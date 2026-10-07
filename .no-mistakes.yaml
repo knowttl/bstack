@@ -5,8 +5,8 @@ commands:
   lint: 'if [ -f package.json ]; then npm run check --if-present; fi'
 document:
   instructions: |
-    The implementation plan (knowttl/brytton projects/bstack/implementation-plan.md) is the build authority;
-    each task's evidence contract decides what a change must record.
+    docs/design.md owns the first-release requirements. docs/implementation-plan.md owns the build sequence
+    and evidence; each task's evidence contract decides what a change must record.
     README.md owns installation and current usage. skills/*/SKILL.md owns each skill's agent-facing contract.
 review:
   path_instructions:
