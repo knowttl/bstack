@@ -320,10 +320,10 @@ Every slice records its task IDs, the original user intent and approved amendmen
 | C14b | T2.6 write/journal/resume, including selected delete | C14a | Injected interruption points, backups, original/proposed/conflict states, repeat and dirty-user protection |
 | C15a | T2.7 check plans/capture/prior protection | C14b | Failed journey despite passing units, failed/skipped/stale/timeout checks rejected, prior refactor proof |
 | C15b | T2.7 live probe pair | C15a | Same endpoint/command/environment before and after, local stand-in mismatch, specific side-effect approval refusal |
-| C16 | Early reference portion of T3.1 | C8, C3, before C17 | Reviewed enforcement/architecture guidance, package check and two-stack relevance rubric |
+| C16 | T3.1 enforcement and architecture references | C8, C3, before C17 | Reviewed enforcement/architecture guidance, package check and two-stack relevance rubric |
 | C17 | T2.8 existing foundation integration | C15b and C16 | Audit before interview, clear-goals loading trace where observable, reviewed vision delta, different project recommendations, current native journey preserved |
 | C18 | T2.9 protected creation | C17 | Approved minimal journey, destination collision/no-write controls, directory/Git journal and interruption recovery |
-| C19a | Remaining T3.1 and T3.2 rule-proof | C18 | Valid/private/alias/cycle proof with native tools in both clean stacks |
+| C19a | T3.2 rule-proof and resulting reference revisions | C18 | Valid/private/alias/cycle proof with native tools in both clean stacks |
 | C19b | T3.3 baseline | C19a | Existing debt visible, new debt/unauthorised refresh rejected, fixed entry removal |
 | C20 | Rewritten T3.4 maintained local integration | C19b | Exact same command passes/fails disposable controls, web/core scoping, no swallowed failures |
 | C21 | T3a.1 contract and T3a.2 collect | C20 | Valid pointers/leaf graph, full Git path inventory and explicit absent base blocked. Split contract and collector if needed |
