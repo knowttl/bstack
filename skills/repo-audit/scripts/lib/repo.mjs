@@ -22,5 +22,5 @@ export async function resolveTarget(options, { draftOnly = false } = {}) {
   if (git.error || git.status !== 0) {
     throw new CommandError('blocked', [{ code: 'git-unavailable', message: 'Git could not resolve the target repo.', fix: 'Install Git and select a non-bare Git working tree.', path: selected }])
   }
-  return { mode: 'repo', root: await realpath(git.stdout.trimEnd()) }
+  return { mode: 'repo', root: await realpath(git.stdout.replace(/\n$/, '')) }
 }

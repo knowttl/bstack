@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 
 // Tests invoke the public fixture command from outside the checkout.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -76,6 +77,20 @@ for (const committed of [false, true]) {
   })
 }
 
+for (const name of ['repo ', 'repo \t\r']) {
+  test(`Git target preserves trailing whitespace ${JSON.stringify(name)}`, { skip: process.platform === 'win32' }, async t => {
+    const box = await sandbox(t)
+    const target = join(box.directory, name)
+    await mkdir(join(target, 'inside'), { recursive: true })
+    await mkdir(join(box.directory, 'repo'))
+    const git = spawnSync('git', ['-C', target, 'init', '-q'], { encoding: 'utf8' })
+    assert.equal(git.status, 0, git.stderr)
+    const output = envelope(run(box, 'draft.json', ['--repo', join(target, 'inside'), '--mode', 'repo']), 'passed', 0)
+    assert.equal(output.inputs.target.root, target)
+    assert.deepEqual(await readdir(join(box.directory, 'repo')), [])
+  })
+}
+
 for (const [name, args, code] of [
   ['missing target', ['--mode', 'draft'], 'missing-target'],
   ['unknown options', ['--unexpected', '--other'], 'unknown-option'],
@@ -144,6 +159,42 @@ test('scratch refuses a cache link into the target before creating directories',
   const box = await sandbox(t)
   await mkdir(dirname(box.cache), { recursive: true })
   await symlink(box.target, box.cache, process.platform === 'win32' ? 'junction' : 'dir')
+  const output = envelope(run(box, 'draft.json', ['--workspace', box.target, '--mode', 'draft']), 'blocked', 2)
+  assert.equal(output.problems[0].code, 'scratch-inside-target')
+  assert.deepEqual(await readdir(box.target), ['brief.md', 'inside'])
+})
+
+test('scratch follows a cache link outside the target', async t => {
+  const box = await sandbox(t)
+  const outside = join(box.directory, 'outside')
+  await mkdir(outside)
+  await mkdir(dirname(box.cache), { recursive: true })
+  await symlink(outside, box.cache, process.platform === 'win32' ? 'junction' : 'dir')
+  const output = envelope(run(box, 'draft.json', ['--workspace', box.target, '--mode', 'draft']), 'passed', 0)
+  const key = createHash('sha256').update(box.target).digest('hex')
+  assert.equal(dirname(output.data.scratch), join(outside, 'bstack', key))
+  assert.equal(await readFile(join(output.data.scratch, 'draft.txt'), 'utf8'), 'draft\n')
+  assert.deepEqual(await readdir(box.target), ['brief.md', 'inside'])
+})
+
+test('scratch follows a run-parent link outside the target', async t => {
+  const box = await sandbox(t)
+  const outside = join(box.directory, 'outside')
+  await mkdir(outside)
+  await mkdir(join(box.cache, 'bstack'), { recursive: true })
+  const key = createHash('sha256').update(box.target).digest('hex')
+  await symlink(outside, join(box.cache, 'bstack', key), process.platform === 'win32' ? 'junction' : 'dir')
+  const output = envelope(run(box, 'draft.json', ['--workspace', box.target, '--mode', 'draft']), 'passed', 0)
+  assert.equal(dirname(output.data.scratch), outside)
+  assert.equal(await readFile(join(output.data.scratch, 'draft.txt'), 'utf8'), 'draft\n')
+  assert.deepEqual(await readdir(box.target), ['brief.md', 'inside'])
+})
+
+test('scratch refuses a run-parent link inside the target before creating directories', async t => {
+  const box = await sandbox(t)
+  await mkdir(join(box.cache, 'bstack'), { recursive: true })
+  const key = createHash('sha256').update(box.target).digest('hex')
+  await symlink(box.target, join(box.cache, 'bstack', key), process.platform === 'win32' ? 'junction' : 'dir')
   const output = envelope(run(box, 'draft.json', ['--workspace', box.target, '--mode', 'draft']), 'blocked', 2)
   assert.equal(output.problems[0].code, 'scratch-inside-target')
   assert.deepEqual(await readdir(box.target), ['brief.md', 'inside'])
