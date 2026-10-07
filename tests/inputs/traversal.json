@@ -1,0 +1,1 @@
+{ "schemaVersion": 1, "paths": ["../outside.md", "inside/../../outside.md", "..\\outside.md"], "scratch": true }

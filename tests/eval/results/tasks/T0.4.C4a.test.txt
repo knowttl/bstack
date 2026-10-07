@@ -1,0 +1,231 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs
+
+Selected 4 suite(s): tests/scripts/bootstrap.test.mjs, tests/scripts/command-contract.test.mjs, tests/scripts/skill-skeleton.test.mjs, tests/scripts/upstream.test.mjs
+TAP version 13
+# Subtest: bootstrap manifest commands and root lockfile agree
+ok 1 - bootstrap manifest commands and root lockfile agree
+  ---
+  duration_ms: 8.945171
+  type: 'test'
+  ...
+# Subtest: discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+ok 2 - discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+  ---
+  duration_ms: 189.47206
+  type: 'test'
+  ...
+# Subtest: task selection executes only registered suites and rejects unknown tasks
+ok 3 - task selection executes only registered suites and rejects unknown tasks
+  ---
+  duration_ms: 222.411318
+  type: 'test'
+  ...
+# Subtest: an empty selected suite fails
+ok 4 - an empty selected suite fails
+  ---
+  duration_ms: 49.430631
+  type: 'test'
+  ...
+# Subtest: draft workspace stores distinct runs in scratch and leaves workspace unchanged
+ok 5 - draft workspace stores distinct runs in scratch and leaves workspace unchanged
+  ---
+  duration_ms: 131.670639
+  type: 'test'
+  ...
+# Subtest: Git target resolves from a subdirectory with no commits
+ok 6 - Git target resolves from a subdirectory with no commits
+  ---
+  duration_ms: 81.491872
+  type: 'test'
+  ...
+# Subtest: Git target resolves from a subdirectory with a commit
+ok 7 - Git target resolves from a subdirectory with a commit
+  ---
+  duration_ms: 113.651483
+  type: 'test'
+  ...
+# Subtest: arguments reject missing target with a JSON usage error
+ok 8 - arguments reject missing target with a JSON usage error
+  ---
+  duration_ms: 55.990377
+  type: 'test'
+  ...
+# Subtest: arguments reject unknown options with a JSON usage error
+ok 9 - arguments reject unknown options with a JSON usage error
+  ---
+  duration_ms: 50.02513
+  type: 'test'
+  ...
+# Subtest: arguments reject missing value with a JSON usage error
+ok 10 - arguments reject missing value with a JSON usage error
+  ---
+  duration_ms: 50.358652
+  type: 'test'
+  ...
+# Subtest: arguments reject duplicate option with a JSON usage error
+ok 11 - arguments reject duplicate option with a JSON usage error
+  ---
+  duration_ms: 47.654232
+  type: 'test'
+  ...
+# Subtest: arguments reject conflicting targets with a JSON usage error
+ok 12 - arguments reject conflicting targets with a JSON usage error
+  ---
+  duration_ms: 46.578886
+  type: 'test'
+  ...
+# Subtest: rejects traversal.json before scratch writes and reports every problem
+ok 13 - rejects traversal.json before scratch writes and reports every problem
+  ---
+  duration_ms: 55.388906
+  type: 'test'
+  ...
+# Subtest: rejects absolute-paths.json before scratch writes and reports every problem
+ok 14 - rejects absolute-paths.json before scratch writes and reports every problem
+  ---
+  duration_ms: 51.607155
+  type: 'test'
+  ...
+# Subtest: rejects unknown-fields.json before scratch writes and reports every problem
+ok 15 - rejects unknown-fields.json before scratch writes and reports every problem
+  ---
+  duration_ms: 49.371963
+  type: 'test'
+  ...
+# Subtest: rejects invalid-types.json before scratch writes and reports every problem
+ok 16 - rejects invalid-types.json before scratch writes and reports every problem
+  ---
+  duration_ms: 48.173255
+  type: 'test'
+  ...
+# Subtest: escaping existing links and new children under escaping parents are refused before writes
+ok 17 - escaping existing links and new children under escaping parents are refused before writes
+  ---
+  duration_ms: 55.933763
+  type: 'test'
+  ...
+# Subtest: dangling parents are refused rather than treated as missing directories
+ok 18 - dangling parents are refused rather than treated as missing directories
+  ---
+  duration_ms: 48.508949
+  type: 'test'
+  ...
+# Subtest: missing Git prerequisite returns blocked rather than passing
+ok 19 - missing Git prerequisite returns blocked rather than passing
+  ---
+  duration_ms: 55.248168
+  type: 'test'
+  ...
+# Subtest: repo commands refuse workspace mode
+ok 20 - repo commands refuse workspace mode
+  ---
+  duration_ms: 49.301313
+  type: 'test'
+  ...
+# Subtest: scratch refuses a cache link into the target before creating directories
+ok 21 - scratch refuses a cache link into the target before creating directories
+  ---
+  duration_ms: 54.633973
+  type: 'test'
+  ...
+# Subtest: target aliases use the same scratch identity
+ok 22 - target aliases use the same scratch identity
+  ---
+  duration_ms: 106.989947
+  type: 'test'
+  ...
+# Subtest: unavailable target absent is blocked without writes
+ok 23 - unavailable target absent is blocked without writes
+  ---
+  duration_ms: 51.248333
+  type: 'test'
+  ...
+# Subtest: unavailable target brief.md is blocked without writes
+ok 24 - unavailable target brief.md is blocked without writes
+  ---
+  duration_ms: 54.643626
+  type: 'test'
+  ...
+# Subtest: human output is a short summary with the same failed exit code
+ok 25 - human output is a short summary with the same failed exit code
+  ---
+  duration_ms: 52.377196
+  type: 'test'
+  ...
+# Subtest: skill metadata permits only user invocation in the documented hosts
+ok 26 - skill metadata permits only user invocation in the documented hosts
+  ---
+  duration_ms: 15.899358
+  type: 'test'
+  ...
+# Subtest: load when table resolves all eight bundled reference placeholders
+ok 27 - load when table resolves all eight bundled reference placeholders
+  ---
+  duration_ms: 17.612149
+  type: 'test'
+  ...
+# Subtest: no arguments prints planned commands and returns usage exit 3
+ok 28 - no arguments prints planned commands and returns usage exit 3
+  ---
+  duration_ms: 39.170739
+  type: 'test'
+  ...
+# Subtest: explicit help succeeds
+ok 29 - explicit help succeeds
+  ---
+  duration_ms: 34.456994
+  type: 'test'
+  ...
+# Subtest: an unimplemented command returns usage exit 3
+ok 30 - an unimplemented command returns usage exit 3
+  ---
+  duration_ms: 36.173586
+  type: 'test'
+  ...
+# Subtest: fetch copies exact pinned bytes and check verifies them without writing
+ok 31 - fetch copies exact pinned bytes and check verifies them without writing
+  ---
+  duration_ms: 184.184503
+  type: 'test'
+  ...
+# Subtest: fetch refuses a listed file absent at its pin
+ok 32 - fetch refuses a listed file absent at its pin
+  ---
+  duration_ms: 84.092359
+  type: 'test'
+  ...
+# Subtest: check refuses a listed file absent at its pin
+ok 33 - check refuses a listed file absent at its pin
+  ---
+  duration_ms: 84.4877
+  type: 'test'
+  ...
+# Subtest: check refuses an absent local copy without repairing it
+ok 34 - check refuses an absent local copy without repairing it
+  ---
+  duration_ms: 76.732879
+  type: 'test'
+  ...
+# Subtest: check refuses modified local bytes and preserves them
+ok 35 - check refuses modified local bytes and preserves them
+  ---
+  duration_ms: 155.251359
+  type: 'test'
+  ...
+# Subtest: fetch rejects traversal before copying files
+ok 36 - fetch rejects traversal before copying files
+  ---
+  duration_ms: 50.10021
+  type: 'test'
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1392.245692

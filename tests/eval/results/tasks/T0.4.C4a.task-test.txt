@@ -1,0 +1,141 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T0.4.C4a
+
+Selected 1 suite(s): tests/scripts/command-contract.test.mjs
+TAP version 13
+# Subtest: draft workspace stores distinct runs in scratch and leaves workspace unchanged
+ok 1 - draft workspace stores distinct runs in scratch and leaves workspace unchanged
+  ---
+  duration_ms: 112.722698
+  type: 'test'
+  ...
+# Subtest: Git target resolves from a subdirectory with no commits
+ok 2 - Git target resolves from a subdirectory with no commits
+  ---
+  duration_ms: 61.070079
+  type: 'test'
+  ...
+# Subtest: Git target resolves from a subdirectory with a commit
+ok 3 - Git target resolves from a subdirectory with a commit
+  ---
+  duration_ms: 103.028388
+  type: 'test'
+  ...
+# Subtest: arguments reject missing target with a JSON usage error
+ok 4 - arguments reject missing target with a JSON usage error
+  ---
+  duration_ms: 47.324751
+  type: 'test'
+  ...
+# Subtest: arguments reject unknown options with a JSON usage error
+ok 5 - arguments reject unknown options with a JSON usage error
+  ---
+  duration_ms: 45.356797
+  type: 'test'
+  ...
+# Subtest: arguments reject missing value with a JSON usage error
+ok 6 - arguments reject missing value with a JSON usage error
+  ---
+  duration_ms: 47.385328
+  type: 'test'
+  ...
+# Subtest: arguments reject duplicate option with a JSON usage error
+ok 7 - arguments reject duplicate option with a JSON usage error
+  ---
+  duration_ms: 57.771111
+  type: 'test'
+  ...
+# Subtest: arguments reject conflicting targets with a JSON usage error
+ok 8 - arguments reject conflicting targets with a JSON usage error
+  ---
+  duration_ms: 47.69402
+  type: 'test'
+  ...
+# Subtest: rejects traversal.json before scratch writes and reports every problem
+ok 9 - rejects traversal.json before scratch writes and reports every problem
+  ---
+  duration_ms: 48.269259
+  type: 'test'
+  ...
+# Subtest: rejects absolute-paths.json before scratch writes and reports every problem
+ok 10 - rejects absolute-paths.json before scratch writes and reports every problem
+  ---
+  duration_ms: 48.562888
+  type: 'test'
+  ...
+# Subtest: rejects unknown-fields.json before scratch writes and reports every problem
+ok 11 - rejects unknown-fields.json before scratch writes and reports every problem
+  ---
+  duration_ms: 52.169063
+  type: 'test'
+  ...
+# Subtest: rejects invalid-types.json before scratch writes and reports every problem
+ok 12 - rejects invalid-types.json before scratch writes and reports every problem
+  ---
+  duration_ms: 66.471898
+  type: 'test'
+  ...
+# Subtest: escaping existing links and new children under escaping parents are refused before writes
+ok 13 - escaping existing links and new children under escaping parents are refused before writes
+  ---
+  duration_ms: 58.558488
+  type: 'test'
+  ...
+# Subtest: dangling parents are refused rather than treated as missing directories
+ok 14 - dangling parents are refused rather than treated as missing directories
+  ---
+  duration_ms: 59.439945
+  type: 'test'
+  ...
+# Subtest: missing Git prerequisite returns blocked rather than passing
+ok 15 - missing Git prerequisite returns blocked rather than passing
+  ---
+  duration_ms: 59.026705
+  type: 'test'
+  ...
+# Subtest: repo commands refuse workspace mode
+ok 16 - repo commands refuse workspace mode
+  ---
+  duration_ms: 51.96284
+  type: 'test'
+  ...
+# Subtest: scratch refuses a cache link into the target before creating directories
+ok 17 - scratch refuses a cache link into the target before creating directories
+  ---
+  duration_ms: 53.655027
+  type: 'test'
+  ...
+# Subtest: target aliases use the same scratch identity
+ok 18 - target aliases use the same scratch identity
+  ---
+  duration_ms: 98.842133
+  type: 'test'
+  ...
+# Subtest: unavailable target absent is blocked without writes
+ok 19 - unavailable target absent is blocked without writes
+  ---
+  duration_ms: 47.542819
+  type: 'test'
+  ...
+# Subtest: unavailable target brief.md is blocked without writes
+ok 20 - unavailable target brief.md is blocked without writes
+  ---
+  duration_ms: 51.735695
+  type: 'test'
+  ...
+# Subtest: human output is a short summary with the same failed exit code
+ok 21 - human output is a short summary with the same failed exit code
+  ---
+  duration_ms: 49.973505
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1337.251677
