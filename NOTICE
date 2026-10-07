@@ -1,0 +1,36 @@
+# Upstream sources and adaptations
+
+Raw files are copied byte-for-byte at the commits below.
+The exact copied paths, including licence files, are listed in upstream/sources.json.
+These development sources live outside the installed skill.
+No upstream procedure or asset has been adapted yet.
+Later owning tasks will record each adapted destination and its changes here, carrying the applicable copyright and permission text into redistributed adaptations.
+
+| Source | Pinned commit | Files adapted | What changed |
+|---|---|---|---|
+| https://github.com/mattpocock/skills | 6fd947921b935b7e1e69293a200400f0fdd5c15f | None | Raw procedures and companion formats only. MIT, Copyright (c) 2026 Matt Pocock. Full licence in upstream/mattpocock-skills/LICENSE |
+| https://github.com/kunchenguid/vision | 7a20c38181151ec67efdf8fa2cb03a60123a7b83 | None | Raw procedure and both board assets only. MIT, Copyright (c) 2026 kunchenguid. Full licence in upstream/vision/LICENSE |
+| https://github.com/cursor/plugins (pstack) | 9f451cf875ad1239912762f67741e8e5ba6ac0f1 | None | Raw design red flags and five principle procedures only. MIT, Copyright (c) 2026 Lauren Tan. Full licence in upstream/pstack/pstack/LICENSE |
+| https://github.com/kunchenguid/kun | 1b2a9c7dd4b2b33eb7161399d7893c39048213be | None | pending: no licence, excluded until the captain rules. Not listed in sources.json, copied or paraphrased |
+
+The three copied sources carry the MIT permission and disclaimer below, with their respective copyright notices recorded in the table and their original licence files preserved beside the copies.
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

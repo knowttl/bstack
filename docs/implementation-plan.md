@@ -473,6 +473,11 @@ Use the explicit-file runner above rather than passing a directory as a test fil
 
 **Verification:** `node upstream/fetch.mjs --check` and `npm test`.
 
+Commissioning C3 scope amendment from firstmate on 2026-10-07: proceed with the three MIT-licensed sources below.
+`kunchenguid/kun` has no licence at its pin and is excluded from the manifest and copied files until the captain rules.
+NOTICE records that pending source without copying or paraphrasing it.
+The original four-source task remains unticked pending that ruling, while C3's licensed-source delivery records its completed checks in `tests/eval/results/tasks/T0.3.json`.
+
 **Read:** design "Bundled sources and runtime" and "Evidence and limitations".
 
 **Steps**

@@ -1,4 +1,5 @@
 {
   "T0.1": ["tests/scripts/bootstrap.test.mjs"],
-  "T0.2": ["tests/scripts/skill-skeleton.test.mjs"]
+  "T0.2": ["tests/scripts/skill-skeleton.test.mjs"],
+  "T0.3": ["tests/scripts/upstream.test.mjs"]
 }
