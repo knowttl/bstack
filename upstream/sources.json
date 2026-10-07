@@ -47,5 +47,11 @@
       "pstack/skills/principle-encode-lessons-in-structure/SKILL.md",
       "pstack/skills/principle-build-the-lever/SKILL.md"
     ]
+  },
+  {
+    "name": "kun",
+    "repoUrl": "https://github.com/kunchenguid/kun",
+    "commit": "1b2a9c7dd4b2b33eb7161399d7893c39048213be",
+    "files": ["ENTRY.md"]
   }
 ]

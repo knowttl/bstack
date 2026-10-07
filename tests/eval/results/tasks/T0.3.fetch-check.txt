@@ -26,4 +26,5 @@ Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/p
 Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md
 Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/skills/principle-encode-lessons-in-structure/SKILL.md
 Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/skills/principle-build-the-lever/SKILL.md
-Checked 28 files from 3 pinned sources
+Present at 1b2a9c7dd4b2b33eb7161399d7893c39048213be, local bytes match: kun/ENTRY.md
+Checked 29 files from 4 pinned sources

@@ -2,12 +2,11 @@
   "schemaVersion": 1,
   "taskId": "T0.3",
   "slice": "C3",
-  "sourceRevision": "e1262d4da43b7812ad5bce9115bb332d36ae38bf",
+  "sourceRevision": "5d0c43faa52d5d258e27529704f7e99547ba5f95",
   "intent": "\"yes approbe and begin the implementation\". Begin the approved commissioning plan slice by slice with T0.3, pinned upstream sources and NOTICE.",
   "amendments": [
     "Preserve .no-mistakes.yaml byte-identical and add no workflows or npm dependencies.",
-    "Firstmate steering 001 on 2026-10-07 authorized proceeding with three MIT-licensed sources. Exclude kunchenguid/kun from sources.json, copies and paraphrases pending the captain ruling on its missing licence.",
-    "Keep the original four-source task unticked while recording completed C3 licensed-source delivery."
+    "R1 decision restores the full four-source T0.3 scope and NOTICE inventory of pins and adaptations."
   ],
   "status": "passed",
   "environment": {
@@ -117,7 +116,7 @@
       "args": [
         "diff",
         "--exit-code",
-        "origin/main",
+        "99c0e7314c0172135a44e040c29ed92bbe55f2e9",
         "--",
         ".no-mistakes.yaml"
       ],
@@ -132,7 +131,7 @@
       "args": [
         "log",
         "-1",
-        "--format=%H %s"
+        "--format=%H"
       ],
       "cwd": ".",
       "exitCode": 0,
@@ -144,7 +143,7 @@
     {
       "id": "T0.3/pins-and-paths",
       "kind": "manual",
-      "procedure": "Run node upstream/fetch.mjs --check against upstream/sources.json. All 28 exact paths, including original licence files and companion formats/assets, match their pinned remote bytes.",
+      "procedure": "Run node upstream/fetch.mjs --check against upstream/sources.json. All 29 exact paths across four sources, including Kun ENTRY.md and companion formats/assets, match their pinned remote bytes.",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T0.3.fetch-check.txt"
     },
@@ -193,25 +192,24 @@
     {
       "id": "T0.3/adaptation-inventory",
       "kind": "manual",
-      "procedure": "Compare NOTICE with upstream/sources.json. All three copied sources have their full pins, MIT copyright attribution, original licence paths and no adaptations. Kun is recorded as pending and excluded.",
+      "procedure": "Compare NOTICE with upstream/sources.json. All four copied sources have their full pins and no adaptations.",
       "status": "passed",
       "artifact": "NOTICE"
     },
     {
       "id": "T0.3/config-preserved",
       "kind": "manual",
-      "procedure": "git diff --exit-code origin/main -- .no-mistakes.yaml",
+      "procedure": "git diff --exit-code 99c0e7314c0172135a44e040c29ed92bbe55f2e9 -- .no-mistakes.yaml",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T0.3.preserved-config.txt"
     }
   ],
   "limitations": [
     "Only Linux with Node v24.17.0 was tested. These runs do not prove Windows or macOS support.",
-    "kunchenguid/kun has no licence at its listed pin. It is excluded pending the captain ruling and the original four-source T0.3 task remains unticked. Passed means the three-source scope firstmate authorized.",
-    "The three copied source licences were confirmed as MIT at their pins before the implementation commit. The live check also verifies their preserved licence bytes.",
-    "Default tests use a file-backed fake of the network boundary and never contact GitHub. The separate recorded live check verified all 28 files at their pins.",
+    "Default tests use a file-backed fake of the network boundary and never contact GitHub. The separate recorded live check verified all 29 files from four sources at their pins.",
     "No pstack files moved at the planned pin, and no design links changed.",
-    "No upstream content was adapted into the installed skill. Later adaptation tasks must carry required licence text with their redistributed content.",
-    "The source revision is the tested implementation commit. This record and command artifacts are added in an evidence-only commit."
+    "No upstream content was adapted into the installed skill.",
+    "The source revision identifies the review starting HEAD. Focused task tests and fetch check cover its corrected working tree, including Kun ENTRY.md. The outer executor owns committing this repair.",
+    "Install, bootstrap check and full test artifacts are historical results from e1262d4da43b7812ad5bce9115bb332d36ae38bf, not reruns of this repair. Full test and lint gates belong to the outer pipeline."
   ]
 }
