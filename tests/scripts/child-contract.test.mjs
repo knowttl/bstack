@@ -1,0 +1,165 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { mkdtemp, realpath, rm, writeFile, readFile, chmod } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { spawnSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
+
+// Public fixture commands run from a target outside the checkout.
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+
+async function sandbox(t) {
+  const directory = await realpath(await mkdtemp(join(tmpdir(), 'bstack child 日本語 $; ')))
+  t.after(() => rm(directory, { recursive: true, force: true }))
+  return directory
+}
+
+async function invoke(directory, mode, input) {
+  const inputPath = join(directory, 'input.json')
+  await writeFile(inputPath, JSON.stringify(input))
+  const result = spawnSync(process.execPath, [join(root, 'tests/inputs/child-contract.mjs'), '--mode', mode,
+    '--workspace', directory, '--input', inputPath, '--json'], { cwd: directory, encoding: 'utf8', timeout: 5000 })
+  assert.ifError(result.error)
+  assert.equal(result.stderr, '')
+  return { code: result.status, ...JSON.parse(result.stdout) }
+}
+
+function nodeCommand(args, extra = {}) {
+  return { executable: 'node', args, cwd: '.', versionArgs: ['--version'], ...extra }
+}
+
+test('child commands preserve literal arguments and capture version and both output streams', async t => {
+  const directory = await sandbox(t)
+  const args = ['spaces here', '日本語', '$HOME', '$(touch injected)', '; touch injected', '"quoted"', '%PATH%', '&echo wrong']
+  const result = await invoke(directory, 'run', { command: nodeCommand(['-e',
+    'console.log(JSON.stringify(process.argv.slice(1))); console.error("diagnostic")', ...args]) })
+  assert.equal(result.code, 0)
+  assert.deepEqual(JSON.parse(result.data.stdout), args)
+  assert.equal(result.data.stderr, 'diagnostic\n')
+  assert.equal(result.data.toolVersion.stdout.trim(), process.version)
+  assert.equal(result.data.exitCode, 0)
+  assert.equal(result.data.signal, null)
+  assert.equal(result.data.timedOut, false)
+  assert.equal(result.data.cancelled, false)
+  assert.ok(result.data.durationMs >= 0)
+  await assert.rejects(readFile(join(directory, 'injected')), { code: 'ENOENT' })
+})
+
+test('child output is bounded to the last 64 KiB per stream', async t => {
+  const directory = await sandbox(t)
+  const result = await invoke(directory, 'run', { command: nodeCommand(['-e',
+    'process.stdout.write("x".repeat(100000) + "END"); process.stderr.write("y".repeat(100000) + "END")']) })
+  assert.equal(result.code, 0)
+  assert.equal(result.data.stdout, 'x'.repeat(65533) + 'END')
+  assert.equal(result.data.stderr, 'y'.repeat(65533) + 'END')
+})
+
+for (const cancelled of [false, true]) {
+  test(`${cancelled ? 'cancellation' : 'timeout'} fails and stops the child process tree before returning`, async t => {
+    const directory = await sandbox(t)
+    const script = join(root, 'tests/inputs/process-tree.mjs')
+    const result = await invoke(directory, 'run', {
+      command: nodeCommand([script, directory], { versionArgs: [script, '--version'], timeoutMs: 500 }),
+      ...(cancelled ? { cancelDirectory: directory } : {})
+    })
+    assert.equal(result.code, 1)
+    assert.equal(result.status, 'failed')
+    assert.equal(result.data.cancelled, cancelled)
+    assert.equal(result.data.timedOut, !cancelled)
+    const pids = JSON.parse(await readFile(join(directory, 'pids.json'), 'utf8'))
+    for (const pid of pids) {
+      if (process.platform === 'linux') {
+        // An orphan may briefly remain as a zombie, but it can no longer execute.
+        const state = await readFile(`/proc/${pid}/stat`, 'utf8').catch(error => {
+          if (error.code !== 'ENOENT') throw error
+          return null
+        })
+        assert.ok(state === null || state.slice(state.lastIndexOf(')') + 2).startsWith('Z '))
+      } else assert.throws(() => process.kill(pid, 0), { code: 'ESRCH' })
+    }
+  })
+}
+
+test('failed commands and unavailable tools cannot pass', async t => {
+  const directory = await sandbox(t)
+  const failed = await invoke(directory, 'run', { command: nodeCommand(['-e', 'process.exit(7)']) })
+  assert.equal(failed.code, 1)
+  assert.equal(failed.data.exitCode, 7)
+  const missing = await invoke(directory, 'run', { command: { ...nodeCommand([]), executable: join(directory, 'missing') } })
+  assert.equal(missing.code, 2)
+  assert.equal(missing.status, 'blocked')
+  assert.ok(missing.data.error)
+})
+
+test('child working directories reject escape before execution', async t => {
+  const directory = await sandbox(t)
+  const result = await invoke(directory, 'run', { command: nodeCommand([], { cwd: '..' }) })
+  assert.equal(result.code, 3)
+  assert.equal(result.problems[0].code, 'unsafe-path')
+})
+
+test('Windows npm selection uses Node and a JavaScript CLI with literal arguments', async t => {
+  const directory = await sandbox(t)
+  const cli = join(directory, 'npm-cli.js')
+  await writeFile(cli, '')
+  const args = ['ci', '--prefix', '日本語 $; folder']
+  const result = await invoke(directory, 'select', { executable: 'npm', args,
+    options: { platform: 'win32', node: process.execPath, env: { npm_execpath: cli, PATH: '' } } })
+  assert.equal(result.code, 0)
+  assert.deepEqual(result.data, { executable: process.execPath, args: [cli, ...args] })
+})
+
+for (const executable of ['npm.cmd', 'tool.cmd', 'tool.bat']) {
+  test(`Windows ${executable} without a supported CLI is blocked`, async t => {
+    const directory = await sandbox(t)
+    const result = await invoke(directory, 'select', { executable, args: [],
+      options: { platform: 'win32', node: join(directory, 'node.exe'), env: { PATH: '' } } })
+    assert.equal(result.code, 2)
+    assert.ok(result.problems[0].fix)
+  })
+}
+
+test('fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs', async t => {
+  const directory = await sandbox(t)
+  const path = join(directory, 'file.txt')
+  await writeFile(path, 'a\r\n')
+  const input = { baseCommit: 'a'.repeat(40), paths: ['absent', 'file.txt'], inputs: { decision: 'yes' } }
+  const initial = await invoke(directory, 'fingerprint', input)
+  assert.equal(initial.code, 0)
+  assert.equal(initial.data.state.files[1].contentHash, createHash('sha256').update('a\r\n').digest('hex'))
+  assert.deepEqual(initial.data.state.files[0], { path: 'absent', present: false, mode: null, contentHash: null })
+  assert.equal((await invoke(directory, 'fingerprint', input)).data.fingerprint, initial.data.fingerprint)
+  await writeFile(path, 'a\n')
+  assert.notEqual((await invoke(directory, 'fingerprint', input)).data.fingerprint, initial.data.fingerprint)
+  await writeFile(path, 'a\r\n')
+  await writeFile(join(directory, 'absent'), '')
+  assert.notEqual((await invoke(directory, 'fingerprint', input)).data.fingerprint, initial.data.fingerprint)
+  await rm(join(directory, 'absent'))
+  if (process.platform !== 'win32') {
+    const before = await invoke(directory, 'fingerprint', input)
+    await chmod(path, 0o755)
+    assert.notEqual((await invoke(directory, 'fingerprint', input)).data.fingerprint, before.data.fingerprint)
+  }
+  const before = await invoke(directory, 'fingerprint', input)
+  assert.notEqual((await invoke(directory, 'fingerprint', { ...input, baseCommit: 'b'.repeat(40) })).data.fingerprint, before.data.fingerprint)
+  assert.notEqual((await invoke(directory, 'fingerprint', { ...input, inputs: { decision: 'no' } })).data.fingerprint, before.data.fingerprint)
+  const other = await sandbox(t)
+  await writeFile(join(other, 'file.txt'), 'a\r\n')
+  assert.notEqual((await invoke(other, 'fingerprint', input)).data.fingerprint, before.data.fingerprint)
+})
+
+test('canonical assessment inputs ignore only derived fields and evidence serialization', async t => {
+  const directory = await sandbox(t)
+  const input = { baseCommit: 'a'.repeat(40), paths: ['evidence.json'], evidencePath: 'evidence.json',
+    inputs: { z: [{ b: 2, a: 1 }], decision: 'yes', fingerprint: 'old', execution: { status: 'failed' } } }
+  await writeFile(join(directory, 'evidence.json'), '{"old":true}')
+  const initial = await invoke(directory, 'fingerprint', input)
+  await writeFile(join(directory, 'evidence.json'), '{ "new": true }')
+  const reordered = { ...input, inputs: { execution: { status: 'passed' }, fingerprint: 'new', decision: 'yes', z: [{ a: 1, b: 2 }] } }
+  assert.equal((await invoke(directory, 'fingerprint', reordered)).data.fingerprint, initial.data.fingerprint)
+  assert.notEqual((await invoke(directory, 'fingerprint', { ...reordered, inputs: { ...reordered.inputs, decision: 'no' } })).data.fingerprint, initial.data.fingerprint)
+  await rm(join(directory, 'evidence.json'))
+  assert.notEqual((await invoke(directory, 'fingerprint', reordered)).data.fingerprint, initial.data.fingerprint)
+})

@@ -348,7 +348,7 @@ Tick each task when its "Done when" commands pass.
   - [x] T0.3 Pin upstream sources and start NOTICE
   - [ ] T0.4 Build the shared script library
     - [x] C4a Target/path/scratch and result/argument contracts ([evidence](../tests/eval/results/tasks/T0.4.C4a.json))
-    - [ ] C4b Child commands and fingerprints
+    - [x] C4b Child commands and fingerprints ([evidence](../tests/eval/results/tasks/T0.4.C4b.json))
     - [ ] C4c Minimal schema contract and real command wiring
   - [ ] T0.5 Build the package check
   - [ ] T0.6 Establish local validation and no-mistakes gate

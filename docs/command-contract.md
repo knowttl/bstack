@@ -76,15 +76,62 @@ Each problem has `code`, `message`, `fix` and an optional `path`.
 `data` contains the command's results and `inputs` identifies the target and relevant declared inputs.
 Without `--json`, the command prints a short status summary and each problem's fix with the same exit code.
 Child output must go to captured artifacts, never alongside the JSON envelope.
-Child execution and fingerprints follow in C4b.
+Child execution and fingerprints are implemented in C4b.
+
+## Child commands
+
+`runCommand(target, command, { signal })` accepts `{ executable, args, cwd, timeoutMs, versionArgs }`.
+`args` and `versionArgs` are arrays of literal strings.
+`cwd` is a required target-relative directory, resolved with the path contract before spawning anything.
+`timeoutMs` defaults to 120000 and must be a positive safe integer.
+The version probe runs first with the same working directory, timeout and cancellation signal.
+A non-passing version probe blocks execution of the requested check.
+Each invocation has its own timeout.
+
+The returned execution record contains `status`, `stdout`, `stderr`, `durationMs`, `exitCode`, `signal`, `timedOut`, `cancelled` and `error`.
+`toolVersion` contains the same record for the version probe, including its captured output.
+Output is captured as the last 65536 bytes of each stream, decoded as UTF-8, and never printed by the library.
+Missing executables or cleanup errors are blocked.
+Nonzero exits, timeouts and cancellation are failed, even if the child exits with code zero.
+An already cancelled signal starts no child.
+Timeout and cancellation kill the managed process group on POSIX and use `taskkill /T /F` on Windows.
+The runner waits for stream closure and cleanup before returning.
+Children that deliberately detach themselves from the managed tree are outside this contract.
+
+`selectCommand(executable, args)` supplies the same launcher selection for the check and its version probe.
+`node` selects `process.execPath`.
+On Windows, `npm` and `npm.cmd` select npm's `npm-cli.js`, first from `npm_execpath`, then beside Node, then under PATH entries.
+Node executes that entry point with literal arguments.
+Missing npm entry points and other `.cmd` or `.bat` launchers are blocked with a prerequisite and fix.
+No child uses shell interpretation.
+Windows command selection is tested on Linux in C4b, while real Windows execution remains pending under R26.
+
+## Fingerprints
+
+`hashBytes(bytes)` returns a lowercase SHA-256 digest of exact bytes, preserving line endings.
+Callers represent an absent original or proposed file with `null`, never the hash of empty bytes.
+`canonicalJSON(value)` serializes JSON values with sorted object keys and preserved array order.
+
+`fingerprint(target, { baseCommit, paths, inputs, evidencePath })` returns `{ fingerprint, state }`.
+The caller supplies the resolved base commit and JSON assessment inputs.
+The state includes the real local target root, base commit, sorted unique paths and substantive inputs.
+Each inventoried file records its path, presence, filesystem mode and exact-byte content hash.
+Absent files record `present: false`, `mode: null` and `contentHash: null`.
+Unreadable inputs and unsafe paths refuse the operation rather than producing a fingerprint.
+
+Only the top-level `inputs.fingerprint` and `inputs.execution` fields are omitted as derived data.
+All other fields, including nested fields with those names, remain substantive.
+When `evidencePath` is supplied, that path stays inventoried with its presence and mode, but its serialized content is not hashed.
+The caller must include the evidence's substantive fields in `inputs`.
+This avoids a self-referential evidence hash without omitting the assessment itself.
+Portable committed identity and format-specific assessment fields belong to their later owning tasks.
 
 ## Structured inputs and later contracts
 
 Every structured format declares `schemaVersion: 1` and rejects unknown fields.
 Owning tasks define exact required contents and reject missing or duplicate joining IDs.
 C4c adds the supported schema keywords and rejects unsupported keywords.
-The plan's child-command object, exact-byte SHA-256 preconditions and substantive-input fingerprint contracts remain authoritative for C4b.
-No schema validator, child runner or fingerprint implementation is claimed by C4a.
+No schema validator or production command wiring is claimed by C4a or C4b.
 
 ## C4a public test command
 
@@ -94,3 +141,11 @@ Its input is `{ "schemaVersion": 1, "paths": [<relative path>], "scratch": <bool
 It validates all paths before optionally writing `draft.txt` in a new scratch run.
 Valid and invalid fixtures in `tests/inputs/` cover refusal with no partial writes.
 See the [README](../README.md) for suite selection and the [implementation plan](implementation-plan.md#progress) for slice progress.
+
+## C4b public test command
+
+`node tests/inputs/child-contract.mjs --mode run --workspace <directory> --input <fixture.json> --json` exercises child execution without production dispatch.
+The fixture input supplies `command` and an optional `cancelDirectory`, whose `ready` file event aborts the running tree.
+`--mode select` accepts `executable`, `args` and launcher-selection `options` for Windows logic tests.
+`--mode fingerprint` accepts the fingerprint input object documented above.
+These fixture commands are test interfaces, not production command wiring or schema validation.
