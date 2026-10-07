@@ -16,8 +16,11 @@ Planned commands (not implemented yet):
   probe compare
   rule-proof
   baseline check
+  contract validate
   evidence collect
   evidence validate
+  docs generate
+  docs check
 
 Use --help to show this help (exit 0).
 Missing or unsupported arguments are a usage error (exit 3).`)
