@@ -1,0 +1,51 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T0.3
+
+Selected 1 suite(s): tests/scripts/upstream.test.mjs
+TAP version 13
+# Subtest: fetch copies exact pinned bytes and check verifies them without writing
+ok 1 - fetch copies exact pinned bytes and check verifies them without writing
+  ---
+  duration_ms: 157.939616
+  type: 'test'
+  ...
+# Subtest: fetch refuses a listed file absent at its pin
+ok 2 - fetch refuses a listed file absent at its pin
+  ---
+  duration_ms: 72.040069
+  type: 'test'
+  ...
+# Subtest: check refuses a listed file absent at its pin
+ok 3 - check refuses a listed file absent at its pin
+  ---
+  duration_ms: 72.746286
+  type: 'test'
+  ...
+# Subtest: check refuses an absent local copy without repairing it
+ok 4 - check refuses an absent local copy without repairing it
+  ---
+  duration_ms: 68.277905
+  type: 'test'
+  ...
+# Subtest: check refuses modified local bytes and preserves them
+ok 5 - check refuses modified local bytes and preserves them
+  ---
+  duration_ms: 134.346237
+  type: 'test'
+  ...
+# Subtest: fetch rejects traversal before copying files
+ok 6 - fetch rejects traversal before copying files
+  ---
+  duration_ms: 43.685279
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 614.177513

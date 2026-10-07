@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.3",
+  "slice": "C3",
+  "sourceRevision": "e1262d4da43b7812ad5bce9115bb332d36ae38bf",
+  "intent": "\"yes approbe and begin the implementation\". Begin the approved commissioning plan slice by slice with T0.3, pinned upstream sources and NOTICE.",
+  "amendments": [
+    "Preserve .no-mistakes.yaml byte-identical and add no workflows or npm dependencies.",
+    "Firstmate steering 001 on 2026-10-07 authorized proceeding with three MIT-licensed sources. Exclude kunchenguid/kun from sources.json, copies and paraphrases pending the captain ruling on its missing licence.",
+    "Keep the original four-source task unticked while recording completed C3 licensed-source delivery."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.node-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.npm-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.os.txt",
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.3"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.task-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "fetch-check",
+      "executable": "node",
+      "args": [
+        "upstream/fetch.mjs",
+        "--check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.fetch-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "preserved-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "--exit-code",
+        "origin/main",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.preserved-config.txt",
+      "status": "passed"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H %s"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.history.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "T0.3/pins-and-paths",
+      "kind": "manual",
+      "procedure": "Run node upstream/fetch.mjs --check against upstream/sources.json. All 28 exact paths, including original licence files and companion formats/assets, match their pinned remote bytes.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.fetch-check.txt"
+    },
+    {
+      "id": "T0.3/fetch-and-check",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: fetch copies exact pinned bytes and check verifies them without writing",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.task-test.txt"
+    },
+    {
+      "id": "T0.3/missing-pinned-file-fetch",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: fetch refuses a listed file absent at its pin",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.task-test.txt"
+    },
+    {
+      "id": "T0.3/missing-pinned-file-check",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: check refuses a listed file absent at its pin",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.task-test.txt"
+    },
+    {
+      "id": "T0.3/missing-local-copy",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: check refuses an absent local copy without repairing it",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.task-test.txt"
+    },
+    {
+      "id": "T0.3/modified-local-copy",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: check refuses modified local bytes and preserves them",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.task-test.txt"
+    },
+    {
+      "id": "T0.3/path-traversal",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: fetch rejects traversal before copying files",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.task-test.txt"
+    },
+    {
+      "id": "T0.3/adaptation-inventory",
+      "kind": "manual",
+      "procedure": "Compare NOTICE with upstream/sources.json. All three copied sources have their full pins, MIT copyright attribution, original licence paths and no adaptations. Kun is recorded as pending and excluded.",
+      "status": "passed",
+      "artifact": "NOTICE"
+    },
+    {
+      "id": "T0.3/config-preserved",
+      "kind": "manual",
+      "procedure": "git diff --exit-code origin/main -- .no-mistakes.yaml",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.preserved-config.txt"
+    }
+  ],
+  "limitations": [
+    "Only Linux with Node v24.17.0 was tested. These runs do not prove Windows or macOS support.",
+    "kunchenguid/kun has no licence at its listed pin. It is excluded pending the captain ruling and the original four-source T0.3 task remains unticked. Passed means the three-source scope firstmate authorized.",
+    "The three copied source licences were confirmed as MIT at their pins before the implementation commit. The live check also verifies their preserved licence bytes.",
+    "Default tests use a file-backed fake of the network boundary and never contact GitHub. The separate recorded live check verified all 28 files at their pins.",
+    "No pstack files moved at the planned pin, and no design links changed.",
+    "No upstream content was adapted into the installed skill. Later adaptation tasks must carry required licence text with their redistributed content.",
+    "The source revision is the tested implementation commit. This record and command artifacts are added in an evidence-only commit."
+  ]
+}
