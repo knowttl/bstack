@@ -1,0 +1,69 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs
+
+Selected 2 suite(s): tests/scripts/bootstrap.test.mjs, tests/scripts/skill-skeleton.test.mjs
+TAP version 13
+# Subtest: bootstrap manifest commands and root lockfile agree
+ok 1 - bootstrap manifest commands and root lockfile agree
+  ---
+  duration_ms: 5.954013
+  type: 'test'
+  ...
+# Subtest: discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+ok 2 - discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+  ---
+  duration_ms: 181.458274
+  type: 'test'
+  ...
+# Subtest: task selection executes only registered suites and rejects unknown tasks
+ok 3 - task selection executes only registered suites and rejects unknown tasks
+  ---
+  duration_ms: 232.17645
+  type: 'test'
+  ...
+# Subtest: an empty selected suite fails
+ok 4 - an empty selected suite fails
+  ---
+  duration_ms: 44.845587
+  type: 'test'
+  ...
+# Subtest: skill metadata permits only user invocation in the documented hosts
+ok 5 - skill metadata permits only user invocation in the documented hosts
+  ---
+  duration_ms: 5.744563
+  type: 'test'
+  ...
+# Subtest: load when table resolves all eight bundled reference placeholders
+ok 6 - load when table resolves all eight bundled reference placeholders
+  ---
+  duration_ms: 6.107039
+  type: 'test'
+  ...
+# Subtest: no arguments prints planned commands and returns usage exit 3
+ok 7 - no arguments prints planned commands and returns usage exit 3
+  ---
+  duration_ms: 37.644671
+  type: 'test'
+  ...
+# Subtest: explicit help succeeds
+ok 8 - explicit help succeeds
+  ---
+  duration_ms: 38.682377
+  type: 'test'
+  ...
+# Subtest: an unimplemented command returns usage exit 3
+ok 9 - an unimplemented command returns usage exit 3
+  ---
+  duration_ms: 44.453189
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 527.398737
