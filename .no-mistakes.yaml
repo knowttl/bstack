@@ -1,0 +1,20 @@
+no_ci: true
+commands:
+  # Lightweight skills repo: npm only, no build. Steps no-op until the Phase 0 skeleton (T0.1) adds package.json.
+  test: 'if [ -f package.json ]; then npm ci --ignore-scripts && npm test; fi'
+  lint: 'if [ -f package.json ]; then npm run check --if-present; fi'
+document:
+  instructions: |
+    The implementation plan (knowttl/brytton projects/bstack/implementation-plan.md) is the build authority;
+    each task's evidence contract decides what a change must record.
+    README.md owns installation and current usage. skills/*/SKILL.md owns each skill's agent-facing contract.
+review:
+  path_instructions:
+    - path: "skills/**"
+      instructions: |
+        Skills stay language-agnostic and dependency-light. Never commit credentials, tokens or customer data.
+        Pinned upstream sources and NOTICE attributions must match what the skill actually uses.
+auto_fix:
+  review: 1
+  test: 2
+  lint: 0
