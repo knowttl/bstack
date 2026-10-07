@@ -5,7 +5,7 @@ The design is [design.md](design.md), revision 26.
 Implementation review applied on 2026-10-07, with owner approval to apply the recommendations.
 Commissioning review applied on 2026-10-07, with the owner's approval of its six recommendations.
 The design records them under "Commissioning decisions (2026-10-07)".
-This file specifies future build work, not evidence that bstack is implemented.
+This file specifies build work, with completed tasks tracked under "Progress" and evidence recorded under "Task evidence contract".
 
 This plan was migrated on 2026-10-07 from `projects/bstack/implementation-plan.md` in the owner's private repo `knowttl/brytton`, at commit `28191a1def2c6c89b6a60d95f00056aaacfea669`.
 This copy is now authoritative, and readers need no access to that source.
@@ -60,7 +60,7 @@ Read only the task and the shared contract it needs.
 - Record unavailable verification as blocked, with a reason and the next prerequisite.
 - On resume, inspect the current files and rerun checks affected by changes since the saved evidence.
 
-T0.1 defines this record's versioned format.
+The [task evidence schema](../tests/eval/task-evidence.schema.json), introduced in T0.1, owns this record's versioned format.
 Later tasks reuse that format rather than adding separate completion logs.
 No build task is complete merely because `npm test` exits zero with no relevant tests.
 The final release validator checks actual case evidence, not only task ticks.
@@ -352,7 +352,7 @@ Parallel work declares its changed contracts as well as its write paths, and sto
 Tick each task when its "Done when" commands pass.
 
 - Phase 0: Package contract
-  - [ ] T0.1 Create the repo skeleton
+  - [x] T0.1 Create the repo skeleton
   - [ ] T0.2 Create the skill skeleton
   - [ ] T0.3 Pin upstream sources and start NOTICE
   - [ ] T0.4 Build the shared script library

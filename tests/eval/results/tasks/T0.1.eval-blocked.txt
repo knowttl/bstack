@@ -1,0 +1,5 @@
+
+> bstack@0.0.0 eval
+> node scripts/eval.mjs
+
+Evaluation is not built yet. T1.2 implements the evaluation runner.

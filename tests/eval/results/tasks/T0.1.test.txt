@@ -1,0 +1,39 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs
+
+Selected 1 suite(s): tests/scripts/bootstrap.test.mjs
+TAP version 13
+# Subtest: bootstrap manifest commands and root lockfile agree
+ok 1 - bootstrap manifest commands and root lockfile agree
+  ---
+  duration_ms: 6.441185
+  type: 'test'
+  ...
+# Subtest: discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+ok 2 - discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+  ---
+  duration_ms: 172.482029
+  type: 'test'
+  ...
+# Subtest: task selection executes only registered suites and rejects unknown tasks
+ok 3 - task selection executes only registered suites and rejects unknown tasks
+  ---
+  duration_ms: 218.415433
+  type: 'test'
+  ...
+# Subtest: an empty selected suite fails
+ok 4 - an empty selected suite fails
+  ---
+  duration_ms: 54.054152
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 521.035522

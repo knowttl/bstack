@@ -1,0 +1,16 @@
+
+> bstack@0.0.0 check
+> node --test tests/scripts/bootstrap.test.mjs
+
+✔ bootstrap manifest commands and root lockfile agree (9.737248ms)
+✔ discovery sorts explicit suites and excludes fixture, dependency and evaluation tests (227.049272ms)
+✔ task selection executes only registered suites and rejects unknown tasks (219.319678ms)
+✔ an empty selected suite fails (46.314047ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 577.742688

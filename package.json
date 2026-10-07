@@ -1,0 +1,13 @@
+{
+  "name": "bstack",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "check": "node --test tests/scripts/bootstrap.test.mjs",
+    "test": "node scripts/test.mjs",
+    "eval": "node scripts/eval.mjs"
+  }
+}
