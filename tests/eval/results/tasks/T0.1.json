@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.1",
+  "slice": "C1",
+  "sourceRevision": "e242b134114578cd55ad04e8cee973412dd139c0",
+  "intent": "\"yes approbe and begin the implementation\". Begin the approved commissioning plan slice by slice, starting with the T0.1 repo skeleton.",
+  "amendments": [
+    "C0 approved the commissioning decisions in docs/design.md revision 26 and docs/implementation-plan.md.",
+    "Preserve .no-mistakes.yaml byte-identical and add no hosted workflow or release automation.",
+    "Review F1: check runs real bootstrap validation until T0.5 replaces it, and eval reports blocked with exit 2 until T1.2.",
+    "Firstmate ruling 001: create only the short AGENTS.md required by T0.1 step 9."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.node-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.npm-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.os.txt",
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.1"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.task-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "unknown-task",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T99"
+      ],
+      "cwd": ".",
+      "exitCode": 1,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.unknown-task.txt",
+      "status": "passed",
+      "reason": "Expected negative control returned exit 1."
+    },
+    {
+      "id": "fixture-control",
+      "executable": "node",
+      "args": [
+        "--test",
+        "tests/fixtures/excluded/failing.test.mjs"
+      ],
+      "cwd": ".",
+      "exitCode": 1,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.fixture-control.txt",
+      "status": "passed",
+      "reason": "Expected negative control returned exit 1."
+    },
+    {
+      "id": "eval-blocked",
+      "executable": "npm",
+      "args": [
+        "run",
+        "eval"
+      ],
+      "cwd": ".",
+      "exitCode": 2,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.eval-blocked.txt",
+      "status": "passed",
+      "reason": "Expected negative control returned exit 2."
+    },
+    {
+      "id": "local-links",
+      "executable": "node",
+      "args": [
+        "--input-type=module",
+        "-e",
+        "import { readFile, access } from 'node:fs/promises'; import { dirname, resolve } from 'node:path'; for (const file of ['docs/design.md', 'docs/implementation-plan.md']) { const text = await readFile(file, 'utf8'); for (const match of text.matchAll(/\\]\\(([^)]+)\\)/g)) { const link = match[1]; if (/^(https?:|#)/.test(link)) continue; const path = resolve(dirname(file), link.split('#')[0]); await access(path); console.log(file + ': ' + link + ' resolves'); } }"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.local-links.txt",
+      "status": "passed"
+    },
+    {
+      "id": "preserved-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "--exit-code",
+        "origin/main",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.preserved-config.txt",
+      "status": "passed"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H %s"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.1.history.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "T0.1/manifest-lock",
+      "kind": "automated",
+      "procedure": "tests/scripts/bootstrap.test.mjs: bootstrap manifest commands and root lockfile agree",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.1.test.txt"
+    },
+    {
+      "id": "T0.1/discovery-exclusions",
+      "kind": "automated",
+      "procedure": "tests/scripts/bootstrap.test.mjs: discovery sorts explicit suites and excludes fixture, dependency and evaluation tests",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.1.test.txt"
+    },
+    {
+      "id": "T0.1/task-selection",
+      "kind": "automated",
+      "procedure": "tests/scripts/bootstrap.test.mjs: task selection executes only registered suites and rejects unknown tasks",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.1.test.txt"
+    },
+    {
+      "id": "T0.1/empty-suite",
+      "kind": "automated",
+      "procedure": "tests/scripts/bootstrap.test.mjs: an empty selected suite fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.1.test.txt"
+    },
+    {
+      "id": "T0.1/planted-fixture",
+      "kind": "manual",
+      "procedure": "Run planted failing fixture directly and compare its exit 1 with npm test exit 0.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.1.fixture-control.txt"
+    },
+    {
+      "id": "T0.1/migrated-links",
+      "kind": "manual",
+      "procedure": "Resolve every relative Markdown link in the migrated docs against its document directory.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.1.local-links.txt"
+    },
+    {
+      "id": "T0.1/config-preserved",
+      "kind": "manual",
+      "procedure": "git diff --exit-code origin/main -- .no-mistakes.yaml",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.1.preserved-config.txt"
+    },
+    {
+      "id": "T0.1/skeleton-history",
+      "kind": "manual",
+      "procedure": "Confirm the tested skeleton commit exists in local Git history.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.1.history.txt"
+    }
+  ],
+  "limitations": [
+    "Only Linux on Node v24.17.0 was tested. This does not establish Windows or macOS support.",
+    "Node 26 verification is assigned to T0.6 and is not claimed by this slice.",
+    "The T0.5 skill package check and T1.2 evaluation runner remain unbuilt.",
+    "T0.1 has no design AC IDs assigned in the plan. These case IDs name its commissioning done criteria.",
+    "The source revision is the skeleton commit. This record and the task tick are added in a subsequent evidence-only commit."
+  ]
+}

@@ -1,0 +1,2 @@
+docs/design.md: implementation-plan.md resolves
+docs/implementation-plan.md: design.md resolves

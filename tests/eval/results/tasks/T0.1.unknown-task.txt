@@ -1,0 +1,5 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T99
+
+Unknown task: T99
