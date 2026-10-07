@@ -352,7 +352,7 @@ Parallel work declares its changed contracts as well as its write paths, and sto
 Tick each task when its "Done when" commands pass.
 
 - Phase 0: Package contract
-  - [ ] T0.1 Create the repo skeleton
+  - [x] T0.1 Create the repo skeleton
   - [ ] T0.2 Create the skill skeleton
   - [ ] T0.3 Pin upstream sources and start NOTICE
   - [ ] T0.4 Build the shared script library
