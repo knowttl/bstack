@@ -1,6 +1,6 @@
 # Shared command contracts
 
-The installed interface is `node skills/repo-audit/scripts/repo-audit.mjs <command> [options]`.
+The planned production interface is `node skills/repo-audit/scripts/repo-audit.mjs <command> [options]`.
 Resource paths are relative to the installed skill, never the caller's current directory.
 Command-specific options and input formats belong to their owning tasks and command help.
 C4a establishes arguments, targets, paths, scratch and results.
@@ -93,5 +93,4 @@ No schema validator, child runner or fingerprint implementation is claimed by C4
 Its input is `{ "schemaVersion": 1, "paths": [<relative path>], "scratch": <boolean> }` with no additional fields.
 It validates all paths before optionally writing `draft.txt` in a new scratch run.
 Valid and invalid fixtures in `tests/inputs/` cover refusal with no partial writes.
-`npm test -- --task T0.4.C4a` selects this slice, and `--task T0.4` selects the currently implemented parent-task tests.
-T0.4 remains incomplete until C4b and C4c pass.
+See the [README](../README.md) for suite selection and the [implementation plan](implementation-plan.md#progress) for slice progress.

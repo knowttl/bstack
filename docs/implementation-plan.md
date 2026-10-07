@@ -122,26 +122,17 @@ Change one only by editing this table with the reason.
 
 ### Shared command and input contracts
 
-T0.4 establishes these contracts in `docs/command-contract.md`.
+The [command contract](command-contract.md) owns the implemented shared contracts, starting with C4a.
+The contracts below define the pending work for later slices.
 Each command's owning task adds its exact options, schema, valid input and invalid input before implementing it.
 Examples and schemas are tested through the public command.
 Unsupported schema keywords and unknown input fields fail closed, with a named problem and fix.
 
 **Target and workspace.**
-Repo commands require `--repo` and resolve a Git top level, including a repo with no commits.
-Draft-only commands accept `--workspace` for an existing directory that need not contain Git.
-The two options are mutually exclusive.
-
-Drafts and board verdicts go to scratch, not the workspace.
-No draft command creates a repo or writes a foundation file.
-T2.9 defines the separately selected creation operation.
+See [arguments and targets](command-contract.md#arguments-and-targets) and [scratch](command-contract.md#scratch).
 
 **Result envelope.**
-With `--json`, stdout contains exactly one JSON object and child output goes to captured artifacts.
-The versioned envelope is `{ schemaVersion, command, status, problems, data, inputs }`.
-Status is `passed`, `failed`, `blocked` or `usage-error`, matching exit codes 0, 1, 2 and 3.
-Each problem has `code`, `message`, `fix` and an optional `path`.
-Missing prerequisites produce `blocked`, rather than an empty passing result.
+See [results](command-contract.md#results).
 
 **Child command.**
 Use `{ executable, args, cwd, timeoutMs, versionArgs }`, with `args` as an array and `cwd` relative to the target.
@@ -356,6 +347,9 @@ Tick each task when its "Done when" commands pass.
   - [x] T0.2 Create the skill skeleton
   - [x] T0.3 Pin upstream sources and start NOTICE
   - [ ] T0.4 Build the shared script library
+    - [x] C4a Target/path/scratch and result/argument contracts ([evidence](../tests/eval/results/tasks/T0.4.C4a.json))
+    - [ ] C4b Child commands and fingerprints
+    - [ ] C4c Minimal schema contract and real command wiring
   - [ ] T0.5 Build the package check
   - [ ] T0.6 Establish local validation and no-mistakes gate
 - Phase 1: Intent and vision
