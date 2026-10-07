@@ -96,6 +96,7 @@ Nonzero exits, timeouts and cancellation are failed, even if the child exits wit
 An already cancelled signal starts no child.
 Timeout and cancellation kill the managed process group on POSIX and use `taskkill /T /F` on Windows.
 The runner waits for stream closure and cleanup before returning.
+If cleanup fails, it closes the captured streams and returns blocked without waiting for inherited pipes to close.
 Children that deliberately detach themselves from the managed tree are outside this contract.
 
 `selectCommand(executable, args)` supplies the same launcher selection for the check and its version probe.

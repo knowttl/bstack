@@ -57,16 +57,25 @@ async function capture(command, { cwd, timeoutMs, signal }) {
   child.stdout.on('data', chunk => { stdout = Buffer.concat([stdout, chunk]).subarray(-outputLimit) })
   child.stderr.on('data', chunk => { stderr = Buffer.concat([stderr, chunk]).subarray(-outputLimit) })
   child.on('error', failure => { error = failure.message })
+  let finish
+  const completion = new Promise(resolve => { finish = resolve })
+  child.on('close', (code, exitSignal) => finish([code, exitSignal]))
+  const cleanupFailed = message => {
+    error ??= message
+    child.stdout.destroy()
+    child.stderr.destroy()
+    finish([child.exitCode, child.signalCode])
+  }
   const stop = () => {
     if (!child.pid) return
     if (process.platform === 'win32') {
       cleanup = new Promise(resolve => {
         const killer = spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { shell: false, stdio: 'ignore' })
-        killer.on('error', failure => { error = failure.message; child.kill() })
-        killer.on('close', code => { if (code !== 0) error ??= 'Process-tree cleanup failed.'; resolve() })
+        killer.on('error', failure => { cleanupFailed(failure.message); resolve() })
+        killer.on('close', code => { if (code !== 0) cleanupFailed('Process-tree cleanup failed.'); resolve() })
       })
     } else {
-      try { process.kill(-child.pid, 'SIGKILL') } catch (failure) { if (failure.code !== 'ESRCH') error = failure.message }
+      try { process.kill(-child.pid, 'SIGKILL') } catch (failure) { if (failure.code !== 'ESRCH') cleanupFailed(failure.message) }
     }
   }
   const cancel = () => { cancelled = true; stop() }
@@ -74,7 +83,7 @@ async function capture(command, { cwd, timeoutMs, signal }) {
   signal?.addEventListener('abort', cancel, { once: true })
   // Cancellation can arrive between the initial check and listener registration.
   if (signal?.aborted) cancel()
-  const [exitCode, exitSignal] = await new Promise(resolve => child.on('close', (code, exitSignal) => resolve([code, exitSignal])))
+  const [exitCode, exitSignal] = await completion
   clearTimeout(timer)
   signal?.removeEventListener('abort', cancel)
   await cleanup

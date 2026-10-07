@@ -6,6 +6,11 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import childProcess from 'node:child_process'
+import { EventEmitter } from 'node:events'
+import { syncBuiltinESMExports } from 'node:module'
+import { PassThrough } from 'node:stream'
+import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 
 // Public fixture commands run from a target outside the checkout.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -80,6 +85,65 @@ for (const cancelled of [false, true]) {
       } else assert.throws(() => process.kill(pid, 0), { code: 'ESRCH' })
     }
   })
+}
+
+for (const cancelled of [false, true]) {
+  for (const probe of [false, true]) {
+    for (const launchError of [false, true]) {
+      test(`Windows cleanup ${launchError ? 'launch error' : 'failure'} blocks ${cancelled ? 'cancelled' : 'timed out'} ${probe ? 'version probe' : 'check'} with inherited pipes`, { timeout: 2000 }, async t => {
+        const platform = Object.getOwnPropertyDescriptor(process, 'platform')
+        Object.defineProperty(process, 'platform', { value: 'win32', configurable: true })
+        t.after(() => {
+          Object.defineProperty(process, 'platform', platform)
+          t.mock.restoreAll()
+          syncBuiltinESMExports()
+        })
+        const controller = new AbortController()
+        let inherited
+        let checks = 0
+        t.mock.method(childProcess, 'spawn', (executable, args) => {
+          const child = new EventEmitter()
+          if (executable === 'taskkill') {
+            setImmediate(() => launchError ? child.emit('error', new Error('taskkill unavailable')) : child.emit('close', 1))
+            return child
+          }
+          child.pid = 123
+          child.exitCode = 0
+          child.signalCode = null
+          child.stdout = new PassThrough()
+          child.stderr = new PassThrough()
+          if (args[0] === 'check') checks++
+          if (!probe && args[0] === '--version') {
+            setImmediate(() => {
+              child.stdout.end('fixture 1\n')
+              child.stderr.end()
+              child.emit('close', 0, null)
+            })
+          } else {
+            inherited = child
+            setImmediate(() => {
+              child.stdout.write('parent exited\n')
+              child.emit('exit', 0, null)
+              if (cancelled) controller.abort()
+            })
+          }
+          return child
+        })
+        syncBuiltinESMExports()
+        const result = await runCommand({ root }, nodeCommand(['check'], { timeoutMs: 100 }), { signal: controller.signal })
+        assert.equal(result.status, 'blocked')
+        assert.equal(result.cancelled, cancelled)
+        assert.equal(result.timedOut, !cancelled)
+        assert.equal(result.stdout, 'parent exited\n')
+        assert.equal(result.exitCode, 0)
+        assert.equal(result.error, launchError ? 'taskkill unavailable' : 'Process-tree cleanup failed.')
+        assert.equal(inherited.stdout.destroyed, true)
+        assert.equal(inherited.stderr.destroyed, true)
+        assert.equal(checks, probe ? 0 : 1)
+        assert.equal(result.toolVersion.status, probe ? 'blocked' : 'passed')
+      })
+    }
+  }
 }
 
 test('failed commands and unavailable tools cannot pass', async t => {
