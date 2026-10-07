@@ -9,5 +9,9 @@
     "check": "node --test tests/scripts/bootstrap.test.mjs tests/scripts/skill-skeleton.test.mjs",
     "test": "node scripts/test.mjs",
     "eval": "node scripts/eval.mjs"
+  },
+  "devDependencies": {
+    "marked": "18.1.0",
+    "yaml": "2.9.1"
   }
 }

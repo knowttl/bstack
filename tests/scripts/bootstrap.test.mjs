@@ -40,9 +40,11 @@ test('bootstrap manifest commands and root lockfile agree', async () => {
   assert.equal(lock.packages[''].name, manifest.name)
   assert.equal(lock.packages[''].version, manifest.version)
   assert.deepEqual(lock.packages[''].engines, manifest.engines)
-  assert.deepEqual(Object.keys(lock.packages), [''])
+  assert.deepEqual(lock.packages[''].devDependencies, manifest.devDependencies)
+  for (const dependency of Object.keys(manifest.devDependencies)) {
+    assert.ok(lock.packages[`node_modules/${dependency}`], dependency)
+  }
   assert.equal(manifest.dependencies, undefined)
-  assert.equal(manifest.devDependencies, undefined)
 })
 
 test('discovery sorts explicit suites and excludes fixture, dependency and evaluation tests', async t => {

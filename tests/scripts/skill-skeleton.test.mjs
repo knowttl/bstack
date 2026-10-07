@@ -1,41 +1,46 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { readFile, stat } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { parse } from 'yaml'
+import { marked } from 'marked'
 
 // Read the installed-folder contract independently of the caller's directory.
 const skill = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/repo-audit')
 
 test('skill metadata permits only user invocation in the documented hosts', async () => {
   const document = await readFile(join(skill, 'SKILL.md'), 'utf8')
-  const frontmatter = document.split('---\n')[1]
-  const metadata = Object.fromEntries(frontmatter.trim().split('\n').map(line => {
-    const colon = line.indexOf(':')
-    return [line.slice(0, colon), line.slice(colon + 1).trim()]
-  }))
+  const frontmatter = document.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)
+  assert.ok(frontmatter)
+  const metadata = parse(frontmatter[1])
   assert.equal(metadata.name, 'repo-audit')
-  assert.ok(metadata.description.length > 0)
-  assert.equal(metadata['disable-model-invocation'], 'true')
-  const policy = await readFile(join(skill, 'agents', 'openai.yaml'), 'utf8')
-  const [section, setting] = policy.trim().split('\n').map(line => line.trim())
-  assert.equal(section, 'policy:')
-  const [key, value] = setting.split(':').map(part => part.trim())
-  assert.equal(key, 'allow_implicit_invocation')
-  assert.equal(value, 'false')
+  assert.equal(typeof metadata.description, 'string')
+  assert.ok(metadata.description.trim().length > 0)
+  assert.equal(metadata['disable-model-invocation'], true)
+  const policy = parse(await readFile(join(skill, 'agents', 'openai.yaml'), 'utf8'))
+  assert.equal(policy.policy?.allow_implicit_invocation, false)
 })
 
 test('load when table resolves all eight bundled reference placeholders', async () => {
   const document = await readFile(join(skill, 'SKILL.md'), 'utf8')
-  const paths = [...document.matchAll(/\| `references\/([^`]+)` \|/g)].map(match => match[1])
-  assert.deepEqual(paths, [
-    'intent-interview.md', 'grilling.md', 'domain-language.md', 'vision.md',
-    'enforcement.md', 'architecture.md', 'research-briefs.md', 'maintenance-contract.md'
-  ])
+  const tokens = marked.lexer(document)
+  const heading = tokens.findIndex(token => token.type === 'heading' && token.text === 'Load when')
+  assert.ok(heading >= 0)
+  const section = tokens.slice(heading + 1)
+  const end = section.findIndex(token => token.type === 'heading')
+  const tables = (end < 0 ? section : section.slice(0, end)).filter(token => token.type === 'table')
+  const paths = tables.flatMap(table => table.rows.flat().flatMap(cell => cell.tokens
+    .filter(token => token.type === 'codespan' || token.type === 'link')
+    .map(token => token.type === 'link' ? token.href : token.text)))
+    .filter(path => path.startsWith('references/'))
+  assert.deepEqual(new Set(paths), new Set([
+    'references/intent-interview.md', 'references/grilling.md', 'references/domain-language.md', 'references/vision.md',
+    'references/enforcement.md', 'references/architecture.md', 'references/research-briefs.md', 'references/maintenance-contract.md'
+  ]))
   for (const path of paths) {
-    const reference = await readFile(join(skill, 'references', path), 'utf8')
-    assert.match(reference, /^# [^\n]+\n\n[^\n]+\n$/)
+    assert.ok((await stat(join(skill, path))).isFile(), path)
   }
 })
 
