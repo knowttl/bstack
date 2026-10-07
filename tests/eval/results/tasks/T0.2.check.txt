@@ -1,0 +1,21 @@
+
+> bstack@0.0.0 check
+> node --test tests/scripts/bootstrap.test.mjs tests/scripts/skill-skeleton.test.mjs
+
+✔ bootstrap manifest commands and root lockfile agree (7.315307ms)
+✔ discovery sorts explicit suites and excludes fixture, dependency and evaluation tests (173.040021ms)
+✔ task selection executes only registered suites and rejects unknown tasks (201.354275ms)
+✔ an empty selected suite fails (43.9376ms)
+✔ skill metadata permits only user invocation in the documented hosts (10.57581ms)
+✔ load when table resolves all eight bundled reference placeholders (6.574731ms)
+✔ no arguments prints planned commands and returns usage exit 3 (35.652347ms)
+✔ explicit help succeeds (47.542387ms)
+✔ an unimplemented command returns usage exit 3 (40.700624ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 491.819752

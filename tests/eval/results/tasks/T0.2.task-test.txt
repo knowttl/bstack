@@ -1,0 +1,45 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T0.2
+
+Selected 1 suite(s): tests/scripts/skill-skeleton.test.mjs
+TAP version 13
+# Subtest: skill metadata permits only user invocation in the documented hosts
+ok 1 - skill metadata permits only user invocation in the documented hosts
+  ---
+  duration_ms: 6.155424
+  type: 'test'
+  ...
+# Subtest: load when table resolves all eight bundled reference placeholders
+ok 2 - load when table resolves all eight bundled reference placeholders
+  ---
+  duration_ms: 6.936194
+  type: 'test'
+  ...
+# Subtest: no arguments prints planned commands and returns usage exit 3
+ok 3 - no arguments prints planned commands and returns usage exit 3
+  ---
+  duration_ms: 33.1349
+  type: 'test'
+  ...
+# Subtest: explicit help succeeds
+ok 4 - explicit help succeeds
+  ---
+  duration_ms: 35.954229
+  type: 'test'
+  ...
+# Subtest: an unimplemented command returns usage exit 3
+ok 5 - an unimplemented command returns usage exit 3
+  ---
+  duration_ms: 33.579067
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 185.776869

@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.2",
+  "slice": "C2",
+  "sourceRevision": "b5b7bb560fd995b62470b1c36464d793b8da7711",
+  "intent": "\"yes approbe and begin the implementation\". Begin the approved commissioning plan slice by slice with T0.2, the skill skeleton.",
+  "amendments": [
+    "Preserve .no-mistakes.yaml byte-identical and add no workflow files.",
+    "Keep reference files as a title and one-line purpose until their owning slices."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.node-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.npm-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.os.txt",
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.2"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.task-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "no-args",
+      "executable": "node",
+      "args": [
+        "skills/repo-audit/scripts/repo-audit.mjs"
+      ],
+      "cwd": ".",
+      "exitCode": 3,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.no-args.txt",
+      "status": "passed",
+      "reason": "Expected usage error returned exit 3."
+    },
+    {
+      "id": "help",
+      "executable": "node",
+      "args": [
+        "skills/repo-audit/scripts/repo-audit.mjs",
+        "--help"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.help.txt",
+      "status": "passed"
+    },
+    {
+      "id": "preserved-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "--exit-code",
+        "origin/main",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.preserved-config.txt",
+      "status": "passed"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H %s"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.2.history.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "T0.2/user-only-metadata",
+      "kind": "automated",
+      "procedure": "tests/scripts/skill-skeleton.test.mjs: skill metadata permits only user invocation in the documented hosts",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.2.task-test.txt"
+    },
+    {
+      "id": "T0.2/local-references",
+      "kind": "automated",
+      "procedure": "tests/scripts/skill-skeleton.test.mjs: load when table resolves all eight bundled reference placeholders",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.2.task-test.txt"
+    },
+    {
+      "id": "T0.2/no-args",
+      "kind": "automated",
+      "procedure": "tests/scripts/skill-skeleton.test.mjs: no arguments prints planned commands and returns usage exit 3",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.2.task-test.txt"
+    },
+    {
+      "id": "T0.2/help",
+      "kind": "automated",
+      "procedure": "tests/scripts/skill-skeleton.test.mjs: explicit help succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.2.task-test.txt"
+    },
+    {
+      "id": "T0.2/unimplemented-command",
+      "kind": "automated",
+      "procedure": "tests/scripts/skill-skeleton.test.mjs: an unimplemented command returns usage exit 3",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.2.task-test.txt"
+    },
+    {
+      "id": "T0.2/config-preserved",
+      "kind": "manual",
+      "procedure": "git diff --exit-code origin/main -- .no-mistakes.yaml",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.2.preserved-config.txt"
+    }
+  ],
+  "limitations": [
+    "Only Linux on Node v24.17.0 was tested. This does not establish Windows or macOS support.",
+    "Host metadata was checked locally, not through live Claude Code, Codex or Pi invocation.",
+    "The skill body and reference files are placeholders. Planned commands are not implemented.",
+    "The full package validator belongs to T0.5. Bootstrap checks include the current skill skeleton.",
+    "T0.2 has no design AC IDs assigned in the plan. Case IDs name its commissioning done criteria.",
+    "The source revision is the tested implementation commit. This record and task tick are added in an evidence-only commit."
+  ]
+}
