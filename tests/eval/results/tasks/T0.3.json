@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "taskId": "T0.3",
   "slice": "C3",
-  "sourceRevision": "5d0c43faa52d5d258e27529704f7e99547ba5f95",
+  "sourceRevision": "49214938422e4ab884bed7d8dc1ca50a2e59d6be",
   "intent": "\"yes approbe and begin the implementation\". Begin the approved commissioning plan slice by slice with T0.3, pinned upstream sources and NOTICE.",
   "amendments": [
     "Preserve .no-mistakes.yaml byte-identical and add no workflows or npm dependencies.",
@@ -209,7 +209,7 @@
     "Default tests use a file-backed fake of the network boundary and never contact GitHub. The separate recorded live check verified all 29 files from four sources at their pins.",
     "No pstack files moved at the planned pin, and no design links changed.",
     "No upstream content was adapted into the installed skill.",
-    "The source revision identifies the review starting HEAD. Focused task tests and fetch check cover its corrected working tree, including Kun ENTRY.md. The outer executor owns committing this repair.",
+    "Focused task tests and fetch check ran against the unchanged implementation at 49214938422e4ab884bed7d8dc1ca50a2e59d6be, which contains all four sources including Kun ENTRY.md. This follow-up changes evidence only.",
     "Install, bootstrap check and full test artifacts are historical results from e1262d4da43b7812ad5bce9115bb332d36ae38bf, not reruns of this repair. Full test and lint gates belong to the outer pipeline."
   ]
 }

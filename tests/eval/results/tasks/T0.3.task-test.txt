@@ -7,37 +7,37 @@ TAP version 13
 # Subtest: fetch copies exact pinned bytes and check verifies them without writing
 ok 1 - fetch copies exact pinned bytes and check verifies them without writing
   ---
-  duration_ms: 161.032829
+  duration_ms: 159.971776
   type: 'test'
   ...
 # Subtest: fetch refuses a listed file absent at its pin
 ok 2 - fetch refuses a listed file absent at its pin
   ---
-  duration_ms: 74.222715
+  duration_ms: 81.476073
   type: 'test'
   ...
 # Subtest: check refuses a listed file absent at its pin
 ok 3 - check refuses a listed file absent at its pin
   ---
-  duration_ms: 72.112973
+  duration_ms: 80.998178
   type: 'test'
   ...
 # Subtest: check refuses an absent local copy without repairing it
 ok 4 - check refuses an absent local copy without repairing it
   ---
-  duration_ms: 76.526935
+  duration_ms: 75.338663
   type: 'test'
   ...
 # Subtest: check refuses modified local bytes and preserves them
 ok 5 - check refuses modified local bytes and preserves them
   ---
-  duration_ms: 161.674388
+  duration_ms: 153.506397
   type: 'test'
   ...
 # Subtest: fetch rejects traversal before copying files
 ok 6 - fetch rejects traversal before copying files
   ---
-  duration_ms: 46.972086
+  duration_ms: 46.475747
   type: 'test'
   ...
 1..6
@@ -48,4 +48,4 @@ ok 6 - fetch rejects traversal before copying files
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 664.735564
+# duration_ms 680.896777
