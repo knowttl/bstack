@@ -1,0 +1,1 @@
+b5b7bb560fd995b62470b1c36464d793b8da7711 fix(skill): include maintenance commands in skeleton help
