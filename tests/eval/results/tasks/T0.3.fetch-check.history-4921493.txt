@@ -1,3 +1,4 @@
+Present at 6fd947921b935b7e1e69293a200400f0fdd5c15f, local bytes match: mattpocock-skills/LICENSE
 Present at 6fd947921b935b7e1e69293a200400f0fdd5c15f, local bytes match: mattpocock-skills/skills/productivity/grill-me/SKILL.md
 Present at 6fd947921b935b7e1e69293a200400f0fdd5c15f, local bytes match: mattpocock-skills/skills/productivity/grilling/SKILL.md
 Present at 6fd947921b935b7e1e69293a200400f0fdd5c15f, local bytes match: mattpocock-skills/skills/engineering/grill-with-docs/SKILL.md
@@ -14,9 +15,11 @@ Present at 6fd947921b935b7e1e69293a200400f0fdd5c15f, local bytes match: mattpoco
 Present at 6fd947921b935b7e1e69293a200400f0fdd5c15f, local bytes match: mattpocock-skills/skills/engineering/retro/SKILL.md
 Present at 6fd947921b935b7e1e69293a200400f0fdd5c15f, local bytes match: mattpocock-skills/skills/productivity/writing-for-agents/SKILL.md
 Present at 6fd947921b935b7e1e69293a200400f0fdd5c15f, local bytes match: mattpocock-skills/skills/productivity/writing-for-agents/SKILL-MECHANICS.md
+Present at 7a20c38181151ec67efdf8fa2cb03a60123a7b83, local bytes match: vision/LICENSE
 Present at 7a20c38181151ec67efdf8fa2cb03a60123a7b83, local bytes match: vision/skills/vision/SKILL.md
 Present at 7a20c38181151ec67efdf8fa2cb03a60123a7b83, local bytes match: vision/skills/vision/assets/review-template.html
 Present at 7a20c38181151ec67efdf8fa2cb03a60123a7b83, local bytes match: vision/skills/vision/assets/review.css
+Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/LICENSE
 Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/skills/architect/references/design-red-flags.md
 Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/skills/principle-model-the-domain/SKILL.md
 Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/skills/principle-minimize-reader-load/SKILL.md
@@ -24,4 +27,4 @@ Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/p
 Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/skills/principle-encode-lessons-in-structure/SKILL.md
 Present at 9f451cf875ad1239912762f67741e8e5ba6ac0f1, local bytes match: pstack/pstack/skills/principle-build-the-lever/SKILL.md
 Present at 1b2a9c7dd4b2b33eb7161399d7893c39048213be, local bytes match: kun/ENTRY.md
-Checked 26 files from 4 pinned sources
+Checked 29 files from 4 pinned sources
