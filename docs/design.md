@@ -1,6 +1,6 @@
 ---
 title: "bstack: repo-audit First Release"
-eyebrow: Personal project · Foundation design · Revision 25
+eyebrow: Personal project · Foundation design · Revision 26
 subtitle: Establish project-specific guidelines, rules and checks that give agents a sound foundation to extend.
 theme: slate-dark
 logo: false
@@ -8,12 +8,12 @@ toc: true
 toc_depth: auto
 mode: dark
 date: 2026-10-07
-footer: Built from projects/bstack/plan.md. Markdown is authoritative. The HTML is generated.
+footer: Built from docs/design.md. Markdown is authoritative. The HTML is generated.
 meta:
   - Owner: Brytton Tsai
-  - Status: Implementation plan reviewed, build not started
+  - Status: Commissioned on 2026-10-07, build not started
   - Scope: repo-audit and its complete dependency set
-  - Revision: 25, implementation contracts clarified, safe to publish
+  - Revision: 26, commissioning decisions applied, safe to publish
 ---
 
 ## Summary
@@ -34,8 +34,9 @@ New projects establish `VISION.md`, while existing projects reuse their approved
 The skill also maintains resolved project vocabulary and identifies standards that need judgement rather than an automated check.
 You review the proposed foundation before the agent applies changes.
 
-The [implementation plan](implementation-plan.md) defines the first-release build tasks and their evidence.
-No owner decision is open.
+This design owns the first-release requirements.
+The [implementation plan](implementation-plan.md) owns the build sequence and the evidence each task records.
+"Commissioning decisions (2026-10-07)" below records the choices settled before the build started.
 Runtime research and build prerequisites remain assigned to the tasks that need them.
 The decisions table in "Scope and decision history" holds the only record of superseded designs.
 
@@ -62,8 +63,9 @@ The new-project path can implement the approved foundation, but it does not buil
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
-| Install and release | A Node installer for Windows, macOS and Linux, from Git tags, with no package |
-| Agent instructions | One `AGENTS.md`. Any `CLAUDE.md`, including a stub that imports `AGENTS.md`, merges into it |
+| Install and release | A Node installer for Windows, macOS and Linux, from manually approved Git tags and GitHub releases, with no package |
+| Agent instructions | One root `AGENTS.md`. Equivalent repo-owned `CLAUDE.md` content, including a stub that imports `AGENTS.md`, merges into it through reviewed protected edits. Scoped instructions keep their meaning |
+| bstack's own delivery | The no-mistakes pipeline with no hosted CI, plus recorded local and clean-checkout runs |
 
 ### Recommendations carried into this design
 
@@ -78,6 +80,37 @@ The new-project path can implement the approved foundation, but it does not buil
 - Install a hybrid maintenance contract so future changes check documentation impact and run the same project rules.
 
 These are design recommendations, rather than claims that the skill already exists.
+
+### Commissioning decisions (2026-10-07)
+
+This design and the implementation plan were migrated into the public bstack repo on 2026-10-07.
+Their source is `projects/bstack/plan.md` and `projects/bstack/implementation-plan.md` in the owner's private repo `knowttl/brytton`, at commit `28191a1def2c6c89b6a60d95f00056aaacfea669`.
+These copies are now authoritative, and readers need no access to that source.
+
+Decisions already given before commissioning:
+
+- bstack is the public repo `knowttl/bstack`.
+- GitHub Actions is disabled for bstack, and the repo has no workflows.
+- bstack's delivery is the no-mistakes pipeline with one automatic review round and unattended merge of green work.
+
+The owner approved the commissioning review and its six recommendations as written:
+
+1. **No hosted CI for bstack.** No-mistakes plus recorded local and clean-checkout execution replace every hosted-CI criterion, including T0.6, the T1.6 setup, T3.4, T3a.6, T4.3 and the T5.2 evidence.
+   Optional CI guidance for target projects remains an explicitly selected integration, and hosted behaviour that bstack has not executed is reported unverified.
+   AC-24 is restated as a clean-checkout execution case.
+   Every other behaviour control stays, and bstack adds no workflows or release automation.
+2. **Three operating systems.** The installer keeps Windows, macOS and Linux support.
+   AC-74 passes only after one real local or manual run on each operating system, supplemented by local Node 24 and Node 26 runs.
+   A Linux run does not substitute for another operating system.
+3. **Small slices.** The build runs as the commissioning slices C0 to C29 in the implementation plan, beginning with C0 and C1, with Phase 0 first.
+   T3.1's enforcement and architecture guidance is written before T2.8.
+   The full first-release scope is preserved.
+4. **Baseline evaluation.** The baseline needs at least three realistic comparable scenarios and retains the cases it already passes.
+   The earlier quota of three observed failures is removed, as "Testing" under "How repo-audit itself is written" now states.
+5. **Scoped instructions.** The audit preserves the meaning of scoped instructions and consolidates equivalent repo-owned `CLAUDE.md` content only through reviewed protected edits.
+   It reports ancestor and local shadowing without modifying files outside the selected repo.
+6. **One automatic review round.** This means the existing `auto_fix.review: 1` automatic repair budget in `.no-mistakes.yaml`.
+   Required validation after a change still runs, and no second autonomous repair round follows once the budget is spent.
 
 ## Project-specific foundation
 
@@ -295,9 +328,11 @@ The foundation proposal covers:
 - Error handling, configuration and external interfaces that the journey needs.
 - Resolved project terms and review standards that the foundation needs, without empty document templates.
 - Project-specific design principles and their enforcement methods.
-- Setup, formatting, lint, type checks where applicable, tests and continuous integration.
+- Setup, formatting, lint, type checks where applicable, tests and, when the user selects it, continuous integration.
 
 Continuous integration, or CI, runs the project's checks when contributors submit changes.
+CI is an explicitly selected integration, not a default part of every foundation.
+Report hosted CI behaviour that bstack has not executed as unverified.
 After the user chooses the foundation changes, create the minimal repo and implement those changes.
 Make the first user journey work end to end where practical.
 Do not add speculative frameworks, service layers or future integrations merely to fill a template.
@@ -476,7 +511,7 @@ Keep rules scoped to the relevant package or module in a repo with several appli
 Each new automated rule needs a representative valid case and a deliberate violation in disposable fixtures.
 The valid case must pass, and the violation must produce the expected diagnostic and failure exit code.
 The clean project must pass the selected final checks.
-The same maintained command must work locally and in CI without ignoring failures.
+The same maintained command must work locally, and in the project's CI when the project selects one, without ignoring failures.
 
 Test custom rules for relevant syntax, path aliases, generated code and documented exceptions.
 For JavaScript lint rules, ESLint's `RuleTester` supports valid and invalid cases.
@@ -766,16 +801,23 @@ Keep one authoritative source for each kind of decision.
 | Existing design document, otherwise `DESIGN.md` | Technical structure, principles, reasons and links to enforcement | Linter implementation and full tool settings |
 | Existing review standards, otherwise `CODING_STANDARDS.md` only when needed | Scoped judgement rules and references to their design rationale | Rules already owned by the design or enforced in native configs |
 | Existing decision history, optionally an ADR for a qualifying choice | A significant choice, alternatives and reason | A second design specification or diary of routine choices |
-| One `AGENTS.md` | Pointers to project rules, evidence requirements and maintained check commands | Full copies of vocabulary, vision, design or standards, and no `CLAUDE.md` |
+| One root `AGENTS.md`, plus existing scoped instruction files that govern distinct scopes | Pointers to project rules, evidence requirements and maintained check commands | Full copies of vocabulary, vision, design or standards, and no repo-owned `CLAUDE.md` with equivalent content |
 | Native tool configs and test files | Executable rules and regression cases | Parallel prose copies of configuration values |
-| Existing check command and CI config | One maintained verification path for contributors and agents | A separate bstack verification engine |
+| Existing check command, and CI config when the project selects CI | One maintained verification path for contributors and agents | A separate bstack verification engine |
 | Existing audit record, otherwise `docs/repo-audit.md` | Findings, selected changes, command results and remaining debt | A competing source for principles or vision |
 
-The project keeps one agent instruction file, `AGENTS.md`.
+The project keeps one root agent instruction file, `AGENTS.md`.
 Claude Code, Codex and Pi all read it.
 Claude Code reads `AGENTS.md` only when no `CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or above it ([Claude Code memory docs](https://code.claude.com/docs/en/memory)).
-So when the audit finds a `CLAUDE.md`, it proposes moving its project content into `AGENTS.md` and removing the `CLAUDE.md`, after the user approves.
+So when the audit finds a repo-owned `CLAUDE.md` with content equivalent to the `AGENTS.md` it would merge into, it proposes moving that content into `AGENTS.md` and removing the `CLAUDE.md`, after the user approves.
 This includes a `CLAUDE.md` that only imports `AGENTS.md`.
+The move and the removal happen only through reviewed protected edits.
+
+Instruction files can govern different scopes, so consolidation preserves their meaning:
+
+- A nested instruction file with distinct scoped guidance keeps that scope. The audit does not flatten it into the root file.
+- A local variant such as `CLAUDE.local.md`, and any instruction file in an ancestor directory outside the selected repo, is reported as possible shadowing of `AGENTS.md`. The audit does not modify it.
+- Before proposing a removal, the agent rechecks the current host's loading behaviour in its official documentation and, where available, its runtime.
 
 Caution: some Claude Code sessions read `CLAUDE.md` only.
 The same docs list versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and a disabled built-in `AGENTS.md` plugin.
@@ -891,22 +933,22 @@ Use the existing audit record for foundation findings.
 Use one change-specific maintenance assessment for the current change, rather than appending every agent step to the design or glossary.
 Avoid a central append-only log that becomes a shared edit target for all parallel work.
 Keep execution logs local unless delivery requires them.
-If CI needs a committed assessment, store a compact change-specific record and validate its coverage there.
+If the project's selected delivery path needs a committed assessment, store a compact change-specific record and validate its coverage there.
 
-Install maintenance checks through the target repo's existing check command and CI as selected foundation changes.
+Install maintenance checks through the target repo's existing check command, and through its CI config when the project selects CI, as selected foundation changes.
 A local pre-commit hook provides earlier feedback, but contributors can bypass it.
-CI reruns deterministic checks against the submitted changes.
+A selected CI or delivery gate reruns deterministic checks against the submitted changes.
 Provide the checker from the target repo or a pinned declared development dependency.
-A clean CI checkout must not depend on a developer's globally installed skill or agent session.
+A clean checkout must not depend on a developer's globally installed skill or agent session.
 
 Declare the runtime, schema version and comparison-base requirements, and test the native command in that clean environment.
-Pass the comparison base and assessment path explicitly, with a committed assessment when CI requires review evidence.
-CI captures its own current leaf-check results without depending on local execution records.
+Pass the comparison base and assessment path explicitly, with a committed assessment when the project's selected delivery path needs portable review evidence.
+Each clean-checkout run captures its own current leaf-check results without depending on earlier local execution records.
 The leaf checks cannot invoke the aggregate maintenance command recursively.
 Changes to the checker or coverage policy also run the prior checker against the proposed target tree, as the implementation plan defines.
 The implementation plan specifies the input policy and its positive and negative controls.
 
-The repository's configured required checks determine whether a failure actually blocks merging.
+The project's selected delivery gate, such as its required checks or a chosen review pipeline, determines whether a failure actually blocks merging.
 Writing AGENTS.md or adding a workflow alone does not establish that merge gate.
 Shared-system configuration remains subject to the user's delivery instruction.
 
@@ -1095,10 +1137,10 @@ Scripts:
 
 Testing:
 
-- Before writing the skill, run a fresh isolated agent on the fixture tasks without it and record the failures. Write only what closes those gaps.
-- Keep at least three evaluation scenarios from those observed failures.
-  If fewer fail, add realistic cases from unmet requirements and rerun them.
-  If the requirement still cannot be met, obtain an owner decision rather than manufacturing failures.
+- Before writing the skill, run a fresh isolated agent without it on at least three realistic, comparable evaluation scenarios drawn from the fixture tasks and acceptance cases, and record the results. Write only what closes the observed gaps and unmet requirements.
+- Keep every approved scenario, including those the baseline already passes.
+  A passing baseline case stays in the evaluation and must still pass with the skill.
+  There is no quota of observed failures, and failures are never manufactured.
 - Compare the same fixture revision, agent, model and scoring criteria with and without the skill.
   Ordinary with-skill scenarios use explicit invocation, while the implicit-invocation case deliberately omits it.
 - Run the tests with a fresh agent in whatever agent and model you use.
@@ -1211,7 +1253,7 @@ The phase checks use only components built in that phase or an earlier phase.
 | 0. Package contract | Public repo skeleton, MIT licence file, upstream pins, dependency closure and scripted package checks | No missing local references or undeclared runtime dependencies |
 | 1. Intent and vision | Interview and domain-language modules, glossary format, new-project VISION adaptation, board assets and runtime launcher | New idea reaches an approved vision draft and resolved vocabulary in scratch, without project writes |
 | 2. Audit and foundation | Discovery, assessment, protected writes, new-project creation and result capture | Existing review preserves the repo, chosen changes protect user edits, and approved new-project creation passes its first journey |
-| 3. Enforcement | Native rule setup, custom rules where needed, scoped debt handling and CI | Valid cases pass, seeded violations fail locally and in CI |
+| 3. Enforcement | Native rule setup, custom rules where needed, scoped debt handling and maintained check integration | Valid cases pass, and seeded violations fail through the maintained command in disposable local copies |
 | 3a. Maintenance | Change-evidence validator, document-impact assessment and native check integration | Unreviewed or stale input states fail, relevant docs receive an update or a checked no-impact explanation |
 | 4. Installation | Install, update, removal, explicit invocation and full-path integration | Clean installation protects user edits, both complete paths pass, and a representative extension uses the maintained constraints |
 | 5. Release | Worked examples, limitations and final end-to-end checks | Release evidence covers the acceptance cases below |
@@ -1221,7 +1263,7 @@ The phase checks use only components built in that phase or an earlier phase.
 The table above defines each phase and its evidence.
 These steps give the order of work inside those phases.
 
-1. Create the public `bstack` repo on your GitHub account with the MIT licence, a README and the `repo-audit` skeleton. Phase 0.
+1. Add the MIT licence, a README and the `repo-audit` skeleton to the existing public `bstack` repo. Phase 0.
 2. Pin each upstream source and start NOTICE, which records each pin and each adaptation. Phase 0.
 3. Write the package check script, which fails on a missing local reference or an undeclared runtime. Phase 0.
    It also fails on these loading errors:
@@ -1232,7 +1274,7 @@ These steps give the order of work inside those phases.
    - A missing user-only setting for any supported host.
    - A constant in a script with no comment that gives its reason.
    - A step in `SKILL.md` with no completion criterion.
-4. Run an agent on the fixture tasks without the skill, and record its failures as the first evaluation scenarios. Phase 1.
+4. Run an agent without the skill on at least three realistic comparable scenarios, and record its results as the baseline. Phase 1.
 5. Write `repo-audit/SKILL.md` by the authoring rules. Include the scope, both paths with checklists, the subagent rule, write safeguards and the "load when" table. Phases 1 and 2.
 6. Bundle the interview and domain-language modules, and replace each call to another skill with a read of the local file. Phase 1.
 7. Adapt VISION for new ideas, bundle the board assets, and build the pinned launcher with its escaping tests. Phase 1.
@@ -1240,17 +1282,18 @@ These steps give the order of work inside those phases.
 9. Build the discovery and measurement scripts: starting-state inspection, document inventory and architecture evidence. Phase 2.
 10. Build findings validation and scratch rendering before protected writes and result capture. Phase 2.
     Complete approved new-project creation only after those safeguards exist.
-11. Build enforcement: native rule setup, custom rules where needed, the debt baseline and CI. Phase 3.
+11. Build enforcement: native rule setup, custom rules where needed, the debt baseline and maintained check integration. Phase 3.
+    The enforcement and architecture references are written earlier, before the existing-repo path in step 10 recommends principles.
 12. Build the maintenance contract and its validators. Phase 3a.
-13. Write the Node installer for install, update and removal from a Git tag, with owned-file hashes. bstack's CI tests it on Windows, macOS and Linux. Run the basic tests in the current agent, covering on-demand loading and user-only start. Phase 4.
+13. Write the Node installer for install, update and removal from a Git tag, with owned-file hashes. Test it with one recorded real local or manual run on each of Windows, macOS and Linux, supplemented by local Node 24 and Node 26 runs. Run the basic tests in the current agent, covering on-demand loading and user-only start. Phase 4.
 14. Prove both complete paths and a representative extension after enforcement and maintenance exist. Phase 4.
-15. Run worked examples, validate evidence for every acceptance case, write the limitations and release. Phase 5.
+15. Run worked examples, validate evidence for every acceptance case, write the limitations and release through a manually approved Git tag and GitHub release, with no release automation or npm publish. Phase 5.
 
 The detailed implementation plan covers the complete first release of repo-audit, phases 0 to 5.
 Each task declares prerequisites, inputs, outputs and verification evidence.
 Early checkpoints prove only components already built.
 Phase 1 keeps drafts in scratch, Phase 2 applies selected foundations, and Phase 4 proves the complete installed paths.
-The implementation plan defines protected-write recovery, command portability, installer ownership and clean-CI input contracts.
+The implementation plan defines protected-write recovery, command portability, installer ownership and clean-checkout input contracts.
 
 ### Gaps for the implementation plan
 
@@ -1264,11 +1307,11 @@ The implementation plan must resolve each one, by research or a stated default, 
 | Detectable formats: a "Done when:" line on each step and the script constant rule | Step 3 | Define each format, then write the check |
 | `lavish-axi`: package name, version, and how board verdicts reach a host with only a terminal | Step 7 | Research, then pin |
 | One pin for each bundled source, including pstack | Step 2 | Pin `cursor/plugins` at the commit actually bundled, and recheck the cited files there |
-| Node version | Step 3 | Support Node 24 and later, and test on Node 24 and Node 26. Recheck the Node release schedule at step 3 |
-| bstack's own CI | Step 3 | GitHub Actions running the package check and script tests on Windows, macOS and Linux |
+| Node version | Step 3 | Support Node 24 and later, with recorded local runs on Node 24 and Node 26. Recheck the Node release schedule at step 3 |
+| bstack's own validation | Step 3 | No hosted CI. Recorded local runs of the package check and script tests, with each change gated through the no-mistakes pipeline |
 | Change-evidence record schema, its location and whether projects commit it | Step 12 | Design it from the fields listed in the maintenance contract |
 | Findings report template, debt baseline format, resume state and scratch location | Step 10 | Define each with a schema and a test |
-| Where the implementation plan lives | Before step 1 | Write it in this project folder, then move it into the public repo at step 1 |
+| Where the implementation plan lives | Before step 1 | Resolved: `docs/implementation-plan.md` in the public repo, migrated during commissioning |
 
 ### Acceptance cases
 
@@ -1297,7 +1340,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 21. Editing code or rules after assessment invalidates affected results, and integration reruns required checks.
 22. A contract change cannot silently remove its own assessment or bypass the previous coverage policy.
 23. Routine maintenance does not repeat the goal interview or full repo audit.
-24. A clean CI checkout runs the maintenance checker without a globally installed skill or prior agent session.
+24. A clean checkout, cloned into a different root with an isolated home and cache, runs the maintenance checker without a globally installed skill or prior agent session.
 25. Verification requirements express user outcomes and evidence without automatically dispatching a TDD skill or prescribing a universal sequence.
 26. A bug fix begins with the reported reproduction, and a refactor protects affected existing behaviour before structural changes.
 27. A fixture with passing unit tests but a failing agreed user journey cannot produce a ready verdict.
@@ -1322,7 +1365,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 46. Each evaluation scenario records the agent's result without the skill and with it, and the skill improves every scenario that the model did not already pass.
 47. The skill folder contains no per-language rule set, lint preset or tool list.
 48. Each language-specific recommendation cites its source and read date, and a run with no web access marks them not researched.
-49. A repo with a `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge into one `AGENTS.md` and the Claude Code version limit.
+49. A repo with a repo-owned `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge of its equivalent content into `AGENTS.md` and the Claude Code version limit. Distinct scoped instructions keep their meaning, and local or ancestor files are reported as shadowing without modification.
 50. A mixed-responsibility file and a cluster of tightly coupled small files both produce evidenced architecture candidates.
 51. A large cohesive module or thin startup file does not fail merely because of its size or import count.
 52. Chosen boundary rules detect private imports, alias bypasses and forbidden cycles in each fixture stack, using the tool the research step selected.
@@ -1375,7 +1418,8 @@ The integrated audit skill, installer and runtime still need implementation and 
 ## Scope and decision history
 
 This table is the only record of earlier and superseded designs.
-This document is authoritative for release scope and skill behaviour.
+This document is authoritative for release scope, skill behaviour and the other first-release requirements.
+The implementation plan is authoritative for the build sequence and the evidence each task records.
 Historical entries keep their original decisions and name their current application.
 
 | Decision | Settled answer | Current application |
@@ -1412,7 +1456,8 @@ Historical entries keep their original decisions and name their current applicat
 | R19, 2026-10-07 | repo-audit is language- and model-agnostic, uses a Node installer, keeps one `AGENTS.md`, ships from Git tags with no package, and the implementation plan covers the full first release | Language practice comes from research at audit time with cited sources. The model matrix is replaced by R23. The installer runs on Windows, macOS and Linux |
 | R20, 2026-10-07 | Security of the skills bstack creates is outside its scope | The OWASP-based rules from R18 and R19 are removed. Review before apply and the live-probe approval stay, because they protect the user's project and data |
 | R21, 2026-10-07 | Consolidate the plan into one current-state design that is safe to publish | History lives in this table, and the plan has no private links |
-| R22, 2026-10-07 | Every `CLAUDE.md`, including an import stub, merges into one `AGENTS.md` | The audit states the Claude Code version limit. The pass rule covers a model that already passes. Node 24 and later |
+| R22, 2026-10-07 | Every `CLAUDE.md`, including an import stub, merges into one `AGENTS.md` | The audit states the Claude Code version limit. The pass rule covers a model that already passes. Node 24 and later. R26 limits the merge to equivalent repo-owned content and preserves scoped instructions |
 | R23, 2026-10-07 | Keep tests basic and model-agnostic. Passing in the agent the user or builder runs is enough | Replaces the host and model matrix in R19 and R22, and the per-host tests in R15 to R17. The package still sets each host's user-only setting |
 | R24, 2026-10-07 | Ignore licensing issues in all bstack work | No licence checks, licence gaps or owner escalation. bstack itself stays MIT under D1. NOTICE records pins and adaptations only |
-| R25, 2026-10-07 | Apply the implementation review recommendations | Explicit task prerequisites and evidence, scratch-only early review, protected creation after write safeguards, recoverable writes, isolated evaluations, portable commands, installer ownership and complete CI inputs |
+| R25, 2026-10-07 | Apply the implementation review recommendations | Explicit task prerequisites and evidence, scratch-only early review, protected creation after write safeguards, recoverable writes, isolated evaluations, portable commands, installer ownership and complete CI inputs. The CI inputs are replaced by clean-checkout inputs under R26 |
+| R26, 2026-10-07 | Approve the commissioning review and its six recommendations | Recorded in "Commissioning decisions (2026-10-07)". No hosted CI or release automation for bstack, three real OS runs for AC-74, slices C0 to C29, a baseline with no failure quota, scoped instruction preservation, and `auto_fix.review: 1` as the one automatic review round |

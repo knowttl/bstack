@@ -1,13 +1,18 @@
 # bstack: repo-audit implementation plan
 
 This plan tells a build agent how to build the first release of bstack, the `repo-audit` skill, in order.
-The design is [plan.md](plan.md), revision 25.
+The design is [design.md](design.md), revision 26.
 Implementation review applied on 2026-10-07, with owner approval to apply the recommendations.
+Commissioning review applied on 2026-10-07, with the owner's approval of its six recommendations.
+The design records them under "Commissioning decisions (2026-10-07)".
 This file specifies future build work, not evidence that bstack is implemented.
 
-The design says what to build and why.
-This plan says how to build it, in what order, and how each task proves it is done.
-When this plan and the design disagree, the design wins.
+This plan was migrated on 2026-10-07 from `projects/bstack/implementation-plan.md` in the owner's private repo `knowttl/brytton`, at commit `28191a1def2c6c89b6a60d95f00056aaacfea669`.
+This copy is now authoritative, and readers need no access to that source.
+
+The design owns the requirements: what to build and why.
+This plan owns the build sequence and evidence: how to build it, in what order, and how each task proves it is done.
+When this plan and the design disagree about a requirement, the design wins.
 Stop and ask the owner.
 
 ## Start here
@@ -20,12 +25,13 @@ Read this section before your first task.
 It audits an existing repo, or interviews the user about a new idea.
 It then recommends project-specific principles, rules and checks, and applies the ones the user selects.
 Everything it needs ships inside one folder, `skills/repo-audit/`.
-The bstack repo also holds a package check, an installer, test fixtures, an evaluation runner and CI.
+The bstack repo also holds a package check, an installer, test fixtures, an evaluation runner and the no-mistakes gate config.
+It has no hosted CI workflows (design "Commissioning decisions (2026-10-07)").
 
 ### How to work through this plan
 
 1. Find the first unticked task whose prerequisites are complete.
-   Use its "Depends on" field, not task numbering alone.
+   Use its "Depends on" field and the slice order in "Commissioning slices", not task numbering alone.
 2. Read only the design sections that task lists under "Read".
    Do not read the whole design up front.
 3. Do the steps in order.
@@ -33,6 +39,7 @@ The bstack repo also holds a package check, an installer, test fixtures, an eval
    Record results using the task evidence contract below.
    A missing prerequisite or unavailable live check leaves the task blocked.
 5. Tick the task in "Progress", and commit with a conventional message, for example `feat(scripts): add inspect command (T2.2)`.
+   Ship each slice through the no-mistakes pipeline, as "Delivery gate" describes.
 6. Move to the next ready task.
    Do not use a later task's unbuilt component to pass an earlier task.
 
@@ -62,7 +69,7 @@ The final release validator checks actual case evidence, not only task ticks.
 
 Stop and ask before you do any of these:
 
-- Create the public GitHub repo, push, create a tag or publish a release.
+- Push outside the no-mistakes pipeline, create a tag or publish a release.
 - Change a design decision in the decisions table at the end of the design.
 - Resolve a contradiction between this plan and the design.
 - Add a runtime dependency other than `lavish-axi`.
@@ -98,7 +105,7 @@ Change one only by editing this table with the reason.
 
 | Topic | Default |
 |---|---|
-| Node version | Support Node 24 and later. CI tests Node 24 and Node 26. Recheck the Node release schedule in T0.6 |
+| Node version | Support Node 24 and later. Recorded local runs on Node 24 and Node 26, with no hosted matrix. Recheck the Node release schedule in T0.6 |
 | Script command | One entry point, `node skills/repo-audit/scripts/repo-audit.mjs <command> --repo <path>`. New-idea draft commands use `--workspace <existing-directory>` instead |
 | Result format | One JSON envelope on stdout with `--json`, a short summary otherwise. Envelope in T0.4 |
 | Exit codes | 0 passed, 1 failed, 2 blocked, 3 usage error |
@@ -106,8 +113,8 @@ Change one only by editing this table with the reason.
 | Audit record | The project's existing audit record, otherwise `docs/repo-audit.md` (design "Files the skill maintains") |
 | Project contract | `.bstack/project.json`, versioned schema, only when the project has no existing config that can hold it |
 | Debt baseline | The native tool's own baseline or suppression feature where one exists. Otherwise `.bstack/baseline.json` |
-| Change evidence record | Scratch for local review. A project that selects CI assessment validation commits `.bstack/evidence/<change-id>.json`, or an equivalent existing path, and passes that path explicitly to CI |
-| Checker in a clean CI checkout | `apply` copies one dependency-free validator into the target repo as `.bstack/bin/bstack-check.mjs`, with the bstack version in its header. CI passes an explicit repo, base and assessment path to it |
+| Change evidence record | Scratch for local review. A project whose selected delivery path needs portable review evidence commits `.bstack/evidence/<change-id>.json`, or an equivalent existing path, and passes that path explicitly to the checker |
+| Checker in a clean checkout | `apply` copies one dependency-free validator into the target repo as `.bstack/bin/bstack-check.mjs`, with the bstack version in its header. Each run, local or in a CI the project selects, passes an explicit repo, base and assessment path to it |
 | Fixtures | Built by a script into a temporary folder, with a scripted Git history. No nested Git repos are committed |
 | Upstream sources | Raw copies at their pinned commits in `upstream/`, outside the skill folder. Adaptations live in `skills/repo-audit/` and are recorded in `NOTICE` |
 | Step format in `SKILL.md` | Each step is a `### Step N: <name>` heading followed by a line that starts `Done when:` |
@@ -168,7 +175,7 @@ Every structured input declares `schemaVersion: 1`.
 Use IDs to join records and reject missing or duplicate IDs.
 Repo identity in local fingerprints uses the resolved local root.
 Portable committed assessments instead identify the project and Git object state, with repo-relative paths.
-CI validates the local root separately, so cloning into a different directory does not invalidate otherwise identical reviewed inputs.
+The checker validates the local root separately, so cloning into a different directory does not invalidate otherwise identical reviewed inputs.
 
 | Format | Required contents | Owner |
 |---|---|---|
@@ -210,7 +217,8 @@ Its owning task supplies the complete validated examples and the acceptance auth
 Phase 1 proves intent and vision in scratch, without relying on protected writes built in Phase 2.
 T2.5 renders to scratch, and T2.6 applies that output after review.
 T2.8 and T2.9 use current native checks, without claiming that later enforcement or maintenance exists.
-T3.4 proves native CI checks, and T3a.6 adds maintenance validation to that CI.
+T3.1 supplies the enforcement and architecture references before T2.8 recommends principles, without claiming that rule-proof exists.
+T3.4 proves the maintained local check command in disposable copies, and T3a.6 proves maintenance validation in a clean checkout.
 T4.3 reruns both full paths and verifies a representative extension against the completed package.
 Earlier checkpoint runs are labelled with their stage and cannot substitute for final acceptance evidence.
 
@@ -223,9 +231,9 @@ bstack/
   LICENSE                        MIT (design D1)
   NOTICE                         upstream pins and adaptations
   package.json, package-lock.json   private, "type": "module", engines node >=24, scripts: check, test, eval
-  .github/workflows/ci.yml
+  .no-mistakes.yaml              delivery gate config, no_ci (no hosted CI workflows)
   docs/
-    design.md                    copy of plan.md, the design of record
+    design.md                    the design of record, migrated from the private source
     implementation-plan.md       this file
     command-contract.md          command grammar and examples, extended by each owning task
     examples/                    worked examples (T5.1)
@@ -259,6 +267,86 @@ bstack/
     eval/results/                recorded runs
 ```
 
+### Delivery gate
+
+bstack has no hosted CI, no GitHub Actions workflows and no release automation (design "Commissioning decisions (2026-10-07)").
+Every shipping slice goes through the no-mistakes pipeline configured in `.no-mistakes.yaml`, which declares `no_ci: true`.
+Green work merges unattended.
+`auto_fix.review: 1` is the one automatic review round: a budget of one automatic repair round for review findings.
+Required validation after a change still runs, and no second autonomous repair round follows once the budget is spent.
+Recorded local runs and clean-checkout runs, as each task defines, supply the execution evidence that hosted CI would otherwise provide.
+These runs do not prove support on an operating system they did not run on.
+
+### Commissioning slices
+
+The build runs as these slices, in order, with Phase 0 first.
+Task IDs stay stable, and a slice maps to a task or a subtask of one.
+A slice's done evidence adds to its tasks' "Done when" checks rather than replacing them.
+A parent task is complete only after all its slices pass.
+Target roughly 200 to 400 lines of authored implementation, reference or test change per slice, excluding copied plans, raw upstream files, assets, generated checker bytes and lockfiles.
+That is a review-size target, not a code-length requirement.
+Split a slice again when its observable behaviour needs more, rather than compressing error handling or tests.
+
+Every slice records its task IDs, the original user intent and approved amendments, tested revision, commands, output artifacts, tool and OS versions, case IDs and limitations, using the T0.1 record format.
+
+| Slice | Task mapping and behaviour | Prerequisite | Done evidence |
+|---|---|---|---|
+| C0 | Amend copied design/plan for commissioning, preserve existing config | Captain commissioning ruling | All conflicts above resolved explicitly, IDs/cases retained or approved revisions recorded, no workflow added |
+| C1 | T0.1 skeleton, lock, explicit test discovery, evidence schema | C0 | Node 24, npm clean install, bootstrap executed, fixture test excluded, unknown task/zero suite fails, migrated links resolve |
+| C2 | T0.2 skill resources and no-arg command | C1 | Correct user-only metadata, all eight local paths, documented exit 3/help |
+| C3 | T0.3 pinned fetch and NOTICE | C2 | Exact manifest paths and pins, fetch check, missing-file failure, adaptation inventory |
+| C4a | T0.4 target/path/scratch and result/arg contracts | C3 | Draft/Git/no-commit paths, JSON envelope, unknown inputs, escaping parents/links rejected |
+| C4b | T0.4 child commands and fingerprints | C4a | Literal arguments, timeout/cancel cleanup, version/output capture, changed bytes invalidate fingerprints |
+| C4c | T0.4 minimal schema contract and real command wiring | C4b | Valid data, unknown fields/keywords, duplicate/missing IDs rejected through public interface |
+| C5a | T0.5 metadata/loading/resource closure | C4c | Valid skeleton and seeded missing/nested/oversized/host-metadata failures |
+| C5b | T0.5 script/import/step policy and rewritten T0.6 | C5a | Declared runtime checks and syntactic controls, local Node 24/26 logs, no-mistakes gate, zero Actions |
+| C6a | T1.1 isolated idea/clear-goals fixtures and builder | C1 and relevant C4 contracts, amended dependency | Deterministic temp builds, non-Git idea, scripted local identity/history, source unchanged |
+| C6b | T1.1 TS and Python seeds/native setup | C6a | Each native sanity check executes and confirms its valid/invalid seeds |
+| C6c | T1.1 dirty/refactor/history/installer variants | C6b | Deterministic seeds, clean proof variants, independent alias/cycle switches |
+| C7a | T1.2 registry and manual evaluation interface | C5b, C6c | 75 owned case IDs, invalid registry/manual result blocked, explicit transcript scoring |
+| C7b | T1.2 one current-host adapter, isolation and baseline | C7a | Fresh sessions, no-skill discovery absence, unique transcripts, comparable model/revision/criteria |
+| C8 | T1.3 baseline-backed SKILL procedure | C7b | Gap map and package check, hard safeguards retained, unavailable later steps labelled |
+| C9a | T1.4 interview/domain references | C8, C3 | Flattened resources, no external skill calls, glossary and confirmed-intent rubric |
+| C9b | T1.5 VISION reference/assets | C9a | Package check and recorded asset/NOTICE diff |
+| C10a | T1.6 runtime probe, exact pin, board build | C9b | Clean nested install, runtime observation, safe inserted text, unique IDs |
+| C10b | T1.6 launch/verdict/resume and T1.7 intent checkpoint | C10a | Live roundtrip, stale verdict refused, approved scratch draft, ambiguous decision blocked, workspace unchanged |
+| C11a | T2.1 research briefs/citation validation | C10b | Correct/wrong/stale citations, no-web limits, discovery-only transcripts in available modes |
+| C11b | T2.2 inspect | C11a, amended dependencies if parallel | Read-only fingerprint and exact missing-prerequisite result |
+| C11c | T2.3 inventory | C11b | Equivalent standards and scoped instruction candidates, absent documents tolerated |
+| C12a | T2.4 history measurement | C11c | Rename/range/exclusion evidence, signal commits, no semantic violation inferred |
+| C12b | T2.4 overlap | C12a | Declared glob semantics, shared path/contract controls |
+| C13 | T2.5 findings schema/render | C12b | Principle/source/selection validation, scratch-only output, stage-specific readiness controls |
+| C14a | T2.6 dry-run and exact reviewed payloads | C13 | All invalid plans/preconditions rejected with zero project changes |
+| C14b | T2.6 write/journal/resume, including selected delete | C14a | Injected interruption points, backups, original/proposed/conflict states, repeat and dirty-user protection |
+| C15a | T2.7 check plans/capture/prior protection | C14b | Failed journey despite passing units, failed/skipped/stale/timeout checks rejected, prior refactor proof |
+| C15b | T2.7 live probe pair | C15a | Same endpoint/command/environment before and after, local stand-in mismatch, specific side-effect approval refusal |
+| C16 | Early reference portion of T3.1 | C8, C3, before C17 | Reviewed enforcement/architecture guidance, package check and two-stack relevance rubric |
+| C17 | T2.8 existing foundation integration | C15b and C16 | Audit before interview, clear-goals loading trace where observable, reviewed vision delta, different project recommendations, current native journey preserved |
+| C18 | T2.9 protected creation | C17 | Approved minimal journey, destination collision/no-write controls, directory/Git journal and interruption recovery |
+| C19a | Remaining T3.1 and T3.2 rule-proof | C18 | Valid/private/alias/cycle proof with native tools in both clean stacks |
+| C19b | T3.3 baseline | C19a | Existing debt visible, new debt/unauthorised refresh rejected, fixed entry removal |
+| C20 | Rewritten T3.4 maintained local integration | C19b | Exact same command passes/fails disposable controls, web/core scoping, no swallowed failures |
+| C21 | T3a.1 contract and T3a.2 collect | C20 | Valid pointers/leaf graph, full Git path inventory and explicit absent base blocked. Split contract and collector if needed |
+| C22a | T3a.3 assessment/freshness validation | C21 | No-impact/updated/decision cases, forged inventory and stale review rejected |
+| C22b | T3a.3 previous-policy/acceptance-source controls | C22a | Removed scope/config/checker cannot erase prior coverage, initial-contract provenance and approved acceptance changes |
+| C23a | T3a.4 generated facts | C22b | Stale bytes rejected, scratch regeneration/protected apply, mutation-free check |
+| C23b | T3a.5 docs/term context/rule relocation | C23a | Broken pointers, within-context duplicate, cross-context valid, one authoritative rule after move |
+| C24a | T3a.6 standalone generation/freshness | C23b | Same source validators/schemas, generated checker current, no skill dependency |
+| C24b | Rewritten T3a.6 clean-checkout execution | C24a | Different-root clean clone, fresh leaf execution, unchanged assessment, missing/shallow base and old-policy controls |
+| C24c | T3a.7 maintenance guidance | C24b | Maintenance-only transcript, no interview/full audit |
+| C25a | T4.1 install preview/copy/ownership | C24c | Isolated homes, source closure, no-op dry run, occupied-unowned collision and nested runtime failure |
+| C25b | T4.1 update/uninstall/interruption | C25a | Edited/unowned preservation, obsolete-owned removal, accurate mixed version, resume |
+| C25c | T4.1 links and OS executions | C25b | Owned symlink/junction only, target survives removal, recorded Windows/macOS/Linux runs |
+| C26 | T4.2 current-agent invocation/loading | C25c | Fresh plain vs explicit sessions, observed load conditions, no router/support skill required |
+| C27 | T4.3 final full paths/repeat/extension | C26 | Fresh complete installed paths, extension via public boundary/journey, clean-checkout evidence, fresh case selection |
+| C28 | T5.1 examples/limits | C27 | Examples tied to recorded results, reproducible install/use, accurate actual test scope |
+| C29 | T5.2 final evidence and manual release | C28, final release approval | All revised case evidence complete, baseline comparisons, final no-mistakes gate, exact approved tag/release |
+
+C0's "conflicts above" are the hosted-CI and release conflicts that the commissioning review listed, now resolved in this plan and the design.
+Parallel work is possible only where a slice's listed prerequisites allow it: upstream acquisition (C3) and fixture work (C6), and the early references (C16) alongside the scripts in C11 to C15.
+Keep root manifests, lockfiles, command dispatch, shared schemas, `SKILL.md`, `NOTICE`, the case registry and task progress under one integration owner.
+Parallel work declares its changed contracts as well as its write paths, and stores evidence in distinct run paths.
+
 ## Progress
 
 Tick each task when its "Done when" commands pass.
@@ -269,7 +357,7 @@ Tick each task when its "Done when" commands pass.
   - [ ] T0.3 Pin upstream sources and start NOTICE
   - [ ] T0.4 Build the shared script library
   - [ ] T0.5 Build the package check
-  - [ ] T0.6 Add bstack's own CI
+  - [ ] T0.6 Establish local validation and no-mistakes gate
 - Phase 1: Intent and vision
   - [ ] T1.1 Build the test fixtures
   - [ ] T1.2 Build the evaluation runner and record the baseline
@@ -289,17 +377,17 @@ Tick each task when its "Done when" commands pass.
   - [ ] T2.8 Complete the existing-repo audit and apply path
   - [ ] T2.9 Complete protected new-project creation
 - Phase 3: Enforcement
-  - [ ] T3.1 Write the enforcement and architecture references
+  - [ ] T3.1 Write the enforcement and architecture references (before T2.8)
   - [ ] T3.2 Build `rule-proof`
   - [ ] T3.3 Build debt baseline handling
-  - [ ] T3.4 Integrate checks with the project's CI
+  - [ ] T3.4 Integrate scoped checks with the maintained local command
 - Phase 3a: Maintenance
   - [ ] T3a.1 Define the project contract
   - [ ] T3a.2 Build `evidence collect`
   - [ ] T3a.3 Build `evidence validate`
   - [ ] T3a.4 Build generated-fact freshness checks
   - [ ] T3a.5 Build document reference checks
-  - [ ] T3a.6 Build the checker for a clean CI checkout
+  - [ ] T3a.6 Build and prove the standalone checker in a clean checkout
   - [ ] T3a.7 Write the maintenance reference
 - Phase 4: Installation
   - [ ] T4.1 Build the installer
@@ -325,7 +413,8 @@ Phase evidence from the design: no missing local references or undeclared runtim
 
 **Steps**
 
-1. Obtain approval for the public repo and create or clone `bstack`.
+1. Work in the existing public repo `knowttl/bstack`.
+   Preserve its `.no-mistakes.yaml` and add no workflow files.
 2. Add the MIT licence file, a short README and `.gitignore` for dependencies, scratch outputs and OS files.
 3. Add the root package manifest with Node >=24 and scripts `check`, `test` and `eval`.
 4. Generate and commit the root `package-lock.json` before any `npm ci` check.
@@ -336,7 +425,7 @@ Phase evidence from the design: no missing local references or undeclared runtim
    Support `--task <id>` to select that task's registered suites.
 6. Add one meaningful bootstrap test that checks manifest commands, lockfile consistency and test-discovery exclusions.
 7. Define the task evidence record from "Task evidence contract", with a versioned schema under `tests/eval/`.
-8. Copy the design and implementation plan into `docs/`, then correct their relative links to the new locations.
+8. Done in commissioning slice C0: the design and implementation plan are in `docs/`, with corrected relative links and recorded provenance.
    Preserve the original personal-repo copies as migration references until the owner chooses their retirement.
 9. Write a short `AGENTS.md` with pointers to the design, implementation plan and supported check commands.
 
@@ -475,30 +564,36 @@ Use the explicit-file runner above rather than passing a directory as a test fil
 
 **Covers:** AC-41, AC-44, AC-45, AC-47.
 
-### T0.6 Add bstack's own CI
+### T0.6 Establish local validation and no-mistakes gate
 
 **Depends on:** T0.5.
 
-**Inputs and outputs:** Root lockfile and passing local checks -> cross-platform CI workflow.
+**Inputs and outputs:** Root lockfile and passing local checks -> recorded local Node 24 and Node 26 runs and the no-mistakes gate.
 
-**Verification:** `npm ci` and `npm run check` and `npm test, then the recorded GitHub matrix run`.
+**Verification:** `npm ci --ignore-scripts`, `npm run check` and `npm test` on local Node 24 and Node 26, then the slice's no-mistakes run.
 
-**Read:** design "Build order and release proof" and the Node version default.
+**Read:** design "Commissioning decisions (2026-10-07)", "Build order and release proof" and the Node version default.
 
 **Steps**
 
 1. Check the Node release schedule at nodejs.org and confirm which majors are in LTS.
    Update the Node row in "Defaults this plan sets" if it changed.
-2. Write `.github/workflows/ci.yml` for push and pull request.
-   Use `ubuntu-latest`, `windows-latest` and `macos-latest`, with Node 24 and Node 26.
-   Run root `npm ci`, `npm run check` and `npm test`.
-   From T1.6 onward, also run `npm ci --omit=dev --prefix skills/repo-audit` before runtime checks.
-3. No step may use `continue-on-error` or `|| true`.
+2. Run `npm ci --ignore-scripts`, `npm run check` and `npm test` on local Node 24 and on local Node 26.
+   Record each command, the full Node version, the OS, the exit code and the output, using the task evidence contract.
+3. Confirm that `.no-mistakes.yaml` runs the same root commands and declares `no_ci: true`.
+   Once `npm run check` exists, remove the `--if-present` fallback from the gate's check command so a missing package check fails.
+   Gate the slice through no-mistakes.
+4. Add no `.github/workflows/` file and no hosted matrix.
+5. No gate command may ignore a failure, for example with `|| true`.
 
 **Done when**
 
-- The workflow passes on all six combinations on GitHub.
-Pushing needs the owner's approval the first time.
+- The Node 24 and Node 26 runs exit 0 with recorded evidence.
+- The slice passes the no-mistakes gate with no CI, and the repo has no GitHub Actions workflow.
+- The record states that these runs do not prove support on another operating system.
+
+These runs replace the earlier recorded GitHub matrix as commissioning evidence (design "Commissioning decisions (2026-10-07)").
+From T1.6 onward, the nested skill runtime joins this local and gate path, as T1.6 defines.
 
 ## Phase 1: Intent and vision
 
@@ -506,7 +601,8 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
 
 ### T1.1 Build the test fixtures
 
-**Depends on:** T0.6.
+**Depends on:** T0.1 and T0.4.
+Fixture construction can proceed in parallel with T0.5 and T0.6.
 
 **Inputs and outputs:** Design acceptance sources -> isolated repo and non-Git fixtures with sanity checks.
 
@@ -548,14 +644,18 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
    Keep unrelated debt out of rule-proof variants.
 4. Add fixture variants for dirty work, refactors, contract removal, shallow history and installer collisions.
 5. Give each fixture a `sanity` script that proves its seeds are present, for example that the `ts-shop` unit tests pass and its end-to-end check fails.
+6. Give each native-stack fixture its own lockfile or pinned setup command and declare its native runtime requirements, such as the TypeScript and Python versions its sanity checks need.
+   Keep those native development dependencies in the fixtures, not in the installed skill.
+   A missing native tool is reported as blocked, rather than as a passing or skipped sanity check.
 
 **Done when**
 
 - `node tests/fixtures/build.mjs --all` builds every fixture and each `sanity` script passes.
+- Each native sanity check executes on its real native tools and confirms its valid and invalid seeds before any baseline run.
 
 ### T1.2 Build the evaluation runner and record the baseline
 
-**Depends on:** T1.1.
+**Depends on:** T1.1 and T0.6.
 
 **Inputs and outputs:** Fixtures and acceptance IDs -> adapters, registry, runner and baseline evidence.
 
@@ -584,6 +684,8 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
    Accept `eval score --run <id> --answers <file> --transcript <file>` to finish scoring explicitly.
    Missing answers or transcripts leave the run blocked, rather than waiting indefinitely or assuming success.
 7. Save unique run IDs with timestamps, agent, model, OS, tool versions, fixture revision, stage, transcript and case results.
+   Keep earlier checkpoint runs as history.
+   Final evidence is an explicit selection of one run per case, stage and revision, so repeated execution artifacts are legitimate while duplicate final selections are rejected.
    Baseline and with-skill runs use the same fixture revision, agent, model and scoring criteria.
    Score deterministic checks from artifacts, and identify human-scored checks by reviewer and transcript location.
 8. Register every design acceptance ID in `tests/acceptance/cases.json` with its owner task, procedure, criterion source and evidence type.
@@ -592,17 +694,16 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
    Completed procedures must name an existing test or scenario and its evidence artifacts.
 9. Add scenarios for a new idea, ambiguous idea, seeded existing repo, clear goals and implicit invocation.
    Add the maintenance and representative-extension scenarios before their owning tasks use them.
-10. Run the initial scenarios in `without` mode and record actual results.
-    Keep at least three scenarios from observed failures, as the design requires.
-    If fewer fail, add realistic cases drawn from unmet requirements and rerun them.
-    If there are still fewer than three, stop for an owner decision on that evaluation requirement.
+10. Run at least three realistic, comparable initial scenarios in `without` mode and record actual results, as the design requires.
+    Keep every approved scenario, including those the baseline already passes.
+    A passing baseline case stays in the evaluation and must still pass with the skill.
+    There is no quota of observed failures.
     Never manufacture a failure, weaken a case or delete a requirement because the baseline passes.
 
 **Done when**
 
 - The runner's tests cover isolation, explicit versus implicit invocation, manual scoring and unique result paths.
-- Every initial scenario has a baseline transcript and scored results.
-- Three observed-failure scenarios exist, or the task remains blocked pending the recorded owner decision.
+- At least three realistic comparable scenarios each have a baseline transcript and scored results, including any that already pass.
 - The acceptance registry names all 75 cases with their planned procedures, without claiming pending evidence is complete.
 
 ### T1.3 Write the first `SKILL.md`
@@ -701,7 +802,10 @@ Record the mapping in the T1.2 results folder as `gap-map.md`.
    Find out how a host with only a terminal gets verdicts back, for example by opening a local URL in a browser or by writing a verdict file.
    Record the findings in `docs/design.md` "Evidence and limitations".
 2. Pin the exact version in `skills/repo-audit/package.json` and commit the lockfile.
-   Run `npm ci --omit=dev --prefix skills/repo-audit` now, and add that setup step to CI.
+   Run `npm ci --omit=dev --prefix skills/repo-audit` now, and add that setup step to the local validation and no-mistakes gate path from T0.6.
+   Make the gate's nested setup conditional only until the nested manifest exists, then validate both lockfiles and the runtime closure.
+   Prove the setup with a fresh disposable install that has no globally installed support skills.
+   Add no workflow file.
    Record a live launcher probe before adapting outside runtime behaviour.
 3. Add the `vision-board` command with three subcommands:
    - `build --draft <file> --proposals <file>` fills the template.
@@ -718,6 +822,7 @@ Record the mapping in the T1.2 results folder as `gap-map.md`.
 **Done when**
 
 - `npm test` passes the escaping and resume tests.
+- A clean nested runtime install succeeds through the local and gate setup path.
 - A manual run opens the board, returns a verdict and updates the matching proposal in the draft.
 - A resumed review preserves prior decisions and rejects verdicts from a different draft revision.
 
@@ -786,8 +891,9 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 **Done when**
 
 - `npm test` shows `cite-check` failing on a report with a wrong path and a wrong line.
-- A discovery-only checkpoint runs the research briefs with subagents and in the main thread.
-- Both checkpoint records contain the same report format, verified citations and the mode that ran.
+- A discovery-only checkpoint runs the research briefs in the main thread, and with subagents where the current host has them.
+  When the host has no subagents, the subagent-mode case stays blocked rather than passing on main-thread evidence.
+- Each checkpoint record contains the same report format, verified citations, the mode that ran, the host, its available capabilities and what was actually observed.
 - These checks do not require the later complete audit path.
 
 **Covers:** AC-34, AC-35, AC-36, AC-37, AC-48.
@@ -830,12 +936,16 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 1. `inventory` finds instruction files (`AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md`, `CLAUDE.local.md`), vision, design, glossary and context maps, standards and `CONTRIBUTING.md`, decision records and earlier audit records.
 2. It matches equivalent names, not only the exact file names, and reports each file's path, hash and kind.
 3. A missing file is reported as absent, not as a failure.
-4. When any `CLAUDE.md` exists, including a stub that only imports `AGENTS.md`, `inventory` returns a candidate finding: merge into one `AGENTS.md`, with the Claude Code version limit from the design.
+4. When a repo-owned `CLAUDE.md` exists, including a stub that only imports `AGENTS.md`, `inventory` returns a candidate finding: merge its equivalent content into `AGENTS.md`, with the Claude Code version limit from the design.
+5. Report each instruction file's scope, its directory and whether it is inside the selected repo.
+   A nested instruction file with distinct scoped guidance is reported as scoped, not as a merge candidate to flatten into the root file.
+   `CLAUDE.local.md` and instruction files in ancestor directories outside the repo are reported as possible shadowing of `AGENTS.md`, never as files to modify.
 
 **Done when**
 
 - On `py-ledger`, `CONTRIBUTING.md` is reported as the standards source and no failure is raised for a missing `CODING_STANDARDS.md`.
 - On `ts-shop`, the `CLAUDE.md` stub produces the merge candidate.
+- Representative root, nested, local-only and outside-repo instruction files produce a merge candidate, a preserved scope, a shadowing report and an out-of-scope shadowing report respectively.
 
 **Covers:** AC-10, AC-11, AC-49.
 
@@ -897,11 +1007,14 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
    T2.6 writes that reviewed output to the existing audit record or `docs/repo-audit.md` through `apply`.
 4. The report states one result: ready for the stated next change, decisions needed, or verification blocked.
    It has no score.
+   Define the verdict inputs and their precedence for each stage.
+   A structurally valid findings set without current evidence for its required outcomes cannot claim ready.
 
 **Done when**
 
 - `npm test` shows `findings validate` rejecting a finding with no principle and one with an unknown status.
 - `render` on a sample finding set produces a record that separates documented intent, observed behaviour and inferred intent.
+- A valid findings set with a failed journey, an unresolved decision or missing evidence does not render as ready.
 
 **Covers:** AC-8, AC-63, AC-65.
 
@@ -921,7 +1034,9 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
    Every edit includes a selected finding ID, target path, original hash, proposed hash and supported operation.
    Bind selections, target identity, resolved scope and edit payloads into the plan digest.
    An unresolved scope or changed reviewed plan requires renewed review before execution.
-2. Support create, replace, set a heading section, set a JSON key and append a line once.
+2. Support create, replace, delete, set a heading section, set a JSON key and append a line once.
+   A selected delete records the original hash, keeps a recoverable backup and has an explicit absent proposed state.
+   An empty replacement is not a deletion.
    Reject ambiguous headings, duplicate keys, overlapping edits and unsupported formats.
    Stage complete proposed file bytes before writing any target.
 3. `apply --plan <file> --dry-run` validates all inputs, selections, targets and original hashes, then prints the exact diff.
@@ -948,6 +1063,7 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 - Fault injection before a write, after replacement and before journal completion preserves a recoverable state.
 - Resume and repeated execution recognise proposed hashes and do not duplicate content.
 - A user edit to a pending or completed file blocks resume, preserving that edit and all other files.
+- A selected delete passes dry run, collision, interrupted deletion and repeat controls, and a file the user recreates after deletion blocks resume.
 - Unrelated uncommitted work remains untouched, and selected edits preserve the existing user journey.
 
 **Covers:** AC-54, AC-57, AC-69, AC-70, AC-72.
@@ -991,23 +1107,27 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 
 ### T2.8 Complete the existing-repo audit and apply path
 
-**Depends on:** T2.7.
+**Depends on:** T2.7 and T3.1.
+T3.1 supplies the enforcement and architecture references that recommendations load (design "Load only what each step needs").
 
 **Inputs and outputs:** Existing repo fixtures and approved findings -> audited, selected and verified foundation changes.
 
 **Verification:** Existing-repo and clear-goals foundation-stage procedures from T1.2.
 
-**Read:** design "Existing-repo path" and "Establish VISION.md" (existing repo).
+**Read:** design "Existing-repo path", "Establish VISION.md" (existing repo) and "Files the skill maintains".
 
 **Steps**
 
 1. Complete the existing-repo steps in `SKILL.md` in this order: `inspect`, `inventory`, research briefs, `cite-check`, evidence summary, a targeted interview only for gaps that change a recommendation, findings, user selection, `apply`, `run-checks`, and the audit record.
 2. When the repo already has an approved vision, the steps propose a reviewed change to it only when the audit found a real gap.
-3. Run the existing-repo and clear-goals scenarios in `with` mode.
+3. A selected instruction merge moves equivalent repo-owned `CLAUDE.md` content into `AGENTS.md` and removes the `CLAUDE.md` only through `apply`, using the selected delete from T2.6.
+   Scoped, local and ancestor instruction files are reported as `inventory` classified them and are never modified.
+4. Run the existing-repo and clear-goals scenarios in `with` mode.
 
 **Done when**
 
-- On `clear-goals`, the agent reaches recommendations without asking about goals the repo states, and never opens the VISION, interview or domain-language references.
+- On `clear-goals`, the agent reaches recommendations without asking about goals the repo states, and, where the agent shows which files it opened, never opens the VISION, interview or domain-language references.
+- A reviewed existing-vision delta scenario proposes a change to the approved vision instead of replacing it, scored against a written rubric.
 - On `ts-shop`, discovery runs before any question, and each question names the recommendation it affects.
 - `ts-shop` and `py-ledger` receive different recommendations that fit their own goals.
 - The reviewed audit record is applied safely and current native user-flow checks preserve the existing journey.
@@ -1055,11 +1175,14 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 
 ## Phase 3: Enforcement
 
-Phase evidence from the design: valid cases pass, and seeded violations fail locally and in CI.
+Phase evidence from the design: valid cases pass, and seeded violations fail through the maintained command in disposable local copies.
 
 ### T3.1 Write the enforcement and architecture references
 
-**Depends on:** T2.9.
+**Depends on:** T1.3 and T0.3.
+Complete it before T2.8, which loads these references when it recommends principles and boundaries.
+This early checkpoint demonstrates useful references only, without claiming that rule-proof or maintenance exists.
+Native rule implementation stays in T3.2 to T3.4, and any reference revision that rule-proof results require lands with T3.2 (slice C19a).
 
 **Inputs and outputs:** Approved principles and architecture sources -> enforcement and architecture references.
 
@@ -1085,7 +1208,7 @@ Phase evidence from the design: valid cases pass, and seeded violations fail loc
 
 ### T3.2 Build `rule-proof`
 
-**Depends on:** T3.1.
+**Depends on:** T2.9 and T3.1.
 
 **Inputs and outputs:** Native researched rules and clean variants -> valid and violation proof artifacts.
 
@@ -1136,29 +1259,34 @@ Phase evidence from the design: valid cases pass, and seeded violations fail loc
 
 **Covers:** AC-67.
 
-### T3.4 Integrate checks with the project's CI
+### T3.4 Integrate scoped checks with the maintained local command
 
 **Depends on:** T3.3.
 
-**Inputs and outputs:** Selected native checks and target CI -> scoped maintained command and actual CI evidence.
+**Inputs and outputs:** Selected native checks -> scoped maintained command and local disposable-copy evidence.
 
-**Verification:** `npm test -- --task T3.4`, then the approved disposable-branch CI procedure.
+**Verification:** `npm test -- --task T3.4`, then the disposable local-copy procedure.
 
-**Read:** design "Keep the contract small" (last three paragraphs).
+**Read:** design "Keep the contract small" (last three paragraphs) and "Commissioning decisions (2026-10-07)".
 
 **Steps**
 
-1. Selected checks go into the project's existing check command and CI file, through `apply`.
-2. `apply` rejects a CI edit that ignores a failure, such as `continue-on-error: true` or `|| true` on a check command.
+1. Selected checks go into the project's existing check command through `apply`.
+   When the project selects CI, the same command also goes into its CI config through `apply`, as an optional integration.
+2. `apply` rejects a command or CI edit that ignores a failure, such as `continue-on-error: true` or `|| true` on a check command.
 3. In a repo with several packages, rules are scoped to the package they apply to.
 4. Set up the initial documented debt baseline through selected findings before expecting an audited fixture to pass new rules.
    Prove each rule separately against the clean variants from T1.1, without treating unrelated existing debt as a new violation.
+5. Execute the identical maintained command in separate disposable local copies for the positive and negative controls.
+   No external test branch or hosted run is needed.
+   Report the behaviour of any CI adapter example as unverified, because bstack does not execute hosted CI.
 
 **Done when**
 
-- On `ts-shop`, the same command fails on a seeded violation locally and in a CI run of a disposable copy pushed to a test branch.
-Ask the owner before that push.
+- On `ts-shop`, the exact same maintained command passes on a valid disposable copy and fails on a seeded violation copy, and the failure propagates to its exit code.
 - The `web` package rule does not run against `core`.
+
+The commissioning decisions retired the earlier criterion of a hosted CI run on a pushed test branch.
 
 **Covers:** AC-58, AC-61.
 
@@ -1168,7 +1296,7 @@ Phase evidence from the design: unreviewed or stale input states fail, and relev
 
 ### T3a.1 Define the project contract
 
-**Depends on:** T3.4.
+**Depends on:** T3.4, the maintained local check integration.
 
 **Inputs and outputs:** Existing config capabilities and source pointers -> validated project contract.
 
@@ -1313,15 +1441,15 @@ Phase evidence from the design: unreviewed or stale input states fail, and relev
 
 **Covers:** AC-13, AC-15.
 
-### T3a.6 Build the checker for a clean CI checkout
+### T3a.6 Build and prove the standalone checker in a clean checkout
 
 **Depends on:** T3a.5.
 
-**Inputs and outputs:** Shared validators, schemas and CI input policy -> standalone checker and clean-clone evidence.
+**Inputs and outputs:** Shared validators, schemas and clean-checkout input policy -> standalone checker and clean-clone evidence.
 
-**Verification:** `npm test -- --task T3a.6`, then the fresh-clone CI procedure.
+**Verification:** `npm test -- --task T3a.6`, then the clean-checkout procedure.
 
-**Read:** design "Keep the contract small" and this plan's clean-CI contract below.
+**Read:** design "Keep the contract small" and this plan's clean-checkout contract below.
 
 **Steps**
 
@@ -1334,48 +1462,55 @@ Phase evidence from the design: unreviewed or stale input states fail, and relev
 4. Separate validation into input preflight, leaf command execution and result validation.
    Preflight checks the contract, inventory, document assessments, source links and generated facts.
    The checker executes each required leaf check exactly once and captures current evidence.
-   Final validation uses those CI results and the substantive reviewed assessment.
-   A local execution result cannot substitute for the current CI run.
+   Final validation uses those current results and the substantive reviewed assessment.
+   An execution record saved earlier cannot substitute for the current clean-checkout run.
 5. Use one project aggregate command that calls this checker.
    Contract leaf checks cannot call that aggregate command or the checker again.
    Validate check dependencies for cycles and reject obvious direct self-invocation before execution.
-6. Extend the target CI configuration from T3.4 through `apply`, using the clean-CI contract.
+6. Run the checker in a clean checkout using the clean-checkout contract below.
    When a change modifies the checker or its coverage policy, run the checker from the comparison base against the proposed target tree as well.
-   Extract that previous standalone checker to CI scratch and pass the target repo and assessment explicitly.
+   Extract that previous standalone checker to clean-checkout scratch and pass the target repo and assessment explicitly.
    Resolve previous contract paths from the base, including a deleted or moved current config.
    An incompatible prior checker requires a recorded migration decision and explicit coverage, rather than silently skipping prior-policy validation.
-   Run the same structural validation and leaf checks in local and CI modes.
+   Run the same structural validation and leaf checks in the working checkout and the clean checkout.
+7. When a target project selects CI, extend its CI configuration from T3.4 through `apply` as an optional integration.
+   bstack does not execute hosted CI, so that adapter's hosted behaviour is reported unverified.
 
 **Done when**
 
-- A fresh clone with no installed skill or agent passes with a complete assessment and valid leaf checks.
-- Seeded stale documents, absent records, missing bases, failed leaf checks and recursive commands cannot pass.
+- A disposable fixture cloned into a different root, with an isolated home and cache, no installed skill or agent, an explicit base and a committed assessment, passes with a complete assessment and freshly executed leaf checks.
+- Seeded stale documents, absent records, missing bases, failed leaf checks, saved earlier successes and recursive commands cannot pass.
 - A shallow checkout missing its comparison commit is blocked until the documented fetch step runs.
 - A contract-removal change fails under its previous coverage policy, including when it edits the checker source or configuration.
-- The generated validator is current, and a CI run records its own execution results without editing the committed assessment.
+- The generated validator is current, and the clean-checkout run records its own execution results without editing the committed assessment.
+- No hosted run is required.
 
 **Covers:** AC-24, AC-58.
 
-### Clean-CI contract
+### Clean-checkout contract
 
-Select a committed assessment path when the project's chosen CI requires review evidence.
-Local-only reviews can keep evidence in scratch, but cannot claim clean-CI assessment coverage.
-The project's CI adapter passes the assessment path and comparison base explicitly.
+Select a committed assessment path when the project's selected delivery path needs portable review evidence.
+Local-only reviews can keep evidence in scratch, but cannot claim clean-checkout assessment coverage.
+The caller passes the assessment path, source revision and comparison base explicitly.
 If several records cover the same change, require an explicit selection instead of guessing the newest one.
 
-For a GitHub pull request, check out the submitted head and fetch the base branch commit.
-Resolve their merge base and require it to match the assessment's comparison base.
+Use explicit source and base objects.
+Compute their merge base, record that computation, and require it to match the assessment's comparison base.
 After a rebase or a base-branch change, refresh the assessment before claiming success.
-For push builds, pass the configured previous commit or comparison policy explicitly.
 For a new repo, use the explicit empty-tree mode.
-Other CI systems document the equivalent source refs in their adapter.
 
 Missing base objects, an absent assessment or unsupported prior policy block the run.
-CI does not silently fetch a different base or fall back to an empty passing diff.
+The checker does not silently fetch a different base or fall back to an empty passing diff.
+
+Optional CI adapter notes remain for target projects that select CI.
+For a GitHub pull request, the adapter checks out the submitted head and fetches the base branch commit before the same merge-base computation.
+For push builds, it passes the configured previous commit or comparison policy explicitly.
+Other CI systems document the equivalent source refs in their adapter.
 Required merge checks remain a separate owner-approved shared-system setting.
-A changed workflow can omit its own checker, so the helper alone cannot guarantee that every pull request runs the gate.
-The project's protected CI configuration or independent required check must enforce that execution boundary.
-Report that boundary as unverified until the owner-approved CI configuration is checked.
+A changed workflow can omit its own checker, so the helper alone cannot guarantee that every change runs the gate.
+Report that execution boundary as unverified, and never claim enforced forge protection.
+
+For bstack itself, the chosen delivery gate is the no-mistakes pipeline described under "Delivery gate".
 
 ### T3a.7 Write the maintenance reference
 
@@ -1391,6 +1526,7 @@ Report that boundary as unverified until the owner-approved CI configuration is 
 
 1. Write `references/maintenance-contract.md`: when to collect evidence, how to assess each candidate document, what counts as a no-impact reason, and when a decision is needed.
 2. State that routine maintenance does not repeat the goal interview or the full audit.
+3. Describe local and standalone checker validation, and how to supply its evidence to the project's selected delivery gate, without assuming a CI.
 
 **Done when**
 
@@ -1449,10 +1585,12 @@ Phase evidence from the design: a clean install runs in the current agent and pr
 - Tests cover copy and link modes, first-install collisions, dry run, repeat, update, obsolete files and removal.
 - Edited files, unrelated content and link targets survive update and uninstall.
 - Runtime-install failure and interrupted installation leave recoverable state and a non-passing result.
-- The same tests pass in isolated homes on Windows, macOS and Linux.
+- The same tests pass in isolated homes in one recorded real local or manual run on each of Windows, macOS and Linux, without GitHub Actions.
+  Local Node 24 and Node 26 runs supplement these, and a Linux run does not substitute for another operating system.
 - `node scripts/check-package.mjs --skill <installed-folder>` validates a clean copy installation.
 
 **Covers:** AC-73, AC-74.
+AC-74 stays blocked until all three operating-system runs are recorded, unless the owner explicitly changes the support scope.
 
 ### T4.2 Run the basic tests in the current agent
 
@@ -1470,12 +1608,15 @@ Phase evidence from the design: a clean install runs in the current agent and pr
 2. Ask "audit this repo" without the explicit command.
    Then start the skill with the explicit command.
 3. Where the agent shows which files it opened, compare them to the "load when" table.
+   Record the host, its available capabilities and what was actually observed.
+   Never infer a loading trace from prose compliance.
 4. Confirm the run needs no router, akashic or no-mistakes.
 
 **Done when**
 
 - The plain request does not start the skill, and the explicit command does.
-- Every opened file matches a "load when" condition, and no script source or board asset was read.
+- Where the host shows which files the agent opened, every opened file matches a "load when" condition, and no script source or board asset was read.
+  Where it does not, the loading cases stay blocked with that limitation recorded.
 - The results are recorded in `tests/eval/results/` with the agent and model.
 
 **Covers:** AC-39, AC-40, AC-42, AC-43, AC-56, AC-75.
@@ -1498,7 +1639,7 @@ Phase evidence from the design: a clean install runs in the current agent and pr
 3. Run a representative extension on `ts-shop` using only the target repo's resulting guidance and checks.
    The extension must locate the approved example, use intended interfaces and exercise the agreed user journey.
 4. Run a maintenance-only scenario without the interview or full audit.
-5. Record script tests, agent transcripts, manual verdicts and clean-CI results under their acceptance IDs.
+5. Record script tests, agent transcripts, manual verdicts, completed installer transcripts and fresh clean-checkout checker artifacts under their acceptance IDs.
    A final result cannot cite a partial checkpoint as proof that a full path works.
 
 **Done when**
@@ -1528,6 +1669,7 @@ Phase evidence from the design: release evidence covers every acceptance case.
 
 1. Run the skill on each fixture and save a short worked example in `docs/examples/`: the request, the findings, the selection and the result.
 2. Write the limitations in `README.md`: what scripts cannot prove, the Claude Code version limit for `AGENTS.md`, and that tests ran in one agent and model.
+   State the actual operating system, Node and agent runs behind the evidence, and that hosted CI behaviour is unverified.
 3. Write the install and use instructions in `README.md`.
 
 **Done when**
@@ -1551,17 +1693,20 @@ Phase evidence from the design: release evidence covers every acceptance case.
    Each must pass under the design's pass rule.
    Ensure each scenario also has a comparable baseline from the same scoring criteria and fixture revision.
 2. Run `node scripts/acceptance.mjs --results tests/eval/results --require-complete`.
-   Require passing evidence for all 75 design cases, plus baseline and final comparisons for every evaluation scenario.
+   Require passing evidence for all 75 design cases as amended by the commissioning decisions, including AC-24 as a clean-checkout case and AC-74 with three real operating-system runs.
+   Require baseline and final comparisons for every evaluation scenario.
    Cases that already passed without the skill must still pass with it.
    Fill the coverage table with actual evidence paths.
    A blocked, skipped or missing procedure cannot be waived by ticking a task.
-3. Ask the owner to approve the tag `v0.1.0` and a GitHub release.
-   Then tag, push and publish.
+3. Ship the final evidence through the no-mistakes gate, and include that gate run and the landed commit in the release evidence.
+4. Ask the owner to approve the tag `v0.1.0` and a GitHub release.
+   Then create the tag and the GitHub release manually.
+   No tag-triggered workflow runs, and nothing is published to npm.
 
 **Done when**
 
 - Every acceptance case has a passing result in the coverage table.
-- The owner has approved, and the tag exists on GitHub.
+- The owner has approved, and the tag and its GitHub release exist on GitHub.
 
 **Covers:** AC-46.
 
@@ -1576,7 +1721,8 @@ Automated procedures name the test title and file, with positive and negative co
 Agent and manual procedures name the scenario check and the transcript or board artifact needed to score it.
 The runner verifies that a named test actually executed, rather than accepting a zero-test exit code.
 Every result records passed, failed or blocked, its relevant input revision and an existing artifact path.
-`scripts/acceptance.mjs --require-complete` rejects missing or duplicate case records and unsupported success claims.
+`scripts/acceptance.mjs --require-complete` rejects missing case records, duplicate final evidence selections and unsupported success claims.
+Repeated execution artifacts with unique run IDs are legitimate history, and the validator prefers the explicitly selected fresh final evidence over stale earlier runs.
 
 Fill in the "Evidence" column in T5.2.
 Registry completeness is a structural check, while final case evidence proves execution.
@@ -1598,14 +1744,14 @@ Registry completeness is a structural check, while final case evidence proves ex
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | |
-| T3.4 | AC-58, AC-61 | Local and real CI violations, with package-scope controls | |
+| T3.4 | AC-58, AC-61 | Same maintained command on valid and violation disposable local copies, failure propagation and package-scope controls | |
 | T3a.2 | AC-19, AC-20 | Complete Git change inventory and invalid-base controls | |
 | T3a.3 | AC-16, AC-17, AC-19, AC-21, AC-22, AC-28 | Before/after impact, no-impact, stale input and prior-policy bypass controls | |
 | T3a.4 | AC-18 | Stale generated sections and checked regeneration | |
 | T3a.5 | AC-13, AC-15 | Context-specific terms and reviewed rule relocation | |
-| T3a.6 | AC-24, AC-58 | Fresh clone, missing evidence, shallow base and current CI execution | |
+| T3a.6 | AC-24, AC-58 | Different-root clean clone, missing evidence, shallow base and fresh leaf execution | |
 | T3a.7 | AC-23 | Maintenance-only transcript without interview or full audit | |
-| T4.1 | AC-73, AC-74 | Copy/link lifecycle and conflict preservation on all three operating systems | |
+| T4.1 | AC-73, AC-74 | Copy/link lifecycle and conflict preservation, with one recorded real run on each of the three operating systems | |
 | T4.2 | AC-39, AC-40, AC-42, AC-43, AC-56, AC-75 | Fresh explicit/implicit invocation and observed file-loading trace | |
 | T4.3 | AC-1, AC-3, AC-23, AC-54, AC-64, AC-69, AC-75 | Final full-path transcripts, repeated audit and independent extension | |
 | T5.2 | AC-46 | Comparable baseline/final results and all-case evidence validation | |
