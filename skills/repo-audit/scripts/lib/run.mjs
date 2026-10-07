@@ -62,6 +62,7 @@ async function capture(command, { cwd, timeoutMs, signal }) {
   child.on('close', (code, exitSignal) => finish([code, exitSignal]))
   const cleanupFailed = message => {
     error ??= message
+    if (child.exitCode === null && child.signalCode === null && !child.kill('SIGKILL')) child.unref()
     child.stdout.destroy()
     child.stderr.destroy()
     finish([child.exitCode, child.signalCode])

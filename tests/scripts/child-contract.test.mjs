@@ -21,10 +21,10 @@ async function sandbox(t) {
   return directory
 }
 
-async function invoke(directory, mode, input) {
+async function invoke(directory, mode, input, preload) {
   const inputPath = join(directory, 'input.json')
   await writeFile(inputPath, JSON.stringify(input))
-  const result = spawnSync(process.execPath, [join(root, 'tests/inputs/child-contract.mjs'), '--mode', mode,
+  const result = spawnSync(process.execPath, [...(preload ? ['--import', preload] : []), join(root, 'tests/inputs/child-contract.mjs'), '--mode', mode,
     '--workspace', directory, '--input', inputPath, '--json'], { cwd: directory, encoding: 'utf8', timeout: 5000 })
   assert.ifError(result.error)
   assert.equal(result.stderr, '')
@@ -142,6 +142,38 @@ for (const cancelled of [false, true]) {
         assert.equal(checks, probe ? 0 : 1)
         assert.equal(result.toolVersion.status, probe ? 'blocked' : 'passed')
       })
+    }
+  }
+}
+
+for (const cancelled of [false, true]) {
+  for (const probe of [false, true]) {
+    for (const launchError of [false, true]) {
+      for (const killFails of [false, true]) {
+        test(`Windows cleanup ${launchError ? 'launch error' : 'failure'} lets the CLI exit after ${cancelled ? 'cancelling' : 'timing out'} a live ${probe ? 'version probe' : 'check'} when direct termination ${killFails ? 'fails' : 'succeeds'}`, async t => {
+          const directory = await sandbox(t)
+          const args = ['-e', 'const fs = require("node:fs"); const path = require("node:path"); fs.writeFileSync(path.join(process.argv[1], "ready"), ""); setInterval(() => {}, 1000)', directory]
+          try {
+            const result = await invoke(directory, 'run', {
+              command: nodeCommand(args, { timeoutMs: 500, ...(probe ? { versionArgs: args } : {}) }),
+              cleanupFailure: { launchError, killFails },
+              ...(cancelled ? { cancelDirectory: directory } : {})
+            }, join(root, 'tests/inputs/windows-cleanup.mjs'))
+            assert.equal(result.code, 2)
+            assert.equal(result.status, 'blocked')
+            assert.equal(result.data.cancelled, cancelled)
+            assert.equal(result.data.timedOut, !cancelled)
+            assert.ok(result.data.error)
+            assert.equal(result.data.toolVersion.status, probe ? 'blocked' : 'passed')
+            const pid = Number(await readFile(join(directory, 'child-pid'), 'utf8'))
+            if (killFails) process.kill(pid, 0)
+            else assert.throws(() => process.kill(pid, 0), { code: 'ESRCH' })
+          } finally {
+            const pid = Number(await readFile(join(directory, 'child-pid'), 'utf8'))
+            try { process.kill(pid, 'SIGKILL') } catch (error) { if (error.code !== 'ESRCH') throw error }
+          }
+        })
+      }
     }
   }
 }
