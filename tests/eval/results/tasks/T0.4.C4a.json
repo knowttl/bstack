@@ -1,0 +1,298 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.4.C4a",
+  "slice": "C4a",
+  "sourceRevision": "07c0ba0f9a8cf6964d47035c1a1e748238140dff",
+  "intent": "\"yes approbe and begin the implementation\". Begin the approved commissioning plan slice by slice with C4a, the target, path, scratch, result and argument contracts of T0.4.",
+  "amendments": [
+    "C4a implements only args.mjs, result.mjs, repo.mjs, paths.mjs and scratch.mjs plus shared contracts and public fixture tests.",
+    "C4b owns child commands and fingerprints, and C4c owns schema validation and production command wiring.",
+    "Preserve .no-mistakes.yaml byte-identical and add no workflow files."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep 2 14:24:27 UTC 2026 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.node-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.npm-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "git-version",
+      "executable": "git",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.git-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.os.txt",
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.4.C4a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "preserved-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "--exit-code",
+        "origin/main",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.preserved-config.txt",
+      "status": "passed"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4a.history.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C4a/draft-scratch",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: draft workspace stores distinct runs in scratch and leaves workspace unchanged",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/git-no-commits",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: Git target resolves from a subdirectory with no commits",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/git-committed",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: Git target resolves from a subdirectory with a commit",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/missing-target",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: arguments reject missing target with a JSON usage error",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/unknown-options",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: arguments reject unknown options with a JSON usage error",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/missing-value",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: arguments reject missing value with a JSON usage error",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/duplicate-option",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: arguments reject duplicate option with a JSON usage error",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/conflicting-targets",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: arguments reject conflicting targets with a JSON usage error",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/traversal",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: rejects traversal.json before scratch writes and reports every problem",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/absolute-paths",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: rejects absolute-paths.json before scratch writes and reports every problem",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/unknown-fields",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: rejects unknown-fields.json before scratch writes and reports every problem",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/invalid-types",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: rejects invalid-types.json before scratch writes and reports every problem",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/escaping-links",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: escaping existing links and new children under escaping parents are refused before writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/dangling-parent",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: dangling parents are refused rather than treated as missing directories",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/git-prerequisite",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: missing Git prerequisite returns blocked rather than passing",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/draft-mode-only",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: repo commands refuse workspace mode",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/scratch-link",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: scratch refuses a cache link into the target before creating directories",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/alias-identity",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: target aliases use the same scratch identity",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/missing-directory",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: unavailable target absent is blocked without writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/file-target",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: unavailable target brief.md is blocked without writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    },
+    {
+      "id": "C4a/human-summary",
+      "kind": "automated",
+      "procedure": "tests/scripts/command-contract.test.mjs: human output is a short summary with the same failed exit code",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4a.task-test.txt"
+    }
+  ],
+  "limitations": [
+    "Only Linux on Node v24.17.0 was tested. Windows and macOS execution remain unverified.",
+    "C4b and C4c remain pending. T0.4 is not complete, and no child execution, fingerprint, schema validation or production command wiring is claimed.",
+    "All recorded commands ran against implementation commit 07c0ba0f9a8cf6964d47035c1a1e748238140dff. An evidence-only commit on top changes no source, tests or manifest and does not need to name itself.",
+    "Path resolution is preflight. Reviewed write protection and revalidation at the write boundary belong to T2.6."
+  ]
+}
