@@ -15,6 +15,7 @@ npm run check
 npm test
 npm test -- --task T0.1
 npm test -- --task T0.2
+npm test -- --task T0.3
 ```
 
 `check` currently runs the bootstrap checks for the manifest, lockfile and test discovery, plus the skill skeleton checks.
@@ -22,6 +23,19 @@ T0.5 replaces it with the skill package check.
 `npm run eval` reports that evaluation is not built and exits 2 until T1.2.
 Tests are discovered only under `tests/scripts/` and `tests/package-check/`.
 Task suites are registered in `tests/tasks.json`.
+
+Raw upstream development sources are committed outside the installed skill.
+[The manifest](upstream/sources.json) owns their exact pins and copied paths, and [NOTICE](NOTICE) records adaptations.
+To refresh the copies or verify them against their pinned remote bytes:
+
+```sh
+node upstream/fetch.mjs
+node upstream/fetch.mjs --check
+```
+
+Both commands require network access and exit 1 if a listed remote file is missing or unavailable.
+Fetching replaces local copies only after every listed remote file downloads successfully.
+`--check` writes nothing and also exits 1 for missing or modified local copies.
 
 To view the planned commands:
 
