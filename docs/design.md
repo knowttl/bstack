@@ -11,7 +11,7 @@ date: 2026-10-07
 footer: Built from docs/design.md. Markdown is authoritative. The HTML is generated.
 meta:
   - Owner: Brytton Tsai
-  - Status: Commissioned on 2026-10-07, build not started
+  - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
   - Scope: repo-audit and its complete dependency set
   - Revision: 26, commissioning decisions applied, safe to publish
 ---
