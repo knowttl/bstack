@@ -4,7 +4,6 @@
     "repoUrl": "https://github.com/mattpocock/skills",
     "commit": "6fd947921b935b7e1e69293a200400f0fdd5c15f",
     "files": [
-      "LICENSE",
       "skills/productivity/grill-me/SKILL.md",
       "skills/productivity/grilling/SKILL.md",
       "skills/engineering/grill-with-docs/SKILL.md",
@@ -28,7 +27,6 @@
     "repoUrl": "https://github.com/kunchenguid/vision",
     "commit": "7a20c38181151ec67efdf8fa2cb03a60123a7b83",
     "files": [
-      "LICENSE",
       "skills/vision/SKILL.md",
       "skills/vision/assets/review-template.html",
       "skills/vision/assets/review.css"
@@ -39,7 +37,6 @@
     "repoUrl": "https://github.com/cursor/plugins",
     "commit": "9f451cf875ad1239912762f67741e8e5ba6ac0f1",
     "files": [
-      "pstack/LICENSE",
       "pstack/skills/architect/references/design-red-flags.md",
       "pstack/skills/principle-model-the-domain/SKILL.md",
       "pstack/skills/principle-minimize-reader-load/SKILL.md",
