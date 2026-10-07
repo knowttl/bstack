@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.3",
+  "slice": "C3",
+  "sourceRevision": "80042e255dff4f474f6993887dc8d0693cbf24d4",
+  "intent": "\"yes approbe and begin the implementation\". Begin the approved commissioning plan slice by slice with T0.3, pinned upstream sources and NOTICE.",
+  "amendments": [
+    "Preserve .no-mistakes.yaml byte-identical and add no workflows or npm dependencies.",
+    "R1 decision restores the full four-source T0.3 scope and NOTICE inventory of pins and adaptations."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.node-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.npm-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.os.txt",
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.3"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.task-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "fetch-check",
+      "executable": "node",
+      "args": [
+        "upstream/fetch.mjs",
+        "--check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.fetch-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "preserved-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "--exit-code",
+        "99c0e7314c0172135a44e040c29ed92bbe55f2e9",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.preserved-config.txt",
+      "status": "passed"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.3.history.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "T0.3/pins-and-paths",
+      "kind": "manual",
+      "procedure": "Run node upstream/fetch.mjs --check against upstream/sources.json. All 26 exact procedure and asset paths across four sources, including Kun ENTRY.md and companion formats/assets, match their pinned remote bytes.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.fetch-check.txt"
+    },
+    {
+      "id": "T0.3/fetch-and-check",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: fetch copies exact pinned bytes and check verifies them without writing",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.test.txt"
+    },
+    {
+      "id": "T0.3/missing-pinned-file-fetch",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: fetch refuses a listed file absent at its pin",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.test.txt"
+    },
+    {
+      "id": "T0.3/missing-pinned-file-check",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: check refuses a listed file absent at its pin",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.test.txt"
+    },
+    {
+      "id": "T0.3/missing-local-copy",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: check refuses an absent local copy without repairing it",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.test.txt"
+    },
+    {
+      "id": "T0.3/modified-local-copy",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: check refuses modified local bytes and preserves them",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.test.txt"
+    },
+    {
+      "id": "T0.3/path-traversal",
+      "kind": "automated",
+      "procedure": "tests/scripts/upstream.test.mjs: fetch rejects traversal before copying files",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.test.txt"
+    },
+    {
+      "id": "T0.3/adaptation-inventory",
+      "kind": "manual",
+      "procedure": "Compare NOTICE with upstream/sources.json. All four copied sources have their full pins and no adaptations.",
+      "status": "passed",
+      "artifact": "NOTICE"
+    },
+    {
+      "id": "T0.3/config-preserved",
+      "kind": "manual",
+      "procedure": "git diff --exit-code 99c0e7314c0172135a44e040c29ed92bbe55f2e9 -- .no-mistakes.yaml",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.3.preserved-config.txt"
+    }
+  ],
+  "limitations": [
+    "Only Linux with Node v24.17.0 was tested. These runs do not prove Windows or macOS support.",
+    "Default tests use a file-backed fake of the network boundary and never contact GitHub. The separate recorded live check verified all 26 files from four sources at their pins.",
+    "No pstack files moved at the planned pin, and no design links changed.",
+    "No upstream content was adapted into the installed skill.",
+    "Full plain npm test and fetch check ran against implementation commit 80042e255dff4f474f6993887dc8d0693cbf24d4, which contains four sources and 26 required files. An evidence-only commit on top changes no source, test or manifest file and does not need to name itself.",
+    "Install and bootstrap check artifacts are historical results from e1262d4da43b7812ad5bce9115bb332d36ae38bf. Its earlier full-suite output is preserved in T0.3.test.history-e1262d4.txt. Earlier four-source fetch output from 49214938422e4ab884bed7d8dc1ca50a2e59d6be is preserved in T0.3.fetch-check.history-4921493.txt.",
+    "The task-test command artifact is a historical focused result from 49214938422e4ab884bed7d8dc1ca50a2e59d6be. The six automated cases link to the current full-suite output.",
+    "The first full test attempt could not load the existing yaml dependency. npm ci installed the unchanged locked dependencies locally, after which plain npm test passed all 15 tests."
+  ]
+}

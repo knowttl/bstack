@@ -354,7 +354,7 @@ Tick each task when its "Done when" commands pass.
 - Phase 0: Package contract
   - [x] T0.1 Create the repo skeleton
   - [x] T0.2 Create the skill skeleton
-  - [ ] T0.3 Pin upstream sources and start NOTICE
+  - [x] T0.3 Pin upstream sources and start NOTICE
   - [ ] T0.4 Build the shared script library
   - [ ] T0.5 Build the package check
   - [ ] T0.6 Establish local validation and no-mistakes gate

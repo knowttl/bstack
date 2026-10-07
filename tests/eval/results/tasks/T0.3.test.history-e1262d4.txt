@@ -1,0 +1,105 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs
+
+Selected 3 suite(s): tests/scripts/bootstrap.test.mjs, tests/scripts/skill-skeleton.test.mjs, tests/scripts/upstream.test.mjs
+TAP version 13
+# Subtest: bootstrap manifest commands and root lockfile agree
+ok 1 - bootstrap manifest commands and root lockfile agree
+  ---
+  duration_ms: 7.519258
+  type: 'test'
+  ...
+# Subtest: discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+ok 2 - discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+  ---
+  duration_ms: 166.546361
+  type: 'test'
+  ...
+# Subtest: task selection executes only registered suites and rejects unknown tasks
+ok 3 - task selection executes only registered suites and rejects unknown tasks
+  ---
+  duration_ms: 191.924515
+  type: 'test'
+  ...
+# Subtest: an empty selected suite fails
+ok 4 - an empty selected suite fails
+  ---
+  duration_ms: 39.143419
+  type: 'test'
+  ...
+# Subtest: skill metadata permits only user invocation in the documented hosts
+ok 5 - skill metadata permits only user invocation in the documented hosts
+  ---
+  duration_ms: 14.04971
+  type: 'test'
+  ...
+# Subtest: load when table resolves all eight bundled reference placeholders
+ok 6 - load when table resolves all eight bundled reference placeholders
+  ---
+  duration_ms: 12.096091
+  type: 'test'
+  ...
+# Subtest: no arguments prints planned commands and returns usage exit 3
+ok 7 - no arguments prints planned commands and returns usage exit 3
+  ---
+  duration_ms: 35.82615
+  type: 'test'
+  ...
+# Subtest: explicit help succeeds
+ok 8 - explicit help succeeds
+  ---
+  duration_ms: 40.352075
+  type: 'test'
+  ...
+# Subtest: an unimplemented command returns usage exit 3
+ok 9 - an unimplemented command returns usage exit 3
+  ---
+  duration_ms: 36.474984
+  type: 'test'
+  ...
+# Subtest: fetch copies exact pinned bytes and check verifies them without writing
+ok 10 - fetch copies exact pinned bytes and check verifies them without writing
+  ---
+  duration_ms: 192.798906
+  type: 'test'
+  ...
+# Subtest: fetch refuses a listed file absent at its pin
+ok 11 - fetch refuses a listed file absent at its pin
+  ---
+  duration_ms: 80.235347
+  type: 'test'
+  ...
+# Subtest: check refuses a listed file absent at its pin
+ok 12 - check refuses a listed file absent at its pin
+  ---
+  duration_ms: 82.509948
+  type: 'test'
+  ...
+# Subtest: check refuses an absent local copy without repairing it
+ok 13 - check refuses an absent local copy without repairing it
+  ---
+  duration_ms: 75.185985
+  type: 'test'
+  ...
+# Subtest: check refuses modified local bytes and preserves them
+ok 14 - check refuses modified local bytes and preserves them
+  ---
+  duration_ms: 142.175753
+  type: 'test'
+  ...
+# Subtest: fetch rejects traversal before copying files
+ok 15 - fetch rejects traversal before copying files
+  ---
+  duration_ms: 41.119855
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 689.274807
