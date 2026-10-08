@@ -216,7 +216,7 @@ Unavailable tools or unreadable history return blocked with named problems.
 Equivalent names such as `CONTRIBUTING.md` and `architecture.md` are recognised.
 Read the discovered files to establish which source is authoritative.
 Root `CLAUDE.md`, including import-only stubs, yields a consolidation candidate requiring content review and author approval.
-Distinct nested instructions keep their scope, and equivalent nested instructions can only consolidate into `AGENTS.md` in the same scope.
+See the [existing-repo apply procedure](skills/repo-audit/SKILL.md#step-10-review-and-apply-selected-findings) for which instruction candidates this path can apply.
 Local and ancestor instructions outside the repo are possible shadowing sources and are never proposed for modification.
 Claude Code versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled may read only `CLAUDE.md`.
 Recheck current host loading behaviour before proposing removal.

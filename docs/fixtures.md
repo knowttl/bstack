@@ -8,7 +8,7 @@ The builder copies declared files into a fresh OS temporary folder and runs the 
 Exit codes are 0 for success, 1 for a failed build or sanity check, 2 for a missing executable or input, and 3 for usage errors.
 
 The [fixture registry](../tests/fixtures/fixtures.json) declares the files to copy and, for repo fixtures, an ordered history of paths, messages and dates.
-Each named fixture keeps its `FIXTURE.md` and `sanity.mjs` outside the built workspace.
+Each named fixture keeps its `sanity.mjs` and any `FIXTURE.md` outside the built workspace.
 Variants reuse source files through `source`, inject independent `seed` files before history, and share native sanity procedures.
 History steps may write or remove files before committing.
 `dirty` and `remove` apply after the final commit, and `shallow` builds a real depth-one clone.
@@ -16,7 +16,8 @@ Repo construction uses a fixed main branch, SHA-1 objects, empty templates, fixt
 It ignores global and system Git configuration while building, and never writes to either.
 Fixed author and committer dates make equivalent builds produce the same Git history.
 
-Each `FIXTURE.md` names its seeds, acceptance inputs and runtime requirements.
+Where present, `FIXTURE.md` explains seeds, acceptance inputs and runtime requirements.
+The [scenario registry](../tests/eval/scenarios/scenarios.json) owns evaluation requests and scoring checks, including the existing-vision delta scenario.
 To rerun sanity directly, use `node tests/fixtures/<name>/sanity.mjs <built-folder>`.
 `npm test -- --task T1.1` exercises the builder, deterministic history, isolated Git configuration, seed sanity and preservation of source bytes.
 The [task evidence](../tests/eval/results/tasks/T1.1.json) records local execution.
