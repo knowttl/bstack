@@ -1,5 +1,11 @@
 # Evaluation contract
 
+C18's [foundation checkpoint](../tests/eval/results/foundation-C18/summary.md) records sequential real new-idea and ambiguous-idea Codex runs using `--stage foundation` and the shipped adapter limits.
+The new-idea run completed the shipped board's actual verdict controls and exact approval, then protected creation and the native Chromium Rice/reload journey.
+Its full native check failed in a generated storage-failure test and remains unverified, with the project retained and the unapproved scratch correction recorded only as diagnosis.
+The ambiguous run preserved the unresolved offline-access decision without selecting a stack or changing its workspace.
+Both isolated homes were deleted after their conversations, and committed evidence redacts host paths, user names and identifiers.
+
 C7a implements the T1.2 acceptance registry and manual evaluation interface.
 C7b adds the current-host Codex adapter, verified discovery isolation, captured conversation turns and baseline runs.
 No C7a manual score proves host isolation or an acceptance case for the released skill.

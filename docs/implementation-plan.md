@@ -392,7 +392,13 @@ Tick each task when its "Done when" commands pass.
       [Checkpoint evidence](../tests/eval/results/foundation-C17/summary.md) distinguishes the scripted candidate review from blocked board interaction and exact-revision approval.
       [Task evidence](../tests/eval/results/tasks/T2.8.json) records final local validation.
       Maintained enforcement, portable maintenance and T4.3's completed-package extension proof remain pending.
-  - [ ] T2.9 Complete protected new-project creation
+  - [x] T2.9 Complete protected new-project creation - versioned reviewed destination/scaffold/command plans reuse the protected-write engine, with scratch exact diffs, no-write validation, directory/file/Git journals and interruption recovery.
+    The registered command suite covers collisions, user edits, partial writes and interrupted commands.
+    The [foundation checkpoint](../tests/eval/results/foundation-C18/summary.md) records real board verdicts, exact vision/scaffold approvals, the Chromium Rice/reload journey and an unchanged ambiguous-idea workspace.
+    The generated full native check failed and remains unverified with the created project kept; its scratch-verified one-line test correction is diagnosis only.
+    Skill-quality observation: the agent did not run and repair its own native tests before finishing the scaffold proposal.
+    This slice adds no corrective skill guidance for that observation.
+    [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks; Windows/macOS, later enforcement and maintenance remain pending.
 - Phase 3: Enforcement
   - [ ] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
