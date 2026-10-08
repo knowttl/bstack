@@ -343,7 +343,7 @@ Tick each task when its "Done when" commands pass.
   - [x] T1.2 Build the evaluation runner and record the baseline
     - [x] C7a Acceptance registry and manual evaluation interface ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
     - [x] C7b Current-host Codex adapter, fresh state and discovery isolation, resumed scripted answers and three human-scored real baselines ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
-  - [ ] T1.3 Write the first `SKILL.md`
+  - [x] T1.3 Write the first `SKILL.md`: bounded checklists, inline safeguards and labelled unavailable tooling ([gap map](../tests/eval/results/gap-map.md), [evidence](../tests/eval/results/tasks/T1.3.json))
   - [ ] T1.4 Bundle the interview and domain-language modules
   - [ ] T1.5 Adapt VISION and bundle the board assets
   - [ ] T1.6 Build the VISION board launcher

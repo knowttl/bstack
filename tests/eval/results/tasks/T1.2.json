@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "taskId": "T1.2",
   "slice": "C7b",
-  "sourceRevision": "cc20ef6e50180dbfd2450d3bafc002efed215cf6",
+  "sourceRevision": "849d698b576edd75f40d626fb1395a65d337dba1",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope, and the approved baseline rule: at least three realistic comparable scenarios, no failure quota) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Landed: Phase 0, T1.1 and C7a (https://github.com/knowttl/bstack/pull/14: acceptance registry, scenarios, run records and manual scoring).\n\nThis piece is slice C7b, the rest of task T1.2: one current-host adapter, isolation and the recorded baseline (slice done evidence: fresh sessions, no-skill discovery absence, unique transcripts, comparable model, revision and criteria).\n\nfor each evaluation run, copy ONLY the existing Codex login file (the auth file in the invoking user's CODEX_HOME) into a fresh throwaway isolated CODEX_HOME created for that run with mode 0700 (file 0600), containing no skills, config or other state; run the session; delete that isolated home immediately after the run, including on failure or timeout. Never print, log, record in evidence, or commit the credential or its contents; record only that the run authenticated via a throwaway copy. Verify isolation (no repo-audit skill discoverable in without mode) before scoring.",
   "amendments": [
     "C7b first refreshed C7a evidence in commit 373880f56dad5b73f852fe35d3607d66f1e2c018 against landed C7a commit 7827f55, including ownership, table-driven completed-procedure matching and comparison checks.",
@@ -12,12 +12,11 @@
     "Evidence-only commit follows the final tested implementation commit. No final with-skill or released-skill acceptance is claimed.",
     "Review fixes remove manual adapter preparation and deferred opening; normal adapter starts and ordered resumed answers retain the recorded baseline conversation behavior.",
     "Published baselines and corresponding evidence copies redact host metadata. Original source, fixture revision, adapter, model, criteria and reviewer outcomes remain unchanged; conversation hashes now bind the redacted bytes, with original hashes retained as provenance.",
-    "Historical command outputs still describe source revision cc20ef6e50180dbfd2450d3bafc002efed215cf6. Full final-commit installation, package check, repository tests, T1.2 tests and registry validation must be refreshed by the outer validation phases; this assigned review phase is limited to focused verification.",
-    "Focused review verification passed 55 evaluation CLI tests and inline archived-evidence assertions on HEAD d4acb62040ad3a82ad122b913f84768056115e17 with implementation worktree diff SHA-256 fb1d59f20974bfbf134276961c81f7cda7e0e446353130e5f42d1cbd3da62684. Final-commit full validation remains assigned to the outer phases."
+    "C8 evidence-only refresh reran installation, package check, full tests (236 passed), T1.2 suite (115 passed), registry validation and focused evaluation suite (55 passed) against landed C7b commit 849d698b576edd75f40d626fb1395a65d337dba1. The recorded real baseline sessions stand without rerunning agents."
   ],
-  "status": "blocked",
+  "status": "passed",
   "environment": {
-    "os": "Linux [redacted: host name] 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "os": "Linux 6.8.0-142-generic x86_64",
     "node": "v24.17.0",
     "tools": {
       "npm": "11.13.0",
@@ -103,7 +102,7 @@
       "id": "os",
       "executable": "uname",
       "args": [
-        "-a"
+        "-srm"
       ],
       "cwd": ".",
       "exitCode": 0,
@@ -196,10 +195,8 @@
       "id": "C7b-conversation",
       "kind": "automated",
       "procedure": "tests/scripts/eval.test.mjs: scripted replies resume the exact host conversation, preserve user turns and require ordered answers; manual adapter preparation is rejected before creating a run; host failure table; a resumed host turn cannot silently switch sessions; closing a conversation deletes isolated state and retains bound evidence for later scoring.",
-      "status": "blocked",
-      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt",
-      "reason": "The historical task-suite artifact covers the removed preparation behavior; the final task-suite evidence needs an outer validation refresh.",
-      "nextPrerequisite": "Outer T1.2 test phase against the final implementation commit."
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
     },
     {
       "id": "C7b-authentication",
@@ -248,9 +245,9 @@
     {
       "id": "C7b-publication",
       "kind": "manual",
-      "procedure": "Inline assertions over committed evaluation artifacts verified host metadata removal, four distinct redacted run identities, three unchanged baseline verdict sets, source and criteria provenance, adapter hashes, matching run and transcript JSONL, redacted conversation hashes, original citation line counts and bounds, and byte-identical pipeline configuration with no workflows added.",
+      "procedure": "Historical C7b publication review retained from the landed commit: redacted identities, unchanged baseline verdicts, provenance, transcript hashes and citation bounds. The refreshed evaluation suite covers archived-evidence consumers, not a new live session.",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/T1.2.review.txt"
+      "artifact": "tests/eval/results/runs/2026-10-08T03-14-25.779Z-868cd552-80e0-4265-9e06-5a2f8bab4bc7/run.json"
     }
   ],
   "limitations": [
@@ -261,6 +258,6 @@
     "The 75 registry definitions remain planned until their owning tasks register completed procedures. Registry validation does not pass acceptance cases.",
     "Fake host and dummy-login tests verify the command boundary and cleanup, not model interpretation. Published model output is redacted for host metadata while retaining scored observations and line citations.",
     "All live isolated homes, authentication copies and fixtures were removed after their outputs were preserved. Closed runs retain verified discovery inventory and a bound conversation hash for later scoring.",
-    "This review changes lifecycle entry points and published evidence representations without rerunning live models or handling credentials. Raw host sessions cannot be resumed from redacted archival identifiers. Final-commit full validation remains pending in the outer pipeline."
+    "This review changes lifecycle entry points and published evidence representations without rerunning live models or handling credentials. Raw host sessions cannot be resumed from redacted archival identifiers. Full local validation now passes on the landed C7b commit."
   ]
 }

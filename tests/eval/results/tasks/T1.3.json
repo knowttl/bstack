@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T1.3",
+  "slice": "C8",
+  "sourceRevision": "a4eae79ac53fa2c04321e2dfbd5f57453ae2a487",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Landed: Phase 0, T1.1 fixtures and T1.2 evaluation runner with the recorded, redacted baseline (https://github.com/knowttl/bstack/pull/15). Baseline outcome without the skill: ambiguous-idea and clear-goals passed, new-idea failed.\n\nThis piece is slice C8: task T1.3 \"Write the first SKILL.md\" - a bounded, baseline-backed SKILL procedure (slice done evidence: gap map and package check, hard safeguards retained, unavailable later steps labelled).",
+  "amendments": [
+    "First evidence-only commit 6778927 refreshed T1.2 against landed C7b revision 849d698b576edd75f40d626fb1395a65d337dba1 without new agent sessions.",
+    "Final implementation includes README usage, evaluation documentation and task progress before validation. This evidence-only commit records those actual runs.",
+    "Registered T1.3 reuses existing package-check and metadata suites. Natural-language effectiveness is reviewed against the baseline, not inferred from substring tests."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.3.install.txt"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.3.check.txt"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.3.test.txt"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T1.3"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.3.task-test.txt"
+    },
+    {
+      "id": "skill-validator",
+      "executable": "python3",
+      "args": [
+        "<skill-creator>/scripts/quick_validate.py",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 1,
+      "status": "failed",
+      "outputArtifact": "tests/eval/results/tasks/T1.3.skill-validator.txt",
+      "reason": "Optional generic validator does not accept the required multi-host frontmatter. The repo-specific package check verifies this contract."
+    }
+  ],
+  "cases": [
+    {
+      "id": "C8-package",
+      "kind": "automated",
+      "procedure": "npm run check and the existing tests/scripts/package-check.test.mjs command-interface cases for valid packages, unavailable paths, missing metadata, nested or unlisted references and missing completion criteria, plus tests/scripts/skill-skeleton.test.mjs user-only metadata and local resource contract.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.3.task-test.txt"
+    },
+    {
+      "id": "C8-baseline-map",
+      "kind": "manual",
+      "procedure": "Review every new-idea failure and retain ambiguous-idea and clear-goals requirements against recorded T1.2 scoring citations, design AC-1, AC-2, AC-6, AC-9 and AC-38 and SKILL.md Steps 1, 2, 3, 7 and 8. The gap map proves mapping only.",
+      "status": "passed",
+      "artifact": "tests/eval/results/gap-map.md"
+    },
+    {
+      "id": "C8-guardrails",
+      "kind": "manual",
+      "procedure": "Review scope, both checklists, review before apply, per-change AGENTS.md approval, protected writes, source-based verification, live probes, read-only research with fallback and unavailable tooling labels against T1.3 and design requirements.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.3.review.md"
+    }
+  ],
+  "limitations": [
+    "No real agent sessions, with-skill comparison or ablation ran in C8. Recorded baselines stand and no advice was removed. Later checkpoints own agent execution.",
+    "References are placeholders and production helpers, board, protected writes and full paths remain unavailable as labelled. Package checks do not establish model interpretation.",
+    "Local automated checks ran on Node 24 and Linux only. Windows, macOS and other host behaviour are not established.",
+    "The optional skill-creator quick validator rejects the design-required disable-model-invocation field because its allowed metadata list lacks the multi-host setting. The repository package check is authoritative and passed with the hard user-only setting preserved."
+  ]
+}

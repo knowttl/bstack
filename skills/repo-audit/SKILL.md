@@ -6,15 +6,264 @@ disable-model-invocation: true
 
 ## Scope
 
+Only the user starts repo-audit.
+Establish a project-specific foundation for a new idea or audit an existing repo, then apply only the changes the user selects.
+An empty repo can be a new idea, and an established repo can need only a scoped reassessment.
+Resolve the target, requested area and stated next change before proceeding.
+Resolve unclear scope before any write, and keep dependent work blocked while a consequential decision is open.
+Record technical uncertainty without inventing a product goal.
+
+Unrelated product work, automatic routing, general development playbooks and delivery orchestration are outside this skill.
+Return findings and evidence to the project's chosen workflow instead of starting another skill, opening a pull request or selecting a delivery service.
+Security hardening of created skills and licensing review are outside scope.
+
+This is a procedure under construction.
+The bundled conditional references are placeholders, and production audit, board, apply and evidence commands are unavailable.
+The shared-library contract-test command is available but does not implement an audit or approve writes.
+Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
+Do not substitute direct project edits or an invented board approval for unavailable tooling.
+
 ## New-idea path checklist
+
+Copy this checklist and tick a step only when its Done when criterion is met.
+
+- [ ] Step 1: Confirm intent
+- [ ] Step 2: Resolve project terms
+- [ ] Step 3: Review the vision
+- [ ] Step 4: Propose the foundation
+- [ ] Step 5: Review and apply selected changes
+- [ ] Step 6: Verify the outcome
+
+### Step 1: Confirm intent
+
+Begin with the intent interview before recommending implementation, even when a brief already supplies goals and a stack.
+Summarise what the user already explained and ask only about gaps, rather than reopening approved choices.
+Establish the problem, intended users, success outcome, first useful journey, non-goals, data, interfaces, deployment environment, reliability and access constraints, compatible behaviour and consequential trade-offs.
+Resolve parent decisions before dependent questions.
+Give a recommendation and its trade-off with each decision question, group only independent questions into a small round, then wait for answers.
+Use available facts instead of asking the user to look them up.
+Finish with the agreed goal, boundaries, decisions and remaining uncertainties.
+New or changed intent needs user confirmation before dependent implementation.
+An unresolved choice such as offline access blocks a dependent stack recommendation.
+The complete interview procedure is unavailable until T1.4.
+
+Done when: The intent interview has established the required facts or named the gaps, the user has confirmed new or changed intent, and every dependent decision is resolved or explicitly blocked.
+
+### Step 2: Resolve project terms
+
+Clarify conflicting or unclear terms alongside the interview, without a separate mandatory interview.
+Use the project's vocabulary source, otherwise propose GLOSSARY.md only when useful terms are resolved.
+Keep canonical domain concepts and their distinctions in the glossary.
+Keep storage choices, frameworks and other implementation details in the design instead of treating them as domain terms.
+Naming migrations are separate selected changes.
+The domain-language procedure is unavailable until T1.4.
+
+Done when: Each term needed for the first journey has a resolved meaning or a named unresolved decision, and the proposed vocabulary contains no implementation details or empty template entries.
+
+### Step 3: Review the vision
+
+Draft a contribution acceptance policy from confirmed author intent, without claiming evidence from nonexistent history.
+Include purpose and users, the responsibility the project owns, commitments, boundaries, non-goals and criteria for accepting or resisting future changes.
+Keep the vision separate from a backlog or implementation plan.
+Stress-test the important fault lines with concrete proposals, adapting their number to real unresolved trade-offs.
+Keep the draft, board and interview transcript outside the project in scratch.
+Collect verdicts against the current draft, revise it and obtain explicit user approval of the resulting vision.
+Approval of a brief's goals or stack does not approve the generated VISION.md.
+Silence and interrupted sessions do not count as approval.
+Write the approved reasoning so the eventual VISION.md stands on its own.
+The adapted vision procedure and board assets are unavailable until T1.5, and the tested board and verdict loop until T1.6.
+Preserve the draft for resume and report the board prerequisite instead of claiming completion.
+
+Done when: The current draft has been stress-tested through the board, its verdicts are resolved and the user has explicitly approved that revision, otherwise this step remains blocked.
+
+### Step 4: Propose the foundation
+
+Use the approved vision to propose the smallest sound foundation.
+Tie stack choices and meaningful alternatives to requirements, keeping the target's language independent of this skill's Node helpers.
+Cover system boundaries, module responsibilities, data flow, the first working journey and its acceptance check, needed errors, configuration and external interfaces, resolved terms and necessary review standards.
+Give each principle a reason, source, scope, enforcement method and exception policy.
+Prefer native checks and one source of truth over duplicated prose or a second verification engine.
+Distinguish automated rules from judgement rules.
+Include setup, formatting, lint, applicable type checks and tests.
+CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
+Avoid speculative frameworks, service layers, integrations and empty document templates.
+The enforcement and architecture references are unavailable until T3.1, with integration into this path in T2.9.
+
+Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
+
+### Step 5: Review and apply selected changes
+
+Present the exact changes and findings for selection using the shared review and write rules below.
+Create the minimal repo and selected foundation only through apply after review.
+Make the first user journey work end to end where practical, without expanding into unrelated product work.
+Protected writes are unavailable until T2.6, and protected new-project creation until T2.9.
+
+Done when: Only selected, reviewed changes have been applied with recoverable originals and current hash preconditions, otherwise writes remain blocked.
+
+### Step 6: Verify the outcome
+
+Follow the shared verification rules and report selected changes, actual evidence, unresolved findings and limitations.
+Verification capture is unavailable until T2.7 and the complete protected new-project path until T2.9.
+
+Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
 ## Existing-repo path checklist
 
+Copy this checklist and tick a step only when its Done when criterion is met.
+
+- [ ] Step 7: Audit the starting state
+- [ ] Step 8: Resolve material gaps
+- [ ] Step 9: Present evidenced findings
+- [ ] Step 10: Review and apply selected findings
+- [ ] Step 11: Verify and report readiness
+
+### Step 7: Audit the starting state
+
+Audit before interviewing.
+Resolve the selected repo and read its instructions and indexes, following them to relevant documents and implementation.
+Inventory the existing README, vision, requirements, goals, design, architecture, decisions, principles, vocabulary, standards, prior audits, debt and planned changes using their actual names and layout.
+Inspect relevant manifests, native configs, CI, entry points, module responsibilities, interfaces, data flow, code and tests.
+Record the revision and working-tree state and preserve uncommitted user work.
+Identify approved principles and their existing enforcement.
+Run safe native checks when prerequisites permit, recording commands and results directly.
+Get approval before checks that affect external systems or shared data.
+Record unavailable checks and inaccessible history as limitations, rather than inventing evidence.
+Use the shared research rules below for read-heavy work.
+Scripted inspect and inventory are unavailable until T2.2 and T2.3, and deterministic architecture measurements until T2.4.
+Manual observations do not establish that those helpers ran.
+
+Done when: Every relevant evidence source is inventoried or listed as unavailable, the starting state and native check results are recorded, and the audit distinguishes documented intent, observed behaviour and inferred intent with file citations.
+
+### Step 8: Resolve material gaps
+
+Summarise the evidence and clarify only missing facts or contradictions that would change a recommendation.
+Use a targeted decision round, resolving parents first and waiting for answers.
+When the repo already answers the questions, proceed directly to recommendations without asking the user to repeat or reconfirm approved goals.
+Load interview, domain-language or vision guidance only for a corresponding gap.
+Keep the existing vision and design as the baseline.
+A new vision or reviewed delta needs a material gap or requested direction change, with the same draft approval boundary as Step 3.
+Targeted interview and language procedures are unavailable until T1.4, and vision review until T1.5 and T1.6.
+
+Done when: Every material gap is resolved or explicitly blocks its dependent recommendation, settled decisions are retained, and no unnecessary interview or vision review has been opened.
+
+### Step 9: Present evidenced findings
+
+Judge the foundation against its approved principles and respect its stack and conventions unless evidence supports a specific change.
+Separate observed debt, missing protections, unresolved design decisions and proposed new principles.
+For each material finding record an ID, observed problem, evidence files or failing command, principle, consequence, proposed fix, scope, verification method and whether it blocks the stated next change or can wait.
+Keep proposed principles separate for review instead of treating them as existing requirements.
+Avoid speculative findings, cosmetic rewrites and universal architecture prescriptions.
+Use native baselines where available, keeping known failures visible and preventing new failures from entering through a refreshed baseline.
+Exceptions need a reason, scope and removal condition.
+Findings validation and scratch rendering are unavailable until T2.5, enforcement guidance until T3.1, rule-proof until T3.2 and baseline handling until T3.3.
+
+Done when: Every recommendation has a project-specific reason, evidence, principle, consequence, scope and verification method, with unresolved decisions and unsupported measurements visible.
+
+### Step 10: Review and apply selected findings
+
+Use the shared review and write rules, preserving existing runtime behaviour and uncommitted user work.
+Reuse authoritative documents and native configs instead of duplicating vision, vocabulary, design or standards.
+AGENTS.md holds pointers and check commands, not full copies of those sources.
+Apply only selected findings.
+Protected writes and resume are unavailable until T2.6, and this path's integration until T2.8.
+
+Done when: Only the user's selected findings have been applied to the reviewed target and scope, with unchanged hash preconditions and recoverable originals, otherwise writes remain blocked.
+
+### Step 11: Verify and report readiness
+
+Use the shared verification rules and update the existing audit record, otherwise docs/repo-audit.md, through the same protected write boundary.
+State the assessed revision or working-tree state, selected changes, actual commands and outcomes, preserved behaviour, remaining debt, decisions and limitations.
+Distinguish ready for the stated next change, decisions needed and verification blocked.
+A guessed debt score does not establish readiness.
+Verification capture is unavailable until T2.7 and path integration until T2.8.
+Maintained enforcement arrives in T3.4 and portable maintenance evidence and document validation in Phase 3a.
+
+Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.
+
+## Review before apply
+
+Keep proposals, transcripts, reports and previews in scratch outside the target repo or new-idea workspace until the user selects changes.
+Present each finding's problem, consequence, fix, scope and verification, then the exact file changes for review.
+Record the selected finding IDs and user-approved scope.
+Review ambiguous or consequential acceptance cases before dependent work and reuse already approved cases.
+A scope or intent change requires a decision, rather than silently widening the plan.
+Machine configuration changes require approval for each change.
+
 ## Verification rules
+
+Requirements and expected outcomes come from identified authoritative sources, not solely from the implementation or its author's tests.
+Validate important user flows directly against approved acceptance cases.
+Use meaningful interface tests for relevant behaviour, edges and failures, and independent review under the project's risk policy.
+Supply the reviewer with original requirements, cases, actual changes and execution evidence.
+Choose the execution method within project constraints, without dispatching a TDD workflow or imposing a universal sequence.
+
+| Change | Required evidence |
+|---|---|
+| Feature | Agreed outcome and successful important flows on the real product |
+| Bug fix | Reproduction close to the user's experience, proof it now succeeds and surrounding behaviour checks |
+| Refactor | Protective coverage before structural edits and compatibility evidence after them |
+| Document or config | Authoritative source, intended effect and relevant structural or behaviour checks |
+| Outside dependency | Small recorded live probe before the change and the same probe after it |
+
+For behaviour outside the codebase, documentation, memory, mocks and recorded fixtures do not replace observation.
+Use a read-only call, sandbox or dry run for the live probe.
+Ask first before any call that writes, costs money, sends a message or changes shared data.
+If the probe cannot run, name the reason and assumption and mark the change unverified.
+
+Capture commands, tool versions, exit codes, output and relevant input state directly from execution.
+Link evidence to the original acceptance source and the outcomes actually covered.
+Invalidate affected results when inputs change.
+Run each check, fix within the approved scope and rerun until it passes, or report the blocker.
+Failing, skipped, missing or stale required checks cannot produce a passing completion claim.
+Changing acceptance cases to fit a failure requires an explicit decision.
+Ask whether the tests could pass while the user's actual problem remains unsolved.
+If so, obtain stronger outcome evidence, keeping unavailable flows unverified.
 
 ## Write rules
 
+Plan, validate, then execute.
+Only apply makes project edits, including AGENTS.md, after the user approves each change.
+Do not bypass missing apply tooling with direct writes.
+Use the installed scripts/repo-audit.mjs entry point, run documented commands and read their output rather than script source.
+Resolve resources relative to the installed skill and pass the target explicitly.
+Use command help for available syntax, never guess arguments for planned commands.
+
+Before any edit, apply must validate selected finding IDs, reviewed scope, target paths, resolved links, original and proposed exact-byte hashes and the plan digest.
+Reject traversal, wrong targets, changed files and unselected edits before any project change.
+Validation-only runs leave project files unchanged.
+Write validated content atomically where supported and preserve recoverable originals and resume state.
+Resume by inspecting current files and rerunning affected checks instead of trusting old completion flags.
+Repeated runs update maintained content without duplicating rules or erasing user edits.
+For unsupported mechanical edits, propose a reviewed patch, validate it through apply and run the same final checks.
+Until apply supports it, the edit remains blocked.
+
+Preserve distinct scoped instructions.
+Propose consolidating equivalent repo-owned CLAUDE.md content, including an import stub, into the corresponding AGENTS.md only through reviewed protected edits.
+Report local variants and ancestor instructions outside the repo as possible shadowing, without modifying them.
+Before proposing removal, check the current host's official loading documentation and available runtime, and state compatibility limits for sessions that read only CLAUDE.md.
+Do not flatten distinct nested guidance into root instructions.
+
+## Research rules
+
+When the host offers subagents, delegate read-heavy document inventory, code and architecture evidence, toolchain inventory and outside research to general-purpose read-only subagents.
+Keep interviews, decisions, recommendations, approvals, live probes and writes in the main thread.
+Each brief states the question, scoped paths, report format and word limit.
+Run independent briefs in parallel, except when only a few files make a hand-off wasteful.
+Subagents do not edit, ask the user questions or run checks with side effects.
+Reports return concise findings with file path and line, or source links marked verified or unverified, and deterministic measurement output where relevant.
+Open each cited path before relying on a report, treating it as evidence to check rather than verified fact.
+Measurements come from scripts, not subagent guesses.
+Keep bulk copying and large encoded strings out of delegation.
+If subagents are unavailable or fail, run the same briefs sequentially in the main thread, retaining only the formatted report instead of quoted files.
+Record which mode ran.
+The complete research briefs and citation checker are unavailable until T2.1.
+
 ## Load when
+
+Read only the one reference needed for the current step, once per run unless it changes.
+Every reference is linked directly here, without another skill or nested reference chain.
+Run scripts without loading their source, and pass assets to scripts without reading them as instructions.
+All references below remain placeholders until their owning tasks supply the procedures.
 
 | When | Open |
 |---|---|

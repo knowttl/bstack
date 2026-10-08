@@ -7,675 +7,699 @@ TAP version 13
 # Subtest: registry validates all 75 owned cases without passing planned procedures
 ok 1 - registry validates all 75 owned cases without passing planned procedures
   ---
-  duration_ms: 69.681088
+  duration_ms: 97.375952
   type: 'test'
   ...
 # Subtest: registry blocks missing acceptance ID
 ok 2 - registry blocks missing acceptance ID
   ---
-  duration_ms: 74.494391
+  duration_ms: 125.172069
   type: 'test'
   ...
 # Subtest: registry blocks duplicate acceptance ID
 ok 3 - registry blocks duplicate acceptance ID
   ---
-  duration_ms: 49.060408
+  duration_ms: 102.883261
   type: 'test'
   ...
 # Subtest: registry blocks unknown owner task
 ok 4 - registry blocks unknown owner task
   ---
-  duration_ms: 54.485559
+  duration_ms: 89.856379
   type: 'test'
   ...
 # Subtest: registry blocks wrong existing owner task
 ok 5 - registry blocks wrong existing owner task
   ---
-  duration_ms: 53.914493
+  duration_ms: 101.659116
   type: 'test'
   ...
 # Subtest: registry blocks missing shared owner
 ok 6 - registry blocks missing shared owner
   ---
-  duration_ms: 65.418503
+  duration_ms: 88.25166
   type: 'test'
   ...
 # Subtest: registry blocks extra shared owner
 ok 7 - registry blocks extra shared owner
   ---
-  duration_ms: 50.868407
+  duration_ms: 100.053624
   type: 'test'
   ...
 # Subtest: registry blocks duplicate owner
 ok 8 - registry blocks duplicate owner
   ---
-  duration_ms: 61.208808
+  duration_ms: 122.630339
   type: 'test'
   ...
 # Subtest: registry blocks invalid procedure status
 ok 9 - registry blocks invalid procedure status
   ---
-  duration_ms: 52.006341
+  duration_ms: 122.168459
   type: 'test'
   ...
 # Subtest: registry blocks empty planned procedure
 ok 10 - registry blocks empty planned procedure
   ---
-  duration_ms: 57.996084
+  duration_ms: 96.132368
   type: 'test'
   ...
 # Subtest: registry blocks invalid criterion source
 ok 11 - registry blocks invalid criterion source
   ---
-  duration_ms: 59.753999
+  duration_ms: 104.952351
   type: 'test'
   ...
 # Subtest: registry blocks unknown registry field
 ok 12 - registry blocks unknown registry field
   ---
-  duration_ms: 50.088641
+  duration_ms: 112.546506
   type: 'test'
   ...
 # Subtest: registry blocks missing completed evidence
 ok 13 - registry blocks missing completed evidence
   ---
-  duration_ms: 53.867414
+  duration_ms: 102.394353
   type: 'test'
   ...
 # Subtest: registry blocks unregistered completed test
 ok 14 - registry blocks unregistered completed test
   ---
-  duration_ms: 51.673956
+  duration_ms: 99.531349
   type: 'test'
   ...
 # Subtest: completed agent procedure blocks ambiguous-idea for AC-1
 ok 15 - completed agent procedure blocks ambiguous-idea for AC-1
   ---
-  duration_ms: 52.996201
+  duration_ms: 103.85586
   type: 'test'
   ...
 # Subtest: completed agent procedure accepts ambiguous-idea for AC-2
 ok 16 - completed agent procedure accepts ambiguous-idea for AC-2
   ---
-  duration_ms: 60.485149
+  duration_ms: 105.207159
   type: 'test'
   ...
 # Subtest: completed agent procedure accepts new-idea for AC-9
 ok 17 - completed agent procedure accepts new-idea for AC-9
   ---
-  duration_ms: 63.529972
+  duration_ms: 110.732789
   type: 'test'
   ...
 # Subtest: completed manual procedure blocks ambiguous-idea for AC-1
 ok 18 - completed manual procedure blocks ambiguous-idea for AC-1
   ---
-  duration_ms: 62.320784
+  duration_ms: 98.038096
   type: 'test'
   ...
 # Subtest: completed manual procedure accepts ambiguous-idea for AC-2
 ok 19 - completed manual procedure accepts ambiguous-idea for AC-2
   ---
-  duration_ms: 55.690294
+  duration_ms: 104.862404
   type: 'test'
   ...
 # Subtest: completed manual procedure accepts new-idea for AC-9
 ok 20 - completed manual procedure accepts new-idea for AC-9
   ---
-  duration_ms: 59.726473
+  duration_ms: 121.835237
   type: 'test'
   ...
 # Subtest: duplicate final selections are blocked independently of run history
 ok 21 - duplicate final selections are blocked independently of run history
   ---
-  duration_ms: 44.833605
+  duration_ms: 109.751953
   type: 'test'
   ...
 # Subtest: completed procedure definitions execute valid skeleton passes from another working directory without scoring it
 ok 22 - completed procedure definitions execute valid skeleton passes from another working directory without scoring it
   ---
-  duration_ms: 575.566476
+  duration_ms: 1005.976878
   type: 'test'
   ...
 # Subtest: completed procedure definitions execute unlisted-reference fails with reference-unlisted without scoring it
 ok 23 - completed procedure definitions execute unlisted-reference fails with reference-unlisted without scoring it
   ---
-  duration_ms: 427.417638
+  duration_ms: 676.995372
   type: 'test'
   ...
 # Subtest: child commands preserve literal arguments and capture version and both output streams
 ok 24 - child commands preserve literal arguments and capture version and both output streams
   ---
-  duration_ms: 118.412662
+  duration_ms: 232.238858
   type: 'test'
   ...
 # Subtest: child output is bounded to the last 64 KiB per stream
 ok 25 - child output is bounded to the last 64 KiB per stream
   ---
-  duration_ms: 101.814029
+  duration_ms: 188.152782
   type: 'test'
   ...
 # Subtest: child environment overrides apply to the version probe and execution without mutating the caller
 ok 26 - child environment overrides apply to the version probe and execution without mutating the caller
   ---
-  duration_ms: 75.208674
+  duration_ms: 122.582771
   type: 'test'
   ...
 # Subtest: timeout fails and stops the child process tree before returning
 ok 27 - timeout fails and stops the child process tree before returning
   ---
-  duration_ms: 621.376818
+  duration_ms: 716.098593
   type: 'test'
   ...
 # Subtest: cancellation fails and stops the child process tree before returning
 ok 28 - cancellation fails and stops the child process tree before returning
   ---
-  duration_ms: 167.306011
+  duration_ms: 315.39559
   type: 'test'
   ...
 # Subtest: Windows cleanup failure blocks timed out check with inherited pipes
 ok 29 - Windows cleanup failure blocks timed out check with inherited pipes
   ---
-  duration_ms: 103.686899
+  duration_ms: 110.239858
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error blocks timed out check with inherited pipes
 ok 30 - Windows cleanup launch error blocks timed out check with inherited pipes
   ---
-  duration_ms: 102.497557
+  duration_ms: 107.071637
   type: 'test'
   ...
 # Subtest: Windows cleanup failure blocks timed out version probe with inherited pipes
 ok 31 - Windows cleanup failure blocks timed out version probe with inherited pipes
   ---
-  duration_ms: 102.309136
+  duration_ms: 110.720484
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error blocks timed out version probe with inherited pipes
 ok 32 - Windows cleanup launch error blocks timed out version probe with inherited pipes
   ---
-  duration_ms: 101.220718
+  duration_ms: 108.162723
   type: 'test'
   ...
 # Subtest: Windows cleanup failure blocks cancelled check with inherited pipes
 ok 33 - Windows cleanup failure blocks cancelled check with inherited pipes
   ---
-  duration_ms: 2.412248
+  duration_ms: 8.118588
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error blocks cancelled check with inherited pipes
 ok 34 - Windows cleanup launch error blocks cancelled check with inherited pipes
   ---
-  duration_ms: 1.56
+  duration_ms: 8.042542
   type: 'test'
   ...
 # Subtest: Windows cleanup failure blocks cancelled version probe with inherited pipes
 ok 35 - Windows cleanup failure blocks cancelled version probe with inherited pipes
   ---
-  duration_ms: 1.049406
+  duration_ms: 3.106988
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error blocks cancelled version probe with inherited pipes
 ok 36 - Windows cleanup launch error blocks cancelled version probe with inherited pipes
   ---
-  duration_ms: 1.017202
+  duration_ms: 2.519394
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
 ok 37 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
   ---
-  duration_ms: 591.943901
+  duration_ms: 693.211
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
 ok 38 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
   ---
-  duration_ms: 588.597612
+  duration_ms: 698.348178
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
 ok 39 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
   ---
-  duration_ms: 565.731259
+  duration_ms: 616.021167
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
 ok 40 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
   ---
-  duration_ms: 575.998404
+  duration_ms: 612.340546
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
 ok 41 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
   ---
-  duration_ms: 592.98167
+  duration_ms: 652.728623
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
 ok 42 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
   ---
-  duration_ms: 594.249256
+  duration_ms: 636.370796
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
 ok 43 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
   ---
-  duration_ms: 566.484236
+  duration_ms: 619.311417
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
 ok 44 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
   ---
-  duration_ms: 573.693937
+  duration_ms: 608.968022
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
 ok 45 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
   ---
-  duration_ms: 142.492202
+  duration_ms: 196.662442
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
 ok 46 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
   ---
-  duration_ms: 145.603499
+  duration_ms: 181.310985
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
 ok 47 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
   ---
-  duration_ms: 131.865374
+  duration_ms: 138.660687
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
 ok 48 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
   ---
-  duration_ms: 109.631824
+  duration_ms: 127.051117
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
 ok 49 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
   ---
-  duration_ms: 139.281055
+  duration_ms: 159.333667
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
 ok 50 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
   ---
-  duration_ms: 138.381326
+  duration_ms: 171.196337
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
 ok 51 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
   ---
-  duration_ms: 105.730278
+  duration_ms: 126.651069
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
 ok 52 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
   ---
-  duration_ms: 102.522075
+  duration_ms: 135.594474
   type: 'test'
   ...
 # Subtest: failed commands and unavailable tools cannot pass
 ok 53 - failed commands and unavailable tools cannot pass
   ---
-  duration_ms: 166.88688
+  duration_ms: 209.292726
   type: 'test'
   ...
 # Subtest: child working directories reject escape before execution
 ok 54 - child working directories reject escape before execution
   ---
-  duration_ms: 62.312056
+  duration_ms: 91.259107
   type: 'test'
   ...
 # Subtest: Windows npm selection uses Node and a JavaScript CLI with literal arguments
 ok 55 - Windows npm selection uses Node and a JavaScript CLI with literal arguments
   ---
-  duration_ms: 69.261664
+  duration_ms: 87.738751
   type: 'test'
   ...
 # Subtest: Windows npm.cmd without a supported CLI is blocked
 ok 56 - Windows npm.cmd without a supported CLI is blocked
   ---
-  duration_ms: 58.896853
+  duration_ms: 64.357301
   type: 'test'
   ...
 # Subtest: Windows tool.cmd without a supported CLI is blocked
 ok 57 - Windows tool.cmd without a supported CLI is blocked
   ---
-  duration_ms: 58.683992
+  duration_ms: 60.606713
   type: 'test'
   ...
 # Subtest: Windows tool.bat without a supported CLI is blocked
 ok 58 - Windows tool.bat without a supported CLI is blocked
   ---
-  duration_ms: 59.35543
+  duration_ms: 63.641783
   type: 'test'
   ...
 # Subtest: fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
 ok 59 - fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
   ---
-  duration_ms: 620.564035
+  duration_ms: 690.938066
   type: 'test'
   ...
 # Subtest: canonical assessment inputs ignore only derived fields and evidence serialization
 ok 60 - canonical assessment inputs ignore only derived fields and evidence serialization
   ---
-  duration_ms: 241.309818
+  duration_ms: 286.380959
   type: 'test'
   ...
 # Subtest: manual run prints its fixture, request, scripted answers and checklist with unique history paths
 ok 61 - manual run prints its fixture, request, scripted answers and checklist with unique history paths
   ---
-  duration_ms: 358.637211
+  duration_ms: 648.400706
   type: 'test'
   ...
 # Subtest: missing answers leaves manual scoring blocked
 ok 62 - missing answers leaves manual scoring blocked
   ---
-  duration_ms: 242.679373
+  duration_ms: 421.978288
   type: 'test'
   ...
 # Subtest: missing transcript leaves manual scoring blocked
 ok 63 - missing transcript leaves manual scoring blocked
   ---
-  duration_ms: 221.756625
+  duration_ms: 452.052426
   type: 'test'
   ...
 # Subtest: manual scoring blocks missing checklist answer
 ok 64 - manual scoring blocks missing checklist answer
   ---
-  duration_ms: 224.485783
+  duration_ms: 408.174895
   type: 'test'
   ...
 # Subtest: manual scoring blocks duplicate checklist answer
 ok 65 - manual scoring blocks duplicate checklist answer
   ---
-  duration_ms: 217.845515
+  duration_ms: 396.733437
   type: 'test'
   ...
 # Subtest: manual scoring blocks unknown checklist answer
 ok 66 - manual scoring blocks unknown checklist answer
   ---
-  duration_ms: 225.080102
+  duration_ms: 395.94035
   type: 'test'
   ...
 # Subtest: manual scoring blocks wrong run
 ok 67 - manual scoring blocks wrong run
   ---
-  duration_ms: 213.560052
+  duration_ms: 426.964458
   type: 'test'
   ...
 # Subtest: manual scoring blocks string verdict
 ok 68 - manual scoring blocks string verdict
   ---
-  duration_ms: 223.521823
+  duration_ms: 389.376258
   type: 'test'
   ...
 # Subtest: manual scoring blocks invalid transcript range
 ok 69 - manual scoring blocks invalid transcript range
   ---
-  duration_ms: 233.673994
+  duration_ms: 348.765122
   type: 'test'
   ...
 # Subtest: manual scoring blocks missing reviewer
 ok 70 - manual scoring blocks missing reviewer
   ---
-  duration_ms: 215.218382
+  duration_ms: 336.771141
   type: 'test'
   ...
 # Subtest: empty and unavailable transcripts leave a run blocked
 ok 71 - empty and unavailable transcripts leave a run blocked
   ---
-  duration_ms: 263.566883
+  duration_ms: 409.871364
   type: 'test'
   ...
 # Subtest: comparison blocks different models and unscored runs
 ok 72 - comparison blocks different models and unscored runs
   ---
-  duration_ms: 536.899849
+  duration_ms: 826.949035
   type: 'test'
   ...
 # Subtest: comparison blocks changed scenario.fixture in the without run
 ok 73 - comparison blocks changed scenario.fixture in the without run
   ---
-  duration_ms: 511.903051
+  duration_ms: 729.628551
   type: 'test'
   ...
 # Subtest: comparison blocks changed scenario.fixture in the with run
 ok 74 - comparison blocks changed scenario.fixture in the with run
   ---
-  duration_ms: 496.515056
+  duration_ms: 756.834631
   type: 'test'
   ...
 # Subtest: comparison blocks changed fixture.name in the without run
 ok 75 - comparison blocks changed fixture.name in the without run
   ---
-  duration_ms: 494.04214
+  duration_ms: 770.163479
   type: 'test'
   ...
 # Subtest: comparison blocks changed fixture.name in the with run
 ok 76 - comparison blocks changed fixture.name in the with run
   ---
-  duration_ms: 511.507738
+  duration_ms: 738.099266
   type: 'test'
   ...
 # Subtest: comparison blocks changed scenario.request in the without run
 ok 77 - comparison blocks changed scenario.request in the without run
   ---
-  duration_ms: 530.116221
+  duration_ms: 689.506505
   type: 'test'
   ...
 # Subtest: comparison blocks changed scenario.request in the with run
 ok 78 - comparison blocks changed scenario.request in the with run
   ---
-  duration_ms: 531.643206
+  duration_ms: 611.325435
   type: 'test'
   ...
 # Subtest: comparison blocks changed scenario.answers in the without run
 ok 79 - comparison blocks changed scenario.answers in the without run
   ---
-  duration_ms: 605.937486
+  duration_ms: 614.910824
   type: 'test'
   ...
 # Subtest: comparison blocks changed scenario.answers in the with run
 ok 80 - comparison blocks changed scenario.answers in the with run
   ---
-  duration_ms: 576.478978
+  duration_ms: 610.163597
   type: 'test'
   ...
 # Subtest: comparison blocks changed scenario.invocation in the without run
 ok 81 - comparison blocks changed scenario.invocation in the without run
   ---
-  duration_ms: 539.94699
+  duration_ms: 634.71113
   type: 'test'
   ...
 # Subtest: comparison blocks changed scenario.invocation in the with run
 ok 82 - comparison blocks changed scenario.invocation in the with run
   ---
-  duration_ms: 558.123028
+  duration_ms: 610.804328
   type: 'test'
   ...
 # Subtest: manual scoring records a passing reviewer verdict and preserves its transcript
 ok 83 - manual scoring records a passing reviewer verdict and preserves its transcript
   ---
-  duration_ms: 359.78875
+  duration_ms: 452.213717
   type: 'test'
   ...
 # Subtest: manual scoring records a failing reviewer verdict and preserves its transcript
 ok 84 - manual scoring records a failing reviewer verdict and preserves its transcript
   ---
-  duration_ms: 363.747156
+  duration_ms: 436.9903
   type: 'test'
   ...
 # Subtest: ordinary with-skill runs require explicit invocation while implicit runs omit it
 ok 85 - ordinary with-skill runs require explicit invocation while implicit runs omit it
   ---
-  duration_ms: 562.98345
+  duration_ms: 691.900674
   type: 'test'
   ...
 # Subtest: comparison honours baseline true and with-skill true
 ok 86 - comparison honours baseline true and with-skill true
   ---
-  duration_ms: 545.345947
+  duration_ms: 693.631804
   type: 'test'
   ...
 # Subtest: comparison honours baseline false and with-skill true
 ok 87 - comparison honours baseline false and with-skill true
   ---
-  duration_ms: 548.31752
+  duration_ms: 672.322834
   type: 'test'
   ...
 # Subtest: comparison honours baseline true and with-skill false
 ok 88 - comparison honours baseline true and with-skill false
   ---
-  duration_ms: 577.132824
+  duration_ms: 699.26341
   type: 'test'
   ...
 # Subtest: comparison honours baseline false and with-skill false
 ok 89 - comparison honours baseline false and with-skill false
   ---
-  duration_ms: 562.120164
+  duration_ms: 681.953757
   type: 'test'
   ...
 # Subtest: automatic host execution requires an adapter
 ok 90 - automatic host execution requires an adapter
   ---
-  duration_ms: 60.985242
+  duration_ms: 69.327542
   type: 'test'
   ...
 # Subtest: host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit
 ok 91 - host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit
   ---
-  duration_ms: 534.025412
+  duration_ms: 701.994872
   type: 'test'
   ...
 # Subtest: with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request
 ok 92 - with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request
   ---
-  duration_ms: 749.382482
+  duration_ms: 849.397074
   type: 'test'
   ...
 # Subtest: scripted replies resume the exact host conversation, preserve user turns and require ordered answers
 ok 93 - scripted replies resume the exact host conversation, preserve user turns and require ordered answers
   ---
-  duration_ms: 530.196328
+  duration_ms: 689.399995
   type: 'test'
   ...
-# Subtest: manual adapter preparation makes no host call and can later capture an opening turn
-ok 94 - manual adapter preparation makes no host call and can later capture an opening turn
+# Subtest: manual adapter preparation is rejected before creating a run
+ok 94 - manual adapter preparation is rejected before creating a run
   ---
-  duration_ms: 385.10305
+  duration_ms: 58.874837
   type: 'test'
   ...
 # Subtest: host fail remains blocked and retains available execution evidence
 ok 95 - host fail remains blocked and retains available execution evidence
   ---
-  duration_ms: 326.230633
+  duration_ms: 322.116373
   type: 'test'
   ...
 # Subtest: host malformed remains blocked and retains available execution evidence
 ok 96 - host malformed remains blocked and retains available execution evidence
   ---
-  duration_ms: 270.364027
+  duration_ms: 333.155767
   type: 'test'
   ...
 # Subtest: host incomplete remains blocked and retains available execution evidence
 ok 97 - host incomplete remains blocked and retains available execution evidence
   ---
-  duration_ms: 266.210944
+  duration_ms: 316.72149
   type: 'test'
   ...
 # Subtest: host contaminate remains blocked and retains available execution evidence
 ok 98 - host contaminate remains blocked and retains available execution evidence
   ---
-  duration_ms: 285.729505
+  duration_ms: 317.458827
   type: 'test'
   ...
 # Subtest: host truncate remains blocked and retains available execution evidence
 ok 99 - host truncate remains blocked and retains available execution evidence
   ---
-  duration_ms: 265.112767
+  duration_ms: 316.85894
   type: 'test'
   ...
 # Subtest: host hang remains blocked and retains available execution evidence
 ok 100 - host hang remains blocked and retains available execution evidence
   ---
-  duration_ms: 1219.550556
+  duration_ms: 1258.446154
   type: 'test'
   ...
 # Subtest: a resumed host turn cannot silently switch sessions
 ok 101 - a resumed host turn cannot silently switch sessions
   ---
-  duration_ms: 426.548262
+  duration_ms: 484.164426
+  type: 'test'
+  ...
+# Subtest: rejected without-skill citations can be corrected without another host turn
+ok 102 - rejected without-skill citations can be corrected without another host turn
+  ---
+  duration_ms: 437.275089
+  type: 'test'
+  ...
+# Subtest: a without-skill score artifact failure preserves cleanup for retry
+ok 103 - a without-skill score artifact failure preserves cleanup for retry
+  ---
+  duration_ms: 483.603749
+  type: 'test'
+  ...
+# Subtest: rejected with-skill citations can be corrected without another host turn
+ok 104 - rejected with-skill citations can be corrected without another host turn
+  ---
+  duration_ms: 653.603461
+  type: 'test'
+  ...
+# Subtest: a with-skill score artifact failure preserves cleanup for retry
+ok 105 - a with-skill score artifact failure preserves cleanup for retry
+  ---
+  duration_ms: 631.454393
   type: 'test'
   ...
 # Subtest: adapter scoring requires the captured conversation and rechecks isolation and staged bytes
-ok 102 - adapter scoring requires the captured conversation and rechecks isolation and staged bytes
+ok 106 - adapter scoring requires the captured conversation and rechecks isolation and staged bytes
   ---
-  duration_ms: 939.662891
+  duration_ms: 1273.021059
   type: 'test'
   ...
 # Subtest: adapter blocks shell string before creating a run
-ok 103 - adapter blocks shell string before creating a run
+ok 107 - adapter blocks shell string before creating a run
   ---
-  duration_ms: 61.084666
+  duration_ms: 67.075827
   type: 'test'
   ...
 # Subtest: adapter blocks unknown field before creating a run
-ok 104 - adapter blocks unknown field before creating a run
+ok 108 - adapter blocks unknown field before creating a run
   ---
-  duration_ms: 65.590913
+  duration_ms: 70.413589
   type: 'test'
   ...
 # Subtest: adapter blocks unsupported conversation before creating a run
-ok 105 - adapter blocks unsupported conversation before creating a run
+ok 109 - adapter blocks unsupported conversation before creating a run
   ---
-  duration_ms: 60.472746
+  duration_ms: 94.077448
   type: 'test'
   ...
 # Subtest: adapter blocks unbounded timeout before creating a run
-ok 106 - adapter blocks unbounded timeout before creating a run
+ok 110 - adapter blocks unbounded timeout before creating a run
   ---
-  duration_ms: 61.734799
+  duration_ms: 105.302969
   type: 'test'
   ...
 # Subtest: adapter blocks missing message placeholder before creating a run
-ok 107 - adapter blocks missing message placeholder before creating a run
+ok 111 - adapter blocks missing message placeholder before creating a run
   ---
-  duration_ms: 66.792381
+  duration_ms: 88.805708
   type: 'test'
   ...
 # Subtest: adapter blocks wrong discovery paths before creating a run
-ok 108 - adapter blocks wrong discovery paths before creating a run
+ok 112 - adapter blocks wrong discovery paths before creating a run
   ---
-  duration_ms: 62.375792
+  duration_ms: 88.045257
   type: 'test'
   ...
 # Subtest: adapter blocks escaping staging path before creating a run
-ok 109 - adapter blocks escaping staging path before creating a run
+ok 113 - adapter blocks escaping staging path before creating a run
   ---
-  duration_ms: 71.65612
+  duration_ms: 80.619937
   type: 'test'
   ...
 # Subtest: closing a conversation deletes isolated state and retains bound evidence for later scoring
-ok 110 - closing a conversation deletes isolated state and retains bound evidence for later scoring
+ok 114 - closing a conversation deletes isolated state and retains bound evidence for later scoring
   ---
-  duration_ms: 501.122072
+  duration_ms: 590.625542
   type: 'test'
   ...
 # Subtest: throwaway authentication copies only a dummy login with private permissions and removes it after the turn
-ok 111 - throwaway authentication copies only a dummy login with private permissions and removes it after the turn
+ok 115 - throwaway authentication copies only a dummy login with private permissions and removes it after the turn
   ---
-  duration_ms: 414.255536
+  duration_ms: 512.616099
   type: 'test'
   ...
-1..111
-# tests 111
+1..115
+# tests 115
 # suites 0
-# pass 111
+# pass 115
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 19758.758783
+# duration_ms 27575.750454
