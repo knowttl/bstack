@@ -9,4 +9,3 @@ disable-model-invocation: true
 | When | Open |
 |---|---|
 | Needed | `references/guide.md` |
-

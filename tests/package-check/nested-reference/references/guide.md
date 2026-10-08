@@ -1,4 +1,3 @@
 # Guide
 
 [Other](other.md)
-

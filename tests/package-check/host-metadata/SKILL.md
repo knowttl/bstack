@@ -8,4 +8,3 @@ description: Package check fixture.
 | When | Open |
 |---|---|
 | Needed | `references/guide.md` |
-
