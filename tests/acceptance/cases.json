@@ -3,7 +3,7 @@
   "cases": [
     {
       "id": "AC-1",
-      "ownerTask": "T2.9",
+      "ownerTask": ["T2.9","T4.3"],
       "criterionSource": "docs/design.md#AC-1",
       "evidenceType": "agent",
       "procedure": {
@@ -13,7 +13,7 @@
     },
     {
       "id": "AC-2",
-      "ownerTask": "T1.7",
+      "ownerTask": ["T1.7","T2.9"],
       "criterionSource": "docs/design.md#AC-2",
       "evidenceType": "agent",
       "procedure": {
@@ -23,7 +23,7 @@
     },
     {
       "id": "AC-3",
-      "ownerTask": "T1.6",
+      "ownerTask": ["T1.6","T4.3"],
       "criterionSource": "docs/design.md#AC-3",
       "evidenceType": "agent",
       "procedure": {
@@ -33,7 +33,7 @@
     },
     {
       "id": "AC-4",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.2"],
       "criterionSource": "docs/design.md#AC-4",
       "evidenceType": "agent",
       "procedure": {
@@ -43,7 +43,7 @@
     },
     {
       "id": "AC-5",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.8"],
       "criterionSource": "docs/design.md#AC-5",
       "evidenceType": "agent",
       "procedure": {
@@ -53,7 +53,7 @@
     },
     {
       "id": "AC-6",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.8"],
       "criterionSource": "docs/design.md#AC-6",
       "evidenceType": "agent",
       "procedure": {
@@ -63,7 +63,7 @@
     },
     {
       "id": "AC-7",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.8"],
       "criterionSource": "docs/design.md#AC-7",
       "evidenceType": "agent",
       "procedure": {
@@ -73,7 +73,7 @@
     },
     {
       "id": "AC-8",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.5"],
       "criterionSource": "docs/design.md#AC-8",
       "evidenceType": "agent",
       "procedure": {
@@ -83,7 +83,7 @@
     },
     {
       "id": "AC-9",
-      "ownerTask": "T1.7",
+      "ownerTask": ["T1.7","T2.9"],
       "criterionSource": "docs/design.md#AC-9",
       "evidenceType": "agent",
       "procedure": {
@@ -93,7 +93,7 @@
     },
     {
       "id": "AC-10",
-      "ownerTask": "T2.3",
+      "ownerTask": ["T2.3"],
       "criterionSource": "docs/design.md#AC-10",
       "evidenceType": "agent",
       "procedure": {
@@ -103,7 +103,7 @@
     },
     {
       "id": "AC-11",
-      "ownerTask": "T2.3",
+      "ownerTask": ["T2.3"],
       "criterionSource": "docs/design.md#AC-11",
       "evidenceType": "agent",
       "procedure": {
@@ -113,7 +113,7 @@
     },
     {
       "id": "AC-12",
-      "ownerTask": "T2.3",
+      "ownerTask": ["T1.7","T2.9"],
       "criterionSource": "docs/design.md#AC-12",
       "evidenceType": "agent",
       "procedure": {
@@ -123,7 +123,7 @@
     },
     {
       "id": "AC-13",
-      "ownerTask": "T3a.5",
+      "ownerTask": ["T3a.5"],
       "criterionSource": "docs/design.md#AC-13",
       "evidenceType": "agent",
       "procedure": {
@@ -133,7 +133,7 @@
     },
     {
       "id": "AC-14",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T3.1"],
       "criterionSource": "docs/design.md#AC-14",
       "evidenceType": "agent",
       "procedure": {
@@ -143,7 +143,7 @@
     },
     {
       "id": "AC-15",
-      "ownerTask": "T2.6",
+      "ownerTask": ["T3a.5"],
       "criterionSource": "docs/design.md#AC-15",
       "evidenceType": "agent",
       "procedure": {
@@ -153,7 +153,7 @@
     },
     {
       "id": "AC-16",
-      "ownerTask": "T3a.3",
+      "ownerTask": ["T3a.3"],
       "criterionSource": "docs/design.md#AC-16",
       "evidenceType": "agent",
       "procedure": {
@@ -163,7 +163,7 @@
     },
     {
       "id": "AC-17",
-      "ownerTask": "T3a.3",
+      "ownerTask": ["T3a.3"],
       "criterionSource": "docs/design.md#AC-17",
       "evidenceType": "agent",
       "procedure": {
@@ -173,7 +173,7 @@
     },
     {
       "id": "AC-18",
-      "ownerTask": "T3a.4",
+      "ownerTask": ["T3a.4"],
       "criterionSource": "docs/design.md#AC-18",
       "evidenceType": "automated",
       "procedure": {
@@ -183,7 +183,7 @@
     },
     {
       "id": "AC-19",
-      "ownerTask": "T3a.3",
+      "ownerTask": ["T3a.2","T3a.3"],
       "criterionSource": "docs/design.md#AC-19",
       "evidenceType": "automated",
       "procedure": {
@@ -193,7 +193,7 @@
     },
     {
       "id": "AC-20",
-      "ownerTask": "T3a.2",
+      "ownerTask": ["T3a.2"],
       "criterionSource": "docs/design.md#AC-20",
       "evidenceType": "automated",
       "procedure": {
@@ -203,7 +203,7 @@
     },
     {
       "id": "AC-21",
-      "ownerTask": "T3a.3",
+      "ownerTask": ["T3a.3"],
       "criterionSource": "docs/design.md#AC-21",
       "evidenceType": "automated",
       "procedure": {
@@ -213,7 +213,7 @@
     },
     {
       "id": "AC-22",
-      "ownerTask": "T3a.3",
+      "ownerTask": ["T3a.3"],
       "criterionSource": "docs/design.md#AC-22",
       "evidenceType": "automated",
       "procedure": {
@@ -223,7 +223,7 @@
     },
     {
       "id": "AC-23",
-      "ownerTask": "T3a.7",
+      "ownerTask": ["T3a.7","T4.3"],
       "criterionSource": "docs/design.md#AC-23",
       "evidenceType": "agent",
       "procedure": {
@@ -233,7 +233,7 @@
     },
     {
       "id": "AC-24",
-      "ownerTask": "T3a.6",
+      "ownerTask": ["T3a.6"],
       "criterionSource": "docs/design.md#AC-24",
       "evidenceType": "automated",
       "procedure": {
@@ -243,7 +243,7 @@
     },
     {
       "id": "AC-25",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T3.1"],
       "criterionSource": "docs/design.md#AC-25",
       "evidenceType": "agent",
       "procedure": {
@@ -253,7 +253,7 @@
     },
     {
       "id": "AC-26",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T2.7"],
       "criterionSource": "docs/design.md#AC-26",
       "evidenceType": "agent",
       "procedure": {
@@ -263,7 +263,7 @@
     },
     {
       "id": "AC-27",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T2.7"],
       "criterionSource": "docs/design.md#AC-27",
       "evidenceType": "agent",
       "procedure": {
@@ -273,7 +273,7 @@
     },
     {
       "id": "AC-28",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T3a.3"],
       "criterionSource": "docs/design.md#AC-28",
       "evidenceType": "agent",
       "procedure": {
@@ -283,7 +283,7 @@
     },
     {
       "id": "AC-29",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T2.7"],
       "criterionSource": "docs/design.md#AC-29",
       "evidenceType": "agent",
       "procedure": {
@@ -293,7 +293,7 @@
     },
     {
       "id": "AC-30",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T2.7"],
       "criterionSource": "docs/design.md#AC-30",
       "evidenceType": "agent",
       "procedure": {
@@ -303,7 +303,7 @@
     },
     {
       "id": "AC-31",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T2.7"],
       "criterionSource": "docs/design.md#AC-31",
       "evidenceType": "agent",
       "procedure": {
@@ -313,7 +313,7 @@
     },
     {
       "id": "AC-32",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T2.7"],
       "criterionSource": "docs/design.md#AC-32",
       "evidenceType": "agent",
       "procedure": {
@@ -323,7 +323,7 @@
     },
     {
       "id": "AC-33",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T2.7"],
       "criterionSource": "docs/design.md#AC-33",
       "evidenceType": "agent",
       "procedure": {
@@ -333,7 +333,7 @@
     },
     {
       "id": "AC-34",
-      "ownerTask": "T2.1",
+      "ownerTask": ["T2.1"],
       "criterionSource": "docs/design.md#AC-34",
       "evidenceType": "agent",
       "procedure": {
@@ -343,7 +343,7 @@
     },
     {
       "id": "AC-35",
-      "ownerTask": "T2.1",
+      "ownerTask": ["T2.1"],
       "criterionSource": "docs/design.md#AC-35",
       "evidenceType": "agent",
       "procedure": {
@@ -353,7 +353,7 @@
     },
     {
       "id": "AC-36",
-      "ownerTask": "T2.1",
+      "ownerTask": ["T2.1"],
       "criterionSource": "docs/design.md#AC-36",
       "evidenceType": "agent",
       "procedure": {
@@ -363,7 +363,7 @@
     },
     {
       "id": "AC-37",
-      "ownerTask": "T2.1",
+      "ownerTask": ["T2.1"],
       "criterionSource": "docs/design.md#AC-37",
       "evidenceType": "agent",
       "procedure": {
@@ -373,7 +373,7 @@
     },
     {
       "id": "AC-38",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.8"],
       "criterionSource": "docs/design.md#AC-38",
       "evidenceType": "agent",
       "procedure": {
@@ -383,7 +383,7 @@
     },
     {
       "id": "AC-39",
-      "ownerTask": "T4.2",
+      "ownerTask": ["T4.2"],
       "criterionSource": "docs/design.md#AC-39",
       "evidenceType": "agent",
       "procedure": {
@@ -393,7 +393,7 @@
     },
     {
       "id": "AC-40",
-      "ownerTask": "T4.2",
+      "ownerTask": ["T4.2"],
       "criterionSource": "docs/design.md#AC-40",
       "evidenceType": "agent",
       "procedure": {
@@ -403,7 +403,7 @@
     },
     {
       "id": "AC-41",
-      "ownerTask": "T0.5",
+      "ownerTask": ["T0.5"],
       "criterionSource": "docs/design.md#AC-41",
       "evidenceType": "automated",
       "procedure": {
@@ -413,7 +413,7 @@
     },
     {
       "id": "AC-42",
-      "ownerTask": "T4.2",
+      "ownerTask": ["T4.2"],
       "criterionSource": "docs/design.md#AC-42",
       "evidenceType": "agent",
       "procedure": {
@@ -423,7 +423,7 @@
     },
     {
       "id": "AC-43",
-      "ownerTask": "T4.2",
+      "ownerTask": ["T4.2"],
       "criterionSource": "docs/design.md#AC-43",
       "evidenceType": "agent",
       "procedure": {
@@ -433,7 +433,7 @@
     },
     {
       "id": "AC-44",
-      "ownerTask": "T0.5",
+      "ownerTask": ["T0.5"],
       "criterionSource": "docs/design.md#AC-44",
       "evidenceType": "automated",
       "procedure": {
@@ -443,7 +443,7 @@
     },
     {
       "id": "AC-45",
-      "ownerTask": "T0.5",
+      "ownerTask": ["T0.5"],
       "criterionSource": "docs/design.md#AC-45",
       "evidenceType": "automated",
       "procedure": {
@@ -453,7 +453,7 @@
     },
     {
       "id": "AC-46",
-      "ownerTask": "T5.2",
+      "ownerTask": ["T5.2"],
       "criterionSource": "docs/design.md#AC-46",
       "evidenceType": "agent",
       "procedure": {
@@ -463,7 +463,7 @@
     },
     {
       "id": "AC-47",
-      "ownerTask": "T0.5",
+      "ownerTask": ["T0.5","T3.1"],
       "criterionSource": "docs/design.md#AC-47",
       "evidenceType": "automated",
       "procedure": {
@@ -473,7 +473,7 @@
     },
     {
       "id": "AC-48",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.1"],
       "criterionSource": "docs/design.md#AC-48",
       "evidenceType": "agent",
       "procedure": {
@@ -483,7 +483,7 @@
     },
     {
       "id": "AC-49",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.3"],
       "criterionSource": "docs/design.md#AC-49",
       "evidenceType": "agent",
       "procedure": {
@@ -493,7 +493,7 @@
     },
     {
       "id": "AC-50",
-      "ownerTask": "T2.4",
+      "ownerTask": ["T2.4"],
       "criterionSource": "docs/design.md#AC-50",
       "evidenceType": "agent",
       "procedure": {
@@ -503,7 +503,7 @@
     },
     {
       "id": "AC-51",
-      "ownerTask": "T2.4",
+      "ownerTask": ["T2.4"],
       "criterionSource": "docs/design.md#AC-51",
       "evidenceType": "agent",
       "procedure": {
@@ -513,7 +513,7 @@
     },
     {
       "id": "AC-52",
-      "ownerTask": "T3.2",
+      "ownerTask": ["T3.2"],
       "criterionSource": "docs/design.md#AC-52",
       "evidenceType": "automated",
       "procedure": {
@@ -523,7 +523,7 @@
     },
     {
       "id": "AC-53",
-      "ownerTask": "T2.4",
+      "ownerTask": ["T2.4"],
       "criterionSource": "docs/design.md#AC-53",
       "evidenceType": "agent",
       "procedure": {
@@ -533,7 +533,7 @@
     },
     {
       "id": "AC-54",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.6","T4.3"],
       "criterionSource": "docs/design.md#AC-54",
       "evidenceType": "agent",
       "procedure": {
@@ -543,7 +543,7 @@
     },
     {
       "id": "AC-55",
-      "ownerTask": "T1.7",
+      "ownerTask": ["T2.8"],
       "criterionSource": "docs/design.md#AC-55",
       "evidenceType": "agent",
       "procedure": {
@@ -553,7 +553,7 @@
     },
     {
       "id": "AC-56",
-      "ownerTask": "T4.3",
+      "ownerTask": ["T4.2"],
       "criterionSource": "docs/design.md#AC-56",
       "evidenceType": "agent",
       "procedure": {
@@ -563,7 +563,7 @@
     },
     {
       "id": "AC-57",
-      "ownerTask": "T2.5",
+      "ownerTask": ["T2.6"],
       "criterionSource": "docs/design.md#AC-57",
       "evidenceType": "agent",
       "procedure": {
@@ -573,7 +573,7 @@
     },
     {
       "id": "AC-58",
-      "ownerTask": "T3a.6",
+      "ownerTask": ["T3.4","T3a.6"],
       "criterionSource": "docs/design.md#AC-58",
       "evidenceType": "automated",
       "procedure": {
@@ -583,7 +583,7 @@
     },
     {
       "id": "AC-59",
-      "ownerTask": "T0.5",
+      "ownerTask": ["T3.1"],
       "criterionSource": "docs/design.md#AC-59",
       "evidenceType": "automated",
       "procedure": {
@@ -593,7 +593,7 @@
     },
     {
       "id": "AC-60",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T3.2"],
       "criterionSource": "docs/design.md#AC-60",
       "evidenceType": "agent",
       "procedure": {
@@ -603,7 +603,7 @@
     },
     {
       "id": "AC-61",
-      "ownerTask": "T3.4",
+      "ownerTask": ["T3.4"],
       "criterionSource": "docs/design.md#AC-61",
       "evidenceType": "agent",
       "procedure": {
@@ -613,7 +613,7 @@
     },
     {
       "id": "AC-62",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.8"],
       "criterionSource": "docs/design.md#AC-62",
       "evidenceType": "agent",
       "procedure": {
@@ -623,7 +623,7 @@
     },
     {
       "id": "AC-63",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.5"],
       "criterionSource": "docs/design.md#AC-63",
       "evidenceType": "agent",
       "procedure": {
@@ -633,7 +633,7 @@
     },
     {
       "id": "AC-64",
-      "ownerTask": "T4.3",
+      "ownerTask": ["T4.3"],
       "criterionSource": "docs/design.md#AC-64",
       "evidenceType": "agent",
       "procedure": {
@@ -643,7 +643,7 @@
     },
     {
       "id": "AC-65",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.5"],
       "criterionSource": "docs/design.md#AC-65",
       "evidenceType": "agent",
       "procedure": {
@@ -653,7 +653,7 @@
     },
     {
       "id": "AC-66",
-      "ownerTask": "T3.2",
+      "ownerTask": ["T3.2"],
       "criterionSource": "docs/design.md#AC-66",
       "evidenceType": "automated",
       "procedure": {
@@ -663,7 +663,7 @@
     },
     {
       "id": "AC-67",
-      "ownerTask": "T3.3",
+      "ownerTask": ["T3.3"],
       "criterionSource": "docs/design.md#AC-67",
       "evidenceType": "automated",
       "procedure": {
@@ -673,7 +673,7 @@
     },
     {
       "id": "AC-68",
-      "ownerTask": "T2.2",
+      "ownerTask": ["T2.2"],
       "criterionSource": "docs/design.md#AC-68",
       "evidenceType": "agent",
       "procedure": {
@@ -683,7 +683,7 @@
     },
     {
       "id": "AC-69",
-      "ownerTask": "T2.8",
+      "ownerTask": ["T2.6","T4.3"],
       "criterionSource": "docs/design.md#AC-69",
       "evidenceType": "agent",
       "procedure": {
@@ -693,7 +693,7 @@
     },
     {
       "id": "AC-70",
-      "ownerTask": "T2.6",
+      "ownerTask": ["T2.6"],
       "criterionSource": "docs/design.md#AC-70",
       "evidenceType": "automated",
       "procedure": {
@@ -703,7 +703,7 @@
     },
     {
       "id": "AC-71",
-      "ownerTask": "T2.7",
+      "ownerTask": ["T2.7"],
       "criterionSource": "docs/design.md#AC-71",
       "evidenceType": "automated",
       "procedure": {
@@ -713,7 +713,7 @@
     },
     {
       "id": "AC-72",
-      "ownerTask": "T2.6",
+      "ownerTask": ["T2.6"],
       "criterionSource": "docs/design.md#AC-72",
       "evidenceType": "automated",
       "procedure": {
@@ -723,7 +723,7 @@
     },
     {
       "id": "AC-73",
-      "ownerTask": "T4.1",
+      "ownerTask": ["T4.1"],
       "criterionSource": "docs/design.md#AC-73",
       "evidenceType": "automated",
       "procedure": {
@@ -733,7 +733,7 @@
     },
     {
       "id": "AC-74",
-      "ownerTask": "T4.1",
+      "ownerTask": ["T4.1"],
       "criterionSource": "docs/design.md#AC-74",
       "evidenceType": "automated",
       "procedure": {
@@ -743,7 +743,7 @@
     },
     {
       "id": "AC-75",
-      "ownerTask": "T4.2",
+      "ownerTask": ["T4.2","T4.3"],
       "criterionSource": "docs/design.md#AC-75",
       "evidenceType": "agent",
       "procedure": {

@@ -84,11 +84,12 @@ node scripts/acceptance.mjs --check-registry
 
 `tests/acceptance/cases.json` registers every numbered design acceptance case with an owner task, criterion source, evidence type and procedure.
 `docs/design.md#AC-N` is a logical locator for numbered case N under the design's Acceptance cases heading.
-Owner IDs must match tasks in the implementation plan.
+`ownerTask` is a nonempty array of task IDs matching every assignment for that case in the implementation plan's procedure table.
 Evidence types are `automated`, `agent` or `manual`.
 A planned procedure has `status: planned` and a nonempty `description`.
 A completed procedure has `status: completed`, `path`, `name` and nonempty `artifacts`.
-Automated procedures name a registered suite and an existing literal top-level `test` name.
+Automated procedures name a registered suite and an exact test name, including table-driven names.
+Registry validation executes that test through Node's test runner and rejects missing, skipped, todo or failing tests.
 Agent and manual procedures name `tests/eval/scenarios/scenarios.json` and an existing scenario ID.
 That scenario must contain a check for the registered acceptance case.
 Completed procedure and artifact paths must exist as nonempty files.

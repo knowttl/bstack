@@ -29,7 +29,11 @@ test('registry validates all 75 owned cases without passing planned procedures',
 for (const [name, mutate] of [
   ['missing acceptance ID', data => data.cases.pop()],
   ['duplicate acceptance ID', data => { data.cases[1].id = data.cases[0].id }],
-  ['unknown owner task', data => { data.cases[0].ownerTask = 'T99.1' }],
+  ['unknown owner task', data => { data.cases[0].ownerTask = ['T99.1'] }],
+  ['wrong existing owner task', data => { data.cases[54].ownerTask = ['T1.7'] }],
+  ['missing shared owner', data => { data.cases[0].ownerTask = ['T2.9'] }],
+  ['extra shared owner', data => { data.cases[0].ownerTask.push('T1.7') }],
+  ['duplicate owner', data => { data.cases[0].ownerTask.push(data.cases[0].ownerTask[0]) }],
   ['invalid procedure status', data => { data.cases[0].procedure.status = 'passed' }],
   ['empty planned procedure', data => { data.cases[0].procedure.description = '' }],
   ['invalid criterion source', data => { data.cases[0].criterionSource = 'README.md' }],
@@ -80,17 +84,19 @@ test('duplicate final selections are blocked independently of run history', asyn
   assert.match(result.data.problems[0].message, /Duplicate final selection/)
 })
 
-test('completed procedure definitions require existing tests and artifacts without scoring them', async t => {
-  const directory = await temporary(t)
-  const data = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
-  data.cases[40].procedure = { status: 'completed', path: 'tests/scripts/package-check.test.mjs',
-    name: 'valid skeleton passes from another working directory', artifacts: ['tests/eval/results/tasks/T0.5.C5b.node24-check.txt'] }
-  const path = join(directory, 'cases.json')
-  await writeFile(path, JSON.stringify(data))
-  const result = run('--check-registry', '--registry', path)
-  assert.equal(result.status, 0, result.stdout)
-  assert.deepEqual(result.data.data, { registered: 75, planned: 74, passed: 0 })
-  data.cases[40].procedure.name = 'nonexistent test'
-  await writeFile(path, JSON.stringify(data))
-  assert.equal(run('--check-registry', '--registry', path).status, 2)
-})
+for (const name of ['valid skeleton passes from another working directory', 'unlisted-reference fails with reference-unlisted']) {
+  test(`completed procedure definitions execute ${name} without scoring it`, async t => {
+    const directory = await temporary(t)
+    const data = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+    data.cases[40].procedure = { status: 'completed', path: 'tests/scripts/package-check.test.mjs',
+      name, artifacts: ['tests/eval/results/tasks/T0.5.C5b.node24-check.txt'] }
+    const path = join(directory, 'cases.json')
+    await writeFile(path, JSON.stringify(data))
+    const result = run('--check-registry', '--registry', path)
+    assert.equal(result.status, 0, result.stdout)
+    assert.deepEqual(result.data.data, { registered: 75, planned: 74, passed: 0 })
+    data.cases[40].procedure.name = 'nonexistent test'
+    await writeFile(path, JSON.stringify(data))
+    assert.equal(run('--check-registry', '--registry', path).status, 2)
+  })
+}

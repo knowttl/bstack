@@ -1,7 +1,7 @@
 import { readFile, stat } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parse } from 'acorn'
+import { spawnSync } from 'node:child_process'
 import { validateData, validateIds } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { CommandError } from '../../skills/repo-audit/scripts/lib/result.mjs'
 
@@ -55,7 +55,7 @@ export async function scenario(id) {
 export async function checkRegistry(path) {
   const registry = await readJSON(path)
   validateData(object({ schemaVersion: { const: 1 }, cases: array(object({
-    id: text, ownerTask: text, criterionSource: text, evidenceType: { enum: ['automated', 'agent', 'manual'] },
+    id: text, ownerTask: { ...array(text), minItems: 1 }, criterionSource: text, evidenceType: { enum: ['automated', 'agent', 'manual'] },
     procedure: { type: 'object' }
   })) }), registry)
   validateIds(registry.cases, '$/cases')
@@ -64,9 +64,12 @@ export async function checkRegistry(path) {
   const ids = [...section.matchAll(/^(\d+)\. /gm)].map(match => `AC-${match[1]}`)
   if (registry.cases.length !== ids.length || ids.some(id => !registry.cases.some(item => item.id === id))) fail('Registry must register every design acceptance ID exactly once.')
   const plan = await readFile(join(root, 'docs', 'implementation-plan.md'), 'utf8')
-  const tasks = [...plan.matchAll(/^### (T[\da.]+) /gm)].map(match => match[1])
+  const assignments = new Map()
+  for (const row of plan.split('## Acceptance case coverage\n')[1].matchAll(/^\| (T[\da.]+) \| ([^|]+) \|/gm)) {
+    for (const id of row[2].match(/AC-\d+/g)) assignments.set(id, [...(assignments.get(id) ?? []), row[1]])
+  }
   for (const item of registry.cases) {
-    if (!tasks.includes(item.ownerTask)) fail(`Unknown owner task: ${item.ownerTask}`)
+    if (JSON.stringify([...item.ownerTask].sort()) !== JSON.stringify(assignments.get(item.id)?.sort())) fail(`Owner tasks must match the implementation plan for ${item.id}`)
     if (item.criterionSource !== `docs/design.md#${item.id}`) fail(`Invalid criterion source for ${item.id}`)
     const procedure = item.procedure
     if (procedure.status === 'planned') {
@@ -77,9 +80,21 @@ export async function checkRegistry(path) {
       if (item.evidenceType === 'automated') {
         const suites = Object.values(await readJSON(join(root, 'tests', 'tasks.json'))).flat()
         if (!suites.includes(procedure.path)) fail(`Unregistered test: ${procedure.path}`)
-        const program = parse(await readFile(resolve(root, procedure.path), 'utf8'), { ecmaVersion: 'latest', sourceType: 'module' })
-        const names = program.body.filter(node => node.type === 'ExpressionStatement' && node.expression.type === 'CallExpression' && node.expression.callee.name === 'test').map(node => node.expression.arguments[0]?.value)
-        if (!names.includes(procedure.name)) fail(`Completed procedure must name an existing literal test: ${procedure.name}`)
+        const result = spawnSync(process.execPath, ['-', resolve(root, procedure.path), procedure.name], {
+          cwd: root, encoding: 'utf8', timeout: 120000, env: { ...process.env, NODE_TEST_CONTEXT: undefined },
+          input: `
+            const { run } = require('node:test')
+            const [file, name] = process.argv.slice(2)
+            ;(async () => {
+              let executed = false
+              for await (const event of run({ files: [file], testNamePatterns: [new RegExp('^' + RegExp.escape(name) + '$')] })) {
+                if (event.type === 'test:pass' && event.data.name === name && !event.data.skip && !event.data.todo) executed = true
+              }
+              console.log(JSON.stringify({ executed }))
+            })()
+          `
+        })
+        if (result.status !== 0 || !JSON.parse(result.stdout).executed) fail(`Completed procedure must name a successfully executed test: ${procedure.name}`)
       } else {
         if (procedure.path !== 'tests/eval/scenarios/scenarios.json') fail('Agent and manual procedures must name a scenario.')
         const definition = await scenario(procedure.name)
