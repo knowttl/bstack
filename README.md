@@ -111,6 +111,7 @@ The [check-plan contract](docs/command-contract.md#check-plans-and-capture) defi
 Bug fixes need a normally failing reproduction before the change and the same reproduction passing afterward.
 Refactors need passing protection before structural edits and compatibility checks afterward.
 Capture records command output, versions, original inputs, execution order and acceptance coverage in scratch.
+All declared inputs are fingerprinted once before and once after the run; any difference blocks the whole capture with `inputs changed during run`.
 Skipped, unavailable, cancelled, timed-out and stale required checks cannot pass.
 User flows that could not run remain unverified, and results covering no user journey say so.
 Live probes and their specific side-effect approval remain C15b work.

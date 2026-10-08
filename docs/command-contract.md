@@ -767,17 +767,17 @@ A bug fix requires a scratch `before` run with a failed required reproduction th
 A refactor requires all required protective checks passing in a `before` run, plus at least one required compatibility check after the change.
 Missing evidence blocks before execution.
 Prior runs must belong to the same target and exact plan, precede the current run, and name a different original input state.
-The recorded original state includes the Git revision, exact input hashes, presence and modes.
-Before-phase reproduction and protection checks must match their scoped inputs in that original snapshot before execution, after execution and at final validation.
-Drift marks the check stale and prevents its version probe and command from starting when detected before execution.
-Prior evidence must bind each required check's fingerprint to the same scoped original snapshot.
+The recorded `originalState` is one fingerprint of the Git revision, check-plan bytes and presence, acceptance sources and the union of every declared product scope, including exact input hashes, presence and modes.
+The same inputs are fingerprinted once after the run as `finalState`.
+Prior evidence requires a passing before capture with matching original and final fingerprints.
 Execution order links prior capture to the after run.
 Local scratch evidence is an execution record, not an authenticated portable attestation.
 
-Every executed check records its command, version probe, exit code, output tails, timing and input fingerprint.
+Every executed check records its command, version probe, exit code, output tails, timing and order within the capture.
 Timeout, cancellation, unavailable tools and skipped checks cannot pass.
-Fingerprints are rechecked after each command and at the end, so later checks that change earlier inputs invalidate those results.
-A stale required result fails overall readiness.
+If the before and after fingerprints differ, the entire capture is `blocked` with `inputs changed during run`, every executed check becomes blocked, and its acceptance coverage is unverified.
+This applies to optional and inactive checks' declared inputs as well as required checks in either phase.
+There is no intermediate input tracking; changes restored before the final fingerprint are not detected.
 Required checks must pass for a phase to pass, apart from the expected failing reproduction in a successful before bug-fix run.
 Per-case coverage lists executed evidence, failed outcomes and unverified flows.
 A result covering no user journey explicitly says so, even when all required checks pass.

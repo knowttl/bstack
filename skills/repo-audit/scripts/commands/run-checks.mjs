@@ -69,15 +69,8 @@ export async function run(options) {
   }
   if (problems.length) throw new CommandError('failed', problems)
   const planDigest = hashBytes(canonicalJSON(plan))
-  function scopedFingerprint(state, checks) {
-    const scopes = checks.flatMap(check => check.inputScopes)
-    const globs = scopes.map(pathGlob)
-    const files = state.files.filter(file => scopes.includes(file.path) || plan.acceptanceSources.some(source => source.path === file.path) ||
-      file.present && globs.some(glob => matchesPath(glob, file.path)))
-    return hashBytes(canonicalJSON({ ...state, files }))
-  }
-  async function inputState(checks, original = null) {
-    const scopes = checks.flatMap(check => check.inputScopes)
+  async function inputState() {
+    const scopes = plan.checks.flatMap(check => check.inputScopes)
     const globs = scopes.map(pathGlob)
     const files = await repoFiles(target.root)
     const declaredPaths = [...scopes.filter(scope => !/[*?]/.test(scope)), ...plan.acceptanceSources.map(source => source.path)]
@@ -88,14 +81,11 @@ export async function run(options) {
     try { planContentHash = hashBytes(await readFile(options.plan)) } catch (error) {
       if (error.code !== 'ENOENT') throw error
     }
-    const current = await fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths, inputs: { planDigest, planContentHash } })
-    const fresh = planContentHash === validatedPlanContentHash && plan.acceptanceSources.every(source =>
-      current.state.files.some(file => file.path === source.path && file.present && file.contentHash === source.contentHash)) &&
-      (phase !== 'before' || !original || current.fingerprint === scopedFingerprint(original.state, checks))
-    return { ...current, fresh }
+    return fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths, inputs: { planDigest, planContentHash } })
   }
-  const originalState = await inputState(plan.checks)
-  if (!originalState.fresh) {
+  const originalState = await inputState()
+  if (originalState.state.inputs.planContentHash !== validatedPlanContentHash || !plan.acceptanceSources.every(source =>
+    originalState.state.files.some(file => file.path === source.path && file.present && file.contentHash === source.contentHash))) {
     problem('stale-check-inputs', 'Approved plan or acceptance sources changed before capture.')
     throw new CommandError('failed', problems)
   }
@@ -105,15 +95,14 @@ export async function run(options) {
     if (options['prior-run']) {
       try { prior = JSON.parse(await readFile(join(await scratchDirectory(target, options['prior-run']), 'checks.json'), 'utf8')) } catch { /* Missing or malformed capture cannot satisfy a prerequisite. */ }
     }
-    if (!prior || prior.schemaVersion !== 1 || prior.phase !== 'before' || prior.planDigest !== planDigest || prior.originalState?.state.root !== target.root || prior.status !== 'passed' || !prior.completedAt || prior.completedAt > startedAt) {
+    if (!prior || prior.schemaVersion !== 1 || prior.phase !== 'before' || prior.planDigest !== planDigest || prior.originalState?.state.root !== target.root || prior.status !== 'passed' || prior.finalState?.fingerprint !== prior.originalState?.fingerprint || !prior.completedAt || prior.completedAt > startedAt) {
       problem('missing-prior-evidence', 'The change needs a completed passing before capture for this target and exact plan.')
     } else {
       if (prior.originalState.fingerprint === originalState.fingerprint) problem('unchanged-original-state', 'Before and after inputs are identical. Capture protection before structural edits.')
       const role = plan.changeKind === 'bug-fix' ? 'reproduction' : 'protection'
       for (const check of required(role)) {
         const captured = prior.checks?.find(item => item.id === check.id)
-        if (!captured?.satisfied || !captured.execution || captured.inputFingerprint !== captured.finalFingerprint ||
-            captured.inputFingerprint !== scopedFingerprint(prior.originalState.state, [check])) problem('invalid-prior-check', `Prior capture does not establish ${check.id}.`)
+        if (!captured?.satisfied || !captured.execution) problem('invalid-prior-check', `Prior capture does not establish ${check.id}.`)
       }
     }
   }
@@ -128,17 +117,9 @@ export async function run(options) {
       const reason = !active ? 'Check belongs to the after phase.' : problems.length ? 'Prior evidence prerequisite was not met.' : check.skipReason
       const captured = { id: check.id, role: check.role, required: check.required, acceptanceCases: check.acceptanceCases,
         command: check.command, active, status: 'unverified', satisfied: false, reason: reason ?? null,
-        inputFingerprint: null, finalFingerprint: null, execution: null, order: checks.length + 1 }
+        execution: null, order: checks.length + 1 }
       checks.push(captured)
       if (reason) continue
-      const before = await inputState([check], originalState)
-      captured.inputFingerprint = before.fingerprint
-      if (!before.fresh) {
-        captured.finalFingerprint = before.fingerprint
-        captured.status = 'stale'
-        captured.reason = 'Inputs changed during this run.'
-        continue
-      }
       try { captured.execution = await runCommand(target, check.command, { signal: controller.signal }) } catch (error) {
         captured.reason = error.message
         captured.status = 'blocked'
@@ -150,41 +131,38 @@ export async function run(options) {
       const reproduced = phase === 'before' && plan.changeKind === 'bug-fix' && check.role === 'reproduction'
       captured.satisfied = reproduced ? execution.status === 'failed' && execution.exitCode !== null && execution.exitCode !== 0 && !execution.signal && !execution.cancelled && !execution.timedOut && execution.toolVersion.status === 'passed' : execution.status === 'passed'
       if (reproduced && !captured.satisfied) captured.reason = 'Reproduction must execute normally and fail against the original state.'
-      const after = await inputState([check], originalState)
-      captured.finalFingerprint = after.fingerprint
-      if (!after.fresh || captured.inputFingerprint !== captured.finalFingerprint) captured.status = 'stale'
     }
   } finally {
     process.removeListener('SIGINT', cancel)
     process.removeListener('SIGTERM', cancel)
   }
-  for (const captured of checks.filter(check => check.execution)) {
-    const check = plan.checks.find(item => item.id === captured.id)
-    const final = await inputState([check], originalState)
-    captured.finalFingerprint = final.fingerprint
-    if (!final.fresh || captured.status === 'stale' || captured.inputFingerprint !== captured.finalFingerprint) {
-      captured.status = 'stale'
-      captured.reason = 'Inputs changed during this run.'
+  const finalState = await inputState()
+  const inputsChanged = originalState.fingerprint !== finalState.fingerprint
+  if (inputsChanged) {
+    problem('inputs-changed-during-run', 'inputs changed during run')
+    for (const captured of checks.filter(check => check.execution)) {
+      captured.status = 'blocked'
+      captured.reason = 'inputs changed during run'
       captured.satisfied = false
     }
   }
   const coverage = plan.acceptanceCases.map(acceptance => {
     const evidence = checks.filter(check => check.active && check.acceptanceCases.includes(acceptance.id))
     const successful = check => check.satisfied && check.status === 'passed'
-    const status = evidence.some(check => check.status === 'stale' || check.status === 'failed' && check.execution?.toolVersion.status === 'passed' && !check.execution.cancelled && !check.execution.timedOut) ? 'failed'
+    const status = evidence.some(check => check.status === 'failed' && check.execution?.toolVersion.status === 'passed' && !check.execution.cancelled && !check.execution.timedOut) ? 'failed'
       : evidence.some(successful) && evidence.filter(check => check.required).every(successful) ? 'passed' : 'unverified'
     return { id: acceptance.id, sourceId: acceptance.sourceId, pointer: acceptance.pointer, outcome: acceptance.outcome, userJourney: acceptance.userJourney,
       status, checkIds: evidence.map(check => check.id), reason: status === 'unverified' ? 'No completed successful check establishes this case.' : null }
   })
   const unsatisfied = checks.filter(check => check.active && check.required && !check.satisfied)
   let status = problems.length || unsatisfied.length ? 'blocked' : 'passed'
-  if (unsatisfied.some(check => ['failed', 'stale'].includes(check.status))) status = 'failed'
+  if (unsatisfied.some(check => check.status === 'failed')) status = 'failed'
   if (phase === 'after' && coverage.some(item => item.userJourney && item.status !== 'passed')) status = coverage.some(item => item.userJourney && item.status === 'failed') ? 'failed' : 'blocked'
   const journeyCoverage = coverage.some(item => item.userJourney && item.status === 'passed') ? 'User journey evidence captured.' : 'No user journey is verified by this result.'
   const directory = await createScratch(target)
-  const data = { schemaVersion: 1, runId: basename(directory), phase, status, planDigest, originalState, startedAt,
+  const data = { schemaVersion: 1, runId: basename(directory), phase, status, planDigest, originalState, finalState, startedAt,
     completedAt: new Date().toISOString(), priorRun: prior?.runId ?? null, executionOrder: [...(prior ? [prior.runId] : []), basename(directory)], checks, coverage, journeyCoverage,
-    limitations: ['Local capture trusts its declared input scopes and approved acceptance sources. Live probes remain unverified until C15b.'] }
+    limitations: ['Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Live probes remain unverified until C15b.'] }
   const path = join(directory, 'checks.json')
   await writeFile(path, JSON.stringify(data, null, 2) + '\n', { flag: 'wx' })
   return { status, problems, inputs: { repo: target.root, plan: options.plan, phase }, data: { ...data, path } }

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, readFile, writeFile, watch } from 'node:fs/promises'
+import { mkdir, readFile, symlink, writeFile, watch } from 'node:fs/promises'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
@@ -47,8 +47,8 @@ test('capture records literal arguments, output tails, versions, fingerprint and
   assert.equal(captured.execution.stderr, 'diagnostic\n')
   assert.equal(captured.execution.exitCode, 0)
   assert.equal(captured.execution.toolVersion.stdout.trim(), process.version)
-  assert.match(captured.inputFingerprint, /^[a-f0-9]{64}$/)
-  assert.equal(captured.inputFingerprint, captured.finalFingerprint)
+  assert.match(result.data.originalState.fingerprint, /^[a-f0-9]{64}$/)
+  assert.equal(result.data.originalState.fingerprint, result.data.finalState.fingerprint)
   const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
   assert.equal(saved.runId, result.data.runId)
   assert.equal(saved.checks[0].order, 1)
@@ -140,34 +140,54 @@ for (const [name, mutation] of [
   ['new glob file', 'require("node:fs").writeFileSync("new.txt", "changed")'],
   ['deleted glob file', 'require("node:fs").unlinkSync("product.txt")']
 ]) {
-  test(`changed ${name} make a required captured result stale`, async t => {
+  test(`changed ${name} block the capture`, async t => {
     const f = await setup(t, [check('journey', mutation, { inputScopes: ['*.txt'] })])
     const result = await f.invoke()
-    assert.equal(result.exit, 1)
-    assert.equal(result.data.checks[0].status, 'stale')
-    assert.notEqual(result.data.checks[0].inputFingerprint, result.data.checks[0].finalFingerprint)
+    assert.equal(result.exit, 2)
+    assert.equal(result.data.checks[0].status, 'blocked')
+    assert.notEqual(result.data.originalState.fingerprint, result.data.finalState.fingerprint)
+    assert.equal(result.problems[0].code, 'inputs-changed-during-run')
   })
 }
 
-test('a later check invalidates an earlier passing result', async t => {
+test('a later input change blocks all executed checks', async t => {
   const f = await setup(t, [check('journey'), check('later', 'require("node:fs").writeFileSync("product.txt", "changed")', { inputScopes: ['other.txt'] })])
   const result = await f.invoke()
-  assert.equal(result.exit, 1)
-  assert.equal(result.data.checks[0].status, 'stale')
-  assert.equal(result.data.checks[1].status, 'passed')
+  assert.equal(result.exit, 2)
+  assert.deepEqual(result.data.checks.map(item => item.status), ['blocked', 'blocked'])
+  assert.deepEqual(result.data.checks.map(item => item.execution.exitCode), [0, 0])
+})
+
+test('inputs restored before completion leave the boundary fingerprints equal', async t => {
+  const f = await setup(t, [check('change', 'require("node:fs").writeFileSync("product.txt", "changed")'),
+    check('restore', 'require("node:fs").writeFileSync("product.txt", "original")')])
+  const result = await f.invoke()
+  assert.equal(result.exit, 0)
+  assert.equal(result.data.originalState.fingerprint, result.data.finalState.fingerprint)
+  assert.deepEqual(result.data.checks.map(item => item.status), ['passed', 'passed'])
+})
+
+test('changed inputs block the capture even when a command also fails', async t => {
+  const f = await setup(t, [check('journey', 'require("node:fs").writeFileSync("product.txt", "changed"); process.exit(7)')])
+  const result = await f.invoke()
+  assert.equal(result.exit, 2)
+  assert.equal(result.status, 'blocked')
+  assert.equal(result.problems[0].message, 'inputs changed during run')
+  assert.equal(result.data.checks[0].execution.exitCode, 7)
+  assert.equal(result.data.coverage[0].status, 'unverified')
 })
 
 for (const [name, mutation] of [
   ['edited', 'fs.writeFileSync(process.argv[1], fs.readFileSync(process.argv[1], "utf8") + "\\n")'],
   ['deleted', 'fs.unlinkSync(process.argv[1])']
 ]) {
-  test(`an external plan ${name} during capture makes results stale`, async t => {
+  test(`an external plan ${name} during capture blocks results`, async t => {
     const f = await setup(t, [check('journey'), check('later')])
     f.plan.checks[1].command.args = ['-e', `const fs = require("node:fs"); ${mutation}`, f.path]
     const result = await f.invoke()
-    assert.equal(result.exit, 1)
-    assert.deepEqual(result.data.checks.map(item => item.status), ['stale', 'stale'])
-    assert.equal(result.data.coverage[0].status, 'failed')
+    assert.equal(result.exit, 2)
+    assert.deepEqual(result.data.checks.map(item => item.status), ['blocked', 'blocked'])
+    assert.equal(result.data.coverage[0].status, 'unverified')
   })
 }
 
@@ -177,16 +197,16 @@ for (const [name, mutation] of [
   ['edited acceptance source', 'fs.writeFileSync("ACCEPTANCE.md", "changed")'],
   ['deleted acceptance source', 'fs.unlinkSync("ACCEPTANCE.md")']
 ]) {
-  test(`an optional check cannot let a later required check adopt ${name}`, async t => {
+  test(`an optional check's ${name} blocks the whole capture`, async t => {
     const f = await setup(t, [check('optional', undefined, { required: false, acceptanceCases: ['units'] }),
       check('journey', 'require("node:fs").writeFileSync("executed", "")')])
     f.plan.acceptanceCases.push({ ...f.plan.acceptanceCases[0], id: 'units', userJourney: false })
     f.plan.checks[0].command.args = ['-e', `const fs = require("node:fs"); ${mutation}`, f.path]
     const result = await f.invoke()
-    assert.equal(result.exit, 1)
-    assert.equal(result.data.checks[1].status, 'stale')
-    assert.equal(result.data.checks[1].execution, null)
-    assert.equal(result.data.coverage[0].status, 'failed')
+    assert.equal(result.exit, 2)
+    assert.equal(result.data.checks[1].status, 'blocked')
+    assert.equal(result.data.checks[1].execution.exitCode, 0)
+    assert.equal(result.data.coverage[0].status, 'unverified')
   })
 }
 
@@ -213,8 +233,8 @@ for (const path of ['src/app/[id]/page.ts', 'src/{name}.ts', 'src/star*.ts', 'sr
     assert.equal(passed.data.originalState.state.files.find(file => file.path === path).contentHash, hash('original'))
     f.plan.checks[0].command.args = ['-e', 'require("node:fs").writeFileSync(process.argv[1], "changed")', path]
     const changed = await f.invoke()
-    assert.equal(changed.exit, 1)
-    assert.equal(changed.data.checks[0].status, 'stale')
+    assert.equal(changed.exit, 2)
+    assert.equal(changed.data.checks[0].status, 'blocked')
   })
 }
 
@@ -293,17 +313,18 @@ for (const [kind, role, code, additionalChecks] of [
     ['deleted glob file', 'fs.unlinkSync("product.txt")', ['product*.txt'], false],
     ['created absent literal', 'fs.writeFileSync("product-new.txt", "new")', ['product.txt', 'product-new.txt'], false]
   ]) {
-    test(`before ${role} rejects ${name} from an earlier optional check`, { skip }, async t => {
+    test(`before ${role} capture is blocked by ${name} from an optional check`, { skip }, async t => {
       const f = await setup(t, [check('optional', `const fs = require("node:fs"); ${mutation}`,
         { role: 'protection', required: false, inputScopes: ['other.txt'], acceptanceCases: ['units'] }),
       check('required', code, { role, inputScopes }), ...additionalChecks], kind)
       f.plan.acceptanceCases.push({ ...f.plan.acceptanceCases[0], id: 'units', userJourney: false })
       const before = await f.invoke(['--phase', 'before'])
-      assert.equal(before.exit, 1)
-      assert.equal(before.data.checks[0].status, 'passed')
-      assert.equal(before.data.checks[1].status, 'stale')
+      assert.equal(before.exit, 2)
+      assert.equal(before.data.checks[0].status, 'blocked')
+      assert.equal(before.data.checks[1].status, 'blocked')
       assert.equal(before.data.checks[1].satisfied, false)
-      assert.equal(before.data.checks[1].execution, null)
+      assert.ok(before.data.checks[1].execution)
+      assert.equal(before.problems[0].code, 'inputs-changed-during-run')
       const after = await f.invoke(['--prior-run', before.data.runId])
       assert.equal(after.exit, 2)
       assert.equal(after.problems[0].code, 'missing-prior-evidence')
@@ -312,7 +333,7 @@ for (const [kind, role, code, additionalChecks] of [
   }
 }
 
-test('before protection projects glob inputs without another check’s absent literal', async t => {
+test('before capture includes glob inputs and another check’s absent literal', async t => {
   const f = await setup(t, [check('optional', undefined, { role: 'protection', required: false, inputScopes: ['other.txt'] }),
     check('protect', undefined, { role: 'protection', inputScopes: ['*.txt'] }),
     check('compatibility', undefined, { role: 'compatibility' })], 'refactor')
@@ -322,7 +343,46 @@ test('before protection projects glob inputs without another check’s absent li
   assert.equal(before.data.checks[1].satisfied, true)
 })
 
-test('prior protection cannot name an original snapshot its checks never assessed', async t => {
+for (const [name, path, prepare, expected, skip] of [
+  ['excluded build output', 'dist/app.js', async repo => {
+    await mkdir(join(repo, 'dist'))
+    await writeFile(join(repo, 'dist/app.js'), 'built')
+  }, 'built', false],
+  ['explicit symlink', 'linked.txt', async repo => {
+    await symlink('product.txt', join(repo, 'linked.txt'))
+  }, 'original', process.platform === 'win32']
+]) {
+  test(`capture combines glob discovery with ${name} from a literal scope`, { skip }, async t => {
+    const f = await refactor(t)
+    await prepare(f.repo)
+    f.plan.checks[0].inputScopes = ['**']
+    f.plan.checks[1].inputScopes = [path]
+    const before = await f.invoke(['--phase', 'before'])
+    assert.equal(before.exit, 0)
+    assert.equal(before.data.originalState.state.files.find(file => file.path === path).contentHash, hash(expected))
+    assert.equal(before.data.originalState.fingerprint, before.data.finalState.fingerprint)
+    await writeFile(join(f.repo, 'product.cjs'), 'exports.total = count => 10 * count\n')
+    const after = await f.invoke(['--prior-run', before.data.runId])
+    assert.equal(after.exit, 0)
+  })
+}
+
+test('before capture blocks changes to an inactive check’s declared inputs', async t => {
+  const f = await refactor(t)
+  await mkdir(join(f.repo, 'dist'))
+  await writeFile(join(f.repo, 'dist/app.js'), 'built')
+  f.plan.checks[1].inputScopes = ['dist/app.js']
+  f.plan.checks.unshift(check('optional', 'require("node:fs").writeFileSync("dist/app.js", "changed")',
+    { role: 'protection', required: false, inputScopes: ['other.txt'] }))
+  const before = await f.invoke(['--phase', 'before'])
+  assert.equal(before.exit, 2)
+  assert.equal(before.problems[0].code, 'inputs-changed-during-run')
+  assert.equal(before.data.checks[1].execution.exitCode, 0)
+  assert.equal(before.data.checks[1].satisfied, false)
+  assert.equal(before.data.checks[2].execution, null)
+})
+
+test('prior protection requires matching original and final snapshots', async t => {
   const f = await refactor(t)
   const original = await f.invoke(['--phase', 'before'])
   await writeFile(join(f.repo, 'product.cjs'), 'exports.total = count => 10 * count\n')
@@ -333,7 +393,7 @@ test('prior protection cannot name an original snapshot its checks never assesse
   await writeFile(changed.data.path, JSON.stringify(saved))
   const after = await f.invoke(['--prior-run', changed.data.runId])
   assert.equal(after.exit, 2)
-  assert.equal(after.problems[0].code, 'invalid-prior-check')
+  assert.equal(after.problems[0].code, 'missing-prior-evidence')
   assert.ok(after.data.checks.every(item => item.execution === null))
 })
 
