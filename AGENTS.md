@@ -4,4 +4,4 @@ Read [docs/design.md](docs/design.md) for requirements and [docs/implementation-
 
 Use Node 24 or later and run `npm ci`, `npm run check` and `npm test`.
 Select a registered task suite with `npm test -- --task <id>`.
-`npm run eval` reports blocked until the evaluation runner is built in T1.2.
+See [docs/evaluation.md](docs/evaluation.md) for the available evaluation interface and pending capabilities.

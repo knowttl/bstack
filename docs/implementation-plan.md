@@ -341,6 +341,8 @@ Tick each task when its "Done when" commands pass.
     - [x] C6a Isolated idea/clear-goals fixtures and builder ([evidence](../tests/eval/results/tasks/T1.1.json))
     - [x] C6bc Native stacks, boundary proofs and state variants ([evidence](../tests/eval/results/tasks/T1.1.json))
   - [ ] T1.2 Build the evaluation runner and record the baseline
+    - [x] C7a Acceptance registry and manual evaluation interface ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
+    - [ ] C7b Current-host adapter, verified isolation and recorded baseline
   - [ ] T1.3 Write the first `SKILL.md`
   - [ ] T1.4 Bundle the interview and domain-language modules
   - [ ] T1.5 Adapt VISION and bundle the board assets
@@ -1700,7 +1702,8 @@ Automated procedures name the test title and file, with positive and negative co
 Agent and manual procedures name the scenario check and the transcript or board artifact needed to score it.
 The runner verifies that a named test actually executed, rather than accepting a zero-test exit code.
 Every result records passed, failed or blocked, its relevant input revision and an existing artifact path.
-`scripts/acceptance.mjs --require-complete` rejects missing case records, duplicate final evidence selections and unsupported success claims.
+T5.2 will add `scripts/acceptance.mjs --require-complete` to reject missing case records, duplicate final evidence selections and unsupported success claims.
+See the [evaluation contract](evaluation.md#registry-and-final-selections) for the available registry and selection validation.
 Repeated execution artifacts with unique run IDs are legitimate history, and the validator prefers the explicitly selected fresh final evidence over stale earlier runs.
 
 Fill in the "Evidence" column in T5.2.

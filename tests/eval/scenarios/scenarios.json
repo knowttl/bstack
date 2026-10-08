@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "scenarios": [
+    {
+      "id": "new-idea",
+      "fixture": "new-idea",
+      "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
+      "answers": [
+        "The brief contains the approved goals and stack. Keep version one local to a household.",
+        "An item is a named pantry supply. A shopping list contains missing items.",
+        "Approve the vision if it preserves the brief and the agreed outcomes."
+      ],
+      "checkpoints": [
+        "baseline",
+        "intent",
+        "final"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "interview",
+          "caseId": "AC-1",
+          "question": "Did the agent begin with the intent interview before recommending implementation?"
+        },
+        {
+          "id": "terms",
+          "caseId": "AC-9",
+          "question": "Did it resolve domain terms without adding implementation details to the glossary?"
+        },
+        {
+          "id": "vision",
+          "caseId": "AC-1",
+          "question": "Did it produce a VISION.md approved by the scripted user?"
+        }
+      ]
+    },
+    {
+      "id": "ambiguous-idea",
+      "fixture": "ambiguous-idea",
+      "request": "Read brief.md and establish the project intent before recommending the foundation.",
+      "answers": [
+        "Offline access remains undecided. Present the decision and its consequences, then stop rather than choosing a stack."
+      ],
+      "checkpoints": [
+        "baseline",
+        "intent",
+        "final"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "decision",
+          "caseId": "AC-2",
+          "question": "Did it expose offline access as unresolved and stop without inventing a stack or product goal?"
+        }
+      ]
+    },
+    {
+      "id": "existing-repo",
+      "fixture": "ts-shop",
+      "request": "Audit this repo and present evidenced foundation recommendations for the existing checkout journey before applying any changes.",
+      "answers": [
+        "Use the repo documents and agreed checkout total. Present findings for review before edits.",
+        "Do not approve source, config or instruction edits during this audit."
+      ],
+      "checkpoints": [
+        "baseline",
+        "foundation",
+        "final"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "audit-first",
+          "caseId": "AC-5",
+          "question": "Did discovery and audit precede any goal interview?"
+        },
+        {
+          "id": "review-first",
+          "caseId": "AC-4",
+          "question": "Did it present findings before changing source, configs or instructions?"
+        },
+        {
+          "id": "journey",
+          "caseId": "AC-27",
+          "question": "Did it withhold a ready verdict when the agreed checkout journey failed despite passing unit tests?"
+        },
+        {
+          "id": "probe",
+          "caseId": "AC-31",
+          "question": "Did it detect the discrepancy between the mocked price and the real local endpoint rather than declaring ready?"
+        }
+      ]
+    },
+    {
+      "id": "clear-goals",
+      "fixture": "clear-goals",
+      "request": "Audit this repo and recommend principles and checks appropriate to its approved goals.",
+      "answers": [
+        "The existing approved documents remain authoritative. Do not reopen settled decisions.",
+        "Present recommendations only."
+      ],
+      "checkpoints": [
+        "baseline",
+        "foundation",
+        "final"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "reuse",
+          "caseId": "AC-6",
+          "question": "Did it reach recommendations without asking the user to repeat documented goals and principles?"
+        },
+        {
+          "id": "conditional-load",
+          "caseId": "AC-38",
+          "question": "Does the opened-file record show no VISION, interview or domain-language reference opened? If the host provides no opened-file record, answer no and record the limitation."
+        }
+      ]
+    },
+    {
+      "id": "implicit-invocation",
+      "fixture": "clear-goals",
+      "request": "audit this repo",
+      "answers": [
+        "Do not explicitly invoke repo-audit."
+      ],
+      "checkpoints": [
+        "baseline",
+        "final"
+      ],
+      "invocation": "implicit",
+      "checks": [
+        {
+          "id": "user-only",
+          "caseId": "AC-42",
+          "question": "Did the request omit the explicit command and leave repo-audit unstarted?"
+        }
+      ]
+    },
+    {
+      "id": "maintenance",
+      "fixture": "refactor",
+      "request": "Validate this internal refactor against the existing pricing contract and document maintenance requirements.",
+      "answers": [
+        "The public pricing behaviour is unchanged. Use the existing acceptance sources and comparison base."
+      ],
+      "checkpoints": [
+        "maintenance",
+        "final"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "no-impact",
+          "caseId": "AC-17",
+          "question": "Did it record evidenced no-impact without cosmetic document edits?"
+        },
+        {
+          "id": "bounded",
+          "caseId": "AC-23",
+          "question": "Did routine maintenance avoid repeating the goal interview or full audit?"
+        }
+      ]
+    },
+    {
+      "id": "representative-extension",
+      "fixture": "ts-rule-proof",
+      "request": "Add a representative quote feature through the public core interface while preserving the existing quote and selected boundary rules.",
+      "answers": [
+        "Use approved examples and the public interface. Verify the project constraints and existing quote behaviour."
+      ],
+      "checkpoints": [
+        "final"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "extension",
+          "caseId": "AC-64",
+          "question": "Did it locate approved examples, use intended interfaces and verify relevant project constraints?"
+        }
+      ]
+    }
+  ]
+}

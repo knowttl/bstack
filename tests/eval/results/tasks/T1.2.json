@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T1.2",
+  "slice": "C7a",
+  "sourceRevision": "278b12f76b55410397c46b44ab5573413ebbf9c9",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Phase 0 and task T1.1 (fixtures, last in https://github.com/knowttl/bstack/pull/13) have landed. The merged slice table is `[host-home]/.treehouse/firstmate-5911dd/3/firstmate/data/slice-merge/report.md` (bstack table).\n\nThis piece is slice C7a, the first part of task T1.2 \"Build the evaluation runner and record the baseline\": the acceptance registry and the manual evaluation interface (slice done evidence: 75 owned case IDs, invalid registry and manual results blocked, explicit transcript scoring). C7b follows with the current-host adapter, isolation and the recorded baseline.",
+  "amendments": [
+    "C7a supplies the registry, scenarios and manual scoring interface. T1.2 remains incomplete until C7b supplies the adapter, verified isolation and actual comparable baseline runs.",
+    "Evidence-only commit follows the tested implementation commit."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.install.txt"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.check.txt"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.test.txt"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T1.2"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.task-test.txt"
+    },
+    {
+      "id": "registry",
+      "executable": "node",
+      "args": [
+        "scripts/acceptance.mjs",
+        "--check-registry"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.registry.txt"
+    },
+    {
+      "id": "revision",
+      "executable": "git",
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.revision.txt"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.os.txt"
+    },
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.node-version.txt"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.npm-version.txt"
+    },
+    {
+      "id": "git-version",
+      "executable": "git",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.git-version.txt"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C7a-registry",
+      "kind": "automated",
+      "procedure": "tests/scripts/acceptance.test.mjs: registry validates all 75 owned cases without passing planned procedures; table-driven invalid registry cases; completed procedure definitions require existing tests and artifacts without scoring them.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
+    },
+    {
+      "id": "C7a-manual-scoring",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: missing answers/transcript cases; manual scoring blocks invalid answer cases; passing and failing reviewer verdict cases; empty and unavailable transcripts leave a run blocked.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
+    },
+    {
+      "id": "C7a-history-selection",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: manual run prints its fixture, request, scripted answers and checklist with unique history paths; scoring retains artifacts and blocks unverified final evidence. tests/scripts/acceptance.test.mjs: duplicate final selections are blocked independently of run history.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
+    },
+    {
+      "id": "C7a-invocation-comparison",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: ordinary with-skill runs require explicit invocation while implicit runs omit it; table-driven comparison baseline and with-skill cases; comparison blocks different models and unscored runs.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
+    },
+    {
+      "id": "AC-46",
+      "kind": "agent",
+      "procedure": "Run at least three comparable fresh isolated baseline scenarios and retain real transcripts, then compare the same agent, model, fixture revision and criteria with the skill.",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C7a builds interfaces only. No actual agent acceptance results or verified isolation are claimed.",
+      "nextPrerequisite": "C7b current-host adapter, isolation and recorded baseline."
+    }
+  ],
+  "limitations": [
+    "Only C7a interface behaviour is complete. T1.2 host execution, isolation and actual baseline procedures remain blocked on C7b.",
+    "The 75 registry definitions remain planned, including cases previously tested in Phase 0, until their completed procedures and artifacts are registered. Registration never passes acceptance cases.",
+    "Human scoring tests use scripted transcripts to test the command interface, not live model evaluations.",
+    "Local execution used Linux and Node 24 only and does not prove Windows or macOS support."
+  ]
+}

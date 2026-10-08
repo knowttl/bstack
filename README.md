@@ -23,6 +23,8 @@ npm test -- --task T0.5.C5a
 npm test -- --task T0.5.C5b
 npm test -- --task T0.6
 npm test -- --task T1.1
+npm test -- --task T1.2
+node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
 
@@ -32,7 +34,17 @@ See the [package check contract](docs/command-contract.md#package-check) for exa
 Local validation runs the install, package check and full tests on Node 24 and Node 26.
 The no-mistakes gate installs once, runs tests once and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
-`npm run eval` reports that evaluation is not built and exits 2 until T1.2.
+The C7a manual evaluation interface is available, with scenarios and all 75 planned acceptance procedures.
+Automatic host execution, verified isolation and the baseline remain blocked until C7b.
+See the [evaluation contract](docs/evaluation.md) for manual scoring, comparison and explicit final selections.
+
+```sh
+npm run eval -- --manual --scenario ambiguous-idea --mode without --stage baseline --agent <agent> --model <model>
+npm run eval -- score --run <id> --answers answers.json --transcript transcript.txt
+```
+
+An unscored manual run exits 2 as blocked.
+Scoring requires complete answers and a transcript with reviewer citations.
 Tests are discovered only under `tests/scripts/` and `tests/package-check/`.
 Task suites are registered in `tests/tasks.json`.
 `npm test -- --task T0.4` selects the currently implemented shared-library tests.
