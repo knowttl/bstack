@@ -20,6 +20,7 @@ Security hardening of created skills and licensing review are outside scope.
 This is a procedure under construction.
 The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available.
 Steps 7 and 11 describe the available read-only audit and findings commands.
+The apply command validates reviewed plans with `--plan <file> --dry-run`; it does not write project files.
 The other conditional references remain placeholders, while complete audit integration, protected writes and automatic verification capture remain unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.

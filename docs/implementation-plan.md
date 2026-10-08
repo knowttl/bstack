@@ -371,6 +371,9 @@ Tick each task when its "Done when" commands pass.
       The [findings contract](command-contract.md#findings) owns audit and foundation inputs, examples and readiness limits.
       [T2.5 evidence](../tests/eval/results/tasks/T2.5.json) records local command controls for AC-8, AC-63 and AC-65, with real Windows/macOS and full agent acceptance still separate.
   - [ ] T2.6 Build protected writes and resume state
+    - C14a implements steps 1-3: change-set and resume schemas, six mechanical operations with complete reviewed bytes, digest-bound selections and resolved scope, and `apply --plan <file> --dry-run`.
+      The partial suite is registered as `npm test -- --task T2.6`; its task evidence is `tests/eval/results/tasks/T2.6.json`.
+      C14b remains for writes, recoverable originals, journal, resume, repeat, `state show` and whole-file replacement; T2.6 is not complete.
   - [ ] T2.7 Build verification capture and live probes
   - [ ] T2.8 Complete the existing-repo audit and apply path
   - [ ] T2.9 Complete protected new-project creation

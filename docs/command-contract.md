@@ -560,6 +560,7 @@ Open and verify source citations using cite-check before relying on them.
 These pointers identify evidence rather than duplicate authoritative principles.
 The findings validator checks source joins, not the meaning of citations or their truth.
 Unknown source IDs, duplicate joining IDs, paths outside scope and inconsistent selections fail validation.
+Duplicate JSON member names at any depth, including escaped equivalents, and numbers that decode to nonfinite values also fail validation.
 `selectedFindingIds` must match exactly the findings whose status is selected.
 Selection authorises a proposed fix, while `resolved` records its observed completion or the owner's settled decision.
 Rejecting a blocking finding does not resolve the block.
@@ -603,4 +604,102 @@ Read `data.result` and `data.reasons` to determine readiness.
 `validate` writes nothing.
 `render` writes only `repo-audit.md` in a fresh OS-cache scratch run and returns `data.path` in JSON or the path in plain output.
 An inside-target cache blocks rendering.
-Writing the reviewed report into the project's audit record remains T2.6 work.
+Writing the reviewed report into the project's audit record remains T2.6 C14b work.
+
+## Apply dry run
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --dry-run [--json]
+node skills/repo-audit/scripts/repo-audit.mjs apply --workspace <path> --plan <file> --dry-run [--json]
+```
+
+C14a implements validation and preview only.
+Omitting `--plan` or `--dry-run` is a usage error.
+No target, scratch, dependency or journal files are written by this command.
+Real writes, backups, resume, repeat execution, `state show` and reviewed whole-file replacement remain C14b.
+
+The [change-set schema](../skills/repo-audit/schemas/change-set.schema.json) owns the plan fields.
+Each plan declares `schemaVersion: 1`, `target`, `findings`, `findingsDigest`, `selectedFindingIds`, `reviewedScope`, `edits` and `planDigest`.
+`--plan` resolves from the invoking cwd; `findings` resolves from the plan's directory and names the full T2.5 findings input.
+Both the findings and plan schemas reject unknown fields.
+Findings use the same structural, source-join, scope and selection validator as `findings validate`.
+The plan's target must match the findings and explicitly selected real target, including mode and current Git HEAD, or null for an unborn repo or workspace.
+Unresolved design decisions block the preview.
+Finding resolution records observed completion, so a selected debt finding may still be unresolved before previewing its fix.
+Preview does not establish readiness, execute checks or validate the truth of supplied evidence.
+
+The plan's selections must exactly match the findings marked selected.
+`reviewedScope` lists concrete files as `{ "path": "README.md", "resolvedPath": "<real-target>/README.md" }`, including planned absent files.
+It must match the findings scope exactly, without duplicates, directories or globs.
+Each path is resolved again through existing links and missing parents.
+Traversal, escaping links and changed resolutions fail before any preview is returned.
+Every edit must belong to its selected finding's scope.
+Use one complete edit per resolved file; duplicate IDs and overlapping aliases fail.
+
+Compute `findingsDigest` as SHA-256 of UTF-8 canonical JSON of the entire findings object, including execution records.
+Compute `planDigest` the same way from the entire plan with only the top-level `planDigest` omitted.
+Canonical JSON recursively sorts object keys, preserves array order and uses `JSON.stringify` for strings and primitive values, without spaces.
+For example, `{ "b": 1, "a": [true, null] }` canonicalises to `{"a":[true,null],"b":1}`.
+This binds target identity, selections, resolved scope, findings digest, operation payloads and complete proposed bytes.
+The digest detects changes to reviewed inputs; it does not prove author approval.
+A changed digest, selection, scope, link target, revision or file precondition requires a fresh review.
+
+Each edit declares a unique `id`, selected `findingId`, target-relative `path`, `originalHash`, `proposedHash`, `operation`, `payload` and `proposedContent`.
+Hashes are lowercase SHA-256 of exact UTF-8 bytes, preserving BOM and line endings.
+Explicit null means absence, while the hash of an empty string means a present empty file.
+The helper derives the full proposed content from the operation and checks it against both `proposedContent` and `proposedHash`.
+Original file bytes must match `originalHash`; a create must start absent and a delete must start present.
+Complete bytes for every file are staged in memory before reporting success.
+If any file fails, no diff or proposed edits are returned and every project file remains unchanged.
+Filesystem access failures block the command; invalid plans fail with named problems and renewed-review guidance.
+
+| Operation | Exact payload | Supported scope |
+|---|---|---|
+| `create` | `{ "content": "complete new text" }` | An absent UTF-8 `.md`, `.txt` or `.json` file; JSON must be an object without duplicate keys |
+| `replace` | `{ "search": "unique nonempty literal", "replacement": "new text" }` | One exact occurrence in `.md` or `.txt`; an empty replacement keeps the file present |
+| `delete` | `{}` | One existing UTF-8 text file, without an extension restriction; both proposed fields must be null |
+| `set-heading-section` | `{ "heading": "ATX heading title", "content": "new body\n" }` | `.md`; exactly one matching nonempty ATX heading at column 0 outside fenced code, replacing its body and subsections until the next same-or-higher-level heading |
+| `set-json-key` | `{ "key": "root key", "value": { "any": "JSON value" } }` | A `.json` object; replace one root value or insert a missing root key, preserving other bytes |
+| `append-line-once` | `{ "line": "one nonempty line" }` | `.md` or `.txt`; leave an existing exact line intact, otherwise append it using CRLF when present, LF otherwise |
+
+Payloads reject unknown and missing fields.
+Plan inputs reject malformed JSON, duplicate keys at any depth (including escaped equivalents) and numbers that decode to nonfinite values.
+JSON create and key edits also reject malformed JSON, duplicate keys, nonfinite numbers and non-object roots.
+All operations reject binary/non-UTF-8 text; operations other than delete reject unsupported extensions.
+`set-heading-section` and `append-line-once` reject any target file containing a bare carriage return (CR not followed by LF) before matching, with no project writes.
+These line-based operations support LF and CRLF without normalising existing bytes.
+Heading edits support unindented prose, nonempty ATX headings at column 0 and closed fences at column 0 with an optional plain info word containing letters, digits, underscores, plus signs, dots or hyphens.
+Outside fenced code, indented content, lists, block quotes, HTML-like markup, tables, reference definitions, empty headings, setext headings and thematic breaks are unsupported.
+Setext underlines and thematic-break lines remain unsupported with trailing spaces or tabs.
+Indented backtick or tilde fence markers are unsupported anywhere, including inside fenced code.
+Unsupported structures fail with `Unsupported Markdown structure; use whole-file replacement.` rather than guessing a section boundary.
+The selected heading needs a line ending and a nonempty new body must end with a newline.
+A leading UTF-8 BOM is ignored when matching headings, fences and existing lines, while its bytes remain preserved.
+Replacement searches with zero or multiple occurrences fail.
+Unsupported edits need the C14b reviewed whole-file interface.
+
+For a selected replacement, an edit has this shape:
+
+```json
+{
+  "id": "E-001",
+  "findingId": "F-001",
+  "path": "README.md",
+  "originalHash": "<SHA-256 of old\\n>",
+  "proposedHash": "<SHA-256 of new\\n>",
+  "operation": "replace",
+  "payload": { "search": "old", "replacement": "new" },
+  "proposedContent": "new\n"
+}
+```
+
+The public-command suite constructs complete plans, computes these digests independently and verifies successful and invalid previews against before/after project fingerprints.
+Plain output prints a full-file unified diff with target-relative labels and missing-final-newline markers.
+CRLF carriage returns remain in the diff; there is no line-ending normalisation.
+JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edits` containing each complete proposed content, original/proposed hashes and diff.
+An unchanged proposed file produces an empty diff.
+
+The [resume-state schema](../skills/repo-audit/schemas/resume-state.schema.json) is defined now for C14b.
+It declares `schemaVersion`, `runId`, the reviewed target, `planDigest`, per-edit IDs, paths, original/proposed hashes, backup paths or explicit null for absent originals, completion flags and `affectedChecks`.
+C14b will derive pending, applied and conflicting states from actual hashes, preflight all remaining edits, preserve recoverable backups and report affected checks.
+The schema alone does not implement recovery or authorise trusting completion flags.

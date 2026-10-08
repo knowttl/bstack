@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdtemp, readdir, readFile, rm, mkdir } from 'node:fs/promises'
+import { mkdtemp, readdir, readFile, readlink, rm, mkdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -43,7 +43,7 @@ export async function snapshot(directory) {
   const files = {}
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name)
-    files[entry.name] = entry.isDirectory() ? await snapshot(path) : createHash('sha256').update(await readFile(path)).digest('hex')
+    files[entry.name] = entry.isSymbolicLink() ? { link: await readlink(path) } : entry.isDirectory() ? await snapshot(path) : createHash('sha256').update(await readFile(path)).digest('hex')
   }
   return files
 }

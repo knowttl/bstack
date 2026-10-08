@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T2.6",
+  "slice": "C14a",
+  "sourceRevision": "af75214f7dd91f91dfc7a54247ff2b2659691c98",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1-T2.4 and T2.5 (https://github.com/knowttl/bstack/pull/24: findings schema, `findings validate`/`render` and per-stage readiness).\n\nThis piece is slice C14a, the first part of task T2.6 \"Build protected writes and resume state\": dry-run and exact reviewed payloads. Done evidence: all invalid plans and preconditions rejected with zero project changes.",
+  "amendments": [
+    "Regenerated all five C14a command artifacts after the completed no-mistakes run 01M4DJF2VJR5KYPJ745VHXZRP9 repaired Markdown subset rejection, BOM matching, duplicate/nonfinite JSON inputs and concrete file scope validation. Fresh commands ran against bba511a7c6464d59a5b22d7d2a919854c404ee3a; the evidence-only follow-up preserves every pipeline repair commit.",
+    "Regenerated all five command artifacts again after completed no-mistakes run 01M4DN4CM4EGY46736Z38STM1C repaired bare-CR rejection for heading sections and append-line-once. Fresh commands ran against af75214f7dd91f91dfc7a54247ff2b2659691c98."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "root-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C14a.root-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "skill-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--prefix",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C14a.skill-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "package-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C14a.package-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "full-tests",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C14a.full-tests.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.6",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.6"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C14a.task-T2.6.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-70",
+      "kind": "automated",
+      "procedure": "apply rejects invalid schema with no project writes; apply rejects unresolved scope with no project writes; apply rejects unselected finding with no project writes; apply rejects path traversal with no project writes; escaping links fail with an unchanged project fingerprint and outside bytes; changed later precondition prevents all edits and reports every changed file",
+      "status": "blocked",
+      "artifact": "tests/eval/results/tasks/C14a.task-T2.6.txt",
+      "reason": "C14a dry-run preflight controls passed, but protected-write execution remains C14b.",
+      "nextPrerequisite": "Complete C14b write and journal tests."
+    },
+    {
+      "id": "AC-54",
+      "kind": "automated",
+      "procedure": "T2.6 protected writes, interrupted journal, resume, repeat and dirty-user protection",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C14a stages and previews reviewed payloads only; writes and recovery are not implemented.",
+      "nextPrerequisite": "Complete C14b and run its registered T2.6 suite."
+    },
+    {
+      "id": "AC-57",
+      "kind": "automated",
+      "procedure": "T2.6 protected writes, interrupted journal, resume, repeat and dirty-user protection",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C14a stages and previews reviewed payloads only; writes and recovery are not implemented.",
+      "nextPrerequisite": "Complete C14b and run its registered T2.6 suite."
+    },
+    {
+      "id": "AC-69",
+      "kind": "automated",
+      "procedure": "T2.6 protected writes, interrupted journal, resume, repeat and dirty-user protection",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C14a stages and previews reviewed payloads only; writes and recovery are not implemented.",
+      "nextPrerequisite": "Complete C14b and run its registered T2.6 suite."
+    },
+    {
+      "id": "AC-72",
+      "kind": "automated",
+      "procedure": "T2.6 protected writes, interrupted journal, resume, repeat and dirty-user protection",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C14a stages and previews reviewed payloads only; writes and recovery are not implemented.",
+      "nextPrerequisite": "Complete C14b and run its registered T2.6 suite."
+    }
+  ],
+  "limitations": [
+    "Partial T2.6 steps 1-3 only; C14b remains. Dry runs are fingerprinted before and after; all 167 task tests and 597 full-suite tests passed.",
+    "Selected delete preview passed; backups, collision recovery, interrupted deletion and repeat are C14b work.",
+    "Linux Node 24 only. Real Windows/macOS execution remains captain checklist evidence; no hosted CI ran."
+  ]
+}

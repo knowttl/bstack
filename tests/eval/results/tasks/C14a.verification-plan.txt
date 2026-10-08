@@ -1,0 +1,7 @@
+Verify C14a against the committed implementation and retain direct command output.
+Run npm ci --ignore-scripts, npm ci --omit=dev --prefix skills/repo-audit, npm run check, npm test, and npm test -- --task T2.6.
+The public apply command must stage all six operations and print complete exact-byte diffs without project writes.
+Reject invalid schema, unresolved scope, unselected findings, traversal, escaping links, changed preconditions, ambiguous headings, duplicate JSON keys, overlapping edits and unsupported formats with unchanged project fingerprints.
+Verify selected-delete preview, empty replacement as a present file, UTF-8/CRLF/BOM preservation, current revision/digests, workspace mode and resume-schema structure.
+Real writes, backups, journal, resume, repeat, state show and whole-file replacement remain C14b; full T2.6 acceptance is blocked.
+Recorded local evidence is Linux Node 24. Real Windows/macOS runs remain captain checklist evidence. No hosted CI or workflows.

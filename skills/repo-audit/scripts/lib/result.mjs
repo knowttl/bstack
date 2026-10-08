@@ -15,6 +15,7 @@ export function emitResult({ command, status, problems = [], data = {}, inputs =
   console.log(json ? JSON.stringify(result) : [
     `${command}: ${status}`,
     ...(data.path ? [data.path] : []),
+    ...(data.diff ? [data.diff] : []),
     ...problems.map(problem => `${problem.code}: ${problem.message} Fix: ${problem.fix}`)
   ].join('\n'))
   process.exitCode = exitCodes[status]
