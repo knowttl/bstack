@@ -1421,7 +1421,10 @@ The board carries its run ID, exact-byte SHA-256 draft revision and unique card 
 The launcher must validate these bindings before accepting verdicts.
 The agent owns interpretation and a reviewed new draft, preserving the previous revision for resume.
 A verdict alone cannot mechanically rewrite arbitrary VISION prose.
-The [implementation plan](implementation-plan.md#progress) records the remaining launch, verdict ingestion, resumed review and approved-draft work.
+See the [launch and verdict contract](command-contract.md#vision-board-launch-and-verdicts) for implemented transport and scratch metadata.
+The [C10b manual procedure](../tests/eval/results/tasks/C10b.manual-board.md) owns the live board observations and interaction limitation.
+The [intent checkpoint](evaluation.md#intent-checkpoint-c10b) owns the isolated agent-run observations.
+The [implementation plan](implementation-plan.md#progress) records task completion and outstanding evidence.
 
 | Source | Verified fact | Effect on this design |
 |---|---|---|

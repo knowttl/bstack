@@ -5,6 +5,14 @@ VISION.md explains which future changes fit the project and which reviewers shou
 It must stand on its own without the board, transcript or a companion answers file.
 Keep a backlog and implementation plan separate from the vision.
 
+## Contents
+
+- Evidence and scope
+- Draft an acceptance policy
+- Stress-test real fault lines
+- Revise from author verdicts
+- Finish and existing companion files
+
 ## Evidence and scope
 
 Resolve the target, author and requested change before drafting.
@@ -57,7 +65,11 @@ Keep its full draft, card stack and review mechanics.
 Do not restyle the board or substitute another approval surface.
 Run command help for the currently implemented syntax and supply the documented input format.
 Do not load assets or script source as instructions.
-The build command is available, but launch, verdict ingestion and resumed review remain unavailable until C10b.
+Build with the draft and matching proposals, launch the returned board path, and use the pinned terminal listener returned by launch.
+Save the complete-round Context data JSON from terminal feedback unchanged.
+After interpreting its reasoning, supply that JSON as --input and the revised draft as --draft to vision-board verdicts with the original --board and target.
+The command validates the run, draft revision and all card IDs before saving the revision and review.json decisions in new scratch.
+Read those decisions when resuming, keep prior scratch drafts, and present the saved revision for explicit author approval.
 Building HTML does not prove that a review or approval happened.
 Preserve the draft and report missing runtime or interaction prerequisites as blocked.
 

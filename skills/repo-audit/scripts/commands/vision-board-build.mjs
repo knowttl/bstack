@@ -46,7 +46,7 @@ export async function run(options) {
   const boardPath = join(scratch, 'board.html')
   await writeFile(join(scratch, 'draft.md'), draft)
   await writeFile(join(scratch, 'proposals.json'), JSON.stringify(proposals, null, 2) + '\n')
-  await writeFile(join(scratch, 'board.json'), JSON.stringify({ ...review, cardIds: proposals.cards.map(card => card.id) }, null, 2) + '\n')
+  await writeFile(join(scratch, 'board.json'), JSON.stringify({ ...review, target, cardIds: proposals.cards.map(card => card.id) }, null, 2) + '\n')
   await copyFile(new URL('../../assets/vision/review.css', import.meta.url), join(scratch, 'review.css'))
   await writeFile(boardPath, board)
   return { inputs: { target, draftRevision }, data: { scratch, board: boardPath, ...review, cardIds: proposals.cards.map(card => card.id) } }

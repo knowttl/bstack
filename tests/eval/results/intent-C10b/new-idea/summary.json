@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "scenario": {
+    "id": "new-idea",
+    "fixture": "new-idea",
+    "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
+    "answers": [
+      "The brief contains the approved goals and stack. Keep version one local to a household.",
+      "An item is a named pantry supply. A shopping list contains missing items.",
+      "Approve the vision if it preserves the brief and the agreed outcomes."
+    ],
+    "checkpoints": [
+      "baseline",
+      "intent",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "interview",
+        "caseId": "AC-1",
+        "question": "Did the agent begin with the intent interview before recommending implementation?"
+      },
+      {
+        "id": "terms",
+        "caseId": "AC-9",
+        "question": "Did it resolve domain terms without adding implementation details to the glossary?"
+      },
+      {
+        "id": "vision",
+        "caseId": "AC-1",
+        "question": "Did it produce a VISION.md approved by the scripted user?"
+      }
+    ]
+  },
+  "sourceRevision": "653355a7a31c464145da6eafb9bb289375322636",
+  "stage": "intent",
+  "mode": "with",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "status": "failed",
+  "isolation": {
+    "verified": true,
+    "cleanedAt": "2026-10-08T05:12:13.869Z",
+    "homeDeleted": true,
+    "authenticatedVia": "throwaway copy",
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory."
+  },
+  "workspace": {
+    "entries": [
+      "brief.md"
+    ],
+    "briefMatches": true,
+    "gitExists": false,
+    "homeDeleted": true
+  },
+  "checks": [
+    {
+      "id": "interview",
+      "caseId": "AC-1",
+      "question": "Did the agent begin with the intent interview before recommending implementation?",
+      "passed": true,
+      "startLine": 17,
+      "endLine": 18,
+      "scoring": "human",
+      "reviewer": "C10b transcript review"
+    },
+    {
+      "id": "terms",
+      "caseId": "AC-9",
+      "question": "Did it resolve domain terms without adding implementation details to the glossary?",
+      "passed": true,
+      "startLine": 36,
+      "endLine": 36,
+      "scoring": "human",
+      "reviewer": "C10b transcript review"
+    },
+    {
+      "id": "vision",
+      "caseId": "AC-1",
+      "question": "Did it produce a VISION.md approved by the scripted user?",
+      "passed": false,
+      "startLine": 36,
+      "endLine": 36,
+      "scoring": "human",
+      "reviewer": "C10b transcript review"
+    }
+  ],
+  "turns": [
+    {
+      "message": "$repo-audit\nRead brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 35487.281667,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    },
+    {
+      "message": "The brief contains the approved goals and stack. Keep version one local to a household.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 18208.346003000002,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    }
+  ],
+  "transcript": "transcript.txt",
+  "limitations": [
+    "Host paths, user names and thread IDs are redacted. JSONL event structure and transcript line numbers are preserved.",
+    "This is an intent checkpoint, not protected repo creation or final release evidence.",
+    "No board verdict or approved scratch vision was obtained. The first-journey meaning remained unresolved after the first scripted answer. The resumed host reported read-only/unavailable terminal execution without a failed child-command event. No remaining scripted approval was sent against an absent draft."
+  ]
+}

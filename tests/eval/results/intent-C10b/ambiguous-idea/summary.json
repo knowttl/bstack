@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "scenario": {
+    "id": "ambiguous-idea",
+    "fixture": "ambiguous-idea",
+    "request": "Read brief.md and establish the project intent before recommending the foundation.",
+    "answers": [
+      "Offline access remains undecided. Present the decision and its consequences, then stop rather than choosing a stack."
+    ],
+    "checkpoints": [
+      "baseline",
+      "intent",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "decision",
+        "caseId": "AC-2",
+        "question": "Did it expose offline access as unresolved and stop without inventing a stack or product goal?"
+      }
+    ]
+  },
+  "sourceRevision": "6d30ad3556964c665f2ae3fd31a66754180e9dd0",
+  "stage": "intent",
+  "mode": "with",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "status": "passed",
+  "isolation": {
+    "verified": true,
+    "cleanedAt": "2026-10-08T05:09:49.954Z",
+    "homeDeleted": true,
+    "authenticatedVia": "throwaway copy",
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory."
+  },
+  "workspace": {
+    "entries": [
+      "brief.md"
+    ],
+    "briefMatches": true,
+    "gitExists": false,
+    "homeDeleted": true
+  },
+  "checks": [
+    {
+      "id": "decision",
+      "caseId": "AC-2",
+      "question": "Did it expose offline access as unresolved and stop without inventing a stack or product goal?",
+      "passed": true,
+      "startLine": 30,
+      "endLine": 30,
+      "scoring": "human",
+      "reviewer": "C10b transcript review"
+    }
+  ],
+  "turns": [
+    {
+      "message": "$repo-audit\nRead brief.md and establish the project intent before recommending the foundation.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 27211.131201,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    },
+    {
+      "message": "Offline access remains undecided. Present the decision and its consequences, then stop rather than choosing a stack.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 8504.797879,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    }
+  ],
+  "transcript": "transcript.txt",
+  "limitations": [
+    "Host paths, user names and thread IDs are redacted. JSONL event structure and transcript line numbers are preserved.",
+    "This is an intent checkpoint, not protected repo creation or final release evidence."
+  ]
+}

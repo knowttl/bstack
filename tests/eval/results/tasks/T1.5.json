@@ -2,11 +2,12 @@
   "schemaVersion": 1,
   "taskId": "T1.5",
   "slice": "C9b10a",
-  "sourceRevision": "13965c7a5be9d58bfdda9d4f274aae16682aa51b",
+  "sourceRevision": "2facff536ab77f203a5f68572a4677533cb8a4f6",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Landed: Phase 0, T1.1-T1.3 and T1.4 (https://github.com/knowttl/bstack/pull/17: interview and domain-language references). The merged slice table combines C9b and C10a as C9b10a, preserving both task IDs and the union of their done evidence.\n\nThis piece is merged slice C9b10a (old C9b + C10a): task T1.5 \"Adapt VISION and bundle the board assets\", then the first part of task T1.6 \"Build the VISION board launcher\" - the runtime research and live probe, the exact pin with its nested lockfile and gate setup, and the `vision-board build` subcommand. Merged done evidence: package check and recorded asset/NOTICE diff; clean nested install, runtime observation, safe inserted text, unique IDs. The `launch` and `verdicts` subcommands, the resumed review and the manual board run are C10b.",
   "amendments": [
     "README, command/runtime documentation and Progress were updated before final implementation validation. This evidence-only commit records those runs.",
-    "F13 read from the approved commissioning report: deterministic run/draft/card binding belongs to the launcher, semantic draft revision belongs to the agent."
+    "F13 read from the approved commissioning report: deterministic run/draft/card binding belongs to the launcher, semantic draft revision belongs to the agent.",
+    "C10b evidence refresh reruns the available checks against landed origin/main, with 249 passing tests. Runtime probe remains the captured historical observation."
   ],
   "status": "passed",
   "environment": {
@@ -30,7 +31,7 @@
       "cwd": ".",
       "exitCode": 0,
       "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C9b10a.install.txt"
+      "outputArtifact": "tests/eval/results/tasks/C10b-refresh.install.txt"
     },
     {
       "id": "check",
@@ -42,7 +43,7 @@
       "cwd": ".",
       "exitCode": 0,
       "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C9b10a.check.txt"
+      "outputArtifact": "tests/eval/results/tasks/C10b-refresh.check.txt"
     },
     {
       "id": "test",
@@ -53,7 +54,7 @@
       "cwd": ".",
       "exitCode": 0,
       "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C9b10a.test.txt"
+      "outputArtifact": "tests/eval/results/tasks/C10b-refresh.test.txt"
     },
     {
       "id": "task-T1.5",
@@ -67,7 +68,7 @@
       "cwd": ".",
       "exitCode": 0,
       "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C9b10a.task-T1.5.txt"
+      "outputArtifact": "tests/eval/results/tasks/C10b-refresh.task-T1.5.txt"
     },
     {
       "id": "template-diff",
@@ -105,7 +106,7 @@
       "kind": "automated",
       "procedure": "Registered package-check tests and generated-board suite verify installed resource closure and unchanged shipped CSS through the public command.",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/C9b10a.task-T1.5.txt"
+      "artifact": "tests/eval/results/tasks/C10b-refresh.task-T1.5.txt"
     },
     {
       "id": "C9b10a-assets",

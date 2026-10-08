@@ -240,3 +240,20 @@ These checks validate packaging and the command surface, not the effectiveness o
 The baseline-to-guidance review is recorded separately in [task evidence](../tests/eval/results/tasks/T1.3.json).
 See [README](../README.md) for current procedure availability and [SKILL.md](../skills/repo-audit/SKILL.md#load-when) for conditional reference loading.
 The interview checkpoint in T1.7 and subsequent foundation and final evaluations own their actual execution evidence.
+
+## Intent checkpoint (C10b)
+
+Two real with-skill Codex runs used --stage intent and the existing throwaway-login adapter.
+Each run used a fresh private home and a non-Git fixture workspace.
+The login copy was removed after every turn, and both homes were deleted immediately on close before transcript scoring.
+The [ambiguous-idea summary](../tests/eval/results/intent-C10b/ambiguous-idea/summary.json) records a passing unresolved-decision check after the scripted answer.
+The agent explained offline and online consequences while keeping the foundation blocked and selecting no stack.
+The [new-idea summary](../tests/eval/results/intent-C10b/new-idea/summary.json) records interview and domain-term checks passing, with vision failing.
+Its first scripted answer did not settle the proposed first-journey meaning, and the resumed agent reported read-only/unavailable terminal execution.
+The transcript contains no failed child-command event supporting that report, so it remains a host-reported limitation.
+No board verdict, revised scratch vision or author approval was obtained, and no remaining scripted approval was sent against an absent draft.
+Both workspaces still contain only brief.md with bytes matching their fixture source and no Git directory.
+The summaries record the actual implementation revisions evaluated, tool versions, turn outcomes, scoring citations and isolation cleanup.
+Captured JSONL transcripts retain their line numbers with host paths, user names and thread IDs redacted.
+These observations are intent checkpoint evidence, not final acceptance selections or complete project creation.
+T1.7 remains blocked until the new-idea journey is resolved and the board and scratch approval flow can complete on an available host.

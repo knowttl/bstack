@@ -18,7 +18,7 @@ Return findings and evidence to the project's chosen workflow instead of startin
 Security hardening of created skills and licensing review are outside scope.
 
 This is a procedure under construction.
-The interview, domain-language and vision references and board build command are available, while the other conditional references remain placeholders and production audit, board launch/verdict, apply and evidence commands are unavailable.
+The intent and vision steps, their references and board build, launch and verdict commands are available, while the other conditional references remain placeholders and production audit, apply and evidence commands are unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -72,8 +72,19 @@ Approval of a brief's goals or stack does not approve the generated VISION.md.
 Silence and interrupted sessions do not count as approval.
 Write the approved reasoning so the eventual VISION.md stands on its own.
 Load the adapted vision procedure for this step and build the board through the documented command interface.
-Board generation is available, while launch, verdict ingestion and resumed review remain blocked until C10b completes T1.6.
-Preserve the draft for resume and report the board prerequisite instead of claiming completion.
+For a new idea, use the existing non-Git directory as --workspace and keep all drafts, vocabulary, transcripts and verdicts outside it in scratch.
+Run vision-board build with --draft and --proposals, then vision-board launch with the returned --board path and the same target.
+Use --json to read the runtime output and returned listener command, then run that pinned listener in the terminal to receive board feedback.
+The host needs a browser that can reach the printed review URL.
+Save the complete-round Context data JSON from the terminal feedback unchanged, including its run ID, draft revision and every card verdict.
+Interpret the author's reasoning into a new semantic draft with an edit-to-verdict explanation.
+Run vision-board verdicts with --board, --input pointing to that complete-round JSON and --draft pointing to the revised draft.
+The command validates the bindings, saves the revised draft and decisions in new scratch and preserves the original draft.
+Read the saved revision back, present it for explicit approval, and retain that approval with its exact revision in the scratch transcript.
+For another board round, use the saved draft and matching new proposals, retaining the previous review.json decisions as evidence.
+If launch, browser access, feedback or author approval is unavailable, preserve scratch for resume and keep the step blocked with the missing prerequisite and fix.
+At this intent checkpoint, stop after the approved scratch vision, resolved vocabulary and confirmed summary.
+Name protected creation in Step 5 as the later prerequisite without creating Git or project files.
 
 Done when: The current draft has been stress-tested through the board, its verdicts are resolved and the user has explicitly approved that revision, otherwise this step remains blocked.
 
@@ -143,7 +154,7 @@ When the repo already answers the questions, proceed directly to recommendations
 Load interview, domain-language or vision guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
 A new vision or reviewed delta needs a material gap or requested direction change, with the same draft approval boundary as Step 3.
-Targeted interview, language and vision procedures are available from the table below, while board launch and verdict review remain unavailable until C10b completes T1.6.
+Targeted interview, language, vision and board review procedures are available from the table below.
 
 Done when: Every material gap is resolved or explicitly blocks its dependent recommendation, settled decisions are retained, and no unnecessary interview or vision review has been opened.
 
