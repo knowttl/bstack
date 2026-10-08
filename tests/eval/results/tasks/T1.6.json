@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "slice": "C10b",
-  "sourceRevision": "801eaa80f46087a52d173b98219da71b2adc9eab",
+  "slice": "C11a prerequisite",
+  "sourceRevision": "d89205180eff3547edb74f2e958ff6e1b99870fe",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs. For real agent evaluation runs the captain approved: \"per evaluation run, copy the existing Codex login into a throwaway isolated home, delete it immediately after the run, never printed or committed.\"\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, T1.1-T1.4, T1.5 and the first part of T1.6 (https://github.com/knowttl/bstack/pull/18: VISION reference and board assets, pinned lavish-axi runtime with nested install in the gate, `vision-board build` with escaping and unique card IDs, and the live probe findings recorded in design \"Evidence and limitations\").\n\nThis piece is slice C10b, the last slice of Phase 1: the rest of task T1.6 (`vision-board launch` and `verdicts`, the resumed review and the manual board run) and task T1.7 \"Complete the intent and vision review\" (old slice-table done evidence: live roundtrip, stale verdict refused, approved scratch draft, ambiguous decision blocked, workspace unchanged).",
   "amendments": [
     "Firstmate steering after a clean fresh-snapshot browser retry still failed: record unavailable interaction as blocked, commit the implementation and continue intent evaluations and validation.",
-    "Final README, command docs, design limitations and Progress were committed before the recorded clean installs, package check and suites."
+    "Final README, command docs, design limitations and Progress were committed before the recorded clean installs, package check and suites.",
+    "Firstmate authorised evaluation-only ten-minute turns and a 16 MiB per-stream adapter capture after real timeout and truncated capture. Ordinary command defaults are unchanged."
   ],
   "environment": {
     "os": "Linux 6.8.0-142-generic x86_64",
@@ -18,134 +19,62 @@
     }
   },
   "limitations": [
-    "Local validation exercised Linux and Node 24 only.",
-    "T1.6 and T1.7 remain incomplete. Automated command tests do not replace unavailable live verdict delivery or author approval.",
-    "Agent transcripts record the actual implementation revisions evaluated before the final usage/evidence commit. Packaged runtime and procedure source did not change after those runs.",
-    "Committed observation artifacts redact host paths, user names and run/session identifiers. They cannot resume the deleted evaluation homes."
+    "Local verification establishes Linux and Node 24 only.",
+    "The real new-idea procedure evaluated b83b4ae29b3bf3f6fcd36b12719f02c20672ba55. The task suite ran at the recorded sourceRevision after evidence and usage updates.",
+    "Earlier blocked runs remain blocked. This pass uses a fresh fully captured, closed and human-scored run.",
+    "Committed paths, user names and session identifiers are redacted. Conversation hashes bind retained redacted bytes and cannot resume deleted host sessions.",
+    "Intent-stage evidence does not claim protected project creation or final acceptance."
   ],
   "commands": [
     {
-      "id": "install",
-      "executable": "npm",
-      "args": [
-        "ci",
-        "--ignore-scripts"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.install.txt"
-    },
-    {
-      "id": "runtime-install",
-      "executable": "npm",
-      "args": [
-        "ci",
-        "--omit=dev",
-        "--prefix",
-        "skills/repo-audit"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.runtime-install.txt"
-    },
-    {
-      "id": "check",
-      "executable": "npm",
-      "args": [
-        "run",
-        "check"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.check.txt"
-    },
-    {
-      "id": "test",
-      "executable": "npm",
-      "args": [
-        "test"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.test.txt"
-    },
-    {
-      "id": "task-T1.6",
+      "id": "task-T1.7",
       "executable": "npm",
       "args": [
         "test",
         "--",
         "--task",
-        "T1.6"
+        "T1.7"
       ],
       "cwd": ".",
       "exitCode": 0,
       "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.task-T1.6.txt"
+      "outputArtifact": "tests/eval/results/tasks/C11a.prerequisite-T1.7.txt"
     },
     {
-      "id": "manual-board",
+      "id": "new-idea-intent-score",
       "executable": "node",
       "args": [
-        "skills/repo-audit/scripts/repo-audit.mjs",
-        "vision-board",
-        "launch",
-        "--workspace",
-        "<workspace>",
-        "--board",
-        "<scratch>/board.html",
+        "scripts/eval.mjs",
+        "score",
+        "--run",
+        "<redacted-evaluation-run>",
+        "--answers",
+        "<scratch>/answers.json",
+        "--transcript",
+        "<scratch>/conversation.txt",
+        "--results",
+        "<scratch>",
         "--json"
       ],
       "cwd": ".",
       "exitCode": 0,
       "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.manual-board.md",
-      "reason": "Launch passed. Subsequent browser interaction and live verdict delivery remain blocked."
+      "outputArtifact": "tests/eval/results/intent-C11a/full-capture/run.json",
+      "resultPaths": [
+        "tests/eval/results/intent-C11a/full-capture/VISION-approved.md",
+        "tests/eval/results/intent-C11a/full-capture/GLOSSARY.md"
+      ]
     }
   ],
   "taskId": "T1.6",
-  "status": "blocked",
+  "status": "passed",
   "cases": [
     {
-      "id": "C10b-bindings-and-resume",
-      "kind": "automated",
-      "procedure": "resumed review preserves previous drafts and decisions and refuses an old round on the revised board; table-driven refusal tests cover unknown, duplicate, missing and blank IDs, stale run/draft, incomplete rounds and invalid revised bytes. review refuses changed original draft bytes and another workspace. launch reports a missing pinned runtime and preserves the draft for resume.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/C10b.task-T1.6.txt"
-    },
-    {
-      "id": "C10a-escaping-and-IDs",
-      "kind": "automated",
-      "procedure": "board build renders escaped text and preserves raw revision-bound verdict data exercises emitted HTML/script with quotes, backticks, template expressions, script tags, ampersands and Unicode. Command cases reject duplicate/missing IDs, stale draft, malformed fields, invalid UTF-8, empty draft and unavailable inputs before scratch writes.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/C10b.task-T1.6.txt"
-    },
-    {
-      "id": "C10a-fresh-runtime",
-      "kind": "automated",
-      "procedure": "gate prepare installs both locks and runs the pinned runtime without global support skills executes the real parsed prepare command in a fresh disposable checkout and empty isolated home, then executes explicit nested CLI version and installed command help.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/C10b.task-T1.6.txt"
-    },
-    {
-      "id": "C10a-live-runtime",
-      "kind": "manual",
-      "procedure": "Synthetic pre-adaptation shared-server launch and terminal feedback, followed by generated-board browser selection, complete-round send, terminal tagged feedback with matching raw run/draft/card context and session end. Captured post-adaptation output is redacted only for host and session identifiers.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/T1.6.runtime-probe.md"
-    },
-    {
       "id": "AC-3",
-      "kind": "manual",
-      "procedure": "Shared-server launch and browser review using the new-idea scenario's scripted answer, followed by terminal verdict delivery and semantic revision if interaction succeeds.",
-      "status": "blocked",
-      "artifact": "tests/eval/results/tasks/C10b.manual-board.md",
-      "reason": "Board opened. Record verdict failed with STALE_REF despite fresh snapshots immediately before each action. No verdict was sent or received, and the session ended.",
-      "nextPrerequisite": "Stable reachable browser interaction and completed terminal-feedback roundtrip, followed by author-reviewed scratch revision."
+      "kind": "agent",
+      "procedure": "Real shipped browser cards, original complete-round listener feedback, semantic revision through vision-board verdicts, exact-revision author approval, preserved original and prior decisions. Registered T1.7 suite includes stale-revision and resume tests.",
+      "status": "passed",
+      "artifact": "tests/eval/results/intent-C11a/full-capture/summary.md"
     }
   ]
 }
