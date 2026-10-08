@@ -49,8 +49,7 @@ npm run eval -- score --run <id> --answers answers.json --transcript transcript.
 
 An unscored manual run exits 2 as blocked.
 An adapter run also exits 2 until explicitly scored.
-The recorded baseline used Codex CLI 0.160.1 and `gpt-6.1-sol` on Linux with Node 24.
-Ambiguous-idea and clear-goals passed, while new-idea failed its interview, domain-term and user-approval checks.
+See the [recorded initial baseline](docs/evaluation.md#recorded-initial-baseline) for host provenance and scenario outcomes.
 Close the conversation immediately when it finishes to delete its isolated home before reviewing the captured transcript.
 The Codex adapter copies only the invoking user's existing login into throwaway state with private permissions, removes the copy after each turn, and deletes the whole home on close or a failed host turn.
 Scoring requires complete answers and a transcript with reviewer citations.

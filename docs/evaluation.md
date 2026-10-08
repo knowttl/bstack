@@ -28,6 +28,7 @@ Without-skill and implicit-invocation requests reject that option.
 The implicit request is exactly `audit this repo`.
 Manual runs without an adapter do not stage the skill or verify discovery paths.
 They retain unverified isolation even after human scoring.
+`--manual` and `--adapter` cannot be combined; adapter starts capture the opening turn automatically.
 
 Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
 `--results <directory>` chooses another result directory on start, turn, close, score, compare or selection validation.
