@@ -30,7 +30,7 @@ test('bootstrap manifest commands and root lockfile agree', async () => {
   assert.equal(manifest.type, 'module')
   assert.equal(manifest.engines.node, '>=24')
   assert.deepEqual(manifest.scripts, {
-    check: 'node --test tests/scripts/bootstrap.test.mjs tests/scripts/skill-skeleton.test.mjs',
+    check: 'node scripts/check-package.mjs',
     test: 'node scripts/test.mjs',
     eval: 'node scripts/eval.mjs'
   })

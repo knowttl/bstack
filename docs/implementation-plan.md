@@ -333,6 +333,8 @@ Tick each task when its "Done when" commands pass.
     - [x] C4b Child commands and fingerprints ([evidence](../tests/eval/results/tasks/T0.4.C4b.json))
     - [x] C4c Minimal schema contract and real command wiring ([evidence](../tests/eval/results/tasks/T0.4.C4c.json))
   - [ ] T0.5 Build the package check
+    - [x] C5a Metadata/loading/resource closure ([evidence](../tests/eval/results/tasks/T0.5.C5a.json))
+    - [ ] C5b Script/import/step policy and rewritten T0.6
   - [ ] T0.6 Establish local validation and no-mistakes gate
 - Phase 1: Intent and vision
   - [ ] T1.1 Build the test fixtures

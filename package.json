@@ -6,7 +6,7 @@
   "license": "MIT",
   "engines": { "node": ">=24" },
   "scripts": {
-    "check": "node --test tests/scripts/bootstrap.test.mjs tests/scripts/skill-skeleton.test.mjs",
+    "check": "node scripts/check-package.mjs",
     "test": "node scripts/test.mjs",
     "eval": "node scripts/eval.mjs"
   },
