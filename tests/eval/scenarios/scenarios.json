@@ -7,7 +7,7 @@
       "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
       "answers": [
         "The brief contains the approved goals and stack. Keep version one local to a household.",
-        "An item is a named pantry supply. A shopping list contains missing items.",
+        "An item is a named pantry supply. A shopping list contains the items the household marks as needing to buy. Version one does not track quantities or stock levels.",
         "Approve the vision if it preserves the brief and the agreed outcomes."
       ],
       "checkpoints": [

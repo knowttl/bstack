@@ -10,7 +10,7 @@
     "model": "gpt-6.1-sol",
     "explicit": "$repo-audit",
     "protocol": "codex-exec-jsonl",
-    "resumeArgs": ["--no-daemon", "exec", "resume", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6.1-sol", "-c", "model_reasoning_effort=\"low\"", "{sessionId}", "{message}"]
+    "resumeArgs": ["--no-daemon", "exec", "resume", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6.1-sol", "-c", "model_reasoning_effort=\"low\"", "-c", "sandbox_mode=\"danger-full-access\"", "{sessionId}", "{message}"]
   },
   "isolation": {
     "stateDirectory": ".codex",
