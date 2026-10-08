@@ -95,3 +95,10 @@ The isolated home was confirmed absent, and the fixture still contained only bri
 Raw closed run and conversation artifacts remain in temporary scratch for firstmate inspection, with no login copy retained.
 T1.7 completion is dropped from this slice's implementation scope pending firstmate's captain escalation.
 T2.1 remains unstarted because its plan dependency is incomplete.
+
+## Authorised ten-minute follow-up
+
+Firstmate subsequently authorised a test-harness-only timeout increase to 600000 ms and restored T1.7 completion to this slice's scope.
+The [follow-up summary](new-idea/summary.md) records successful real verdict ingestion, saved revision, glossary and explicit exact-revision approval.
+That run completed without timeout, but the adapter correctly remains blocked because shared child output capture truncated its conversation.
+The previous no-retry and dropped-scope instructions above describe the earlier attempt and are superseded by firstmate's instruction 004.

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "runId": "[identifier-2]",
+  "draftRevision": "7033b0919cd10fc0994ee45b791c262fe0d7eeb4254a4ed9c522db588ce1166d",
+  "complete": true,
+  "verdicts": [
+    {
+      "id": "local-transfer",
+      "verdict": "In vision",
+      "notes": "Optional manual transfer supports the same local household journey without accounts or remote services. It may fit the vision without becoming a mandatory version-one feature."
+    },
+    {
+      "id": "recipe-shortages",
+      "verdict": "Off mission",
+      "notes": "Recipe planning is outside the approved responsibility. Keep version one focused on named pantry supplies and household-marked buying needs. Version one has no quantities or stock levels; recipes are not required to identify purchases."
+    }
+  ]
+}
