@@ -56,7 +56,26 @@ Capture the maintained command, tool version, output, exit code and relevant inp
 The same maintained command must work locally and in the project's CI when the project selects one, without ignoring failures.
 For behaviour compatibility, preserve agreed acceptance outcomes rather than proving only that unit checks are green.
 These are evidence requirements for selected enforcement, not a development workflow.
-Maintained local integration and maintenance validation remain pending.
+Maintenance validation remains Phase 3a work.
+
+## Integrate the maintained command
+
+Use reviewed selected findings and `apply` to extend the project's existing check command rather than creating a competing entry point.
+The target repo owns each checker or pins its declared development dependency; running checks must not require an installed bstack skill or agent session.
+Scope each package rule in its native configuration or checker, and prove a sibling package's permitted use remains valid.
+Apply the complete initial documented baseline through selected debt findings before expecting the audited project to pass.
+Keep every known violation visible with its reason and removal condition; new violations fail and fixed entries must be removed.
+Continue to prove each rule independently on clean fixtures without counting unrelated audited debt as new violations.
+
+For integration proof, select the maintained command in the check plan, for example executable `npm`, args `["run", "check"]`, cwd `.` and versionArgs `["--version"]`.
+Run the same rule-proof interface against separate disposable sources containing the integrated command, installed native dependencies and the accepted baseline, with one new seeded violation in the negative source.
+Capture both exits and the specific new diagnostic; a tool setup failure does not prove enforcement.
+The valid control must include a permitted sibling-package use where package scope matters.
+
+Changed package scripts and YAML `run`/`script` commands use the bounded failure-preserving grammar described in the command contract.
+Use simple commands joined with `&&`; failure-masking shell operators and failure-tolerant CI settings are rejected before writes.
+If the project selects CI, apply the same maintained command to its configuration as another reviewed edit.
+CI examples are unverified adapters until actual hosted execution is observed; local disposable proof does not establish a merge gate.
 
 ## Control existing debt
 

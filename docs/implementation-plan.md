@@ -429,7 +429,11 @@ Tick each task when its "Done when" commands pass.
       `npm test -- --task T3.3` covers unauthorized refresh, selection, scope and metadata boundaries and no partial refresh writes.
       [Task evidence](../tests/eval/results/tasks/T3.3.json) retains full-suite baseline checks and the AC-67 link, with Linux-only execution and native-analysis limitations.
       Real Windows and macOS execution remains captain checklist evidence.
-  - [ ] T3.4 Integrate scoped checks with the maintained local command
+  - [x] T3.4 Integrate scoped checks with the maintained local command
+    - C20 integrates selected checks through protected `apply` edits and rejects failure-masking package commands and supported YAML CI edits before writes.
+      `npm test -- --task T3.4` runs the identical `npm run check` in valid and seeded disposable `ts-shop` copies, after selected initial documented debt, with exits 0 and 1 and a permitted core import under the web-scoped rule.
+      Individual native rules still run against the clean T1.1 variants.
+      [Task evidence](../tests/eval/results/tasks/T3.4.json) binds the final gate run to these local controls; hosted CI adapters remain unverified and real Windows/macOS execution remains captain checklist evidence.
 - Phase 3a: Maintenance
   - [ ] T3a.1 Define the project contract
   - [ ] T3a.2 Build `evidence collect`

@@ -701,6 +701,13 @@ The helper derives the full proposed content from the operation and checks it ag
 For a fresh plan or dry run, current file bytes must match `originalHash`; a create must start absent and a delete must start present.
 Resume validates the saved originals against `originalHash` and derives current file states as described below.
 Complete bytes for every file are staged in memory before reporting success.
+Changed `package.json` scripts are validated as literal commands joined with `&&`.
+YAML edits support block mappings with scalar `run` or `script` commands, including quoted scalars and `|`/`>` blocks whose intermediate command lines end in `&&`.
+`continue-on-error` and `allow_failure` must be literal `false` when present.
+Failure-masking operators (`||`, pipelines, separators, background execution and negation), shell wrappers, substitutions and unsupported YAML flow collections, tags or aliases fail with `ignored-check-failure` before any writes.
+This bounded grammar is a configuration safeguard, not an interpreter for arbitrary shell programs or a proof of a checker's implementation.
+The identical maintained command must still pass the valid disposable control and reject the seeded violation with its diagnostic and nonzero exit through `rule-proof`.
+CI adapter behaviour remains unverified without hosted execution.
 If any file fails input validation or staging, no diff or proposed edits are returned and every project file remains unchanged.
 Filesystem access failures block the command; invalid plans fail with named problems and renewed-review guidance.
 

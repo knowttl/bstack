@@ -143,6 +143,14 @@ npm test -- --task T3.3
 
 Prepare an existing baseline file and normalized native violations as described in the [enforcement command contract](docs/command-contract.md#rule-proof-and-temporary-debt), including the requirements for authorizing new entries.
 
+Integrate selected native checks into the project's existing check command through a reviewed `apply` plan.
+Keep package rules scoped to their owning package and prepare the complete documented initial debt baseline through selected findings before expecting an audited project to pass.
+Prove each rule independently on the clean fixture variants, then use `rule-proof` with the identical maintained command, such as `npm run check`, on separate valid and seeded disposable copies.
+The target owns the checker and its declared dependencies, so ordinary contributors can run it without an installed skill or agent session.
+`apply` rejects failure-masking package scripts and supported YAML CI command edits; simple commands joined with `&&` preserve failures.
+CI integration requires the project's selection and its adapter behaviour remains unverified until hosted execution is observed.
+Run `npm test -- --task T3.4` for the maintained-command, baseline and web/core scope controls.
+
 Capture a reviewed check plan with acceptance sources and input scopes:
 
 ```sh

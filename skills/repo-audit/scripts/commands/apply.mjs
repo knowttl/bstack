@@ -10,6 +10,7 @@ import { proposedEdit, exactDiff } from '../lib/proposed-edit.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { validateFindings } from './findings.mjs'
 import { loadJournal, journalOriginal, inspectJournal, fileBytes, applyWrites } from '../lib/protected-write.mjs'
+import { validateCheckIntegration } from '../lib/check-integration.mjs'
 
 function reject(code, message, path) {
   throw new CommandError('failed', [{ code, message, path, fix: 'Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again.' }])
@@ -76,6 +77,7 @@ export async function prepareChangeSet(options, target) {
       const proposed = proposedEdit(edit, original)
       if (proposed !== null && (proposed.includes('\0') || Buffer.from(proposed).toString('utf8') !== proposed)) reject('unsupported-format', 'Proposed text must encode as exact UTF-8 without NUL bytes.', edit.path)
       if (proposed !== edit.proposedContent || (proposed === null ? null : hashBytes(Buffer.from(proposed))) !== edit.proposedHash) reject('payload-mismatch', 'Complete proposed bytes or hash differ from the mechanical operation.', edit.path)
+      validateCheckIntegration(edit.path, original, proposed)
       staged.push({ id: edit.id, path: edit.path, originalHash: edit.originalHash, proposedHash: edit.proposedHash, proposedContent: proposed,
         originalBytes: bytes, resolvedPath: path, diff: exactDiff(edit.path, original, proposed) })
     } catch (error) {

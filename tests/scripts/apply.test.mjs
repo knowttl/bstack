@@ -79,6 +79,44 @@ async function preview(context) {
   return result
 }
 
+for (const value of ['node check.mjs || true', 'node check.mjs || :', 'node check.mjs; true', 'node check.mjs; exit 0', 'node check.mjs &',
+  'node check.mjs | cat', '! node check.mjs', 'set +e && node check.mjs', 'sh -c "node check.mjs || :"']) {
+  test(`apply rejects swallowed package command failure: ${value}`, async t => {
+    const proposed = JSON.stringify({ scripts: { check: value } })
+    const context = await setup(t, 'replace-file', '{}', { content: proposed }, proposed, 'package.json')
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const proposed of [
+  'steps:\n  - run: npm run check\n    continue-on-error: true\n',
+  'steps:\n  - run: npm run check || true\n',
+  'steps:\n  - run: |\n      npm run check\n      echo done\n',
+  'steps:\n  - run: "npm run check || true"\n',
+  'steps:\n  - run: npm run check\n    continue-on-error: ${{ true }}\n',
+  'job:\n  script: npm run check\n  allow_failure: true\n',
+  'steps:\n  - "run": npm run check || true\n',
+  'steps:\n  - run: [npm run check, true]\n',
+  'steps:\n  - run: *unchecked\n'
+]) {
+  test(`apply rejects ignored CI failure: ${JSON.stringify(proposed)}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content: proposed }, proposed, 'ci.yml')
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const [path, proposed] of [
+  ['package.json', '{"scripts":{"check":"tsc --noEmit && node boundaries.mjs"}}'],
+  ['ci.yml', 'steps:\n  - run: npm run check\n    continue-on-error: false\n'],
+  ['ci.yml', 'steps:\n  - run: |\n      npm run check &&\n      npm test\n']
+]) {
+  test(`apply accepts failure-preserving integration: ${path} ${JSON.stringify(proposed)}`, async t => {
+    const context = await setup(t, 'replace-file', path.endsWith('.json') ? '{}' : '', { content: proposed }, proposed, path)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+  })
+}
+
 for (const [name, operation, original, payload, proposed, path] of [
   ['create', 'create', null, { content: 'new\n' }, 'new\n', 'new ü &.txt'],
   ['replace', 'replace', 'old\r\n', { search: 'old', replacement: 'new' }, 'new\r\n', 'README.md'],

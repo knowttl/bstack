@@ -109,7 +109,7 @@ Avoid speculative frameworks, service layers, integrations and empty document te
 The enforcement and architecture references are available for recommendations.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
 Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
-Native rule-proof and debt baseline checks are available; maintained enforcement remains T3.4 work, with portable maintenance in Phase 3a.
+Native rule-proof, debt baseline checks and maintained local enforcement integration through apply are available; portable maintenance remains Phase 3a work.
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
 
@@ -213,7 +213,7 @@ Run `findings validate --repo <target> --findings <file> --json`, then `findings
 Missing execution evidence can leave the preview verification blocked without preventing review of its proposals.
 The enforcement and architecture references are available for recommendations.
 Use the enforcement reference's rule-proof and debt baseline commands for selected rules and accepted temporary debt.
-Maintained enforcement remains T3.4 work.
+Use selected apply edits to extend the existing maintained check command, preserving failures and package scope as described in the enforcement reference.
 
 Done when: Every recommendation has a project-specific reason, evidence, principle, consequence, scope and verification method, with unresolved decisions and unsupported measurements visible.
 
