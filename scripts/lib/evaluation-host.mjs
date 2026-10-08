@@ -11,12 +11,13 @@ import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 export async function readAdapter(path) {
   const adapter = await readJSON(path)
   validateData(object({ schemaVersion: { const: 1 }, executable: text, args: array(text), cwd: { const: '.' },
-    versionArgs: array(text), timeoutMs: { type: 'integer' },
+    versionArgs: array(text), timeoutMs: { type: 'integer' }, outputLimitBytes: { type: 'integer' },
     invocation: object({ agent: text, model: text, explicit: text, protocol: { const: 'codex-exec-jsonl' }, resumeArgs: array(text) }),
     isolation: object({ stateDirectory: { const: '.codex' }, discoveryPaths: array(text), systemDiscoveryPaths: array(text), stagePath: text,
       authentication: { enum: ['none', 'throwaway-codex-login'] } })
   }), adapter)
   if (adapter.timeoutMs < 1 || adapter.timeoutMs > 600000) fail('Adapter timeoutMs must be between 1 and 600000.')
+  if (adapter.outputLimitBytes < 1 || adapter.outputLimitBytes > 16777216) fail('Adapter outputLimitBytes must be between 1 and 16777216.')
   if (!adapter.args.includes('{message}') || !adapter.invocation.resumeArgs.includes('{message}') ||
       !adapter.invocation.resumeArgs.includes('{sessionId}')) fail('Adapter requires message and resume session placeholders.')
   for (const args of [adapter.args, adapter.invocation.resumeArgs]) {
@@ -111,7 +112,7 @@ export async function hostTurn(record, message) {
       await chmod(login, 0o600)
       record.authenticatedVia = 'throwaway copy'
     }
-    result = await runCommand({ root: record.fixture.path }, { ...record.adapter, args }, { env })
+    result = await runCommand({ root: record.fixture.path }, { ...record.adapter, args }, { env, outputLimitBytes: record.adapter.outputLimitBytes })
   } finally {
     // The login copy exists only during a host turn, including its timeout cleanup.
     if (record.adapter.isolation.authentication === 'throwaway-codex-login') await rm(login, { force: true })

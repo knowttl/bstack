@@ -5,6 +5,7 @@
   "cwd": ".",
   "versionArgs": ["--version"],
   "timeoutMs": 600000,
+  "outputLimitBytes": 16777216,
   "invocation": {
     "agent": "codex",
     "model": "gpt-6.1-sol",
