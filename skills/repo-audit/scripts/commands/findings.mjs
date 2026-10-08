@@ -42,13 +42,7 @@ function render(findings, assessment) {
   return `${lines.join('\n')}\n`
 }
 
-export async function run(options, command) {
-  if (!options.findings) throw new CommandError('usage-error', [{ code: 'missing-findings', message: '--findings is required.', fix: 'Supply --findings <file>.' }])
-  const target = await resolveTarget(options, { draftOnly: true })
-  let findings
-  try { findings = JSON.parse(await readFile(options.findings, 'utf8')) } catch {
-    invalid('invalid-findings', 'Findings must be readable JSON.', options.findings)
-  }
+export async function validateFindings(findings, target) {
   const schema = JSON.parse(await readFile(new URL('../../schemas/findings.schema.json', import.meta.url), 'utf8'))
   validateData(schema, findings)
   for (const collection of ['sources', 'findings', 'execution']) validateIds(findings[collection], `$/` + collection)
@@ -70,6 +64,16 @@ export async function run(options, command) {
     if (!findings.requiredOutcomes.includes(outcome)) invalid('missing-stage-outcome', `Stage requires outcome: ${outcome}`, '$/requiredOutcomes')
   }
   if (new Set(findings.execution.map(record => record.outcome)).size !== findings.execution.length) invalid('duplicate-outcome', 'Use one current record per outcome.', '$/execution')
+}
+
+export async function run(options, command) {
+  if (!options.findings) throw new CommandError('usage-error', [{ code: 'missing-findings', message: '--findings is required.', fix: 'Supply --findings <file>.' }])
+  const target = await resolveTarget(options, { draftOnly: true })
+  let findings
+  try { findings = JSON.parse(await readFile(options.findings, 'utf8')) } catch {
+    invalid('invalid-findings', 'Findings must be readable JSON.', options.findings)
+  }
+  await validateFindings(findings, target)
   const current = await fingerprint(target, { baseCommit: findings.target.revision, paths: findings.reviewedScope, inputs: findings })
   const reasons = []
   if (target.mode === 'repo') {

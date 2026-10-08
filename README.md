@@ -79,6 +79,19 @@ Rendering returns a scratch path and one readiness result with documented, obser
 Missing or stale evidence blocks readiness, and unresolved decisions require review.
 These commands assess supplied evidence without executing checks or applying changes.
 
+Preview selected mechanical edits without changing the project:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --dry-run
+node skills/repo-audit/scripts/repo-audit.mjs apply --workspace <path> --plan <file> --dry-run --json
+npm test -- --task T2.6
+```
+
+The [apply contract](docs/command-contract.md#apply-dry-run) documents the reviewed change set, exact-byte hashes, digest and supported operations.
+Plain output prints the complete diff; JSON additionally returns complete proposed content and hashes.
+Invalid inputs or changed preconditions leave every project file unchanged.
+C14a delivers dry run and both schemas; real writes, backups, resume, `state show` and reviewed whole-file replacement remain C14b work.
+
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
 Scripted replies use the host's resume interface after a reviewer matches the question to the next scripted answer.
