@@ -341,7 +341,7 @@ An interrupted or failed command is not automatically repeated, avoiding duplica
 Prerequisites run again on every invocation, including dry runs and resume.
 Missing, failed or interrupted setup or journey produces exit 2 with creation-unverified and keeps the project.
 Inspect the retained record and capture fresh affected native checks explicitly before claiming readiness.
-A successful record includes tool versions and captured outputs, gitComplete and verified true, and names rule-proof, maintained enforcement and portable maintenance as pending.
+A successful record includes tool versions and captured outputs, gitComplete and verified true, and names maintained enforcement and portable maintenance as pending.
 Real Windows and macOS execution remains owner checklist evidence, rather than a Linux support claim.
 
 ## Arguments and targets
@@ -893,4 +893,51 @@ No comparison invokes a command or writes the target.
 Successful comparison returns `verified: true`, status `passed` and exit 0.
 Every incomplete pair returns `verified: false`, status `failed` and exit 1 with named reasons.
 Completion for a change depending on outside behaviour requires both check evidence and a successful comparison for every such dependency.
+
+## Rule-proof and temporary debt
+
+`rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]` reads the existing `schemas/check-plan.json` format and selects one check's child command.
+The valid and violation directories must be distinct, prepared fixtures with native dependencies already installed.
+Use the clean rule-proof variant as the source of both, with one independently seeded violation per invocation.
+The command copies each fixture into a separate scratch directory, runs the command there, captures the native version, stdout, stderr and exit, then removes the disposable copies.
+It never runs the child against the source fixtures or target repo.
+Valid must exit zero; violation must exit nonzero and include the exact expected text in stdout or stderr.
+A skipped or absent check cannot prove enforcement.
+Unavailable tools, failed version probes, failed clean setup, cancellation, timeouts and missing working directories are blocked.
+The saved `proof.json` reports cases, native commands, diagnostics, status and source locations; failed proof returns exit 1, blocked proof exit 2.
+Proof establishes only the supplied static cases; it does not infer coverage of unresolved imports, dynamic dependencies or unsupported syntax.
+The clean native fixtures cover public imports and permitted dependency direction; separate private, alias or equivalent bridge and cycle seeds cover forbidden cases.
+TypeScript uses the researched compiler resolver; Python uses its researched AST check, with no JavaScript lint assumption.
+Their research found no native baseline feature, so the custom debt interface below is used.
+
+`baseline check --repo <target> --baseline <repo-relative-file> --violations <file> [--json]` compares complete current normalized native diagnostics with `schemas/baseline.schema.json`.
+Native adapters must preserve stable rule/path/key identities, and must not present setup failure or unavailable analysis as an empty violation list.
+This command compares supplied data; it does not execute the native analysis.
+Each entry owns a narrow reason and removal condition:
+
+```json
+{
+  "schemaVersion": 1,
+  "entries": [{
+    "rule": "private-import",
+    "path": "src/app.py",
+    "key": "ledger._internal",
+    "reason": "Keep the existing import until the selected interface cleanup.",
+    "removalCondition": "The caller uses the public ledger interface."
+  }]
+}
+```
+
+The violation file is an array such as `[{"rule":"private-import","path":"src/app.py","key":"ledger._internal"}]`.
+Duplicate identities, unknown fields, blank reasons and removal conditions, directory scopes and unsafe paths are rejected.
+Missing source files are allowed because fixed debt may refer to a deleted file.
+Existing debt remains visible in both plain and JSON output.
+An unrecorded violation fails with `new-debt`; a fixed entry fails with `stale-debt` until removed.
+`--refresh` removes fixed entries and keeps matching entries; any new debt prevents all writes.
+Adding exactly one entry requires `--refresh --finding <id> --findings <file> --entry <file>`.
+The entry file holds one complete baseline entry matching a current unrecorded violation.
+Findings follow `schemas/findings.schema.json`, refer to the selected target and list that ID as a selected unresolved debt finding whose concrete scope includes the entry path.
+The command rejects missing, unselected, resolved, out-of-scope or non-debt findings.
+If other new debt remains, the refresh writes nothing even when the one entry is authorized.
+Apply the selected native tool's own baseline or suppression mechanism instead when research finds one, retaining the same no-growth and removal requirements.
 Automatic collection of those separate records belongs to the later evidence tasks.

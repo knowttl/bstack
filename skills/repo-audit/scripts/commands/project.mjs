@@ -161,7 +161,7 @@ export async function run(options) {
     const verified = recovery.commands.length === plan.setupCommands.length + 1 && recovery.commands.every(record => record.status === 'passed')
     return { inputs, status: verified ? 'passed' : 'blocked', problems: verified ? [] : [{ code: 'creation-unverified', message: 'Setup or the first journey failed or was interrupted. The project is retained.', fix: 'Inspect captured results and verify the affected native commands before claiming readiness.' }],
       data: { planDigest, destination, diff, scratch, recovery: recoveryPath, fileJournal: applied.journal, directories: recovery.directories,
-        gitComplete: recovery.gitComplete, prerequisiteResults, commands: recovery.commands, verified, pending: ['native rule-proof and maintained enforcement (T3.2-T3.4)', 'portable maintenance (Phase 3a)'] } }
+        gitComplete: recovery.gitComplete, prerequisiteResults, commands: recovery.commands, verified, pending: ['maintained enforcement (T3.4)', 'portable maintenance (Phase 3a)'] } }
   } catch (error) {
     return { inputs, status: 'blocked', problems: error instanceof CommandError ? error.problems : [{ code: 'creation-io-failure', message: error.message, fix: 'Restore access and resume the unchanged plan.' }], data: { recovery: recoveryPath, destination } }
   }

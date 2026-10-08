@@ -416,13 +416,20 @@ Tick each task when its "Done when" commands pass.
     This slice adds no corrective skill guidance for that observation.
     [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks; Windows/macOS, later enforcement and maintenance remain pending.
 - Phase 3: Enforcement
-  - [ ] T3.1 Write the enforcement and architecture references (before T2.8)
+  - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
       `npm test -- --task T3.1` reuses package and skill command-interface suites, with package check and routing searches recorded in [task evidence](../tests/eval/results/tasks/T3.1.json).
       This checkpoint claims useful references only.
-      Rule-proof-driven reference revisions land with T3.2 in C19a, so the parent task remains open until that checkpoint.
-  - [ ] T3.2 Build `rule-proof`
-  - [ ] T3.3 Build debt baseline handling
+      C19 adds rule-proof usage, equivalent-resolution coverage limits and debt baseline guidance after native proof in both stacks.
+  - [x] T3.2 Build `rule-proof`
+    - C19 proves clean public imports and permitted direction, plus independently seeded private, alias/equivalent bridge and cycle violations using the researched TypeScript resolver and Python AST tools.
+      `npm test -- --task T3.2` also covers failed clean setup, missing tools, failed versions, wrong diagnostics, passing violations, timeouts and invalid selection.
+      The gate's final full-suite run supplies [task evidence](../tests/eval/results/tasks/T3.2.json).
+  - [x] T3.3 Build debt baseline handling
+    - Neither researched fixture tool has a native baseline feature; C19 supplies the baseline schema and `baseline check` with visible retained debt, new-debt rejection, fixed-entry removal and one-entry growth only for a selected unresolved debt finding.
+      `npm test -- --task T3.3` covers unauthorized refresh, selection, scope and metadata boundaries and no partial refresh writes.
+      The gate's final full-suite run supplies [task evidence](../tests/eval/results/tasks/T3.3.json).
+      Real Windows and macOS execution remains captain checklist evidence.
   - [ ] T3.4 Integrate scoped checks with the maintained local command
 - Phase 3a: Maintenance
   - [ ] T3a.1 Define the project contract

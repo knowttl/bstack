@@ -46,12 +46,17 @@ Use the selected tool's native rule-testing mechanism where available.
 Include relevant syntax, aliases, re-exports, generated code and documented exceptions in the proof scope.
 Record unsupported syntax and dynamic dependencies as coverage limits rather than assuming they pass.
 
+After preparing native dependencies in the clean and independently seeded fixtures, run `rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json`.
+The plan follows `schemas/check-plan.json`; the selected check supplies the native child-command object.
+The command runs separate disposable copies, records versions, exits and diagnostics in scratch, and removes the copies.
+Repeat for each private import, alias or equivalent resolution bypass and forbidden cycle, retaining public imports and permitted dependency direction in the clean control.
+Unavailable native tools, interrupted execution and failed clean setup are blocked, never proof.
+
 Capture the maintained command, tool version, output, exit code and relevant input state directly from execution.
 The same maintained command must work locally and in the project's CI when the project selects one, without ignoring failures.
 For behaviour compatibility, preserve agreed acceptance outcomes rather than proving only that unit checks are green.
 These are evidence requirements for selected enforcement, not a development workflow.
-This reference supplies guidance only.
-The early reference checkpoint does not implement rule-proof, baseline handling or maintenance validation.
+Maintained local integration and maintenance validation remain pending.
 
 ## Control existing debt
 
@@ -63,6 +68,14 @@ Do not silently refresh a baseline to accept new failures.
 An exception must record its reason, scope and removal condition.
 Never disable a whole rule or exclude a whole directory merely to obtain a green result.
 A changed-file-only check cannot establish a constraint that depends on the complete import graph or generated outputs.
+
+Where native research found no baseline feature, use `schemas/baseline.schema.json` and `baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --json`.
+Supply the complete current native violations as rule/path/key objects, preserving stable identities when lines move.
+Keep native execution failures separate from the violation list; unavailable analysis cannot establish an empty list.
+Checking reports retained debt and rejects new violations or entries whose violations were fixed.
+`--refresh` removes fixed entries but cannot accept new debt by itself.
+Adding one current violation requires `--refresh --finding <id> --findings <file> --entry <file>` for a selected unresolved debt finding covering that path, with a narrow reason and removal condition.
+A failed refresh changes no baseline bytes.
 
 ## One authoritative source per rule
 
