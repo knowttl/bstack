@@ -16,7 +16,7 @@ export async function readAdapter(path) {
     isolation: object({ stateDirectory: { const: '.codex' }, discoveryPaths: array(text), systemDiscoveryPaths: array(text), stagePath: text,
       authentication: { enum: ['none', 'throwaway-codex-login'] } })
   }), adapter)
-  if (adapter.timeoutMs < 1 || adapter.timeoutMs > 120000) fail('Adapter timeoutMs must be between 1 and 120000.')
+  if (adapter.timeoutMs < 1 || adapter.timeoutMs > 600000) fail('Adapter timeoutMs must be between 1 and 600000.')
   if (!adapter.args.includes('{message}') || !adapter.invocation.resumeArgs.includes('{message}') ||
       !adapter.invocation.resumeArgs.includes('{sessionId}')) fail('Adapter requires message and resume session placeholders.')
   for (const args of [adapter.args, adapter.invocation.resumeArgs]) {

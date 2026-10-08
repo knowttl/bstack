@@ -384,7 +384,7 @@ for (const [name, mutate] of [
   ['shell string', adapter => { adapter.args = 'codex exec' }],
   ['unknown field', adapter => { adapter.shell = true }],
   ['unsupported conversation', adapter => { adapter.invocation.protocol = 'stdin' }],
-  ['unbounded timeout', adapter => { adapter.timeoutMs = 120001 }],
+  ['unbounded timeout', adapter => { adapter.timeoutMs = 600001 }],
   ['missing message placeholder', adapter => { adapter.args = ['exec'] }],
   ['wrong discovery paths', adapter => { adapter.isolation.discoveryPaths = [] }],
   ['escaping staging path', adapter => { adapter.isolation.stagePath = '../skill' }]

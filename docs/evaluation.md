@@ -42,7 +42,9 @@ Manual records initially have status `blocked` and no answers, transcript or cas
 
 [codex.json](../tests/eval/adapters/codex.json) is the current-host adapter.
 Its version 1 format extends the shared child-command object with `invocation` and `isolation`.
-It requires `executable`, string-array `args`, `cwd: "."`, `versionArgs` and `timeoutMs` from 1 to 120000.
+It requires `executable`, string-array `args`, `cwd: "."`, `versionArgs` and `timeoutMs` from 1 to 600000.
+The Codex adapter allows ten-minute turns because real model revision turns exceeded two minutes during live board review.
+This evaluation-only bound does not change installed skill command defaults.
 Unknown fields and shell command strings are rejected.
 `invocation` names the agent, model, explicit command, `codex-exec-jsonl` protocol and string-array `resumeArgs`.
 `{message}` and `{sessionId}` are replaced only when they occupy whole arguments.
