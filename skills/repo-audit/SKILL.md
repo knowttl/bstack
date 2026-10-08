@@ -110,9 +110,7 @@ The enforcement and architecture references are available for recommendations.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
 Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
 Native rule-proof, debt baseline checks and maintained local enforcement integration through apply are available; portable maintenance remains Phase 3a work.
-Mark the selected command paths with each apply edit's `checkIntegration`, such as `[["scripts", "check"]]`; unrelated reviewed edits retain their ordinary validation.
-Use fail-fast top-level `&&` chains and arguments without shell control syntax or substitutions, even inside quotes; known shell-dispatch modes are unsupported.
-Selected CI integration uses JSON syntax, which is valid YAML, and marks exact `run` or `script` paths; general YAML parsing is outside the installed runtime.
+Declare selected command paths with each apply edit's `checkIntegration` according to the [enforcement reference](references/enforcement.md#integrate-the-maintained-command).
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
 
@@ -141,7 +139,8 @@ Failed or interrupted setup and journey commands leave the created project unver
 Setup and journey commands already attempted are never rerun automatically, avoiding duplicate setup effects.
 Verify affected commands explicitly and retain fresh evidence before claiming readiness.
 Prove selected native rules using the enforcement reference's rule-proof command and preserve the scratch evidence.
-Name maintained enforcement and portable maintenance as pending later work.
+Prove selected maintained integration as described in the enforcement reference before claiming it is verified for the created project.
+Portable maintenance remains pending later work.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 

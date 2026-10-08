@@ -81,13 +81,23 @@ Run the same rule-proof interface against separate disposable sources containing
 Capture both exits and the specific new diagnostic; a tool setup failure does not prove enforcement.
 The valid control must include a permitted sibling-package use where package scope matters.
 
-Mark each integration edit's selected command paths with `checkIntegration`, such as `[["scripts", "check"]]` for the maintained package script.
-Only those selected commands use the bounded failure-preserving grammar described in the command contract; unrelated reviewed edits and sibling commands retain their ordinary validation.
-Use simple commands joined with `&&`; failure-masking shell operators and failure-tolerant CI settings are rejected before writes.
-Selected arguments must not contain shell control syntax or substitutions, even when quoted or escaped; known shell-dispatch modes such as npm `--call` are unsupported.
-The validator is bounded rather than a complete shell interpreter; the identical maintained-command disposable controls remain the enforcement proof.
-If the project selects CI, apply the same maintained command to its configuration as another reviewed edit using JSON syntax, which is valid YAML.
-Mark its exact `run` or `script` paths, such as `[["jobs", "check", "steps", "0", "run"]]`; the installed runtime does not parse general YAML.
+If the project selects CI, apply the same maintained command to its configuration as another reviewed edit.
+An edit that integrates selected checks declares optional `checkIntegration`, a nonempty list of unique command paths, each a nonempty array of string keys.
+For `package.json`, mark each selected script with a path such as `[["scripts", "check"]]`; other changed scripts receive no integration validation.
+For a selected `.yml` or `.yaml` CI edit, use JSON syntax, which is valid YAML, and mark the exact `run` or `script` paths, such as `[["jobs", "check", "steps", "0", "run"]]`.
+The installed runtime supports only this JSON subset for marked CI edits; it uses Node built-ins and does not parse general YAML.
+Every selected path must resolve to a string command in the complete proposed bytes; missing commands, deletion and unsupported marked formats fail before writes.
+`continue-on-error` and `allow_failure` on the selected CI command's ancestor objects must be literal `false` when present.
+Unmarked edits, other package scripts, other CI commands and unrelated configuration fields pass through the ordinary protected-write validation unchanged.
+The plan digest binds these selections alongside the complete proposed bytes.
+Selected commands use literal arguments and fail-fast top-level `&&` chains; line breaks between commands are allowed only after `&&`.
+Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted and escaped arguments.
+Quotes do not make shell control syntax acceptable as an argument.
+Failure-masking operators (`||`, pipelines, separators, background execution and negation), unquoted shell comments, assignment prefixes, shell dispatch and substitutions fail with `ignored-check-failure` before any writes.
+Shell dispatch includes `command`, `builtin`, shell executables, executable paths to those programs and their `.exe`/`.cmd`/`.bat` forms in every `&&` segment.
+`npm exec`/`npm x` and `npx` reject `-c` and `--call` modes, including attached option values; `env`, including `env -S`, remains unsupported.
+This bounded grammar is a configuration safeguard, not an interpreter for arbitrary shell programs or a proof of a checker's implementation.
+The identical maintained command must still pass the valid disposable control and reject the seeded violation with its diagnostic and nonzero exit through `rule-proof`.
 CI examples are unverified adapters until actual hosted execution is observed; local disposable proof does not establish a merge gate.
 
 ## Control existing debt

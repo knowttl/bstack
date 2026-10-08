@@ -342,6 +342,7 @@ Prerequisites run again on every invocation, including dry runs and resume.
 Missing, failed or interrupted setup or journey produces exit 2 with creation-unverified and keeps the project.
 Inspect the retained record and capture fresh affected native checks explicitly before claiming readiness.
 A successful record includes tool versions and captured outputs, gitComplete and verified true, and names maintained enforcement and portable maintenance as pending.
+These are unperformed creation steps, not global capability status; selected maintained integration is available through [apply](#apply-dry-run) and needs its own disposable proof.
 Real Windows and macOS execution remains owner checklist evidence, rather than a Linux support claim.
 
 ## Arguments and targets
@@ -624,7 +625,7 @@ Stage requirements are deliberately bounded:
 `requiredOutcomes` includes every stage requirement and any further outcome the approved scope needs.
 For example, add a journey to audit readiness when the stated next change relies on that flow.
 A foundation claim cannot substitute audit starting checks for its journey or review.
-These stages do not claim later maintained enforcement, portable assessment or final release acceptance.
+These stage requirements alone do not establish maintained enforcement, portable assessment or final release acceptance.
 
 Validation returns the current fingerprint even when evidence is missing.
 It hashes the real target root, reviewed revision, exact scoped file bytes and modes, including absence, and all substantive findings inputs except `execution`, using the T0.4 fingerprint contract.
@@ -701,23 +702,7 @@ The helper derives the full proposed content from the operation and checks it ag
 For a fresh plan or dry run, current file bytes must match `originalHash`; a create must start absent and a delete must start present.
 Resume validates the saved originals against `originalHash` and derives current file states as described below.
 Complete bytes for every file are staged in memory before reporting success.
-An edit that integrates selected checks declares optional `checkIntegration`, a nonempty list of unique command paths, each a nonempty array of string keys.
-For `package.json`, mark each selected script with a path such as `[["scripts", "check"]]`; other changed scripts receive no integration validation.
-For a selected `.yml` or `.yaml` CI edit, use JSON syntax, which is valid YAML, and mark the exact `run` or `script` paths, such as `[["jobs", "check", "steps", "0", "run"]]`.
-The installed runtime supports only this JSON subset for marked CI edits; it uses Node built-ins and does not parse general YAML.
-Every selected path must resolve to a string command in the complete proposed bytes; missing commands, deletion and unsupported marked formats fail before writes.
-`continue-on-error` and `allow_failure` on the selected CI command's ancestor objects must be literal `false` when present.
-Unmarked edits, other package scripts, other CI commands and unrelated configuration fields pass through the ordinary protected-write validation unchanged.
-The plan digest binds these selections alongside the complete proposed bytes.
-Selected commands use literal arguments and fail-fast top-level `&&` chains; line breaks between commands are allowed only after `&&`.
-Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted and escaped arguments.
-Quotes do not make shell control syntax acceptable as an argument.
-Failure-masking operators (`||`, pipelines, separators, background execution and negation), unquoted shell comments, assignment prefixes, shell dispatch and substitutions fail with `ignored-check-failure` before any writes.
-Shell dispatch includes `command`, `builtin`, shell executables, executable paths and `.exe`/`.cmd`/`.bat` forms in every `&&` segment.
-`npm exec`/`npm x` and `npx` reject `-c` and `--call` modes, including attached option values; `env`, including `env -S`, remains unsupported.
-This bounded grammar is a configuration safeguard, not an interpreter for arbitrary shell programs or a proof of a checker's implementation.
-The identical maintained command must still pass the valid disposable control and reject the seeded violation with its diagnostic and nonzero exit through `rule-proof`.
-CI adapter behaviour remains unverified without hosted execution.
+The installed [enforcement reference](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command) owns selected `checkIntegration` paths, their bounded command grammar, supported CI format and disposable-proof requirements.
 If any file fails input validation or staging, no diff or proposed edits are returned and every project file remains unchanged.
 Filesystem access failures block the command; invalid plans fail with named problems and renewed-review guidance.
 

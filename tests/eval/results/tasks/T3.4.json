@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T3.4",
+  "slice": "C20",
+  "sourceRevision": "a97155bd9514b7813469871e2aa07ff8f4f4b59d",
+  "intent": "Integrate selected scoped checks through the maintained local command, preserving failures, documented initial debt and permitted sibling-package use without hosted workflows.",
+  "amendments": [
+    "The selected-integration interface and bounded validator contract are owned by skills/repo-audit/references/enforcement.md#integrate-the-maintained-command.",
+    "The verification procedure is docs/implementation-plan.md#t34-integrate-scoped-checks-with-the-maintained-local-command; the existing gate capture passed at the source revision, but documentation fixes require a fresh capture on committed final inputs before attachment."
+  ],
+  "status": "blocked",
+  "environment": {
+    "os": "linux 6.8.0-142-generic x64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "attach-full-tests",
+      "executable": "node",
+      "args": ["scripts/task-evidence.mjs", ".cache/full-suite.json", "T3.4"],
+      "cwd": ".",
+      "exitCode": 1,
+      "outputArtifact": null,
+      "status": "blocked",
+      "reason": "Attachment rejected the documentation edits with: Commit source inputs before attaching evidence.",
+      "nextPrerequisite": "The outer executor must commit final documentation, refresh the configured full-suite capture within this run, and attach it once to T3.4."
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-58",
+      "kind": "automated",
+      "procedure": "docs/design.md#AC-58; docs/implementation-plan.md#t34-integrate-scoped-checks-with-the-maintained-local-command; tests/scripts/maintained-checks.test.mjs: ts-shop maintained command accepts documented debt and core imports but rejects new web debt in disposable copies; tests/scripts/apply.test.mjs: apply enforces bounded selected arguments, apply permits unrelated reviewed edit and apply validates only selected commands within an integration edit table-driven controls.",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "The pre-documentation gate capture passed these controls; final-input evidence has not been attached.",
+      "nextPrerequisite": "Attach the refreshed final full-suite capture to T3.4 within this run."
+    },
+    {
+      "id": "AC-61",
+      "kind": "automated",
+      "procedure": "docs/design.md#AC-61; docs/implementation-plan.md#t34-integrate-scoped-checks-with-the-maintained-local-command; tests/scripts/maintained-checks.test.mjs: ts-shop maintained command accepts documented debt and core imports but rejects new web debt in disposable copies.",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "The pre-documentation gate capture passed the permitted core import and seeded web violation controls; final-input evidence has not been attached.",
+      "nextPrerequisite": "Attach the refreshed final full-suite capture to T3.4 within this run."
+    }
+  ],
+  "limitations": [
+    "Executed locally on Linux and Node 24 only; real Windows and macOS execution remains captain checklist evidence.",
+    "Hosted CI adapters remain unverified; bstack adds no workflows.",
+    "The selected command validator is bounded, not a complete shell interpreter; identical maintained-command disposable controls establish enforcement for the seeded cases only.",
+    "Selected CI edits support the JSON subset of YAML only; unrelated reviewed configuration and sibling commands are not subject to integration validation.",
+    "AC-58 maintenance validation and final released-skill agent acceptance remain separate procedures."
+  ]
+}

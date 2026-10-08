@@ -11,7 +11,7 @@ Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending
 These provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
-The maintenance reference remains a placeholder, while maintained enforcement, portable maintenance and the installer are pending.
+The maintenance reference remains a placeholder, while portable maintenance and the installer are pending.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -147,11 +147,8 @@ Integrate selected native checks into the project's existing check command throu
 Keep package rules scoped to their owning package and prepare the complete documented initial debt baseline through selected findings before expecting an audited project to pass.
 Prove each rule independently on the clean fixture variants, then use `rule-proof` with the identical maintained command, such as `npm run check`, on separate valid and seeded disposable copies.
 The target owns the checker and its declared dependencies, so ordinary contributors can run it without an installed skill or agent session.
-Mark selected command paths with each edit's `checkIntegration`, such as `[["scripts", "check"]]` for a package check script.
-`apply` rejects failure-masking selected commands; simple commands joined with `&&` preserve failures, while unrelated reviewed edits pass through unchanged.
-Selected arguments cannot contain shell control operators or substitutions, even when quoted or escaped, and known shell-dispatch modes are rejected.
-This bounded validator is not a complete shell interpreter; the identical maintained-command disposable controls remain the enforcement proof.
-Selected CI edits use the JSON subset of YAML and exact `run`/`script` paths, as described in the [command contract](docs/command-contract.md#apply-dry-run).
+Declare selected command paths in each edit's `checkIntegration` using the [enforcement reference](skills/repo-audit/references/enforcement.md#integrate-the-maintained-command), which owns the supported command grammar and CI format.
+The identical maintained-command disposable controls remain the enforcement proof.
 CI integration requires the project's selection and its adapter behaviour remains unverified until hosted execution is observed.
 Run `npm test -- --task T3.4` for the maintained-command, baseline and web/core scope controls.
 
