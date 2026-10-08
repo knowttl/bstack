@@ -2,7 +2,7 @@ import { CommandError } from './result.mjs'
 import { canonicalJSON } from './fingerprint.mjs'
 
 // Only keywords exercised by installed input formats belong to this subset.
-const keywords = ['$schema', 'title', 'type', 'const', 'enum', 'properties', 'required', 'additionalProperties', 'items', 'minItems', 'minLength', 'pattern']
+const keywords = ['$schema', 'title', 'type', 'const', 'enum', 'properties', 'required', 'additionalProperties', 'items', 'minItems', 'minLength', 'pattern', 'uniqueItems']
 // JSON types distinguish arrays from objects and exclude JavaScript-only values.
 const types = ['object', 'array', 'string', 'number', 'integer', 'boolean', 'null']
 
@@ -46,6 +46,7 @@ export function validateSchema(schema) {
       else for (const [key, child] of Object.entries(node.properties)) visit(child, `${path}/properties/${key}`)
     }
     if (Object.hasOwn(node, 'items')) visit(node.items, `${path}/items`)
+    if (Object.hasOwn(node, 'uniqueItems') && typeof node.uniqueItems !== 'boolean') invalid('uniqueItems must be a boolean.')
     if (Object.hasOwn(node, 'additionalProperties') && typeof node.additionalProperties !== 'boolean') visit(node.additionalProperties, `${path}/additionalProperties`)
   }
   visit(schema, '$')
@@ -68,6 +69,7 @@ export function validateData(schema, data) {
       if (node.pattern !== undefined && !new RegExp(node.pattern, 'u').test(value)) problem('invalid-pattern', `Value must match ${node.pattern}.`)
     }
     if (Array.isArray(value)) {
+      if (node.uniqueItems && new Set(value.map(canonicalJSON)).size !== value.length) problem('duplicate-item', 'Array items must be unique.')
       if (node.minItems !== undefined && value.length < node.minItems) problem('min-items', `Expected at least ${node.minItems} items.`)
       if (node.items) value.forEach((item, index) => visit(node.items, item, `${path}/${index}`))
     }
