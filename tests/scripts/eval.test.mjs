@@ -245,18 +245,25 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   return { result, record }
 }
 
-test('supplied reviewer identities are redacted throughout manual and adapter scoring publication', async t => {
-  for (const host of ['manual', 'adapter', 'closed-adapter']) {
-    await t.test(host, async t => {
+test('supplied reviewer identities including quoted nicknames are redacted throughout scoring publication', async t => {
+  for (const [host, reviewer, mode] of [
+    ['manual', 'Alice Chen', 'reviewer'],
+    ['adapter', 'Alice Chen', 'reviewer'],
+    ['closed-adapter', 'Alice Chen', 'reviewer'],
+    ['manual', 'Alice "Ali" Chen', 'reviewer-quoted'],
+    ['adapter', 'Alice "Ali" Chen', 'reviewer-quoted'],
+    ['closed-adapter', 'Alice "Ali" Chen', 'reviewer-quoted']
+  ]) {
+    await t.test(`${host}: ${reviewer}`, async t => {
       const directory = await temporary(t)
-      const { path } = await adapterFile(directory, 'reviewer')
+      const { path } = await adapterFile(directory, mode)
       const record = host === 'manual' ? start(t, directory) : hostStart(t, directory, path).record
       const files = await inputs(directory, record)
-      files.answers.reviewer = 'Alice Chen'
+      files.answers.reviewer = reviewer
       assert.notEqual(files.answers.reviewer, userInfo().username)
       await writeFile(files.answersPath, JSON.stringify(files.answers))
       const transcriptPath = host === 'manual' ? files.transcriptPath : join(directory, record.id, record.conversation)
-      if (host === 'manual') await writeFile(transcriptPath, 'User: Review the evidence.\nReviewer: Alice Chen\n')
+      if (host === 'manual') await writeFile(transcriptPath, `User: Review the evidence.\nReviewer: ${reviewer}\n`)
       if (host === 'closed-adapter') run(directory, 'close', '--run', record.id)
       const original = await readFile(transcriptPath, 'utf8')
       const result = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
@@ -264,13 +271,14 @@ test('supplied reviewer identities are redacted throughout manual and adapter sc
       const saved = await readFile(join(directory, record.id, 'run.json'), 'utf8')
       const scored = JSON.parse(saved)
       assert.deepEqual(result.data.data, scored)
-      assert.ok(!saved.includes('Alice Chen'))
+      assert.ok(!saved.includes('Alice'))
       assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
       assert.equal(scored.caseResults[0].passed, true)
       assert.equal(scored.caseResults[0].startLine, 1)
       assert.equal(scored.caseResults[0].endLine, 2)
       const transcript = await readFile(join(directory, record.id, scored.transcript), 'utf8')
-      assert.equal(transcript, original.replaceAll('Alice Chen', '[redacted: user name]'))
+      assert.equal(transcript, original.replaceAll(reviewer, '[redacted: user name]')
+        .replaceAll(JSON.stringify(reviewer).slice(1, -1), '[redacted: user name]'))
       assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, scored.answers), 'utf8')),
         { ...files.answers, reviewer: '[redacted: user name]' })
       if (host !== 'manual') {

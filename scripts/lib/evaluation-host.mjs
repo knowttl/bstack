@@ -25,6 +25,13 @@ export function redactEvidence(content, record) {
   const names = replacements.sort((a, b) => b[0].length - a[0].length)
   const scratch = tmpdir().replace(/[\\/]$/, '')
   function redact(value) {
+    let serialized
+    try { serialized = JSON.parse(value) } catch {}
+    if (serialized === undefined) {
+      for (const [name, placeholder] of names) {
+        value = value.replace(new RegExp(`(?<![\\p{L}\\p{N}_-])${RegExp.escape(name)}(?![\\p{L}\\p{N}_-])`, 'gu'), () => placeholder)
+      }
+    }
     return value.replace(/"(?:[^"\\\x00-\x1f]|\\.)*"|[^"]+|"/g, part => {
       if (part.startsWith('"') && part.length > 1) {
         let decoded
@@ -33,9 +40,6 @@ export function redactEvidence(content, record) {
           const redacted = redact(decoded)
           return redacted === decoded ? part : JSON.stringify(redacted)
         }
-      }
-      for (const [name, placeholder] of names) {
-        part = part.replace(new RegExp(`(?<![\\p{L}\\p{N}_-])${RegExp.escape(name)}(?![\\p{L}\\p{N}_-])`, 'gu'), () => placeholder)
       }
       return part.replace(new RegExp(`${RegExp.escape(scratch)}[/\\\\]+[^\\s"'\\\\;<>]+`, 'g'), '[scratch-path]')
         .replace(/(?:\/private)?\/tmp\/[^\s"'\\;<>]+/g, '[scratch-path]')
