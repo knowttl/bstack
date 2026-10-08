@@ -3,11 +3,11 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, read-only starting-state inspection and document inventory, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
-Other conditional references remain placeholders, and production audit commands and the installer are not built yet.
+Other conditional references remain placeholders, and later audit commands and the installer are not built yet.
 Use the procedure for bounded read-only planning, keeping blocked steps visible.
 Project edits remain blocked until the protected apply command is built.
 Nothing is published to npm.
@@ -36,6 +36,8 @@ npm test -- --task T1.5
 npm test -- --task T1.6
 npm test -- --task T1.7
 npm test -- --task T2.1
+npm test -- --task T2.2
+npm test -- --task T2.3
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
@@ -113,6 +115,26 @@ node skills/repo-audit/scripts/repo-audit.mjs --help
 `--help` prints help and exits 0.
 No arguments print the same help and exit 3 (usage error).
 Unsupported commands or arguments report problems using the [result contract](docs/command-contract.md#results).
+
+Inspect an existing Git repo before interviewing, then discover its document and instruction sources:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs inspect --repo <target> --json
+node skills/repo-audit/scripts/repo-audit.mjs inventory --repo <target> --json
+```
+
+`inspect` reports the real root, revision or "no commits", working-tree changes, manifest hashes and found prerequisite versions.
+Unavailable tools or unreadable history return blocked with named problems.
+`inventory` reports paths, exact-byte hashes, document kinds and absent sources without failing for missing documents.
+Equivalent names such as `CONTRIBUTING.md` and `architecture.md` are recognised.
+Read the discovered files to establish which source is authoritative.
+Root `CLAUDE.md`, including import-only stubs, yields a consolidation candidate requiring content review and author approval.
+Distinct nested instructions keep their scope, and equivalent nested instructions can only consolidate into `AGENTS.md` in the same scope.
+Local and ancestor instructions outside the repo are possible shadowing sources and are never proposed for modification.
+Claude Code versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled may read only `CLAUDE.md`.
+Recheck current host loading behaviour before proposing removal.
+Both commands are read-only and do not run native project checks.
+See the [discovery contract](docs/command-contract.md#inspect-and-inventory) for the supported name families and traversal limits.
 
 Run the five [research briefs](skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using independent subagents in parallel where available or the same briefs sequentially in the main thread.
 Save the common [research report](skills/repo-audit/schemas/research-report.json) in scratch, open each cited source and check it before using the observations:
