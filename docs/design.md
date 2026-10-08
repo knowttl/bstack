@@ -40,7 +40,7 @@ The [implementation plan](implementation-plan.md) owns the build sequence and th
 Runtime research and build prerequisites remain assigned to the tasks that need them.
 The decisions table in "Scope and decision history" holds the only record of superseded designs.
 
-The packaging and runtime checks below remain build work, rather than verified capabilities.
+The [implementation plan](implementation-plan.md#progress) records completed packaging and runtime checks; unchecked capabilities remain build work.
 The new-project path can implement the approved foundation, but it does not build the full product during setup.
 
 ### Your current decisions
@@ -1399,7 +1399,29 @@ Documentation research alone does not satisfy an execution check.
 ## Evidence and limitations
 
 This review checked the upstream procedures and licences at pinned commits on 2026-10-06.
-The integrated audit skill, installer and runtime still need implementation and execution tests.
+The integrated audit skill and installer still need implementation and execution tests.
+The [implementation plan](implementation-plan.md#progress) records partial board runtime completion.
+
+### VISION runtime observation (C9b10a)
+
+The [T1.6 evidence record](../tests/eval/results/tasks/T1.6.json) owns tested versions, setup results and probe limitations.
+Its [captured live probe](../tests/eval/results/tasks/T1.6.runtime-probe.md) records the observed CLI and feedback transport.
+The runtime dependency declaration and nested lockfile own the exact pin, chosen for its observed interface rather than assuming a newer version behaves identically.
+See [README setup](../README.md) for the nested installation and the [board command contract](command-contract.md#vision-board-build) for generation and feedback metadata.
+
+A terminal-only agent can open the printed URL in a reachable browser, while its terminal runs the CLI's long-poll command.
+Browser sends deliver queued prompts once to that listener.
+CLI help documents final feedback on Send & End, ended sessions and resumable browser disconnection.
+The probe used a bounded debugging timeout, not the normal indefinite review wait.
+No documented CLI verdict-file input was established.
+With no reachable browser, preserve the draft and mark interaction blocked rather than claim approval.
+
+The F13 commissioning correction separates deterministic transport from semantic editing.
+The board carries its run ID, exact-byte SHA-256 draft revision and unique card IDs in feedback.
+The launcher must validate these bindings before accepting verdicts.
+The agent owns interpretation and a reviewed new draft, preserving the previous revision for resume.
+A verdict alone cannot mechanically rewrite arbitrary VISION prose.
+The [implementation plan](implementation-plan.md#progress) records the remaining launch, verdict ingestion, resumed review and approved-draft work.
 
 | Source | Verified fact | Effect on this design |
 |---|---|---|
