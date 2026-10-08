@@ -1,0 +1,4618 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs
+
+Selected 22 suite(s): tests/scripts/acceptance.test.mjs, tests/scripts/apply.test.mjs, tests/scripts/bootstrap.test.mjs, tests/scripts/child-contract.test.mjs, tests/scripts/cite-check.test.mjs, tests/scripts/command-contract.test.mjs, tests/scripts/eval.test.mjs, tests/scripts/findings.test.mjs, tests/scripts/fixtures.test.mjs, tests/scripts/inspect.test.mjs, tests/scripts/inventory.test.mjs, tests/scripts/measure.test.mjs, tests/scripts/overlap.test.mjs, tests/scripts/package-check.test.mjs, tests/scripts/probe.test.mjs, tests/scripts/run-checks.test.mjs, tests/scripts/schema-contract.test.mjs, tests/scripts/skill-skeleton.test.mjs, tests/scripts/upstream.test.mjs, tests/scripts/vision-board.test.mjs, tests/scripts/vision-review.test.mjs, tests/scripts/vision-runtime.test.mjs
+TAP version 13
+# Subtest: registry validates all 75 owned cases without passing planned procedures
+ok 1 - registry validates all 75 owned cases without passing planned procedures
+  ---
+  duration_ms: 128.790425
+  type: 'test'
+  ...
+# Subtest: registry blocks missing acceptance ID
+ok 2 - registry blocks missing acceptance ID
+  ---
+  duration_ms: 151.492073
+  type: 'test'
+  ...
+# Subtest: registry blocks duplicate acceptance ID
+ok 3 - registry blocks duplicate acceptance ID
+  ---
+  duration_ms: 162.018922
+  type: 'test'
+  ...
+# Subtest: registry blocks unknown owner task
+ok 4 - registry blocks unknown owner task
+  ---
+  duration_ms: 93.93513
+  type: 'test'
+  ...
+# Subtest: registry blocks wrong existing owner task
+ok 5 - registry blocks wrong existing owner task
+  ---
+  duration_ms: 108.095799
+  type: 'test'
+  ...
+# Subtest: registry blocks missing shared owner
+ok 6 - registry blocks missing shared owner
+  ---
+  duration_ms: 147.140946
+  type: 'test'
+  ...
+# Subtest: registry blocks extra shared owner
+ok 7 - registry blocks extra shared owner
+  ---
+  duration_ms: 120.47377
+  type: 'test'
+  ...
+# Subtest: registry blocks duplicate owner
+ok 8 - registry blocks duplicate owner
+  ---
+  duration_ms: 80.655
+  type: 'test'
+  ...
+# Subtest: registry blocks invalid procedure status
+ok 9 - registry blocks invalid procedure status
+  ---
+  duration_ms: 167.847811
+  type: 'test'
+  ...
+# Subtest: registry blocks empty planned procedure
+ok 10 - registry blocks empty planned procedure
+  ---
+  duration_ms: 126.27851
+  type: 'test'
+  ...
+# Subtest: registry blocks invalid criterion source
+ok 11 - registry blocks invalid criterion source
+  ---
+  duration_ms: 76.708342
+  type: 'test'
+  ...
+# Subtest: registry blocks unknown registry field
+ok 12 - registry blocks unknown registry field
+  ---
+  duration_ms: 134.761305
+  type: 'test'
+  ...
+# Subtest: registry blocks missing completed evidence
+ok 13 - registry blocks missing completed evidence
+  ---
+  duration_ms: 250.17504
+  type: 'test'
+  ...
+# Subtest: registry blocks unregistered completed test
+ok 14 - registry blocks unregistered completed test
+  ---
+  duration_ms: 125.914148
+  type: 'test'
+  ...
+# Subtest: completed agent procedure blocks ambiguous-idea for AC-1
+ok 15 - completed agent procedure blocks ambiguous-idea for AC-1
+  ---
+  duration_ms: 121.510946
+  type: 'test'
+  ...
+# Subtest: completed agent procedure accepts ambiguous-idea for AC-2
+ok 16 - completed agent procedure accepts ambiguous-idea for AC-2
+  ---
+  duration_ms: 161.333561
+  type: 'test'
+  ...
+# Subtest: completed agent procedure accepts new-idea for AC-9
+ok 17 - completed agent procedure accepts new-idea for AC-9
+  ---
+  duration_ms: 91.719534
+  type: 'test'
+  ...
+# Subtest: completed manual procedure blocks ambiguous-idea for AC-1
+ok 18 - completed manual procedure blocks ambiguous-idea for AC-1
+  ---
+  duration_ms: 176.059106
+  type: 'test'
+  ...
+# Subtest: completed manual procedure accepts ambiguous-idea for AC-2
+ok 19 - completed manual procedure accepts ambiguous-idea for AC-2
+  ---
+  duration_ms: 115.075027
+  type: 'test'
+  ...
+# Subtest: completed manual procedure accepts new-idea for AC-9
+ok 20 - completed manual procedure accepts new-idea for AC-9
+  ---
+  duration_ms: 196.139974
+  type: 'test'
+  ...
+# Subtest: duplicate final selections are blocked independently of run history
+ok 21 - duplicate final selections are blocked independently of run history
+  ---
+  duration_ms: 181.705677
+  type: 'test'
+  ...
+# Subtest: completed procedure definitions execute valid skeleton passes from another working directory without scoring it
+ok 22 - completed procedure definitions execute valid skeleton passes from another working directory without scoring it
+  ---
+  duration_ms: 2304.265727
+  type: 'test'
+  ...
+# Subtest: completed procedure definitions execute unlisted-reference fails with reference-unlisted without scoring it
+ok 23 - completed procedure definitions execute unlisted-reference fails with reference-unlisted without scoring it
+  ---
+  duration_ms: 1841.966971
+  type: 'test'
+  ...
+# Subtest: apply dry run stages create with no project writes
+ok 24 - apply dry run stages create with no project writes
+  ---
+  duration_ms: 322.414183
+  type: 'test'
+  ...
+# Subtest: apply dry run stages replace with no project writes
+ok 25 - apply dry run stages replace with no project writes
+  ---
+  duration_ms: 249.937983
+  type: 'test'
+  ...
+# Subtest: apply dry run stages selected delete with no project writes
+ok 26 - apply dry run stages selected delete with no project writes
+  ---
+  duration_ms: 266.339355
+  type: 'test'
+  ...
+# Subtest: apply dry run stages empty replacement keeps a present file with no project writes
+ok 27 - apply dry run stages empty replacement keeps a present file with no project writes
+  ---
+  duration_ms: 207.43731
+  type: 'test'
+  ...
+# Subtest: apply dry run stages heading section with no project writes
+ok 28 - apply dry run stages heading section with no project writes
+  ---
+  duration_ms: 152.178118
+  type: 'test'
+  ...
+# Subtest: apply dry run stages CRLF heading section with no project writes
+ok 29 - apply dry run stages CRLF heading section with no project writes
+  ---
+  duration_ms: 172.928651
+  type: 'test'
+  ...
+# Subtest: apply dry run stages UTF-8 BOM and Unicode replacement with no project writes
+ok 30 - apply dry run stages UTF-8 BOM and Unicode replacement with no project writes
+  ---
+  duration_ms: 280.559102
+  type: 'test'
+  ...
+# Subtest: apply dry run stages JSON key with no project writes
+ok 31 - apply dry run stages JSON key with no project writes
+  ---
+  duration_ms: 313.849701
+  type: 'test'
+  ...
+# Subtest: apply dry run stages new JSON key preserves exact existing values with no project writes
+ok 32 - apply dry run stages new JSON key preserves exact existing values with no project writes
+  ---
+  duration_ms: 245.91107
+  type: 'test'
+  ...
+# Subtest: apply dry run stages append line with no project writes
+ok 33 - apply dry run stages append line with no project writes
+  ---
+  duration_ms: 326.552469
+  type: 'test'
+  ...
+# Subtest: apply dry run stages existing appended line with no project writes
+ok 34 - apply dry run stages existing appended line with no project writes
+  ---
+  duration_ms: 346.337535
+  type: 'test'
+  ...
+# Subtest: apply dry run stages heading in fenced code is preserved with no project writes
+ok 35 - apply dry run stages heading in fenced code is preserved with no project writes
+  ---
+  duration_ms: 332.893685
+  type: 'test'
+  ...
+# Subtest: apply dry run stages comment in fenced code is preserved with no project writes
+ok 36 - apply dry run stages comment in fenced code is preserved with no project writes
+  ---
+  duration_ms: 299.052571
+  type: 'test'
+  ...
+# Subtest: apply dry run stages HTML block in fenced code is preserved with no project writes
+ok 37 - apply dry run stages HTML block in fenced code is preserved with no project writes
+  ---
+  duration_ms: 276.03118
+  type: 'test'
+  ...
+# Subtest: apply dry run stages less-than prose with no project writes
+ok 38 - apply dry run stages less-than prose with no project writes
+  ---
+  duration_ms: 260.128517
+  type: 'test'
+  ...
+# Subtest: apply dry run stages closing heading markers with no project writes
+ok 39 - apply dry run stages closing heading markers with no project writes
+  ---
+  duration_ms: 388.747682
+  type: 'test'
+  ...
+# Subtest: apply rejects bare CR in set-heading-section before matching with no project writes
+ok 40 - apply rejects bare CR in set-heading-section before matching with no project writes
+  ---
+  duration_ms: 739.870822
+  type: 'test'
+  ...
+# Subtest: apply rejects bare CR in append-line-once before matching with no project writes
+ok 41 - apply rejects bare CR in append-line-once before matching with no project writes
+  ---
+  duration_ms: 871.445406
+  type: 'test'
+  ...
+# Subtest: apply ignores a leading BOM for semantic matching while preserving bytes
+ok 42 - apply ignores a leading BOM for semantic matching while preserving bytes
+  ---
+  duration_ms: 2373.88256
+  type: 'test'
+  ...
+# Subtest: apply rejects backtick-containing fence info before deriving section bytes
+ok 43 - apply rejects backtick-containing fence info before deriving section bytes
+  ---
+  duration_ms: 520.087441
+  type: 'test'
+  ...
+# Subtest: heading edits reject " ```" inside a fence without project writes
+ok 44 - heading edits reject " ```" inside a fence without project writes
+  ---
+  duration_ms: 721.199522
+  type: 'test'
+  ...
+# Subtest: heading edits reject " ```" outside a fence without project writes
+ok 45 - heading edits reject " ```" outside a fence without project writes
+  ---
+  duration_ms: 681.870422
+  type: 'test'
+  ...
+# Subtest: heading edits reject "  ```" inside a fence without project writes
+ok 46 - heading edits reject "  ```" inside a fence without project writes
+  ---
+  duration_ms: 826.18142
+  type: 'test'
+  ...
+# Subtest: heading edits reject "  ```" outside a fence without project writes
+ok 47 - heading edits reject "  ```" outside a fence without project writes
+  ---
+  duration_ms: 634.389621
+  type: 'test'
+  ...
+# Subtest: heading edits reject "   ```" inside a fence without project writes
+ok 48 - heading edits reject "   ```" inside a fence without project writes
+  ---
+  duration_ms: 726.251374
+  type: 'test'
+  ...
+# Subtest: heading edits reject "   ```" outside a fence without project writes
+ok 49 - heading edits reject "   ```" outside a fence without project writes
+  ---
+  duration_ms: 646.451522
+  type: 'test'
+  ...
+# Subtest: heading edits reject "\\t```" inside a fence without project writes
+ok 50 - heading edits reject "\\t```" inside a fence without project writes
+  ---
+  duration_ms: 617.33695
+  type: 'test'
+  ...
+# Subtest: heading edits reject "\\t```" outside a fence without project writes
+ok 51 - heading edits reject "\\t```" outside a fence without project writes
+  ---
+  duration_ms: 659.724586
+  type: 'test'
+  ...
+# Subtest: heading edits reject " ~~~" inside a fence without project writes
+ok 52 - heading edits reject " ~~~" inside a fence without project writes
+  ---
+  duration_ms: 627.67992
+  type: 'test'
+  ...
+# Subtest: heading edits reject " ~~~" outside a fence without project writes
+ok 53 - heading edits reject " ~~~" outside a fence without project writes
+  ---
+  duration_ms: 616.437455
+  type: 'test'
+  ...
+# Subtest: heading edits reject "  ~~~" inside a fence without project writes
+ok 54 - heading edits reject "  ~~~" inside a fence without project writes
+  ---
+  duration_ms: 859.527665
+  type: 'test'
+  ...
+# Subtest: heading edits reject "  ~~~" outside a fence without project writes
+ok 55 - heading edits reject "  ~~~" outside a fence without project writes
+  ---
+  duration_ms: 1232.293188
+  type: 'test'
+  ...
+# Subtest: heading edits reject "   ~~~" inside a fence without project writes
+ok 56 - heading edits reject "   ~~~" inside a fence without project writes
+  ---
+  duration_ms: 1026.859808
+  type: 'test'
+  ...
+# Subtest: heading edits reject "   ~~~" outside a fence without project writes
+ok 57 - heading edits reject "   ~~~" outside a fence without project writes
+  ---
+  duration_ms: 889.633369
+  type: 'test'
+  ...
+# Subtest: heading edits reject "\\t~~~" inside a fence without project writes
+ok 58 - heading edits reject "\\t~~~" inside a fence without project writes
+  ---
+  duration_ms: 712.720205
+  type: 'test'
+  ...
+# Subtest: heading edits reject "\\t~~~" outside a fence without project writes
+ok 59 - heading edits reject "\\t~~~" outside a fence without project writes
+  ---
+  duration_ms: 571.452601
+  type: 'test'
+  ...
+# Subtest: apply rejects nonfinite JSON payload numbers before digest computation
+ok 60 - apply rejects nonfinite JSON payload numbers before digest computation
+  ---
+  duration_ms: 1853.648103
+  type: 'test'
+  ...
+# Subtest: apply prints the exact selected-delete diff in plain and JSON output
+ok 61 - apply prints the exact selected-delete diff in plain and JSON output
+  ---
+  duration_ms: 748.997313
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#" section without project writes
+ok 62 - heading edits reject the empty "\#" section without project writes
+  ---
+  duration_ms: 658.912435
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#   " section without project writes
+ok 63 - heading edits reject the empty "\#   " section without project writes
+  ---
+  duration_ms: 645.317945
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\# \#\#\#" section without project writes
+ok 64 - heading edits reject the empty "\# \#\#\#" section without project writes
+  ---
+  duration_ms: 626.847512
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#" section without project writes
+ok 65 - heading edits reject the empty "\#\#" section without project writes
+  ---
+  duration_ms: 766.63995
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#\#" section without project writes
+ok 66 - heading edits reject the empty "\#\#\#" section without project writes
+  ---
+  duration_ms: 941.046
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#\#\#" section without project writes
+ok 67 - heading edits reject the empty "\#\#\#\#" section without project writes
+  ---
+  duration_ms: 891.254965
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#\#\#\#" section without project writes
+ok 68 - heading edits reject the empty "\#\#\#\#\#" section without project writes
+  ---
+  duration_ms: 830.747704
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#\#\#\#\#" section without project writes
+ok 69 - heading edits reject the empty "\#\#\#\#\#\#" section without project writes
+  ---
+  duration_ms: 700.99319
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated level-1 setext underline with "\\n" and no project writes
+ok 70 - heading edits reject tab-terminated level-1 setext underline with "\\n" and no project writes
+  ---
+  duration_ms: 432.666266
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated level-1 setext underline with "\\r\\n" and no project writes
+ok 71 - heading edits reject tab-terminated level-1 setext underline with "\\r\\n" and no project writes
+  ---
+  duration_ms: 631.235166
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated level-2 setext underline with "\\n" and no project writes
+ok 72 - heading edits reject tab-terminated level-2 setext underline with "\\n" and no project writes
+  ---
+  duration_ms: 601.991296
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated level-2 setext underline with "\\r\\n" and no project writes
+ok 73 - heading edits reject tab-terminated level-2 setext underline with "\\r\\n" and no project writes
+  ---
+  duration_ms: 429.297314
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated star thematic break with "\\n" and no project writes
+ok 74 - heading edits reject tab-terminated star thematic break with "\\n" and no project writes
+  ---
+  duration_ms: 464.685232
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated star thematic break with "\\r\\n" and no project writes
+ok 75 - heading edits reject tab-terminated star thematic break with "\\r\\n" and no project writes
+  ---
+  duration_ms: 388.872958
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated underscore thematic break with "\\n" and no project writes
+ok 76 - heading edits reject tab-terminated underscore thematic break with "\\n" and no project writes
+  ---
+  duration_ms: 363.717985
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated underscore thematic break with "\\r\\n" and no project writes
+ok 77 - heading edits reject tab-terminated underscore thematic break with "\\r\\n" and no project writes
+  ---
+  duration_ms: 393.296326
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported unordered list continuation with whole-file guidance and no project writes
+ok 78 - heading edits reject unsupported unordered list continuation with whole-file guidance and no project writes
+  ---
+  duration_ms: 417.843644
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported ordered list continuation with whole-file guidance and no project writes
+ok 79 - heading edits reject unsupported ordered list continuation with whole-file guidance and no project writes
+  ---
+  duration_ms: 368.841104
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported unordered list heading with whole-file guidance and no project writes
+ok 80 - heading edits reject unsupported unordered list heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 319.531553
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported ordered list heading with whole-file guidance and no project writes
+ok 81 - heading edits reject unsupported ordered list heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 335.747815
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported indented heading with whole-file guidance and no project writes
+ok 82 - heading edits reject unsupported indented heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 309.405726
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported tab-indented heading with whole-file guidance and no project writes
+ok 83 - heading edits reject unsupported tab-indented heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 363.832899
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported block quote heading with whole-file guidance and no project writes
+ok 84 - heading edits reject unsupported block quote heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 341.928685
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported HTML block with whole-file guidance and no project writes
+ok 85 - heading edits reject unsupported HTML block with whole-file guidance and no project writes
+  ---
+  duration_ms: 423.839569
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported indented fence with whole-file guidance and no project writes
+ok 86 - heading edits reject unsupported indented fence with whole-file guidance and no project writes
+  ---
+  duration_ms: 391.745449
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported fence attributes with whole-file guidance and no project writes
+ok 87 - heading edits reject unsupported fence attributes with whole-file guidance and no project writes
+  ---
+  duration_ms: 544.923871
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported table with whole-file guidance and no project writes
+ok 88 - heading edits reject unsupported table with whole-file guidance and no project writes
+  ---
+  duration_ms: 379.731165
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported reference definition with whole-file guidance and no project writes
+ok 89 - heading edits reject unsupported reference definition with whole-file guidance and no project writes
+  ---
+  duration_ms: 334.128205
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported CRLF empty heading with whole-file guidance and no project writes
+ok 90 - heading edits reject unsupported CRLF empty heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 328.876185
+  type: 'test'
+  ...
+# Subtest: heading edits reject comment before selected heading without project writes
+ok 91 - heading edits reject comment before selected heading without project writes
+  ---
+  duration_ms: 409.730977
+  type: 'test'
+  ...
+# Subtest: heading edits reject comment inside selected section without project writes
+ok 92 - heading edits reject comment inside selected section without project writes
+  ---
+  duration_ms: 321.534603
+  type: 'test'
+  ...
+# Subtest: heading edits reject inline comment without project writes
+ok 93 - heading edits reject inline comment without project writes
+  ---
+  duration_ms: 310.462444
+  type: 'test'
+  ...
+# Subtest: heading edits reject pre before selection without project writes
+ok 94 - heading edits reject pre before selection without project writes
+  ---
+  duration_ms: 356.7449
+  type: 'test'
+  ...
+# Subtest: heading edits reject pre inside selection without project writes
+ok 95 - heading edits reject pre inside selection without project writes
+  ---
+  duration_ms: 400.848559
+  type: 'test'
+  ...
+# Subtest: heading edits reject pre after selection without project writes
+ok 96 - heading edits reject pre after selection without project writes
+  ---
+  duration_ms: 313.922075
+  type: 'test'
+  ...
+# Subtest: heading edits reject script before selection without project writes
+ok 97 - heading edits reject script before selection without project writes
+  ---
+  duration_ms: 367.758453
+  type: 'test'
+  ...
+# Subtest: heading edits reject script inside selection without project writes
+ok 98 - heading edits reject script inside selection without project writes
+  ---
+  duration_ms: 291.340997
+  type: 'test'
+  ...
+# Subtest: heading edits reject script after selection without project writes
+ok 99 - heading edits reject script after selection without project writes
+  ---
+  duration_ms: 303.082096
+  type: 'test'
+  ...
+# Subtest: heading edits reject style before selection without project writes
+ok 100 - heading edits reject style before selection without project writes
+  ---
+  duration_ms: 288.508166
+  type: 'test'
+  ...
+# Subtest: heading edits reject style inside selection without project writes
+ok 101 - heading edits reject style inside selection without project writes
+  ---
+  duration_ms: 345.75541
+  type: 'test'
+  ...
+# Subtest: heading edits reject style after selection without project writes
+ok 102 - heading edits reject style after selection without project writes
+  ---
+  duration_ms: 297.953969
+  type: 'test'
+  ...
+# Subtest: heading edits reject textarea before selection without project writes
+ok 103 - heading edits reject textarea before selection without project writes
+  ---
+  duration_ms: 342.269316
+  type: 'test'
+  ...
+# Subtest: heading edits reject textarea inside selection without project writes
+ok 104 - heading edits reject textarea inside selection without project writes
+  ---
+  duration_ms: 273.897271
+  type: 'test'
+  ...
+# Subtest: heading edits reject textarea after selection without project writes
+ok 105 - heading edits reject textarea after selection without project writes
+  ---
+  duration_ms: 279.57411
+  type: 'test'
+  ...
+# Subtest: heading edits reject div before selection without project writes
+ok 106 - heading edits reject div before selection without project writes
+  ---
+  duration_ms: 315.889709
+  type: 'test'
+  ...
+# Subtest: heading edits reject div inside selection without project writes
+ok 107 - heading edits reject div inside selection without project writes
+  ---
+  duration_ms: 319.779329
+  type: 'test'
+  ...
+# Subtest: heading edits reject div after selection without project writes
+ok 108 - heading edits reject div after selection without project writes
+  ---
+  duration_ms: 309.32883
+  type: 'test'
+  ...
+# Subtest: heading edits reject uppercase indented tag before selection without project writes
+ok 109 - heading edits reject uppercase indented tag before selection without project writes
+  ---
+  duration_ms: 328.887395
+  type: 'test'
+  ...
+# Subtest: heading edits reject uppercase indented tag inside selection without project writes
+ok 110 - heading edits reject uppercase indented tag inside selection without project writes
+  ---
+  duration_ms: 308.053458
+  type: 'test'
+  ...
+# Subtest: heading edits reject uppercase indented tag after selection without project writes
+ok 111 - heading edits reject uppercase indented tag after selection without project writes
+  ---
+  duration_ms: 290.804705
+  type: 'test'
+  ...
+# Subtest: heading edits reject multiline tag before selection without project writes
+ok 112 - heading edits reject multiline tag before selection without project writes
+  ---
+  duration_ms: 253.01452
+  type: 'test'
+  ...
+# Subtest: heading edits reject multiline tag inside selection without project writes
+ok 113 - heading edits reject multiline tag inside selection without project writes
+  ---
+  duration_ms: 285.888041
+  type: 'test'
+  ...
+# Subtest: heading edits reject multiline tag after selection without project writes
+ok 114 - heading edits reject multiline tag after selection without project writes
+  ---
+  duration_ms: 278.65691
+  type: 'test'
+  ...
+# Subtest: heading edits reject custom tag before selection without project writes
+ok 115 - heading edits reject custom tag before selection without project writes
+  ---
+  duration_ms: 265.534139
+  type: 'test'
+  ...
+# Subtest: heading edits reject custom tag inside selection without project writes
+ok 116 - heading edits reject custom tag inside selection without project writes
+  ---
+  duration_ms: 300.781536
+  type: 'test'
+  ...
+# Subtest: heading edits reject custom tag after selection without project writes
+ok 117 - heading edits reject custom tag after selection without project writes
+  ---
+  duration_ms: 300.916691
+  type: 'test'
+  ...
+# Subtest: heading edits reject closing tag before selection without project writes
+ok 118 - heading edits reject closing tag before selection without project writes
+  ---
+  duration_ms: 263.11175
+  type: 'test'
+  ...
+# Subtest: heading edits reject closing tag inside selection without project writes
+ok 119 - heading edits reject closing tag inside selection without project writes
+  ---
+  duration_ms: 307.513917
+  type: 'test'
+  ...
+# Subtest: heading edits reject closing tag after selection without project writes
+ok 120 - heading edits reject closing tag after selection without project writes
+  ---
+  duration_ms: 340.004082
+  type: 'test'
+  ...
+# Subtest: heading edits reject processing instruction before selection without project writes
+ok 121 - heading edits reject processing instruction before selection without project writes
+  ---
+  duration_ms: 264.154693
+  type: 'test'
+  ...
+# Subtest: heading edits reject processing instruction inside selection without project writes
+ok 122 - heading edits reject processing instruction inside selection without project writes
+  ---
+  duration_ms: 299.96828
+  type: 'test'
+  ...
+# Subtest: heading edits reject processing instruction after selection without project writes
+ok 123 - heading edits reject processing instruction after selection without project writes
+  ---
+  duration_ms: 279.558689
+  type: 'test'
+  ...
+# Subtest: heading edits reject declaration before selection without project writes
+ok 124 - heading edits reject declaration before selection without project writes
+  ---
+  duration_ms: 290.594139
+  type: 'test'
+  ...
+# Subtest: heading edits reject declaration inside selection without project writes
+ok 125 - heading edits reject declaration inside selection without project writes
+  ---
+  duration_ms: 291.099532
+  type: 'test'
+  ...
+# Subtest: heading edits reject declaration after selection without project writes
+ok 126 - heading edits reject declaration after selection without project writes
+  ---
+  duration_ms: 277.809714
+  type: 'test'
+  ...
+# Subtest: heading edits reject CDATA before selection without project writes
+ok 127 - heading edits reject CDATA before selection without project writes
+  ---
+  duration_ms: 282.364358
+  type: 'test'
+  ...
+# Subtest: heading edits reject CDATA inside selection without project writes
+ok 128 - heading edits reject CDATA inside selection without project writes
+  ---
+  duration_ms: 278.00795
+  type: 'test'
+  ...
+# Subtest: heading edits reject CDATA after selection without project writes
+ok 129 - heading edits reject CDATA after selection without project writes
+  ---
+  duration_ms: 306.366782
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate plan member before hashing with no project writes
+ok 130 - apply rejects duplicate plan member before hashing with no project writes
+  ---
+  duration_ms: 323.356906
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate escaped plan member before hashing with no project writes
+ok 131 - apply rejects duplicate escaped plan member before hashing with no project writes
+  ---
+  duration_ms: 259.101552
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate nested payload member before hashing with no project writes
+ok 132 - apply rejects duplicate nested payload member before hashing with no project writes
+  ---
+  duration_ms: 284.530219
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate findings member before hashing with no project writes
+ok 133 - apply rejects duplicate findings member before hashing with no project writes
+  ---
+  duration_ms: 279.400417
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs" in plan scope without project writes
+ok 134 - apply rejects unedited "docs" in plan scope without project writes
+  ---
+  duration_ms: 357.950143
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs" in both scope without project writes
+ok 135 - apply rejects unedited "docs" in both scope without project writes
+  ---
+  duration_ms: 304.707386
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/*.md" in plan scope without project writes
+ok 136 - apply rejects unedited "docs/*.md" in plan scope without project writes
+  ---
+  duration_ms: 301.684446
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/*.md" in both scope without project writes
+ok 137 - apply rejects unedited "docs/*.md" in both scope without project writes
+  ---
+  duration_ms: 291.087515
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/?.md" in plan scope without project writes
+ok 138 - apply rejects unedited "docs/?.md" in plan scope without project writes
+  ---
+  duration_ms: 271.83024
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/?.md" in both scope without project writes
+ok 139 - apply rejects unedited "docs/?.md" in both scope without project writes
+  ---
+  duration_ms: 250.278072
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/[ab].md" in plan scope without project writes
+ok 140 - apply rejects unedited "docs/[ab].md" in plan scope without project writes
+  ---
+  duration_ms: 224.280064
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/[ab].md" in both scope without project writes
+ok 141 - apply rejects unedited "docs/[ab].md" in both scope without project writes
+  ---
+  duration_ms: 208.793966
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/{a,b}.md" in plan scope without project writes
+ok 142 - apply rejects unedited "docs/{a,b}.md" in plan scope without project writes
+  ---
+  duration_ms: 294.375023
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/{a,b}.md" in both scope without project writes
+ok 143 - apply rejects unedited "docs/{a,b}.md" in both scope without project writes
+  ---
+  duration_ms: 277.826928
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "README.md/child" in plan scope without project writes
+ok 144 - apply rejects unedited "README.md/child" in plan scope without project writes
+  ---
+  duration_ms: 308.071841
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "README.md/child" in both scope without project writes
+ok 145 - apply rejects unedited "README.md/child" in both scope without project writes
+  ---
+  duration_ms: 291.08879
+  type: 'test'
+  ...
+# Subtest: apply accepts unedited concrete planned files in reviewed scope
+ok 146 - apply accepts unedited concrete planned files in reviewed scope
+  ---
+  duration_ms: 176.986954
+  type: 'test'
+  ...
+# Subtest: apply rejects invalid schema with no project writes
+ok 147 - apply rejects invalid schema with no project writes
+  ---
+  duration_ms: 260.471125
+  type: 'test'
+  ...
+# Subtest: apply rejects unknown input field with no project writes
+ok 148 - apply rejects unknown input field with no project writes
+  ---
+  duration_ms: 247.952947
+  type: 'test'
+  ...
+# Subtest: apply rejects unresolved scope with no project writes
+ok 149 - apply rejects unresolved scope with no project writes
+  ---
+  duration_ms: 282.961634
+  type: 'test'
+  ...
+# Subtest: apply rejects changed scope resolution with no project writes
+ok 150 - apply rejects changed scope resolution with no project writes
+  ---
+  duration_ms: 285.243477
+  type: 'test'
+  ...
+# Subtest: apply rejects unselected finding with no project writes
+ok 151 - apply rejects unselected finding with no project writes
+  ---
+  duration_ms: 303.673364
+  type: 'test'
+  ...
+# Subtest: apply rejects changed selected IDs with no project writes
+ok 152 - apply rejects changed selected IDs with no project writes
+  ---
+  duration_ms: 265.132495
+  type: 'test'
+  ...
+# Subtest: apply rejects scope widening with no project writes
+ok 153 - apply rejects scope widening with no project writes
+  ---
+  duration_ms: 230.545667
+  type: 'test'
+  ...
+# Subtest: apply rejects path traversal with no project writes
+ok 154 - apply rejects path traversal with no project writes
+  ---
+  duration_ms: 283.208539
+  type: 'test'
+  ...
+# Subtest: apply rejects target mismatch with no project writes
+ok 155 - apply rejects target mismatch with no project writes
+  ---
+  duration_ms: 258.649428
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate edit IDs with no project writes
+ok 156 - apply rejects duplicate edit IDs with no project writes
+  ---
+  duration_ms: 216.39812
+  type: 'test'
+  ...
+# Subtest: apply rejects overlapping edits with no project writes
+ok 157 - apply rejects overlapping edits with no project writes
+  ---
+  duration_ms: 257.696919
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate scope with no project writes
+ok 158 - apply rejects duplicate scope with no project writes
+  ---
+  duration_ms: 206.095753
+  type: 'test'
+  ...
+# Subtest: apply rejects changed precondition with no project writes
+ok 159 - apply rejects changed precondition with no project writes
+  ---
+  duration_ms: 224.788453
+  type: 'test'
+  ...
+# Subtest: apply rejects wrong proposed hash with no project writes
+ok 160 - apply rejects wrong proposed hash with no project writes
+  ---
+  duration_ms: 220.874901
+  type: 'test'
+  ...
+# Subtest: apply rejects wrong proposed bytes with no project writes
+ok 161 - apply rejects wrong proposed bytes with no project writes
+  ---
+  duration_ms: 206.838757
+  type: 'test'
+  ...
+# Subtest: apply rejects empty replacement as absent with no project writes
+ok 162 - apply rejects empty replacement as absent with no project writes
+  ---
+  duration_ms: 253.115347
+  type: 'test'
+  ...
+# Subtest: apply rejects unknown payload field with no project writes
+ok 163 - apply rejects unknown payload field with no project writes
+  ---
+  duration_ms: 244.865077
+  type: 'test'
+  ...
+# Subtest: apply rejects changed reviewed payload with no project writes
+ok 164 - apply rejects changed reviewed payload with no project writes
+  ---
+  duration_ms: 212.687616
+  type: 'test'
+  ...
+# Subtest: apply rejects changed reviewed findings with no project writes
+ok 165 - apply rejects changed reviewed findings with no project writes
+  ---
+  duration_ms: 218.254449
+  type: 'test'
+  ...
+# Subtest: apply rejects unresolved decision with no project writes
+ok 166 - apply rejects unresolved decision with no project writes
+  ---
+  duration_ms: 219.166609
+  type: 'test'
+  ...
+# Subtest: apply rejects ambiguous headings before any project writes
+ok 167 - apply rejects ambiguous headings before any project writes
+  ---
+  duration_ms: 229.323438
+  type: 'test'
+  ...
+# Subtest: apply rejects setext headings before any project writes
+ok 168 - apply rejects setext headings before any project writes
+  ---
+  duration_ms: 238.427788
+  type: 'test'
+  ...
+# Subtest: apply rejects unclosed fence before any project writes
+ok 169 - apply rejects unclosed fence before any project writes
+  ---
+  duration_ms: 280.08848
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate JSON keys before any project writes
+ok 170 - apply rejects duplicate JSON keys before any project writes
+  ---
+  duration_ms: 240.834349
+  type: 'test'
+  ...
+# Subtest: apply rejects nested duplicate JSON keys before any project writes
+ok 171 - apply rejects nested duplicate JSON keys before any project writes
+  ---
+  duration_ms: 244.469475
+  type: 'test'
+  ...
+# Subtest: apply rejects unsupported format before any project writes
+ok 172 - apply rejects unsupported format before any project writes
+  ---
+  duration_ms: 243.573688
+  type: 'test'
+  ...
+# Subtest: apply rejects invalid JSON before any project writes
+ok 173 - apply rejects invalid JSON before any project writes
+  ---
+  duration_ms: 236.550869
+  type: 'test'
+  ...
+# Subtest: apply rejects ambiguous replacement before any project writes
+ok 174 - apply rejects ambiguous replacement before any project writes
+  ---
+  duration_ms: 225.678555
+  type: 'test'
+  ...
+# Subtest: apply rejects missing replacement match before any project writes
+ok 175 - apply rejects missing replacement match before any project writes
+  ---
+  duration_ms: 221.435615
+  type: 'test'
+  ...
+# Subtest: apply rejects create collision before any project writes
+ok 176 - apply rejects create collision before any project writes
+  ---
+  duration_ms: 227.674583
+  type: 'test'
+  ...
+# Subtest: apply rejects missing delete before any project writes
+ok 177 - apply rejects missing delete before any project writes
+  ---
+  duration_ms: 226.013139
+  type: 'test'
+  ...
+# Subtest: changed later precondition prevents all edits and reports every changed file
+ok 178 - changed later precondition prevents all edits and reports every changed file
+  ---
+  duration_ms: 227.075146
+  type: 'test'
+  ...
+# Subtest: escaping links fail with an unchanged project fingerprint and outside bytes
+ok 179 - escaping links fail with an unchanged project fingerprint and outside bytes
+  ---
+  duration_ms: 231.823256
+  type: 'test'
+  ...
+# Subtest: Git revision changes invalidate a reviewed dry run
+ok 180 - Git revision changes invalidate a reviewed dry run
+  ---
+  duration_ms: 274.870314
+  type: 'test'
+  ...
+# Subtest: apply refuses a missing plan and malformed plans
+ok 181 - apply refuses a missing plan and malformed plans
+  ---
+  duration_ms: 296.472853
+  type: 'test'
+  ...
+# Subtest: internal link aliases cannot stage overlapping edits
+ok 182 - internal link aliases cannot stage overlapping edits
+  ---
+  duration_ms: 222.499011
+  type: 'test'
+  ...
+# Subtest: workspace dry run uses the same scope and payload protections
+ok 183 - workspace dry run uses the same scope and payload protections
+  ---
+  duration_ms: 116.42217
+  type: 'test'
+  ...
+# Subtest: resume schema validates complete state through the public contract command
+ok 184 - resume schema validates complete state through the public contract command
+  ---
+  duration_ms: 117.469875
+  type: 'test'
+  ...
+# Subtest: resume schema validates absent original and backup for create through the public contract command
+ok 185 - resume schema validates absent original and backup for create through the public contract command
+  ---
+  duration_ms: 117.031871
+  type: 'test'
+  ...
+# Subtest: resume schema validates absent proposed state for delete through the public contract command
+ok 186 - resume schema validates absent proposed state for delete through the public contract command
+  ---
+  duration_ms: 91.492245
+  type: 'test'
+  ...
+# Subtest: resume schema validates missing plan digest through the public contract command
+ok 187 - resume schema validates missing plan digest through the public contract command
+  ---
+  duration_ms: 99.652513
+  type: 'test'
+  ...
+# Subtest: resume schema validates missing backup through the public contract command
+ok 188 - resume schema validates missing backup through the public contract command
+  ---
+  duration_ms: 93.617106
+  type: 'test'
+  ...
+# Subtest: resume schema validates missing resolved identity through the public contract command
+ok 189 - resume schema validates missing resolved identity through the public contract command
+  ---
+  duration_ms: 110.306267
+  type: 'test'
+  ...
+# Subtest: resume schema validates invalid hash through the public contract command
+ok 190 - resume schema validates invalid hash through the public contract command
+  ---
+  duration_ms: 90.193326
+  type: 'test'
+  ...
+# Subtest: resume schema validates unknown field through the public contract command
+ok 191 - resume schema validates unknown field through the public contract command
+  ---
+  duration_ms: 86.172494
+  type: 'test'
+  ...
+# Subtest: protected replacement saves originals and repeat performs no writes
+ok 192 - protected replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 303.272533
+  type: 'test'
+  ...
+# Subtest: protected creation saves originals and repeat performs no writes
+ok 193 - protected creation saves originals and repeat performs no writes
+  ---
+  duration_ms: 326.158167
+  type: 'test'
+  ...
+# Subtest: protected deletion saves originals and repeat performs no writes
+ok 194 - protected deletion saves originals and repeat performs no writes
+  ---
+  duration_ms: 327.41321
+  type: 'test'
+  ...
+# Subtest: protected empty replacement saves originals and repeat performs no writes
+ok 195 - protected empty replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 346.480163
+  type: 'test'
+  ...
+# Subtest: protected append saves originals and repeat performs no writes
+ok 196 - protected append saves originals and repeat performs no writes
+  ---
+  duration_ms: 350.429478
+  type: 'test'
+  ...
+# Subtest: protected no-op append saves originals and repeat performs no writes
+ok 197 - protected no-op append saves originals and repeat performs no writes
+  ---
+  duration_ms: 324.139504
+  type: 'test'
+  ...
+# Subtest: protected heading saves originals and repeat performs no writes
+ok 198 - protected heading saves originals and repeat performs no writes
+  ---
+  duration_ms: 362.330518
+  type: 'test'
+  ...
+# Subtest: protected JSON saves originals and repeat performs no writes
+ok 199 - protected JSON saves originals and repeat performs no writes
+  ---
+  duration_ms: 332.390693
+  type: 'test'
+  ...
+# Subtest: protected unsupported code whole-file replacement saves originals and repeat performs no writes
+ok 200 - protected unsupported code whole-file replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 329.779613
+  type: 'test'
+  ...
+# Subtest: protected unsupported Markdown whole-file replacement saves originals and repeat performs no writes
+ok 201 - protected unsupported Markdown whole-file replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 316.732804
+  type: 'test'
+  ...
+# Subtest: protected unsupported JSON whole-file replacement saves originals and repeat performs no writes
+ok 202 - protected unsupported JSON whole-file replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 320.501654
+  type: 'test'
+  ...
+# Subtest: replace interruption before-write resumes from actual hashes and keeps backups
+ok 203 - replace interruption before-write resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 479.135691
+  type: 'test'
+  ...
+# Subtest: replace interruption after-replacement resumes from actual hashes and keeps backups
+ok 204 - replace interruption after-replacement resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 457.367482
+  type: 'test'
+  ...
+# Subtest: replace interruption before-completion resumes from actual hashes and keeps backups
+ok 205 - replace interruption before-completion resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 449.546162
+  type: 'test'
+  ...
+# Subtest: replace interruption journal-io resumes from actual hashes and keeps backups
+ok 206 - replace interruption journal-io resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 421.131995
+  type: 'test'
+  ...
+# Subtest: delete interruption before-write resumes from actual hashes and keeps backups
+ok 207 - delete interruption before-write resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 448.895161
+  type: 'test'
+  ...
+# Subtest: delete interruption after-replacement resumes from actual hashes and keeps backups
+ok 208 - delete interruption after-replacement resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 393.224266
+  type: 'test'
+  ...
+# Subtest: delete interruption before-completion resumes from actual hashes and keeps backups
+ok 209 - delete interruption before-completion resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 398.696057
+  type: 'test'
+  ...
+# Subtest: delete interruption journal-io resumes from actual hashes and keeps backups
+ok 210 - delete interruption journal-io resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 419.858706
+  type: 'test'
+  ...
+# Subtest: create interruption before-write resumes from actual hashes and keeps backups
+ok 211 - create interruption before-write resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 462.38481
+  type: 'test'
+  ...
+# Subtest: create interruption after-replacement resumes from actual hashes and keeps backups
+ok 212 - create interruption after-replacement resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 524.092297
+  type: 'test'
+  ...
+# Subtest: create interruption before-completion resumes from actual hashes and keeps backups
+ok 213 - create interruption before-completion resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 493.902779
+  type: 'test'
+  ...
+# Subtest: create interruption journal-io resumes from actual hashes and keeps backups
+ok 214 - create interruption journal-io resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 487.102925
+  type: 'test'
+  ...
+# Subtest: user change to README.md after replace interruption blocks every remaining write
+ok 215 - user change to README.md after replace interruption blocks every remaining write
+  ---
+  duration_ms: 352.57247
+  type: 'test'
+  ...
+# Subtest: user change to other.txt after replace interruption blocks every remaining write
+ok 216 - user change to other.txt after replace interruption blocks every remaining write
+  ---
+  duration_ms: 371.754889
+  type: 'test'
+  ...
+# Subtest: user change to README.md after delete interruption blocks every remaining write
+ok 217 - user change to README.md after delete interruption blocks every remaining write
+  ---
+  duration_ms: 404.456864
+  type: 'test'
+  ...
+# Subtest: user change to README.md after create interruption blocks every remaining write
+ok 218 - user change to README.md after create interruption blocks every remaining write
+  ---
+  duration_ms: 330.747152
+  type: 'test'
+  ...
+# Subtest: a user change to a completed run blocks repetition
+ok 219 - a user change to a completed run blocks repetition
+  ---
+  duration_ms: 306.170609
+  type: 'test'
+  ...
+# Subtest: a changed digest cannot reuse an earlier run
+ok 220 - a changed digest cannot reuse an earlier run
+  ---
+  duration_ms: 254.146981
+  type: 'test'
+  ...
+# Subtest: apply rejects a second run-selection input without writes
+ok 221 - apply rejects a second run-selection input without writes
+  ---
+  duration_ms: 89.324319
+  type: 'test'
+  ...
+# Subtest: a changed target cannot reuse completion from another target
+ok 222 - a changed target cannot reuse completion from another target
+  ---
+  duration_ms: 306.516311
+  type: 'test'
+  ...
+# Subtest: filesystem replacement limits block without falling back or losing the original
+ok 223 - filesystem replacement limits block without falling back or losing the original
+  ---
+  duration_ms: 288.851454
+  type: 'test'
+  ...
+# Subtest: directory flush limits are reported in successful results
+ok 224 - directory flush limits are reported in successful results
+  ---
+  duration_ms: 161.138248
+  type: 'test'
+  ...
+# Subtest: unrelated uncommitted journey and selected file permissions survive writes
+ok 225 - unrelated uncommitted journey and selected file permissions survive writes
+  ---
+  duration_ms: 205.096843
+  type: 'test'
+  ...
+# Subtest: rendered T2.5 audit record applies through reviewed whole-file replacement
+ok 226 - rendered T2.5 audit record applies through reviewed whole-file replacement
+  ---
+  duration_ms: 333.466733
+  type: 'test'
+  ...
+# Subtest: restored originals are pending even when journal completion flags say applied
+ok 227 - restored originals are pending even when journal completion flags say applied
+  ---
+  duration_ms: 308.377257
+  type: 'test'
+  ...
+# Subtest: changed backups block resume without any target writes
+ok 228 - changed backups block resume without any target writes
+  ---
+  duration_ms: 213.912416
+  type: 'test'
+  ...
+# Subtest: creation preflights collision and creates missing parent directories
+ok 229 - creation preflights collision and creates missing parent directories
+  ---
+  duration_ms: 134.442442
+  type: 'test'
+  ...
+# Subtest: workspace apply writes and repeats through the same protected boundary
+ok 230 - workspace apply writes and repeats through the same protected boundary
+  ---
+  duration_ms: 207.38714
+  type: 'test'
+  ...
+# Subtest: backup-io during backup preparation permits an unchanged retry
+ok 231 - backup-io during backup preparation permits an unchanged retry
+  ---
+  duration_ms: 217.047121
+  type: 'test'
+  ...
+# Subtest: backup-interruption during backup preparation permits an unchanged retry
+ok 232 - backup-interruption during backup preparation permits an unchanged retry
+  ---
+  duration_ms: 220.583459
+  type: 'test'
+  ...
+# Subtest: replace preserves a user save during journal-user-change and blocks success
+ok 233 - replace preserves a user save during journal-user-change and blocks success
+  ---
+  duration_ms: 135.8138
+  type: 'test'
+  ...
+# Subtest: delete preserves a user save during journal-user-change and blocks success
+ok 234 - delete preserves a user save during journal-user-change and blocks success
+  ---
+  duration_ms: 128.544397
+  type: 'test'
+  ...
+# Subtest: create preserves a user save during journal-user-change and blocks success
+ok 235 - create preserves a user save during journal-user-change and blocks success
+  ---
+  duration_ms: 129.644461
+  type: 'test'
+  ...
+# Subtest: replace preserves a user save during temporary-user-change and blocks success
+ok 236 - replace preserves a user save during temporary-user-change and blocks success
+  ---
+  duration_ms: 136.334373
+  type: 'test'
+  ...
+# Subtest: create preserves a user save during temporary-user-change and blocks success
+ok 237 - create preserves a user save during temporary-user-change and blocks success
+  ---
+  duration_ms: 125.88773
+  type: 'test'
+  ...
+# Subtest: a user save after the last replacement blocks the final success result
+ok 238 - a user save after the last replacement blocks the final success result
+  ---
+  duration_ms: 124.154033
+  type: 'test'
+  ...
+# Subtest: selected delete through a absolute alias resumes and repeats with its reviewed identity
+ok 239 - selected delete through a absolute alias resumes and repeats with its reviewed identity
+  ---
+  duration_ms: 479.87069
+  type: 'test'
+  ...
+# Subtest: selected delete through a relative alias resumes and repeats with its reviewed identity
+ok 240 - selected delete through a relative alias resumes and repeats with its reviewed identity
+  ---
+  duration_ms: 486.398374
+  type: 'test'
+  ...
+# Subtest: selected delete through a chain alias resumes and repeats with its reviewed identity
+ok 241 - selected delete through a chain alias resumes and repeats with its reviewed identity
+  ---
+  duration_ms: 489.150191
+  type: 'test'
+  ...
+# Subtest: selected delete through a parent alias resumes and repeats with its reviewed identity
+ok 242 - selected delete through a parent alias resumes and repeats with its reviewed identity
+  ---
+  duration_ms: 471.520973
+  type: 'test'
+  ...
+# Subtest: an unedited absolute alias permits deletion recovery after after-replacement
+ok 243 - an unedited absolute alias permits deletion recovery after after-replacement
+  ---
+  duration_ms: 391.074055
+  type: 'test'
+  ...
+# Subtest: an unedited absolute alias permits deletion recovery after completion
+ok 244 - an unedited absolute alias permits deletion recovery after completion
+  ---
+  duration_ms: 435.220448
+  type: 'test'
+  ...
+# Subtest: an unedited relative alias permits deletion recovery after after-replacement
+ok 245 - an unedited relative alias permits deletion recovery after after-replacement
+  ---
+  duration_ms: 409.18276
+  type: 'test'
+  ...
+# Subtest: an unedited relative alias permits deletion recovery after completion
+ok 246 - an unedited relative alias permits deletion recovery after completion
+  ---
+  duration_ms: 404.229433
+  type: 'test'
+  ...
+# Subtest: an unedited chain alias permits deletion recovery after after-replacement
+ok 247 - an unedited chain alias permits deletion recovery after after-replacement
+  ---
+  duration_ms: 448.025413
+  type: 'test'
+  ...
+# Subtest: an unedited chain alias permits deletion recovery after completion
+ok 248 - an unedited chain alias permits deletion recovery after completion
+  ---
+  duration_ms: 438.322658
+  type: 'test'
+  ...
+# Subtest: an unedited parent alias permits deletion recovery after after-replacement
+ok 249 - an unedited parent alias permits deletion recovery after after-replacement
+  ---
+  duration_ms: 388.957788
+  type: 'test'
+  ...
+# Subtest: an unedited parent alias permits deletion recovery after completion
+ok 250 - an unedited parent alias permits deletion recovery after completion
+  ---
+  duration_ms: 392.690271
+  type: 'test'
+  ...
+# Subtest: fresh apply rejects creation through a dangling relative link without writes
+ok 251 - fresh apply rejects creation through a dangling relative link without writes
+  ---
+  duration_ms: 97.990501
+  type: 'test'
+  ...
+# Subtest: fresh dry run rejects creation through a dangling relative link without writes
+ok 252 - fresh dry run rejects creation through a dangling relative link without writes
+  ---
+  duration_ms: 96.205328
+  type: 'test'
+  ...
+# Subtest: fresh apply rejects creation through a dangling absolute link without writes
+ok 253 - fresh apply rejects creation through a dangling absolute link without writes
+  ---
+  duration_ms: 92.08625
+  type: 'test'
+  ...
+# Subtest: fresh dry run rejects creation through a dangling absolute link without writes
+ok 254 - fresh dry run rejects creation through a dangling absolute link without writes
+  ---
+  duration_ms: 98.504677
+  type: 'test'
+  ...
+# Subtest: fresh apply rejects creation through a dangling chain link without writes
+ok 255 - fresh apply rejects creation through a dangling chain link without writes
+  ---
+  duration_ms: 95.786064
+  type: 'test'
+  ...
+# Subtest: fresh dry run rejects creation through a dangling chain link without writes
+ok 256 - fresh dry run rejects creation through a dangling chain link without writes
+  ---
+  duration_ms: 91.558786
+  type: 'test'
+  ...
+# Subtest: fresh apply rejects creation through a dangling parent link without writes
+ok 257 - fresh apply rejects creation through a dangling parent link without writes
+  ---
+  duration_ms: 93.647353
+  type: 'test'
+  ...
+# Subtest: fresh dry run rejects creation through a dangling parent link without writes
+ok 258 - fresh dry run rejects creation through a dangling parent link without writes
+  ---
+  duration_ms: 87.269724
+  type: 'test'
+  ...
+# Subtest: a retargeted alias during journal preparation blocks both destinations
+ok 259 - a retargeted alias during journal preparation blocks both destinations
+  ---
+  duration_ms: 154.611114
+  type: 'test'
+  ...
+# Subtest: new recovery and nested target directory entries are flushed before publication
+ok 260 - new recovery and nested target directory entries are flushed before publication
+  ---
+  duration_ms: 131.939371
+  type: 'test'
+  ...
+# Subtest: bootstrap manifest commands and root lockfile agree
+ok 261 - bootstrap manifest commands and root lockfile agree
+  ---
+  duration_ms: 22.478175
+  type: 'test'
+  ...
+# Subtest: discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+ok 262 - discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
+  ---
+  duration_ms: 453.271938
+  type: 'test'
+  ...
+# Subtest: task selection executes only registered suites and rejects unknown tasks
+ok 263 - task selection executes only registered suites and rejects unknown tasks
+  ---
+  duration_ms: 442.362403
+  type: 'test'
+  ...
+# Subtest: an empty selected suite fails
+ok 264 - an empty selected suite fails
+  ---
+  duration_ms: 91.98646
+  type: 'test'
+  ...
+# Subtest: child commands preserve literal arguments and capture version and both output streams
+ok 265 - child commands preserve literal arguments and capture version and both output streams
+  ---
+  duration_ms: 241.650172
+  type: 'test'
+  ...
+# Subtest: child output is bounded to the last 64 KiB per stream
+ok 266 - child output is bounded to the last 64 KiB per stream
+  ---
+  duration_ms: 199.140456
+  type: 'test'
+  ...
+# Subtest: child environment overrides apply to the version probe and execution without mutating the caller
+ok 267 - child environment overrides apply to the version probe and execution without mutating the caller
+  ---
+  duration_ms: 155.442756
+  type: 'test'
+  ...
+# Subtest: timeout fails and stops the child process tree before returning
+ok 268 - timeout fails and stops the child process tree before returning
+  ---
+  duration_ms: 500.125489
+  type: 'test'
+  ...
+# Subtest: cancellation fails and stops the child process tree before returning
+ok 269 - cancellation fails and stops the child process tree before returning
+  ---
+  duration_ms: 453.690642
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks timed out check with inherited pipes
+ok 270 - Windows cleanup failure blocks timed out check with inherited pipes
+  ---
+  duration_ms: 124.48131
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks timed out check with inherited pipes
+ok 271 - Windows cleanup launch error blocks timed out check with inherited pipes
+  ---
+  duration_ms: 110.236141
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks timed out version probe with inherited pipes
+ok 272 - Windows cleanup failure blocks timed out version probe with inherited pipes
+  ---
+  duration_ms: 125.512492
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks timed out version probe with inherited pipes
+ok 273 - Windows cleanup launch error blocks timed out version probe with inherited pipes
+  ---
+  duration_ms: 114.620056
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks cancelled check with inherited pipes
+ok 274 - Windows cleanup failure blocks cancelled check with inherited pipes
+  ---
+  duration_ms: 12.145981
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks cancelled check with inherited pipes
+ok 275 - Windows cleanup launch error blocks cancelled check with inherited pipes
+  ---
+  duration_ms: 6.579434
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks cancelled version probe with inherited pipes
+ok 276 - Windows cleanup failure blocks cancelled version probe with inherited pipes
+  ---
+  duration_ms: 11.566007
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks cancelled version probe with inherited pipes
+ok 277 - Windows cleanup launch error blocks cancelled version probe with inherited pipes
+  ---
+  duration_ms: 6.126027
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
+ok 278 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
+  ---
+  duration_ms: 740.428189
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
+ok 279 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
+  ---
+  duration_ms: 848.046573
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
+ok 280 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
+  ---
+  duration_ms: 812.787771
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
+ok 281 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
+  ---
+  duration_ms: 798.929643
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
+ok 282 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
+  ---
+  duration_ms: 820.237864
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
+ok 283 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
+  ---
+  duration_ms: 906.017998
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
+ok 284 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
+  ---
+  duration_ms: 718.061342
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
+ok 285 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
+  ---
+  duration_ms: 813.938577
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
+ok 286 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
+  ---
+  duration_ms: 411.621335
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
+ok 287 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
+  ---
+  duration_ms: 602.80966
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
+ok 288 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
+  ---
+  duration_ms: 437.471404
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
+ok 289 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
+  ---
+  duration_ms: 367.016077
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
+ok 290 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
+  ---
+  duration_ms: 492.422577
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
+ok 291 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
+  ---
+  duration_ms: 574.845044
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
+ok 292 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
+  ---
+  duration_ms: 308.044178
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
+ok 293 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
+  ---
+  duration_ms: 243.669811
+  type: 'test'
+  ...
+# Subtest: failed commands and unavailable tools cannot pass
+ok 294 - failed commands and unavailable tools cannot pass
+  ---
+  duration_ms: 705.392896
+  type: 'test'
+  ...
+# Subtest: child working directories reject escape before execution
+ok 295 - child working directories reject escape before execution
+  ---
+  duration_ms: 319.312904
+  type: 'test'
+  ...
+# Subtest: Windows npm selection uses Node and a JavaScript CLI with literal arguments
+ok 296 - Windows npm selection uses Node and a JavaScript CLI with literal arguments
+  ---
+  duration_ms: 300.346528
+  type: 'test'
+  ...
+# Subtest: Windows npm resolves a PATH launcher to an executable JavaScript CLI
+ok 297 - Windows npm resolves a PATH launcher to an executable JavaScript CLI
+  ---
+  duration_ms: 283.222325
+  type: 'test'
+  ...
+# Subtest: Windows npm.cmd resolves a PATH launcher to an executable JavaScript CLI
+ok 298 - Windows npm.cmd resolves a PATH launcher to an executable JavaScript CLI
+  ---
+  duration_ms: 341.833883
+  type: 'test'
+  ...
+# Subtest: Windows pnpm resolves a PATH launcher to an executable JavaScript CLI
+ok 299 - Windows pnpm resolves a PATH launcher to an executable JavaScript CLI
+  ---
+  duration_ms: 418.847549
+  type: 'test'
+  ...
+# Subtest: Windows pnpm.cmd resolves a PATH launcher to an executable JavaScript CLI
+ok 300 - Windows pnpm.cmd resolves a PATH launcher to an executable JavaScript CLI
+  ---
+  duration_ms: 476.602063
+  type: 'test'
+  ...
+# Subtest: Windows yarn resolves a PATH launcher to an executable JavaScript CLI
+ok 301 - Windows yarn resolves a PATH launcher to an executable JavaScript CLI
+  ---
+  duration_ms: 313.88591
+  type: 'test'
+  ...
+# Subtest: Windows yarn.cmd resolves a PATH launcher to an executable JavaScript CLI
+ok 302 - Windows yarn.cmd resolves a PATH launcher to an executable JavaScript CLI
+  ---
+  duration_ms: 297.247842
+  type: 'test'
+  ...
+# Subtest: Windows npm.cmd without a supported CLI is blocked
+ok 303 - Windows npm.cmd without a supported CLI is blocked
+  ---
+  duration_ms: 358.094195
+  type: 'test'
+  ...
+# Subtest: Windows pnpm without a supported CLI is blocked
+ok 304 - Windows pnpm without a supported CLI is blocked
+  ---
+  duration_ms: 235.626352
+  type: 'test'
+  ...
+# Subtest: Windows pnpm.cmd without a supported CLI is blocked
+ok 305 - Windows pnpm.cmd without a supported CLI is blocked
+  ---
+  duration_ms: 481.06729
+  type: 'test'
+  ...
+# Subtest: Windows yarn without a supported CLI is blocked
+ok 306 - Windows yarn without a supported CLI is blocked
+  ---
+  duration_ms: 348.578188
+  type: 'test'
+  ...
+# Subtest: Windows yarn.cmd without a supported CLI is blocked
+ok 307 - Windows yarn.cmd without a supported CLI is blocked
+  ---
+  duration_ms: 320.408356
+  type: 'test'
+  ...
+# Subtest: Windows tool.cmd without a supported CLI is blocked
+ok 308 - Windows tool.cmd without a supported CLI is blocked
+  ---
+  duration_ms: 195.643901
+  type: 'test'
+  ...
+# Subtest: Windows tool.bat without a supported CLI is blocked
+ok 309 - Windows tool.bat without a supported CLI is blocked
+  ---
+  duration_ms: 300.673456
+  type: 'test'
+  ...
+# Subtest: fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
+ok 310 - fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
+  ---
+  duration_ms: 2276.415216
+  type: 'test'
+  ...
+# Subtest: canonical assessment inputs ignore only derived fields and evidence serialization
+ok 311 - canonical assessment inputs ignore only derived fields and evidence serialization
+  ---
+  duration_ms: 767.053238
+  type: 'test'
+  ...
+# Subtest: correct exact-byte citations pass from another cwd without changing the target
+ok 312 - correct exact-byte citations pass from another cwd without changing the target
+  ---
+  duration_ms: 133.876655
+  type: 'test'
+  ...
+# Subtest: wrong path and wrong line are both reported as failed citations
+ok 313 - wrong path and wrong line are both reported as failed citations
+  ---
+  duration_ms: 167.6201
+  type: 'test'
+  ...
+# Subtest: hash citations fail after content changes without changing line count
+ok 314 - hash citations fail after content changes without changing line count
+  ---
+  duration_ms: 128.200495
+  type: 'test'
+  ...
+# Subtest: hash citations fail after line-ending changes
+ok 315 - hash citations fail after line-ending changes
+  ---
+  duration_ms: 125.237816
+  type: 'test'
+  ...
+# Subtest: revision citations remain valid across unrelated commits but fail on dirty cited bytes
+ok 316 - revision citations remain valid across unrelated commits but fail on dirty cited bytes
+  ---
+  duration_ms: 646.210862
+  type: 'test'
+  ...
+# Subtest: unavailable revisions fail rather than accepting an unverified state
+ok 317 - unavailable revisions fail rather than accepting an unverified state
+  ---
+  duration_ms: 126.805257
+  type: 'test'
+  ...
+# Subtest: line 1 of "" has exit 1
+ok 318 - line 1 of "" has exit 1
+  ---
+  duration_ms: 137.421615
+  type: 'test'
+  ...
+# Subtest: line 1 of "One line" has exit 0
+ok 319 - line 1 of "One line" has exit 0
+  ---
+  duration_ms: 236.427903
+  type: 'test'
+  ...
+# Subtest: line 2 of "One line\\n" has exit 1
+ok 320 - line 2 of "One line\\n" has exit 1
+  ---
+  duration_ms: 132.702906
+  type: 'test'
+  ...
+# Subtest: line 2 of "One\\r\\nTwo" has exit 0
+ok 321 - line 2 of "One\\r\\nTwo" has exit 0
+  ---
+  duration_ms: 112.822406
+  type: 'test'
+  ...
+# Subtest: line 3 of "One\\rTwo\\r" has exit 1
+ok 322 - line 3 of "One\\rTwo\\r" has exit 1
+  ---
+  duration_ms: 130.736301
+  type: 'test'
+  ...
+# Subtest: report rejects unknown report fields
+ok 323 - report rejects unknown report fields
+  ---
+  duration_ms: 107.440314
+  type: 'test'
+  ...
+# Subtest: report rejects duplicate brief IDs
+ok 324 - report rejects duplicate brief IDs
+  ---
+  duration_ms: 192.270163
+  type: 'test'
+  ...
+# Subtest: report rejects line zero
+ok 325 - report rejects line zero
+  ---
+  duration_ms: 213.208635
+  type: 'test'
+  ...
+# Subtest: report rejects missing citation state
+ok 326 - report rejects missing citation state
+  ---
+  duration_ms: 114.386849
+  type: 'test'
+  ...
+# Subtest: report rejects wrong digest length for state kind
+ok 327 - report rejects wrong digest length for state kind
+  ---
+  duration_ms: 162.502883
+  type: 'test'
+  ...
+# Subtest: report rejects parent traversal
+ok 328 - report rejects parent traversal
+  ---
+  duration_ms: 199.628326
+  type: 'test'
+  ...
+# Subtest: web-only metadata passes without claiming that the checker verified the source
+ok 329 - web-only metadata passes without claiming that the checker verified the source
+  ---
+  duration_ms: 332.490186
+  type: 'test'
+  ...
+# Subtest: web citation file:///outside read 2026-10-08 is invalid
+ok 330 - web citation file:///outside read 2026-10-08 is invalid
+  ---
+  duration_ms: 225.521429
+  type: 'test'
+  ...
+# Subtest: web citation not a URL read 2026-10-08 is invalid
+ok 331 - web citation not a URL read 2026-10-08 is invalid
+  ---
+  duration_ms: 167.31657
+  type: 'test'
+  ...
+# Subtest: web citation https://example.invalid read 2026-02-30 is invalid
+ok 332 - web citation https://example.invalid read 2026-02-30 is invalid
+  ---
+  duration_ms: 226.129519
+  type: 'test'
+  ...
+# Subtest: missing reports and malformed JSON fail through the command interface
+ok 333 - missing reports and malformed JSON fail through the command interface
+  ---
+  duration_ms: 313.451285
+  type: 'test'
+  ...
+# Subtest: draft workspace stores distinct runs in scratch and leaves workspace unchanged
+ok 334 - draft workspace stores distinct runs in scratch and leaves workspace unchanged
+  ---
+  duration_ms: 320.9156
+  type: 'test'
+  ...
+# Subtest: Git target resolves from a subdirectory with no commits
+ok 335 - Git target resolves from a subdirectory with no commits
+  ---
+  duration_ms: 172.824664
+  type: 'test'
+  ...
+# Subtest: Git target resolves from a subdirectory with a commit
+ok 336 - Git target resolves from a subdirectory with a commit
+  ---
+  duration_ms: 277.584717
+  type: 'test'
+  ...
+# Subtest: Git target preserves trailing whitespace "repo "
+ok 337 - Git target preserves trailing whitespace "repo "
+  ---
+  duration_ms: 98.458905
+  type: 'test'
+  ...
+# Subtest: Git target preserves trailing whitespace "repo \\t\\r"
+ok 338 - Git target preserves trailing whitespace "repo \\t\\r"
+  ---
+  duration_ms: 155.82591
+  type: 'test'
+  ...
+# Subtest: arguments reject missing target with a JSON usage error
+ok 339 - arguments reject missing target with a JSON usage error
+  ---
+  duration_ms: 78.579741
+  type: 'test'
+  ...
+# Subtest: arguments reject unknown options with a JSON usage error
+ok 340 - arguments reject unknown options with a JSON usage error
+  ---
+  duration_ms: 142.994584
+  type: 'test'
+  ...
+# Subtest: arguments reject missing value with a JSON usage error
+ok 341 - arguments reject missing value with a JSON usage error
+  ---
+  duration_ms: 130.85133
+  type: 'test'
+  ...
+# Subtest: arguments reject duplicate option with a JSON usage error
+ok 342 - arguments reject duplicate option with a JSON usage error
+  ---
+  duration_ms: 219.259151
+  type: 'test'
+  ...
+# Subtest: arguments reject conflicting targets with a JSON usage error
+ok 343 - arguments reject conflicting targets with a JSON usage error
+  ---
+  duration_ms: 136.533627
+  type: 'test'
+  ...
+# Subtest: rejects traversal.json before scratch writes and reports every problem
+ok 344 - rejects traversal.json before scratch writes and reports every problem
+  ---
+  duration_ms: 88.410048
+  type: 'test'
+  ...
+# Subtest: rejects absolute-paths.json before scratch writes and reports every problem
+ok 345 - rejects absolute-paths.json before scratch writes and reports every problem
+  ---
+  duration_ms: 172.048472
+  type: 'test'
+  ...
+# Subtest: rejects unknown-fields.json before scratch writes and reports every problem
+ok 346 - rejects unknown-fields.json before scratch writes and reports every problem
+  ---
+  duration_ms: 106.609801
+  type: 'test'
+  ...
+# Subtest: rejects invalid-types.json before scratch writes and reports every problem
+ok 347 - rejects invalid-types.json before scratch writes and reports every problem
+  ---
+  duration_ms: 113.253793
+  type: 'test'
+  ...
+# Subtest: escaping existing links and new children under escaping parents are refused before writes
+ok 348 - escaping existing links and new children under escaping parents are refused before writes
+  ---
+  duration_ms: 171.709673
+  type: 'test'
+  ...
+# Subtest: dangling parents are refused rather than treated as missing directories
+ok 349 - dangling parents are refused rather than treated as missing directories
+  ---
+  duration_ms: 217.113989
+  type: 'test'
+  ...
+# Subtest: missing Git prerequisite returns blocked rather than passing
+ok 350 - missing Git prerequisite returns blocked rather than passing
+  ---
+  duration_ms: 111.994152
+  type: 'test'
+  ...
+# Subtest: repo commands refuse workspace mode
+ok 351 - repo commands refuse workspace mode
+  ---
+  duration_ms: 195.272734
+  type: 'test'
+  ...
+# Subtest: scratch refuses a cache link into the target before creating directories
+ok 352 - scratch refuses a cache link into the target before creating directories
+  ---
+  duration_ms: 264.417039
+  type: 'test'
+  ...
+# Subtest: scratch follows a cache link outside the target
+ok 353 - scratch follows a cache link outside the target
+  ---
+  duration_ms: 148.640682
+  type: 'test'
+  ...
+# Subtest: scratch follows a run-parent link outside the target
+ok 354 - scratch follows a run-parent link outside the target
+  ---
+  duration_ms: 155.231504
+  type: 'test'
+  ...
+# Subtest: scratch refuses a run-parent link inside the target before creating directories
+ok 355 - scratch refuses a run-parent link inside the target before creating directories
+  ---
+  duration_ms: 201.621363
+  type: 'test'
+  ...
+# Subtest: target aliases use the same scratch identity
+ok 356 - target aliases use the same scratch identity
+  ---
+  duration_ms: 408.777784
+  type: 'test'
+  ...
+# Subtest: unavailable target absent is blocked without writes
+ok 357 - unavailable target absent is blocked without writes
+  ---
+  duration_ms: 183.317253
+  type: 'test'
+  ...
+# Subtest: unavailable target brief.md is blocked without writes
+ok 358 - unavailable target brief.md is blocked without writes
+  ---
+  duration_ms: 246.801535
+  type: 'test'
+  ...
+# Subtest: human output is a short summary with the same failed exit code
+ok 359 - human output is a short summary with the same failed exit code
+  ---
+  duration_ms: 323.135094
+  type: 'test'
+  ...
+# Subtest: manual run prints its fixture, request, scripted answers and checklist with unique history paths
+ok 360 - manual run prints its fixture, request, scripted answers and checklist with unique history paths
+  ---
+  duration_ms: 883.800551
+  type: 'test'
+  ...
+# Subtest: missing answers leaves manual scoring blocked
+ok 361 - missing answers leaves manual scoring blocked
+  ---
+  duration_ms: 522.678775
+  type: 'test'
+  ...
+# Subtest: missing transcript leaves manual scoring blocked
+ok 362 - missing transcript leaves manual scoring blocked
+  ---
+  duration_ms: 676.75193
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks missing checklist answer
+ok 363 - manual scoring blocks missing checklist answer
+  ---
+  duration_ms: 601.612806
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks duplicate checklist answer
+ok 364 - manual scoring blocks duplicate checklist answer
+  ---
+  duration_ms: 813.315089
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks unknown checklist answer
+ok 365 - manual scoring blocks unknown checklist answer
+  ---
+  duration_ms: 808.841744
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks wrong run
+ok 366 - manual scoring blocks wrong run
+  ---
+  duration_ms: 817.04436
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks string verdict
+ok 367 - manual scoring blocks string verdict
+  ---
+  duration_ms: 897.044464
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks invalid transcript range
+ok 368 - manual scoring blocks invalid transcript range
+  ---
+  duration_ms: 1030.164231
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks missing reviewer
+ok 369 - manual scoring blocks missing reviewer
+  ---
+  duration_ms: 765.846532
+  type: 'test'
+  ...
+# Subtest: empty and unavailable transcripts leave a run blocked
+ok 370 - empty and unavailable transcripts leave a run blocked
+  ---
+  duration_ms: 1123.540926
+  type: 'test'
+  ...
+# Subtest: comparison blocks different models and unscored runs
+ok 371 - comparison blocks different models and unscored runs
+  ---
+  duration_ms: 1749.48932
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.fixture in the without run
+ok 372 - comparison blocks changed scenario.fixture in the without run
+  ---
+  duration_ms: 1970.606021
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.fixture in the with run
+ok 373 - comparison blocks changed scenario.fixture in the with run
+  ---
+  duration_ms: 2155.145048
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed fixture.name in the without run
+ok 374 - comparison blocks changed fixture.name in the without run
+  ---
+  duration_ms: 2208.114524
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed fixture.name in the with run
+ok 375 - comparison blocks changed fixture.name in the with run
+  ---
+  duration_ms: 2702.692004
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.request in the without run
+ok 376 - comparison blocks changed scenario.request in the without run
+  ---
+  duration_ms: 1931.933676
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.request in the with run
+ok 377 - comparison blocks changed scenario.request in the with run
+  ---
+  duration_ms: 1767.990608
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.answers in the without run
+ok 378 - comparison blocks changed scenario.answers in the without run
+  ---
+  duration_ms: 1978.390857
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.answers in the with run
+ok 379 - comparison blocks changed scenario.answers in the with run
+  ---
+  duration_ms: 2057.650687
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.invocation in the without run
+ok 380 - comparison blocks changed scenario.invocation in the without run
+  ---
+  duration_ms: 1756.099211
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.invocation in the with run
+ok 381 - comparison blocks changed scenario.invocation in the with run
+  ---
+  duration_ms: 1574.879513
+  type: 'test'
+  ...
+# Subtest: manual scoring records a passing reviewer verdict and preserves its transcript
+ok 382 - manual scoring records a passing reviewer verdict and preserves its transcript
+  ---
+  duration_ms: 817.708114
+  type: 'test'
+  ...
+# Subtest: manual scoring records a failing reviewer verdict and preserves its transcript
+ok 383 - manual scoring records a failing reviewer verdict and preserves its transcript
+  ---
+  duration_ms: 703.9832
+  type: 'test'
+  ...
+# Subtest: ordinary with-skill runs require explicit invocation while implicit runs omit it
+ok 384 - ordinary with-skill runs require explicit invocation while implicit runs omit it
+  ---
+  duration_ms: 1190.746041
+  type: 'test'
+  ...
+# Subtest: comparison honours baseline true and with-skill true
+ok 385 - comparison honours baseline true and with-skill true
+  ---
+  duration_ms: 1005.61724
+  type: 'test'
+  ...
+# Subtest: comparison honours baseline false and with-skill true
+ok 386 - comparison honours baseline false and with-skill true
+  ---
+  duration_ms: 955.074132
+  type: 'test'
+  ...
+# Subtest: comparison honours baseline true and with-skill false
+ok 387 - comparison honours baseline true and with-skill false
+  ---
+  duration_ms: 1087.85154
+  type: 'test'
+  ...
+# Subtest: comparison honours baseline false and with-skill false
+ok 388 - comparison honours baseline false and with-skill false
+  ---
+  duration_ms: 1173.902273
+  type: 'test'
+  ...
+# Subtest: automatic host execution requires an adapter
+ok 389 - automatic host execution requires an adapter
+  ---
+  duration_ms: 93.937979
+  type: 'test'
+  ...
+# Subtest: host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit
+ok 390 - host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit
+  ---
+  duration_ms: 969.183452
+  type: 'test'
+  ...
+# Subtest: with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request
+ok 391 - with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request
+  ---
+  duration_ms: 9157.453805
+  type: 'test'
+  ...
+# Subtest: scripted replies resume the exact host conversation, preserve user turns and require ordered answers
+ok 392 - scripted replies resume the exact host conversation, preserve user turns and require ordered answers
+  ---
+  duration_ms: 866.037541
+  type: 'test'
+  ...
+# Subtest: resumed Codex turns retain the opening sandbox policy
+ok 393 - resumed Codex turns retain the opening sandbox policy
+  ---
+  duration_ms: 623.168588
+  type: 'test'
+  ...
+# Subtest: manual adapter preparation is rejected before creating a run
+ok 394 - manual adapter preparation is rejected before creating a run
+  ---
+  duration_ms: 67.568609
+  type: 'test'
+  ...
+# Subtest: host fail remains blocked and retains available execution evidence
+ok 395 - host fail remains blocked and retains available execution evidence
+  ---
+  duration_ms: 367.559362
+  type: 'test'
+  ...
+# Subtest: host malformed remains blocked and retains available execution evidence
+ok 396 - host malformed remains blocked and retains available execution evidence
+  ---
+  duration_ms: 392.602403
+  type: 'test'
+  ...
+# Subtest: host incomplete remains blocked and retains available execution evidence
+ok 397 - host incomplete remains blocked and retains available execution evidence
+  ---
+  duration_ms: 479.188651
+  type: 'test'
+  ...
+# Subtest: host contaminate remains blocked and retains available execution evidence
+ok 398 - host contaminate remains blocked and retains available execution evidence
+  ---
+  duration_ms: 388.887782
+  type: 'test'
+  ...
+# Subtest: host truncate remains blocked and retains available execution evidence
+ok 399 - host truncate remains blocked and retains available execution evidence
+  ---
+  duration_ms: 397.36227
+  type: 'test'
+  ...
+# Subtest: host hang remains blocked and retains available execution evidence
+ok 400 - host hang remains blocked and retains available execution evidence
+  ---
+  duration_ms: 1356.419963
+  type: 'test'
+  ...
+# Subtest: evaluation capture retains a complete valid host transcript larger than the product limit
+ok 401 - evaluation capture retains a complete valid host transcript larger than the product limit
+  ---
+  duration_ms: 477.492917
+  type: 'test'
+  ...
+# Subtest: a resumed host turn cannot silently switch sessions
+ok 402 - a resumed host turn cannot silently switch sessions
+  ---
+  duration_ms: 645.71554
+  type: 'test'
+  ...
+# Subtest: rejected without-skill citations can be corrected without another host turn
+ok 403 - rejected without-skill citations can be corrected without another host turn
+  ---
+  duration_ms: 601.186598
+  type: 'test'
+  ...
+# Subtest: a without-skill score artifact failure preserves cleanup for retry
+ok 404 - a without-skill score artifact failure preserves cleanup for retry
+  ---
+  duration_ms: 540.725143
+  type: 'test'
+  ...
+# Subtest: rejected with-skill citations can be corrected without another host turn
+ok 405 - rejected with-skill citations can be corrected without another host turn
+  ---
+  duration_ms: 3579.191966
+  type: 'test'
+  ...
+# Subtest: a with-skill score artifact failure preserves cleanup for retry
+ok 406 - a with-skill score artifact failure preserves cleanup for retry
+  ---
+  duration_ms: 3516.537367
+  type: 'test'
+  ...
+# Subtest: adapter scoring requires the captured conversation and rechecks isolation and staged bytes
+ok 407 - adapter scoring requires the captured conversation and rechecks isolation and staged bytes
+  ---
+  duration_ms: 5663.993574
+  type: 'test'
+  ...
+# Subtest: adapter blocks shell string before creating a run
+ok 408 - adapter blocks shell string before creating a run
+  ---
+  duration_ms: 66.050843
+  type: 'test'
+  ...
+# Subtest: adapter blocks unknown field before creating a run
+ok 409 - adapter blocks unknown field before creating a run
+  ---
+  duration_ms: 65.445865
+  type: 'test'
+  ...
+# Subtest: adapter blocks unsupported conversation before creating a run
+ok 410 - adapter blocks unsupported conversation before creating a run
+  ---
+  duration_ms: 68.143635
+  type: 'test'
+  ...
+# Subtest: adapter blocks unbounded timeout before creating a run
+ok 411 - adapter blocks unbounded timeout before creating a run
+  ---
+  duration_ms: 74.222079
+  type: 'test'
+  ...
+# Subtest: adapter blocks unbounded capture before creating a run
+ok 412 - adapter blocks unbounded capture before creating a run
+  ---
+  duration_ms: 65.679557
+  type: 'test'
+  ...
+# Subtest: adapter blocks empty capture before creating a run
+ok 413 - adapter blocks empty capture before creating a run
+  ---
+  duration_ms: 77.224083
+  type: 'test'
+  ...
+# Subtest: adapter blocks missing message placeholder before creating a run
+ok 414 - adapter blocks missing message placeholder before creating a run
+  ---
+  duration_ms: 70.164057
+  type: 'test'
+  ...
+# Subtest: adapter blocks wrong discovery paths before creating a run
+ok 415 - adapter blocks wrong discovery paths before creating a run
+  ---
+  duration_ms: 78.893059
+  type: 'test'
+  ...
+# Subtest: adapter blocks escaping staging path before creating a run
+ok 416 - adapter blocks escaping staging path before creating a run
+  ---
+  duration_ms: 72.834363
+  type: 'test'
+  ...
+# Subtest: closing a conversation deletes isolated state and retains bound evidence for later scoring
+ok 417 - closing a conversation deletes isolated state and retains bound evidence for later scoring
+  ---
+  duration_ms: 535.328912
+  type: 'test'
+  ...
+# Subtest: throwaway authentication copies only a dummy login with private permissions and removes it after the turn
+ok 418 - throwaway authentication copies only a dummy login with private permissions and removes it after the turn
+  ---
+  duration_ms: 472.622375
+  type: 'test'
+  ...
+# Subtest: findings validate rejects missing principle without target writes
+ok 419 - findings validate rejects missing principle without target writes
+  ---
+  duration_ms: 219.07122
+  type: 'test'
+  ...
+# Subtest: findings validate rejects blank principle without target writes
+ok 420 - findings validate rejects blank principle without target writes
+  ---
+  duration_ms: 201.213786
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown status without target writes
+ok 421 - findings validate rejects unknown status without target writes
+  ---
+  duration_ms: 254.075553
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown field without target writes
+ok 422 - findings validate rejects unknown field without target writes
+  ---
+  duration_ms: 194.086911
+  type: 'test'
+  ...
+# Subtest: findings validate rejects duplicate finding without target writes
+ok 423 - findings validate rejects duplicate finding without target writes
+  ---
+  duration_ms: 167.892888
+  type: 'test'
+  ...
+# Subtest: findings validate rejects duplicate source without target writes
+ok 424 - findings validate rejects duplicate source without target writes
+  ---
+  duration_ms: 231.7992
+  type: 'test'
+  ...
+# Subtest: findings validate rejects missing source ID without target writes
+ok 425 - findings validate rejects missing source ID without target writes
+  ---
+  duration_ms: 292.572586
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown source without target writes
+ok 426 - findings validate rejects unknown source without target writes
+  ---
+  duration_ms: 246.348154
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown intent without target writes
+ok 427 - findings validate rejects unknown intent without target writes
+  ---
+  duration_ms: 257.266339
+  type: 'test'
+  ...
+# Subtest: findings validate rejects selection mismatch without target writes
+ok 428 - findings validate rejects selection mismatch without target writes
+  ---
+  duration_ms: 290.035337
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown selection without target writes
+ok 429 - findings validate rejects unknown selection without target writes
+  ---
+  duration_ms: 335.691021
+  type: 'test'
+  ...
+# Subtest: findings validate rejects duplicate selection without target writes
+ok 430 - findings validate rejects duplicate selection without target writes
+  ---
+  duration_ms: 383.541094
+  type: 'test'
+  ...
+# Subtest: findings validate rejects duplicate required outcome without target writes
+ok 431 - findings validate rejects duplicate required outcome without target writes
+  ---
+  duration_ms: 352.442568
+  type: 'test'
+  ...
+# Subtest: findings validate rejects target mismatch without target writes
+ok 432 - findings validate rejects target mismatch without target writes
+  ---
+  duration_ms: 337.04124
+  type: 'test'
+  ...
+# Subtest: findings validate rejects scope mismatch without target writes
+ok 433 - findings validate rejects scope mismatch without target writes
+  ---
+  duration_ms: 304.78754
+  type: 'test'
+  ...
+# Subtest: findings validate rejects missing location without target writes
+ok 434 - findings validate rejects missing location without target writes
+  ---
+  duration_ms: 226.29268
+  type: 'test'
+  ...
+# Subtest: findings validate rejects missing stage requirement without target writes
+ok 435 - findings validate rejects missing stage requirement without target writes
+  ---
+  duration_ms: 393.257645
+  type: 'test'
+  ...
+# Subtest: render separates source intent, selected debt and new principles in scratch
+ok 436 - render separates source intent, selected debt and new principles in scratch
+  ---
+  duration_ms: 467.817594
+  type: 'test'
+  ...
+# Subtest: audit requires current evidence before ready
+ok 437 - audit requires current evidence before ready
+  ---
+  duration_ms: 1123.025679
+  type: 'test'
+  ...
+# Subtest: foundation requires current evidence before ready
+ok 438 - foundation requires current evidence before ready
+  ---
+  duration_ms: 1393.517235
+  type: 'test'
+  ...
+# Subtest: readiness handles failed journey despite passing units
+ok 439 - readiness handles failed journey despite passing units
+  ---
+  duration_ms: 1124.266492
+  type: 'test'
+  ...
+# Subtest: readiness handles skipped journey
+ok 440 - readiness handles skipped journey
+  ---
+  duration_ms: 953.307698
+  type: 'test'
+  ...
+# Subtest: readiness handles blocked journey
+ok 441 - readiness handles blocked journey
+  ---
+  duration_ms: 588.908486
+  type: 'test'
+  ...
+# Subtest: readiness handles missing journey
+ok 442 - readiness handles missing journey
+  ---
+  duration_ms: 951.870153
+  type: 'test'
+  ...
+# Subtest: readiness handles unresolved decision
+ok 443 - readiness handles unresolved decision
+  ---
+  duration_ms: 984.540966
+  type: 'test'
+  ...
+# Subtest: readiness handles unresolved blocking debt
+ok 444 - readiness handles unresolved blocking debt
+  ---
+  duration_ms: 724.905165
+  type: 'test'
+  ...
+# Subtest: readiness handles deferred nonblocking debt
+ok 445 - readiness handles deferred nonblocking debt
+  ---
+  duration_ms: 792.920752
+  type: 'test'
+  ...
+# Subtest: readiness handles unselected new principle
+ok 446 - readiness handles unselected new principle
+  ---
+  duration_ms: 716.234386
+  type: 'test'
+  ...
+# Subtest: changed intent or selection invalidates otherwise passed evidence
+ok 447 - changed intent or selection invalidates otherwise passed evidence
+  ---
+  duration_ms: 1191.862942
+  type: 'test'
+  ...
+# Subtest: artifact deletion and changed bytes block readiness
+ok 448 - artifact deletion and changed bytes block readiness
+  ---
+  duration_ms: 1103.297302
+  type: 'test'
+  ...
+# Subtest: Git revision changes block readiness even with unchanged scoped bytes
+ok 449 - Git revision changes block readiness even with unchanged scoped bytes
+  ---
+  duration_ms: 1607.083764
+  type: 'test'
+  ...
+# Subtest: foundation workspace renders without Git and refuses scratch inside target
+ok 450 - foundation workspace renders without Git and refuses scratch inside target
+  ---
+  duration_ms: 623.137928
+  type: 'test'
+  ...
+# Subtest: findings rejects malformed input and missing option
+ok 451 - findings rejects malformed input and missing option
+  ---
+  duration_ms: 526.729452
+  type: 'test'
+  ...
+# Subtest: findings validate rejects escaped duplicate members without target writes
+ok 452 - findings validate rejects escaped duplicate members without target writes
+  ---
+  duration_ms: 511.834069
+  type: 'test'
+  ...
+# Subtest: findings render rejects escaped duplicate members without target writes
+ok 453 - findings render rejects escaped duplicate members without target writes
+  ---
+  duration_ms: 310.733855
+  type: 'test'
+  ...
+# Subtest: findings rejects unedited "src" scope without target writes
+ok 454 - findings rejects unedited "src" scope without target writes
+  ---
+  duration_ms: 277.809754
+  type: 'test'
+  ...
+# Subtest: findings rejects unedited "src/*.md" scope without target writes
+ok 455 - findings rejects unedited "src/*.md" scope without target writes
+  ---
+  duration_ms: 373.507251
+  type: 'test'
+  ...
+# Subtest: findings rejects unedited "src/?.md" scope without target writes
+ok 456 - findings rejects unedited "src/?.md" scope without target writes
+  ---
+  duration_ms: 350.974254
+  type: 'test'
+  ...
+# Subtest: findings rejects unedited "src/[ab].md" scope without target writes
+ok 457 - findings rejects unedited "src/[ab].md" scope without target writes
+  ---
+  duration_ms: 311.340979
+  type: 'test'
+  ...
+# Subtest: findings rejects unedited "src/{a,b}.md" scope without target writes
+ok 458 - findings rejects unedited "src/{a,b}.md" scope without target writes
+  ---
+  duration_ms: 299.211445
+  type: 'test'
+  ...
+# Subtest: findings rejects unedited "README.md/child" scope without target writes
+ok 459 - findings rejects unedited "README.md/child" scope without target writes
+  ---
+  duration_ms: 372.404729
+  type: 'test'
+  ...
+# Subtest: findings accepts concrete planned absent files in reviewed scope
+ok 460 - findings accepts concrete planned absent files in reviewed scope
+  ---
+  duration_ms: 450.915637
+  type: 'test'
+  ...
+# Subtest: new-idea builds a non-Git workspace containing only its brief
+ok 461 - new-idea builds a non-Git workspace containing only its brief
+  ---
+  duration_ms: 288.306083
+  type: 'test'
+  ...
+# Subtest: ambiguous-idea builds a non-Git workspace containing only its brief
+ok 462 - ambiguous-idea builds a non-Git workspace containing only its brief
+  ---
+  duration_ms: 204.687007
+  type: 'test'
+  ...
+# Subtest: clear-goals replays deterministic history with local identity and signing disabled
+ok 463 - clear-goals replays deterministic history with local identity and signing disabled
+  ---
+  duration_ms: 914.537161
+  type: 'test'
+  ...
+# Subtest: all fixtures run sanity checks and leave source bytes unchanged
+ok 464 - all fixtures run sanity checks and leave source bytes unchanged
+  ---
+  duration_ms: 47272.754481
+  type: 'test'
+  ...
+# Subtest: dirty-work reproduces its declared state with deterministic history
+ok 465 - dirty-work reproduces its declared state with deterministic history
+  ---
+  duration_ms: 667.790017
+  type: 'test'
+  ...
+# Subtest: refactor reproduces its declared state with deterministic history
+ok 466 - refactor reproduces its declared state with deterministic history
+  ---
+  duration_ms: 1003.934616
+  type: 'test'
+  ...
+# Subtest: contract-removal reproduces its declared state with deterministic history
+ok 467 - contract-removal reproduces its declared state with deterministic history
+  ---
+  duration_ms: 810.845352
+  type: 'test'
+  ...
+# Subtest: shallow-history reproduces its declared state with deterministic history
+ok 468 - shallow-history reproduces its declared state with deterministic history
+  ---
+  duration_ms: 973.418104
+  type: 'test'
+  ...
+# Subtest: installer-collision reproduces its declared state with deterministic history
+ok 469 - installer-collision reproduces its declared state with deterministic history
+  ---
+  duration_ms: 574.517521
+  type: 'test'
+  ...
+# Subtest: ts-shop reports missing native tools as blocked
+ok 470 - ts-shop reports missing native tools as blocked
+  ---
+  duration_ms: 58.517343
+  type: 'test'
+  ...
+# Subtest: py-ledger reports missing native tools as blocked
+ok 471 - py-ledger reports missing native tools as blocked
+  ---
+  duration_ms: 48.697458
+  type: 'test'
+  ...
+# Subtest: a changed fixture seed fails its sanity check
+ok 472 - a changed fixture seed fails its sanity check
+  ---
+  duration_ms: 176.111981
+  type: 'test'
+  ...
+# Subtest: unknown fixture selection returns usage without building
+ok 473 - unknown fixture selection returns usage without building
+  ---
+  duration_ms: 61.643776
+  type: 'test'
+  ...
+# Subtest: inspect fingerprints a dirty fixture unchanged including Git index bytes
+ok 474 - inspect fingerprints a dirty fixture unchanged including Git index bytes
+  ---
+  duration_ms: 813.219885
+  type: 'test'
+  ...
+# Subtest: inspect with git hidden from PATH is blocked with the exact named limitation
+ok 475 - inspect with git hidden from PATH is blocked with the exact named limitation
+  ---
+  duration_ms: 206.033716
+  type: 'test'
+  ...
+# Subtest: inspect reports no commits and literal staged rename and untracked paths
+ok 476 - inspect reports no commits and literal staged rename and untracked paths
+  ---
+  duration_ms: 876.607812
+  type: 'test'
+  ...
+# Subtest: inspect reads nested manifests and reports missing detected prerequisites
+ok 477 - inspect reads nested manifests and reports missing detected prerequisites
+  ---
+  duration_ms: 736.235178
+  type: 'test'
+  ...
+# Subtest: inspect blocks unreadable commit history rather than claiming no commits
+ok 478 - inspect blocks unreadable commit history rather than claiming no commits
+  ---
+  duration_ms: 258.254305
+  type: 'test'
+  ...
+# Subtest: inspect reports malformed manifests as a named limitation
+ok 479 - inspect reports malformed manifests as a named limitation
+  ---
+  duration_ms: 255.302605
+  type: 'test'
+  ...
+# Subtest: py-ledger CONTRIBUTING is the standards source without requiring CODING_STANDARDS
+ok 480 - py-ledger CONTRIBUTING is the standards source without requiring CODING_STANDARDS
+  ---
+  duration_ms: 1178.784675
+  type: 'test'
+  ...
+# Subtest: ts-shop import-only CLAUDE stub produces a version-limited merge candidate
+ok 481 - ts-shop import-only CLAUDE stub produces a version-limited merge candidate
+  ---
+  duration_ms: 12391.721817
+  type: 'test'
+  ...
+# Subtest: inventory preserves root, nested, local and outside-repo instruction scopes without writes
+ok 482 - inventory preserves root, nested, local and outside-repo instruction scopes without writes
+  ---
+  duration_ms: 332.801091
+  type: 'test'
+  ...
+# Subtest: inventory discovers equivalent names and exact-byte hashes and tolerates absent documents
+ok 483 - inventory discovers equivalent names and exact-byte hashes and tolerates absent documents
+  ---
+  duration_ms: 256.912536
+  type: 'test'
+  ...
+# Subtest: a local-only instruction is a shadowing report without a merge candidate
+ok 484 - a local-only instruction is a shadowing report without a merge candidate
+  ---
+  duration_ms: 207.817944
+  type: 'test'
+  ...
+# Subtest: equivalent nested instructions consolidate within their own scope
+ok 485 - equivalent nested instructions consolidate within their own scope
+  ---
+  duration_ms: 186.176497
+  type: 'test'
+  ...
+# Subtest: inventory preserves the containing scope of .claude/AGENTS.md
+ok 486 - inventory preserves the containing scope of .claude/AGENTS.md
+  ---
+  duration_ms: 329.890237
+  type: 'test'
+  ...
+# Subtest: inventory preserves the containing scope of .claude/CLAUDE.local.md
+ok 487 - inventory preserves the containing scope of .claude/CLAUDE.local.md
+  ---
+  duration_ms: 313.148196
+  type: 'test'
+  ...
+# Subtest: inventory preserves the containing scope of web/.claude/AGENTS.md
+ok 488 - inventory preserves the containing scope of web/.claude/AGENTS.md
+  ---
+  duration_ms: 309.861142
+  type: 'test'
+  ...
+# Subtest: inventory preserves the containing scope of web/.claude/CLAUDE.local.md
+ok 489 - inventory preserves the containing scope of web/.claude/CLAUDE.local.md
+  ---
+  duration_ms: 217.455462
+  type: 'test'
+  ...
+# Subtest: ts-shop mixed responsibilities and coupled cluster have supporting signal commits
+ok 490 - ts-shop mixed responsibilities and coupled cluster have supporting signal commits
+  ---
+  duration_ms: 12678.54083
+  type: 'test'
+  ...
+# Subtest: py-ledger cohesive module and startup remain signals without a violation classification
+ok 491 - py-ledger cohesive module and startup remain signals without a violation classification
+  ---
+  duration_ms: 2864.134213
+  type: 'test'
+  ...
+# Subtest: measure joins chained renames, excludes declared formatting and generated paths, and stays read-only
+ok 492 - measure joins chained renames, excludes declared formatting and generated paths, and stays read-only
+  ---
+  duration_ms: 2599.621428
+  type: 'test'
+  ...
+# Subtest: measure omits generated-directory rename evidence
+ok 493 - measure omits generated-directory rename evidence
+  ---
+  duration_ms: 846.562254
+  type: 'test'
+  ...
+# Subtest: measure omits renames through a generated-directory destination
+ok 494 - measure omits renames through a generated-directory destination
+  ---
+  duration_ms: 902.615753
+  type: 'test'
+  ...
+# Subtest: measure omits lockfile rename evidence
+ok 495 - measure omits lockfile rename evidence
+  ---
+  duration_ms: 571.802788
+  type: 'test'
+  ...
+# Subtest: measure omits renames through a lockfile destination
+ok 496 - measure omits renames through a lockfile destination
+  ---
+  duration_ms: 796.819278
+  type: 'test'
+  ...
+# Subtest: measure omits declared-generated rename evidence
+ok 497 - measure omits declared-generated rename evidence
+  ---
+  duration_ms: 708.412764
+  type: 'test'
+  ...
+# Subtest: measure omits renames through a declared-generated destination
+ok 498 - measure omits renames through a declared-generated destination
+  ---
+  duration_ms: 853.406988
+  type: 'test'
+  ...
+# Subtest: measure retains formatting-only rename evidence
+ok 499 - measure retains formatting-only rename evidence
+  ---
+  duration_ms: 696.944506
+  type: 'test'
+  ...
+# Subtest: measure honours empty ranges, missing history, and deleted paths
+ok 500 - measure honours empty ranges, missing history, and deleted paths
+  ---
+  duration_ms: 1172.678351
+  type: 'test'
+  ...
+# Subtest: measure separates reused rename paths with no formatting exclusion
+ok 501 - measure separates reused rename paths with no formatting exclusion
+  ---
+  duration_ms: 2011.097717
+  type: 'test'
+  ...
+# Subtest: measure separates reused rename paths with addition formatting exclusion
+ok 502 - measure separates reused rename paths with addition formatting exclusion
+  ---
+  duration_ms: 1387.807365
+  type: 'test'
+  ...
+# Subtest: measure separates reused rename paths with deletion formatting exclusion
+ok 503 - measure separates reused rename paths with deletion formatting exclusion
+  ---
+  duration_ms: 1136.828123
+  type: 'test'
+  ...
+# Subtest: measure separates a recreated rename source without a deletion commit
+ok 504 - measure separates a recreated rename source without a deletion commit
+  ---
+  duration_ms: 876.190746
+  type: 'test'
+  ...
+# Subtest: measure follows merged branch modifications with renamed first and exclusions 
+ok 505 - measure follows merged branch modifications with renamed first and exclusions 
+  ---
+  duration_ms: 795.160541
+  type: 'test'
+  ...
+# Subtest: measure follows merged branch modifications with modified first and exclusions 
+ok 506 - measure follows merged branch modifications with modified first and exclusions 
+  ---
+  duration_ms: 787.728397
+  type: 'test'
+  ...
+# Subtest: measure follows merged branch modifications with renamed first and exclusions renamed
+ok 507 - measure follows merged branch modifications with renamed first and exclusions renamed
+  ---
+  duration_ms: 832.632958
+  type: 'test'
+  ...
+# Subtest: measure preserves both retained rename descendants without pairing one historical path
+ok 508 - measure preserves both retained rename descendants without pairing one historical path
+  ---
+  duration_ms: 647.074737
+  type: 'test'
+  ...
+# Subtest: measure excludes gitlinks removed before the selected head
+ok 509 - measure excludes gitlinks removed before the selected head
+  ---
+  duration_ms: 586.663421
+  type: 'test'
+  ...
+# Subtest: measure excludes gitlink type changes without losing separate blob lifetimes
+ok 510 - measure excludes gitlink type changes without losing separate blob lifetimes
+  ---
+  duration_ms: 744.493671
+  type: 'test'
+  ...
+# Subtest: measure limits a reused endpoint path to its replacement lifetime
+ok 511 - measure limits a reused endpoint path to its replacement lifetime
+  ---
+  duration_ms: 702.272255
+  type: 'test'
+  ...
+# Subtest: measure and discovery apply the same generated directory conventions
+ok 512 - measure and discovery apply the same generated directory conventions
+  ---
+  duration_ms: 455.665194
+  type: 'test'
+  ...
+# Subtest: measure reads head inventory and history larger than one MiB
+ok 513 - measure reads head inventory and history larger than one MiB
+  ---
+  duration_ms: 48347.976753
+  type: 'test'
+  ...
+# Subtest: measure rejects missing or unsupported range ""
+ok 514 - measure rejects missing or unsupported range ""
+  ---
+  duration_ms: 69.226833
+  type: 'test'
+  ...
+# Subtest: measure rejects missing or unsupported range "--all"
+ok 515 - measure rejects missing or unsupported range "--all"
+  ---
+  duration_ms: 53.878232
+  type: 'test'
+  ...
+# Subtest: measure rejects missing or unsupported range "HEAD...HEAD"
+ok 516 - measure rejects missing or unsupported range "HEAD...HEAD"
+  ---
+  duration_ms: 70.098023
+  type: 'test'
+  ...
+# Subtest: measure rejects missing or unsupported range "..HEAD"
+ok 517 - measure rejects missing or unsupported range "..HEAD"
+  ---
+  duration_ms: 77.857499
+  type: 'test'
+  ...
+# Subtest: measure rejects missing or unsupported range "HEAD.."
+ok 518 - measure rejects missing or unsupported range "HEAD.."
+  ---
+  duration_ms: 94.23915
+  type: 'test'
+  ...
+# Subtest: measure rejects unknown exclusion fields and out-of-range formatting commits
+ok 519 - measure rejects unknown exclusion fields and out-of-range formatting commits
+  ---
+  duration_ms: 687.63266
+  type: 'test'
+  ...
+# Subtest: measure preserves literal Git paths with injected win32
+ok 520 - measure preserves literal Git paths with injected win32
+  ---
+  duration_ms: 154.522485
+  type: 'test'
+  ...
+# Subtest: measure preserves literal Git paths with injected darwin
+ok 521 - measure preserves literal Git paths with injected darwin
+  ---
+  duration_ms: 135.903843
+  type: 'test'
+  ...
+# Subtest: overlap reports seeded shared writes and shared contract files without target writes
+ok 522 - overlap reports seeded shared writes and shared contract files without target writes
+  ---
+  duration_ms: 228.41832
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/**/*.ts against src/new.ts
+ok 523 - overlap declared glob src/**/*.ts against src/new.ts
+  ---
+  duration_ms: 267.015176
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/**/*.ts against src/nested/new.ts
+ok 524 - overlap declared glob src/**/*.ts against src/nested/new.ts
+  ---
+  duration_ms: 290.077347
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/*.ts against src/nested/new.ts
+ok 525 - overlap declared glob src/*.ts against src/nested/new.ts
+  ---
+  duration_ms: 272.369916
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/?.ts against src/😀.ts
+ok 526 - overlap declared glob src/?.ts against src/😀.ts
+  ---
+  duration_ms: 265.845485
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/?.ts against src/ab.ts
+ok 527 - overlap declared glob src/?.ts against src/ab.ts
+  ---
+  duration_ms: 219.849367
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/a*.ts against src/*b.ts
+ok 528 - overlap declared glob src/a*.ts against src/*b.ts
+  ---
+  duration_ms: 200.010182
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/**/*.ts against src/**/new.*
+ok 529 - overlap declared glob src/**/*.ts against src/**/new.*
+  ---
+  duration_ms: 300.304217
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/**/*.ts against other/**/*.ts
+ok 530 - overlap declared glob src/**/*.ts against other/**/*.ts
+  ---
+  duration_ms: 358.650601
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/Foo.ts against src/foo.ts
+ok 531 - overlap declared glob src/Foo.ts against src/foo.ts
+  ---
+  duration_ms: 188.875705
+  type: 'test'
+  ...
+# Subtest: overlap declared glob **/package-lock.json against package-lock.json
+ok 532 - overlap declared glob **/package-lock.json against package-lock.json
+  ---
+  duration_ms: 267.459104
+  type: 'test'
+  ...
+# Subtest: overlap declared glob **/dist/** against dist/deep/file
+ok 533 - overlap declared glob **/dist/** against dist/deep/file
+  ---
+  duration_ms: 186.229176
+  type: 'test'
+  ...
+# Subtest: overlap declared glob **/* against .hidden
+ok 534 - overlap declared glob **/* against .hidden
+  ---
+  duration_ms: 245.378978
+  type: 'test'
+  ...
+# Subtest: overlap declared glob src/* against src/notes ü &.txt
+ok 535 - overlap declared glob src/* against src/notes ü &.txt
+  ---
+  duration_ms: 288.531606
+  type: 'test'
+  ...
+# Subtest: overlap retains a changing contract ID across disjoint files
+ok 536 - overlap retains a changing contract ID across disjoint files
+  ---
+  duration_ms: 227.218228
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path /absolute
+ok 537 - overlap rejects unsupported path /absolute
+  ---
+  duration_ms: 358.070061
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path C:/file
+ok 538 - overlap rejects unsupported path C:/file
+  ---
+  duration_ms: 198.929031
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path C:\\file
+ok 539 - overlap rejects unsupported path C:\\file
+  ---
+  duration_ms: 252.763984
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path ../file
+ok 540 - overlap rejects unsupported path ../file
+  ---
+  duration_ms: 229.055027
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path src/../file
+ok 541 - overlap rejects unsupported path src/../file
+  ---
+  duration_ms: 253.285008
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path ./file
+ok 542 - overlap rejects unsupported path ./file
+  ---
+  duration_ms: 259.667083
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path src//file
+ok 543 - overlap rejects unsupported path src//file
+  ---
+  duration_ms: 354.27028
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path src/
+ok 544 - overlap rejects unsupported path src/
+  ---
+  duration_ms: 271.150522
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path src/[ab].ts
+ok 545 - overlap rejects unsupported path src/[ab].ts
+  ---
+  duration_ms: 175.295815
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path src/{a,b}.ts
+ok 546 - overlap rejects unsupported path src/{a,b}.ts
+  ---
+  duration_ms: 236.52534
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path !src/file
+ok 547 - overlap rejects unsupported path !src/file
+  ---
+  duration_ms: 267.487461
+  type: 'test'
+  ...
+# Subtest: overlap rejects unsupported path src/a**.ts
+ok 548 - overlap rejects unsupported path src/a**.ts
+  ---
+  duration_ms: 216.796743
+  type: 'test'
+  ...
+# Subtest: overlap rejects invalid plan {"extra":true}
+ok 549 - overlap rejects invalid plan {"extra":true}
+  ---
+  duration_ms: 261.993974
+  type: 'test'
+  ...
+# Subtest: overlap rejects invalid plan {"schemaVersion":2}
+ok 550 - overlap rejects invalid plan {"schemaVersion":2}
+  ---
+  duration_ms: 217.844505
+  type: 'test'
+  ...
+# Subtest: overlap rejects invalid plan {"writePaths":"src/file"}
+ok 551 - overlap rejects invalid plan {"writePaths":"src/file"}
+  ---
+  duration_ms: 303.826697
+  type: 'test'
+  ...
+# Subtest: overlap rejects invalid plan {"id":"same"}
+ok 552 - overlap rejects invalid plan {"id":"same"}
+  ---
+  duration_ms: 300.592674
+  type: 'test'
+  ...
+# Subtest: overlap rejects invalid plan {"contracts":[{"id":"price","files":["a"]},{"id":"price","files":["b"]}]}
+ok 553 - overlap rejects invalid plan {"contracts":[{"id":"price","files":["a"]},{"id":"price","files":["b"]}]}
+  ---
+  duration_ms: 212.551273
+  type: 'test'
+  ...
+# Subtest: overlap rejects invalid plan {"contracts":[{"id":"price","files":["C:/file"]}]}
+ok 554 - overlap rejects invalid plan {"contracts":[{"id":"price","files":["C:/file"]}]}
+  ---
+  duration_ms: 241.96057
+  type: 'test'
+  ...
+# Subtest: overlap requires exactly two readable plans
+ok 555 - overlap requires exactly two readable plans
+  ---
+  duration_ms: 615.738729
+  type: 'test'
+  ...
+# Subtest: overlap preserves portable declared paths with injected win32
+ok 556 - overlap preserves portable declared paths with injected win32
+  ---
+  duration_ms: 284.767958
+  type: 'test'
+  ...
+# Subtest: overlap preserves portable declared paths with injected darwin
+ok 557 - overlap preserves portable declared paths with injected darwin
+  ---
+  duration_ms: 368.582934
+  type: 'test'
+  ...
+# Subtest: valid skeleton passes from another working directory
+ok 558 - valid skeleton passes from another working directory
+  ---
+  duration_ms: 1235.637577
+  type: 'test'
+  ...
+# Subtest: missing-path fails with local-path-missing
+ok 559 - missing-path fails with local-path-missing
+  ---
+  duration_ms: 328.732011
+  type: 'test'
+  ...
+# Subtest: unlisted-reference fails with reference-unlisted
+ok 560 - unlisted-reference fails with reference-unlisted
+  ---
+  duration_ms: 458.474619
+  type: 'test'
+  ...
+# Subtest: nested-reference fails with reference-nested
+ok 561 - nested-reference fails with reference-nested
+  ---
+  duration_ms: 331.330561
+  type: 'test'
+  ...
+# Subtest: oversized-skill fails with skill-too-long
+ok 562 - oversized-skill fails with skill-too-long
+  ---
+  duration_ms: 401.308406
+  type: 'test'
+  ...
+# Subtest: long-reference fails with reference-toc
+ok 563 - long-reference fails with reference-toc
+  ---
+  duration_ms: 233.84661
+  type: 'test'
+  ...
+# Subtest: host-metadata fails with host-metadata
+ok 564 - host-metadata fails with host-metadata
+  ---
+  duration_ms: 191.808607
+  type: 'test'
+  ...
+# Subtest: undeclared-import fails with script-import
+ok 565 - undeclared-import fails with script-import
+  ---
+  duration_ms: 262.782055
+  type: 'test'
+  ...
+# Subtest: unexplained-constant fails with constant-comment
+ok 566 - unexplained-constant fails with constant-comment
+  ---
+  duration_ms: 216.824391
+  type: 'test'
+  ...
+# Subtest: unfinished-step fails with step-done
+ok 567 - unfinished-step fails with step-done
+  ---
+  duration_ms: 276.232306
+  type: 'test'
+  ...
+# Subtest: language-policy fails with language-policy
+ok 568 - language-policy fails with language-policy
+  ---
+  duration_ms: 248.547673
+  type: 'test'
+  ...
+# Subtest: every independent problem is reported together
+ok 569 - every independent problem is reported together
+  ---
+  duration_ms: 573.764777
+  type: 'test'
+  ...
+# Subtest: line limits include their boundary and exclude frontmatter
+ok 570 - line limits include their boundary and exclude frontmatter
+  ---
+  duration_ms: 300.293645
+  type: 'test'
+  ...
+# Subtest: contents heading at line twenty permits a long reference
+ok 571 - contents heading at line twenty permits a long reference
+  ---
+  duration_ms: 455.980265
+  type: 'test'
+  ...
+# Subtest: local paths in source and nested resources resolve from their file
+ok 572 - local paths in source and nested resources resolve from their file
+  ---
+  duration_ms: 991.345998
+  type: 'test'
+  ...
+# Subtest: inline link location suffix preserves missing and nested reference checks
+ok 573 - inline link location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 474.043765
+  type: 'test'
+  ...
+# Subtest: image location suffix preserves missing and nested reference checks
+ok 574 - image location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 373.221939
+  type: 'test'
+  ...
+# Subtest: reference definition location suffix preserves missing and nested reference checks
+ok 575 - reference definition location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 402.227293
+  type: 'test'
+  ...
+# Subtest: angle destination location suffix preserves missing and nested reference checks
+ok 576 - angle destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 277.168585
+  type: 'test'
+  ...
+# Subtest: encoded destination location suffix preserves missing and nested reference checks
+ok 577 - encoded destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 206.360603
+  type: 'test'
+  ...
+# Subtest: quoted resource location suffix preserves missing and nested reference checks
+ok 578 - quoted resource location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 274.961989
+  type: 'test'
+  ...
+# Subtest: location suffix accepts existing resources and excludes URLs
+ok 579 - location suffix accepts existing resources and excludes URLs
+  ---
+  duration_ms: 483.386124
+  type: 'test'
+  ...
+# Subtest: unlisted reference diagnostics identify each source file
+ok 580 - unlisted reference diagnostics identify each source file
+  ---
+  duration_ms: 365.857103
+  type: 'test'
+  ...
+# Subtest: dependency and cache contents are excluded
+ok 581 - dependency and cache contents are excluded
+  ---
+  duration_ms: 463.643765
+  type: 'test'
+  ...
+# Subtest: help and invalid arguments have explicit exits
+ok 582 - help and invalid arguments have explicit exits
+  ---
+  duration_ms: 1175.531991
+  type: 'test'
+  ...
+# Subtest: imports accept built-ins, local files and declared runtime package subpaths
+ok 583 - imports accept built-ins, local files and declared runtime package subpaths
+  ---
+  duration_ms: 406.35801
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'undeclared'
+ok 584 - import policy refuses import 'undeclared'
+  ---
+  duration_ms: 422.005454
+  type: 'test'
+  ...
+# Subtest: import policy refuses export * from 'undeclared'
+ok 585 - import policy refuses export * from 'undeclared'
+  ---
+  duration_ms: 557.068152
+  type: 'test'
+  ...
+# Subtest: import policy refuses await import('undeclared')
+ok 586 - import policy refuses await import('undeclared')
+  ---
+  duration_ms: 474.512927
+  type: 'test'
+  ...
+# Subtest: import policy refuses require('undeclared')
+ok 587 - import policy refuses require('undeclared')
+  ---
+  duration_ms: 708.972256
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'node:not-a-builtin'
+ok 588 - import policy refuses import 'node:not-a-builtin'
+  ---
+  duration_ms: 305.038835
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'dev-only'
+ok 589 - import policy refuses import 'dev-only'
+  ---
+  duration_ms: 306.646895
+  type: 'test'
+  ...
+# Subtest: strings, comments, regexes and nested constants do not impersonate script policy
+ok 590 - strings, comments, regexes and nested constants do not impersonate script policy
+  ---
+  duration_ms: 340.053681
+  type: 'test'
+  ...
+# Subtest: computed dispatch imports remain outside the literal import control
+ok 591 - computed dispatch imports remain outside the literal import control
+  ---
+  duration_ms: 270.050475
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return passes
+ok 592 - CommonJS top-level return passes
+  ---
+  duration_ms: 321.573396
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return preserves script-import
+ok 593 - CommonJS top-level return preserves script-import
+  ---
+  duration_ms: 354.95275
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return preserves constant-comment
+ok 594 - CommonJS top-level return preserves constant-comment
+  ---
+  duration_ms: 331.593875
+  type: 'test'
+  ...
+# Subtest: js module rejects top-level return
+ok 595 - js module rejects top-level return
+  ---
+  duration_ms: 355.152501
+  type: 'test'
+  ...
+# Subtest: mjs module rejects top-level return
+ok 596 - mjs module rejects top-level return
+  ---
+  duration_ms: 314.132776
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+ok 597 - constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+  ---
+  duration_ms: 447.707186
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+ok 598 - constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+  ---
+  duration_ms: 228.289511
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+ok 599 - constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+  ---
+  duration_ms: 284.710861
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+ok 600 - constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+  ---
+  duration_ms: 191.854683
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "export const first = 1 // Too late.\\n"
+ok 601 - constant comment boundary "export const first = 1 // Too late.\\n"
+  ---
+  duration_ms: 285.897738
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "if (true) { const nested = 1 }\\n"
+ok 602 - constant comment boundary "if (true) { const nested = 1 }\\n"
+  ---
+  duration_ms: 442.74482
+  type: 'test'
+  ...
+# Subtest: invalid script and manifest refuse unverified imports while other problems collect
+ok 603 - invalid script and manifest refuse unverified imports while other problems collect
+  ---
+  duration_ms: 352.421758
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+ok 604 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+  ---
+  duration_ms: 389.863275
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+ok 605 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+  ---
+  duration_ms: 305.370504
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+ok 606 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+  ---
+  duration_ms: 271.838661
+  type: 'test'
+  ...
+# Subtest: step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+ok 607 - step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+  ---
+  duration_ms: 380.482061
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+ok 608 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+  ---
+  duration_ms: 429.039307
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+ok 609 - language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+  ---
+  duration_ms: 229.619172
+  type: 'test'
+  ...
+# Subtest: language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+ok 610 - language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+  ---
+  duration_ms: 336.944861
+  type: 'test'
+  ...
+# Subtest: language policy boundary .ruff.toml ""
+ok 611 - language policy boundary .ruff.toml ""
+  ---
+  duration_ms: 289.004213
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+ok 612 - language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+  ---
+  duration_ms: 243.083096
+  type: 'test'
+  ...
+# Subtest: matching live calls capture literal arguments and pass across changed product inputs without target writes
+ok 613 - matching live calls capture literal arguments and pass across changed product inputs without target writes
+  ---
+  duration_ms: 1452.957924
+  type: 'test'
+  ...
+# Subtest: comparison rejects a missing before probe
+ok 614 - comparison rejects a missing before probe
+  ---
+  duration_ms: 786.853709
+  type: 'test'
+  ...
+# Subtest: comparison rejects a missing after probe
+ok 615 - comparison rejects a missing after probe
+  ---
+  duration_ms: 761.883931
+  type: 'test'
+  ...
+# Subtest: comparison rejects changed endpoint
+ok 616 - comparison rejects changed endpoint
+  ---
+  duration_ms: 1416.060233
+  type: 'test'
+  ...
+# Subtest: comparison rejects changed command
+ok 617 - comparison rejects changed command
+  ---
+  duration_ms: 1341.438307
+  type: 'test'
+  ...
+# Subtest: comparison rejects changed environment
+ok 618 - comparison rejects changed environment
+  ---
+  duration_ms: 1465.517048
+  type: 'test'
+  ...
+# Subtest: side-effect approval is refused before either version or live command and binds only the specific call
+ok 619 - side-effect approval is refused before either version or live command and binds only the specific call
+  ---
+  duration_ms: 2164.149228
+  type: 'test'
+  ...
+# Subtest: a child argument cannot approve a side-effecting call
+ok 620 - a child argument cannot approve a side-effecting call
+  ---
+  duration_ms: 251.686655
+  type: 'test'
+  ...
+# Subtest: missing executable retains its reason and cannot verify the pair
+ok 621 - missing executable retains its reason and cannot verify the pair
+  ---
+  duration_ms: 1100.70315
+  type: 'test'
+  ...
+# Subtest: timeout retains its reason and cannot verify the pair
+ok 622 - timeout retains its reason and cannot verify the pair
+  ---
+  duration_ms: 1345.095186
+  type: 'test'
+  ...
+# Subtest: failed assertion retains its reason and cannot verify the pair
+ok 623 - failed assertion retains its reason and cannot verify the pair
+  ---
+  duration_ms: 1582.912612
+  type: 'test'
+  ...
+# Subtest: declared input changes during a probe block its capture
+ok 624 - declared input changes during a probe block its capture
+  ---
+  duration_ms: 487.676184
+  type: 'test'
+  ...
+# Subtest: a later input change invalidates the after capture
+ok 625 - a later input change invalidates the after capture
+  ---
+  duration_ms: 1246.811321
+  type: 'test'
+  ...
+# Subtest: a later environment change invalidates the after capture
+ok 626 - a later environment change invalidates the after capture
+  ---
+  duration_ms: 1118.786006
+  type: 'test'
+  ...
+# Subtest: a later descriptor change invalidates the after capture
+ok 627 - a later descriptor change invalidates the after capture
+  ---
+  duration_ms: 1202.370843
+  type: 'test'
+  ...
+# Subtest: comparison rejects swapped phases and capture reuse
+ok 628 - comparison rejects swapped phases and capture reuse
+  ---
+  duration_ms: 1394.706094
+  type: 'test'
+  ...
+# Subtest: malformed descriptors and unsafe scopes do not execute the probe
+ok 629 - malformed descriptors and unsafe scopes do not execute the probe
+  ---
+  duration_ms: 435.873678
+  type: 'test'
+  ...
+# Subtest: ts-shop live stand-in disagrees with the passing mock so its probe pair is not ready
+ok 630 - ts-shop live stand-in disagrees with the passing mock so its probe pair is not ready
+  ---
+  duration_ms: 10732.05517
+  type: 'test'
+  ...
+# Subtest: capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes
+ok 631 - capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes
+  ---
+  duration_ms: 766.980051
+  type: 'test'
+  ...
+# Subtest: before capture rejects scratch inside the target before any command executes
+ok 632 - before capture rejects scratch inside the target before any command executes
+  ---
+  duration_ms: 460.849908
+  type: 'test'
+  ...
+# Subtest: after capture rejects scratch inside the target before any command executes
+ok 633 - after capture rejects scratch inside the target before any command executes
+  ---
+  duration_ms: 250.690474
+  type: 'test'
+  ...
+# Subtest: ts-shop passing units cannot hide the failed checkout journey
+ok 634 - ts-shop passing units cannot hide the failed checkout journey
+  ---
+  duration_ms: 14809.0325
+  type: 'test'
+  ...
+# Subtest: failed required check cannot pass and does not verify the user flow
+ok 635 - failed required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 391.88994
+  type: 'test'
+  ...
+# Subtest: skipped required check cannot pass and does not verify the user flow
+ok 636 - skipped required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 314.685336
+  type: 'test'
+  ...
+# Subtest: unavailable required check cannot pass and does not verify the user flow
+ok 637 - unavailable required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 288.385134
+  type: 'test'
+  ...
+# Subtest: timed out required check cannot pass and does not verify the user flow
+ok 638 - timed out required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 1423.245188
+  type: 'test'
+  ...
+# Subtest: failed version required check cannot pass and does not verify the user flow
+ok 639 - failed version required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 497.233393
+  type: 'test'
+  ...
+# Subtest: cancelled required check stays unverified even with other passing checks
+ok 640 - cancelled required check stays unverified even with other passing checks
+  ---
+  duration_ms: 1139.089109
+  type: 'test'
+  ...
+# Subtest: a result covering no user journey explicitly reports that limit
+ok 641 - a result covering no user journey explicitly reports that limit
+  ---
+  duration_ms: 629.677615
+  type: 'test'
+  ...
+# Subtest: an uncovered user flow remains unverified despite passing units
+ok 642 - an uncovered user flow remains unverified despite passing units
+  ---
+  duration_ms: 502.260792
+  type: 'test'
+  ...
+# Subtest: changed own bytes block the capture
+ok 643 - changed own bytes block the capture
+  ---
+  duration_ms: 390.619257
+  type: 'test'
+  ...
+# Subtest: changed new glob file block the capture
+ok 644 - changed new glob file block the capture
+  ---
+  duration_ms: 483.72714
+  type: 'test'
+  ...
+# Subtest: changed deleted glob file block the capture
+ok 645 - changed deleted glob file block the capture
+  ---
+  duration_ms: 343.550971
+  type: 'test'
+  ...
+# Subtest: a later input change blocks all executed checks
+ok 646 - a later input change blocks all executed checks
+  ---
+  duration_ms: 451.158638
+  type: 'test'
+  ...
+# Subtest: inputs restored before completion leave the boundary fingerprints equal
+ok 647 - inputs restored before completion leave the boundary fingerprints equal
+  ---
+  duration_ms: 520.452279
+  type: 'test'
+  ...
+# Subtest: changed inputs block the capture even when a command also fails
+ok 648 - changed inputs block the capture even when a command also fails
+  ---
+  duration_ms: 306.363852
+  type: 'test'
+  ...
+# Subtest: a product file replaced by a directory retains completed command evidence
+ok 649 - a product file replaced by a directory retains completed command evidence
+  ---
+  duration_ms: 369.529603
+  type: 'test'
+  ...
+# Subtest: a product file replaced by a dangling link retains completed command evidence
+ok 650 - a product file replaced by a dangling link retains completed command evidence
+  ---
+  duration_ms: 329.683429
+  type: 'test'
+  ...
+# Subtest: a acceptance source replaced by a directory retains completed command evidence
+ok 651 - a acceptance source replaced by a directory retains completed command evidence
+  ---
+  duration_ms: 324.108656
+  type: 'test'
+  ...
+# Subtest: a acceptance source replaced by a dangling link retains completed command evidence
+ok 652 - a acceptance source replaced by a dangling link retains completed command evidence
+  ---
+  duration_ms: 348.061373
+  type: 'test'
+  ...
+# Subtest: a plan replaced by a directory retains completed command evidence
+ok 653 - a plan replaced by a directory retains completed command evidence
+  ---
+  duration_ms: 342.901407
+  type: 'test'
+  ...
+# Subtest: an external plan edited during capture blocks results
+ok 654 - an external plan edited during capture blocks results
+  ---
+  duration_ms: 404.851104
+  type: 'test'
+  ...
+# Subtest: an external plan deleted during capture blocks results
+ok 655 - an external plan deleted during capture blocks results
+  ---
+  duration_ms: 357.961279
+  type: 'test'
+  ...
+# Subtest: an optional check's edited plan blocks the whole capture
+ok 656 - an optional check's edited plan blocks the whole capture
+  ---
+  duration_ms: 309.594231
+  type: 'test'
+  ...
+# Subtest: an optional check's deleted plan blocks the whole capture
+ok 657 - an optional check's deleted plan blocks the whole capture
+  ---
+  duration_ms: 301.976533
+  type: 'test'
+  ...
+# Subtest: an optional check's edited acceptance source blocks the whole capture
+ok 658 - an optional check's edited acceptance source blocks the whole capture
+  ---
+  duration_ms: 281.709396
+  type: 'test'
+  ...
+# Subtest: an optional check's deleted acceptance source blocks the whole capture
+ok 659 - an optional check's deleted acceptance source blocks the whole capture
+  ---
+  duration_ms: 358.735381
+  type: 'test'
+  ...
+# Subtest: before capture with no active required check runs no commands
+ok 660 - before capture with no active required check runs no commands
+  ---
+  duration_ms: 211.440102
+  type: 'test'
+  ...
+# Subtest: after capture with no active required check runs no commands
+ok 661 - after capture with no active required check runs no commands
+  ---
+  duration_ms: 187.360461
+  type: 'test'
+  ...
+# Subtest: glob capture fingerprints the literal file src/app/[id]/page.ts
+ok 662 - glob capture fingerprints the literal file src/app/[id]/page.ts
+  ---
+  duration_ms: 493.116988
+  type: 'test'
+  ...
+# Subtest: glob capture fingerprints the literal file src/{name}.ts
+ok 663 - glob capture fingerprints the literal file src/{name}.ts
+  ---
+  duration_ms: 526.347427
+  type: 'test'
+  ...
+# Subtest: glob capture fingerprints the literal file src/star*.ts
+ok 664 - glob capture fingerprints the literal file src/star*.ts
+  ---
+  duration_ms: 662.917812
+  type: 'test'
+  ...
+# Subtest: glob capture fingerprints the literal file src/question?.ts
+ok 665 - glob capture fingerprints the literal file src/question?.ts
+  ---
+  duration_ms: 542.63581
+  type: 'test'
+  ...
+# Subtest: a later file cwd is rejected before any version probe or check runs
+ok 666 - a later file cwd is rejected before any version probe or check runs
+  ---
+  duration_ms: 171.214442
+  type: 'test'
+  ...
+# Subtest: a later missing cwd is rejected before any version probe or check runs
+ok 667 - a later missing cwd is rejected before any version probe or check runs
+  ---
+  duration_ms: 246.499663
+  type: 'test'
+  ...
+# Subtest: a later NUL executable is rejected before any version probe or check runs
+ok 668 - a later NUL executable is rejected before any version probe or check runs
+  ---
+  duration_ms: 185.663965
+  type: 'test'
+  ...
+# Subtest: a later NUL argument is rejected before any version probe or check runs
+ok 669 - a later NUL argument is rejected before any version probe or check runs
+  ---
+  duration_ms: 190.525918
+  type: 'test'
+  ...
+# Subtest: a later NUL version argument is rejected before any version probe or check runs
+ok 670 - a later NUL version argument is rejected before any version probe or check runs
+  ---
+  duration_ms: 188.314462
+  type: 'test'
+  ...
+# Subtest: invalid unknown field is rejected before any command runs
+ok 671 - invalid unknown field is rejected before any command runs
+  ---
+  duration_ms: 163.118345
+  type: 'test'
+  ...
+# Subtest: invalid duplicate check is rejected before any command runs
+ok 672 - invalid duplicate check is rejected before any command runs
+  ---
+  duration_ms: 213.463944
+  type: 'test'
+  ...
+# Subtest: invalid missing case is rejected before any command runs
+ok 673 - invalid missing case is rejected before any command runs
+  ---
+  duration_ms: 219.174475
+  type: 'test'
+  ...
+# Subtest: invalid missing source is rejected before any command runs
+ok 674 - invalid missing source is rejected before any command runs
+  ---
+  duration_ms: 177.473144
+  type: 'test'
+  ...
+# Subtest: invalid missing pointer is rejected before any command runs
+ok 675 - invalid missing pointer is rejected before any command runs
+  ---
+  duration_ms: 235.302214
+  type: 'test'
+  ...
+# Subtest: invalid stale source is rejected before any command runs
+ok 676 - invalid stale source is rejected before any command runs
+  ---
+  duration_ms: 151.883647
+  type: 'test'
+  ...
+# Subtest: invalid unsafe scope is rejected before any command runs
+ok 677 - invalid unsafe scope is rejected before any command runs
+  ---
+  duration_ms: 187.312656
+  type: 'test'
+  ...
+# Subtest: invalid unsafe cwd is rejected before any command runs
+ok 678 - invalid unsafe cwd is rejected before any command runs
+  ---
+  duration_ms: 223.499748
+  type: 'test'
+  ...
+# Subtest: invalid invalid timeout is rejected before any command runs
+ok 679 - invalid invalid timeout is rejected before any command runs
+  ---
+  duration_ms: 149.683072
+  type: 'test'
+  ...
+# Subtest: invalid string command is rejected before any command runs
+ok 680 - invalid string command is rejected before any command runs
+  ---
+  duration_ms: 187.744386
+  type: 'test'
+  ...
+# Subtest: invalid agent execution claim is rejected before any command runs
+ok 681 - invalid agent execution claim is rejected before any command runs
+  ---
+  duration_ms: 175.2626
+  type: 'test'
+  ...
+# Subtest: a refactor without prior protective capture is rejected before compatibility runs
+ok 682 - a refactor without prior protective capture is rejected before compatibility runs
+  ---
+  duration_ms: 163.924632
+  type: 'test'
+  ...
+# Subtest: before protection with an unavailable final snapshot cannot serve as prior evidence
+ok 683 - before protection with an unavailable final snapshot cannot serve as prior evidence
+  ---
+  duration_ms: 334.402222
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by changed bytes from an optional check
+ok 684 - before protection capture is blocked by changed bytes from an optional check
+  ---
+  duration_ms: 407.825342
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by changed mode from an optional check
+ok 685 - before protection capture is blocked by changed mode from an optional check
+  ---
+  duration_ms: 462.143806
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by new glob file from an optional check
+ok 686 - before protection capture is blocked by new glob file from an optional check
+  ---
+  duration_ms: 444.197079
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by deleted glob file from an optional check
+ok 687 - before protection capture is blocked by deleted glob file from an optional check
+  ---
+  duration_ms: 413.443097
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by created absent literal from an optional check
+ok 688 - before protection capture is blocked by created absent literal from an optional check
+  ---
+  duration_ms: 377.619391
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by changed bytes from an optional check
+ok 689 - before reproduction capture is blocked by changed bytes from an optional check
+  ---
+  duration_ms: 383.931097
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by changed mode from an optional check
+ok 690 - before reproduction capture is blocked by changed mode from an optional check
+  ---
+  duration_ms: 427.042145
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by new glob file from an optional check
+ok 691 - before reproduction capture is blocked by new glob file from an optional check
+  ---
+  duration_ms: 400.590726
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by deleted glob file from an optional check
+ok 692 - before reproduction capture is blocked by deleted glob file from an optional check
+  ---
+  duration_ms: 375.725533
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by created absent literal from an optional check
+ok 693 - before reproduction capture is blocked by created absent literal from an optional check
+  ---
+  duration_ms: 369.123796
+  type: 'test'
+  ...
+# Subtest: before capture includes glob inputs and another check’s absent literal
+ok 694 - before capture includes glob inputs and another check’s absent literal
+  ---
+  duration_ms: 246.639492
+  type: 'test'
+  ...
+# Subtest: capture combines glob discovery with excluded build output from a literal scope
+ok 695 - capture combines glob discovery with excluded build output from a literal scope
+  ---
+  duration_ms: 434.600705
+  type: 'test'
+  ...
+# Subtest: capture combines glob discovery with explicit symlink from a literal scope
+ok 696 - capture combines glob discovery with explicit symlink from a literal scope
+  ---
+  duration_ms: 425.204686
+  type: 'test'
+  ...
+# Subtest: before capture blocks changes to an inactive check’s declared inputs
+ok 697 - before capture blocks changes to an inactive check’s declared inputs
+  ---
+  duration_ms: 316.325866
+  type: 'test'
+  ...
+# Subtest: prior protection requires matching original and final snapshots
+ok 698 - prior protection requires matching original and final snapshots
+  ---
+  duration_ms: 542.003518
+  type: 'test'
+  ...
+# Subtest: a protected refactor passes only after compatibility runs against changed state
+ok 699 - a protected refactor passes only after compatibility runs against changed state
+  ---
+  duration_ms: 636.363192
+  type: 'test'
+  ...
+# Subtest: failed protection cannot establish prior refactor evidence
+ok 700 - failed protection cannot establish prior refactor evidence
+  ---
+  duration_ms: 323.886291
+  type: 'test'
+  ...
+# Subtest: skipped protection cannot establish prior refactor evidence
+ok 701 - skipped protection cannot establish prior refactor evidence
+  ---
+  duration_ms: 267.423125
+  type: 'test'
+  ...
+# Subtest: changing the check plan cannot reuse prior protection
+ok 702 - changing the check plan cannot reuse prior protection
+  ---
+  duration_ms: 351.247847
+  type: 'test'
+  ...
+# Subtest: after capture cannot pretend to be prior refactor protection
+ok 703 - after capture cannot pretend to be prior refactor protection
+  ---
+  duration_ms: 584.634364
+  type: 'test'
+  ...
+# Subtest: compatibility failure prevents a protected refactor from passing
+ok 704 - compatibility failure prevents a protected refactor from passing
+  ---
+  duration_ms: 436.655765
+  type: 'test'
+  ...
+# Subtest: bug fix requires normally failing reproduction before and passing reproduction after
+ok 705 - bug fix requires normally failing reproduction before and passing reproduction after
+  ---
+  duration_ms: 544.917012
+  type: 'test'
+  ...
+# Subtest: passing reproduction before change cannot satisfy the bug prerequisite
+ok 706 - passing reproduction before change cannot satisfy the bug prerequisite
+  ---
+  duration_ms: 247.07103
+  type: 'test'
+  ...
+# Subtest: a reproduction timeout is not a recorded bug
+ok 707 - a reproduction timeout is not a recorded bug
+  ---
+  duration_ms: 1174.025447
+  type: 'test'
+  ...
+# Subtest: a reproduction version failure is not a recorded bug
+ok 708 - a reproduction version failure is not a recorded bug
+  ---
+  duration_ms: 202.470188
+  type: 'test'
+  ...
+# Subtest: a reproduction unavailable tool is not a recorded bug
+ok 709 - a reproduction unavailable tool is not a recorded bug
+  ---
+  duration_ms: 131.828043
+  type: 'test'
+  ...
+# Subtest: bug-fix requires a required reproduction check in its plan
+ok 710 - bug-fix requires a required reproduction check in its plan
+  ---
+  duration_ms: 134.88932
+  type: 'test'
+  ...
+# Subtest: refactor requires a required protection check in its plan
+ok 711 - refactor requires a required protection check in its plan
+  ---
+  duration_ms: 126.270299
+  type: 'test'
+  ...
+# Subtest: refactor requires a required compatibility check in its plan
+ok 712 - refactor requires a required compatibility check in its plan
+  ---
+  duration_ms: 126.776006
+  type: 'test'
+  ...
+# Subtest: valid schema data dispatches from another cwd without changing the workspace
+ok 713 - valid schema data dispatches from another cwd without changing the workspace
+  ---
+  duration_ms: 240.229563
+  type: 'test'
+  ...
+# Subtest: schema-invalid.json with the installed schema fails with named problems and no writes
+ok 714 - schema-invalid.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 223.38533
+  type: 'test'
+  ...
+# Subtest: schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
+ok 715 - schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
+  ---
+  duration_ms: 254.313935
+  type: 'test'
+  ...
+# Subtest: schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
+ok 716 - schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
+  ---
+  duration_ms: 362.258304
+  type: 'test'
+  ...
+# Subtest: schema-empty.json with the installed schema fails with named problems and no writes
+ok 717 - schema-empty.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 218.009777
+  type: 'test'
+  ...
+# Subtest: schema-missing.json with the installed schema fails with named problems and no writes
+ok 718 - schema-missing.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 134.835372
+  type: 'test'
+  ...
+# Subtest: schema-wrong-types.json with the installed schema fails with named problems and no writes
+ok 719 - schema-wrong-types.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 190.065127
+  type: 'test'
+  ...
+# Subtest: schema-map-invalid.json with schema-map.json fails with named problems and no writes
+ok 720 - schema-map-invalid.json with schema-map.json fails with named problems and no writes
+  ---
+  duration_ms: 305.31896
+  type: 'test'
+  ...
+# Subtest: schema-malformed.json with the installed schema fails with named problems and no writes
+ok 721 - schema-malformed.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 197.446384
+  type: 'test'
+  ...
+# Subtest: schema-valued additional properties validates each map value
+ok 722 - schema-valued additional properties validates each map value
+  ---
+  duration_ms: 347.431523
+  type: 'test'
+  ...
+# Subtest: uniqueItems true validates semantic JSON equality for [{"a":1,"b":2},{"b":2,"a":1}]
+ok 723 - uniqueItems true validates semantic JSON equality for [{"a":1,"b":2},{"b":2,"a":1}]
+  ---
+  duration_ms: 267.481526
+  type: 'test'
+  ...
+# Subtest: uniqueItems false validates semantic JSON equality for [1,1]
+ok 724 - uniqueItems false validates semantic JSON equality for [1,1]
+  ---
+  duration_ms: 167.484808
+  type: 'test'
+  ...
+# Subtest: uniqueItems true validates semantic JSON equality for [1,"1"]
+ok 725 - uniqueItems true validates semantic JSON equality for [1,"1"]
+  ---
+  duration_ms: 221.467465
+  type: 'test'
+  ...
+# Subtest: uniqueItems true validates semantic JSON equality for []
+ok 726 - uniqueItems true validates semantic JSON equality for []
+  ---
+  duration_ms: 374.578044
+  type: 'test'
+  ...
+# Subtest: command help succeeds with its implementation absent while execution reports blocked
+ok 727 - command help succeeds with its implementation absent while execution reports blocked
+  ---
+  duration_ms: 569.750409
+  type: 'test'
+  ...
+# Subtest: dispatch rejects unsupported arguments before loading the command
+ok 728 - dispatch rejects unsupported arguments before loading the command
+  ---
+  duration_ms: 136.999889
+  type: 'test'
+  ...
+# Subtest: skill metadata permits only user invocation in the documented hosts
+ok 729 - skill metadata permits only user invocation in the documented hosts
+  ---
+  duration_ms: 66.209526
+  type: 'test'
+  ...
+# Subtest: load when table resolves all eight bundled references
+ok 730 - load when table resolves all eight bundled references
+  ---
+  duration_ms: 45.264513
+  type: 'test'
+  ...
+# Subtest: no arguments prints planned commands and returns usage exit 3
+ok 731 - no arguments prints planned commands and returns usage exit 3
+  ---
+  duration_ms: 146.30624
+  type: 'test'
+  ...
+# Subtest: explicit help succeeds
+ok 732 - explicit help succeeds
+  ---
+  duration_ms: 103.539363
+  type: 'test'
+  ...
+# Subtest: an unimplemented command returns usage exit 3
+ok 733 - an unimplemented command returns usage exit 3
+  ---
+  duration_ms: 262.251815
+  type: 'test'
+  ...
+# Subtest: fetch copies exact pinned bytes and check verifies them without writing
+ok 734 - fetch copies exact pinned bytes and check verifies them without writing
+  ---
+  duration_ms: 929.385555
+  type: 'test'
+  ...
+# Subtest: fetch refuses a listed file absent at its pin
+ok 735 - fetch refuses a listed file absent at its pin
+  ---
+  duration_ms: 324.944552
+  type: 'test'
+  ...
+# Subtest: check refuses a listed file absent at its pin
+ok 736 - check refuses a listed file absent at its pin
+  ---
+  duration_ms: 281.325319
+  type: 'test'
+  ...
+# Subtest: check refuses an absent local copy without repairing it
+ok 737 - check refuses an absent local copy without repairing it
+  ---
+  duration_ms: 321.20411
+  type: 'test'
+  ...
+# Subtest: check refuses modified local bytes and preserves them
+ok 738 - check refuses modified local bytes and preserves them
+  ---
+  duration_ms: 687.583021
+  type: 'test'
+  ...
+# Subtest: fetch rejects traversal before copying files
+ok 739 - fetch rejects traversal before copying files
+  ---
+  duration_ms: 122.099326
+  type: 'test'
+  ...
+# Subtest: board build renders escaped text and preserves raw revision-bound verdict data
+ok 740 - board build renders escaped text and preserves raw revision-bound verdict data
+  ---
+  duration_ms: 514.050811
+  type: 'test'
+  ...
+# Subtest: board rejects duplicate IDs before scratch writes
+ok 741 - board rejects duplicate IDs before scratch writes
+  ---
+  duration_ms: 210.687909
+  type: 'test'
+  ...
+# Subtest: board rejects blank IDs before scratch writes
+ok 742 - board rejects blank IDs before scratch writes
+  ---
+  duration_ms: 173.24546
+  type: 'test'
+  ...
+# Subtest: board rejects missing IDs before scratch writes
+ok 743 - board rejects missing IDs before scratch writes
+  ---
+  duration_ms: 253.563632
+  type: 'test'
+  ...
+# Subtest: board rejects stale draft before scratch writes
+ok 744 - board rejects stale draft before scratch writes
+  ---
+  duration_ms: 280.851006
+  type: 'test'
+  ...
+# Subtest: board rejects unknown fields before scratch writes
+ok 745 - board rejects unknown fields before scratch writes
+  ---
+  duration_ms: 263.059145
+  type: 'test'
+  ...
+# Subtest: board rejects empty cards before scratch writes
+ok 746 - board rejects empty cards before scratch writes
+  ---
+  duration_ms: 209.611841
+  type: 'test'
+  ...
+# Subtest: board rejects wrong field types before scratch writes
+ok 747 - board rejects wrong field types before scratch writes
+  ---
+  duration_ms: 212.238043
+  type: 'test'
+  ...
+# Subtest: board rejects an empty draft without scratch writes
+ok 748 - board rejects an empty draft without scratch writes
+  ---
+  duration_ms: 168.950847
+  type: 'test'
+  ...
+# Subtest: board rejects an invalid UTF-8 draft without scratch writes
+ok 749 - board rejects an invalid UTF-8 draft without scratch writes
+  ---
+  duration_ms: 198.436007
+  type: 'test'
+  ...
+# Subtest: board reports missing files, missing options and unknown options
+ok 750 - board reports missing files, missing options and unknown options
+  ---
+  duration_ms: 486.493131
+  type: 'test'
+  ...
+# Subtest: board ships the unchanged upstream stylesheet beside its generated HTML
+ok 751 - board ships the unchanged upstream stylesheet beside its generated HTML
+  ---
+  duration_ms: 345.991838
+  type: 'test'
+  ...
+# Subtest: resumed review preserves previous drafts and decisions and refuses an old round on the revised board
+ok 752 - resumed review preserves previous drafts and decisions and refuses an old round on the revised board
+  ---
+  duration_ms: 1054.808896
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses unknown card without creating a new draft
+ok 753 - verdict ingestion refuses unknown card without creating a new draft
+  ---
+  duration_ms: 391.711771
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses duplicate card without creating a new draft
+ok 754 - verdict ingestion refuses duplicate card without creating a new draft
+  ---
+  duration_ms: 312.691104
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses missing card without creating a new draft
+ok 755 - verdict ingestion refuses missing card without creating a new draft
+  ---
+  duration_ms: 462.686051
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses missing card ID without creating a new draft
+ok 756 - verdict ingestion refuses missing card ID without creating a new draft
+  ---
+  duration_ms: 517.265112
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses blank card ID without creating a new draft
+ok 757 - verdict ingestion refuses blank card ID without creating a new draft
+  ---
+  duration_ms: 597.727807
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses different run without creating a new draft
+ok 758 - verdict ingestion refuses different run without creating a new draft
+  ---
+  duration_ms: 354.896839
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses different revision without creating a new draft
+ok 759 - verdict ingestion refuses different revision without creating a new draft
+  ---
+  duration_ms: 453.628604
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses unknown verdict without creating a new draft
+ok 760 - verdict ingestion refuses unknown verdict without creating a new draft
+  ---
+  duration_ms: 518.011979
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses incomplete round without creating a new draft
+ok 761 - verdict ingestion refuses incomplete round without creating a new draft
+  ---
+  duration_ms: 384.33035
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses unknown field without creating a new draft
+ok 762 - verdict ingestion refuses unknown field without creating a new draft
+  ---
+  duration_ms: 453.745241
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses an empty revised draft
+ok 763 - verdict ingestion refuses an empty revised draft
+  ---
+  duration_ms: 354.045142
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses an invalid UTF-8 revised draft
+ok 764 - verdict ingestion refuses an invalid UTF-8 revised draft
+  ---
+  duration_ms: 527.667549
+  type: 'test'
+  ...
+# Subtest: review refuses changed original draft bytes and another workspace
+ok 765 - review refuses changed original draft bytes and another workspace
+  ---
+  duration_ms: 1021.521894
+  type: 'test'
+  ...
+# Subtest: launch reports a missing pinned runtime and preserves the draft for resume
+ok 766 - launch reports a missing pinned runtime and preserves the draft for resume
+  ---
+  duration_ms: 933.979024
+  type: 'test'
+  ...
+# Fresh gate prepare: both lockfiles installed. Nested lavish-axi --version: 0.1.78. Empty isolated home, no support skill installed, installed command help: exit 0.
+# Subtest: gate prepare installs both locks and runs the pinned runtime without global support skills
+ok 767 - gate prepare installs both locks and runs the pinned runtime without global support skills
+  ---
+  duration_ms: 10395.495837
+  type: 'test'
+  ...
+1..767
+# tests 767
+# suites 0
+# pass 767
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 86691.720967
