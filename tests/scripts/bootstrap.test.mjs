@@ -230,6 +230,36 @@ test('capture rejects uncommitted source and invalidates an older successful cap
   assert.equal(attach(directory).status, 1)
 })
 
+for (const [state, restoreArgs] of [['unstaged', ['--worktree']], ['staged', ['--staged', '--worktree']]]) {
+  test(`attachment rejects ${state} restoration of tested source over an untested HEAD`, async t => {
+    const directory = await evidenceSandbox(t)
+    const path = join(directory, 'tests/scripts/selected.test.mjs')
+    assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+    const capture = JSON.parse(await readFile(join(directory, '.cache/run.json'), 'utf8'))
+    await writeFile(path, "import test from 'node:test'\ntest('untested behaviour', () => {})\n")
+    assert.equal(spawnSync('git', ['add', '.'], { cwd: directory }).status, 0)
+    assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'untested source'], { cwd: directory }).status, 0)
+    assert.equal(spawnSync('git', ['restore', `--source=${capture.sourceRevision}`, ...restoreArgs, 'tests/scripts/selected.test.mjs'], { cwd: directory }).status, 0)
+    const result = attach(directory)
+    assert.equal(result.status, 1, result.stderr + result.stdout)
+    assert.match(result.stderr, /Commit source inputs before attaching evidence/)
+  })
+}
+
+test('attachment rejects untracked restoration of a file deleted from HEAD', async t => {
+  const directory = await evidenceSandbox(t)
+  const path = join(directory, 'tests/scripts/selected.test.mjs')
+  const tested = await readFile(path, 'utf8')
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  assert.equal(spawnSync('git', ['rm', 'tests/scripts/selected.test.mjs'], { cwd: directory }).status, 0)
+  assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'delete tested source'], { cwd: directory }).status, 0)
+  await mkdir(dirname(path), { recursive: true })
+  await writeFile(path, tested)
+  const result = attach(directory)
+  assert.equal(result.status, 1, result.stderr + result.stdout)
+  assert.match(result.stderr, /Commit source inputs before attaching evidence/)
+})
+
 test('capture rejects source changes made during test execution', async t => {
   const directory = await evidenceSandbox(t,
     "import test from 'node:test'\nimport { writeFileSync } from 'node:fs'\ntest('mutates authored input', () => writeFileSync('new.mjs', '// changed\\n'))\n")

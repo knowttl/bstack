@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { environment, git, hash, inputs } from './lib/test-evidence.mjs'
+import { environment, git, hash, inputs, inputsCommitted } from './lib/test-evidence.mjs'
 
 // Task artifacts live in one portable directory, independent of the shell cwd.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -24,6 +24,7 @@ try {
       hash(output) !== run.outputSha256 || hash(events) !== run.eventsSha256) throw new Error('Full-suite evidence is incomplete or failed')
   if (run.baseRevision !== git(root, 'rev-parse', 'origin/main')) throw new Error('Evidence base changed; run the full suite again')
   git(root, 'merge-base', '--is-ancestor', run.sourceRevision, 'HEAD')
+  if (!inputsCommitted(root)) throw new Error('Commit source inputs before attaching evidence')
   if (JSON.stringify(run.inputs) !== JSON.stringify(await inputs(root)) ||
       JSON.stringify(run.environment) !== JSON.stringify(await environment())) throw new Error('Evidence inputs or environment changed; run the full suite again')
   const directory = join(root, 'tests', 'eval', 'results', 'tasks')

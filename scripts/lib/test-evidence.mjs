@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { lstat, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { platform, release, arch } from 'node:os'
 import { selectCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 
@@ -11,6 +11,13 @@ export function git(root, ...args) {
 
 export function hash(value) {
   return createHash('sha256').update(value).digest('hex')
+}
+
+export function inputsCommitted(root) {
+  const clean = spawnSync('git', ['diff', '--quiet', 'HEAD', '--', '.', ':!tests/eval/results/tasks'], { cwd: root })
+  if (clean.error) throw clean.error
+  return clean.status === 0 && !git(root, 'ls-files', '--others', '--exclude-standard', '-z').split('\0')
+    .some(path => path && !path.startsWith('tests/eval/results/tasks/'))
 }
 
 export async function environment() {
