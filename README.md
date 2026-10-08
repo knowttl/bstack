@@ -66,6 +66,7 @@ If a path is deleted on one line of history and reused by an unrelated file, the
 Rename lineage stops at file-lifetime boundaries, and Git output has no fixed capture limit.
 Lineage follows merged ancestry, and historical gitlink events are excluded even when absent at the selected head.
 Generated-directory exclusions use the shared discovery policy.
+Rename evidence omits events touching excluded lockfiles or generated paths, while formatting-only exclusions retain it.
 Signals are advisory evidence, never violations, and do not establish semantic independence or observed conflicts.
 
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.

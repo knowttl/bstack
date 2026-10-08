@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { appendFile, mkdir, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { build, emptyRepo, git, run, snapshot } from './discovery-fixture.mjs'
 import { repoFiles } from '../../skills/repo-audit/scripts/lib/discovery.mjs'
@@ -83,6 +83,63 @@ test('measure joins chained renames, excludes declared formatting and generated 
   assert.equal(result.data.renames.length, 2)
   assert.deepEqual(run('measure', repo, process.env, ['--range', 'HEAD', '--exclusions', policy]).data, result.data)
   assert.deepEqual(await snapshot(repo), before)
+})
+
+for (const scenario of [
+  { label: 'generated-directory', originalPath: 'dist/output.txt', generatedPaths: [] },
+  { label: 'lockfile', originalPath: 'package-lock.json', generatedPaths: [] },
+  { label: 'declared-generated', originalPath: 'output.generated.txt', generatedPaths: ['*.generated.txt'] }
+]) {
+  test(`measure omits ${scenario.label} rename evidence`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    await mkdir(dirname(join(repo, scenario.originalPath)), { recursive: true })
+    await writeFile(join(repo, scenario.originalPath), 'Stable\n')
+    await writeFile(join(repo, 'peer.txt'), 'Peer\n')
+    const seed = commit(repo, 'seed excluded file and peer')
+    git(repo, 'mv', scenario.originalPath, 'source.txt')
+    await appendFile(join(repo, 'peer.txt'), 'Changed\n')
+    const renamed = commit(repo, 'rename excluded file and change peer')
+    const policy = join(directory, 'exclusions.json')
+    await writeFile(policy, JSON.stringify({ schemaVersion: 1, generatedPaths: scenario.generatedPaths, formattingCommits: [] }))
+    const result = run('measure', repo, process.env, ['--range', 'HEAD', '--exclusions', policy])
+    assert.equal(result.exit, 0)
+    assert.deepEqual(result.data.renames, [])
+    assert.deepEqual(result.data.files.find(file => file.path === 'source.txt'), { path: 'source.txt', bytes: 7, commits: [], changeCount: 0 })
+    assert.deepEqual(result.data.files.find(file => file.path === 'peer.txt').commits, [renamed, seed])
+    assert.deepEqual(result.data.coChangePairs, [])
+  })
+  test(`measure omits renames through a ${scenario.label} destination`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    await writeFile(join(repo, 'old.txt'), 'Stable\n')
+    const seed = commit(repo, 'seed authored file')
+    await mkdir(dirname(join(repo, scenario.originalPath)), { recursive: true })
+    git(repo, 'mv', 'old.txt', scenario.originalPath)
+    commit(repo, 'rename into excluded destination')
+    git(repo, 'mv', scenario.originalPath, 'source.txt')
+    commit(repo, 'rename out of excluded destination')
+    const policy = join(directory, 'exclusions.json')
+    await writeFile(policy, JSON.stringify({ schemaVersion: 1, generatedPaths: scenario.generatedPaths, formattingCommits: [] }))
+    const result = run('measure', repo, process.env, ['--range', 'HEAD', '--exclusions', policy])
+    assert.equal(result.exit, 0)
+    assert.deepEqual(result.data.renames, [])
+    assert.deepEqual(result.data.files.find(file => file.path === 'source.txt').commits, [seed])
+  })
+}
+
+test('measure retains formatting-only rename evidence', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  await writeFile(join(repo, 'old.txt'), 'Stable\n')
+  await writeFile(join(repo, 'peer.txt'), 'Peer\n')
+  const seed = commit(repo, 'seed authored files')
+  git(repo, 'mv', 'old.txt', 'source.txt')
+  const renamed = commit(repo, 'formatting rename')
+  const policy = join(directory, 'exclusions.json')
+  await writeFile(policy, JSON.stringify({ schemaVersion: 1, generatedPaths: [], formattingCommits: [renamed] }))
+  const result = run('measure', repo, process.env, ['--range', 'HEAD', '--exclusions', policy])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.renames, [{ commit: renamed, path: 'source.txt', originalPath: 'old.txt', canonicalPath: 'source.txt' }])
+  assert.deepEqual(result.data.files.find(file => file.path === 'source.txt').commits, [seed])
+  assert.deepEqual(result.data.coChangePairs, [{ paths: ['peer.txt', 'source.txt'], commits: [seed], changeCount: 1 }])
 })
 
 test('measure honours empty ranges, missing history, and deleted paths', async t => {

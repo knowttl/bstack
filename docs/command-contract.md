@@ -63,7 +63,7 @@ Declare other generated files and broad formatting commits with the [exclusions 
 ```
 
 Formatting commits resolve to full IDs and must belong to the range.
-The command excludes their changes from frequency and co-change while retaining their rename evidence.
+The command excludes their changes from frequency and co-change while retaining rename evidence unless the original or destination path is excluded.
 Formatting is explicitly identified by the caller, never guessed from size or commit messages.
 `data.exclusions` reports all applied rules, matching observed paths with their reason and pattern, and resolved formatting commit IDs.
 An excluded original or destination name excludes that rename event.

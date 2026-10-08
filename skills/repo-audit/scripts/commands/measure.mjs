@@ -100,7 +100,7 @@ export async function run(options) {
       if (nonBlob) excluded.set(change.path, { path: change.path, reason: 'non-blob' })
       const omitted = nonBlob || exclusion(change.path) || (change.originalPath ? exclusion(change.originalPath) : false)
       for (const path of canonicalPaths) {
-        if (change.originalPath) renames.push({ commit: record.commit, path: change.path, originalPath: change.originalPath, canonicalPath: path })
+        if (change.originalPath && !omitted) renames.push({ commit: record.commit, path: change.path, originalPath: change.originalPath, canonicalPath: path })
         if (formatting.has(record.commit) || omitted) continue
         if (!touched.has(path)) touched.set(path, new Set())
         touched.get(path).add(change.path)
