@@ -66,15 +66,29 @@ test('clear-goals replays deterministic history with local identity and signing 
 test('all fixtures run sanity checks and leave source bytes unchanged', async t => {
   const before = await bytes(sources)
   const fixtures = build(t, '--all')
-  assert.deepEqual(fixtures.map(({ name, kind }) => ({ name, kind })), [
-    { name: 'new-idea', kind: 'idea' }, { name: 'ambiguous-idea', kind: 'idea' }, { name: 'clear-goals', kind: 'repo' }
-  ])
-  for (const fixture of fixtures) {
-    const result = spawnSync(process.execPath, [join(sources, fixture.name, 'sanity.mjs'), fixture.path], { encoding: 'utf8' })
-    assert.equal(result.status, 0, result.stderr)
-  }
+  const registry = JSON.parse(await readFile(join(sources, 'fixtures.json'), 'utf8'))
+  assert.deepEqual(fixtures.map(({ name, kind }) => ({ name, kind })),
+    Object.entries(registry).map(([name, fixture]) => ({ name, kind: fixture.kind })))
   assert.deepEqual(await bytes(sources), before)
 })
+
+for (const name of ['dirty-work', 'refactor', 'contract-removal', 'shallow-history', 'installer-collision']) {
+  test(`${name} reproduces its declared state with deterministic history`, t => {
+    const [first] = build(t, name)
+    const [second] = build(t, name)
+    assert.equal(git(first.path, 'rev-parse', 'HEAD'), git(second.path, 'rev-parse', 'HEAD'))
+    assert.equal(git(first.path, 'status', '--porcelain'), git(second.path, 'status', '--porcelain'))
+  })
+}
+
+for (const name of ['ts-shop', 'py-ledger']) {
+  test(`${name} reports missing native tools as blocked`, () => {
+    const result = spawnSync(process.execPath, [join(sources, name, 'sanity.mjs'), tmpdir(), name],
+      { encoding: 'utf8', env: { ...process.env, PATH: '' } })
+    assert.equal(result.status, 2)
+    assert.match(result.stderr, /Blocked: install/)
+  })
+}
 
 test('a changed fixture seed fails its sanity check', async t => {
   const [fixture] = build(t, 'ambiguous-idea')

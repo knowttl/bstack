@@ -337,8 +337,9 @@ Tick each task when its "Done when" commands pass.
     - [x] C5b Script/import/step policy and rewritten T0.6 ([evidence](../tests/eval/results/tasks/T0.5.C5b.json))
   - [x] T0.6 Establish local validation and no-mistakes gate ([evidence](../tests/eval/results/tasks/T0.6.json))
 - Phase 1: Intent and vision
-  - [ ] T1.1 Build the test fixtures
+  - [x] T1.1 Build the test fixtures
     - [x] C6a Isolated idea/clear-goals fixtures and builder ([evidence](../tests/eval/results/tasks/T1.1.json))
+    - [x] C6bc Native stacks, boundary proofs and state variants ([evidence](../tests/eval/results/tasks/T1.1.json))
     - [ ] C6bc Native stacks, rule-proof and remaining variants
   - [ ] T1.2 Build the evaluation runner and record the baseline
   - [ ] T1.3 Write the first `SKILL.md`
