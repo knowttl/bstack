@@ -1,4 +1,5 @@
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
+import { randomUUID } from 'node:crypto'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
@@ -48,6 +49,12 @@ export async function run(options) {
   }
   const problems = newDebt.map(entry => ({ code: 'new-debt', message: `Unrecorded violation: ${identity(entry)}`, fix: 'Fix it or select its debt finding before adding a narrow entry.' }))
   if (!options.refresh) problems.push(...removedDebt.map(entry => ({ code: 'stale-debt', message: `Fixed entry must be removed: ${identity(entry)}`, fix: 'Run baseline check with --refresh to remove fixed entries.' })))
-  if (options.refresh && !problems.length) await writeFile(path, JSON.stringify({ schemaVersion: 1, entries: retained }, null, 2) + '\n')
+  if (options.refresh && !problems.length) {
+    const temporary = `${path}.${randomUUID()}.tmp`
+    try {
+      await writeFile(temporary, JSON.stringify({ schemaVersion: 1, entries: retained }, null, 2) + '\n', { flag: 'wx', mode: (await stat(path)).mode })
+      await rename(temporary, path)
+    } finally { await rm(temporary, { force: true }) }
+  }
   return { status: problems.length ? 'failed' : 'passed', problems, data: { baseline: path, debt: retained, newDebt, removedDebt, refreshed: Boolean(options.refresh && !problems.length) } }
 }

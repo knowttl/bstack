@@ -86,6 +86,23 @@ test('a selected debt finding authorizes one matching new entry', async t => {
   assert.deepEqual(JSON.parse(await readFile(join(f.repo, 'baseline.json'), 'utf8')).entries, [entry])
 })
 
+for (const adding of [false, true]) {
+  for (const fault of ['write', 'rename']) {
+    test(`failed ${fault} preserves baseline bytes during ${adding ? 'selected entry addition' : 'fixed entry removal'}`, async t => {
+      const f = await setup(t, adding ? [] : [entry], adding ? [violation] : [])
+      const args = adding ? (await authorize(f)).args : ['--refresh']
+      await f.invoke()
+      const before = await snapshot(f.repo)
+      const result = spawnSync(process.execPath, ['--import', new URL('../inputs/baseline-fault.mjs', import.meta.url).pathname,
+        new URL('../../skills/repo-audit/scripts/repo-audit.mjs', import.meta.url).pathname,
+        'baseline', 'check', '--repo', f.repo, '--json', '--baseline', 'baseline.json', '--violations', f.file, ...args],
+      { encoding: 'utf8', env: { ...process.env, BSTACK_TEST_FAULT: fault, BSTACK_TEST_DESTINATION: join(f.repo, 'baseline.json') } })
+      assert.notEqual(result.status, 0)
+      assert.deepEqual(await snapshot(f.repo), before)
+    })
+  }
+}
+
 for (const [name, mutate] of [
   ['unselected finding', f => { f.findings[0].status = 'proposed'; f.selectedFindingIds = [] }],
   ['resolved finding', f => { f.findings[0].resolved = true }],

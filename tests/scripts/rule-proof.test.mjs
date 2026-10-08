@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, symlink, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { emptyRepo, build, run, snapshot } from './discovery-fixture.mjs'
 
@@ -25,6 +25,26 @@ async function setup(t, command) {
 }
 
 const command = { executable: 'node', args: ['-e', 'const fs = require("node:fs"); const kind = fs.readFileSync("case.txt", "utf8"); fs.writeFileSync("generated", kind); console.log(kind); process.exit(kind === "valid" ? 0 : 1)'], cwd: '.', versionArgs: ['--version'] }
+
+for (const absolute of [false, true]) {
+  test(`proof relocates ${absolute ? 'absolute' : 'relative'} dependency executable links in both copies`, async t => {
+    const f = await setup(t, { ...command, args: ['node_modules/.bin/check'] })
+    for (const root of [f.valid, f.violation]) {
+      await mkdir(join(root, 'node_modules/.bin'), { recursive: true })
+      await mkdir(join(root, 'node_modules/check/bin'), { recursive: true })
+      await mkdir(join(root, 'node_modules/check/lib'))
+      await writeFile(join(root, 'node_modules/check/bin/check'), 'require("../lib/check.cjs")')
+      await writeFile(join(root, 'node_modules/check/lib/check.cjs'),
+        'const fs = require("node:fs"); const kind = fs.readFileSync("case.txt", "utf8"); fs.writeFileSync(__dirname + "/generated", kind); console.log(kind); process.exit(kind === "valid" ? 0 : 1)')
+      await symlink(absolute ? join(root, 'node_modules/check/bin/check') : '../check/bin/check', join(root, 'node_modules/.bin/check'), 'file')
+    }
+    const before = await Promise.all([snapshot(f.valid), snapshot(f.violation)])
+    const result = await f.invoke()
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.cases.map(item => item.execution.exitCode), [0, 1])
+    assert.deepEqual(await Promise.all([snapshot(f.valid), snapshot(f.violation)]), before)
+  })
+}
 
 test('proof preserves source fixtures and records normal rejection with tool version', async t => {
   const f = await setup(t, command)

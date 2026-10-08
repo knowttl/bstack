@@ -1,5 +1,6 @@
-import { cp, readFile, rm, writeFile, realpath, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { cp, lstat, readFile, rm, symlink, writeFile, realpath, stat } from 'node:fs/promises'
+import { dirname, join, relative } from 'node:path'
+import { isInside } from '../lib/paths.mjs'
 import { resolveTarget } from '../lib/repo.mjs'
 import { createScratch } from '../lib/scratch.mjs'
 import { inspectJSON } from '../lib/json.mjs'
@@ -37,7 +38,14 @@ export async function run(options) {
       let reason = null
       let status = 'blocked'
       try {
-        await cp(sources[index], root, { recursive: true, dereference: true })
+        await cp(sources[index], root, { recursive: true, dereference: true, filter: async (source, destination) => {
+          if (!(await lstat(source)).isSymbolicLink()) return true
+          const resolved = await realpath(source)
+          if (!isInside(sources[index], resolved)) return true
+          const copiedTarget = join(root, relative(sources[index], resolved))
+          await symlink(relative(dirname(destination), copiedTarget), destination, (await stat(resolved)).isDirectory() ? 'dir' : 'file')
+          return false
+        } })
         execution = await runCommand({ root }, check.command, { signal: controller.signal })
         const normal = execution.toolVersion.status === 'passed' && execution.exitCode !== null && !execution.error &&
           !execution.signal && !execution.timedOut && !execution.cancelled
