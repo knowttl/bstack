@@ -8,7 +8,7 @@ The procedure defines both audit checklists, review before apply, protected writ
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
 Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending principles and their checks, and [architecture](skills/repo-audit/references/architecture.md) when recommending module boundaries.
-These provide evidence requirements and project-specific guidance, with native rule-proof and maintained checks still pending.
+These provide project-specific guidance, native rule-proof and debt baseline checks, with maintained local integration still pending.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
 The maintenance reference remains a placeholder, while maintained enforcement, portable maintenance and the installer are pending.
@@ -120,7 +120,28 @@ The owner selects the stack, scaffold and first journey after approving the scra
 Creation journals directories and files through the existing protected-write engine before initialising Git only at the reviewed destination.
 Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
-Later rule-proof, maintained enforcement and portable maintenance remain pending.
+Maintained enforcement and portable maintenance remain pending.
+
+Prove a selected native rule against prepared clean and independently seeded fixtures:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json
+npm test -- --task T3.2
+```
+
+Prepare native dependencies in the fixtures first.
+See the [enforcement command contract](docs/command-contract.md#rule-proof-and-temporary-debt) for check selection, saved proof evidence and coverage limits.
+
+Check a temporary baseline when the native tool has no baseline feature:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --json
+node skills/repo-audit/scripts/repo-audit.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --refresh --json
+node skills/repo-audit/scripts/repo-audit.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --refresh --finding <id> --findings <file> --entry <file> --json
+npm test -- --task T3.3
+```
+
+Prepare an existing baseline file and normalized native violations as described in the [enforcement command contract](docs/command-contract.md#rule-proof-and-temporary-debt), including the requirements for authorizing new entries.
 
 Capture a reviewed check plan with acceptance sources and input scopes:
 

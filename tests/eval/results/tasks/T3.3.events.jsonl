@@ -1,0 +1,921 @@
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry validates all 75 owned cases without passing planned procedures","line":23,"column":1,"nesting":0,"duration_ms":101.641124}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks missing acceptance ID","line":44,"column":3,"nesting":0,"duration_ms":106.98282}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks duplicate acceptance ID","line":44,"column":3,"nesting":0,"duration_ms":83.378584}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks unknown owner task","line":44,"column":3,"nesting":0,"duration_ms":111.506484}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks wrong existing owner task","line":44,"column":3,"nesting":0,"duration_ms":128.561633}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks missing shared owner","line":44,"column":3,"nesting":0,"duration_ms":101.645251}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks extra shared owner","line":44,"column":3,"nesting":0,"duration_ms":99.32919}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks duplicate owner","line":44,"column":3,"nesting":0,"duration_ms":121.882847}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks invalid procedure status","line":44,"column":3,"nesting":0,"duration_ms":113.981194}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks empty planned procedure","line":44,"column":3,"nesting":0,"duration_ms":88.959632}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks invalid criterion source","line":44,"column":3,"nesting":0,"duration_ms":101.947464}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks unknown registry field","line":44,"column":3,"nesting":0,"duration_ms":112.924473}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks missing completed evidence","line":44,"column":3,"nesting":0,"duration_ms":102.332788}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"registry blocks unregistered completed test","line":44,"column":3,"nesting":0,"duration_ms":94.507092}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"completed agent procedure blocks ambiguous-idea for AC-1","line":60,"column":5,"nesting":0,"duration_ms":103.545164}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"completed agent procedure accepts ambiguous-idea for AC-2","line":60,"column":5,"nesting":0,"duration_ms":120.197873}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"completed agent procedure accepts new-idea for AC-9","line":60,"column":5,"nesting":0,"duration_ms":146.014016}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"completed manual procedure blocks ambiguous-idea for AC-1","line":60,"column":5,"nesting":0,"duration_ms":85.882372}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"completed manual procedure accepts ambiguous-idea for AC-2","line":60,"column":5,"nesting":0,"duration_ms":117.237099}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"completed manual procedure accepts new-idea for AC-9","line":60,"column":5,"nesting":0,"duration_ms":123.367755}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"duplicate final selections are blocked independently of run history","line":77,"column":1,"nesting":0,"duration_ms":98.708946}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"completed procedure definitions execute valid skeleton passes from another working directory without scoring it","line":88,"column":3,"nesting":0,"duration_ms":1139.358489}
+{"type":"test:pass","file":"tests/scripts/acceptance.test.mjs","name":"completed procedure definitions execute unlisted-reference fails with reference-unlisted without scoring it","line":88,"column":3,"nesting":0,"duration_ms":757.296068}
+{"type":"test:summary","file":"tests/scripts/acceptance.test.mjs","counts":{"tests":23,"failed":0,"passed":23,"cancelled":0,"skipped":0,"todo":0,"topLevel":23,"suites":0},"success":true,"duration_ms":4175.84737}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages create with no project writes","line":100,"column":3,"nesting":0,"duration_ms":298.784826}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages replace with no project writes","line":100,"column":3,"nesting":0,"duration_ms":202.852146}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages selected delete with no project writes","line":100,"column":3,"nesting":0,"duration_ms":228.186345}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages empty replacement keeps a present file with no project writes","line":100,"column":3,"nesting":0,"duration_ms":161.447662}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages heading section with no project writes","line":100,"column":3,"nesting":0,"duration_ms":163.880189}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages CRLF heading section with no project writes","line":100,"column":3,"nesting":0,"duration_ms":210.380641}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages UTF-8 BOM and Unicode replacement with no project writes","line":100,"column":3,"nesting":0,"duration_ms":176.627955}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages JSON key with no project writes","line":100,"column":3,"nesting":0,"duration_ms":153.114312}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages new JSON key preserves exact existing values with no project writes","line":100,"column":3,"nesting":0,"duration_ms":166.779368}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages append line with no project writes","line":100,"column":3,"nesting":0,"duration_ms":187.947486}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages existing appended line with no project writes","line":100,"column":3,"nesting":0,"duration_ms":176.983833}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages heading in fenced code is preserved with no project writes","line":100,"column":3,"nesting":0,"duration_ms":167.421953}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages comment in fenced code is preserved with no project writes","line":100,"column":3,"nesting":0,"duration_ms":135.281327}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages HTML block in fenced code is preserved with no project writes","line":100,"column":3,"nesting":0,"duration_ms":156.034898}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages less-than prose with no project writes","line":100,"column":3,"nesting":0,"duration_ms":176.320839}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply dry run stages closing heading markers with no project writes","line":100,"column":3,"nesting":0,"duration_ms":228.881169}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects bare CR in set-heading-section before matching with no project writes","line":113,"column":3,"nesting":0,"duration_ms":301.814731}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects bare CR in append-line-once before matching with no project writes","line":113,"column":3,"nesting":0,"duration_ms":303.671045}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply ignores a leading BOM for semantic matching while preserving bytes","line":123,"column":1,"nesting":0,"duration_ms":1509.188563}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects backtick-containing fence info before deriving section bytes","line":137,"column":1,"nesting":0,"duration_ms":390.978677}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \" ```\" inside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":415.349345}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \" ```\" outside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":380.227313}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"  ```\" inside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":403.676014}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"  ```\" outside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":447.375095}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"   ```\" inside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":427.854908}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"   ```\" outside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":324.77622}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"\\t```\" inside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":307.524328}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"\\t```\" outside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":341.596002}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \" ~~~\" inside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":346.927781}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \" ~~~\" outside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":337.210442}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"  ~~~\" inside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":412.7967}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"  ~~~\" outside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":296.894891}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"   ~~~\" inside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":446.266895}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"   ~~~\" outside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":309.690164}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"\\t~~~\" inside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":388.028911}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject \"\\t~~~\" outside a fence without project writes","line":152,"column":7,"nesting":0,"duration_ms":316.788836}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects nonfinite JSON payload numbers before digest computation","line":164,"column":1,"nesting":0,"duration_ms":918.379758}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply prints the exact selected-delete diff in plain and JSON output","line":180,"column":1,"nesting":0,"duration_ms":430.594666}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject the empty \"#\" section without project writes","line":192,"column":3,"nesting":0,"duration_ms":387.084908}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject the empty \"#   \" section without project writes","line":192,"column":3,"nesting":0,"duration_ms":334.063744}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject the empty \"# ###\" section without project writes","line":192,"column":3,"nesting":0,"duration_ms":346.247362}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject the empty \"##\" section without project writes","line":192,"column":3,"nesting":0,"duration_ms":399.497257}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject the empty \"###\" section without project writes","line":192,"column":3,"nesting":0,"duration_ms":402.650061}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject the empty \"####\" section without project writes","line":192,"column":3,"nesting":0,"duration_ms":377.849532}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject the empty \"#####\" section without project writes","line":192,"column":3,"nesting":0,"duration_ms":361.467506}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject the empty \"######\" section without project writes","line":192,"column":3,"nesting":0,"duration_ms":355.201265}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject tab-terminated level-1 setext underline with \"\\n\" and no project writes","line":211,"column":5,"nesting":0,"duration_ms":309.296417}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject tab-terminated level-1 setext underline with \"\\r\\n\" and no project writes","line":211,"column":5,"nesting":0,"duration_ms":390.771629}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject tab-terminated level-2 setext underline with \"\\n\" and no project writes","line":211,"column":5,"nesting":0,"duration_ms":435.448284}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject tab-terminated level-2 setext underline with \"\\r\\n\" and no project writes","line":211,"column":5,"nesting":0,"duration_ms":548.184237}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject tab-terminated star thematic break with \"\\n\" and no project writes","line":211,"column":5,"nesting":0,"duration_ms":370.568007}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject tab-terminated star thematic break with \"\\r\\n\" and no project writes","line":211,"column":5,"nesting":0,"duration_ms":382.992889}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject tab-terminated underscore thematic break with \"\\n\" and no project writes","line":211,"column":5,"nesting":0,"duration_ms":272.29727}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject tab-terminated underscore thematic break with \"\\r\\n\" and no project writes","line":211,"column":5,"nesting":0,"duration_ms":292.137063}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported unordered list continuation with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":352.83998}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported ordered list continuation with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":333.102883}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported unordered list heading with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":319.14508}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported ordered list heading with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":328.263499}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported indented heading with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":306.225574}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported tab-indented heading with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":275.095917}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported block quote heading with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":425.982322}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported HTML block with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":384.799586}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported indented fence with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":306.127658}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported fence attributes with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":325.608561}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported table with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":313.810713}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported reference definition with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":341.155674}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject unsupported CRLF empty heading with whole-file guidance and no project writes","line":239,"column":3,"nesting":0,"duration_ms":283.964543}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject comment before selected heading without project writes","line":254,"column":3,"nesting":0,"duration_ms":413.71527}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject comment inside selected section without project writes","line":254,"column":3,"nesting":0,"duration_ms":319.97964}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject inline comment without project writes","line":254,"column":3,"nesting":0,"duration_ms":248.277371}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject pre before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":302.023015}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject pre inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":273.023933}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject pre after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":287.880888}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject script before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":313.728544}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject script inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":327.670295}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject script after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":245.010175}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject style before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":249.57558}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject style inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":199.127048}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject style after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":225.081257}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject textarea before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":249.054788}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject textarea inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":250.835093}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject textarea after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":225.416088}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject div before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":259.460866}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject div inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":293.389583}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject div after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":225.224552}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject uppercase indented tag before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":247.847218}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject uppercase indented tag inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":338.783465}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject uppercase indented tag after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":295.088891}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject multiline tag before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":250.720459}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject multiline tag inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":258.269231}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject multiline tag after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":260.463499}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject custom tag before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":333.783976}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject custom tag inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":308.038552}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject custom tag after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":233.041487}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject closing tag before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":327.992335}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject closing tag inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":265.098769}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject closing tag after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":524.899463}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject processing instruction before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":352.475489}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject processing instruction inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":232.705921}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject processing instruction after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":325.132878}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject declaration before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":287.378162}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject declaration inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":369.505076}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject declaration after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":283.409002}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject CDATA before selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":330.581424}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject CDATA inside selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":235.996164}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"heading edits reject CDATA after selection without project writes","line":281,"column":5,"nesting":0,"duration_ms":281.193912}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects duplicate plan member before hashing with no project writes","line":297,"column":3,"nesting":0,"duration_ms":203.56409}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects duplicate escaped plan member before hashing with no project writes","line":297,"column":3,"nesting":0,"duration_ms":258.860454}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects duplicate nested payload member before hashing with no project writes","line":297,"column":3,"nesting":0,"duration_ms":255.205505}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects duplicate findings member before hashing with no project writes","line":297,"column":3,"nesting":0,"duration_ms":230.13452}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs\" in plan scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":192.397103}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs\" in both scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":258.981115}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs/*.md\" in plan scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":264.662673}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs/*.md\" in both scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":201.290721}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs/?.md\" in plan scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":199.365708}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs/?.md\" in both scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":176.249018}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs/[ab].md\" in plan scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":240.267311}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs/[ab].md\" in both scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":197.443684}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs/{a,b}.md\" in plan scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":187.716923}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"docs/{a,b}.md\" in both scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":199.471978}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"README.md/child\" in plan scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":235.157895}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unedited \"README.md/child\" in both scope without project writes","line":312,"column":5,"nesting":0,"duration_ms":193.521538}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply accepts unedited concrete planned files in reviewed scope","line":325,"column":1,"nesting":0,"duration_ms":144.935339}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects invalid schema with no project writes","line":356,"column":3,"nesting":0,"duration_ms":178.922519}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unknown input field with no project writes","line":356,"column":3,"nesting":0,"duration_ms":216.302714}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unresolved scope with no project writes","line":356,"column":3,"nesting":0,"duration_ms":327.558476}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects changed scope resolution with no project writes","line":356,"column":3,"nesting":0,"duration_ms":169.604722}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unselected finding with no project writes","line":356,"column":3,"nesting":0,"duration_ms":281.78429}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects changed selected IDs with no project writes","line":356,"column":3,"nesting":0,"duration_ms":368.126075}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects scope widening with no project writes","line":356,"column":3,"nesting":0,"duration_ms":337.571303}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects path traversal with no project writes","line":356,"column":3,"nesting":0,"duration_ms":239.035846}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects target mismatch with no project writes","line":356,"column":3,"nesting":0,"duration_ms":232.306567}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects duplicate edit IDs with no project writes","line":356,"column":3,"nesting":0,"duration_ms":226.57062}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects overlapping edits with no project writes","line":356,"column":3,"nesting":0,"duration_ms":407.260403}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects duplicate scope with no project writes","line":356,"column":3,"nesting":0,"duration_ms":208.973714}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects changed precondition with no project writes","line":356,"column":3,"nesting":0,"duration_ms":206.602579}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects wrong proposed hash with no project writes","line":356,"column":3,"nesting":0,"duration_ms":248.768406}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects wrong proposed bytes with no project writes","line":356,"column":3,"nesting":0,"duration_ms":223.598079}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects empty replacement as absent with no project writes","line":356,"column":3,"nesting":0,"duration_ms":273.799025}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unknown payload field with no project writes","line":356,"column":3,"nesting":0,"duration_ms":296.713068}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects changed reviewed payload with no project writes","line":356,"column":3,"nesting":0,"duration_ms":259.639414}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects changed reviewed findings with no project writes","line":356,"column":3,"nesting":0,"duration_ms":232.468649}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unresolved decision with no project writes","line":356,"column":3,"nesting":0,"duration_ms":235.770011}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects ambiguous headings before any project writes","line":380,"column":3,"nesting":0,"duration_ms":218.65753}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects setext headings before any project writes","line":380,"column":3,"nesting":0,"duration_ms":639.594764}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unclosed fence before any project writes","line":380,"column":3,"nesting":0,"duration_ms":313.478391}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects duplicate JSON keys before any project writes","line":380,"column":3,"nesting":0,"duration_ms":207.039665}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects nested duplicate JSON keys before any project writes","line":380,"column":3,"nesting":0,"duration_ms":408.911153}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects unsupported format before any project writes","line":380,"column":3,"nesting":0,"duration_ms":283.88824}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects invalid JSON before any project writes","line":380,"column":3,"nesting":0,"duration_ms":215.095007}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects ambiguous replacement before any project writes","line":380,"column":3,"nesting":0,"duration_ms":208.82732}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects missing replacement match before any project writes","line":380,"column":3,"nesting":0,"duration_ms":220.286584}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects create collision before any project writes","line":380,"column":3,"nesting":0,"duration_ms":466.877412}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects missing delete before any project writes","line":380,"column":3,"nesting":0,"duration_ms":479.323519}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"changed later precondition prevents all edits and reports every changed file","line":388,"column":1,"nesting":0,"duration_ms":307.405347}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"escaping links fail with an unchanged project fingerprint and outside bytes","line":403,"column":1,"nesting":0,"duration_ms":193.708283}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"Git revision changes invalidate a reviewed dry run","line":415,"column":1,"nesting":0,"duration_ms":548.703788}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply refuses a missing plan and malformed plans","line":422,"column":1,"nesting":0,"duration_ms":264.027859}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"internal link aliases cannot stage overlapping edits","line":431,"column":1,"nesting":0,"duration_ms":246.483383}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"workspace dry run uses the same scope and payload protections","line":442,"column":1,"nesting":0,"duration_ms":117.583264}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"resume schema validates complete state through the public contract command","line":463,"column":3,"nesting":0,"duration_ms":99.102802}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"resume schema validates absent original and backup for create through the public contract command","line":463,"column":3,"nesting":0,"duration_ms":85.655667}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"resume schema validates absent proposed state for delete through the public contract command","line":463,"column":3,"nesting":0,"duration_ms":77.410279}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"resume schema validates missing plan digest through the public contract command","line":463,"column":3,"nesting":0,"duration_ms":251.591842}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"resume schema validates missing backup through the public contract command","line":463,"column":3,"nesting":0,"duration_ms":282.941361}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"resume schema validates missing resolved identity through the public contract command","line":463,"column":3,"nesting":0,"duration_ms":135.983331}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"resume schema validates invalid hash through the public contract command","line":463,"column":3,"nesting":0,"duration_ms":147.059212}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"resume schema validates unknown field through the public contract command","line":463,"column":3,"nesting":0,"duration_ms":98.183986}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected replacement saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":1366.544973}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected creation saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":499.045352}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected deletion saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":399.339137}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected empty replacement saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":364.98466}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected append saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":333.917351}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected no-op append saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":382.952776}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected heading saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":337.88388}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected JSON saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":434.067117}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected unsupported code whole-file replacement saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":571.364454}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected unsupported Markdown whole-file replacement saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":477.677381}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"protected unsupported JSON whole-file replacement saves originals and repeat performs no writes","line":489,"column":3,"nesting":0,"duration_ms":1183.367047}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"replace interruption before-write resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":566.767108}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"replace interruption after-replacement resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":546.392234}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"replace interruption before-completion resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":464.188451}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"replace interruption journal-io resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":461.236723}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"delete interruption before-write resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":501.931976}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"delete interruption after-replacement resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":542.587181}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"delete interruption before-completion resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":480.890795}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"delete interruption journal-io resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":508.839149}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"create interruption before-write resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":537.063352}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"create interruption after-replacement resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":464.861111}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"create interruption before-completion resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":490.835306}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"create interruption journal-io resumes from actual hashes and keeps backups","line":512,"column":5,"nesting":0,"duration_ms":450.496133}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"user change to README.md after replace interruption blocks every remaining write","line":539,"column":3,"nesting":0,"duration_ms":345.663493}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"user change to other.txt after replace interruption blocks every remaining write","line":539,"column":3,"nesting":0,"duration_ms":335.435999}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"user change to README.md after delete interruption blocks every remaining write","line":539,"column":3,"nesting":0,"duration_ms":337.962381}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"user change to README.md after create interruption blocks every remaining write","line":539,"column":3,"nesting":0,"duration_ms":342.030787}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"a user change to a completed run blocks repetition","line":556,"column":1,"nesting":0,"duration_ms":229.64916}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"a changed digest cannot reuse an earlier run","line":565,"column":1,"nesting":0,"duration_ms":235.446538}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"apply rejects a second run-selection input without writes","line":577,"column":1,"nesting":0,"duration_ms":77.739351}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"a changed target cannot reuse completion from another target","line":586,"column":1,"nesting":0,"duration_ms":320.459125}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"filesystem replacement limits block without falling back or losing the original","line":595,"column":1,"nesting":0,"duration_ms":300.165929}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"directory flush limits are reported in successful results","line":606,"column":1,"nesting":0,"duration_ms":119.521457}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"unrelated uncommitted journey and selected file permissions survive writes","line":613,"column":1,"nesting":0,"duration_ms":190.769075}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"rendered T2.5 audit record applies through reviewed whole-file replacement","line":628,"column":1,"nesting":0,"duration_ms":299.009102}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"restored original after completed replace conflicts without writes","line":646,"column":3,"nesting":0,"duration_ms":346.146459}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"restored original after completed replace-file conflicts without writes","line":646,"column":3,"nesting":0,"duration_ms":327.070083}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"restored original after completed create conflicts without writes","line":646,"column":3,"nesting":0,"duration_ms":295.539573}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"restored original after completed delete conflicts without writes","line":646,"column":3,"nesting":0,"duration_ms":288.804799}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"changed backups block resume without any target writes","line":661,"column":1,"nesting":0,"duration_ms":223.520613}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"creation preflights collision and creates missing parent directories","line":670,"column":1,"nesting":0,"duration_ms":109.028849}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"workspace apply writes and repeats through the same protected boundary","line":676,"column":1,"nesting":0,"duration_ms":161.874687}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"backup-io during backup preparation permits an unchanged retry","line":689,"column":3,"nesting":0,"duration_ms":195.937581}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"backup-interruption during backup preparation permits an unchanged retry","line":689,"column":3,"nesting":0,"duration_ms":190.5708}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"replace preserves a user save during journal-user-change and blocks success","line":704,"column":3,"nesting":0,"duration_ms":126.03841}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"delete preserves a user save during journal-user-change and blocks success","line":704,"column":3,"nesting":0,"duration_ms":110.430363}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"create preserves a user save during journal-user-change and blocks success","line":704,"column":3,"nesting":0,"duration_ms":124.928188}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"replace preserves a user save during temporary-user-change and blocks success","line":704,"column":3,"nesting":0,"duration_ms":125.935594}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"create preserves a user save during temporary-user-change and blocks success","line":704,"column":3,"nesting":0,"duration_ms":129.578527}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"a user save after the last replacement blocks the final success result","line":718,"column":1,"nesting":0,"duration_ms":140.419975}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"selected delete through a absolute alias resumes and repeats with its reviewed identity","line":727,"column":3,"nesting":0,"duration_ms":460.154979}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"selected delete through a relative alias resumes and repeats with its reviewed identity","line":727,"column":3,"nesting":0,"duration_ms":491.547569}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"selected delete through a chain alias resumes and repeats with its reviewed identity","line":727,"column":3,"nesting":0,"duration_ms":491.814686}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"selected delete through a parent alias resumes and repeats with its reviewed identity","line":727,"column":3,"nesting":0,"duration_ms":493.766053}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"an unedited absolute alias permits deletion recovery after after-replacement","line":758,"column":5,"nesting":0,"duration_ms":431.871334}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"an unedited absolute alias permits deletion recovery after completion","line":758,"column":5,"nesting":0,"duration_ms":420.037351}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"an unedited relative alias permits deletion recovery after after-replacement","line":758,"column":5,"nesting":0,"duration_ms":391.706053}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"an unedited relative alias permits deletion recovery after completion","line":758,"column":5,"nesting":0,"duration_ms":373.590686}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"an unedited chain alias permits deletion recovery after after-replacement","line":758,"column":5,"nesting":0,"duration_ms":402.225433}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"an unedited chain alias permits deletion recovery after completion","line":758,"column":5,"nesting":0,"duration_ms":384.742983}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"an unedited parent alias permits deletion recovery after after-replacement","line":758,"column":5,"nesting":0,"duration_ms":388.431893}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"an unedited parent alias permits deletion recovery after completion","line":758,"column":5,"nesting":0,"duration_ms":390.845543}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"fresh apply rejects creation through a dangling relative link without writes","line":791,"column":5,"nesting":0,"duration_ms":98.826764}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"fresh dry run rejects creation through a dangling relative link without writes","line":791,"column":5,"nesting":0,"duration_ms":95.874432}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"fresh apply rejects creation through a dangling absolute link without writes","line":791,"column":5,"nesting":0,"duration_ms":88.291574}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"fresh dry run rejects creation through a dangling absolute link without writes","line":791,"column":5,"nesting":0,"duration_ms":99.399779}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"fresh apply rejects creation through a dangling chain link without writes","line":791,"column":5,"nesting":0,"duration_ms":91.551906}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"fresh dry run rejects creation through a dangling chain link without writes","line":791,"column":5,"nesting":0,"duration_ms":89.701955}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"fresh apply rejects creation through a dangling parent link without writes","line":791,"column":5,"nesting":0,"duration_ms":89.311579}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"fresh dry run rejects creation through a dangling parent link without writes","line":791,"column":5,"nesting":0,"duration_ms":94.004112}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"a retargeted alias during journal preparation blocks both destinations","line":806,"column":1,"nesting":0,"duration_ms":114.839759}
+{"type":"test:pass","file":"tests/scripts/apply.test.mjs","name":"new recovery and nested target directory entries are flushed before publication","line":822,"column":1,"nesting":0,"duration_ms":111.603458}
+{"type":"test:summary","file":"tests/scripts/apply.test.mjs","counts":{"tests":240,"failed":0,"passed":240,"cancelled":0,"skipped":0,"todo":0,"topLevel":240,"suites":0},"success":true,"duration_ms":74127.927389}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"existing debt remains visible and checking leaves the target unchanged","line":27,"column":1,"nesting":0,"duration_ms":531.265449}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"new debt fails checking without altering the baseline","line":44,"column":3,"nesting":0,"duration_ms":142.095976}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"new debt fails refresh without a finding without altering the baseline","line":44,"column":3,"nesting":0,"duration_ms":171.850144}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"a fixed entry fails checking and refresh removes only the fixed entry","line":53,"column":1,"nesting":0,"duration_ms":312.993247}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"a selected debt finding authorizes one matching new entry","line":81,"column":1,"nesting":0,"duration_ms":181.602033}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"failed write preserves baseline bytes during fixed entry removal","line":91,"column":5,"nesting":0,"duration_ms":250.579428}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"failed rename preserves baseline bytes during fixed entry removal","line":91,"column":5,"nesting":0,"duration_ms":262.040355}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"failed write preserves baseline bytes during selected entry addition","line":91,"column":5,"nesting":0,"duration_ms":241.150274}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"failed rename preserves baseline bytes during selected entry addition","line":91,"column":5,"nesting":0,"duration_ms":294.194562}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"unselected finding cannot authorize growth","line":113,"column":3,"nesting":0,"duration_ms":118.853089}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"resolved finding cannot authorize growth","line":113,"column":3,"nesting":0,"duration_ms":133.444395}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"different scope cannot authorize growth","line":113,"column":3,"nesting":0,"duration_ms":273.133179}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"different target cannot authorize growth","line":113,"column":3,"nesting":0,"duration_ms":153.655419}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"decision finding cannot authorize growth","line":113,"column":3,"nesting":0,"duration_ms":156.108977}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"authorization for one entry cannot refresh unrelated new debt","line":124,"column":1,"nesting":0,"duration_ms":132.785314}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"a selected finding cannot add an entry without a matching current violation","line":132,"column":1,"nesting":0,"duration_ms":127.675756}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"duplicate identity is rejected","line":146,"column":3,"nesting":0,"duration_ms":294.795471}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"missing reason is rejected","line":146,"column":3,"nesting":0,"duration_ms":150.013104}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"blank removal condition is rejected","line":146,"column":3,"nesting":0,"duration_ms":121.133573}
+{"type":"test:pass","file":"tests/scripts/baseline.test.mjs","name":"directory scope is rejected","line":146,"column":3,"nesting":0,"duration_ms":167.405333}
+{"type":"test:summary","file":"tests/scripts/baseline.test.mjs","counts":{"tests":20,"failed":0,"passed":20,"cancelled":0,"skipped":0,"todo":0,"topLevel":20,"suites":0},"success":true,"duration_ms":4243.176641}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"bootstrap manifest commands and root lockfile agree","line":29,"column":1,"nesting":0,"duration_ms":29.351904}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"discovery sorts explicit suites and excludes fixture, dependency and evaluation tests","line":53,"column":1,"nesting":0,"duration_ms":404.673446}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"task selection executes only registered suites and rejects unknown tasks","line":71,"column":1,"nesting":0,"duration_ms":380.813535}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"an empty selected suite fails","line":85,"column":1,"nesting":0,"duration_ms":99.854005}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"ordinary full-suite invocation retains attachable evidence in a Git checkout","line":113,"column":1,"nesting":0,"duration_ms":949.807986}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"ordinary tests execute without a base and invalidate older capture","line":119,"column":1,"nesting":0,"duration_ms":1180.356742}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"Windows evidence environment launches the npm JavaScript entry point","line":132,"column":1,"nesting":0,"duration_ms":147.483765}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"attachment preserves inventory paths and captured artifact hashes","line":145,"column":1,"nesting":0,"duration_ms":1128.849953}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"capture and attachment bind task artifacts consumed by tests","line":162,"column":1,"nesting":0,"duration_ms":2007.005702}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"capture streams TAP and stderr before a blocked suite finishes","line":187,"column":1,"nesting":0,"duration_ms":921.82985}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"ordinary tests still execute dirty source but its evidence cannot attach","line":221,"column":1,"nesting":0,"duration_ms":725.315218}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-run evidence attaches identities and output without executing tests again","line":230,"column":1,"nesting":0,"duration_ms":1276.443441}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-run evidence rejects changed source","line":250,"column":3,"nesting":0,"duration_ms":757.83625}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-run evidence rejects changed new input","line":250,"column":3,"nesting":0,"duration_ms":747.879431}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-run evidence rejects changed deleted input","line":250,"column":3,"nesting":0,"duration_ms":777.801448}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-run evidence rejects changed base","line":250,"column":3,"nesting":0,"duration_ms":731.117035}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-run evidence rejects changed output","line":250,"column":3,"nesting":0,"duration_ms":847.577584}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-run evidence rejects changed identities","line":250,"column":3,"nesting":0,"duration_ms":679.369758}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-run evidence rejects changed environment","line":250,"column":3,"nesting":0,"duration_ms":1141.034985}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"failed full-suite evidence cannot attach a passing record","line":272,"column":1,"nesting":0,"duration_ms":783.050294}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-suite evidence with skip cannot attach a passing record","line":279,"column":3,"nesting":0,"duration_ms":804.080354}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"full-suite evidence with todo cannot attach a passing record","line":279,"column":3,"nesting":0,"duration_ms":830.388081}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"capture rejects uncommitted source and invalidates an older successful capture","line":286,"column":1,"nesting":0,"duration_ms":888.676736}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"attachment rejects unstaged restoration of tested source over an untested HEAD","line":295,"column":3,"nesting":0,"duration_ms":1005.393228}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"attachment rejects staged restoration of tested source over an untested HEAD","line":295,"column":3,"nesting":0,"duration_ms":794.452518}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"attachment rejects untracked restoration of a file deleted from HEAD","line":310,"column":1,"nesting":0,"duration_ms":963.990889}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"capture rejects source changes made during test execution","line":324,"column":1,"nesting":0,"duration_ms":817.241651}
+{"type":"test:pass","file":"tests/scripts/bootstrap.test.mjs","name":"refreshing full-suite evidence preserves task acceptance and blocked limitations","line":331,"column":1,"nesting":0,"duration_ms":1259.388132}
+{"type":"test:summary","file":"tests/scripts/bootstrap.test.mjs","counts":{"tests":28,"failed":0,"passed":28,"cancelled":0,"skipped":0,"todo":0,"topLevel":28,"suites":0},"success":true,"duration_ms":23095.203725}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"child commands preserve literal arguments and capture version and both output streams","line":38,"column":1,"nesting":0,"duration_ms":224.489389}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"child output is bounded to the last 64 KiB per stream","line":55,"column":1,"nesting":0,"duration_ms":186.627624}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"child environment overrides apply to the version probe and execution without mutating the caller","line":65,"column":1,"nesting":0,"duration_ms":127.313774}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"timeout fails and stops the child process tree before returning","line":78,"column":3,"nesting":0,"duration_ms":455.434752}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"cancellation fails and stops the child process tree before returning","line":78,"column":3,"nesting":0,"duration_ms":285.062319}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure blocks timed out check with inherited pipes","line":106,"column":7,"nesting":0,"duration_ms":114.819027}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error blocks timed out check with inherited pipes","line":106,"column":7,"nesting":0,"duration_ms":108.298482}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure blocks timed out version probe with inherited pipes","line":106,"column":7,"nesting":0,"duration_ms":105.807471}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error blocks timed out version probe with inherited pipes","line":106,"column":7,"nesting":0,"duration_ms":106.560802}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure blocks cancelled check with inherited pipes","line":106,"column":7,"nesting":0,"duration_ms":7.062035}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error blocks cancelled check with inherited pipes","line":106,"column":7,"nesting":0,"duration_ms":3.045518}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure blocks cancelled version probe with inherited pipes","line":106,"column":7,"nesting":0,"duration_ms":1.702157}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error blocks cancelled version probe with inherited pipes","line":106,"column":7,"nesting":0,"duration_ms":2.142829}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds","line":166,"column":9,"nesting":0,"duration_ms":712.33171}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails","line":166,"column":9,"nesting":0,"duration_ms":664.378709}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds","line":166,"column":9,"nesting":0,"duration_ms":660.091143}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails","line":166,"column":9,"nesting":0,"duration_ms":690.174667}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds","line":166,"column":9,"nesting":0,"duration_ms":692.101047}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails","line":166,"column":9,"nesting":0,"duration_ms":685.019133}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds","line":166,"column":9,"nesting":0,"duration_ms":652.968965}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails","line":166,"column":9,"nesting":0,"duration_ms":696.279831}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds","line":166,"column":9,"nesting":0,"duration_ms":230.310246}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails","line":166,"column":9,"nesting":0,"duration_ms":222.349244}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds","line":166,"column":9,"nesting":0,"duration_ms":185.272476}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails","line":166,"column":9,"nesting":0,"duration_ms":136.361388}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds","line":166,"column":9,"nesting":0,"duration_ms":179.480794}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails","line":166,"column":9,"nesting":0,"duration_ms":197.055372}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds","line":166,"column":9,"nesting":0,"duration_ms":147.873968}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails","line":166,"column":9,"nesting":0,"duration_ms":162.588773}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"failed commands and unavailable tools cannot pass","line":194,"column":1,"nesting":0,"duration_ms":303.419087}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"child working directories reject escape before execution","line":205,"column":1,"nesting":0,"duration_ms":100.67796}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows npm selection uses Node and a JavaScript CLI with literal arguments","line":212,"column":1,"nesting":0,"duration_ms":96.915249}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows npm resolves a PATH launcher to an executable JavaScript CLI","line":225,"column":5,"nesting":0,"duration_ms":135.299226}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows npm.cmd resolves a PATH launcher to an executable JavaScript CLI","line":225,"column":5,"nesting":0,"duration_ms":250.926073}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows pnpm resolves a PATH launcher to an executable JavaScript CLI","line":225,"column":5,"nesting":0,"duration_ms":186.558113}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows pnpm.cmd resolves a PATH launcher to an executable JavaScript CLI","line":225,"column":5,"nesting":0,"duration_ms":163.755113}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows yarn resolves a PATH launcher to an executable JavaScript CLI","line":225,"column":5,"nesting":0,"duration_ms":150.551746}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows yarn.cmd resolves a PATH launcher to an executable JavaScript CLI","line":225,"column":5,"nesting":0,"duration_ms":147.844977}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows npm.cmd without a supported CLI is blocked","line":246,"column":3,"nesting":0,"duration_ms":93.210746}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows pnpm without a supported CLI is blocked","line":246,"column":3,"nesting":0,"duration_ms":88.266262}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows pnpm.cmd without a supported CLI is blocked","line":246,"column":3,"nesting":0,"duration_ms":80.718972}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows yarn without a supported CLI is blocked","line":246,"column":3,"nesting":0,"duration_ms":75.394849}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows yarn.cmd without a supported CLI is blocked","line":246,"column":3,"nesting":0,"duration_ms":98.6479}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows tool.cmd without a supported CLI is blocked","line":246,"column":3,"nesting":0,"duration_ms":86.819845}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"Windows tool.bat without a supported CLI is blocked","line":246,"column":3,"nesting":0,"duration_ms":108.302242}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs","line":255,"column":1,"nesting":0,"duration_ms":981.317154}
+{"type":"test:pass","file":"tests/scripts/child-contract.test.mjs","name":"canonical assessment inputs ignore only derived fields and evidence serialization","line":284,"column":1,"nesting":0,"duration_ms":382.501598}
+{"type":"test:summary","file":"tests/scripts/child-contract.test.mjs","counts":{"tests":47,"failed":0,"passed":47,"cancelled":0,"skipped":0,"todo":0,"topLevel":47,"suites":0},"success":true,"duration_ms":12211.196252}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"correct exact-byte citations pass from another cwd without changing the target","line":39,"column":1,"nesting":0,"duration_ms":107.327595}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"wrong path and wrong line are both reported as failed citations","line":48,"column":1,"nesting":0,"duration_ms":110.995235}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"hash citations fail after content changes without changing line count","line":62,"column":3,"nesting":0,"duration_ms":127.423216}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"hash citations fail after line-ending changes","line":62,"column":3,"nesting":0,"duration_ms":107.586587}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"revision citations remain valid across unrelated commits but fail on dirty cited bytes","line":71,"column":1,"nesting":0,"duration_ms":456.97731}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"unavailable revisions fail rather than accepting an unverified state","line":89,"column":1,"nesting":0,"duration_ms":155.268584}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"line 1 of \"\" has exit 1","line":98,"column":3,"nesting":0,"duration_ms":98.800428}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"line 1 of \"One line\" has exit 0","line":98,"column":3,"nesting":0,"duration_ms":88.562393}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"line 2 of \"One line\\n\" has exit 1","line":98,"column":3,"nesting":0,"duration_ms":98.074951}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"line 2 of \"One\\r\\nTwo\" has exit 0","line":98,"column":3,"nesting":0,"duration_ms":92.750603}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"line 3 of \"One\\rTwo\\r\" has exit 1","line":98,"column":3,"nesting":0,"duration_ms":90.294923}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"report rejects unknown report fields","line":113,"column":3,"nesting":0,"duration_ms":110.774748}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"report rejects duplicate brief IDs","line":113,"column":3,"nesting":0,"duration_ms":102.112718}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"report rejects line zero","line":113,"column":3,"nesting":0,"duration_ms":69.568036}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"report rejects missing citation state","line":113,"column":3,"nesting":0,"duration_ms":82.159581}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"report rejects wrong digest length for state kind","line":113,"column":3,"nesting":0,"duration_ms":121.31706}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"report rejects parent traversal","line":113,"column":3,"nesting":0,"duration_ms":92.052156}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"web-only metadata passes without claiming that the checker verified the source","line":122,"column":1,"nesting":0,"duration_ms":86.637292}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"web citation file:///outside read 2026-10-08 is invalid","line":133,"column":3,"nesting":0,"duration_ms":101.15765}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"web citation not a URL read 2026-10-08 is invalid","line":133,"column":3,"nesting":0,"duration_ms":70.726431}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"web citation https://example.invalid read 2026-02-30 is invalid","line":133,"column":3,"nesting":0,"duration_ms":115.548628}
+{"type":"test:pass","file":"tests/scripts/cite-check.test.mjs","name":"missing reports and malformed JSON fail through the command interface","line":142,"column":1,"nesting":0,"duration_ms":184.659547}
+{"type":"test:summary","file":"tests/scripts/cite-check.test.mjs","counts":{"tests":22,"failed":0,"passed":22,"cancelled":0,"skipped":0,"todo":0,"topLevel":22,"suites":0},"success":true,"duration_ms":2683.468374}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"draft workspace stores distinct runs in scratch and leaves workspace unchanged","line":47,"column":1,"nesting":0,"duration_ms":263.631123}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"Git target resolves from a subdirectory with no commits","line":61,"column":3,"nesting":0,"duration_ms":127.045229}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"Git target resolves from a subdirectory with a commit","line":61,"column":3,"nesting":0,"duration_ms":162.022934}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"Git target preserves trailing whitespace \"repo \"","line":81,"column":3,"nesting":0,"duration_ms":198.761637}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"Git target preserves trailing whitespace \"repo \\t\\r\"","line":81,"column":3,"nesting":0,"duration_ms":157.225253}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"arguments reject missing target with a JSON usage error","line":101,"column":3,"nesting":0,"duration_ms":80.69045}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"arguments reject unknown options with a JSON usage error","line":101,"column":3,"nesting":0,"duration_ms":86.262134}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"arguments reject missing value with a JSON usage error","line":101,"column":3,"nesting":0,"duration_ms":112.400801}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"arguments reject duplicate option with a JSON usage error","line":101,"column":3,"nesting":0,"duration_ms":102.042534}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"arguments reject conflicting targets with a JSON usage error","line":101,"column":3,"nesting":0,"duration_ms":104.107306}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"rejects traversal.json before scratch writes and reports every problem","line":115,"column":3,"nesting":0,"duration_ms":111.909191}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"rejects absolute-paths.json before scratch writes and reports every problem","line":115,"column":3,"nesting":0,"duration_ms":75.872972}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"rejects unknown-fields.json before scratch writes and reports every problem","line":115,"column":3,"nesting":0,"duration_ms":78.94803}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"rejects invalid-types.json before scratch writes and reports every problem","line":115,"column":3,"nesting":0,"duration_ms":82.427028}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"escaping existing links and new children under escaping parents are refused before writes","line":124,"column":1,"nesting":0,"duration_ms":150.179963}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"dangling parents are refused rather than treated as missing directories","line":137,"column":1,"nesting":0,"duration_ms":113.230207}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"missing Git prerequisite returns blocked rather than passing","line":145,"column":1,"nesting":0,"duration_ms":74.190565}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"repo commands refuse workspace mode","line":152,"column":1,"nesting":0,"duration_ms":83.333175}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"scratch refuses a cache link into the target before creating directories","line":158,"column":1,"nesting":0,"duration_ms":88.581293}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"scratch follows a cache link outside the target","line":167,"column":1,"nesting":0,"duration_ms":94.253553}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"scratch follows a run-parent link outside the target","line":180,"column":1,"nesting":0,"duration_ms":76.973732}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"scratch refuses a run-parent link inside the target before creating directories","line":193,"column":1,"nesting":0,"duration_ms":110.666914}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"target aliases use the same scratch identity","line":203,"column":1,"nesting":0,"duration_ms":166.687075}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"unavailable target absent is blocked without writes","line":214,"column":3,"nesting":0,"duration_ms":75.435994}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"unavailable target brief.md is blocked without writes","line":214,"column":3,"nesting":0,"duration_ms":71.06099}
+{"type":"test:pass","file":"tests/scripts/command-contract.test.mjs","name":"human output is a short summary with the same failed exit code","line":222,"column":1,"nesting":0,"duration_ms":86.675354}
+{"type":"test:summary","file":"tests/scripts/command-contract.test.mjs","counts":{"tests":26,"failed":0,"passed":26,"cancelled":0,"skipped":0,"todo":0,"topLevel":26,"suites":0},"success":true,"duration_ms":2947.733249}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual run prints its fixture, request, scripted answers and checklist with unique history paths","line":43,"column":1,"nesting":0,"duration_ms":840.446991}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring publishes redacted records, transcripts and answers with intact verdicts and citations","line":58,"column":1,"nesting":0,"duration_ms":635.412925}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"missing answers leaves manual scoring blocked","line":90,"column":3,"nesting":0,"duration_ms":441.693452}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"missing transcript leaves manual scoring blocked","line":90,"column":3,"nesting":0,"duration_ms":421.568014}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring blocks missing checklist answer","line":109,"column":3,"nesting":0,"duration_ms":467.169822}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring blocks duplicate checklist answer","line":109,"column":3,"nesting":0,"duration_ms":353.19234}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring blocks unknown checklist answer","line":109,"column":3,"nesting":0,"duration_ms":520.077848}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring blocks wrong run","line":109,"column":3,"nesting":0,"duration_ms":446.519913}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring blocks string verdict","line":109,"column":3,"nesting":0,"duration_ms":537.591734}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring blocks invalid transcript range","line":109,"column":3,"nesting":0,"duration_ms":481.354833}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring blocks missing reviewer","line":109,"column":3,"nesting":0,"duration_ms":393.869348}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"empty and unavailable transcripts leave a run blocked","line":120,"column":1,"nesting":0,"duration_ms":570.805833}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks different models and unscored runs","line":130,"column":1,"nesting":0,"duration_ms":1251.024497}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed scenario.fixture in the without run","line":155,"column":5,"nesting":0,"duration_ms":918.232593}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed scenario.fixture in the with run","line":155,"column":5,"nesting":0,"duration_ms":910.610031}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed fixture.name in the without run","line":155,"column":5,"nesting":0,"duration_ms":970.824827}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed fixture.name in the with run","line":155,"column":5,"nesting":0,"duration_ms":989.207695}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed scenario.request in the without run","line":155,"column":5,"nesting":0,"duration_ms":970.043271}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed scenario.request in the with run","line":155,"column":5,"nesting":0,"duration_ms":992.670084}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed scenario.answers in the without run","line":155,"column":5,"nesting":0,"duration_ms":968.629053}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed scenario.answers in the with run","line":155,"column":5,"nesting":0,"duration_ms":1053.680608}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed scenario.invocation in the without run","line":155,"column":5,"nesting":0,"duration_ms":1007.956911}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison blocks changed scenario.invocation in the with run","line":155,"column":5,"nesting":0,"duration_ms":1195.466312}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring records a passing reviewer verdict and preserves its transcript","line":176,"column":3,"nesting":0,"duration_ms":762.083551}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual scoring records a failing reviewer verdict and preserves its transcript","line":176,"column":3,"nesting":0,"duration_ms":654.172793}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"ordinary with-skill runs require explicit invocation while implicit runs omit it","line":196,"column":1,"nesting":0,"duration_ms":950.35181}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison honours baseline true and with-skill true","line":208,"column":3,"nesting":0,"duration_ms":1028.86202}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison honours baseline false and with-skill true","line":208,"column":3,"nesting":0,"duration_ms":941.04527}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison honours baseline true and with-skill false","line":208,"column":3,"nesting":0,"duration_ms":1008.249188}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"comparison honours baseline false and with-skill false","line":208,"column":3,"nesting":0,"duration_ms":925.131773}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"automatic host execution requires an adapter","line":220,"column":1,"nesting":0,"duration_ms":95.204184}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"Alice \"Ali\" Chen","line":250,"column":13,"nesting":1,"duration_ms":399.259729}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"123","line":250,"column":13,"nesting":1,"duration_ms":344.015643}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"id","line":250,"column":13,"nesting":1,"duration_ms":404.80101}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"reviewer publication preserves JSON keys and scalar types while rejecting unsupported identities","line":248,"column":1,"nesting":0,"duration_ms":1149.501556}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual: Alice Chen","line":293,"column":13,"nesting":1,"duration_ms":400.449269}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter: Alice Chen","line":293,"column":13,"nesting":1,"duration_ms":591.665533}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"closed-adapter: Alice Chen","line":293,"column":13,"nesting":1,"duration_ms":545.204749}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual: Alice \"Ali\" Chen","line":293,"column":13,"nesting":1,"duration_ms":348.360469}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter: Alice \"Ali\" Chen","line":293,"column":13,"nesting":1,"duration_ms":506.107255}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"closed-adapter: Alice \"Ali\" Chen","line":293,"column":13,"nesting":1,"duration_ms":639.439194}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"supplied reviewer identities including quoted nicknames are redacted throughout scoring publication","line":284,"column":1,"nesting":0,"duration_ms":3033.039274}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit","line":328,"column":1,"nesting":0,"duration_ms":786.082877}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"evidence redacts names after \"\\n\" across nested JSON strings","line":350,"column":3,"nesting":0,"duration_ms":19.209576}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"evidence redacts names after \"\\r\" across nested JSON strings","line":350,"column":3,"nesting":0,"duration_ms":11.956145}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"evidence redacts names after \"\\t\" across nested JSON strings","line":350,"column":3,"nesting":0,"duration_ms":12.477787}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"evidence redacts JSONL surrounded by plain text with unmatched quotes","line":361,"column":1,"nesting":0,"duration_ms":4.817408}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"captured listings and closed evidence redact host identities while retaining scoring and resume","line":370,"column":1,"nesting":0,"duration_ms":903.466725}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request","line":405,"column":1,"nesting":0,"duration_ms":7758.244886}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"foundation execution delivers the active checkpoint to the host","line":418,"column":1,"nesting":0,"duration_ms":2548.978371}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"scripted replies resume the exact host conversation, preserve user turns and require ordered answers","line":429,"column":1,"nesting":0,"duration_ms":767.002523}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"resumed Codex turns retain the opening sandbox policy","line":445,"column":1,"nesting":0,"duration_ms":539.759397}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"manual adapter preparation is rejected before creating a run","line":455,"column":1,"nesting":0,"duration_ms":65.080316}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"host fail remains blocked and retains available execution evidence","line":465,"column":3,"nesting":0,"duration_ms":370.533019}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"host malformed remains blocked and retains available execution evidence","line":465,"column":3,"nesting":0,"duration_ms":394.045061}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"host incomplete remains blocked and retains available execution evidence","line":465,"column":3,"nesting":0,"duration_ms":401.021916}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"host contaminate remains blocked and retains available execution evidence","line":465,"column":3,"nesting":0,"duration_ms":413.819063}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"host truncate remains blocked and retains available execution evidence","line":465,"column":3,"nesting":0,"duration_ms":363.9882}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"host hang remains blocked and retains available execution evidence","line":465,"column":3,"nesting":0,"duration_ms":1910.547276}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"evaluation capture retains a complete valid host transcript larger than the product limit","line":483,"column":1,"nesting":0,"duration_ms":473.948268}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"a resumed host turn cannot silently switch sessions","line":495,"column":1,"nesting":0,"duration_ms":1036.768751}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"rejected without-skill citations can be corrected without another host turn","line":506,"column":3,"nesting":0,"duration_ms":1102.455958}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"a without-skill score artifact failure preserves cleanup for retry","line":526,"column":3,"nesting":0,"duration_ms":531.344449}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"rejected with-skill citations can be corrected without another host turn","line":506,"column":3,"nesting":0,"duration_ms":5186.692089}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"a with-skill score artifact failure preserves cleanup for retry","line":526,"column":3,"nesting":0,"duration_ms":4324.146977}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter scoring requires the captured conversation and rechecks isolation and staged bytes","line":553,"column":1,"nesting":0,"duration_ms":6743.937976}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks shell string before creating a run","line":586,"column":3,"nesting":0,"duration_ms":71.140111}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks unknown field before creating a run","line":586,"column":3,"nesting":0,"duration_ms":75.464203}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks unsupported conversation before creating a run","line":586,"column":3,"nesting":0,"duration_ms":71.117164}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks unbounded timeout before creating a run","line":586,"column":3,"nesting":0,"duration_ms":72.83766}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks unbounded capture before creating a run","line":586,"column":3,"nesting":0,"duration_ms":67.711439}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks empty capture before creating a run","line":586,"column":3,"nesting":0,"duration_ms":75.511452}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks missing message placeholder before creating a run","line":586,"column":3,"nesting":0,"duration_ms":70.681078}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks wrong discovery paths before creating a run","line":586,"column":3,"nesting":0,"duration_ms":76.121865}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"adapter blocks escaping staging path before creating a run","line":586,"column":3,"nesting":0,"duration_ms":72.326862}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"closing a conversation deletes isolated state and retains bound evidence for later scoring","line":597,"column":1,"nesting":0,"duration_ms":591.856892}
+{"type":"test:pass","file":"tests/scripts/eval.test.mjs","name":"throwaway authentication copies only a dummy login with private permissions and removes it after the turn","line":614,"column":1,"nesting":0,"duration_ms":490.902237}
+{"type":"test:summary","file":"tests/scripts/eval.test.mjs","counts":{"tests":77,"failed":0,"passed":77,"cancelled":0,"skipped":0,"todo":0,"topLevel":68,"suites":0},"success":true,"duration_ms":66313.525413}
+{"type":"test:pass","file":"tests/scripts/existing-repo.test.mjs","name":"selected root instruction merge and audit apply preserve scoped instructions, dirty work and the native journey","line":38,"column":1,"nesting":0,"duration_ms":3570.333952}
+{"type":"test:summary","file":"tests/scripts/existing-repo.test.mjs","counts":{"tests":1,"failed":0,"passed":1,"cancelled":0,"skipped":0,"todo":0,"topLevel":1,"suites":0},"success":true,"duration_ms":3584.484165}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects missing principle without target writes","line":71,"column":3,"nesting":0,"duration_ms":214.696201}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects blank principle without target writes","line":71,"column":3,"nesting":0,"duration_ms":185.33253}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects unknown status without target writes","line":71,"column":3,"nesting":0,"duration_ms":161.293384}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects unknown field without target writes","line":71,"column":3,"nesting":0,"duration_ms":310.844525}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects duplicate finding without target writes","line":71,"column":3,"nesting":0,"duration_ms":169.799141}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects duplicate source without target writes","line":71,"column":3,"nesting":0,"duration_ms":170.773404}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects missing source ID without target writes","line":71,"column":3,"nesting":0,"duration_ms":159.495064}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects unknown source without target writes","line":71,"column":3,"nesting":0,"duration_ms":135.169901}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects unknown intent without target writes","line":71,"column":3,"nesting":0,"duration_ms":142.603699}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects selection mismatch without target writes","line":71,"column":3,"nesting":0,"duration_ms":228.871359}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects unknown selection without target writes","line":71,"column":3,"nesting":0,"duration_ms":138.975219}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects duplicate selection without target writes","line":71,"column":3,"nesting":0,"duration_ms":142.349921}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects duplicate required outcome without target writes","line":71,"column":3,"nesting":0,"duration_ms":171.545223}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects target mismatch without target writes","line":71,"column":3,"nesting":0,"duration_ms":211.019484}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects scope mismatch without target writes","line":71,"column":3,"nesting":0,"duration_ms":125.347568}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects missing location without target writes","line":71,"column":3,"nesting":0,"duration_ms":245.579813}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects missing stage requirement without target writes","line":71,"column":3,"nesting":0,"duration_ms":154.677413}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"render separates source intent, selected debt and new principles in scratch","line":83,"column":1,"nesting":0,"duration_ms":300.774474}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"audit requires current evidence before ready","line":102,"column":3,"nesting":0,"duration_ms":550.89735}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"foundation requires current evidence before ready","line":102,"column":3,"nesting":0,"duration_ms":687.291955}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"readiness handles failed journey despite passing units","line":124,"column":3,"nesting":0,"duration_ms":466.157623}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"readiness handles skipped journey","line":124,"column":3,"nesting":0,"duration_ms":375.603149}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"readiness handles blocked journey","line":124,"column":3,"nesting":0,"duration_ms":459.662705}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"readiness handles missing journey","line":124,"column":3,"nesting":0,"duration_ms":407.937887}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"readiness handles unresolved decision","line":124,"column":3,"nesting":0,"duration_ms":408.738468}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"readiness handles unresolved blocking debt","line":124,"column":3,"nesting":0,"duration_ms":429.270983}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"readiness handles deferred nonblocking debt","line":124,"column":3,"nesting":0,"duration_ms":361.527404}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"readiness handles unselected new principle","line":124,"column":3,"nesting":0,"duration_ms":359.302713}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"changed intent or selection invalidates otherwise passed evidence","line":138,"column":1,"nesting":0,"duration_ms":455.40733}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"artifact deletion and changed bytes block readiness","line":153,"column":1,"nesting":0,"duration_ms":344.111307}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"Git revision changes block readiness even with unchanged scoped bytes","line":165,"column":1,"nesting":0,"duration_ms":525.79062}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"foundation workspace renders without Git and refuses scratch inside target","line":178,"column":1,"nesting":0,"duration_ms":225.616901}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings rejects malformed input and missing option","line":187,"column":1,"nesting":0,"duration_ms":286.365478}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings validate rejects escaped duplicate members without target writes","line":197,"column":3,"nesting":0,"duration_ms":202.929301}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings render rejects escaped duplicate members without target writes","line":197,"column":3,"nesting":0,"duration_ms":217.869302}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings rejects unedited \"src\" scope without target writes","line":213,"column":3,"nesting":0,"duration_ms":258.826552}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings rejects unedited \"src/*.md\" scope without target writes","line":213,"column":3,"nesting":0,"duration_ms":150.19086}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings rejects unedited \"src/?.md\" scope without target writes","line":213,"column":3,"nesting":0,"duration_ms":239.21311}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings rejects unedited \"src/[ab].md\" scope without target writes","line":213,"column":3,"nesting":0,"duration_ms":214.361402}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings rejects unedited \"src/{a,b}.md\" scope without target writes","line":213,"column":3,"nesting":0,"duration_ms":213.546151}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings rejects unedited \"README.md/child\" scope without target writes","line":213,"column":3,"nesting":0,"duration_ms":176.658941}
+{"type":"test:pass","file":"tests/scripts/findings.test.mjs","name":"findings accepts concrete planned absent files in reviewed scope","line":225,"column":1,"nesting":0,"duration_ms":153.898753}
+{"type":"test:summary","file":"tests/scripts/findings.test.mjs","counts":{"tests":42,"failed":0,"passed":42,"cancelled":0,"skipped":0,"todo":0,"topLevel":42,"suites":0},"success":true,"duration_ms":11566.126439}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"new-idea builds a non-Git workspace containing only its brief","line":36,"column":3,"nesting":0,"duration_ms":179.349941}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"ambiguous-idea builds a non-Git workspace containing only its brief","line":36,"column":3,"nesting":0,"duration_ms":179.111516}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"clear-goals replays deterministic history with local identity and signing disabled","line":44,"column":1,"nesting":0,"duration_ms":653.283906}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"all fixtures run sanity checks and leave source bytes unchanged","line":66,"column":1,"nesting":0,"duration_ms":29438.855511}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"dirty-work reproduces its declared state with deterministic history","line":76,"column":3,"nesting":0,"duration_ms":848.267044}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"refactor reproduces its declared state with deterministic history","line":76,"column":3,"nesting":0,"duration_ms":1111.694056}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"contract-removal reproduces its declared state with deterministic history","line":76,"column":3,"nesting":0,"duration_ms":635.46308}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"shallow-history reproduces its declared state with deterministic history","line":76,"column":3,"nesting":0,"duration_ms":980.317133}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"installer-collision reproduces its declared state with deterministic history","line":76,"column":3,"nesting":0,"duration_ms":447.718798}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"ts-shop reports missing native tools as blocked","line":85,"column":3,"nesting":0,"duration_ms":71.682526}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"py-ledger reports missing native tools as blocked","line":85,"column":3,"nesting":0,"duration_ms":54.336054}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"a changed fixture seed fails its sanity check","line":95,"column":1,"nesting":0,"duration_ms":311.227512}
+{"type":"test:pass","file":"tests/scripts/fixtures.test.mjs","name":"unknown fixture selection returns usage without building","line":102,"column":1,"nesting":0,"duration_ms":57.165505}
+{"type":"test:summary","file":"tests/scripts/fixtures.test.mjs","counts":{"tests":13,"failed":0,"passed":13,"cancelled":0,"skipped":0,"todo":0,"topLevel":13,"suites":0},"success":true,"duration_ms":34977.73817}
+{"type":"test:pass","file":"tests/scripts/inspect.test.mjs","name":"inspect fingerprints a dirty fixture unchanged including Git index bytes","line":7,"column":1,"nesting":0,"duration_ms":492.786125}
+{"type":"test:pass","file":"tests/scripts/inspect.test.mjs","name":"inspect with git hidden from PATH is blocked with the exact named limitation","line":20,"column":1,"nesting":0,"duration_ms":102.603298}
+{"type":"test:pass","file":"tests/scripts/inspect.test.mjs","name":"inspect reports no commits and literal staged rename and untracked paths","line":28,"column":1,"nesting":0,"duration_ms":422.146638}
+{"type":"test:pass","file":"tests/scripts/inspect.test.mjs","name":"inspect reads nested manifests and reports missing detected prerequisites","line":43,"column":1,"nesting":0,"duration_ms":532.713916}
+{"type":"test:pass","file":"tests/scripts/inspect.test.mjs","name":"inspect blocks unreadable commit history rather than claiming no commits","line":62,"column":1,"nesting":0,"duration_ms":212.978739}
+{"type":"test:pass","file":"tests/scripts/inspect.test.mjs","name":"inspect reports malformed manifests as a named limitation","line":71,"column":1,"nesting":0,"duration_ms":164.645807}
+{"type":"test:summary","file":"tests/scripts/inspect.test.mjs","counts":{"tests":6,"failed":0,"passed":6,"cancelled":0,"skipped":0,"todo":0,"topLevel":6,"suites":0},"success":true,"duration_ms":1934.617593}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"py-ledger CONTRIBUTING is the standards source without requiring CODING_STANDARDS","line":8,"column":1,"nesting":0,"duration_ms":899.195416}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"ts-shop import-only CLAUDE stub produces a version-limited merge candidate","line":18,"column":1,"nesting":0,"duration_ms":5866.021765}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"inventory preserves root, nested, local and outside-repo instruction scopes without writes","line":31,"column":1,"nesting":0,"duration_ms":182.808315}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"inventory discovers equivalent names and exact-byte hashes and tolerates absent documents","line":50,"column":1,"nesting":0,"duration_ms":185.797149}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"a local-only instruction is a shadowing report without a merge candidate","line":62,"column":1,"nesting":0,"duration_ms":256.091527}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"equivalent nested instructions consolidate within their own scope","line":71,"column":1,"nesting":0,"duration_ms":138.401188}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"inventory preserves the containing scope of .claude/AGENTS.md","line":87,"column":3,"nesting":0,"duration_ms":92.499417}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"inventory preserves the containing scope of .claude/CLAUDE.local.md","line":87,"column":3,"nesting":0,"duration_ms":174.941463}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"inventory preserves the containing scope of web/.claude/AGENTS.md","line":87,"column":3,"nesting":0,"duration_ms":115.736397}
+{"type":"test:pass","file":"tests/scripts/inventory.test.mjs","name":"inventory preserves the containing scope of web/.claude/CLAUDE.local.md","line":87,"column":3,"nesting":0,"duration_ms":119.58916}
+{"type":"test:summary","file":"tests/scripts/inventory.test.mjs","counts":{"tests":10,"failed":0,"passed":10,"cancelled":0,"skipped":0,"todo":0,"topLevel":10,"suites":0},"success":true,"duration_ms":8041.133032}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"ts-shop mixed responsibilities and coupled cluster have supporting signal commits","line":22,"column":1,"nesting":0,"duration_ms":5873.393566}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"py-ledger cohesive module and startup remain signals without a violation classification","line":42,"column":1,"nesting":0,"duration_ms":1055.500358}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure joins chained renames, excludes declared formatting and generated paths, and stays read-only","line":54,"column":1,"nesting":0,"duration_ms":611.452837}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure omits generated-directory rename evidence","line":93,"column":3,"nesting":0,"duration_ms":222.681395}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure omits renames through a generated-directory destination","line":111,"column":3,"nesting":0,"duration_ms":249.368217}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure omits lockfile rename evidence","line":93,"column":3,"nesting":0,"duration_ms":212.172985}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure omits renames through a lockfile destination","line":111,"column":3,"nesting":0,"duration_ms":263.25008}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure omits declared-generated rename evidence","line":93,"column":3,"nesting":0,"duration_ms":236.292976}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure omits renames through a declared-generated destination","line":111,"column":3,"nesting":0,"duration_ms":252.405316}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure retains formatting-only rename evidence","line":129,"column":1,"nesting":0,"duration_ms":270.745256}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure honours empty ranges, missing history, and deleted paths","line":145,"column":1,"nesting":0,"duration_ms":427.051128}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure separates reused rename paths with no formatting exclusion","line":164,"column":3,"nesting":0,"duration_ms":322.440377}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure separates reused rename paths with addition formatting exclusion","line":164,"column":3,"nesting":0,"duration_ms":283.265424}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure separates reused rename paths with deletion formatting exclusion","line":164,"column":3,"nesting":0,"duration_ms":401.343098}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure separates a recreated rename source without a deletion commit","line":190,"column":1,"nesting":0,"duration_ms":375.114459}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure follows merged branch modifications with renamed first and exclusions ","line":214,"column":3,"nesting":0,"duration_ms":327.343628}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure follows merged branch modifications with modified first and exclusions ","line":214,"column":3,"nesting":0,"duration_ms":305.311476}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure follows merged branch modifications with renamed first and exclusions renamed","line":214,"column":3,"nesting":0,"duration_ms":395.399695}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure preserves both retained rename descendants without pairing one historical path","line":240,"column":1,"nesting":0,"duration_ms":412.347322}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure excludes gitlinks removed before the selected head","line":262,"column":1,"nesting":0,"duration_ms":364.551448}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure excludes gitlink type changes without losing separate blob lifetimes","line":282,"column":1,"nesting":0,"duration_ms":299.59637}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure limits a reused endpoint path to its replacement lifetime","line":302,"column":1,"nesting":0,"duration_ms":418.866232}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure and discovery apply the same generated directory conventions","line":323,"column":1,"nesting":0,"duration_ms":330.408989}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure reads head inventory and history larger than one MiB","line":340,"column":1,"nesting":0,"duration_ms":44110.234588}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure rejects missing or unsupported range \"\"","line":353,"column":3,"nesting":0,"duration_ms":73.8842}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure rejects missing or unsupported range \"--all\"","line":353,"column":3,"nesting":0,"duration_ms":55.243527}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure rejects missing or unsupported range \"HEAD...HEAD\"","line":353,"column":3,"nesting":0,"duration_ms":76.08615}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure rejects missing or unsupported range \"..HEAD\"","line":353,"column":3,"nesting":0,"duration_ms":86.388857}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure rejects missing or unsupported range \"HEAD..\"","line":353,"column":3,"nesting":0,"duration_ms":69.377108}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure rejects unknown exclusion fields and out-of-range formatting commits","line":359,"column":1,"nesting":0,"duration_ms":733.26946}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure preserves literal Git paths with injected win32","line":369,"column":3,"nesting":0,"duration_ms":119.656877}
+{"type":"test:pass","file":"tests/scripts/measure.test.mjs","name":"measure preserves literal Git paths with injected darwin","line":369,"column":3,"nesting":0,"duration_ms":132.764553}
+{"type":"test:summary","file":"tests/scripts/measure.test.mjs","counts":{"tests":32,"failed":0,"passed":32,"cancelled":0,"skipped":0,"todo":0,"topLevel":32,"suites":0},"success":true,"duration_ms":59381.992685}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap reports seeded shared writes and shared contract files without target writes","line":15,"column":1,"nesting":0,"duration_ms":206.418084}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/**/*.ts against src/new.ts","line":42,"column":3,"nesting":0,"duration_ms":117.563974}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/**/*.ts against src/nested/new.ts","line":42,"column":3,"nesting":0,"duration_ms":159.556567}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/*.ts against src/nested/new.ts","line":42,"column":3,"nesting":0,"duration_ms":143.885136}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/?.ts against src/😀.ts","line":42,"column":3,"nesting":0,"duration_ms":91.011076}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/?.ts against src/ab.ts","line":42,"column":3,"nesting":0,"duration_ms":189.957022}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/a*.ts against src/*b.ts","line":42,"column":3,"nesting":0,"duration_ms":137.12481}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/**/*.ts against src/**/new.*","line":42,"column":3,"nesting":0,"duration_ms":116.259929}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/**/*.ts against other/**/*.ts","line":42,"column":3,"nesting":0,"duration_ms":101.894727}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/Foo.ts against src/foo.ts","line":42,"column":3,"nesting":0,"duration_ms":127.099642}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob **/package-lock.json against package-lock.json","line":42,"column":3,"nesting":0,"duration_ms":132.073279}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob **/dist/** against dist/deep/file","line":42,"column":3,"nesting":0,"duration_ms":159.361738}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob **/* against .hidden","line":42,"column":3,"nesting":0,"duration_ms":148.105294}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap declared glob src/* against src/notes ü &.txt","line":42,"column":3,"nesting":0,"duration_ms":139.588509}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap retains a changing contract ID across disjoint files","line":50,"column":1,"nesting":0,"duration_ms":147.332064}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path /absolute","line":60,"column":3,"nesting":0,"duration_ms":132.01114}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path C:/file","line":60,"column":3,"nesting":0,"duration_ms":124.257378}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path C:\\file","line":60,"column":3,"nesting":0,"duration_ms":121.408461}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path ../file","line":60,"column":3,"nesting":0,"duration_ms":163.183434}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path src/../file","line":60,"column":3,"nesting":0,"duration_ms":142.454289}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path ./file","line":60,"column":3,"nesting":0,"duration_ms":120.277441}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path src//file","line":60,"column":3,"nesting":0,"duration_ms":131.80833}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path src/","line":60,"column":3,"nesting":0,"duration_ms":131.534766}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path src/[ab].ts","line":60,"column":3,"nesting":0,"duration_ms":96.989261}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path src/{a,b}.ts","line":60,"column":3,"nesting":0,"duration_ms":115.402279}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path !src/file","line":60,"column":3,"nesting":0,"duration_ms":116.321457}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects unsupported path src/a**.ts","line":60,"column":3,"nesting":0,"duration_ms":118.672572}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects invalid plan {\"extra\":true}","line":74,"column":3,"nesting":0,"duration_ms":109.596489}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects invalid plan {\"schemaVersion\":2}","line":74,"column":3,"nesting":0,"duration_ms":111.184095}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects invalid plan {\"writePaths\":\"src/file\"}","line":74,"column":3,"nesting":0,"duration_ms":108.883073}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects invalid plan {\"id\":\"same\"}","line":74,"column":3,"nesting":0,"duration_ms":103.486345}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects invalid plan {\"contracts\":[{\"id\":\"price\",\"files\":[\"a\"]},{\"id\":\"price\",\"files\":[\"b\"]}]}","line":74,"column":3,"nesting":0,"duration_ms":109.676875}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap rejects invalid plan {\"contracts\":[{\"id\":\"price\",\"files\":[\"C:/file\"]}]}","line":74,"column":3,"nesting":0,"duration_ms":105.303186}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap requires exactly two readable plans","line":80,"column":1,"nesting":0,"duration_ms":340.005228}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap preserves portable declared paths with injected win32","line":90,"column":3,"nesting":0,"duration_ms":130.015436}
+{"type":"test:pass","file":"tests/scripts/overlap.test.mjs","name":"overlap preserves portable declared paths with injected darwin","line":90,"column":3,"nesting":0,"duration_ms":105.392682}
+{"type":"test:summary","file":"tests/scripts/overlap.test.mjs","counts":{"tests":36,"failed":0,"passed":36,"cancelled":0,"skipped":0,"todo":0,"topLevel":36,"suites":0},"success":true,"duration_ms":4873.183119}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"valid skeleton passes from another working directory","line":18,"column":1,"nesting":0,"duration_ms":575.838173}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"missing-path fails with local-path-missing","line":37,"column":3,"nesting":0,"duration_ms":129.854188}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"unlisted-reference fails with reference-unlisted","line":37,"column":3,"nesting":0,"duration_ms":142.384773}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"nested-reference fails with reference-nested","line":37,"column":3,"nesting":0,"duration_ms":145.979684}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"oversized-skill fails with skill-too-long","line":37,"column":3,"nesting":0,"duration_ms":146.958432}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"long-reference fails with reference-toc","line":37,"column":3,"nesting":0,"duration_ms":132.132368}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"host-metadata fails with host-metadata","line":37,"column":3,"nesting":0,"duration_ms":144.454437}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"undeclared-import fails with script-import","line":37,"column":3,"nesting":0,"duration_ms":150.411593}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"unexplained-constant fails with constant-comment","line":37,"column":3,"nesting":0,"duration_ms":139.053707}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"unfinished-step fails with step-done","line":37,"column":3,"nesting":0,"duration_ms":115.00157}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"language-policy fails with language-policy","line":37,"column":3,"nesting":0,"duration_ms":137.170974}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"every independent problem is reported together","line":51,"column":1,"nesting":0,"duration_ms":212.886493}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"line limits include their boundary and exclude frontmatter","line":60,"column":1,"nesting":0,"duration_ms":187.860385}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"contents heading at line twenty permits a long reference","line":67,"column":1,"nesting":0,"duration_ms":320.445875}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"local paths in source and nested resources resolve from their file","line":75,"column":1,"nesting":0,"duration_ms":276.591322}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"inline link location suffix preserves missing and nested reference checks","line":93,"column":3,"nesting":0,"duration_ms":131.933947}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"image location suffix preserves missing and nested reference checks","line":93,"column":3,"nesting":0,"duration_ms":147.368371}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"reference definition location suffix preserves missing and nested reference checks","line":93,"column":3,"nesting":0,"duration_ms":148.01714}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"angle destination location suffix preserves missing and nested reference checks","line":93,"column":3,"nesting":0,"duration_ms":138.986002}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"encoded destination location suffix preserves missing and nested reference checks","line":93,"column":3,"nesting":0,"duration_ms":101.202315}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"quoted resource location suffix preserves missing and nested reference checks","line":93,"column":3,"nesting":0,"duration_ms":147.260521}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"location suffix accepts existing resources and excludes URLs","line":103,"column":1,"nesting":0,"duration_ms":157.78829}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"unlisted reference diagnostics identify each source file","line":109,"column":1,"nesting":0,"duration_ms":159.579607}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"dependency and cache contents are excluded","line":119,"column":1,"nesting":0,"duration_ms":163.262248}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"help and invalid arguments have explicit exits","line":128,"column":1,"nesting":0,"duration_ms":472.373578}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"imports accept built-ins, local files and declared runtime package subpaths","line":140,"column":1,"nesting":0,"duration_ms":140.236155}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"import policy refuses import 'undeclared'","line":150,"column":3,"nesting":0,"duration_ms":171.354468}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"import policy refuses export * from 'undeclared'","line":150,"column":3,"nesting":0,"duration_ms":255.732926}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"import policy refuses await import('undeclared')","line":150,"column":3,"nesting":0,"duration_ms":167.939101}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"import policy refuses require('undeclared')","line":150,"column":3,"nesting":0,"duration_ms":157.209889}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"import policy refuses import 'node:not-a-builtin'","line":150,"column":3,"nesting":0,"duration_ms":138.934063}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"import policy refuses import 'dev-only'","line":150,"column":3,"nesting":0,"duration_ms":146.568721}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"strings, comments, regexes and nested constants do not impersonate script policy","line":160,"column":1,"nesting":0,"duration_ms":167.596015}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"computed dispatch imports remain outside the literal import control","line":166,"column":1,"nesting":0,"duration_ms":159.944551}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"CommonJS top-level return passes","line":172,"column":1,"nesting":0,"duration_ms":179.883354}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"CommonJS top-level return preserves script-import","line":183,"column":3,"nesting":0,"duration_ms":174.039857}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"CommonJS top-level return preserves constant-comment","line":183,"column":3,"nesting":0,"duration_ms":178.485336}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"js module rejects top-level return","line":194,"column":3,"nesting":0,"duration_ms":207.309265}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"mjs module rejects top-level return","line":194,"column":3,"nesting":0,"duration_ms":168.762262}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"constant comment boundary \"// Reason.\\nexport const { first, second } = values\\n\"","line":211,"column":3,"nesting":0,"duration_ms":137.738853}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"constant comment boundary \"/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n\"","line":211,"column":3,"nesting":0,"duration_ms":137.654987}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"constant comment boundary \"/* Multi-line\\nreason. */\\nconst first = 1\\n\"","line":211,"column":3,"nesting":0,"duration_ms":150.0788}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"constant comment boundary \"// Too far away.\\n\\nconst first = 1\\n\"","line":211,"column":3,"nesting":0,"duration_ms":177.376503}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"constant comment boundary \"export const first = 1 // Too late.\\n\"","line":211,"column":3,"nesting":0,"duration_ms":132.931585}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"constant comment boundary \"if (true) { const nested = 1 }\\n\"","line":211,"column":3,"nesting":0,"duration_ms":153.42174}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"invalid script and manifest refuse unverified imports while other problems collect","line":220,"column":1,"nesting":0,"duration_ms":164.869591}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"step completion boundary \"### Step 1: Inspect\\n\\nDone when: inspected.\\n\"","line":237,"column":3,"nesting":0,"duration_ms":161.593945}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"step completion boundary \"### Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n\"","line":237,"column":3,"nesting":0,"duration_ms":154.207286}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"step completion boundary \"### Step 1: Inspect\\n\\n#### Details\\n\\nDone when: too late.\\n\"","line":237,"column":3,"nesting":0,"duration_ms":180.910621}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"step completion boundary \"```text\\n### Step 1: Example\\n```\\n\"","line":237,"column":3,"nesting":0,"duration_ms":183.933609}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"step completion boundary \"### Step 1: Inspect\\n\\nDone when: inspected.\\n\\n### Step 2: Apply\\n\"","line":237,"column":3,"nesting":0,"duration_ms":167.70405}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"language policy boundary references/guide.md \"- ESLint\\n- Ruff\\n\"","line":252,"column":3,"nesting":0,"duration_ms":166.454774}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"language policy boundary package.json \"{\\\"dependencies\\\":{\\\"eslint-config-project\\\":\\\"1.0.0\\\"}}\\n\"","line":252,"column":3,"nesting":0,"duration_ms":131.954307}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"language policy boundary .ruff.toml \"\"","line":252,"column":3,"nesting":0,"duration_ms":119.846362}
+{"type":"test:pass","file":"tests/scripts/package-check.test.mjs","name":"language policy boundary references/guide.md \"Research project tooling. A truffle is unrelated.\\n\"","line":252,"column":3,"nesting":0,"duration_ms":149.371048}
+{"type":"test:summary","file":"tests/scripts/package-check.test.mjs","counts":{"tests":55,"failed":0,"passed":55,"cancelled":0,"skipped":0,"todo":0,"topLevel":55,"suites":0},"success":true,"duration_ms":9631.133954}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"matching live calls capture literal arguments and pass across changed product inputs without target writes","line":30,"column":1,"nesting":0,"duration_ms":700.547537}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"comparison rejects a missing before probe","line":51,"column":3,"nesting":0,"duration_ms":378.056529}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"comparison rejects a missing after probe","line":51,"column":3,"nesting":0,"duration_ms":407.136695}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"comparison rejects changed endpoint","line":65,"column":3,"nesting":0,"duration_ms":639.531075}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"comparison rejects changed command","line":65,"column":3,"nesting":0,"duration_ms":556.874781}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"comparison rejects changed environment","line":65,"column":3,"nesting":0,"duration_ms":518.67938}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"side-effect approval is refused before either version or live command and binds only the specific call","line":77,"column":1,"nesting":0,"duration_ms":836.158674}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"a child argument cannot approve a side-effecting call","line":100,"column":1,"nesting":0,"duration_ms":149.830071}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"missing executable retains its reason and cannot verify the pair","line":113,"column":3,"nesting":0,"duration_ms":615.012841}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"timeout retains its reason and cannot verify the pair","line":113,"column":3,"nesting":0,"duration_ms":625.660646}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"failed assertion retains its reason and cannot verify the pair","line":113,"column":3,"nesting":0,"duration_ms":637.394709}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"declared input changes during a probe block its capture","line":125,"column":1,"nesting":0,"duration_ms":246.833432}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"a later input change invalidates the after capture","line":133,"column":3,"nesting":0,"duration_ms":568.865371}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"a later environment change invalidates the after capture","line":133,"column":3,"nesting":0,"duration_ms":578.279546}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"a later descriptor change invalidates the after capture","line":133,"column":3,"nesting":0,"duration_ms":545.486981}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"comparison rejects swapped phases and capture reuse","line":144,"column":1,"nesting":0,"duration_ms":743.211554}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"malformed descriptors and unsafe scopes do not execute the probe","line":152,"column":1,"nesting":0,"duration_ms":242.670517}
+{"type":"test:pass","file":"tests/scripts/probe.test.mjs","name":"ts-shop live stand-in disagrees with the passing mock so its probe pair is not ready","line":165,"column":1,"nesting":0,"duration_ms":6909.390535}
+{"type":"test:summary","file":"tests/scripts/probe.test.mjs","counts":{"tests":18,"failed":0,"passed":18,"cancelled":0,"skipped":0,"todo":0,"topLevel":18,"suites":0},"success":true,"duration_ms":15910.940184}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"reviewed scratch scaffold creates a minimal Git project and passes its native journey","line":68,"column":1,"nesting":0,"duration_ms":1509.052456}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"unknown input leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":222.175505}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"changed payload leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":265.34777}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"unresolved decision leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":251.976907}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"unselected edits leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":246.383903}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"escaping path leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":241.784149}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"missing vision leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":214.382819}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"missing glossary leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":280.706981}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"Git payload leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":257.340734}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"missing prerequisite leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":307.852137}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"invalid timeout leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":235.848567}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"missing command directory leaves the destination unchanged in preview and execution","line":104,"column":3,"nesting":0,"duration_ms":243.31135}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in prerequisite executable rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":219.283244}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in prerequisite args rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":187.77332}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in prerequisite versionArgs rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":258.483391}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in setup executable rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":207.710755}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in setup args rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":250.300301}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in setup versionArgs rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":238.819052}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in journey executable rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":239.320495}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in journey args rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":193.317006}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"NUL in journey versionArgs rejects preview and execution without writes","line":125,"column":5,"nesting":0,"duration_ms":200.99399}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"unselected empty destination is handled without adopting unrelated content","line":142,"column":3,"nesting":0,"duration_ms":136.177242}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"selected empty destination is handled without adopting unrelated content","line":142,"column":3,"nesting":0,"duration_ms":893.120389}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"nonempty destination is handled without adopting unrelated content","line":142,"column":3,"nesting":0,"duration_ms":165.505822}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"destination symlink collision leaves both the link and its target unchanged","line":155,"column":1,"nesting":0,"duration_ms":130.481961}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"interruption after directory creation resumes without duplicate setup effects","line":165,"column":3,"nesting":0,"duration_ms":1562.160136}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"interruption after temporary creation resumes without duplicate setup effects","line":165,"column":3,"nesting":0,"duration_ms":1678.007602}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"interruption after partial-temporary creation resumes without duplicate setup effects","line":165,"column":3,"nesting":0,"duration_ms":1535.04}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"interruption after file creation resumes without duplicate setup effects","line":165,"column":3,"nesting":0,"duration_ms":1111.639311}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"interruption after git creation resumes without duplicate setup effects","line":165,"column":3,"nesting":0,"duration_ms":1447.056739}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"interruption after partial-git creation resumes without duplicate setup effects","line":165,"column":3,"nesting":0,"duration_ms":1091.756102}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"user edit at unrelated.txt after interruption blocks remaining creation","line":179,"column":3,"nesting":0,"duration_ms":617.28821}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"user edit at VISION.md after interruption blocks remaining creation","line":179,"column":3,"nesting":0,"duration_ms":269.720681}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"setup failure retains the created project as unverified","line":190,"column":3,"nesting":0,"duration_ms":691.973041}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"journey failure retains the created project as unverified","line":190,"column":3,"nesting":0,"duration_ms":626.263264}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"interrupted setup is retained as unverified and never rerun automatically","line":205,"column":1,"nesting":0,"duration_ms":809.453163}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"malformed JSON plan leaves the workspace unchanged","line":216,"column":1,"nesting":0,"duration_ms":111.957894}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"a changed recorded temporary blocks recovery without removing user bytes","line":224,"column":1,"nesting":0,"duration_ms":459.946874}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"removed Git metadata blocks a completed creation without recreating it","line":236,"column":1,"nesting":0,"duration_ms":878.56487}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"removal of GLOSSARY.md after completion blocks creation without writes","line":248,"column":3,"nesting":0,"duration_ms":1235.783962}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"removal of docs after completion blocks creation without writes","line":248,"column":3,"nesting":0,"duration_ms":1495.882678}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"removal of the destination after completion blocks creation without writes","line":248,"column":3,"nesting":0,"duration_ms":826.174873}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"removal of VISION.md after completed-file blocks creation without writes","line":248,"column":3,"nesting":0,"duration_ms":575.192379}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"removal of the destination after completed-file blocks creation without writes","line":248,"column":3,"nesting":0,"duration_ms":392.059719}
+{"type":"test:pass","file":"tests/scripts/project.test.mjs","name":"recovered replacement completion protects a later scaffold deletion","line":260,"column":1,"nesting":0,"duration_ms":1133.311866}
+{"type":"test:summary","file":"tests/scripts/project.test.mjs","counts":{"tests":45,"failed":0,"passed":45,"cancelled":0,"skipped":0,"todo":0,"topLevel":45,"suites":0},"success":true,"duration_ms":26169.823295}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"proof relocates relative dependency executable links in both copies","line":30,"column":3,"nesting":0,"duration_ms":422.858114}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"proof relocates absolute dependency executable links in both copies","line":30,"column":3,"nesting":0,"duration_ms":406.990218}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"proof preserves source fixtures and records normal rejection with tool version","line":49,"column":1,"nesting":0,"duration_ms":329.426525}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"passing violation cannot prove enforcement","line":71,"column":3,"nesting":0,"duration_ms":292.839456}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"wrong diagnostic cannot prove enforcement","line":71,"column":3,"nesting":0,"duration_ms":315.442145}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"failed setup cannot prove enforcement","line":71,"column":3,"nesting":0,"duration_ms":208.803378}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"missing tool cannot prove enforcement","line":71,"column":3,"nesting":0,"duration_ms":134.343866}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"failed version cannot prove enforcement","line":71,"column":3,"nesting":0,"duration_ms":197.746194}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"missing cwd cannot prove enforcement","line":71,"column":3,"nesting":0,"duration_ms":126.373861}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"timeout cannot prove enforcement","line":71,"column":3,"nesting":0,"duration_ms":302.699562}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"ts native public imports and permitted direction pass while private, alias and cycles fail","line":84,"column":3,"nesting":0,"duration_ms":28046.413361}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"py native public imports and permitted direction pass while private, alias and cycles fail","line":84,"column":3,"nesting":0,"duration_ms":8976.447856}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"unknown check ID is rejected before execution","line":107,"column":3,"nesting":0,"duration_ms":108.743874}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"skipped check is rejected before execution","line":107,"column":3,"nesting":0,"duration_ms":177.468675}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"identical fixtures is rejected before execution","line":107,"column":3,"nesting":0,"duration_ms":114.861006}
+{"type":"test:pass","file":"tests/scripts/rule-proof.test.mjs","name":"string child command is rejected before execution","line":107,"column":3,"nesting":0,"duration_ms":89.545563}
+{"type":"test:summary","file":"tests/scripts/rule-proof.test.mjs","counts":{"tests":16,"failed":0,"passed":16,"cancelled":0,"skipped":0,"todo":0,"topLevel":16,"suites":0},"success":true,"duration_ms":40264.004926}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes","line":38,"column":1,"nesting":0,"duration_ms":294.759015}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before capture rejects scratch inside the target before any command executes","line":60,"column":3,"nesting":0,"duration_ms":198.012768}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"after capture rejects scratch inside the target before any command executes","line":60,"column":3,"nesting":0,"duration_ms":149.293381}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"ts-shop passing units cannot hide the failed checkout journey","line":72,"column":1,"nesting":0,"duration_ms":6338.839781}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"failed required check cannot pass and does not verify the user flow","line":98,"column":3,"nesting":0,"duration_ms":265.203609}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"skipped required check cannot pass and does not verify the user flow","line":98,"column":3,"nesting":0,"duration_ms":281.170717}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"unavailable required check cannot pass and does not verify the user flow","line":98,"column":3,"nesting":0,"duration_ms":166.11265}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"timed out required check cannot pass and does not verify the user flow","line":98,"column":3,"nesting":0,"duration_ms":1192.465555}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"failed version required check cannot pass and does not verify the user flow","line":98,"column":3,"nesting":0,"duration_ms":264.452536}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"cancelled required check stays unverified even with other passing checks","line":113,"column":1,"nesting":0,"duration_ms":312.038299}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a result covering no user journey explicitly reports that limit","line":136,"column":1,"nesting":0,"duration_ms":212.633758}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"an uncovered user flow remains unverified despite passing units","line":144,"column":1,"nesting":0,"duration_ms":254.801436}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"changed own bytes block the capture","line":157,"column":3,"nesting":0,"duration_ms":220.784057}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"changed new glob file block the capture","line":157,"column":3,"nesting":0,"duration_ms":246.608869}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"changed deleted glob file block the capture","line":157,"column":3,"nesting":0,"duration_ms":255.63191}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a later input change blocks all executed checks","line":167,"column":1,"nesting":0,"duration_ms":301.459421}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"inputs restored before completion leave the boundary fingerprints equal","line":175,"column":1,"nesting":0,"duration_ms":297.369309}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"changed inputs block the capture even when a command also fails","line":184,"column":1,"nesting":0,"duration_ms":255.997984}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a product file replaced by a directory retains completed command evidence","line":206,"column":5,"nesting":0,"duration_ms":317.212831}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a product file replaced by a dangling link retains completed command evidence","line":206,"column":5,"nesting":0,"duration_ms":345.900318}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a acceptance source replaced by a directory retains completed command evidence","line":206,"column":5,"nesting":0,"duration_ms":302.939293}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a acceptance source replaced by a dangling link retains completed command evidence","line":206,"column":5,"nesting":0,"duration_ms":258.682552}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a plan replaced by a directory retains completed command evidence","line":206,"column":5,"nesting":0,"duration_ms":315.627418}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"an external plan edited during capture blocks results","line":229,"column":3,"nesting":0,"duration_ms":279.820645}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"an external plan deleted during capture blocks results","line":229,"column":3,"nesting":0,"duration_ms":238.239907}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"an optional check's edited plan blocks the whole capture","line":245,"column":3,"nesting":0,"duration_ms":283.537262}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"an optional check's deleted plan blocks the whole capture","line":245,"column":3,"nesting":0,"duration_ms":235.057894}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"an optional check's edited acceptance source blocks the whole capture","line":245,"column":3,"nesting":0,"duration_ms":214.753969}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"an optional check's deleted acceptance source blocks the whole capture","line":245,"column":3,"nesting":0,"duration_ms":211.192645}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before capture with no active required check runs no commands","line":259,"column":3,"nesting":0,"duration_ms":126.048483}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"after capture with no active required check runs no commands","line":259,"column":3,"nesting":0,"duration_ms":135.923644}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"glob capture fingerprints the literal file src/app/[id]/page.ts","line":272,"column":3,"nesting":0,"duration_ms":410.513515}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"glob capture fingerprints the literal file src/{name}.ts","line":272,"column":3,"nesting":0,"duration_ms":320.494648}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"glob capture fingerprints the literal file src/star*.ts","line":272,"column":3,"nesting":0,"duration_ms":326.772525}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"glob capture fingerprints the literal file src/question?.ts","line":272,"column":3,"nesting":0,"duration_ms":457.972991}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a later file cwd is rejected before any version probe or check runs","line":293,"column":3,"nesting":0,"duration_ms":150.48513}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a later missing cwd is rejected before any version probe or check runs","line":293,"column":3,"nesting":0,"duration_ms":150.829868}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a later NUL executable is rejected before any version probe or check runs","line":293,"column":3,"nesting":0,"duration_ms":142.119543}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a later NUL argument is rejected before any version probe or check runs","line":293,"column":3,"nesting":0,"duration_ms":140.896847}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a later NUL version argument is rejected before any version probe or check runs","line":293,"column":3,"nesting":0,"duration_ms":179.6902}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid unknown field is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":167.66339}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid duplicate check is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":140.455589}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid missing case is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":138.755342}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid missing source is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":144.784196}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid missing pointer is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":129.61668}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid stale source is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":232.932033}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid unsafe scope is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":141.675636}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid unsafe cwd is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":176.823754}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid invalid timeout is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":165.458722}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid string command is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":129.450753}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"invalid agent execution claim is rejected before any command runs","line":319,"column":3,"nesting":0,"duration_ms":239.979174}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a refactor without prior protective capture is rejected before compatibility runs","line":342,"column":1,"nesting":0,"duration_ms":197.95458}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before protection with an unavailable final snapshot cannot serve as prior evidence","line":350,"column":1,"nesting":0,"duration_ms":561.889978}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before protection capture is blocked by changed bytes from an optional check","line":376,"column":5,"nesting":0,"duration_ms":522.456452}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before protection capture is blocked by changed mode from an optional check","line":376,"column":5,"nesting":0,"duration_ms":364.284068}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before protection capture is blocked by new glob file from an optional check","line":376,"column":5,"nesting":0,"duration_ms":498.870513}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before protection capture is blocked by deleted glob file from an optional check","line":376,"column":5,"nesting":0,"duration_ms":488.497507}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before protection capture is blocked by created absent literal from an optional check","line":376,"column":5,"nesting":0,"duration_ms":615.353527}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before reproduction capture is blocked by changed bytes from an optional check","line":376,"column":5,"nesting":0,"duration_ms":476.544871}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before reproduction capture is blocked by changed mode from an optional check","line":376,"column":5,"nesting":0,"duration_ms":563.242208}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before reproduction capture is blocked by new glob file from an optional check","line":376,"column":5,"nesting":0,"duration_ms":322.955991}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before reproduction capture is blocked by deleted glob file from an optional check","line":376,"column":5,"nesting":0,"duration_ms":334.466361}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before reproduction capture is blocked by created absent literal from an optional check","line":376,"column":5,"nesting":0,"duration_ms":446.569301}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before capture includes glob inputs and another check’s absent literal","line":396,"column":1,"nesting":0,"duration_ms":218.530015}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"capture combines glob discovery with excluded build output from a literal scope","line":415,"column":3,"nesting":0,"duration_ms":389.960034}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"capture combines glob discovery with explicit symlink from a literal scope","line":415,"column":3,"nesting":0,"duration_ms":352.671874}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"before capture blocks changes to an inactive check’s declared inputs","line":430,"column":1,"nesting":0,"duration_ms":209.172393}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"prior protection requires matching original and final snapshots","line":445,"column":1,"nesting":0,"duration_ms":427.145064}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a protected refactor passes only after compatibility runs against changed state","line":460,"column":1,"nesting":0,"duration_ms":497.042592}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"failed protection cannot establish prior refactor evidence","line":483,"column":3,"nesting":0,"duration_ms":347.074459}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"skipped protection cannot establish prior refactor evidence","line":483,"column":3,"nesting":0,"duration_ms":210.479507}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"changing the check plan cannot reuse prior protection","line":495,"column":1,"nesting":0,"duration_ms":331.582505}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"after capture cannot pretend to be prior refactor protection","line":505,"column":1,"nesting":0,"duration_ms":810.261961}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"compatibility failure prevents a protected refactor from passing","line":516,"column":1,"nesting":0,"duration_ms":397.209655}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"bug fix requires normally failing reproduction before and passing reproduction after","line":525,"column":1,"nesting":0,"duration_ms":405.58954}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"passing reproduction before change cannot satisfy the bug prerequisite","line":542,"column":1,"nesting":0,"duration_ms":207.205628}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a reproduction timeout is not a recorded bug","line":554,"column":3,"nesting":0,"duration_ms":1139.862287}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a reproduction version failure is not a recorded bug","line":554,"column":3,"nesting":0,"duration_ms":202.312439}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"a reproduction unavailable tool is not a recorded bug","line":554,"column":3,"nesting":0,"duration_ms":142.775503}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"bug-fix requires a required reproduction check in its plan","line":568,"column":3,"nesting":0,"duration_ms":101.982145}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"refactor requires a required protection check in its plan","line":568,"column":3,"nesting":0,"duration_ms":122.089504}
+{"type":"test:pass","file":"tests/scripts/run-checks.test.mjs","name":"refactor requires a required compatibility check in its plan","line":568,"column":3,"nesting":0,"duration_ms":122.454072}
+{"type":"test:summary","file":"tests/scripts/run-checks.test.mjs","counts":{"tests":82,"failed":0,"passed":82,"cancelled":0,"skipped":0,"todo":0,"topLevel":82,"suites":0},"success":true,"duration_ms":30914.695241}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"valid schema data dispatches from another cwd without changing the workspace","line":24,"column":1,"nesting":0,"duration_ms":122.258037}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-invalid.json with the installed schema fails with named problems and no writes","line":45,"column":3,"nesting":0,"duration_ms":101.36831}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes","line":45,"column":3,"nesting":0,"duration_ms":98.457759}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-valid.json with schema-invalid-definition.json fails with named problems and no writes","line":45,"column":3,"nesting":0,"duration_ms":101.552293}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-empty.json with the installed schema fails with named problems and no writes","line":45,"column":3,"nesting":0,"duration_ms":89.714043}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-missing.json with the installed schema fails with named problems and no writes","line":45,"column":3,"nesting":0,"duration_ms":61.688511}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-wrong-types.json with the installed schema fails with named problems and no writes","line":45,"column":3,"nesting":0,"duration_ms":91.012004}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-map-invalid.json with schema-map.json fails with named problems and no writes","line":45,"column":3,"nesting":0,"duration_ms":75.594606}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-malformed.json with the installed schema fails with named problems and no writes","line":45,"column":3,"nesting":0,"duration_ms":91.989165}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"schema-valued additional properties validates each map value","line":58,"column":1,"nesting":0,"duration_ms":107.548185}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"uniqueItems true validates semantic JSON equality for [{\"a\":1,\"b\":2},{\"b\":2,\"a\":1}]","line":68,"column":3,"nesting":0,"duration_ms":103.991776}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"uniqueItems false validates semantic JSON equality for [1,1]","line":68,"column":3,"nesting":0,"duration_ms":95.28703}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"uniqueItems true validates semantic JSON equality for [1,\"1\"]","line":68,"column":3,"nesting":0,"duration_ms":90.866726}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"uniqueItems true validates semantic JSON equality for []","line":68,"column":3,"nesting":0,"duration_ms":89.517551}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"command help succeeds with its implementation absent while execution reports blocked","line":81,"column":1,"nesting":0,"duration_ms":192.890166}
+{"type":"test:pass","file":"tests/scripts/schema-contract.test.mjs","name":"dispatch rejects unsupported arguments before loading the command","line":96,"column":1,"nesting":0,"duration_ms":73.975847}
+{"type":"test:summary","file":"tests/scripts/schema-contract.test.mjs","counts":{"tests":16,"failed":0,"passed":16,"cancelled":0,"skipped":0,"todo":0,"topLevel":16,"suites":0},"success":true,"duration_ms":1599.486737}
+{"type":"test:pass","file":"tests/scripts/skill-skeleton.test.mjs","name":"skill metadata permits only user invocation in the documented hosts","line":13,"column":1,"nesting":0,"duration_ms":22.001793}
+{"type":"test:pass","file":"tests/scripts/skill-skeleton.test.mjs","name":"load when table resolves all eight bundled references","line":26,"column":1,"nesting":0,"duration_ms":22.351782}
+{"type":"test:pass","file":"tests/scripts/skill-skeleton.test.mjs","name":"no arguments prints planned commands and returns usage exit 3","line":47,"column":1,"nesting":0,"duration_ms":66.282972}
+{"type":"test:pass","file":"tests/scripts/skill-skeleton.test.mjs","name":"explicit help succeeds","line":58,"column":1,"nesting":0,"duration_ms":59.919508}
+{"type":"test:pass","file":"tests/scripts/skill-skeleton.test.mjs","name":"an unimplemented command returns usage exit 3","line":64,"column":1,"nesting":0,"duration_ms":81.143016}
+{"type":"test:summary","file":"tests/scripts/skill-skeleton.test.mjs","counts":{"tests":5,"failed":0,"passed":5,"cancelled":0,"skipped":0,"todo":0,"topLevel":5,"suites":0},"success":true,"duration_ms":269.362444}
+{"type":"test:pass","file":"tests/scripts/upstream.test.mjs","name":"fetch copies exact pinned bytes and check verifies them without writing","line":31,"column":1,"nesting":0,"duration_ms":327.055703}
+{"type":"test:pass","file":"tests/scripts/upstream.test.mjs","name":"fetch refuses a listed file absent at its pin","line":45,"column":3,"nesting":0,"duration_ms":220.218924}
+{"type":"test:pass","file":"tests/scripts/upstream.test.mjs","name":"check refuses a listed file absent at its pin","line":45,"column":3,"nesting":0,"duration_ms":155.550726}
+{"type":"test:pass","file":"tests/scripts/upstream.test.mjs","name":"check refuses an absent local copy without repairing it","line":59,"column":1,"nesting":0,"duration_ms":140.3875}
+{"type":"test:pass","file":"tests/scripts/upstream.test.mjs","name":"check refuses modified local bytes and preserves them","line":67,"column":1,"nesting":0,"duration_ms":208.345018}
+{"type":"test:pass","file":"tests/scripts/upstream.test.mjs","name":"fetch rejects traversal before copying files","line":78,"column":1,"nesting":0,"duration_ms":73.421438}
+{"type":"test:summary","file":"tests/scripts/upstream.test.mjs","counts":{"tests":6,"failed":0,"passed":6,"cancelled":0,"skipped":0,"todo":0,"topLevel":6,"suites":0},"success":true,"duration_ms":1133.226518}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board build renders escaped text and preserves raw revision-bound verdict data","line":56,"column":1,"nesting":0,"duration_ms":246.625704}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects duplicate IDs before scratch writes","line":103,"column":3,"nesting":0,"duration_ms":84.660306}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects blank IDs before scratch writes","line":103,"column":3,"nesting":0,"duration_ms":118.91518}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects missing IDs before scratch writes","line":103,"column":3,"nesting":0,"duration_ms":86.045605}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects stale draft before scratch writes","line":103,"column":3,"nesting":0,"duration_ms":90.904313}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects unknown fields before scratch writes","line":103,"column":3,"nesting":0,"duration_ms":96.861606}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects empty cards before scratch writes","line":103,"column":3,"nesting":0,"duration_ms":92.416791}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects wrong field types before scratch writes","line":103,"column":3,"nesting":0,"duration_ms":90.455673}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects an empty draft without scratch writes","line":115,"column":3,"nesting":0,"duration_ms":87.480175}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board rejects an invalid UTF-8 draft without scratch writes","line":115,"column":3,"nesting":0,"duration_ms":90.953558}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board reports missing files, missing options and unknown options","line":125,"column":1,"nesting":0,"duration_ms":237.316728}
+{"type":"test:pass","file":"tests/scripts/vision-board.test.mjs","name":"board ships the unchanged upstream stylesheet beside its generated HTML","line":138,"column":1,"nesting":0,"duration_ms":111.314715}
+{"type":"test:summary","file":"tests/scripts/vision-board.test.mjs","counts":{"tests":12,"failed":0,"passed":12,"cancelled":0,"skipped":0,"todo":0,"topLevel":12,"suites":0},"success":true,"duration_ms":1443.977284}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"resumed review preserves previous drafts and decisions and refuses an old round on the revised board","line":49,"column":1,"nesting":0,"duration_ms":471.486861}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses unknown card without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":220.326524}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses duplicate card without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":225.710502}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses missing card without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":184.431267}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses missing card ID without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":231.605635}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses blank card ID without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":211.799304}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses different run without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":299.618171}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses different revision without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":239.931575}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses unknown verdict without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":246.158906}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses incomplete round without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":294.942656}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses unknown field without creating a new draft","line":84,"column":3,"nesting":0,"duration_ms":277.942416}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses an empty revised draft","line":98,"column":3,"nesting":0,"duration_ms":216.117204}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"verdict ingestion refuses an invalid UTF-8 revised draft","line":98,"column":3,"nesting":0,"duration_ms":233.726629}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"review refuses changed original draft bytes and another workspace","line":107,"column":1,"nesting":0,"duration_ms":467.453947}
+{"type":"test:pass","file":"tests/scripts/vision-review.test.mjs","name":"launch reports a missing pinned runtime and preserves the draft for resume","line":121,"column":1,"nesting":0,"duration_ms":546.185855}
+{"type":"test:summary","file":"tests/scripts/vision-review.test.mjs","counts":{"tests":15,"failed":0,"passed":15,"cancelled":0,"skipped":0,"todo":0,"topLevel":15,"suites":0},"success":true,"duration_ms":4380.586191}
+{"type":"test:pass","file":"tests/scripts/vision-runtime.test.mjs","name":"gate prepare installs both locks and runs the pinned runtime without global support skills","line":13,"column":1,"nesting":0,"duration_ms":5116.047082}
+{"type":"test:summary","file":"tests/scripts/vision-runtime.test.mjs","counts":{"tests":1,"failed":0,"passed":1,"cancelled":0,"skipped":0,"todo":0,"topLevel":1,"suites":0},"success":true,"duration_ms":5122.879707}
+{"type":"test:summary","file":null,"counts":{"tests":894,"failed":0,"passed":894,"cancelled":0,"skipped":0,"todo":0,"topLevel":885,"suites":0},"success":true,"duration_ms":74228.82076}
