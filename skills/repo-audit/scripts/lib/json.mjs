@@ -1,7 +1,10 @@
 import { CommandError } from './result.mjs'
 
 export function inspectJSON(text) {
-  const value = JSON.parse(text)
+  const value = JSON.parse(text, (key, value) => {
+    if (typeof value === 'number' && !Number.isFinite(value)) throw new CommandError('failed', [{ code: 'nonfinite-number', message: 'JSON numbers must be finite.', fix: 'Supply finite numbers in every JSON value.' }])
+    return value
+  })
   const tokens = [...text.matchAll(/"(?:[^"\\]|\\.)*"|[{}\[\],:]|[^\s{}\[\],:]+/g)]
   const entries = new Map()
   let index = 0

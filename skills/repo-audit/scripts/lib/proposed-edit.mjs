@@ -24,14 +24,17 @@ function headingSection(text, heading, content) {
   let fence
   let offset = 0
   for (const line of lines) {
-    const marker = /^ {0,3}(`{3,}|~{3,})(.*?)(?:\r?\n)?$/.exec(line)
+    const semanticLine = offset === 0 ? line.replace(/^\uFEFF/, '') : line
+    const marker = /^ {0,3}(`{3,}|~{3,})(.*?)(?:\r?\n)?$/.exec(semanticLine)
     if (fence) {
       if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined
-    } else if (marker) fence = marker[1]
-    else {
-      if (/<(?:\/?[A-Za-z]|[!?])/.test(line)) reject('unsupported-format', 'HTML-like markup requires a reviewed replacement.')
-      if (/^ {0,3}(?:=+|-+)\s*$/.test(line)) reject('unsupported-format', 'Setext headings and thematic breaks require a reviewed replacement.')
-      const match = /^ {0,3}(#{1,6})(?:[ \t]+(.*))?$/.exec(line.replace(/\r?\n$/, ''))
+    } else if (marker) {
+      if (marker[1][0] === '`' && marker[2].includes('`')) reject('unsupported-format', 'Backtick fence info strings cannot contain backticks.')
+      fence = marker[1]
+    } else {
+      if (/<(?:\/?[A-Za-z]|[!?])/.test(semanticLine)) reject('unsupported-format', 'HTML-like markup requires a reviewed replacement.')
+      if (/^ {0,3}(?:=+|-+)\s*$/.test(semanticLine)) reject('unsupported-format', 'Setext headings and thematic breaks require a reviewed replacement.')
+      const match = /^ {0,3}(#{1,6})(?:[ \t]+(.*))?$/.exec(semanticLine.replace(/\r?\n$/, ''))
       if (match) headings.push({ title: (match[2] ?? '').replace(/(?:^|[ \t]+)#+[ \t]*$/, '').trim(), level: match[1].length, start: offset, body: offset + line.length })
     }
     offset += line.length
@@ -86,7 +89,7 @@ export function proposedEdit(edit, original) {
     if (position < 0 || original.indexOf(edit.payload.search, position + 1) >= 0) reject('ambiguous-replacement', 'Replacement search must occur exactly once.')
     return original.slice(0, position) + edit.payload.replacement + original.slice(position + edit.payload.search.length)
   }
-  if (original.split(/\r?\n/).includes(edit.payload.line)) return original
+  if (original.replace(/^\uFEFF/, '').split(/\r?\n/).includes(edit.payload.line)) return original
   const newline = original.includes('\r\n') ? '\r\n' : '\n'
   return original + (original && !original.endsWith('\n') ? newline : '') + edit.payload.line + newline
 }

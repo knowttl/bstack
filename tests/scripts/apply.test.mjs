@@ -80,6 +80,45 @@ for (const [name, operation, original, payload, proposed, path] of [
   })
 }
 
+test('apply ignores a leading BOM for semantic matching while preserving bytes', async t => {
+  for (const [operation, original, payload, proposed, expected] of [
+    ['set-heading-section', '\uFEFF# A\none\n# A\ntwo\n', { heading: 'A', content: 'new\n' }, '\uFEFF# A\none\n# A\nnew\n', { exit: 1, code: 'ambiguous-heading', content: undefined }],
+    ['append-line-once', '\uFEFFrule\r\n', { line: 'rule' }, '\uFEFFrule\r\n', { exit: 0, code: undefined, content: '\uFEFFrule\r\n' }],
+    ['set-heading-section', '\uFEFF# A\nold\n# B\nkeep\n', { heading: 'A', content: 'new\n' }, '\uFEFF# A\nnew\n# B\nkeep\n', { exit: 0, code: undefined, content: '\uFEFF# A\nnew\n# B\nkeep\n' }],
+    ['set-heading-section', '\uFEFF```md\n# A\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '\uFEFF```md\n# A\n```\n# A\nnew\n', { exit: 0, code: undefined, content: '\uFEFF```md\n# A\n```\n# A\nnew\n' }],
+    ['set-heading-section', '\uFEFF---\n# A\nold\n', { heading: 'A', content: 'new\n' }, '', { exit: 1, code: 'unsupported-format', content: undefined }]
+  ]) {
+    const context = await setup(t, operation, original, payload, proposed)
+    const result = await preview(context)
+    assert.deepEqual({ exit: result.exit, code: result.problems[0]?.code, content: result.data.edits?.[0].proposedContent }, expected)
+  }
+})
+
+test('apply rejects backtick-containing fence info before deriving section bytes', async t => {
+  const context = await setup(t, 'set-heading-section', '# A\nold\n```inline```\n# B\nkeep\n```text\nliteral\n```\n# C\nrest\n',
+    { heading: 'A', content: 'new\n' }, '# A\nnew\n# C\nrest\n')
+  const result = await preview(context)
+  assert.equal(result.exit, 1)
+  assert.equal(result.problems[0].code, 'unsupported-format')
+  assert.deepEqual(result.data, {})
+})
+
+test('apply rejects nonfinite JSON payload numbers before digest computation', async t => {
+  for (const [value, raw, proposed] of [
+    [null, '1e400', '{"a":null}\n'],
+    [{ nested: null }, '{"nested":-1e400}', '{"a":{"nested":null}}\n'],
+    [[{ nested: [null] }], '[{"nested":[1e400]}]', '{"a":[{"nested":[null]}]}\n']
+  ]) {
+    const context = await setup(t, 'set-json-key', '{"a":0}\n', { key: 'a', value }, proposed, 'config.json')
+    const input = await readFile(context.file, 'utf8')
+    await writeFile(context.file, input.replace(`"value":${JSON.stringify(value)}`, `"value":${raw}`))
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'nonfinite-number')
+    assert.deepEqual(result.data, {})
+  }
+})
+
 test('apply prints the exact selected-delete diff in plain and JSON output', async t => {
   const context = await setup(t, 'delete', 'old', {}, null)
   const expected = '--- a/README.md\n+++ /dev/null\n@@ -1,1 +0,0 @@\n-old\n\\ No newline at end of file\n'
