@@ -33,7 +33,7 @@ function headingSection(text, heading, content) {
       if (!/^[A-Za-z0-9_+.-]*$/.test(marker[2].trim())) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
       fence = marker[1]
     } else if (semanticLine.trim()) {
-      if (/^(?:[ \t]|[>\[]|(?:[-+*]|\d+[.)])(?:[ \t]|$)|[=*_ -]+[\r\n]*$)|\||<(?:\/?[A-Za-z]|[!?])/.test(semanticLine)) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
+      if (/^(?:[ \t]|[>\[]|(?:[-+*]|\d+[.)])(?:[ \t]|$)|[=*_ \t-]+[\r\n]*$)|\||<(?:\/?[A-Za-z]|[!?])/.test(semanticLine)) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
       if (semanticLine.startsWith('#')) {
         const match = /^(#{1,6})[ \t]+(.+)$/.exec(semanticLine.replace(/\r?\n$/, ''))
         const title = match?.[2].replace(/(?:^|[ \t]+)#+[ \t]*$/, '').trim()

@@ -160,6 +160,26 @@ for (const boundary of ['#', '#   ', '# ###', '##', '###', '####', '#####', '###
   })
 }
 
+for (const [name, heading, underline] of [
+  ['level-1 setext underline', '# A', '===\t'],
+  ['level-2 setext underline', '## A', '---\t'],
+  ['star thematic break', '# A', '***\t'],
+  ['underscore thematic break', '# A', '___\t']
+]) {
+  for (const newline of ['\n', '\r\n']) {
+    test(`heading edits reject tab-terminated ${name} with ${JSON.stringify(newline)} and no project writes`, async t => {
+      const original = [heading, 'old', '', 'B', underline, 'keep', '# C', 'rest', ''].join(newline)
+      const proposed = [heading, 'new', '# C', 'rest', ''].join(newline)
+      const context = await setup(t, 'set-heading-section', original, { heading: 'A', content: `new${newline}` }, proposed)
+      const result = await preview(context)
+      assert.equal(result.exit, 1)
+      assert.equal(result.problems[0].code, 'unsupported-format')
+      assert.equal(result.problems[0].message, 'Unsupported Markdown structure; use whole-file replacement.')
+      assert.deepEqual(result.data, {})
+    })
+  }
+}
+
 for (const [name, structure] of [
   ['unordered list continuation', '- item\n # B\n keep\n'],
   ['ordered list continuation', '1. item\n   # B\n   keep\n'],
