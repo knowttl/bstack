@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
 
 // Discovery is anchored to this checkout, independent of the caller's directory.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -30,7 +31,9 @@ try {
   if (args.length && (args.length !== 2 || !['--task', '--capture'].includes(args[0]))) {
     throw new Error('Usage: npm test -- [--task <id> | --capture <run.json>]')
   }
-  const capture = args[0] === '--capture' ? resolve(root, args[1]) : null
+  // Ordinary gate runs retain evidence too; standalone discovery fixtures have no Git checkout.
+  const capture = args[0] === '--capture' ? resolve(root, args[1]) :
+    !args.length && existsSync(join(root, '.git')) ? join(root, '.cache', 'full-suite.json') : null
   if (capture) {
     if (!relative(join(root, '.cache'), capture) || relative(join(root, '.cache'), capture).startsWith('..')) {
       throw new Error('Capture must be a file inside .cache/')
@@ -77,7 +80,7 @@ try {
     await writeFile(`${capture}.events`, events)
     if (JSON.stringify(binding.inputs) !== JSON.stringify(await evidence.inputs(root))) throw new Error('Evidence inputs changed during the suite')
     await writeFile(capture, JSON.stringify({ schemaVersion: 1, ...binding,
-      command: { executable: 'npm', args: ['test', '--', '--capture', relative(root, capture)], cwd: '.', exitCode: process.exitCode },
+      command: { executable: 'node', args: ['scripts/test.mjs', ...args], cwd: '.', exitCode: process.exitCode },
       suites: files.map(path => relative(root, path).replaceAll('\\', '/')),
       outputSha256: evidence.hash(output), eventsSha256: evidence.hash(events) }, null, 2) + '\n')
   }

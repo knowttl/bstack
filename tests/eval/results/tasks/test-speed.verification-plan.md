@@ -14,6 +14,8 @@ The baseline profile retained 834 passing tests in 58.89 seconds across 24 files
 File concurrency remains unchanged because the longest file already spans almost the entire suite wall time.
 
 The gate must retain its own final full-suite capture after all review and documentation fixes.
+Ordinary `npm test` now retains this capture too, because this PR's new gate-control YAML is trusted only after it lands on main.
+For this PR the Test agent must attach its own final run using the command below, and Document must refresh it if any authored inputs change.
 Document attaches it with `node scripts/task-evidence.mjs .cache/full-suite.json test-speed` before publication.
 If input binding rejects attachment, rerun the configured full-suite command inside this pipeline and attach its fresh result.
 Record actual final test counts and suite times in the PR body, along with install and check results and timing.

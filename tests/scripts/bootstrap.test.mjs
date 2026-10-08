@@ -101,11 +101,17 @@ async function evidenceSandbox(t, source = "import test from 'node:test'\ntest('
   return directory
 }
 
-function attach(directory) {
+function attach(directory, runPath = '.cache/run.json') {
   const { NODE_TEST_CONTEXT, ...env } = process.env
-  return spawnSync(process.execPath, [join(directory, 'scripts', 'task-evidence.mjs'), '.cache/run.json', 'speed'],
+  return spawnSync(process.execPath, [join(directory, 'scripts', 'task-evidence.mjs'), runPath, 'speed'],
     { cwd: directory, encoding: 'utf8', env })
 }
+
+test('ordinary full-suite invocation retains attachable evidence in a Git checkout', async t => {
+  const directory = await evidenceSandbox(t)
+  assert.equal(run(directory).status, 0)
+  assert.equal(attach(directory, '.cache/full-suite.json').status, 0)
+})
 
 test('full-run evidence attaches identities and output without executing tests again', async t => {
   const directory = await evidenceSandbox(t,
