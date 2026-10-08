@@ -5,6 +5,15 @@ Start from the project's requirements, approved design and observed risks.
 These examples are candidates, not defaults.
 Checks catch defined mistakes, not every unsound future design decision.
 
+## Contents
+
+- [Record each principle](#record-each-principle)
+- [Example mappings](#example-mappings)
+- [Proof required before adopting an automated rule](#proof-required-before-adopting-an-automated-rule)
+- [Integrate the maintained command](#integrate-the-maintained-command)
+- [Control existing debt](#control-existing-debt)
+- [One authoritative source per rule](#one-authoritative-source-per-rule)
+
 ## Record each principle
 
 | Field | Required evidence |
