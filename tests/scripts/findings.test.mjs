@@ -192,3 +192,39 @@ test('findings rejects malformed input and missing option', async t => {
   assert.equal(result.status, 3)
   assert.equal(JSON.parse(result.stdout).problems[0].code, 'missing-findings')
 })
+
+for (const action of ['validate', 'render']) {
+  test(`findings ${action} rejects escaped duplicate members without target writes`, async t => {
+    const context = await setup(t)
+    const input = await readFile(context.file, 'utf8')
+    await writeFile(context.file, input.replace('"nextChange":', '"next\\u0043hange":"discarded","nextChange":'))
+    const before = await snapshot(context.repo)
+    const result = run(context, action)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'duplicate-key')
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+for (const [path, code] of [
+  ['src', 'invalid-scope'], ['src/*.md', 'invalid-scope'], ['src/?.md', 'invalid-scope'],
+  ['src/[ab].md', 'invalid-scope'], ['src/{a,b}.md', 'invalid-scope'], ['README.md/child', 'unresolved-path']
+]) {
+  test(`findings rejects unedited ${JSON.stringify(path)} scope without target writes`, async t => {
+    const context = await setup(t)
+    context.findings.reviewedScope.push(path)
+    await save(context)
+    const before = await snapshot(context.repo)
+    const result = run(context)
+    assert.notEqual(result.exit, 0)
+    assert.equal(result.problems[0].code, code)
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+test('findings accepts concrete planned absent files in reviewed scope', async t => {
+  const context = await setup(t)
+  context.findings.reviewedScope.push('future/new.md')
+  await save(context)
+  assert.equal(run(context).exit, 0)
+})
