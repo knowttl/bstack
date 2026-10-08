@@ -2,12 +2,13 @@
   "schemaVersion": 1,
   "taskId": "T2.7",
   "slice": "C15a",
-  "sourceRevision": "4a1da5b569e3c565f226390b16e66a239ad6b2dd",
+  "sourceRevision": "431b703ba38c418eee42eb8f52aba3e2d082d73d",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1-T2.6 (most recently https://github.com/knowttl/bstack/pull/26: protected writes, journal, resume and selected delete).\n\nThis piece is slice C15a, the first part of task T2.7 \"Build verification capture and live probes\": check plans, capture and prior protection. Done evidence: failed journey despite passing units, failed/skipped/stale/timeout checks rejected, prior refactor proof.",
   "amendments": [
     "Regenerated all command artifacts after the first pipeline repaired capture freshness, command and phase preflight, literal input paths and reproduction coverage.",
     "Firstmate authorized the two-boundary fingerprint contract: compare all declared inputs before and after execution and block changed inputs; no mid-run tracking.",
-    "Final snapshot failures retain completed command evidence, and scratch setup precedes command execution."
+    "Final snapshot failures retain completed command evidence, and scratch setup precedes command execution.",
+    "The second pipeline's document step clarified phase and journey verdicts and removed inherited NODE_TEST_CONTEXT from the fixture command environment; regenerated all required command artifacts against that final harness."
   ],
   "status": "passed",
   "environment": {
