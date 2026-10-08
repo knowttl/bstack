@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+  },
+  "nextChange": "Audit and recommend principles/checks only; no implementation change requested.",
+  "reviewedScope": [
+    "VISION.md",
+    "DESIGN.md",
+    "glossary.md"
+  ],
+  "sources": [
+    {
+      "id": "vision",
+      "pointer": "VISION.md:3",
+      "intent": "documented",
+      "summary": "Owner-approved single-reader journey and first-version exclusions."
+    },
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "Local Node, JSON persistence and queue/public-operation boundary."
+    },
+    {
+      "id": "terms",
+      "pointer": "glossary.md:3",
+      "intent": "documented",
+      "summary": "Read articles remain in the queue; mark read preserves title and address."
+    },
+    {
+      "id": "inventory",
+      "pointer": "[audit-scratch]/inventory.json",
+      "intent": "observed",
+      "summary": "Three documents, no executable application or check configuration."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "No executable acceptance protection for the approved journey.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Keep article identity and queue membership stable.",
+      "consequence": "A mark-read implementation could discard title/address or remove read articles.",
+      "fix": "Add public-operation and real-presentation acceptance tests: save two distinct articles, list, mark one read, list again and restart/reload JSON. Assert exact title/address preservation, read article remains, and second article is unchanged.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "Run node --test with temporary storage plus a real presentation smoke flow. Expectations come from VISION.md:5, DESIGN.md:6 and glossary.md:4-5.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "terms",
+        "inventory"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "The documented presentation/storage boundary has no executable or review protection.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Queue owns mutations; presentation uses only public operations.",
+      "consequence": "Direct storage writes can bypass mark-read invariants.",
+      "fix": "At first implementation, keep presentation, queue operations and JSON adapter responsibilities explicit. Use import-graph review now; add a native semantic import restriction only if the selected tool supports it. Avoid regex rules.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "Review resolved imports and storage writes; prove allowed public import passes and deliberate direct-storage import fails if automating.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "inventory"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Persistence failure behaviour has no implementation or protection.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Proposed: failed persistence must not silently discard saved articles.",
+      "consequence": "Malformed JSON or a failed write could erase the reader\u2019s queue.",
+      "fix": "Handle an absent file as an empty queue; report malformed JSON without overwriting it. Serialize mutations and write via temporary file/replacement appropriate to the supported platform; do not report success before persistence completes.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "Real temporary-file checks: restart round trip, malformed JSON preserved byte-for-byte, failed-write error surfaced and prior valid data retained. Do not claim universal crash durability from these tests.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "inventory"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "There is no reproducible setup or maintained check command.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Proposed: a clean checkout must reproduce setup and journey checks.",
+      "consequence": "Later contributors could get a green run with no tests or inconsistent tools.",
+      "fix": "When implementation lands, document supported Node/setup/start/check commands, make tests actually discoverable, and adopt one formatter/linter if useful. Keep review rules in DESIGN.md, config as mechanical authority. Add JS checkJs or TS noEmit only if that language setup is selected; CI is a separate selection.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "Clean-checkout setup and start smoke test; node --test must execute the required cases, formatter/lint and applicable type checks pass. No host version is silently adopted as project pin.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "inventory"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "No code exists to assess first-version scope compliance.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Keep the local single-reader scope and purposeful dependencies.",
+      "consequence": "Accounts, sharing or recommendations would expand the approved first version.",
+      "fix": "Review each proposed capability/dependency against save, list, mark-read and local JSON persistence. Preserve current vision/design/glossary as authority; do not generate a replacement vision or duplicate standards.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "Human review maps each capability to VISION.md:4-6 and DESIGN.md:3-5. This is judgement, not a static violation.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "inventory"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Research ran in main thread: three small files made delegation wasteful.",
+    "Application, manifests, tests and check commands absent; executable readiness unverified.",
+    "No next implementation change stated; no recommendation blocks this read-only audit.",
+    "No two change plans supplied; overlap analysis not applicable.",
+    "No product or stack gap found; no intent/vision interview opened.",
+    "Checks not adopted or proven; no selected edits. Readiness validation may remain blocked without captured starting-check artifacts."
+  ]
+}

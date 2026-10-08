@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Owner-approved vision: one reader saves articles and marks them read without losing title or address. Accounts, sharing and recommendations excluded. Design fixes local Node, JSON persistence, queue-owned state and presentation via public operations. Glossary agrees; no material contradictions.",
+      "limitations": [
+        "No instructions, standards, audit or requirements beyond these three documents."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "VISION.md:5",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Documented boundary: queue owns article state; presentation uses save/list/mark-read and cannot write storage directly. No implementation, entry points or tests exist. No runtime behaviour inferred.",
+      "limitations": [
+        "No executable architecture to assess. History has two documentation commits; measurements are advisory."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:5",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "No manifests, lockfiles, native config, check scripts or CI exist. Inspect and inventory pass. Host Node v24.17.0 and Git 2.54.0 are available; these are host versions, not project pins.",
+      "limitations": [
+        "No project check or user journey can execute."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Approved Node stack can use the built-in node:test runner through node --test for behaviour checks. Official filesystem documentation warns against overlapping writes without awaiting completion; serialize JSON mutations if asynchronous persistence is used.",
+      "limitations": [
+        "No JS versus TS choice or project version is imposed; no existing tool conventions to extend."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://nodejs.org/api/test.html",
+          "readDate": "2026-10-08",
+          "verification": "verified"
+        },
+        {
+          "url": "https://nodejs.org/api/fs.html",
+          "readDate": "2026-10-08",
+          "verification": "verified"
+        }
+      ]
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "No third-party integration is documented or implemented; no outside service research or live probe is relevant.",
+      "limitations": [
+        "No service behaviour claimed."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

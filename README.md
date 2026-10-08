@@ -9,7 +9,8 @@ Use the load-when table to read the self-contained intent interview for a new id
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
 Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending principles and their checks, and [architecture](skills/repo-audit/references/architecture.md) when recommending module boundaries.
 These provide evidence requirements and project-specific guidance, with native rule-proof and maintained checks still pending.
-The maintenance reference remains a placeholder, and later audit commands and the installer are not built yet.
+The existing-repo audit and selected apply path are available.
+The maintenance reference remains a placeholder, while protected new-project creation, maintained enforcement, portable maintenance and the installer are pending.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -42,6 +43,7 @@ npm test -- --task T2.2
 npm test -- --task T2.3
 npm test -- --task T2.4
 npm test -- --task T2.5
+npm test -- --task T2.8
 npm test -- --task T3.1
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
@@ -54,6 +56,14 @@ Local validation installs both the root development lock and the nested skill ru
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 The no-mistakes gate installs both locks, runs tests and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
+For an existing repo, explicitly invoke `repo-audit` with the target, assessed area and stated next change.
+The procedure runs inspect and inventory, researches the discovered sources and checks citations before asking only recommendation-changing questions.
+It reuses approved goals, presents findings and exact changes for selection, applies the reviewed plan, captures native checks and applies the reviewed audit record through the same write boundary.
+Equivalent root CLAUDE.md consolidation uses a selected delete alongside the reviewed AGENTS.md content.
+Scoped, local and ancestor instructions remain inventoried and unchanged.
+A material vision gap produces a candidate delta against the approved baseline, with board feedback and exact-revision approval required before a selected vision write.
+See the [T2.8 foundation checkpoint](tests/eval/results/foundation-C17/summary.md) for actual outcomes and blocked interactions.
+
 Collect repeatable size and change-history signals, or compare two declared change plans:
 
 ```sh
