@@ -57,11 +57,7 @@ T0.6 recorded Node 24 and Node 26, while each later task records the versions it
 The no-mistakes gate installs both locks, runs tests and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
 For an existing repo, explicitly invoke `repo-audit` with the target, assessed area and stated next change.
-The procedure runs inspect and inventory, researches the discovered sources and checks citations before asking only recommendation-changing questions.
-It reuses approved goals, presents findings and exact changes for selection, applies the reviewed plan, captures native checks and applies the reviewed audit record through the same write boundary.
-Equivalent root CLAUDE.md consolidation uses a selected delete alongside the reviewed AGENTS.md content.
-Scoped, local and ancestor instructions remain inventoried and unchanged.
-A material vision gap produces a candidate delta against the approved baseline, with board feedback and exact-revision approval required before a selected vision write.
+Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation, vision review and final verification requirements.
 See the [T2.8 foundation checkpoint](tests/eval/results/foundation-C17/summary.md) for actual outcomes and blocked interactions.
 
 Collect repeatable size and change-history signals, or compare two declared change plans:
