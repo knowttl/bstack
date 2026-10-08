@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, realpath, rm, writeFile, readFile, chmod } from 'node:fs/promises'
+import { mkdtemp, realpath, rm, writeFile, readFile, chmod, mkdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -16,7 +16,7 @@ import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 async function sandbox(t) {
-  const directory = await realpath(await mkdtemp(join(tmpdir(), 'bstack child 日本語 $; ')))
+  const directory = await realpath(await mkdtemp(join(tmpdir(), 'bstack child 日本語 $ ')))
   t.after(() => rm(directory, { recursive: true, force: true }))
   return directory
 }
@@ -220,7 +220,29 @@ test('Windows npm selection uses Node and a JavaScript CLI with literal argument
   assert.deepEqual(result.data, { executable: process.execPath, args: [cli, ...args] })
 })
 
-for (const executable of ['npm.cmd', 'tool.cmd', 'tool.bat']) {
+for (const [manager, entry] of [['npm', 'npm-cli.js'], ['pnpm', 'pnpm.cjs'], ['yarn', 'yarn.js']]) {
+  for (const executable of [manager, `${manager}.cmd`]) {
+    test(`Windows ${executable} resolves a PATH launcher to an executable JavaScript CLI`, async t => {
+      const directory = await sandbox(t)
+      const bin = join(directory, 'bin')
+      const node = join(directory, 'node.exe')
+      const cli = join(bin, 'node_modules', manager, 'bin', entry)
+      await mkdir(dirname(cli), { recursive: true })
+      await writeFile(join(bin, `${manager}.cmd`), '@echo off\r\nexit /b 99\r\n')
+      await writeFile(cli, 'console.log(JSON.stringify(process.argv.slice(2)))')
+      const args = ['--version', '日本語 $; folder', '&echo wrong']
+      const result = await invoke(directory, 'select', { executable, args,
+        options: { platform: 'win32', node, env: { PATH: bin } } })
+      assert.equal(result.code, 0)
+      assert.deepEqual(result.data, { executable: node, args: [cli, ...args] })
+      const launched = spawnSync(process.execPath, result.data.args, { encoding: 'utf8', shell: false })
+      assert.equal(launched.status, 0)
+      assert.deepEqual(JSON.parse(launched.stdout), args)
+    })
+  }
+}
+
+for (const executable of ['npm.cmd', 'pnpm', 'pnpm.cmd', 'yarn', 'yarn.cmd', 'tool.cmd', 'tool.bat']) {
   test(`Windows ${executable} without a supported CLI is blocked`, async t => {
     const directory = await sandbox(t)
     const result = await invoke(directory, 'select', { executable, args: [],

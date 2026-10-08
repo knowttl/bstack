@@ -11,17 +11,20 @@ const outputLimit = 65536
 export async function selectCommand(executable, args, { platform = process.platform, env = process.env, node = process.execPath } = {}) {
   if (executable === 'node') return { executable: node, args }
   if (platform !== 'win32') return { executable, args }
-  if (/^npm(?:\.cmd)?$/i.test(executable)) {
-    const candidates = [env.npm_execpath, join(dirname(node), 'node_modules', 'npm', 'bin', 'npm-cli.js'),
-      ...(env.PATH || '').split(';').filter(Boolean).map(path => join(path, 'node_modules', 'npm', 'bin', 'npm-cli.js'))]
+  const manager = /^(npm|pnpm|yarn)(?:\.cmd)?$/i.exec(executable)?.[1].toLowerCase()
+  if (manager) {
+    const entry = { npm: 'npm-cli.js', pnpm: 'pnpm.cjs', yarn: 'yarn.js' }[manager]
+    const candidates = [manager === 'npm' ? env.npm_execpath : undefined,
+      join(dirname(node), 'node_modules', manager, 'bin', entry),
+      ...(env.PATH || '').split(';').filter(Boolean).map(path => join(path, 'node_modules', manager, 'bin', entry))]
     for (const path of candidates) {
-      if (!path || !/npm-cli\.js$/i.test(path)) continue
+      if (!path || !path.toLowerCase().endsWith(entry)) continue
       try {
         await access(path)
         return { executable: node, args: [path, ...args] }
       } catch {}
     }
-    throw new CommandError('blocked', [{ code: 'npm-cli-unavailable', message: 'The npm JavaScript CLI could not be resolved.', fix: 'Install npm alongside Node or set npm_execpath to npm-cli.js.' }])
+    throw new CommandError('blocked', [{ code: `${manager}-cli-unavailable`, message: `The ${manager} JavaScript CLI could not be resolved.`, fix: manager === 'npm' ? 'Install npm alongside Node or set npm_execpath to npm-cli.js.' : `Install ${manager} alongside Node or make its JavaScript CLI available on PATH.` }])
   }
   if (/\.(cmd|bat)$/i.test(executable)) {
     throw new CommandError('blocked', [{ code: 'command-file-unsupported', message: 'Command-file launchers cannot run without a shell.', fix: 'Select the tool executable or its JavaScript entry point with node.' }])

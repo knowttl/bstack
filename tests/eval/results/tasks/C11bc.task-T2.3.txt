@@ -1,0 +1,75 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T2.3
+
+Selected 1 suite(s): tests/scripts/inventory.test.mjs
+TAP version 13
+# Subtest: py-ledger CONTRIBUTING is the standards source without requiring CODING_STANDARDS
+ok 1 - py-ledger CONTRIBUTING is the standards source without requiring CODING_STANDARDS
+  ---
+  duration_ms: 510.024852
+  type: 'test'
+  ...
+# Subtest: ts-shop import-only CLAUDE stub produces a version-limited merge candidate
+ok 2 - ts-shop import-only CLAUDE stub produces a version-limited merge candidate
+  ---
+  duration_ms: 3000.409922
+  type: 'test'
+  ...
+# Subtest: inventory preserves root, nested, local and outside-repo instruction scopes without writes
+ok 3 - inventory preserves root, nested, local and outside-repo instruction scopes without writes
+  ---
+  duration_ms: 90.839477
+  type: 'test'
+  ...
+# Subtest: inventory discovers equivalent names and exact-byte hashes and tolerates absent documents
+ok 4 - inventory discovers equivalent names and exact-byte hashes and tolerates absent documents
+  ---
+  duration_ms: 76.453353
+  type: 'test'
+  ...
+# Subtest: a local-only instruction is a shadowing report without a merge candidate
+ok 5 - a local-only instruction is a shadowing report without a merge candidate
+  ---
+  duration_ms: 64.062397
+  type: 'test'
+  ...
+# Subtest: equivalent nested instructions consolidate within their own scope
+ok 6 - equivalent nested instructions consolidate within their own scope
+  ---
+  duration_ms: 67.693575
+  type: 'test'
+  ...
+# Subtest: inventory preserves the containing scope of .claude/AGENTS.md
+ok 7 - inventory preserves the containing scope of .claude/AGENTS.md
+  ---
+  duration_ms: 64.8545
+  type: 'test'
+  ...
+# Subtest: inventory preserves the containing scope of .claude/CLAUDE.local.md
+ok 8 - inventory preserves the containing scope of .claude/CLAUDE.local.md
+  ---
+  duration_ms: 61.657016
+  type: 'test'
+  ...
+# Subtest: inventory preserves the containing scope of web/.claude/AGENTS.md
+ok 9 - inventory preserves the containing scope of web/.claude/AGENTS.md
+  ---
+  duration_ms: 71.391892
+  type: 'test'
+  ...
+# Subtest: inventory preserves the containing scope of web/.claude/CLAUDE.local.md
+ok 10 - inventory preserves the containing scope of web/.claude/CLAUDE.local.md
+  ---
+  duration_ms: 71.089684
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4154.15611
