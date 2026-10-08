@@ -39,6 +39,7 @@ test('selected root instruction merge and audit apply preserve scoped instructio
   const context = await emptyRepo(t)
   const repo = context.repo = build(t, 'dirty-work')
   const env = { ...process.env, XDG_CACHE_HOME: join(context.directory, 'cache'), LOCALAPPDATA: join(context.directory, 'cache') }
+  delete env.NODE_TEST_CONTEXT
   const instructions = '# Instructions\nUse DESIGN.md for the pricing contract.\nRun node --test price.test.mjs.\n'
   await writeFile(join(repo, 'AGENTS.md'), instructions)
   await writeFile(join(repo, 'CLAUDE.md'), instructions)
@@ -59,6 +60,10 @@ test('selected root instruction merge and audit apply preserve scoped instructio
   const checksFile = join(context.directory, 'checks.json')
   await writeFile(checksFile, JSON.stringify(checks))
   assert.equal(run('run-checks', repo, env, ['--plan', checksFile]).exit, 0)
+  const originalPrice = await readFile(join(repo, 'price.mjs'))
+  await writeFile(join(repo, 'price.mjs'), 'export function quote(quantity) { return quantity * 13 }\n')
+  assert.equal(run('run-checks', repo, env, ['--plan', checksFile]).exit, 1)
+  await writeFile(join(repo, 'price.mjs'), originalPrice)
   const findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-audit.json')))
   findings.target = { mode: 'repo', root: repo, revision: git(repo, 'rev-parse', 'HEAD') }
   findings.nextChange = 'Consolidate equivalent root instructions and record the audit.'
