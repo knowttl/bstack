@@ -172,6 +172,8 @@ The Codex adapter copies only the invoking user's existing login into throwaway 
 Scoring requires complete answers and a transcript with reviewer citations.
 Tests are discovered only under `tests/scripts/` and `tests/package-check/`.
 Task suites are registered in `tests/tasks.json`.
+For portable full-suite evidence, use `npm test -- --capture .cache/full-suite.json`, then `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>`.
+The [task evidence contract](docs/implementation-plan.md#task-evidence-contract) owns capture prerequisites, automatic capture during ordinary tests, input binding and refresh rules.
 `npm test -- --task T0.4` selects the currently implemented shared-library tests.
 `npm test -- --task T0.5` selects the currently implemented package-check tests.
 See [task progress](docs/implementation-plan.md#progress) for the remaining slices.
