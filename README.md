@@ -58,15 +58,10 @@ node skills/repo-audit/scripts/repo-audit.mjs measure --repo <path> --range HEAD
 node skills/repo-audit/scripts/repo-audit.mjs overlap --repo <path> --plans <file> <file> --json
 ```
 
-See the [measurement and overlap contract](docs/command-contract.md#measure-and-overlap) for input examples, exclusions and glob semantics.
+See the [measurement and overlap contract](docs/command-contract.md#measure-and-overlap) for input examples, lineage handling, exclusions and glob semantics.
 Measurements include supporting commits, rename handling and the resolved revision range.
 Only eligible files present at the range endpoint are measured, following detected lineage back through renames to addition commits.
-In linear history, deleted lifetimes contribute no commits, rename evidence or co-change pairs to reused endpoint paths.
 If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, the old lifetime's commits and co-change pairs can be attributed to the new file.
-Rename lineage stops at file-lifetime boundaries, and Git output has no fixed capture limit.
-Lineage follows merged ancestry, and historical gitlink events are excluded even when absent at the selected head.
-Generated-directory exclusions use the shared discovery policy.
-Rename evidence omits events touching excluded lockfiles or generated paths, while formatting-only exclusions retain it.
 Signals are advisory evidence, never violations, and do not establish semantic independence or observed conflicts.
 
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
