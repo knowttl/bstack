@@ -340,9 +340,9 @@ Tick each task when its "Done when" commands pass.
   - [x] T1.1 Build the test fixtures
     - [x] C6a Isolated idea/clear-goals fixtures and builder ([evidence](../tests/eval/results/tasks/T1.1.json))
     - [x] C6bc Native stacks, boundary proofs and state variants ([evidence](../tests/eval/results/tasks/T1.1.json))
-  - [ ] T1.2 Build the evaluation runner and record the baseline
+  - [x] T1.2 Build the evaluation runner and record the baseline
     - [x] C7a Acceptance registry and manual evaluation interface ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
-    - [ ] C7b Current-host Codex adapter and isolation implemented, baseline recording and final validation in progress ([contract](evaluation.md))
+    - [x] C7b Current-host Codex adapter, fresh state and discovery isolation, resumed scripted answers and three human-scored real baselines ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
     - [ ] C7b Current-host adapter, verified isolation and recorded baseline
   - [ ] T1.3 Write the first `SKILL.md`
   - [ ] T1.4 Bundle the interview and domain-language modules

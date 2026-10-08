@@ -134,7 +134,7 @@ export async function closeHost(record, directory) {
   if (record.isolation.cleanedAt) return
   try {
     await verifyIsolation(record.isolation, record.mode)
-    if (record.turns.length && record.turns.every(turn => turn.sessionId)) {
+    if (!record.hostFailure && record.turns.length && record.turns.every(turn => turn.sessionId)) {
       record.conversationHash = hashBytes(await readFile(join(directory, record.conversation)))
     } else record.isolation.verified = false
   } finally {

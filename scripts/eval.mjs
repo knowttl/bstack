@@ -66,6 +66,7 @@ async function start(opts, results) {
       if (!opts.manual) await captureTurn(record, record.request, directory)
     } catch (error) {
       record.reason = error.message
+      record.hostFailure = true
       if (record.isolation.home) await closeHost(record, directory).catch(() => { record.isolation.verified = false })
     }
   }
@@ -98,6 +99,7 @@ async function turn(opts, results) {
     if (opts.answer) record.nextAnswer++
   } catch (error) {
     record.reason = error.message
+    record.hostFailure = true
     record.isolation.verified = false
     await closeHost(record, join(results, record.id)).catch(() => { record.isolation.verified = false })
   }
@@ -133,7 +135,7 @@ async function score(opts, results) {
   const transcript = await readFile(resolve(opts.transcript), 'utf8')
   if (!transcript.trim()) fail('Transcript is empty. The run remains blocked.')
   if (record.adapter) {
-    if (!record.turns?.length || record.turns.some(turn => !turn.sessionId)) fail('Adapter scoring requires completed host turns. Use the manual procedure for unsupported conversations.')
+    if (record.hostFailure || !record.turns?.length || record.turns.some(turn => !turn.sessionId)) fail('Adapter scoring requires completed host turns. Use the manual procedure for unsupported conversations.')
     if (transcript !== await readFile(join(results, record.id, record.conversation), 'utf8')) fail('Score the captured adapter conversation without replacing its transcript.')
     if (record.isolation.cleanedAt) {
       if (!record.isolation.verified || record.conversationHash !== hashBytes(transcript)) fail('Closed host evidence has unverified isolation or a changed conversation.')

@@ -377,6 +377,14 @@ test('throwaway authentication copies only a dummy login with private permission
   await assert.rejects(readFile(join(record.isolation.state, 'auth.json')), { code: 'ENOENT' })
   await assert.rejects(readFile(join(record.isolation.state, 'config.toml')), { code: 'ENOENT' })
   assert.equal(await readFile(join(source, 'auth.json'), 'utf8'), 'dummy test login')
-  assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
+  await rm(join(source, 'auth.json'))
+  const reply = spawnSync(process.execPath, [join(root, 'scripts/eval.mjs'), 'turn', '--run', record.id, '--answer', '1',
+    '--results', directory, '--json'], { encoding: 'utf8', env: { ...process.env, CODEX_HOME: source } })
+  const failed = JSON.parse(reply.stdout).data
+  assert.equal(failed.hostFailure, true)
+  assert.equal(failed.isolation.verified, false)
   await assert.rejects(readFile(join(record.isolation.state, 'fake-session.json')), { code: 'ENOENT' })
+  const files = await inputs(directory, record)
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath,
+    '--transcript', join(directory, record.id, record.conversation)).status, 2)
 })

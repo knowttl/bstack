@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-08T03-14-25.779Z-868cd552-80e0-4265-9e06-5a2f8bab4bc7",
+  "createdAt": "2026-10-08T03:14:25.780Z",
+  "sourceRevision": "ca0618c3adf9013497b39f883c413679f454e04d",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "os": "linux 6.8.0-142-generic",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "fixture": {
+    "name": "new-idea",
+    "path": "/tmp/bstack-new-idea-i7ZvS1",
+    "kind": "idea",
+    "revision": "e15b941cb5ab07e9a1f99ce492a3a891c8cac91b"
+  },
+  "scenario": {
+    "id": "new-idea",
+    "fixture": "new-idea",
+    "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
+    "answers": [
+      "The brief contains the approved goals and stack. Keep version one local to a household.",
+      "An item is a named pantry supply. A shopping list contains missing items.",
+      "Approve the vision if it preserves the brief and the agreed outcomes."
+    ],
+    "checkpoints": [
+      "baseline",
+      "intent",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "interview",
+        "caseId": "AC-1",
+        "question": "Did the agent begin with the intent interview before recommending implementation?"
+      },
+      {
+        "id": "terms",
+        "caseId": "AC-9",
+        "question": "Did it resolve domain terms without adding implementation details to the glossary?"
+      },
+      {
+        "id": "vision",
+        "caseId": "AC-1",
+        "question": "Did it produce a VISION.md approved by the scripted user?"
+      }
+    ]
+  },
+  "criteriaHash": "c1bec4112cb625493f315680f7d99256c9519604c6f96785b94adb7521b20841",
+  "stage": "baseline",
+  "mode": "without",
+  "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
+  "status": "failed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
+  "isolation": {
+    "home": "/tmp/bstack-agent-kmj111",
+    "state": "/tmp/bstack-agent-kmj111/.codex",
+    "discoveryPaths": [
+      "/tmp/bstack-agent-kmj111/.agents/skills",
+      "/tmp/bstack-agent-kmj111/.codex/skills",
+      "/tmp/bstack-new-idea-i7ZvS1/.agents/skills",
+      "/tmp/bstack-new-idea-i7ZvS1/.codex/skills",
+      "/tmp/.agents/skills",
+      "/tmp/.codex/skills",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "/tmp/bstack-agent-kmj111/.agents/skills/repo-audit",
+    "skillHash": null,
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [],
+    "checkedAt": "2026-10-08T03:15:17.933Z",
+    "cleanedAt": "2026-10-08T03:15:17.965Z"
+  },
+  "transcript": "af3f704e-a982-4e92-9cfa-4d85caab821f/transcript.txt",
+  "answers": "af3f704e-a982-4e92-9cfa-4d85caab821f/answers.json",
+  "caseResults": [
+    {
+      "id": "interview",
+      "caseId": "AC-1",
+      "question": "Did the agent begin with the intent interview before recommending implementation?",
+      "passed": false,
+      "startLine": 1,
+      "endLine": 13,
+      "scoring": "human",
+      "reviewer": "C7b baseline reviewer",
+      "transcript": "af3f704e-a982-4e92-9cfa-4d85caab821f/transcript.txt"
+    },
+    {
+      "id": "terms",
+      "caseId": "AC-9",
+      "question": "Did it resolve domain terms without adding implementation details to the glossary?",
+      "passed": false,
+      "startLine": 10,
+      "endLine": 13,
+      "scoring": "human",
+      "reviewer": "C7b baseline reviewer",
+      "transcript": "af3f704e-a982-4e92-9cfa-4d85caab821f/transcript.txt"
+    },
+    {
+      "id": "vision",
+      "caseId": "AC-1",
+      "question": "Did it produce a VISION.md approved by the scripted user?",
+      "passed": false,
+      "startLine": 10,
+      "endLine": 13,
+      "scoring": "human",
+      "reviewer": "C7b baseline reviewer",
+      "transcript": "af3f704e-a982-4e92-9cfa-4d85caab821f/transcript.txt"
+    }
+  ],
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 120000,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"low\"",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "adapterHash": "a5cf9e952c21c17206f10d02a5980af7470eb2a25a5d97d77a0bee00897f3a8f",
+  "turns": [
+    {
+      "message": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a11981-4a29-7563-8cd6-1c51d4bf41d4\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll read `brief.md` and any project guidance, then draft the intent, domain terms, and vision for your review.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/home/brytton/.nix-profile/bin/zsh -lc \\\"pwd; rg --files -g 'brief.md' -g 'AGENTS.md' -g 'VISION.md' -g '*.md'\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/home/brytton/.nix-profile/bin/zsh -lc \\\"pwd; rg --files -g 'brief.md' -g 'AGENTS.md' -g 'VISION.md' -g '*.md'\\\"\",\"aggregated_output\":\"/tmp/bstack-new-idea-i7ZvS1\\nbrief.md\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/home/brytton/.nix-profile/bin/zsh -lc 'cat brief.md'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/home/brytton/.nix-profile/bin/zsh -lc 'cat brief.md'\",\"aggregated_output\":\"# Pantry list\\n\\nHelp a household record pantry items and make a shopping list of what is missing.\\nThe first version runs locally in a browser using TypeScript and local storage.\\nIt needs no account, server or remote service.\\nAn item is one named pantry supply, and a shopping list contains items the household needs to buy.\\nThe owner has approved these goals and stack choices, with no open decisions.\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_3\",\"type\":\"agent_message\",\"text\":\"The brief says the owner has already approved the goals and stack, with no open decisions. I’ll carry that approval into `VISION.md` and define the domain terms without adding requirements such as quantities, recipes, or household accounts.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_4\",\"type\":\"file_change\",\"changes\":[{\"path\":\"/tmp/bstack-new-idea-i7ZvS1/VISION.md\",\"kind\":\"add\"}],\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_4\",\"type\":\"file_change\",\"changes\":[{\"path\":\"/tmp/bstack-new-idea-i7ZvS1/VISION.md\",\"kind\":\"add\"}],\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_5\",\"type\":\"agent_message\",\"text\":\"Created [VISION.md](/tmp/bstack-new-idea-i7ZvS1/VISION.md) with the project intent, useful domain terms, first-version scope, and success criteria.\\n\\nIt records the approval already stated in `brief.md`: a local TypeScript browser app using local storage, with no accounts, server, remote services, or open decisions.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":57984,\"cached_input_tokens\":54656,\"cache_write_input_tokens\":0,\"output_tokens\":731,\"reasoning_output_tokens\":32}}\n",
+        "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"/tmp/bstack-agent-kmj111/.codex\"))\nReading additional input from stdin...\n",
+        "durationMs": 33195.994805,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.160.1\n",
+          "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"/tmp/bstack-agent-kmj111/.codex\"))\n",
+          "durationMs": 11.296399000000008,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "sessionId": "01a11981-4a29-7563-8cd6-1c51d4bf41d4"
+    }
+  ],
+  "nextAnswer": 1,
+  "sessionId": "01a11981-4a29-7563-8cd6-1c51d4bf41d4",
+  "conversation": "conversation.txt",
+  "authenticatedVia": "throwaway copy",
+  "conversationHash": "8139930844d0b0a8ff616df6b8dffddb9c64ca66a5d915291627a8747d8d37f6",
+  "scoredAt": "2026-10-08T03:16:01.650Z"
+}

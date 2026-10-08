@@ -2,6 +2,7 @@ import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 
+// Modes emulate only the external host's conversation and failure boundary.
 const args = process.argv.slice(2)
 if (args.includes('--version')) {
   console.log('fake-codex 1')

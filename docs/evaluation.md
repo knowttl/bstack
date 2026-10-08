@@ -206,3 +206,23 @@ They cover registration failures, incomplete manual evidence, explicit transcrip
 They also cover fresh host state, discovery absence, resource staging, resumed scripted answers, transcript identity, authentication-copy cleanup and host failure paths.
 Fake executables test the conversation boundary without spending model quota.
 Task evidence records these interface checks separately from actual baseline procedures.
+
+## Recorded initial baseline
+
+Three scored `without` runs used Codex CLI 0.160.1, `gpt-6.1-sol`, Node 24 and Linux at the baseline checkpoint.
+All three retain distinct fixture paths, homes, thread IDs, transcripts and scoring artifacts.
+Their fixture revision is `e15b941cb5ab07e9a1f99ce492a3a891c8cac91b`, and each preserves its registered criteria hash and the same adapter hash.
+The [T1.2 task evidence](../tests/eval/results/tasks/T1.2.json) names their complete run records and transcript locations.
+
+- Ambiguous-idea passed its unresolved-decision check after the corresponding scripted reply.
+- New-idea failed all three checks: no intent interview, browser local storage included in its domain-term section, and a VISION declared approved without approval from the scripted user.
+  The generated VISION is retained alongside the conversation.
+  No scripted answer was sent because the agent asked no corresponding question.
+- Clear-goals passed both checks by reusing the approved repo documents without repeating settled questions or opening a skill reference.
+  Its trace includes a broad parent-directory filename search that the host interrupted, followed by recommendations based on the fixture documents.
+  This observation is retained, not concealed or turned into an extra scoring criterion.
+
+The first workspace-sandbox attempt stays blocked in the history with its real `bwrap` failure.
+It is not one of the three scored baselines.
+No baseline was required to fail, and the passing scenarios remain in the evaluation.
+These are initial development observations, not final released-skill acceptance or a host and operating-system support matrix.
