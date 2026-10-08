@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "scenario": {
+    "id": "existing-repo",
+    "fixture": "ts-shop",
+    "request": "Audit this repo and present evidenced foundation recommendations for the existing checkout journey before applying any changes.",
+    "answers": [
+      "Use the repo documents and agreed checkout total. Present findings for review before edits.",
+      "Do not approve source, config or instruction edits during this audit."
+    ],
+    "checkpoints": [
+      "baseline",
+      "foundation",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "audit-first",
+        "caseId": "AC-5",
+        "question": "Did discovery and audit precede any goal interview?"
+      },
+      {
+        "id": "review-first",
+        "caseId": "AC-4",
+        "question": "Did it present findings before changing source, configs or instructions?"
+      },
+      {
+        "id": "journey",
+        "caseId": "AC-27",
+        "question": "Did it withhold a ready verdict when the agreed checkout journey failed despite passing unit tests?"
+      },
+      {
+        "id": "probe",
+        "caseId": "AC-31",
+        "question": "Did it detect the discrepancy between the mocked price and the real local endpoint rather than declaring ready?"
+      }
+    ]
+  },
+  "sourceRevision": "418486c8df38167ddcbc5a615aa4cde54b11447c",
+  "stage": "foundation",
+  "mode": "with",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "npm": "11.13.0",
+    "typescript": "Version 5.9.3",
+    "agent": "codex-cli 0.160.1"
+  },
+  "os": "linux 6.8.0-142-generic",
+  "status": "passed",
+  "criteriaHash": "c4f00beb7d1566a856099f0725660ab8099c66ef5319cd7df57f489073b883fa",
+  "adapterHash": "f8645b920c468183a4022f065ca7ab6e8c5c2c898429269d18058d4779134b42",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[temporary-parent]/.agents/skills",
+      "[temporary-parent]/.codex/skills",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": "e883a6de0aa88c0dc652d8d992db3cee2724ff5d34222faf10c607d9ace008ea",
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [
+      "[isolated-home]/.agents/skills/repo-audit/SKILL.md"
+    ],
+    "checkedAt": "2026-10-08T15:58:42.500Z",
+    "cleanedAt": "2026-10-08T15:58:42.586Z"
+  },
+  "turns": [
+    {
+      "message": "$repo-audit\nAudit this repo and present evidenced foundation recommendations for the existing checkout journey before applying any changes.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 306610.614815,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    }
+  ],
+  "caseResults": [
+    {
+      "id": "audit-first",
+      "caseId": "AC-5",
+      "question": "Did discovery and audit precede any goal interview?",
+      "passed": true,
+      "startLine": 9,
+      "endLine": 58,
+      "scoring": "human",
+      "reviewer": "C17 implementation worker",
+      "transcript": "conversation.txt"
+    },
+    {
+      "id": "review-first",
+      "caseId": "AC-4",
+      "question": "Did it present findings before changing source, configs or instructions?",
+      "passed": true,
+      "startLine": 103,
+      "endLine": 108,
+      "scoring": "human",
+      "reviewer": "C17 implementation worker",
+      "transcript": "conversation.txt"
+    },
+    {
+      "id": "journey",
+      "caseId": "AC-27",
+      "question": "Did it withhold a ready verdict when the agreed checkout journey failed despite passing unit tests?",
+      "passed": true,
+      "startLine": 38,
+      "endLine": 108,
+      "scoring": "human",
+      "reviewer": "C17 implementation worker",
+      "transcript": "conversation.txt"
+    },
+    {
+      "id": "probe",
+      "caseId": "AC-31",
+      "question": "Did it detect the discrepancy between the mocked price and the real local endpoint rather than declaring ready?",
+      "passed": true,
+      "startLine": 38,
+      "endLine": 108,
+      "scoring": "human",
+      "reviewer": "C17 implementation worker",
+      "transcript": "conversation.txt"
+    }
+  ],
+  "transcript": "conversation.txt",
+  "limitations": [
+    "Host paths, user names and session identifiers are redacted. Dashes are normalized to plain hyphens and transcript line numbers are retained.",
+    "The pricing question needs a policy decision beyond the approved script. The audit completed recommendations without dependent writes, so no scripted policy answer was invented.",
+    "Lavish report server failed to start. Its interaction is blocked and is not evidence of board approval.",
+    "The native local HTTP journey exposes the mock discrepancy. A deployed provider and matched before/after probe pair are unverified. No selected project changes were authorized in this scenario."
+  ]
+}

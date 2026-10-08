@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "draftRevision": "2c69e153eaf0df5b143719838717f609496c482bb33a4206af36dc30145f838b",
+  "project": "Reading queue",
+  "runNote": "Candidate only; baseline remains approved.",
+  "cards": [
+    {
+      "id": "backup-sharing",
+      "title": "Backup export intended for another reader",
+      "body": "Add an export option designed for sending selected articles to another reader, using the same local file without accounts or hosted links.",
+      "tests": "Accept local export of the reader's own saved articles, preserving title, address and read status, for personal backup.\nResist changes that turn personal backup into accounts, sharing or recommendations.\n",
+      "why": "Accept: same local format, no service dependency, readers can already send files. Resist: a recipient-oriented journey makes sharing a product responsibility despite local mechanics. Test purpose versus format."
+    }
+  ]
+}

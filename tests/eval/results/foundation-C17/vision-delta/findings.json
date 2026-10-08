@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+  },
+  "nextChange": "Review candidate delta only",
+  "reviewedScope": [
+    "VISION.md",
+    "DESIGN.md"
+  ],
+  "sources": [
+    {
+      "id": "baseline",
+      "pointer": "VISION.md:3-7",
+      "intent": "documented",
+      "summary": "Approved purpose, preservation and non-goals."
+    },
+    {
+      "id": "decision",
+      "pointer": "DESIGN.md:10-13",
+      "intent": "documented",
+      "summary": "Personal backup approved; vision gap explicit; no stack or implementation approval."
+    },
+    {
+      "id": "history",
+      "pointer": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718",
+      "intent": "observed",
+      "summary": "Later personal backup commit changes only DESIGN.md."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Vision lacks accept/resist criteria for approved portability.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md"
+      ],
+      "command": null,
+      "principle": "Personal backup permitted; sharing excluded.",
+      "consequence": "Backup may be rejected or sharing admitted as portability.",
+      "fix": "Append two candidate acceptance lines; retain every baseline line.",
+      "scope": [
+        "VISION.md"
+      ],
+      "verification": "Fresh citations; exact delta; board verdicts and explicit approval of exact revision.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "baseline",
+        "decision",
+        "history"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "board-review"
+  ],
+  "execution": [],
+  "limitations": [
+    "No implementation or native checks exist.",
+    "Board interaction and exact candidate approval pending.",
+    "No remote or PR history.",
+    "No project edits authorized."
+  ]
+}

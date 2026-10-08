@@ -1,0 +1,33 @@
+{
+  "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "checks": {
+    "check": {
+      "chunk_id": "f504b3",
+      "wall_time_seconds": 1.13116315,
+      "exit_code": 0,
+      "original_token_count": 7,
+      "output": "\n> check\n> tsc --noEmit\n\n"
+    },
+    "test": {
+      "chunk_id": "0782e9",
+      "wall_time_seconds": 0.231767385,
+      "exit_code": 0,
+      "original_token_count": 55,
+      "output": "\n> test\n> node --test unit.test.mjs\n\n✔ public price (1.205554ms)\n✔ checkout HTTP mock (31.290587ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 173.164944\n"
+    },
+    "journey": {
+      "chunk_id": "799bd4",
+      "wall_time_seconds": 0.146683779,
+      "exit_code": 1,
+      "original_token_count": 159,
+      "output": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":12}}\nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: agreed checkout total is 10\n+ actual - expected\n\n  {\n    status: 201,\n+   total: 12\n-   total: 10\n  }\n\n    at file://[fixture]/journey.mjs:12:10\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: { status: 201, total: 12 },\n  expected: { status: 201, total: 10 },\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.17.0\n"
+    },
+    "boundaries": {
+      "chunk_id": "6d02fa",
+      "wall_time_seconds": 0.733256588,
+      "exit_code": 1,
+      "original_token_count": 17,
+      "output": "\n> boundaries\n> node boundaries.mjs\n\n[\"alias\",\"cycle\",\"private\"]\n"
+    }
+  }
+}
