@@ -762,7 +762,8 @@ Unsupported atomic replacement blocks without a non-atomic fallback.
 Unsupported directory flushes are reported as a power-loss durability limitation.
 
 Repeating a plan automatically opens its digest-bound journal and validates its identity and backups before staging from the original bytes.
-Actual proposed hashes mean applied, original hashes mean pending, and any other hash or unreadable path means conflicting.
+Actual proposed hashes mean applied; original hashes mean pending only when completion has not been recorded.
+Any other state or unreadable path means conflicting, including completed edits restored to their original bytes or absence.
 When original and proposed hashes are equal, the edit is already applied.
 Completion flags never override actual target hashes.
 All remaining files are preflighted before continuing, with another complete check before each replacement.

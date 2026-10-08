@@ -32,6 +32,10 @@ fs.rename = async (...args) => {
     if (value.commands?.[0]?.status === 'passed') process.exit(91)
   }
   const result = await nativeRename(...args)
+  if (fault === 'completed-file' && args[1].endsWith('journal.json')) {
+    const value = JSON.parse(await fs.readFile(args[1], 'utf8'))
+    if (value.edits[0].completed) process.exit(91)
+  }
   if (fault === 'file' && args[1] === join(destination, 'VISION.md')) process.exit(91)
   return result
 }

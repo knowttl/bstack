@@ -35,7 +35,7 @@ export async function inspectJournal(journal) {
       const path = await resolveFilePath(journal.target.root, edit.path, edit.resolvedPath, edit.originalHash !== null && edit.proposedHash === null)
       const bytes = await fileBytes(path)
       const actualHash = bytes === null ? null : hashBytes(bytes)
-      const state = actualHash === edit.proposedHash ? 'applied' : actualHash === edit.originalHash ? 'pending' : 'conflicting'
+      const state = actualHash === edit.proposedHash ? 'applied' : !edit.completed && actualHash === edit.originalHash ? 'pending' : 'conflicting'
       edits.push({ ...edit, actualHash, state })
     } catch (error) {
       edits.push({ ...edit, state: 'conflicting', problem: error.message })
@@ -119,7 +119,7 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
   const limitations = ['Replacement is atomic per file where supported, never across the whole change set.']
   const journal = previous ?? { schemaVersion: 1, runId: plan.planDigest, target: plan.target, planDigest: plan.planDigest,
     edits: staged.map((edit, index) => ({ id: edit.id, path: edit.path, resolvedPath: edit.resolvedPath, originalHash: edit.originalHash, proposedHash: edit.proposedHash,
-      backup: edit.originalHash === null ? null : `original-${index}`, completed: false })), affectedChecks }
+      backup: edit.originalHash === null ? null : `original-${index}`, completed: edit.originalHash === edit.proposedHash })), affectedChecks }
   const journalPath = join(directory, 'journal.json')
   const save = () => replaceFile(journalPath, Buffer.from(JSON.stringify(journal, null, 2) + '\n'), undefined, limitations)
   try {
@@ -129,8 +129,9 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       throw new CommandError('blocked', [{ code: 'changed-precondition', message: 'Target bytes changed before execution.', fix: 'Review the changed files before applying.' }])
     }
     if (previous) {
-      const hasTemporaries = journal.edits.some(edit => edit.temporary)
+      const hasUpdates = journal.edits.some((edit, index) => edit.temporary || (!edit.completed && state.edits[index].state === 'applied'))
       for (const [index, recorded] of journal.edits.entries()) {
+        if (state.edits[index].state === 'applied') recorded.completed = true
         if (!recorded.temporary) continue
         const path = await resolveFilePath(target.root, recorded.path, recorded.resolvedPath)
         if (dirname(recorded.temporary) !== dirname(path) || !/^\.bstack-[0-9a-f-]{36}\.tmp$/.test(basename(recorded.temporary))) throw new Error('Recovery temporary path differs from its write directory.')
@@ -146,7 +147,7 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
         }
         recorded.temporary = null
       }
-      if (hasTemporaries) await save()
+      if (hasUpdates) await save()
       if (!state.pending.length) return { ...state, journal: journalPath, outcome: 'already-applied', limitations }
     }
     await durableDirectory(directory, limitations)

@@ -8,7 +8,7 @@ import { canonicalJSON, hashBytes } from '../lib/fingerprint.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
 import { runCommand, selectCommand } from '../lib/run.mjs'
-import { applyWrites, fileBytes, saveRecovery } from '../lib/protected-write.mjs'
+import { applyWrites, fileBytes, inspectJournal, saveRecovery } from '../lib/protected-write.mjs'
 import { prepareChangeSet } from './apply.mjs'
 import { CommandError } from '../lib/result.mjs'
 
@@ -52,6 +52,10 @@ export async function run(options) {
   const changeSetPath = resolve(dirname(resolve(options.plan)), plan.changeSet)
   const prepared = await prepareChangeSet({ plan: changeSetPath, 'dry-run': options['dry-run'] }, target)
   const { plan: changeSet, staged, journal, findings } = prepared
+  if (journal) {
+    const state = await inspectJournal(journal)
+    if (state.conflicting.length) block('user-change', 'A user change blocks project creation.', state.conflicting[0])
+  }
   if (changeSet.planDigest !== plan.changeSetDigest || findings.stage !== 'foundation' || staged.some(edit => edit.originalHash !== null || edit.proposedContent === null || changeSet.edits.find(item => item.id === edit.id).operation !== 'create')) {
     block('invalid-scaffold', 'Creation requires the reviewed foundation findings and complete create-only file payloads.')
   }

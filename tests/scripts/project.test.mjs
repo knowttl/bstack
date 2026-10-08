@@ -221,3 +221,26 @@ test('removed Git metadata blocks a completed creation without recreating it', a
   assert.equal(result.problems[0].code, 'git-collision')
   assert.deepEqual(await snapshot(context.workspace), before)
 })
+
+for (const [fault, path] of [[undefined, 'GLOSSARY.md'], [undefined, 'docs'], [undefined, ''], ['completed-file', 'VISION.md'], ['completed-file', '']]) {
+  test(`removal of ${path || 'the destination'} after ${fault || 'completion'} blocks creation without writes`, async t => {
+    const context = await setup(t)
+    assert.equal(execute(context, { fault }).exit, fault ? 91 : 0)
+    await rm(join(context.destination, path), { recursive: true })
+    const before = await snapshot(context.workspace)
+    const result = execute(context)
+    assert.equal(result.exit, 2, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'user-change')
+    assert.deepEqual(await snapshot(context.workspace), before)
+  })
+}
+
+test('recovered replacement completion protects a later scaffold deletion', async t => {
+  const context = await setup(t)
+  assert.equal(execute(context, { fault: 'file' }).exit, 91)
+  assert.equal(execute(context).exit, 0)
+  await rm(join(context.destination, 'VISION.md'))
+  const before = await snapshot(context.workspace)
+  assert.equal(execute(context).exit, 2)
+  assert.deepEqual(await snapshot(context.workspace), before)
+})

@@ -96,7 +96,7 @@ export async function run(options) {
   if (journal) {
     const state = await inspectJournal(journal)
     if (state.conflicting.length) return { inputs, status: 'blocked', problems: state.conflicting.map(path => ({ code: 'user-change', path,
-      message: 'Target matches neither the original nor proposed bytes.', fix: 'Review the user change before continuing.' })), data: state }
+      message: 'Target bytes conflict with the recorded edit state.', fix: 'Review the user change before continuing.' })), data: state }
   }
   const result = await applyWrites(target, plan, staged, directory, journal, findings.requiredOutcomes)
   return result.status ? { inputs, ...result } : { inputs, data: result }
