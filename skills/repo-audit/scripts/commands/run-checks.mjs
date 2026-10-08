@@ -136,8 +136,8 @@ export async function run(options) {
     process.removeListener('SIGINT', cancel)
     process.removeListener('SIGTERM', cancel)
   }
-  const finalState = await inputState()
-  const inputsChanged = originalState.fingerprint !== finalState.fingerprint
+  const finalState = await inputState().catch(() => null)
+  const inputsChanged = !finalState || originalState.fingerprint !== finalState.fingerprint
   if (inputsChanged) {
     problem('inputs-changed-during-run', 'inputs changed during run')
     for (const captured of checks.filter(check => check.execution)) {

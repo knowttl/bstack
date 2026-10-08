@@ -769,6 +769,7 @@ Missing evidence blocks before execution.
 Prior runs must belong to the same target and exact plan, precede the current run, and name a different original input state.
 The recorded `originalState` is one fingerprint of the Git revision, check-plan bytes and presence, acceptance sources and the union of every declared product scope, including exact input hashes, presence and modes.
 The same inputs are fingerprinted once after the run as `finalState`.
+If that final snapshot cannot be read or validated, `finalState` is `null`; completed command evidence is still saved, and the capture is blocked with `inputs changed during run`.
 Prior evidence requires a passing before capture with matching original and final fingerprints.
 Execution order links prior capture to the after run.
 Local scratch evidence is an execution record, not an authenticated portable attestation.

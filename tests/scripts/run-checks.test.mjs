@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, readFile, symlink, writeFile, watch } from 'node:fs/promises'
+import { mkdir, readFile, rm, symlink, writeFile, watch } from 'node:fs/promises'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
@@ -177,6 +177,37 @@ test('changed inputs block the capture even when a command also fails', async t 
   assert.equal(result.data.coverage[0].status, 'unverified')
 })
 
+for (const [input, pathFor, replacements] of [
+  ['product file', f => join(f.repo, 'product.txt'), [
+    ['directory', 'fs.mkdirSync(process.argv[1])', false],
+    ['dangling link', 'fs.symlinkSync("missing.txt", process.argv[1])', process.platform === 'win32']
+  ]],
+  ['acceptance source', f => join(f.repo, 'ACCEPTANCE.md'), [
+    ['directory', 'fs.mkdirSync(process.argv[1])', false],
+    ['dangling link', 'fs.symlinkSync("missing.txt", process.argv[1])', process.platform === 'win32']
+  ]],
+  ['plan', f => f.path, [['directory', 'fs.mkdirSync(process.argv[1])', false]]]
+]) {
+  for (const [name, replacement, skip] of replacements) {
+    test(`a ${input} replaced by a ${name} retains completed command evidence`, { skip }, async t => {
+      const f = await setup(t, [check('first', 'console.log("completed")'), check('replace')])
+      f.plan.checks[1].command.args = ['-e', `const fs = require("node:fs"); fs.unlinkSync(process.argv[1]); ${replacement}; console.log("replaced")`, pathFor(f)]
+      const result = await f.invoke()
+      assert.equal(result.exit, 2)
+      assert.equal(result.status, 'blocked')
+      assert.equal(result.problems[0].message, 'inputs changed during run')
+      assert.equal(result.data.finalState, null)
+      assert.deepEqual(result.data.checks.map(item => item.execution.stdout), ['completed\n', 'replaced\n'])
+      assert.deepEqual(result.data.checks.map(item => item.execution.exitCode), [0, 0])
+      assert.equal(result.data.coverage[0].status, 'unverified')
+      const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
+      assert.equal(saved.status, 'blocked')
+      assert.equal(saved.finalState, null)
+      assert.deepEqual(saved.checks, result.data.checks)
+    })
+  }
+}
+
 for (const [name, mutation] of [
   ['edited', 'fs.writeFileSync(process.argv[1], fs.readFileSync(process.argv[1], "utf8") + "\\n")'],
   ['deleted', 'fs.unlinkSync(process.argv[1])']
@@ -300,6 +331,21 @@ test('a refactor without prior protective capture is rejected before compatibili
   assert.equal(result.exit, 2)
   assert.equal(result.problems[0].code, 'missing-prior-evidence')
   assert.ok(result.data.checks.every(item => item.execution === null))
+})
+
+test('before protection with an unavailable final snapshot cannot serve as prior evidence', async t => {
+  const f = await refactor(t)
+  f.plan.checks[0].command.args = ['-e', 'const fs = require("node:fs"); fs.unlinkSync("product.cjs"); fs.mkdirSync("product.cjs"); console.log("completed")']
+  const before = await f.invoke(['--phase', 'before'])
+  assert.equal(before.exit, 2)
+  assert.equal(before.data.finalState, null)
+  assert.equal(before.data.checks[0].execution.stdout, 'completed\n')
+  await rm(join(f.repo, 'product.cjs'), { recursive: true })
+  await writeFile(join(f.repo, 'product.cjs'), 'exports.total = count => 10 * count\n')
+  const after = await f.invoke(['--prior-run', before.data.runId])
+  assert.equal(after.exit, 2)
+  assert.equal(after.problems[0].code, 'missing-prior-evidence')
+  assert.ok(after.data.checks.every(item => item.execution === null))
 })
 
 for (const [kind, role, code, additionalChecks] of [
