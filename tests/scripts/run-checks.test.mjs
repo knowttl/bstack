@@ -27,6 +27,7 @@ async function setup(t, checks = [check('journey')], changeKind = 'feature') {
     acceptanceCases: [{ id: 'flow', sourceId: 'requirements', pointer: 'Approved acceptance:', outcome: 'Checkout returns the agreed total.', userJourney: true }], checks }
   const path = join(directory, 'plan.json')
   const env = { ...process.env, XDG_CACHE_HOME: join(directory, 'cache'), LOCALAPPDATA: join(directory, 'cache') }
+  delete env.NODE_TEST_CONTEXT
   const invoke = async (extra = []) => {
     await writeFile(path, JSON.stringify(plan))
     return run('run-checks', repo, env, ['--plan', path, ...extra])

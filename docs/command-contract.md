@@ -764,6 +764,7 @@ The scratch destination is created and validated before any version probe or che
 
 Before runs execute reproduction and protection checks.
 After runs execute outcome, protection and compatibility checks, plus reproduction checks to confirm the bug now succeeds.
+Each phase requires at least one active required check; otherwise preflight rejects the plan before any command executes.
 A bug fix requires a scratch `before` run with a failed required reproduction that executed normally with a passing version probe, plus the same required reproduction passing after the change.
 A refactor requires all required protective checks passing in a `before` run, plus at least one required compatibility check after the change.
 Missing evidence blocks before execution.
@@ -782,6 +783,7 @@ This applies to optional and inactive checks' declared inputs as well as require
 There is no intermediate input tracking; changes restored before the final fingerprint are not detected.
 Required checks must pass for a phase to pass, apart from the expected failing reproduction in a successful before bug-fix run.
 That expected failure satisfies the reproduction prerequisite but still reports its acceptance outcome as failed, without claiming a verified user journey.
+After captures also require passing coverage for every declared user journey: failed journeys fail the capture, and unverified journeys block it.
 Per-case coverage lists executed evidence, failed outcomes and unverified flows.
 A result covering no user journey explicitly says so, even when all required checks pass.
 Human summaries include the run, readiness and coverage limits.
