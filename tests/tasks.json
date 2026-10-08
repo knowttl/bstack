@@ -2,6 +2,7 @@
   "T0.1": ["tests/scripts/bootstrap.test.mjs"],
   "T0.2": ["tests/scripts/skill-skeleton.test.mjs"],
   "T0.3": ["tests/scripts/upstream.test.mjs"],
-  "T0.4": ["tests/scripts/command-contract.test.mjs"],
-  "T0.4.C4a": ["tests/scripts/command-contract.test.mjs"]
+  "T0.4": ["tests/scripts/command-contract.test.mjs", "tests/scripts/child-contract.test.mjs"],
+  "T0.4.C4a": ["tests/scripts/command-contract.test.mjs"],
+  "T0.4.C4b": ["tests/scripts/child-contract.test.mjs"]
 }

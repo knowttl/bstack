@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.4.C4b",
+  "slice": "C4b",
+  "sourceRevision": "a18e6a4a76f8c7cce44c7ddb8418170de83f2ab1",
+  "intent": "\"yes approbe and begin the implementation\". Continue the approved commissioning plan with C4b child commands and fingerprints.",
+  "amendments": [
+    "C4b implements run.mjs and fingerprint.mjs through public fixture commands.",
+    "C4c owns schema validation and production wiring.",
+    "Preserve .no-mistakes.yaml byte-identical and add no workflows."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.node-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.npm-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "git-version",
+      "executable": "git",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.git-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.os.txt",
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.4.C4b"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "preserved-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "--exit-code",
+        "origin/main",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.preserved-config.txt",
+      "status": "passed"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.history.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C4b/1",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: child commands preserve literal arguments and capture version and both output streams",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/2",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: child output is bounded to the last 64 KiB per stream",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/3",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: timeout fails and stops the child process tree before returning",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/4",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: cancellation fails and stops the child process tree before returning",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/5",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: failed commands and unavailable tools cannot pass",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/6",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: child working directories reject escape before execution",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/7",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows npm selection uses Node and a JavaScript CLI with literal arguments",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/8",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows npm.cmd without a supported CLI is blocked",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/9",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows tool.cmd without a supported CLI is blocked",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/10",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows tool.bat without a supported CLI is blocked",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/11",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    },
+    {
+      "id": "C4b/12",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: canonical assessment inputs ignore only derived fields and evidence serialization",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt"
+    }
+  ],
+  "limitations": [
+    "Historical run against a18e6a4a76f8c7cce44c7ddb8418170de83f2ab1, superseded by tests/eval/results/tasks/T0.4.C4b.json against c8c5129b756e0bb0a6c2e72d1cd1179c08b4256d. This is not the current evidence selection.",
+    "Linux on Node v24.17.0 was executed. Windows npm launcher selection was tested on Linux, not on Windows. Real Windows and macOS execution remain unverified under R26.",
+    "C4c schema validation and production command wiring remain pending. T0.4 is incomplete.",
+    "All recorded commands ran against implementation commit a18e6a4a76f8c7cce44c7ddb8418170de83f2ab1. An evidence-only commit on top changes no implementation, tests or manifest and does not need to name itself.",
+    "Process-tree cleanup covers managed descendants. Deliberately detached children are outside the contract.",
+    "Portable committed assessment identity and format-specific assessment inputs belong to their later owning tasks."
+  ]
+}

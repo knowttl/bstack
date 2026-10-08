@@ -1,0 +1,231 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T0.4.C4b
+
+Selected 1 suite(s): tests/scripts/child-contract.test.mjs
+TAP version 13
+# Subtest: child commands preserve literal arguments and capture version and both output streams
+ok 1 - child commands preserve literal arguments and capture version and both output streams
+  ---
+  duration_ms: 112.799185
+  type: 'test'
+  ...
+# Subtest: child output is bounded to the last 64 KiB per stream
+ok 2 - child output is bounded to the last 64 KiB per stream
+  ---
+  duration_ms: 101.677141
+  type: 'test'
+  ...
+# Subtest: timeout fails and stops the child process tree before returning
+ok 3 - timeout fails and stops the child process tree before returning
+  ---
+  duration_ms: 604.144804
+  type: 'test'
+  ...
+# Subtest: cancellation fails and stops the child process tree before returning
+ok 4 - cancellation fails and stops the child process tree before returning
+  ---
+  duration_ms: 164.373767
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks timed out check with inherited pipes
+ok 5 - Windows cleanup failure blocks timed out check with inherited pipes
+  ---
+  duration_ms: 105.4774
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks timed out check with inherited pipes
+ok 6 - Windows cleanup launch error blocks timed out check with inherited pipes
+  ---
+  duration_ms: 102.394389
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks timed out version probe with inherited pipes
+ok 7 - Windows cleanup failure blocks timed out version probe with inherited pipes
+  ---
+  duration_ms: 101.900583
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks timed out version probe with inherited pipes
+ok 8 - Windows cleanup launch error blocks timed out version probe with inherited pipes
+  ---
+  duration_ms: 102.624186
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks cancelled check with inherited pipes
+ok 9 - Windows cleanup failure blocks cancelled check with inherited pipes
+  ---
+  duration_ms: 2.571116
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks cancelled check with inherited pipes
+ok 10 - Windows cleanup launch error blocks cancelled check with inherited pipes
+  ---
+  duration_ms: 1.872112
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks cancelled version probe with inherited pipes
+ok 11 - Windows cleanup failure blocks cancelled version probe with inherited pipes
+  ---
+  duration_ms: 1.412
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks cancelled version probe with inherited pipes
+ok 12 - Windows cleanup launch error blocks cancelled version probe with inherited pipes
+  ---
+  duration_ms: 2.300514
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
+ok 13 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
+  ---
+  duration_ms: 588.75002
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
+ok 14 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
+  ---
+  duration_ms: 586.7449
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
+ok 15 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
+  ---
+  duration_ms: 573.848187
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
+ok 16 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
+  ---
+  duration_ms: 563.82548
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
+ok 17 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
+  ---
+  duration_ms: 588.692317
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
+ok 18 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
+  ---
+  duration_ms: 604.663351
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
+ok 19 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
+  ---
+  duration_ms: 561.317689
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
+ok 20 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
+  ---
+  duration_ms: 567.126824
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
+ok 21 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
+  ---
+  duration_ms: 144.900239
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
+ok 22 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
+  ---
+  duration_ms: 121.615145
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
+ok 23 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
+  ---
+  duration_ms: 105.336284
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
+ok 24 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
+  ---
+  duration_ms: 97.93356
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
+ok 25 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
+  ---
+  duration_ms: 129.550801
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
+ok 26 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
+  ---
+  duration_ms: 129.608745
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
+ok 27 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
+  ---
+  duration_ms: 89.262835
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
+ok 28 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
+  ---
+  duration_ms: 112.165157
+  type: 'test'
+  ...
+# Subtest: failed commands and unavailable tools cannot pass
+ok 29 - failed commands and unavailable tools cannot pass
+  ---
+  duration_ms: 154.542183
+  type: 'test'
+  ...
+# Subtest: child working directories reject escape before execution
+ok 30 - child working directories reject escape before execution
+  ---
+  duration_ms: 60.750076
+  type: 'test'
+  ...
+# Subtest: Windows npm selection uses Node and a JavaScript CLI with literal arguments
+ok 31 - Windows npm selection uses Node and a JavaScript CLI with literal arguments
+  ---
+  duration_ms: 52.472623
+  type: 'test'
+  ...
+# Subtest: Windows npm.cmd without a supported CLI is blocked
+ok 32 - Windows npm.cmd without a supported CLI is blocked
+  ---
+  duration_ms: 59.040534
+  type: 'test'
+  ...
+# Subtest: Windows tool.cmd without a supported CLI is blocked
+ok 33 - Windows tool.cmd without a supported CLI is blocked
+  ---
+  duration_ms: 69.310407
+  type: 'test'
+  ...
+# Subtest: Windows tool.bat without a supported CLI is blocked
+ok 34 - Windows tool.bat without a supported CLI is blocked
+  ---
+  duration_ms: 51.475581
+  type: 'test'
+  ...
+# Subtest: fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
+ok 35 - fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
+  ---
+  duration_ms: 619.47281
+  type: 'test'
+  ...
+# Subtest: canonical assessment inputs ignore only derived fields and evidence serialization
+ok 36 - canonical assessment inputs ignore only derived fields and evidence serialization
+  ---
+  duration_ms: 225.674709
+  type: 'test'
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 36
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8337.511012
