@@ -43,3 +43,26 @@ export async function inputs(root, excluded = []) {
   }
   return { files, sha256: hash(JSON.stringify(files)) }
 }
+
+export async function postCaptureDocumentation(root, run, current) {
+  const before = new Map(run.inputs.files.map(file => [file.path, file]))
+  const after = new Map(current.files.map(file => [file.path, file]))
+  const changes = []
+  for (const path of [...new Set([...before.keys(), ...after.keys()])].sort()) {
+    const original = before.get(path) ?? null
+    const updated = after.get(path) ?? null
+    if (JSON.stringify(original) === JSON.stringify(updated)) continue
+    if (original?.executable || updated?.executable) continue
+    if (path === 'docs/implementation-plan.md') {
+      if (!original?.sha256 || !updated?.sha256) continue
+      const stripProgress = text => text.replace(/^## Progress\r?\n[\s\S]*?(?=^## |$(?![\s\S]))/m, '').trim()
+      const tested = execFileSync('git', ['show', `${run.sourceRevision}:${path}`], { cwd: root })
+      const committed = execFileSync('git', ['show', `HEAD:${path}`], { cwd: root, encoding: 'utf8' })
+      if (hash(tested) !== original.sha256 ||
+          stripProgress(tested.toString('utf8')) !== stripProgress(committed) ||
+          stripProgress(committed) !== stripProgress(await readFile(join(root, path), 'utf8'))) continue
+    } else if (path !== 'README.md' && (!/^docs\/[^/]+\.md$/.test(path) || path === 'docs/design.md')) continue
+    changes.push({ path, before: original, after: updated })
+  }
+  return changes
+}

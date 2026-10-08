@@ -80,6 +80,19 @@
       "additionalProperties": false,
       "required": ["baseRevision", "inputs", "suites", "counts", "durationMs", "outputSha256", "eventsSha256", "eventsArtifact"],
       "properties": {
+        "postCaptureDocumentation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "before", "after"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "before": { "type": ["object", "null"] },
+              "after": { "type": ["object", "null"] }
+            }
+          }
+        },
         "baseRevision": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
         "inputs": {
           "type": "object",
