@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdtemp, readdir, rm } from 'node:fs/promises'
+import { cp, mkdtemp, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -34,7 +34,7 @@ test('valid schema data dispatches from another cwd without changing the workspa
 
 for (const [fixture, schema, codes, messages] of [
   ['schema-invalid.json', undefined, ['invalid-const', 'unknown-field', 'invalid-enum', 'invalid-pattern', 'duplicate-id', 'missing-id', 'invalid-type'], ['extra', 'one']],
-  ['schema-valid.json', 'schema-unknown-keywords.json', ['unsupported-keyword'], ['format', 'uniqueItems', 'allOf']],
+  ['schema-valid.json', 'schema-unknown-keywords.json', ['unsupported-keyword'], ['format', 'allOf']],
   ['schema-valid.json', 'schema-invalid-definition.json', ['invalid-schema'], ['type', 'required', 'properties', 'schema must be an object', 'minItems', 'minLength', 'pattern', 'enum', 'title', '$schema']],
   ['schema-empty.json', undefined, ['min-items'], []],
   ['schema-missing.json', undefined, ['missing-field'], ['records']],
@@ -58,6 +58,25 @@ for (const [fixture, schema, codes, messages] of [
 test('schema-valued additional properties validates each map value', () => {
   assert.equal(run(tmpdir(), 'schema-map-valid.json', 'schema-map.json').exit, 0)
 })
+
+for (const [keyword, values, exit, code] of [
+  [true, [{ a: 1, b: 2 }, { b: 2, a: 1 }], 1, 'duplicate-item'],
+  [false, [1, 1], 0, undefined],
+  [true, [1, '1'], 0, undefined],
+  ['true', [], 1, 'invalid-schema']
+]) {
+  test(`uniqueItems ${keyword} validates semantic JSON equality for ${JSON.stringify(values)}`, async t => {
+    const workspace = await mkdtemp(join(tmpdir(), 'bstack unique '))
+    t.after(() => rm(workspace, { recursive: true, force: true }))
+    const schema = join(workspace, 'schema.json')
+    const input = join(workspace, 'input.json')
+    await writeFile(schema, JSON.stringify({ type: 'array', uniqueItems: keyword }))
+    await writeFile(input, JSON.stringify(values))
+    const result = spawnSync(process.execPath, [entry, 'contract-test', '--workspace', workspace, '--schema', schema, '--input', input, '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, exit, result.stdout)
+    if (code) assert.ok(JSON.parse(result.stdout).problems.some(problem => problem.code === code))
+  })
+}
 
 test('command help succeeds with its implementation absent while execution reports blocked', async t => {
   const directory = await mkdtemp(join(tmpdir(), 'bstack help '))

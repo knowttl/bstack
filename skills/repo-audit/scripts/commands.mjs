@@ -1,5 +1,15 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'findings validate': {
+    module: './commands/findings.mjs',
+    options: ['findings'],
+    help: 'Validate findings and assess current readiness without writes.\nUsage: repo-audit.mjs findings validate --repo <path>|--workspace <path> --findings <file> [--json]'
+  },
+  'findings render': {
+    module: './commands/findings.mjs',
+    options: ['findings'],
+    help: 'Render a proposed audit record only in scratch and return its path.\nUsage: repo-audit.mjs findings render --repo <path>|--workspace <path> --findings <file> [--json]'
+  },
   inspect: {
     module: './commands/inspect.mjs',
     options: [],
@@ -48,4 +58,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['findings validate', 'findings render', 'apply', 'state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['apply', 'state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
