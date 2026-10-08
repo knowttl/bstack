@@ -41,7 +41,7 @@ export async function run(options) {
     const file = { path, hash: hashBytes(bytes), kind }
     if (kind === 'instructions') {
       const directory = dirname(absolute)
-      const scopeDirectory = basename(directory) === '.claude' ? dirname(directory) : directory
+      const scopeDirectory = basename(path) === 'CLAUDE.md' && basename(directory) === '.claude' ? dirname(directory) : directory
       const scope = insideRepo ? relative(target.root, scopeDirectory).split(sep).join('/') || '.' : scopeDirectory
       Object.assign(file, { directory: insideRepo ? dirname(path) : directory, scope, insideRepo,
         scoped: insideRepo && scope !== '.', local: basename(path) === 'CLAUDE.local.md' })

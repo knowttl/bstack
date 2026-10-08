@@ -77,3 +77,23 @@ test('equivalent nested instructions consolidate within their own scope', async 
   assert.equal(result.exit, 0)
   assert.deepEqual(result.data.candidates.map(({ path, destination, scope }) => ({ path, destination, scope })), [{ path: 'web/.claude/CLAUDE.md', destination: 'web/AGENTS.md', scope: 'web' }])
 })
+
+for (const [directory, name, shadowingScopes] of [
+  ['.claude', 'AGENTS.md', []],
+  ['.claude', 'CLAUDE.local.md', ['.claude']],
+  ['web/.claude', 'AGENTS.md', []],
+  ['web/.claude', 'CLAUDE.local.md', ['web/.claude']]
+]) {
+  test(`inventory preserves the containing scope of ${directory}/${name}`, async t => {
+    const { repo } = await emptyRepo(t)
+    await mkdir(join(repo, directory), { recursive: true })
+    await writeFile(join(repo, directory, name), 'Scoped fixture guidance\n')
+    const result = run('inventory', repo)
+    assert.equal(result.exit, 0)
+    const file = result.data.files.find(file => file.path === `${directory}/${name}`)
+    assert.equal(file.scope, directory)
+    assert.equal(file.scoped, true)
+    assert.deepEqual(result.data.shadowing.filter(file => file.insideRepo).map(file => file.scope), shadowingScopes)
+    assert.deepEqual(result.data.candidates, [])
+  })
+}
