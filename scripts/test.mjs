@@ -1,8 +1,9 @@
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { spawnSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { spawn } from 'node:child_process'
+import { createWriteStream, existsSync } from 'node:fs'
+import { finished } from 'node:stream/promises'
 
 // Discovery is anchored to this checkout, independent of the caller's directory.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -72,14 +73,22 @@ try {
   }
   const runnerArgs = ['--test', '--test-reporter=tap', ...(capture ? ['--test-reporter-destination=stdout',
     `--test-reporter=${join(root, 'scripts', 'test-reporter.mjs')}`, `--test-reporter-destination=${capture}.events`] : []), ...files]
-  const result = spawnSync(process.execPath, runnerArgs, { cwd: root, stdio: capture ? 'pipe' : 'inherit',
-    encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
-  if (result.error) throw result.error
-  process.exitCode = result.status ?? 1
+  const child = spawn(process.execPath, runnerArgs, { cwd: root, stdio: capture ? ['ignore', 'pipe', 'pipe'] : 'inherit' })
+  const transcript = capture ? createWriteStream(`${capture}.tap`) : null
+  if (transcript) {
+    child.stdout.pipe(process.stdout, { end: false })
+    child.stderr.pipe(process.stderr, { end: false })
+    child.stdout.pipe(transcript, { end: false })
+    child.stderr.pipe(transcript, { end: false })
+  }
+  const completion = new Promise((resolve, reject) => {
+    child.once('error', reject)
+    child.once('close', code => { transcript?.end(); resolve(code ?? 1) })
+  })
+  const saved = transcript ? finished(transcript).catch(error => { child.kill(); throw error }) : Promise.resolve()
+  process.exitCode = (await Promise.all([completion, saved]))[0]
   if (capture) {
-    process.stdout.write(result.stdout)
-    process.stderr.write(result.stderr)
-    const output = redactEvidence(result.stdout + result.stderr)
+    const output = redactEvidence(await readFile(`${capture}.tap`, 'utf8'))
     const events = redactEvidence(await readFile(`${capture}.events`, 'utf8'))
     await writeFile(`${capture}.tap`, output)
     await writeFile(`${capture}.events`, events)

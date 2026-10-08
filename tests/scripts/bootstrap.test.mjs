@@ -4,7 +4,9 @@ import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { spawnSync } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
+import { createServer } from 'node:http'
+import { once } from 'node:events'
 import { hash } from '../../scripts/lib/test-evidence.mjs'
 
 // Resolve package inputs from the suite location, not the shell working directory.
@@ -155,6 +157,65 @@ test('attachment preserves inventory paths and captured artifact hashes', async 
   assert.equal(hash(JSON.stringify(record.validation.inputs.files)), record.validation.inputs.sha256)
   assert.equal(hash(await readFile(join(directory, record.commands[0].outputArtifact))), record.validation.outputSha256)
   assert.equal(hash(await readFile(join(directory, record.validation.eventsArtifact))), record.validation.eventsSha256)
+})
+
+test('capture and attachment bind task artifacts consumed by tests', async t => {
+  const directory = await evidenceSandbox(t,
+    "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { readFileSync } from 'node:fs'\ntest('consumed task evidence', () => assert.equal(readFileSync('tests/eval/results/tasks/T0.5.C5b.node24-check.txt', 'utf8'), 'check-package: passed\\n'))\n")
+  const artifact = join(directory, 'tests/eval/results/tasks/T0.5.C5b.node24-check.txt')
+  await mkdir(dirname(artifact), { recursive: true })
+  await writeFile(artifact, 'check-package: passed\n')
+  await writeFile(join(directory, 'tests/eval/results/tasks/other.json'), '{}\n')
+  assert.equal(spawnSync('git', ['add', '.'], { cwd: directory }).status, 0)
+  assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'consumed task evidence'], { cwd: directory }).status, 0)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  assert.equal(attach(directory).status, 0)
+  const record = JSON.parse(await readFile(join(directory, 'tests/eval/results/tasks/speed.json'), 'utf8'))
+  assert.ok(record.validation.inputs.files.some(file => file.path === 'tests/eval/results/tasks/T0.5.C5b.node24-check.txt'))
+  assert.ok(record.validation.inputs.files.some(file => file.path === 'tests/eval/results/tasks/other.json'))
+  await rm(artifact)
+  assert.equal(run(directory, '--capture', '.cache/dirty.json').status, 1)
+  assert.equal(attach(directory).status, 1)
+  assert.equal(spawnSync('git', ['add', '-u'], { cwd: directory }).status, 0)
+  assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'delete consumed evidence'], { cwd: directory }).status, 0)
+  const stale = attach(directory)
+  assert.equal(stale.status, 1)
+  assert.match(stale.stderr, /Evidence inputs or environment changed/)
+  assert.equal(run(directory).status, 1)
+})
+
+test('capture streams TAP and stderr before a blocked suite finishes', { timeout: 15000 }, async t => {
+  const server = createServer()
+  t.after(() => { server.closeAllConnections(); server.close() })
+  server.listen(0, '127.0.0.1')
+  await once(server, 'listening')
+  const request = once(server, 'request')
+  const directory = await evidenceSandbox(t,
+    `import test from 'node:test'\ntest('live progress', () => { console.log('stdout progress'); console.error('stderr progress') })\ntest('blocked suite', async () => { await fetch('http://127.0.0.1:${server.address().port}/release') })\n`)
+  const { NODE_TEST_CONTEXT, ...env } = process.env
+  const child = spawn(process.execPath, [join(directory, 'scripts/test.mjs'), '--capture', '.cache/run.json'],
+    { cwd: directory, env, stdio: ['ignore', 'pipe', 'pipe'] })
+  t.after(() => child.kill())
+  const completion = once(child, 'close')
+  let terminal = ''
+  const progress = new Promise(resolve => {
+    const receive = chunk => {
+      terminal += chunk
+      if (terminal.includes('ok 1 - live progress') && terminal.includes('stdout progress') && terminal.includes('stderr progress')) resolve()
+    }
+    child.stdout.on('data', receive)
+    child.stderr.on('data', receive)
+  })
+  const [, response] = await request
+  await progress
+  assert.equal(child.exitCode, null)
+  response.end('continue')
+  const [code] = await completion
+  assert.equal(code, 0, terminal)
+  const output = await readFile(join(directory, '.cache/run.json.tap'), 'utf8')
+  assert.match(output, /stdout progress/)
+  assert.match(output, /stderr progress/)
+  assert.match(output, /ok 1 - live progress/)
 })
 
 test('ordinary tests still execute dirty source but its evidence cannot attach', async t => {

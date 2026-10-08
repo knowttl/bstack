@@ -13,11 +13,11 @@ export function hash(value) {
   return createHash('sha256').update(value).digest('hex')
 }
 
-export function inputsCommitted(root) {
-  const clean = spawnSync('git', ['diff', '--quiet', 'HEAD', '--', '.', ':!tests/eval/results/tasks'], { cwd: root })
+export function inputsCommitted(root, excluded = []) {
+  const clean = spawnSync('git', ['diff', '--quiet', 'HEAD', '--', '.', ...excluded.map(path => `:(top,literal,exclude)${path}`)], { cwd: root })
   if (clean.error) throw clean.error
   return clean.status === 0 && !git(root, 'ls-files', '--others', '--exclude-standard', '-z').split('\0')
-    .some(path => path && !path.startsWith('tests/eval/results/tasks/'))
+    .some(path => path && !excluded.includes(path))
 }
 
 export async function environment() {
@@ -27,12 +27,11 @@ export async function environment() {
       git: execFileSync('git', ['--version'], { encoding: 'utf8' }).trim() } }
 }
 
-export async function inputs(root) {
+export async function inputs(root, excluded = []) {
   const paths = git(root, 'ls-files', '--cached', '--others', '--exclude-standard', '-z').split('\0').filter(Boolean)
   const files = []
   for (const path of [...new Set(paths)].sort()) {
-    // Portable evidence is output, so attaching it does not invalidate the tested inputs.
-    if (path.startsWith('tests/eval/results/tasks/')) continue
+    if (excluded.includes(path)) continue
     try {
       const info = await lstat(join(root, path))
       if (!info.isFile()) throw new Error(`Unsupported evidence input: ${path}`)

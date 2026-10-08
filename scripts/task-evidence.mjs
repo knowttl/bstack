@@ -12,6 +12,8 @@ try {
     throw new Error('Usage: node scripts/task-evidence.mjs <run.json> <task-id>')
   }
   const path = resolve(root, runPath)
+  const prefix = `tests/eval/results/tasks/${taskId}`
+  const excluded = [`${prefix}.json`, `${prefix}.full-tests.txt`, `${prefix}.events.jsonl`]
   const run = JSON.parse(await readFile(path, 'utf8'))
   const output = await readFile(`${path}.tap`, 'utf8')
   const events = await readFile(`${path}.events`, 'utf8')
@@ -21,14 +23,16 @@ try {
   if (run.schemaVersion !== 1 || !run.committed || run.command.exitCode !== 0 || !summary?.success ||
       summary.counts.failed || summary.counts.cancelled || summary.counts.skipped || summary.counts.todo || !summary.counts.tests ||
       JSON.stringify(suites) !== JSON.stringify(run.suites) ||
+      hash(JSON.stringify(run.inputs.files)) !== run.inputs.sha256 ||
       hash(output) !== run.outputSha256 || hash(events) !== run.eventsSha256) throw new Error('Full-suite evidence is incomplete or failed')
   if (run.baseRevision !== git(root, 'rev-parse', 'origin/main')) throw new Error('Evidence base changed; run the full suite again')
   git(root, 'merge-base', '--is-ancestor', run.sourceRevision, 'HEAD')
-  if (!inputsCommitted(root)) throw new Error('Commit source inputs before attaching evidence')
-  if (JSON.stringify(run.inputs) !== JSON.stringify(await inputs(root)) ||
+  if (!inputsCommitted(root, excluded)) throw new Error('Commit source inputs before attaching evidence')
+  const files = run.inputs.files.filter(file => !excluded.includes(file.path))
+  const binding = { files, sha256: hash(JSON.stringify(files)) }
+  if (JSON.stringify(binding) !== JSON.stringify(await inputs(root, excluded)) ||
       JSON.stringify(run.environment) !== JSON.stringify(await environment())) throw new Error('Evidence inputs or environment changed; run the full suite again')
   const directory = join(root, 'tests', 'eval', 'results', 'tasks')
-  const prefix = `tests/eval/results/tasks/${taskId}`
   let previous
   try { previous = JSON.parse(await readFile(join(directory, `${taskId}.json`), 'utf8')) } catch (error) {
     if (error.code !== 'ENOENT') throw error
@@ -39,7 +43,7 @@ try {
     status: previous?.status ?? 'passed', environment: run.environment,
     commands: [...(previous?.commands ?? []).filter(command => command.id !== 'full-tests'),
       { id: 'full-tests', ...run.command, outputArtifact: `${prefix}.full-tests.txt`, status: 'passed' }],
-    validation: { baseRevision: run.baseRevision, inputs: run.inputs, suites: run.suites,
+    validation: { baseRevision: run.baseRevision, inputs: binding, suites: run.suites,
       counts: summary.counts, durationMs: summary.duration_ms, outputSha256: run.outputSha256,
       eventsSha256: run.eventsSha256, eventsArtifact: `${prefix}.events.jsonl` },
     limitations: [...new Set([...(previous?.limitations ?? []),
@@ -48,7 +52,7 @@ try {
   await writeFile(join(directory, `${taskId}.full-tests.txt`), output)
   await writeFile(join(directory, `${taskId}.events.jsonl`), events)
   await writeFile(join(directory, `${taskId}.json`), JSON.stringify(record, null, 2) + '\n')
-  console.log(`Attached ${summary.counts.tests} tests from ${run.sourceRevision} to HEAD ${git(root, 'rev-parse', 'HEAD')}; inputs ${run.inputs.sha256}`)
+  console.log(`Attached ${summary.counts.tests} tests from ${run.sourceRevision} to HEAD ${git(root, 'rev-parse', 'HEAD')}; inputs ${binding.sha256}`)
 } catch (error) {
   console.error(error.message)
   process.exitCode = 1

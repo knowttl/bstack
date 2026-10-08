@@ -68,7 +68,10 @@ The generator reads the saved run rather than executing another suite or startin
 Its validation binding records the tested head, resolved base, command, environment, selected suite paths, test identities, counts, timing, output hashes and complete authored input inventory.
 An evidence-only descendant can reuse the tested head when the generator confirms ancestry and identical inputs, base and environment at the final head.
 The record cannot contain its own commit hash; publication identifies the final head, and the input binding proves that head has the tested contents.
-Only `tests/eval/results/tasks/` evidence outputs are excluded from the input inventory.
+Capture includes every authored task artifact and requires those inputs to be committed.
+Attachment excludes only its own `<task-id>.json`, `<task-id>.full-tests.txt` and `<task-id>.events.jsonl` files from both inventories and the commitment check.
+Every other task artifact remains an input, including evidence consumed by acceptance tests.
+TAP and stderr stream to the terminal and the capture file while the suite runs.
 Changes to behaviour, tests or other inputs require a fresh full-suite capture within the existing pipeline before attachment.
 Preserve task-specific commands, acceptance cases and limitations; the full-suite record does not replace them.
 
