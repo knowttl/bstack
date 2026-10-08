@@ -1,0 +1,309 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T2.5
+
+Selected 2 suite(s): tests/scripts/findings.test.mjs, tests/scripts/schema-contract.test.mjs
+TAP version 13
+# Subtest: findings validate rejects missing principle without target writes
+ok 1 - findings validate rejects missing principle without target writes
+  ---
+  duration_ms: 131.366885
+  type: 'test'
+  ...
+# Subtest: findings validate rejects blank principle without target writes
+ok 2 - findings validate rejects blank principle without target writes
+  ---
+  duration_ms: 113.351877
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown status without target writes
+ok 3 - findings validate rejects unknown status without target writes
+  ---
+  duration_ms: 133.131299
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown field without target writes
+ok 4 - findings validate rejects unknown field without target writes
+  ---
+  duration_ms: 113.748857
+  type: 'test'
+  ...
+# Subtest: findings validate rejects duplicate finding without target writes
+ok 5 - findings validate rejects duplicate finding without target writes
+  ---
+  duration_ms: 113.157136
+  type: 'test'
+  ...
+# Subtest: findings validate rejects duplicate source without target writes
+ok 6 - findings validate rejects duplicate source without target writes
+  ---
+  duration_ms: 107.073252
+  type: 'test'
+  ...
+# Subtest: findings validate rejects missing source ID without target writes
+ok 7 - findings validate rejects missing source ID without target writes
+  ---
+  duration_ms: 112.699879
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown source without target writes
+ok 8 - findings validate rejects unknown source without target writes
+  ---
+  duration_ms: 121.286955
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown intent without target writes
+ok 9 - findings validate rejects unknown intent without target writes
+  ---
+  duration_ms: 122.052066
+  type: 'test'
+  ...
+# Subtest: findings validate rejects selection mismatch without target writes
+ok 10 - findings validate rejects selection mismatch without target writes
+  ---
+  duration_ms: 163.880356
+  type: 'test'
+  ...
+# Subtest: findings validate rejects unknown selection without target writes
+ok 11 - findings validate rejects unknown selection without target writes
+  ---
+  duration_ms: 333.799018
+  type: 'test'
+  ...
+# Subtest: findings validate rejects duplicate selection without target writes
+ok 12 - findings validate rejects duplicate selection without target writes
+  ---
+  duration_ms: 320.234613
+  type: 'test'
+  ...
+# Subtest: findings validate rejects duplicate required outcome without target writes
+ok 13 - findings validate rejects duplicate required outcome without target writes
+  ---
+  duration_ms: 334.864229
+  type: 'test'
+  ...
+# Subtest: findings validate rejects target mismatch without target writes
+ok 14 - findings validate rejects target mismatch without target writes
+  ---
+  duration_ms: 326.253266
+  type: 'test'
+  ...
+# Subtest: findings validate rejects scope mismatch without target writes
+ok 15 - findings validate rejects scope mismatch without target writes
+  ---
+  duration_ms: 429.612626
+  type: 'test'
+  ...
+# Subtest: findings validate rejects missing location without target writes
+ok 16 - findings validate rejects missing location without target writes
+  ---
+  duration_ms: 352.386554
+  type: 'test'
+  ...
+# Subtest: findings validate rejects missing stage requirement without target writes
+ok 17 - findings validate rejects missing stage requirement without target writes
+  ---
+  duration_ms: 352.162796
+  type: 'test'
+  ...
+# Subtest: render separates source intent, selected debt and new principles in scratch
+ok 18 - render separates source intent, selected debt and new principles in scratch
+  ---
+  duration_ms: 617.947776
+  type: 'test'
+  ...
+# Subtest: audit requires current evidence before ready
+ok 19 - audit requires current evidence before ready
+  ---
+  duration_ms: 793.546588
+  type: 'test'
+  ...
+# Subtest: foundation requires current evidence before ready
+ok 20 - foundation requires current evidence before ready
+  ---
+  duration_ms: 876.578379
+  type: 'test'
+  ...
+# Subtest: readiness handles failed journey despite passing units
+ok 21 - readiness handles failed journey despite passing units
+  ---
+  duration_ms: 475.402861
+  type: 'test'
+  ...
+# Subtest: readiness handles skipped journey
+ok 22 - readiness handles skipped journey
+  ---
+  duration_ms: 802.420974
+  type: 'test'
+  ...
+# Subtest: readiness handles blocked journey
+ok 23 - readiness handles blocked journey
+  ---
+  duration_ms: 851.654513
+  type: 'test'
+  ...
+# Subtest: readiness handles missing journey
+ok 24 - readiness handles missing journey
+  ---
+  duration_ms: 704.39184
+  type: 'test'
+  ...
+# Subtest: readiness handles unresolved decision
+ok 25 - readiness handles unresolved decision
+  ---
+  duration_ms: 651.165575
+  type: 'test'
+  ...
+# Subtest: readiness handles unresolved blocking debt
+ok 26 - readiness handles unresolved blocking debt
+  ---
+  duration_ms: 802.738425
+  type: 'test'
+  ...
+# Subtest: readiness handles deferred nonblocking debt
+ok 27 - readiness handles deferred nonblocking debt
+  ---
+  duration_ms: 841.845929
+  type: 'test'
+  ...
+# Subtest: readiness handles unselected new principle
+ok 28 - readiness handles unselected new principle
+  ---
+  duration_ms: 694.33075
+  type: 'test'
+  ...
+# Subtest: changed intent or selection invalidates otherwise passed evidence
+ok 29 - changed intent or selection invalidates otherwise passed evidence
+  ---
+  duration_ms: 970.154591
+  type: 'test'
+  ...
+# Subtest: artifact deletion and changed bytes block readiness
+ok 30 - artifact deletion and changed bytes block readiness
+  ---
+  duration_ms: 1031.601699
+  type: 'test'
+  ...
+# Subtest: Git revision changes block readiness even with unchanged scoped bytes
+ok 31 - Git revision changes block readiness even with unchanged scoped bytes
+  ---
+  duration_ms: 943.432195
+  type: 'test'
+  ...
+# Subtest: foundation workspace renders without Git and refuses scratch inside target
+ok 32 - foundation workspace renders without Git and refuses scratch inside target
+  ---
+  duration_ms: 454.929627
+  type: 'test'
+  ...
+# Subtest: findings rejects malformed input and missing option
+ok 33 - findings rejects malformed input and missing option
+  ---
+  duration_ms: 236.617967
+  type: 'test'
+  ...
+# Subtest: valid schema data dispatches from another cwd without changing the workspace
+ok 34 - valid schema data dispatches from another cwd without changing the workspace
+  ---
+  duration_ms: 89.016285
+  type: 'test'
+  ...
+# Subtest: schema-invalid.json with the installed schema fails with named problems and no writes
+ok 35 - schema-invalid.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 62.877327
+  type: 'test'
+  ...
+# Subtest: schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
+ok 36 - schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
+  ---
+  duration_ms: 66.61509
+  type: 'test'
+  ...
+# Subtest: schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
+ok 37 - schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
+  ---
+  duration_ms: 59.450814
+  type: 'test'
+  ...
+# Subtest: schema-empty.json with the installed schema fails with named problems and no writes
+ok 38 - schema-empty.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 66.292094
+  type: 'test'
+  ...
+# Subtest: schema-missing.json with the installed schema fails with named problems and no writes
+ok 39 - schema-missing.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 70.081121
+  type: 'test'
+  ...
+# Subtest: schema-wrong-types.json with the installed schema fails with named problems and no writes
+ok 40 - schema-wrong-types.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 74.157456
+  type: 'test'
+  ...
+# Subtest: schema-map-invalid.json with schema-map.json fails with named problems and no writes
+ok 41 - schema-map-invalid.json with schema-map.json fails with named problems and no writes
+  ---
+  duration_ms: 85.865497
+  type: 'test'
+  ...
+# Subtest: schema-malformed.json with the installed schema fails with named problems and no writes
+ok 42 - schema-malformed.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 68.587352
+  type: 'test'
+  ...
+# Subtest: schema-valued additional properties validates each map value
+ok 43 - schema-valued additional properties validates each map value
+  ---
+  duration_ms: 71.881904
+  type: 'test'
+  ...
+# Subtest: uniqueItems true validates semantic JSON equality for [{"a":1,"b":2},{"b":2,"a":1}]
+ok 44 - uniqueItems true validates semantic JSON equality for [{"a":1,"b":2},{"b":2,"a":1}]
+  ---
+  duration_ms: 76.964105
+  type: 'test'
+  ...
+# Subtest: uniqueItems false validates semantic JSON equality for [1,1]
+ok 45 - uniqueItems false validates semantic JSON equality for [1,1]
+  ---
+  duration_ms: 68.266357
+  type: 'test'
+  ...
+# Subtest: uniqueItems true validates semantic JSON equality for [1,"1"]
+ok 46 - uniqueItems true validates semantic JSON equality for [1,"1"]
+  ---
+  duration_ms: 60.404588
+  type: 'test'
+  ...
+# Subtest: uniqueItems true validates semantic JSON equality for []
+ok 47 - uniqueItems true validates semantic JSON equality for []
+  ---
+  duration_ms: 62.746298
+  type: 'test'
+  ...
+# Subtest: command help succeeds with its implementation absent while execution reports blocked
+ok 48 - command help succeeds with its implementation absent while execution reports blocked
+  ---
+  duration_ms: 148.790801
+  type: 'test'
+  ...
+# Subtest: dispatch rejects unsupported arguments before loading the command
+ok 49 - dispatch rejects unsupported arguments before loading the command
+  ---
+  duration_ms: 100.771032
+  type: 'test'
+  ...
+1..49
+# tests 49
+# suites 0
+# pass 49
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15561.566452

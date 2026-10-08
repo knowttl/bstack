@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T2.5",
+  "slice": "C13",
+  "sourceRevision": "199f66a07d1fbaf6d479ed0b5fb2e6804ccfb812",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1-T2.3 and T2.4 (https://github.com/knowttl/bstack/pull/23: `measure` and `overlap`, with the merge-path-reuse limitation documented; its final evidence refresh was deferred to this slice).\n\nThis piece is slice C13: task T2.5 \"Build the findings schema and report\". Done evidence: principle/source/selection validation, scratch-only output, stage-specific readiness controls.",
+  "amendments": [],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "root-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C13.root-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "skill-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--prefix",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C13.skill-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "package-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C13.package-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "full-tests",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C13.full-tests.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.5",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.5"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C13.task-T2.5.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-8",
+      "kind": "automated",
+      "procedure": "findings validate rejects missing principle without target writes; findings validate rejects unknown status without target writes; render separates source intent, selected debt and new principles in scratch.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C13.task-T2.5.txt"
+    },
+    {
+      "id": "AC-63",
+      "kind": "automated",
+      "procedure": "readiness handles unresolved decision; readiness handles unselected new principle; audit requires current evidence before ready; foundation requires current evidence before ready.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C13.task-T2.5.txt"
+    },
+    {
+      "id": "AC-65",
+      "kind": "automated",
+      "procedure": "findings validate rejects unknown source without target writes; findings validate rejects selection mismatch without target writes; readiness handles failed journey despite passing units; changed intent or selection invalidates otherwise passed evidence.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C13.task-T2.5.txt"
+    }
+  ],
+  "limitations": [
+    "Recorded execution is Linux on Node 24. Real Windows and macOS execution remains captain checklist evidence.",
+    "These automated controls establish the findings command contract. Full agent acceptance for AC-8, AC-63 and AC-65 remains planned in the acceptance registry.",
+    "Readiness checks supplied observations and exact artifact freshness, without executing checks or independently proving their truth. Automatic capture belongs to T2.7.",
+    "Audit requires current starting-checks and any declared scope outcomes. Foundation requires journey and foundation-review plus declared outcomes. Maintained enforcement and portable assessment remain later tasks."
+  ]
+}
