@@ -384,7 +384,14 @@ Tick each task when its "Done when" commands pass.
     - C15b implements steps 4-5 and the probe-record portion of step 8: schema-defined live captures, matching command/endpoint/environment pairs, freshness checks and approval bound to each side-effecting call.
       `npm test -- --task T2.7` also covers missing and mismatched probes, unavailable reasons and the ts-shop live stand-in disagreement despite passing mocked units.
       Real Windows/macOS execution and full agent acceptance remain separate evidence.
-  - [ ] T2.8 Complete the existing-repo audit and apply path
+  - [x] T2.8 Complete the existing-repo audit and apply path
+    - C17 connects inspect, inventory, cited research, evidence summary, conditional questions, findings, selection, protected apply, native check capture and the reviewed audit record.
+      `npm test -- --task T2.8` registers the command integration, evaluation controls and package check suites.
+      The integration preserves distinct scoped and local instructions, dirty user work and the native quote journey through a selected root instruction delete and audit-record apply, then refreshes stale final evidence.
+      Four real isolated Codex scenarios cover audit-before-interview, clear-goals loading, different TypeScript/Python recommendations and a reviewed two-line candidate delta against an existing approved vision.
+      [Checkpoint evidence](../tests/eval/results/foundation-C17/summary.md) distinguishes the scripted candidate review from blocked board interaction and exact-revision approval.
+      [Task evidence](../tests/eval/results/tasks/T2.8.json) records final local validation.
+      Maintained enforcement, portable maintenance and T4.3's completed-package extension proof remain pending.
   - [ ] T2.9 Complete protected new-project creation
 - Phase 3: Enforcement
   - [ ] T3.1 Write the enforcement and architecture references (before T2.8)

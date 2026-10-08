@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "scenario": {
+    "id": "existing-repo-python",
+    "fixture": "py-ledger",
+    "request": "Audit this repo and present evidenced foundation recommendations for balanced postings through the public ledger package. Present recommendations only, preserving the current native Python journey and standards.",
+    "answers": [],
+    "checkpoints": [
+      "foundation",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "project-fit",
+        "caseId": "AC-62",
+        "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript."
+      }
+    ]
+  },
+  "sourceRevision": "7c5e754b948b7ab80a21bfe05de6940d26871fd3",
+  "stage": "foundation",
+  "mode": "with",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "os": "linux 6.8.0-142-generic",
+  "status": "passed",
+  "criteriaHash": "ca97c7e90e07e731793d704d854626a22769530abb8c9c561a49763ff52baf4c",
+  "adapterHash": "f8645b920c468183a4022f065ca7ab6e8c5c2c898429269d18058d4779134b42",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[temporary-parent]/.agents/skills",
+      "[temporary-parent]/.codex/skills",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": "e883a6de0aa88c0dc652d8d992db3cee2724ff5d34222faf10c607d9ace008ea",
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [
+      "[isolated-home]/.agents/skills/repo-audit/SKILL.md"
+    ],
+    "checkedAt": "2026-10-08T16:07:08.555Z",
+    "cleanedAt": "2026-10-08T16:07:08.617Z"
+  },
+  "turns": [
+    {
+      "message": "$repo-audit\nAudit this repo and present evidenced foundation recommendations for balanced postings through the public ledger package. Present recommendations only, preserving the current native Python journey and standards.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 284143.892148,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    }
+  ],
+  "caseResults": [
+    {
+      "id": "project-fit",
+      "caseId": "AC-62",
+      "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript.",
+      "passed": true,
+      "startLine": 23,
+      "endLine": 50,
+      "scoring": "human",
+      "reviewer": "C17 implementation worker",
+      "transcript": "conversation.txt"
+    }
+  ],
+  "transcript": "conversation.txt",
+  "limitations": [
+    "Host paths, user names and session identifiers are redacted. Dashes are normalized to plain hyphens and transcript line numbers are retained.",
+    "Compared with the TypeScript checkout audit, recommendations centre Python public ledger ownership, Decimal finite amounts and rounding, balanced postings, native Ruff/unittest and CSV/JSON compatibility.",
+    "The host ran public opening-balance and CSV/JSON checks and reported their passing outcome, while boundary checks failed. No source edits or selected apply were authorized.",
+    "The host used the bundled Lavish presentation skill. It is not required by the existing-repo procedure. Maintained enforcement and portable maintenance remain pending."
+  ]
+}

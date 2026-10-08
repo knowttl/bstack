@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "scenario": {
+    "id": "existing-vision-delta",
+    "fixture": "existing-vision-delta",
+    "request": "Audit the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the audit finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
+    "answers": [
+      "Retain the existing vision as baseline. Local export of my own title, address and read status for personal backup fits. Accounts, sharing and recommendations remain excluded. Present the exact candidate line edits for review, with no project writes."
+    ],
+    "checkpoints": [
+      "foundation",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "delta",
+        "caseId": "AC-55",
+        "question": "Against docs/evaluation.md's existing-vision delta rubric, did it propose and review a minimal evidenced delta preserving the approved baseline and keep unavailable board approval blocked?"
+      }
+    ]
+  },
+  "sourceRevision": "7c5e754b948b7ab80a21bfe05de6940d26871fd3",
+  "stage": "foundation",
+  "mode": "with",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "os": "linux 6.8.0-142-generic",
+  "status": "passed",
+  "criteriaHash": "f85c6d461bd51efd3c70bf33c58f0ff79777c0991548251052e09d081f2d45c8",
+  "adapterHash": "f8645b920c468183a4022f065ca7ab6e8c5c2c898429269d18058d4779134b42",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[temporary-parent]/.agents/skills",
+      "[temporary-parent]/.codex/skills",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": "e883a6de0aa88c0dc652d8d992db3cee2724ff5d34222faf10c607d9ace008ea",
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [
+      "[isolated-home]/.agents/skills/repo-audit/SKILL.md"
+    ],
+    "checkedAt": "2026-10-08T16:12:10.860Z",
+    "cleanedAt": "2026-10-08T16:12:10.941Z"
+  },
+  "turns": [
+    {
+      "message": "$repo-audit\nAudit the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the audit finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 169930.650159,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    },
+    {
+      "message": "Retain the existing vision as baseline. Local export of my own title, address and read status for personal backup fits. Accounts, sharing and recommendations remain excluded. Present the exact candidate line edits for review, with no project writes.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 6237.660874,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    }
+  ],
+  "caseResults": [
+    {
+      "id": "delta",
+      "caseId": "AC-55",
+      "question": "Against docs/evaluation.md's existing-vision delta rubric, did it propose and review a minimal evidenced delta preserving the approved baseline and keep unavailable board approval blocked?",
+      "passed": true,
+      "startLine": 14,
+      "endLine": 47,
+      "scoring": "human",
+      "reviewer": "C17 implementation worker",
+      "transcript": "conversation.txt"
+    }
+  ],
+  "transcript": "conversation.txt",
+  "limitations": [
+    "Host paths, user names and session identifiers are redacted. Dashes are normalized to plain hyphens and transcript line numbers are retained.",
+    "The scripted author review was delivered as a resumed turn only after the host exposed the backup-versus-sharing fault line. The reply preserves the baseline and presents two exact candidate additions.",
+    "Board build, launch and listener startup were observed. Browser interaction, terminal board verdicts and exact-revision approval remain blocked pending reachable author interaction and current feedback.",
+    "This score covers the reviewed candidate delta rubric, not completed board approval, selected vision apply or runtime readiness. No target files changed."
+  ]
+}
