@@ -423,11 +423,11 @@ Tick each task when its "Done when" commands pass.
   - [x] T3.2 Build `rule-proof`
     - C19 proves clean public imports and permitted direction, plus independently seeded private, alias/equivalent bridge and cycle violations using the researched TypeScript resolver and Python AST tools.
       `npm test -- --task T3.2` also covers failed clean setup, missing tools, failed versions, wrong diagnostics, passing violations, timeouts and invalid selection.
-      Task evidence awaits attachment from the gate's final full-suite run at `tests/eval/results/tasks/T3.2.json`.
+      [Task evidence](../tests/eval/results/tasks/T3.2.json) retains full-suite native versions, clean controls and independently seeded diagnostics with AC-52, AC-60 and AC-66 links.
   - [x] T3.3 Build debt baseline handling
     - Neither researched fixture tool has a native baseline feature; C19 supplies the baseline schema and `baseline check` with visible retained debt, new-debt rejection, fixed-entry removal and one-entry growth only for a selected unresolved debt finding.
       `npm test -- --task T3.3` covers unauthorized refresh, selection, scope and metadata boundaries and no partial refresh writes.
-      Task evidence awaits attachment from the gate's final full-suite run at `tests/eval/results/tasks/T3.3.json`.
+      [Task evidence](../tests/eval/results/tasks/T3.3.json) retains full-suite baseline checks and the AC-67 link, with Linux-only execution and native-analysis limitations.
       Real Windows and macOS execution remains captain checklist evidence.
   - [ ] T3.4 Integrate scoped checks with the maintained local command
 - Phase 3a: Maintenance

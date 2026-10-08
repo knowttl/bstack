@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T3.2",
+  "slice": "C19",
+  "sourceRevision": "e598285b433b951a571506de0fc222b32f2a0208",
+  "intent": "Build merged slice C19 sequentially: complete rule-proof-driven T3.1 reference revisions, T3.2 native rule-proof and T3.3 debt baseline handling. Prove clean public imports and permitted direction, independently seeded private imports, alias/equivalent bypasses and cycles in both stacks. Keep existing debt visible, reject new debt and unselected refresh growth, remove fixed entries and require a selected unresolved debt finding for one new entry. Preserve project-specific design guidance and add no hosted workflows.",
+  "amendments": [
+    "Native stack procedures execute through the public command inside the full suite; retained TAP diagnostics record versions, exits and native outputs."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "2.54.0"
+    }
+  },
+  "commands": [],
+  "cases": [
+    {
+      "id": "AC-52",
+      "kind": "automated",
+      "procedure": "tests/scripts/rule-proof.test.mjs: 'ts native public imports and permitted direction pass while private, alias and cycles fail' and the corresponding 'py native ...' test. Each runs separate clean/seeded disposable copies through rule-proof. Native TypeScript 5.9.3 and Python 3.12.3 produce clean stdout [] with exit 0 and the specific private, alias or cycle JSON diagnostic with exit 1; stderr is empty. Full-suite TAP retains all six native diagnostic records.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3.2.full-tests.txt"
+    },
+    {
+      "id": "AC-60",
+      "kind": "automated",
+      "procedure": "tests/scripts/rule-proof.test.mjs: 'ts native public imports and permitted direction pass while private, alias and cycles fail' and the corresponding 'py native ...' test. Each runs separate clean/seeded disposable copies through rule-proof. Native TypeScript 5.9.3 and Python 3.12.3 produce clean stdout [] with exit 0 and the specific private, alias or cycle JSON diagnostic with exit 1; stderr is empty. Full-suite TAP retains all six native diagnostic records.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3.2.full-tests.txt"
+    },
+    {
+      "id": "AC-66",
+      "kind": "automated",
+      "procedure": "tests/scripts/rule-proof.test.mjs: 'ts native public imports and permitted direction pass while private, alias and cycles fail' and the corresponding 'py native ...' test. Each runs separate clean/seeded disposable copies through rule-proof. Native TypeScript 5.9.3 and Python 3.12.3 produce clean stdout [] with exit 0 and the specific private, alias or cycle JSON diagnostic with exit 1; stderr is empty. Full-suite TAP retains all six native diagnostic records.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3.2.full-tests.txt"
+    }
+  ],
+  "limitations": [
+    "Executed locally on Linux and Node 24 only; no real Windows or macOS execution is claimed.",
+    "Static seeded fixtures do not establish every dynamic dependency, unsupported syntax or re-export pattern.",
+    "Maintained local integration is T3.4 work; this record does not claim final released-skill agent acceptance.",
+    "Python alias coverage is an intermediate relative-import bridge to private implementation, not proof of all re-export forms."
+  ]
+}

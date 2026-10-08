@@ -1,14 +1,15 @@
 {
   "schemaVersion": 1,
   "taskId": "T3.1",
-  "slice": "C16",
+  "slice": "C16, C19",
   "sourceRevision": "a75764289ea07fe223ca9ca14558afe9804eb46f",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1-T2.7 (most recently https://github.com/knowttl/bstack/pull/28: live probe record/compare and side-effect approval).\n\nThis piece is slice C16: the early reference portion of task T3.1 \"Write the enforcement and architecture references\", which must land before C17 (T2.8) loads these references. Done evidence: reviewed enforcement/architecture guidance, package check and two-stack relevance rubric.",
   "amendments": [
     "Early reference portion only. Rule-proof-driven revisions remain C19a, as Progress records.",
     "README usage, docs and Progress updated before final implementation commit. Evidence generated from that commit.",
     "Refreshed both installs, package check, full suite, task suite and prohibited-routing searches after the first no-mistakes review and document fixes. This evidence-only commit records that implementation head.",
-    "Firstmate approved test-1 proceeding without live validation because C16 delivers reference documents only. Agent behaviour remains C17 and native enforcement remains T3.2-T3.4."
+    "Firstmate approved test-1 proceeding without live validation because C16 delivers reference documents only. Agent behaviour remains C17 and native enforcement remains T3.2-T3.4.",
+    "C19 merges the rule-proof-driven T3.1 reference revisions with T3.2 native rule-proof and T3.3 debt baseline handling, preserving C16 commands and acceptance limitations."
   ],
   "status": "passed",
   "environment": {
@@ -153,11 +154,18 @@
       "procedure": "Prohibited-routing searches and manual review of authored skill procedure and references. All three scoped searches have no matches. The existing playbooks scope exclusion is not an instruction.",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T3.1.routing-search.txt"
+    },
+    {
+      "id": "C19-reference-review",
+      "kind": "manual",
+      "procedure": "Compared README, SKILL.md, enforcement and architecture references with the rule-proof and baseline command interfaces and native tests. References describe disposable proof, selected debt growth and static coverage limits without tool presets or development routing.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C19.verification-plan.md"
     }
   ],
   "limitations": [
     "C16 demonstrates useful references only. It does not claim final AC-14, AC-25, AC-47 or AC-59 agent acceptance.",
-    "No native rule-proof, baseline handling or maintained integration executed. T3.2-T3.4 and C19a reference revisions remain pending.",
+    "Historical C16 execution did not include native rule-proof, baseline handling or maintained integration. C19 supplies T3.2/T3.3 evidence separately; maintained integration remains T3.4.",
     "Package deny checks and routing searches are syntactic controls, not proof of model interpretation. Two-stack relevance is manual source review, not an agent run.",
     "Local command execution ran on Linux and Node 24 only."
   ]

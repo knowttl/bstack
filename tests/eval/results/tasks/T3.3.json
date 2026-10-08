@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T3.3",
+  "slice": "C19",
+  "sourceRevision": "e598285b433b951a571506de0fc222b32f2a0208",
+  "intent": "Build merged slice C19 sequentially: complete rule-proof-driven T3.1 reference revisions, T3.2 native rule-proof and T3.3 debt baseline handling. Prove clean public imports and permitted direction, independently seeded private imports, alias/equivalent bypasses and cycles in both stacks. Keep existing debt visible, reject new debt and unselected refresh growth, remove fixed entries and require a selected unresolved debt finding for one new entry. Preserve project-specific design guidance and add no hosted workflows.",
+  "amendments": [
+    "Native stack procedures execute through the public command inside the full suite; retained TAP diagnostics record versions, exits and native outputs."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "2.54.0"
+    }
+  },
+  "commands": [],
+  "cases": [
+    {
+      "id": "AC-67",
+      "kind": "automated",
+      "procedure": "tests/scripts/baseline.test.mjs: 'existing debt remains visible and checking leaves the target unchanged', 'new debt fails checking without altering the baseline', 'new debt fails refresh without a finding without altering the baseline', 'a fixed entry fails checking and refresh removes only the fixed entry', 'a selected debt finding authorizes one matching new entry', and selected finding, unrelated growth and write/rename failure controls.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3.3.full-tests.txt"
+    }
+  ],
+  "limitations": [
+    "Executed locally on Linux and Node 24 only; no real Windows or macOS execution is claimed.",
+    "Static seeded fixtures do not establish every dynamic dependency, unsupported syntax or re-export pattern.",
+    "Maintained local integration is T3.4 work; this record does not claim final released-skill agent acceptance.",
+    "The researched TypeScript resolver and Python AST probes have no native baseline feature, so the custom schema is exercised with normalized diagnostic inputs; baseline check does not execute the native analysis."
+  ]
+}
