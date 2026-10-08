@@ -359,6 +359,8 @@ Tick each task when its "Done when" commands pass.
       Real resumed turns now create scratch and launch the board, but the bounded host turns timed out awaiting browser verdicts, so an approved vision is still unverified.
     - The browser-only instructions also blocked authors who review in the terminal conversation.
       The procedure now offers conversation verdicts with the same run, revision and card bindings; the existing verdict command accepts them without launch, with a public-command regression check.
+      The final real run presented and rebuilt the draft in the conversation within the unchanged turn bound, but the script supplies no explicit verdicts for every proposal, so author approval remains blocked.
+      All 266 tests and package checks pass; [Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md) retain the actual results and limitations.
 - Phase 2: Audit and foundation
   - [ ] T2.1 Write the research briefs and the citation check
   - [ ] T2.2 Build `inspect`

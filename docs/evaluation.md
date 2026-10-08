@@ -257,3 +257,10 @@ The summaries record the actual implementation revisions evaluated, tool version
 Captured JSONL transcripts retain their line numbers with host paths, user names and thread IDs redacted.
 These observations are intent checkpoint evidence, not final acceptance selections or complete project creation.
 T1.7 remains blocked until the new-idea journey is resolved and the board and scratch approval flow can complete on an available host.
+
+## Phase 1 E2E follow-up
+
+The [Phase 1 validation](../tests/eval/results/phase1-check/summary.md) records the corrected shopping-list answer, retained Codex resume permissions and conversation-based proposal review.
+The final real new-idea run built and revised scratch drafts without a browser listener, but its script did not supply explicit verdicts for all proposals, so no approved vision is claimed.
+The separate synthetic live board roundtrip succeeded, and all 266 local tests passed.
+T1.7 remains blocked on complete author verdicts and approval of the resulting revision.
