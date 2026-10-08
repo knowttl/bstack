@@ -229,3 +229,14 @@ The first workspace-sandbox attempt stays blocked in the history with its real `
 It is not one of the three scored baselines.
 No baseline was required to fail, and the passing scenarios remain in the evaluation.
 These are initial development observations, not final released-skill acceptance or a host and operating-system support matrix.
+
+## First procedure checkpoint
+
+T1.3 supplies the bounded SKILL.md procedure and the [baseline gap map](../tests/eval/results/gap-map.md).
+The map covers all three new-idea failures and retains ambiguous-idea and clear-goals as required passing scenarios.
+No real agent sessions or ablation runs were added in this slice, and no advice was removed.
+`npm test -- --task T1.3` reuses the existing package and metadata suites.
+These checks validate packaging and the command surface, not the effectiveness of natural-language instructions.
+The baseline-to-guidance review is recorded separately in [task evidence](../tests/eval/results/tasks/T1.3.json).
+Conditional references, board review and production audit helpers remain unavailable as labelled in SKILL.md.
+The interview checkpoint in T1.7 and subsequent foundation and final evaluations own their actual execution evidence.

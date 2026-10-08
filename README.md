@@ -3,8 +3,11 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the T0.2 [skill skeleton](skills/repo-audit/SKILL.md) and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
-Its body and bundled references are placeholders, and the planned audit commands and installer are not built yet.
+This checkout contains the T1.3 [repo-audit procedure](skills/repo-audit/SKILL.md) and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
+Bundled conditional references remain placeholders, and production audit commands and the installer are not built yet.
+Use the procedure for bounded read-only planning, keeping blocked steps visible.
+Project edits remain blocked until the protected apply command is built.
 Nothing is published to npm.
 
 Use Node 24 or later:
@@ -24,6 +27,7 @@ npm test -- --task T0.5.C5b
 npm test -- --task T0.6
 npm test -- --task T1.1
 npm test -- --task T1.2
+npm test -- --task T1.3
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
@@ -50,6 +54,8 @@ npm run eval -- score --run <id> --answers answers.json --transcript transcript.
 An unscored manual run exits 2 as blocked.
 An adapter run also exits 2 until explicitly scored.
 See the [recorded initial baseline](docs/evaluation.md#recorded-initial-baseline) for host provenance and scenario outcomes.
+The [T1.3 gap map](tests/eval/results/gap-map.md) links every observed failure to the procedure and retains passing requirements.
+This slice adds no real agent runs and does not claim with-skill behaviour or complete audit execution.
 Close the conversation immediately when it finishes to delete its isolated home before reviewing the captured transcript.
 The Codex adapter copies only the invoking user's existing login into throwaway state with private permissions, removes the copy after each turn, and deletes the whole home on close or a failed host turn.
 Scoring requires complete answers and a transcript with reviewer citations.
