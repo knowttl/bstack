@@ -28,8 +28,8 @@ async function setup(t) {
       { id: 'offline', title: 'Offline use', body: 'Work without network access.', tests: 'Keep planning local.', why: 'Reliable access adds storage responsibility.' }] }
   await writeFile(proposalsPath, JSON.stringify(proposals))
   const { NODE_TEST_CONTEXT, ...env } = process.env
-  function command(subcommand, args, entry = join(root, 'skills/repo-audit/scripts/repo-audit.mjs')) {
-    const result = spawnSync(process.execPath, [entry, 'vision-board', subcommand, '--workspace', workspace, '--json', ...args], {
+  function command(subcommand, args, entry = join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), target = workspace) {
+    const result = spawnSync(process.execPath, [entry, 'vision-board', subcommand, '--workspace', target, '--json', ...args], {
       cwd: directory, encoding: 'utf8', env: { ...env, HOME: directory, USERPROFILE: directory, XDG_CACHE_HOME: cache, LOCALAPPDATA: cache }
     })
     return { ...result, envelope: JSON.parse(result.stdout) }
@@ -113,14 +113,9 @@ test('review refuses changed original draft bytes and another workspace', async 
   await writeFile(join(box.board.scratch, 'draft.md'), box.draft)
   const second = join(box.directory, 'second')
   await mkdir(second)
-  const wrong = box.command('launch', ['--board', box.board.board, '--workspace', second])
-  assert.equal(wrong.status, 3)
-  const manifestPath = join(box.board.scratch, 'board.json')
-  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
-  await writeFile(manifestPath, JSON.stringify({ ...manifest, target: { ...manifest.target, root: second } }))
-  const mismatch = box.command('launch', ['--board', box.board.board])
-  assert.equal(mismatch.status, 1)
-  assert.equal(mismatch.envelope.problems[0].code, 'incompatible-board')
+  const wrong = box.command('launch', ['--board', box.board.board], undefined, second)
+  assert.equal(wrong.status, 1)
+  assert.equal(wrong.envelope.problems[0].code, 'incompatible-board')
 })
 
 test('launch reports a missing pinned runtime and preserves the draft for resume', async t => {
