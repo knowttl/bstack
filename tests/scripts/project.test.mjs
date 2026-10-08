@@ -67,6 +67,9 @@ function execute(context, { dryRun = false, fault } = {}) {
 
 test('reviewed scratch scaffold creates a minimal Git project and passes its native journey', async t => {
   const context = await setup(t)
+  const config = join(context.directory, '.gitconfig')
+  await writeFile(config, '[user]\n\tname = Fixture owner\n\temail = fixture@example.invalid\n')
+  const configBefore = await readFile(config)
   const before = await snapshot(context.workspace)
   const preview = execute(context, { dryRun: true })
   assert.equal(preview.exit, 0, JSON.stringify(preview))
@@ -77,6 +80,7 @@ test('reviewed scratch scaffold creates a minimal Git project and passes its nat
   assert.equal(created.exit, 0, JSON.stringify(created))
   assert.equal(created.data.commands[0].stdout, 'shopping list: Rice\n')
   assert.equal(created.data.gitComplete, true)
+  assert.deepEqual(await readFile(config), configBefore)
   assert.equal(created.data.pending.length, 2)
   assert.equal(spawnSync('git', ['-C', context.destination, 'rev-parse', '--show-toplevel'], { encoding: 'utf8' }).stdout.trim(), context.destination)
   assert.equal(await readFile(join(context.workspace, 'brief.md'), 'utf8'), 'Approved local pantry list.\n')
@@ -84,24 +88,30 @@ test('reviewed scratch scaffold creates a minimal Git project and passes its nat
   assert.equal(await readFile(join(context.destination, 'GLOSSARY.md'), 'utf8'), context.changeSet.edits[1].proposedContent)
 })
 
-for (const [name, mutate] of [
-  ['unknown input', context => { context.plan.extra = true }],
-  ['changed payload', context => { context.changeSet.edits[1].proposedContent = 'changed' }],
-  ['unresolved decision', context => { Object.assign(context.findings.findings[0], { category: 'decision', resolved: false }) }],
-  ['unselected edits', context => { context.changeSet.edits[1].findingId = 'F-002' }],
-  ['escaping path', context => { context.changeSet.edits[1].path = '../outside' }],
-  ['missing vision', context => { context.plan.visionPath = 'other.md' }],
-  ['missing glossary', context => { context.plan.glossaryPath = 'missing.md' }],
-  ['Git payload', context => { context.changeSet.edits[1].path = '.git/config'; context.changeSet.reviewedScope[1] = { path: '.git/config', resolvedPath: join(context.destination, '.git/config') }; context.findings.reviewedScope[1] = '.git/config'; context.findings.findings[0].scope[1] = '.git/config'; context.findings.findings[0].files[1] = '.git/config' }],
-  ['missing prerequisite', context => { context.plan.prerequisites.push({ ...context.plan.journeyCommand, id: 'prerequisite', executable: 'bstack-not-installed', args: ['--version'] }) }]
+for (const [name, code, mutate] of [
+  ['unknown input', 'unknown-field', context => { context.plan.extra = true }],
+  ['changed payload', 'payload-mismatch', context => { context.changeSet.edits[1].proposedContent = 'changed' }],
+  ['unresolved decision', 'unresolved-decision', context => { Object.assign(context.findings.findings[0], { category: 'decision', resolved: false }) }],
+  ['unselected edits', 'unselected-finding', context => { context.changeSet.edits[1].findingId = 'F-002' }],
+  ['escaping path', 'scope-mismatch', context => { context.changeSet.edits[1].path = '../outside' }],
+  ['missing vision', 'invalid-const', context => { context.plan.visionPath = 'other.md' }],
+  ['missing glossary', 'missing-approved-document', context => { context.plan.glossaryPath = 'missing.md' }],
+  ['Git payload', 'invalid-scaffold', context => { context.plan.glossaryPath = null; context.changeSet.edits[1].path = '.git/config'; context.changeSet.reviewedScope[1] = { path: '.git/config', resolvedPath: join(context.destination, '.git/config') }; context.findings.reviewedScope[1] = '.git/config'; context.findings.findings[0].scope[1] = '.git/config'; context.findings.findings[0].files[1] = '.git/config' }],
+  ['missing prerequisite', 'missing-prerequisite', context => { context.plan.prerequisites.push({ ...context.plan.journeyCommand, id: 'prerequisite', executable: 'bstack-not-installed', args: ['--version'] }) }],
+  ['invalid timeout', 'invalid-command', context => { context.plan.journeyCommand.timeoutMs = 0 }],
+  ['missing command directory', 'invalid-command-directory', context => { context.plan.journeyCommand.cwd = 'missing' }]
 ]) {
   test(`${name} leaves the destination unchanged in preview and execution`, async t => {
     const context = await setup(t)
     mutate(context)
     await save(context)
     const before = await snapshot(context.workspace)
-    assert.notEqual(execute(context, { dryRun: true }).exit, 0)
-    assert.notEqual(execute(context).exit, 0)
+    const preview = execute(context, { dryRun: true })
+    const applied = execute(context)
+    assert.notEqual(preview.exit, 0)
+    assert.notEqual(applied.exit, 0)
+    assert.equal(preview.problems[0].code, code, JSON.stringify(preview))
+    assert.equal(applied.problems[0].code, code, JSON.stringify(applied))
     assert.deepEqual(await snapshot(context.workspace), before)
   })
 }
@@ -129,7 +139,7 @@ test('destination symlink collision leaves both the link and its target unchange
   assert.deepEqual(await readdir(outside), [])
 })
 
-for (const fault of ['directory', 'file', 'git']) {
+for (const fault of ['directory', 'file', 'git', 'partial-git']) {
   test(`interruption after ${fault} creation resumes without duplicate setup effects`, async t => {
     const context = await setup(t)
     context.plan.setupCommands.push({ ...context.plan.journeyCommand, id: 'setup', args: ['-e', "require('node:fs').appendFileSync('setup-count.txt','once\\n')"] })
@@ -179,4 +189,12 @@ test('interrupted setup is retained as unverified and never rerun automatically'
   assert.equal(resumed.exit, 2)
   assert.equal(resumed.data.commands[0].status, 'unverified')
   assert.equal(await readFile(join(context.destination, 'setup-count.txt'), 'utf8'), 'once\n')
+})
+
+test('malformed JSON plan leaves the workspace unchanged', async t => {
+  const context = await setup(t)
+  await writeFile(context.file, '{"schemaVersion":1,')
+  const before = await snapshot(context.workspace)
+  assert.notEqual(execute(context).exit, 0)
+  assert.deepEqual(await snapshot(context.workspace), before)
 })

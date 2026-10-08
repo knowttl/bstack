@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises'
+import { mkdirSync } from 'node:fs'
 import child from 'node:child_process'
 import { join } from 'node:path'
 import { syncBuiltinESMExports } from 'node:module'
@@ -25,6 +26,10 @@ fs.rename = async (...args) => {
   return result
 }
 child.spawnSync = (...args) => {
+  if (fault === 'partial-git' && args[0] === 'git' && args[1].includes('init')) {
+    mkdirSync(join(destination, '.git'))
+    process.exit(91)
+  }
   const result = nativeSpawnSync(...args)
   if (fault === 'git' && args[0] === 'git' && args[1].includes('init')) process.exit(91)
   return result

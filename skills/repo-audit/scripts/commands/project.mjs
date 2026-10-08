@@ -77,6 +77,12 @@ export async function run(options) {
   const recoveryPath = join(directory, 'creation.json')
   const bytes = await fileBytes(recoveryPath)
   const previous = bytes === null ? null : inspectJSON(bytes.toString('utf8')).value
+  if (previous) validateData({ type: 'object', additionalProperties: false,
+    required: ['schemaVersion', 'planDigest', 'destination', 'directories', 'gitStarted', 'gitComplete', 'commandsStarted', 'commands'],
+    properties: { schemaVersion: { const: 1 }, planDigest: { const: planDigest }, destination: { const: destination },
+      directories: { const: ['', ...directories].sort((a, b) => a.split('/').length - b.split('/').length) },
+      gitStarted: { type: 'boolean' }, gitComplete: { type: 'boolean' }, commandsStarted: { type: 'boolean' }, gitVersion: { type: 'string' },
+      commands: { type: 'array', items: { type: 'object', required: ['id', 'status'], properties: { id: { type: 'string' }, status: { enum: ['passed', 'failed', 'unverified', 'blocked'] } } } } } }, previous)
   if (previous && (previous.planDigest !== planDigest || previous.destination !== destination)) block('journal-mismatch', 'Creation recovery belongs to another plan or destination.')
   const current = await exists(destination)
   if (current && (!current.isDirectory() || current.isSymbolicLink())) block('destination-collision', 'Destination must be an absent or explicitly selected empty directory.')

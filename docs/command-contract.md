@@ -297,8 +297,6 @@ Present the saved revision and edit-to-verdict explanation for explicit author a
 Another board round builds from that saved draft with matching proposals and uses the retained review.json decisions.
 No board command changes the target or initialises Git, and a successful verdict command does not complete approval.
 
-## Arguments and targets
-
 ## Protected project creation
 
 ```sh
