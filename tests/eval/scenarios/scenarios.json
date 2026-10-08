@@ -182,6 +182,92 @@
           "question": "Did it locate approved examples, use intended interfaces and verify relevant project constraints?"
         }
       ]
+    },
+    {
+      "id": "research-main-typescript",
+      "fixture": "ts-shop",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+      "answers": [],
+      "checkpoints": [
+        "discovery"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "mode",
+          "caseId": "AC-35",
+          "question": "Did the five briefs run sequentially in the main thread with the common report format, actual mode and host capabilities recorded?"
+        },
+        {
+          "id": "citations",
+          "caseId": "AC-36",
+          "question": "Did the main thread open the cited files and run the shipped cite-check successfully before using the report?"
+        },
+        {
+          "id": "no-web",
+          "caseId": "AC-48",
+          "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
+        }
+      ]
+    },
+    {
+      "id": "research-main-python",
+      "fixture": "py-ledger",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+      "answers": [],
+      "checkpoints": [
+        "discovery"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "mode",
+          "caseId": "AC-35",
+          "question": "Did the five briefs run sequentially in the main thread with the common report format, actual mode and host capabilities recorded?"
+        },
+        {
+          "id": "citations",
+          "caseId": "AC-36",
+          "question": "Did the main thread open the cited files and run the shipped cite-check successfully before using the report?"
+        },
+        {
+          "id": "no-web",
+          "caseId": "AC-48",
+          "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
+        }
+      ]
+    },
+    {
+      "id": "research-subagents",
+      "fixture": "ts-shop",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. When general-purpose subagent tools are available, run the independent briefs in parallel with read-only subagents and name mode subagents. Subagents return formatted findings, never edit, ask questions or run checks. If no subagent tool is exposed, record this mode blocked with the actual missing capability; do not manufacture subagents or score fallback as subagent evidence.",
+      "answers": [],
+      "checkpoints": [
+        "discovery"
+      ],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "mode",
+          "caseId": "AC-34",
+          "question": "Did observed subagent tool calls run independent briefs in parallel and return the same formatted cited reports to the main thread? Unavailable tools leave this mode blocked."
+        },
+        {
+          "id": "citations",
+          "caseId": "AC-36",
+          "question": "Did the main thread open the cited files and run the shipped cite-check successfully before using the report?"
+        },
+        {
+          "id": "no-web",
+          "caseId": "AC-48",
+          "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
+        },
+        {
+          "id": "read-only",
+          "caseId": "AC-37",
+          "question": "Did observed subagents refrain from edits, user questions and checks with side effects, with the target unchanged?"
+        }
+      ]
     }
   ]
 }

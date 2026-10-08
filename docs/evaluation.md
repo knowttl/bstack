@@ -42,7 +42,13 @@ Manual records initially have status `blocked` and no answers, transcript or cas
 
 [codex.json](../tests/eval/adapters/codex.json) is the current-host adapter.
 Its version 1 format extends the shared child-command object with `invocation` and `isolation`.
-It requires `executable`, string-array `args`, `cwd: "."`, `versionArgs` and `timeoutMs` from 1 to 120000.
+It requires `executable`, string-array `args`, `cwd: "."`, `versionArgs` and `timeoutMs` from 1 to 600000.
+It also requires `outputLimitBytes` from 1 to 16777216, bounding each captured output stream.
+The Codex adapter allows ten-minute turns because real model revision turns exceeded two minutes during live board review.
+It captures up to 16 MiB per stream because the real JSONL board conversation exceeded the ordinary 64 KiB child-command capture.
+Ordinary child-command capture retains its 64 KiB default and truncation behaviour.
+Truncated evaluation output still blocks scoring and closes the isolated home.
+This evaluation-only bound does not change installed skill command defaults.
 Unknown fields and shell command strings are rejected.
 `invocation` names the agent, model, explicit command, `codex-exec-jsonl` protocol and string-array `resumeArgs`.
 `{message}` and `{sessionId}` are replaced only when they occupy whole arguments.
@@ -257,10 +263,36 @@ Both workspaces still contain only brief.md with bytes matching their fixture so
 The summaries record the actual implementation revisions evaluated, tool versions, turn outcomes, scoring citations and isolation cleanup.
 Captured JSONL transcripts retain their line numbers with host paths, user names and thread IDs redacted.
 These observations are intent checkpoint evidence, not final acceptance selections or complete project creation.
-T1.7 remains blocked until the new-idea journey is resolved and the board and scratch approval flow can complete on an available host.
+At this earlier checkpoint, T1.7 was blocked until the new-idea journey and board and scratch approval flow could complete on an available host.
 
 ## Phase 1 E2E follow-up
 
 The [Phase 1 validation](../tests/eval/results/phase1-check/summary.md) records the corrected shopping-list answer and retained Codex resume permissions.
 That summary owns the supported-flow observations, synthetic live board evidence, superseded experiment and historical verification counts.
 See [build progress](implementation-plan.md#progress) for the remaining task prerequisites.
+
+## Completed intent checkpoint (C11a prerequisite)
+
+The [fresh scored new-idea run](../tests/eval/results/intent-C11a/full-capture/summary.md) completed the real shipped board workflow, semantic revision, glossary and explicit saved-revision approval.
+The scripted fixture author supplied per-card verdicts and final approval through the shipped UI, using chrome-devtools-axi in a task-specific browser session.
+Both real host turns exited 0 without timeout or truncation.
+Close verified isolation and deleted the private home before scoring, which passed all three scenario checks.
+The original brief-only workspace remained unchanged and non-Git.
+The earlier passing ambiguous-idea procedure remains valid intent-stage evidence.
+T1.7 is complete at this checkpoint, while protected project creation and final acceptance remain later tasks.
+The preceding blocked browser, timeout and capture attempts are retained as historical evidence, not promoted into this pass.
+Redacted transcripts preserve line citations and conversation hashes bind the retained redacted bytes.
+
+## Discovery checkpoint (C11a)
+
+The scenarios `research-main-typescript`, `research-main-python` and `research-subagents` use `--stage discovery` with the existing isolated adapter.
+The two main-thread evaluations use a scratch adapter adding `--disable multi_agent`, preserving the shipped model, authentication and capture settings.
+The subagent evaluation uses the shipped adapter and observes the tools actually available to the host.
+Unsupported subagent mode remains blocked rather than being credited for sequential execution.
+Each scenario requests the same five-brief report outside the fixture, source review, a shipped citation check and no fixture writes or native checks.
+Web access is unavailable by the scripted author's constraint; these runs do not claim a network sandbox.
+Language and outside recommendations retain repo evidence and explicitly say "not researched" with the reason.
+The [discovery summary](../tests/eval/results/discovery-C11a/summary.md) records actual modes, host capabilities, per-turn outcomes, scoring and cleanup.
+Additional task-local session excerpts preserve actual delegation events omitted from Codex exec JSONL output.
+The transcript and worker traces establish overlapping read-only work and the main thread's citation verification.
+This evidence is discovery-only and does not establish full audit execution or approved recommendations.

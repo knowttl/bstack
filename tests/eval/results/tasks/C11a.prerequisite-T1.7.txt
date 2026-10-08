@@ -1,0 +1,789 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T1.7
+
+Selected 3 suite(s): tests/scripts/eval.test.mjs, tests/scripts/package-check.test.mjs, tests/scripts/vision-review.test.mjs
+TAP version 13
+# Subtest: manual run prints its fixture, request, scripted answers and checklist with unique history paths
+ok 1 - manual run prints its fixture, request, scripted answers and checklist with unique history paths
+  ---
+  duration_ms: 496.311682
+  type: 'test'
+  ...
+# Subtest: missing answers leaves manual scoring blocked
+ok 2 - missing answers leaves manual scoring blocked
+  ---
+  duration_ms: 334.212957
+  type: 'test'
+  ...
+# Subtest: missing transcript leaves manual scoring blocked
+ok 3 - missing transcript leaves manual scoring blocked
+  ---
+  duration_ms: 319.744609
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks missing checklist answer
+ok 4 - manual scoring blocks missing checklist answer
+  ---
+  duration_ms: 251.868666
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks duplicate checklist answer
+ok 5 - manual scoring blocks duplicate checklist answer
+  ---
+  duration_ms: 283.354354
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks unknown checklist answer
+ok 6 - manual scoring blocks unknown checklist answer
+  ---
+  duration_ms: 316.290114
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks wrong run
+ok 7 - manual scoring blocks wrong run
+  ---
+  duration_ms: 286.072284
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks string verdict
+ok 8 - manual scoring blocks string verdict
+  ---
+  duration_ms: 306.336957
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks invalid transcript range
+ok 9 - manual scoring blocks invalid transcript range
+  ---
+  duration_ms: 337.408651
+  type: 'test'
+  ...
+# Subtest: manual scoring blocks missing reviewer
+ok 10 - manual scoring blocks missing reviewer
+  ---
+  duration_ms: 309.014271
+  type: 'test'
+  ...
+# Subtest: empty and unavailable transcripts leave a run blocked
+ok 11 - empty and unavailable transcripts leave a run blocked
+  ---
+  duration_ms: 393.276608
+  type: 'test'
+  ...
+# Subtest: comparison blocks different models and unscored runs
+ok 12 - comparison blocks different models and unscored runs
+  ---
+  duration_ms: 744.928005
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.fixture in the without run
+ok 13 - comparison blocks changed scenario.fixture in the without run
+  ---
+  duration_ms: 729.39784
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.fixture in the with run
+ok 14 - comparison blocks changed scenario.fixture in the with run
+  ---
+  duration_ms: 700.338322
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed fixture.name in the without run
+ok 15 - comparison blocks changed fixture.name in the without run
+  ---
+  duration_ms: 716.514208
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed fixture.name in the with run
+ok 16 - comparison blocks changed fixture.name in the with run
+  ---
+  duration_ms: 840.333548
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.request in the without run
+ok 17 - comparison blocks changed scenario.request in the without run
+  ---
+  duration_ms: 924.981408
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.request in the with run
+ok 18 - comparison blocks changed scenario.request in the with run
+  ---
+  duration_ms: 676.795889
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.answers in the without run
+ok 19 - comparison blocks changed scenario.answers in the without run
+  ---
+  duration_ms: 709.128168
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.answers in the with run
+ok 20 - comparison blocks changed scenario.answers in the with run
+  ---
+  duration_ms: 671.512617
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.invocation in the without run
+ok 21 - comparison blocks changed scenario.invocation in the without run
+  ---
+  duration_ms: 613.304629
+  type: 'test'
+  ...
+# Subtest: comparison blocks changed scenario.invocation in the with run
+ok 22 - comparison blocks changed scenario.invocation in the with run
+  ---
+  duration_ms: 647.562075
+  type: 'test'
+  ...
+# Subtest: manual scoring records a passing reviewer verdict and preserves its transcript
+ok 23 - manual scoring records a passing reviewer verdict and preserves its transcript
+  ---
+  duration_ms: 402.067453
+  type: 'test'
+  ...
+# Subtest: manual scoring records a failing reviewer verdict and preserves its transcript
+ok 24 - manual scoring records a failing reviewer verdict and preserves its transcript
+  ---
+  duration_ms: 440.768601
+  type: 'test'
+  ...
+# Subtest: ordinary with-skill runs require explicit invocation while implicit runs omit it
+ok 25 - ordinary with-skill runs require explicit invocation while implicit runs omit it
+  ---
+  duration_ms: 683.09861
+  type: 'test'
+  ...
+# Subtest: comparison honours baseline true and with-skill true
+ok 26 - comparison honours baseline true and with-skill true
+  ---
+  duration_ms: 693.882999
+  type: 'test'
+  ...
+# Subtest: comparison honours baseline false and with-skill true
+ok 27 - comparison honours baseline false and with-skill true
+  ---
+  duration_ms: 633.403477
+  type: 'test'
+  ...
+# Subtest: comparison honours baseline true and with-skill false
+ok 28 - comparison honours baseline true and with-skill false
+  ---
+  duration_ms: 595.901355
+  type: 'test'
+  ...
+# Subtest: comparison honours baseline false and with-skill false
+ok 29 - comparison honours baseline false and with-skill false
+  ---
+  duration_ms: 541.670321
+  type: 'test'
+  ...
+# Subtest: automatic host execution requires an adapter
+ok 30 - automatic host execution requires an adapter
+  ---
+  duration_ms: 60.556191
+  type: 'test'
+  ...
+# Subtest: host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit
+ok 31 - host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit
+  ---
+  duration_ms: 568.29096
+  type: 'test'
+  ...
+# Subtest: with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request
+ok 32 - with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request
+  ---
+  duration_ms: 4533.281241
+  type: 'test'
+  ...
+# Subtest: scripted replies resume the exact host conversation, preserve user turns and require ordered answers
+ok 33 - scripted replies resume the exact host conversation, preserve user turns and require ordered answers
+  ---
+  duration_ms: 606.270406
+  type: 'test'
+  ...
+# Subtest: resumed Codex turns retain the opening sandbox policy
+ok 34 - resumed Codex turns retain the opening sandbox policy
+  ---
+  duration_ms: 469.541604
+  type: 'test'
+  ...
+# Subtest: manual adapter preparation is rejected before creating a run
+ok 35 - manual adapter preparation is rejected before creating a run
+  ---
+  duration_ms: 65.913628
+  type: 'test'
+  ...
+# Subtest: host fail remains blocked and retains available execution evidence
+ok 36 - host fail remains blocked and retains available execution evidence
+  ---
+  duration_ms: 272.549502
+  type: 'test'
+  ...
+# Subtest: host malformed remains blocked and retains available execution evidence
+ok 37 - host malformed remains blocked and retains available execution evidence
+  ---
+  duration_ms: 276.318991
+  type: 'test'
+  ...
+# Subtest: host incomplete remains blocked and retains available execution evidence
+ok 38 - host incomplete remains blocked and retains available execution evidence
+  ---
+  duration_ms: 278.21735
+  type: 'test'
+  ...
+# Subtest: host contaminate remains blocked and retains available execution evidence
+ok 39 - host contaminate remains blocked and retains available execution evidence
+  ---
+  duration_ms: 311.769997
+  type: 'test'
+  ...
+# Subtest: host truncate remains blocked and retains available execution evidence
+ok 40 - host truncate remains blocked and retains available execution evidence
+  ---
+  duration_ms: 313.87772
+  type: 'test'
+  ...
+# Subtest: host hang remains blocked and retains available execution evidence
+ok 41 - host hang remains blocked and retains available execution evidence
+  ---
+  duration_ms: 1260.472718
+  type: 'test'
+  ...
+# Subtest: evaluation capture retains a complete valid host transcript larger than the product limit
+ok 42 - evaluation capture retains a complete valid host transcript larger than the product limit
+  ---
+  duration_ms: 392.327336
+  type: 'test'
+  ...
+# Subtest: a resumed host turn cannot silently switch sessions
+ok 43 - a resumed host turn cannot silently switch sessions
+  ---
+  duration_ms: 490.964403
+  type: 'test'
+  ...
+# Subtest: rejected without-skill citations can be corrected without another host turn
+ok 44 - rejected without-skill citations can be corrected without another host turn
+  ---
+  duration_ms: 486.32538
+  type: 'test'
+  ...
+# Subtest: a without-skill score artifact failure preserves cleanup for retry
+ok 45 - a without-skill score artifact failure preserves cleanup for retry
+  ---
+  duration_ms: 477.49807
+  type: 'test'
+  ...
+# Subtest: rejected with-skill citations can be corrected without another host turn
+ok 46 - rejected with-skill citations can be corrected without another host turn
+  ---
+  duration_ms: 2696.759648
+  type: 'test'
+  ...
+# Subtest: a with-skill score artifact failure preserves cleanup for retry
+ok 47 - a with-skill score artifact failure preserves cleanup for retry
+  ---
+  duration_ms: 3081.929294
+  type: 'test'
+  ...
+# Subtest: adapter scoring requires the captured conversation and rechecks isolation and staged bytes
+ok 48 - adapter scoring requires the captured conversation and rechecks isolation and staged bytes
+  ---
+  duration_ms: 5016.299999
+  type: 'test'
+  ...
+# Subtest: adapter blocks shell string before creating a run
+ok 49 - adapter blocks shell string before creating a run
+  ---
+  duration_ms: 68.571221
+  type: 'test'
+  ...
+# Subtest: adapter blocks unknown field before creating a run
+ok 50 - adapter blocks unknown field before creating a run
+  ---
+  duration_ms: 75.282978
+  type: 'test'
+  ...
+# Subtest: adapter blocks unsupported conversation before creating a run
+ok 51 - adapter blocks unsupported conversation before creating a run
+  ---
+  duration_ms: 66.089575
+  type: 'test'
+  ...
+# Subtest: adapter blocks unbounded timeout before creating a run
+ok 52 - adapter blocks unbounded timeout before creating a run
+  ---
+  duration_ms: 62.70448
+  type: 'test'
+  ...
+# Subtest: adapter blocks unbounded capture before creating a run
+ok 53 - adapter blocks unbounded capture before creating a run
+  ---
+  duration_ms: 64.480115
+  type: 'test'
+  ...
+# Subtest: adapter blocks empty capture before creating a run
+ok 54 - adapter blocks empty capture before creating a run
+  ---
+  duration_ms: 67.712403
+  type: 'test'
+  ...
+# Subtest: adapter blocks missing message placeholder before creating a run
+ok 55 - adapter blocks missing message placeholder before creating a run
+  ---
+  duration_ms: 72.160748
+  type: 'test'
+  ...
+# Subtest: adapter blocks wrong discovery paths before creating a run
+ok 56 - adapter blocks wrong discovery paths before creating a run
+  ---
+  duration_ms: 64.08701
+  type: 'test'
+  ...
+# Subtest: adapter blocks escaping staging path before creating a run
+ok 57 - adapter blocks escaping staging path before creating a run
+  ---
+  duration_ms: 61.47132
+  type: 'test'
+  ...
+# Subtest: closing a conversation deletes isolated state and retains bound evidence for later scoring
+ok 58 - closing a conversation deletes isolated state and retains bound evidence for later scoring
+  ---
+  duration_ms: 582.547994
+  type: 'test'
+  ...
+# Subtest: throwaway authentication copies only a dummy login with private permissions and removes it after the turn
+ok 59 - throwaway authentication copies only a dummy login with private permissions and removes it after the turn
+  ---
+  duration_ms: 412.359222
+  type: 'test'
+  ...
+# Subtest: valid skeleton passes from another working directory
+ok 60 - valid skeleton passes from another working directory
+  ---
+  duration_ms: 364.700214
+  type: 'test'
+  ...
+# Subtest: missing-path fails with local-path-missing
+ok 61 - missing-path fails with local-path-missing
+  ---
+  duration_ms: 111.691321
+  type: 'test'
+  ...
+# Subtest: unlisted-reference fails with reference-unlisted
+ok 62 - unlisted-reference fails with reference-unlisted
+  ---
+  duration_ms: 113.650666
+  type: 'test'
+  ...
+# Subtest: nested-reference fails with reference-nested
+ok 63 - nested-reference fails with reference-nested
+  ---
+  duration_ms: 115.662296
+  type: 'test'
+  ...
+# Subtest: oversized-skill fails with skill-too-long
+ok 64 - oversized-skill fails with skill-too-long
+  ---
+  duration_ms: 97.048384
+  type: 'test'
+  ...
+# Subtest: long-reference fails with reference-toc
+ok 65 - long-reference fails with reference-toc
+  ---
+  duration_ms: 105.349407
+  type: 'test'
+  ...
+# Subtest: host-metadata fails with host-metadata
+ok 66 - host-metadata fails with host-metadata
+  ---
+  duration_ms: 104.180672
+  type: 'test'
+  ...
+# Subtest: undeclared-import fails with script-import
+ok 67 - undeclared-import fails with script-import
+  ---
+  duration_ms: 108.966422
+  type: 'test'
+  ...
+# Subtest: unexplained-constant fails with constant-comment
+ok 68 - unexplained-constant fails with constant-comment
+  ---
+  duration_ms: 124.133224
+  type: 'test'
+  ...
+# Subtest: unfinished-step fails with step-done
+ok 69 - unfinished-step fails with step-done
+  ---
+  duration_ms: 139.847599
+  type: 'test'
+  ...
+# Subtest: language-policy fails with language-policy
+ok 70 - language-policy fails with language-policy
+  ---
+  duration_ms: 118.083309
+  type: 'test'
+  ...
+# Subtest: every independent problem is reported together
+ok 71 - every independent problem is reported together
+  ---
+  duration_ms: 136.494295
+  type: 'test'
+  ...
+# Subtest: line limits include their boundary and exclude frontmatter
+ok 72 - line limits include their boundary and exclude frontmatter
+  ---
+  duration_ms: 129.660157
+  type: 'test'
+  ...
+# Subtest: contents heading at line twenty permits a long reference
+ok 73 - contents heading at line twenty permits a long reference
+  ---
+  duration_ms: 255.324221
+  type: 'test'
+  ...
+# Subtest: local paths in source and nested resources resolve from their file
+ok 74 - local paths in source and nested resources resolve from their file
+  ---
+  duration_ms: 271.042535
+  type: 'test'
+  ...
+# Subtest: inline link location suffix preserves missing and nested reference checks
+ok 75 - inline link location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 128.363336
+  type: 'test'
+  ...
+# Subtest: image location suffix preserves missing and nested reference checks
+ok 76 - image location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 113.645173
+  type: 'test'
+  ...
+# Subtest: reference definition location suffix preserves missing and nested reference checks
+ok 77 - reference definition location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 129.502577
+  type: 'test'
+  ...
+# Subtest: angle destination location suffix preserves missing and nested reference checks
+ok 78 - angle destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 109.944188
+  type: 'test'
+  ...
+# Subtest: encoded destination location suffix preserves missing and nested reference checks
+ok 79 - encoded destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 155.093349
+  type: 'test'
+  ...
+# Subtest: quoted resource location suffix preserves missing and nested reference checks
+ok 80 - quoted resource location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 118.207931
+  type: 'test'
+  ...
+# Subtest: location suffix accepts existing resources and excludes URLs
+ok 81 - location suffix accepts existing resources and excludes URLs
+  ---
+  duration_ms: 152.258477
+  type: 'test'
+  ...
+# Subtest: unlisted reference diagnostics identify each source file
+ok 82 - unlisted reference diagnostics identify each source file
+  ---
+  duration_ms: 126.892753
+  type: 'test'
+  ...
+# Subtest: dependency and cache contents are excluded
+ok 83 - dependency and cache contents are excluded
+  ---
+  duration_ms: 114.30603
+  type: 'test'
+  ...
+# Subtest: help and invalid arguments have explicit exits
+ok 84 - help and invalid arguments have explicit exits
+  ---
+  duration_ms: 394.556284
+  type: 'test'
+  ...
+# Subtest: imports accept built-ins, local files and declared runtime package subpaths
+ok 85 - imports accept built-ins, local files and declared runtime package subpaths
+  ---
+  duration_ms: 140.311156
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'undeclared'
+ok 86 - import policy refuses import 'undeclared'
+  ---
+  duration_ms: 130.111393
+  type: 'test'
+  ...
+# Subtest: import policy refuses export * from 'undeclared'
+ok 87 - import policy refuses export * from 'undeclared'
+  ---
+  duration_ms: 127.736527
+  type: 'test'
+  ...
+# Subtest: import policy refuses await import('undeclared')
+ok 88 - import policy refuses await import('undeclared')
+  ---
+  duration_ms: 106.337889
+  type: 'test'
+  ...
+# Subtest: import policy refuses require('undeclared')
+ok 89 - import policy refuses require('undeclared')
+  ---
+  duration_ms: 140.180387
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'node:not-a-builtin'
+ok 90 - import policy refuses import 'node:not-a-builtin'
+  ---
+  duration_ms: 120.25886
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'dev-only'
+ok 91 - import policy refuses import 'dev-only'
+  ---
+  duration_ms: 118.924709
+  type: 'test'
+  ...
+# Subtest: strings, comments, regexes and nested constants do not impersonate script policy
+ok 92 - strings, comments, regexes and nested constants do not impersonate script policy
+  ---
+  duration_ms: 150.556082
+  type: 'test'
+  ...
+# Subtest: computed dispatch imports remain outside the literal import control
+ok 93 - computed dispatch imports remain outside the literal import control
+  ---
+  duration_ms: 136.715407
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return passes
+ok 94 - CommonJS top-level return passes
+  ---
+  duration_ms: 129.589902
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return preserves script-import
+ok 95 - CommonJS top-level return preserves script-import
+  ---
+  duration_ms: 139.480081
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return preserves constant-comment
+ok 96 - CommonJS top-level return preserves constant-comment
+  ---
+  duration_ms: 156.565668
+  type: 'test'
+  ...
+# Subtest: js module rejects top-level return
+ok 97 - js module rejects top-level return
+  ---
+  duration_ms: 122.154226
+  type: 'test'
+  ...
+# Subtest: mjs module rejects top-level return
+ok 98 - mjs module rejects top-level return
+  ---
+  duration_ms: 115.256024
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+ok 99 - constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+  ---
+  duration_ms: 120.565567
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+ok 100 - constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+  ---
+  duration_ms: 146.589174
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+ok 101 - constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+  ---
+  duration_ms: 140.215863
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+ok 102 - constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+  ---
+  duration_ms: 141.826876
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "export const first = 1 // Too late.\\n"
+ok 103 - constant comment boundary "export const first = 1 // Too late.\\n"
+  ---
+  duration_ms: 127.159862
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "if (true) { const nested = 1 }\\n"
+ok 104 - constant comment boundary "if (true) { const nested = 1 }\\n"
+  ---
+  duration_ms: 122.600809
+  type: 'test'
+  ...
+# Subtest: invalid script and manifest refuse unverified imports while other problems collect
+ok 105 - invalid script and manifest refuse unverified imports while other problems collect
+  ---
+  duration_ms: 132.631203
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+ok 106 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+  ---
+  duration_ms: 133.482992
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+ok 107 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+  ---
+  duration_ms: 286.019313
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+ok 108 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+  ---
+  duration_ms: 337.965172
+  type: 'test'
+  ...
+# Subtest: step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+ok 109 - step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+  ---
+  duration_ms: 507.860781
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+ok 110 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+  ---
+  duration_ms: 128.537469
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+ok 111 - language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+  ---
+  duration_ms: 119.222357
+  type: 'test'
+  ...
+# Subtest: language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+ok 112 - language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+  ---
+  duration_ms: 120.149844
+  type: 'test'
+  ...
+# Subtest: language policy boundary .ruff.toml ""
+ok 113 - language policy boundary .ruff.toml ""
+  ---
+  duration_ms: 108.199097
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+ok 114 - language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+  ---
+  duration_ms: 115.032162
+  type: 'test'
+  ...
+# Subtest: resumed review preserves previous drafts and decisions and refuses an old round on the revised board
+ok 115 - resumed review preserves previous drafts and decisions and refuses an old round on the revised board
+  ---
+  duration_ms: 373.400867
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses unknown card without creating a new draft
+ok 116 - verdict ingestion refuses unknown card without creating a new draft
+  ---
+  duration_ms: 189.004474
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses duplicate card without creating a new draft
+ok 117 - verdict ingestion refuses duplicate card without creating a new draft
+  ---
+  duration_ms: 174.103087
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses missing card without creating a new draft
+ok 118 - verdict ingestion refuses missing card without creating a new draft
+  ---
+  duration_ms: 165.466771
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses missing card ID without creating a new draft
+ok 119 - verdict ingestion refuses missing card ID without creating a new draft
+  ---
+  duration_ms: 157.580739
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses blank card ID without creating a new draft
+ok 120 - verdict ingestion refuses blank card ID without creating a new draft
+  ---
+  duration_ms: 147.190001
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses different run without creating a new draft
+ok 121 - verdict ingestion refuses different run without creating a new draft
+  ---
+  duration_ms: 171.854131
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses different revision without creating a new draft
+ok 122 - verdict ingestion refuses different revision without creating a new draft
+  ---
+  duration_ms: 168.358151
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses unknown verdict without creating a new draft
+ok 123 - verdict ingestion refuses unknown verdict without creating a new draft
+  ---
+  duration_ms: 152.146341
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses incomplete round without creating a new draft
+ok 124 - verdict ingestion refuses incomplete round without creating a new draft
+  ---
+  duration_ms: 179.983063
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses unknown field without creating a new draft
+ok 125 - verdict ingestion refuses unknown field without creating a new draft
+  ---
+  duration_ms: 172.952652
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses an empty revised draft
+ok 126 - verdict ingestion refuses an empty revised draft
+  ---
+  duration_ms: 135.445194
+  type: 'test'
+  ...
+# Subtest: verdict ingestion refuses an invalid UTF-8 revised draft
+ok 127 - verdict ingestion refuses an invalid UTF-8 revised draft
+  ---
+  duration_ms: 163.677907
+  type: 'test'
+  ...
+# Subtest: review refuses changed original draft bytes and another workspace
+ok 128 - review refuses changed original draft bytes and another workspace
+  ---
+  duration_ms: 226.265912
+  type: 'test'
+  ...
+# Subtest: launch reports a missing pinned runtime and preserves the draft for resume
+ok 129 - launch reports a missing pinned runtime and preserves the draft for resume
+  ---
+  duration_ms: 311.533984
+  type: 'test'
+  ...
+1..129
+# tests 129
+# suites 0
+# pass 129
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 38950.516509

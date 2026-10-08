@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-08T07-30-38.341Z-[identifier-1]",
+  "reviewer": "C11a worker",
+  "checks": [
+    {
+      "id": "mode",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 24
+    },
+    {
+      "id": "citations",
+      "passed": true,
+      "startLine": 16,
+      "endLine": 24
+    },
+    {
+      "id": "no-web",
+      "passed": true,
+      "startLine": 19,
+      "endLine": 24
+    }
+  ]
+}

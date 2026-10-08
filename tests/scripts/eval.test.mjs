@@ -285,10 +285,9 @@ for (const mode of ['fail', 'malformed', 'incomplete', 'contaminate', 'truncate'
   test(`host ${mode} remains blocked and retains available execution evidence`, async t => {
     const directory = await temporary(t)
     const { path, adapter } = await adapterFile(directory, mode)
-    if (mode === 'hang') {
-      adapter.timeoutMs = 1000
-      await writeFile(path, JSON.stringify(adapter))
-    }
+    if (mode === 'hang') adapter.timeoutMs = 1000
+    if (mode === 'truncate') adapter.outputLimitBytes = 65536
+    await writeFile(path, JSON.stringify(adapter))
     const { record, result } = hostStart(t, directory, path)
     assert.equal(result.status, 2, result.stdout)
     assert.equal(record.status, 'blocked')
@@ -296,9 +295,22 @@ for (const mode of ['fail', 'malformed', 'incomplete', 'contaminate', 'truncate'
     assert.equal(record.turns[0].sessionId, null)
     assert.ok(record.reason)
     assert.equal(record.turns[0].result.timedOut, mode === 'hang')
+    assert.equal(record.turns[0].result.outputTruncated, mode === 'truncate')
     await assert.rejects(readFile(join(record.isolation.home, '.codex', 'fake-session.json')), { code: 'ENOENT' })
   })
 }
+
+test('evaluation capture retains a complete valid host transcript larger than the product limit', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'large')
+  const { record } = hostStart(t, directory, path)
+  assert.ok(record.turns[0].result.stdout.length > 65536)
+  assert.equal(record.turns[0].result.outputTruncated, false)
+  assert.equal(record.turns[0].sessionId, record.sessionId)
+  const files = await inputs(directory, record)
+  const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', join(directory, record.id, record.conversation))
+  assert.equal(scored.status, 0, scored.stdout)
+})
 
 test('a resumed host turn cannot silently switch sessions', async t => {
   const directory = await temporary(t)
@@ -384,7 +396,9 @@ for (const [name, mutate] of [
   ['shell string', adapter => { adapter.args = 'codex exec' }],
   ['unknown field', adapter => { adapter.shell = true }],
   ['unsupported conversation', adapter => { adapter.invocation.protocol = 'stdin' }],
-  ['unbounded timeout', adapter => { adapter.timeoutMs = 120001 }],
+  ['unbounded timeout', adapter => { adapter.timeoutMs = 600001 }],
+  ['unbounded capture', adapter => { adapter.outputLimitBytes = 16777217 }],
+  ['empty capture', adapter => { adapter.outputLimitBytes = 0 }],
   ['missing message placeholder', adapter => { adapter.args = ['exec'] }],
   ['wrong discovery paths', adapter => { adapter.isolation.discoveryPaths = [] }],
   ['escaping staging path', adapter => { adapter.isolation.stagePath = '../skill' }]
