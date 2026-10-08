@@ -18,7 +18,7 @@ Return findings and evidence to the project's chosen workflow instead of startin
 Security hardening of created skills and licensing review are outside scope.
 
 This is a procedure under construction.
-The interview and domain-language references are available, while the other conditional references remain placeholders and production audit, board, apply and evidence commands are unavailable.
+The interview, domain-language and vision references and board build command are available, while the other conditional references remain placeholders and production audit, board launch/verdict, apply and evidence commands are unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -71,7 +71,8 @@ Collect verdicts against the current draft, revise it and obtain explicit user a
 Approval of a brief's goals or stack does not approve the generated VISION.md.
 Silence and interrupted sessions do not count as approval.
 Write the approved reasoning so the eventual VISION.md stands on its own.
-The adapted vision procedure and board assets are unavailable until T1.5, and the tested board and verdict loop until T1.6.
+Load the adapted vision procedure for this step and build the board through the documented command interface.
+Board generation is available, while launch, verdict ingestion and resumed review remain blocked until C10b completes T1.6.
 Preserve the draft for resume and report the board prerequisite instead of claiming completion.
 
 Done when: The current draft has been stress-tested through the board, its verdicts are resolved and the user has explicitly approved that revision, otherwise this step remains blocked.
@@ -142,7 +143,7 @@ When the repo already answers the questions, proceed directly to recommendations
 Load interview, domain-language or vision guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
 A new vision or reviewed delta needs a material gap or requested direction change, with the same draft approval boundary as Step 3.
-Targeted interview and language procedures are available from the table below, while vision review remains unavailable until T1.5 and T1.6.
+Targeted interview, language and vision procedures are available from the table below, while board launch and verdict review remain unavailable until C10b completes T1.6.
 
 Done when: Every material gap is resolved or explicitly blocks its dependent recommendation, settled decisions are retained, and no unnecessary interview or vision review has been opened.
 
@@ -263,7 +264,7 @@ The complete research briefs and citation checker are unavailable until T2.1.
 Read only the one reference needed for the current step, once per run unless it changes.
 Every reference is linked directly here, without another skill or nested reference chain.
 Run scripts without loading their source, and pass assets to scripts without reading them as instructions.
-The intent interview, grilling and domain-language references are available.
+The intent interview, grilling, domain-language and vision references are available.
 Other references remain placeholders until their owning tasks supply the procedures.
 
 | When | Open |
