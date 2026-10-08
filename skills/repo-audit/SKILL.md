@@ -18,7 +18,9 @@ Return findings and evidence to the project's chosen workflow instead of startin
 Security hardening of created skills and licensing review are outside scope.
 
 This is a procedure under construction.
-The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available, while the other conditional references remain placeholders and production audit, apply and evidence commands are unavailable.
+The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available.
+Steps 7 and 11 describe the available read-only audit and findings commands.
+The other conditional references remain placeholders, while complete audit integration, protected writes and automatic verification capture remain unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
