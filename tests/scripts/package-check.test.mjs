@@ -169,6 +169,37 @@ test('computed dispatch imports remain outside the literal import control', asyn
   assert.equal(run('--skill', directory).status, 0)
 })
 
+test('CommonJS top-level return passes', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'example.cjs'), 'if (!process.env.RUN_AUDIT) return;\n')
+  const result = run('--skill', directory)
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+})
+
+for (const [source, code] of [
+  ["require('undeclared')\n", 'script-import'],
+  ['const value = 1\n', 'constant-comment']
+]) {
+  test(`CommonJS top-level return preserves ${code}`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, 'example.cjs'), 'if (!process.env.RUN_AUDIT) return;\n' + source)
+    const result = run('--skill', directory)
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.match(result.stdout, new RegExp(`^${code}: example\\.cjs:`, 'm'))
+    assert.doesNotMatch(result.stdout, /^script-syntax:/m)
+  })
+}
+
+for (const extension of ['js', 'mjs']) {
+  test(`${extension} module rejects top-level return`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, `example.${extension}`), 'if (!process.env.RUN_AUDIT) return;\n')
+    const result = run('--skill', directory)
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.match(result.stdout, /^script-syntax:/m)
+  })
+}
+
 for (const [source, expected] of [
   ['// Reason.\nexport const { first, second } = values\n', 0],
   ['/* Reason. */\r\nconst first = 1, second = 2\r\n', 0],

@@ -19,7 +19,7 @@ function scriptProblems(file, text, dependencies, add) {
   const comments = []
   let program
   try {
-    program = parse(text, { ecmaVersion: 'latest', sourceType: file.endsWith('.cjs') ? 'script' : 'module', locations: true, onComment: comments })
+    program = parse(text, { ecmaVersion: 'latest', sourceType: file.endsWith('.cjs') ? 'script' : 'module', allowReturnOutsideFunction: file.endsWith('.cjs'), locations: true, onComment: comments })
   } catch (error) {
     add('script-syntax', file, error.message, 'Use valid JavaScript supported by the package checker.')
     return
