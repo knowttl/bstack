@@ -195,7 +195,7 @@ Input and schema file paths resolve from the caller's working directory, while t
 Unreadable or malformed JSON reports `invalid-input`.
 This read-only test interface implements no audit, apply or evidence workflow.
 
-## Package check (C5a)
+## Package check
 
 `node scripts/check-package.mjs [--skill <folder>]` checks authored skill resources without writing files.
 The default is this checkout's `skills/repo-audit/`, independent of the caller's working directory.

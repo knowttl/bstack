@@ -82,8 +82,9 @@ Do not check upstream licences or raise licence questions (design R24).
 ### Conventions
 
 - **Language.** bstack's own scripts are JavaScript ES modules (`.mjs`) on Node 24 or later (design D3).
-- **Dependencies.** Scripts use Node built-in modules only.
+- **Dependencies.** Installed skill scripts use Node built-in modules only.
 The one runtime dependency is `lavish-axi` for the VISION board.
+Repository development tools may use the root development dependencies declared in `package.json`.
 Tests use `node:test` and `node:assert`.
 - **Paths.** Use `node:path` and `node:url`.
 Never build a path by joining strings with `/`.
@@ -95,7 +96,7 @@ No semicolons in prose.
 Canadian spelling.
 One term for each concept, matching the design.
 - **Constants.** Each top-level constant has a comment on the line above that gives its reason.
-Package-check enforcement is planned in C5b.
+The [package check contract](command-contract.md#package-check) defines the implemented syntactic enforcement and its limits.
 - **Tests.** Each script has tests in `tests/scripts/` that call it through its command interface, not its internal functions.
 
 ### Defaults this plan sets

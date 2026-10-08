@@ -27,7 +27,7 @@ node scripts/check-package.mjs --skill skills/repo-audit
 
 `check` runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy.
 It reports every detected problem with a stable rule code and exits 1 on failure.
-See the [package check contract](docs/command-contract.md#package-check-c5a) for exact syntax and limits.
+See the [package check contract](docs/command-contract.md#package-check) for exact syntax and limits.
 Local validation runs the install, package check and full tests on Node 24 and Node 26.
 The no-mistakes gate installs once, runs tests once and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
