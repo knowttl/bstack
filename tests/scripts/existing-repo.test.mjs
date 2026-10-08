@@ -21,7 +21,7 @@ async function plan(context, findings, edits) {
   await writeFile(findingsFile, JSON.stringify(findings))
   const change = { schemaVersion: 1, target: findings.target, findings: 'findings.json', findingsDigest: hash(canonical(findings)),
     selectedFindingIds: findings.selectedFindingIds,
-    reviewedScope: edits.map(edit => ({ path: edit.path, resolvedPath: join(context.repo, edit.path) })), edits }
+    reviewedScope: findings.reviewedScope.map(path => ({ path, resolvedPath: join(context.repo, path) })), edits }
   change.planDigest = hash(canonical(change))
   const path = join(context.directory, 'apply.json')
   await writeFile(path, JSON.stringify(change))
@@ -72,7 +72,8 @@ test('selected root instruction merge and audit apply preserve scoped instructio
   findings.limitations = ['Maintained enforcement and portable maintenance are pending.']
   const changes = await plan(context, findings, [await edit(repo, 'AGENTS.md', instructions, 'E-001', 'F-001'),
     await edit(repo, 'CLAUDE.md', null, 'E-002', 'F-001')])
-  assert.equal(run('apply', repo, env, ['--plan', changes, '--dry-run']).exit, 0)
+  const preview = run('apply', repo, env, ['--plan', changes, '--dry-run'])
+  assert.equal(preview.exit, 0, JSON.stringify(preview))
   assert.deepEqual(await snapshot(repo), before)
   assert.equal(run('apply', repo, env, ['--plan', changes]).exit, 0)
   const captured = run('run-checks', repo, env, ['--plan', checksFile])
@@ -93,8 +94,14 @@ test('selected root instruction merge and audit apply preserve scoped instructio
   assert.equal(run('apply', repo, env, ['--plan', auditPlan, '--dry-run']).exit, 0)
   assert.equal(run('apply', repo, env, ['--plan', auditPlan]).exit, 0)
   assert.equal(await readFile(join(repo, 'docs/repo-audit.md'), 'utf8'), content)
-  assert.equal(run('run-checks', repo, env, ['--plan', checksFile]).exit, 0)
+  const finalChecks = run('run-checks', repo, env, ['--plan', checksFile])
+  assert.equal(finalChecks.exit, 0)
   assert.equal(run('findings validate', repo, env, ['--findings', findingsFile]).data.result, 'verification blocked')
+  const finalFingerprint = run('findings validate', repo, env, ['--findings', findingsFile]).data.fingerprint
+  const finalHash = hash(await readFile(finalChecks.data.path))
+  findings.execution = findings.execution.map(record => ({ ...record, fingerprint: finalFingerprint, artifact: finalChecks.data.path, artifactHash: finalHash }))
+  await writeFile(findingsFile, JSON.stringify(findings))
+  assert.equal(run('findings validate', repo, env, ['--findings', findingsFile]).data.result, 'ready for the stated next change')
   const after = await snapshot(repo)
   delete before['CLAUDE.md']
   delete after.docs
