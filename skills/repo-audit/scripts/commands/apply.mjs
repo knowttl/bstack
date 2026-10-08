@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolvePath, resolveFilePath } from '../lib/paths.mjs'
+import { resolveFilePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { canonicalJSON, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
@@ -28,7 +28,7 @@ export async function run(options) {
   const plan = await input(options.plan)
   validateData(JSON.parse(await readFile(new URL('../../schemas/change-set.schema.json', import.meta.url), 'utf8')), plan)
   const findings = await input(resolve(dirname(resolve(options.plan)), plan.findings))
-  await validateFindings(findings, target)
+  await validateFindings(findings, target, plan.reviewedScope)
   validateIds(plan.edits, '$/edits')
   const { planDigest, ...reviewed } = plan
   if (hashBytes(canonicalJSON(reviewed)) !== planDigest || hashBytes(canonicalJSON(findings)) !== plan.findingsDigest) reject('changed-plan', 'The reviewed plan or findings digest changed.')
@@ -49,8 +49,7 @@ export async function run(options) {
   const problems = []
   for (const entry of plan.reviewedScope) {
     try {
-      const path = await resolveFilePath(target.root, entry.path)
-      if (path !== entry.resolvedPath) reject('unresolved-scope', 'Reviewed scope resolution has changed.', entry.path)
+      const path = await resolveFilePath(target.root, entry.path, entry.resolvedPath)
       if (scope.has(entry.path)) reject('overlapping-scope', 'Reviewed scope paths must be unique.', entry.path)
       scope.set(entry.path, path)
     } catch (error) {
@@ -66,8 +65,7 @@ export async function run(options) {
       const finding = findings.findings.find(finding => finding.id === edit.findingId)
       if (!plan.selectedFindingIds.includes(edit.findingId)) reject('unselected-finding', 'Every edit requires a selected finding.', edit.path)
       if (!scope.has(edit.path) || !finding.scope.includes(edit.path)) reject('scope-mismatch', 'Edit is outside its reviewed finding scope.', edit.path)
-      const path = await resolvePath(target.root, edit.path)
-      if (path !== scope.get(edit.path)) reject('unresolved-scope', 'Edit resolution differs from reviewed scope.', edit.path)
+      const path = scope.get(edit.path)
       if (destinations.has(path)) reject('overlapping-edits', 'Use one complete proposed edit per resolved file.', edit.path)
       destinations.add(path)
       const bytes = journal ? await journalOriginal(directory, journal, plan, edit, index) : await fileBytes(path)

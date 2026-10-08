@@ -705,11 +705,12 @@ JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edits` cont
 An unchanged proposed file produces an empty diff.
 
 The [resume-state schema](../skills/repo-audit/schemas/resume-state.schema.json) owns the durable journal.
-It declares `schemaVersion`, `runId`, the reviewed target, `planDigest`, per-edit IDs, paths, original/proposed hashes, backup paths or explicit null for absent originals, completion flags and `affectedChecks`.
+It declares `schemaVersion`, `runId`, the reviewed target, `planDigest`, per-edit IDs, paths, reviewed `resolvedPath` identities, original/proposed hashes, backup paths or explicit null for absent originals, completion flags and `affectedChecks`.
 The run ID is the reviewed plan digest, under the target's existing OS-cache identity folder.
 Before any replacement, apply revalidates all targets, stages complete proposed bytes, saves exact originals in scratch and flushes the journal containing original/proposed hashes.
 Each replacement uses a flushed same-directory temporary file followed by rename, preserving existing file permissions.
 A selected delete removes the target while preserving its original backup and explicit absent proposed hash.
+An internal alias retains its reviewed resolved identity when deletion leaves its referent absent, so state inspection and repeat still recognise the applied edit.
 Completion is journalled after replacement.
 Replacement is atomic per file where supported, never across the whole set.
 Unsupported atomic replacement blocks without a non-atomic fallback.

@@ -49,7 +49,8 @@ async function setup(t, operation = 'replace', original = 'old\n', payload = { s
 function execute(context, fault, command = 'apply', extra = ['--plan', context.file]) {
   const result = spawnSync(process.execPath, [...(fault ? ['--import', join(root, 'tests/inputs/write-fault.mjs')] : []),
     join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), ...command.split(' '), '--repo', context.repo, '--json', ...extra],
-  { encoding: 'utf8', cwd: context.directory, env: { ...context.env, BSTACK_TEST_FAULT: fault, BSTACK_TEST_DESTINATION: join(context.repo, context.plan.edits[0].path) } })
+  { encoding: 'utf8', cwd: context.directory, env: { ...context.env, BSTACK_TEST_FAULT: fault,
+    BSTACK_TEST_DESTINATION: fault === 'resolution-user-change' ? join(context.repo, context.plan.edits[0].path) : context.plan.reviewedScope[0].resolvedPath } })
   assert.equal(result.stderr, '')
   return { exit: result.status, ...(result.stdout ? JSON.parse(result.stdout) : {}) }
 }
@@ -455,13 +456,14 @@ for (const [name, mutate, expected] of [
   ['absent proposed state for delete', s => s.edits[0].proposedHash = null, 0],
   ['missing plan digest', s => delete s.planDigest, 1],
   ['missing backup', s => delete s.edits[0].backup, 1],
+  ['missing resolved identity', s => delete s.edits[0].resolvedPath, 1],
   ['invalid hash', s => s.edits[0].originalHash = 'bad', 1],
   ['unknown field', s => s.trusted = true, 1]
 ]) {
   test(`resume schema validates ${name} through the public contract command`, async t => {
     const context = await setup(t)
     const state = { schemaVersion: 1, runId: 'run-1', target: context.plan.target, planDigest: context.plan.planDigest,
-      edits: [{ id: 'E-001', path: 'README.md', originalHash: hash('old\n'), proposedHash: hash('new\n'), backup: 'scratch/original-1', completed: false }], affectedChecks: ['journey'] }
+      edits: [{ id: 'E-001', path: 'README.md', resolvedPath: join(context.repo, 'README.md'), originalHash: hash('old\n'), proposedHash: hash('new\n'), backup: 'scratch/original-1', completed: false }], affectedChecks: ['journey'] }
     mutate(state)
     await writeFile(context.file, JSON.stringify(state))
     const before = await snapshot(context.repo)
@@ -662,4 +664,93 @@ test('workspace apply writes and repeats through the same protected boundary', a
   assert.equal(applied.status, 0, applied.stdout)
   assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'new\n')
   assert.equal(JSON.parse(invoke().stdout).data.outcome, 'already-applied')
+})
+
+for (const [fault, exit] of [['backup-io', 2], ['backup-interruption', 94]]) {
+  test(`${fault} during backup preparation permits an unchanged retry`, async t => {
+    const context = await setup(t)
+    assert.equal(execute(context, fault).exit, exit)
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'old\n')
+    const retried = execute(context)
+    assert.equal(retried.exit, 0, JSON.stringify(retried))
+    assert.equal(await readFile(join(dirname(retried.data.journal), 'original-0'), 'utf8'), 'old\n')
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'new\n')
+  })
+}
+
+for (const [operation, fault] of [
+  ['replace', 'journal-user-change'], ['delete', 'journal-user-change'], ['create', 'journal-user-change'],
+  ['replace', 'temporary-user-change'], ['create', 'temporary-user-change']
+]) {
+  test(`${operation} preserves a user save during ${fault} and blocks success`, async t => {
+    const original = operation === 'create' ? null : 'old\n'
+    const proposed = operation === 'delete' ? null : 'new\n'
+    const payload = operation === 'delete' ? {} : operation === 'create' ? { content: proposed } : { search: 'old', replacement: 'new' }
+    const context = await setup(t, operation, original, payload, proposed)
+    await secondEdit(context)
+    const result = execute(context, fault)
+    assert.equal(result.exit, 2, JSON.stringify(result))
+    assert.deepEqual(result.data.conflicting, ['README.md'])
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'user\n')
+    assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'old\n')
+  })
+}
+
+test('a user save after the last replacement blocks the final success result', async t => {
+  const context = await setup(t)
+  const result = execute(context, 'final-user-change')
+  assert.equal(result.exit, 2, JSON.stringify(result))
+  assert.deepEqual(result.data.conflicting, ['README.md'])
+  assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'user\n')
+})
+
+for (const alias of ['absolute', 'relative', 'chain', 'parent']) {
+  test(`selected delete through a ${alias} alias resumes and repeats with its reviewed identity`, async t => {
+    const context = await setup(t, 'delete', 'old\n', {}, null)
+    const path = alias === 'parent' ? 'alias/README.md' : 'alias.md'
+    const link = alias === 'absolute' ? join(context.repo, 'README.md') : alias === 'chain' ? 'intermediate.md' : alias === 'parent' ? context.repo : 'README.md'
+    if (alias === 'chain') await symlink('README.md', join(context.repo, 'intermediate.md'))
+    await symlink(link, join(context.repo, alias === 'parent' ? 'alias' : path), alias === 'parent' ? (process.platform === 'win32' ? 'junction' : 'dir') : 'file')
+    context.findings.reviewedScope = [path]
+    context.findings.findings[0].scope = [path]
+    context.findings.findings[0].files = [path]
+    context.plan.reviewedScope[0].path = path
+    context.plan.edits[0].path = path
+    await secondEdit(context)
+    const applied = execute(context, 'before-completion')
+    assert.equal(applied.exit, 92, JSON.stringify(applied))
+    const shown = execute(context, undefined, 'state show', ['--run', context.plan.planDigest])
+    assert.equal(shown.exit, 0, JSON.stringify(shown))
+    assert.deepEqual(shown.data.applied, [path])
+    assert.deepEqual(shown.data.pending, ['other.txt'])
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'new\n')
+    assert.equal(execute(context).data.outcome, 'already-applied')
+    await writeFile(join(context.repo, 'README.md'), 'user\n')
+    assert.equal(execute(context).exit, 2)
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'user\n')
+  })
+}
+
+test('a retargeted alias during journal preparation blocks both destinations', async t => {
+  const context = await setup(t)
+  await symlink('README.md', join(context.repo, 'alias.md'))
+  context.findings.reviewedScope = ['alias.md']
+  context.findings.findings[0].scope = ['alias.md']
+  context.findings.findings[0].files = ['alias.md']
+  context.plan.reviewedScope[0].path = 'alias.md'
+  context.plan.edits[0].path = 'alias.md'
+  await secondEdit(context)
+  const result = execute(context, 'resolution-user-change')
+  assert.equal(result.exit, 2, JSON.stringify(result))
+  assert.deepEqual(result.data.conflicting, ['alias.md'])
+  assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'old\n')
+  assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'old\n')
+})
+
+test('new recovery and nested target directory entries are flushed before publication', async t => {
+  const context = await setup(t, 'create', null, { content: 'new\n' }, 'new\n', 'docs/nested/new.md')
+  const result = execute(context, 'directory-order')
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'docs/nested/new.md'), 'utf8'), 'new\n')
 })

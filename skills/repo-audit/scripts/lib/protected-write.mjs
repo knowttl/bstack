@@ -32,7 +32,7 @@ export async function inspectJournal(journal) {
   const edits = []
   for (const edit of journal.edits) {
     try {
-      const path = await resolveFilePath(journal.target.root, edit.path)
+      const path = await resolveFilePath(journal.target.root, edit.path, edit.resolvedPath)
       const bytes = await fileBytes(path)
       const actualHash = bytes === null ? null : hashBytes(bytes)
       const state = actualHash === edit.proposedHash ? 'applied' : actualHash === edit.originalHash ? 'pending' : 'conflicting'
@@ -51,6 +51,7 @@ export async function journalOriginal(directory, journal, plan, edit, index) {
   const recorded = journal.edits[index]
   if (journal.planDigest !== plan.planDigest || canonicalJSON(journal.target) !== canonicalJSON(plan.target) || journal.edits.length !== plan.edits.length ||
       !recorded || ['id', 'path', 'originalHash', 'proposedHash'].some(key => recorded[key] !== edit[key]) ||
+      recorded.resolvedPath !== plan.reviewedScope.find(entry => entry.path === edit.path)?.resolvedPath ||
       recorded.backup !== (edit.originalHash === null ? null : `original-${index}`)) {
     throw new CommandError('blocked', [{ code: 'journal-mismatch', message: 'Journal does not match the reviewed plan.', fix: 'Use the unchanged reviewed plan or review a new plan.' }])
   }
@@ -82,10 +83,18 @@ async function durableFile(path, bytes, mode) {
   } finally { await handle.close() }
 }
 
-async function replaceFile(path, bytes, mode, limitations) {
+async function durableDirectory(directory, limitations) {
+  await mkdir(directory, { recursive: true })
+  for (let path = directory; path !== dirname(path); path = dirname(path)) {
+    await syncDirectory(dirname(path), limitations)
+  }
+}
+
+async function replaceFile(path, bytes, mode, limitations, beforeReplace) {
   const temporary = join(dirname(path), `.bstack-${randomUUID()}.tmp`)
   try {
     await durableFile(temporary, bytes, mode)
+    if (beforeReplace) await beforeReplace()
     try { await rename(temporary, path) } catch (error) {
       if (['EXDEV', 'ENOTSUP', 'EPERM', 'EEXIST'].includes(error.code)) {
         throw new CommandError('blocked', [{ code: 'atomic-replacement-unavailable', message: 'Filesystem cannot atomically replace this file. No non-atomic fallback was attempted.', path, fix: 'Use a filesystem supporting same-directory atomic replacement and resume the run.' }])
@@ -101,7 +110,7 @@ async function replaceFile(path, bytes, mode, limitations) {
 export async function applyWrites(target, plan, staged, directory, previous, affectedChecks) {
   const limitations = ['Replacement is atomic per file where supported, never across the whole change set.']
   const journal = previous ?? { schemaVersion: 1, runId: plan.planDigest, target: plan.target, planDigest: plan.planDigest,
-    edits: staged.map((edit, index) => ({ id: edit.id, path: edit.path, originalHash: edit.originalHash, proposedHash: edit.proposedHash,
+    edits: staged.map((edit, index) => ({ id: edit.id, path: edit.path, resolvedPath: edit.resolvedPath, originalHash: edit.originalHash, proposedHash: edit.proposedHash,
       backup: edit.originalHash === null ? null : `original-${index}`, completed: false })), affectedChecks }
   const journalPath = join(directory, 'journal.json')
   const save = () => replaceFile(journalPath, Buffer.from(JSON.stringify(journal, null, 2) + '\n'), undefined, limitations)
@@ -112,8 +121,7 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       throw new CommandError('blocked', [{ code: 'changed-precondition', message: 'Target bytes changed before execution.', fix: 'Review the changed files before applying.' }])
     }
     if (previous && !state.pending.length) return { ...state, journal: journalPath, outcome: 'already-applied', limitations }
-    await mkdir(directory, { recursive: true })
-    await syncDirectory(dirname(directory), limitations)
+    await durableDirectory(directory, limitations)
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
         if (edit.originalHash !== null) {
@@ -121,7 +129,7 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
           // An interrupted preparation can leave backups without a journal.
           const existing = await fileBytes(backup)
           if (existing !== null && hashBytes(existing) !== edit.originalHash) throw new Error('Prepared backup differs from the reviewed original.')
-          if (existing === null) await durableFile(backup, edit.originalBytes)
+          if (existing === null) await replaceFile(backup, edit.originalBytes, undefined, limitations)
         }
       }
       await syncDirectory(directory, limitations)
@@ -131,21 +139,33 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       state = await inspectJournal(journal)
       if (state.conflicting.length) throw new CommandError('blocked', [{ code: 'user-change', message: 'A user change blocks all remaining writes.', fix: 'Review conflicting target files before continuing.' }])
       if (state.edits[index].state === 'applied') continue
-      const path = await resolveFilePath(target.root, edit.path)
-      if (path !== edit.resolvedPath) throw new Error('Target resolution changed before replacement.')
+      const path = edit.resolvedPath
+      const beforeWrite = async () => {
+        const current = await inspectJournal(journal)
+        const resolved = await resolveFilePath(target.root, edit.path, path)
+        const bytes = await fileBytes(resolved)
+        if (current.conflicting.length || (bytes === null ? null : hashBytes(bytes)) !== edit.originalHash) {
+          throw new CommandError('blocked', [{ code: 'user-change', message: 'A user change blocks all remaining writes.', fix: 'Review conflicting target files before continuing.' }])
+        }
+      }
       await save()
       if (edit.proposedContent === null) {
+        await beforeWrite()
         await unlink(path)
         await syncDirectory(dirname(path), limitations)
       } else {
-        await mkdir(dirname(path), { recursive: true })
+        await durableDirectory(dirname(path), limitations)
         const mode = edit.originalHash === null ? undefined : (await stat(path)).mode
-        await replaceFile(path, Buffer.from(edit.proposedContent), mode, limitations)
+        await replaceFile(path, Buffer.from(edit.proposedContent), mode, limitations, beforeWrite)
       }
       journal.edits[index].completed = true
       await save()
     }
-    return { ...await inspectJournal(journal), journal: journalPath, outcome: 'applied', limitations }
+    state = await inspectJournal(journal)
+    if (state.conflicting.length || state.pending.length) {
+      throw new CommandError('blocked', [{ code: 'user-change', message: 'Target changed before execution completed.', fix: 'Review the changed target files before continuing.' }])
+    }
+    return { ...state, journal: journalPath, outcome: 'applied', limitations }
   } catch (error) {
     let state
     try { state = await inspectJournal(journal) } catch { state = { runId: journal.runId, planDigest: journal.planDigest } }
