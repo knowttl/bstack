@@ -121,6 +121,52 @@ for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'as
   }
 }
 
+for (const [value, exit] of [
+  ["npm exec -c 'node boundaries.mjs || true'", 1],
+  ["npx --call 'node boundaries.mjs || true'", 1],
+  ["npm x --call 'node boundaries.mjs'", 1],
+  ["npm --call='node boundaries.mjs' exec", 1],
+  ["npm exec -c'node boundaries.mjs'", 1],
+  ["npm test && npm x -c 'node boundaries.mjs'", 1],
+  ["npx --call='node boundaries.mjs'", 1],
+  ["npm test && npx -c 'node boundaries.mjs'", 1],
+  ["'C:\\tools\\npm.cmd' exec --call='node boundaries.mjs'", 1],
+  ["env -S 'node boundaries.mjs'", 1],
+  ["sh -c 'node boundaries.mjs'", 1],
+  ["node check.mjs 'a || b'", 1],
+  ['node check.mjs "a && b"', 1],
+  ["node check.mjs 'a;b'", 1],
+  ["node check.mjs 'a|b'", 1],
+  ["node check.mjs 'a&b'", 1],
+  ["node check.mjs '$(check)'", 1],
+  ["node check.mjs '`check`'", 1],
+  ["node check.mjs 'a\n&&\nb'", 1],
+  ['node check.mjs a\\;b', 1],
+  ['node check.mjs a\\|b', 1],
+  ['node check.mjs a\\&b', 1],
+  ['node check.mjs \\`check\\`', 1],
+  ["npm test && node check.mjs 'a || b'", 1],
+  ['npm run check && node boundaries.mjs', 0],
+  ['npm run check &&\nnode boundaries.mjs', 0],
+  ['npm exec -- tsc --noEmit', 0],
+  ['npx tsc --noEmit', 0],
+  ['node check.mjs "literal argument"', 0]
+]) {
+  for (const [path, content] of [
+    ['package.json', JSON.stringify({ scripts: { check: value } })],
+    ['ci.yml', JSON.stringify({ steps: [{ run: value }] })],
+    ['ci.yml', JSON.stringify({ job: { script: value } })]
+  ]) {
+    test(`apply enforces bounded selected arguments: ${path} ${content}`, async t => {
+      const context = await integration(t, path, content)
+      const result = await preview(context)
+      assert.equal(result.exit, exit)
+      if (exit === 1) assert.equal(result.problems[0].code, 'ignored-check-failure')
+      else assert.equal(execute(context).exit, 0)
+    })
+  }
+}
+
 for (const [path, content] of [
   ['config.yml', 'packages: [web, core]\n'],
   ['package.json', '{"scripts":{"start":"node $ENTRY"}}']

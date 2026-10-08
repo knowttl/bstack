@@ -111,6 +111,7 @@ Obtain the owner's selection of the destination inside the existing idea workspa
 Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
 Native rule-proof, debt baseline checks and maintained local enforcement integration through apply are available; portable maintenance remains Phase 3a work.
 Mark the selected command paths with each apply edit's `checkIntegration`, such as `[["scripts", "check"]]`; unrelated reviewed edits retain their ordinary validation.
+Use fail-fast top-level `&&` chains and arguments without shell control syntax or substitutions, even inside quotes; known shell-dispatch modes are unsupported.
 Selected CI integration uses JSON syntax, which is valid YAML, and marks exact `run` or `script` paths; general YAML parsing is outside the installed runtime.
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.

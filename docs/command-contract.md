@@ -709,9 +709,12 @@ Every selected path must resolve to a string command in the complete proposed by
 `continue-on-error` and `allow_failure` on the selected CI command's ancestor objects must be literal `false` when present.
 Unmarked edits, other package scripts, other CI commands and unrelated configuration fields pass through the ordinary protected-write validation unchanged.
 The plan digest binds these selections alongside the complete proposed bytes.
-Selected commands use literal arguments and fail-fast `&&` chains; multiline commands require `&&` at intermediate line endings.
+Selected commands use literal arguments and fail-fast top-level `&&` chains; line breaks between commands are allowed only after `&&`.
+Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted and escaped arguments.
+Quotes do not make shell control syntax acceptable as an argument.
 Failure-masking operators (`||`, pipelines, separators, background execution and negation), unquoted shell comments, assignment prefixes, shell dispatch and substitutions fail with `ignored-check-failure` before any writes.
-Shell dispatch includes `command`, `builtin`, shell executables, executable paths and `.exe` forms in every `&&` segment.
+Shell dispatch includes `command`, `builtin`, shell executables, executable paths and `.exe`/`.cmd`/`.bat` forms in every `&&` segment.
+`npm exec`/`npm x` and `npx` reject `-c` and `--call` modes, including attached option values; `env`, including `env -S`, remains unsupported.
 This bounded grammar is a configuration safeguard, not an interpreter for arbitrary shell programs or a proof of a checker's implementation.
 The identical maintained command must still pass the valid disposable control and reject the seeded violation with its diagnostic and nonzero exit through `rule-proof`.
 CI adapter behaviour remains unverified without hosted execution.

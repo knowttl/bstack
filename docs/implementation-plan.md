@@ -432,6 +432,7 @@ Tick each task when its "Done when" commands pass.
   - [x] T3.4 Integrate scoped checks with the maintained local command
     - C20 integrates selected checks through protected `apply` edits with explicit `checkIntegration` command paths and rejects failure-masking selected commands before writes.
       Unrelated reviewed edits and sibling scripts pass through unchanged; selected CI edits use the JSON subset of YAML, retaining the Node-built-ins-only runtime and sole `lavish-axi` runtime dependency.
+      The bounded validator rejects control syntax within selected arguments and known shell-dispatch modes, while preserving top-level `&&` chains; identical maintained-command disposable controls establish enforcement.
       `npm test -- --task T3.4` runs the identical `npm run check` in valid and seeded disposable `ts-shop` copies, after selected initial documented debt, with exits 0 and 1 and a permitted core import under the web-scoped rule.
       Individual native rules still run against the clean T1.1 variants.
       [Task evidence](../tests/eval/results/tasks/T3.4.json) binds the final gate run to these local controls; hosted CI adapters remain unverified and real Windows/macOS execution remains captain checklist evidence.

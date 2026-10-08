@@ -84,6 +84,8 @@ The valid control must include a permitted sibling-package use where package sco
 Mark each integration edit's selected command paths with `checkIntegration`, such as `[["scripts", "check"]]` for the maintained package script.
 Only those selected commands use the bounded failure-preserving grammar described in the command contract; unrelated reviewed edits and sibling commands retain their ordinary validation.
 Use simple commands joined with `&&`; failure-masking shell operators and failure-tolerant CI settings are rejected before writes.
+Selected arguments must not contain shell control syntax or substitutions, even when quoted or escaped; known shell-dispatch modes such as npm `--call` are unsupported.
+The validator is bounded rather than a complete shell interpreter; the identical maintained-command disposable controls remain the enforcement proof.
 If the project selects CI, apply the same maintained command to its configuration as another reviewed edit using JSON syntax, which is valid YAML.
 Mark its exact `run` or `script` paths, such as `[["jobs", "check", "steps", "0", "run"]]`; the installed runtime does not parse general YAML.
 CI examples are unverified adapters until actual hosted execution is observed; local disposable proof does not establish a merge gate.

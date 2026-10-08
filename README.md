@@ -149,6 +149,8 @@ Prove each rule independently on the clean fixture variants, then use `rule-proo
 The target owns the checker and its declared dependencies, so ordinary contributors can run it without an installed skill or agent session.
 Mark selected command paths with each edit's `checkIntegration`, such as `[["scripts", "check"]]` for a package check script.
 `apply` rejects failure-masking selected commands; simple commands joined with `&&` preserve failures, while unrelated reviewed edits pass through unchanged.
+Selected arguments cannot contain shell control operators or substitutions, even when quoted or escaped, and known shell-dispatch modes are rejected.
+This bounded validator is not a complete shell interpreter; the identical maintained-command disposable controls remain the enforcement proof.
 Selected CI edits use the JSON subset of YAML and exact `run`/`script` paths, as described in the [command contract](docs/command-contract.md#apply-dry-run).
 CI integration requires the project's selection and its adapter behaviour remains unverified until hosted execution is observed.
 Run `npm test -- --task T3.4` for the maintained-command, baseline and web/core scope controls.

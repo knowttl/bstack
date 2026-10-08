@@ -11,14 +11,16 @@ function reject(path) {
 // A bounded command grammar avoids claiming to understand arbitrary shell programs.
 // Quoted arguments are literal; shell control flow must use fail-fast && chains.
 function command(text, path) {
-  const lines = text.trim().split(/\r?\n/).map(line => line.trim()).filter(Boolean)
-  if (lines.slice(0, -1).some(line => !line.endsWith('&&'))) reject(path)
-  text = lines.join(' ')
+  text = text.trim()
   let quote = null
   let escaped = false
   let word = ''
   const words = []
-  const flush = () => { if (word) words.push(word); word = '' }
+  const flush = () => {
+    if (/[|;&`\r\n]|\$\(/.test(word)) reject(path)
+    if (word) words.push(word)
+    word = ''
+  }
   for (let i = 0; i < text.length; i++) {
     const char = text[i]
     if (escaped) { word += char; escaped = false; continue }
@@ -29,7 +31,12 @@ function command(text, path) {
     if (char === '`' || char === '$') reject(path)
     if (quote) { word += char; continue }
     if (char === '&' && text[i + 1] === '&') { flush(); words.push('&&'); i++; continue }
-    if ('#|;&!<>\n\r(){}'.includes(char)) reject(path)
+    if (char === '\n' || char === '\r') {
+      flush()
+      if (words.at(-1) !== '&&') reject(path)
+      continue
+    }
+    if ('#|;&!<>(){}'.includes(char)) reject(path)
     if (/\s/.test(char)) flush()
     else word += char
   }
@@ -41,11 +48,17 @@ function command(text, path) {
     if (word === '&&' && words[index - 1] === '&&') reject(path)
     if (word === '&&') { first = true; continue }
     if (first && /^[A-Za-z_][A-Za-z0-9_]*=/.test(word)) reject(path)
-    if (first && ['set', 'exit', 'trap', 'eval', 'exec', 'env', 'command', 'builtin', 'source', '.',
+    if (!first) continue
+    const executable = word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+    if (['set', 'exit', 'trap', 'eval', 'exec', 'env', 'command', 'builtin', 'source', '.',
       'sh', 'bash', 'rbash', 'zsh', 'dash', 'ash', 'ksh', 'ksh88', 'ksh93', 'mksh', 'pdksh', 'yash', 'posh',
       'csh', 'tcsh', 'fish', 'busybox', 'time', 'nohup', 'nice', 'timeout', 'setsid', 'sudo', 'doas', 'xargs',
       'cmd', 'powershell', 'pwsh', 'call', 'start']
-      .includes(word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.exe$/, ''))) reject(path)
+      .includes(executable)) reject(path)
+    const next = words.indexOf('&&', index + 1)
+    const args = words.slice(index + 1, next === -1 ? words.length : next)
+    if ((executable === 'npx' || (executable === 'npm' && args.some(arg => ['exec', 'x'].includes(arg)))) &&
+      args.some(arg => /^--call(?:=|$)|^-[^-]*c/.test(arg))) reject(path)
     first = false
   }
 }
