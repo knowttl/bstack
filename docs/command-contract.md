@@ -305,7 +305,10 @@ node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <existi
 ```
 
 The owner approves intent and the exact scratch vision first, then selects the destination, stack, minimal scaffold and first journey.
-The versioned [creation schema](../skills/repo-audit/schemas/project-create.json) contains the real `workspace`, `destination` with workspace-relative `path`, reviewed absolute `resolvedPath` and explicit `allowEmpty`, selected `stack` and `firstJourney`, `visionPath: "VISION.md"`, useful `glossaryPath` or null, `changeSet` path relative to this plan, `changeSetDigest`, `prerequisites`, `setupCommands`, `journeyCommand` and `planDigest`.
+The versioned [creation schema](../skills/repo-audit/schemas/project-create.json) owns the plan's fields and command objects.
+`workspace` identifies the real idea directory.
+The destination path is workspace-relative and its resolvedPath binds the reviewed absolute location.
+`changeSet` resolves relative to the creation plan.
 The referenced change set follows the existing apply schema and owns complete generated file payloads, selected findings, scope, exact-byte hashes and its digest.
 Its findings use stage foundation and both targets identify the planned destination as `{ mode: "workspace", root: <resolved-destination>, revision: null }`.
 Every scaffold edit uses create with originalHash null and complete UTF-8 payloads.
@@ -313,7 +316,7 @@ See the [apply operation table](#apply-dry-run) for supported file formats.
 The same plan writes the approved vision, confirmed glossary when useful and selected foundation.
 The creation digest uses the existing canonical JSON hash algorithm on every field except planDigest.
 
-Commands have unique IDs across prerequisites, setup and journey, plus executable, literal args, versionArgs, cwd and a positive safe-integer timeoutMs.
+Commands have unique IDs across prerequisites, setup and journey, and a positive safe-integer timeoutMs.
 Prerequisites run before destination writes, with cwd `.` at its existing parent, and must be selected read-only availability checks.
 Git availability is always checked.
 Setup and journey cwd must be the scaffold root or a declared scaffold directory.
@@ -333,8 +336,9 @@ Repeat the unchanged creation plan to inspect actual paths and resume pending di
 Unrelated paths block before setup, including during file writes, and changed reviewed bytes block every continuation.
 After setup starts, generated files are permitted while reviewed scaffold files still have protected hash preconditions.
 
-Each command is recorded as unverified before execution and its actual captured result is saved afterward.
+Each setup and journey command is recorded as unverified before execution and its actual captured result is saved afterward.
 An interrupted or failed command is not automatically repeated, avoiding duplicate setup effects.
+Prerequisites run again on every invocation, including dry runs and resume.
 Missing, failed or interrupted setup or journey produces exit 2 with creation-unverified and keeps the project.
 Inspect the retained record and capture fresh affected native checks explicitly before claiming readiness.
 A successful record includes tool versions and captured outputs, gitComplete and verified true, and names rule-proof, maintained enforcement and portable maintenance as pending.

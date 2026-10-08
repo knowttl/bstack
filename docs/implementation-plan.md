@@ -107,7 +107,7 @@ Change one only by editing this table with the reason.
 | Topic | Default |
 |---|---|
 | Node version | Support Node 24 and later. Recorded local runs on Node 24 and Node 26, with no hosted matrix. The [official release schedule](https://nodejs.org/en/about/previous-releases), checked 2026-10-07 in T0.6, lists Node 24 and 22 as LTS and Node 26 as Current |
-| Script command | One entry point, `node skills/repo-audit/scripts/repo-audit.mjs <command> --repo <path>`. New-idea draft commands use `--workspace <existing-directory>` instead |
+| Script command | One entry point, `node skills/repo-audit/scripts/repo-audit.mjs <command>`. Target options follow the [arguments and targets contract](command-contract.md#arguments-and-targets) |
 | Result format | One JSON envelope on stdout with `--json`, a short summary otherwise. Envelope in T0.4 |
 | Exit codes | 0 passed, 1 failed, 2 blocked, 3 usage error |
 | Scratch and resume state | Outside the target repo or new-idea workspace, in the OS cache folder: `%LOCALAPPDATA%\bstack\` on Windows, `~/Library/Caches/bstack/` on macOS, `$XDG_CACHE_HOME/bstack/` or `~/.cache/bstack/` on Linux. One subfolder per target, keyed by a hash of its real path, and one per run |
@@ -1188,7 +1188,7 @@ T3.1 supplies the enforcement and architecture references that recommendations l
 4. `project create --workspace <path> --plan <file>` uses the protected-write engine from T2.6.
    Journal directory creation and files, then run `git init` only at the reviewed destination.
    Never adopt an existing nonempty directory or set global Git options.
-   Interruption leaves a recoverable run, and unrelated files block continuation without overwriting them.
+   Interruption leaves a recoverable run under the [creation recovery contract](command-contract.md#protected-project-creation).
 5. Write the approved vision, confirmed glossary and selected foundation through that same plan.
    Record setup or first-journey failures as unverified, retaining the created project for recovery.
 6. Run the new-idea and ambiguous-idea scenarios with `--stage foundation`.

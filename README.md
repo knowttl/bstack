@@ -119,7 +119,6 @@ The [creation contract](docs/command-contract.md#protected-project-creation) doc
 The owner selects the stack, scaffold and first journey after approving the scratch vision, then approves the exact dry-run files and declared commands.
 Creation journals directories and files through the existing protected-write engine before initialising Git only at the reviewed destination.
 Repeat the unchanged plan to resume directory, file or Git interruption.
-Unrelated files and changed scaffold bytes block continuation without overwrite.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
 Later rule-proof, maintained enforcement and portable maintenance remain pending.
 

@@ -124,7 +124,7 @@ Run project create --workspace <idea-workspace> --plan <file> --dry-run --json t
 Only after approval of those exact bytes and commands, run the unchanged plan without --dry-run.
 Creation uses the same protected-write engine as apply and journals directory creation, files, Git initialisation and command results outside the project.
 Repeat the unchanged creation plan to resume interrupted directory, file or Git creation.
-Unrelated files and changed scaffold bytes block continuation without overwrite.
+Preserve unrelated files and user edits, inspecting retained journals before resolving any continuation conflict.
 Make the first user journey work end to end where practical, without expanding into unrelated product work.
 Never adopt an existing nonempty directory or change global Git config.
 
@@ -135,7 +135,7 @@ Done when: Only selected, reviewed changes have been applied with recoverable or
 Follow the shared verification rules and report selected changes, actual evidence, unresolved findings and limitations.
 Read the returned creation record for the captured setup and native first-journey results.
 Failed or interrupted setup and journey commands leave the created project unverified and available for recovery.
-Commands already attempted are never rerun automatically, avoiding duplicate setup effects.
+Setup and journey commands already attempted are never rerun automatically, avoiding duplicate setup effects.
 Verify affected commands explicitly and retain fresh evidence before claiming readiness.
 Name native rule-proof, maintained enforcement and portable maintenance as pending later work.
 
