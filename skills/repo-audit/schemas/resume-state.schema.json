@@ -17,10 +17,11 @@
       "type": "array", "minItems": 1,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["id", "path", "originalHash", "proposedHash", "backup", "completed"],
+        "required": ["id", "path", "resolvedPath", "originalHash", "proposedHash", "backup", "completed"],
         "properties": {
           "id": { "type": "string", "pattern": "\\S" },
           "path": { "type": "string", "pattern": "\\S" },
+          "resolvedPath": { "type": "string", "pattern": "\\S" },
           "originalHash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
           "proposedHash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
           "backup": { "type": ["string", "null"], "pattern": "\\S" },

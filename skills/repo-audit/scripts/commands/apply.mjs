@@ -2,13 +2,14 @@ import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolvePath, resolveFilePath } from '../lib/paths.mjs'
+import { resolveFilePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { canonicalJSON, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
 import { proposedEdit, exactDiff } from '../lib/proposed-edit.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { validateFindings } from './findings.mjs'
+import { loadJournal, journalOriginal, inspectJournal, fileBytes, applyWrites } from '../lib/protected-write.mjs'
 
 function reject(code, message, path) {
   throw new CommandError('failed', [{ code, message, path, fix: 'Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again.' }])
@@ -22,12 +23,15 @@ async function input(file) {
 }
 
 export async function run(options) {
-  if (!options.plan || !options['dry-run']) throw new CommandError('usage-error', [{ code: 'dry-run-required', message: 'C14a requires --plan <file> --dry-run.', fix: 'Supply a reviewed plan and --dry-run. Writes remain pending in C14b.' }])
+  if (!options.plan) throw new CommandError('usage-error', [{ code: 'missing-plan', message: '--plan is required.', fix: 'Supply a reviewed change set.' }])
   const target = await resolveTarget(options, { draftOnly: true })
   const plan = await input(options.plan)
   validateData(JSON.parse(await readFile(new URL('../../schemas/change-set.schema.json', import.meta.url), 'utf8')), plan)
   const findings = await input(resolve(dirname(resolve(options.plan)), plan.findings))
-  await validateFindings(findings, target)
+  const { directory, journal } = options['dry-run'] ? { directory: null, journal: null } : await loadJournal(target, plan.planDigest)
+  const deletionScope = plan.reviewedScope.filter(entry => journal?.edits.some(edit =>
+    edit.originalHash !== null && edit.proposedHash === null && edit.resolvedPath === entry.resolvedPath))
+  await validateFindings(findings, target, deletionScope)
   validateIds(plan.edits, '$/edits')
   const { planDigest, ...reviewed } = plan
   if (hashBytes(canonicalJSON(reviewed)) !== planDigest || hashBytes(canonicalJSON(findings)) !== plan.findingsDigest) reject('changed-plan', 'The reviewed plan or findings digest changed.')
@@ -46,8 +50,7 @@ export async function run(options) {
   const problems = []
   for (const entry of plan.reviewedScope) {
     try {
-      const path = await resolveFilePath(target.root, entry.path)
-      if (path !== entry.resolvedPath) reject('unresolved-scope', 'Reviewed scope resolution has changed.', entry.path)
+      const path = await resolveFilePath(target.root, entry.path, entry.resolvedPath, deletionScope.includes(entry))
       if (scope.has(entry.path)) reject('overlapping-scope', 'Reviewed scope paths must be unique.', entry.path)
       scope.set(entry.path, path)
     } catch (error) {
@@ -58,17 +61,15 @@ export async function run(options) {
   if (scope.size !== findings.reviewedScope.length || findings.reviewedScope.some(path => !scope.has(path))) problems.push({ code: 'scope-mismatch', message: 'Resolved scope must match reviewed findings scope.', fix: 'Review the complete scope again.' })
   const staged = []
   const destinations = new Set()
-  for (const edit of plan.edits) {
+  for (const [index, edit] of plan.edits.entries()) {
     try {
       const finding = findings.findings.find(finding => finding.id === edit.findingId)
       if (!plan.selectedFindingIds.includes(edit.findingId)) reject('unselected-finding', 'Every edit requires a selected finding.', edit.path)
       if (!scope.has(edit.path) || !finding.scope.includes(edit.path)) reject('scope-mismatch', 'Edit is outside its reviewed finding scope.', edit.path)
-      const path = await resolvePath(target.root, edit.path)
-      if (path !== scope.get(edit.path)) reject('unresolved-scope', 'Edit resolution differs from reviewed scope.', edit.path)
+      const path = scope.get(edit.path)
       if (destinations.has(path)) reject('overlapping-edits', 'Use one complete proposed edit per resolved file.', edit.path)
       destinations.add(path)
-      let bytes = null
-      try { bytes = await readFile(path) } catch (error) { if (error.code !== 'ENOENT') throw error }
+      const bytes = journal ? await journalOriginal(directory, journal, plan, edit, index) : await fileBytes(path)
       if ((bytes === null ? null : hashBytes(bytes)) !== edit.originalHash) reject('changed-precondition', 'Original file bytes no longer match review.', edit.path)
       let original = null
       try { original = bytes === null ? null : new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes) } catch { reject('unsupported-format', 'Mechanical edits require valid UTF-8.', edit.path) }
@@ -76,12 +77,22 @@ export async function run(options) {
       const proposed = proposedEdit(edit, original)
       if (proposed !== null && (proposed.includes('\0') || Buffer.from(proposed).toString('utf8') !== proposed)) reject('unsupported-format', 'Proposed text must encode as exact UTF-8 without NUL bytes.', edit.path)
       if (proposed !== edit.proposedContent || (proposed === null ? null : hashBytes(Buffer.from(proposed))) !== edit.proposedHash) reject('payload-mismatch', 'Complete proposed bytes or hash differ from the mechanical operation.', edit.path)
-      staged.push({ id: edit.id, path: edit.path, originalHash: edit.originalHash, proposedHash: edit.proposedHash, proposedContent: proposed, diff: exactDiff(edit.path, original, proposed) })
+      staged.push({ id: edit.id, path: edit.path, originalHash: edit.originalHash, proposedHash: edit.proposedHash, proposedContent: proposed,
+        originalBytes: bytes, resolvedPath: path, diff: exactDiff(edit.path, original, proposed) })
     } catch (error) {
       if (!(error instanceof CommandError)) throw error
       problems.push(...error.problems.map(problem => ({ ...problem, path: problem.path ?? edit.path })))
     }
   }
   if (problems.length) throw new CommandError('failed', problems)
-  return { inputs: { target, plan: options.plan }, data: { planDigest, dryRun: true, edits: staged, diff: staged.map(edit => edit.diff).join('') } }
+  const inputs = { target, plan: options.plan }
+  if (options['dry-run']) return { inputs, data: { planDigest, dryRun: true,
+    edits: staged.map(({ originalBytes, resolvedPath, ...edit }) => edit), diff: staged.map(edit => edit.diff).join('') } }
+  if (journal) {
+    const state = await inspectJournal(journal)
+    if (state.conflicting.length) return { inputs, status: 'blocked', problems: state.conflicting.map(path => ({ code: 'user-change', path,
+      message: 'Target matches neither the original nor proposed bytes.', fix: 'Review the user change before continuing.' })), data: state }
+  }
+  const result = await applyWrites(target, plan, staged, directory, journal, findings.requiredOutcomes)
+  return result.status ? { inputs, ...result } : { inputs, data: result }
 }

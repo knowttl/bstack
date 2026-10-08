@@ -1,0 +1,1437 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T2.6
+
+Selected 1 suite(s): tests/scripts/apply.test.mjs
+TAP version 13
+# Subtest: apply dry run stages create with no project writes
+ok 1 - apply dry run stages create with no project writes
+  ---
+  duration_ms: 144.033622
+  type: 'test'
+  ...
+# Subtest: apply dry run stages replace with no project writes
+ok 2 - apply dry run stages replace with no project writes
+  ---
+  duration_ms: 111.584346
+  type: 'test'
+  ...
+# Subtest: apply dry run stages selected delete with no project writes
+ok 3 - apply dry run stages selected delete with no project writes
+  ---
+  duration_ms: 99.551613
+  type: 'test'
+  ...
+# Subtest: apply dry run stages empty replacement keeps a present file with no project writes
+ok 4 - apply dry run stages empty replacement keeps a present file with no project writes
+  ---
+  duration_ms: 107.984811
+  type: 'test'
+  ...
+# Subtest: apply dry run stages heading section with no project writes
+ok 5 - apply dry run stages heading section with no project writes
+  ---
+  duration_ms: 93.986453
+  type: 'test'
+  ...
+# Subtest: apply dry run stages CRLF heading section with no project writes
+ok 6 - apply dry run stages CRLF heading section with no project writes
+  ---
+  duration_ms: 103.954471
+  type: 'test'
+  ...
+# Subtest: apply dry run stages UTF-8 BOM and Unicode replacement with no project writes
+ok 7 - apply dry run stages UTF-8 BOM and Unicode replacement with no project writes
+  ---
+  duration_ms: 105.221781
+  type: 'test'
+  ...
+# Subtest: apply dry run stages JSON key with no project writes
+ok 8 - apply dry run stages JSON key with no project writes
+  ---
+  duration_ms: 97.505409
+  type: 'test'
+  ...
+# Subtest: apply dry run stages new JSON key preserves exact existing values with no project writes
+ok 9 - apply dry run stages new JSON key preserves exact existing values with no project writes
+  ---
+  duration_ms: 110.75967
+  type: 'test'
+  ...
+# Subtest: apply dry run stages append line with no project writes
+ok 10 - apply dry run stages append line with no project writes
+  ---
+  duration_ms: 111.32991
+  type: 'test'
+  ...
+# Subtest: apply dry run stages existing appended line with no project writes
+ok 11 - apply dry run stages existing appended line with no project writes
+  ---
+  duration_ms: 99.884566
+  type: 'test'
+  ...
+# Subtest: apply dry run stages heading in fenced code is preserved with no project writes
+ok 12 - apply dry run stages heading in fenced code is preserved with no project writes
+  ---
+  duration_ms: 98.540837
+  type: 'test'
+  ...
+# Subtest: apply dry run stages comment in fenced code is preserved with no project writes
+ok 13 - apply dry run stages comment in fenced code is preserved with no project writes
+  ---
+  duration_ms: 110.042852
+  type: 'test'
+  ...
+# Subtest: apply dry run stages HTML block in fenced code is preserved with no project writes
+ok 14 - apply dry run stages HTML block in fenced code is preserved with no project writes
+  ---
+  duration_ms: 101.563615
+  type: 'test'
+  ...
+# Subtest: apply dry run stages less-than prose with no project writes
+ok 15 - apply dry run stages less-than prose with no project writes
+  ---
+  duration_ms: 100.485274
+  type: 'test'
+  ...
+# Subtest: apply dry run stages closing heading markers with no project writes
+ok 16 - apply dry run stages closing heading markers with no project writes
+  ---
+  duration_ms: 101.125699
+  type: 'test'
+  ...
+# Subtest: apply rejects bare CR in set-heading-section before matching with no project writes
+ok 17 - apply rejects bare CR in set-heading-section before matching with no project writes
+  ---
+  duration_ms: 174.806837
+  type: 'test'
+  ...
+# Subtest: apply rejects bare CR in append-line-once before matching with no project writes
+ok 18 - apply rejects bare CR in append-line-once before matching with no project writes
+  ---
+  duration_ms: 176.829813
+  type: 'test'
+  ...
+# Subtest: apply ignores a leading BOM for semantic matching while preserving bytes
+ok 19 - apply ignores a leading BOM for semantic matching while preserving bytes
+  ---
+  duration_ms: 808.991734
+  type: 'test'
+  ...
+# Subtest: apply rejects backtick-containing fence info before deriving section bytes
+ok 20 - apply rejects backtick-containing fence info before deriving section bytes
+  ---
+  duration_ms: 330.240203
+  type: 'test'
+  ...
+# Subtest: heading edits reject " ```" inside a fence without project writes
+ok 21 - heading edits reject " ```" inside a fence without project writes
+  ---
+  duration_ms: 390.339964
+  type: 'test'
+  ...
+# Subtest: heading edits reject " ```" outside a fence without project writes
+ok 22 - heading edits reject " ```" outside a fence without project writes
+  ---
+  duration_ms: 343.529749
+  type: 'test'
+  ...
+# Subtest: heading edits reject "  ```" inside a fence without project writes
+ok 23 - heading edits reject "  ```" inside a fence without project writes
+  ---
+  duration_ms: 242.650977
+  type: 'test'
+  ...
+# Subtest: heading edits reject "  ```" outside a fence without project writes
+ok 24 - heading edits reject "  ```" outside a fence without project writes
+  ---
+  duration_ms: 308.548205
+  type: 'test'
+  ...
+# Subtest: heading edits reject "   ```" inside a fence without project writes
+ok 25 - heading edits reject "   ```" inside a fence without project writes
+  ---
+  duration_ms: 203.328519
+  type: 'test'
+  ...
+# Subtest: heading edits reject "   ```" outside a fence without project writes
+ok 26 - heading edits reject "   ```" outside a fence without project writes
+  ---
+  duration_ms: 195.595685
+  type: 'test'
+  ...
+# Subtest: heading edits reject "\\t```" inside a fence without project writes
+ok 27 - heading edits reject "\\t```" inside a fence without project writes
+  ---
+  duration_ms: 542.799698
+  type: 'test'
+  ...
+# Subtest: heading edits reject "\\t```" outside a fence without project writes
+ok 28 - heading edits reject "\\t```" outside a fence without project writes
+  ---
+  duration_ms: 244.704506
+  type: 'test'
+  ...
+# Subtest: heading edits reject " ~~~" inside a fence without project writes
+ok 29 - heading edits reject " ~~~" inside a fence without project writes
+  ---
+  duration_ms: 203.640795
+  type: 'test'
+  ...
+# Subtest: heading edits reject " ~~~" outside a fence without project writes
+ok 30 - heading edits reject " ~~~" outside a fence without project writes
+  ---
+  duration_ms: 873.181173
+  type: 'test'
+  ...
+# Subtest: heading edits reject "  ~~~" inside a fence without project writes
+ok 31 - heading edits reject "  ~~~" inside a fence without project writes
+  ---
+  duration_ms: 398.302849
+  type: 'test'
+  ...
+# Subtest: heading edits reject "  ~~~" outside a fence without project writes
+ok 32 - heading edits reject "  ~~~" outside a fence without project writes
+  ---
+  duration_ms: 216.754985
+  type: 'test'
+  ...
+# Subtest: heading edits reject "   ~~~" inside a fence without project writes
+ok 33 - heading edits reject "   ~~~" inside a fence without project writes
+  ---
+  duration_ms: 216.956657
+  type: 'test'
+  ...
+# Subtest: heading edits reject "   ~~~" outside a fence without project writes
+ok 34 - heading edits reject "   ~~~" outside a fence without project writes
+  ---
+  duration_ms: 215.720942
+  type: 'test'
+  ...
+# Subtest: heading edits reject "\\t~~~" inside a fence without project writes
+ok 35 - heading edits reject "\\t~~~" inside a fence without project writes
+  ---
+  duration_ms: 242.431043
+  type: 'test'
+  ...
+# Subtest: heading edits reject "\\t~~~" outside a fence without project writes
+ok 36 - heading edits reject "\\t~~~" outside a fence without project writes
+  ---
+  duration_ms: 267.335018
+  type: 'test'
+  ...
+# Subtest: apply rejects nonfinite JSON payload numbers before digest computation
+ok 37 - apply rejects nonfinite JSON payload numbers before digest computation
+  ---
+  duration_ms: 646.684633
+  type: 'test'
+  ...
+# Subtest: apply prints the exact selected-delete diff in plain and JSON output
+ok 38 - apply prints the exact selected-delete diff in plain and JSON output
+  ---
+  duration_ms: 259.411649
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#" section without project writes
+ok 39 - heading edits reject the empty "\#" section without project writes
+  ---
+  duration_ms: 224.225976
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#   " section without project writes
+ok 40 - heading edits reject the empty "\#   " section without project writes
+  ---
+  duration_ms: 209.416028
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\# \#\#\#" section without project writes
+ok 41 - heading edits reject the empty "\# \#\#\#" section without project writes
+  ---
+  duration_ms: 225.380608
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#" section without project writes
+ok 42 - heading edits reject the empty "\#\#" section without project writes
+  ---
+  duration_ms: 215.510183
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#\#" section without project writes
+ok 43 - heading edits reject the empty "\#\#\#" section without project writes
+  ---
+  duration_ms: 240.68828
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#\#\#" section without project writes
+ok 44 - heading edits reject the empty "\#\#\#\#" section without project writes
+  ---
+  duration_ms: 220.698426
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#\#\#\#" section without project writes
+ok 45 - heading edits reject the empty "\#\#\#\#\#" section without project writes
+  ---
+  duration_ms: 214.88457
+  type: 'test'
+  ...
+# Subtest: heading edits reject the empty "\#\#\#\#\#\#" section without project writes
+ok 46 - heading edits reject the empty "\#\#\#\#\#\#" section without project writes
+  ---
+  duration_ms: 186.471762
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated level-1 setext underline with "\\n" and no project writes
+ok 47 - heading edits reject tab-terminated level-1 setext underline with "\\n" and no project writes
+  ---
+  duration_ms: 197.330026
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated level-1 setext underline with "\\r\\n" and no project writes
+ok 48 - heading edits reject tab-terminated level-1 setext underline with "\\r\\n" and no project writes
+  ---
+  duration_ms: 204.652558
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated level-2 setext underline with "\\n" and no project writes
+ok 49 - heading edits reject tab-terminated level-2 setext underline with "\\n" and no project writes
+  ---
+  duration_ms: 193.091564
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated level-2 setext underline with "\\r\\n" and no project writes
+ok 50 - heading edits reject tab-terminated level-2 setext underline with "\\r\\n" and no project writes
+  ---
+  duration_ms: 203.493835
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated star thematic break with "\\n" and no project writes
+ok 51 - heading edits reject tab-terminated star thematic break with "\\n" and no project writes
+  ---
+  duration_ms: 204.364163
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated star thematic break with "\\r\\n" and no project writes
+ok 52 - heading edits reject tab-terminated star thematic break with "\\r\\n" and no project writes
+  ---
+  duration_ms: 210.122942
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated underscore thematic break with "\\n" and no project writes
+ok 53 - heading edits reject tab-terminated underscore thematic break with "\\n" and no project writes
+  ---
+  duration_ms: 212.214966
+  type: 'test'
+  ...
+# Subtest: heading edits reject tab-terminated underscore thematic break with "\\r\\n" and no project writes
+ok 54 - heading edits reject tab-terminated underscore thematic break with "\\r\\n" and no project writes
+  ---
+  duration_ms: 172.737948
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported unordered list continuation with whole-file guidance and no project writes
+ok 55 - heading edits reject unsupported unordered list continuation with whole-file guidance and no project writes
+  ---
+  duration_ms: 188.339865
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported ordered list continuation with whole-file guidance and no project writes
+ok 56 - heading edits reject unsupported ordered list continuation with whole-file guidance and no project writes
+  ---
+  duration_ms: 170.071016
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported unordered list heading with whole-file guidance and no project writes
+ok 57 - heading edits reject unsupported unordered list heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 171.925424
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported ordered list heading with whole-file guidance and no project writes
+ok 58 - heading edits reject unsupported ordered list heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 169.073245
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported indented heading with whole-file guidance and no project writes
+ok 59 - heading edits reject unsupported indented heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 190.509353
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported tab-indented heading with whole-file guidance and no project writes
+ok 60 - heading edits reject unsupported tab-indented heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 171.202431
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported block quote heading with whole-file guidance and no project writes
+ok 61 - heading edits reject unsupported block quote heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 167.922987
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported HTML block with whole-file guidance and no project writes
+ok 62 - heading edits reject unsupported HTML block with whole-file guidance and no project writes
+  ---
+  duration_ms: 181.198126
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported indented fence with whole-file guidance and no project writes
+ok 63 - heading edits reject unsupported indented fence with whole-file guidance and no project writes
+  ---
+  duration_ms: 183.449189
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported fence attributes with whole-file guidance and no project writes
+ok 64 - heading edits reject unsupported fence attributes with whole-file guidance and no project writes
+  ---
+  duration_ms: 173.042403
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported table with whole-file guidance and no project writes
+ok 65 - heading edits reject unsupported table with whole-file guidance and no project writes
+  ---
+  duration_ms: 170.133579
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported reference definition with whole-file guidance and no project writes
+ok 66 - heading edits reject unsupported reference definition with whole-file guidance and no project writes
+  ---
+  duration_ms: 185.33709
+  type: 'test'
+  ...
+# Subtest: heading edits reject unsupported CRLF empty heading with whole-file guidance and no project writes
+ok 67 - heading edits reject unsupported CRLF empty heading with whole-file guidance and no project writes
+  ---
+  duration_ms: 175.508839
+  type: 'test'
+  ...
+# Subtest: heading edits reject comment before selected heading without project writes
+ok 68 - heading edits reject comment before selected heading without project writes
+  ---
+  duration_ms: 195.202665
+  type: 'test'
+  ...
+# Subtest: heading edits reject comment inside selected section without project writes
+ok 69 - heading edits reject comment inside selected section without project writes
+  ---
+  duration_ms: 165.869998
+  type: 'test'
+  ...
+# Subtest: heading edits reject inline comment without project writes
+ok 70 - heading edits reject inline comment without project writes
+  ---
+  duration_ms: 172.714519
+  type: 'test'
+  ...
+# Subtest: heading edits reject pre before selection without project writes
+ok 71 - heading edits reject pre before selection without project writes
+  ---
+  duration_ms: 180.983733
+  type: 'test'
+  ...
+# Subtest: heading edits reject pre inside selection without project writes
+ok 72 - heading edits reject pre inside selection without project writes
+  ---
+  duration_ms: 187.396673
+  type: 'test'
+  ...
+# Subtest: heading edits reject pre after selection without project writes
+ok 73 - heading edits reject pre after selection without project writes
+  ---
+  duration_ms: 173.34936
+  type: 'test'
+  ...
+# Subtest: heading edits reject script before selection without project writes
+ok 74 - heading edits reject script before selection without project writes
+  ---
+  duration_ms: 182.14635
+  type: 'test'
+  ...
+# Subtest: heading edits reject script inside selection without project writes
+ok 75 - heading edits reject script inside selection without project writes
+  ---
+  duration_ms: 197.397357
+  type: 'test'
+  ...
+# Subtest: heading edits reject script after selection without project writes
+ok 76 - heading edits reject script after selection without project writes
+  ---
+  duration_ms: 178.042676
+  type: 'test'
+  ...
+# Subtest: heading edits reject style before selection without project writes
+ok 77 - heading edits reject style before selection without project writes
+  ---
+  duration_ms: 174.340996
+  type: 'test'
+  ...
+# Subtest: heading edits reject style inside selection without project writes
+ok 78 - heading edits reject style inside selection without project writes
+  ---
+  duration_ms: 180.028168
+  type: 'test'
+  ...
+# Subtest: heading edits reject style after selection without project writes
+ok 79 - heading edits reject style after selection without project writes
+  ---
+  duration_ms: 177.122441
+  type: 'test'
+  ...
+# Subtest: heading edits reject textarea before selection without project writes
+ok 80 - heading edits reject textarea before selection without project writes
+  ---
+  duration_ms: 184.722121
+  type: 'test'
+  ...
+# Subtest: heading edits reject textarea inside selection without project writes
+ok 81 - heading edits reject textarea inside selection without project writes
+  ---
+  duration_ms: 179.832371
+  type: 'test'
+  ...
+# Subtest: heading edits reject textarea after selection without project writes
+ok 82 - heading edits reject textarea after selection without project writes
+  ---
+  duration_ms: 182.757678
+  type: 'test'
+  ...
+# Subtest: heading edits reject div before selection without project writes
+ok 83 - heading edits reject div before selection without project writes
+  ---
+  duration_ms: 176.602803
+  type: 'test'
+  ...
+# Subtest: heading edits reject div inside selection without project writes
+ok 84 - heading edits reject div inside selection without project writes
+  ---
+  duration_ms: 180.091519
+  type: 'test'
+  ...
+# Subtest: heading edits reject div after selection without project writes
+ok 85 - heading edits reject div after selection without project writes
+  ---
+  duration_ms: 185.58684
+  type: 'test'
+  ...
+# Subtest: heading edits reject uppercase indented tag before selection without project writes
+ok 86 - heading edits reject uppercase indented tag before selection without project writes
+  ---
+  duration_ms: 171.029665
+  type: 'test'
+  ...
+# Subtest: heading edits reject uppercase indented tag inside selection without project writes
+ok 87 - heading edits reject uppercase indented tag inside selection without project writes
+  ---
+  duration_ms: 191.14549
+  type: 'test'
+  ...
+# Subtest: heading edits reject uppercase indented tag after selection without project writes
+ok 88 - heading edits reject uppercase indented tag after selection without project writes
+  ---
+  duration_ms: 176.384712
+  type: 'test'
+  ...
+# Subtest: heading edits reject multiline tag before selection without project writes
+ok 89 - heading edits reject multiline tag before selection without project writes
+  ---
+  duration_ms: 202.553222
+  type: 'test'
+  ...
+# Subtest: heading edits reject multiline tag inside selection without project writes
+ok 90 - heading edits reject multiline tag inside selection without project writes
+  ---
+  duration_ms: 173.958248
+  type: 'test'
+  ...
+# Subtest: heading edits reject multiline tag after selection without project writes
+ok 91 - heading edits reject multiline tag after selection without project writes
+  ---
+  duration_ms: 182.243595
+  type: 'test'
+  ...
+# Subtest: heading edits reject custom tag before selection without project writes
+ok 92 - heading edits reject custom tag before selection without project writes
+  ---
+  duration_ms: 189.385014
+  type: 'test'
+  ...
+# Subtest: heading edits reject custom tag inside selection without project writes
+ok 93 - heading edits reject custom tag inside selection without project writes
+  ---
+  duration_ms: 188.478401
+  type: 'test'
+  ...
+# Subtest: heading edits reject custom tag after selection without project writes
+ok 94 - heading edits reject custom tag after selection without project writes
+  ---
+  duration_ms: 206.651592
+  type: 'test'
+  ...
+# Subtest: heading edits reject closing tag before selection without project writes
+ok 95 - heading edits reject closing tag before selection without project writes
+  ---
+  duration_ms: 162.408621
+  type: 'test'
+  ...
+# Subtest: heading edits reject closing tag inside selection without project writes
+ok 96 - heading edits reject closing tag inside selection without project writes
+  ---
+  duration_ms: 189.247235
+  type: 'test'
+  ...
+# Subtest: heading edits reject closing tag after selection without project writes
+ok 97 - heading edits reject closing tag after selection without project writes
+  ---
+  duration_ms: 199.976486
+  type: 'test'
+  ...
+# Subtest: heading edits reject processing instruction before selection without project writes
+ok 98 - heading edits reject processing instruction before selection without project writes
+  ---
+  duration_ms: 215.745116
+  type: 'test'
+  ...
+# Subtest: heading edits reject processing instruction inside selection without project writes
+ok 99 - heading edits reject processing instruction inside selection without project writes
+  ---
+  duration_ms: 213.733626
+  type: 'test'
+  ...
+# Subtest: heading edits reject processing instruction after selection without project writes
+ok 100 - heading edits reject processing instruction after selection without project writes
+  ---
+  duration_ms: 197.59236
+  type: 'test'
+  ...
+# Subtest: heading edits reject declaration before selection without project writes
+ok 101 - heading edits reject declaration before selection without project writes
+  ---
+  duration_ms: 203.085237
+  type: 'test'
+  ...
+# Subtest: heading edits reject declaration inside selection without project writes
+ok 102 - heading edits reject declaration inside selection without project writes
+  ---
+  duration_ms: 215.199309
+  type: 'test'
+  ...
+# Subtest: heading edits reject declaration after selection without project writes
+ok 103 - heading edits reject declaration after selection without project writes
+  ---
+  duration_ms: 206.519958
+  type: 'test'
+  ...
+# Subtest: heading edits reject CDATA before selection without project writes
+ok 104 - heading edits reject CDATA before selection without project writes
+  ---
+  duration_ms: 183.756968
+  type: 'test'
+  ...
+# Subtest: heading edits reject CDATA inside selection without project writes
+ok 105 - heading edits reject CDATA inside selection without project writes
+  ---
+  duration_ms: 182.570873
+  type: 'test'
+  ...
+# Subtest: heading edits reject CDATA after selection without project writes
+ok 106 - heading edits reject CDATA after selection without project writes
+  ---
+  duration_ms: 178.115379
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate plan member before hashing with no project writes
+ok 107 - apply rejects duplicate plan member before hashing with no project writes
+  ---
+  duration_ms: 170.640456
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate escaped plan member before hashing with no project writes
+ok 108 - apply rejects duplicate escaped plan member before hashing with no project writes
+  ---
+  duration_ms: 164.178395
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate nested payload member before hashing with no project writes
+ok 109 - apply rejects duplicate nested payload member before hashing with no project writes
+  ---
+  duration_ms: 156.495322
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate findings member before hashing with no project writes
+ok 110 - apply rejects duplicate findings member before hashing with no project writes
+  ---
+  duration_ms: 191.979164
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs" in plan scope without project writes
+ok 111 - apply rejects unedited "docs" in plan scope without project writes
+  ---
+  duration_ms: 184.437717
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs" in both scope without project writes
+ok 112 - apply rejects unedited "docs" in both scope without project writes
+  ---
+  duration_ms: 185.846557
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/*.md" in plan scope without project writes
+ok 113 - apply rejects unedited "docs/*.md" in plan scope without project writes
+  ---
+  duration_ms: 170.40711
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/*.md" in both scope without project writes
+ok 114 - apply rejects unedited "docs/*.md" in both scope without project writes
+  ---
+  duration_ms: 177.473786
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/?.md" in plan scope without project writes
+ok 115 - apply rejects unedited "docs/?.md" in plan scope without project writes
+  ---
+  duration_ms: 193.66036
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/?.md" in both scope without project writes
+ok 116 - apply rejects unedited "docs/?.md" in both scope without project writes
+  ---
+  duration_ms: 204.428638
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/[ab].md" in plan scope without project writes
+ok 117 - apply rejects unedited "docs/[ab].md" in plan scope without project writes
+  ---
+  duration_ms: 189.944355
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/[ab].md" in both scope without project writes
+ok 118 - apply rejects unedited "docs/[ab].md" in both scope without project writes
+  ---
+  duration_ms: 188.251051
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/{a,b}.md" in plan scope without project writes
+ok 119 - apply rejects unedited "docs/{a,b}.md" in plan scope without project writes
+  ---
+  duration_ms: 181.117388
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "docs/{a,b}.md" in both scope without project writes
+ok 120 - apply rejects unedited "docs/{a,b}.md" in both scope without project writes
+  ---
+  duration_ms: 197.012079
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "README.md/child" in plan scope without project writes
+ok 121 - apply rejects unedited "README.md/child" in plan scope without project writes
+  ---
+  duration_ms: 195.370146
+  type: 'test'
+  ...
+# Subtest: apply rejects unedited "README.md/child" in both scope without project writes
+ok 122 - apply rejects unedited "README.md/child" in both scope without project writes
+  ---
+  duration_ms: 193.3172
+  type: 'test'
+  ...
+# Subtest: apply accepts unedited concrete planned files in reviewed scope
+ok 123 - apply accepts unedited concrete planned files in reviewed scope
+  ---
+  duration_ms: 114.010434
+  type: 'test'
+  ...
+# Subtest: apply rejects invalid schema with no project writes
+ok 124 - apply rejects invalid schema with no project writes
+  ---
+  duration_ms: 199.434858
+  type: 'test'
+  ...
+# Subtest: apply rejects unknown input field with no project writes
+ok 125 - apply rejects unknown input field with no project writes
+  ---
+  duration_ms: 190.992433
+  type: 'test'
+  ...
+# Subtest: apply rejects unresolved scope with no project writes
+ok 126 - apply rejects unresolved scope with no project writes
+  ---
+  duration_ms: 192.872741
+  type: 'test'
+  ...
+# Subtest: apply rejects changed scope resolution with no project writes
+ok 127 - apply rejects changed scope resolution with no project writes
+  ---
+  duration_ms: 217.141628
+  type: 'test'
+  ...
+# Subtest: apply rejects unselected finding with no project writes
+ok 128 - apply rejects unselected finding with no project writes
+  ---
+  duration_ms: 177.99292
+  type: 'test'
+  ...
+# Subtest: apply rejects changed selected IDs with no project writes
+ok 129 - apply rejects changed selected IDs with no project writes
+  ---
+  duration_ms: 197.671568
+  type: 'test'
+  ...
+# Subtest: apply rejects scope widening with no project writes
+ok 130 - apply rejects scope widening with no project writes
+  ---
+  duration_ms: 207.739789
+  type: 'test'
+  ...
+# Subtest: apply rejects path traversal with no project writes
+ok 131 - apply rejects path traversal with no project writes
+  ---
+  duration_ms: 203.571391
+  type: 'test'
+  ...
+# Subtest: apply rejects target mismatch with no project writes
+ok 132 - apply rejects target mismatch with no project writes
+  ---
+  duration_ms: 201.927792
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate edit IDs with no project writes
+ok 133 - apply rejects duplicate edit IDs with no project writes
+  ---
+  duration_ms: 222.895897
+  type: 'test'
+  ...
+# Subtest: apply rejects overlapping edits with no project writes
+ok 134 - apply rejects overlapping edits with no project writes
+  ---
+  duration_ms: 279.427407
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate scope with no project writes
+ok 135 - apply rejects duplicate scope with no project writes
+  ---
+  duration_ms: 341.408076
+  type: 'test'
+  ...
+# Subtest: apply rejects changed precondition with no project writes
+ok 136 - apply rejects changed precondition with no project writes
+  ---
+  duration_ms: 274.047857
+  type: 'test'
+  ...
+# Subtest: apply rejects wrong proposed hash with no project writes
+ok 137 - apply rejects wrong proposed hash with no project writes
+  ---
+  duration_ms: 298.289221
+  type: 'test'
+  ...
+# Subtest: apply rejects wrong proposed bytes with no project writes
+ok 138 - apply rejects wrong proposed bytes with no project writes
+  ---
+  duration_ms: 350.435747
+  type: 'test'
+  ...
+# Subtest: apply rejects empty replacement as absent with no project writes
+ok 139 - apply rejects empty replacement as absent with no project writes
+  ---
+  duration_ms: 382.272725
+  type: 'test'
+  ...
+# Subtest: apply rejects unknown payload field with no project writes
+ok 140 - apply rejects unknown payload field with no project writes
+  ---
+  duration_ms: 295.390969
+  type: 'test'
+  ...
+# Subtest: apply rejects changed reviewed payload with no project writes
+ok 141 - apply rejects changed reviewed payload with no project writes
+  ---
+  duration_ms: 226.158835
+  type: 'test'
+  ...
+# Subtest: apply rejects changed reviewed findings with no project writes
+ok 142 - apply rejects changed reviewed findings with no project writes
+  ---
+  duration_ms: 272.801956
+  type: 'test'
+  ...
+# Subtest: apply rejects unresolved decision with no project writes
+ok 143 - apply rejects unresolved decision with no project writes
+  ---
+  duration_ms: 248.916683
+  type: 'test'
+  ...
+# Subtest: apply rejects ambiguous headings before any project writes
+ok 144 - apply rejects ambiguous headings before any project writes
+  ---
+  duration_ms: 225.522186
+  type: 'test'
+  ...
+# Subtest: apply rejects setext headings before any project writes
+ok 145 - apply rejects setext headings before any project writes
+  ---
+  duration_ms: 249.375826
+  type: 'test'
+  ...
+# Subtest: apply rejects unclosed fence before any project writes
+ok 146 - apply rejects unclosed fence before any project writes
+  ---
+  duration_ms: 238.089546
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate JSON keys before any project writes
+ok 147 - apply rejects duplicate JSON keys before any project writes
+  ---
+  duration_ms: 223.153392
+  type: 'test'
+  ...
+# Subtest: apply rejects nested duplicate JSON keys before any project writes
+ok 148 - apply rejects nested duplicate JSON keys before any project writes
+  ---
+  duration_ms: 222.386992
+  type: 'test'
+  ...
+# Subtest: apply rejects unsupported format before any project writes
+ok 149 - apply rejects unsupported format before any project writes
+  ---
+  duration_ms: 234.523288
+  type: 'test'
+  ...
+# Subtest: apply rejects invalid JSON before any project writes
+ok 150 - apply rejects invalid JSON before any project writes
+  ---
+  duration_ms: 231.899906
+  type: 'test'
+  ...
+# Subtest: apply rejects ambiguous replacement before any project writes
+ok 151 - apply rejects ambiguous replacement before any project writes
+  ---
+  duration_ms: 231.905788
+  type: 'test'
+  ...
+# Subtest: apply rejects missing replacement match before any project writes
+ok 152 - apply rejects missing replacement match before any project writes
+  ---
+  duration_ms: 213.220518
+  type: 'test'
+  ...
+# Subtest: apply rejects create collision before any project writes
+ok 153 - apply rejects create collision before any project writes
+  ---
+  duration_ms: 244.114499
+  type: 'test'
+  ...
+# Subtest: apply rejects missing delete before any project writes
+ok 154 - apply rejects missing delete before any project writes
+  ---
+  duration_ms: 218.48294
+  type: 'test'
+  ...
+# Subtest: changed later precondition prevents all edits and reports every changed file
+ok 155 - changed later precondition prevents all edits and reports every changed file
+  ---
+  duration_ms: 219.860123
+  type: 'test'
+  ...
+# Subtest: escaping links fail with an unchanged project fingerprint and outside bytes
+ok 156 - escaping links fail with an unchanged project fingerprint and outside bytes
+  ---
+  duration_ms: 242.665944
+  type: 'test'
+  ...
+# Subtest: Git revision changes invalidate a reviewed dry run
+ok 157 - Git revision changes invalidate a reviewed dry run
+  ---
+  duration_ms: 271.109849
+  type: 'test'
+  ...
+# Subtest: apply refuses a missing plan and malformed plans
+ok 158 - apply refuses a missing plan and malformed plans
+  ---
+  duration_ms: 258.350763
+  type: 'test'
+  ...
+# Subtest: internal link aliases cannot stage overlapping edits
+ok 159 - internal link aliases cannot stage overlapping edits
+  ---
+  duration_ms: 211.053511
+  type: 'test'
+  ...
+# Subtest: workspace dry run uses the same scope and payload protections
+ok 160 - workspace dry run uses the same scope and payload protections
+  ---
+  duration_ms: 103.884246
+  type: 'test'
+  ...
+# Subtest: resume schema validates complete state through the public contract command
+ok 161 - resume schema validates complete state through the public contract command
+  ---
+  duration_ms: 93.56933
+  type: 'test'
+  ...
+# Subtest: resume schema validates absent original and backup for create through the public contract command
+ok 162 - resume schema validates absent original and backup for create through the public contract command
+  ---
+  duration_ms: 104.371141
+  type: 'test'
+  ...
+# Subtest: resume schema validates absent proposed state for delete through the public contract command
+ok 163 - resume schema validates absent proposed state for delete through the public contract command
+  ---
+  duration_ms: 92.196711
+  type: 'test'
+  ...
+# Subtest: resume schema validates missing plan digest through the public contract command
+ok 164 - resume schema validates missing plan digest through the public contract command
+  ---
+  duration_ms: 99.405586
+  type: 'test'
+  ...
+# Subtest: resume schema validates missing backup through the public contract command
+ok 165 - resume schema validates missing backup through the public contract command
+  ---
+  duration_ms: 102.078023
+  type: 'test'
+  ...
+# Subtest: resume schema validates missing resolved identity through the public contract command
+ok 166 - resume schema validates missing resolved identity through the public contract command
+  ---
+  duration_ms: 83.150072
+  type: 'test'
+  ...
+# Subtest: resume schema validates invalid hash through the public contract command
+ok 167 - resume schema validates invalid hash through the public contract command
+  ---
+  duration_ms: 91.957013
+  type: 'test'
+  ...
+# Subtest: resume schema validates unknown field through the public contract command
+ok 168 - resume schema validates unknown field through the public contract command
+  ---
+  duration_ms: 106.24347
+  type: 'test'
+  ...
+# Subtest: protected replacement saves originals and repeat performs no writes
+ok 169 - protected replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 322.065311
+  type: 'test'
+  ...
+# Subtest: protected creation saves originals and repeat performs no writes
+ok 170 - protected creation saves originals and repeat performs no writes
+  ---
+  duration_ms: 280.907217
+  type: 'test'
+  ...
+# Subtest: protected deletion saves originals and repeat performs no writes
+ok 171 - protected deletion saves originals and repeat performs no writes
+  ---
+  duration_ms: 266.836282
+  type: 'test'
+  ...
+# Subtest: protected empty replacement saves originals and repeat performs no writes
+ok 172 - protected empty replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 275.417906
+  type: 'test'
+  ...
+# Subtest: protected append saves originals and repeat performs no writes
+ok 173 - protected append saves originals and repeat performs no writes
+  ---
+  duration_ms: 293.308359
+  type: 'test'
+  ...
+# Subtest: protected no-op append saves originals and repeat performs no writes
+ok 174 - protected no-op append saves originals and repeat performs no writes
+  ---
+  duration_ms: 261.265507
+  type: 'test'
+  ...
+# Subtest: protected heading saves originals and repeat performs no writes
+ok 175 - protected heading saves originals and repeat performs no writes
+  ---
+  duration_ms: 302.804933
+  type: 'test'
+  ...
+# Subtest: protected JSON saves originals and repeat performs no writes
+ok 176 - protected JSON saves originals and repeat performs no writes
+  ---
+  duration_ms: 275.328218
+  type: 'test'
+  ...
+# Subtest: protected unsupported code whole-file replacement saves originals and repeat performs no writes
+ok 177 - protected unsupported code whole-file replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 297.209771
+  type: 'test'
+  ...
+# Subtest: protected unsupported Markdown whole-file replacement saves originals and repeat performs no writes
+ok 178 - protected unsupported Markdown whole-file replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 313.173989
+  type: 'test'
+  ...
+# Subtest: protected unsupported JSON whole-file replacement saves originals and repeat performs no writes
+ok 179 - protected unsupported JSON whole-file replacement saves originals and repeat performs no writes
+  ---
+  duration_ms: 298.337973
+  type: 'test'
+  ...
+# Subtest: replace interruption before-write resumes from actual hashes and keeps backups
+ok 180 - replace interruption before-write resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 495.778482
+  type: 'test'
+  ...
+# Subtest: replace interruption after-replacement resumes from actual hashes and keeps backups
+ok 181 - replace interruption after-replacement resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 403.076643
+  type: 'test'
+  ...
+# Subtest: replace interruption before-completion resumes from actual hashes and keeps backups
+ok 182 - replace interruption before-completion resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 404.737941
+  type: 'test'
+  ...
+# Subtest: replace interruption journal-io resumes from actual hashes and keeps backups
+ok 183 - replace interruption journal-io resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 376.817427
+  type: 'test'
+  ...
+# Subtest: delete interruption before-write resumes from actual hashes and keeps backups
+ok 184 - delete interruption before-write resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 401.550744
+  type: 'test'
+  ...
+# Subtest: delete interruption after-replacement resumes from actual hashes and keeps backups
+ok 185 - delete interruption after-replacement resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 397.662085
+  type: 'test'
+  ...
+# Subtest: delete interruption before-completion resumes from actual hashes and keeps backups
+ok 186 - delete interruption before-completion resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 373.865211
+  type: 'test'
+  ...
+# Subtest: delete interruption journal-io resumes from actual hashes and keeps backups
+ok 187 - delete interruption journal-io resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 374.431035
+  type: 'test'
+  ...
+# Subtest: create interruption before-write resumes from actual hashes and keeps backups
+ok 188 - create interruption before-write resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 391.4665
+  type: 'test'
+  ...
+# Subtest: create interruption after-replacement resumes from actual hashes and keeps backups
+ok 189 - create interruption after-replacement resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 378.50211
+  type: 'test'
+  ...
+# Subtest: create interruption before-completion resumes from actual hashes and keeps backups
+ok 190 - create interruption before-completion resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 361.379166
+  type: 'test'
+  ...
+# Subtest: create interruption journal-io resumes from actual hashes and keeps backups
+ok 191 - create interruption journal-io resumes from actual hashes and keeps backups
+  ---
+  duration_ms: 385.542065
+  type: 'test'
+  ...
+# Subtest: user change to README.md after replace interruption blocks every remaining write
+ok 192 - user change to README.md after replace interruption blocks every remaining write
+  ---
+  duration_ms: 270.101906
+  type: 'test'
+  ...
+# Subtest: user change to other.txt after replace interruption blocks every remaining write
+ok 193 - user change to other.txt after replace interruption blocks every remaining write
+  ---
+  duration_ms: 279.031512
+  type: 'test'
+  ...
+# Subtest: user change to README.md after delete interruption blocks every remaining write
+ok 194 - user change to README.md after delete interruption blocks every remaining write
+  ---
+  duration_ms: 277.888966
+  type: 'test'
+  ...
+# Subtest: user change to README.md after create interruption blocks every remaining write
+ok 195 - user change to README.md after create interruption blocks every remaining write
+  ---
+  duration_ms: 279.734341
+  type: 'test'
+  ...
+# Subtest: a user change to a completed run blocks repetition
+ok 196 - a user change to a completed run blocks repetition
+  ---
+  duration_ms: 205.600168
+  type: 'test'
+  ...
+# Subtest: a changed digest cannot reuse an earlier run
+ok 197 - a changed digest cannot reuse an earlier run
+  ---
+  duration_ms: 205.168448
+  type: 'test'
+  ...
+# Subtest: apply rejects a second run-selection input without writes
+ok 198 - apply rejects a second run-selection input without writes
+  ---
+  duration_ms: 59.475441
+  type: 'test'
+  ...
+# Subtest: a changed target cannot reuse completion from another target
+ok 199 - a changed target cannot reuse completion from another target
+  ---
+  duration_ms: 276.872481
+  type: 'test'
+  ...
+# Subtest: filesystem replacement limits block without falling back or losing the original
+ok 200 - filesystem replacement limits block without falling back or losing the original
+  ---
+  duration_ms: 240.805
+  type: 'test'
+  ...
+# Subtest: directory flush limits are reported in successful results
+ok 201 - directory flush limits are reported in successful results
+  ---
+  duration_ms: 126.902885
+  type: 'test'
+  ...
+# Subtest: unrelated uncommitted journey and selected file permissions survive writes
+ok 202 - unrelated uncommitted journey and selected file permissions survive writes
+  ---
+  duration_ms: 170.532586
+  type: 'test'
+  ...
+# Subtest: rendered T2.5 audit record applies through reviewed whole-file replacement
+ok 203 - rendered T2.5 audit record applies through reviewed whole-file replacement
+  ---
+  duration_ms: 300.566641
+  type: 'test'
+  ...
+# Subtest: restored originals are pending even when journal completion flags say applied
+ok 204 - restored originals are pending even when journal completion flags say applied
+  ---
+  duration_ms: 294.666489
+  type: 'test'
+  ...
+# Subtest: changed backups block resume without any target writes
+ok 205 - changed backups block resume without any target writes
+  ---
+  duration_ms: 238.915344
+  type: 'test'
+  ...
+# Subtest: creation preflights collision and creates missing parent directories
+ok 206 - creation preflights collision and creates missing parent directories
+  ---
+  duration_ms: 129.133
+  type: 'test'
+  ...
+# Subtest: workspace apply writes and repeats through the same protected boundary
+ok 207 - workspace apply writes and repeats through the same protected boundary
+  ---
+  duration_ms: 214.037389
+  type: 'test'
+  ...
+# Subtest: backup-io during backup preparation permits an unchanged retry
+ok 208 - backup-io during backup preparation permits an unchanged retry
+  ---
+  duration_ms: 243.108574
+  type: 'test'
+  ...
+# Subtest: backup-interruption during backup preparation permits an unchanged retry
+ok 209 - backup-interruption during backup preparation permits an unchanged retry
+  ---
+  duration_ms: 374.374209
+  type: 'test'
+  ...
+# Subtest: replace preserves a user save during journal-user-change and blocks success
+ok 210 - replace preserves a user save during journal-user-change and blocks success
+  ---
+  duration_ms: 221.579433
+  type: 'test'
+  ...
+# Subtest: delete preserves a user save during journal-user-change and blocks success
+ok 211 - delete preserves a user save during journal-user-change and blocks success
+  ---
+  duration_ms: 168.734447
+  type: 'test'
+  ...
+# Subtest: create preserves a user save during journal-user-change and blocks success
+ok 212 - create preserves a user save during journal-user-change and blocks success
+  ---
+  duration_ms: 162.476417
+  type: 'test'
+  ...
+# Subtest: replace preserves a user save during temporary-user-change and blocks success
+ok 213 - replace preserves a user save during temporary-user-change and blocks success
+  ---
+  duration_ms: 157.747722
+  type: 'test'
+  ...
+# Subtest: create preserves a user save during temporary-user-change and blocks success
+ok 214 - create preserves a user save during temporary-user-change and blocks success
+  ---
+  duration_ms: 149.750448
+  type: 'test'
+  ...
+# Subtest: a user save after the last replacement blocks the final success result
+ok 215 - a user save after the last replacement blocks the final success result
+  ---
+  duration_ms: 128.482771
+  type: 'test'
+  ...
+# Subtest: selected delete through a absolute alias resumes and repeats with its reviewed identity
+ok 216 - selected delete through a absolute alias resumes and repeats with its reviewed identity
+  ---
+  duration_ms: 553.367055
+  type: 'test'
+  ...
+# Subtest: selected delete through a relative alias resumes and repeats with its reviewed identity
+ok 217 - selected delete through a relative alias resumes and repeats with its reviewed identity
+  ---
+  duration_ms: 510.899421
+  type: 'test'
+  ...
+# Subtest: selected delete through a chain alias resumes and repeats with its reviewed identity
+ok 218 - selected delete through a chain alias resumes and repeats with its reviewed identity
+  ---
+  duration_ms: 532.24985
+  type: 'test'
+  ...
+# Subtest: selected delete through a parent alias resumes and repeats with its reviewed identity
+ok 219 - selected delete through a parent alias resumes and repeats with its reviewed identity
+  ---
+  duration_ms: 478.148458
+  type: 'test'
+  ...
+# Subtest: an unedited absolute alias permits deletion recovery after after-replacement
+ok 220 - an unedited absolute alias permits deletion recovery after after-replacement
+  ---
+  duration_ms: 404.214132
+  type: 'test'
+  ...
+# Subtest: an unedited absolute alias permits deletion recovery after completion
+ok 221 - an unedited absolute alias permits deletion recovery after completion
+  ---
+  duration_ms: 429.066831
+  type: 'test'
+  ...
+# Subtest: an unedited relative alias permits deletion recovery after after-replacement
+ok 222 - an unedited relative alias permits deletion recovery after after-replacement
+  ---
+  duration_ms: 474.668425
+  type: 'test'
+  ...
+# Subtest: an unedited relative alias permits deletion recovery after completion
+ok 223 - an unedited relative alias permits deletion recovery after completion
+  ---
+  duration_ms: 440.827879
+  type: 'test'
+  ...
+# Subtest: an unedited chain alias permits deletion recovery after after-replacement
+ok 224 - an unedited chain alias permits deletion recovery after after-replacement
+  ---
+  duration_ms: 401.956233
+  type: 'test'
+  ...
+# Subtest: an unedited chain alias permits deletion recovery after completion
+ok 225 - an unedited chain alias permits deletion recovery after completion
+  ---
+  duration_ms: 397.767619
+  type: 'test'
+  ...
+# Subtest: an unedited parent alias permits deletion recovery after after-replacement
+ok 226 - an unedited parent alias permits deletion recovery after after-replacement
+  ---
+  duration_ms: 425.786925
+  type: 'test'
+  ...
+# Subtest: an unedited parent alias permits deletion recovery after completion
+ok 227 - an unedited parent alias permits deletion recovery after completion
+  ---
+  duration_ms: 438.650293
+  type: 'test'
+  ...
+# Subtest: fresh apply rejects creation through a dangling relative link without writes
+ok 228 - fresh apply rejects creation through a dangling relative link without writes
+  ---
+  duration_ms: 88.263259
+  type: 'test'
+  ...
+# Subtest: fresh dry run rejects creation through a dangling relative link without writes
+ok 229 - fresh dry run rejects creation through a dangling relative link without writes
+  ---
+  duration_ms: 83.934353
+  type: 'test'
+  ...
+# Subtest: fresh apply rejects creation through a dangling absolute link without writes
+ok 230 - fresh apply rejects creation through a dangling absolute link without writes
+  ---
+  duration_ms: 89.890802
+  type: 'test'
+  ...
+# Subtest: fresh dry run rejects creation through a dangling absolute link without writes
+ok 231 - fresh dry run rejects creation through a dangling absolute link without writes
+  ---
+  duration_ms: 93.102644
+  type: 'test'
+  ...
+# Subtest: fresh apply rejects creation through a dangling chain link without writes
+ok 232 - fresh apply rejects creation through a dangling chain link without writes
+  ---
+  duration_ms: 90.98138
+  type: 'test'
+  ...
+# Subtest: fresh dry run rejects creation through a dangling chain link without writes
+ok 233 - fresh dry run rejects creation through a dangling chain link without writes
+  ---
+  duration_ms: 91.284225
+  type: 'test'
+  ...
+# Subtest: fresh apply rejects creation through a dangling parent link without writes
+ok 234 - fresh apply rejects creation through a dangling parent link without writes
+  ---
+  duration_ms: 87.971454
+  type: 'test'
+  ...
+# Subtest: fresh dry run rejects creation through a dangling parent link without writes
+ok 235 - fresh dry run rejects creation through a dangling parent link without writes
+  ---
+  duration_ms: 123.703267
+  type: 'test'
+  ...
+# Subtest: a retargeted alias during journal preparation blocks both destinations
+ok 236 - a retargeted alias during journal preparation blocks both destinations
+  ---
+  duration_ms: 151.778655
+  type: 'test'
+  ...
+# Subtest: new recovery and nested target directory entries are flushed before publication
+ok 237 - new recovery and nested target directory entries are flushed before publication
+  ---
+  duration_ms: 115.403605
+  type: 'test'
+  ...
+1..237
+# tests 237
+# suites 0
+# pass 237
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54498.063607
