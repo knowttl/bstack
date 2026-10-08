@@ -96,7 +96,24 @@ Repeating the same plan resumes pending edits or returns `already-applied` witho
 Use `replace-file` with complete reviewed UTF-8 content when a mechanical edit is unsupported, including the audit record rendered by T2.5.
 `state show` reports actual applied, pending and conflicting files and affected checks to rerun.
 See the apply contract for preflight protection, backup and journal recovery, and filesystem limits.
-Automatic check execution remains T2.7 work.
+
+Capture a reviewed check plan with acceptance sources and input scopes:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --json
+node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --phase before --json
+# After the change, reuse the same plan and the returned before run ID:
+node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --prior-run <before-run-id> --json
+npm test -- --task T2.7
+```
+
+The [check-plan contract](docs/command-contract.md#check-plans-and-capture) defines the schema, source pointers, phase roles and prerequisites.
+Bug fixes need a normally failing reproduction before the change and the same reproduction passing afterward.
+Refactors need passing protection before structural edits and compatibility checks afterward.
+Capture records command output, versions, original inputs, execution order and acceptance coverage in scratch.
+Skipped, unavailable, cancelled, timed-out and stale required checks cannot pass.
+User flows that could not run remain unverified, and results covering no user journey say so.
+Live probes and their specific side-effect approval remain C15b work.
 
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.

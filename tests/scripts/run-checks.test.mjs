@@ -1,0 +1,316 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { readFile, writeFile, watch } from 'node:fs/promises'
+import { join, resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { spawn } from 'node:child_process'
+import { createHash } from 'node:crypto'
+import { emptyRepo, build, run, snapshot } from './discovery-fixture.mjs'
+
+// Exercise the installed CLI from an unrelated directory with isolated cache evidence.
+const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+
+function hash(value) { return createHash('sha256').update(value).digest('hex') }
+
+function check(id, code = 'console.log("passed")', extra = {}) {
+  return { id, role: 'outcome', required: true, acceptanceCases: ['flow'], inputScopes: ['product.txt'],
+    command: { executable: 'node', args: ['-e', code], cwd: '.', versionArgs: ['--version'] }, ...extra }
+}
+
+async function setup(t, checks = [check('journey')], changeKind = 'feature') {
+  const { directory, repo } = await emptyRepo(t)
+  const source = 'Approved acceptance: the checkout returns the agreed total.\n'
+  await writeFile(join(repo, 'ACCEPTANCE.md'), source)
+  await writeFile(join(repo, 'product.txt'), 'original')
+  const plan = { schemaVersion: 1, changeKind,
+    acceptanceSources: [{ id: 'requirements', path: 'ACCEPTANCE.md', contentHash: hash(source) }],
+    acceptanceCases: [{ id: 'flow', sourceId: 'requirements', pointer: 'Approved acceptance:', outcome: 'Checkout returns the agreed total.', userJourney: true }], checks }
+  const path = join(directory, 'plan.json')
+  const env = { ...process.env, XDG_CACHE_HOME: join(directory, 'cache'), LOCALAPPDATA: join(directory, 'cache') }
+  const invoke = async (extra = []) => {
+    await writeFile(path, JSON.stringify(plan))
+    return run('run-checks', repo, env, ['--plan', path, ...extra])
+  }
+  return { repo, directory, plan, path, env, invoke }
+}
+
+test('capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes', async t => {
+  const args = ['日本語 spaces', '$HOME', '$(touch injected)', '; touch injected', '%PATH%', '&echo wrong']
+  const f = await setup(t, [check('journey', 'console.log(JSON.stringify(process.argv.slice(1))); console.error("diagnostic")')])
+  f.plan.checks[0].command.args.push(...args)
+  const original = await snapshot(f.repo)
+  const result = await f.invoke()
+  assert.equal(result.exit, 0)
+  assert.equal(result.data.coverage[0].status, 'passed')
+  const captured = result.data.checks[0]
+  assert.deepEqual(JSON.parse(captured.execution.stdout), args)
+  assert.equal(captured.execution.stderr, 'diagnostic\n')
+  assert.equal(captured.execution.exitCode, 0)
+  assert.equal(captured.execution.toolVersion.stdout.trim(), process.version)
+  assert.match(captured.inputFingerprint, /^[a-f0-9]{64}$/)
+  assert.equal(captured.inputFingerprint, captured.finalFingerprint)
+  const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
+  assert.equal(saved.runId, result.data.runId)
+  assert.equal(saved.checks[0].order, 1)
+  assert.deepEqual(await snapshot(f.repo), original)
+})
+
+test('ts-shop passing units cannot hide the failed checkout journey', async t => {
+  const f = await setup(t)
+  const repo = build(t, 'ts-shop')
+  const source = await readFile(join(repo, 'DESIGN.md'))
+  f.plan.acceptanceSources[0] = { id: 'requirements', path: 'DESIGN.md', contentHash: hash(source) }
+  f.plan.acceptanceCases[0].pointer = source.toString().split('\n').find(line => line.trim())
+  f.plan.checks = [check('units'), check('journey')]
+  f.plan.checks[0].command.args = ['--test', 'unit.test.mjs']
+  f.plan.checks[1].command.args = ['journey.mjs']
+  f.plan.checks.forEach(item => { item.inputScopes = ['packages/**', 'unit.test.mjs', 'journey.mjs', 'package.json'] })
+  await writeFile(f.path, JSON.stringify(f.plan))
+  const result = run('run-checks', repo, f.env, ['--plan', f.path])
+  assert.equal(result.exit, 1)
+  assert.equal(result.data.checks[0].status, 'passed')
+  assert.equal(result.data.checks[1].status, 'failed')
+  assert.equal(result.data.coverage[0].status, 'failed')
+  assert.match(result.data.journeyCoverage, /No user journey/)
+})
+
+for (const [name, modify, expected] of [
+  ['failed', c => { c.command.args = ['-e', 'console.error("failure"); process.exit(7)'] }, 'failed'],
+  ['skipped', c => { c.skipReason = 'Browser unavailable.' }, 'unverified'],
+  ['unavailable', c => { c.command.executable = 'bstack-nonexistent-tool' }, 'blocked'],
+  ['timed out', c => { c.command.args = ['-e', 'setInterval(() => {}, 1000)']; c.command.timeoutMs = 1000 }, 'failed'],
+  ['failed version', c => { c.command.versionArgs = ['-e', 'process.exit(8)'] }, 'failed']
+]) {
+  test(`${name} required check cannot pass and does not verify the user flow`, async t => {
+    const f = await setup(t)
+    modify(f.plan.checks[0])
+    const result = await f.invoke()
+    assert.notEqual(result.status, 'passed')
+    assert.equal(result.data.checks[0].status, expected)
+    assert.notEqual(result.data.coverage[0].status, 'passed')
+    if (name === 'timed out') {
+      assert.equal(result.data.checks[0].execution.timedOut, true)
+      assert.equal(result.data.coverage[0].status, 'unverified')
+    }
+    if (name === 'skipped') assert.equal(result.data.coverage[0].status, 'unverified')
+  })
+}
+
+test('cancelled required check stays unverified even with other passing checks', { timeout: 10000 }, async t => {
+  const f = await setup(t, [check('units'), check('journey')])
+  const ready = join(f.directory, 'ready')
+  f.plan.checks[1].command.args = ['-e', 'require("node:fs").writeFileSync(process.argv[1], ""); setInterval(() => {}, 1000)', ready]
+  await writeFile(f.path, JSON.stringify(f.plan))
+  const controller = new AbortController()
+  const watcher = watch(f.directory, { signal: controller.signal })
+  const child = spawn(process.execPath, [join(checkout, 'skills/repo-audit/scripts/repo-audit.mjs'), 'run-checks', '--repo', f.repo, '--plan', f.path, '--json'], { env: f.env, stdio: ['ignore', 'pipe', 'pipe'] })
+  t.after(() => { controller.abort(); child.kill('SIGKILL') })
+  let stdout = ''
+  child.stdout.on('data', chunk => { stdout += chunk })
+  const done = new Promise(resolve => child.on('close', resolve))
+  for await (const event of watcher) {
+    if (event.filename === 'ready') { child.kill('SIGINT'); controller.abort(); break }
+  }
+  assert.equal(await done, 1)
+  const result = JSON.parse(stdout)
+  assert.equal(result.data.checks[0].status, 'passed')
+  assert.equal(result.data.checks[1].execution.cancelled, true)
+  assert.equal(result.data.checks[1].satisfied, false)
+  assert.equal(result.data.coverage[0].status, 'unverified')
+})
+
+test('a result covering no user journey explicitly reports that limit', async t => {
+  const f = await setup(t)
+  f.plan.acceptanceCases[0].userJourney = false
+  const result = await f.invoke()
+  assert.equal(result.exit, 0)
+  assert.match(result.data.journeyCoverage, /No user journey/)
+})
+
+test('an uncovered user flow remains unverified despite passing units', async t => {
+  const f = await setup(t)
+  f.plan.acceptanceCases.push({ ...f.plan.acceptanceCases[0], id: 'uncovered' })
+  const result = await f.invoke()
+  assert.equal(result.exit, 2)
+  assert.equal(result.data.coverage[1].status, 'unverified')
+})
+
+for (const [name, mutation] of [
+  ['own bytes', 'require("node:fs").writeFileSync("product.txt", "changed")'],
+  ['new glob file', 'require("node:fs").writeFileSync("new.txt", "changed")'],
+  ['deleted glob file', 'require("node:fs").unlinkSync("product.txt")']
+]) {
+  test(`changed ${name} make a required captured result stale`, async t => {
+    const f = await setup(t, [check('journey', mutation, { inputScopes: ['*.txt'] })])
+    const result = await f.invoke()
+    assert.equal(result.exit, 1)
+    assert.equal(result.data.checks[0].status, 'stale')
+    assert.notEqual(result.data.checks[0].inputFingerprint, result.data.checks[0].finalFingerprint)
+  })
+}
+
+test('a later check invalidates an earlier passing result', async t => {
+  const f = await setup(t, [check('journey'), check('later', 'require("node:fs").writeFileSync("product.txt", "changed")', { inputScopes: ['other.txt'] })])
+  const result = await f.invoke()
+  assert.equal(result.exit, 1)
+  assert.equal(result.data.checks[0].status, 'stale')
+  assert.equal(result.data.checks[1].status, 'passed')
+})
+
+for (const [name, mutate, problem] of [
+  ['unknown field', p => { p.unrecognised = true }, 'unknown-field'],
+  ['duplicate check', p => { p.checks.push(p.checks[0]) }, 'duplicate-id'],
+  ['missing case', p => { p.checks[0].acceptanceCases = ['missing'] }, 'missing-case-id'],
+  ['missing source', p => { p.acceptanceCases[0].sourceId = 'missing' }, 'missing-source-id'],
+  ['missing pointer', p => { p.acceptanceCases[0].pointer = 'nonexistent' }, 'missing-acceptance-pointer'],
+  ['stale source', p => { p.acceptanceSources[0].contentHash = '0'.repeat(64) }, 'stale-acceptance-source'],
+  ['unsafe scope', p => { p.checks[0].inputScopes = ['../outside'] }, 'invalid-glob'],
+  ['unsafe cwd', p => { p.checks[0].command.cwd = '..' }, 'unsafe-path'],
+  ['invalid timeout', p => { p.checks[0].command.timeoutMs = 0 }, 'invalid-timeout'],
+  ['string command', p => { p.checks[0].command = 'npm test' }, 'invalid-type'],
+  ['agent execution claim', p => { p.checks[0].execution = { status: 'passed' } }, 'unknown-field']
+]) {
+  test(`invalid ${name} is rejected before any command runs`, async t => {
+    const f = await setup(t, [check('journey', 'require("node:fs").writeFileSync("executed", "")')])
+    mutate(f.plan)
+    const original = await snapshot(f.repo)
+    const result = await f.invoke()
+    assert.notEqual(result.exit, 0)
+    assert.ok(result.problems.some(item => item.code === problem), JSON.stringify(result))
+    assert.deepEqual(await snapshot(f.repo), original)
+  })
+}
+
+function refactorChecks() {
+  const behaviour = 'require("node:assert/strict").equal(require("./product.cjs").total(2), 20)'
+  return [check('protect', behaviour, { role: 'protection', inputScopes: ['product.cjs'] }),
+    check('compatibility', behaviour, { role: 'compatibility', inputScopes: ['product.cjs'] })]
+}
+
+async function refactor(t) {
+  const fixture = await setup(t, refactorChecks(), 'refactor')
+  await writeFile(join(fixture.repo, 'product.cjs'), 'exports.total = count => count * 10\n')
+  return fixture
+}
+
+test('a refactor without prior protective capture is rejected before compatibility runs', async t => {
+  const f = await refactor(t)
+  const result = await f.invoke()
+  assert.equal(result.exit, 2)
+  assert.equal(result.problems[0].code, 'missing-prior-evidence')
+  assert.ok(result.data.checks.every(item => item.execution === null))
+})
+
+test('a protected refactor passes only after compatibility runs against changed state', async t => {
+  const f = await refactor(t)
+  const before = await f.invoke(['--phase', 'before'])
+  assert.equal(before.exit, 0)
+  assert.equal(before.data.checks[1].status, 'unverified')
+  const unchanged = await f.invoke(['--prior-run', before.data.runId])
+  assert.equal(unchanged.exit, 2)
+  assert.equal(unchanged.problems[0].code, 'unchanged-original-state')
+  await writeFile(join(f.repo, 'product.cjs'), 'const unitPrice = 10\nexports.total = count => unitPrice * count\n')
+  const after = await f.invoke(['--prior-run', before.data.runId])
+  assert.equal(after.exit, 0)
+  assert.equal(after.data.checks[1].execution.exitCode, 0)
+  assert.equal(after.data.checks[1].status, 'passed')
+  assert.deepEqual(after.data.executionOrder, [before.data.runId, after.data.runId])
+  assert.ok(before.data.completedAt <= after.data.startedAt)
+  assert.equal(before.data.originalState.state.files.find(file => file.path === 'product.cjs').contentHash, hash('exports.total = count => count * 10\n'))
+  assert.notEqual(after.data.originalState.fingerprint, before.data.originalState.fingerprint)
+})
+
+for (const [name, mutate] of [
+  ['failed protection', p => { p.checks[0].command.args = ['-e', 'process.exit(1)'] }],
+  ['skipped protection', p => { p.checks[0].skipReason = 'Unavailable.' }]
+]) {
+  test(`${name} cannot establish prior refactor evidence`, async t => {
+    const f = await refactor(t)
+    mutate(f.plan)
+    const before = await f.invoke(['--phase', 'before'])
+    assert.notEqual(before.exit, 0)
+    await writeFile(join(f.repo, 'product.txt'), 'changed')
+    const after = await f.invoke(['--prior-run', before.data.runId])
+    assert.equal(after.exit, 2)
+    assert.equal(after.problems[0].code, 'missing-prior-evidence')
+  })
+}
+
+test('changing the check plan cannot reuse prior protection', async t => {
+  const f = await refactor(t)
+  const before = await f.invoke(['--phase', 'before'])
+  await writeFile(join(f.repo, 'product.txt'), 'changed')
+  f.plan.checks[0].command.args = ['-e', 'console.log("different protection")']
+  const after = await f.invoke(['--prior-run', before.data.runId])
+  assert.equal(after.exit, 2)
+  assert.equal(after.problems[0].code, 'missing-prior-evidence')
+})
+
+test('after capture cannot pretend to be prior refactor protection', async t => {
+  const f = await refactor(t)
+  const before = await f.invoke(['--phase', 'before'])
+  await writeFile(join(f.repo, 'product.cjs'), 'exports.total = count => 10 * count\n')
+  const after = await f.invoke(['--prior-run', before.data.runId])
+  await writeFile(join(f.repo, 'product.txt'), 'changed again')
+  const reused = await f.invoke(['--prior-run', after.data.runId])
+  assert.equal(reused.exit, 2)
+  assert.equal(reused.problems[0].code, 'missing-prior-evidence')
+})
+
+test('compatibility failure prevents a protected refactor from passing', async t => {
+  const f = await setup(t, [check('protect', undefined, { role: 'protection' }), check('compat', 'process.exit(3)', { role: 'compatibility' })], 'refactor')
+  const before = await f.invoke(['--phase', 'before'])
+  await writeFile(join(f.repo, 'product.txt'), 'changed')
+  const after = await f.invoke(['--prior-run', before.data.runId])
+  assert.equal(after.exit, 1)
+  assert.equal(after.data.checks[1].status, 'failed')
+})
+
+test('bug fix requires normally failing reproduction before and passing reproduction after', async t => {
+  const f = await setup(t, [check('reproduce', 'process.exit(require("node:fs").readFileSync("product.txt", "utf8") === "fixed" ? 0 : 1)', { role: 'reproduction' })], 'bug-fix')
+  const missing = await f.invoke()
+  assert.equal(missing.exit, 2)
+  const before = await f.invoke(['--phase', 'before'])
+  assert.equal(before.exit, 0)
+  assert.equal(before.data.checks[0].execution.exitCode, 1)
+  assert.equal(before.data.checks[0].satisfied, true)
+  await writeFile(join(f.repo, 'product.txt'), 'fixed')
+  const after = await f.invoke(['--prior-run', before.data.runId])
+  assert.equal(after.exit, 0)
+  assert.equal(after.data.checks[0].execution.exitCode, 0)
+})
+
+test('passing reproduction before change cannot satisfy the bug prerequisite', async t => {
+  const f = await setup(t, [check('reproduce', undefined, { role: 'reproduction' })], 'bug-fix')
+  const before = await f.invoke(['--phase', 'before'])
+  assert.notEqual(before.exit, 0)
+  assert.equal(before.data.checks[0].satisfied, false)
+})
+
+for (const [name, modify] of [
+  ['timeout', c => { c.command.args = ['-e', 'setInterval(() => {}, 1000)']; c.command.timeoutMs = 1000 }],
+  ['version failure', c => { c.command.versionArgs = ['-e', 'process.exit(1)'] }],
+  ['unavailable tool', c => { c.command.executable = 'bstack-nonexistent-tool' }]
+]) {
+  test(`a reproduction ${name} is not a recorded bug`, async t => {
+    const f = await setup(t, [check('reproduce', undefined, { role: 'reproduction' })], 'bug-fix')
+    modify(f.plan.checks[0])
+    const before = await f.invoke(['--phase', 'before'])
+    assert.notEqual(before.exit, 0)
+    assert.equal(before.data.checks[0].satisfied, false)
+  })
+}
+
+for (const [kind, role, code] of [
+  ['bug-fix', 'reproduction', 'missing-reproduction'],
+  ['refactor', 'protection', 'missing-protection'],
+  ['refactor', 'compatibility', 'missing-compatibility']
+]) {
+  test(`${kind} requires a required ${role} check in its plan`, async t => {
+    const f = await setup(t, kind === 'refactor' ? refactorChecks() : [check('reproduce', undefined, { role: 'reproduction' })], kind)
+    f.plan.checks.find(item => item.role === role).required = false
+    const result = await f.invoke()
+    assert.equal(result.exit, 1)
+    assert.ok(result.problems.some(item => item.code === code))
+  })
+}
