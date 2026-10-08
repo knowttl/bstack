@@ -1,0 +1,755 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "AC-1",
+      "ownerTask": "T2.9",
+      "criterionSource": "docs/design.md#AC-1",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A new project idea with no repo or history begins with the intent interview and produces an approved `VISION.md`."
+      }
+    },
+    {
+      "id": "AC-2",
+      "ownerTask": "T1.7",
+      "criterionSource": "docs/design.md#AC-2",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An ambiguous idea exposes the unresolved decision instead of inventing a stack or product goal."
+      }
+    },
+    {
+      "id": "AC-3",
+      "ownerTask": "T1.6",
+      "criterionSource": "docs/design.md#AC-3",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: The VISION board launches, returns a verdict, updates the draft and handles a resumed review."
+      }
+    },
+    {
+      "id": "AC-4",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-4",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An existing repo presents findings before changing source, configs or instructions."
+      }
+    },
+    {
+      "id": "AC-5",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-5",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An existing-project invocation starts with repo discovery and audit before any goal interview."
+      }
+    },
+    {
+      "id": "AC-6",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-6",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo with clear goals and principles reaches recommendations without making the user repeat those facts."
+      }
+    },
+    {
+      "id": "AC-7",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-7",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Missing or contradictory intent produces targeted questions after the evidence review, with the affected recommendation identified."
+      }
+    },
+    {
+      "id": "AC-8",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-8",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Existing-project recommendations cite their supporting principle and evidence, and retain approved documents unless the user chooses an update."
+      }
+    },
+    {
+      "id": "AC-9",
+      "ownerTask": "T1.7",
+      "criterionSource": "docs/design.md#AC-9",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A new-project interview resolves useful domain terms without adding implementation details to the glossary."
+      }
+    },
+    {
+      "id": "AC-10",
+      "ownerTask": "T2.3",
+      "criterionSource": "docs/design.md#AC-10",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An existing repo with a glossary and standards uses those sources before asking questions, including relevant context documents."
+      }
+    },
+    {
+      "id": "AC-11",
+      "ownerTask": "T2.3",
+      "criterionSource": "docs/design.md#AC-11",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo without those filenames can use equivalent documents and does not fail merely because the files are absent."
+      }
+    },
+    {
+      "id": "AC-12",
+      "ownerTask": "T2.3",
+      "criterionSource": "docs/design.md#AC-12",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Conflicting definitions produce an evidenced question, while proposed glossary entries remain drafts until confirmed or selected."
+      }
+    },
+    {
+      "id": "AC-13",
+      "ownerTask": "T3a.5",
+      "criterionSource": "docs/design.md#AC-13",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Equivalent words in different domain contexts do not trigger a false duplicate-term failure."
+      }
+    },
+    {
+      "id": "AC-14",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-14",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A rule already in DESIGN.md or CONTRIBUTING.md stays authoritative, and mechanical rules use native checks instead of duplicate prose."
+      }
+    },
+    {
+      "id": "AC-15",
+      "ownerTask": "T2.6",
+      "criterionSource": "docs/design.md#AC-15",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A selected move into CODING_STANDARDS.md replaces the old rule with a link and preserves behaviour."
+      }
+    },
+    {
+      "id": "AC-16",
+      "ownerTask": "T3a.3",
+      "criterionSource": "docs/design.md#AC-16",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A behaviour change identifies relevant glossary, design and standards sources before implementation and after the final diff."
+      }
+    },
+    {
+      "id": "AC-17",
+      "ownerTask": "T3a.3",
+      "criterionSource": "docs/design.md#AC-17",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A contract-preserving internal fix completes with an evidenced no-impact result, without cosmetic document edits."
+      }
+    },
+    {
+      "id": "AC-18",
+      "ownerTask": "T3a.4",
+      "criterionSource": "docs/design.md#AC-18",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Generated command or schema documentation fails when stale and passes after regeneration from its source."
+      }
+    },
+    {
+      "id": "AC-19",
+      "ownerTask": "T3a.3",
+      "criterionSource": "docs/design.md#AC-19",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Missing document assessments, unknown changed paths and unavailable comparison bases cannot produce a passing maintenance result."
+      }
+    },
+    {
+      "id": "AC-20",
+      "ownerTask": "T3a.2",
+      "criterionSource": "docs/design.md#AC-20",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The supported local comparison covers staged, unstaged, new, renamed and deleted files."
+      }
+    },
+    {
+      "id": "AC-21",
+      "ownerTask": "T3a.3",
+      "criterionSource": "docs/design.md#AC-21",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Editing code or rules after assessment invalidates affected results, and integration reruns required checks."
+      }
+    },
+    {
+      "id": "AC-22",
+      "ownerTask": "T3a.3",
+      "criterionSource": "docs/design.md#AC-22",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: A contract change cannot silently remove its own assessment or bypass the previous coverage policy."
+      }
+    },
+    {
+      "id": "AC-23",
+      "ownerTask": "T3a.7",
+      "criterionSource": "docs/design.md#AC-23",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Routine maintenance does not repeat the goal interview or full repo audit."
+      }
+    },
+    {
+      "id": "AC-24",
+      "ownerTask": "T3a.6",
+      "criterionSource": "docs/design.md#AC-24",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: A clean checkout, cloned into a different root with an isolated home and cache, runs the maintenance checker without a globally installed skill or prior agent session."
+      }
+    },
+    {
+      "id": "AC-25",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-25",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Verification requirements express user outcomes and evidence without automatically dispatching a TDD skill or prescribing a universal sequence."
+      }
+    },
+    {
+      "id": "AC-26",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-26",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A bug fix begins with the reported reproduction, and a refactor protects affected existing behaviour before structural changes."
+      }
+    },
+    {
+      "id": "AC-27",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-27",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A fixture with passing unit tests but a failing agreed user journey cannot produce a ready verdict."
+      }
+    },
+    {
+      "id": "AC-28",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-28",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An implementation cannot silently replace an agreed acceptance case with one that fits the code."
+      }
+    },
+    {
+      "id": "AC-29",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-29",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Unavailable user-flow checks remain unverified even when the unit tests pass."
+      }
+    },
+    {
+      "id": "AC-30",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-30",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A fix that depends on an outside endpoint or service records a live probe before the change and the same probe after it."
+      }
+    },
+    {
+      "id": "AC-31",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-31",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A fixture whose mock disagrees with the real endpoint cannot produce a ready verdict."
+      }
+    },
+    {
+      "id": "AC-32",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-32",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A probe that would write, cost money or change shared data waits for the user's approval."
+      }
+    },
+    {
+      "id": "AC-33",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-33",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An unrunnable probe leaves the change marked unverified, with the reason."
+      }
+    },
+    {
+      "id": "AC-34",
+      "ownerTask": "T2.1",
+      "criterionSource": "docs/design.md#AC-34",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: With subagents available, existing-repo discovery runs in subagents and the main thread receives only cited reports."
+      }
+    },
+    {
+      "id": "AC-35",
+      "ownerTask": "T2.1",
+      "criterionSource": "docs/design.md#AC-35",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Without subagents, the same briefs run in the main thread, produce the same report format and name the mode."
+      }
+    },
+    {
+      "id": "AC-36",
+      "ownerTask": "T2.1",
+      "criterionSource": "docs/design.md#AC-36",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A subagent report with a wrong file citation fails the main thread's check before it becomes a finding."
+      }
+    },
+    {
+      "id": "AC-37",
+      "ownerTask": "T2.1",
+      "criterionSource": "docs/design.md#AC-37",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: No subagent edits a file, runs a check with side effects or asks the user a question."
+      }
+    },
+    {
+      "id": "AC-38",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-38",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An audit of a repo with an approved vision and no open decisions never opens the VISION, interview or domain-language references."
+      }
+    },
+    {
+      "id": "AC-39",
+      "ownerTask": "T4.2",
+      "criterionSource": "docs/design.md#AC-39",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Where the agent records the files it opened, every opened file matches a \"load when\" condition that applied."
+      }
+    },
+    {
+      "id": "AC-40",
+      "ownerTask": "T4.2",
+      "criterionSource": "docs/design.md#AC-40",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: The agent runs bundled scripts without reading their source, and passes board assets to the launcher without reading them."
+      }
+    },
+    {
+      "id": "AC-41",
+      "ownerTask": "T0.5",
+      "criterionSource": "docs/design.md#AC-41",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The package check fails on a seeded unlisted reference, a seeded nested reference and a seeded oversized `SKILL.md`."
+      }
+    },
+    {
+      "id": "AC-42",
+      "ownerTask": "T4.2",
+      "criterionSource": "docs/design.md#AC-42",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: In the current agent, a request such as \"audit this repo\" without the explicit command does not start repo-audit."
+      }
+    },
+    {
+      "id": "AC-43",
+      "ownerTask": "T4.2",
+      "criterionSource": "docs/design.md#AC-43",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: In the current agent, the explicit command starts repo-audit."
+      }
+    },
+    {
+      "id": "AC-44",
+      "ownerTask": "T0.5",
+      "criterionSource": "docs/design.md#AC-44",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The package check fails when the frontmatter setting or `agents/openai.yaml` is missing."
+      }
+    },
+    {
+      "id": "AC-45",
+      "ownerTask": "T0.5",
+      "criterionSource": "docs/design.md#AC-45",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The package check fails on a seeded unexplained constant and a seeded step with no completion criterion."
+      }
+    },
+    {
+      "id": "AC-46",
+      "ownerTask": "T5.2",
+      "criterionSource": "docs/design.md#AC-46",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Each evaluation scenario records the agent's result without the skill and with it, and the skill improves every scenario that the model did not already pass."
+      }
+    },
+    {
+      "id": "AC-47",
+      "ownerTask": "T0.5",
+      "criterionSource": "docs/design.md#AC-47",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The skill folder contains no per-language rule set, lint preset or tool list."
+      }
+    },
+    {
+      "id": "AC-48",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-48",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Each language-specific recommendation cites its source and read date, and a run with no web access marks them not researched."
+      }
+    },
+    {
+      "id": "AC-49",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-49",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo with a repo-owned `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge of its equivalent content into `AGENTS.md` and the Claude Code version limit. Distinct scoped instructions keep their meaning, and local or ancestor files are reported as shadowing without modification."
+      }
+    },
+    {
+      "id": "AC-50",
+      "ownerTask": "T2.4",
+      "criterionSource": "docs/design.md#AC-50",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A mixed-responsibility file and a cluster of tightly coupled small files both produce evidenced architecture candidates."
+      }
+    },
+    {
+      "id": "AC-51",
+      "ownerTask": "T2.4",
+      "criterionSource": "docs/design.md#AC-51",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A large cohesive module or thin startup file does not fail merely because of its size or import count."
+      }
+    },
+    {
+      "id": "AC-52",
+      "ownerTask": "T3.2",
+      "criterionSource": "docs/design.md#AC-52",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Chosen boundary rules detect private imports, alias bypasses and forbidden cycles in each fixture stack, using the tool the research step selected."
+      }
+    },
+    {
+      "id": "AC-53",
+      "ownerTask": "T2.4",
+      "criterionSource": "docs/design.md#AC-53",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Proposed parallel changes identify shared write paths and shared contract changes before implementation."
+      }
+    },
+    {
+      "id": "AC-54",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-54",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Selected changes preserve an existing user journey and protect uncommitted user work."
+      }
+    },
+    {
+      "id": "AC-55",
+      "ownerTask": "T1.7",
+      "criterionSource": "docs/design.md#AC-55",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: The agent proposes a reviewed delta to an existing vision instead of replacing it silently."
+      }
+    },
+    {
+      "id": "AC-56",
+      "ownerTask": "T4.3",
+      "criterionSource": "docs/design.md#AC-56",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: repo-audit works without a router, akashic or no-mistakes installed."
+      }
+    },
+    {
+      "id": "AC-57",
+      "ownerTask": "T2.5",
+      "criterionSource": "docs/design.md#AC-57",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Ambiguous audit scope cannot select a write path without a resolved scope."
+      }
+    },
+    {
+      "id": "AC-58",
+      "ownerTask": "T3a.6",
+      "criterionSource": "docs/design.md#AC-58",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Project checks and maintenance validation run without an agent session."
+      }
+    },
+    {
+      "id": "AC-59",
+      "ownerTask": "T0.5",
+      "criterionSource": "docs/design.md#AC-59",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: No package resource redirects ordinary development work into a bstack implementation playbook."
+      }
+    },
+    {
+      "id": "AC-60",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-60",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A second language stack uses its native tools rather than inheriting JavaScript lint assumptions."
+      }
+    },
+    {
+      "id": "AC-61",
+      "ownerTask": "T3.4",
+      "criterionSource": "docs/design.md#AC-61",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo with several packages gets correctly scoped rules and checks."
+      }
+    },
+    {
+      "id": "AC-62",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-62",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Two projects with different goals or boundaries receive appropriately different rule recommendations, rather than the same generic preset."
+      }
+    },
+    {
+      "id": "AC-63",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-63",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repeated existing pattern that conflicts with an approved principle remains an audit finding instead of becoming a permanent standard."
+      }
+    },
+    {
+      "id": "AC-64",
+      "ownerTask": "T4.3",
+      "criterionSource": "docs/design.md#AC-64",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A representative extension can locate approved examples, use the intended interfaces and verify the relevant project constraints."
+      }
+    },
+    {
+      "id": "AC-65",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-65",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A foundation recommendation explains what must remain true without prescribing a general implementation sequence."
+      }
+    },
+    {
+      "id": "AC-66",
+      "ownerTask": "T3.2",
+      "criterionSource": "docs/design.md#AC-66",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Each added automated principle rejects a deliberate violation and accepts a valid case."
+      }
+    },
+    {
+      "id": "AC-67",
+      "ownerTask": "T3.3",
+      "criterionSource": "docs/design.md#AC-67",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Existing failures and temporary exceptions remain visible, and new failures cannot enter through a refreshed baseline."
+      }
+    },
+    {
+      "id": "AC-68",
+      "ownerTask": "T2.2",
+      "criterionSource": "docs/design.md#AC-68",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Missing tools or inaccessible history produce a specific limitation rather than a false passing verdict."
+      }
+    },
+    {
+      "id": "AC-69",
+      "ownerTask": "T2.8",
+      "criterionSource": "docs/design.md#AC-69",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Running the skill again updates the maintained files without duplicating rules or erasing user edits."
+      }
+    },
+    {
+      "id": "AC-70",
+      "ownerTask": "T2.6",
+      "criterionSource": "docs/design.md#AC-70",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Malformed helper inputs, wrong target paths and changed file hashes stop the scripted write before any project edit."
+      }
+    },
+    {
+      "id": "AC-71",
+      "ownerTask": "T2.7",
+      "criterionSource": "docs/design.md#AC-71",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: A failing, skipped or stale required check cannot produce a passing completion result."
+      }
+    },
+    {
+      "id": "AC-72",
+      "ownerTask": "T2.6",
+      "criterionSource": "docs/design.md#AC-72",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Helpers survive interrupted runs, and resume checks the current state before applying remaining changes."
+      }
+    },
+    {
+      "id": "AC-73",
+      "ownerTask": "T4.1",
+      "criterionSource": "docs/design.md#AC-73",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: A clean installation includes every referenced resource and required runtime declaration."
+      }
+    },
+    {
+      "id": "AC-74",
+      "ownerTask": "T4.1",
+      "criterionSource": "docs/design.md#AC-74",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Install, update and removal work on Windows, macOS and Linux without losing unrelated files or user edits."
+      }
+    },
+    {
+      "id": "AC-75",
+      "ownerTask": "T4.2",
+      "criterionSource": "docs/design.md#AC-75",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: The current agent discovers and executes the bounded audit skill successfully."
+      }
+    }
+  ]
+}
