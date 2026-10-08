@@ -366,6 +366,7 @@ With `--json`, stdout contains exactly one JSON object:
 Each problem has `code`, `message`, `fix` and an optional `path`.
 `data` contains the command's results and `inputs` identifies the target and relevant declared inputs.
 Without `--json`, the command prints a short status summary and each problem's fix with the same exit code.
+When `data.path` is present, plain output also prints that path after the status summary.
 Child output must go to captured artifacts, never alongside the JSON envelope.
 Child execution and fingerprints are implemented in C4b.
 
@@ -597,6 +598,8 @@ A failed journey always blocks, including when units passed or the journey was o
 The report has one result and no score, and shows source intent, debt, missing protections, decisions, selected findings, proposed principles and limitations.
 Malformed input fails with named problems and no writes.
 Missing evidence is a valid input with a verification-blocked assessment, rather than a schema failure.
+A completed readiness assessment uses command status `passed` with exit code 0 even when readiness is blocked or decisions are needed.
+Read `data.result` and `data.reasons` to determine readiness.
 `validate` writes nothing.
 `render` writes only `repo-audit.md` in a fresh OS-cache scratch run and returns `data.path` in JSON or the path in plain output.
 An inside-target cache blocks rendering.

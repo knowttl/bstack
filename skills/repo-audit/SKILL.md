@@ -179,7 +179,8 @@ Keep proposed principles separate for review instead of treating them as existin
 Avoid speculative findings, cosmetic rewrites and universal architecture prescriptions.
 Use native baselines where available, keeping known failures visible and preventing new failures from entering through a refreshed baseline.
 Exceptions need a reason, scope and removal condition.
-Findings validation and scratch rendering are unavailable until T2.5, enforcement guidance until T3.1, rule-proof until T3.2 and baseline handling until T3.3.
+Use the findings validation and scratch rendering commands in Step 11 before review.
+Enforcement guidance is unavailable until T3.1, rule-proof until T3.2 and baseline handling until T3.3.
 
 Done when: Every recommendation has a project-specific reason, evidence, principle, consequence, scope and verification method, with unresolved decisions and unsupported measurements visible.
 

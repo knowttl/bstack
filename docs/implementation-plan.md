@@ -364,7 +364,6 @@ Tick each task when its "Done when" commands pass.
       Rename evidence respects the same path exclusions as frequency and co-change signals, while formatting-only exclusions retain rename evidence.
       The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records earlier local checks and named fixture controls.
       C13 refreshed T2.4.json and all five C12 command-output artifacts from fresh runs against landed C12 revision fc953e2ea6a8990c92aa29fe820efe43740b0242.
-      Firstmate defers this refresh to the next slice's first evidence-only commit, using the landed implementation revision.
       Injected Windows/macOS cases run on Linux, while real platform execution and complete agent acceptance remain unverified.
   - [x] T2.5 Build the findings schema and report
       C13 adds the complete findings schema, tested uniqueItems validation, source and selection joins, and scratch-only reports with one stage-specific readiness result.
