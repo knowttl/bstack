@@ -37,6 +37,7 @@ There are no size or frequency thresholds, violation classifications or import a
 
 History uses `git log` with 50% similarity rename detection and first-parent diffs for merge commits.
 Older names join the newest name found within the selected range, including chained renames.
+Additions and deletions end rename lineage, including in excluded formatting commits, so a replacement file does not inherit the previous file's history.
 `data.renames` retains commit, original path, destination path and canonical path.
 Renames outside the range are not inferred.
 Counts describe same-commit changes, rather than observed merge conflicts.

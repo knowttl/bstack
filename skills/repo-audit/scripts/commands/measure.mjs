@@ -67,7 +67,7 @@ export async function run(options) {
     const originalPath = tokens[++index]
     const renamed = token.startsWith('R')
     const path = renamed ? tokens[++index] : originalPath
-    record.changes.push({ path, ...(renamed ? { originalPath } : {}) })
+    record.changes.push({ status: token[0], path, ...(renamed ? { originalPath } : {}) })
   }
   if ([...formatting].some(value => !commits.some(record => record.commit === value))) throw new CommandError('failed', [{ code: 'exclusion-outside-range', message: 'Every formatting commit must belong to the selected range.', fix: 'Remove out-of-range exclusions or change the range.' }])
   // Walk newest to oldest so older names join the final name, including chained renames.
@@ -77,11 +77,14 @@ export async function run(options) {
   for (const record of commits) {
     const touched = new Set()
     for (const change of record.changes) {
+      if (change.status === 'D') aliases.delete(change.path)
       const path = aliases.get(change.path) ?? change.path
       if (change.originalPath) {
+        aliases.delete(change.path)
         aliases.set(change.originalPath, path)
-        renames.push({ commit: record.commit, ...change, canonicalPath: path })
+        renames.push({ commit: record.commit, path: change.path, originalPath: change.originalPath, canonicalPath: path })
       }
+      if (change.status === 'A') aliases.delete(change.path)
       const omitted = exclusion(change.path) || (change.originalPath ? exclusion(change.originalPath) : false) || exclusion(path)
       if (formatting.has(record.commit) || omitted) continue
       if (!files.has(path)) files.set(path, { path, bytes: null, commits: [] })
@@ -98,7 +101,7 @@ export async function run(options) {
   return { inputs: { repo: target.root, range: options.range, exclusions: options.exclusions ?? null }, data: {
     range: { requested: options.range, base, head, resolved: range },
     shallow,
-    renameHandling: 'Git 50% similarity detection, older paths joined to newest names within the range', renames,
+    renameHandling: 'Git 50% similarity detection, older paths joined to newest names within each file lifetime in the range', renames,
     exclusions: { rules: rules.map(({ reason, pattern }) => ({ reason, pattern })), files: [...excluded.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0), formattingCommits: [...formatting].sort() },
     files: [...files.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map(file => ({ ...file, changeCount: file.commits.length })),
     coChangePairs: [...pairs.values()].map(pair => ({ ...pair, changeCount: pair.commits.length })),

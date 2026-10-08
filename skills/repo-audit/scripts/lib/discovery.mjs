@@ -19,6 +19,6 @@ export async function repoFiles(root) {
 }
 
 export function readGit(root, args) {
-  return spawnSync('git', ['-C', root, ...args], { encoding: 'utf8',
+  return spawnSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: Infinity,
     env: { ...process.env, GIT_OPTIONAL_LOCKS: '0', GIT_DIR: undefined, GIT_WORK_TREE: undefined, GIT_COMMON_DIR: undefined, GIT_INDEX_FILE: undefined } })
 }

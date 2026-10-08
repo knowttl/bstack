@@ -90,6 +90,67 @@ test('measure honours empty ranges, missing history, and deleted paths', async t
   assert.deepEqual(empty.data.files, [])
 })
 
+for (const scenario of [
+  { boundary: 'no', formatting: [], replacement: ['replacementRename', 'addition'], original: ['deletion', 'originalRename', 'seed'] },
+  { boundary: 'addition', formatting: ['addition'], replacement: ['replacementRename'], original: ['deletion', 'originalRename', 'seed'] },
+  { boundary: 'deletion', formatting: ['deletion'], replacement: ['replacementRename', 'addition'], original: ['originalRename', 'seed'] }
+]) {
+  test(`measure separates reused rename paths with ${scenario.boundary} formatting exclusion`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    await writeFile(join(repo, 'old.txt'), 'Original bytes\n')
+    await writeFile(join(repo, 'peer.txt'), 'Peer\n')
+    const seed = commit(repo, 'seed')
+    git(repo, 'mv', 'old.txt', 'reused.txt')
+    const originalRename = commit(repo, 'rename original')
+    git(repo, 'rm', 'reused.txt')
+    const deletion = commit(repo, 'delete original')
+    await writeFile(join(repo, 'reused.txt'), 'Replacement bytes\n')
+    const addition = commit(repo, 'add replacement')
+    git(repo, 'mv', 'reused.txt', 'final.txt')
+    const replacementRename = commit(repo, 'rename replacement')
+    const commits = { seed, originalRename, deletion, addition, replacementRename }
+    const policy = join(directory, 'exclusions.json')
+    await writeFile(policy, JSON.stringify({ schemaVersion: 1, generatedPaths: [], formattingCommits: scenario.formatting.map(name => commits[name]) }))
+    const result = run('measure', repo, process.env, ['--range', 'HEAD', '--exclusions', policy])
+    assert.equal(result.exit, 0)
+    assert.deepEqual(result.data.files.find(file => file.path === 'final.txt').commits, scenario.replacement.map(name => commits[name]))
+    assert.deepEqual(result.data.files.find(file => file.path === 'reused.txt').commits, scenario.original.map(name => commits[name]))
+    assert.deepEqual(result.data.renames.map(rename => rename.canonicalPath), ['final.txt', 'reused.txt'])
+    assert.deepEqual(result.data.coChangePairs, [{ paths: ['peer.txt', 'reused.txt'], commits: [seed], changeCount: 1 }])
+  })
+}
+
+test('measure separates a recreated rename source without a deletion commit', async t => {
+  const { repo } = await emptyRepo(t)
+  await writeFile(join(repo, 'old.txt'), 'Original bytes\n')
+  await writeFile(join(repo, 'peer.txt'), 'Peer\n')
+  const seed = commit(repo, 'seed')
+  git(repo, 'mv', 'old.txt', 'middle.txt')
+  const originalRename = commit(repo, 'rename original')
+  await writeFile(join(repo, 'old.txt'), 'Replacement bytes\n')
+  const addition = commit(repo, 'add replacement')
+  git(repo, 'mv', 'old.txt', 'final.txt')
+  const replacementRename = commit(repo, 'rename replacement')
+  const result = run('measure', repo, process.env, ['--range', 'HEAD'])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.files.find(file => file.path === 'final.txt').commits, [replacementRename, addition])
+  assert.deepEqual(result.data.files.find(file => file.path === 'middle.txt').commits, [originalRename, seed])
+  assert.deepEqual(result.data.renames.map(rename => rename.canonicalPath), ['final.txt', 'middle.txt'])
+  assert.deepEqual(result.data.coChangePairs, [{ paths: ['middle.txt', 'peer.txt'], commits: [seed], changeCount: 1 }])
+})
+
+test('measure reads head inventory and history larger than one MiB', async t => {
+  const { repo } = await emptyRepo(t)
+  await mkdir(join(repo, 'dist'))
+  await Promise.all(Array.from({ length: 4400 }, (_, index) => writeFile(join(repo, 'dist', `${String(index).padStart(4, '0')}-${'x'.repeat(230)}.txt`), 'Generated\n')))
+  commit(repo, 'generated inventory')
+  const result = run('measure', repo, process.env, ['--range', 'HEAD'])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.files, [])
+  assert.deepEqual(result.data.coChangePairs, [])
+  assert.equal(result.data.exclusions.files.length, 4400)
+})
+
 for (const range of ['', '--all', 'HEAD...HEAD', '..HEAD', 'HEAD..']) {
   test(`measure rejects missing or unsupported range ${JSON.stringify(range)}`, async t => {
     const { repo } = await emptyRepo(t)
