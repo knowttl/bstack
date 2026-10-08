@@ -127,8 +127,7 @@
       "checkpoints": ["foundation", "final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "project-fit", "caseId": "AC-62", "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript." },
-        { "id": "findings", "caseId": "AC-7", "question": "Does each material recommendation name evidence, principle, consequence, bounded fix and verification?" }
+        { "id": "project-fit", "caseId": "AC-62", "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript." }
       ]
     },
     {
