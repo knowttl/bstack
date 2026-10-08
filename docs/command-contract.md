@@ -781,6 +781,7 @@ If the before and after fingerprints differ, the entire capture is `blocked` wit
 This applies to optional and inactive checks' declared inputs as well as required checks in either phase.
 There is no intermediate input tracking; changes restored before the final fingerprint are not detected.
 Required checks must pass for a phase to pass, apart from the expected failing reproduction in a successful before bug-fix run.
+That expected failure satisfies the reproduction prerequisite but still reports its acceptance outcome as failed, without claiming a verified user journey.
 Per-case coverage lists executed evidence, failed outcomes and unverified flows.
 A result covering no user journey explicitly says so, even when all required checks pass.
 Human summaries include the run, readiness and coverage limits.

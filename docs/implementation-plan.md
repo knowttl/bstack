@@ -378,11 +378,9 @@ Tick each task when its "Done when" commands pass.
       Real Windows/macOS execution remains captain checklist evidence, and affected checks can now run through C15a's explicit check plans.
   - [ ] T2.7 Build verification capture and live probes
     - C15a implements steps 1-3, 6-7 and the check-plan portion of step 8: acceptance-source schema and pointers, argument-array command capture, input freshness, explicit user-journey coverage and prior-state bug/refactor prerequisites.
-      Capture fingerprints all declared inputs once before and once after the run; any difference blocks the entire capture with `inputs changed during run`.
-      The original-state record is the plain before-fingerprint with execution order, and prior protection requires a passing capture whose before and after fingerprints match.
-      Intermediate input tracking is removed; changes restored before completion are not detected.
       `npm test -- --task T2.7` covers passing units with a failing ts-shop journey, required failure/skip/cancellation/timeout, changed-input blocking, and protective refactor evidence before structural edits plus compatibility afterward.
-      The [check-plan contract](command-contract.md#check-plans-and-capture) owns the interface, scope exclusions and local evidence limits.
+      The [task evidence](../tests/eval/results/tasks/T2.7.json) records this partial slice's execution and pending procedures.
+      The [check-plan contract](command-contract.md#check-plans-and-capture) owns the interface, before/after snapshot rules, scope exclusions and local evidence limits.
       C15b remains: live probe records, matched before/after comparison and specific side-effect approval.
       Real Windows/macOS execution and full agent acceptance remain separate evidence.
   - [ ] T2.8 Complete the existing-repo audit and apply path
