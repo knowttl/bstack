@@ -194,3 +194,37 @@ The command also checks the `records` collection with `validateIds`, as describe
 Input and schema file paths resolve from the caller's working directory, while the default schema resolves from the installed command module.
 Unreadable or malformed JSON reports `invalid-input`.
 This read-only test interface implements no audit, apply or evidence workflow.
+
+## Package check (C5a)
+
+`node scripts/check-package.mjs [--skill <folder>]` checks authored skill resources without writing files.
+The default is this checkout's `skills/repo-audit/`, independent of the caller's working directory.
+An explicit folder resolves from the caller's working directory.
+`--help` exits 0, unsupported or repeated arguments exit 3, detected package problems exit 1, and a passing package exits 0.
+Output uses the shared text result format and reports all detected problems before exiting.
+Each problem carries one stable code below.
+
+The scanner recursively reads regular files, excluding entries named `node_modules`, `.git`, `.cache` and `scratch` at every depth.
+These are installed dependencies, Git data and the package's local cache or scratch conventions.
+Directory symlinks are not traversed.
+File symlinks are read if they resolve to regular files.
+Files containing a NUL byte are treated as binary and only participate in the reference inventory.
+Unreadable files or folders report `package-unreadable` and do not stop checks of other resources.
+
+| Rule code | Exact syntactic check |
+|---|---|
+| `local-path-missing` | In every scanned text file, collect Markdown inline link/image destinations, Markdown reference-definition destinations, and single-line strings enclosed in backticks, single quotes or double quotes that start with `./`, `../`, `references/`, `scripts/`, `schemas/`, `assets/` or `agents/`. Ignore URI schemes, `//` URLs and fragment-only destinations. Remove query/fragment suffixes, decode percent escapes and remove a trailing `:line` or `:line:column`. The five named resource prefixes resolve from the skill root, all other paths from the containing file's directory. The destination must exist according to filesystem stat, as a file or directory. Invalid percent escapes also fail. |
+| `reference-unlisted` | Every scanned file under `references/`, including subdirectories and binary files, must appear with its exact skill-relative path among the recognised destinations in pipe-delimited rows under a heading named exactly `Load when`. That section ends at the next Markdown ATX heading. |
+| `reference-nested` | A recognised destination in a reference text file resolves to a path under the same skill's `references/` directory. It fails independently of whether the target exists. |
+| `skill-too-long` | After stripping a leading `---` frontmatter block terminated by another `---` line, the `SKILL.md` body has more than 500 lines. CRLF is normalised for counting and a final newline does not add a line. |
+| `reference-toc` | A reference text file has more than 100 lines, using the same line-count convention, and none of its first 20 lines is an ATX heading named `Table of contents`, `Contents` or `TOC`, case-insensitively. |
+| `host-metadata` | The leading `SKILL.md` frontmatter lacks the literal unindented line `disable-model-invocation: true`, or `agents/openai.yaml` lacks an unindented `policy:` block with a two-space-indented literal `allow_implicit_invocation: false` line. Trailing whitespace is accepted. |
+
+These are textual checks, including text in examples and comments.
+They do not parse full Markdown or YAML, accept every equivalent YAML spelling, validate duplicate YAML keys, check anchor names or TOC entries, infer unquoted prose paths, resolve computed resource names, or prove host invocation behaviour.
+Markdown destinations with spaces must use angle brackets.
+Inline link labels with nested brackets and destinations with unescaped parentheses are outside this scanner's grammar.
+Quoted resource paths must be complete literals without interpolation or embedded quote delimiters.
+The contents rule proves the early heading exists, not that its entries describe the file.
+Imports are only checked for recognised local path existence in C5a.
+Import policy, constant comments, step completion criteria and the lint-config/tool deny list belong to C5b.

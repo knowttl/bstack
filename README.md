@@ -19,14 +19,19 @@ npm test -- --task T0.3
 npm test -- --task T0.4.C4a
 npm test -- --task T0.4.C4b
 npm test -- --task T0.4.C4c
+npm test -- --task T0.5.C5a
+node scripts/check-package.mjs --skill skills/repo-audit
 ```
 
-`check` currently runs the bootstrap checks for the manifest, lockfile and test discovery, plus the skill skeleton checks.
-T0.5 replaces it with the skill package check.
+`check` runs the C5a package checks for user-only metadata, local resource paths, reference loading and line limits.
+It reports every detected problem with a stable rule code and exits 1 on failure.
+The remaining T0.5 script, import and step policies arrive in C5b.
+See the [package check contract](docs/command-contract.md#package-check-c5a) for exact syntax and limits.
 `npm run eval` reports that evaluation is not built and exits 2 until T1.2.
 Tests are discovered only under `tests/scripts/` and `tests/package-check/`.
 Task suites are registered in `tests/tasks.json`.
 `npm test -- --task T0.4` selects the currently implemented shared-library tests.
+`npm test -- --task T0.5` selects the currently implemented package-check tests.
 See [task progress](docs/implementation-plan.md#progress) for the remaining slices.
 
 Raw upstream development sources are committed outside the installed skill.
