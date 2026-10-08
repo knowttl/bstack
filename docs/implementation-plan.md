@@ -107,7 +107,7 @@ Change one only by editing this table with the reason.
 | Topic | Default |
 |---|---|
 | Node version | Support Node 24 and later. Recorded local runs on Node 24 and Node 26, with no hosted matrix. The [official release schedule](https://nodejs.org/en/about/previous-releases), checked 2026-10-07 in T0.6, lists Node 24 and 22 as LTS and Node 26 as Current |
-| Script command | One entry point, `node skills/repo-audit/scripts/repo-audit.mjs <command> --repo <path>`. New-idea draft commands use `--workspace <existing-directory>` instead |
+| Script command | One entry point, `node skills/repo-audit/scripts/repo-audit.mjs <command>`. Target options follow the [arguments and targets contract](command-contract.md#arguments-and-targets) |
 | Result format | One JSON envelope on stdout with `--json`, a short summary otherwise. Envelope in T0.4 |
 | Exit codes | 0 passed, 1 failed, 2 blocked, 3 usage error |
 | Scratch and resume state | Outside the target repo or new-idea workspace, in the OS cache folder: `%LOCALAPPDATA%\bstack\` on Windows, `~/Library/Caches/bstack/` on macOS, `$XDG_CACHE_HOME/bstack/` or `~/.cache/bstack/` on Linux. One subfolder per target, keyed by a hash of its real path, and one per run |
@@ -392,7 +392,13 @@ Tick each task when its "Done when" commands pass.
       [Checkpoint evidence](../tests/eval/results/foundation-C17/summary.md) distinguishes the scripted candidate review from blocked board interaction and exact-revision approval.
       [Task evidence](../tests/eval/results/tasks/T2.8.json) records final local validation.
       Maintained enforcement, portable maintenance and T4.3's completed-package extension proof remain pending.
-  - [ ] T2.9 Complete protected new-project creation
+  - [x] T2.9 Complete protected new-project creation - versioned reviewed destination/scaffold/command plans reuse the protected-write engine, with scratch exact diffs, no-write validation, directory/file/Git journals and interruption recovery.
+    The registered command suite covers collisions, user edits, partial writes and interrupted commands.
+    The [foundation checkpoint](../tests/eval/results/foundation-C18/summary.md) records real board verdicts, exact vision/scaffold approvals, the Chromium Rice/reload journey and an unchanged ambiguous-idea workspace.
+    The generated full native check failed and remains unverified with the created project kept; its scratch-verified one-line test correction is diagnosis only.
+    Skill-quality observation: the agent did not run and repair its own native tests before finishing the scaffold proposal.
+    This slice adds no corrective skill guidance for that observation.
+    [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks; Windows/macOS, later enforcement and maintenance remain pending.
 - Phase 3: Enforcement
   - [ ] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -1069,11 +1075,8 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
    Do not claim atomic replacement of the entire multi-file change set.
 5. Journal each edit's original and proposed hash before replacement, then record completion after replacement.
    If the process stops between replacement and journal completion, resume derives the state from the actual target hash.
-6. On resume, an original hash means the edit is pending, and a proposed hash means the edit is already applied.
-   Any other hash is a user change and blocks the run without further writes.
-   Preflight every remaining file before continuing, preserving completed edits and recoverable backups.
-7. A repeated completed plan returns an already-applied result with no writes.
-   A changed plan digest or target cannot reuse an earlier run's completion flags.
+6. Implement hash-derived resume and user-change protection according to the [apply recovery contract](command-contract.md#apply-dry-run), preserving completed edits and recoverable backups.
+7. Verify completed-plan repetition and pending journal recovery against that same contract.
 8. `state show --run <id>` reports pending, applied and conflicting edits plus affected checks that must rerun.
    On an I/O failure, stop, preserve the journal and report applied and pending files accurately.
 9. For unsupported edits, the agent proposes a reviewed whole-file replacement using the same preconditions and checks.
@@ -1182,7 +1185,7 @@ T3.1 supplies the enforcement and architecture references that recommendations l
 4. `project create --workspace <path> --plan <file>` uses the protected-write engine from T2.6.
    Journal directory creation and files, then run `git init` only at the reviewed destination.
    Never adopt an existing nonempty directory or set global Git options.
-   Interruption leaves a recoverable run, and unrelated files block continuation without overwriting them.
+   Interruption leaves a recoverable run under the [creation recovery contract](command-contract.md#protected-project-creation).
 5. Write the approved vision, confirmed glossary and selected foundation through that same plan.
    Record setup or first-journey failures as unverified, retaining the created project for recovery.
 6. Run the new-idea and ambiguous-idea scenarios with `--stage foundation`.

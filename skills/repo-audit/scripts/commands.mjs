@@ -1,5 +1,10 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'project create': {
+    module: './commands/project.mjs',
+    options: ['plan', 'dry-run'],
+    help: 'Create or resume the approved minimal project.\nUsage: repo-audit.mjs project create --workspace <existing-directory> --plan <file> [--dry-run] [--json]\nPlan follows schemas/project-create.json and references a reviewed change set. Dry run builds only in scratch. Repeat the unchanged plan to recover directory, file and Git creation. Failed setup or journey keeps the project unverified.'
+  },
   'probe record': {
     module: './commands/probe.mjs',
     options: ['name', 'phase', 'spec', 'approved-by-user', 'command'],

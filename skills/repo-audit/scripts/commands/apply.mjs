@@ -22,9 +22,8 @@ async function input(file) {
   }
 }
 
-export async function run(options) {
+export async function prepareChangeSet(options, target) {
   if (!options.plan) throw new CommandError('usage-error', [{ code: 'missing-plan', message: '--plan is required.', fix: 'Supply a reviewed change set.' }])
-  const target = await resolveTarget(options, { draftOnly: true })
   const plan = await input(options.plan)
   validateData(JSON.parse(await readFile(new URL('../../schemas/change-set.schema.json', import.meta.url), 'utf8')), plan)
   const findings = await input(resolve(dirname(resolve(options.plan)), plan.findings))
@@ -85,13 +84,19 @@ export async function run(options) {
     }
   }
   if (problems.length) throw new CommandError('failed', problems)
-  const inputs = { target, plan: options.plan }
+  return { inputs: { target, plan: options.plan }, plan, staged, directory, journal, findings }
+}
+
+export async function run(options) {
+  const target = await resolveTarget(options, { draftOnly: true })
+  const { inputs, plan, staged, directory, journal, findings } = await prepareChangeSet(options, target)
+  const { planDigest } = plan
   if (options['dry-run']) return { inputs, data: { planDigest, dryRun: true,
     edits: staged.map(({ originalBytes, resolvedPath, ...edit }) => edit), diff: staged.map(edit => edit.diff).join('') } }
   if (journal) {
     const state = await inspectJournal(journal)
     if (state.conflicting.length) return { inputs, status: 'blocked', problems: state.conflicting.map(path => ({ code: 'user-change', path,
-      message: 'Target matches neither the original nor proposed bytes.', fix: 'Review the user change before continuing.' })), data: state }
+      message: 'Target bytes conflict with the recorded edit state.', fix: 'Review the user change before continuing.' })), data: state }
   }
   const result = await applyWrites(target, plan, staged, directory, journal, findings.requiredOutcomes)
   return result.status ? { inputs, ...result } : { inputs, data: result }
