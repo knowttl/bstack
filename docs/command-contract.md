@@ -657,13 +657,15 @@ Filesystem access failures block the command; invalid plans fail with named prob
 | `create` | `{ "content": "complete new text" }` | An absent UTF-8 `.md`, `.txt` or `.json` file; JSON must be an object without duplicate keys |
 | `replace` | `{ "search": "unique nonempty literal", "replacement": "new text" }` | One exact occurrence in `.md` or `.txt`; an empty replacement keeps the file present |
 | `delete` | `{}` | One existing UTF-8 text file; both proposed fields must be null |
-| `set-heading-section` | `{ "heading": "ATX heading title", "content": "new body\n" }` | `.md`; exactly one matching heading outside fenced code, replacing its body and subsections until the next same-or-higher-level heading |
+| `set-heading-section` | `{ "heading": "ATX heading title", "content": "new body\n" }` | `.md`; exactly one matching nonempty ATX heading at column 0 outside fenced code, replacing its body and subsections until the next same-or-higher-level heading |
 | `set-json-key` | `{ "key": "root key", "value": { "any": "JSON value" } }` | A `.json` object; replace one root value or insert a missing root key, preserving other bytes |
 | `append-line-once` | `{ "line": "one nonempty line" }` | `.md` or `.txt`; leave an existing exact line intact, otherwise append it using CRLF when present, LF otherwise |
 
 Payloads reject unknown and missing fields.
 Malformed JSON, duplicate keys at any depth (including escaped equivalents), JSON arrays at the root, binary/non-UTF-8 text and unsupported extensions fail.
-Heading edits recognize empty ATX headings as section boundaries and reject HTML-like markup outside fenced code, setext headings, thematic breaks and unclosed fences rather than guessing a Markdown section boundary.
+Heading edits support unindented prose, nonempty ATX headings at column 0 and closed fences at column 0 with an optional plain info word containing letters, digits, underscores, plus signs, dots or hyphens.
+Outside fenced code, indented content, lists, block quotes, HTML-like markup, tables, reference definitions, empty headings, setext headings and thematic breaks are unsupported.
+Unsupported structures fail with `Unsupported Markdown structure; use whole-file replacement.` rather than guessing a section boundary.
 The selected heading needs a line ending and a nonempty new body must end with a newline.
 Replacement searches with zero or multiple occurrences fail.
 Unsupported edits need the C14b reviewed whole-file interface.

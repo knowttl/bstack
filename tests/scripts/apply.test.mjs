@@ -68,8 +68,7 @@ for (const [name, operation, original, payload, proposed, path] of [
   ['comment in fenced code is preserved', 'set-heading-section', '```md\n<!--\n# A\n-->\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '```md\n<!--\n# A\n-->\n```\n# A\nnew\n', 'README.md'],
   ['HTML block in fenced code is preserved', 'set-heading-section', '~~~html\n<pre>\n# A\n</pre>\n~~~\n# A\nold\n', { heading: 'A', content: 'new\n' }, '~~~html\n<pre>\n# A\n</pre>\n~~~\n# A\nnew\n', 'README.md'],
   ['less-than prose', 'set-heading-section', '# A\nold\n# B\n1 < 2\n', { heading: 'A', content: 'new\n' }, '# A\nnew\n# B\n1 < 2\n', 'README.md'],
-  ['closing heading markers', 'set-heading-section', '# A ###\nold\n# B ###\nkeep\n', { heading: 'A', content: 'new\n' }, '# A ###\nnew\n# B ###\nkeep\n', 'README.md'],
-  ['CRLF empty heading boundary', 'set-heading-section', '# A\r\nold\r\n#\r\nkeep\r\n', { heading: 'A', content: 'new\r\n' }, '# A\r\nnew\r\n#\r\nkeep\r\n', 'README.md']
+  ['closing heading markers', 'set-heading-section', '# A ###\nold\n# B ###\nkeep\n', { heading: 'A', content: 'new\n' }, '# A ###\nnew\n# B ###\nkeep\n', 'README.md']
 ]) {
   test(`apply dry run stages ${name} with no project writes`, async t => {
     const context = await setup(t, operation, original, payload, proposed, path)
@@ -131,14 +130,40 @@ test('apply prints the exact selected-delete diff in plain and JSON output', asy
 })
 
 for (const boundary of ['#', '#   ', '# ###', '##', '###', '####', '#####', '######']) {
-  test(`heading edits preserve the empty ${JSON.stringify(boundary)} section`, async t => {
+  test(`heading edits reject the empty ${JSON.stringify(boundary)} section without project writes`, async t => {
     const level = boundary.trim().split(' ')[0].length
     const heading = '#'.repeat(level) + ' A\n'
     const context = await setup(t, 'set-heading-section', `${heading}old\n${boundary}\nkeep\n# C\nrest\n`,
       { heading: 'A', content: 'new\n' }, `${heading}new\n${boundary}\nkeep\n# C\nrest\n`)
     const result = await preview(context)
-    assert.equal(result.exit, 0, JSON.stringify(result))
-    assert.equal(result.data.edits[0].proposedContent, context.plan.edits[0].proposedContent)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'unsupported-format')
+    assert.equal(result.problems[0].message, 'Unsupported Markdown structure; use whole-file replacement.')
+  })
+}
+
+for (const [name, structure] of [
+  ['unordered list continuation', '- item\n # B\n keep\n'],
+  ['ordered list continuation', '1. item\n   # B\n   keep\n'],
+  ['unordered list heading', '- # B\n'],
+  ['ordered list heading', '1) # B\n'],
+  ['indented heading', ' # B\n'],
+  ['tab-indented heading', '\t# B\n'],
+  ['block quote heading', '> # B\n'],
+  ['HTML block', '<pre>\n# B\n</pre>\n'],
+  ['indented fence', ' ```md\n# B\n ```\n'],
+  ['fence attributes', '```md {#example}\n# B\n```\n'],
+  ['table', 'name | value\n--- | ---\n'],
+  ['reference definition', '[example]: target.md\n'],
+  ['CRLF empty heading', '#\r\nkeep\r\n']
+]) {
+  test(`heading edits reject unsupported ${name} with whole-file guidance and no project writes`, async t => {
+    const context = await setup(t, 'set-heading-section', `# A\nold\n${structure}# C\nrest\n`, { heading: 'A', content: 'new\n' }, '')
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'unsupported-format')
+    assert.equal(result.problems[0].message, 'Unsupported Markdown structure; use whole-file replacement.')
+    assert.deepEqual(result.data, {})
   })
 }
 

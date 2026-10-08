@@ -25,21 +25,24 @@ function headingSection(text, heading, content) {
   let offset = 0
   for (const line of lines) {
     const semanticLine = offset === 0 ? line.replace(/^\uFEFF/, '') : line
-    const marker = /^ {0,3}(`{3,}|~{3,})(.*?)(?:\r?\n)?$/.exec(semanticLine)
+    const marker = /^(`{3,}|~{3,})(.*?)(?:\r?\n)?$/.exec(semanticLine)
     if (fence) {
       if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined
     } else if (marker) {
-      if (marker[1][0] === '`' && marker[2].includes('`')) reject('unsupported-format', 'Backtick fence info strings cannot contain backticks.')
+      if (!/^[A-Za-z0-9_+.-]*$/.test(marker[2].trim())) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
       fence = marker[1]
-    } else {
-      if (/<(?:\/?[A-Za-z]|[!?])/.test(semanticLine)) reject('unsupported-format', 'HTML-like markup requires a reviewed replacement.')
-      if (/^ {0,3}(?:=+|-+)\s*$/.test(semanticLine)) reject('unsupported-format', 'Setext headings and thematic breaks require a reviewed replacement.')
-      const match = /^ {0,3}(#{1,6})(?:[ \t]+(.*))?$/.exec(semanticLine.replace(/\r?\n$/, ''))
-      if (match) headings.push({ title: (match[2] ?? '').replace(/(?:^|[ \t]+)#+[ \t]*$/, '').trim(), level: match[1].length, start: offset, body: offset + line.length })
+    } else if (semanticLine.trim()) {
+      if (/^(?:[ \t]|[>\[]|(?:[-+*]|\d+[.)])(?:[ \t]|$)|[=*_ -]+[\r\n]*$)|\||<(?:\/?[A-Za-z]|[!?])/.test(semanticLine)) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
+      if (semanticLine.startsWith('#')) {
+        const match = /^(#{1,6})[ \t]+(.+)$/.exec(semanticLine.replace(/\r?\n$/, ''))
+        const title = match?.[2].replace(/(?:^|[ \t]+)#+[ \t]*$/, '').trim()
+        if (!title) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
+        headings.push({ title, level: match[1].length, start: offset, body: offset + line.length })
+      }
     }
     offset += line.length
   }
-  if (fence) reject('unsupported-format', 'An unclosed Markdown fence makes heading scope unresolved.')
+  if (fence) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
   const matches = headings.filter(item => item.title === heading)
   if (matches.length !== 1) reject('ambiguous-heading', 'The heading must identify exactly one ATX section.')
   const selected = matches[0]
