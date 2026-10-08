@@ -240,6 +240,6 @@
   "sessionId": "[identifier-2]",
   "conversation": "conversation.txt",
   "authenticatedVia": "throwaway copy",
-  "conversationHash": "a61c15128485b784c074444eb83eac198d00a9e16de5ccecba88118e41cdd94e",
+  "conversationHash": "9bda3b607fb6592f55f1d1b5e40dcf45c6f20d8b39c153079ca128cf792c80c2",
   "scoredAt": "2026-10-08T07:12:10.228Z"
 }
