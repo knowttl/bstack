@@ -136,7 +136,8 @@ async function score(opts, results) {
     id: text, passed: { type: 'boolean' }, startLine: { type: 'integer' }, endLine: { type: 'integer' }
   })) }), answers)
   validateIds(answers.checks, '$/checks')
-  if (answers.runId !== record.id || !answers.reviewer.trim() || answers.checks.length !== record.scenario.checks.length ||
+  if (answers.reviewer.trim().length < 3 || /^\d+$/.test(answers.reviewer.trim())) fail('Reviewer identities must contain at least three characters and cannot be purely numeric.')
+  if (answers.runId !== record.id || answers.checks.length !== record.scenario.checks.length ||
       record.scenario.checks.some(check => !answers.checks.some(answer => answer.id === check.id))) fail('Answers must name this run, a reviewer and every checklist ID exactly once.')
   const transcript = await readFile(resolve(opts.transcript), 'utf8')
   if (!transcript.trim()) fail('Transcript is empty. The run remains blocked.')

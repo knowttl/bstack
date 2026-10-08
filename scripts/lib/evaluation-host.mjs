@@ -24,26 +24,35 @@ export function redactEvidence(content, record) {
   ].filter(([value, placeholder]) => value && (placeholder === '[redacted: user name]' ? value !== placeholder : !/^[\[<]/.test(value)))
   const names = replacements.sort((a, b) => b[0].length - a[0].length)
   const scratch = tmpdir().replace(/[\\/]$/, '')
-  function redact(value) {
+  function redact(value, decoded = false) {
     let serialized
     try { serialized = JSON.parse(value) } catch {}
-    if (serialized === undefined) {
-      for (const [name, placeholder] of names) {
-        value = value.replace(new RegExp(`(?<![\\p{L}\\p{N}_-])${RegExp.escape(name)}(?![\\p{L}\\p{N}_-])`, 'gu'), () => placeholder)
+    if ((serialized !== null && typeof serialized === 'object') || (!decoded && typeof serialized === 'string')) {
+      const strings = new Map()
+      function walk(node) {
+        if (typeof node === 'string') strings.set(node, redact(node, true))
+        else if (node !== null && typeof node === 'object') Object.values(node).forEach(walk)
       }
+      walk(serialized)
+      return value.replace(/"(?:[^"\\\x00-\x1f]|\\.)*"/g, (part, offset) => {
+        if (/^\s*:/.test(value.slice(offset + part.length))) return part
+        const original = JSON.parse(part)
+        const replacement = strings.get(original)
+        return replacement === undefined || replacement === original ? part : JSON.stringify(replacement)
+      })
     }
-    return value.replace(/"(?:[^"\\\x00-\x1f]|\\.)*"|[^"]+|"/g, part => {
-      if (part.startsWith('"') && part.length > 1) {
-        let decoded
-        try { decoded = JSON.parse(part) } catch {}
-        if (typeof decoded === 'string') {
-          const redacted = redact(decoded)
-          return redacted === decoded ? part : JSON.stringify(redacted)
-        }
-      }
-      return part.replace(new RegExp(`${RegExp.escape(scratch)}[/\\\\]+[^\\s"'\\\\;<>]+`, 'g'), '[scratch-path]')
-        .replace(/(?:\/private)?\/tmp\/[^\s"'\\;<>]+/g, '[scratch-path]')
-        .replace(/\/(?:home|Users)\/[^\s/"'\\;<>]+/g, '[host-home]')
+    if (/[\r\n]/.test(value)) return value.split(/(\r\n|\r|\n)/).map((part, index) => index % 2 ? part : redact(part, decoded)).join('')
+    for (const [name, placeholder] of names) {
+      value = value.replace(new RegExp(`(?<![\\p{L}\\p{N}_-])${RegExp.escape(name)}(?![\\p{L}\\p{N}_-])`, 'gu'), () => placeholder)
+    }
+    value = value.replace(new RegExp(`${RegExp.escape(scratch)}[/\\\\]+[^\\s"'\\\\;<>]+`, 'g'), '[scratch-path]')
+      .replace(/(?:\/private)?\/tmp\/[^\s"'\\;<>]+/g, '[scratch-path]')
+      .replace(/\/(?:home|Users)\/[^\s/"'\\;<>]+/g, '[host-home]')
+    return value.replace(/"(?:[^"\\\x00-\x1f]|\\.)*"/g, part => {
+      let original
+      try { original = JSON.parse(part) } catch { return part }
+      const replacement = redact(original, true)
+      return replacement === original ? part : JSON.stringify(replacement)
     })
   }
   return redact(content)

@@ -138,6 +138,7 @@ The `clear-goals` loading score uses observed command/file-open events, never a 
 Create a scoring answers file using the checklist IDs printed by the run.
 Every check needs a Boolean verdict and a one-based inclusive line range in the transcript, whether it passed or failed.
 The reviewer is responsible for the judgement and for identifying unavailable observations as a failed check with the limitation in the transcript.
+Reviewer identities must contain at least three characters and cannot be purely numeric; published reviewer fields always use the anonymous placeholder.
 All current scenario checks are human scored.
 Fixture sanity remains deterministic in the existing builder and does not substitute for agent observations.
 

@@ -245,6 +245,42 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   return { result, record }
 }
 
+test('reviewer publication preserves JSON keys and scalar types while rejecting unsupported identities', async t => {
+  for (const [reviewer, status] of [['Alice "Ali" Chen', 0], ['123', 2], ['id', 2]]) {
+    await t.test(reviewer, async t => {
+      const directory = await temporary(t)
+      const record = start(t, directory)
+      const files = await inputs(directory, record)
+      files.answers.reviewer = reviewer
+      await writeFile(files.answersPath, JSON.stringify(files.answers))
+      const document = { id: 'stable', [reviewer]: reviewer, text: reviewer, nested: [{ [reviewer]: reviewer }], number: 123, passed: true }
+      const transcript = JSON.stringify(document, null, '\t') + '\n'
+      const redacted = redactEvidence(transcript, { caseResults: [{ reviewer }] })
+      const expected = { ...document, [reviewer]: '[redacted: user name]', text: '[redacted: user name]', nested: [{ [reviewer]: '[redacted: user name]' }] }
+      assert.deepEqual(JSON.parse(redacted), expected)
+      assert.equal(redacted.split('\n').length, transcript.split('\n').length)
+      assert.deepEqual(JSON.parse(JSON.parse(redactEvidence(JSON.stringify({ stdout: transcript }), { caseResults: [{ reviewer }] })).stdout), expected)
+      await writeFile(files.transcriptPath, transcript)
+      const result = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath)
+      assert.equal(result.status, status, result.stdout)
+      const saved = JSON.parse(await readFile(join(directory, record.id, 'run.json'), 'utf8'))
+      assert.equal(saved.id, record.id)
+      assert.equal(saved.scenario.id, record.scenario.id)
+      assert.equal(saved.scenario.checks[0].id, 'decision')
+      if (status === 2) {
+        assert.equal(saved.transcript, null)
+        assert.deepEqual(await readdir(join(directory, record.id)), ['run.json'])
+      } else {
+        assert.equal(saved.caseResults[0].reviewer, '[redacted: user name]')
+        assert.equal(saved.caseResults[0].id, 'decision')
+        assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, saved.transcript), 'utf8')), expected)
+        assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, saved.answers), 'utf8')),
+          { ...files.answers, reviewer: '[redacted: user name]' })
+      }
+    })
+  }
+})
+
 test('supplied reviewer identities including quoted nicknames are redacted throughout scoring publication', async t => {
   for (const [host, reviewer, mode] of [
     ['manual', 'Alice Chen', 'reviewer'],
