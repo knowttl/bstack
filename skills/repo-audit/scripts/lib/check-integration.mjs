@@ -1,12 +1,11 @@
 import { basename } from 'node:path'
-import { isAlias, isMap, isScalar, parseDocument, visit } from 'yaml'
 import { inspectJSON } from './json.mjs'
 import { CommandError } from './result.mjs'
 
 function reject(path) {
   throw new CommandError('failed', [{ code: 'ignored-check-failure', path,
     message: 'Check integration must preserve failures. Use simple commands joined with && and disable failure-tolerance settings.',
-    fix: 'Review a failure-preserving command and prove its exit code in disposable controls.' }])
+    fix: 'Review selected command paths and failure-preserving commands, use JSON syntax for marked CI edits, and prove exit codes in disposable controls.' }])
 }
 
 // A bounded command grammar avoids claiming to understand arbitrary shell programs.
@@ -42,36 +41,34 @@ function command(text, path) {
     if (word === '&&' && words[index - 1] === '&&') reject(path)
     if (word === '&&') { first = true; continue }
     if (first && /^[A-Za-z_][A-Za-z0-9_]*=/.test(word)) reject(path)
-    if (first && ['set', 'exit', 'trap', 'eval', 'exec', 'env', 'sh', 'bash', 'zsh', 'cmd', 'powershell', 'pwsh']
+    if (first && ['set', 'exit', 'trap', 'eval', 'exec', 'env', 'command', 'builtin', 'source', '.',
+      'sh', 'bash', 'rbash', 'zsh', 'dash', 'ash', 'ksh', 'ksh88', 'ksh93', 'mksh', 'pdksh', 'yash', 'posh',
+      'csh', 'tcsh', 'fish', 'busybox', 'time', 'nohup', 'nice', 'timeout', 'setsid', 'sudo', 'doas', 'xargs',
+      'cmd', 'powershell', 'pwsh', 'call', 'start']
       .includes(word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.exe$/, ''))) reject(path)
     first = false
   }
 }
 
-export function validateCheckIntegration(path, original, proposed) {
-  if (proposed === null) return
-  if (basename(path) === 'package.json') {
-    const before = original === null ? {} : inspectJSON(original).value.scripts ?? {}
-    const after = inspectJSON(proposed).value.scripts ?? {}
-    for (const [name, value] of Object.entries(after)) {
-      if (value !== before[name]) {
-        if (typeof value !== 'string') reject(path)
-        command(value, path)
+export function validateCheckIntegration(path, proposed, selected) {
+  if (!selected) return
+  const packageScript = basename(path) === 'package.json'
+  if (proposed === null || (!packageScript && !/\.ya?ml$/i.test(path))) reject(path)
+  let document
+  try { document = inspectJSON(proposed).value } catch { reject(path) }
+  for (const keys of selected) {
+    if (packageScript ? keys.length !== 2 || keys[0] !== 'scripts' : !['run', 'script'].includes(keys.at(-1))) reject(path)
+    let value = document
+    for (const key of keys) {
+      if (value === null || typeof value !== 'object' || !Object.hasOwn(value, key)) reject(path)
+      if (!packageScript) {
+        for (const setting of ['continue-on-error', 'allow_failure']) {
+          if (Object.hasOwn(value, setting) && value[setting] !== false) reject(path)
+        }
       }
+      value = value[key]
     }
+    if (typeof value !== 'string') reject(path)
+    command(value, path)
   }
-  if (!/\.(ya?ml)$/i.test(path)) return
-  const document = parseDocument(proposed)
-  if (document.errors.length || document.warnings.length) reject(path)
-  visit(document, (_, node) => {
-    if (isAlias(node) || node?.anchor || node?.tag || node?.flow) reject(path)
-    if (!isMap(node)) return
-    for (const { key, value } of node.items) {
-      if (!isScalar(key)) reject(path)
-      if (['continue-on-error', 'allow_failure'].includes(key.value) && (!isScalar(value) || value.value !== false)) reject(path)
-      if (!['run', 'script'].includes(key.value)) continue
-      if (!isScalar(value) || typeof value.value !== 'string') reject(path)
-      command(value.value, path)
-    }
-  })
 }

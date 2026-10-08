@@ -5,6 +5,7 @@ import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
+import { parse } from 'yaml'
 import { emptyRepo, run, snapshot, git } from './discovery-fixture.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -26,7 +27,7 @@ async function save(context, refresh = true) {
   await writeFile(context.file, JSON.stringify(context.plan))
 }
 
-async function setup(t, operation = 'replace', original = 'old\n', payload = { search: 'old', replacement: 'new' }, proposed = 'new\n', path = 'README.md') {
+async function setup(t, operation = 'replace', original = 'old\n', payload = { search: 'old', replacement: 'new' }, proposed = 'new\n', path = 'README.md', checkIntegration) {
   const context = await emptyRepo(t)
   context.env = { ...process.env, XDG_CACHE_HOME: join(context.directory, 'cache'), LOCALAPPDATA: join(context.directory, 'cache'), HOME: context.directory, USERPROFILE: context.directory }
   context.file = join(context.directory, 'plan ü &.json')
@@ -42,8 +43,23 @@ async function setup(t, operation = 'replace', original = 'old\n', payload = { s
     selectedFindingIds: ['F-001'], reviewedScope: [{ path, resolvedPath: join(context.repo, path) }],
     edits: [{ id: 'E-001', findingId: 'F-001', path, originalHash: hash(original), proposedHash: hash(proposed), operation, payload, proposedContent: proposed }], planDigest: ''
   }
+  if (checkIntegration) context.plan.edits[0].checkIntegration = checkIntegration
   await save(context)
   return context
+}
+
+async function integration(t, path, content, original = path === 'package.json' ? '{}' : '') {
+  let proposed = content
+  let selected = [['scripts', 'check']]
+  if (path !== 'package.json') {
+    let document
+    try { document = parse(content) } catch {
+      return setup(t, 'replace-file', original, { content }, content, path, [['steps', '0', 'run']])
+    }
+    proposed = JSON.stringify(document)
+    selected = document.job ? [['job', 'script']] : [['steps', '0', Object.hasOwn(document.steps[0], 'run') ? 'run' : 'script']]
+  }
+  return setup(t, 'replace-file', original, { content: proposed }, proposed, path, selected)
 }
 
 function execute(context, fault, command = 'apply', extra = ['--plan', context.file]) {
@@ -84,7 +100,60 @@ for (const value of ['node check.mjs || true', 'node check.mjs || :', 'node chec
   "CI=true sh -c 'npm run check || true'", "npm test && CI=true sh -c 'npm run check || true'"]) {
   test(`apply rejects swallowed package command failure: ${value}`, async t => {
     const proposed = JSON.stringify({ scripts: { check: value } })
-    const context = await setup(t, 'replace-file', '{}', { content: proposed }, proposed, 'package.json')
+    const context = await integration(t, 'package.json', proposed)
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'ash', 'ksh', 'fish', 'busybox sh', 'cmd.exe']) {
+  for (const prefix of ['', 'npm test && ']) {
+    const value = `${prefix}${executable} -c 'npm run check || true'`
+    for (const [path, content] of [
+      ['package.json', JSON.stringify({ scripts: { check: value } })],
+      ['ci.yml', JSON.stringify({ steps: [{ run: value }] })],
+      ['ci.yml', JSON.stringify({ job: { script: value } })]
+    ]) {
+      test(`apply rejects selected shell dispatch: ${path} ${content}`, async t => {
+        const context = await integration(t, path, content)
+        assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+      })
+    }
+  }
+}
+
+for (const [path, content] of [
+  ['config.yml', 'packages: [web, core]\n'],
+  ['package.json', '{"scripts":{"start":"node $ENTRY"}}']
+]) {
+  test(`apply permits unrelated reviewed edit: ${path}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, path), 'utf8'), content)
+  })
+}
+
+for (const [path, content, selected] of [
+  ['package.json', '{"scripts":{"check":"npm test","start":"node $ENTRY"}}', [['scripts', 'check']]],
+  ['ci.yml', '{"packages":["web","core"],"steps":[{"run":"npm test"},{"run":"echo $ENTRY","continue-on-error":true}]}', [['steps', '0', 'run']]]
+]) {
+  test(`apply validates only selected commands within an integration edit: ${path}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path, selected)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, path), 'utf8'), content)
+  })
+}
+
+for (const [path, content, selected] of [
+  ['package.json', '{"scripts":{"check":"npm test","boundaries":"node boundaries.mjs || true"}}', [['scripts', 'check'], ['scripts', 'boundaries']]],
+  ['ci.yml', '{"steps":[{"run":"npm test"},{"script":"node boundaries.mjs || true"}]}', [['steps', '0', 'run'], ['steps', '1', 'script']]],
+  ['ci.yml', '{"job":{"allow_failure":true,"steps":[{"run":"npm test"}]}}', [['job', 'steps', '0', 'run']]],
+  ['package.json', '{"scripts":{"start":"npm start"}}', [['scripts', 'check']]],
+  ['ci.yml', 'steps:\n  - run: npm test\n', [['steps', '0', 'run']]]
+]) {
+  test(`apply rejects invalid selected integration: ${path} ${content}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path, selected)
     assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
   })
 }
@@ -101,7 +170,7 @@ for (const proposed of [
   'steps:\n  - run: *unchecked\n'
 ]) {
   test(`apply rejects ignored CI failure: ${JSON.stringify(proposed)}`, async t => {
-    const context = await setup(t, 'replace-file', '', { content: proposed }, proposed, 'ci.yml')
+    const context = await integration(t, 'ci.yml', proposed)
     assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
   })
 }
@@ -113,7 +182,7 @@ for (const key of ['run', 'script']) {
     "npm test && CI=true sh -c 'npm run check || true'"]) {
     const proposed = `steps:\n  - ${key}: ${scalar}\n`
     test(`apply rejects folded or prefixed CI failure: ${JSON.stringify(proposed)}`, async t => {
-      const context = await setup(t, 'replace-file', '', { content: proposed }, proposed, 'ci.yml')
+      const context = await integration(t, 'ci.yml', proposed)
       assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
     })
   }
@@ -122,7 +191,7 @@ for (const key of ['run', 'script']) {
     '"npm run check" # selected check', "'npm run check' # selected check", '"npm run \\x63heck"']) {
     const proposed = `steps:\n  - ${key}: ${scalar}\n    name: Check\n`
     test(`apply accepts decoded CI scalar with sibling: ${JSON.stringify(proposed)}`, async t => {
-      const context = await setup(t, 'replace-file', '', { content: proposed }, proposed, 'ci.yml')
+      const context = await integration(t, 'ci.yml', proposed)
       assert.equal((await preview(context)).exit, 0)
       assert.equal(execute(context).exit, 0)
     })
@@ -137,7 +206,7 @@ for (const value of ['tsc --noEmit # typecheck && node boundaries.mjs',
     ['ci.yml', `job:\n  script: |\n    ${value.replaceAll('\n', '\n    ')}\n`, '']
   ]) {
     test(`apply rejects shell comments hiding checks: ${path} ${JSON.stringify(proposed)}`, async t => {
-      const context = await setup(t, 'replace-file', original, { content: proposed }, proposed, path)
+      const context = await integration(t, path, proposed, original)
       assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
     })
   }
@@ -152,7 +221,7 @@ for (const [path, proposed] of [
   ['ci.yml', 'steps:\n  - run: |\n      npm run check &&\n      npm test\n']
 ]) {
   test(`apply accepts failure-preserving integration: ${path} ${JSON.stringify(proposed)}`, async t => {
-    const context = await setup(t, 'replace-file', path.endsWith('.json') ? '{}' : '', { content: proposed }, proposed, path)
+    const context = await integration(t, path, proposed)
     assert.equal((await preview(context)).exit, 0)
     assert.equal(execute(context).exit, 0)
   })

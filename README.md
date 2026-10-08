@@ -8,7 +8,7 @@ The procedure defines both audit checklists, review before apply, protected writ
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
 Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending principles and their checks, and [architecture](skills/repo-audit/references/architecture.md) when recommending module boundaries.
-These provide project-specific guidance, native rule-proof and debt baseline checks, with maintained local integration still pending.
+These provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
 The maintenance reference remains a placeholder, while maintained enforcement, portable maintenance and the installer are pending.
@@ -147,7 +147,9 @@ Integrate selected native checks into the project's existing check command throu
 Keep package rules scoped to their owning package and prepare the complete documented initial debt baseline through selected findings before expecting an audited project to pass.
 Prove each rule independently on the clean fixture variants, then use `rule-proof` with the identical maintained command, such as `npm run check`, on separate valid and seeded disposable copies.
 The target owns the checker and its declared dependencies, so ordinary contributors can run it without an installed skill or agent session.
-`apply` rejects failure-masking package scripts and supported YAML CI command edits; simple commands joined with `&&` preserve failures.
+Mark selected command paths with each edit's `checkIntegration`, such as `[["scripts", "check"]]` for a package check script.
+`apply` rejects failure-masking selected commands; simple commands joined with `&&` preserve failures, while unrelated reviewed edits pass through unchanged.
+Selected CI edits use the JSON subset of YAML and exact `run`/`script` paths, as described in the [command contract](docs/command-contract.md#apply-dry-run).
 CI integration requires the project's selection and its adapter behaviour remains unverified until hosted execution is observed.
 Run `npm test -- --task T3.4` for the maintained-command, baseline and web/core scope controls.
 

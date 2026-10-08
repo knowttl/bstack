@@ -29,7 +29,8 @@ async function apply(repo, contents, category = 'missing-protection', scope = Ob
   for (const [path, proposed] of Object.entries(contents)) {
     const original = await readFile(join(repo, path), 'utf8').catch(error => { if (error.code !== 'ENOENT') throw error; return null })
     edits.push({ id: path, findingId: 'F-001', path, originalHash: hash(original), proposedHash: hash(proposed),
-      operation: original === null ? 'create' : 'replace-file', payload: { content: proposed }, proposedContent: proposed })
+      operation: original === null ? 'create' : 'replace-file', payload: { content: proposed }, proposedContent: proposed,
+      ...(path === 'package.json' ? { checkIntegration: [['scripts', 'check']] } : {}) })
   }
   const plan = { schemaVersion: 1, target: record.target, findings: file, findingsDigest: hash(canonical(record)),
     selectedFindingIds: ['F-001'], reviewedScope: scope.map(path => ({ path, resolvedPath: join(repo, path) })), edits }

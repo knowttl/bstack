@@ -430,7 +430,8 @@ Tick each task when its "Done when" commands pass.
       [Task evidence](../tests/eval/results/tasks/T3.3.json) retains full-suite baseline checks and the AC-67 link, with Linux-only execution and native-analysis limitations.
       Real Windows and macOS execution remains captain checklist evidence.
   - [x] T3.4 Integrate scoped checks with the maintained local command
-    - C20 integrates selected checks through protected `apply` edits and rejects failure-masking package commands and supported YAML CI edits before writes.
+    - C20 integrates selected checks through protected `apply` edits with explicit `checkIntegration` command paths and rejects failure-masking selected commands before writes.
+      Unrelated reviewed edits and sibling scripts pass through unchanged; selected CI edits use the JSON subset of YAML, retaining the Node-built-ins-only runtime and sole `lavish-axi` runtime dependency.
       `npm test -- --task T3.4` runs the identical `npm run check` in valid and seeded disposable `ts-shop` copies, after selected initial documented debt, with exits 0 and 1 and a permitted core import under the web-scoped rule.
       Individual native rules still run against the clean T1.1 variants.
       [Task evidence](../tests/eval/results/tasks/T3.4.json) binds the final gate run to these local controls; hosted CI adapters remain unverified and real Windows/macOS execution remains captain checklist evidence.
@@ -1325,7 +1326,9 @@ Native rule implementation stays in T3.2 to T3.4, and any reference revision tha
 **Steps**
 
 1. Selected checks go into the project's existing check command through `apply`.
+   Mark the selected command paths in each edit's `checkIntegration`; the reviewed digest binds those paths with the proposed bytes.
    When the project selects CI, the same command also goes into its CI config through `apply`, as an optional integration.
+   Selected CI edits use JSON syntax, which is valid YAML, with exact `run` or `script` paths; unrelated YAML edits are not parsed by integration validation.
 2. `apply` rejects a command or CI edit that ignores a failure, such as `continue-on-error: true` or `|| true` on a check command.
 3. In a repo with several packages, rules are scoped to the package they apply to.
 4. Set up the initial documented debt baseline through selected findings before expecting an audited fixture to pass new rules.

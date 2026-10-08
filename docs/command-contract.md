@@ -701,10 +701,17 @@ The helper derives the full proposed content from the operation and checks it ag
 For a fresh plan or dry run, current file bytes must match `originalHash`; a create must start absent and a delete must start present.
 Resume validates the saved originals against `originalHash` and derives current file states as described below.
 Complete bytes for every file are staged in memory before reporting success.
-Changed `package.json` scripts are validated as literal commands joined with `&&`.
-YAML edits support block mappings with scalar `run` or `script` commands, including quoted scalars and `|`/`>` blocks whose intermediate command lines end in `&&`.
-`continue-on-error` and `allow_failure` must be literal `false` when present.
-Failure-masking operators (`||`, pipelines, separators, background execution and negation), shell wrappers, substitutions and unsupported YAML flow collections, tags or aliases fail with `ignored-check-failure` before any writes.
+An edit that integrates selected checks declares optional `checkIntegration`, a nonempty list of unique command paths, each a nonempty array of string keys.
+For `package.json`, mark each selected script with a path such as `[["scripts", "check"]]`; other changed scripts receive no integration validation.
+For a selected `.yml` or `.yaml` CI edit, use JSON syntax, which is valid YAML, and mark the exact `run` or `script` paths, such as `[["jobs", "check", "steps", "0", "run"]]`.
+The installed runtime supports only this JSON subset for marked CI edits; it uses Node built-ins and does not parse general YAML.
+Every selected path must resolve to a string command in the complete proposed bytes; missing commands, deletion and unsupported marked formats fail before writes.
+`continue-on-error` and `allow_failure` on the selected CI command's ancestor objects must be literal `false` when present.
+Unmarked edits, other package scripts, other CI commands and unrelated configuration fields pass through the ordinary protected-write validation unchanged.
+The plan digest binds these selections alongside the complete proposed bytes.
+Selected commands use literal arguments and fail-fast `&&` chains; multiline commands require `&&` at intermediate line endings.
+Failure-masking operators (`||`, pipelines, separators, background execution and negation), unquoted shell comments, assignment prefixes, shell dispatch and substitutions fail with `ignored-check-failure` before any writes.
+Shell dispatch includes `command`, `builtin`, shell executables, executable paths and `.exe` forms in every `&&` segment.
 This bounded grammar is a configuration safeguard, not an interpreter for arbitrary shell programs or a proof of a checker's implementation.
 The identical maintained command must still pass the valid disposable control and reject the seeded violation with its diagnostic and nonzero exit through `rule-proof`.
 CI adapter behaviour remains unverified without hosted execution.

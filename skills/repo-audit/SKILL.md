@@ -110,6 +110,8 @@ The enforcement and architecture references are available for recommendations.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
 Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
 Native rule-proof, debt baseline checks and maintained local enforcement integration through apply are available; portable maintenance remains Phase 3a work.
+Mark the selected command paths with each apply edit's `checkIntegration`, such as `[["scripts", "check"]]`; unrelated reviewed edits retain their ordinary validation.
+Selected CI integration uses JSON syntax, which is valid YAML, and marks exact `run` or `script` paths; general YAML parsing is outside the installed runtime.
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
 
@@ -251,7 +253,7 @@ Render returns a scratch path and distinguishes documented, observed and inferre
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
 Capture approved checks through the shared verification rules below.
-Maintained enforcement arrives in T3.4 and portable maintenance evidence and document validation in Phase 3a.
+Selected maintained enforcement through apply is available from T3.4; portable maintenance evidence and document validation remain Phase 3a work.
 
 Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.
 
