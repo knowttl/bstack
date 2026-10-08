@@ -1,5 +1,5 @@
 import { readFile, open, mkdir, rename, unlink, stat } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { scratchDirectory } from './scratch.mjs'
 import { resolveFilePath } from './paths.mjs'
@@ -35,7 +35,7 @@ export async function inspectJournal(journal) {
       const path = await resolveFilePath(journal.target.root, edit.path, edit.resolvedPath, edit.originalHash !== null && edit.proposedHash === null)
       const bytes = await fileBytes(path)
       const actualHash = bytes === null ? null : hashBytes(bytes)
-      const state = actualHash === edit.proposedHash ? 'applied' : actualHash === edit.originalHash ? 'pending' : 'conflicting'
+      const state = actualHash === edit.proposedHash ? 'applied' : !edit.completed && actualHash === edit.originalHash ? 'pending' : 'conflicting'
       edits.push({ ...edit, actualHash, state })
     } catch (error) {
       edits.push({ ...edit, state: 'conflicting', problem: error.message })
@@ -90,11 +90,12 @@ async function durableDirectory(directory, limitations) {
   }
 }
 
-async function replaceFile(path, bytes, mode, limitations, beforeReplace) {
+async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary) {
   const temporary = join(dirname(path), `.bstack-${randomUUID()}.tmp`)
   try {
+    if (prepareTemporary) await prepareTemporary(temporary)
     await durableFile(temporary, bytes, mode)
-    if (beforeReplace) await beforeReplace()
+    if (beforeReplace) await beforeReplace(temporary)
     try { await rename(temporary, path) } catch (error) {
       if (['EXDEV', 'ENOTSUP', 'EPERM', 'EEXIST'].includes(error.code)) {
         throw new CommandError('blocked', [{ code: 'atomic-replacement-unavailable', message: 'Filesystem cannot atomically replace this file. No non-atomic fallback was attempted.', path, fix: 'Use a filesystem supporting same-directory atomic replacement and resume the run.' }])
@@ -107,11 +108,18 @@ async function replaceFile(path, bytes, mode, limitations, beforeReplace) {
   }
 }
 
-export async function applyWrites(target, plan, staged, directory, previous, affectedChecks) {
+export async function saveRecovery(path, value) {
+  const limitations = []
+  await durableDirectory(dirname(path), limitations)
+  await replaceFile(path, Buffer.from(JSON.stringify(value, null, 2) + '\n'), undefined, limitations)
+  return limitations
+}
+
+export async function applyWrites(target, plan, staged, directory, previous, affectedChecks, guard) {
   const limitations = ['Replacement is atomic per file where supported, never across the whole change set.']
   const journal = previous ?? { schemaVersion: 1, runId: plan.planDigest, target: plan.target, planDigest: plan.planDigest,
     edits: staged.map((edit, index) => ({ id: edit.id, path: edit.path, resolvedPath: edit.resolvedPath, originalHash: edit.originalHash, proposedHash: edit.proposedHash,
-      backup: edit.originalHash === null ? null : `original-${index}`, completed: false })), affectedChecks }
+      backup: edit.originalHash === null ? null : `original-${index}`, completed: edit.originalHash === edit.proposedHash })), affectedChecks }
   const journalPath = join(directory, 'journal.json')
   const save = () => replaceFile(journalPath, Buffer.from(JSON.stringify(journal, null, 2) + '\n'), undefined, limitations)
   try {
@@ -120,7 +128,28 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
     if (state.conflicting.length || (!previous && state.edits.some((edit, index) => edit.actualHash !== staged[index].originalHash))) {
       throw new CommandError('blocked', [{ code: 'changed-precondition', message: 'Target bytes changed before execution.', fix: 'Review the changed files before applying.' }])
     }
-    if (previous && !state.pending.length) return { ...state, journal: journalPath, outcome: 'already-applied', limitations }
+    if (previous) {
+      const hasUpdates = journal.edits.some((edit, index) => edit.temporary || (!edit.completed && state.edits[index].state === 'applied'))
+      for (const [index, recorded] of journal.edits.entries()) {
+        if (state.edits[index].state === 'applied') recorded.completed = true
+        if (!recorded.temporary) continue
+        const path = await resolveFilePath(target.root, recorded.path, recorded.resolvedPath)
+        if (dirname(recorded.temporary) !== dirname(path) || !/^\.bstack-[0-9a-f-]{36}\.tmp$/.test(basename(recorded.temporary))) throw new Error('Recovery temporary path differs from its write directory.')
+        await resolveFilePath(dirname(path), basename(recorded.temporary), recorded.temporary)
+        const bytes = await fileBytes(recorded.temporary)
+        const proposed = Buffer.from(staged[index].proposedContent ?? '')
+        if (bytes !== null && (bytes.length > proposed.length || !bytes.equals(proposed.subarray(0, bytes.length)))) {
+          throw new CommandError('blocked', [{ code: 'user-change', message: 'The recorded temporary contains unrelated bytes.', path: recorded.temporary, fix: 'Preserve and review the changed temporary before resuming.' }])
+        }
+        if (bytes !== null) {
+          await unlink(recorded.temporary)
+          await syncDirectory(dirname(recorded.temporary), limitations)
+        }
+        recorded.temporary = null
+      }
+      if (hasUpdates) await save()
+      if (!state.pending.length) return { ...state, journal: journalPath, outcome: 'already-applied', limitations }
+    }
     await durableDirectory(directory, limitations)
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
@@ -136,11 +165,13 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       await save()
     }
     for (const [index, edit] of staged.entries()) {
+      if (guard) await guard()
       state = await inspectJournal(journal)
       if (state.conflicting.length) throw new CommandError('blocked', [{ code: 'user-change', message: 'A user change blocks all remaining writes.', fix: 'Review conflicting target files before continuing.' }])
       if (state.edits[index].state === 'applied') continue
       const path = edit.resolvedPath
-      const beforeWrite = async () => {
+      const beforeWrite = async temporary => {
+        if (guard) await guard(temporary)
         const current = await inspectJournal(journal)
         const resolved = await resolveFilePath(target.root, edit.path, path)
         const bytes = await fileBytes(resolved)
@@ -156,8 +187,12 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       } else {
         await durableDirectory(dirname(path), limitations)
         const mode = edit.originalHash === null ? undefined : (await stat(path)).mode
-        await replaceFile(path, Buffer.from(edit.proposedContent), mode, limitations, beforeWrite)
+        await replaceFile(path, Buffer.from(edit.proposedContent), mode, limitations, beforeWrite, async temporary => {
+          journal.edits[index].temporary = temporary
+          await save()
+        })
       }
+      journal.edits[index].temporary = null
       journal.edits[index].completed = true
       await save()
     }

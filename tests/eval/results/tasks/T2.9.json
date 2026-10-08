@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T2.9",
+  "slice": "C18",
+  "sourceRevision": "a553cda4091d98dd365c953de2139683e9eb37e5",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs. For real agent evaluation runs the captain approved: \"per evaluation run, copy the existing Codex login into a throwaway isolated home, delete it immediately after the run, never printed or committed.\"\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1-T2.8 and early T3.1 (most recently https://github.com/knowttl/bstack/pull/30: the completed existing-repo audit and apply path).\n\nThis piece is slice C18, task T2.9 \"Complete protected new-project creation\", the last slice of plan Phase 2. Done evidence: approved minimal journey, destination collision/no-write controls, directory/Git journal and interruption recovery.",
+  "amendments": [
+    "Firstmate directed preservation of the generated project and unverified full native check, without adding a sixth scripted answer or applying the scratch correction. Record the diagnosis and skill-quality observation without corrective skill changes.",
+    "No-mistakes fixed the missed recovery conflict: completed edits restored or removed by users block before directory recreation, and recognized applied files persist completion before continuation.",
+    "No-mistakes fixed the missed malformed-command case by rejecting NUL executable, argument and version-argument fields before writes; nine public-command regression cases cover all phases. The redacted ambiguous transcript hash was corrected to its normalized committed bytes."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0",
+      "codex": "codex-cli 0.160.1"
+    }
+  },
+  "commands": [
+    {
+      "id": "root-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C18.root-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "skill-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--prefix",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C18.skill-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "package-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C18.package-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.9",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.9"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C18.task-T2.9.txt",
+      "status": "passed"
+    },
+    {
+      "id": "full-tests",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C18.full-tests.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-1",
+      "kind": "agent",
+      "procedure": "Intent confirmation, real shipped board verdicts, saved revised vision approval, selected minimal scaffold and exact creation approval; Chromium Rice/reload case passed.",
+      "status": "passed",
+      "artifact": "tests/eval/results/foundation-C18/new-idea/conversation.txt"
+    },
+    {
+      "id": "AC-1",
+      "kind": "agent",
+      "procedure": "Generated native npm run check covering the first journey and storage failures.",
+      "status": "blocked",
+      "artifact": "tests/eval/results/foundation-C18/summary.md",
+      "reason": "Full native check failed in a generated test that uses check() despite expected rollback. Creation retains its unverified result and project; scratch correction is diagnosis only.",
+      "nextPrerequisite": "Owner-approved exact correction and fresh native check execution; no sixth scripted answer added in this slice."
+    },
+    {
+      "id": "AC-2",
+      "kind": "agent",
+      "procedure": "Unresolved offline-access decision after scripted answer stops foundation without stack selection or target writes.",
+      "status": "passed",
+      "artifact": "tests/eval/results/foundation-C18/ambiguous-idea/conversation.txt"
+    },
+    {
+      "id": "AC-9",
+      "kind": "agent",
+      "procedure": "Confirmed Item, Shopping list and Needed definitions remain domain-only and are written through the same approved scaffold plan.",
+      "status": "passed",
+      "artifact": "tests/eval/results/foundation-C18/new-idea/GLOSSARY.md"
+    },
+    {
+      "id": "AC-12",
+      "kind": "automated",
+      "procedure": "Public project create scratch controls: malformed plans, unresolved decisions, absent/selected-empty destinations, collision no-write, directory/temp/file/Git interruption recovery, altered bytes preserved and setup never duplicated.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C18.task-T2.9.txt"
+    }
+  ],
+  "limitations": [
+    "345 registered T2.9 tests and 817 full-suite tests passed against the recorded source revision after pipeline fixes. Both required installs and package check passed. Local Linux Node 24 only; Windows/macOS remains captain checklist evidence. No hosted CI ran.",
+    "Two real sequential Codex foundation runs used the shipped 600000 ms turn timeout and 16 MiB capture bound, fresh isolated homes and temporary login copies. All eight turns completed without timeout or truncation. Both homes were deleted immediately after conversation completion.",
+    "New-idea creation initialized the reviewed destination and retained the exact 18 approved file payloads. Its native Rice/reload browser case passed, while the full native check remains unverified. The generated storage-failure test correction was tested only in scratch and not applied. Firstmate explicitly directed that evidence outcome.",
+    "The evaluation interface labels scores human; the implementation worker supplied the explicit scores. Committed transcripts redact host paths, user names and identifiers while preserving lines and recalculating hashes. They are not resumable sessions or final release selections.",
+    "The new-idea run evaluated d50095c74d41f79f87e4f1e555e61cc4197cef72; the ambiguous run records its own revision. Later interruption fixes are covered by final command tests and not attributed to the earlier live skill snapshot.",
+    ".no-mistakes.yaml remains byte-identical, SHA-256 4f2ea277de60fbe51b2371031e94c17bb3ae7138beb562bf58b65112b37b461b. No workflows added.",
+    "Maintained enforcement T3.2-T3.4, portable maintenance Phase 3a and completed-package final acceptance remain pending.",
+    "The ambiguous brief was independently compared byte-for-byte with its committed fixture source, with only brief.md present. Both committed redacted transcript hashes were verified against file bytes. Captured command logs redact host paths and normalize trailing whitespace without altering outcomes."
+  ]
+}

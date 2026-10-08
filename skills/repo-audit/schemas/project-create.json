@@ -1,0 +1,60 @@
+{
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "workspace", "destination", "stack", "firstJourney", "visionPath", "glossaryPath", "changeSet", "changeSetDigest", "prerequisites", "setupCommands", "journeyCommand", "planDigest"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "workspace": { "type": "string", "pattern": "\\S" },
+    "destination": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "resolvedPath", "allowEmpty"],
+      "properties": {
+        "path": { "type": "string", "pattern": "\\S" },
+        "resolvedPath": { "type": "string", "pattern": "\\S" },
+        "allowEmpty": { "type": "boolean" }
+      }
+    },
+    "stack": { "type": "string", "pattern": "\\S" },
+    "firstJourney": { "type": "string", "pattern": "\\S" },
+    "visionPath": { "const": "VISION.md" },
+    "glossaryPath": { "type": ["string", "null"], "pattern": "\\S" },
+    "changeSet": { "type": "string", "pattern": "\\S" },
+    "changeSetDigest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "prerequisites": { "type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "executable", "args", "versionArgs", "cwd", "timeoutMs"],
+      "properties": {
+        "id": { "type": "string", "pattern": "\\S" },
+        "executable": { "type": "string", "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+        "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "cwd": { "const": "." },
+        "timeoutMs": { "type": "integer" }
+      }
+    } },
+    "setupCommands": { "type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "executable", "args", "versionArgs", "cwd", "timeoutMs"],
+      "properties": {
+        "id": { "type": "string", "pattern": "\\S" },
+        "executable": { "type": "string", "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+        "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "cwd": { "type": "string", "pattern": "\\S" },
+        "timeoutMs": { "type": "integer" }
+      }
+    } },
+    "journeyCommand": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "executable", "args", "versionArgs", "cwd", "timeoutMs"],
+      "properties": {
+        "id": { "type": "string", "pattern": "\\S" },
+        "executable": { "type": "string", "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+        "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "cwd": { "type": "string", "pattern": "\\S" },
+        "timeoutMs": { "type": "integer" }
+      }
+    },
+    "planDigest": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

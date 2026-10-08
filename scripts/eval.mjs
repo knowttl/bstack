@@ -47,7 +47,8 @@ async function start(opts, results) {
   const record = { schemaVersion: 1, id, createdAt: new Date().toISOString(), sourceRevision: revision,
     agent: opts.agent, model: opts.model, os: `${platform()} ${release()}`, tools: { node: process.version, git: git.toolVersion.stdout.trim() },
     fixture: { ...fixture, revision: fixtureRevision }, scenario: definition, criteriaHash: hashBytes(canonicalJSON(definition.checks)),
-    stage: opts.stage, mode: opts.mode, request: opts.invocation ? `${opts.invocation}\n${definition.request}` : definition.request,
+    stage: opts.stage, mode: opts.mode, request: (opts.invocation ? `${opts.invocation}\n` : '') +
+      (opts.stage === 'foundation' ? 'Active checkpoint: foundation.\n' : '') + definition.request,
     status: 'blocked', reason: 'Awaiting explicit manual answers and transcript. Host isolation is not verified by C7a.',
     isolation: { verified: false }, transcript: null, answers: null, caseResults: [] }
   if (definition.fixture.startsWith('ts-')) {

@@ -246,6 +246,17 @@ test('with-skill staging preserves resources and ordinary invocation while impli
   }
 })
 
+test('foundation execution delivers the active checkpoint to the host', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const { data } = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'with', '--stage', 'foundation', '--adapter', path)
+  const record = data.data
+  t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+  t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+  const observed = JSON.parse(record.turns[0].result.stdout.split('\n')[1]).item.observed
+  assert.equal(observed.message, '$repo-audit\nActive checkpoint: foundation.\n' + record.scenario.request)
+})
+
 test('scripted replies resume the exact host conversation, preserve user turns and require ordered answers', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)

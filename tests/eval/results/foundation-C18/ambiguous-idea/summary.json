@@ -1,0 +1,42 @@
+{
+  "sourceRevision": "5d0b767beaf4a69fd543f6ec9546423ddec240c6",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "os": "linux 6.8.0-142-generic",
+  "stage": "foundation",
+  "adapterHash": "f8645b920c468183a4022f065ca7ab6e8c5c2c898429269d18058d4779134b42",
+  "criteriaHash": "dd06c4c758b1c050decd705b911abbbe2de99632fc0aef294095f69ca59f0a70",
+  "isolationVerified": true,
+  "cleanedAt": "2026-10-08T18:21:00.181Z",
+  "conversationHash": "ce2c63f6470bb639bd939c2014ae458d1a37d0de61c76f9230d2337bc1d866c9",
+  "turns": [
+    {
+      "exitCode": 0,
+      "durationMs": 23513.014719,
+      "timedOut": false,
+      "outputTruncated": false
+    },
+    {
+      "exitCode": 0,
+      "durationMs": 6955.9653,
+      "timedOut": false,
+      "outputTruncated": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "decision",
+      "caseId": "AC-2",
+      "question": "Did it expose offline access as unresolved and stop without inventing a stack or product goal?",
+      "passed": true,
+      "startLine": 15,
+      "endLine": 27,
+      "scoring": "human",
+      "reviewer": "implementation worker"
+    }
+  ],
+  "workspaceUnchanged": true
+}

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile, writeFile, symlink, mkdir, readdir, stat, chmod } from 'node:fs/promises'
+import { readFile, writeFile, symlink, mkdir, readdir, stat, chmod, rm } from 'node:fs/promises'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
@@ -637,14 +637,26 @@ test('rendered T2.5 audit record applies through reviewed whole-file replacement
   assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), content)
 })
 
-test('restored originals are pending even when journal completion flags say applied', async t => {
-  const context = await setup(t)
-  const applied = execute(context)
-  await writeFile(join(context.repo, 'README.md'), 'old\n')
-  assert.deepEqual(execute(context, undefined, 'state show', ['--run', applied.data.runId]).data.pending, ['README.md'])
-  assert.equal(execute(context).data.outcome, 'applied')
-  assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'new\n')
-})
+for (const [operation, original, payload, proposed] of [
+  ['replace', 'old\n', { search: 'old', replacement: 'new' }, 'new\n'],
+  ['replace-file', 'old\n', { content: 'new\n' }, 'new\n'],
+  ['create', null, { content: 'new\n' }, 'new\n'],
+  ['delete', 'old\n', {}, null]
+]) {
+  test(`restored original after completed ${operation} conflicts without writes`, async t => {
+    const context = await setup(t, operation, original, payload, proposed)
+    const applied = execute(context)
+    assert.equal(applied.exit, 0, JSON.stringify(applied))
+    if (original === null) await rm(join(context.repo, 'README.md'))
+    else await writeFile(join(context.repo, 'README.md'), original)
+    const before = await snapshot(context.directory)
+    const shown = execute(context, undefined, 'state show', ['--run', applied.data.runId])
+    assert.deepEqual(shown.data.conflicting, ['README.md'])
+    assert.deepEqual(shown.data.pending, [])
+    assert.equal(execute(context).exit, 2)
+    assert.deepEqual(await snapshot(context.directory), before)
+  })
+}
 
 test('changed backups block resume without any target writes', async t => {
   const context = await setup(t)

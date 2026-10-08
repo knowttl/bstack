@@ -25,7 +25,8 @@
           "originalHash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
           "proposedHash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
           "backup": { "type": ["string", "null"], "pattern": "\\S" },
-          "completed": { "type": "boolean" }
+          "completed": { "type": "boolean" },
+          "temporary": { "type": ["string", "null"], "pattern": "\\S" }
         }
       }
     },

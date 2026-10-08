@@ -4,15 +4,18 @@
     {
       "id": "new-idea",
       "fixture": "new-idea",
-      "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
+      "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md. At the foundation checkpoint continue after the intent checkpoint to propose the minimum foundation, obtain destination/scaffold/journey selection, then preview and create it through the shipped project create command only after exact review. Stop for board interaction and exact vision approval. Do not invent unavailable host interaction.",
       "answers": [
         "The brief contains the approved goals and stack. Keep version one local to a household.",
-        "An item is a named pantry supply. A shopping list contains the items the household marks as needing to buy. Version one does not track quantities or stock levels.",
-        "Approve the vision if it preserves the brief and the agreed outcomes."
+        "An item is a named pantry supply. A shopping list contains items the household marks as needing to buy. Version one does not track quantities or stock levels. The first journey is add Rice, mark it needed, view Rice in the shopping list, then reload and retain it.",
+        "I approve the exact saved revised VISION.md presented in this turn, preserving the brief and agreed outcomes.",
+        "Select the absent pantry-app destination inside this idea workspace. Keep the approved TypeScript browser stack with local storage, a single browser entry and the smallest list module. Include approved vision, confirmed glossary, design guidance and native compile/test commands. The first journey is add Rice, mark it needed, view Rice in the shopping list, reload and retain it. No accounts, quantities, server or hosted CI. Present the exact generated file diff and setup/journey commands before creation.",
+        "I approve the exact project create dry-run diff and declared setup and first-journey commands just presented for pantry-app. Create through the unchanged plan, execute native checks, and report browser interaction unavailable as blocked if it cannot be observed. Later enforcement and maintenance remain pending."
       ],
       "checkpoints": [
         "baseline",
         "intent",
+        "foundation",
         "final"
       ],
       "invocation": "explicit",
@@ -44,6 +47,7 @@
       "checkpoints": [
         "baseline",
         "intent",
+        "foundation",
         "final"
       ],
       "invocation": "explicit",

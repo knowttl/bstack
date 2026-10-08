@@ -1,5 +1,7 @@
 # Evaluation contract
 
+See [build progress](implementation-plan.md#progress) for T2.9 completion and the [C18 foundation checkpoint](../tests/eval/results/foundation-C18/summary.md) for its observed outcomes and limitations.
+
 C7a implements the T1.2 acceptance registry and manual evaluation interface.
 C7b adds the current-host Codex adapter, verified discovery isolation, captured conversation turns and baseline runs.
 No C7a manual score proves host isolation or an acceptance case for the released skill.
@@ -19,6 +21,7 @@ npm run eval -- --manual --scenario ambiguous-idea --mode with --stage baseline 
 ```
 
 The runner calls the existing fixture builder and prints the fixture path, request, answer script and checklist in its run record.
+For `--stage foundation`, the opening request includes `Active checkpoint: foundation.` after any explicit invocation and before the scenario request.
 The caller owns removal of the temporary fixture after the session.
 Use a fresh conversation and preserve the complete conversation, including user answers and any available file-open record, as a UTF-8 transcript.
 Deliver the scripted answers when the agent asks the corresponding questions.
@@ -303,7 +306,7 @@ Both real host turns exited 0 without timeout or truncation.
 Close verified isolation and deleted the private home before scoring, which passed all three scenario checks.
 The original brief-only workspace remained unchanged and non-Git.
 The earlier passing ambiguous-idea procedure remains valid intent-stage evidence.
-T1.7 is complete at this checkpoint, while protected project creation and final acceptance remain later tasks.
+At this checkpoint, T1.7 was complete, while protected project creation and final acceptance remained later tasks.
 The preceding blocked browser, timeout and capture attempts are retained as historical evidence, not promoted into this pass.
 Redacted transcripts preserve line citations and conversation hashes bind the retained redacted bytes.
 
