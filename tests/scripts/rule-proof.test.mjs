@@ -71,6 +71,9 @@ for (const [stack, executable, args, versionArgs] of [
       assert.deepEqual(result.data.cases.map(item => item.status), ['passed', 'passed'])
       assert.equal(result.data.cases[0].execution.stdout.trim(), '[]')
       assert.deepEqual(JSON.parse(result.data.cases[1].execution.stdout), [kind])
+      t.diagnostic(JSON.stringify({ stack, violation: kind, command: result.data.command,
+        cases: result.data.cases.map(item => ({ kind: item.kind, status: item.status, toolVersion: item.execution.toolVersion.stdout.trim(),
+          exitCode: item.execution.exitCode, stdout: item.execution.stdout, stderr: item.execution.stderr })) }))
     }
   })
 }
