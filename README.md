@@ -120,7 +120,8 @@ The owner selects the stack, scaffold and first journey after approving the scra
 Creation journals directories and files through the existing protected-write engine before initialising Git only at the reviewed destination.
 Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
-Maintained enforcement and portable maintenance remain pending.
+Maintained enforcement is available through selected `apply` edits, as described below.
+Portable maintenance remains pending.
 
 Prove a selected native rule against prepared clean and independently seeded fixtures:
 

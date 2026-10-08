@@ -406,14 +406,14 @@ Tick each task when its "Done when" commands pass.
       Four real isolated Codex scenarios cover audit-before-interview, clear-goals loading, different TypeScript/Python recommendations and a reviewed two-line candidate delta against an existing approved vision.
       [Checkpoint evidence](../tests/eval/results/foundation-C17/summary.md) distinguishes the scripted candidate review from blocked board interaction and exact-revision approval.
       [Task evidence](../tests/eval/results/tasks/T2.8.json) records final local validation.
-      Maintained enforcement, portable maintenance and T4.3's completed-package extension proof remain pending.
+      See [README](../README.md) for current enforcement and maintenance availability; T4.3 owns the completed-package extension proof.
   - [x] T2.9 Complete protected new-project creation - versioned reviewed destination/scaffold/command plans reuse the protected-write engine, with scratch exact diffs, no-write validation, directory/file/Git journals and interruption recovery.
     The registered command suite covers collisions, user edits, partial writes and interrupted commands.
     The [foundation checkpoint](../tests/eval/results/foundation-C18/summary.md) records real board verdicts, exact vision/scaffold approvals, the Chromium Rice/reload journey and an unchanged ambiguous-idea workspace.
     The generated full native check failed and remains unverified with the created project kept; its scratch-verified one-line test correction is diagnosis only.
     Skill-quality observation: the agent did not run and repair its own native tests before finishing the scaffold proposal.
     This slice adds no corrective skill guidance for that observation.
-    [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks; Windows/macOS, later enforcement and maintenance remain pending.
+    [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks and platform limitations; see [README](../README.md) for current enforcement and maintenance availability.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -436,6 +436,10 @@ Tick each task when its "Done when" commands pass.
       `npm test -- --task T3.4` runs the identical `npm run check` in valid and seeded disposable `ts-shop` copies, after selected initial documented debt, with exits 0 and 1 and a permitted core import under the web-scoped rule.
       Individual native rules still run against the clean T1.1 variants.
       [Task evidence](../tests/eval/results/tasks/T3.4.json) records the local control procedures and attachment status; hosted CI adapters remain unverified and real Windows/macOS execution remains captain checklist evidence.
+    - The end-of-Phase-3 validation reran the native rule-proof, debt baseline and maintained-command procedures in disposable fixtures: all 37 checks passed with TypeScript 5.9.3 and Python 3.12.3.
+      Clean public imports and permitted direction passed, each private/alias/cycle seed failed, baseline debt stayed visible with unauthorized growth rejected and fixed entries removed, and the identical maintained command returned 0/1 for valid/seeded copies while permitting the core import.
+      README incorrectly described maintained enforcement as pending after C20; the validation corrected that availability statement without changing executable behavior.
+      The [task evidence contract](#task-evidence-contract) requires attachment of the final full-suite capture after documentation fixes; the [T3.4 record](../tests/eval/results/tasks/T3.4.json) owns attached counts, environment and input binding.
 - Phase 3a: Maintenance
   - [ ] T3a.1 Define the project contract
   - [ ] T3a.2 Build `evidence collect`

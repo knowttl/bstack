@@ -32,7 +32,7 @@
     "AC-58 maintenance validation and final released-skill agent acceptance remain separate procedures.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "e117db33fefbfcc0a2e6bfcdddeba4133084b9e1",
+  "sourceRevision": "78d147aeac42cb5f9e3ddde96e29ca85a393bb9a",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -58,7 +58,7 @@
     }
   ],
   "validation": {
-    "baseRevision": "93785555d0579bccd1c70a623f4cf2adb095c617",
+    "baseRevision": "06220f54afa38f164ec54cf5c33ede217d0ed7e6",
     "inputs": {
       "files": [
         {
@@ -89,7 +89,7 @@
         {
           "path": "README.md",
           "executable": false,
-          "sha256": "568da8846a96cdcd5d64bef8763f44ffb062d91a6ac980058ba8d7498b21d13c"
+          "sha256": "1d878f2a7d1de2f387c4f77a7cdb14c0eac553c78f5496e3de5588b35e4622b1"
         },
         {
           "path": "docs/command-contract.md",
@@ -114,7 +114,7 @@
         {
           "path": "docs/implementation-plan.md",
           "executable": false,
-          "sha256": "511d0d8e658367489e22243a05dcb8e931dc4095f8009b305dfb44a6f581d9a2"
+          "sha256": "912a5ae49d7609b2953757ebfd00983ebf2cd7deb54da4b3c80a9434b520d59d"
         },
         {
           "path": "package-lock.json",
@@ -3537,7 +3537,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "aac36e1f4107f8c7ec794a65c15c157d9ced26c0b8f9fd8e937de6bf3247d665"
+      "sha256": "66004dd7f3d1e88212ef5b394b337351de4d54e2e33f7ddb248bfde1336b6f48"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3578,9 +3578,9 @@
       "topLevel": 1099,
       "suites": 0
     },
-    "durationMs": 107717.207563,
-    "outputSha256": "8898a84cb841729c1aa1029d09b4e6520c46a5fed92dc8804d3c9529403a91bb",
-    "eventsSha256": "2e2d041f67023e06528f39b4067b9e1321bcfeda5e2e509283f8a377b63b672b",
+    "durationMs": 142481.706324,
+    "outputSha256": "29f14401696f50edcbc6aef4fe34a96b9562db6f2a4cf787d33844d904f9708a",
+    "eventsSha256": "718efe097d03d2dab035e508b72513a8bfafd9e034a9bbd26d2822881b112464",
     "eventsArtifact": "tests/eval/results/tasks/T3.4.events.jsonl"
   }
 }

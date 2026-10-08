@@ -88,4 +88,4 @@ Verification requires representative allowed and forbidden imports and compatibl
 Use rule-proof for a clean public-import control and independent private, alias or equivalent resolution bypass and cycle violations with the selected native check.
 The Python equivalent-resolution fixture exercises an intermediate public-looking bridge to private implementation; proof does not establish every possible re-export or dynamic dependency.
 Maintain these coverage limits alongside the rule evidence.
-Maintained local integration and maintenance checks remain pending.
+Portable maintenance checks remain pending.
