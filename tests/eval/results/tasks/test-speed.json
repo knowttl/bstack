@@ -8,7 +8,7 @@
   "limitations": [
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "202e1247910d678c2c3c58f1b3957ed83a1c2a72",
+  "sourceRevision": "fa4bbff56652665a07fb885097d9d979c9982441",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -23,7 +23,9 @@
       "id": "full-tests",
       "executable": "node",
       "args": [
-        "scripts/test.mjs"
+        "scripts/test.mjs",
+        "--capture",
+        ".cache/full-suite.json"
       ],
       "cwd": ".",
       "exitCode": 0,
@@ -63,7 +65,7 @@
         {
           "path": "README.md",
           "executable": false,
-          "sha256": "5dcc41fda8377a42b544be0b7a7c56e8e980a5595ec3520e31fa3fc41f408710"
+          "sha256": "0a7796e265dfca9c0aad61b559b72c8c94e7d63449a76f60559a40a72af53f77"
         },
         {
           "path": "docs/command-contract.md",
@@ -88,7 +90,7 @@
         {
           "path": "docs/implementation-plan.md",
           "executable": false,
-          "sha256": "6946e730c97d0083369d971276f688c668fe66728719048436f7b587efb3e6d3"
+          "sha256": "9c738f0c0ed8975e3b61993020a01bfdcd987ec1726b1b80ae4034b3b71cd421"
         },
         {
           "path": "package-lock.json",
@@ -128,12 +130,12 @@
         {
           "path": "scripts/lib/test-evidence.mjs",
           "executable": false,
-          "sha256": "27b3cd0cd90d31dd9d696c545d4b41114f8682f7708981d2509a411f82b4d8f9"
+          "sha256": "e684f5143da56e7e76f8fbb8f5c87f43826de76b5a1752f707e387ddf2acfeaa"
         },
         {
           "path": "scripts/task-evidence.mjs",
           "executable": false,
-          "sha256": "5156d44af962ca2995112a307a99ab710c23805e01fe1d6a03acf390edb62db2"
+          "sha256": "87a77e7dc9c61145e4c59f3aabc70e8544ac9c592fc0ff431162f0c9471edabe"
         },
         {
           "path": "scripts/test-reporter.mjs",
@@ -143,7 +145,7 @@
         {
           "path": "scripts/test.mjs",
           "executable": false,
-          "sha256": "780d6be494e76b300e21c3e0b3c9b1a1fc20c2bd486f05ce6a8ee0fab3b66c6f"
+          "sha256": "aeaf12283fbb4138d19c45061da303f067c7960dc676fee298c21db3226d03a5"
         },
         {
           "path": "skills/repo-audit/SKILL.md",
@@ -939,6 +941,1401 @@
           "path": "tests/eval/results/runs/2026-10-08T03-15-18.377Z-e02be0d2-09da-4ea3-be1b-31b04eca03b7/run.json",
           "executable": false,
           "sha256": "7cd24f58f5e82eab8c2be18f6fa5c70cfd94c7240ce6956d2e1fd9bdd315f217"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b-refresh.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b-refresh.install.txt",
+          "executable": false,
+          "sha256": "3bf0c1438e5ce244aa1a329cf0f7763fe88a33b8f356f1459f43f57e40636c96"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b-refresh.runtime-install.txt",
+          "executable": false,
+          "sha256": "20b9e6ca498d0498c50f552ee0d27893fdddaefc6766df1b296f8639cbf867b5"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b-refresh.task-T1.5.txt",
+          "executable": false,
+          "sha256": "4f2c0483ff346b297144052f2ba9afd17147042b2389d90827298f42c2694022"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b-refresh.task-T1.6.txt",
+          "executable": false,
+          "sha256": "81cb92c7a40c01a1d27cb1b8dd9ed092bbf59c5ad77cc4c622513e60589fb5a7"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b-refresh.test.txt",
+          "executable": false,
+          "sha256": "5144f8d59e545671d6f578f2ccaa39eb62ae24cff76ffd13d55f437d9b2ec042"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b.install.txt",
+          "executable": false,
+          "sha256": "4779983ad808ab0efadad2eca77cca50fcc3094678f1daff9e92f03fd443156f"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b.manual-board.md",
+          "executable": false,
+          "sha256": "e1df1546306931a0e1e62a6e7288e80ee261a065ecf4ceb653e4b7a7c04d1bce"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b.runtime-install.txt",
+          "executable": false,
+          "sha256": "39aa986e38fc83e02ec9554f71ae2ac2312b82dd3b76f6cd0ed4d055ab2b69d8"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b.task-T1.6.txt",
+          "executable": false,
+          "sha256": "df9468308374542d2533354b7692c64c2b19a0594d313a8bf6bed9dbfed4f3b1"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b.task-T1.7.txt",
+          "executable": false,
+          "sha256": "718c7109dec5273aa762663307c2823d7052bc656ecdf6db0287f89c99d3cfea"
+        },
+        {
+          "path": "tests/eval/results/tasks/C10b.test.txt",
+          "executable": false,
+          "sha256": "edbc14ab611e1f1240c92eedc8e2857effed62e2a53baeb45e6f136d9b08e49b"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11a.T2.1.txt",
+          "executable": false,
+          "sha256": "63be4cadb11a6e5fc89df4f092091b1c9fa463670112aec1f7d8e27a355590ca"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11a.full-tests.txt",
+          "executable": false,
+          "sha256": "ce264c667b40fd8838e91c049590e0d8876678756338b715a81b497468aef39c"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11a.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11a.prerequisite-T1.7.txt",
+          "executable": false,
+          "sha256": "1cdc82f6df8a30fc8729d48d7fc08cfb46ef9acac05f8f79a55228dff417ae79"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11a.root-install.txt",
+          "executable": false,
+          "sha256": "f8d4afea54b83c8dd627eb28c727e5dc459102fa65307e2e323cee5e4b9da711"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11a.skill-install.txt",
+          "executable": false,
+          "sha256": "164276e6a69eba3fbe1c2ddecced0858bc5d069af5899dccb9fc5b55dc32a9f2"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11bc.full-tests.txt",
+          "executable": false,
+          "sha256": "c2335e3231de359ce3fd807595d9ac9773b02400b51df033e5e72c5cb142a708"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11bc.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11bc.root-install.txt",
+          "executable": false,
+          "sha256": "2c9a8473c20b88a432feaff12e93ace29e05c81e9e01894033ecbe3fc90192cb"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11bc.skill-install.txt",
+          "executable": false,
+          "sha256": "818b08b3f0e6d59fba3a75d47d943da5ce56c3d7e75a0a4872fd8d1e5234b20c"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11bc.task-T2.2.txt",
+          "executable": false,
+          "sha256": "26325f714d6882a10841ebc89897bcc709551d8718b07641971cb221c8886e4b"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11bc.task-T2.3.txt",
+          "executable": false,
+          "sha256": "6828e33e8e5df7713c59101acf96bb59b0ab97dcf563b03c6cfebfb42cf9824c"
+        },
+        {
+          "path": "tests/eval/results/tasks/C11bc.verification.md",
+          "executable": false,
+          "sha256": "8fe4c59e681c96577ee08cd6eca7c0bebbf61c4538d310531feaf7f0a5f37414"
+        },
+        {
+          "path": "tests/eval/results/tasks/C12.full-tests.txt",
+          "executable": false,
+          "sha256": "5bb3253bca9877b66b2a267cc8cb9c69a1c57abefe1191bcfd20e75dbdc198d0"
+        },
+        {
+          "path": "tests/eval/results/tasks/C12.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C12.root-install.txt",
+          "executable": false,
+          "sha256": "d470ed4f63270ea7fe8d8981e31eb511ea68d94e557dff177bce459e6d57c4ea"
+        },
+        {
+          "path": "tests/eval/results/tasks/C12.skill-install.txt",
+          "executable": false,
+          "sha256": "845700803fab397acb15422975ceb75c765d014e50f756fd4aa3afbc4ab4c5f1"
+        },
+        {
+          "path": "tests/eval/results/tasks/C12.task-T2.4.txt",
+          "executable": false,
+          "sha256": "51ffc3269bc28bb1fb71828a73ddf3eda68ede0eebaaed58bba5ac86531e9efb"
+        },
+        {
+          "path": "tests/eval/results/tasks/C12.verification.md",
+          "executable": false,
+          "sha256": "a2dfa8d60792a78200f08437a56de62e99e3f99a02b02bb7ae3f1377d6ce7548"
+        },
+        {
+          "path": "tests/eval/results/tasks/C13.full-tests.txt",
+          "executable": false,
+          "sha256": "3e0ffeead97c3027c5d0e8c27d907241a3ae245b09684bbe7b1460a383d0a485"
+        },
+        {
+          "path": "tests/eval/results/tasks/C13.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C13.root-install.txt",
+          "executable": false,
+          "sha256": "ae28afcc06838bd9ed5cf2f0419479a639a549b54c765716f526fad2fbe2a41c"
+        },
+        {
+          "path": "tests/eval/results/tasks/C13.skill-install.txt",
+          "executable": false,
+          "sha256": "79010dd2119dd0e39f9391e2c1bd31284b3e5b6f7370da76f2787f81f4f304bb"
+        },
+        {
+          "path": "tests/eval/results/tasks/C13.task-T2.5.txt",
+          "executable": false,
+          "sha256": "6dff6fde15e8e4144e72459aff5818a48308fee35840434dab146ef3a9495a85"
+        },
+        {
+          "path": "tests/eval/results/tasks/C13.verification.md",
+          "executable": false,
+          "sha256": "3f36ae4d509404d026a647badcdc2cf4d220a0bad9b4fe5a88cf64c0a436d8c9"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14a.full-tests.txt",
+          "executable": false,
+          "sha256": "4607db09e52f4527783a7e7dcb80b39205040febf1254a9447db21a631c27911"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14a.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14a.root-install.txt",
+          "executable": false,
+          "sha256": "647882cb4ce93531da4ed2c02530f155839e903d44971b39a861309f73494ca0"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14a.skill-install.txt",
+          "executable": false,
+          "sha256": "20cbeceb2f6680d1d354cfa2816955139ccc9a1807eb0372684bf98f5892ce7d"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14a.task-T2.6.txt",
+          "executable": false,
+          "sha256": "dd9592ca8f621aa9789076a5570974c93107ccadec713a012166b790124e5519"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14a.verification-plan.txt",
+          "executable": false,
+          "sha256": "a6ab2c747eec21da3fb670def9502ab5c95c8a71e9b6cb05d07f825e6e3cd0b7"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14b.full-tests.txt",
+          "executable": false,
+          "sha256": "33fe9c58fd162eadf144397639868ba6bcd5d0eb546900cc3f75f74a6d86e306"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14b.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14b.root-install.txt",
+          "executable": false,
+          "sha256": "ac0a9aa6b3834feca61b3f3f9c55788754b411ec6f9c258dfed48df9b7b3a7b8"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14b.skill-install.txt",
+          "executable": false,
+          "sha256": "9c705ed1e7da714b624a3ed6721c322af6fba182db515fe508835498bc294f76"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14b.task-T2.6.txt",
+          "executable": false,
+          "sha256": "e0fc1dc11b4c5de2bc60135a3b1ac37b59248106389eb434b869b924a71f8893"
+        },
+        {
+          "path": "tests/eval/results/tasks/C14b.verification-plan.txt",
+          "executable": false,
+          "sha256": "c00cfa50809b327107d8d0c413d80b80ca34f7c42d5ae5b7fbebc6ec9f053b11"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15a.full-tests.txt",
+          "executable": false,
+          "sha256": "ddc2053c507762b17044dbeb30bf4ce2b63349d644e91e7235b2671dde0b5395"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15a.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15a.root-install.txt",
+          "executable": false,
+          "sha256": "1dc1ea06006cadda8304b8a52d8328db82a002fd1f462fbdf2f1a99692969be7"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15a.skill-install.txt",
+          "executable": false,
+          "sha256": "cbaa3536881963b9aceb36b368a2b314cbe84a19d62f8c423c5f83e7de180015"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15a.task-T2.7.txt",
+          "executable": false,
+          "sha256": "7c630c6187bfe7587b128eb1f87ec7284ebfb5a6901127c54a27ac58dfba64fc"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15a.verification-plan.md",
+          "executable": false,
+          "sha256": "d609f48c340fc0c98d15a0dfa965a6b4da2f871b0b2308f883c8674ec28b6c8c"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15b.full-tests.txt",
+          "executable": false,
+          "sha256": "9a2c2c5afb129ca5c0280cb28e4c9bd9b9da71783ed9567e520bc47e8249021f"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15b.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15b.root-install.txt",
+          "executable": false,
+          "sha256": "1dc1ea06006cadda8304b8a52d8328db82a002fd1f462fbdf2f1a99692969be7"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15b.skill-install.txt",
+          "executable": false,
+          "sha256": "cf44a7faa527fdebde92e873d8bf1afffc285e639b8262186c18fc1652cb2011"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15b.task-T2.7.txt",
+          "executable": false,
+          "sha256": "b79925fd4e51d9d7eee1a3c54e8a5446e2d6abbe8532680fa75f267544c5fc77"
+        },
+        {
+          "path": "tests/eval/results/tasks/C15b.verification-plan.md",
+          "executable": false,
+          "sha256": "b710e8146268d3c35b0cefde51560875b463e40594902a7005281ec820ca9685"
+        },
+        {
+          "path": "tests/eval/results/tasks/C17.full-tests.txt",
+          "executable": false,
+          "sha256": "a04090860fe3e0d6dd995004241ab233e5ce0bc490928c1d3fb34bfada99f824"
+        },
+        {
+          "path": "tests/eval/results/tasks/C17.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C17.root-install.txt",
+          "executable": false,
+          "sha256": "85fecac5e90d1987fe5100675b8731abb09c5067fd0b5c29c24f234789d7323f"
+        },
+        {
+          "path": "tests/eval/results/tasks/C17.skill-install.txt",
+          "executable": false,
+          "sha256": "205b82e6753ca5f72574bc3f61567f6b0bbe468c16eb17a0ba63c6902ab615a1"
+        },
+        {
+          "path": "tests/eval/results/tasks/C17.task-T2.8.txt",
+          "executable": false,
+          "sha256": "4964d9707a7e00cc6a992be4c8255c43923332678d63cf6aa6e639480e86f4bd"
+        },
+        {
+          "path": "tests/eval/results/tasks/C17.verification-plan.md",
+          "executable": false,
+          "sha256": "f8b29e40d1812b6471011af12f1fbefb8b36f84528e66f0ad91178c578303874"
+        },
+        {
+          "path": "tests/eval/results/tasks/C18-redaction.verification-plan.md",
+          "executable": false,
+          "sha256": "4b9eb1c7d8e0ee5d89c2775f83da09e7faf72a5901dba3fb48075b515fb5f1b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/C18.full-tests.txt",
+          "executable": false,
+          "sha256": "5db580997f5fcb9605b70f283e632269c06b775683fb550da321af5366675599"
+        },
+        {
+          "path": "tests/eval/results/tasks/C18.package-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C18.root-install.txt",
+          "executable": false,
+          "sha256": "040f769bb0d54699e4db92a1b007eb46d9c7c2b9b1d11e52794de815efea651a"
+        },
+        {
+          "path": "tests/eval/results/tasks/C18.skill-install.txt",
+          "executable": false,
+          "sha256": "04e9290da404a500a9123652c5afdf4e925f25442048465211ff5701695a83c2"
+        },
+        {
+          "path": "tests/eval/results/tasks/C18.task-T2.9.txt",
+          "executable": false,
+          "sha256": "d96747b290807d2d20b95f63b5f4f95ab8ff9c8f7a5c6047765c28d81525eab9"
+        },
+        {
+          "path": "tests/eval/results/tasks/C18.verification-plan.md",
+          "executable": false,
+          "sha256": "b60302759d211dafaf8327509237ec298caa073fe524d9863d0b728b96398696"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.install.txt",
+          "executable": false,
+          "sha256": "71005d8892e3201465cf4b61a45e31cf7c5479efc80921ccb63f51c5d6f32056"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.runtime-install.txt",
+          "executable": false,
+          "sha256": "23d50f4f82c942d85fd259c53e66434d5ed95a2c75a1a8ae5ff556ac59afae9c"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.stylesheet-diff.txt",
+          "executable": false,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.task-T1.5.txt",
+          "executable": false,
+          "sha256": "a9f283a84bf6b2c0f8bfe34bf4954199d67413f39876c59a886b9b4be763fa80"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.task-T1.6.txt",
+          "executable": false,
+          "sha256": "9f14099040efb9449b8802c20a3b77c569736670ac79758c10b5c9e3fb8c06e3"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.template-diff.txt",
+          "executable": false,
+          "sha256": "fe36a46c07f9765f1aa77197bad63c5ed65afcc3a7b0e608eae52f91cbcf0be3"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.test.txt",
+          "executable": false,
+          "sha256": "0a25b3834fa10472cfcfdd4734dbd37109cf9a575b9a4b4a6e27d5fef4c7f246"
+        },
+        {
+          "path": "tests/eval/results/tasks/C9b10a.verification-plan.md",
+          "executable": false,
+          "sha256": "af6a1afdf30d14fc138c3a8ad08e2d5eae87e23b253ab8c28d1f273bb68d0054"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.check.txt",
+          "executable": false,
+          "sha256": "24e2c1a6724c971304e2e46e63aca90266e1dd93d4d103f6037d2cfd7db26645"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.eval-blocked.txt",
+          "executable": false,
+          "sha256": "1dcc90fa96fc892b1cb821840433321898b372b2336378919b828ad7e889462f"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.fixture-control.txt",
+          "executable": false,
+          "sha256": "a1e7b7f98d43d5fad9e0fc620ca13a9ee95f9c0db7b6ec6b2fb1136f9af8ff58"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.history.txt",
+          "executable": false,
+          "sha256": "88d237407cb2853fa3198666afdbc57cf7109bbd329485718a7a631d7b4a5837"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.install.txt",
+          "executable": false,
+          "sha256": "be651d6981c94f4fc648864f204919b3a7ee022eb54707146e93b0595d76982f"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.json",
+          "executable": false,
+          "sha256": "a45d7c3850018fa9b7c5ce569abdaa37068f342b83dc5ce147833b1fc9317def"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.local-links.txt",
+          "executable": false,
+          "sha256": "daaa05efb7712d77b5a298a8d6f6d3c1eed2a49615de6399f526bef7c2b5e719"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.preserved-config.txt",
+          "executable": false,
+          "sha256": "02a713f76226c52a198adae80526740fc4d6057636326bc8dec49635db8ae7a7"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.task-test.txt",
+          "executable": false,
+          "sha256": "14f311bf759b6603cd41d4918bc36fc628d67ee3e40b94688d736b18e5d3e4d2"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.test.txt",
+          "executable": false,
+          "sha256": "684acf4ca40c32ed6caa459b7dc0ceced5de4b4742dd42f8aecb2832151b8f10"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.unknown-task.txt",
+          "executable": false,
+          "sha256": "010a2a3cce3cb998bc26c8f4cbf34a0b8e4e3ef94ce24239343790e98d36a4cd"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.1.verification.md",
+          "executable": false,
+          "sha256": "0cba3585f95a6e9b5845e5b2fde4cc5e6d7767dbf40af2095b67233c862bfa14"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.check.txt",
+          "executable": false,
+          "sha256": "6c3aec264ca93163fb3c6cffff8b6f1f59d80be19f935dcc3efdd1a453061f13"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.help.txt",
+          "executable": false,
+          "sha256": "ef372789269d8f6d11fe92cfbb7a54c4c2dff7b38eb8438f0d1a7622deaa7bf8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.history.txt",
+          "executable": false,
+          "sha256": "3d365c51d148b431a68ba0e5aaffb4dc16a792f22d877d2c7f73cc8a2a0dde1f"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.install.txt",
+          "executable": false,
+          "sha256": "889dc73ee682fdf74118b04afb8638fca906d697aeb5e94aceb98faba33b4300"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.json",
+          "executable": false,
+          "sha256": "9decb6985d7206ebf0f29aac9b760fcdd09d9ac07fea5e5eae3d248dd1be2b45"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.no-args.txt",
+          "executable": false,
+          "sha256": "ef372789269d8f6d11fe92cfbb7a54c4c2dff7b38eb8438f0d1a7622deaa7bf8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.preserved-config.txt",
+          "executable": false,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.task-test.txt",
+          "executable": false,
+          "sha256": "f5b53742bf6c37d92c1fb735f5b37e6fcc3cbfdbe1ab54ff86136b1af539c3e2"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.test.txt",
+          "executable": false,
+          "sha256": "70d8a6bd486b1b74eceb177362cf720fea7384bee4a582221105470d296ffd17"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.2.verification.md",
+          "executable": false,
+          "sha256": "8b2f537fa1d2577dc7e66960829a0eaaf98daf232c7e5b35cbee4324aa4eb0de"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.check.txt",
+          "executable": false,
+          "sha256": "cc877bb537d43f5e5ffb034c2310095c22327f7314979b01c5badd7a47d9a9be"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.fetch-check.history-4921493.txt",
+          "executable": false,
+          "sha256": "ef5332e5a9f4b3a3060ca7d18bcde968640c57fccaf6482b92d1f52edeb39f7a"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.fetch-check.txt",
+          "executable": false,
+          "sha256": "f7a363f6c6ad41cc1ac7af2a4add314e24caca2a222ad666a5ea8b2b3c53b352"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.history.txt",
+          "executable": false,
+          "sha256": "6d24fe09c787675c7ff02763ee9b822a7e7f8f3a185e4bd4e455d9cd7ecb3394"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.install.txt",
+          "executable": false,
+          "sha256": "f466e34ee9ddd9211412106f576539c31cd26c5e382141fbe3078a00193d8694"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.json",
+          "executable": false,
+          "sha256": "6a8443da2ea0874559b818da9622bce6402e9bee93dcbdd021fce228d804cc8d"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.preserved-config.txt",
+          "executable": false,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.task-test.txt",
+          "executable": false,
+          "sha256": "270ad54fd5631a7f445cfe652d39ce72e8dc1c2a7ab730d0acedf31128389708"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.test.history-e1262d4.txt",
+          "executable": false,
+          "sha256": "dc032e02c61b33cbdeb965c61e476290b6deb17806429b04f333bace7d7d80fd"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.test.txt",
+          "executable": false,
+          "sha256": "764f632fb3e32dfe8f536f564ba54ce82a68a51e8f08ad6fac544f1e7cfe82eb"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.3.verification.md",
+          "executable": false,
+          "sha256": "9a3167d7f6bee5ff1c24b8f30eb70ac5d33b6f35aebafd112b9ecc6fbb887f34"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.check.txt",
+          "executable": false,
+          "sha256": "0b6bf24300c8e5c64f4b83d614f16eea53e35c19569be9cb60175b093cf23572"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.git-version.txt",
+          "executable": false,
+          "sha256": "fff575d3fa43a92d932e4eb8bc03394140ce40699f9c8a97c3126016a244dfb8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.history.txt",
+          "executable": false,
+          "sha256": "6e442db8ef1c6e594faa8df4b7cd1321742663c4593034f6c7f65afed8b59af0"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.install.txt",
+          "executable": false,
+          "sha256": "cabf8c0b52a73eb84a5fbde287eb110b4f0bcae6857ed64adf66d13a7578493e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.json",
+          "executable": false,
+          "sha256": "cd14de9cddda60ca525636204bc0ebd6eeb0403eed9a13cdb8d02cca5321e5f2"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.preserved-config.txt",
+          "executable": false,
+          "sha256": "02a713f76226c52a198adae80526740fc4d6057636326bc8dec49635db8ae7a7"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.task-test.txt",
+          "executable": false,
+          "sha256": "d378e03c417f14cff9272dd770a7bb680a1b601e8ba3221954165bb095d78a1f"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.test.txt",
+          "executable": false,
+          "sha256": "a48ce1329c660853c3e8d18966be602c8ec640f6d4cfd0accbd3087079340d50"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4a.verification.md",
+          "executable": false,
+          "sha256": "e7bedabb0b18f9eb66d3f9dc74a27fe9e0751ca54afd514ad8c6759e5f837ea6"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.check.txt",
+          "executable": false,
+          "sha256": "42c56134500b29d9fc3e941870d1a68a33689f908b04163e0b98e94cd373a132"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.git-version.txt",
+          "executable": false,
+          "sha256": "fff575d3fa43a92d932e4eb8bc03394140ce40699f9c8a97c3126016a244dfb8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.history.txt",
+          "executable": false,
+          "sha256": "86df59a3e554016a3bf50d1ff087abcf4c6e1767345e019e66e2944f4e9c2b47"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.install.txt",
+          "executable": false,
+          "sha256": "55b7168976cc856c96f6f824ff28ed4720d4b4f34961a57fb975bed93af62014"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.json",
+          "executable": false,
+          "sha256": "0a0e534a0c930f31135f92ad16cbf39154e4ebb039791769d7477a0d221361a4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.preserved-config.txt",
+          "executable": false,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.task-test-repeat.txt",
+          "executable": false,
+          "sha256": "24ba53065df25e7cdad53975af23f7ed8d3a6e76a28351416ff07cefdf48f63f"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.task-test.txt",
+          "executable": false,
+          "sha256": "e06bdd66be180ae8858ac5ed04d53ea1a1da4fe7a85455a83c79598b5630a068"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.test.txt",
+          "executable": false,
+          "sha256": "74f53101a80e4e3f44aa3dc5ea75d6f5d88f1f3b8998872bc9347c0ee06da361"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4b.verification.md",
+          "executable": false,
+          "sha256": "8d6fdb4a67e2198b8cd956c0cf455cef3eec32c6361c120ef02d06bb685c6e04"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.check.txt",
+          "executable": false,
+          "sha256": "907f401aa281aa3a8b13aa3f202d9104e53bf52e1e3dfea6aed4a9b89b274cc9"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.git-version.txt",
+          "executable": false,
+          "sha256": "fff575d3fa43a92d932e4eb8bc03394140ce40699f9c8a97c3126016a244dfb8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.history.txt",
+          "executable": false,
+          "sha256": "4b79e5fda8293d5600d42c363979b9b28fc5a6189888c361e468b51d9bce279d"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.install.txt",
+          "executable": false,
+          "sha256": "756e1a338efa5a8c064ac4826fe1e4254e8d6616585d247a71dd80a6c1dd1909"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.json",
+          "executable": false,
+          "sha256": "e84ac7eaf62c23526454426c4861360a73454030a6415a419084166717628de6"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.preserved-config.txt",
+          "executable": false,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt",
+          "executable": false,
+          "sha256": "7388229f3533106944ad7c83fae4492b23c78c846f2ec3715069f811cc7dea8d"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.task-test.txt",
+          "executable": false,
+          "sha256": "2c8ce794137459d9c19668278f07eab8fce555b9d3008e282825667ee429ec3b"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.test.txt",
+          "executable": false,
+          "sha256": "42033e2090c1bf67364995af1c61eb05d4b1592b75afe60e693a724e3b1d4594"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.verification.md",
+          "executable": false,
+          "sha256": "54e70288b46bcd80d5b2c80bce0cd185adb96e573b1cd512c7d93aa7beb8ed02"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.4.C4c.workflows.txt",
+          "executable": false,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.git-version.txt",
+          "executable": false,
+          "sha256": "fff575d3fa43a92d932e4eb8bc03394140ce40699f9c8a97c3126016a244dfb8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.history.txt",
+          "executable": false,
+          "sha256": "26443de9271e4ff060d246afc6c51cad8c873862f47cfce3efff21ec8df252fb"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.install.txt",
+          "executable": false,
+          "sha256": "8a8146939bfac2078b11123c5bebee47ac021de6d0705842820d08b35de08bd8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.json",
+          "executable": false,
+          "sha256": "e88c9306dc2067d72e1a4062d48a5183ecd9ef6c3bd2cf0c037807557d25ae84"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.preserved-config.txt",
+          "executable": false,
+          "sha256": "02a713f76226c52a198adae80526740fc4d6057636326bc8dec49635db8ae7a7"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.task-test.txt",
+          "executable": false,
+          "sha256": "abe149cb0eed5c683a38fd17f2cb318ccf1a1e970774ec4a0d1a3922ab88cba9"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.test.txt",
+          "executable": false,
+          "sha256": "cfa72cccf9aa1f56100b7a01fb5c74a3e8a5e23045ddd97f55116b4b0be4bc3b"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.verification.md",
+          "executable": false,
+          "sha256": "e7f1dfb025f39ab27a5bd9c2017f4869ba030540cb73fb08e872032aee830e5c"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5a.workflows.txt",
+          "executable": false,
+          "sha256": "02a713f76226c52a198adae80526740fc4d6057636326bc8dec49635db8ae7a7"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.gate-config.txt",
+          "executable": false,
+          "sha256": "a5369f27747bce12d79df2d0a594dc3da0b17524aaf72da9eee8f75796d48e47"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.git-version.txt",
+          "executable": false,
+          "sha256": "fff575d3fa43a92d932e4eb8bc03394140ce40699f9c8a97c3126016a244dfb8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.history.txt",
+          "executable": false,
+          "sha256": "785980f76d0952908d0f0668a82c4e4f0378c7e4d1cd3ca7d9f91ef281c5b451"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.json",
+          "executable": false,
+          "sha256": "34b44cef10ec440e4daa11473c149fd90bb869381d0d66236a9eae0fb75ed6e0"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node-schedule.txt",
+          "executable": false,
+          "sha256": "1cf0432ceb9dfde7f1fd4cce43206519942cfdfad5a26039c2f4bb20fde8549c"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node24-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node24-gate-task-test.txt",
+          "executable": false,
+          "sha256": "e1815e07b4e2432186f440b7d8bfc1b12e7dc22ee0561c3b3a51b70ef2ffe19d"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node24-install.txt",
+          "executable": false,
+          "sha256": "feccc1c82fad592e7b99544c9863a4a2a3b24dc762ddf4a5de958fc02e5f1698"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node24-node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node24-npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node24-task-test.txt",
+          "executable": false,
+          "sha256": "a12ec630e232549f84fb0ac94ed3a7bb70f6b557ccf5406fe0bdc9428c9af9bb"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node24-test.txt",
+          "executable": false,
+          "sha256": "3b29b1aa0607b058c0ec362d51ae488a8e8d317fdc39d5df9116f1a1efbd0b9e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node26-check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node26-gate-task-test.txt",
+          "executable": false,
+          "sha256": "82d3971392203b0389373107ab76925767bdb8d76e51f2af2c2cdb7ad64782ef"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node26-install.txt",
+          "executable": false,
+          "sha256": "43fcea0d4cae7c6a0f4f1043e1026de7987db41e51b1fcf3a580b0a1d01e3d73"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node26-node-version.txt",
+          "executable": false,
+          "sha256": "ff9f714664f5d87ac6548bb3700b0c18bd57add52ac986b01d4aec21543ccfda"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node26-npm-version.txt",
+          "executable": false,
+          "sha256": "6784d6c924df1c8341f9f841f5b5b20c37255de3d34f923baebc0a557d5d5201"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node26-task-test.txt",
+          "executable": false,
+          "sha256": "0f08d0d39cb3f00e60128104b552c7941ce86f9c431c88920630bc60d11f1893"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.node26-test.txt",
+          "executable": false,
+          "sha256": "cb85b302003ee81b2a6b4595edca84eb34266d6a950070f9d711efce6d953096"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.verification.md",
+          "executable": false,
+          "sha256": "cbd886d7b6e61f4b2e8e76c3e9da61522cfb5204057fe172dac0d4a2fb79812e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.5.C5b.workflows.txt",
+          "executable": false,
+          "sha256": "ffceb5e47769a4ec263f38a865f70da08270f34e2eb6b56fab8a9a55fba17938"
+        },
+        {
+          "path": "tests/eval/results/tasks/T0.6.json",
+          "executable": false,
+          "sha256": "2c917d0def0cd8ccf7a95a991d4200fb88fc4e20563a1fede760165d1f8a492c"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.build.txt",
+          "executable": false,
+          "sha256": "98ca3582ba24804c17cab58b41c83951f831003191c6bd7a965e145659679f44"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.git-version.txt",
+          "executable": false,
+          "sha256": "fff575d3fa43a92d932e4eb8bc03394140ce40699f9c8a97c3126016a244dfb8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.install.txt",
+          "executable": false,
+          "sha256": "e642e09a5fc519ce44883d013d371f726362834e7b4417fc93d6b29d14080739"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.json",
+          "executable": false,
+          "sha256": "527a0bf931d9f5db9b48730cc476c0895908faa87e381f6064e5d0fda8e9ec6e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.python-version.txt",
+          "executable": false,
+          "sha256": "5b3e43dc38ca01e3f5a7854ba50d4330864b0c1e0f646650b2c78cf072acc366"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.revision.txt",
+          "executable": false,
+          "sha256": "f6069692041de8fdcc29646703ee3f9ce64a0a9930e6f5e1497658f5f28075d5"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.ruff-version.txt",
+          "executable": false,
+          "sha256": "4c19d978a40e405035f16d9c5ae54e3a29a88823e31420d53764c0f64259dbb7"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.task-test.txt",
+          "executable": false,
+          "sha256": "4b20713bc84b530e8963da2e3993bea7e5d4af554f44ed8d7468bc092372ad6f"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.test.txt",
+          "executable": false,
+          "sha256": "7d1e58d205267e0d2c22e5b7a153d527cc8af41d273a2876164f1a1c091ac0af"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.typescript-version.txt",
+          "executable": false,
+          "sha256": "4985b444236c5acdb5b850e5d754975e130eed5b033c53f201cdf471e83d7f13"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.uv-version.txt",
+          "executable": false,
+          "sha256": "dcccc14d410dab345544375b730933845d90c3222a4a8a0c08ed6c412ca336a4"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.1.verification.md",
+          "executable": false,
+          "sha256": "0499bb44fe495e4eab7d861dfa83e6c43e1386c6e867ed24913ca309d6511dd5"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.git-version.txt",
+          "executable": false,
+          "sha256": "fff575d3fa43a92d932e4eb8bc03394140ce40699f9c8a97c3126016a244dfb8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.install.txt",
+          "executable": false,
+          "sha256": "b1c47d1bb4c81b47c4c41695b3897ffdefd50ec28ebd5318c1aae87e5858f14e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.json",
+          "executable": false,
+          "sha256": "c08d42f3040061ca0e7f02ec13814f6a08be1792eb849484fba34e6d1ff4e3d0"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.os.txt",
+          "executable": false,
+          "sha256": "0cf67852ee610594b382d0cde3ab2574a4b6e16fb4c19700821dd295a002898e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.registry.txt",
+          "executable": false,
+          "sha256": "f425825c0e67f6e529a60268b44b4dcedf650d53d579010c4c2ba03e3a9a7c0c"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.review.txt",
+          "executable": false,
+          "sha256": "b310f18d524691ddec2fb7ece77e0aaf755154451ac916b654e8986d55253d9d"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.revision.txt",
+          "executable": false,
+          "sha256": "781e4d2527df52ff71c099e18cfc3a03e46cf10bf869546bca311471f03efe64"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.task-test.txt",
+          "executable": false,
+          "sha256": "169661fff217baeaedc09a630bf2f3b91a039628620773003a4398479550d266"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.test.txt",
+          "executable": false,
+          "sha256": "8ad0cd359e672d9224b9c70e3a9b19933d36e5b76fc6246a099501762447cfc5"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.2.verification.md",
+          "executable": false,
+          "sha256": "ba3a2911ad7f3dae8b984d8a7b05fc747cd837866fd497f58c53aef8921626b7"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.3.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.3.install.txt",
+          "executable": false,
+          "sha256": "193512164527685a7d5660db28a4357a654b6916b957974c9e28f0456c2fecb9"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.3.json",
+          "executable": false,
+          "sha256": "2aaf0d3bc5b17b8bf25f2d3572a053a3294a36f0186002319cce60e8a7aebda9"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.3.review.md",
+          "executable": false,
+          "sha256": "c9d341169ba57963460a7c15198fc75315ebcd91cf2770e7b350fd810a923902"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.3.skill-validator.txt",
+          "executable": false,
+          "sha256": "57ffc02256c47d2aa19352126e139f97b9d3a6845f5816cb39d430b91025a319"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.3.task-test.txt",
+          "executable": false,
+          "sha256": "72d3440d26f47dee29fdcbe4e29ebc39b0db20689c898eb4acfbd39b5d0bdc3b"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.3.test.txt",
+          "executable": false,
+          "sha256": "918cbc8989f1b203625502da3944f92baad693736963ae9b81e1552834a6aa18"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.3.verification-plan.md",
+          "executable": false,
+          "sha256": "00df8cf187db4751dfe4869246956ea18ee0f7ec71cdb7e452c8d9eba8ca4b96"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.4.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.4.install.txt",
+          "executable": false,
+          "sha256": "c982141ee15b7b03cb868e111e863a3d70144dc81213d4768c2446eeedc4e06b"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.4.json",
+          "executable": false,
+          "sha256": "c8d7c38bd4688d521ccb277b398c4129344030bb3f378266c3da2a5f3829bd4e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.4.task-test.txt",
+          "executable": false,
+          "sha256": "a7eee2d0481c434a9bf775e84397e15acdbc46271afea8a46bf4cb3c580c7032"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.4.test.txt",
+          "executable": false,
+          "sha256": "b46fae3e0171c704d275d054731b1bd0a7abbb3849c92231f6f9a234d1d6a930"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.4.verification.md",
+          "executable": false,
+          "sha256": "6457b8a584c73804a6a0d44cedf0f73d318b51df9c6e4595787c8115078caf5b"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.5.json",
+          "executable": false,
+          "sha256": "ec5f57fb99bc416dc72d9c557851d6a84240c6bc773b459146a25d199b66f486"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.6.json",
+          "executable": false,
+          "sha256": "0b22e3b605f3de71757ffbe0517c43699ec839c14a688290e049daa895c1e4d0"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.6.runtime-probe.md",
+          "executable": false,
+          "sha256": "904109730460c6ab9a97e261c334bba92c8ddf8d3a0a06ffc4d716d7ea29dcbf"
+        },
+        {
+          "path": "tests/eval/results/tasks/T1.7.json",
+          "executable": false,
+          "sha256": "2a282c333982c125116d3304042e5d0b1923c2c3588dbef12702d6d1b382f739"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.1.json",
+          "executable": false,
+          "sha256": "2f43e41a7a825db960c8892b21939039ff17ed9df2cfd9e33df5ae6bbeba2c36"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.2.json",
+          "executable": false,
+          "sha256": "6ea4acc46af0f1c3df197c5cb4a8e10b8d5e164c257e3a8d7d500470ba076cec"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.3.json",
+          "executable": false,
+          "sha256": "ddc3b0c49200f93ae3b80ce395c1250cd8fbcf7ca999c2889048f842e318e791"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.4.json",
+          "executable": false,
+          "sha256": "e7c23f5fd2cad00c0e80178410984172da136d3ef04735d79a0c18c464023f20"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.5.json",
+          "executable": false,
+          "sha256": "bbee34f38b7433393d792a7a9818007409bb22f4e230a5784f67651c170d21e9"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.6.json",
+          "executable": false,
+          "sha256": "2531f075beddc945acd85797115197a094f35c3882785095e2901d5eba027e82"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.7.json",
+          "executable": false,
+          "sha256": "64838cbbeb378e169a59cf3bfe45dc96746694de9b9e66ca0734362a68d514f7"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.8.json",
+          "executable": false,
+          "sha256": "f628f45477639bad4fca9288db09792ff3317d58f59c3f928c2ea1d83824e849"
+        },
+        {
+          "path": "tests/eval/results/tasks/T2.9.json",
+          "executable": false,
+          "sha256": "e021bd9af044071297b812ed784b4644c62e978215a1bca920f43f782096250e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.check.txt",
+          "executable": false,
+          "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.json",
+          "executable": false,
+          "sha256": "215d50a88ef2f30208b89e6c415cbaea5c88d91c26fb1abf629083a38562f971"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.root-install.txt",
+          "executable": false,
+          "sha256": "1e0d7bf38d048a8a0841d94f1390afd73dfd2ac2e22346fa5c8cccc6dfff4437"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.routing-search.txt",
+          "executable": false,
+          "sha256": "5e4e7c65b600db6b6d9f683a9772440053a0480c3e9408ef8b24827fccaf1020"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.skill-install.txt",
+          "executable": false,
+          "sha256": "39aa986e38fc83e02ec9554f71ae2ac2312b82dd3b76f6cd0ed4d055ab2b69d8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.task-test.txt",
+          "executable": false,
+          "sha256": "a771695cf32215a8c11de568e468458fb2237b724b3848ba1bd9d8587c47027e"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.test.txt",
+          "executable": false,
+          "sha256": "f3dae2a7e5ad120d7c61e14a6924fc30000481fafdd796e9e5a6801d4816caf8"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.verification-plan.txt",
+          "executable": false,
+          "sha256": "d042a847059aec902050bdc783c2522bb23e7ebe3e0045a715e0c9bd28e8dc83"
+        },
+        {
+          "path": "tests/eval/results/tasks/T3.1.verification.md",
+          "executable": false,
+          "sha256": "98f468f6d5133196c71bff2283a1d00a700737bdc66e4d2513f2d4fa8baab770"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.check.txt",
+          "executable": false,
+          "sha256": "11ab9e857c2db40c6f20bfb581f90ecff41ff5b91ba5ccb2a44c6dab93666201"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.git-version.txt",
+          "executable": false,
+          "sha256": "fff575d3fa43a92d932e4eb8bc03394140ce40699f9c8a97c3126016a244dfb8"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.history.txt",
+          "executable": false,
+          "sha256": "82cb32543a54c447484bf107602e363681b3210126d73bc829659f2c917a94e4"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.install.txt",
+          "executable": false,
+          "sha256": "3c72fea77209cb7c54e2a1d927c7de271a5e8714c02a2b011584ce5eed7c3ec7"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.json",
+          "executable": false,
+          "sha256": "053e978968c9696f881f710faf33761238a8cc2726ee107b717db87770d7a62c"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.node-version.txt",
+          "executable": false,
+          "sha256": "5c9160ca0ca43d0c49f5e254d49027c297167ac86be2287128b53ca3d9cd7296"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.npm-version.txt",
+          "executable": false,
+          "sha256": "3dbc807e13de125e909bea5877613d5d67989a43fb8e982fd79ba0efa46ac952"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.os.txt",
+          "executable": false,
+          "sha256": "a1c1a216f250d0b9125adce3602140fd05d1621adc8ceaa7bb01c590e4fec9b4"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.preserved-config.txt",
+          "executable": false,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.task-test.txt",
+          "executable": false,
+          "sha256": "ddc5529e7c9413ea7400a5e50ae505c0da8c31d73c279c91c223b06310f4e1d1"
+        },
+        {
+          "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.test.txt",
+          "executable": false,
+          "sha256": "9236b3b059e49f1ae43e99fd1c6aa717cee3cb55a54debb8787e514c1f276ee0"
+        },
+        {
+          "path": "tests/eval/results/tasks/test-speed.profile.md",
+          "executable": false,
+          "sha256": "2345f22038819b02862a31ebb799437d8a05dc23b215906470dd56dc88e13b82"
+        },
+        {
+          "path": "tests/eval/results/tasks/test-speed.verification-plan.md",
+          "executable": false,
+          "sha256": "a11d9cfa9eb0ead173603a1159a4801b6c954ab728e2422afb76d650ae4d3729"
         },
         {
           "path": "tests/eval/scenarios/scenarios.json",
@@ -1758,7 +3155,7 @@
         {
           "path": "tests/scripts/bootstrap.test.mjs",
           "executable": false,
-          "sha256": "211145e7fd29a363e12710f13e684799a0349b04749513332f62f18ea6837d82"
+          "sha256": "d257e383c45ede3e8d38984bc59c5cd9609b2701151002f4edfaa3f78b4a82fa"
         },
         {
           "path": "tests/scripts/child-contract.test.mjs",
@@ -2016,7 +3413,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "c2d837e2c70361998a9ccf8c7cca9011ffd3237a545cee63efc72f4137a4d279"
+      "sha256": "1af2adfb8710a930c65df47f1319fcb24b1c2f61f94b701d578e2615b1135b64"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -2045,18 +3442,18 @@
       "tests/scripts/vision-runtime.test.mjs"
     ],
     "counts": {
-      "tests": 850,
+      "tests": 858,
       "failed": 0,
-      "passed": 850,
+      "passed": 858,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 841,
+      "topLevel": 849,
       "suites": 0
     },
-    "durationMs": 63808.638454,
-    "outputSha256": "6705cc3567b2a0d3ee9e49c70861525c424e7b5d3df03279fd0fc076e9551bb2",
-    "eventsSha256": "c37eccdbbedb4dd0a191ae83807e6451685f843732fc6104e1da2de3a5a24cf1",
+    "durationMs": 61667.706681,
+    "outputSha256": "e02ec826e25f04e3dc3e88e5ca43dad54077a98c9c137b902296f69ebf0f6679",
+    "eventsSha256": "4906f85751b88b48c771df9a7f89a937449b8d72b5b0b1e97bcd646f89d4e380",
     "eventsArtifact": "tests/eval/results/tasks/test-speed.events.jsonl"
   }
 }
