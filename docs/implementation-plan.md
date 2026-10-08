@@ -556,8 +556,8 @@ Use the explicit-file runner above rather than passing a directory as a test fil
    Update the Node row in "Defaults this plan sets" if it changed.
 2. Run `npm ci --ignore-scripts`, `npm run check` and `npm test` on local Node 24 and on local Node 26.
    Record each command, the full Node version, the OS, the exit code and the output, using the task evidence contract.
-3. Confirm that `.no-mistakes.yaml` runs the same root commands and declares `no_ci: true`.
-   Once `npm run check` exists, remove the `--if-present` fallback from the gate's check command so a missing package check fails.
+3. Confirm that `.no-mistakes.yaml` declares `no_ci: true` and covers the same validation as the local runs without repeating dependency installation or test suites.
+   Include T0.5's distinct package check rather than assuming `npm test` covers it.
    Gate the slice through no-mistakes.
 4. Add no `.github/workflows/` file and no hosted matrix.
 5. No gate command may ignore a failure, for example with `|| true`.
