@@ -60,6 +60,16 @@ Read only the task and the shared contract it needs.
 - Record unavailable verification as blocked, with a reason and the next prerequisite.
 - On resume, inspect the current files and rerun checks affected by changes since the saved evidence.
 
+The no-mistakes Test command captures its full-suite output and test identities from committed source inputs with `npm test -- --capture .cache/full-suite.json`.
+After the final source, test and documentation fixes, Document attaches that run with `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>` before publication.
+The generator reads the saved run rather than executing another suite or starting another pipeline.
+Its validation binding records the tested head, resolved base, command, environment, selected suite paths, test identities, counts, timing, output hashes and complete authored input inventory.
+An evidence-only descendant can reuse the tested head when the generator confirms ancestry and identical inputs, base and environment at the final head.
+The record cannot contain its own commit hash; publication identifies the final head, and the input binding proves that head has the tested contents.
+Only `tests/eval/results/tasks/` evidence outputs are excluded from the input inventory.
+Changes to behaviour, tests or other inputs require a fresh full-suite capture within the existing pipeline before attachment.
+Preserve task-specific commands, acceptance cases and limitations; the full-suite record does not replace them.
+
 The [task evidence schema](../tests/eval/task-evidence.schema.json), introduced in T0.1, owns this record's versioned format.
 Later tasks reuse that format rather than adding separate completion logs.
 No build task is complete merely because `npm test` exits zero with no relevant tests.
