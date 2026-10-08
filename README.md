@@ -22,6 +22,7 @@ npm test -- --task T0.4.C4c
 npm test -- --task T0.5.C5a
 npm test -- --task T0.5.C5b
 npm test -- --task T0.6
+npm test -- --task T1.1
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
 
@@ -37,6 +38,19 @@ Task suites are registered in `tests/tasks.json`.
 `npm test -- --task T0.4` selects the currently implemented shared-library tests.
 `npm test -- --task T0.5` selects the currently implemented package-check tests.
 See [task progress](docs/implementation-plan.md#progress) for the remaining slices.
+
+Build isolated fixture workspaces with Node 24 or later and Git:
+
+```sh
+node tests/fixtures/build.mjs --all
+node tests/fixtures/build.mjs clear-goals
+```
+
+The builder prints one JSON line per fixture with its `name`, temporary `path` and `kind` after its sanity check passes.
+`new-idea` and `ambiguous-idea` contain only their briefs and have no Git repository.
+`clear-goals` contains approved project documents and two deterministic commits with fixture-local identity and signing disabled.
+The caller owns removal of the printed temporary folders.
+See the [fixture contract](docs/fixtures.md) for sources, sanity commands and the remaining T1.1 scope.
 
 Raw upstream development sources are committed outside the installed skill.
 [The manifest](upstream/sources.json) owns their exact pins and copied paths, and [NOTICE](NOTICE) records adaptations.
