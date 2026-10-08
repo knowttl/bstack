@@ -103,7 +103,7 @@ npm test -- --task T2.6
 The [apply contract](docs/command-contract.md#apply-dry-run) documents the reviewed change set, exact-byte hashes, digest and supported operations.
 Dry-run plain output prints the complete diff; dry-run JSON additionally returns complete proposed content and hashes.
 Omit `--dry-run` to apply after review.
-Repeating the same plan resumes pending edits or returns `already-applied` without writes.
+See the apply contract for resume and completed-plan behavior.
 Use `replace-file` with complete reviewed UTF-8 content when a mechanical edit is unsupported, including the audit record rendered by T2.5.
 `state show` reports actual applied, pending and conflicting files and affected checks to rerun.
 See the apply contract for preflight protection, backup and journal recovery, and filesystem limits.
