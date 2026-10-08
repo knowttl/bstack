@@ -1,5 +1,5 @@
 
-added 3 packages, and audited 4 packages in 421ms
+added 3 packages, and audited 4 packages in 433ms
 
 1 package is looking for funding
   run `npm fund` for details

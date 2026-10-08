@@ -7,79 +7,79 @@ TAP version 13
 # Subtest: new-idea builds a non-Git workspace containing only its brief
 ok 1 - new-idea builds a non-Git workspace containing only its brief
   ---
-  duration_ms: 104.696332
+  duration_ms: 94.415196
   type: 'test'
   ...
 # Subtest: ambiguous-idea builds a non-Git workspace containing only its brief
 ok 2 - ambiguous-idea builds a non-Git workspace containing only its brief
   ---
-  duration_ms: 80.478923
+  duration_ms: 96.021443
   type: 'test'
   ...
 # Subtest: clear-goals replays deterministic history with local identity and signing disabled
 ok 3 - clear-goals replays deterministic history with local identity and signing disabled
   ---
-  duration_ms: 417.767647
+  duration_ms: 317.698169
   type: 'test'
   ...
 # Subtest: all fixtures run sanity checks and leave source bytes unchanged
 ok 4 - all fixtures run sanity checks and leave source bytes unchanged
   ---
-  duration_ms: 18878.855466
+  duration_ms: 17337.191107
   type: 'test'
   ...
 # Subtest: dirty-work reproduces its declared state with deterministic history
 ok 5 - dirty-work reproduces its declared state with deterministic history
   ---
-  duration_ms: 504.461129
+  duration_ms: 361.830659
   type: 'test'
   ...
 # Subtest: refactor reproduces its declared state with deterministic history
 ok 6 - refactor reproduces its declared state with deterministic history
   ---
-  duration_ms: 636.069279
+  duration_ms: 517.727778
   type: 'test'
   ...
 # Subtest: contract-removal reproduces its declared state with deterministic history
 ok 7 - contract-removal reproduces its declared state with deterministic history
   ---
-  duration_ms: 514.32535
+  duration_ms: 368.046899
   type: 'test'
   ...
 # Subtest: shallow-history reproduces its declared state with deterministic history
 ok 8 - shallow-history reproduces its declared state with deterministic history
   ---
-  duration_ms: 716.828589
+  duration_ms: 458.711652
   type: 'test'
   ...
 # Subtest: installer-collision reproduces its declared state with deterministic history
 ok 9 - installer-collision reproduces its declared state with deterministic history
   ---
-  duration_ms: 333.056242
+  duration_ms: 278.490701
   type: 'test'
   ...
 # Subtest: ts-shop reports missing native tools as blocked
 ok 10 - ts-shop reports missing native tools as blocked
   ---
-  duration_ms: 42.453032
+  duration_ms: 49.647921
   type: 'test'
   ...
 # Subtest: py-ledger reports missing native tools as blocked
 ok 11 - py-ledger reports missing native tools as blocked
   ---
-  duration_ms: 42.899563
+  duration_ms: 44.8287
   type: 'test'
   ...
 # Subtest: a changed fixture seed fails its sanity check
 ok 12 - a changed fixture seed fails its sanity check
   ---
-  duration_ms: 132.832284
+  duration_ms: 145.447488
   type: 'test'
   ...
 # Subtest: unknown fixture selection returns usage without building
 ok 13 - unknown fixture selection returns usage without building
   ---
-  duration_ms: 39.988254
+  duration_ms: 45.549261
   type: 'test'
   ...
 1..13
@@ -90,4 +90,4 @@ ok 13 - unknown fixture selection returns usage without building
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 22527.793599
+# duration_ms 20184.872984
