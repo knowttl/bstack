@@ -7,45 +7,87 @@ TAP version 13
 # Subtest: new-idea builds a non-Git workspace containing only its brief
 ok 1 - new-idea builds a non-Git workspace containing only its brief
   ---
-  duration_ms: 121.00581
+  duration_ms: 104.696332
   type: 'test'
   ...
 # Subtest: ambiguous-idea builds a non-Git workspace containing only its brief
 ok 2 - ambiguous-idea builds a non-Git workspace containing only its brief
   ---
-  duration_ms: 116.323458
+  duration_ms: 80.478923
   type: 'test'
   ...
 # Subtest: clear-goals replays deterministic history with local identity and signing disabled
 ok 3 - clear-goals replays deterministic history with local identity and signing disabled
   ---
-  duration_ms: 452.934881
+  duration_ms: 417.767647
   type: 'test'
   ...
 # Subtest: all fixtures run sanity checks and leave source bytes unchanged
 ok 4 - all fixtures run sanity checks and leave source bytes unchanged
   ---
-  duration_ms: 469.848096
+  duration_ms: 18878.855466
+  type: 'test'
+  ...
+# Subtest: dirty-work reproduces its declared state with deterministic history
+ok 5 - dirty-work reproduces its declared state with deterministic history
+  ---
+  duration_ms: 504.461129
+  type: 'test'
+  ...
+# Subtest: refactor reproduces its declared state with deterministic history
+ok 6 - refactor reproduces its declared state with deterministic history
+  ---
+  duration_ms: 636.069279
+  type: 'test'
+  ...
+# Subtest: contract-removal reproduces its declared state with deterministic history
+ok 7 - contract-removal reproduces its declared state with deterministic history
+  ---
+  duration_ms: 514.32535
+  type: 'test'
+  ...
+# Subtest: shallow-history reproduces its declared state with deterministic history
+ok 8 - shallow-history reproduces its declared state with deterministic history
+  ---
+  duration_ms: 716.828589
+  type: 'test'
+  ...
+# Subtest: installer-collision reproduces its declared state with deterministic history
+ok 9 - installer-collision reproduces its declared state with deterministic history
+  ---
+  duration_ms: 333.056242
+  type: 'test'
+  ...
+# Subtest: ts-shop reports missing native tools as blocked
+ok 10 - ts-shop reports missing native tools as blocked
+  ---
+  duration_ms: 42.453032
+  type: 'test'
+  ...
+# Subtest: py-ledger reports missing native tools as blocked
+ok 11 - py-ledger reports missing native tools as blocked
+  ---
+  duration_ms: 42.899563
   type: 'test'
   ...
 # Subtest: a changed fixture seed fails its sanity check
-ok 5 - a changed fixture seed fails its sanity check
+ok 12 - a changed fixture seed fails its sanity check
   ---
-  duration_ms: 154.373042
+  duration_ms: 132.832284
   type: 'test'
   ...
 # Subtest: unknown fixture selection returns usage without building
-ok 6 - unknown fixture selection returns usage without building
+ok 13 - unknown fixture selection returns usage without building
   ---
-  duration_ms: 56.395594
+  duration_ms: 39.988254
   type: 'test'
   ...
-1..6
-# tests 6
+1..13
+# tests 13
 # suites 0
-# pass 6
+# pass 13
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1458.860788
+# duration_ms 22527.793599
