@@ -3,7 +3,7 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, read-only starting-state inspection and document inventory, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
@@ -38,6 +38,7 @@ npm test -- --task T1.7
 npm test -- --task T2.1
 npm test -- --task T2.2
 npm test -- --task T2.3
+npm test -- --task T2.4
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
@@ -49,6 +50,20 @@ Local validation installs both the root development lock and the nested skill ru
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 The no-mistakes gate installs both locks, runs tests and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
+Collect repeatable size and change-history signals, or compare two declared change plans:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs measure --repo <path> --range <base>..<head> --json
+node skills/repo-audit/scripts/repo-audit.mjs measure --repo <path> --range HEAD --exclusions <file> --json
+node skills/repo-audit/scripts/repo-audit.mjs overlap --repo <path> --plans <file> <file> --json
+```
+
+See the [measurement and overlap contract](docs/command-contract.md#measure-and-overlap) for input examples, lineage handling, exclusions and glob semantics.
+Measurements include supporting commits, rename handling and the resolved revision range.
+Only eligible files present at the range endpoint are measured, following detected lineage back through renames to addition commits.
+If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, the old lifetime's commits and co-change pairs can be attributed to the new file.
+Signals are advisory evidence, never violations, and do not establish semantic independence or observed conflicts.
+
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
 Scripted replies use the host's resume interface after a reviewer matches the question to the next scripted answer.

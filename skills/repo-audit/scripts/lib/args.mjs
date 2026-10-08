@@ -16,6 +16,10 @@ export function parseArgs(argv, valueOptions = []) {
     if (name === 'json') options[name] = true
     else if (!argv[index + 1] || argv[index + 1].startsWith('--')) {
       problems.push({ code: 'missing-value', message: `Missing value for ${token}`, fix: 'Supply a nonempty value after the option.' })
+    } else if (name === 'plans') {
+      options[name] = [argv[++index]]
+      if (!argv[index + 1] || argv[index + 1].startsWith('--')) problems.push({ code: 'missing-value', message: '--plans requires two files.', fix: 'Supply --plans <file> <file>.' })
+      else options[name].push(argv[++index])
     } else options[name] = argv[++index]
   }
   if (options.repo && options.workspace) {

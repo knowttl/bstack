@@ -19,5 +19,6 @@
   "T1.7": ["tests/scripts/vision-review.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/package-check.test.mjs"],
   "T2.1": ["tests/scripts/cite-check.test.mjs", "tests/scripts/package-check.test.mjs"],
   "T2.2": ["tests/scripts/inspect.test.mjs"],
-  "T2.3": ["tests/scripts/inventory.test.mjs"]
+  "T2.3": ["tests/scripts/inventory.test.mjs"],
+  "T2.4": ["tests/scripts/measure.test.mjs", "tests/scripts/overlap.test.mjs"]
 }
