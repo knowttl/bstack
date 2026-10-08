@@ -1,0 +1,51 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T2.3
+
+Selected 1 suite(s): tests/scripts/inventory.test.mjs
+TAP version 13
+# Subtest: py-ledger CONTRIBUTING is the standards source without requiring CODING_STANDARDS
+ok 1 - py-ledger CONTRIBUTING is the standards source without requiring CODING_STANDARDS
+  ---
+  duration_ms: 847.215701
+  type: 'test'
+  ...
+# Subtest: ts-shop import-only CLAUDE stub produces a version-limited merge candidate
+ok 2 - ts-shop import-only CLAUDE stub produces a version-limited merge candidate
+  ---
+  duration_ms: 3775.467533
+  type: 'test'
+  ...
+# Subtest: inventory preserves root, nested, local and outside-repo instruction scopes without writes
+ok 3 - inventory preserves root, nested, local and outside-repo instruction scopes without writes
+  ---
+  duration_ms: 102.363807
+  type: 'test'
+  ...
+# Subtest: inventory discovers equivalent names and exact-byte hashes and tolerates absent documents
+ok 4 - inventory discovers equivalent names and exact-byte hashes and tolerates absent documents
+  ---
+  duration_ms: 104.031779
+  type: 'test'
+  ...
+# Subtest: a local-only instruction is a shadowing report without a merge candidate
+ok 5 - a local-only instruction is a shadowing report without a merge candidate
+  ---
+  duration_ms: 85.743308
+  type: 'test'
+  ...
+# Subtest: equivalent nested instructions consolidate within their own scope
+ok 6 - equivalent nested instructions consolidate within their own scope
+  ---
+  duration_ms: 73.266527
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5090.607389
