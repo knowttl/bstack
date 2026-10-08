@@ -2,12 +2,20 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { appendFile, mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { spawnSync } from 'node:child_process'
 import { build, emptyRepo, git, run, snapshot } from './discovery-fixture.mjs'
 
-function commit(repo, message) {
-  git(repo, 'add', '.')
-  git(repo, '-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', message)
+function commitIndex(repo, message, date) {
+  const result = spawnSync('git', ['-C', repo, '-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', message], {
+    encoding: 'utf8', env: { ...process.env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }
+  })
+  assert.equal(result.status, 0, result.stderr)
   return git(repo, 'rev-parse', 'HEAD')
+}
+
+function commit(repo, message, date) {
+  git(repo, 'add', '.')
+  return commitIndex(repo, message, date)
 }
 
 test('ts-shop mixed responsibilities and coupled cluster have supporting signal commits', async t => {
@@ -137,6 +145,99 @@ test('measure separates a recreated rename source without a deletion commit', as
   assert.deepEqual(result.data.files.find(file => file.path === 'middle.txt').commits, [originalRename, seed])
   assert.deepEqual(result.data.renames.map(rename => rename.canonicalPath), ['final.txt', 'middle.txt'])
   assert.deepEqual(result.data.coChangePairs, [{ paths: ['middle.txt', 'peer.txt'], commits: [seed], changeCount: 1 }])
+})
+
+for (const scenario of [
+  { head: 'renamed', merge: 'modified', formatting: [], supporting: ['merged', 'modified', 'renamed', 'seed'], pairs: ['merged', 'modified', 'seed'] },
+  { head: 'modified', merge: 'renamed', formatting: [], supporting: ['merged', 'modified', 'renamed', 'seed'], pairs: ['modified', 'seed'] },
+  { head: 'renamed', merge: 'modified', formatting: ['renamed'], supporting: ['merged', 'modified', 'seed'], pairs: ['merged', 'modified', 'seed'] }
+]) {
+  test(`measure follows merged branch modifications with ${scenario.head} first and exclusions ${scenario.formatting}`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    await writeFile(join(repo, 'a.txt'), 'Original\n')
+    await writeFile(join(repo, 'peer.txt'), 'Peer\n')
+    const seed = commit(repo, 'seed', '2026-01-01T00:00:00Z')
+    git(repo, 'checkout', '-qb', 'renamed')
+    git(repo, 'mv', 'a.txt', 'b.txt')
+    const renamed = commit(repo, 'rename on main', '2026-01-02T00:00:00Z')
+    git(repo, 'checkout', '-qb', 'modified', seed)
+    await appendFile(join(repo, 'a.txt'), 'Branch change\n')
+    await appendFile(join(repo, 'peer.txt'), 'Branch change\n')
+    const modified = commit(repo, 'modify on side', '2026-01-03T00:00:00Z')
+    git(repo, 'checkout', '-q', scenario.head)
+    git(repo, '-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'merge', '--no-ff', '-qm', 'merge side', scenario.merge)
+    const merged = git(repo, 'rev-parse', 'HEAD')
+    const commits = { seed, renamed, modified, merged }
+    const policy = join(directory, 'exclusions.json')
+    await writeFile(policy, JSON.stringify({ schemaVersion: 1, generatedPaths: [], formattingCommits: scenario.formatting.map(name => commits[name]) }))
+    const result = run('measure', repo, process.env, ['--range', 'HEAD', '--exclusions', policy])
+    assert.equal(result.exit, 0)
+    assert.deepEqual(result.data.files.map(file => file.path), ['b.txt', 'peer.txt'])
+    assert.deepEqual(new Set(result.data.files.find(file => file.path === 'b.txt').commits), new Set(scenario.supporting.map(name => commits[name])))
+    assert.deepEqual(new Set(result.data.coChangePairs.find(pair => pair.paths.join(',') === 'b.txt,peer.txt').commits), new Set(scenario.pairs.map(name => commits[name])))
+  })
+}
+
+test('measure preserves both retained rename descendants without pairing one historical path', async t => {
+  const { repo } = await emptyRepo(t)
+  await writeFile(join(repo, 'a.txt'), 'Original\n')
+  const seed = commit(repo, 'seed')
+  git(repo, 'checkout', '-qb', 'left')
+  git(repo, 'mv', 'a.txt', 'b.txt')
+  const left = commit(repo, 'rename left')
+  git(repo, 'checkout', '-qb', 'right', seed)
+  git(repo, 'mv', 'a.txt', 'c.txt')
+  const right = commit(repo, 'rename right')
+  git(repo, 'checkout', '-q', 'left')
+  const merge = spawnSync('git', ['-C', repo, '-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'merge', '--no-ff', '--no-commit', 'right'], { encoding: 'utf8' })
+  assert.equal(merge.status, 1)
+  const merged = commit(repo, 'retain both names')
+  const result = run('measure', repo, process.env, ['--range', 'HEAD'])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.files.map(file => file.path), ['b.txt', 'c.txt'])
+  assert.deepEqual(new Set(result.data.files.find(file => file.path === 'b.txt').commits), new Set([left, seed]))
+  assert.deepEqual(new Set(result.data.files.find(file => file.path === 'c.txt').commits), new Set([merged, right, seed]))
+  assert.deepEqual(result.data.coChangePairs, [])
+})
+
+test('measure excludes gitlinks removed before the selected head', async t => {
+  const { repo } = await emptyRepo(t)
+  await writeFile(join(repo, 'peer.txt'), 'Peer\n')
+  const seed = commit(repo, 'seed')
+  git(repo, 'update-index', '--add', '--cacheinfo', `160000,${seed},dependency`)
+  const added = commitIndex(repo, 'add gitlink')
+  git(repo, 'update-index', '--cacheinfo', `160000,${added},dependency`)
+  await appendFile(join(repo, 'peer.txt'), 'Changed\n')
+  git(repo, 'add', 'peer.txt')
+  const updated = commitIndex(repo, 'update gitlink and peer')
+  git(repo, 'rm', '--cached', 'dependency')
+  commitIndex(repo, 'remove gitlink')
+  const result = run('measure', repo, process.env, ['--range', 'HEAD'])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.files.map(file => file.path), ['peer.txt'])
+  assert.deepEqual(result.data.files[0].commits, [updated, seed])
+  assert.deepEqual(result.data.coChangePairs, [])
+  assert.deepEqual(result.data.exclusions.files, [{ path: 'dependency', reason: 'non-blob' }])
+})
+
+test('measure excludes gitlink type changes without losing separate blob lifetimes', async t => {
+  const { repo } = await emptyRepo(t)
+  await writeFile(join(repo, 'dependency'), 'Original blob\n')
+  await writeFile(join(repo, 'peer.txt'), 'Peer\n')
+  const seed = commit(repo, 'seed blobs')
+  git(repo, 'update-index', '--cacheinfo', `160000,${seed},dependency`)
+  commitIndex(repo, 'replace blob with gitlink')
+  git(repo, 'rm', '--cached', 'dependency')
+  await writeFile(join(repo, 'dependency'), 'Replacement blob\n')
+  commit(repo, 'replace gitlink with blob')
+  git(repo, 'mv', 'dependency', 'final.txt')
+  const renamed = commit(repo, 'rename replacement blob')
+  const result = run('measure', repo, process.env, ['--range', 'HEAD'])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.files.find(file => file.path === 'final.txt').commits, [renamed])
+  assert.deepEqual(result.data.files.find(file => file.path === 'dependency').commits, [seed])
+  assert.deepEqual(result.data.coChangePairs, [{ paths: ['dependency', 'peer.txt'], commits: [seed], changeCount: 1 }])
+  assert.deepEqual(result.data.exclusions.files, [{ path: 'dependency', reason: 'non-blob' }])
 })
 
 test('measure reads head inventory and history larger than one MiB', async t => {

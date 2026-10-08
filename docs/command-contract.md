@@ -31,13 +31,17 @@ The command never fetches missing history.
 Sizes come from Git blobs, so working-tree changes and untracked files cannot alter measurement.
 The resolved head is the size evidence revision, including for files unchanged in the selected history range.
 A removed historical file has null bytes.
-Gitlinks are excluded as non-blobs.
+Gitlink events are excluded as non-blobs using historical object modes, including deleted gitlinks and blob/gitlink type changes.
+Blob history at a reused gitlink path remains eligible for signals.
 `data.coChangePairs` gives sorted path pairs, change counts and their supporting commits.
 There are no size or frequency thresholds, violation classifications or import analysis.
 
 History uses `git log` with 50% similarity rename detection and first-parent diffs for merge commits.
 Older names join the newest name found within the selected range, including chained renames.
+Lineage follows every selected commit-parent edge in topological order, including across merged branches; merge signal counts still use the first-parent diff.
+If shared ancestry reaches multiple retained names, its commits support each name without creating a co-change pair from a single historical path.
 Additions and deletions end rename lineage, including in excluded formatting commits, so a replacement file does not inherit the previous file's history.
+Blob/gitlink type changes also end blob lineage.
 `data.renames` retains commit, original path, destination path and canonical path.
 Renames outside the range are not inferred.
 Counts describe same-commit changes, rather than observed merge conflicts.

@@ -10,6 +10,30 @@ const lockfiles = ['package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml',
 // These generated directory conventions match discovery. Projects declare other generated paths explicitly.
 const generatedPaths = ['.git', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'].map(name => `**/${name}/**`)
 
+function gitRecords(output) {
+  const records = []
+  const tokens = output.split('\0')
+  for (let index = 0; index < tokens.length; index++) {
+    const token = tokens[index].trim()
+    if (!token) continue
+    if (/^[a-f0-9]{40,64}(?: [a-f0-9]{40,64})*$/u.test(token)) {
+      const [commit, ...parents] = token.split(' ')
+      records.push({ commit, parents })
+      continue
+    }
+    const [oldMode, newMode, , , status] = token.slice(1).split(' ')
+    const originalPath = tokens[++index]
+    const renamed = status.startsWith('R')
+    const path = renamed ? tokens[++index] : originalPath
+    records.push({ oldMode, newMode, status: status[0], path, ...(renamed ? { originalPath } : {}) })
+  }
+  return records
+}
+
+function blobMode(mode) {
+  return mode.startsWith('100') || mode === '120000'
+}
+
 export async function run(options) {
   if (!options.range) throw new CommandError('usage-error', [{ code: 'missing-range', message: '--range is required.', fix: 'Supply --range <base>..<head> or --range <head> for all reachable history.' }])
   const target = await resolveTarget(options)
@@ -41,70 +65,82 @@ export async function run(options) {
   const formatting = new Set(policy.formattingCommits.map(commit))
   const excluded = new Map()
   function exclusion(path) {
-    if (excluded.get(path)?.reason === 'non-blob') return true
     const rule = rules.find(rule => matchesPath(rule.glob, path))
     if (rule) excluded.set(path, { path, reason: rule.reason, pattern: rule.pattern })
     return Boolean(rule)
   }
   const files = new Map()
+  const headNames = new Map()
   const shallow = git(['rev-parse', '--is-shallow-repository']).trim() === 'true'
   for (const entry of git(['ls-tree', '-r', '-z', '-l', head]).split('\0').filter(Boolean)) {
     const tab = entry.indexOf('\t')
     const [, type, , size] = entry.slice(0, tab).trim().split(/\s+/u)
     const path = entry.slice(tab + 1)
+    if (type === 'blob') headNames.set(path, new Set([path]))
     if (exclusion(path)) continue
     if (type !== 'blob') { excluded.set(path, { path, reason: 'non-blob' }); continue }
     files.set(path, { path, bytes: Number(size), commits: [] })
   }
-  const log = git(['log', '--format=%x00%H%x00', '--name-status', '-z', '--root', '--find-renames=50%', '--diff-merges=first-parent', range, '--'])
+  const log = git(['log', '--format=%x00%H %P%x00', '--raw', '-r', '-z', '--root', '--find-renames=50%', '--diff-merges=first-parent', '--topo-order', range, '--'])
   const commits = []
   let record
-  const tokens = log.split('\0')
-  for (let index = 0; index < tokens.length; index++) {
-    const token = tokens[index].replace(/^\n/u, '')
-    if (!token) continue
-    if (/^[a-f0-9]{40,64}$/u.test(token)) { record = { commit: token, changes: [] }; commits.push(record); continue }
-    const originalPath = tokens[++index]
-    const renamed = token.startsWith('R')
-    const path = renamed ? tokens[++index] : originalPath
-    record.changes.push({ status: token[0], path, ...(renamed ? { originalPath } : {}) })
+  for (const entry of gitRecords(log)) {
+    if (entry.commit) { record = { ...entry, changes: [] }; commits.push(record) }
+    else record.changes.push(entry)
   }
   if ([...formatting].some(value => !commits.some(record => record.commit === value))) throw new CommandError('failed', [{ code: 'exclusion-outside-range', message: 'Every formatting commit must belong to the selected range.', fix: 'Remove out-of-range exclusions or change the range.' }])
-  // Walk newest to oldest so older names join the final name, including chained renames.
-  const aliases = new Map()
+  const selected = new Set(commits.map(record => record.commit))
+  const lineage = new Map([[head, headNames]])
   const pairs = new Map()
   const renames = []
   for (const record of commits) {
-    const touched = new Set()
+    const names = lineage.get(record.commit)
+    const touched = new Map()
     for (const change of record.changes) {
-      if (change.status === 'D') aliases.delete(change.path)
-      const path = aliases.get(change.path) ?? change.path
-      if (change.originalPath) {
-        aliases.delete(change.path)
-        aliases.set(change.originalPath, path)
-        renames.push({ commit: record.commit, path: change.path, originalPath: change.originalPath, canonicalPath: path })
+      const canonicalPaths = change.status === 'D' ? [change.path] : [...(names.get(change.path) ?? [change.path])].sort()
+      const nonBlob = [change.oldMode, change.newMode].some(mode => mode !== '000000' && !blobMode(mode))
+      if (nonBlob) excluded.set(change.path, { path: change.path, reason: 'non-blob' })
+      for (const path of canonicalPaths) {
+        if (change.originalPath) renames.push({ commit: record.commit, path: change.path, originalPath: change.originalPath, canonicalPath: path })
+        const omitted = nonBlob || exclusion(change.path) || (change.originalPath ? exclusion(change.originalPath) : false) || exclusion(path)
+        if (formatting.has(record.commit) || omitted) continue
+        if (!files.has(path)) files.set(path, { path, bytes: null, commits: [] })
+        if (!touched.has(path)) touched.set(path, new Set())
+        touched.get(path).add(change.path)
       }
-      if (change.status === 'A') aliases.delete(change.path)
-      const omitted = exclusion(change.path) || (change.originalPath ? exclusion(change.originalPath) : false) || exclusion(path)
-      if (formatting.has(record.commit) || omitted) continue
-      if (!files.has(path)) files.set(path, { path, bytes: null, commits: [] })
-      touched.add(path)
     }
-    const paths = [...touched].sort()
+    const paths = [...touched.keys()].sort()
     for (const path of paths) files.get(path).commits.push(record.commit)
     for (let a = 0; a < paths.length; a++) for (let b = a + 1; b < paths.length; b++) {
+      const sources = touched.get(paths[b])
+      if (![...touched.get(paths[a])].some(source => sources.size > 1 || !sources.has(source))) continue
       const key = JSON.stringify([paths[a], paths[b]])
       if (!pairs.has(key)) pairs.set(key, { paths: [paths[a], paths[b]], commits: [] })
       pairs.get(key).commits.push(record.commit)
     }
+    for (const parent of record.parents.filter(parent => selected.has(parent))) {
+      const changes = parent === record.parents[0] ? record.changes : gitRecords(git(['diff-tree', '-r', '--raw', '--no-commit-id', '-z', '--find-renames=50%', parent, record.commit, '--']))
+      const parentNames = new Map(names)
+      for (const change of changes) {
+        if (['A', 'D', 'R'].includes(change.status) || blobMode(change.oldMode) !== blobMode(change.newMode)) parentNames.delete(change.path)
+      }
+      for (const change of changes) {
+        if (change.originalPath && blobMode(change.oldMode)) parentNames.set(change.originalPath, names.get(change.path) ?? new Set([change.path]))
+        else if (blobMode(change.oldMode) && (change.status === 'D' || !blobMode(change.newMode))) parentNames.set(change.path, new Set([change.path]))
+      }
+      const existing = lineage.get(parent)
+      if (!existing) lineage.set(parent, parentNames)
+      else for (const [path, canonicalPaths] of parentNames) existing.set(path, new Set([...(existing.get(path) ?? []), ...canonicalPaths]))
+    }
+    lineage.delete(record.commit)
   }
   return { inputs: { repo: target.root, range: options.range, exclusions: options.exclusions ?? null }, data: {
     range: { requested: options.range, base, head, resolved: range },
     shallow,
-    renameHandling: 'Git 50% similarity detection, older paths joined to newest names within each file lifetime in the range', renames,
+    renameHandling: 'Git 50% similarity detection, older paths joined through commit ancestry within each file lifetime in the range', renames,
     exclusions: { rules: rules.map(({ reason, pattern }) => ({ reason, pattern })), files: [...excluded.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0), formattingCommits: [...formatting].sort() },
     files: [...files.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map(file => ({ ...file, changeCount: file.commits.length })),
     coChangePairs: [...pairs.values()].map(pair => ({ ...pair, changeCount: pair.commits.length })),
-    limitations: ['Sizes are bytes at the resolved head, with null for files absent there. Working-tree edits are not measured.', 'History and co-change are investigation signals, not violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.', 'Merge commits use their first-parent diff. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.']
+    limitations: ['Sizes are bytes at the resolved head, with null for files absent there. Working-tree edits are not measured.', 'History and co-change are investigation signals, not violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.', 'Merge signals use their first-parent diff; lineage follows every selected parent edge. Shared ancestry may support multiple surviving names, without inferring co-change from one historical path. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.']
   } }
 }

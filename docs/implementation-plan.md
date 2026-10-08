@@ -358,6 +358,7 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.4 Build `measure` and `overlap`
     - C12 implements revision-bound byte sizes, change and co-change commits, rename lineage, reported lock/generated/declared-formatting exclusions and shared declared write and contract paths.
       Review repairs separate replacement-file history and remove the fixed Git-output capture limit.
+      Further review repairs follow merged ancestry and exclude historical gitlink events without suppressing separate blob lifetimes.
       The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records local checks and named fixture controls.
       Injected Windows/macOS cases run on Linux, while real platform execution and complete agent acceptance remain unverified.
   - [ ] T2.5 Build the findings schema and report
