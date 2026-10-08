@@ -22,7 +22,8 @@ The intent and vision steps, research briefs and citation check, their reference
 Steps 7 and 11 describe the available read-only audit and findings commands.
 The apply command previews reviewed plans with `--plan <file> --dry-run`, then writes or resumes them without `--dry-run`, preserving originals and a journal in scratch.
 Check-plan execution capture is available through the shared verification rules below.
-The other conditional references remain placeholders, while complete audit integration remains unavailable.
+The enforcement and architecture references are available for recommendations.
+Only the maintenance-contract reference remains a placeholder, while complete audit integration remains unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -185,7 +186,8 @@ Avoid speculative findings, cosmetic rewrites and universal architecture prescri
 Use native baselines where available, keeping known failures visible and preventing new failures from entering through a refreshed baseline.
 Exceptions need a reason, scope and removal condition.
 Use the findings validation and scratch rendering commands in Step 11 before review.
-Enforcement guidance is unavailable until T3.1, rule-proof until T3.2 and baseline handling until T3.3.
+The enforcement and architecture references are available for recommendations.
+Native rule-proof remains T3.2 work, baseline handling T3.3 and maintained enforcement T3.4.
 
 Done when: Every recommendation has a project-specific reason, evidence, principle, consequence, scope and verification method, with unresolved decisions and unsupported measurements visible.
 
@@ -316,8 +318,8 @@ Without web access, mark language and outside recommendations "not researched" w
 Read only the one reference needed for the current step, once per run unless it changes.
 Every reference is linked directly here, without another skill or nested reference chain.
 Run scripts without loading their source, and pass assets to scripts without reading them as instructions.
-The intent interview, grilling, domain-language, vision and research briefs are available.
-Other references remain placeholders until their owning tasks supply the procedures.
+The intent interview, grilling, domain-language, vision, research briefs, enforcement and architecture references are available.
+Only the maintenance-contract reference remains a placeholder until its owning task supplies the procedure.
 
 | When | Open |
 |---|---|
