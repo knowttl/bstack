@@ -24,7 +24,8 @@ The apply command previews reviewed plans with `--plan <file> --dry-run`, then w
 Check-plan execution capture is available through the shared verification rules below.
 The enforcement and architecture references are available for recommendations.
 The existing-repo audit and selected apply path are available.
-The maintenance-contract reference remains a placeholder, and protected new-project creation remains T2.9 work.
+Protected new-project creation is available through Step 5.
+The maintenance-contract reference remains a placeholder.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.

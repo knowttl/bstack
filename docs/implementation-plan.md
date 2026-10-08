@@ -1076,7 +1076,7 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 5. Journal each edit's original and proposed hash before replacement, then record completion after replacement.
    If the process stops between replacement and journal completion, resume derives the state from the actual target hash.
 6. On resume, an original hash means the edit is pending only when completion has not been recorded, and a proposed hash means the edit is already applied.
-   Any other hash is a user change and blocks the run without further writes.
+   Any other state, including a completed edit restored to its original bytes or absence, is a user change and blocks the run without further writes.
    Preflight every remaining file before continuing, preserving completed edits and recoverable backups.
 7. A repeated completed plan returns an already-applied result with no writes.
    A changed plan digest or target cannot reuse an earlier run's completion flags.

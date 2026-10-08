@@ -309,7 +309,7 @@ The versioned [creation schema](../skills/repo-audit/schemas/project-create.json
 The referenced change set follows the existing apply schema and owns complete generated file payloads, selected findings, scope, exact-byte hashes and its digest.
 Its findings use stage foundation and both targets identify the planned destination as `{ mode: "workspace", root: <resolved-destination>, revision: null }`.
 Every scaffold edit uses create with originalHash null and complete UTF-8 payloads.
-Whole-file creation accepts source files as well as documents, while mechanical partial edits retain their documented format restrictions.
+See the [apply operation table](#apply-dry-run) for supported file formats.
 The same plan writes the approved vision, confirmed glossary when useful and selected foundation.
 The creation digest uses the existing canonical JSON hash algorithm on every field except planDigest.
 
@@ -357,7 +357,7 @@ Relative target paths resolve from the caller's working directory.
 Target identity is `{ mode: "repo" | "workspace", root: <absolute real path> }`.
 Links to the target share that identity.
 Draft commands do not initialise Git, create a repo or write foundation files.
-The separately selected creation operation uses the contract below.
+The separately selected creation operation uses the [protected project creation contract](#protected-project-creation).
 
 ## Target-relative paths
 
@@ -702,7 +702,7 @@ Filesystem access failures block the command; invalid plans fail with named prob
 
 | Operation | Exact payload | Supported scope |
 |---|---|---|
-| `create` | `{ "content": "complete new text" }` | An absent UTF-8 `.md`, `.txt` or `.json` file; JSON must be an object without duplicate keys |
+| `create` | `{ "content": "complete new text" }` | An absent UTF-8 text file, including source files; `.json` content must be an object without duplicate keys |
 | `replace` | `{ "search": "unique nonempty literal", "replacement": "new text" }` | One exact occurrence in `.md` or `.txt`; an empty replacement keeps the file present |
 | `replace-file` | `{ "content": "complete reviewed text" }` | One existing UTF-8 text file, without extension or parser restrictions; use for unsupported mechanical edits |
 | `delete` | `{}` | One existing UTF-8 text file, without an extension restriction; both proposed fields must be null |
@@ -713,7 +713,7 @@ Filesystem access failures block the command; invalid plans fail with named prob
 Payloads reject unknown and missing fields.
 Plan inputs reject malformed JSON, duplicate keys at any depth (including escaped equivalents) and numbers that decode to nonfinite values.
 JSON create and key edits also reject malformed JSON, duplicate keys, nonfinite numbers and non-object roots.
-All operations reject binary/non-UTF-8 text; operations other than delete and whole-file replacement reject unsupported extensions.
+All operations reject binary/non-UTF-8 text; mechanical partial edits reject unsupported extensions.
 `set-heading-section` and `append-line-once` reject any target file containing a bare carriage return (CR not followed by LF) before matching, with no project writes.
 These line-based operations support LF and CRLF without normalising existing bytes.
 Heading edits support unindented prose, nonempty ATX headings at column 0 and closed fences at column 0 with an optional plain info word containing letters, digits, underscores, plus signs, dots or hyphens.
@@ -766,9 +766,11 @@ Actual proposed hashes mean applied; original hashes mean pending only when comp
 Any other state or unreadable path means conflicting, including completed edits restored to their original bytes or absence.
 When original and proposed hashes are equal, the edit is already applied.
 Completion flags never override actual target hashes.
+Before writing a replacement, the journal records its same-directory temporary path.
+Resume removes a recorded temporary only if its bytes match the proposed content or a prefix of it; unrelated bytes block continuation and are preserved.
 All remaining files are preflighted before continuing, with another complete check before each replacement.
 A user change to any pending or completed file blocks all further writes.
-A repeated completed plan returns `data.outcome: "already-applied"` without updating targets, originals or journal.
+A repeated completed plan with no pending journal recovery returns `data.outcome: "already-applied"` without updating targets, originals or journal.
 Changed digests or targets cannot reuse earlier completion.
 On write or journal I/O failure, apply returns blocked, preserves any published journal and reports actual applied, pending and conflicting paths.
 Failure before the initial journal is published leaves targets unchanged; `state show` reports a missing journal until preparation succeeds.
