@@ -46,17 +46,6 @@ async function setup(t) {
   return { directory, workspace, cache, draft, draftPath, revisedPath, proposalsPath, proposals, board, input, command, ingest }
 }
 
-test('conversation verdicts save author reasoning without a browser launch', async t => {
-  const box = await setup(t)
-  const accepted = await box.ingest()
-  assert.equal(accepted.status, 0, accepted.stdout)
-  const review = JSON.parse(await readFile(accepted.envelope.data.review, 'utf8'))
-  assert.deepEqual(review.verdicts, box.input.verdicts)
-  assert.equal(await readFile(accepted.envelope.data.draft, 'utf8'), await readFile(box.revisedPath, 'utf8'))
-  assert.equal(accepted.envelope.data.approval, 'pending-author-review')
-  assert.deepEqual(await readdir(box.workspace), [])
-})
-
 test('resumed review preserves previous drafts and decisions and refuses an old round on the revised board', async t => {
   const box = await setup(t)
   // A new process resumes an earlier build using its explicit board path.

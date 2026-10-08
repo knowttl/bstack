@@ -260,7 +260,8 @@ T1.7 remains blocked until the new-idea journey is resolved and the board and sc
 
 ## Phase 1 E2E follow-up
 
-The [Phase 1 validation](../tests/eval/results/phase1-check/summary.md) records the corrected shopping-list answer, retained Codex resume permissions and conversation-based proposal review.
-The final real new-idea run built and revised scratch drafts without a browser listener, but its script did not supply explicit verdicts for all proposals, so no approved vision is claimed.
-The separate synthetic live board roundtrip succeeded, and all 266 local tests passed.
-T1.7 remains blocked on complete author verdicts and approval of the resulting revision.
+The [Phase 1 validation](../tests/eval/results/phase1-check/summary.md) records the corrected shopping-list answer and retained Codex resume permissions.
+The supported real new-idea run built and launched the board, then timed out awaiting browser verdicts.
+The separate synthetic live board roundtrip succeeded, but a scripted terminal-only evaluation cannot supply author verdicts through the board.
+T1.7 remains blocked on reachable author interaction and approval of the resulting revision.
+The summary distinguishes historical test counts from verification of the restored board workflow.

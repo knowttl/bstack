@@ -355,12 +355,11 @@ Tick each task when its "Done when" commands pass.
     - The retry exposed an adapter defect: Codex opened with danger-full-access, but resumed with read-only permissions and could not create review scratch.
       Recorded turn contexts confirmed the policy change.
       Resume now explicitly retains the opening sandbox policy, with a regression check through the existing fake host.
-      The regression fails with the old adapter and passes with the fix; the full suite passes all 265 tests.
+      The regression fails with the old adapter and passes with the fix.
       Real resumed turns now create scratch and launch the board, but the bounded host turns timed out awaiting browser verdicts, so an approved vision is still unverified.
-    - The browser-only instructions also blocked authors who review in the terminal conversation.
-      The procedure now offers conversation verdicts with the same run, revision and card bindings; the existing verdict command accepts them without launch, with a public-command regression check.
-      The final real run presented and rebuilt the draft in the conversation within the unchanged turn bound, but the script supplies no explicit verdicts for every proposal, so author approval remains blocked.
-      All 266 tests and package checks pass; [Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md) retain the actual results and limitations.
+    - The separate synthetic live board roundtrip proves transport and revision preservation, not author approval of the new-idea vision.
+      With no reachable author interaction, the supported workflow preserves the draft and records review as blocked rather than substituting another approval surface.
+      T1.7 remains blocked; [Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md) distinguish supported-flow evidence, superseded experiments and historical verification counts.
 - Phase 2: Audit and foundation
   - [ ] T2.1 Write the research briefs and the citation check
   - [ ] T2.2 Build `inspect`

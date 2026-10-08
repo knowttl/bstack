@@ -1,3 +1,7 @@
+Superseded conversation-review experiment, retained only as historical evidence.
+This transcript does not validate the supported board workflow or author approval.
+The supported-flow capture is new-idea-board.txt.
+
 User: $repo-audit
 Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md. Review vision proposals in this conversation rather than waiting for browser feedback.
 Host JSONL:

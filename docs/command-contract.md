@@ -78,16 +78,13 @@ Read the printed URL and next_step, open the URL in a reachable browser, and run
 The listener uses the pinned runtime's foreground long-poll interface with no debugging timeout in normal use.
 It consumes feedback once, so preserve its entire returned response before resuming.
 Follow the runtime's ended-session and browser-disconnection instructions.
-With no reachable browser, offer conversation review of the draft and proposal cards.
+With no reachable browser, preserve scratch and report interaction blocked.
 Runtime launch failures return blocked exit 2 with the nested install and server-access fix, leaving draft.md unchanged.
 The runtime inherits the host's server and state configuration.
 See the [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md) for the observed server setup and interaction limits.
 
-For browser review, verdicts takes the complete-round Context data JSON embedded in the terminal's vision-verdict prompt.
+Verdicts takes the complete-round Context data JSON embedded in the terminal's vision-verdict prompt.
 Copy that JSON unchanged to a scratch file, retaining the captured terminal response as provenance.
-For conversation review, present the full draft and each proposal's ID and reasoning, then collect an explicit author verdict and reasoning for every card.
-Save those decisions in the same complete-round JSON format using the build's run ID and original draft revision, retaining the conversation as provenance.
-Verdict ingestion does not require a browser launch or listener delivery.
 The installed [vision-verdicts schema](../skills/repo-audit/schemas/vision-verdicts.json) defines the input fields and accepted verdict labels:
 
 ```json
