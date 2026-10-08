@@ -109,7 +109,19 @@ npm test -- --task T2.7
 
 For bug fixes and refactors, run the before capture before editing, then supply its run ID after the change.
 Keep the returned scratch artifact as execution evidence.
-The [check-plan contract](docs/command-contract.md#check-plans-and-capture) owns the schema, prerequisites, freshness rules, coverage verdicts and limitations, including pending live probes.
+The [check-plan contract](docs/command-contract.md#check-plans-and-capture) owns the schema, prerequisites, freshness rules, coverage verdicts and limitations.
+
+For each outside dependency, record the same live call before and after the change:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs probe record --repo <path> --name <dependency> --phase before --spec <file> --json -- node scripts/probe.mjs <endpoint>
+node skills/repo-audit/scripts/repo-audit.mjs probe record --repo <path> --name <dependency> --phase after --spec <file> --json -- node scripts/probe.mjs <endpoint>
+node skills/repo-audit/scripts/repo-audit.mjs probe compare --repo <path> --name <dependency> --before <run-id> --after <run-id> --json
+```
+
+The [probe contract](docs/command-contract.md#live-probe-pairs) defines the descriptor, environment binding, per-call `--approved-by-user` flag and unavailable results.
+The probe command must assert the agreed outcome and exit nonzero on disagreement.
+Passing checks alone do not replace a successful probe comparison for an outside dependency.
 
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.

@@ -1,0 +1,33 @@
+{
+  "title": "Captured live probe version 1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "runId", "name", "phase", "target", "spec", "specPath", "command", "environment", "callDigest", "approval", "startedAt", "completedAt", "originalState", "finalState", "execution", "status", "reason"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "phase": { "enum": ["before", "after"] },
+    "target": { "type": "object" },
+    "spec": { "type": "object" },
+    "specPath": { "type": "string", "minLength": 1 },
+    "command": { "type": "object" },
+    "environment": { "type": "object", "additionalProperties": { "type": ["string", "null"] } },
+    "callDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "approval": {
+      "type": ["object", "null"], "additionalProperties": false,
+      "required": ["runId", "callDigest", "approvedByUser"],
+      "properties": {
+        "runId": { "type": "string", "minLength": 1 },
+        "callDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "approvedByUser": { "const": true }
+      }
+    },
+    "startedAt": { "type": "string", "minLength": 1 },
+    "completedAt": { "type": "string", "minLength": 1 },
+    "originalState": { "type": "object" },
+    "finalState": { "type": ["object", "null"] },
+    "execution": { "type": ["object", "null"] },
+    "status": { "enum": ["passed", "failed", "blocked", "unverified"] },
+    "reason": { "type": ["string", "null"] }
+  }
+}
