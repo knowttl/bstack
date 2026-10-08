@@ -30,19 +30,22 @@ The command never fetches missing history.
 `data.files` reports eligible blob files present at the resolved head: repo-relative paths, `bytes` at that revision, `changeCount` and supporting `commits` in reverse topological order.
 Sizes come from Git blobs, so working-tree changes and untracked files cannot alter measurement.
 The resolved head is the size evidence revision, including for files unchanged in the selected history range.
-Deleted files and earlier lifetimes of reused endpoint paths contribute no file rows, supporting commits, rename evidence or co-change pairs.
+Deleted paths do not create file rows.
+In linear history, earlier lifetimes of reused endpoint paths contribute no supporting commits, rename evidence or co-change pairs.
 Gitlink events are excluded as non-blobs using historical object modes, including deleted gitlinks and blob/gitlink type changes.
 Only the current blob lifetime at a reused gitlink path remains eligible for signals.
 `data.coChangePairs` gives sorted path pairs, change counts and their supporting commits.
 There are no size or frequency thresholds, violation classifications or import analysis.
 
 History uses `git log` with 50% similarity rename detection and first-parent diffs for merge commits.
-Endpoint files are followed back through older names within their current lifetime and selected range, including chained renames, stopping at the commit that added that lifetime.
+Endpoint files are followed back through detected lineage within the selected range, including chained renames, stopping at addition events.
 Lineage follows every selected commit-parent edge in topological order, including across merged branches; merge signal counts still use the first-parent diff.
 If shared ancestry reaches multiple retained names, its commits support each name without creating a co-change pair from a single historical path.
-Additions and deletions end rename lineage, including in excluded formatting commits, so a replacement file does not inherit the previous file's history.
+Additions and deletions end rename lineage along each traversed parent edge, including in excluded formatting commits.
+If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, a modification on the second-parent edge can carry the old lifetime's commits, rename evidence and co-change pairs into the new file's signals.
+These signals are advisory evidence, never violations; this limitation does not change what counts as a file change.
 Blob/gitlink type changes also end blob lineage.
-`data.renames` retains commit, original path, destination path and canonical endpoint path for current lifetimes only.
+`data.renames` retains commit, original path, destination path and canonical endpoint path for tracked lineage, subject to the merged path-reuse limitation above.
 Renames outside the range are not inferred.
 Counts describe same-commit changes, rather than observed merge conflicts.
 

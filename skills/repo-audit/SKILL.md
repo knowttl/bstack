@@ -147,7 +147,8 @@ Read the discovered sources before treating them as authoritative.
 Preserve distinct nested guidance and local or outside-repo instructions.
 Instruction consolidation candidates require content review, a current host loading check and author approval before protected edits.
 Run `node scripts/repo-audit.mjs measure --repo <target> --range <base>..<head> --json` for revision-bound sizes, change frequency and co-change signals with supporting commits.
-Measurement covers eligible files present at the endpoint and only their current lifetime back through renames to addition; deleted lifetimes contribute no signals.
+Measurement covers eligible files present at the endpoint and follows detected lineage back through renames to addition.
+Merged deletion and unrelated path reuse can attribute old-lifetime commits and co-change pairs to the replacement; treat signals as advisory evidence, never violations.
 Use `--exclusions <file>` following `schemas/measure-exclusions.json` for project-generated paths and explicitly identified broad formatting commits.
 Compare two declared plans with `node scripts/repo-audit.mjs overlap --repo <target> --plans <file> <file> --json`, following `schemas/overlap-plan.json`.
 Plan paths use forward slashes, case-sensitive `*` and `?` within segments and whole-segment `**` for recursive matching, including planned new files.
