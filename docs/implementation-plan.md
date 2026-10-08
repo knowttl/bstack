@@ -376,12 +376,13 @@ Tick each task when its "Done when" commands pass.
     - C14b implements steps 4-9: protected writes, flushed originals and journal, per-file atomic replacement, hash-derived resume and repeat, `state show`, selected delete and reviewed whole-file replacement.
       Tests inject failures before replacement and process exits after replacement and before journal completion, plus journal I/O failure, filesystem limits, dirty-user conflicts and T2.5 report application.
       Real Windows/macOS execution remains captain checklist evidence, and affected checks can now run through C15a's explicit check plans.
-  - [ ] T2.7 Build verification capture and live probes
+  - [x] T2.7 Build verification capture and live probes
     - C15a implements steps 1-3, 6-7 and the check-plan portion of step 8: acceptance-source schema and pointers, argument-array command capture, input freshness, explicit user-journey coverage and prior-state bug/refactor prerequisites.
       `npm test -- --task T2.7` covers passing units with a failing ts-shop journey, required failure/skip/cancellation/timeout, changed-input blocking, and protective refactor evidence before structural edits plus compatibility afterward.
-      The [task evidence](../tests/eval/results/tasks/T2.7.json) records this partial slice's execution and pending procedures.
+      The [task evidence](../tests/eval/results/tasks/T2.7.json) records execution for the complete task.
       The [check-plan contract](command-contract.md#check-plans-and-capture) owns the interface, before/after snapshot rules, scope exclusions and local evidence limits.
-      C15b remains: live probe records, matched before/after comparison and specific side-effect approval.
+    - C15b implements steps 4-5 and the probe-record portion of step 8: schema-defined live captures, matching command/endpoint/environment pairs, freshness checks and approval bound to each side-effecting call.
+      `npm test -- --task T2.7` also covers missing and mismatched probes, unavailable reasons and the ts-shop live stand-in disagreement despite passing mocked units.
       Real Windows/macOS execution and full agent acceptance remain separate evidence.
   - [ ] T2.8 Complete the existing-repo audit and apply path
   - [ ] T2.9 Complete protected new-project creation
@@ -1095,7 +1096,8 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 2. A required check that fails or is skipped makes the overall result `failed` or `blocked`, never `passed`.
    Any difference between the run's input fingerprints makes the entire capture `blocked: inputs changed during run`.
 3. Each check names the acceptance cases it covers. A result that covers no user journey is reported as such, and user-flow checks that could not run stay "unverified".
-4. `probe record --name <n> --phase before|after -- <command>` records a live probe and its result. `probe compare` fails when a change that depends on outside behaviour has no `before` probe, or no `after` probe that repeats it.
+4. Record and compare live probes using the [live-probe command contract](command-contract.md#live-probe-pairs).
+   Comparison fails when a change that depends on outside behaviour has no `before` probe, or no `after` probe that repeats it.
 5. A probe marked as having side effects needs `--approved-by-user`.
    Without it, `probe record` refuses.
 6. A bug fix needs a recorded reproduction against the pre-change state.

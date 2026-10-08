@@ -1,14 +1,12 @@
 {
   "schemaVersion": 1,
   "taskId": "T2.7",
-  "slice": "C15a",
-  "sourceRevision": "431b703ba38c418eee42eb8f52aba3e2d082d73d",
-  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1-T2.6 (most recently https://github.com/knowttl/bstack/pull/26: protected writes, journal, resume and selected delete).\n\nThis piece is slice C15a, the first part of task T2.7 \"Build verification capture and live probes\": check plans, capture and prior protection. Done evidence: failed journey despite passing units, failed/skipped/stale/timeout checks rejected, prior refactor proof.",
+  "slice": "C15b",
+  "sourceRevision": "f94c4f4e7b61c59ee92162ead084c5ade4f030d7",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1-T2.6 and T2.7 part 1 (https://github.com/knowttl/bstack/pull/27: check plans, `run-checks` and prior protection, with the simplified contract - inputs fingerprinted once before and once after a run, blocked on any change).\n\nThis piece is slice C15b, the rest of task T2.7 \"Build verification capture and live probes\": the live probe pair. Done evidence: same endpoint/command/environment before and after, local stand-in mismatch, specific side-effect approval refusal.",
   "amendments": [
-    "Regenerated all command artifacts after the first pipeline repaired capture freshness, command and phase preflight, literal input paths and reproduction coverage.",
-    "Firstmate authorized the two-boundary fingerprint contract: compare all declared inputs before and after execution and block changed inputs; no mid-run tracking.",
-    "Final snapshot failures retain completed command evidence, and scratch setup precedes command execution.",
-    "The second pipeline's document step clarified phase and journey verdicts and removed inherited NODE_TEST_CONTEXT from the fixture command environment; regenerated all required command artifacts against that final harness."
+    "C15b completes T2.7 with schema-defined live probe capture, ordered matching pairs, per-call side-effect approval and current-input freshness.",
+    "Required installs, package check, full suite and registered T2.7 suite executed against the committed implementation revision."
   ],
   "status": "passed",
   "environment": {
@@ -29,7 +27,7 @@
       ],
       "cwd": ".",
       "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/C15a.root-install.txt",
+      "outputArtifact": "tests/eval/results/tasks/C15b.root-install.txt",
       "status": "passed"
     },
     {
@@ -43,7 +41,7 @@
       ],
       "cwd": ".",
       "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/C15a.skill-install.txt",
+      "outputArtifact": "tests/eval/results/tasks/C15b.skill-install.txt",
       "status": "passed"
     },
     {
@@ -55,7 +53,7 @@
       ],
       "cwd": ".",
       "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/C15a.package-check.txt",
+      "outputArtifact": "tests/eval/results/tasks/C15b.package-check.txt",
       "status": "passed"
     },
     {
@@ -66,7 +64,7 @@
       ],
       "cwd": ".",
       "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/C15a.full-tests.txt",
+      "outputArtifact": "tests/eval/results/tasks/C15b.full-tests.txt",
       "status": "passed"
     },
     {
@@ -80,7 +78,7 @@
       ],
       "cwd": ".",
       "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/C15a.task-T2.7.txt",
+      "outputArtifact": "tests/eval/results/tasks/C15b.task-T2.7.txt",
       "status": "passed"
     }
   ],
@@ -90,68 +88,61 @@
       "kind": "automated",
       "procedure": "bug fix requires normally failing reproduction before and passing reproduction after; a protected refactor passes only after compatibility runs against changed state",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+      "artifact": "tests/eval/results/tasks/C15b.task-T2.7.txt"
     },
     {
       "id": "AC-27",
       "kind": "automated",
       "procedure": "ts-shop passing units cannot hide the failed checkout journey",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+      "artifact": "tests/eval/results/tasks/C15b.task-T2.7.txt"
     },
     {
       "id": "AC-29",
       "kind": "automated",
       "procedure": "an uncovered user flow remains unverified despite passing units; cancelled required check stays unverified even with other passing checks",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+      "artifact": "tests/eval/results/tasks/C15b.task-T2.7.txt"
     },
     {
       "id": "AC-31",
       "kind": "automated",
-      "procedure": "ts-shop passing units cannot hide the failed checkout journey",
+      "procedure": "ts-shop live stand-in disagrees with the passing mock so its probe pair is not ready; ts-shop passing units cannot hide the failed checkout journey",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+      "artifact": "tests/eval/results/tasks/C15b.task-T2.7.txt"
     },
     {
       "id": "AC-71",
       "kind": "automated",
       "procedure": "failed/skipped/unavailable/timed out/failed version required check cannot pass; changed declared inputs block the capture; a later input change blocks all executed checks; unavailable final snapshots retain completed command evidence; invalid scratch setup runs no commands",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+      "artifact": "tests/eval/results/tasks/C15b.task-T2.7.txt"
     },
     {
       "id": "AC-30",
       "kind": "automated",
-      "procedure": "Live probe records, matching before/after calls and specific side-effect approval",
-      "status": "blocked",
-      "artifact": null,
-      "reason": "C15a implements check capture and prior protection only.",
-      "nextPrerequisite": "Implement C15b live probe pair and approval."
+      "procedure": "matching live calls capture literal arguments and pass across changed product inputs without target writes; comparison rejects changed endpoint, command and environment",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C15b.task-T2.7.txt"
     },
     {
       "id": "AC-32",
       "kind": "automated",
-      "procedure": "Live probe records, matching before/after calls and specific side-effect approval",
-      "status": "blocked",
-      "artifact": null,
-      "reason": "C15a implements check capture and prior protection only.",
-      "nextPrerequisite": "Implement C15b live probe pair and approval."
+      "procedure": "missing executable retains its reason and cannot verify the pair; comparison rejects a missing before or after probe",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C15b.task-T2.7.txt"
     },
     {
       "id": "AC-33",
       "kind": "automated",
-      "procedure": "Live probe records, matching before/after calls and specific side-effect approval",
-      "status": "blocked",
-      "artifact": null,
-      "reason": "C15a implements check capture and prior protection only.",
-      "nextPrerequisite": "Implement C15b live probe pair and approval."
+      "procedure": "side-effect approval is refused before either version or live command and binds only the specific call; a child argument cannot approve a side-effecting call",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C15b.task-T2.7.txt"
     }
   ],
   "limitations": [
-    "C15a is partial T2.7. Live probe records, comparisons and side-effect approval remain C15b.",
-    "82 targeted tests and 749 full-suite tests passed on Linux Node 24. Real Windows/macOS execution remains captain checklist evidence. No hosted CI ran.",
-    "Case mappings establish command-interface controls, not complete fresh-agent acceptance. Local scratch capture trusts declared scopes and approved source authority. AC-31 exercises the fixture disagreement and non-ready verdict, not live probe record/compare.",
-    "Boundary fingerprints do not detect transient input changes restored before completion."
+    "100 targeted tests and 767 full-suite tests passed on Linux Node 24. Real Windows/macOS execution remains captain checklist evidence. No hosted CI ran.",
+    "Case mappings establish command-interface controls, not complete fresh-agent acceptance. Local scratch capture trusts declared scopes, endpoint identity, environment keys and the selected assertion command.",
+    "Boundary fingerprints do not detect transient input changes restored before completion. Later evidence tasks collect check and probe results into a unified assessment."
   ]
 }
