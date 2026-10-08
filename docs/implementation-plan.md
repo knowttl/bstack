@@ -347,19 +347,10 @@ Tick each task when its "Done when" commands pass.
   - [x] T1.5 Adapt VISION and bundle the board assets ([evidence](../tests/eval/results/tasks/T1.5.json))
   - [ ] T1.6 Build the VISION board launcher
     - [x] C10a (merged into C9b10a): runtime research/probe, exact nested pin and lock, local/gate setup and revision-bound board build ([partial evidence](../tests/eval/results/tasks/T1.6.json)).
-    - [ ] C10b: launch, verdict ingestion and resumed-review tests are implemented; live verdict-to-draft evidence remains blocked ([task evidence](../tests/eval/results/tasks/T1.6.json), [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md)).
+    - [ ] C10b: launch, verdict ingestion and resumed-review tests are implemented; the synthetic live verdict-to-draft roundtrip succeeded, while live resumed review and approved scratch vision remain unverified ([Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md), [prior task evidence](../tests/eval/results/tasks/T1.6.json), [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md)).
   - [ ] T1.7 Complete the intent and vision review - C10b implements the bounded SKILL.md steps and registers the task suite; the approved scratch vision remains missing ([task evidence](../tests/eval/results/tasks/T1.7.json), [checkpoint observations](evaluation.md#intent-checkpoint-c10b)).
-    - Phase 1 E2E found that the new-idea answer script called shopping-list entries "missing items" without explaining how the household identifies them.
-      The real agent correctly asked about that gap, but the script could not answer it and the vision remained blocked.
-      The corrected answer specifies explicit need-to-buy marking and excludes quantities and stock levels in version one.
-    - The retry exposed an adapter defect: Codex opened with danger-full-access, but resumed with read-only permissions and could not create review scratch.
-      Recorded turn contexts confirmed the policy change.
-      Resume now explicitly retains the opening sandbox policy, with a regression check through the existing fake host.
-      The regression fails with the old adapter and passes with the fix.
-      Real resumed turns now create scratch and launch the board, but the bounded host turns timed out awaiting browser verdicts, so an approved vision is still unverified.
-    - The separate synthetic live board roundtrip proves transport and revision preservation, not author approval of the new-idea vision.
-      With no reachable author interaction, the supported workflow preserves the draft and records review as blocked rather than substituting another approval surface.
-      T1.7 remains blocked; [Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md) distinguish supported-flow evidence, superseded experiments and historical verification counts.
+    - [Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md) record the scenario and adapter fixes and the supported board attempt.
+      T1.7 remains blocked on complete board verdicts and explicit approval of the resulting revision.
 - Phase 2: Audit and foundation
   - [ ] T2.1 Write the research briefs and the citation check
   - [ ] T2.2 Build `inspect`
