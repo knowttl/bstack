@@ -1,0 +1,94 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T1.6
+
+Selected 2 suite(s): tests/scripts/vision-board.test.mjs, tests/scripts/vision-runtime.test.mjs
+TAP version 13
+# Subtest: board build renders escaped text and preserves raw revision-bound verdict data
+ok 1 - board build renders escaped text and preserves raw revision-bound verdict data
+  ---
+  duration_ms: 891.72826
+  type: 'test'
+  ...
+# Subtest: board rejects duplicate IDs before scratch writes
+ok 2 - board rejects duplicate IDs before scratch writes
+  ---
+  duration_ms: 350.31629
+  type: 'test'
+  ...
+# Subtest: board rejects blank IDs before scratch writes
+ok 3 - board rejects blank IDs before scratch writes
+  ---
+  duration_ms: 174.983686
+  type: 'test'
+  ...
+# Subtest: board rejects missing IDs before scratch writes
+ok 4 - board rejects missing IDs before scratch writes
+  ---
+  duration_ms: 113.796232
+  type: 'test'
+  ...
+# Subtest: board rejects stale draft before scratch writes
+ok 5 - board rejects stale draft before scratch writes
+  ---
+  duration_ms: 168.098079
+  type: 'test'
+  ...
+# Subtest: board rejects unknown fields before scratch writes
+ok 6 - board rejects unknown fields before scratch writes
+  ---
+  duration_ms: 114.609679
+  type: 'test'
+  ...
+# Subtest: board rejects empty cards before scratch writes
+ok 7 - board rejects empty cards before scratch writes
+  ---
+  duration_ms: 231.530563
+  type: 'test'
+  ...
+# Subtest: board rejects wrong field types before scratch writes
+ok 8 - board rejects wrong field types before scratch writes
+  ---
+  duration_ms: 140.023574
+  type: 'test'
+  ...
+# Subtest: board rejects an empty draft without scratch writes
+ok 9 - board rejects an empty draft without scratch writes
+  ---
+  duration_ms: 241.544476
+  type: 'test'
+  ...
+# Subtest: board rejects an invalid UTF-8 draft without scratch writes
+ok 10 - board rejects an invalid UTF-8 draft without scratch writes
+  ---
+  duration_ms: 168.020698
+  type: 'test'
+  ...
+# Subtest: board reports missing files, missing options and unknown options
+ok 11 - board reports missing files, missing options and unknown options
+  ---
+  duration_ms: 325.210177
+  type: 'test'
+  ...
+# Subtest: board ships the unchanged upstream stylesheet beside its generated HTML
+ok 12 - board ships the unchanged upstream stylesheet beside its generated HTML
+  ---
+  duration_ms: 133.825388
+  type: 'test'
+  ...
+# Fresh gate prepare: both lockfiles installed. Nested lavish-axi --version: 0.1.78. Empty isolated home, no support skill installed, installed command help: exit 0.
+# Subtest: gate prepare installs both locks and runs the pinned runtime without global support skills
+ok 13 - gate prepare installs both locks and runs the pinned runtime without global support skills
+  ---
+  duration_ms: 5811.09583
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6366.431052

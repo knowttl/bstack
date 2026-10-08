@@ -1,0 +1,79 @@
+diff --git a/upstream/vision/skills/vision/assets/review-template.html b/skills/repo-audit/assets/vision/review-template.html
+index f6eb9c7..02b2d7c 100644
+--- a/upstream/vision/skills/vision/assets/review-template.html
++++ b/skills/repo-audit/assets/vision/review-template.html
+@@ -5,14 +5,15 @@
+   Agent instructions:
+   1. Copy this file and review.css next to each other in the tool's scratch
+      area, never into the target repo.
+-  2. Fill ONLY the four slots marked {{...}} below:
+-       {{PROJECT}}        - the target repo name (appears in <title> and the header meta)
+-       {{RUN_NOTE}}       - one short italic note for the header (mode, date, or blank)
+-       {{DRAFT_MARKDOWN}} - the full latest VISION.md text (markdown: #, ##, paragraphs)
++  2. The bundled build command fills the following slots:
++       PROJECT        - the target repo name (appears in the document title and header meta)
++       RUN_NOTE       - one short italic note for the header (mode, date, or blank)
++       DRAFT_MARKDOWN - the full latest VISION.md text as a script-safe JSON string
++       REVIEW         - run ID and exact draft revision as script-safe JSON
+        CARDS              - one object per hypothetical: { id, title, body, tests, why }
+   3. Change NOTHING else: no restyling, no layout edits, no extra sections.
+      The stylesheet and structure are the /vision house style.
+-  4. Open with: npx -y lavish-axi <this-file>   then poll for verdicts.
++  4. Use the pinned installed lavish-axi runtime to open, then poll for verdicts.
+ -->
+ <html lang="en">
+ <head>
+@@ -50,7 +51,8 @@
+ </main>
+ 
+ <script>
+-const DRAFT = `{{DRAFT_MARKDOWN}}`;
++const DRAFT = {{DRAFT_MARKDOWN}};
++const REVIEW = {{REVIEW}};
+ 
+ const CARDS = [
+   // {{CARDS}} - one object per hypothetical, in presentation order:
+@@ -78,11 +80,11 @@ const stack = document.getElementById('vr-stack');
+ let topIdx = 0; const ledger = [];
+ stack.innerHTML = CARDS.map((c,i) => `
+   <div class="vr-card" id="vrc-${i}">
+-    <span class="vr-card-id">${c.id} · ${i+1}/${CARDS.length}</span>
+-    <h3 class="vr-card-title">${c.title}</h3>
+-    <p class="vr-card-body">${c.body}</p>
+-    <div class="vr-card-tests">${c.tests}</div>
+-    <div class="vr-why"><span class="vr-why-label">Why the answer is not obvious</span><p>${c.why}</p></div>
++    <span class="vr-card-id">${esc(c.id)} · ${i+1}/${CARDS.length}</span>
++    <h3 class="vr-card-title">${esc(c.title)}</h3>
++    <p class="vr-card-body">${esc(c.body)}</p>
++    <div class="vr-card-tests">${esc(c.tests)}</div>
++    <div class="vr-why"><span class="vr-why-label">Why the answer is not obvious</span><p>${esc(c.why)}</p></div>
+     <div class="vr-verdicts">${VERDICTS.map(v => `<button type="button" aria-pressed="false" onclick="pick(${i}, this)">${v}</button>`).join('')}</div>
+     <textarea class="vr-reason" placeholder="reasoning (this is what the vision gets rebuilt from)"></textarea>
+     <button type="button" class="vr-commit" disabled onclick="commit(${i})">Record verdict</button>
+@@ -114,7 +116,7 @@ function commit(i){
+   if (window.lavish?.queuePrompt) {
+     window.lavish.queuePrompt(
+       `${CARDS[i].id} (${CARDS[i].title}): ${verdict}.` + (notes ? ` Reasoning: ${notes}` : ''),
+-      { tag:'vision-verdict', queueKey:CARDS[i].id, text:`${CARDS[i].id}: ${verdict}`, element:card, data:{ id:CARDS[i].id, verdict, notes } });
++      { tag:'vision-verdict', queueKey:'vision-card:'+CARDS[i].id, text:`${CARDS[i].id}: ${verdict}`, element:card, data:{ ...REVIEW, id:CARDS[i].id, verdict, notes } });
+   }
+   card.classList.add('vr-gone');
+   topIdx += 1;
+@@ -122,7 +124,7 @@ function commit(i){
+   setTimeout(() => { card.hidden = true; layout(); }, 360);
+   if (topIdx >= CARDS.length) {
+     document.getElementById('vr-ledger').innerHTML =
+-      ledger.map(l => `<li><b>${l.id}</b> ${l.verdict}${l.notes ? ' - ' + esc(l.notes) : ''}</li>`).join('');
++      ledger.map(l => `<li><b>${esc(l.id)}</b> ${l.verdict}${l.notes ? ' - ' + esc(l.notes) : ''}</li>`).join('');
+     setTimeout(() => { stack.hidden = true; document.getElementById('vr-done').hidden = false; }, 400);
+   }
+ }
+@@ -132,7 +134,7 @@ function sendBack(){
+     window.lavish.queuePrompt(
+       `All ${CARDS.length} hypotheticals are answered. Fold every verdict into the draft and send back the next round.`,
+       { tag:'vision-verdict', queueKey:'vision-round-complete', text:'All verdicts recorded - next round',
+-        element: document.getElementById('vr-done'), data:{ complete:true, verdicts: ledger } });
++        element: document.getElementById('vr-done'), data:{ ...REVIEW, complete:true, verdicts: ledger } });
+   }
+   window.lavish?.sendQueuedPrompts?.();
+   btn.disabled = true;
