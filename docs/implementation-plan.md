@@ -363,7 +363,7 @@ Tick each task when its "Done when" commands pass.
       Generated-directory exclusions now derive from the shared discovery policy.
       Rename evidence respects the same path exclusions as frequency and co-change signals, while formatting-only exclusions retain rename evidence.
       The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records earlier local checks and named fixture controls.
-      Final evidence refresh remains pending: the outer validation executor must regenerate T2.4.json and all five C12 command-output artifacts from final runs against the final implementation commit, recording firstmate decisions as specification amendments.
+      C13 refreshed T2.4.json and all five C12 command-output artifacts from fresh runs against landed C12 revision fc953e2ea6a8990c92aa29fe820efe43740b0242.
       Firstmate defers this refresh to the next slice's first evidence-only commit, using the landed implementation revision.
       Injected Windows/macOS cases run on Linux, while real platform execution and complete agent acceptance remain unverified.
   - [ ] T2.5 Build the findings schema and report
