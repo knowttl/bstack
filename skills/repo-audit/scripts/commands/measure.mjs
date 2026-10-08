@@ -1,14 +1,12 @@
 import { readFile } from 'node:fs/promises'
 import { resolveTarget } from '../lib/repo.mjs'
-import { readGit } from '../lib/discovery.mjs'
+import { excludedDirectories, readGit } from '../lib/discovery.mjs'
 import { validateData } from '../lib/schema.mjs'
 import { pathGlob, matchesPath } from '../lib/glob.mjs'
 import { CommandError } from '../lib/result.mjs'
 
 // Locks describe resolution, rather than authored responsibility or coupling.
 const lockfiles = ['package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb', 'uv.lock', 'poetry.lock', 'Pipfile.lock', 'Cargo.lock', 'go.sum', 'Gemfile.lock', 'composer.lock']
-// These generated directory conventions match discovery. Projects declare other generated paths explicitly.
-const generatedPaths = ['.git', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'].map(name => `**/${name}/**`)
 
 function gitRecords(output) {
   const records = []
@@ -60,7 +58,7 @@ export async function run(options) {
   }
   const rules = [
     ...lockfiles.map(name => ({ reason: 'lockfile', pattern: `**/${name}` })),
-    ...[...generatedPaths, ...policy.generatedPaths].map(pattern => ({ reason: 'generated', pattern }))
+    ...[...[...excludedDirectories].map(name => `**/${name}/**`), ...policy.generatedPaths].map(pattern => ({ reason: 'generated', pattern }))
   ].map(rule => ({ ...rule, glob: pathGlob(rule.pattern) }))
   const formatting = new Set(policy.formattingCommits.map(commit))
   const excluded = new Map()
@@ -76,10 +74,10 @@ export async function run(options) {
     const tab = entry.indexOf('\t')
     const [, type, , size] = entry.slice(0, tab).trim().split(/\s+/u)
     const path = entry.slice(tab + 1)
-    if (type === 'blob') headNames.set(path, new Set([path]))
     if (exclusion(path)) continue
     if (type !== 'blob') { excluded.set(path, { path, reason: 'non-blob' }); continue }
     files.set(path, { path, bytes: Number(size), commits: [] })
+    headNames.set(path, new Set([path]))
   }
   const log = git(['log', '--format=%x00%H %P%x00', '--raw', '-r', '-z', '--root', '--find-renames=50%', '--diff-merges=first-parent', '--topo-order', range, '--'])
   const commits = []
@@ -97,14 +95,13 @@ export async function run(options) {
     const names = lineage.get(record.commit)
     const touched = new Map()
     for (const change of record.changes) {
-      const canonicalPaths = change.status === 'D' ? [change.path] : [...(names.get(change.path) ?? [change.path])].sort()
+      const canonicalPaths = [...(names.get(change.path) ?? [])].sort()
       const nonBlob = [change.oldMode, change.newMode].some(mode => mode !== '000000' && !blobMode(mode))
       if (nonBlob) excluded.set(change.path, { path: change.path, reason: 'non-blob' })
+      const omitted = nonBlob || exclusion(change.path) || (change.originalPath ? exclusion(change.originalPath) : false)
       for (const path of canonicalPaths) {
         if (change.originalPath) renames.push({ commit: record.commit, path: change.path, originalPath: change.originalPath, canonicalPath: path })
-        const omitted = nonBlob || exclusion(change.path) || (change.originalPath ? exclusion(change.originalPath) : false) || exclusion(path)
         if (formatting.has(record.commit) || omitted) continue
-        if (!files.has(path)) files.set(path, { path, bytes: null, commits: [] })
         if (!touched.has(path)) touched.set(path, new Set())
         touched.get(path).add(change.path)
       }
@@ -125,8 +122,7 @@ export async function run(options) {
         if (['A', 'D', 'R'].includes(change.status) || blobMode(change.oldMode) !== blobMode(change.newMode)) parentNames.delete(change.path)
       }
       for (const change of changes) {
-        if (change.originalPath && blobMode(change.oldMode)) parentNames.set(change.originalPath, names.get(change.path) ?? new Set([change.path]))
-        else if (blobMode(change.oldMode) && (change.status === 'D' || !blobMode(change.newMode))) parentNames.set(change.path, new Set([change.path]))
+        if (change.originalPath && blobMode(change.oldMode) && names.has(change.path)) parentNames.set(change.originalPath, names.get(change.path))
       }
       const existing = lineage.get(parent)
       if (!existing) lineage.set(parent, parentNames)
@@ -137,10 +133,10 @@ export async function run(options) {
   return { inputs: { repo: target.root, range: options.range, exclusions: options.exclusions ?? null }, data: {
     range: { requested: options.range, base, head, resolved: range },
     shallow,
-    renameHandling: 'Git 50% similarity detection, older paths joined through commit ancestry within each file lifetime in the range', renames,
+    renameHandling: 'Git 50% similarity detection, endpoint files followed through commit ancestry within their current lifetime in the range', renames,
     exclusions: { rules: rules.map(({ reason, pattern }) => ({ reason, pattern })), files: [...excluded.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0), formattingCommits: [...formatting].sort() },
     files: [...files.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map(file => ({ ...file, changeCount: file.commits.length })),
     coChangePairs: [...pairs.values()].map(pair => ({ ...pair, changeCount: pair.commits.length })),
-    limitations: ['Sizes are bytes at the resolved head, with null for files absent there. Working-tree edits are not measured.', 'History and co-change are investigation signals, not violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.', 'Merge signals use their first-parent diff; lineage follows every selected parent edge. Shared ancestry may support multiple surviving names, without inferring co-change from one historical path. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.']
+    limitations: ['Only eligible blob files present at the resolved head are measured, with byte sizes from that revision. History follows each current lifetime through renames and stops at its addition or blob/gitlink type boundary. Deleted lifetimes and working-tree edits are not measured.', 'History and co-change are investigation signals, not violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.', 'Merge signals use their first-parent diff; lineage follows every selected parent edge. Shared ancestry may support multiple surviving names, without inferring co-change from one historical path. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.']
   } }
 }

@@ -13,7 +13,7 @@ export const commands = {
   measure: {
     module: './commands/measure.mjs',
     options: ['range', 'exclusions'],
-    help: 'Collect file sizes and history signals without writes.\nUsage: repo-audit.mjs measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision includes its reachable history. Exclusions follow schemas/measure-exclusions.json. Signals do not establish violations or merge conflicts.'
+    help: 'Collect endpoint file sizes and current-lifetime history signals without writes.\nUsage: repo-audit.mjs measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision selects its reachable history. Only files present at the endpoint are measured, following renames back to their addition. Exclusions follow schemas/measure-exclusions.json. Signals do not establish violations or merge conflicts.'
   },
   overlap: {
     module: './commands/overlap.mjs',

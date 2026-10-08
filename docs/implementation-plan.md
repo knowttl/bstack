@@ -357,8 +357,9 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.3 Build `inventory`. C11bc records equivalent document sources, absent kinds and scoped instruction candidates, with native fixtures and root, nested, local and ancestor cases in `tests/eval/results/tasks/T2.3.json`.
   - [x] T2.4 Build `measure` and `overlap`
     - C12 implements revision-bound byte sizes, change and co-change commits, rename lineage, reported lock/generated/declared-formatting exclusions and shared declared write and contract paths.
-      Review repairs separate replacement-file history and remove the fixed Git-output capture limit.
-      Further review repairs follow merged ancestry and exclude historical gitlink events without suppressing separate blob lifetimes.
+      Measurement follows merged ancestry with no fixed Git-output capture limit and excludes historical gitlink events.
+      The firstmate-approved scope measures only endpoint files and their current lifetimes, following renames back to addition and omitting deleted lifetimes from every signal.
+      Generated-directory exclusions now derive from the shared discovery policy.
       The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records local checks and named fixture controls.
       Injected Windows/macOS cases run on Linux, while real platform execution and complete agent acceptance remain unverified.
   - [ ] T2.5 Build the findings schema and report

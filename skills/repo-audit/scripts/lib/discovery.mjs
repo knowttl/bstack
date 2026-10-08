@@ -3,7 +3,7 @@ import { join, relative, sep } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 // Generated dependencies, build output and Git internals are not project evidence.
-const excludedDirectories = new Set(['.git', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'])
+export const excludedDirectories = new Set(['.git', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'])
 
 export async function repoFiles(root) {
   const files = []

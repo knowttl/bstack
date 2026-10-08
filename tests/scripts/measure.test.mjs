@@ -4,6 +4,7 @@ import { appendFile, mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { build, emptyRepo, git, run, snapshot } from './discovery-fixture.mjs'
+import { repoFiles } from '../../skills/repo-audit/scripts/lib/discovery.mjs'
 
 function commitIndex(repo, message, date) {
   const result = spawnSync('git', ['-C', repo, '-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', message], {
@@ -90,8 +91,8 @@ test('measure honours empty ranges, missing history, and deleted paths', async t
   await writeFile(join(repo, 'removed.txt'), 'Gone\n')
   const seed = commit(repo, 'seed')
   git(repo, 'rm', 'removed.txt')
-  const deletion = commit(repo, 'delete')
-  assert.deepEqual(run('measure', repo, process.env, ['--range', `${seed}..HEAD`]).data.files, [{ path: 'removed.txt', bytes: null, commits: [deletion], changeCount: 1 }])
+  commit(repo, 'delete')
+  assert.deepEqual(run('measure', repo, process.env, ['--range', `${seed}..HEAD`]).data.files, [])
   const empty = run('measure', repo, process.env, ['--range', 'HEAD..HEAD'])
   assert.equal(empty.exit, 0)
   assert.deepEqual(empty.data.coChangePairs, [])
@@ -99,9 +100,9 @@ test('measure honours empty ranges, missing history, and deleted paths', async t
 })
 
 for (const scenario of [
-  { boundary: 'no', formatting: [], replacement: ['replacementRename', 'addition'], original: ['deletion', 'originalRename', 'seed'] },
-  { boundary: 'addition', formatting: ['addition'], replacement: ['replacementRename'], original: ['deletion', 'originalRename', 'seed'] },
-  { boundary: 'deletion', formatting: ['deletion'], replacement: ['replacementRename', 'addition'], original: ['originalRename', 'seed'] }
+  { boundary: 'no', formatting: [], replacement: ['replacementRename', 'addition'] },
+  { boundary: 'addition', formatting: ['addition'], replacement: ['replacementRename'] },
+  { boundary: 'deletion', formatting: ['deletion'], replacement: ['replacementRename', 'addition'] }
 ]) {
   test(`measure separates reused rename paths with ${scenario.boundary} formatting exclusion`, async t => {
     const { directory, repo } = await emptyRepo(t)
@@ -109,22 +110,23 @@ for (const scenario of [
     await writeFile(join(repo, 'peer.txt'), 'Peer\n')
     const seed = commit(repo, 'seed')
     git(repo, 'mv', 'old.txt', 'reused.txt')
-    const originalRename = commit(repo, 'rename original')
+    commit(repo, 'rename original')
     git(repo, 'rm', 'reused.txt')
     const deletion = commit(repo, 'delete original')
     await writeFile(join(repo, 'reused.txt'), 'Replacement bytes\n')
     const addition = commit(repo, 'add replacement')
     git(repo, 'mv', 'reused.txt', 'final.txt')
     const replacementRename = commit(repo, 'rename replacement')
-    const commits = { seed, originalRename, deletion, addition, replacementRename }
+    const commits = { deletion, addition, replacementRename }
     const policy = join(directory, 'exclusions.json')
     await writeFile(policy, JSON.stringify({ schemaVersion: 1, generatedPaths: [], formattingCommits: scenario.formatting.map(name => commits[name]) }))
     const result = run('measure', repo, process.env, ['--range', 'HEAD', '--exclusions', policy])
     assert.equal(result.exit, 0)
     assert.deepEqual(result.data.files.find(file => file.path === 'final.txt').commits, scenario.replacement.map(name => commits[name]))
-    assert.deepEqual(result.data.files.find(file => file.path === 'reused.txt').commits, scenario.original.map(name => commits[name]))
-    assert.deepEqual(result.data.renames.map(rename => rename.canonicalPath), ['final.txt', 'reused.txt'])
-    assert.deepEqual(result.data.coChangePairs, [{ paths: ['peer.txt', 'reused.txt'], commits: [seed], changeCount: 1 }])
+    assert.deepEqual(result.data.files.map(file => file.path), ['final.txt', 'peer.txt'])
+    assert.deepEqual(result.data.files.find(file => file.path === 'peer.txt').commits, [seed])
+    assert.deepEqual(result.data.renames.map(rename => rename.canonicalPath), ['final.txt'])
+    assert.deepEqual(result.data.coChangePairs, [])
   })
 }
 
@@ -235,9 +237,47 @@ test('measure excludes gitlink type changes without losing separate blob lifetim
   const result = run('measure', repo, process.env, ['--range', 'HEAD'])
   assert.equal(result.exit, 0)
   assert.deepEqual(result.data.files.find(file => file.path === 'final.txt').commits, [renamed])
-  assert.deepEqual(result.data.files.find(file => file.path === 'dependency').commits, [seed])
-  assert.deepEqual(result.data.coChangePairs, [{ paths: ['dependency', 'peer.txt'], commits: [seed], changeCount: 1 }])
+  assert.deepEqual(result.data.files.map(file => file.path), ['final.txt', 'peer.txt'])
+  assert.deepEqual(result.data.coChangePairs, [])
   assert.deepEqual(result.data.exclusions.files, [{ path: 'dependency', reason: 'non-blob' }])
+})
+
+test('measure limits a reused endpoint path to its replacement lifetime', async t => {
+  const { repo } = await emptyRepo(t)
+  await writeFile(join(repo, 'old.txt'), 'Original bytes\n')
+  await writeFile(join(repo, 'peer.txt'), 'Peer\n')
+  const seed = commit(repo, 'seed original and peer')
+  git(repo, 'mv', 'old.txt', 'reused.txt')
+  commit(repo, 'rename original')
+  git(repo, 'rm', 'reused.txt')
+  commit(repo, 'delete original')
+  await writeFile(join(repo, 'reused.txt'), 'Replacement bytes\n')
+  const replacement = commit(repo, 'add unrelated replacement')
+  const result = run('measure', repo, process.env, ['--range', 'HEAD'])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.files, [
+    { path: 'peer.txt', bytes: 5, commits: [seed], changeCount: 1 },
+    { path: 'reused.txt', bytes: 18, commits: [replacement], changeCount: 1 }
+  ])
+  assert.deepEqual(result.data.coChangePairs, [])
+  assert.deepEqual(result.data.renames, [])
+})
+
+test('measure and discovery apply the same generated directory conventions', async t => {
+  const { repo } = await emptyRepo(t)
+  await Promise.all(['node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'].map(async name => {
+    await mkdir(join(repo, 'nested', name), { recursive: true })
+    await writeFile(join(repo, 'nested', name, 'output.txt'), 'Generated\n')
+  }))
+  await mkdir(join(repo, 'nested', 'distillery'))
+  await writeFile(join(repo, 'nested', 'distillery', 'source.txt'), 'Authored\n')
+  await writeFile(join(repo, 'build'), 'Authored file\n')
+  commit(repo, 'seed directories and authored files')
+  const result = run('measure', repo, process.env, ['--range', 'HEAD'])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.files.map(file => file.path), ['build', 'nested/distillery/source.txt'])
+  assert.deepEqual(await repoFiles(repo), result.data.files.map(file => file.path))
+  assert.equal(result.data.exclusions.files.length, 7)
 })
 
 test('measure reads head inventory and history larger than one MiB', async t => {

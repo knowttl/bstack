@@ -27,27 +27,28 @@ Three-dot and omitted endpoints are usage errors.
 `data.shallow` identifies locally truncated history.
 The command never fetches missing history.
 
-`data.files` reports repo-relative paths, `bytes` at the resolved head, `changeCount` and supporting `commits` newest first.
+`data.files` reports eligible blob files present at the resolved head: repo-relative paths, `bytes` at that revision, `changeCount` and supporting `commits` in reverse topological order.
 Sizes come from Git blobs, so working-tree changes and untracked files cannot alter measurement.
 The resolved head is the size evidence revision, including for files unchanged in the selected history range.
-A removed historical file has null bytes.
+Deleted files and earlier lifetimes of reused endpoint paths contribute no file rows, supporting commits, rename evidence or co-change pairs.
 Gitlink events are excluded as non-blobs using historical object modes, including deleted gitlinks and blob/gitlink type changes.
-Blob history at a reused gitlink path remains eligible for signals.
+Only the current blob lifetime at a reused gitlink path remains eligible for signals.
 `data.coChangePairs` gives sorted path pairs, change counts and their supporting commits.
 There are no size or frequency thresholds, violation classifications or import analysis.
 
 History uses `git log` with 50% similarity rename detection and first-parent diffs for merge commits.
-Older names join the newest name found within the selected range, including chained renames.
+Endpoint files are followed back through older names within their current lifetime and selected range, including chained renames, stopping at the commit that added that lifetime.
 Lineage follows every selected commit-parent edge in topological order, including across merged branches; merge signal counts still use the first-parent diff.
 If shared ancestry reaches multiple retained names, its commits support each name without creating a co-change pair from a single historical path.
 Additions and deletions end rename lineage, including in excluded formatting commits, so a replacement file does not inherit the previous file's history.
 Blob/gitlink type changes also end blob lineage.
-`data.renames` retains commit, original path, destination path and canonical path.
+`data.renames` retains commit, original path, destination path and canonical endpoint path for current lifetimes only.
 Renames outside the range are not inferred.
 Counts describe same-commit changes, rather than observed merge conflicts.
 
 Default exclusions cover lock basenames at every depth: package-lock.json, npm-shrinkwrap.json, pnpm-lock.yaml, yarn.lock, bun.lock, bun.lockb, uv.lock, poetry.lock, Pipfile.lock, Cargo.lock, go.sum, Gemfile.lock and composer.lock.
 Generated directory conventions are .git, node_modules, .venv, venv, __pycache__, dist, build and .cache at every depth.
+These patterns derive from the shared discovery policy in `lib/discovery.mjs`.
 Declare other generated files and broad formatting commits with the [exclusions schema](../skills/repo-audit/schemas/measure-exclusions.json):
 
 ```json
