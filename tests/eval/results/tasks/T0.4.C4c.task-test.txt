@@ -1,0 +1,459 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T0.4
+
+Selected 3 suite(s): tests/scripts/child-contract.test.mjs, tests/scripts/command-contract.test.mjs, tests/scripts/schema-contract.test.mjs
+TAP version 13
+# Subtest: child commands preserve literal arguments and capture version and both output streams
+ok 1 - child commands preserve literal arguments and capture version and both output streams
+  ---
+  duration_ms: 107.961637
+  type: 'test'
+  ...
+# Subtest: child output is bounded to the last 64 KiB per stream
+ok 2 - child output is bounded to the last 64 KiB per stream
+  ---
+  duration_ms: 103.01319
+  type: 'test'
+  ...
+# Subtest: timeout fails and stops the child process tree before returning
+ok 3 - timeout fails and stops the child process tree before returning
+  ---
+  duration_ms: 609.428906
+  type: 'test'
+  ...
+# Subtest: cancellation fails and stops the child process tree before returning
+ok 4 - cancellation fails and stops the child process tree before returning
+  ---
+  duration_ms: 165.423683
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks timed out check with inherited pipes
+ok 5 - Windows cleanup failure blocks timed out check with inherited pipes
+  ---
+  duration_ms: 105.250309
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks timed out check with inherited pipes
+ok 6 - Windows cleanup launch error blocks timed out check with inherited pipes
+  ---
+  duration_ms: 101.329563
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks timed out version probe with inherited pipes
+ok 7 - Windows cleanup failure blocks timed out version probe with inherited pipes
+  ---
+  duration_ms: 102.056771
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks timed out version probe with inherited pipes
+ok 8 - Windows cleanup launch error blocks timed out version probe with inherited pipes
+  ---
+  duration_ms: 102.509526
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks cancelled check with inherited pipes
+ok 9 - Windows cleanup failure blocks cancelled check with inherited pipes
+  ---
+  duration_ms: 1.895501
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks cancelled check with inherited pipes
+ok 10 - Windows cleanup launch error blocks cancelled check with inherited pipes
+  ---
+  duration_ms: 1.664715
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure blocks cancelled version probe with inherited pipes
+ok 11 - Windows cleanup failure blocks cancelled version probe with inherited pipes
+  ---
+  duration_ms: 1.96319
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error blocks cancelled version probe with inherited pipes
+ok 12 - Windows cleanup launch error blocks cancelled version probe with inherited pipes
+  ---
+  duration_ms: 1.20277
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
+ok 13 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
+  ---
+  duration_ms: 594.970495
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
+ok 14 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
+  ---
+  duration_ms: 594.446098
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
+ok 15 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
+  ---
+  duration_ms: 578.334175
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
+ok 16 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
+  ---
+  duration_ms: 570.973332
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
+ok 17 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
+  ---
+  duration_ms: 587.706702
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
+ok 18 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
+  ---
+  duration_ms: 591.43269
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
+ok 19 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
+  ---
+  duration_ms: 561.244047
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
+ok 20 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
+  ---
+  duration_ms: 559.316489
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
+ok 21 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
+  ---
+  duration_ms: 120.397611
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
+ok 22 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
+  ---
+  duration_ms: 119.684825
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
+ok 23 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
+  ---
+  duration_ms: 93.091202
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
+ok 24 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
+  ---
+  duration_ms: 91.689497
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
+ok 25 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
+  ---
+  duration_ms: 129.099243
+  type: 'test'
+  ...
+# Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
+ok 26 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
+  ---
+  duration_ms: 116.514148
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
+ok 27 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
+  ---
+  duration_ms: 82.402803
+  type: 'test'
+  ...
+# Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
+ok 28 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
+  ---
+  duration_ms: 87.222727
+  type: 'test'
+  ...
+# Subtest: failed commands and unavailable tools cannot pass
+ok 29 - failed commands and unavailable tools cannot pass
+  ---
+  duration_ms: 157.636657
+  type: 'test'
+  ...
+# Subtest: child working directories reject escape before execution
+ok 30 - child working directories reject escape before execution
+  ---
+  duration_ms: 49.993968
+  type: 'test'
+  ...
+# Subtest: Windows npm selection uses Node and a JavaScript CLI with literal arguments
+ok 31 - Windows npm selection uses Node and a JavaScript CLI with literal arguments
+  ---
+  duration_ms: 58.56458
+  type: 'test'
+  ...
+# Subtest: Windows npm.cmd without a supported CLI is blocked
+ok 32 - Windows npm.cmd without a supported CLI is blocked
+  ---
+  duration_ms: 63.551679
+  type: 'test'
+  ...
+# Subtest: Windows tool.cmd without a supported CLI is blocked
+ok 33 - Windows tool.cmd without a supported CLI is blocked
+  ---
+  duration_ms: 60.556852
+  type: 'test'
+  ...
+# Subtest: Windows tool.bat without a supported CLI is blocked
+ok 34 - Windows tool.bat without a supported CLI is blocked
+  ---
+  duration_ms: 55.547066
+  type: 'test'
+  ...
+# Subtest: fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
+ok 35 - fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
+  ---
+  duration_ms: 557.917523
+  type: 'test'
+  ...
+# Subtest: canonical assessment inputs ignore only derived fields and evidence serialization
+ok 36 - canonical assessment inputs ignore only derived fields and evidence serialization
+  ---
+  duration_ms: 226.578357
+  type: 'test'
+  ...
+# Subtest: draft workspace stores distinct runs in scratch and leaves workspace unchanged
+ok 37 - draft workspace stores distinct runs in scratch and leaves workspace unchanged
+  ---
+  duration_ms: 117.90826
+  type: 'test'
+  ...
+# Subtest: Git target resolves from a subdirectory with no commits
+ok 38 - Git target resolves from a subdirectory with no commits
+  ---
+  duration_ms: 64.549999
+  type: 'test'
+  ...
+# Subtest: Git target resolves from a subdirectory with a commit
+ok 39 - Git target resolves from a subdirectory with a commit
+  ---
+  duration_ms: 116.868342
+  type: 'test'
+  ...
+# Subtest: Git target preserves trailing whitespace "repo "
+ok 40 - Git target preserves trailing whitespace "repo "
+  ---
+  duration_ms: 70.328392
+  type: 'test'
+  ...
+# Subtest: Git target preserves trailing whitespace "repo \\t\\r"
+ok 41 - Git target preserves trailing whitespace "repo \\t\\r"
+  ---
+  duration_ms: 62.670159
+  type: 'test'
+  ...
+# Subtest: arguments reject missing target with a JSON usage error
+ok 42 - arguments reject missing target with a JSON usage error
+  ---
+  duration_ms: 48.414527
+  type: 'test'
+  ...
+# Subtest: arguments reject unknown options with a JSON usage error
+ok 43 - arguments reject unknown options with a JSON usage error
+  ---
+  duration_ms: 48.478068
+  type: 'test'
+  ...
+# Subtest: arguments reject missing value with a JSON usage error
+ok 44 - arguments reject missing value with a JSON usage error
+  ---
+  duration_ms: 50.47279
+  type: 'test'
+  ...
+# Subtest: arguments reject duplicate option with a JSON usage error
+ok 45 - arguments reject duplicate option with a JSON usage error
+  ---
+  duration_ms: 49.652671
+  type: 'test'
+  ...
+# Subtest: arguments reject conflicting targets with a JSON usage error
+ok 46 - arguments reject conflicting targets with a JSON usage error
+  ---
+  duration_ms: 50.546723
+  type: 'test'
+  ...
+# Subtest: rejects traversal.json before scratch writes and reports every problem
+ok 47 - rejects traversal.json before scratch writes and reports every problem
+  ---
+  duration_ms: 55.87106
+  type: 'test'
+  ...
+# Subtest: rejects absolute-paths.json before scratch writes and reports every problem
+ok 48 - rejects absolute-paths.json before scratch writes and reports every problem
+  ---
+  duration_ms: 48.497992
+  type: 'test'
+  ...
+# Subtest: rejects unknown-fields.json before scratch writes and reports every problem
+ok 49 - rejects unknown-fields.json before scratch writes and reports every problem
+  ---
+  duration_ms: 44.219361
+  type: 'test'
+  ...
+# Subtest: rejects invalid-types.json before scratch writes and reports every problem
+ok 50 - rejects invalid-types.json before scratch writes and reports every problem
+  ---
+  duration_ms: 48.465343
+  type: 'test'
+  ...
+# Subtest: escaping existing links and new children under escaping parents are refused before writes
+ok 51 - escaping existing links and new children under escaping parents are refused before writes
+  ---
+  duration_ms: 50.255298
+  type: 'test'
+  ...
+# Subtest: dangling parents are refused rather than treated as missing directories
+ok 52 - dangling parents are refused rather than treated as missing directories
+  ---
+  duration_ms: 48.001389
+  type: 'test'
+  ...
+# Subtest: missing Git prerequisite returns blocked rather than passing
+ok 53 - missing Git prerequisite returns blocked rather than passing
+  ---
+  duration_ms: 51.355756
+  type: 'test'
+  ...
+# Subtest: repo commands refuse workspace mode
+ok 54 - repo commands refuse workspace mode
+  ---
+  duration_ms: 48.566496
+  type: 'test'
+  ...
+# Subtest: scratch refuses a cache link into the target before creating directories
+ok 55 - scratch refuses a cache link into the target before creating directories
+  ---
+  duration_ms: 54.520738
+  type: 'test'
+  ...
+# Subtest: scratch follows a cache link outside the target
+ok 56 - scratch follows a cache link outside the target
+  ---
+  duration_ms: 51.267877
+  type: 'test'
+  ...
+# Subtest: scratch follows a run-parent link outside the target
+ok 57 - scratch follows a run-parent link outside the target
+  ---
+  duration_ms: 67.98276
+  type: 'test'
+  ...
+# Subtest: scratch refuses a run-parent link inside the target before creating directories
+ok 58 - scratch refuses a run-parent link inside the target before creating directories
+  ---
+  duration_ms: 47.347857
+  type: 'test'
+  ...
+# Subtest: target aliases use the same scratch identity
+ok 59 - target aliases use the same scratch identity
+  ---
+  duration_ms: 97.32764
+  type: 'test'
+  ...
+# Subtest: unavailable target absent is blocked without writes
+ok 60 - unavailable target absent is blocked without writes
+  ---
+  duration_ms: 49.807112
+  type: 'test'
+  ...
+# Subtest: unavailable target brief.md is blocked without writes
+ok 61 - unavailable target brief.md is blocked without writes
+  ---
+  duration_ms: 48.363964
+  type: 'test'
+  ...
+# Subtest: human output is a short summary with the same failed exit code
+ok 62 - human output is a short summary with the same failed exit code
+  ---
+  duration_ms: 63.621731
+  type: 'test'
+  ...
+# Subtest: valid schema data dispatches from another cwd without changing the workspace
+ok 63 - valid schema data dispatches from another cwd without changing the workspace
+  ---
+  duration_ms: 60.67909
+  type: 'test'
+  ...
+# Subtest: schema-invalid.json with the installed schema fails with named problems and no writes
+ok 64 - schema-invalid.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 57.871053
+  type: 'test'
+  ...
+# Subtest: schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
+ok 65 - schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
+  ---
+  duration_ms: 56.270242
+  type: 'test'
+  ...
+# Subtest: schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
+ok 66 - schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
+  ---
+  duration_ms: 48.332954
+  type: 'test'
+  ...
+# Subtest: schema-empty.json with the installed schema fails with named problems and no writes
+ok 67 - schema-empty.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 57.315851
+  type: 'test'
+  ...
+# Subtest: schema-missing.json with the installed schema fails with named problems and no writes
+ok 68 - schema-missing.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 51.644823
+  type: 'test'
+  ...
+# Subtest: schema-wrong-types.json with the installed schema fails with named problems and no writes
+ok 69 - schema-wrong-types.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 50.423229
+  type: 'test'
+  ...
+# Subtest: schema-map-invalid.json with schema-map.json fails with named problems and no writes
+ok 70 - schema-map-invalid.json with schema-map.json fails with named problems and no writes
+  ---
+  duration_ms: 49.198373
+  type: 'test'
+  ...
+# Subtest: schema-malformed.json with the installed schema fails with named problems and no writes
+ok 71 - schema-malformed.json with the installed schema fails with named problems and no writes
+  ---
+  duration_ms: 50.732614
+  type: 'test'
+  ...
+# Subtest: schema-valued additional properties validates each map value
+ok 72 - schema-valued additional properties validates each map value
+  ---
+  duration_ms: 48.407957
+  type: 'test'
+  ...
+# Subtest: command help succeeds with its implementation absent while execution reports blocked
+ok 73 - command help succeeds with its implementation absent while execution reports blocked
+  ---
+  duration_ms: 111.412672
+  type: 'test'
+  ...
+# Subtest: dispatch rejects unsupported arguments before loading the command
+ok 74 - dispatch rejects unsupported arguments before loading the command
+  ---
+  duration_ms: 36.91911
+  type: 'test'
+  ...
+1..74
+# tests 74
+# suites 0
+# pass 74
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8198.718731
