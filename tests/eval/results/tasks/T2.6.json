@@ -2,9 +2,11 @@
   "schemaVersion": 1,
   "taskId": "T2.6",
   "slice": "C14b",
-  "sourceRevision": "78ab73eab8c4793b6bb0d3648e548f3f37569471",
+  "sourceRevision": "13b5dfb45d9ec28b1499384ab4b173a22c10b2fb",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1-T2.5 and T2.6 part 1 (https://github.com/knowttl/bstack/pull/25: change-set and resume schemas, plan digest, staged operations with a conservative supported Markdown subset, and `apply --dry-run`).\n\nThis piece is slice C14b, the rest of task T2.6 \"Build protected writes and resume state\": write/journal/resume, including selected delete. Done evidence: injected interruption points, backups, original/proposed/conflict states, repeat and dirty-user protection.",
-  "amendments": [],
+  "amendments": [
+    "Regenerated all five command artifacts after no-mistakes run 01M4DQBYBNS3S1QT9NPSA8Y840 repaired atomic backup publication, mutation-boundary checks, directory durability and journalled-deletion alias recovery, then removed redundant apply run selection. Fresh commands ran against 13b5dfb45d9ec28b1499384ab4b173a22c10b2fb, preserving every repair and document commit."
+  ],
   "status": "passed",
   "environment": {
     "os": "Linux 6.8.0-142-generic x86_64",
@@ -90,7 +92,7 @@
     {
       "id": "AC-57",
       "kind": "automated",
-      "procedure": "apply rejects unresolved scope with no project writes; apply rejects changed scope resolution with no project writes; apply rejects unedited concrete scope failures with no project writes",
+      "procedure": "apply rejects unresolved scope with no project writes; apply rejects changed scope resolution with no project writes",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/C14b.task-T2.6.txt"
     },
@@ -111,14 +113,14 @@
     {
       "id": "AC-72",
       "kind": "automated",
-      "procedure": "replace/delete/create interruption before-write, after-replacement, before-completion and journal-io resumes from actual hashes and keeps backups; user change to other.txt after replace interruption blocks every remaining write",
+      "procedure": "replace interruption before-write resumes from actual hashes and keeps backups; delete interruption after-replacement resumes from actual hashes and keeps backups; create interruption before-completion resumes from actual hashes and keeps backups; replace interruption journal-io resumes from actual hashes and keeps backups; user change to other.txt after replace interruption blocks every remaining write; restored originals are pending even when journal completion flags say applied",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/C14b.task-T2.6.txt"
     }
   ],
   "limitations": [
     "Linux Node 24 execution only. Real Windows/macOS runs remain captain checklist evidence; no hosted CI ran.",
-    "205 T2.6 tests and 635 full-suite tests passed. Case mappings record local command controls, not fresh-agent transcript acceptance for AC-54, AC-57 or AC-69. Full path acceptance remains the later integration checkpoints.",
+    "237 T2.6 tests and 667 full-suite tests passed. Case mappings record local command controls, not fresh-agent transcript acceptance for AC-54, AC-57 or AC-69. Full path acceptance remains the later integration checkpoints.",
     "Affected checks are reported from reviewed findings required outcomes. Automatic execution remains T2.7. Atomicity covers individual files only; unsupported directory flushes report power-loss limitations."
   ]
 }
