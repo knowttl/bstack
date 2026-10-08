@@ -116,6 +116,28 @@ for (const [name, code, mutate] of [
   })
 }
 
+for (const [phase, select] of [
+  ['prerequisite', plan => { plan.prerequisites = [{ ...plan.journeyCommand, id: 'prerequisite' }]; return plan.prerequisites[0] }],
+  ['setup', plan => { plan.setupCommands = [{ ...plan.journeyCommand, id: 'setup' }]; return plan.setupCommands[0] }],
+  ['journey', plan => plan.journeyCommand]
+]) {
+  for (const [field, value] of [['executable', 'node\u0000'], ['args', ['journey.mjs\u0000']], ['versionArgs', ['--version\u0000']]]) {
+    test(`NUL in ${phase} ${field} rejects preview and execution without writes`, async t => {
+      const context = await setup(t)
+      select(context.plan)[field] = value
+      await save(context)
+      const before = await snapshot(context.workspace)
+      const preview = execute(context, { dryRun: true })
+      const applied = execute(context)
+      assert.notEqual(preview.exit, 0)
+      assert.notEqual(applied.exit, 0)
+      assert.equal(preview.problems[0].code, 'invalid-pattern', JSON.stringify(preview))
+      assert.equal(applied.problems[0].code, 'invalid-pattern', JSON.stringify(applied))
+      assert.deepEqual(await snapshot(context.workspace), before)
+    })
+  }
+}
+
 for (const [name, allowEmpty, content, expected] of [['unselected empty', false, false, 2], ['selected empty', true, false, 0], ['nonempty', true, true, 2]]) {
   test(`${name} destination is handled without adopting unrelated content`, async t => {
     const context = await setup(t)

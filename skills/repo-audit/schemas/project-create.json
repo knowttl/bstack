@@ -24,9 +24,9 @@
       "required": ["id", "executable", "args", "versionArgs", "cwd", "timeoutMs"],
       "properties": {
         "id": { "type": "string", "pattern": "\\S" },
-        "executable": { "type": "string", "pattern": "\\S" },
-        "args": { "type": "array", "items": { "type": "string" } },
-        "versionArgs": { "type": "array", "items": { "type": "string" } },
+        "executable": { "type": "string", "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+        "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
         "cwd": { "const": "." },
         "timeoutMs": { "type": "integer" }
       }
@@ -36,9 +36,9 @@
       "required": ["id", "executable", "args", "versionArgs", "cwd", "timeoutMs"],
       "properties": {
         "id": { "type": "string", "pattern": "\\S" },
-        "executable": { "type": "string", "pattern": "\\S" },
-        "args": { "type": "array", "items": { "type": "string" } },
-        "versionArgs": { "type": "array", "items": { "type": "string" } },
+        "executable": { "type": "string", "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+        "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
         "cwd": { "type": "string", "pattern": "\\S" },
         "timeoutMs": { "type": "integer" }
       }
@@ -48,9 +48,9 @@
       "required": ["id", "executable", "args", "versionArgs", "cwd", "timeoutMs"],
       "properties": {
         "id": { "type": "string", "pattern": "\\S" },
-        "executable": { "type": "string", "pattern": "\\S" },
-        "args": { "type": "array", "items": { "type": "string" } },
-        "versionArgs": { "type": "array", "items": { "type": "string" } },
+        "executable": { "type": "string", "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+        "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+        "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
         "cwd": { "type": "string", "pattern": "\\S" },
         "timeoutMs": { "type": "integer" }
       }
