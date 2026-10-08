@@ -345,12 +345,12 @@ Tick each task when its "Done when" commands pass.
   - [x] T1.3 Write the first `SKILL.md`: bounded checklists, inline safeguards and labelled unavailable tooling ([gap map](../tests/eval/results/gap-map.md), [evidence](../tests/eval/results/tasks/T1.3.json))
   - [x] T1.4 Bundle the interview and domain-language modules - C9a flattens decision rounds, the confirmed-intent rubric, glossary discovery and formats, and separate decision records. Registered packaging search and local checks are recorded in `tests/eval/results/tasks/T1.4.json`. AC-9 and AC-12 agent checks remain assigned to T1.7.
   - [x] T1.5 Adapt VISION and bundle the board assets ([evidence](../tests/eval/results/tasks/T1.5.json))
-  - [ ] T1.6 Build the VISION board launcher
+  - [x] T1.6 Build the VISION board launcher
     - [x] C10a (merged into C9b10a): runtime research/probe, exact nested pin and lock, local/gate setup and revision-bound board build ([partial evidence](../tests/eval/results/tasks/T1.6.json)).
-    - [ ] C10b: launch, verdict ingestion and resumed-review tests are implemented; the synthetic live verdict-to-draft roundtrip succeeded, while live resumed review and approved scratch vision remain unverified ([Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md), [prior task evidence](../tests/eval/results/tasks/T1.6.json), [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md)).
-  - [ ] T1.7 Complete the intent and vision review - C10b implements the bounded SKILL.md steps and registers the task suite; the approved scratch vision remains missing ([task evidence](../tests/eval/results/tasks/T1.7.json), [checkpoint observations](evaluation.md#intent-checkpoint-c10b)).
+    - [x] C10b: launch, verdict ingestion and resumed-review tests are implemented, with real complete-round verdict ingestion and approved scratch revision now observed in the [C11a prerequisite run](../tests/eval/results/intent-C11a/full-capture/summary.md).
+  - [x] T1.7 Complete the intent and vision review - the [fresh scored intent checkpoint](../tests/eval/results/intent-C11a/full-capture/summary.md) records real board review, domain-only glossary, explicit approval of the saved revision and an unchanged non-Git workspace ([task evidence](../tests/eval/results/tasks/T1.7.json)).
     - [Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md) record the scenario and adapter fixes and the supported board attempt.
-      T1.7 remains blocked on complete board verdicts and explicit approval of the resulting revision.
+      The C11a prerequisite run completes the previously blocked board and scratch-approval evidence without claiming protected project creation.
 - Phase 2: Audit and foundation
   - [ ] T2.1 Write the research briefs and the citation check
   - [ ] T2.2 Build `inspect`

@@ -263,10 +263,22 @@ Both workspaces still contain only brief.md with bytes matching their fixture so
 The summaries record the actual implementation revisions evaluated, tool versions, turn outcomes, scoring citations and isolation cleanup.
 Captured JSONL transcripts retain their line numbers with host paths, user names and thread IDs redacted.
 These observations are intent checkpoint evidence, not final acceptance selections or complete project creation.
-T1.7 remains blocked until the new-idea journey is resolved and the board and scratch approval flow can complete on an available host.
+At this earlier checkpoint, T1.7 was blocked until the new-idea journey and board and scratch approval flow could complete on an available host.
 
 ## Phase 1 E2E follow-up
 
 The [Phase 1 validation](../tests/eval/results/phase1-check/summary.md) records the corrected shopping-list answer and retained Codex resume permissions.
 That summary owns the supported-flow observations, synthetic live board evidence, superseded experiment and historical verification counts.
 See [build progress](implementation-plan.md#progress) for the remaining task prerequisites.
+
+## Completed intent checkpoint (C11a prerequisite)
+
+The [fresh scored new-idea run](../tests/eval/results/intent-C11a/full-capture/summary.md) completed the real shipped board workflow, semantic revision, glossary and explicit saved-revision approval.
+The scripted fixture author supplied per-card verdicts and final approval through the shipped UI, using chrome-devtools-axi in a task-specific browser session.
+Both real host turns exited 0 without timeout or truncation.
+Close verified isolation and deleted the private home before scoring, which passed all three scenario checks.
+The original brief-only workspace remained unchanged and non-Git.
+The earlier passing ambiguous-idea procedure remains valid intent-stage evidence.
+T1.7 is complete at this checkpoint, while protected project creation and final acceptance remain later tasks.
+The preceding blocked browser, timeout and capture attempts are retained as historical evidence, not promoted into this pass.
+Redacted transcripts preserve line citations and conversation hashes bind the retained redacted bytes.
