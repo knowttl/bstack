@@ -3,11 +3,13 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
-Other conditional references remain placeholders, and later audit commands and the installer are not built yet.
+Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending principles and their checks, and [architecture](skills/repo-audit/references/architecture.md) when recommending module boundaries.
+These provide evidence requirements and project-specific guidance, with native rule-proof and maintained checks still pending.
+The maintenance reference remains a placeholder, and later audit commands and the installer are not built yet.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -40,6 +42,7 @@ npm test -- --task T2.2
 npm test -- --task T2.3
 npm test -- --task T2.4
 npm test -- --task T2.5
+npm test -- --task T3.1
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
