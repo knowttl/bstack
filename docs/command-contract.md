@@ -46,7 +46,7 @@ Unreadable inputs, invalid JSON/schema, invalid UTF-8, an empty draft, missing/d
 Unavailable target, cache or bundled resources produce blocked exit 2 and a named prerequisite.
 On success, exit 0 returns the shared envelope with `data.board`, `data.scratch`, `data.runId`, `data.draftRevision` and ordered `data.cardIds`.
 Use `--json` to retrieve these paths and bindings.
-Scratch contains `board.html`, the unchanged `review.css`, exact `draft.md` bytes, `proposals.json` and a versioned `board.json` manifest.
+Scratch contains `board.html`, the unchanged `review.css`, exact `draft.md` bytes, `proposals.json` and a versioned `board.json` manifest bound to the resolved target.
 Each build creates a distinct run and preserves earlier drafts, without changing the target.
 
 The full draft and one-card stack retain the upstream layout and review mechanics.
@@ -56,8 +56,57 @@ Individual `vision-verdict` and complete-round payloads carry schemaVersion, run
 Card queue keys use a `vision-card:` prefix so an ID cannot collide with the round-completion key.
 The observed pinned runtime returns that context as JSON embedded after `Context data:` in tagged prompts.
 The agent owns semantic revisions from author reasoning, with previous drafts preserved.
-The build command does not launch a server, ingest verdicts, revise or approve a draft.
-Launch, validated verdict ingestion and resumed review remain C10b work.
+The build command generates the board for the launch and verdict commands below.
+
+## VISION board launch and verdicts
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs vision-board launch --workspace <existing-directory> --board <scratch-board.html> --json
+node skills/repo-audit/scripts/repo-audit.mjs vision-board verdicts --workspace <existing-directory> --board <scratch-board.html> --input <round.json> --draft <revised.md> --json
+```
+
+Both commands also accept --repo for a Git target.
+Resume uses the explicit board path from an earlier build, preserving its original draft and proposals.
+The manifest target, original exact-byte draft hash and ordered proposal IDs must still agree.
+A different target or changed draft fails with incompatible-board before launch or new scratch creation.
+Missing board files or inaccessible resources are blocked with a restoration fix.
+Legacy boards without target metadata need a new build from the preserved draft.
+
+Launch runs the installed pinned Lavish JavaScript CLI through Node with literal arguments.
+It captures runtime output in scratch launch.json and returns runtimeOutput plus listener executable and args with --json.
+Read the printed URL and next_step, open the URL in a reachable browser, and run that listener in the terminal.
+The listener uses the pinned runtime's foreground long-poll interface with no debugging timeout in normal use.
+It consumes feedback once, so preserve its entire returned response before resuming.
+Follow the runtime's ended-session and browser-disconnection instructions.
+With no reachable browser, preserve scratch and report interaction blocked.
+Runtime launch failures return blocked exit 2 with the nested install and server-access fix, leaving draft.md unchanged.
+The runtime inherits the host's server and state configuration.
+See the [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md) for the observed server setup and interaction limits.
+
+Verdicts takes the complete-round Context data JSON embedded in the terminal's vision-verdict prompt.
+Copy that JSON unchanged to a scratch file, retaining the captured terminal response as provenance.
+The installed [vision-verdicts schema](../skills/repo-audit/schemas/vision-verdicts.json) defines the input fields and accepted verdict labels:
+
+```json
+{
+  "schemaVersion": 1,
+  "runId": "<board run ID>",
+  "draftRevision": "<original exact-byte draft SHA-256>",
+  "complete": true,
+  "verdicts": [{ "id": "H-1", "verdict": "Conditional", "notes": "Author reasoning" }]
+}
+```
+
+Every original card must occur exactly once.
+Unknown, missing, blank or duplicate IDs, unknown fields or verdict labels, incomplete rounds and incompatible run or draft bindings fail with exit 1 before creating a new scratch draft.
+The agent interprets author reasoning into the nonempty UTF-8 revised Markdown supplied as --draft.
+The script validates transport and saves those exact revised bytes, rather than inferring semantic edits or author approval.
+On success it creates new scratch draft.md and review.json, returning their paths, the revised hash, previousDraft and approval: pending-author-review.
+Review metadata preserves the verdicts, original run ID, reviewedDraftRevision, previousBoard and previousDraft alongside the new draftRevision.
+The original draft, board, proposals and decisions remain available for resumed review.
+Present the saved revision and edit-to-verdict explanation for explicit author approval, retaining the approval and revision in the scratch transcript.
+Another board round builds from that saved draft with matching proposals and uses the retained review.json decisions.
+No board command changes the target or initialises Git, and a successful verdict command does not complete approval.
 
 ## Arguments and targets
 

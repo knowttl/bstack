@@ -3,7 +3,7 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language and vision references, board generation with a pinned runtime, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language and vision references, board build, launch and verdict ingestion with a pinned runtime, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
@@ -34,6 +34,7 @@ npm test -- --task T1.3
 npm test -- --task T1.4
 npm test -- --task T1.5
 npm test -- --task T1.6
+npm test -- --task T1.7
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
@@ -62,7 +63,8 @@ An unscored manual run exits 2 as blocked.
 An adapter run also exits 2 until explicitly scored.
 See the [recorded initial baseline](docs/evaluation.md#recorded-initial-baseline) for host provenance and scenario outcomes.
 The [T1.3 gap map](tests/eval/results/gap-map.md) links every observed failure to the procedure and retains passing requirements.
-This slice adds no real agent runs and does not claim with-skill behaviour or complete audit execution.
+The [intent checkpoint](docs/evaluation.md#intent-checkpoint-c10b) records two real with-skill runs and their limitations.
+These runs do not establish complete audit execution or protected repo creation.
 Close the conversation immediately when it finishes to delete its isolated home before reviewing the captured transcript.
 The Codex adapter copies only the invoking user's existing login into throwaway state with private permissions, removes the copy after each turn, and deletes the whole home on close or a failed host turn.
 Scoring requires complete answers and a transcript with reviewer citations.
@@ -131,8 +133,20 @@ For a real draft, supply nonempty UTF-8 Markdown and [versioned proposals](skill
 The JSON result returns the board path, run ID, revision and card IDs.
 Scratch preserves the draft, proposals, manifest and stylesheet without changing the target.
 The [board command contract](docs/command-contract.md#vision-board-build) documents inputs and failure behaviour.
-Board launch, verdict ingestion and resumed review remain pending C10b.
-Generated HTML alone does not establish approval or complete AC-3.
+Launch the returned scratch board with the same target, then run the listener executable and arguments returned by --json:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs vision-board launch --workspace . --board <returned-board.html> --json
+node skills/repo-audit/scripts/repo-audit.mjs vision-board verdicts --workspace . --board <returned-board.html> --input <complete-round.json> --draft <agent-revised.md> --json
+```
+
+Open the runtime's printed URL in a reachable browser and use the pinned terminal listener to receive feedback.
+Save the complete-round Context data JSON unchanged as --input.
+The agent interprets author reasoning into --draft, and verdicts validates run, original draft and every card before preserving the revised bytes and decisions in new scratch.
+Read the saved revision back and obtain explicit author approval, preserving that approval and the revision in the scratch transcript.
+The previous draft and review decisions remain available for resume.
+Missing runtime or unavailable interaction leaves the draft intact and the review blocked.
+See [build progress](docs/implementation-plan.md#progress) for outstanding live-review evidence and the [intent checkpoint](skills/repo-audit/SKILL.md#step-3-review-the-vision) for its completion boundary.
 
 Task evidence follows [the versioned schema](tests/eval/task-evidence.schema.json), with records and output artifacts in `tests/eval/results/tasks/`.
 Shipping slices use no-mistakes and recorded local verification, with no hosted CI or release automation.

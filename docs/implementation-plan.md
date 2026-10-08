@@ -347,8 +347,8 @@ Tick each task when its "Done when" commands pass.
   - [x] T1.5 Adapt VISION and bundle the board assets ([evidence](../tests/eval/results/tasks/T1.5.json))
   - [ ] T1.6 Build the VISION board launcher
     - [x] C10a (merged into C9b10a): runtime research/probe, exact nested pin and lock, local/gate setup and revision-bound board build ([partial evidence](../tests/eval/results/tasks/T1.6.json)).
-    - [ ] C10b: launch, verdict ingestion, resumed review and manual verdict-to-draft update.
-  - [ ] T1.7 Complete the intent and vision review
+    - [ ] C10b: launch, verdict ingestion and resumed-review tests are implemented; live verdict-to-draft evidence remains blocked ([task evidence](../tests/eval/results/tasks/T1.6.json), [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md)).
+  - [ ] T1.7 Complete the intent and vision review - C10b implements the bounded SKILL.md steps and registers the task suite; the approved scratch vision remains missing ([task evidence](../tests/eval/results/tasks/T1.7.json), [checkpoint observations](evaluation.md#intent-checkpoint-c10b)).
 - Phase 2: Audit and foundation
   - [ ] T2.1 Write the research briefs and the citation check
   - [ ] T2.2 Build `inspect`
