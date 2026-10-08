@@ -2,9 +2,13 @@
   "schemaVersion": 1,
   "taskId": "T2.7",
   "slice": "C15a",
-  "sourceRevision": "5756f1c84cf03bb239e3a84008bdb737225bff36",
+  "sourceRevision": "4a1da5b569e3c565f226390b16e66a239ad6b2dd",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1-T2.6 (most recently https://github.com/knowttl/bstack/pull/26: protected writes, journal, resume and selected delete).\n\nThis piece is slice C15a, the first part of task T2.7 \"Build verification capture and live probes\": check plans, capture and prior protection. Done evidence: failed journey despite passing units, failed/skipped/stale/timeout checks rejected, prior refactor proof.",
-  "amendments": [],
+  "amendments": [
+    "Regenerated all command artifacts after the first pipeline repaired capture freshness, command and phase preflight, literal input paths and reproduction coverage.",
+    "Firstmate authorized the two-boundary fingerprint contract: compare all declared inputs before and after execution and block changed inputs; no mid-run tracking.",
+    "Final snapshot failures retain completed command evidence, and scratch setup precedes command execution."
+  ],
   "status": "passed",
   "environment": {
     "os": "Linux 6.8.0-142-generic x86_64",
@@ -111,7 +115,7 @@
     {
       "id": "AC-71",
       "kind": "automated",
-      "procedure": "failed/skipped/unavailable/timed out/failed version required check cannot pass; changed own bytes/new glob file/deleted glob file make a required captured result stale; a later check invalidates an earlier passing result",
+      "procedure": "failed/skipped/unavailable/timed out/failed version required check cannot pass; changed declared inputs block the capture; a later input change blocks all executed checks; unavailable final snapshots retain completed command evidence; invalid scratch setup runs no commands",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
     },
@@ -145,7 +149,8 @@
   ],
   "limitations": [
     "C15a is partial T2.7. Live probe records, comparisons and side-effect approval remain C15b.",
-    "40 targeted tests and 707 full-suite tests passed on Linux Node 24. Real Windows/macOS execution remains captain checklist evidence. No hosted CI ran.",
-    "Case mappings establish command-interface controls, not complete fresh-agent acceptance. Local scratch capture trusts declared scopes and approved source authority. AC-31 exercises the fixture disagreement and non-ready verdict, not live probe record/compare."
+    "82 targeted tests and 749 full-suite tests passed on Linux Node 24. Real Windows/macOS execution remains captain checklist evidence. No hosted CI ran.",
+    "Case mappings establish command-interface controls, not complete fresh-agent acceptance. Local scratch capture trusts declared scopes and approved source authority. AC-31 exercises the fixture disagreement and non-ready verdict, not live probe record/compare.",
+    "Boundary fingerprints do not detect transient input changes restored before completion."
   ]
 }
