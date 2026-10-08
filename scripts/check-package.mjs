@@ -22,13 +22,17 @@ function paths(text) {
   for (const match of text.matchAll(/([`"'])([^`"'\r\n]+)\1/g)) {
     if (/^(?:\.\.?\/|references\/|scripts\/|schemas\/|assets\/|agents\/)/.test(match[2])) found.add(match[2])
   }
-  return [...found].filter(path => !/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(path))
+  return [...found].filter(path => {
+    let destination = path
+    try { destination = decodeURIComponent(path.split(/[?#]/)[0]) } catch {}
+    return !/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(destination.replace(/(\.[^/:?#]+):\d+(?::\d+)?$/, '$1'))
+  })
 }
 
 async function check(skill) {
   const problems = []
   const files = new Map()
-  const add = (code, path, message, fix) => problems.push({ code, path, message, fix })
+  const add = (code, path, message, fix) => problems.push({ code, path, message: `${path}: ${message}`, fix })
   async function walk(directory) {
     let entries
     try { entries = await readdir(directory, { withFileTypes: true }) } catch (error) {

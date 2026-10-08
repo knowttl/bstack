@@ -78,6 +78,40 @@ test('local paths in source and nested resources resolve from their file', async
   assert.equal(run('--skill', directory).status, 0)
 })
 
+for (const [syntax, destination] of [
+  ['inline link', '[Target](absent.md:12)'],
+  ['image', '![Target](absent.md:12:3)'],
+  ['reference definition', '[Target]: absent.md:12?view=source#here'],
+  ['angle destination', '[Target](<absent.md:12:3#here>)'],
+  ['encoded destination', '[Target](absent.md:%31%32%3A3)'],
+  ['quoted resource', '`./absent.md:12`']
+]) {
+  test(`${syntax} location suffix preserves missing and nested reference checks`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, 'references', 'guide.md'), destination + '\n')
+    const result = run('--skill', directory)
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.match(result.stdout, /local-path-missing:.*references\/guide\.md:.*absent\.md/)
+    assert.match(result.stdout, /reference-nested:.*references\/guide\.md:.*absent\.md/)
+  })
+}
+
+test('location suffix accepts existing resources and excludes URLs', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'references', 'guide.md'), '[Policy](../agents/openai.yaml:12:3?view=source#here)\n[Web](https://example.invalid/no-file:12)\n[Mail](mailto:user@example.invalid)\n[Numeric URI](tel:123)\n[Network](//example.invalid/no-file:12)\n[Section](#here:12)\n')
+  assert.equal(run('--skill', directory).status, 0)
+})
+
+test('unlisted reference diagnostics identify each source file', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'references', 'one.md'), 'First reference.\n')
+  await writeFile(join(directory, 'references', 'two.md'), 'Second reference.\n')
+  const result = run('--skill', directory)
+  assert.equal(result.status, 1)
+  assert.match(result.stdout, /^reference-unlisted: references\/one\.md:/m)
+  assert.match(result.stdout, /^reference-unlisted: references\/two\.md:/m)
+})
+
 test('dependency and cache contents are excluded', async t => {
   const directory = await sandbox(t)
   for (const folder of ['node_modules', '.cache', 'scratch']) {
