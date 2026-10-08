@@ -2,12 +2,13 @@
   "schemaVersion": 1,
   "taskId": "T0.4.C4b",
   "slice": "C4b",
-  "sourceRevision": "a18e6a4a76f8c7cce44c7ddb8418170de83f2ab1",
+  "sourceRevision": "c8c5129b756e0bb0a6c2e72d1cd1179c08b4256d",
   "intent": "\"yes approbe and begin the implementation\". Continue the approved commissioning plan with C4b child commands and fingerprints.",
   "amendments": [
     "C4b implements run.mjs and fingerprint.mjs through public fixture commands.",
     "C4c owns schema validation and production wiring.",
-    "Preserve .no-mistakes.yaml byte-identical and add no workflows."
+    "Preserve .no-mistakes.yaml byte-identical and add no workflows.",
+    "Refresh evidence after the R1 and R2 cleanup fixes against the last implementation commit, retaining the earlier run as history. No source, tests, gate configuration or workflows change in this evidence-only round."
   ],
   "status": "passed",
   "environment": {
@@ -138,6 +139,20 @@
       "exitCode": 0,
       "outputArtifact": "tests/eval/results/tasks/T0.4.C4b.history.txt",
       "status": "passed"
+    },
+    {
+      "id": "task-test-repeat",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.4.C4b"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4b.task-test-repeat.txt",
+      "status": "passed"
     }
   ],
   "cases": [
@@ -224,13 +239,183 @@
       "procedure": "tests/scripts/child-contract.test.mjs: canonical assessment inputs ignore only derived fields and evidence serialization",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/13",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure blocks timed out check with inherited pipes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/14",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error blocks timed out check with inherited pipes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/15",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure blocks timed out version probe with inherited pipes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/16",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error blocks timed out version probe with inherited pipes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/17",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure blocks cancelled check with inherited pipes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/18",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error blocks cancelled check with inherited pipes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/19",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure blocks cancelled version probe with inherited pipes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/20",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error blocks cancelled version probe with inherited pipes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/21",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/22",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/23",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/24",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/25",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/26",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/27",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/28",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/29",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/30",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/31",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/32",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/33",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/34",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/35",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
+    },
+    {
+      "id": "C4b/36",
+      "kind": "automated",
+      "procedure": "tests/scripts/child-contract.test.mjs: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4b.task-test.txt"
     }
   ],
   "limitations": [
-    "Linux on Node v24.17.0 was executed. Windows npm launcher selection was tested on Linux, not on Windows. Real Windows and macOS execution remain unverified under R26.",
+    "Linux on Node v24.17.0 was executed. Windows npm launcher selection and Windows cleanup failure behavior were simulated on Linux, not executed on Windows. Real Windows and macOS execution remain unverified under R26.",
     "C4c schema validation and production command wiring remain pending. T0.4 is incomplete.",
-    "All recorded commands ran against implementation commit a18e6a4a76f8c7cce44c7ddb8418170de83f2ab1. An evidence-only commit on top changes no implementation, tests or manifest and does not need to name itself.",
+    "All current recorded commands ran against implementation commit c8c5129b756e0bb0a6c2e72d1cd1179c08b4256d. An evidence-only commit on top changes no implementation, tests or manifest and does not need to name itself.",
     "Process-tree cleanup covers managed descendants. Deliberately detached children are outside the contract.",
-    "Portable committed assessment identity and format-specific assessment inputs belong to their later owning tasks."
+    "Portable committed assessment identity and format-specific assessment inputs belong to their later owning tasks.",
+    "The check passed 9 tests, the full suite passed 77 tests, and both C4b task runs passed 36 tests with no failures or skips.",
+    "The earlier 53-test full suite and 12-test task run against a18e6a4a76f8c7cce44c7ddb8418170de83f2ab1 are retained only as history in tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.json and its linked artifacts."
   ]
 }

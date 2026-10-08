@@ -2,15 +2,15 @@
 > bstack@0.0.0 check
 > node --test tests/scripts/bootstrap.test.mjs tests/scripts/skill-skeleton.test.mjs
 
-✔ bootstrap manifest commands and root lockfile agree (6.214405ms)
-✔ discovery sorts explicit suites and excludes fixture, dependency and evaluation tests (188.01258ms)
-✔ task selection executes only registered suites and rejects unknown tasks (203.657054ms)
-✔ an empty selected suite fails (46.867728ms)
-✔ skill metadata permits only user invocation in the documented hosts (15.81813ms)
-✔ load when table resolves all eight bundled reference placeholders (17.550234ms)
-✔ no arguments prints planned commands and returns usage exit 3 (42.862119ms)
-✔ explicit help succeeds (33.305514ms)
-✔ an unimplemented command returns usage exit 3 (32.933783ms)
+✔ bootstrap manifest commands and root lockfile agree (10.547078ms)
+✔ discovery sorts explicit suites and excludes fixture, dependency and evaluation tests (200.831607ms)
+✔ task selection executes only registered suites and rejects unknown tasks (209.751624ms)
+✔ an empty selected suite fails (43.931173ms)
+✔ skill metadata permits only user invocation in the documented hosts (15.478334ms)
+✔ load when table resolves all eight bundled reference placeholders (16.50957ms)
+✔ no arguments prints planned commands and returns usage exit 3 (42.943575ms)
+✔ explicit help succeeds (44.60855ms)
+✔ an unimplemented command returns usage exit 3 (46.162798ms)
 ℹ tests 9
 ℹ suites 0
 ℹ pass 9
@@ -18,4 +18,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 516.744789
+ℹ duration_ms 541.838463
