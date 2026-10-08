@@ -344,7 +344,7 @@ Tick each task when its "Done when" commands pass.
     - [x] C7a Acceptance registry and manual evaluation interface ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
     - [x] C7b Current-host Codex adapter, fresh state and discovery isolation, resumed scripted answers and three human-scored real baselines ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
   - [x] T1.3 Write the first `SKILL.md`: bounded checklists, inline safeguards and labelled unavailable tooling ([gap map](../tests/eval/results/gap-map.md), [evidence](../tests/eval/results/tasks/T1.3.json))
-  - [ ] T1.4 Bundle the interview and domain-language modules
+  - [x] T1.4 Bundle the interview and domain-language modules - C9a flattens decision rounds, the confirmed-intent rubric, glossary discovery and formats, and separate decision records. Registered packaging search and local checks are recorded in `tests/eval/results/tasks/T1.4.json`. AC-9 and AC-12 agent checks remain assigned to T1.7.
   - [ ] T1.5 Adapt VISION and bundle the board assets
   - [ ] T1.6 Build the VISION board launcher
   - [ ] T1.7 Complete the intent and vision review
