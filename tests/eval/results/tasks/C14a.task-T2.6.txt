@@ -1,0 +1,358 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T2.6
+
+Selected 1 suite(s): tests/scripts/apply.test.mjs
+TAP version 13
+# Subtest: apply dry run stages create with no project writes
+ok 1 - apply dry run stages create with no project writes
+  ---
+  duration_ms: 109.8053
+  type: 'test'
+  ...
+# Subtest: apply dry run stages replace with no project writes
+ok 2 - apply dry run stages replace with no project writes
+  ---
+  duration_ms: 94.515345
+  type: 'test'
+  ...
+# Subtest: apply dry run stages selected delete with no project writes
+ok 3 - apply dry run stages selected delete with no project writes
+  ---
+  duration_ms: 104.606467
+  type: 'test'
+  ...
+# Subtest: apply dry run stages empty replacement keeps a present file with no project writes
+ok 4 - apply dry run stages empty replacement keeps a present file with no project writes
+  ---
+  duration_ms: 97.839303
+  type: 'test'
+  ...
+# Subtest: apply dry run stages heading section with no project writes
+ok 5 - apply dry run stages heading section with no project writes
+  ---
+  duration_ms: 89.202238
+  type: 'test'
+  ...
+# Subtest: apply dry run stages CRLF heading section with no project writes
+ok 6 - apply dry run stages CRLF heading section with no project writes
+  ---
+  duration_ms: 97.679076
+  type: 'test'
+  ...
+# Subtest: apply dry run stages UTF-8 BOM and Unicode replacement with no project writes
+ok 7 - apply dry run stages UTF-8 BOM and Unicode replacement with no project writes
+  ---
+  duration_ms: 92.123668
+  type: 'test'
+  ...
+# Subtest: apply dry run stages JSON key with no project writes
+ok 8 - apply dry run stages JSON key with no project writes
+  ---
+  duration_ms: 90.902373
+  type: 'test'
+  ...
+# Subtest: apply dry run stages new JSON key preserves exact existing values with no project writes
+ok 9 - apply dry run stages new JSON key preserves exact existing values with no project writes
+  ---
+  duration_ms: 99.613551
+  type: 'test'
+  ...
+# Subtest: apply dry run stages append line with no project writes
+ok 10 - apply dry run stages append line with no project writes
+  ---
+  duration_ms: 91.462542
+  type: 'test'
+  ...
+# Subtest: apply dry run stages existing appended line with no project writes
+ok 11 - apply dry run stages existing appended line with no project writes
+  ---
+  duration_ms: 96.608075
+  type: 'test'
+  ...
+# Subtest: apply dry run stages heading in fenced code is preserved with no project writes
+ok 12 - apply dry run stages heading in fenced code is preserved with no project writes
+  ---
+  duration_ms: 90.178739
+  type: 'test'
+  ...
+# Subtest: apply prints the exact selected-delete diff in plain and JSON output
+ok 13 - apply prints the exact selected-delete diff in plain and JSON output
+  ---
+  duration_ms: 178.195339
+  type: 'test'
+  ...
+# Subtest: apply rejects invalid schema with no project writes
+ok 14 - apply rejects invalid schema with no project writes
+  ---
+  duration_ms: 91.820072
+  type: 'test'
+  ...
+# Subtest: apply rejects unknown input field with no project writes
+ok 15 - apply rejects unknown input field with no project writes
+  ---
+  duration_ms: 80.369877
+  type: 'test'
+  ...
+# Subtest: apply rejects unresolved scope with no project writes
+ok 16 - apply rejects unresolved scope with no project writes
+  ---
+  duration_ms: 80.689633
+  type: 'test'
+  ...
+# Subtest: apply rejects changed scope resolution with no project writes
+ok 17 - apply rejects changed scope resolution with no project writes
+  ---
+  duration_ms: 87.651609
+  type: 'test'
+  ...
+# Subtest: apply rejects unselected finding with no project writes
+ok 18 - apply rejects unselected finding with no project writes
+  ---
+  duration_ms: 100.04027
+  type: 'test'
+  ...
+# Subtest: apply rejects changed selected IDs with no project writes
+ok 19 - apply rejects changed selected IDs with no project writes
+  ---
+  duration_ms: 92.656409
+  type: 'test'
+  ...
+# Subtest: apply rejects scope widening with no project writes
+ok 20 - apply rejects scope widening with no project writes
+  ---
+  duration_ms: 90.577153
+  type: 'test'
+  ...
+# Subtest: apply rejects path traversal with no project writes
+ok 21 - apply rejects path traversal with no project writes
+  ---
+  duration_ms: 87.7588
+  type: 'test'
+  ...
+# Subtest: apply rejects target mismatch with no project writes
+ok 22 - apply rejects target mismatch with no project writes
+  ---
+  duration_ms: 85.818239
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate edit IDs with no project writes
+ok 23 - apply rejects duplicate edit IDs with no project writes
+  ---
+  duration_ms: 84.490942
+  type: 'test'
+  ...
+# Subtest: apply rejects overlapping edits with no project writes
+ok 24 - apply rejects overlapping edits with no project writes
+  ---
+  duration_ms: 96.779671
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate scope with no project writes
+ok 25 - apply rejects duplicate scope with no project writes
+  ---
+  duration_ms: 90.859569
+  type: 'test'
+  ...
+# Subtest: apply rejects changed precondition with no project writes
+ok 26 - apply rejects changed precondition with no project writes
+  ---
+  duration_ms: 85.544498
+  type: 'test'
+  ...
+# Subtest: apply rejects wrong proposed hash with no project writes
+ok 27 - apply rejects wrong proposed hash with no project writes
+  ---
+  duration_ms: 95.360817
+  type: 'test'
+  ...
+# Subtest: apply rejects wrong proposed bytes with no project writes
+ok 28 - apply rejects wrong proposed bytes with no project writes
+  ---
+  duration_ms: 89.839246
+  type: 'test'
+  ...
+# Subtest: apply rejects empty replacement as absent with no project writes
+ok 29 - apply rejects empty replacement as absent with no project writes
+  ---
+  duration_ms: 88.626022
+  type: 'test'
+  ...
+# Subtest: apply rejects unknown payload field with no project writes
+ok 30 - apply rejects unknown payload field with no project writes
+  ---
+  duration_ms: 95.790518
+  type: 'test'
+  ...
+# Subtest: apply rejects changed reviewed payload with no project writes
+ok 31 - apply rejects changed reviewed payload with no project writes
+  ---
+  duration_ms: 88.151234
+  type: 'test'
+  ...
+# Subtest: apply rejects changed reviewed findings with no project writes
+ok 32 - apply rejects changed reviewed findings with no project writes
+  ---
+  duration_ms: 92.076425
+  type: 'test'
+  ...
+# Subtest: apply rejects unresolved decision with no project writes
+ok 33 - apply rejects unresolved decision with no project writes
+  ---
+  duration_ms: 96.791786
+  type: 'test'
+  ...
+# Subtest: apply rejects ambiguous headings before any project writes
+ok 34 - apply rejects ambiguous headings before any project writes
+  ---
+  duration_ms: 89.145841
+  type: 'test'
+  ...
+# Subtest: apply rejects setext headings before any project writes
+ok 35 - apply rejects setext headings before any project writes
+  ---
+  duration_ms: 95.950375
+  type: 'test'
+  ...
+# Subtest: apply rejects unclosed fence before any project writes
+ok 36 - apply rejects unclosed fence before any project writes
+  ---
+  duration_ms: 97.378583
+  type: 'test'
+  ...
+# Subtest: apply rejects duplicate JSON keys before any project writes
+ok 37 - apply rejects duplicate JSON keys before any project writes
+  ---
+  duration_ms: 107.752105
+  type: 'test'
+  ...
+# Subtest: apply rejects nested duplicate JSON keys before any project writes
+ok 38 - apply rejects nested duplicate JSON keys before any project writes
+  ---
+  duration_ms: 95.21208
+  type: 'test'
+  ...
+# Subtest: apply rejects unsupported format before any project writes
+ok 39 - apply rejects unsupported format before any project writes
+  ---
+  duration_ms: 86.634961
+  type: 'test'
+  ...
+# Subtest: apply rejects invalid JSON before any project writes
+ok 40 - apply rejects invalid JSON before any project writes
+  ---
+  duration_ms: 83.469888
+  type: 'test'
+  ...
+# Subtest: apply rejects ambiguous replacement before any project writes
+ok 41 - apply rejects ambiguous replacement before any project writes
+  ---
+  duration_ms: 84.677204
+  type: 'test'
+  ...
+# Subtest: apply rejects missing replacement match before any project writes
+ok 42 - apply rejects missing replacement match before any project writes
+  ---
+  duration_ms: 83.370348
+  type: 'test'
+  ...
+# Subtest: apply rejects create collision before any project writes
+ok 43 - apply rejects create collision before any project writes
+  ---
+  duration_ms: 88.615759
+  type: 'test'
+  ...
+# Subtest: apply rejects missing delete before any project writes
+ok 44 - apply rejects missing delete before any project writes
+  ---
+  duration_ms: 93.214185
+  type: 'test'
+  ...
+# Subtest: changed later precondition prevents all edits and reports every changed file
+ok 45 - changed later precondition prevents all edits and reports every changed file
+  ---
+  duration_ms: 83.171545
+  type: 'test'
+  ...
+# Subtest: escaping links fail with an unchanged project fingerprint and outside bytes
+ok 46 - escaping links fail with an unchanged project fingerprint and outside bytes
+  ---
+  duration_ms: 97.495194
+  type: 'test'
+  ...
+# Subtest: Git revision changes invalidate a reviewed dry run
+ok 47 - Git revision changes invalidate a reviewed dry run
+  ---
+  duration_ms: 127.883425
+  type: 'test'
+  ...
+# Subtest: apply refuses real writes and malformed plans
+ok 48 - apply refuses real writes and malformed plans
+  ---
+  duration_ms: 167.384324
+  type: 'test'
+  ...
+# Subtest: internal link aliases cannot stage overlapping edits
+ok 49 - internal link aliases cannot stage overlapping edits
+  ---
+  duration_ms: 94.351549
+  type: 'test'
+  ...
+# Subtest: workspace dry run uses the same scope and payload protections
+ok 50 - workspace dry run uses the same scope and payload protections
+  ---
+  duration_ms: 81.50604
+  type: 'test'
+  ...
+# Subtest: resume schema validates complete state through the public contract command
+ok 51 - resume schema validates complete state through the public contract command
+  ---
+  duration_ms: 91.063198
+  type: 'test'
+  ...
+# Subtest: resume schema validates absent original and backup for create through the public contract command
+ok 52 - resume schema validates absent original and backup for create through the public contract command
+  ---
+  duration_ms: 79.588212
+  type: 'test'
+  ...
+# Subtest: resume schema validates absent proposed state for delete through the public contract command
+ok 53 - resume schema validates absent proposed state for delete through the public contract command
+  ---
+  duration_ms: 83.575074
+  type: 'test'
+  ...
+# Subtest: resume schema validates missing plan digest through the public contract command
+ok 54 - resume schema validates missing plan digest through the public contract command
+  ---
+  duration_ms: 101.991901
+  type: 'test'
+  ...
+# Subtest: resume schema validates missing backup through the public contract command
+ok 55 - resume schema validates missing backup through the public contract command
+  ---
+  duration_ms: 86.442738
+  type: 'test'
+  ...
+# Subtest: resume schema validates invalid hash through the public contract command
+ok 56 - resume schema validates invalid hash through the public contract command
+  ---
+  duration_ms: 79.83105
+  type: 'test'
+  ...
+# Subtest: resume schema validates unknown field through the public contract command
+ok 57 - resume schema validates unknown field through the public contract command
+  ---
+  duration_ms: 90.809569
+  type: 'test'
+  ...
+1..57
+# tests 57
+# suites 0
+# pass 57
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5494.549046
+
