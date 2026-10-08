@@ -1,7 +1,7 @@
 # Evaluation contract
 
 C7a implements the T1.2 acceptance registry and manual evaluation interface.
-C7b owns the host adapter, verified isolation, automatic conversation delivery and recorded baseline.
+C7b adds the current-host Codex adapter, verified discovery isolation, captured conversation turns and baseline runs.
 No C7a manual score proves host isolation or an acceptance case for the released skill.
 
 ## Scenarios and runs
@@ -26,16 +26,84 @@ Do not treat a one-shot prompt as delivery of later answers.
 Ordinary with-skill requests require the host's explicit command through `--invocation`.
 Without-skill and implicit-invocation requests reject that option.
 The implicit request is exactly `audit this repo`.
-Until C7b, the runner does not stage the skill or verify its discovery paths, and every manual run records isolation as unverified.
-Automatic execution is blocked.
+Manual runs without an adapter do not stage the skill or verify discovery paths.
+They retain unverified isolation even after human scoring.
+`--manual` and `--adapter` cannot be combined; adapter starts capture the opening turn automatically.
 
 Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
-`--results <directory>` chooses another result directory on start, score, compare or selection validation.
+`--results <directory>` chooses another result directory on start, turn, close, score, compare or selection validation.
 Starting a manual run creates a fresh fixture and unique record, with UTC timestamps, source revision, agent, model, OS, tool versions, fixture revision, checkpoint, criteria hash and case results.
 TypeScript fixtures also record npm and fixture-local TypeScript versions.
 The fixture revision is the committed `tests/fixtures` Git tree, so skill-only commits do not prevent comparison.
 Run a committed checkout when recording evidence.
 Manual records initially have status `blocked` and no answers, transcript or case results.
+
+## Current-host adapter and conversation
+
+[codex.json](../tests/eval/adapters/codex.json) is the current-host adapter.
+Its version 1 format extends the shared child-command object with `invocation` and `isolation`.
+It requires `executable`, string-array `args`, `cwd: "."`, `versionArgs` and `timeoutMs` from 1 to 120000.
+Unknown fields and shell command strings are rejected.
+`invocation` names the agent, model, explicit command, `codex-exec-jsonl` protocol and string-array `resumeArgs`.
+`{message}` and `{sessionId}` are replaced only when they occupy whole arguments.
+Both command forms require JSONL, the declared model, ignored user config and a separate process.
+The opening command creates a new resumable thread, and later turns must retain that exact thread ID.
+The installed CLI's `codex exec --help` and `codex exec resume --help` define its supported options.
+The host interface follows the official [non-interactive execution documentation](https://developers.openai.com/codex/noninteractive/).
+The recorded Linux host cannot start Codex's workspace sandbox because `bwrap` cannot configure its loopback interface.
+The adapter therefore selects `danger-full-access` for the disposable fixture, while separately isolating host state and verifying skill discovery.
+This is discovery and conversation isolation, not an operating-system security boundary.
+
+```sh
+npm run eval -- --scenario ambiguous-idea --mode without --stage baseline --adapter tests/eval/adapters/codex.json
+npm run eval -- --scenario ambiguous-idea --mode with --stage baseline --adapter tests/eval/adapters/codex.json
+npm run eval -- turn --run <id> --answer 1
+npm run eval -- close --run <id>
+npm run eval -- score --run <id> --answers answers.json --transcript tests/eval/results/runs/<id>/conversation.txt
+```
+
+Starting captures only the opening request.
+The runner preserves the exact user messages, JSONL events and stderr in `conversation.txt`, including available command and file-open observations.
+Each turn also retains its child execution result and tool version in `run.json`.
+Review the host's question and deliver the corresponding next scripted answer with `eval turn --answer`, using its one-based index.
+This reviewer-driven delivery uses `codex exec resume` instead of guessing which prose question an answer addresses.
+Do not send an answer merely because a turn completed.
+If a question cannot be answered from the approved script, close the run, record the limitation and score the unmet outcome honestly.
+The opening prompt never includes later scripted answers.
+Every command returns immediately after its bounded child execution and remains blocked until human scoring.
+At most one opening and one turn per scripted answer may succeed.
+A failed, incomplete, malformed, truncated or wrong-session host result stays blocked and closes the isolated home.
+Neither deterministic fake-host tests nor an unscored transcript claim an agent acceptance pass.
+
+### Isolation and authentication
+
+Every adapter run creates a new temporary home with mode 0700, an empty `.codex` state directory with mode 0700 and a fresh cache.
+Child environment overrides set `HOME`, `USERPROFILE`, `CODEX_HOME`, `XDG_CONFIG_HOME`, `XDG_CACHE_HOME` and `LOCALAPPDATA` without changing the invoking process.
+The fixed Codex isolation format records `.agents/skills`, `.codex/skills`, `/etc/codex/skills` and the fixture's ancestor discovery paths.
+These include the documented [Codex discovery locations](https://developers.openai.com/codex/skills/) and the legacy state-directory skill path.
+Before execution and before closing or scoring, the runner inventories these paths and requires no skill named `repo-audit` in `without` mode.
+In `with` mode it copies the current skill folder, including any built runtime resources, into the isolated home's `.agents/skills/repo-audit`.
+Only that copy may be discoverable, and its complete file snapshot must still match the staged bytes.
+An inaccessible path or discovery through a symbolic link stays blocked for manual review.
+This staging is an evaluation helper, not the release installer.
+Bundled host system skills can remain available, but they cannot include repo-audit.
+
+The captain approved `authentication: "throwaway-codex-login"` for this adapter on 2026-10-08.
+Immediately before a host turn, the runner copies only the existing login file from the invoking user's `CODEX_HOME`, or its default home location, into the empty run state and sets the file mode to 0600.
+It copies no configuration, skills or previous sessions.
+The login copy is removed after every turn, including failure and timeout.
+Only `authenticatedVia: "throwaway copy"` is recorded, never credential contents.
+The fake-host tests use `authentication: "none"` or a dummy login created by the test.
+If the invoking user's login is unavailable, the run is blocked, without attempting login or manufacturing a result.
+Close each conversation immediately on completion with `eval close`, even if scoring will happen later.
+Close verifies isolation, binds its proof to the captured conversation hash and deletes the entire isolated home.
+Scoring a closed run checks that retained proof and hash, since the home is already gone.
+Direct scoring also closes the home after its isolation check.
+The caller removes the disposable fixture after preserving the run's output artifacts.
+
+For a host without the supported conversation or isolation interface, use the manual start commands above, deliver the script in a fresh conversation and preserve the complete transcript and available discovery observations.
+Keep unavailable interaction or isolation checks blocked with their specific reason and next prerequisite.
+Do not substitute a one-shot prompt for later user answers or promote an unverified manual run into final acceptance evidence.
 
 ## Explicit manual scoring
 
@@ -64,13 +132,15 @@ Successful scoring copies the answers and transcript into a unique scoring artif
 All yes answers produce a passing score, and any no answer produces a failing score.
 A scored run cannot be rescored.
 Create a new run to retain earlier checkpoints and scoring history.
-Pass and fail describe the human score, with the isolation limitation retained in the record.
+Pass and fail describe the human score, with any isolation limitation retained in the record.
+Adapter scoring requires completed host turns and the exact captured conversation, and retains the isolation proof taken before deletion.
 
 ```sh
 npm run eval -- compare --without <baseline-id> --with <with-skill-id>
 ```
 
 Comparison requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.
+Adapter comparisons also require the same adapter hash, preserving execution settings across modes.
 The scenario fixture, built fixture name, outcome request, ordered scripted answers and invocation mode must also match.
 No previously passing check may fail with the skill.
 At least one more check must pass with the skill, unless every check already passed in the baseline and still passes.
@@ -128,8 +198,34 @@ Their options parser has no target argument because evaluation creates targets t
 Exit codes follow the shared contract: 0 passed, 1 failed, 2 blocked and 3 usage error.
 `--help` prints usage and exits 0.
 
-## C7a verification
+## Verification
 
 `npm test -- --task T1.2` selects the registry and evaluation command suites.
 They cover registration failures, incomplete manual evidence, explicit transcript scoring, history paths, invocation requests, final selection blocking and the baseline comparison rule.
-Task evidence records these interface checks separately from unbuilt isolation and baseline procedures.
+They also cover fresh host state, discovery absence, resource staging, resumed scripted answers, transcript identity, authentication-copy cleanup and host failure paths.
+Fake executables test the conversation boundary without spending model quota.
+Task evidence records these interface checks separately from actual baseline procedures.
+
+## Recorded initial baseline
+
+Three scored `without` runs used Codex CLI 0.160.1, `gpt-6.1-sol`, Node 24 and Linux at the baseline checkpoint.
+Before commit, baseline transcripts and every corresponding evidence copy are redacted for host paths, user and host names, out-of-fixture workspace inventories and host thread IDs.
+Run-local markers retain distinct fixtures, isolated homes and conversations without publishing their original identifiers.
+Redaction preserves JSONL events, transcript line numbers, commands, observations, reviewer verdicts and citations; conversation hashes bind the redacted bytes.
+These are historical observations rather than byte-identical raw host logs, and cannot be used to resume their deleted host sessions.
+All three retain distinct fixture paths, homes, thread IDs, transcripts and scoring artifacts.
+Their fixture revision is `e15b941cb5ab07e9a1f99ce492a3a891c8cac91b`, and each preserves its registered criteria hash and the same adapter hash.
+The [T1.2 task evidence](../tests/eval/results/tasks/T1.2.json) names their complete run records and transcript locations.
+
+- Ambiguous-idea passed its unresolved-decision check after the corresponding scripted reply.
+- New-idea failed all three checks: no intent interview, browser local storage included in its domain-term section, and a VISION declared approved without approval from the scripted user.
+  The generated VISION is retained alongside the conversation.
+  No scripted answer was sent because the agent asked no corresponding question.
+- Clear-goals passed both checks by reusing the approved repo documents without repeating settled questions or opening a skill reference.
+  Its trace includes a broad parent-directory filename search that the host interrupted, followed by recommendations based on the fixture documents.
+  This observation is retained, not concealed or turned into an extra scoring criterion.
+
+The first workspace-sandbox attempt stays blocked in the history with its real `bwrap` failure.
+It is not one of the three scored baselines.
+No baseline was required to fail, and the passing scenarios remain in the evaluation.
+These are initial development observations, not final released-skill acceptance or a host and operating-system support matrix.

@@ -1,20 +1,28 @@
 {
   "schemaVersion": 1,
   "taskId": "T1.2",
-  "slice": "C7a",
-  "sourceRevision": "278b12f76b55410397c46b44ab5573413ebbf9c9",
-  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Phase 0 and task T1.1 (fixtures, last in https://github.com/knowttl/bstack/pull/13) have landed. The merged slice table is `[host-home]/.treehouse/firstmate-5911dd/3/firstmate/data/slice-merge/report.md` (bstack table).\n\nThis piece is slice C7a, the first part of task T1.2 \"Build the evaluation runner and record the baseline\": the acceptance registry and the manual evaluation interface (slice done evidence: 75 owned case IDs, invalid registry and manual results blocked, explicit transcript scoring). C7b follows with the current-host adapter, isolation and the recorded baseline.",
+  "slice": "C7b",
+  "sourceRevision": "cc20ef6e50180dbfd2450d3bafc002efed215cf6",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope, and the approved baseline rule: at least three realistic comparable scenarios, no failure quota) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Landed: Phase 0, T1.1 and C7a (https://github.com/knowttl/bstack/pull/14: acceptance registry, scenarios, run records and manual scoring).\n\nThis piece is slice C7b, the rest of task T1.2: one current-host adapter, isolation and the recorded baseline (slice done evidence: fresh sessions, no-skill discovery absence, unique transcripts, comparable model, revision and criteria).\n\nfor each evaluation run, copy ONLY the existing Codex login file (the auth file in the invoking user's CODEX_HOME) into a fresh throwaway isolated CODEX_HOME created for that run with mode 0700 (file 0600), containing no skills, config or other state; run the session; delete that isolated home immediately after the run, including on failure or timeout. Never print, log, record in evidence, or commit the credential or its contents; record only that the run authenticated via a throwaway copy. Verify isolation (no repo-audit skill discoverable in without mode) before scoring.",
   "amendments": [
-    "C7a supplies the registry, scenarios and manual scoring interface. T1.2 remains incomplete until C7b supplies the adapter, verified isolation and actual comparable baseline runs.",
-    "Evidence-only commit follows the tested implementation commit."
+    "C7b first refreshed C7a evidence in commit 373880f56dad5b73f852fe35d3607d66f1e2c018 against landed C7a commit 7827f55, including ownership, table-driven completed-procedure matching and comparison checks.",
+    "The captain approved copying only the invoking user's Codex login into throwaway state with private permissions. The implementation removes the login after each turn and the entire isolated home on conversation close or failure.",
+    "The current host's workspace sandbox cannot configure bwrap loopback. Its initial real attempt remains blocked in the history. The three scored baselines use the same unsandboxed adapter with separately verified discovery and conversation isolation.",
+    "The three scored baselines retain source revision ca0618c and their original fixture revision, adapter, model and criteria hashes. The final implementation adds a failed-authentication scoring guard without changing those successful conversation paths.",
+    "Evidence-only commit follows the final tested implementation commit. No final with-skill or released-skill acceptance is claimed.",
+    "Review fixes remove manual adapter preparation and deferred opening; normal adapter starts and ordered resumed answers retain the recorded baseline conversation behavior.",
+    "Published baselines and corresponding evidence copies redact host metadata. Original source, fixture revision, adapter, model, criteria and reviewer outcomes remain unchanged; conversation hashes now bind the redacted bytes, with original hashes retained as provenance.",
+    "Historical command outputs still describe source revision cc20ef6e50180dbfd2450d3bafc002efed215cf6. Full final-commit installation, package check, repository tests, T1.2 tests and registry validation must be refreshed by the outer validation phases; this assigned review phase is limited to focused verification.",
+    "Focused review verification passed 55 evaluation CLI tests and inline archived-evidence assertions on HEAD d4acb62040ad3a82ad122b913f84768056115e17 with implementation worktree diff SHA-256 fb1d59f20974bfbf134276961c81f7cda7e0e446353130e5f42d1cbd3da62684. Final-commit full validation remains assigned to the outer phases."
   ],
-  "status": "passed",
+  "status": "blocked",
   "environment": {
-    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "os": "Linux [redacted: host name] 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
     "node": "v24.17.0",
     "tools": {
       "npm": "11.13.0",
-      "git": "git version 2.54.0"
+      "git": "git version 2.54.0",
+      "codex": "codex-cli 0.160.1"
     }
   },
   "commands": [
@@ -134,6 +142,18 @@
       "exitCode": 0,
       "status": "passed",
       "outputArtifact": "tests/eval/results/tasks/T1.2.git-version.txt"
+    },
+    {
+      "id": "review-focused",
+      "executable": "node",
+      "args": [
+        "--test",
+        "tests/scripts/eval.test.mjs"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.review.txt"
     }
   ],
   "cases": [
@@ -161,24 +181,86 @@
     {
       "id": "C7a-invocation-comparison",
       "kind": "automated",
-      "procedure": "tests/scripts/eval.test.mjs: ordinary with-skill runs require explicit invocation while implicit runs omit it; table-driven comparison baseline and with-skill cases; comparison blocks different models and unscored runs.",
+      "procedure": "tests/scripts/eval.test.mjs: ordinary with-skill runs require explicit invocation while implicit runs omit it; table-driven comparison honours baseline and with-skill cases; comparison blocks different models and unscored runs.",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
     },
     {
+      "id": "C7b-isolation",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit; with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request; adapter scoring requires the captured conversation and rechecks isolation and staged bytes.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
+    },
+    {
+      "id": "C7b-conversation",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: scripted replies resume the exact host conversation, preserve user turns and require ordered answers; manual adapter preparation is rejected before creating a run; host failure table; a resumed host turn cannot silently switch sessions; closing a conversation deletes isolated state and retains bound evidence for later scoring.",
+      "status": "blocked",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt",
+      "reason": "The historical task-suite artifact covers the removed preparation behavior; the final task-suite evidence needs an outer validation refresh.",
+      "nextPrerequisite": "Outer T1.2 test phase against the final implementation commit."
+    },
+    {
+      "id": "C7b-authentication",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: throwaway authentication copies only a dummy login with private permissions and removes it after the turn, including a missing-login resumed turn that deletes its home and cannot score. tests/scripts/child-contract.test.mjs: child environment overrides apply to the version probe and execution without mutating the caller; output truncation and process-tree timeout cleanup.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
+    },
+    {
+      "id": "C7b-baseline-ambiguous-idea",
+      "kind": "agent",
+      "procedure": "Completed real without-mode baseline procedure: node scripts/eval.mjs --scenario ambiguous-idea --mode without --stage baseline --adapter tests/eval/adapters/codex.json, reviewer-delivered corresponding scripted answers through eval turn, immediate eval close and explicit eval score. Baseline recording is complete with 1/1 checks passed; this completion verdict does not require a passing scenario. Retained transcript: tests/eval/results/runs/2026-10-08T03-13-27.136Z-67e9adf6-0b87-46c9-a4c2-518b31c40ace/b4b372f9-ba58-4cf6-b965-edb7b62d15b2/transcript.txt.",
+      "status": "passed",
+      "artifact": "tests/eval/results/runs/2026-10-08T03-13-27.136Z-67e9adf6-0b87-46c9-a4c2-518b31c40ace/run.json"
+    },
+    {
+      "id": "C7b-baseline-new-idea",
+      "kind": "agent",
+      "procedure": "Completed real without-mode baseline procedure: node scripts/eval.mjs --scenario new-idea --mode without --stage baseline --adapter tests/eval/adapters/codex.json, reviewer-delivered corresponding scripted answers through eval turn, immediate eval close and explicit eval score. Baseline recording is complete with 0/3 checks passed; this completion verdict does not require a passing scenario. Retained transcript: tests/eval/results/runs/2026-10-08T03-14-25.779Z-868cd552-80e0-4265-9e06-5a2f8bab4bc7/af3f704e-a982-4e92-9cfa-4d85caab821f/transcript.txt.",
+      "status": "passed",
+      "artifact": "tests/eval/results/runs/2026-10-08T03-14-25.779Z-868cd552-80e0-4265-9e06-5a2f8bab4bc7/run.json"
+    },
+    {
+      "id": "C7b-baseline-clear-goals",
+      "kind": "agent",
+      "procedure": "Completed real without-mode baseline procedure: node scripts/eval.mjs --scenario clear-goals --mode without --stage baseline --adapter tests/eval/adapters/codex.json, reviewer-delivered corresponding scripted answers through eval turn, immediate eval close and explicit eval score. Baseline recording is complete with 2/2 checks passed; this completion verdict does not require a passing scenario. Retained transcript: tests/eval/results/runs/2026-10-08T03-15-18.377Z-e02be0d2-09da-4ea3-be1b-31b04eca03b7/c22e4c53-c80d-44ff-a494-cbde5ee3f70a/transcript.txt.",
+      "status": "passed",
+      "artifact": "tests/eval/results/runs/2026-10-08T03-15-18.377Z-e02be0d2-09da-4ea3-be1b-31b04eca03b7/run.json"
+    },
+    {
       "id": "AC-46",
       "kind": "agent",
-      "procedure": "Run at least three comparable fresh isolated baseline scenarios and retain real transcripts, then compare the same agent, model, fixture revision and criteria with the skill.",
+      "procedure": "Compare every approved baseline scenario with its final with-skill result using the same agent, model, fixture revision, checkpoint, adapter and criteria.",
       "status": "blocked",
       "artifact": null,
-      "reason": "C7a builds interfaces only. No actual agent acceptance results or verified isolation are claimed.",
-      "nextPrerequisite": "C7b current-host adapter, isolation and recorded baseline."
+      "reason": "The initial baseline is recorded. Final with-skill comparisons require the completed skill and final checkpoints.",
+      "nextPrerequisite": "Later skill slices and T5.2 final evaluation."
+    },
+    {
+      "id": "C7b-review-interface",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: manual adapter preparation is rejected before creating a run; scripted replies require an answer index and resume the exact host conversation. The focused evaluation file passed all 55 tests.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.review.txt"
+    },
+    {
+      "id": "C7b-publication",
+      "kind": "manual",
+      "procedure": "Inline assertions over committed evaluation artifacts verified host metadata removal, four distinct redacted run identities, three unchanged baseline verdict sets, source and criteria provenance, adapter hashes, matching run and transcript JSONL, redacted conversation hashes, original citation line counts and bounds, and byte-identical pipeline configuration with no workflows added.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.review.txt"
     }
   ],
   "limitations": [
-    "Only C7a interface behaviour is complete. T1.2 host execution, isolation and actual baseline procedures remain blocked on C7b.",
-    "The 75 registry definitions remain planned, including cases previously tested in Phase 0, until their completed procedures and artifacts are registered. Registration never passes acceptance cases.",
-    "Human scoring tests use scripted transcripts to test the command interface, not live model evaluations.",
-    "Local execution used Linux and Node 24 only and does not prove Windows or macOS support."
+    "Live baseline used Codex CLI 0.160.1, gpt-6.1-sol, Node 24 and Linux only. It does not prove Windows or macOS support, an agent/model matrix, or final released-skill acceptance.",
+    "Host question matching is reviewer-driven. Scripted answers are sent through resumed host turns only for corresponding questions. New-idea and clear-goals asked no questions, so no extra scripted replies were invented.",
+    "New-idea skipped the intent interview, included browser local storage in its domain terms, and declared the generated VISION approved without scripted user approval. Its actual failed result and generated VISION remain evidence.",
+    "Clear-goals reused its approved documents. Its host trace includes a broad parent-directory filename search interrupted by the host, followed by recommendations based on the fixture documents. This observation is retained without adding a scoring criterion.",
+    "The 75 registry definitions remain planned until their owning tasks register completed procedures. Registry validation does not pass acceptance cases.",
+    "Fake host and dummy-login tests verify the command boundary and cleanup, not model interpretation. Published model output is redacted for host metadata while retaining scored observations and line citations.",
+    "All live isolated homes, authentication copies and fixtures were removed after their outputs were preserved. Closed runs retain verified discovery inventory and a bound conversation hash for later scoring.",
+    "This review changes lifecycle entry points and published evidence representations without rerunning live models or handling credentials. Raw host sessions cannot be resumed from redacted archival identifiers. Final-commit full validation remains pending in the outer pipeline."
   ]
 }

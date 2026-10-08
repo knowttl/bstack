@@ -59,6 +59,19 @@ test('child output is bounded to the last 64 KiB per stream', async t => {
   assert.equal(result.code, 0)
   assert.equal(result.data.stdout, 'x'.repeat(65533) + 'END')
   assert.equal(result.data.stderr, 'y'.repeat(65533) + 'END')
+  assert.equal(result.data.outputTruncated, true)
+})
+
+test('child environment overrides apply to the version probe and execution without mutating the caller', async t => {
+  const directory = await sandbox(t)
+  const command = nodeCommand(['-e', 'console.log(process.env.BSTACK_CHILD_STATE)'], {
+    versionArgs: ['-e', 'console.log(process.env.BSTACK_CHILD_STATE)']
+  })
+  const result = await runCommand({ root: directory }, command, { env: { ...process.env, BSTACK_CHILD_STATE: directory } })
+  assert.equal(result.stdout.trim(), directory)
+  assert.equal(result.toolVersion.stdout.trim(), directory)
+  assert.equal(process.env.BSTACK_CHILD_STATE, undefined)
+  assert.equal(result.outputTruncated, false)
 })
 
 for (const cancelled of [false, true]) {

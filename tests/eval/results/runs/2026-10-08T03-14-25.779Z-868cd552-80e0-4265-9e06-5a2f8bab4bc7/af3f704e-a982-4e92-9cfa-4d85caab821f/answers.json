@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-08T03-14-25.779Z-868cd552-80e0-4265-9e06-5a2f8bab4bc7",
+  "reviewer": "C7b baseline reviewer",
+  "checks": [
+    {
+      "id": "interview",
+      "passed": false,
+      "startLine": 1,
+      "endLine": 13
+    },
+    {
+      "id": "terms",
+      "passed": false,
+      "startLine": 10,
+      "endLine": 13
+    },
+    {
+      "id": "vision",
+      "passed": false,
+      "startLine": 10,
+      "endLine": 13
+    }
+  ]
+}
