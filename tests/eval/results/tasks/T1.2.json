@@ -2,11 +2,12 @@
   "schemaVersion": 1,
   "taskId": "T1.2",
   "slice": "C7a",
-  "sourceRevision": "278b12f76b55410397c46b44ab5573413ebbf9c9",
+  "sourceRevision": "7827f55733ffe78409ae01247a3cd5b9aaffcaf3",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Phase 0 and task T1.1 (fixtures, last in https://github.com/knowttl/bstack/pull/13) have landed. The merged slice table is `/home/brytton/.treehouse/firstmate-5911dd/3/firstmate/data/slice-merge/report.md` (bstack table).\n\nThis piece is slice C7a, the first part of task T1.2 \"Build the evaluation runner and record the baseline\": the acceptance registry and the manual evaluation interface (slice done evidence: 75 owned case IDs, invalid registry and manual results blocked, explicit transcript scoring). C7b follows with the current-host adapter, isolation and the recorded baseline.",
   "amendments": [
     "C7a supplies the registry, scenarios and manual scoring interface. T1.2 remains incomplete until C7b supplies the adapter, verified isolation and actual comparable baseline runs.",
-    "Evidence-only commit follows the tested implementation commit."
+    "Evidence-only commit follows the tested implementation commit.",
+    "C7b first refresh: reran the C7a command set against the landed C7a commit, including owner assignment, table-driven completed-procedure matching and baseline comparison checks."
   ],
   "status": "passed",
   "environment": {
@@ -161,7 +162,7 @@
     {
       "id": "C7a-invocation-comparison",
       "kind": "automated",
-      "procedure": "tests/scripts/eval.test.mjs: ordinary with-skill runs require explicit invocation while implicit runs omit it; table-driven comparison baseline and with-skill cases; comparison blocks different models and unscored runs.",
+      "procedure": "tests/scripts/eval.test.mjs: ordinary with-skill runs require explicit invocation while implicit runs omit it; table-driven comparison honours baseline and with-skill cases; comparison blocks different models and unscored runs.",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
     },
