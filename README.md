@@ -129,10 +129,8 @@ node skills/repo-audit/scripts/repo-audit.mjs rule-proof --repo <target> --check
 npm test -- --task T3.2
 ```
 
-The selected check in `schemas/check-plan.json` supplies a child-command object.
-Prepare native dependencies in the fixtures first; proof runs disposable copies and saves versions, exits and diagnostics in scratch.
-An unavailable tool or failed clean control is blocked.
-The registered task proves private imports, alias or equivalent resolution bypasses and cycles in both TypeScript and Python using their researched native tools.
+Prepare native dependencies in the fixtures first.
+See the [enforcement command contract](docs/command-contract.md#rule-proof-and-temporary-debt) for check selection, saved proof evidence and coverage limits.
 
 Check a temporary baseline when the native tool has no baseline feature:
 
@@ -143,11 +141,7 @@ node skills/repo-audit/scripts/repo-audit.mjs baseline check --repo <target> --b
 npm test -- --task T3.3
 ```
 
-The baseline follows `schemas/baseline.schema.json`; native violations are normalized to an array of rule/path/key objects.
-Checking shows retained debt and fails on new violations or fixed entries still recorded.
-Refresh removes fixed entries; adding one entry requires a selected unresolved debt finding covering its path, plus its reason and removal condition.
-A refresh with any remaining new violation writes nothing.
-See the [enforcement command contract](docs/command-contract.md#rule-proof-and-temporary-debt) for examples and coverage limits.
+Prepare an existing baseline file and normalized native violations as described in the [enforcement command contract](docs/command-contract.md#rule-proof-and-temporary-debt), including the requirements for authorizing new entries.
 
 Capture a reviewed check plan with acceptance sources and input scopes:
 
