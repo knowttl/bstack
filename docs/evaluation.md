@@ -240,7 +240,8 @@ Three scored `without` runs used Codex CLI 0.160.1, `gpt-6.1-sol`, Node 24 and L
 Before commit, baseline transcripts and every corresponding evidence copy are redacted for host paths, user and host names, out-of-fixture workspace inventories and host thread IDs.
 Run-local markers retain distinct fixtures, isolated homes and conversations without publishing their original identifiers.
 Redaction preserves JSONL events, transcript line numbers, commands, observations, reviewer verdicts and citations; conversation hashes bind the redacted bytes.
-The runner redacts captured conversations and closed run records using the capture host's actual user and group names, fixture and home paths, scratch paths and thread identifiers.
+The runner redacts captured conversations, manual and closed run records, and every scoring transcript and answers copy using the local host's actual user and group names, fixture and home paths, scratch paths and thread identifiers.
+Only open resumable adapter run records retain operational host identities.
 Open run records retain private operational paths and session identifiers for resume and isolation checks, and must not be committed.
 These are historical observations rather than byte-identical raw host logs, and cannot be used to resume their deleted host sessions.
 All three retain distinct fixture paths, homes, thread IDs, transcripts and scoring artifacts.

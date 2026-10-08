@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir } from 'node:fs/promises'
-import { tmpdir, userInfo } from 'node:os'
+import { homedir, tmpdir, userInfo } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
@@ -52,6 +52,37 @@ test('manual run prints its fixture, request, scripted answers and checklist wit
   assert.ok(first.scenario.answers.length)
   assert.equal(first.scenario.checks[0].caseId, 'AC-2')
   assert.equal(JSON.parse(await readFile(join(directory, first.id, 'run.json'), 'utf8')).id, first.id)
+})
+
+test('manual scoring publishes redacted records, transcripts and answers with intact verdicts and citations', async t => {
+  const directory = await temporary(t)
+  const record = start(t, directory)
+  const files = await inputs(directory, record)
+  const username = userInfo().username
+  files.answers.reviewer = username
+  await writeFile(files.answersPath, JSON.stringify(files.answers))
+  const transcript = `User: ${username} opened ${record.fixture.path}\r\n` +
+    `Agent: Read ${homedir()}/notes; {"thread_id":"manual-host-session"}\r\n`
+  await writeFile(files.transcriptPath, transcript)
+  const result = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath)
+  assert.equal(result.status, 0, result.stdout)
+  const saved = await readFile(join(directory, record.id, 'run.json'), 'utf8')
+  const scored = JSON.parse(saved)
+  assert.deepEqual(result.data.data, scored)
+  assert.equal(scored.fixture.path, '[fixture]')
+  assert.equal(scored.isolation.verified, false)
+  assert.equal(scored.status, 'passed')
+  assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
+  assert.equal(scored.caseResults[0].passed, true)
+  assert.equal(scored.caseResults[0].startLine, 1)
+  assert.equal(scored.caseResults[0].endLine, 2)
+  const publishedTranscript = await readFile(join(directory, record.id, scored.transcript), 'utf8')
+  assert.equal(publishedTranscript, 'User: [redacted: user name] opened [scratch-path]\r\n' +
+    'Agent: Read [host-home]/notes; {"thread_id":"[identifier]"}\r\n')
+  const publishedAnswers = await readFile(join(directory, record.id, scored.answers), 'utf8')
+  assert.deepEqual(JSON.parse(publishedAnswers), { ...files.answers, reviewer: '[redacted: user name]' })
+  assert.equal(await readFile(files.transcriptPath, 'utf8'), transcript)
+  assert.equal(JSON.parse(await readFile(files.answersPath, 'utf8')).reviewer, username)
 })
 
 for (const missing of ['answers', 'transcript']) {
@@ -280,9 +311,14 @@ test('captured listings and closed evidence redact host identities while retaini
     .find(event => event.item?.command === 'ls -la').item.aggregated_output
   assert.equal(closedListing, listing)
   const files = await inputs(directory, record)
+  files.answers.reviewer = userInfo().username
+  await writeFile(files.answersPath, JSON.stringify(files.answers))
   assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 0)
   const scored = JSON.parse(await readFile(join(directory, record.id, 'run.json'), 'utf8'))
   assert.equal(await readFile(join(directory, record.id, scored.transcript), 'utf8'), transcript)
+  assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
+  assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, scored.answers), 'utf8')),
+    { ...files.answers, reviewer: '[redacted: user name]' })
 })
 
 test('with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request', async t => {
@@ -401,8 +437,8 @@ for (const mode of ['without', 'with']) {
     await writeFile(files.answersPath, JSON.stringify(files.answers))
     const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
     assert.equal(scored.status, 0, scored.stdout)
-    assert.deepEqual(scored.data.data.turns, record.turns)
-    assert.equal(scored.data.data.sessionId, record.sessionId)
+    assert.deepEqual(scored.data.data.turns, JSON.parse(redactEvidence(JSON.stringify(record.turns), record)))
+    assert.equal(scored.data.data.sessionId, '[identifier]')
     assert.ok(scored.data.data.isolation.cleanedAt)
   })
 

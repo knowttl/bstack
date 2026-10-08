@@ -122,7 +122,9 @@ async function load(results, id) {
 async function saveRecord(record, directory, flag) {
   const content = JSON.stringify(record, null, 2) + '\n'
   // Open run records are private operational state required for resume and isolation checks.
-  await writeFile(join(directory, 'run.json'), record.isolation.cleanedAt ? redactEvidence(content, record) : content, { flag })
+  const evidence = record.adapter && !record.isolation.cleanedAt && !record.transcript ? content : redactEvidence(content, record)
+  await writeFile(join(directory, 'run.json'), evidence, { flag })
+  return JSON.parse(evidence)
 }
 
 async function score(opts, results) {
@@ -155,15 +157,14 @@ async function score(opts, results) {
   await mkdir(join(directory, attempt))
   record.transcript = join(attempt, 'transcript.txt')
   record.answers = join(attempt, 'answers.json')
-  await writeFile(join(directory, record.transcript), transcript, { flag: 'wx' })
-  await writeFile(join(directory, record.answers), JSON.stringify(answers, null, 2) + '\n', { flag: 'wx' })
+  await writeFile(join(directory, record.transcript), redactEvidence(transcript, record), { flag: 'wx' })
+  await writeFile(join(directory, record.answers), redactEvidence(JSON.stringify(answers, null, 2) + '\n', record), { flag: 'wx' })
   record.scoredAt = new Date().toISOString()
   record.caseResults = record.scenario.checks.map(check => ({ ...check, ...answers.checks.find(answer => answer.id === check.id),
     scoring: 'human', reviewer: answers.reviewer, transcript: record.transcript }))
   record.status = record.caseResults.every(check => check.passed) ? 'passed' : 'failed'
   record.reason = record.adapter ? 'Human-scored captured host conversation with verified discovery isolation.' : 'Human-scored transcript. Host isolation remains unverified for this manual host.'
-  await saveRecord(record, directory)
-  return record
+  return await saveRecord(record, directory)
 }
 
 async function compare(opts, results) {
