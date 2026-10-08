@@ -1,0 +1,255 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T2.7
+
+Selected 1 suite(s): tests/scripts/run-checks.test.mjs
+TAP version 13
+# Subtest: capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes
+ok 1 - capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes
+  ---
+  duration_ms: 433.893587
+  type: 'test'
+  ...
+# Subtest: ts-shop passing units cannot hide the failed checkout journey
+ok 2 - ts-shop passing units cannot hide the failed checkout journey
+  ---
+  duration_ms: 6575.749809
+  type: 'test'
+  ...
+# Subtest: failed required check cannot pass and does not verify the user flow
+ok 3 - failed required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 289.031224
+  type: 'test'
+  ...
+# Subtest: skipped required check cannot pass and does not verify the user flow
+ok 4 - skipped required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 159.515948
+  type: 'test'
+  ...
+# Subtest: unavailable required check cannot pass and does not verify the user flow
+ok 5 - unavailable required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 182.392795
+  type: 'test'
+  ...
+# Subtest: timed out required check cannot pass and does not verify the user flow
+ok 6 - timed out required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 1231.047414
+  type: 'test'
+  ...
+# Subtest: failed version required check cannot pass and does not verify the user flow
+ok 7 - failed version required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 226.515237
+  type: 'test'
+  ...
+# Subtest: cancelled required check stays unverified even with other passing checks
+ok 8 - cancelled required check stays unverified even with other passing checks
+  ---
+  duration_ms: 367.610053
+  type: 'test'
+  ...
+# Subtest: a result covering no user journey explicitly reports that limit
+ok 9 - a result covering no user journey explicitly reports that limit
+  ---
+  duration_ms: 298.008382
+  type: 'test'
+  ...
+# Subtest: an uncovered user flow remains unverified despite passing units
+ok 10 - an uncovered user flow remains unverified despite passing units
+  ---
+  duration_ms: 238.238708
+  type: 'test'
+  ...
+# Subtest: changed own bytes make a required captured result stale
+ok 11 - changed own bytes make a required captured result stale
+  ---
+  duration_ms: 254.173116
+  type: 'test'
+  ...
+# Subtest: changed new glob file make a required captured result stale
+ok 12 - changed new glob file make a required captured result stale
+  ---
+  duration_ms: 206.611616
+  type: 'test'
+  ...
+# Subtest: changed deleted glob file make a required captured result stale
+ok 13 - changed deleted glob file make a required captured result stale
+  ---
+  duration_ms: 222.100032
+  type: 'test'
+  ...
+# Subtest: a later check invalidates an earlier passing result
+ok 14 - a later check invalidates an earlier passing result
+  ---
+  duration_ms: 291.004118
+  type: 'test'
+  ...
+# Subtest: invalid unknown field is rejected before any command runs
+ok 15 - invalid unknown field is rejected before any command runs
+  ---
+  duration_ms: 152.14037
+  type: 'test'
+  ...
+# Subtest: invalid duplicate check is rejected before any command runs
+ok 16 - invalid duplicate check is rejected before any command runs
+  ---
+  duration_ms: 120.283239
+  type: 'test'
+  ...
+# Subtest: invalid missing case is rejected before any command runs
+ok 17 - invalid missing case is rejected before any command runs
+  ---
+  duration_ms: 151.890501
+  type: 'test'
+  ...
+# Subtest: invalid missing source is rejected before any command runs
+ok 18 - invalid missing source is rejected before any command runs
+  ---
+  duration_ms: 168.050373
+  type: 'test'
+  ...
+# Subtest: invalid missing pointer is rejected before any command runs
+ok 19 - invalid missing pointer is rejected before any command runs
+  ---
+  duration_ms: 119.928125
+  type: 'test'
+  ...
+# Subtest: invalid stale source is rejected before any command runs
+ok 20 - invalid stale source is rejected before any command runs
+  ---
+  duration_ms: 143.957405
+  type: 'test'
+  ...
+# Subtest: invalid unsafe scope is rejected before any command runs
+ok 21 - invalid unsafe scope is rejected before any command runs
+  ---
+  duration_ms: 141.195161
+  type: 'test'
+  ...
+# Subtest: invalid unsafe cwd is rejected before any command runs
+ok 22 - invalid unsafe cwd is rejected before any command runs
+  ---
+  duration_ms: 113.910332
+  type: 'test'
+  ...
+# Subtest: invalid invalid timeout is rejected before any command runs
+ok 23 - invalid invalid timeout is rejected before any command runs
+  ---
+  duration_ms: 126.675839
+  type: 'test'
+  ...
+# Subtest: invalid string command is rejected before any command runs
+ok 24 - invalid string command is rejected before any command runs
+  ---
+  duration_ms: 106.884521
+  type: 'test'
+  ...
+# Subtest: invalid agent execution claim is rejected before any command runs
+ok 25 - invalid agent execution claim is rejected before any command runs
+  ---
+  duration_ms: 125.434818
+  type: 'test'
+  ...
+# Subtest: a refactor without prior protective capture is rejected before compatibility runs
+ok 26 - a refactor without prior protective capture is rejected before compatibility runs
+  ---
+  duration_ms: 112.771085
+  type: 'test'
+  ...
+# Subtest: a protected refactor passes only after compatibility runs against changed state
+ok 27 - a protected refactor passes only after compatibility runs against changed state
+  ---
+  duration_ms: 531.921459
+  type: 'test'
+  ...
+# Subtest: failed protection cannot establish prior refactor evidence
+ok 28 - failed protection cannot establish prior refactor evidence
+  ---
+  duration_ms: 283.123062
+  type: 'test'
+  ...
+# Subtest: skipped protection cannot establish prior refactor evidence
+ok 29 - skipped protection cannot establish prior refactor evidence
+  ---
+  duration_ms: 202.291951
+  type: 'test'
+  ...
+# Subtest: changing the check plan cannot reuse prior protection
+ok 30 - changing the check plan cannot reuse prior protection
+  ---
+  duration_ms: 258.323751
+  type: 'test'
+  ...
+# Subtest: after capture cannot pretend to be prior refactor protection
+ok 31 - after capture cannot pretend to be prior refactor protection
+  ---
+  duration_ms: 526.409285
+  type: 'test'
+  ...
+# Subtest: compatibility failure prevents a protected refactor from passing
+ok 32 - compatibility failure prevents a protected refactor from passing
+  ---
+  duration_ms: 475.132978
+  type: 'test'
+  ...
+# Subtest: bug fix requires normally failing reproduction before and passing reproduction after
+ok 33 - bug fix requires normally failing reproduction before and passing reproduction after
+  ---
+  duration_ms: 486.200775
+  type: 'test'
+  ...
+# Subtest: passing reproduction before change cannot satisfy the bug prerequisite
+ok 34 - passing reproduction before change cannot satisfy the bug prerequisite
+  ---
+  duration_ms: 183.943667
+  type: 'test'
+  ...
+# Subtest: a reproduction timeout is not a recorded bug
+ok 35 - a reproduction timeout is not a recorded bug
+  ---
+  duration_ms: 1137.555422
+  type: 'test'
+  ...
+# Subtest: a reproduction version failure is not a recorded bug
+ok 36 - a reproduction version failure is not a recorded bug
+  ---
+  duration_ms: 172.552383
+  type: 'test'
+  ...
+# Subtest: a reproduction unavailable tool is not a recorded bug
+ok 37 - a reproduction unavailable tool is not a recorded bug
+  ---
+  duration_ms: 148.842703
+  type: 'test'
+  ...
+# Subtest: bug-fix requires a required reproduction check in its plan
+ok 38 - bug-fix requires a required reproduction check in its plan
+  ---
+  duration_ms: 90.861993
+  type: 'test'
+  ...
+# Subtest: refactor requires a required protection check in its plan
+ok 39 - refactor requires a required protection check in its plan
+  ---
+  duration_ms: 90.338373
+  type: 'test'
+  ...
+# Subtest: refactor requires a required compatibility check in its plan
+ok 40 - refactor requires a required compatibility check in its plan
+  ---
+  duration_ms: 92.715666
+  type: 'test'
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 40
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17338.671965
