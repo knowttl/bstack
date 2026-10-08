@@ -43,10 +43,10 @@
             "type": "object", "additionalProperties": false,
             "required": ["executable", "args", "cwd", "versionArgs"],
             "properties": {
-              "executable": { "type": "string", "minLength": 1, "pattern": "\\S" },
-              "args": { "type": "array", "items": { "type": "string" } },
+              "executable": { "type": "string", "minLength": 1, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+              "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
               "cwd": { "type": "string", "minLength": 1 },
-              "versionArgs": { "type": "array", "items": { "type": "string" } },
+              "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
               "timeoutMs": { "type": "integer" }
             }
           },

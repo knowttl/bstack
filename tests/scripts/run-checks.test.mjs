@@ -157,6 +157,40 @@ test('a later check invalidates an earlier passing result', async t => {
   assert.equal(result.data.checks[1].status, 'passed')
 })
 
+for (const [name, mutation] of [
+  ['edited', 'fs.writeFileSync(process.argv[1], fs.readFileSync(process.argv[1], "utf8") + "\\n")'],
+  ['deleted', 'fs.unlinkSync(process.argv[1])']
+]) {
+  test(`an external plan ${name} during capture makes results stale`, async t => {
+    const f = await setup(t, [check('journey'), check('later')])
+    f.plan.checks[1].command.args = ['-e', `const fs = require("node:fs"); ${mutation}`, f.path]
+    const result = await f.invoke()
+    assert.equal(result.exit, 1)
+    assert.deepEqual(result.data.checks.map(item => item.status), ['stale', 'stale'])
+    assert.equal(result.data.coverage[0].status, 'failed')
+  })
+}
+
+for (const [name, mutate, problem] of [
+  ['file cwd', c => { c.cwd = 'product.txt' }, 'invalid-cwd'],
+  ['missing cwd', c => { c.cwd = 'missing' }, 'invalid-cwd'],
+  ['NUL executable', c => { c.executable += '\0' }, 'invalid-pattern'],
+  ['NUL argument', c => { c.args.push('\0') }, 'invalid-pattern'],
+  ['NUL version argument', c => { c.versionArgs.push('\0') }, 'invalid-pattern']
+]) {
+  test(`a later ${name} is rejected before any version probe or check runs`, async t => {
+    const write = 'require("node:fs").writeFileSync("executed", "")'
+    const f = await setup(t, [check('first', write), check('second')])
+    f.plan.checks[0].command.versionArgs = ['-e', write]
+    mutate(f.plan.checks[1].command)
+    const original = await snapshot(f.repo)
+    const result = await f.invoke()
+    assert.notEqual(result.exit, 0)
+    assert.ok(result.problems.some(item => item.code === problem), JSON.stringify(result))
+    assert.deepEqual(await snapshot(f.repo), original)
+  })
+}
+
 for (const [name, mutate, problem] of [
   ['unknown field', p => { p.unrecognised = true }, 'unknown-field'],
   ['duplicate check', p => { p.checks.push(p.checks[0]) }, 'duplicate-id'],

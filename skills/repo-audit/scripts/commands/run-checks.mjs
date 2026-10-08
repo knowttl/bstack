@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile, stat, writeFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { CommandError } from '../lib/result.mjs'
@@ -44,7 +44,13 @@ export async function run(options) {
   }
   for (const check of plan.checks) {
     for (const id of check.acceptanceCases) if (!plan.acceptanceCases.some(item => item.id === id)) problem('missing-case-id', `Check ${check.id} names unknown case ${id}.`)
-    await resolvePath(target.root, check.command.cwd)
+    const cwd = await resolvePath(target.root, check.command.cwd)
+    try {
+      if (!(await stat(cwd)).isDirectory()) problem('invalid-cwd', `Check ${check.id} needs an existing working directory.`)
+    } catch (error) {
+      if (!['ENOENT', 'ENOTDIR'].includes(error.code)) throw error
+      problem('invalid-cwd', `Check ${check.id} needs an existing working directory.`)
+    }
     if (check.command.timeoutMs !== undefined && (!Number.isSafeInteger(check.command.timeoutMs) || check.command.timeoutMs <= 0)) problem('invalid-timeout', `Check ${check.id} needs a positive safe timeout.`)
     check.inputScopes.forEach(pathGlob)
   }
@@ -63,7 +69,11 @@ export async function run(options) {
     const paths = [...scopes.filter(scope => !/[*?]/.test(scope)), ...files.filter(path => globs.some(glob => matchesPath(glob, path))), ...plan.acceptanceSources.map(source => source.path)]
     for (const path of paths) await resolveFilePath(target.root, path)
     const head = readGit(target.root, ['rev-parse', '--verify', 'HEAD'])
-    return fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths, inputs: { planDigest } })
+    let planContentHash = null
+    try { planContentHash = hashBytes(await readFile(options.plan)) } catch (error) {
+      if (error.code !== 'ENOENT') throw error
+    }
+    return fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths, inputs: { planDigest, planContentHash } })
   }
   const originalState = await inputState(plan.checks)
   const startedAt = new Date().toISOString()
