@@ -1,18 +1,473 @@
 {
   "new-idea": {
     "kind": "idea",
-    "files": ["brief.md"]
+    "files": [
+      "brief.md"
+    ]
   },
   "ambiguous-idea": {
     "kind": "idea",
-    "files": ["brief.md"]
+    "files": [
+      "brief.md"
+    ]
   },
   "clear-goals": {
     "kind": "repo",
-    "files": ["VISION.md", "DESIGN.md", "glossary.md"],
+    "files": [
+      "VISION.md",
+      "DESIGN.md",
+      "glossary.md"
+    ],
     "history": [
-      { "paths": ["VISION.md"], "message": "docs: approve project vision", "date": "2026-01-01T12:00:00Z" },
-      { "paths": ["DESIGN.md", "glossary.md"], "message": "docs: record design and vocabulary", "date": "2026-01-02T12:00:00Z" }
+      {
+        "paths": [
+          "VISION.md"
+        ],
+        "message": "docs: approve project vision",
+        "date": "2026-01-01T12:00:00Z"
+      },
+      {
+        "paths": [
+          "DESIGN.md",
+          "glossary.md"
+        ],
+        "message": "docs: record design and vocabulary",
+        "date": "2026-01-02T12:00:00Z"
+      }
+    ]
+  },
+  "ts-shop": {
+    "kind": "repo",
+    "files": [
+      "package.json",
+      "tsconfig.json",
+      "packages/core/package.json",
+      "packages/web/package.json",
+      "packages/core/internal/database.ts",
+      "packages/core/index.ts",
+      "packages/core/a.ts",
+      "packages/core/b.ts",
+      "packages/web/ui.ts",
+      "packages/web/public.ts",
+      "packages/web/alias.ts",
+      "packages/web/routes.ts",
+      "unit.test.mjs",
+      "journey.mjs",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "DESIGN.md",
+      "glossary.md",
+      ".gitignore",
+      "boundaries.mjs",
+      "package-lock.json"
+    ],
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "py-ledger": {
+    "kind": "repo",
+    "files": [
+      "pyproject.toml",
+      ".gitignore",
+      "ledger/__init__.py",
+      "ledger/_internal.py",
+      "ledger/book.py",
+      "app.py",
+      "startup.py",
+      "test_ledger.py",
+      "CONTRIBUTING.md",
+      "boundaries.py",
+      "uv.lock"
+    ],
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "ts-rule-proof": {
+    "kind": "repo",
+    "source": "ts-shop",
+    "files": [
+      "package.json",
+      "tsconfig.json",
+      "packages/core/package.json",
+      "packages/web/package.json",
+      "packages/core/internal/database.ts",
+      "packages/core/index.ts",
+      "packages/web/public.ts",
+      ".gitignore",
+      "boundaries.mjs",
+      "package-lock.json"
+    ],
+    "seed": {
+      "unit.test.mjs": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n"
+    },
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "ts-rule-proof-private": {
+    "kind": "repo",
+    "source": "ts-shop",
+    "files": [
+      "package.json",
+      "tsconfig.json",
+      "packages/core/package.json",
+      "packages/web/package.json",
+      "packages/core/internal/database.ts",
+      "packages/core/index.ts",
+      "packages/web/public.ts",
+      ".gitignore",
+      "boundaries.mjs",
+      "package-lock.json"
+    ],
+    "seed": {
+      "unit.test.mjs": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
+      "packages/web/private.ts": "import { price } from '../core/internal/database.ts'\nexport function privateQuote() { return price() }\n"
+    },
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "ts-rule-proof-alias": {
+    "kind": "repo",
+    "source": "ts-shop",
+    "files": [
+      "package.json",
+      "tsconfig.json",
+      "packages/core/package.json",
+      "packages/web/package.json",
+      "packages/core/internal/database.ts",
+      "packages/core/index.ts",
+      "packages/web/public.ts",
+      ".gitignore",
+      "boundaries.mjs",
+      "package-lock.json"
+    ],
+    "seed": {
+      "unit.test.mjs": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
+      "packages/web/alias.ts": "import { price } from '@storage/database'\nexport function aliasQuote() { return price() }\n"
+    },
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "ts-rule-proof-cycle": {
+    "kind": "repo",
+    "source": "ts-shop",
+    "files": [
+      "package.json",
+      "tsconfig.json",
+      "packages/core/package.json",
+      "packages/web/package.json",
+      "packages/core/internal/database.ts",
+      "packages/core/index.ts",
+      "packages/web/public.ts",
+      ".gitignore",
+      "boundaries.mjs",
+      "package-lock.json"
+    ],
+    "seed": {
+      "unit.test.mjs": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
+      "packages/core/a.ts": "import { b } from './b.ts'\nexport function a(): number { return b() }\n",
+      "packages/core/b.ts": "import { a } from './a.ts'\nexport function b(): number { return a() }\n"
+    },
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "py-rule-proof": {
+    "kind": "repo",
+    "source": "py-ledger",
+    "files": [
+      "pyproject.toml",
+      ".gitignore",
+      "ledger/__init__.py",
+      "ledger/_internal.py",
+      "ledger/book.py",
+      "app.py",
+      "test_ledger.py",
+      "boundaries.py",
+      "uv.lock"
+    ],
+    "seed": {
+      "app.py": "from ledger import Ledger\n\n\ndef opening_balance():\n    book = Ledger()\n    book.post(\"cash\", \"equity\", \"10\")\n    return book.balance(\"cash\")\n"
+    },
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "py-rule-proof-private": {
+    "kind": "repo",
+    "source": "py-ledger",
+    "files": [
+      "pyproject.toml",
+      ".gitignore",
+      "ledger/__init__.py",
+      "ledger/_internal.py",
+      "ledger/book.py",
+      "app.py",
+      "test_ledger.py",
+      "boundaries.py",
+      "uv.lock"
+    ],
+    "seed": {
+      "app.py": "from ledger._internal import amount\n\n\ndef opening_balance():\n    return amount(\"10\")\n"
+    },
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "py-rule-proof-alias": {
+    "kind": "repo",
+    "source": "py-ledger",
+    "files": [
+      "pyproject.toml",
+      ".gitignore",
+      "ledger/__init__.py",
+      "ledger/_internal.py",
+      "ledger/book.py",
+      "app.py",
+      "test_ledger.py",
+      "boundaries.py",
+      "uv.lock"
+    ],
+    "seed": {
+      "app.py": "from ledger.bridge import public_amount\n\n\ndef opening_balance():\n    return public_amount(\"10\")\n",
+      "ledger/bridge.py": "from ._internal import amount as public_amount\n\n__all__ = [\"public_amount\"]\n"
+    },
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "py-rule-proof-cycle": {
+    "kind": "repo",
+    "source": "py-ledger",
+    "files": [
+      "pyproject.toml",
+      ".gitignore",
+      "ledger/__init__.py",
+      "ledger/_internal.py",
+      "ledger/book.py",
+      "app.py",
+      "test_ledger.py",
+      "boundaries.py",
+      "uv.lock"
+    ],
+    "seed": {
+      "app.py": "from ledger import Ledger\n\n\ndef opening_balance():\n    book = Ledger()\n    book.post(\"cash\", \"equity\", \"10\")\n    return book.balance(\"cash\")\n",
+      "ledger/a.py": "from . import b\n\n\ndef value():\n    return b.value()\n",
+      "ledger/b.py": "from . import a\n\n\ndef value():\n    return a.value()\n"
+    },
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish fixture",
+        "date": "2026-01-03T12:00:00Z"
+      }
+    ]
+  },
+  "dirty-work": {
+    "kind": "repo",
+    "source": "maintenance",
+    "files": [
+      "DESIGN.md",
+      "project.json",
+      "price.mjs",
+      "price.test.mjs",
+      "notes.md",
+      "remove.md",
+      "rename.md"
+    ],
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish pricing contract",
+        "date": "2026-01-04T12:00:00Z"
+      }
+    ],
+    "dirty": {
+      "notes.md": "User edits must survive.\n",
+      "price.mjs": "export function quote(quantity) { return quantity * 12 }\n\n",
+      "new.md": "New user file.\n",
+      "renamed.md": "Rename these notes.\n"
+    },
+    "stage": ["price.mjs", "rename.md", "renamed.md"],
+    "remove": [
+      "remove.md",
+      "rename.md"
+    ]
+  },
+  "refactor": {
+    "kind": "repo",
+    "source": "maintenance",
+    "files": [
+      "DESIGN.md",
+      "project.json",
+      "price.mjs",
+      "price.test.mjs",
+      "notes.md",
+      "remove.md",
+      "rename.md"
+    ],
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish pricing contract",
+        "date": "2026-01-04T12:00:00Z"
+      },
+      {
+        "paths": [
+          "price.mjs"
+        ],
+        "write": {
+          "price.mjs": "export function quote(quantity) {\n  const unitPrice = 12\n  return quantity * unitPrice\n}\n"
+        },
+        "message": "refactor: preserve public pricing",
+        "date": "2026-01-05T12:00:00Z"
+      }
+    ]
+  },
+  "contract-removal": {
+    "kind": "repo",
+    "source": "maintenance",
+    "files": [
+      "DESIGN.md",
+      "project.json",
+      "price.mjs",
+      "price.test.mjs",
+      "notes.md",
+      "remove.md",
+      "rename.md"
+    ],
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish pricing contract",
+        "date": "2026-01-04T12:00:00Z"
+      },
+      {
+        "paths": [
+          "DESIGN.md",
+          "project.json"
+        ],
+        "remove": [
+          "DESIGN.md",
+          "project.json"
+        ],
+        "message": "docs: remove coverage contract",
+        "date": "2026-01-05T12:00:00Z"
+      }
+    ]
+  },
+  "shallow-history": {
+    "kind": "repo",
+    "source": "maintenance",
+    "files": [
+      "DESIGN.md",
+      "project.json",
+      "price.mjs",
+      "price.test.mjs",
+      "notes.md",
+      "remove.md",
+      "rename.md"
+    ],
+    "history": [
+      {
+        "paths": [
+          "."
+        ],
+        "message": "feat: establish pricing contract",
+        "date": "2026-01-04T12:00:00Z"
+      },
+      {
+        "paths": [
+          "notes.md"
+        ],
+        "write": {
+          "notes.md": "Updated notes.\n"
+        },
+        "message": "docs: update notes",
+        "date": "2026-01-05T12:00:00Z"
+      }
+    ],
+    "shallow": true
+  },
+  "installer-collision": {
+    "kind": "repo",
+    "files": [
+      "home"
+    ],
+    "history": [
+      {
+        "paths": [
+          "home"
+        ],
+        "message": "test: seed installer collisions",
+        "date": "2026-01-04T12:00:00Z"
+      }
     ]
   }
 }

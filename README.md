@@ -39,16 +39,21 @@ Task suites are registered in `tests/tasks.json`.
 `npm test -- --task T0.5` selects the currently implemented package-check tests.
 See [task progress](docs/implementation-plan.md#progress) for the remaining slices.
 
-Build isolated fixture workspaces with Node 24 or later and Git:
+Build isolated fixture workspaces with Node 24 or later and Git.
+Native fixtures also require npm, Python 3.12 and uv, with fixture-local TypeScript and Ruff locks:
 
 ```sh
 node tests/fixtures/build.mjs --all
 node tests/fixtures/build.mjs clear-goals
+node tests/fixtures/build.mjs ts-rule-proof-alias
+node tests/fixtures/build.mjs py-rule-proof-cycle
 ```
 
 The builder prints one JSON line per fixture with its `name`, absolute temporary `path` and `kind` (`idea` or `repo`) after its sanity check passes.
 The caller owns removal of the printed temporary folders.
-See the [fixture contract](docs/fixtures.md) for sources and sanity commands, and [task progress](docs/implementation-plan.md#progress) for the remaining T1.1 scope.
+T1.1 includes the two native stacks, clean boundary proofs, independent private/alias/cycle seeds, dirty work, refactors, contract removal, shallow history and installer collisions.
+Missing native tools exit 2 as blocked.
+See the [fixture contract](docs/fixtures.md) for sources and sanity commands.
 
 Raw upstream development sources are committed outside the installed skill.
 [The manifest](upstream/sources.json) owns their exact pins and copied paths, and [NOTICE](NOTICE) records adaptations.
