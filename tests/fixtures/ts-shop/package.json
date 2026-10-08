@@ -1,0 +1,20 @@
+{
+  "name": "ts-shop",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "node --test unit.test.mjs",
+    "journey": "node journey.mjs",
+    "boundaries": "node boundaries.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

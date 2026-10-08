@@ -1,19 +1,24 @@
 {
   "schemaVersion": 1,
   "taskId": "T1.1",
-  "slice": "C6a",
-  "sourceRevision": "585bd94350036fe78dd3c90efabf209cbb47f8bc",
-  "intent": "Implement each task as the plan specifies with no extra hardening or defensive code beyond its acceptance criteria, record only the evidence the task contract requires, and merge tiny adjacent slices. C6a builds the fixture builder and non-stack fixtures.",
+  "slice": "C6bc",
+  "sourceRevision": "e868209cfd3a7f0d64080bac1a46c7e0f2bedba6",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Phase 0 and C6a (https://github.com/knowttl/bstack/pull/11: `tests/fixtures/build.mjs` plus the new-idea, ambiguous-idea and clear-goals fixtures) have landed. The merged slice table is `[host-home]/.treehouse/firstmate-5911dd/3/firstmate/data/slice-merge/report.md` (bstack table).\n\nThis piece is merged slice C6bc (old C6b + C6c), which completes task T1.1 \"Build the test fixtures\": the `ts-shop/` and `py-ledger/` fixtures with their seeded problems and native setup, the clean rule-proof variants for both stacks, and the dirty-work, refactor, contract-removal, shallow-history and installer-collision variants (merged done evidence: each native sanity check executes and confirms its valid and invalid seeds; deterministic dirty/refactor/history/installer seeds, clean proof variants, independent alias/cycle switches).",
   "amendments": [
-    "C6a delivers the builder and three non-stack fixtures. Native stacks and variants remain C6bc. Evidence-only commits name the tested implementation revision."
+    "C6bc completes the remaining native and state fixtures on top of C6a. Evidence-only commits name the tested implementation revision.",
+    "R6 refresh records all five required commands against the final implementation revision after the rename, sanity identity and checkout repairs; this commit changes evidence only."
   ],
-  "status": "blocked",
+  "status": "passed",
   "environment": {
     "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
     "node": "v24.17.0",
     "tools": {
       "npm": "11.13.0",
-      "git": "2.54.0"
+      "git": "git version 2.54.0",
+      "python": "Python 3.12.3",
+      "uv": "uv 0.12.22 (x86_64-unknown-linux-gnu)",
+      "typescript": "Version 5.9.3",
+      "ruff": "ruff 0.14.0"
     }
   },
   "commands": [
@@ -76,7 +81,27 @@
       "cwd": ".",
       "exitCode": 0,
       "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/T1.1.build.txt"
+      "outputArtifact": "tests/eval/results/tasks/T1.1.build.txt",
+      "resultPaths": [
+        "/tmp/bstack-new-idea-PYVSEA",
+        "/tmp/bstack-ambiguous-idea-hxBNq4",
+        "/tmp/bstack-clear-goals-wt4jSO",
+        "/tmp/bstack-ts-shop-E8sPee",
+        "/tmp/bstack-py-ledger-Ex9HIx",
+        "/tmp/bstack-ts-rule-proof-qAIiX6",
+        "/tmp/bstack-ts-rule-proof-private-vOdFim",
+        "/tmp/bstack-ts-rule-proof-alias-igFZGY",
+        "/tmp/bstack-ts-rule-proof-cycle-riMji0",
+        "/tmp/bstack-py-rule-proof-wJX5Km",
+        "/tmp/bstack-py-rule-proof-private-7vCddg",
+        "/tmp/bstack-py-rule-proof-alias-NDlq0H",
+        "/tmp/bstack-py-rule-proof-cycle-X4bpqt",
+        "/tmp/bstack-dirty-work-mBLXxY",
+        "/tmp/bstack-refactor-1Cq50v",
+        "/tmp/bstack-contract-removal-c0AMHS",
+        "/tmp/bstack-shallow-history-shallow-K3z4Se",
+        "/tmp/bstack-installer-collision-CoVo5n"
+      ]
     },
     {
       "id": "node-version",
@@ -112,6 +137,28 @@
       "outputArtifact": "tests/eval/results/tasks/T1.1.git-version.txt"
     },
     {
+      "id": "python-version",
+      "executable": "python3.12",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.python-version.txt"
+    },
+    {
+      "id": "uv-version",
+      "executable": "uv",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.uv-version.txt"
+    },
+    {
       "id": "os",
       "executable": "uname",
       "args": [
@@ -133,43 +180,82 @@
       "exitCode": 0,
       "status": "passed",
       "outputArtifact": "tests/eval/results/tasks/T1.1.revision.txt"
+    },
+    {
+      "id": "typescript-version",
+      "executable": "node",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--version"
+      ],
+      "cwd": "/tmp/bstack-ts-shop-E8sPee",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.typescript-version.txt"
+    },
+    {
+      "id": "ruff-version",
+      "executable": "uv",
+      "args": [
+        "run",
+        "--no-sync",
+        "ruff",
+        "--version"
+      ],
+      "cwd": "/tmp/bstack-py-ledger-Ex9HIx",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.ruff-version.txt"
     }
   ],
   "cases": [
     {
       "id": "C6a-non-git",
       "kind": "automated",
-      "procedure": "tests/scripts/fixtures.test.mjs: new-idea builds a non-Git workspace containing only its brief; ambiguous-idea builds a non-Git workspace containing only its brief.",
+      "procedure": "tests/scripts/fixtures.test.mjs: new-idea builds a non-Git workspace containing only its brief; ambiguous-idea builds a non-Git workspace containing only its brief. Supplies AC-1 and AC-2 inputs.",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T1.1.task-test.txt"
     },
     {
       "id": "C6a-history",
       "kind": "automated",
-      "procedure": "tests/scripts/fixtures.test.mjs: clear-goals replays deterministic history with local identity and signing disabled.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/T1.1.task-test.txt"
-    },
-    {
-      "id": "C6a-source-preservation",
-      "kind": "automated",
-      "procedure": "tests/scripts/fixtures.test.mjs: all fixtures run sanity checks and leave source bytes unchanged; a changed fixture seed fails its sanity check.",
+      "procedure": "tests/scripts/fixtures.test.mjs: clear-goals replays deterministic history with local identity and signing disabled. Supplies AC-6 and AC-38 inputs.",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T1.1.task-test.txt"
     },
     {
       "id": "T1.1-native-fixtures",
-      "kind": "manual",
-      "procedure": "Build native stacks, clean rule-proof variants and dirty/refactor/history/installer variants, then execute their native sanity checks.",
-      "status": "blocked",
-      "artifact": null,
-      "reason": "Outside C6a scope.",
-      "nextPrerequisite": "C6bc implements the remaining T1.1 fixtures."
+      "kind": "automated",
+      "procedure": "tests/scripts/fixtures.test.mjs: all fixtures run sanity checks and leave source bytes unchanged. ts-shop sanity compiles TypeScript, passes the checkout unit with mocked HTTP price 10 through postOrder, and confirms the live checkout returns status 201 and total 12 before rejecting the agreed total 10. py-ledger sanity executes native Ruff, unittest and startup. Supplies AC-11, AC-14, AC-27, AC-30, AC-31, AC-49, AC-50, AC-51, AC-60, AC-61 and AC-63 inputs.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.1.build.txt"
+    },
+    {
+      "id": "T1.1-rule-proof",
+      "kind": "automated",
+      "procedure": "tests/scripts/fixtures.test.mjs: all fixtures run sanity checks and leave source bytes unchanged. Named sanity entry points derive their own identity with only the built-folder argument. Both clean stacks pass public imports before each independently injected private, alias and cycle seed fails its native import probe. Supplies AC-52 and AC-66 inputs.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.1.build.txt"
+    },
+    {
+      "id": "T1.1-state-variants",
+      "kind": "automated",
+      "procedure": "tests/scripts/fixtures.test.mjs: dirty-work, refactor, contract-removal, shallow-history and installer-collision each reproduce their declared state with deterministic history. Dirty-work requires a staged R record for rename.md to renamed.md alongside staged, unstaged, new and deleted work. Refactor executes public quote behavior at both revisions; contract-removal parses the prior coverage policy; shallow-history lacks the previous commit; installer-collision preserves the declared isolated home state. Supplies AC-17, AC-19, AC-20, AC-22, AC-26, AC-54, AC-68, AC-69 and AC-74 inputs.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.1.task-test.txt"
+    },
+    {
+      "id": "T1.1-missing-native-tools",
+      "kind": "automated",
+      "procedure": "tests/scripts/fixtures.test.mjs: ts-shop reports missing native tools as blocked; py-ledger reports missing native tools as blocked. Supplies AC-68 inputs.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.1.task-test.txt"
     }
   ],
   "limitations": [
-    "C6a checks fixture construction and seed presence, not the later agent acceptance behaviours served by these inputs.",
-    "Native stack fixtures and variants are pending C6bc. T1.1 remains partially complete.",
-    "Recorded local runs use Linux and Node 24 only and do not prove other operating systems."
+    "These runs prove fixture construction and seeded outcomes, not the later agent acceptance behaviours these fixtures serve.",
+    "Recorded runs use Linux, Node 24 and Python 3.12 only and do not prove other operating systems.",
+    "Fixture-native boundary probes confirm seeds. Automated skill enforcement is later work.",
+    "Installer manifests are fixture inputs. The installer is not built yet."
   ]
 }
