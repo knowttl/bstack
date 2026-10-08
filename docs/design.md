@@ -91,7 +91,7 @@ Decisions already given before commissioning:
 
 - bstack is the public repo `knowttl/bstack`.
 - GitHub Actions is disabled for bstack, and the repo has no workflows.
-- bstack's delivery is the no-mistakes pipeline with one automatic review round and unattended merge of green work.
+- bstack's delivery is the no-mistakes pipeline with unattended merge of green work; [the delivery gate](implementation-plan.md#delivery-gate) describes its current configuration.
 
 The owner approved the commissioning review and its six recommendations as written:
 
@@ -109,8 +109,7 @@ The owner approved the commissioning review and its six recommendations as writt
    The earlier quota of three observed failures is removed, as "Testing" under "How repo-audit itself is written" now states.
 5. **Scoped instructions.** The audit preserves the meaning of scoped instructions and consolidates equivalent repo-owned `CLAUDE.md` content only through reviewed protected edits.
    It reports ancestor and local shadowing without modifying files outside the selected repo.
-6. **One automatic review round.** This means the existing `auto_fix.review: 1` automatic repair budget in `.no-mistakes.yaml`.
-   Required validation after a change still runs, and no second autonomous repair round follows once the budget is spent.
+6. **Automatic review repair budget.** The current budget and build review focus are owned by `.no-mistakes.yaml`; see [the delivery gate](implementation-plan.md#delivery-gate).
 
 ## Project-specific foundation
 
@@ -1459,4 +1458,4 @@ Historical entries keep their original decisions and name their current applicat
 | R23, 2026-10-07 | Keep tests basic and model-agnostic. Passing in the agent the user or builder runs is enough | Replaces the host and model matrix in R19 and R22, and the per-host tests in R15 to R17. The package still sets each host's user-only setting |
 | R24, 2026-10-07 | Ignore licensing issues in all bstack work | No licence checks, licence gaps or owner escalation. bstack itself stays MIT under D1. NOTICE records pins and adaptations only |
 | R25, 2026-10-07 | Apply the implementation review recommendations | Explicit task prerequisites and evidence, scratch-only early review, protected creation after write safeguards, recoverable writes, isolated evaluations, portable commands, installer ownership and complete CI inputs. The CI inputs are replaced by clean-checkout inputs under R26 |
-| R26, 2026-10-07 | Approve the commissioning review and its six recommendations | Recorded in "Commissioning decisions (2026-10-07)". No hosted CI or release automation for bstack, three real OS runs for AC-74, slices C0 to C29, a baseline with no failure quota, scoped instruction preservation, and `auto_fix.review: 1` as the one automatic review round |
+| R26, 2026-10-07 | Approve the commissioning review and its six recommendations | Recorded in "Commissioning decisions (2026-10-07)". No hosted CI or release automation for bstack, three real OS runs for AC-74, slices C0 to C29, a baseline with no failure quota, and scoped instruction preservation. The current review repair budget is owned by `.no-mistakes.yaml` |
