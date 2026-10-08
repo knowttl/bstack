@@ -562,17 +562,24 @@ test('a user change to a completed run blocks repetition', async t => {
   assert.deepEqual(await snapshot(context.directory), before)
 })
 
-test('a changed digest cannot reuse an earlier run and explicit run binding rejects it', async t => {
+test('a changed digest cannot reuse an earlier run', async t => {
   const context = await setup(t)
   assert.equal(execute(context).exit, 0)
-  const previous = context.plan.planDigest
   context.plan.edits[0].payload.replacement = 'later'
   context.plan.edits[0].proposedContent = 'later\n'
   context.plan.edits[0].proposedHash = hash('later\n')
   await save(context)
   const before = await snapshot(context.directory)
   assert.equal(execute(context).problems[0].code, 'changed-precondition')
-  assert.equal(execute(context, undefined, 'apply', ['--plan', context.file, '--run', previous]).problems[0].code, 'changed-plan')
+  assert.deepEqual(await snapshot(context.directory), before)
+})
+
+test('apply rejects a second run-selection input without writes', async t => {
+  const context = await setup(t)
+  const before = await snapshot(context.directory)
+  const result = execute(context, undefined, 'apply', ['--plan', context.file, '--run', context.plan.planDigest])
+  assert.equal(result.exit, 3, JSON.stringify(result))
+  assert.equal(result.problems[0].code, 'unknown-option')
   assert.deepEqual(await snapshot(context.directory), before)
 })
 
@@ -730,6 +737,28 @@ for (const alias of ['absolute', 'relative', 'chain', 'parent']) {
     assert.equal(execute(context).exit, 2)
     assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'user\n')
   })
+}
+
+for (const [alias, path, link, resolvedPath, type] of [
+  ['relative', 'alias.md', 'missing.md', 'missing.md', 'file'],
+  ['absolute', 'alias.md', null, 'missing.md', 'file'],
+  ['chain', 'alias.md', 'intermediate.md', 'missing.md', 'file'],
+  ['parent', 'alias/new.md', 'missing', 'missing/new.md', process.platform === 'win32' ? 'junction' : 'dir']
+]) {
+  for (const [command, extra] of [['apply', []], ['dry run', ['--dry-run']]]) {
+    test(`fresh ${command} rejects creation through a dangling ${alias} link without writes`, async t => {
+      const context = await setup(t, 'create', null, { content: 'new\n' }, 'new\n', path)
+      if (alias === 'chain') await symlink('missing.md', join(context.repo, 'intermediate.md'))
+      await symlink(link ?? join(context.repo, resolvedPath), join(context.repo, path.split('/')[0]), type)
+      context.plan.reviewedScope[0].resolvedPath = join(context.repo, resolvedPath)
+      await save(context)
+      const before = await snapshot(context.directory)
+      const result = execute(context, undefined, 'apply', ['--plan', context.file, ...extra])
+      assert.equal(result.exit, 2, JSON.stringify(result))
+      assert.equal(result.problems[0].code, 'unresolved-path')
+      assert.deepEqual(await snapshot(context.directory), before)
+    })
+  }
 }
 
 test('a retargeted alias during journal preparation blocks both destinations', async t => {

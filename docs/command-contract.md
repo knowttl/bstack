@@ -611,14 +611,14 @@ Write the reviewed report into the project's audit record through an `apply` cre
 ```sh
 node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --dry-run [--json]
 node skills/repo-audit/scripts/repo-audit.mjs apply --workspace <path> --plan <file> --dry-run [--json]
-node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--run <id>] [--json]
+node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--json]
 node skills/repo-audit/scripts/repo-audit.mjs state show --repo <path>|--workspace <path> --run <id> [--json]
 ```
 
 `--plan` is required, while `--dry-run` selects validation and preview only.
 Dry run writes no target, scratch, dependency or journal files.
 Omitting `--dry-run` applies or resumes the reviewed plan with backups and a durable journal.
-`--run`, when supplied, must equal the plan digest returned as the run ID.
+The plan digest selects the run automatically.
 
 The [change-set schema](../skills/repo-audit/schemas/change-set.schema.json) owns the plan fields.
 Each plan declares `schemaVersion: 1`, `target`, `findings`, `findingsDigest`, `selectedFindingIds`, `reviewedScope`, `edits` and `planDigest`.
@@ -710,7 +710,8 @@ The run ID is the reviewed plan digest, under the target's existing OS-cache ide
 Before any replacement, apply revalidates all targets, stages complete proposed bytes, saves exact originals in scratch and flushes the journal containing original/proposed hashes.
 Each replacement uses a flushed same-directory temporary file followed by rename, preserving existing file permissions.
 A selected delete removes the target while preserving its original backup and explicit absent proposed hash.
-An internal alias retains its reviewed resolved identity when deletion leaves its referent absent, so state inspection and repeat still recognise the applied edit.
+An internal alias retains its reviewed resolved identity when a journalled deletion leaves its referent absent, so state inspection and repeat still recognise the applied edit.
+Fresh plans and dry runs reject dangling links, including creates through links to absent targets.
 Completion is journalled after replacement.
 Replacement is atomic per file where supported, never across the whole set.
 Unsupported atomic replacement blocks without a non-atomic fallback.

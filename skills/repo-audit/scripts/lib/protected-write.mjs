@@ -32,7 +32,7 @@ export async function inspectJournal(journal) {
   const edits = []
   for (const edit of journal.edits) {
     try {
-      const path = await resolveFilePath(journal.target.root, edit.path, edit.resolvedPath)
+      const path = await resolveFilePath(journal.target.root, edit.path, edit.resolvedPath, edit.originalHash !== null && edit.proposedHash === null)
       const bytes = await fileBytes(path)
       const actualHash = bytes === null ? null : hashBytes(bytes)
       const state = actualHash === edit.proposedHash ? 'applied' : actualHash === edit.originalHash ? 'pending' : 'conflicting'

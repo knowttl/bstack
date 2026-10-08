@@ -43,13 +43,16 @@ function render(findings, assessment) {
   return `${lines.join('\n')}\n`
 }
 
-export async function validateFindings(findings, target, reviewedScope = []) {
+export async function validateFindings(findings, target, deletedEdits = []) {
   const schema = JSON.parse(await readFile(new URL('../../schemas/findings.schema.json', import.meta.url), 'utf8'))
   validateData(schema, findings)
   for (const collection of ['sources', 'findings', 'execution']) validateIds(findings[collection], `$/` + collection)
   if (findings.target.root !== target.root || findings.target.mode !== target.mode) invalid('target-mismatch', 'Reviewed identity differs from the selected target.', '$/target')
   if (target.mode === 'workspace' && findings.target.revision !== null) invalid('target-mismatch', 'A draft workspace has no Git revision.', '$/target/revision')
-  for (const path of findings.reviewedScope) await resolveFilePath(target.root, path, reviewedScope.find(entry => entry.path === path)?.resolvedPath)
+  for (const path of findings.reviewedScope) {
+    const deleted = deletedEdits.find(edit => edit.path === path)
+    await resolveFilePath(target.root, path, deleted?.resolvedPath, deleted !== undefined)
+  }
   for (const finding of findings.findings) {
     if (!finding.files.length && finding.command === null) invalid('missing-location', 'A finding needs files or a failing command.', finding.id)
     for (const path of [...finding.scope, ...finding.files]) {

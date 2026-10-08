@@ -28,11 +28,12 @@ export async function run(options) {
   const plan = await input(options.plan)
   validateData(JSON.parse(await readFile(new URL('../../schemas/change-set.schema.json', import.meta.url), 'utf8')), plan)
   const findings = await input(resolve(dirname(resolve(options.plan)), plan.findings))
-  await validateFindings(findings, target, plan.reviewedScope)
+  const { directory, journal } = options['dry-run'] ? { directory: null, journal: null } : await loadJournal(target, plan.planDigest)
+  const deletedEdits = journal?.edits.filter(edit => edit.originalHash !== null && edit.proposedHash === null) ?? []
+  await validateFindings(findings, target, deletedEdits)
   validateIds(plan.edits, '$/edits')
   const { planDigest, ...reviewed } = plan
   if (hashBytes(canonicalJSON(reviewed)) !== planDigest || hashBytes(canonicalJSON(findings)) !== plan.findingsDigest) reject('changed-plan', 'The reviewed plan or findings digest changed.')
-  if (options.run && options.run !== planDigest) reject('changed-plan', 'Run ID must match the reviewed plan digest.')
   if (plan.target.root !== target.root || plan.target.mode !== target.mode || canonicalJSON(plan.target) !== canonicalJSON(findings.target)) reject('target-mismatch', 'Reviewed target identity differs from the selected target.')
   if (target.mode === 'workspace') {
     if (plan.target.revision !== null) reject('target-mismatch', 'A workspace has no Git revision.')
@@ -44,12 +45,12 @@ export async function run(options) {
   const selected = findings.findings.filter(finding => finding.status === 'selected').map(finding => finding.id)
   if (plan.selectedFindingIds.length !== selected.length || selected.some(id => !plan.selectedFindingIds.includes(id))) reject('selection-mismatch', 'Plan selections must match the reviewed selected findings.')
   if (findings.findings.some(finding => finding.category === 'decision' && !finding.resolved)) reject('unresolved-decision', 'Resolve design decisions before reviewing edits.')
-  const { directory, journal } = options['dry-run'] ? { directory: null, journal: null } : await loadJournal(target, planDigest)
   const scope = new Map()
   const problems = []
   for (const entry of plan.reviewedScope) {
     try {
-      const path = await resolveFilePath(target.root, entry.path, entry.resolvedPath)
+      const path = await resolveFilePath(target.root, entry.path, entry.resolvedPath,
+        deletedEdits.some(edit => edit.path === entry.path && edit.resolvedPath === entry.resolvedPath))
       if (scope.has(entry.path)) reject('overlapping-scope', 'Reviewed scope paths must be unique.', entry.path)
       scope.set(entry.path, path)
     } catch (error) {

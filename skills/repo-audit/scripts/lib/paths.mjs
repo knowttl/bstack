@@ -7,14 +7,14 @@ export function isInside(root, path) {
   return offset === '' || (!isAbsolute(offset) && offset !== '..' && !offset.startsWith(`..${sep}`))
 }
 
-export async function resolvePath(root, input, reviewedPath) {
+export async function resolvePath(root, input, reviewedPath, allowMissingLinks = false) {
   if (typeof input !== 'string' || !input || input.includes('\0') || isAbsolute(input) || win32.isAbsolute(input) || /^[A-Za-z]:/.test(input) || input.split(/[\\/]/).includes('..')) {
     throw new CommandError('usage-error', [{ code: 'unsafe-path', message: 'Paths must be relative and contain no parent traversal.', fix: 'Supply a path inside the selected target.', path: String(input) }])
   }
   const destination = resolve(root, input)
   let resolved
   try {
-    resolved = await resolveLinks(destination, reviewedPath !== undefined)
+    resolved = await resolveLinks(destination, allowMissingLinks)
   } catch {
     throw new CommandError('blocked', [{ code: 'unresolved-path', message: 'An existing path or link cannot be resolved.', fix: 'Repair the link or select a resolvable path.', path: input }])
   }
@@ -48,8 +48,8 @@ export async function resolveLinks(destination, allowMissingLinks = false) {
   return join(path, ...missing)
 }
 
-export async function resolveFilePath(root, input, reviewedPath) {
-  const path = await resolvePath(root, input, reviewedPath)
+export async function resolveFilePath(root, input, reviewedPath, allowMissingLinks = false) {
+  const path = await resolvePath(root, input, reviewedPath, allowMissingLinks)
   if (/[*?\[\]{}]/.test(input)) {
     throw new CommandError('failed', [{ code: 'invalid-scope', message: 'Reviewed scope cannot contain globs.', fix: 'List concrete file paths, including planned absent files.', path: input }])
   }
