@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -28,7 +28,11 @@ for (const [folder, code] of [
   ['nested-reference', 'reference-nested'],
   ['oversized-skill', 'skill-too-long'],
   ['long-reference', 'reference-toc'],
-  ['host-metadata', 'host-metadata']
+  ['host-metadata', 'host-metadata'],
+  ['undeclared-import', 'script-import'],
+  ['unexplained-constant', 'constant-comment'],
+  ['unfinished-step', 'step-done'],
+  ['language-policy', 'language-policy']
 ]) {
   test(`${folder} fails with ${code}`, () => {
     const result = run('--skill', join(fixtures, folder))
@@ -132,3 +136,124 @@ test('help and invalid arguments have explicit exits', () => {
   assert.equal(missing.status, 1)
   assert.match(missing.stdout, /package-unreadable:/)
 })
+
+test('imports accept built-ins, local files and declared runtime package subpaths', async t => {
+  const directory = await sandbox(t)
+  await mkdir(join(directory, 'scripts'))
+  await writeFile(join(directory, 'package.json'), JSON.stringify({ dependencies: { '@scope/runtime': '1.0.0' }, optionalDependencies: { optional: '1.0.0' } }))
+  await writeFile(join(directory, 'scripts', 'local.mjs'), 'export default 1\n')
+  await writeFile(join(directory, 'scripts', 'example.mjs'), "import 'fs'\nimport 'node:test'\nimport './local.mjs'\nexport { default } from '@scope/runtime/subpath'\nawait import('optional/subpath')\n")
+  assert.equal(run('--skill', directory).status, 0)
+})
+
+for (const source of ["import 'undeclared'", "export * from 'undeclared'", "await import('undeclared')", "require('undeclared')", "import 'node:not-a-builtin'", "import 'dev-only'"]) {
+  test(`import policy refuses ${source}`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, 'package.json'), JSON.stringify({ devDependencies: { 'dev-only': '1.0.0' } }))
+    await writeFile(join(directory, 'example.mjs'), source + '\n')
+    const result = run('--skill', directory)
+    assert.equal(result.status, 1)
+    assert.match(result.stdout, /script-import: example.mjs:.*line 1/)
+  })
+}
+
+test('strings, comments, regexes and nested constants do not impersonate script policy', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'example.mjs'), "// Explain the text fixture.\nconst text = `import 'undeclared'; const fake = 1`\n/* import 'undeclared'; const fake = 1 */\n// Explain the regular expression.\nconst pattern = /const fake = 1/\nfunction example() { const nested = 1; return nested }\n")
+  assert.equal(run('--skill', directory).status, 0)
+})
+
+test('computed dispatch imports remain outside the literal import control', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'example.mjs'), 'await import(selectedCommand)\n')
+  assert.equal(run('--skill', directory).status, 0)
+})
+
+test('CommonJS top-level return passes', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'example.cjs'), 'if (!process.env.RUN_AUDIT) return;\n')
+  const result = run('--skill', directory)
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+})
+
+for (const [source, code] of [
+  ["require('undeclared')\n", 'script-import'],
+  ['const value = 1\n', 'constant-comment']
+]) {
+  test(`CommonJS top-level return preserves ${code}`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, 'example.cjs'), 'if (!process.env.RUN_AUDIT) return;\n' + source)
+    const result = run('--skill', directory)
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.match(result.stdout, new RegExp(`^${code}: example\\.cjs:`, 'm'))
+    assert.doesNotMatch(result.stdout, /^script-syntax:/m)
+  })
+}
+
+for (const extension of ['js', 'mjs']) {
+  test(`${extension} module rejects top-level return`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, `example.${extension}`), 'if (!process.env.RUN_AUDIT) return;\n')
+    const result = run('--skill', directory)
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.match(result.stdout, /^script-syntax:/m)
+  })
+}
+
+for (const [source, expected] of [
+  ['// Reason.\nexport const { first, second } = values\n', 0],
+  ['/* Reason. */\r\nconst first = 1, second = 2\r\n', 0],
+  ['/* Multi-line\nreason. */\nconst first = 1\n', 0],
+  ['// Too far away.\n\nconst first = 1\n', 1],
+  ['export const first = 1 // Too late.\n', 1],
+  ['if (true) { const nested = 1 }\n', 0]
+]) {
+  test(`constant comment boundary ${JSON.stringify(source)}`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, 'example.mjs'), source)
+    const result = run('--skill', directory)
+    assert.equal(result.status, expected, result.stdout)
+    if (expected) assert.match(result.stdout, /constant-comment:/)
+  })
+}
+
+test('invalid script and manifest refuse unverified imports while other problems collect', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'package.json'), '{')
+  await writeFile(join(directory, 'example.mjs'), 'const =\n')
+  const result = run('--skill', directory)
+  assert.equal(result.status, 1)
+  assert.match(result.stdout, /script-syntax:/)
+  assert.match(result.stdout, /package-manifest:/)
+})
+
+for (const [section, expected] of [
+  ['### Step 1: Inspect\n\nDone when: inspected.\n', 0],
+  ['### Step 1: Inspect\n\n```text\nDone when: example only.\n```\n', 1],
+  ['### Step 1: Inspect\n\n#### Details\n\nDone when: too late.\n', 1],
+  ['```text\n### Step 1: Example\n```\n', 0],
+  ['### Step 1: Inspect\n\nDone when: inspected.\n\n### Step 2: Apply\n', 1]
+]) {
+  test(`step completion boundary ${JSON.stringify(section)}`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, 'SKILL.md'), await readFile(join(fixtures, 'valid', 'SKILL.md'), 'utf8') + '\n' + section)
+    const result = run('--skill', directory)
+    assert.equal(result.status, expected, result.stdout)
+    if (expected) assert.match(result.stdout, /step-done:/)
+  })
+}
+
+for (const [file, text, expected] of [
+  ['references/guide.md', '- ESLint\n- Ruff\n', 1],
+  ['package.json', '{"dependencies":{"eslint-config-project":"1.0.0"}}\n', 1],
+  ['.ruff.toml', '', 1],
+  ['references/guide.md', 'Research project tooling. A truffle is unrelated.\n', 0]
+]) {
+  test(`language policy boundary ${file} ${JSON.stringify(text)}`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, file), text)
+    const result = run('--skill', directory)
+    assert.equal(result.status, expected, result.stdout)
+    if (expected) assert.match(result.stdout, /language-policy:/)
+  })
+}

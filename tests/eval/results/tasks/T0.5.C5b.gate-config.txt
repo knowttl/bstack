@@ -1,0 +1,13 @@
+diff --git a/.no-mistakes.yaml b/.no-mistakes.yaml
+index d39b481..4ac04b4 100644
+--- a/.no-mistakes.yaml
++++ b/.no-mistakes.yaml
+@@ -2,7 +2,7 @@ no_ci: true
+ commands:
+   prepare: 'npm ci --prefer-offline --ignore-scripts'
+   test: 'npm test'
+-  lint: ''
++  lint: 'npm run check'
+ document:
+   instructions: |
+     docs/design.md owns the first-release requirements. docs/implementation-plan.md owns the build sequence

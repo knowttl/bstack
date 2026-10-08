@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.6",
+  "slice": "C5b",
+  "sourceRevision": "5294d52757177f4de656e3bc75e0d2974b13f402",
+  "intent": "\"yes approbe and begin the implementation\". Complete C5b of the approved sequential commissioning plan.",
+  "amendments": [
+    "Evidence names the last implementation commit tested. Evidence-only commits need not name themselves. Any source or test fix must refresh evidence in the same round.",
+    "Only commands.lint changes in .no-mistakes.yaml. No hosted CI or workflows are added.",
+    "Local validation completed on Node 24 and Node 26. No-mistakes gate verification is still pending."
+  ],
+  "status": "blocked",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "2.54.0",
+      "node26": "v26.11.1",
+      "npm26": "11.20.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node24-node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node24-node-version.txt"
+    },
+    {
+      "id": "node24-npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node24-npm-version.txt"
+    },
+    {
+      "id": "node24-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node24-install.txt"
+    },
+    {
+      "id": "node24-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node24-check.txt"
+    },
+    {
+      "id": "node24-test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node24-test.txt"
+    },
+    {
+      "id": "node24-task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.5.C5b"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node24-task-test.txt"
+    },
+    {
+      "id": "node24-gate-task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.6"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node24-gate-task-test.txt"
+    },
+    {
+      "id": "node26-node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node26-node-version.txt"
+    },
+    {
+      "id": "node26-npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node26-npm-version.txt"
+    },
+    {
+      "id": "node26-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node26-install.txt"
+    },
+    {
+      "id": "node26-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node26-check.txt"
+    },
+    {
+      "id": "node26-test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node26-test.txt"
+    },
+    {
+      "id": "node26-task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.5.C5b"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node26-task-test.txt"
+    },
+    {
+      "id": "node26-gate-task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.6"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node26-gate-task-test.txt"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.os.txt"
+    },
+    {
+      "id": "git-version",
+      "executable": "git",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.git-version.txt"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.history.txt"
+    },
+    {
+      "id": "workflows",
+      "executable": "git",
+      "args": [
+        "ls-files",
+        ".github/workflows/*"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.workflows.txt"
+    },
+    {
+      "id": "gate-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "origin/main",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.gate-config.txt"
+    },
+    {
+      "id": "node-schedule",
+      "executable": "curl",
+      "args": [
+        "--fail",
+        "--silent",
+        "--show-error",
+        "https://raw.githubusercontent.com/nodejs/Release/main/schedule.json"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5b.node-schedule.txt"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C5b-local-node24",
+      "kind": "manual",
+      "procedure": "Run npm ci --ignore-scripts, npm run check and full npm test with Node v24.17.0 on Linux.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5b.node24-test.txt"
+    },
+    {
+      "id": "C5b-local-node26",
+      "kind": "manual",
+      "procedure": "Run npm ci --ignore-scripts, npm run check and full npm test with Node v26.11.1 on Linux.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5b.node26-test.txt"
+    },
+    {
+      "id": "C5b-gate-config",
+      "kind": "manual",
+      "procedure": "Compare .no-mistakes.yaml against origin/main: only lint becomes npm run check, no_ci remains true, prepare/test/review/auto_fix unchanged.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5b.gate-config.txt"
+    },
+    {
+      "id": "C5b-zero-actions",
+      "kind": "manual",
+      "procedure": "git ls-files .github/workflows/* reports no tracked workflows.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5b.workflows.txt"
+    },
+    {
+      "id": "C5b-no-mistakes",
+      "kind": "manual",
+      "procedure": "Run no-mistakes with --skip ci and the committed verification plan.",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Gate starts after these local evidence records are committed.",
+      "nextPrerequisite": "No-mistakes review, tests, documentation, lint, push and PR gate completes."
+    }
+  ],
+  "limitations": [
+    "Linux only. These Node 24 and Node 26 runs do not prove support on another operating system.",
+    "Literal import and top-level constant controls are syntactic. Computed imports, package resolution, comment rationale quality, semantic completion criteria and unlisted language tools are not proved.",
+    "The real skill is still a skeleton. Installed-package closure and full runtime behaviour remain pending later tasks.",
+    "No-mistakes gate result will be supplied by the delivery run and PR. The T0.6 gate case remains blocked until that result exists."
+  ]
+}

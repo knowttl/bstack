@@ -1,0 +1,315 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T0.5.C5b
+
+Selected 1 suite(s): tests/scripts/package-check.test.mjs
+TAP version 13
+# Subtest: valid skeleton passes from another working directory
+ok 1 - valid skeleton passes from another working directory
+  ---
+  duration_ms: 232.974287
+  type: 'test'
+  ...
+# Subtest: missing-path fails with local-path-missing
+ok 2 - missing-path fails with local-path-missing
+  ---
+  duration_ms: 82.614927
+  type: 'test'
+  ...
+# Subtest: unlisted-reference fails with reference-unlisted
+ok 3 - unlisted-reference fails with reference-unlisted
+  ---
+  duration_ms: 87.831988
+  type: 'test'
+  ...
+# Subtest: nested-reference fails with reference-nested
+ok 4 - nested-reference fails with reference-nested
+  ---
+  duration_ms: 92.946891
+  type: 'test'
+  ...
+# Subtest: oversized-skill fails with skill-too-long
+ok 5 - oversized-skill fails with skill-too-long
+  ---
+  duration_ms: 88.794838
+  type: 'test'
+  ...
+# Subtest: long-reference fails with reference-toc
+ok 6 - long-reference fails with reference-toc
+  ---
+  duration_ms: 74.139446
+  type: 'test'
+  ...
+# Subtest: host-metadata fails with host-metadata
+ok 7 - host-metadata fails with host-metadata
+  ---
+  duration_ms: 84.813768
+  type: 'test'
+  ...
+# Subtest: undeclared-import fails with script-import
+ok 8 - undeclared-import fails with script-import
+  ---
+  duration_ms: 78.475432
+  type: 'test'
+  ...
+# Subtest: unexplained-constant fails with constant-comment
+ok 9 - unexplained-constant fails with constant-comment
+  ---
+  duration_ms: 92.499521
+  type: 'test'
+  ...
+# Subtest: unfinished-step fails with step-done
+ok 10 - unfinished-step fails with step-done
+  ---
+  duration_ms: 85.40695
+  type: 'test'
+  ...
+# Subtest: language-policy fails with language-policy
+ok 11 - language-policy fails with language-policy
+  ---
+  duration_ms: 83.970146
+  type: 'test'
+  ...
+# Subtest: every independent problem is reported together
+ok 12 - every independent problem is reported together
+  ---
+  duration_ms: 99.865353
+  type: 'test'
+  ...
+# Subtest: line limits include their boundary and exclude frontmatter
+ok 13 - line limits include their boundary and exclude frontmatter
+  ---
+  duration_ms: 100.42849
+  type: 'test'
+  ...
+# Subtest: contents heading at line twenty permits a long reference
+ok 14 - contents heading at line twenty permits a long reference
+  ---
+  duration_ms: 163.787665
+  type: 'test'
+  ...
+# Subtest: local paths in source and nested resources resolve from their file
+ok 15 - local paths in source and nested resources resolve from their file
+  ---
+  duration_ms: 175.691383
+  type: 'test'
+  ...
+# Subtest: inline link location suffix preserves missing and nested reference checks
+ok 16 - inline link location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 87.731158
+  type: 'test'
+  ...
+# Subtest: image location suffix preserves missing and nested reference checks
+ok 17 - image location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 85.259585
+  type: 'test'
+  ...
+# Subtest: reference definition location suffix preserves missing and nested reference checks
+ok 18 - reference definition location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 79.216675
+  type: 'test'
+  ...
+# Subtest: angle destination location suffix preserves missing and nested reference checks
+ok 19 - angle destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 86.692559
+  type: 'test'
+  ...
+# Subtest: encoded destination location suffix preserves missing and nested reference checks
+ok 20 - encoded destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 85.617679
+  type: 'test'
+  ...
+# Subtest: quoted resource location suffix preserves missing and nested reference checks
+ok 21 - quoted resource location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 90.343319
+  type: 'test'
+  ...
+# Subtest: location suffix accepts existing resources and excludes URLs
+ok 22 - location suffix accepts existing resources and excludes URLs
+  ---
+  duration_ms: 79.586791
+  type: 'test'
+  ...
+# Subtest: unlisted reference diagnostics identify each source file
+ok 23 - unlisted reference diagnostics identify each source file
+  ---
+  duration_ms: 76.072738
+  type: 'test'
+  ...
+# Subtest: dependency and cache contents are excluded
+ok 24 - dependency and cache contents are excluded
+  ---
+  duration_ms: 81.442022
+  type: 'test'
+  ...
+# Subtest: help and invalid arguments have explicit exits
+ok 25 - help and invalid arguments have explicit exits
+  ---
+  duration_ms: 272.585409
+  type: 'test'
+  ...
+# Subtest: imports accept built-ins, local files and declared runtime package subpaths
+ok 26 - imports accept built-ins, local files and declared runtime package subpaths
+  ---
+  duration_ms: 96.815758
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'undeclared'
+ok 27 - import policy refuses import 'undeclared'
+  ---
+  duration_ms: 92.1843
+  type: 'test'
+  ...
+# Subtest: import policy refuses export * from 'undeclared'
+ok 28 - import policy refuses export * from 'undeclared'
+  ---
+  duration_ms: 82.329515
+  type: 'test'
+  ...
+# Subtest: import policy refuses await import('undeclared')
+ok 29 - import policy refuses await import('undeclared')
+  ---
+  duration_ms: 100.755503
+  type: 'test'
+  ...
+# Subtest: import policy refuses require('undeclared')
+ok 30 - import policy refuses require('undeclared')
+  ---
+  duration_ms: 103.41585
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'node:not-a-builtin'
+ok 31 - import policy refuses import 'node:not-a-builtin'
+  ---
+  duration_ms: 91.214316
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'dev-only'
+ok 32 - import policy refuses import 'dev-only'
+  ---
+  duration_ms: 89.065855
+  type: 'test'
+  ...
+# Subtest: strings, comments, regexes and nested constants do not impersonate script policy
+ok 33 - strings, comments, regexes and nested constants do not impersonate script policy
+  ---
+  duration_ms: 83.245269
+  type: 'test'
+  ...
+# Subtest: computed dispatch imports remain outside the literal import control
+ok 34 - computed dispatch imports remain outside the literal import control
+  ---
+  duration_ms: 88.54117
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+ok 35 - constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+  ---
+  duration_ms: 92.317556
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+ok 36 - constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+  ---
+  duration_ms: 86.128965
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+ok 37 - constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+  ---
+  duration_ms: 85.442107
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+ok 38 - constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+  ---
+  duration_ms: 89.854279
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "export const first = 1 // Too late.\\n"
+ok 39 - constant comment boundary "export const first = 1 // Too late.\\n"
+  ---
+  duration_ms: 88.164677
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "if (true) { const nested = 1 }\\n"
+ok 40 - constant comment boundary "if (true) { const nested = 1 }\\n"
+  ---
+  duration_ms: 91.005607
+  type: 'test'
+  ...
+# Subtest: invalid script and manifest refuse unverified imports while other problems collect
+ok 41 - invalid script and manifest refuse unverified imports while other problems collect
+  ---
+  duration_ms: 86.985149
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+ok 42 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+  ---
+  duration_ms: 92.09919
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+ok 43 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+  ---
+  duration_ms: 81.336145
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+ok 44 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+  ---
+  duration_ms: 80.544788
+  type: 'test'
+  ...
+# Subtest: step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+ok 45 - step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+  ---
+  duration_ms: 89.153319
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+ok 46 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+  ---
+  duration_ms: 85.773521
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+ok 47 - language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+  ---
+  duration_ms: 79.404726
+  type: 'test'
+  ...
+# Subtest: language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+ok 48 - language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+  ---
+  duration_ms: 81.57413
+  type: 'test'
+  ...
+# Subtest: language policy boundary .ruff.toml ""
+ok 49 - language policy boundary .ruff.toml ""
+  ---
+  duration_ms: 95.440356
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+ok 50 - language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+  ---
+  duration_ms: 76.203197
+  type: 'test'
+  ...
+1..50
+# tests 50
+# suites 0
+# pass 50
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4948.970598
