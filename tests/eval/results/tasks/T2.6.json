@@ -2,10 +2,11 @@
   "schemaVersion": 1,
   "taskId": "T2.6",
   "slice": "C14b",
-  "sourceRevision": "13b5dfb45d9ec28b1499384ab4b173a22c10b2fb",
+  "sourceRevision": "dbdc87c9559d33ec2b392b7134a81116a4395340",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1-T2.5 and T2.6 part 1 (https://github.com/knowttl/bstack/pull/25: change-set and resume schemas, plan digest, staged operations with a conservative supported Markdown subset, and `apply --dry-run`).\n\nThis piece is slice C14b, the rest of task T2.6 \"Build protected writes and resume state\": write/journal/resume, including selected delete. Done evidence: injected interruption points, backups, original/proposed/conflict states, repeat and dirty-user protection.",
   "amendments": [
-    "Regenerated all five command artifacts after no-mistakes run 01M4DQBYBNS3S1QT9NPSA8Y840 repaired atomic backup publication, mutation-boundary checks, directory durability and journalled-deletion alias recovery, then removed redundant apply run selection. Fresh commands ran against 13b5dfb45d9ec28b1499384ab4b173a22c10b2fb, preserving every repair and document commit."
+    "Regenerated all five command artifacts after no-mistakes run 01M4DQBYBNS3S1QT9NPSA8Y840 repaired atomic backup publication, mutation-boundary checks, directory durability and journalled-deletion alias recovery, then removed redundant apply run selection. Fresh commands ran against 13b5dfb45d9ec28b1499384ab4b173a22c10b2fb, preserving every repair and document commit.",
+    "Repaired an inherited child-process timeout fixture startup race after local confirmation of the docs-only pipeline commit. Timeout and cancellation now wait for fixture readiness under mocked time. Regenerated all five command artifacts against dbdc87c9559d33ec2b392b7134a81116a4395340; production child-command code is unchanged."
   ],
   "status": "passed",
   "environment": {
