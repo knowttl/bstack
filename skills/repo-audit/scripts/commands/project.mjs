@@ -83,7 +83,6 @@ export async function run(options) {
       directories: { const: ['', ...directories].sort((a, b) => a.split('/').length - b.split('/').length) },
       gitStarted: { type: 'boolean' }, gitComplete: { type: 'boolean' }, commandsStarted: { type: 'boolean' }, gitVersion: { type: 'string' },
       commands: { type: 'array', items: { type: 'object', required: ['id', 'status'], properties: { id: { type: 'string' }, status: { enum: ['passed', 'failed', 'unverified', 'blocked'] } } } } } }, previous)
-  if (previous && (previous.planDigest !== planDigest || previous.destination !== destination)) block('journal-mismatch', 'Creation recovery belongs to another plan or destination.')
   const current = await exists(destination)
   if (current && (!current.isDirectory() || current.isSymbolicLink())) block('destination-collision', 'Destination must be an absent or explicitly selected empty directory.')
   if (!previous && current && (!plan.destination.allowEmpty || (await readdir(destination)).length)) block('destination-collision', 'Destination was not selected as empty or contains existing files.')
@@ -148,9 +147,10 @@ export async function run(options) {
       const record = { id: command.id, status: 'unverified', reason: 'Execution interrupted before a result was saved.' }
       recovery.commands.push(record)
       await save()
-      Object.assign(record, await runCommand(target, command))
+      const result = await runCommand(target, command)
+      recovery.commands[recovery.commands.length - 1] = { id: command.id, ...result }
       await save()
-      if (record.status !== 'passed') break
+      if (result.status !== 'passed') break
     }
     const verified = recovery.commands.length === plan.setupCommands.length + 1 && recovery.commands.every(record => record.status === 'passed')
     return { inputs, status: verified ? 'passed' : 'blocked', problems: verified ? [] : [{ code: 'creation-unverified', message: 'Setup or the first journey failed or was interrupted. The project is retained.', fix: 'Inspect captured results and verify the affected native commands before claiming readiness.' }],
