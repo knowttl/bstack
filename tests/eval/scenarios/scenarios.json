@@ -120,6 +120,29 @@
       ]
     },
     {
+      "id": "existing-repo-python",
+      "fixture": "py-ledger",
+      "request": "Audit this repo and present evidenced foundation recommendations for balanced postings through the public ledger package. Present recommendations only, preserving the current native Python journey and standards.",
+      "answers": [],
+      "checkpoints": ["foundation", "final"],
+      "invocation": "explicit",
+      "checks": [
+        { "id": "project-fit", "caseId": "AC-62", "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript." },
+        { "id": "findings", "caseId": "AC-7", "question": "Does each material recommendation name evidence, principle, consequence, bounded fix and verification?" }
+      ]
+    },
+    {
+      "id": "existing-vision-delta",
+      "fixture": "existing-vision-delta",
+      "request": "Audit the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the audit finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
+      "answers": ["Retain the existing vision as baseline. Local export of my own title, address and read status for personal backup fits. Accounts, sharing and recommendations remain excluded. Present the exact candidate line edits for review, with no project writes."],
+      "checkpoints": ["foundation", "final"],
+      "invocation": "explicit",
+      "checks": [
+        { "id": "delta", "caseId": "AC-55", "question": "Against docs/evaluation.md's existing-vision delta rubric, did it propose and review a minimal evidenced delta preserving the approved baseline and keep unavailable board approval blocked?" }
+      ]
+    },
+    {
       "id": "implicit-invocation",
       "fixture": "clear-goals",
       "request": "audit this repo",

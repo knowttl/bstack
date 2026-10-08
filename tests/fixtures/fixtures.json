@@ -36,6 +36,19 @@
       }
     ]
   },
+  "existing-vision-delta": {
+    "kind": "repo",
+    "source": "clear-goals",
+    "files": ["VISION.md", "DESIGN.md", "glossary.md"],
+    "history": [
+      { "paths": ["."], "message": "docs: approve local reading queue", "date": "2026-01-01T12:00:00Z" },
+      {
+        "paths": ["DESIGN.md"],
+        "write": { "DESIGN.md": "# Design\n\nThe approved stack is a local Node application with JSON persistence.\nThe queue owns article state and exposes save, list and mark-read operations.\nPresentation never writes storage directly.\nPreserve article titles and addresses when marking an article read.\n\n# Approved portability decision\n\nThe owner approved local export of a reader's own saved articles, including title, address and read status.\nExport is for personal backup, never accounts, sharing or recommendations.\nThe existing vision lacks accept and resist criteria distinguishing local backup from sharing.\nNo implementation or stack change is approved by this decision.\n" },
+        "message": "docs: approve personal backup boundary", "date": "2026-01-02T12:00:00Z"
+      }
+    ]
+  },
   "ts-shop": {
     "kind": "repo",
     "files": [

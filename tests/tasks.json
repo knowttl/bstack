@@ -24,5 +24,6 @@
   "T2.5": ["tests/scripts/findings.test.mjs", "tests/scripts/schema-contract.test.mjs"],
   "T2.6": ["tests/scripts/apply.test.mjs"],
   "T2.7": ["tests/scripts/run-checks.test.mjs", "tests/scripts/probe.test.mjs"],
+  "T2.8": ["tests/scripts/existing-repo.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/package-check.test.mjs"],
   "T3.1": ["tests/scripts/package-check.test.mjs", "tests/scripts/skill-skeleton.test.mjs"]
 }
