@@ -111,7 +111,7 @@ test('cancelled required check stays unverified even with other passing checks',
   for await (const event of watcher) {
     if (event.filename === 'ready') { child.kill('SIGINT'); controller.abort(); break }
   }
-  assert.equal(await done, 1)
+  assert.equal(await done, 2)
   const result = JSON.parse(stdout)
   assert.equal(result.data.checks[0].status, 'passed')
   assert.equal(result.data.checks[1].execution.cancelled, true)
