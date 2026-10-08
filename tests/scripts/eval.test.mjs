@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm, mkdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -184,7 +184,199 @@ for (const [before, after, expected] of [[true, true, 0], [false, true, 0], [tru
   })
 }
 
-test('automatic host execution remains blocked pending C7b', async t => {
+test('automatic host execution requires an adapter', async t => {
   const directory = await temporary(t)
   assert.equal(run(directory, '--scenario', 'new-idea', '--mode', 'without', '--stage', 'baseline', '--agent', 'test', '--model', 'test').status, 2)
+})
+
+async function adapterFile(directory, mode = 'success') {
+  const adapter = JSON.parse(await readFile(join(root, 'tests/eval/adapters/codex.json'), 'utf8'))
+  adapter.executable = 'node'
+  adapter.isolation.authentication = 'none'
+  const fake = join(root, 'tests/inputs/evaluation-host.mjs')
+  adapter.args = [fake, mode, ...adapter.args]
+  adapter.versionArgs = [fake, '--version']
+  adapter.invocation.resumeArgs = [fake, mode, ...adapter.invocation.resumeArgs]
+  const path = join(directory, 'adapter.json')
+  await writeFile(path, JSON.stringify(adapter))
+  return { adapter, path }
+}
+
+function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-idea', ...extra) {
+  const result = run(directory, '--scenario', scenario, '--mode', mode, '--stage', 'baseline', '--adapter', path, ...extra)
+  const record = result.data.data
+  if (record) {
+    t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+    if (record.isolation.home) t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+  }
+  return { result, record }
+}
+
+test('host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const { record: first } = hostStart(t, directory, path)
+  const { record: second } = hostStart(t, directory, path)
+  assert.equal(first.isolation.verified, true)
+  assert.deepEqual(first.isolation.discovered, [])
+  assert.equal(first.tools.agent, 'fake-codex 1')
+  assert.notEqual(first.id, second.id)
+  assert.notEqual(first.fixture.path, second.fixture.path)
+  assert.notEqual(first.isolation.home, second.isolation.home)
+  assert.notEqual(first.sessionId, second.sessionId)
+  const observed = JSON.parse(first.turns[0].result.stdout.split('\n')[1]).item.observed
+  assert.equal(observed.home, first.isolation.home)
+  assert.equal(observed.state, first.isolation.state)
+  assert.equal(observed.cache, join(first.isolation.home, 'cache'))
+  assert.equal(observed.cwd, first.fixture.path)
+  assert.equal(observed.message, first.scenario.request)
+  assert.ok((await readFile(join(directory, first.id, first.conversation), 'utf8')).includes(first.request))
+})
+
+test('with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  for (const scenario of ['ambiguous-idea', 'implicit-invocation']) {
+    const { record } = hostStart(t, directory, path, 'with', scenario)
+    assert.equal(record.isolation.verified, true)
+    assert.deepEqual(record.isolation.discovered, [join(record.isolation.stagedPath, 'SKILL.md')])
+    assert.equal(record.request, scenario === 'ambiguous-idea' ? '$repo-audit\n' + record.scenario.request : 'audit this repo')
+    assert.equal(await readFile(join(record.isolation.stagedPath, 'scripts/repo-audit.mjs'), 'utf8'),
+      await readFile(join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'utf8'))
+  }
+})
+
+test('scripted replies resume the exact host conversation, preserve user turns and require ordered answers', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const { record } = hostStart(t, directory, path)
+  assert.equal(run(directory, 'turn', '--run', record.id, '--answer', '2').status, 2)
+  const reply = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
+  assert.equal(reply.turns.length, 2)
+  assert.equal(reply.turns[1].sessionId, record.sessionId)
+  assert.equal(reply.turns[1].message, record.scenario.answers[0])
+  assert.equal(reply.nextAnswer, 2)
+  assert.equal(run(directory, 'turn', '--run', record.id, '--answer', '1').status, 2)
+  const transcript = await readFile(join(directory, record.id, record.conversation), 'utf8')
+  assert.ok(transcript.includes('User: ' + record.scenario.answers[0]))
+})
+
+test('manual adapter preparation makes no host call and can later capture an opening turn', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const { record } = hostStart(t, directory, path, 'without', 'ambiguous-idea', '--manual')
+  assert.deepEqual(record.turns, [])
+  assert.equal(record.sessionId, null)
+  const files = await inputs(directory, record)
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, 2)
+  const captured = run(directory, 'turn', '--run', record.id).data.data
+  assert.equal(captured.turns.length, 1)
+  assert.equal(captured.isolation.verified, true)
+})
+
+for (const mode of ['fail', 'malformed', 'incomplete', 'contaminate', 'truncate', 'hang']) {
+  test(`host ${mode} remains blocked and retains available execution evidence`, async t => {
+    const directory = await temporary(t)
+    const { path, adapter } = await adapterFile(directory, mode)
+    if (mode === 'hang') {
+      adapter.timeoutMs = 1000
+      await writeFile(path, JSON.stringify(adapter))
+    }
+    const { record, result } = hostStart(t, directory, path)
+    assert.equal(result.status, 2, result.stdout)
+    assert.equal(record.status, 'blocked')
+    assert.equal(record.turns.length, 1)
+    assert.equal(record.turns[0].sessionId, null)
+    assert.ok(record.reason)
+    assert.equal(record.turns[0].result.timedOut, mode === 'hang')
+    await assert.rejects(readFile(join(record.isolation.home, '.codex', 'fake-session.json')), { code: 'ENOENT' })
+  })
+}
+
+test('a resumed host turn cannot silently switch sessions', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'wrong-session')
+  const { record } = hostStart(t, directory, path)
+  const reply = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
+  assert.equal(reply.isolation.verified, false)
+  assert.equal(reply.turns[1].sessionId, null)
+  assert.equal(reply.nextAnswer, 1)
+})
+
+test('adapter scoring requires the captured conversation and rechecks isolation and staged bytes', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const { record } = hostStart(t, directory, path, 'with')
+  const files = await inputs(directory, record)
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, 2)
+  const transcriptPath = join(directory, record.id, record.conversation)
+  await writeFile(join(record.isolation.stagedPath, 'SKILL.md'), '---\nname: repo-audit\n---\nchanged\n')
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 2)
+  await assert.rejects(readFile(join(record.isolation.stagedPath, 'SKILL.md')), { code: 'ENOENT' })
+  const { record: fresh } = hostStart(t, directory, path, 'with')
+  const freshFiles = await inputs(directory, fresh)
+  const scored = run(directory, 'score', '--run', fresh.id, '--answers', freshFiles.answersPath, '--transcript', join(directory, fresh.id, fresh.conversation))
+  assert.equal(scored.status, 0, scored.stdout)
+  assert.equal(scored.data.data.isolation.verified, true)
+  assert.equal(run(directory, 'turn', '--run', fresh.id, '--answer', '1').status, 2)
+})
+
+for (const [name, mutate] of [
+  ['shell string', adapter => { adapter.args = 'codex exec' }],
+  ['unknown field', adapter => { adapter.shell = true }],
+  ['unsupported conversation', adapter => { adapter.invocation.protocol = 'stdin' }],
+  ['unbounded timeout', adapter => { adapter.timeoutMs = 120001 }],
+  ['missing message placeholder', adapter => { adapter.args = ['exec'] }],
+  ['wrong discovery paths', adapter => { adapter.isolation.discoveryPaths = [] }],
+  ['escaping staging path', adapter => { adapter.isolation.stagePath = '../skill' }]
+]) {
+  test(`adapter blocks ${name} before creating a run`, async t => {
+    const directory = await temporary(t)
+    const { path, adapter } = await adapterFile(directory)
+    mutate(adapter)
+    await writeFile(path, JSON.stringify(adapter))
+    const result = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'without', '--stage', 'baseline', '--adapter', path)
+    assert.equal(result.status, 2, result.stdout)
+    assert.deepEqual(result.data.data, {})
+  })
+}
+
+test('closing a conversation deletes isolated state and retains bound evidence for later scoring', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const { record } = hostStart(t, directory, path)
+  const closed = run(directory, 'close', '--run', record.id).data.data
+  assert.equal(closed.isolation.verified, true)
+  assert.ok(closed.isolation.cleanedAt)
+  await assert.rejects(readFile(join(record.isolation.state, 'fake-session.json')), { code: 'ENOENT' })
+  const files = await inputs(directory, record)
+  const transcriptPath = join(directory, record.id, record.conversation)
+  const original = await readFile(transcriptPath, 'utf8')
+  await writeFile(transcriptPath, original + 'replaced\n')
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 2)
+  await writeFile(transcriptPath, original)
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 0)
+})
+
+test('throwaway authentication copies only a dummy login with private permissions and removes it after the turn', async t => {
+  const directory = await temporary(t)
+  const source = join(directory, 'invoking-state')
+  await mkdir(source)
+  await writeFile(join(source, 'auth.json'), 'dummy test login')
+  await writeFile(join(source, 'config.toml'), 'must not be copied')
+  const { path, adapter } = await adapterFile(directory, 'require-auth')
+  adapter.isolation.authentication = 'throwaway-codex-login'
+  await writeFile(path, JSON.stringify(adapter))
+  const execution = spawnSync(process.execPath, [join(root, 'scripts/eval.mjs'), '--scenario', 'ambiguous-idea', '--mode', 'without',
+    '--stage', 'baseline', '--adapter', path, '--results', directory, '--json'], { encoding: 'utf8', env: { ...process.env, CODEX_HOME: source } })
+  const record = JSON.parse(execution.stdout).data
+  assert.equal(record.turns[0].result.status, 'passed', execution.stdout)
+  t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+  t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+  assert.equal(record.authenticatedVia, 'throwaway copy')
+  await assert.rejects(readFile(join(record.isolation.state, 'auth.json')), { code: 'ENOENT' })
+  await assert.rejects(readFile(join(record.isolation.state, 'config.toml')), { code: 'ENOENT' })
+  assert.equal(await readFile(join(source, 'auth.json'), 'utf8'), 'dummy test login')
+  assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
+  await assert.rejects(readFile(join(record.isolation.state, 'fake-session.json')), { code: 'ENOENT' })
 })

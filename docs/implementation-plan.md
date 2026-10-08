@@ -342,6 +342,7 @@ Tick each task when its "Done when" commands pass.
     - [x] C6bc Native stacks, boundary proofs and state variants ([evidence](../tests/eval/results/tasks/T1.1.json))
   - [ ] T1.2 Build the evaluation runner and record the baseline
     - [x] C7a Acceptance registry and manual evaluation interface ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
+    - [ ] C7b Current-host Codex adapter and isolation implemented, baseline recording and final validation in progress ([contract](evaluation.md))
     - [ ] C7b Current-host adapter, verified isolation and recorded baseline
   - [ ] T1.3 Write the first `SKILL.md`
   - [ ] T1.4 Bundle the interview and domain-language modules

@@ -34,16 +34,23 @@ See the [package check contract](docs/command-contract.md#package-check) for exa
 Local validation runs the install, package check and full tests on Node 24 and Node 26.
 The no-mistakes gate installs once, runs tests once and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
-The C7a manual evaluation interface is available, with scenarios and all 75 planned acceptance procedures.
-Automatic host execution, verified isolation and the baseline remain blocked until C7b.
-See the [evaluation contract](docs/evaluation.md) for manual scoring, comparison and explicit final selections.
+The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
+Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
+Scripted replies use the host's resume interface after a reviewer matches the question to the next scripted answer.
+See the [evaluation contract](docs/evaluation.md) for bounded runs, throwaway authentication, manual scoring, comparison and explicit final selections.
 
 ```sh
 npm run eval -- --manual --scenario ambiguous-idea --mode without --stage baseline --agent <agent> --model <model>
+npm run eval -- --scenario ambiguous-idea --mode without --stage baseline --adapter tests/eval/adapters/codex.json
+npm run eval -- turn --run <id> --answer 1
+npm run eval -- close --run <id>
 npm run eval -- score --run <id> --answers answers.json --transcript transcript.txt
 ```
 
 An unscored manual run exits 2 as blocked.
+An adapter run also exits 2 until explicitly scored.
+Close the conversation immediately when it finishes to delete its isolated home before reviewing the captured transcript.
+The Codex adapter copies only the invoking user's existing login into throwaway state with private permissions, removes the copy after each turn, and deletes the whole home on close or a failed host turn.
 Scoring requires complete answers and a transcript with reviewer citations.
 Tests are discovered only under `tests/scripts/` and `tests/package-check/`.
 Task suites are registered in `tests/tasks.json`.

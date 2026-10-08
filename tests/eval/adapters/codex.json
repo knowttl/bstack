@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "executable": "codex",
+  "args": ["--no-daemon", "exec", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6.1-sol", "--sandbox", "workspace-write", "-c", "model_reasoning_effort=\"low\"", "{message}"],
+  "cwd": ".",
+  "versionArgs": ["--version"],
+  "timeoutMs": 120000,
+  "invocation": {
+    "agent": "codex",
+    "model": "gpt-6.1-sol",
+    "explicit": "$repo-audit",
+    "protocol": "codex-exec-jsonl",
+    "resumeArgs": ["--no-daemon", "exec", "resume", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6.1-sol", "-c", "model_reasoning_effort=\"low\"", "{sessionId}", "{message}"]
+  },
+  "isolation": {
+    "stateDirectory": ".codex",
+    "discoveryPaths": [".agents/skills", ".codex/skills"],
+    "systemDiscoveryPaths": ["/etc/codex/skills"],
+    "stagePath": ".agents/skills/repo-audit",
+    "authentication": "throwaway-codex-login"
+  }
+}
