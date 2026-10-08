@@ -95,7 +95,7 @@ No semicolons in prose.
 Canadian spelling.
 One term for each concept, matching the design.
 - **Constants.** Each top-level constant has a comment on the line above that gives its reason.
-The package check enforces this.
+Package-check enforcement is planned in C5b.
 - **Tests.** Each script has tests in `tests/scripts/` that call it through its command interface, not its internal functions.
 
 ### Defaults this plan sets
