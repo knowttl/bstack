@@ -25,7 +25,8 @@ The [task evidence](../tests/eval/results/tasks/T1.1.json) records local executi
 The TypeScript workspace pins TypeScript 5.9.3 with package-lock.json and requires Node 24 or later and npm.
 The Python package pins Ruff 0.14.0 with uv.lock and requires Python 3.12 and uv.
 Sanity installs from each lock, runs native compilation or lint and unit checks, and resolves imports with TypeScript or Python AST/importlib.
-The fixture boundary probes supply native checks for the installed skill's [rule-proof command](command-contract.md#rule-proof-and-temporary-debt); maintained local integration remains T3.4 work.
+The fixture boundary probes supply native checks for the installed skill's [rule-proof command](command-contract.md#rule-proof-and-temporary-debt).
+See [T3.4](implementation-plan.md#t34-integrate-scoped-checks-with-the-maintained-local-command) for maintained-command integration controls.
 The clean `ts-rule-proof` and `py-rule-proof` fixtures pass with public imports.
 Their `-private`, `-alias` and `-cycle` variants each fail only that boundary probe while native compilation, lint and units pass.
 Python's alias variant uses a relative-import re-export bridge.

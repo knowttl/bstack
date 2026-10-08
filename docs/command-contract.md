@@ -342,6 +342,7 @@ Prerequisites run again on every invocation, including dry runs and resume.
 Missing, failed or interrupted setup or journey produces exit 2 with creation-unverified and keeps the project.
 Inspect the retained record and capture fresh affected native checks explicitly before claiming readiness.
 A successful record includes tool versions and captured outputs, gitComplete and verified true, and names maintained enforcement and portable maintenance as pending.
+These are unperformed creation steps, not global capability status; selected maintained integration is available through [apply](#apply-dry-run) and needs its own disposable proof.
 Real Windows and macOS execution remains owner checklist evidence, rather than a Linux support claim.
 
 ## Arguments and targets
@@ -624,7 +625,7 @@ Stage requirements are deliberately bounded:
 `requiredOutcomes` includes every stage requirement and any further outcome the approved scope needs.
 For example, add a journey to audit readiness when the stated next change relies on that flow.
 A foundation claim cannot substitute audit starting checks for its journey or review.
-These stages do not claim later maintained enforcement, portable assessment or final release acceptance.
+These stage requirements alone do not establish maintained enforcement, portable assessment or final release acceptance.
 
 Validation returns the current fingerprint even when evidence is missing.
 It hashes the real target root, reviewed revision, exact scoped file bytes and modes, including absence, and all substantive findings inputs except `execution`, using the T0.4 fingerprint contract.
@@ -701,6 +702,7 @@ The helper derives the full proposed content from the operation and checks it ag
 For a fresh plan or dry run, current file bytes must match `originalHash`; a create must start absent and a delete must start present.
 Resume validates the saved originals against `originalHash` and derives current file states as described below.
 Complete bytes for every file are staged in memory before reporting success.
+The installed [enforcement reference](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command) owns selected `checkIntegration` paths, their bounded command grammar, supported CI format and disposable-proof requirements.
 If any file fails input validation or staging, no diff or proposed edits are returned and every project file remains unchanged.
 Filesystem access failures block the command; invalid plans fail with named problems and renewed-review guidance.
 

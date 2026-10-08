@@ -5,6 +5,15 @@ Start from the project's requirements, approved design and observed risks.
 These examples are candidates, not defaults.
 Checks catch defined mistakes, not every unsound future design decision.
 
+## Contents
+
+- [Record each principle](#record-each-principle)
+- [Example mappings](#example-mappings)
+- [Proof required before adopting an automated rule](#proof-required-before-adopting-an-automated-rule)
+- [Integrate the maintained command](#integrate-the-maintained-command)
+- [Control existing debt](#control-existing-debt)
+- [One authoritative source per rule](#one-authoritative-source-per-rule)
+
 ## Record each principle
 
 | Field | Required evidence |
@@ -56,7 +65,40 @@ Capture the maintained command, tool version, output, exit code and relevant inp
 The same maintained command must work locally and in the project's CI when the project selects one, without ignoring failures.
 For behaviour compatibility, preserve agreed acceptance outcomes rather than proving only that unit checks are green.
 These are evidence requirements for selected enforcement, not a development workflow.
-Maintained local integration and maintenance validation remain pending.
+Maintenance validation remains Phase 3a work.
+
+## Integrate the maintained command
+
+Use reviewed selected findings and `apply` to extend the project's existing check command rather than creating a competing entry point.
+The target repo owns each checker or pins its declared development dependency; running checks must not require an installed bstack skill or agent session.
+Scope each package rule in its native configuration or checker, and prove a sibling package's permitted use remains valid.
+Apply the complete initial documented baseline through selected debt findings before expecting the audited project to pass.
+Keep every known violation visible with its reason and removal condition; new violations fail and fixed entries must be removed.
+Continue to prove each rule independently on clean fixtures without counting unrelated audited debt as new violations.
+
+For integration proof, select the maintained command in the check plan, for example executable `npm`, args `["run", "check"]`, cwd `.` and versionArgs `["--version"]`.
+Run the same rule-proof interface against separate disposable sources containing the integrated command, installed native dependencies and the accepted baseline, with one new seeded violation in the negative source.
+Capture both exits and the specific new diagnostic; a tool setup failure does not prove enforcement.
+The valid control must include a permitted sibling-package use where package scope matters.
+
+If the project selects CI, apply the same maintained command to its configuration as another reviewed edit.
+An edit that integrates selected checks declares optional `checkIntegration`, a nonempty list of unique command paths, each a nonempty array of string keys.
+For `package.json`, mark each selected script with a path such as `[["scripts", "check"]]`; other changed scripts receive no integration validation.
+For a selected `.yml` or `.yaml` CI edit, use JSON syntax, which is valid YAML, and mark the exact `run` or `script` paths, such as `[["jobs", "check", "steps", "0", "run"]]`.
+The installed runtime supports only this JSON subset for marked CI edits; it uses Node built-ins and does not parse general YAML.
+Every selected path must resolve to a string command in the complete proposed bytes; missing commands, deletion and unsupported marked formats fail before writes.
+`continue-on-error` and `allow_failure` on the selected CI command's ancestor objects must be literal `false` when present.
+Unmarked edits, other package scripts, other CI commands and unrelated configuration fields pass through the ordinary protected-write validation unchanged.
+The plan digest binds these selections alongside the complete proposed bytes.
+Selected commands use literal arguments and fail-fast top-level `&&` chains; line breaks between commands are allowed only after `&&`.
+Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted and escaped arguments.
+Quotes do not make shell control syntax acceptable as an argument.
+Failure-masking operators (`||`, pipelines, separators, background execution and negation), unquoted shell comments, assignment prefixes, shell dispatch and substitutions fail with `ignored-check-failure` before any writes.
+Shell dispatch includes `command`, `builtin`, shell executables, executable paths to those programs and their `.exe`/`.cmd`/`.bat` forms in every `&&` segment.
+`npm exec`/`npm x` and `npx` reject `-c` and `--call` modes, including attached option values; `env`, including `env -S`, remains unsupported.
+This bounded grammar is a configuration safeguard, not an interpreter for arbitrary shell programs or a proof of a checker's implementation.
+The identical maintained command must still pass the valid disposable control and reject the seeded violation with its diagnostic and nonzero exit through `rule-proof`.
+CI examples are unverified adapters until actual hosted execution is observed; local disposable proof does not establish a merge gate.
 
 ## Control existing debt
 
