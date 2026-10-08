@@ -2,10 +2,11 @@
   "schemaVersion": 1,
   "taskId": "T2.9",
   "slice": "C18",
-  "sourceRevision": "82637e77ac03eac17c7ed2a860d87fe2a9adf467",
+  "sourceRevision": "923e508004e71477ee7ecdbdddac0fdad8a38336",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs. For real agent evaluation runs the captain approved: \"per evaluation run, copy the existing Codex login into a throwaway isolated home, delete it immediately after the run, never printed or committed.\"\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1-T2.8 and early T3.1 (most recently https://github.com/knowttl/bstack/pull/30: the completed existing-repo audit and apply path).\n\nThis piece is slice C18, task T2.9 \"Complete protected new-project creation\", the last slice of plan Phase 2. Done evidence: approved minimal journey, destination collision/no-write controls, directory/Git journal and interruption recovery.",
   "amendments": [
-    "Firstmate directed preservation of the generated project and unverified full native check, without adding a sixth scripted answer or applying the scratch correction. Record the diagnosis and skill-quality observation without corrective skill changes."
+    "Firstmate directed preservation of the generated project and unverified full native check, without adding a sixth scripted answer or applying the scratch correction. Record the diagnosis and skill-quality observation without corrective skill changes.",
+    "No-mistakes fixed the missed recovery conflict: completed edits restored or removed by users block before directory recreation, and recognized applied files persist completion before continuation."
   ],
   "status": "passed",
   "environment": {
@@ -122,7 +123,7 @@
     }
   ],
   "limitations": [
-    "327 registered T2.9 tests and 799 full-suite tests passed against the recorded source revision. Both required installs and package check passed. Local Linux Node 24 only; Windows/macOS remains captain checklist evidence. No hosted CI ran.",
+    "336 registered T2.9 tests and 808 full-suite tests passed against the recorded source revision after pipeline fixes. Both required installs and package check passed. Local Linux Node 24 only; Windows/macOS remains captain checklist evidence. No hosted CI ran.",
     "Two real sequential Codex foundation runs used the shipped 600000 ms turn timeout and 16 MiB capture bound, fresh isolated homes and temporary login copies. All eight turns completed without timeout or truncation. Both homes were deleted immediately after conversation completion.",
     "New-idea creation initialized the reviewed destination and retained the exact 18 approved file payloads. Its native Rice/reload browser case passed, while the full native check remains unverified. The generated storage-failure test correction was tested only in scratch and not applied. Firstmate explicitly directed that evidence outcome.",
     "The evaluation interface labels scores human; the implementation worker supplied the explicit scores. Committed transcripts redact host paths, user names and identifiers while preserving lines and recalculating hashes. They are not resumable sessions or final release selections.",
