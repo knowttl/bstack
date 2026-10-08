@@ -31,7 +31,7 @@ Automatic execution is blocked.
 
 Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
 `--results <directory>` chooses another result directory on start, score, compare or selection validation.
-Every invocation creates a fresh fixture and unique record, with UTC timestamps, source revision, agent, model, OS, tool versions, fixture revision, checkpoint, criteria hash and case results.
+Starting a manual run creates a fresh fixture and unique record, with UTC timestamps, source revision, agent, model, OS, tool versions, fixture revision, checkpoint, criteria hash and case results.
 TypeScript fixtures also record npm and fixture-local TypeScript versions.
 The fixture revision is the committed `tests/fixtures` Git tree, so skill-only commits do not prevent comparison.
 Run a committed checkout when recording evidence.

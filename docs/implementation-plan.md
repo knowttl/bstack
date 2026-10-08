@@ -1702,7 +1702,8 @@ Automated procedures name the test title and file, with positive and negative co
 Agent and manual procedures name the scenario check and the transcript or board artifact needed to score it.
 The runner verifies that a named test actually executed, rather than accepting a zero-test exit code.
 Every result records passed, failed or blocked, its relevant input revision and an existing artifact path.
-`scripts/acceptance.mjs --require-complete` rejects missing case records, duplicate final evidence selections and unsupported success claims.
+T5.2 will add `scripts/acceptance.mjs --require-complete` to reject missing case records, duplicate final evidence selections and unsupported success claims.
+See the [evaluation contract](evaluation.md#registry-and-final-selections) for the available registry and selection validation.
 Repeated execution artifacts with unique run IDs are legitimate history, and the validator prefers the explicitly selected fresh final evidence over stale earlier runs.
 
 Fill in the "Evidence" column in T5.2.
