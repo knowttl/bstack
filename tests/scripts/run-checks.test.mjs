@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile, writeFile, watch } from 'node:fs/promises'
+import { mkdir, readFile, writeFile, watch } from 'node:fs/promises'
 import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
@@ -171,6 +171,53 @@ for (const [name, mutation] of [
   })
 }
 
+for (const [name, mutation] of [
+  ['edited plan', 'fs.appendFileSync(process.argv[1], "\\n")'],
+  ['deleted plan', 'fs.unlinkSync(process.argv[1])'],
+  ['edited acceptance source', 'fs.writeFileSync("ACCEPTANCE.md", "changed")'],
+  ['deleted acceptance source', 'fs.unlinkSync("ACCEPTANCE.md")']
+]) {
+  test(`an optional check cannot let a later required check adopt ${name}`, async t => {
+    const f = await setup(t, [check('optional', undefined, { required: false, acceptanceCases: ['units'] }),
+      check('journey', 'require("node:fs").writeFileSync("executed", "")')])
+    f.plan.acceptanceCases.push({ ...f.plan.acceptanceCases[0], id: 'units', userJourney: false })
+    f.plan.checks[0].command.args = ['-e', `const fs = require("node:fs"); ${mutation}`, f.path]
+    const result = await f.invoke()
+    assert.equal(result.exit, 1)
+    assert.equal(result.data.checks[1].status, 'stale')
+    assert.equal(result.data.checks[1].execution, null)
+    assert.equal(result.data.coverage[0].status, 'failed')
+  })
+}
+
+for (const [phase, otherChecks] of [['before', [check('after-only')]], ['after', []]]) {
+  test(`${phase} capture with no active required check runs no commands`, async t => {
+    const write = 'require("node:fs").writeFileSync("executed", "")'
+    const f = await setup(t, [check('optional', write, { required: false, role: 'protection' }), ...otherChecks])
+    f.plan.checks[0].command.versionArgs = ['-e', write]
+    const original = await snapshot(f.repo)
+    const result = await f.invoke(['--phase', phase])
+    assert.notEqual(result.exit, 0)
+    assert.ok(result.problems.some(item => item.code === 'no-required-checks'), JSON.stringify(result))
+    assert.deepEqual(await snapshot(f.repo), original)
+  })
+}
+
+for (const path of ['src/app/[id]/page.ts', 'src/{name}.ts', 'src/star*.ts', 'src/question?.ts']) {
+  test(`glob capture fingerprints the literal file ${path}`, { skip: process.platform === 'win32' && /[*?]/.test(path) }, async t => {
+    const f = await setup(t, [check('journey', undefined, { inputScopes: ['src/**'] })])
+    await mkdir(dirname(join(f.repo, path)), { recursive: true })
+    await writeFile(join(f.repo, path), 'original')
+    const passed = await f.invoke()
+    assert.equal(passed.exit, 0)
+    assert.equal(passed.data.originalState.state.files.find(file => file.path === path).contentHash, hash('original'))
+    f.plan.checks[0].command.args = ['-e', 'require("node:fs").writeFileSync(process.argv[1], "changed")', path]
+    const changed = await f.invoke()
+    assert.equal(changed.exit, 1)
+    assert.equal(changed.data.checks[0].status, 'stale')
+  })
+}
+
 for (const [name, mutate, problem] of [
   ['file cwd', c => { c.cwd = 'product.txt' }, 'invalid-cwd'],
   ['missing cwd', c => { c.cwd = 'missing' }, 'invalid-cwd'],
@@ -308,10 +355,13 @@ test('bug fix requires normally failing reproduction before and passing reproduc
   assert.equal(before.exit, 0)
   assert.equal(before.data.checks[0].execution.exitCode, 1)
   assert.equal(before.data.checks[0].satisfied, true)
+  assert.equal(before.data.coverage[0].status, 'failed')
+  assert.match(before.data.journeyCoverage, /No user journey/)
   await writeFile(join(f.repo, 'product.txt'), 'fixed')
   const after = await f.invoke(['--prior-run', before.data.runId])
   assert.equal(after.exit, 0)
   assert.equal(after.data.checks[0].execution.exitCode, 0)
+  assert.equal(after.data.coverage[0].status, 'passed')
 })
 
 test('passing reproduction before change cannot satisfy the bug prerequisite', async t => {
