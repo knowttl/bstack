@@ -15,9 +15,13 @@ if (name === 'dirty-work') {
   assert.equal(await readFile(join(path, 'notes.md'), 'utf8'), 'User edits must survive.\n')
 } else if (name === 'refactor') {
   assert.equal(run('git', ['log', '--format=%s', '-1']), 'refactor: preserve public pricing')
-  assert.match(run('git', ['diff', 'HEAD~1', 'HEAD', '--', 'price.mjs']), /unitPrice/)
+  assert.equal(run('git', ['diff', '--name-status', 'HEAD~1', 'HEAD']), 'M\tprice.mjs')
+  for (const revision of ['HEAD~1', 'HEAD']) {
+    const source = run('git', ['show', `${revision}:price.mjs`])
+    run(process.execPath, ['--input-type=module', '-e', "import assert from 'node:assert/strict'; const { quote } = await import(process.argv[1]); assert.deepEqual([quote(0), quote(1), quote(3)], [0, 12, 36])", `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`])
+  }
 } else if (name === 'contract-removal') {
-  assert.equal(run('git', ['show', 'HEAD~1:project.json']), '{"schemaVersion":1,"documents":["DESIGN.md"],"rules":["public-price"]}')
+  assert.deepEqual(JSON.parse(run('git', ['show', 'HEAD~1:project.json'])), { schemaVersion: 1, documents: ['DESIGN.md'], rules: ['public-price'] })
   assert.equal(run('git', ['diff', '--name-status', 'HEAD~1', 'HEAD']), 'D\tDESIGN.md\nD\tproject.json')
 } else if (name === 'shallow-history') {
   assert.equal(run('git', ['rev-parse', '--is-shallow-repository']), 'true')

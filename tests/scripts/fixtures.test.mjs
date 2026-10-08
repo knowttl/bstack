@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
 // The builder and source byte contract are anchored to this checkout.
@@ -83,8 +83,10 @@ for (const name of ['dirty-work', 'refactor', 'contract-removal', 'shallow-histo
 
 for (const name of ['ts-shop', 'py-ledger']) {
   test(`${name} reports missing native tools as blocked`, () => {
-    const result = spawnSync(process.execPath, [join(sources, name, 'sanity.mjs'), tmpdir(), name],
-      { encoding: 'utf8', env: { ...process.env, PATH: '' } })
+    const entry = join(sources, name, 'sanity.mjs')
+    const args = ['--input-type=module', '-e', "const entry = process.argv[2]; process.execPath = process.argv[1]; process.argv = [process.execPath, entry, ...process.argv.slice(3)]; await import(entry)", join(sources, 'missing-node', 'node.exe'), pathToFileURL(entry).href, tmpdir(), name]
+    const result = spawnSync(process.execPath, args,
+      { encoding: 'utf8', env: { ...process.env, PATH: '', npm_execpath: '' } })
     assert.equal(result.status, 2)
     assert.match(result.stderr, /Blocked: install/)
   })
