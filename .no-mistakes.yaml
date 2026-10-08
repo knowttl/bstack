@@ -1,8 +1,8 @@
 no_ci: true
 commands:
-  # Lightweight skills repo: npm only, no build. Steps no-op until the Phase 0 skeleton (T0.1) adds package.json.
-  test: 'if [ -f package.json ]; then npm ci --ignore-scripts && npm test; fi'
-  lint: 'if [ -f package.json ]; then npm run check --if-present; fi'
+  prepare: 'npm ci --prefer-offline --ignore-scripts'
+  test: 'npm test'
+  lint: ''
 document:
   instructions: |
     docs/design.md owns the first-release requirements. docs/implementation-plan.md owns the build sequence
