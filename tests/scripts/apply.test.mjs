@@ -739,6 +739,36 @@ for (const alias of ['absolute', 'relative', 'chain', 'parent']) {
   })
 }
 
+for (const [alias, previewExit, previewCode] of [
+  ['absolute', 2, 'unresolved-path'], ['relative', 2, 'unresolved-path'], ['chain', 2, 'unresolved-path'], ['parent', 1, 'changed-precondition']
+]) {
+  for (const [fault, exit] of [['after-replacement', 91], [undefined, 0]]) {
+    test(`an unedited ${alias} alias permits deletion recovery after ${fault ?? 'completion'}`, async t => {
+      const context = await setup(t, 'delete', 'old\n', {}, null)
+      const path = alias === 'parent' ? 'alias/README.md' : 'alias.md'
+      const link = alias === 'absolute' ? join(context.repo, 'README.md') : alias === 'chain' ? 'intermediate.md' : alias === 'parent' ? context.repo : 'README.md'
+      if (alias === 'chain') await symlink('README.md', join(context.repo, 'intermediate.md'))
+      await symlink(link, join(context.repo, alias === 'parent' ? 'alias' : path), alias === 'parent' ? (process.platform === 'win32' ? 'junction' : 'dir') : 'file')
+      context.findings.reviewedScope.push(path)
+      context.findings.findings[0].scope.push(path)
+      context.plan.reviewedScope.push({ path, resolvedPath: join(context.repo, 'README.md') })
+      await secondEdit(context)
+      const initial = execute(context, fault)
+      assert.equal(initial.exit, exit, JSON.stringify(initial))
+      const repeated = execute(context)
+      assert.equal(repeated.exit, 0, JSON.stringify(repeated))
+      assert.deepEqual(repeated.data.applied, ['README.md', 'other.txt'])
+      assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'new\n')
+      assert.equal(execute(context).data.outcome, 'already-applied')
+      const before = await snapshot(context.directory)
+      const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+      assert.equal(preview.exit, previewExit, JSON.stringify(preview))
+      assert.equal(preview.problems[0].code, previewCode)
+      assert.deepEqual(await snapshot(context.directory), before)
+    })
+  }
+}
+
 for (const [alias, path, link, resolvedPath, type] of [
   ['relative', 'alias.md', 'missing.md', 'missing.md', 'file'],
   ['absolute', 'alias.md', null, 'missing.md', 'file'],

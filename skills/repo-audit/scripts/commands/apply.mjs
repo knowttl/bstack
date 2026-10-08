@@ -29,8 +29,9 @@ export async function run(options) {
   validateData(JSON.parse(await readFile(new URL('../../schemas/change-set.schema.json', import.meta.url), 'utf8')), plan)
   const findings = await input(resolve(dirname(resolve(options.plan)), plan.findings))
   const { directory, journal } = options['dry-run'] ? { directory: null, journal: null } : await loadJournal(target, plan.planDigest)
-  const deletedEdits = journal?.edits.filter(edit => edit.originalHash !== null && edit.proposedHash === null) ?? []
-  await validateFindings(findings, target, deletedEdits)
+  const deletionScope = plan.reviewedScope.filter(entry => journal?.edits.some(edit =>
+    edit.originalHash !== null && edit.proposedHash === null && edit.resolvedPath === entry.resolvedPath))
+  await validateFindings(findings, target, deletionScope)
   validateIds(plan.edits, '$/edits')
   const { planDigest, ...reviewed } = plan
   if (hashBytes(canonicalJSON(reviewed)) !== planDigest || hashBytes(canonicalJSON(findings)) !== plan.findingsDigest) reject('changed-plan', 'The reviewed plan or findings digest changed.')
@@ -49,8 +50,7 @@ export async function run(options) {
   const problems = []
   for (const entry of plan.reviewedScope) {
     try {
-      const path = await resolveFilePath(target.root, entry.path, entry.resolvedPath,
-        deletedEdits.some(edit => edit.path === entry.path && edit.resolvedPath === entry.resolvedPath))
+      const path = await resolveFilePath(target.root, entry.path, entry.resolvedPath, deletionScope.includes(entry))
       if (scope.has(entry.path)) reject('overlapping-scope', 'Reviewed scope paths must be unique.', entry.path)
       scope.set(entry.path, path)
     } catch (error) {
