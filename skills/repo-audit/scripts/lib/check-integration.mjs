@@ -30,7 +30,7 @@ function command(text, path) {
     if (char === '`' || char === '$') reject(path)
     if (quote) { word += char; continue }
     if (char === '&' && text[i + 1] === '&') { flush(); words.push('&&'); i++; continue }
-    if ('|;&!<>\n\r(){}'.includes(char)) reject(path)
+    if ('#|;&!<>\n\r(){}'.includes(char)) reject(path)
     if (/\s/.test(char)) flush()
     else word += char
   }

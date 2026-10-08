@@ -129,8 +129,25 @@ for (const key of ['run', 'script']) {
   }
 }
 
+for (const value of ['tsc --noEmit # typecheck && node boundaries.mjs',
+  'tsc --noEmit # typecheck &&\nnode boundaries.mjs', 'tsc --noEmit && # boundary check &&\nnode boundaries.mjs']) {
+  for (const [path, proposed, original] of [
+    ['package.json', JSON.stringify({ scripts: { check: value } }), '{"scripts":{"check":"tsc --noEmit"}}'],
+    ['ci.yml', `steps:\n  - run: ${JSON.stringify(value)}\n`, ''],
+    ['ci.yml', `job:\n  script: |\n    ${value.replaceAll('\n', '\n    ')}\n`, '']
+  ]) {
+    test(`apply rejects shell comments hiding checks: ${path} ${JSON.stringify(proposed)}`, async t => {
+      const context = await setup(t, 'replace-file', original, { content: proposed }, proposed, path)
+      assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+    })
+  }
+}
+
 for (const [path, proposed] of [
   ['package.json', '{"scripts":{"check":"tsc --noEmit && node boundaries.mjs"}}'],
+  ['package.json', JSON.stringify({ scripts: { check: 'node check.mjs "#literal" && node boundaries.mjs' } })],
+  ['package.json', JSON.stringify({ scripts: { check: "node check.mjs '#literal' && node boundaries.mjs" } })],
+  ['package.json', JSON.stringify({ scripts: { check: 'node check.mjs \\#literal && node boundaries.mjs' } })],
   ['ci.yml', 'steps:\n  - run: npm run check\n    continue-on-error: false\n'],
   ['ci.yml', 'steps:\n  - run: |\n      npm run check &&\n      npm test\n']
 ]) {
