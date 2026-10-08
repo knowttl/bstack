@@ -70,7 +70,10 @@ An evidence-only descendant can reuse the tested head when the generator confirm
 The record cannot contain its own commit hash; publication identifies the final head, and the input binding proves that head has the tested contents.
 Capture includes every authored task artifact.
 Explicit capture requires committed inputs; ordinary tests can capture dirty inputs, but that evidence cannot be attached.
-Attachment excludes only its own `<task-id>.json`, `<task-id>.full-tests.txt` and `<task-id>.events.jsonl` files from both inventories and the commitment check.
+Attachment excludes its own `<task-id>.json`, `<task-id>.full-tests.txt` and `<task-id>.events.jsonl` files from both inventories and the commitment check.
+It also permits post-capture prose changes in `README.md` and top-level `docs/*.md` other than `docs/design.md`, recording their before/after inventory entries in `validation.postCaptureDocumentation`.
+For `docs/implementation-plan.md`, only the Progress section may change; requirements, task contracts and acceptance assignments remain evidence inputs.
+Executable documentation, skill instructions, nested documentation, source, scripts, tests, fixtures and all other inputs remain bound and require fresh capture when changed.
 Every other task artifact remains an input, including evidence consumed by acceptance tests.
 TAP and stderr stream to the terminal and the capture file while the suite runs.
 Changes to behaviour, tests or other inputs require a fresh full-suite capture within the existing pipeline before attachment.
