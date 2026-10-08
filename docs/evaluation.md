@@ -282,3 +282,17 @@ The earlier passing ambiguous-idea procedure remains valid intent-stage evidence
 T1.7 is complete at this checkpoint, while protected project creation and final acceptance remain later tasks.
 The preceding blocked browser, timeout and capture attempts are retained as historical evidence, not promoted into this pass.
 Redacted transcripts preserve line citations and conversation hashes bind the retained redacted bytes.
+
+## Discovery checkpoint (C11a)
+
+The scenarios `research-main-typescript`, `research-main-python` and `research-subagents` use `--stage discovery` with the existing isolated adapter.
+The two main-thread evaluations use a scratch adapter adding `--disable multi_agent`, preserving the shipped model, authentication and capture settings.
+The subagent evaluation uses the shipped adapter and observes the tools actually available to the host.
+Unsupported subagent mode remains blocked rather than being credited for sequential execution.
+Each scenario requests the same five-brief report outside the fixture, source review, a shipped citation check and no fixture writes or native checks.
+Web access is unavailable by the scripted author's constraint; these runs do not claim a network sandbox.
+Language and outside recommendations retain repo evidence and explicitly say "not researched" with the reason.
+The [discovery summary](../tests/eval/results/discovery-C11a/summary.md) records actual modes, host capabilities, per-turn outcomes, scoring and cleanup.
+Additional task-local session excerpts preserve actual delegation events omitted from Codex exec JSONL output.
+The transcript and worker traces establish overlapping read-only work and the main thread's citation verification.
+This evidence is discovery-only and does not establish full audit execution or approved recommendations.

@@ -352,7 +352,7 @@ Tick each task when its "Done when" commands pass.
     - [Phase 1 E2E observations](../tests/eval/results/phase1-check/summary.md) record the scenario and adapter fixes and the supported board attempt.
       The C11a prerequisite run completes the previously blocked board and scratch-approval evidence without claiming protected project creation.
 - Phase 2: Audit and foundation
-  - [ ] T2.1 Write the research briefs and the citation check
+  - [x] T2.1 Write the research briefs and the citation check - five bounded read-only briefs, common report schema and exact-byte citation validation; [real discovery checkpoints](../tests/eval/results/discovery-C11a/summary.md) record sequential TypeScript/Python fallback and parallel subagent execution, checked citations, no-web limits and unchanged fixtures.
   - [ ] T2.2 Build `inspect`
   - [ ] T2.3 Build `inventory`
   - [ ] T2.4 Build `measure` and `overlap`

@@ -1400,7 +1400,8 @@ Documentation research alone does not satisfy an execution check.
 
 This review checked the upstream procedures and licences at pinned commits on 2026-10-06.
 The integrated audit skill and installer still need implementation and execution tests.
-The [implementation plan](implementation-plan.md#progress) records partial board runtime completion.
+The [implementation plan](implementation-plan.md#progress) records completed intent and board review, research briefs and citation checking.
+The [discovery checkpoint](../tests/eval/results/discovery-C11a/summary.md) records actual main-thread and subagent execution with explicit no-web limits.
 
 ### VISION runtime observation (C9b10a)
 

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-08T07-32-46.858Z-[identifier-1]",
+  "reviewer": "C11a worker; delegation independently checked in task-local host traces",
+  "checks": [
+    {
+      "id": "mode",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 36
+    },
+    {
+      "id": "citations",
+      "passed": true,
+      "startLine": 22,
+      "endLine": 36
+    },
+    {
+      "id": "no-web",
+      "passed": true,
+      "startLine": 33,
+      "endLine": 36
+    },
+    {
+      "id": "read-only",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 36
+    }
+  ]
+}
