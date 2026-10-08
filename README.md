@@ -3,7 +3,7 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
@@ -96,7 +96,20 @@ Repeating the same plan resumes pending edits or returns `already-applied` witho
 Use `replace-file` with complete reviewed UTF-8 content when a mechanical edit is unsupported, including the audit record rendered by T2.5.
 `state show` reports actual applied, pending and conflicting files and affected checks to rerun.
 See the apply contract for preflight protection, backup and journal recovery, and filesystem limits.
-Automatic check execution remains T2.7 work.
+
+Capture a reviewed check plan with acceptance sources and input scopes:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --json
+node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --phase before --json
+# After the change, reuse the same plan and the returned before run ID:
+node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --prior-run <before-run-id> --json
+npm test -- --task T2.7
+```
+
+For bug fixes and refactors, run the before capture before editing, then supply its run ID after the change.
+Keep the returned scratch artifact as execution evidence.
+The [check-plan contract](docs/command-contract.md#check-plans-and-capture) owns the schema, prerequisites, freshness rules, coverage verdicts and limitations, including pending live probes.
 
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.

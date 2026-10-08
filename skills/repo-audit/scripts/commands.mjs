@@ -1,5 +1,10 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'run-checks': {
+    module: './commands/run-checks.mjs',
+    options: ['plan', 'phase', 'prior-run'],
+    help: 'Capture declared checks and user outcome coverage in scratch.\nUsage: repo-audit.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]\nPhase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Live probes remain unavailable.'
+  },
   apply: {
     module: './commands/apply.mjs',
     options: ['plan', 'dry-run'],
@@ -68,4 +73,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']

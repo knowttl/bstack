@@ -375,8 +375,14 @@ Tick each task when its "Done when" commands pass.
       The complete suite is registered as `npm test -- --task T2.6`; its task evidence is `tests/eval/results/tasks/T2.6.json`.
     - C14b implements steps 4-9: protected writes, flushed originals and journal, per-file atomic replacement, hash-derived resume and repeat, `state show`, selected delete and reviewed whole-file replacement.
       Tests inject failures before replacement and process exits after replacement and before journal completion, plus journal I/O failure, filesystem limits, dirty-user conflicts and T2.5 report application.
-      Real Windows/macOS execution remains captain checklist evidence, and automatic affected-check execution remains T2.7.
+      Real Windows/macOS execution remains captain checklist evidence, and affected checks can now run through C15a's explicit check plans.
   - [ ] T2.7 Build verification capture and live probes
+    - C15a implements steps 1-3, 6-7 and the check-plan portion of step 8: acceptance-source schema and pointers, argument-array command capture, input freshness, explicit user-journey coverage and prior-state bug/refactor prerequisites.
+      `npm test -- --task T2.7` covers passing units with a failing ts-shop journey, required failure/skip/cancellation/timeout, changed-input blocking, and protective refactor evidence before structural edits plus compatibility afterward.
+      The [task evidence](../tests/eval/results/tasks/T2.7.json) records this partial slice's execution and pending procedures.
+      The [check-plan contract](command-contract.md#check-plans-and-capture) owns the interface, before/after snapshot rules, scope exclusions and local evidence limits.
+      C15b remains: live probe records, matched before/after comparison and specific side-effect approval.
+      Real Windows/macOS execution and full agent acceptance remain separate evidence.
   - [ ] T2.8 Complete the existing-repo audit and apply path
   - [ ] T2.9 Complete protected new-project creation
 - Phase 3: Enforcement
@@ -1085,8 +1091,9 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 **Steps**
 
 1. `run-checks --plan <file>` runs each declared command with an argument array.
-   It records the exit code, output tail, tool version and the input fingerprint for each.
-2. A required check that fails, is skipped or has a fingerprint that no longer matches makes the overall result `failed` or `blocked`, never `passed`.
+   It records each command's exit code, output tail and tool version, with one fingerprint of all declared inputs before and one after the run.
+2. A required check that fails or is skipped makes the overall result `failed` or `blocked`, never `passed`.
+   Any difference between the run's input fingerprints makes the entire capture `blocked: inputs changed during run`.
 3. Each check names the acceptance cases it covers. A result that covers no user journey is reported as such, and user-flow checks that could not run stay "unverified".
 4. `probe record --name <n> --phase before|after -- <command>` records a live probe and its result. `probe compare` fails when a change that depends on outside behaviour has no `before` probe, or no `after` probe that repeats it.
 5. A probe marked as having side effects needs `--approved-by-user`.

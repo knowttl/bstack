@@ -21,7 +21,8 @@ This is a procedure under construction.
 The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available.
 Steps 7 and 11 describe the available read-only audit and findings commands.
 The apply command previews reviewed plans with `--plan <file> --dry-run`, then writes or resumes them without `--dry-run`, preserving originals and a journal in scratch.
-The other conditional references remain placeholders, while complete audit integration and automatic verification capture remain unavailable.
+Check-plan execution capture is available through the shared verification rules below.
+The other conditional references remain placeholders, while complete audit integration remains unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -118,7 +119,7 @@ Done when: Only selected, reviewed changes have been applied with recoverable or
 ### Step 6: Verify the outcome
 
 Follow the shared verification rules and report selected changes, actual evidence, unresolved findings and limitations.
-Verification capture is unavailable until T2.7 and the complete protected new-project path until T2.9.
+The complete protected new-project path remains T2.9 work.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
@@ -207,7 +208,8 @@ Validate the versioned findings with `findings validate --findings <file> --json
 Render returns a scratch path and distinguishes documented, observed and inferred sources, selected changes and proposed new principles.
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
-Verification capture is unavailable until T2.7 and path integration until T2.8.
+Capture approved checks through the shared verification rules below.
+Path integration remains T2.8 work.
 Maintained enforcement arrives in T3.4 and portable maintenance evidence and document validation in Phase 3a.
 
 Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.
@@ -228,6 +230,12 @@ Validate important user flows directly against approved acceptance cases.
 Use meaningful interface tests for relevant behaviour, edges and failures, and independent review under the project's risk policy.
 Supply the reviewer with original requirements, cases, actual changes and execution evidence.
 Choose the execution method within project constraints, without dispatching a TDD workflow or imposing a universal sequence.
+
+For a Git repo, capture an approved plan through `run-checks --repo <target> --plan <file> --json`.
+Use `schemas/check-plan.json` as the plan format, linking acceptance cases to approved source bytes and declaring relevant input scopes.
+Capture bug reproduction or refactor protection with `--phase before` before applying changes, then reuse the plan with `--prior-run <before-run-id>` afterward.
+Preserve the returned scratch artifact, coverage and execution order.
+Live probe capture remains C15b work.
 
 | Change | Required evidence |
 |---|---|
