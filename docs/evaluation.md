@@ -239,6 +239,12 @@ These are initial development observations, not final released-skill acceptance 
 
 ## First procedure checkpoint
 
+The early T3.1 reference checkpoint supplies enforcement and architecture guidance before foundation integration.
+Its [two-stack relevance rubric](../tests/eval/results/tasks/T3.1.verification.md) records a completed manual review of ts-shop and py-ledger, including distinct scopes, reused standards and signals that are not violations.
+`npm test -- --task T3.1` validates package behaviour only.
+The [task record](../tests/eval/results/tasks/T3.1.json) retains command execution evidence and limits.
+This review does not establish final agent acceptance, native rule-proof or maintenance.
+
 T1.3 supplies the bounded SKILL.md procedure and the [baseline gap map](../tests/eval/results/gap-map.md).
 The map covers all three new-idea failures and retains ambiguous-idea and clear-goals as required passing scenarios.
 No real agent sessions or ablation runs were added in this slice, and no advice was removed.

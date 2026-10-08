@@ -1,0 +1,8 @@
+Scope: C16 early T3.1 enforcement and architecture references.
+Install both locked packages with npm ci --ignore-scripts and npm ci --omit=dev --prefix skills/repo-audit.
+Run npm run check, npm test and npm test -- --task T3.1.
+Review both references against T3.1 and the assigned design sections.
+Review the two-stack relevance rubric at tests/eval/results/tasks/T3.1.verification.md against ts-shop and py-ledger.
+Run the three prohibited-routing searches recorded in T3.1.routing-search.txt and review any broad playbook occurrence for instructional meaning.
+Verify .no-mistakes.yaml is unchanged against origin/main and no workflow files were added.
+Package tests prove package behaviour only. No rule-proof or maintenance is delivered in C16.

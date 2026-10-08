@@ -1,0 +1,14 @@
+$ rg -n -i --glob '!**/node_modules/**' 'red-green' skills/repo-audit
+Exit code: 1
+Output: empty (no matches)
+
+$ rg -n -i --glob '!**/node_modules/**' '(call|invoke|dispatch|run|use|follow|load|read)[^.!?\n]*playbook|playbook[^.!?\n]*(must|required)' skills/repo-audit
+Exit code: 1
+Output: empty (no matches)
+
+$ rg -n -i --glob '!**/node_modules/**' '(call|invoke|dispatch|run|use|follow|load|read)[^.!?\n]*(skill tool|["\x27][^"\x27]*skill["\x27])|Skill\(|\$[A-Za-z][A-Za-z-]*(-[A-Za-z-]+)' skills/repo-audit
+Exit code: 1
+Output: empty (no matches)
+
+Manual broad search: playbooks occurs only in SKILL.md:16 as a scope exclusion, not an instruction.
+Manual procedure/reference review found no calls to other skills.

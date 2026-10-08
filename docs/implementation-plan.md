@@ -388,6 +388,10 @@ Tick each task when its "Done when" commands pass.
   - [ ] T2.9 Complete protected new-project creation
 - Phase 3: Enforcement
   - [ ] T3.1 Write the enforcement and architecture references (before T2.8)
+    - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
+      `npm test -- --task T3.1` reuses package and skill command-interface suites, with package check and routing searches recorded in [task evidence](../tests/eval/results/tasks/T3.1.json).
+      This checkpoint claims useful references only.
+      Rule-proof-driven reference revisions land with T3.2 in C19a, so the parent task remains open until that checkpoint.
   - [ ] T3.2 Build `rule-proof`
   - [ ] T3.3 Build debt baseline handling
   - [ ] T3.4 Integrate scoped checks with the maintained local command
