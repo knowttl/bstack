@@ -323,7 +323,7 @@ Absolute paths, Windows drive paths, NUL bytes and parent traversal components u
 Spaces, Unicode and metacharacters remain literal path characters.
 For a new path, resolution starts with its nearest existing parent.
 Existing links must resolve inside the target, including parents of new files.
-Dangling links are refused rather than treated as absent directories.
+Dangling links are refused rather than treated as absent directories, except during [journalled-deletion recovery](#apply-dry-run).
 Internal links are allowed and return their real destination.
 No validation operation creates target files or directories.
 Callers validate all inputs and paths before any write, and report every detected problem.
@@ -342,10 +342,11 @@ Drafts, board verdicts and resume state stay outside the selected target.
 | Linux | `$XDG_CACHE_HOME/bstack/`, otherwise `~/.cache/bstack/` |
 
 The cache directory must be absolute.
-A target subfolder uses SHA-256 of the absolute real target root, and a UUID identifies each run.
+A target subfolder uses SHA-256 of the absolute real target root, and `createScratch` assigns a UUID to each new draft run.
+Apply uses the [digest-bound run identity](#apply-dry-run) instead.
 Existing cache and run-parent links are resolved before creating directories.
 A resolved scratch location inside the target is blocked before any write.
-The returned absolute run path is explicit input to later resume operations, rather than guessing the newest run.
+Draft review commands use explicit returned scratch paths rather than guessing the newest run.
 Scratch is retained for review and resume, with no automatic deletion in C4a.
 
 ## Results
@@ -604,19 +605,21 @@ Read `data.result` and `data.reasons` to determine readiness.
 `validate` writes nothing.
 `render` writes only `repo-audit.md` in a fresh OS-cache scratch run and returns `data.path` in JSON or the path in plain output.
 An inside-target cache blocks rendering.
-Writing the reviewed report into the project's audit record remains T2.6 C14b work.
+Write the reviewed report into the project's audit record through an `apply` create or whole-file replacement plan.
 
 ## Apply dry run
 
 ```sh
 node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --dry-run [--json]
 node skills/repo-audit/scripts/repo-audit.mjs apply --workspace <path> --plan <file> --dry-run [--json]
+node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--json]
+node skills/repo-audit/scripts/repo-audit.mjs state show --repo <path>|--workspace <path> --run <id> [--json]
 ```
 
-C14a implements validation and preview only.
-Omitting `--plan` or `--dry-run` is a usage error.
-No target, scratch, dependency or journal files are written by this command.
-Real writes, backups, resume, repeat execution, `state show` and reviewed whole-file replacement remain C14b.
+`--plan` is required, while `--dry-run` selects validation and preview only.
+Dry run writes no target, scratch, dependency or journal files.
+Omitting `--dry-run` applies or resumes the reviewed plan with backups and a durable journal.
+The plan digest selects the run automatically.
 
 The [change-set schema](../skills/repo-audit/schemas/change-set.schema.json) owns the plan fields.
 Each plan declares `schemaVersion: 1`, `target`, `findings`, `findingsDigest`, `selectedFindingIds`, `reviewedScope`, `edits` and `planDigest`.
@@ -648,15 +651,17 @@ Each edit declares a unique `id`, selected `findingId`, target-relative `path`, 
 Hashes are lowercase SHA-256 of exact UTF-8 bytes, preserving BOM and line endings.
 Explicit null means absence, while the hash of an empty string means a present empty file.
 The helper derives the full proposed content from the operation and checks it against both `proposedContent` and `proposedHash`.
-Original file bytes must match `originalHash`; a create must start absent and a delete must start present.
+For a fresh plan or dry run, current file bytes must match `originalHash`; a create must start absent and a delete must start present.
+Resume validates the saved originals against `originalHash` and derives current file states as described below.
 Complete bytes for every file are staged in memory before reporting success.
-If any file fails, no diff or proposed edits are returned and every project file remains unchanged.
+If any file fails input validation or staging, no diff or proposed edits are returned and every project file remains unchanged.
 Filesystem access failures block the command; invalid plans fail with named problems and renewed-review guidance.
 
 | Operation | Exact payload | Supported scope |
 |---|---|---|
 | `create` | `{ "content": "complete new text" }` | An absent UTF-8 `.md`, `.txt` or `.json` file; JSON must be an object without duplicate keys |
 | `replace` | `{ "search": "unique nonempty literal", "replacement": "new text" }` | One exact occurrence in `.md` or `.txt`; an empty replacement keeps the file present |
+| `replace-file` | `{ "content": "complete reviewed text" }` | One existing UTF-8 text file, without extension or parser restrictions; use for unsupported mechanical edits |
 | `delete` | `{}` | One existing UTF-8 text file, without an extension restriction; both proposed fields must be null |
 | `set-heading-section` | `{ "heading": "ATX heading title", "content": "new body\n" }` | `.md`; exactly one matching nonempty ATX heading at column 0 outside fenced code, replacing its body and subsections until the next same-or-higher-level heading |
 | `set-json-key` | `{ "key": "root key", "value": { "any": "JSON value" } }` | A `.json` object; replace one root value or insert a missing root key, preserving other bytes |
@@ -665,7 +670,7 @@ Filesystem access failures block the command; invalid plans fail with named prob
 Payloads reject unknown and missing fields.
 Plan inputs reject malformed JSON, duplicate keys at any depth (including escaped equivalents) and numbers that decode to nonfinite values.
 JSON create and key edits also reject malformed JSON, duplicate keys, nonfinite numbers and non-object roots.
-All operations reject binary/non-UTF-8 text; operations other than delete reject unsupported extensions.
+All operations reject binary/non-UTF-8 text; operations other than delete and whole-file replacement reject unsupported extensions.
 `set-heading-section` and `append-line-once` reject any target file containing a bare carriage return (CR not followed by LF) before matching, with no project writes.
 These line-based operations support LF and CRLF without normalising existing bytes.
 Heading edits support unindented prose, nonempty ATX headings at column 0 and closed fences at column 0 with an optional plain info word containing letters, digits, underscores, plus signs, dots or hyphens.
@@ -676,7 +681,9 @@ Unsupported structures fail with `Unsupported Markdown structure; use whole-file
 The selected heading needs a line ending and a nonempty new body must end with a newline.
 A leading UTF-8 BOM is ignored when matching headings, fences and existing lines, while its bytes remain preserved.
 Replacement searches with zero or multiple occurrences fail.
-Unsupported edits need the C14b reviewed whole-file interface.
+For unsupported mechanical edits, review complete text with `replace-file`, using the same selected finding, scope, hashes and digest checks.
+That operation treats the reviewed content as opaque UTF-8 text rather than trying another parser.
+An absent audit record uses `create`, while an existing audit record uses `replace-file` with the exact T2.5 rendered bytes.
 
 For a selected replacement, an edit has this shape:
 
@@ -694,12 +701,38 @@ For a selected replacement, an edit has this shape:
 ```
 
 The public-command suite constructs complete plans, computes these digests independently and verifies successful and invalid previews against before/after project fingerprints.
-Plain output prints a full-file unified diff with target-relative labels and missing-final-newline markers.
+Dry-run plain output prints a full-file unified diff with target-relative labels and missing-final-newline markers.
 CRLF carriage returns remain in the diff; there is no line-ending normalisation.
-JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edits` containing each complete proposed content, original/proposed hashes and diff.
+Dry-run JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edits` containing each complete proposed content, original/proposed hashes and diff.
 An unchanged proposed file produces an empty diff.
 
-The [resume-state schema](../skills/repo-audit/schemas/resume-state.schema.json) is defined now for C14b.
-It declares `schemaVersion`, `runId`, the reviewed target, `planDigest`, per-edit IDs, paths, original/proposed hashes, backup paths or explicit null for absent originals, completion flags and `affectedChecks`.
-C14b will derive pending, applied and conflicting states from actual hashes, preflight all remaining edits, preserve recoverable backups and report affected checks.
-The schema alone does not implement recovery or authorise trusting completion flags.
+The [resume-state schema](../skills/repo-audit/schemas/resume-state.schema.json) owns the durable journal.
+The run ID is the reviewed plan digest, under the target's existing OS-cache identity folder.
+Before any replacement, apply revalidates all targets, stages complete proposed bytes, saves exact originals in scratch and flushes the journal containing original/proposed hashes.
+Each replacement uses a flushed same-directory temporary file followed by rename, preserving existing file permissions.
+A selected delete removes the target while preserving its original backup and explicit absent proposed hash.
+An internal alias retains its reviewed resolved identity when a journalled deletion leaves its referent absent, so state inspection and repeat still recognise the applied edit.
+Fresh plans and dry runs reject dangling links, including creates through links to absent targets.
+Completion is journalled after replacement.
+Replacement is atomic per file where supported, never across the whole set.
+Unsupported atomic replacement blocks without a non-atomic fallback.
+Unsupported directory flushes are reported as a power-loss durability limitation.
+
+Repeating a plan automatically opens its digest-bound journal and validates its identity and backups before staging from the original bytes.
+Actual proposed hashes mean applied, original hashes mean pending, and any other hash or unreadable path means conflicting.
+When original and proposed hashes are equal, the edit is already applied.
+Completion flags never override actual target hashes.
+All remaining files are preflighted before continuing, with another complete check before each replacement.
+A user change to any pending or completed file blocks all further writes.
+A repeated completed plan returns `data.outcome: "already-applied"` without updating targets, originals or journal.
+Changed digests or targets cannot reuse earlier completion.
+On write or journal I/O failure, apply returns blocked, preserves any published journal and reports actual applied, pending and conflicting paths.
+Failure before the initial journal is published leaves targets unchanged; `state show` reports a missing journal until preparation succeeds.
+Failure after target writes can leave a partially applied set, with saved originals retained for resume.
+Resume with the unchanged plan after resolving filesystem access.
+
+`state show` requires the explicit target and `--run`, reads the journal and inspects current targets without writes.
+Apply and state results include `runId`, `planDigest`, per-edit `state` and `actualHash` when readable, path lists `applied`, `pending` and `conflicting`, and `affectedChecks`.
+Apply also returns the scratch journal path, an `outcome` on success and filesystem limitations.
+Affected checks are the reviewed findings' required outcomes, which must rerun after writes.
+These commands do not execute checks, which remains T2.7 work.

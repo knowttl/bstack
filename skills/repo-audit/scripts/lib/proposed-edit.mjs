@@ -57,6 +57,7 @@ export function proposedEdit(edit, original) {
   const fields = {
     create: { content: { type: 'string' } },
     replace: { search: { type: 'string', minLength: 1 }, replacement: { type: 'string' } },
+    'replace-file': { content: { type: 'string' } },
     delete: {},
     'set-heading-section': { heading: { type: 'string', pattern: '\\S' }, content: { type: 'string' } },
     'set-json-key': { key: { type: 'string', minLength: 1 }, value: {} },
@@ -66,6 +67,10 @@ export function proposedEdit(edit, original) {
   if (edit.operation === 'delete') {
     if (original === null) reject('missing-original', 'Delete requires an existing file.')
     return null
+  }
+  if (edit.operation === 'replace-file') {
+    if (original === null) reject('missing-original', 'Whole-file replacement requires an existing file; use create for an absent file.')
+    return edit.payload.content
   }
   const format = extname(edit.path).toLowerCase()
   if (!['.md', '.txt', '.json'].includes(format)) reject('unsupported-format', 'Mechanical edits support UTF-8 .md, .txt and JSON objects only.')

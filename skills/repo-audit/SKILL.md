@@ -20,8 +20,8 @@ Security hardening of created skills and licensing review are outside scope.
 This is a procedure under construction.
 The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available.
 Steps 7 and 11 describe the available read-only audit and findings commands.
-The apply command validates reviewed plans with `--plan <file> --dry-run`; it does not write project files.
-The other conditional references remain placeholders, while complete audit integration, protected writes and automatic verification capture remain unavailable.
+The apply command previews reviewed plans with `--plan <file> --dry-run`, then writes or resumes them without `--dry-run`, preserving originals and a journal in scratch.
+The other conditional references remain placeholders, while complete audit integration and automatic verification capture remain unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -111,7 +111,7 @@ Done when: Every proposed foundation change supports an approved outcome, has a 
 Present the exact changes and findings for selection using the shared review and write rules below.
 Create the minimal repo and selected foundation only through apply after review.
 Make the first user journey work end to end where practical, without expanding into unrelated product work.
-Protected writes are unavailable until T2.6, and protected new-project creation until T2.9.
+Protected writes are available through apply, while protected new-project creation remains T2.9 work.
 
 Done when: Only selected, reviewed changes have been applied with recoverable originals and current hash preconditions, otherwise writes remain blocked.
 
@@ -193,7 +193,7 @@ Use the shared review and write rules, preserving existing runtime behaviour and
 Reuse authoritative documents and native configs instead of duplicating vision, vocabulary, design or standards.
 AGENTS.md holds pointers and check commands, not full copies of those sources.
 Apply only selected findings.
-Protected writes and resume are unavailable until T2.6, and this path's integration until T2.8.
+Protected writes and resume are available through apply, while this path's integration remains T2.8 work.
 
 Done when: Only the user's selected findings have been applied to the reviewed target and scope, with unchanged hash preconditions and recoverable originals, otherwise writes remain blocked.
 
@@ -267,7 +267,9 @@ Write validated content atomically where supported and preserve recoverable orig
 Resume by inspecting current files and rerunning affected checks instead of trusting old completion flags.
 Repeated runs update maintained content without duplicating rules or erasing user edits.
 For unsupported mechanical edits, propose a reviewed patch, validate it through apply and run the same final checks.
-Until apply supports it, the edit remains blocked.
+Use `replace-file` with complete reviewed UTF-8 content for unsupported mechanical edits, or `create` for an absent audit record.
+Repeat the unchanged plan to resume, and use `state show --run <returned-run-id>` with the explicit target to inspect actual file states and affected checks.
+User changes block remaining writes, and replacement is atomic per file where supported, never across the whole set.
 
 Preserve distinct scoped instructions.
 Propose consolidating equivalent repo-owned CLAUDE.md content, including an import stub, into the corresponding AGENTS.md only through reviewed protected edits.

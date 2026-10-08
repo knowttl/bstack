@@ -1,0 +1,6 @@
+Run npm ci --ignore-scripts and npm ci --omit=dev --prefix skills/repo-audit.
+Run npm run check, npm test and npm test -- --task T2.6 against the final implementation commit.
+The T2.6 public CLI suite covers invalid plans without project writes, durable originals, atomic replacement limits, interrupted replacement/create/delete, hash-derived resume, repeats, dirty-user protection, unrelated uncommitted work and reviewed T2.5 report replacement.
+Record source revision, commands, exit codes, redacted captured output, environment and acceptance mappings in tests/eval/results/tasks/T2.6.json.
+Real Windows/macOS execution remains captain checklist evidence.
+No hosted CI is declared, so run no-mistakes with --skip ci and preserve .no-mistakes.yaml byte-identical.

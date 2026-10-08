@@ -49,7 +49,7 @@ The draft contains:
 Aim for a page or two, rather than a ledger of decisions or marketing copy.
 In delta mode, keep the baseline and list candidate line edits independently, each with its evidence.
 Keep the draft, evidence sheet, board and transcript in scratch outside the target.
-Protected creation or replacement remains blocked until apply is available and the author selects the exact change.
+Apply selected creation or replacement through the main procedure's shared review and write rules.
 
 ## Stress-test real fault lines
 
@@ -96,7 +96,7 @@ An ended review without approval remains incomplete.
 Deliver the approved draft or delta for selected protected apply.
 Confirm its purpose, commitments, boundaries and accept/resist tests stand alone.
 If an existing companion answers file contains approved reasoning, propose folding missing reasoning into the vision and removing the companion and its pointers as selected protected changes.
-Do not delete or migrate it directly while apply is unavailable.
+Use the main procedure's shared review and write rules for those changes.
 Merge overlapping reasoning and keep the vision concise.
 Board transcripts remain in scratch and never become project documents.
 

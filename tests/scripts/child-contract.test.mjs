@@ -79,8 +79,8 @@ for (const cancelled of [false, true]) {
     const directory = await sandbox(t)
     const script = join(root, 'tests/inputs/process-tree.mjs')
     const result = await invoke(directory, 'run', {
-      command: nodeCommand([script, directory], { versionArgs: [script, '--version'], timeoutMs: 500 }),
-      ...(cancelled ? { cancelDirectory: directory } : {})
+      command: nodeCommand([script, directory], { versionArgs: [script, '--version'], timeoutMs: cancelled ? 500 : 1 }),
+      ...(cancelled ? { cancelDirectory: directory } : { timeoutDirectory: directory })
     })
     assert.equal(result.code, 1)
     assert.equal(result.status, 'failed')

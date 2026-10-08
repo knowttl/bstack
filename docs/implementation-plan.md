@@ -370,10 +370,12 @@ Tick each task when its "Done when" commands pass.
       Current target, scope, intent and artifact fingerprints gate required outcomes, with verification blocked before decisions needed before ready.
       The [findings contract](command-contract.md#findings) owns audit and foundation inputs, examples and readiness limits.
       [T2.5 evidence](../tests/eval/results/tasks/T2.5.json) records local command controls for AC-8, AC-63 and AC-65, with real Windows/macOS and full agent acceptance still separate.
-  - [ ] T2.6 Build protected writes and resume state
+  - [x] T2.6 Build protected writes and resume state
     - C14a implements steps 1-3: change-set and resume schemas, six mechanical operations with complete reviewed bytes, digest-bound selections and resolved scope, and `apply --plan <file> --dry-run`.
-      The partial suite is registered as `npm test -- --task T2.6`; its task evidence is `tests/eval/results/tasks/T2.6.json`.
-      C14b remains for writes, recoverable originals, journal, resume, repeat, `state show` and whole-file replacement; T2.6 is not complete.
+      The complete suite is registered as `npm test -- --task T2.6`; its task evidence is `tests/eval/results/tasks/T2.6.json`.
+    - C14b implements steps 4-9: protected writes, flushed originals and journal, per-file atomic replacement, hash-derived resume and repeat, `state show`, selected delete and reviewed whole-file replacement.
+      Tests inject failures before replacement and process exits after replacement and before journal completion, plus journal I/O failure, filesystem limits, dirty-user conflicts and T2.5 report application.
+      Real Windows/macOS execution remains captain checklist evidence, and automatic affected-check execution remains T2.7.
   - [ ] T2.7 Build verification capture and live probes
   - [ ] T2.8 Complete the existing-repo audit and apply path
   - [ ] T2.9 Complete protected new-project creation
