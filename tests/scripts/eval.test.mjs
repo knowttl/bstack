@@ -262,6 +262,16 @@ test('scripted replies resume the exact host conversation, preserve user turns a
   assert.ok(transcript.includes('User: ' + record.scenario.answers[0]))
 })
 
+test('resumed Codex turns retain the opening sandbox policy', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const { record } = hostStart(t, directory, path)
+  const reply = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
+  const opening = JSON.parse(record.turns[0].result.stdout.trim().split('\n')[1]).item.observed
+  const resumed = JSON.parse(reply.turns[1].result.stdout.trim().split('\n')[1]).item.observed
+  assert.deepEqual([opening.sandboxPolicy, resumed.sandboxPolicy], ['danger-full-access', 'danger-full-access'])
+})
+
 test('manual adapter preparation is rejected before creating a run', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)

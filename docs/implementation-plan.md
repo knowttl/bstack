@@ -352,6 +352,9 @@ Tick each task when its "Done when" commands pass.
     - Phase 1 E2E found that the new-idea answer script called shopping-list entries "missing items" without explaining how the household identifies them.
       The real agent correctly asked about that gap, but the script could not answer it and the vision remained blocked.
       The corrected answer specifies explicit need-to-buy marking and excludes quantities and stock levels in version one.
+    - The retry exposed an adapter defect: Codex opened with danger-full-access, but resumed with read-only permissions and could not create review scratch.
+      Recorded turn contexts confirmed the policy change.
+      Resume now explicitly retains the opening sandbox policy, with a regression check through the existing fake host.
 - Phase 2: Audit and foundation
   - [ ] T2.1 Write the research briefs and the citation check
   - [ ] T2.2 Build `inspect`
