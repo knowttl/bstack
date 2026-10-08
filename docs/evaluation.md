@@ -73,7 +73,7 @@ npm run eval -- score --run <id> --answers answers.json --transcript tests/eval/
 ```
 
 Starting captures only the opening request.
-The runner preserves the exact user messages, JSONL events and stderr in `conversation.txt`, including available command and file-open observations.
+The runner captures user messages, JSONL events and stderr in `conversation.txt`, including available command and file-open observations, subject to [evidence publication redaction](#evidence-publication).
 Each turn also retains its child execution result and tool version in `run.json`.
 Review the host's question and deliver the corresponding next scripted answer with `eval turn --answer`, using its one-based index.
 This reviewer-driven delivery uses `codex exec resume` instead of guessing which prose question an answer addresses.
@@ -138,6 +138,7 @@ The `clear-goals` loading score uses observed command/file-open events, never a 
 Create a scoring answers file using the checklist IDs printed by the run.
 Every check needs a Boolean verdict and a one-based inclusive line range in the transcript, whether it passed or failed.
 The reviewer is responsible for the judgement and for identifying unavailable observations as a failed check with the limitation in the transcript.
+Reviewer identities must contain at least three characters and cannot be purely numeric.
 All current scenario checks are human scored.
 Fixture sanity remains deterministic in the existing builder and does not substitute for agent observations.
 
@@ -156,7 +157,8 @@ npm run eval -- score --run <id> --answers answers.json --transcript transcript.
 
 Missing files, empty transcripts, incomplete or duplicate check IDs, non-Boolean verdicts, wrong run IDs and out-of-range citations leave the run blocked.
 The runner never waits for missing manual evidence.
-Successful scoring copies the answers and transcript into a unique scoring artifact folder and records reviewer and transcript locations for every check.
+Successful scoring publishes redacted answers and transcript copies in a unique scoring artifact folder and records the anonymous reviewer placeholder and transcript location for every check.
+For adapter runs, scoring also replaces the retained conversation with the redacted scoring transcript and updates its conversation hash.
 All yes answers produce a passing score, and any no answer produces a failing score.
 A scored run cannot be rescored.
 Create a new run to retain earlier checkpoints and scoring history.
@@ -173,6 +175,16 @@ The scenario fixture, built fixture name, outcome request, ordered scripted answ
 No previously passing check may fail with the skill.
 At least one more check must pass with the skill, unless every check already passed in the baseline and still passes.
 Unscored or incomparable runs stay blocked.
+
+### Evidence publication
+
+The runner redacts captured conversations, manual and closed run records, and every scoring transcript and answers copy using the local host's actual user and group names, fixture and home paths, scratch paths and thread identifiers.
+Scoring also redacts the supplied reviewer identity in string values, including decoded JSON strings, and always publishes reviewer fields as `[redacted: user name]`.
+JSON property names are retained, and transcript line breaks and citation ranges are preserved.
+Conversation hashes bind the published bytes.
+
+Open, unscored adapter run records retain private operational paths and session identifiers for resume and isolation checks, and must not be committed.
+Manual scoring leaves the supplied source answers and transcript files unchanged; keep those private and commit only their redacted publication copies.
 
 ## Registry and final selections
 

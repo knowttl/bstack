@@ -7,7 +7,7 @@ import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/sche
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { readAdapter, isolate, hostTurn, closeHost } from './lib/evaluation-host.mjs'
+import { readAdapter, isolate, hostTurn, closeHost, redactEvidence } from './lib/evaluation-host.mjs'
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
@@ -71,7 +71,7 @@ async function start(opts, results) {
       if (record.isolation.home) await closeHost(record, directory).catch(() => { record.isolation.verified = false })
     }
   }
-  await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n', { flag: 'wx' })
+  await saveRecord(record, directory, 'wx')
   return record
 }
 
@@ -82,7 +82,7 @@ async function captureTurn(record, message, directory) {
     record.reason = 'Host turn captured. Review the question, send its scripted answer with eval turn, then score the transcript.'
   } finally {
     const transcript = record.turns.map(turn => `User: ${turn.message}\nHost JSONL:\n${turn.result.stdout}\nHost stderr:\n${turn.result.stderr}\n`).join('\n')
-    await writeFile(join(directory, record.conversation), transcript)
+    await writeFile(join(directory, record.conversation), redactEvidence(transcript, record))
   }
 }
 
@@ -101,7 +101,7 @@ async function turn(opts, results) {
     record.isolation.verified = false
     await closeHost(record, join(results, record.id)).catch(() => { record.isolation.verified = false })
   }
-  await writeFile(join(results, record.id, 'run.json'), JSON.stringify(record, null, 2) + '\n')
+  await saveRecord(record, join(results, record.id))
   return record
 }
 
@@ -110,13 +110,21 @@ async function close(opts, results) {
   if (!record.adapter) fail('Only adapter conversations have an isolated host to close.')
   try { await closeHost(record, join(results, record.id)) }
   catch (error) { record.reason = error.message }
-  await writeFile(join(results, record.id, 'run.json'), JSON.stringify(record, null, 2) + '\n')
+  await saveRecord(record, join(results, record.id))
   return record
 }
 
 async function load(results, id) {
   if (!/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(id ?? '')) fail('Supply a run ID printed by eval.', 'usage-error')
   return await readJSON(join(results, id, 'run.json'))
+}
+
+async function saveRecord(record, directory, flag) {
+  const content = JSON.stringify(record, null, 2) + '\n'
+  // Open run records are private operational state required for resume and isolation checks.
+  const evidence = record.adapter && !record.isolation.cleanedAt && !record.transcript ? content : redactEvidence(content, record)
+  await writeFile(join(directory, 'run.json'), evidence, { flag })
+  return JSON.parse(evidence)
 }
 
 async function score(opts, results) {
@@ -128,7 +136,8 @@ async function score(opts, results) {
     id: text, passed: { type: 'boolean' }, startLine: { type: 'integer' }, endLine: { type: 'integer' }
   })) }), answers)
   validateIds(answers.checks, '$/checks')
-  if (answers.runId !== record.id || !answers.reviewer.trim() || answers.checks.length !== record.scenario.checks.length ||
+  if (answers.reviewer.trim().length < 3 || /^\d+$/.test(answers.reviewer.trim())) fail('Reviewer identities must contain at least three characters and cannot be purely numeric.')
+  if (answers.runId !== record.id || answers.checks.length !== record.scenario.checks.length ||
       record.scenario.checks.some(check => !answers.checks.some(answer => answer.id === check.id))) fail('Answers must name this run, a reviewer and every checklist ID exactly once.')
   const transcript = await readFile(resolve(opts.transcript), 'utf8')
   if (!transcript.trim()) fail('Transcript is empty. The run remains blocked.')
@@ -142,22 +151,27 @@ async function score(opts, results) {
       if (!record.isolation.verified || record.conversationHash !== hashBytes(transcript)) fail('Closed host evidence has unverified isolation or a changed conversation.')
     } else {
       try { await closeHost(record, directory) }
-      finally { await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n') }
+      finally { await saveRecord(record, directory) }
     }
   }
   const attempt = randomUUID()
   await mkdir(join(directory, attempt))
   record.transcript = join(attempt, 'transcript.txt')
   record.answers = join(attempt, 'answers.json')
-  await writeFile(join(directory, record.transcript), transcript, { flag: 'wx' })
-  await writeFile(join(directory, record.answers), JSON.stringify(answers, null, 2) + '\n', { flag: 'wx' })
-  record.scoredAt = new Date().toISOString()
+  const redaction = { ...record, caseResults: [{ reviewer: answers.reviewer }] }
   record.caseResults = record.scenario.checks.map(check => ({ ...check, ...answers.checks.find(answer => answer.id === check.id),
-    scoring: 'human', reviewer: answers.reviewer, transcript: record.transcript }))
+    scoring: 'human', reviewer: '[redacted: user name]', transcript: record.transcript }))
+  const evidence = redactEvidence(transcript, redaction)
+  await writeFile(join(directory, record.transcript), evidence, { flag: 'wx' })
+  await writeFile(join(directory, record.answers), redactEvidence(JSON.stringify({ ...answers, reviewer: '[redacted: user name]' }, null, 2) + '\n', redaction), { flag: 'wx' })
+  if (record.adapter) {
+    await writeFile(join(directory, record.conversation), evidence)
+    record.conversationHash = hashBytes(evidence)
+  }
+  record.scoredAt = new Date().toISOString()
   record.status = record.caseResults.every(check => check.passed) ? 'passed' : 'failed'
   record.reason = record.adapter ? 'Human-scored captured host conversation with verified discovery isolation.' : 'Human-scored transcript. Host isolation remains unverified for this manual host.'
-  await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n')
-  return record
+  return await saveRecord(JSON.parse(redactEvidence(JSON.stringify(record), redaction)), directory)
 }
 
 async function compare(opts, results) {

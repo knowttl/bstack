@@ -1,12 +1,62 @@
 import { chmod, copyFile, cp, mkdir, mkdtemp, readdir, readFile, realpath, rm } from 'node:fs/promises'
 import { constants } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { homedir, tmpdir } from 'node:os'
+import { homedir, tmpdir, userInfo } from 'node:os'
+import { execFileSync } from 'node:child_process'
 import { root, text, object, array, readJSON, fail } from './evaluation.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { resolvePath } from '../../skills/repo-audit/scripts/lib/paths.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
+
+export function redactEvidence(content, record) {
+  const username = userInfo().username
+  const group = process.platform === 'win32' ? username : execFileSync('id', ['-gn'], { encoding: 'utf8' }).trim()
+  const replacements = [
+    [record?.fixture?.path, '[fixture]'],
+    [record?.isolation?.home, '[isolated-home]'],
+    [homedir(), '[host-home]'],
+    [record?.sessionId, '[identifier]'],
+    ...[...content.matchAll(/(?:thread_id|sessionId)\\?":\s*\\?"([^"\\]+)/g)].map(match => [match[1], '[identifier]']),
+    ...(record?.caseResults ?? []).map(check => [check.reviewer.trim(), '[redacted: user name]']),
+    [username, '[redacted: user name]'],
+    [group, '[redacted: user name]']
+  ].filter(([value, placeholder]) => value && (placeholder === '[redacted: user name]' ? value !== placeholder : !/^[\[<]/.test(value)))
+  const names = replacements.sort((a, b) => b[0].length - a[0].length)
+  const scratch = tmpdir().replace(/[\\/]$/, '')
+  function redact(value, decoded = false) {
+    let serialized
+    try { serialized = JSON.parse(value) } catch {}
+    if ((serialized !== null && typeof serialized === 'object') || (!decoded && typeof serialized === 'string')) {
+      const strings = new Map()
+      function walk(node) {
+        if (typeof node === 'string') strings.set(node, redact(node, true))
+        else if (node !== null && typeof node === 'object') Object.values(node).forEach(walk)
+      }
+      walk(serialized)
+      return value.replace(/"(?:[^"\\\x00-\x1f]|\\.)*"/g, (part, offset) => {
+        if (/^\s*:/.test(value.slice(offset + part.length))) return part
+        const original = JSON.parse(part)
+        const replacement = strings.get(original)
+        return replacement === undefined || replacement === original ? part : JSON.stringify(replacement)
+      })
+    }
+    if (/[\r\n]/.test(value)) return value.split(/(\r\n|\r|\n)/).map((part, index) => index % 2 ? part : redact(part, decoded)).join('')
+    for (const [name, placeholder] of names) {
+      value = value.replace(new RegExp(`(?<![\\p{L}\\p{N}_-])${RegExp.escape(name)}(?![\\p{L}\\p{N}_-])`, 'gu'), () => placeholder)
+    }
+    value = value.replace(new RegExp(`${RegExp.escape(scratch)}[/\\\\]+[^\\s"'\\\\;<>]+`, 'g'), '[scratch-path]')
+      .replace(/(?:\/private)?\/tmp\/[^\s"'\\;<>]+/g, '[scratch-path]')
+      .replace(/\/(?:home|Users)\/[^\s/"'\\;<>]+/g, '[host-home]')
+    return value.replace(/"(?:[^"\\\x00-\x1f]|\\.)*"/g, part => {
+      let original
+      try { original = JSON.parse(part) } catch { return part }
+      const replacement = redact(original, true)
+      return replacement === original ? part : JSON.stringify(replacement)
+    })
+  }
+  return redact(content)
+}
 
 export async function readAdapter(path) {
   const adapter = await readJSON(path)
