@@ -141,7 +141,12 @@ Run safe native checks when prerequisites permit, recording commands and results
 Get approval before checks that affect external systems or shared data.
 Record unavailable checks and inaccessible history as limitations, rather than inventing evidence.
 Use the shared research rules below for read-heavy work.
-Scripted inspect and inventory are unavailable until T2.2 and T2.3, and deterministic architecture measurements until T2.4.
+Run `node scripts/repo-audit.mjs inspect --repo <target> --json` to record starting Git state, manifests and prerequisite versions without writes.
+Run `node scripts/repo-audit.mjs inventory --repo <target> --json` to discover equivalent document names, absent sources and scoped instruction candidates.
+Read the discovered sources before treating them as authoritative.
+Preserve distinct nested guidance and local or outside-repo instructions.
+Instruction consolidation candidates require content review, a current host loading check and author approval before protected edits.
+Deterministic architecture measurements remain unavailable until T2.4.
 Manual observations do not establish that those helpers ran.
 
 Done when: Every relevant evidence source is inventoried or listed as unavailable, the starting state and native check results are recorded, and the audit distinguishes documented intent, observed behaviour and inferred intent with file citations.

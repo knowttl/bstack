@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T2.3",
+  "slice": "C11bc",
+  "sourceRevision": "f6a452edb8152b49e8de9dae1f4d41e2fb6235be",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs. Tiny adjacent slices are merged; this piece merges C11b and C11c.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1 (https://github.com/knowttl/bstack/pull/21: research briefs, `cite-check`, and the completed Phase 1 live vision review).\n\nThis piece is merged slice C11bc: task T2.2 \"Build `inspect`\" and task T2.3 \"Build `inventory`\". Done evidence: read-only fingerprint and exact missing-prerequisite result; equivalent standards and scoped instruction candidates, absent documents tolerated.",
+  "amendments": [],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "root-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.root-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "skill-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--prefix",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.skill-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "package-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.package-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "full-tests",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.full-tests.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.2",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.2"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.task-T2.2.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.3",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.3"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.task-T2.3.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-10",
+      "kind": "automated",
+      "procedure": "py-ledger CONTRIBUTING is the standards source without requiring CODING_STANDARDS; inventory discovers equivalent names and exact-byte hashes and tolerates absent documents.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C11bc.task-T2.3.txt"
+    },
+    {
+      "id": "AC-11",
+      "kind": "automated",
+      "procedure": "inventory discovers equivalent names and exact-byte hashes and tolerates absent documents.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C11bc.task-T2.3.txt"
+    },
+    {
+      "id": "AC-49",
+      "kind": "automated",
+      "procedure": "ts-shop import-only CLAUDE stub produces a version-limited merge candidate; inventory preserves root, nested, local and outside-repo instruction scopes without writes; a local-only instruction is a shadowing report without a merge candidate; equivalent nested instructions consolidate within their own scope. inventory preserves the containing scope of .claude/AGENTS.md; inventory preserves the containing scope of .claude/CLAUDE.local.md; inventory preserves the containing scope of web/.claude/AGENTS.md; inventory preserves the containing scope of web/.claude/CLAUDE.local.md.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C11bc.task-T2.3.txt"
+    }
+  ],
+  "limitations": [
+    "Recorded local runs establish Linux and Node 24 only, not Windows or macOS.",
+    "Evidence covers this task slice, not complete audit execution, native project checks, protected edits or the later release acceptance run.",
+    "Discovery uses documented name families and regular-file traversal exclusions. Sources need content review to establish authority.",
+    "Instruction candidates require equivalent-content review, a fresh host loading check and author approval. No instructions are modified.",
+    "Captain checklist: real Windows execution of npm, pnpm and Yarn launchers remains unverified. Injected win32 tests on Linux cover PATH entry-point resolution and literal JavaScript CLI arguments, not Windows process execution."
+  ]
+}

@@ -353,8 +353,8 @@ Tick each task when its "Done when" commands pass.
       The C11a prerequisite run completes the previously blocked board and scratch-approval evidence without claiming protected project creation.
 - Phase 2: Audit and foundation
   - [x] T2.1 Write the research briefs and the citation check - five bounded read-only briefs, common report schema and exact-byte citation validation; [real discovery checkpoints](../tests/eval/results/discovery-C11a/summary.md) record sequential TypeScript/Python fallback and parallel subagent execution, checked citations, no-web limits and unchanged fixtures.
-  - [ ] T2.2 Build `inspect`
-  - [ ] T2.3 Build `inventory`
+  - [x] T2.2 Build `inspect`. C11bc records read-only Git state, manifest hashes and prerequisite versions, with fixture fingerprint, missing-tool and unreadable-history tests in `tests/eval/results/tasks/T2.2.json`.
+  - [x] T2.3 Build `inventory`. C11bc records equivalent document sources, absent kinds and scoped instruction candidates, with native fixtures and root, nested, local and ancestor cases in `tests/eval/results/tasks/T2.3.json`.
   - [ ] T2.4 Build `measure` and `overlap`
   - [ ] T2.5 Build the findings schema and report
   - [ ] T2.6 Build protected writes and resume state

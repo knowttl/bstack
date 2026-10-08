@@ -1,5 +1,15 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  inspect: {
+    module: './commands/inspect.mjs',
+    options: [],
+    help: 'Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]'
+  },
+  inventory: {
+    module: './commands/inventory.mjs',
+    options: [],
+    help: 'Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.'
+  },
   'cite-check': {
     module: './commands/cite-check.mjs',
     options: ['report'],
@@ -28,4 +38,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['inspect', 'inventory', 'measure', 'overlap', 'findings validate', 'findings render', 'apply', 'state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['measure', 'overlap', 'findings validate', 'findings render', 'apply', 'state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']

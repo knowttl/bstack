@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T2.2",
+  "slice": "C11bc",
+  "sourceRevision": "f6a452edb8152b49e8de9dae1f4d41e2fb6235be",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs. Tiny adjacent slices are merged; this piece merges C11b and C11c.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1 (https://github.com/knowttl/bstack/pull/21: research briefs, `cite-check`, and the completed Phase 1 live vision review).\n\nThis piece is merged slice C11bc: task T2.2 \"Build `inspect`\" and task T2.3 \"Build `inventory`\". Done evidence: read-only fingerprint and exact missing-prerequisite result; equivalent standards and scoped instruction candidates, absent documents tolerated.",
+  "amendments": [],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "root-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.root-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "skill-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--prefix",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.skill-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "package-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.package-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "full-tests",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.full-tests.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.2",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.2"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.task-T2.2.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.3",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.3"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C11bc.task-T2.3.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-4",
+      "kind": "automated",
+      "procedure": "inspect fingerprints a dirty fixture unchanged including Git index bytes; inspect reports no commits and literal staged rename and untracked paths.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C11bc.task-T2.2.txt"
+    },
+    {
+      "id": "AC-68",
+      "kind": "automated",
+      "procedure": "inspect with git hidden from PATH is blocked with the exact named limitation; inspect reads nested manifests and reports missing detected prerequisites; inspect blocks unreadable commit history rather than claiming no commits; inspect reports malformed manifests as a named limitation. Windows npm selection uses Node and a JavaScript CLI with literal arguments; Windows npm resolves a PATH launcher to an executable JavaScript CLI; Windows npm.cmd resolves a PATH launcher to an executable JavaScript CLI; Windows pnpm resolves a PATH launcher to an executable JavaScript CLI; Windows pnpm.cmd resolves a PATH launcher to an executable JavaScript CLI; Windows yarn resolves a PATH launcher to an executable JavaScript CLI; Windows yarn.cmd resolves a PATH launcher to an executable JavaScript CLI; Windows npm.cmd without a supported CLI is blocked; Windows pnpm without a supported CLI is blocked; Windows pnpm.cmd without a supported CLI is blocked; Windows yarn without a supported CLI is blocked; Windows yarn.cmd without a supported CLI is blocked.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C11bc.full-tests.txt"
+    }
+  ],
+  "limitations": [
+    "Recorded local runs establish Linux and Node 24 only, not Windows or macOS.",
+    "Evidence covers this task slice, not complete audit execution, native project checks, protected edits or the later release acceptance run.",
+    "Discovery uses documented name families and regular-file traversal exclusions. Sources need content review to establish authority.",
+    "Prerequisite probes report versions for recognised manifests, without asserting all project-specific prerequisites or supported version ranges. Available local history is read without fetching shallow ancestors.",
+    "Captain checklist: real Windows execution of npm, pnpm and Yarn launchers remains unverified. Injected win32 tests on Linux cover PATH entry-point resolution and literal JavaScript CLI arguments, not Windows process execution."
+  ]
+}
