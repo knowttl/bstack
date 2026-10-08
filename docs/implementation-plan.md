@@ -135,36 +135,18 @@ See [arguments and targets](command-contract.md#arguments-and-targets) and [scra
 See [results](command-contract.md#results).
 
 **Child command.**
-Use `{ executable, args, cwd, timeoutMs, versionArgs }`, with `args` as an array and `cwd` relative to the target.
-Resolve the working directory inside the declared target before execution.
-Default timeout is 120000 milliseconds, with an explicit override for long checks.
-Capture bounded output, duration, exit code, signal, timeout and tool version.
+See [child commands](command-contract.md#child-commands) for the implemented execution contract and Windows launcher constraint.
 
-Timeout or cancellation cannot produce a passing result.
-Stop managed child processes and close output streams before returning.
-
-Run Node entry points with `process.execPath` and an argument array.
-For npm on Windows, resolve npm's JavaScript CLI entry point and invoke it with `process.execPath`.
-Do not directly spawn `npm.cmd` or silently switch arbitrary project commands to `shell: true`.
-An unsupported command-file launcher is blocked with an actionable prerequisite.
-
-Tests cover paths with spaces, Unicode, metacharacters and arguments that must remain literal on all three operating systems.
-
-Evidence: a Windows Node `v24.16.0` probe returned `EINVAL` for direct `npm.cmd` execution.
-The platform constraint is documented in [Node's child-process guide](https://raw.githubusercontent.com/nodejs/node/v24.0.0/doc/api/child_process.md).
+Tests must cover paths with spaces, Unicode, metacharacters and arguments that must remain literal on all three operating systems.
 
 **Hashes.**
 Write preconditions use SHA-256 of exact file bytes, without line-ending normalisation.
 Record both original and proposed hashes, including explicit absence for a new or removed file.
-Evidence fingerprints include repo identity, resolved base commit, path, presence, file mode and content hash.
-Include substantive assessment inputs as canonical JSON, omitting only derived fingerprints and execution result fields.
-Do not hash the serialized evidence file into its own fingerprint.
-Its path remains inventoried, and its substantive fields remain covered through canonical JSON.
+See [fingerprints](command-contract.md#fingerprints) for the implemented hashing and local evidence identity contract.
 
 **Named input formats.**
 Every structured input declares `schemaVersion: 1`.
 Use IDs to join records and reject missing or duplicate IDs.
-Repo identity in local fingerprints uses the resolved local root.
 Portable committed assessments instead identify the project and Git object state, with repo-relative paths.
 The checker validates the local root separately, so cloning into a different directory does not invalidate otherwise identical reviewed inputs.
 

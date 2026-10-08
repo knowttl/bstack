@@ -97,6 +97,8 @@ An already cancelled signal starts no child.
 Timeout and cancellation kill the managed process group on POSIX and use `taskkill /T /F` on Windows.
 The runner waits for stream closure and cleanup before returning.
 If cleanup fails, it closes the captured streams and returns blocked without waiting for inherited pipes to close.
+It also attempts to kill the direct child and releases its event-loop reference if that attempt fails.
+Direct-child termination does not prove tree cleanup, so the result remains blocked.
 Children that deliberately detach themselves from the managed tree are outside this contract.
 
 `selectCommand(executable, args)` supplies the same launcher selection for the check and its version probe.
@@ -105,6 +107,8 @@ On Windows, `npm` and `npm.cmd` select npm's `npm-cli.js`, first from `npm_execp
 Node executes that entry point with literal arguments.
 Missing npm entry points and other `.cmd` or `.bat` launchers are blocked with a prerequisite and fix.
 No child uses shell interpretation.
+Direct `npm.cmd` execution returned `EINVAL` in a Windows Node `v24.16.0` probe.
+The platform constraint is documented in [Node's child-process guide](https://raw.githubusercontent.com/nodejs/node/v24.0.0/doc/api/child_process.md).
 Windows command selection is tested on Linux in C4b, while real Windows execution remains pending under R26.
 
 ## Fingerprints

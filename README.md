@@ -3,7 +3,7 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the T0.2 [skill skeleton](skills/repo-audit/SKILL.md) and the C4a shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the T0.2 [skill skeleton](skills/repo-audit/SKILL.md) and the C4a/C4b shared library described in the [command contract](docs/command-contract.md).
 Its body and bundled references are placeholders, and the planned audit commands and installer are not built yet.
 Nothing is published to npm.
 
@@ -17,6 +17,7 @@ npm test -- --task T0.1
 npm test -- --task T0.2
 npm test -- --task T0.3
 npm test -- --task T0.4.C4a
+npm test -- --task T0.4.C4b
 ```
 
 `check` currently runs the bootstrap checks for the manifest, lockfile and test discovery, plus the skill skeleton checks.
