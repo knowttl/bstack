@@ -275,9 +275,8 @@ Every slice records its task IDs, the original user intent and approved amendmen
 | C5a | T0.5 metadata/loading/resource closure | C4c | Valid skeleton and seeded missing/nested/oversized/host-metadata failures |
 | C5b | T0.5 script/import/step policy and rewritten T0.6 | C5a | Declared runtime checks and syntactic controls, local Node 24/26 logs, no-mistakes gate, zero Actions |
 | C6a | T1.1 isolated idea/clear-goals fixtures and builder | C1 and relevant C4 contracts, amended dependency | Deterministic temp builds, non-Git idea, scripted local identity/history, source unchanged |
-| C6b | T1.1 TS and Python seeds/native setup | C6a | Each native sanity check executes and confirms its valid/invalid seeds |
-| C6c | T1.1 dirty/refactor/history/installer variants | C6b | Deterministic seeds, clean proof variants, independent alias/cycle switches |
-| C7a | T1.2 registry and manual evaluation interface | C5b, C6c | 75 owned case IDs, invalid registry/manual result blocked, explicit transcript scoring |
+| C6bc | T1.1 TS and Python seeds/native setup, rule-proof and dirty/refactor/history/installer variants | C6a | Each native sanity check executes and confirms its valid/invalid seeds; deterministic seeds, clean proof variants, independent alias/cycle switches |
+| C7a | T1.2 registry and manual evaluation interface | C5b, C6bc | 75 owned case IDs, invalid registry/manual result blocked, explicit transcript scoring |
 | C7b | T1.2 one current-host adapter, isolation and baseline | C7a | Fresh sessions, no-skill discovery absence, unique transcripts, comparable model/revision/criteria |
 | C8 | T1.3 baseline-backed SKILL procedure | C7b | Gap map and package check, hard safeguards retained, unavailable later steps labelled |
 | C9a | T1.4 interview/domain references | C8, C3 | Flattened resources, no external skill calls, glossary and confirmed-intent rubric |
@@ -285,7 +284,7 @@ Every slice records its task IDs, the original user intent and approved amendmen
 | C10a | T1.6 runtime probe, exact pin, board build | C9b | Clean nested install, runtime observation, safe inserted text, unique IDs |
 | C10b | T1.6 launch/verdict/resume and T1.7 intent checkpoint | C10a | Live roundtrip, stale verdict refused, approved scratch draft, ambiguous decision blocked, workspace unchanged |
 | C11a | T2.1 research briefs/citation validation | C10b | Correct/wrong/stale citations, no-web limits, discovery-only transcripts in available modes |
-| C11b | T2.2 inspect | C11a, amended dependencies if parallel | Read-only fingerprint and exact missing-prerequisite result |
+| C11b | T2.2 inspect | C11a | Read-only fingerprint and exact missing-prerequisite result |
 | C11c | T2.3 inventory | C11b | Equivalent standards and scoped instruction candidates, absent documents tolerated |
 | C12a | T2.4 history measurement | C11c | Rename/range/exclusion evidence, signal commits, no semantic violation inferred |
 | C12b | T2.4 overlap | C12a | Declared glob semantics, shared path/contract controls |
@@ -317,9 +316,9 @@ Every slice records its task IDs, the original user intent and approved amendmen
 | C29 | T5.2 final evidence and manual release | C28, final release approval | All revised case evidence complete, baseline comparisons, final no-mistakes gate, exact approved tag/release |
 
 C0's "conflicts above" are the hosted-CI and release conflicts that the commissioning review listed, now resolved in this plan and the design.
-Parallel work is possible only where a slice's listed prerequisites allow it: upstream acquisition (C3) and fixture work (C6), and the early references (C16) alongside the scripts in C11 to C15.
+Execute one slice at a time, as approved by the owner.
+Listed prerequisites do not authorise parallel execution.
 Keep root manifests, lockfiles, command dispatch, shared schemas, `SKILL.md`, `NOTICE`, the case registry and task progress under one integration owner.
-Parallel work declares its changed contracts as well as its write paths, and stores evidence in distinct run paths.
 
 ## Progress
 
@@ -336,9 +335,11 @@ Tick each task when its "Done when" commands pass.
   - [x] T0.5 Build the package check
     - [x] C5a Metadata/loading/resource closure ([evidence](../tests/eval/results/tasks/T0.5.C5a.json))
     - [x] C5b Script/import/step policy and rewritten T0.6 ([evidence](../tests/eval/results/tasks/T0.5.C5b.json))
-  - [ ] T0.6 Establish local validation and no-mistakes gate (local Node 24/26 validation and gate config delivered in C5b, gate outcome pending, [evidence](../tests/eval/results/tasks/T0.6.json))
+  - [x] T0.6 Establish local validation and no-mistakes gate ([evidence](../tests/eval/results/tasks/T0.6.json))
 - Phase 1: Intent and vision
   - [ ] T1.1 Build the test fixtures
+    - [x] C6a Isolated idea/clear-goals fixtures and builder ([evidence](../tests/eval/results/tasks/T1.1.json))
+    - [ ] C6bc Native stacks, rule-proof and remaining variants
   - [ ] T1.2 Build the evaluation runner and record the baseline
   - [ ] T1.3 Write the first `SKILL.md`
   - [ ] T1.4 Bundle the interview and domain-language modules
@@ -581,7 +582,6 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
 ### T1.1 Build the test fixtures
 
 **Depends on:** T0.1 and T0.4.
-Fixture construction can proceed in parallel with T0.5 and T0.6.
 
 **Inputs and outputs:** Design acceptance sources -> isolated repo and non-Git fixtures with sanity checks.
 

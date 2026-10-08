@@ -1,0 +1,3 @@
+{"name":"new-idea","path":"/tmp/bstack-new-idea-44ZZWk","kind":"idea"}
+{"name":"ambiguous-idea","path":"/tmp/bstack-ambiguous-idea-6uJoZf","kind":"idea"}
+{"name":"clear-goals","path":"/tmp/bstack-clear-goals-yQsHoz","kind":"repo"}

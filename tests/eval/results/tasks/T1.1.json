@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T1.1",
+  "slice": "C6a",
+  "sourceRevision": "585bd94350036fe78dd3c90efabf209cbb47f8bc",
+  "intent": "Implement each task as the plan specifies with no extra hardening or defensive code beyond its acceptance criteria, record only the evidence the task contract requires, and merge tiny adjacent slices. C6a builds the fixture builder and non-stack fixtures.",
+  "amendments": [
+    "C6a delivers the builder and three non-stack fixtures. Native stacks and variants remain C6bc. Evidence-only commits name the tested implementation revision."
+  ],
+  "status": "blocked",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.install.txt"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.check.txt"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.test.txt"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T1.1"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.task-test.txt"
+    },
+    {
+      "id": "build",
+      "executable": "node",
+      "args": [
+        "tests/fixtures/build.mjs",
+        "--all"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.build.txt"
+    },
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.node-version.txt"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.npm-version.txt"
+    },
+    {
+      "id": "git-version",
+      "executable": "git",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.git-version.txt"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.os.txt"
+    },
+    {
+      "id": "revision",
+      "executable": "git",
+      "args": [
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.1.revision.txt"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C6a-non-git",
+      "kind": "automated",
+      "procedure": "tests/scripts/fixtures.test.mjs: new-idea builds a non-Git workspace containing only its brief; ambiguous-idea builds a non-Git workspace containing only its brief.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.1.task-test.txt"
+    },
+    {
+      "id": "C6a-history",
+      "kind": "automated",
+      "procedure": "tests/scripts/fixtures.test.mjs: clear-goals replays deterministic history with local identity and signing disabled.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.1.task-test.txt"
+    },
+    {
+      "id": "C6a-source-preservation",
+      "kind": "automated",
+      "procedure": "tests/scripts/fixtures.test.mjs: all fixtures run sanity checks and leave source bytes unchanged; a changed fixture seed fails its sanity check.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.1.task-test.txt"
+    },
+    {
+      "id": "T1.1-native-fixtures",
+      "kind": "manual",
+      "procedure": "Build native stacks, clean rule-proof variants and dirty/refactor/history/installer variants, then execute their native sanity checks.",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Outside C6a scope.",
+      "nextPrerequisite": "C6bc implements the remaining T1.1 fixtures."
+    }
+  ],
+  "limitations": [
+    "C6a checks fixture construction and seed presence, not the later agent acceptance behaviours served by these inputs.",
+    "Native stack fixtures and variants are pending C6bc. T1.1 remains partially complete.",
+    "Recorded local runs use Linux and Node 24 only and do not prove other operating systems."
+  ]
+}
