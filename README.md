@@ -46,11 +46,9 @@ node tests/fixtures/build.mjs --all
 node tests/fixtures/build.mjs clear-goals
 ```
 
-The builder prints one JSON line per fixture with its `name`, temporary `path` and `kind` after its sanity check passes.
-`new-idea` and `ambiguous-idea` contain only their briefs and have no Git repository.
-`clear-goals` contains approved project documents and two deterministic commits with fixture-local identity and signing disabled.
+The builder prints one JSON line per fixture with its `name`, absolute temporary `path` and `kind` (`idea` or `repo`) after its sanity check passes.
 The caller owns removal of the printed temporary folders.
-See the [fixture contract](docs/fixtures.md) for sources, sanity commands and the remaining T1.1 scope.
+See the [fixture contract](docs/fixtures.md) for sources and sanity commands, and [task progress](docs/implementation-plan.md#progress) for the remaining T1.1 scope.
 
 Raw upstream development sources are committed outside the installed skill.
 [The manifest](upstream/sources.json) owns their exact pins and copied paths, and [NOTICE](NOTICE) records adaptations.
