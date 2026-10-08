@@ -18,9 +18,10 @@ export function redactEvidence(content, record) {
     [homedir(), '[host-home]'],
     [record?.sessionId, '[identifier]'],
     ...[...content.matchAll(/(?:thread_id|sessionId)\\?":\s*\\?"([^"\\]+)/g)].map(match => [match[1], '[identifier]']),
+    ...(record?.caseResults ?? []).map(check => [check.reviewer.trim(), '[redacted: user name]']),
     [username, '[redacted: user name]'],
     [group, '[redacted: user name]']
-  ].filter(([value]) => value && !/^[\[<]/.test(value))
+  ].filter(([value, placeholder]) => value && (placeholder === '[redacted: user name]' ? value !== placeholder : !/^[\[<]/.test(value)))
   const names = replacements.sort((a, b) => b[0].length - a[0].length)
   const scratch = tmpdir().replace(/[\\/]$/, '')
   function redact(value) {

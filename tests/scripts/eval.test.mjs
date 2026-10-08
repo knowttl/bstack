@@ -5,6 +5,7 @@ import { homedir, tmpdir, userInfo } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
 
 // Each test invokes the real command with disposable evaluation records.
@@ -180,7 +181,7 @@ for (const passed of [true, false]) {
     assert.equal(result.status, passed ? 0 : 1)
     const scored = result.data.data
     assert.equal(scored.caseResults[0].scoring, 'human')
-    assert.equal(scored.caseResults[0].reviewer, 'Fixture reviewer')
+    assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
     assert.equal(scored.caseResults[0].startLine, 1)
     assert.equal(await readFile(join(directory, record.id, scored.transcript), 'utf8'), await readFile(files.transcriptPath, 'utf8'))
     assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, 2)
@@ -243,6 +244,42 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   }
   return { result, record }
 }
+
+test('supplied reviewer identities are redacted throughout manual and adapter scoring publication', async t => {
+  for (const host of ['manual', 'adapter', 'closed-adapter']) {
+    await t.test(host, async t => {
+      const directory = await temporary(t)
+      const { path } = await adapterFile(directory, 'reviewer')
+      const record = host === 'manual' ? start(t, directory) : hostStart(t, directory, path).record
+      const files = await inputs(directory, record)
+      files.answers.reviewer = 'Alice Chen'
+      assert.notEqual(files.answers.reviewer, userInfo().username)
+      await writeFile(files.answersPath, JSON.stringify(files.answers))
+      const transcriptPath = host === 'manual' ? files.transcriptPath : join(directory, record.id, record.conversation)
+      if (host === 'manual') await writeFile(transcriptPath, 'User: Review the evidence.\nReviewer: Alice Chen\n')
+      if (host === 'closed-adapter') run(directory, 'close', '--run', record.id)
+      const original = await readFile(transcriptPath, 'utf8')
+      const result = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
+      assert.equal(result.status, 0, result.stdout)
+      const saved = await readFile(join(directory, record.id, 'run.json'), 'utf8')
+      const scored = JSON.parse(saved)
+      assert.deepEqual(result.data.data, scored)
+      assert.ok(!saved.includes('Alice Chen'))
+      assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
+      assert.equal(scored.caseResults[0].passed, true)
+      assert.equal(scored.caseResults[0].startLine, 1)
+      assert.equal(scored.caseResults[0].endLine, 2)
+      const transcript = await readFile(join(directory, record.id, scored.transcript), 'utf8')
+      assert.equal(transcript, original.replaceAll('Alice Chen', '[redacted: user name]'))
+      assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, scored.answers), 'utf8')),
+        { ...files.answers, reviewer: '[redacted: user name]' })
+      if (host !== 'manual') {
+        assert.equal(await readFile(transcriptPath, 'utf8'), transcript)
+        assert.equal(scored.conversationHash, createHash('sha256').update(transcript).digest('hex'))
+      }
+    })
+  }
+})
 
 test('host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit', async t => {
   const directory = await temporary(t)

@@ -32,6 +32,7 @@ if (args.includes('--version')) {
   if (mode === 'malformed') console.log('not JSONL')
   else {
     console.log(JSON.stringify({ type: 'thread.started', thread_id: mode === 'wrong-session' && args.includes('resume') ? randomUUID() : sessionId }))
+    if (mode === 'reviewer') console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: 'Reviewer: Alice Chen' } }))
     if (mode === 'listing') {
       const username = userInfo().username
       const group = process.platform === 'win32' ? username : execFileSync('id', ['-gn'], { encoding: 'utf8' }).trim()
