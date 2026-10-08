@@ -31,7 +31,7 @@ if (args.includes('--version')) {
   else {
     console.log(JSON.stringify({ type: 'thread.started', thread_id: mode === 'wrong-session' && args.includes('resume') ? randomUUID() : sessionId }))
     console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: args.includes('resume') ?
-      'Offline access remains unresolved. I will stop without choosing a stack.' : 'Which offline access option should we use?',
+      'Offline access remains unresolved. I will stop without choosing a stack.' : 'Which offline access option should we use?' + (mode === 'large' ? 'x'.repeat(70000) : ''),
     observed: { message, home: process.env.HOME, state: process.env.CODEX_HOME, cache: process.env.XDG_CACHE_HOME, cwd: process.cwd(), sandboxPolicy } } }))
     if (mode === 'truncate') process.stdout.write('x'.repeat(70000))
     if (mode !== 'incomplete') console.log(JSON.stringify({ type: 'turn.completed', usage: { input_tokens: 1, output_tokens: 1 } }))

@@ -29,22 +29,22 @@ export async function selectCommand(executable, args, { platform = process.platf
   return { executable, args }
 }
 
-export async function runCommand(target, command, { signal, env = process.env } = {}) {
+export async function runCommand(target, command, { signal, env = process.env, outputLimitBytes = outputLimit } = {}) {
   const timeoutMs = command.timeoutMs ?? 120000
   if (!command.executable || !Array.isArray(command.args) || command.args.some(arg => typeof arg !== 'string') ||
       !Array.isArray(command.versionArgs) || command.versionArgs.some(arg => typeof arg !== 'string') ||
-      !Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) {
+      !Number.isSafeInteger(timeoutMs) || timeoutMs <= 0 || !Number.isSafeInteger(outputLimitBytes) || outputLimitBytes <= 0) {
     throw new CommandError('usage-error', [{ code: 'invalid-command', message: 'A child command requires executable, string args and versionArgs, and a positive timeout.', fix: 'Supply the documented child-command object.' }])
   }
   const cwd = await resolvePath(target.root, command.cwd)
   const selected = await selectCommand(command.executable, command.args, { env })
   const version = await selectCommand(command.executable, command.versionArgs, { env })
-  const toolVersion = await capture(version, { cwd, timeoutMs, signal, env })
+  const toolVersion = await capture(version, { cwd, timeoutMs, signal, env, outputLimitBytes })
   if (toolVersion.status !== 'passed') return { ...toolVersion, toolVersion }
-  return { ...await capture(selected, { cwd, timeoutMs, signal, env }), toolVersion }
+  return { ...await capture(selected, { cwd, timeoutMs, signal, env, outputLimitBytes }), toolVersion }
 }
 
-async function capture(command, { cwd, timeoutMs, signal, env }) {
+async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes }) {
   const started = performance.now()
   let stdout = Buffer.alloc(0)
   let stderr = Buffer.alloc(0)
@@ -55,8 +55,8 @@ async function capture(command, { cwd, timeoutMs, signal, env }) {
   let cleanup = Promise.resolve()
   if (cancelled) return result(null, null)
   const child = spawn(command.executable, command.args, { cwd, env, shell: false, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] })
-  child.stdout.on('data', chunk => { outputTruncated ||= stdout.length + chunk.length > outputLimit; stdout = Buffer.concat([stdout, chunk]).subarray(-outputLimit) })
-  child.stderr.on('data', chunk => { outputTruncated ||= stderr.length + chunk.length > outputLimit; stderr = Buffer.concat([stderr, chunk]).subarray(-outputLimit) })
+  child.stdout.on('data', chunk => { outputTruncated ||= stdout.length + chunk.length > outputLimitBytes; stdout = Buffer.concat([stdout, chunk]).subarray(-outputLimitBytes) })
+  child.stderr.on('data', chunk => { outputTruncated ||= stderr.length + chunk.length > outputLimitBytes; stderr = Buffer.concat([stderr, chunk]).subarray(-outputLimitBytes) })
   child.on('error', failure => { error = failure.message })
   let finish
   const completion = new Promise(resolve => { finish = resolve })
