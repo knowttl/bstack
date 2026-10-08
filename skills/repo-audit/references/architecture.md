@@ -81,7 +81,7 @@ Compare declared paths and contract changes, then review semantic dependencies e
 A script reports overlap evidence but cannot prove independence or predict every conflict.
 Fewer unrelated shared edits are an expected benefit, not a measured reduction until actual evidence exists.
 
-Tie each proposed boundary to its project-specific reason, source, scope, enforcement and exception policy using the enforcement reference.
+Record each proposed boundary's project-specific reason, source, scope, enforcement and exception policy.
 Reuse existing design decisions and standards rather than duplicating their rules.
 Present evidenced candidates and alternatives for selection before applying changes.
 Verification requires representative allowed and forbidden imports and compatible public behaviour, not file-count targets.
