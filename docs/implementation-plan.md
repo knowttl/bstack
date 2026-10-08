@@ -105,7 +105,7 @@ Change one only by editing this table with the reason.
 
 | Topic | Default |
 |---|---|
-| Node version | Support Node 24 and later. Recorded local runs on Node 24 and Node 26, with no hosted matrix. Recheck the Node release schedule in T0.6 |
+| Node version | Support Node 24 and later. Recorded local runs on Node 24 and Node 26, with no hosted matrix. The [official release schedule](https://nodejs.org/en/about/previous-releases), checked 2026-10-07 in T0.6, lists Node 24 and 22 as LTS and Node 26 as Current |
 | Script command | One entry point, `node skills/repo-audit/scripts/repo-audit.mjs <command> --repo <path>`. New-idea draft commands use `--workspace <existing-directory>` instead |
 | Result format | One JSON envelope on stdout with `--json`, a short summary otherwise. Envelope in T0.4 |
 | Exit codes | 0 passed, 1 failed, 2 blocked, 3 usage error |
@@ -332,10 +332,10 @@ Tick each task when its "Done when" commands pass.
     - [x] C4a Target/path/scratch and result/argument contracts ([evidence](../tests/eval/results/tasks/T0.4.C4a.json))
     - [x] C4b Child commands and fingerprints ([evidence](../tests/eval/results/tasks/T0.4.C4b.json))
     - [x] C4c Minimal schema contract and real command wiring ([evidence](../tests/eval/results/tasks/T0.4.C4c.json))
-  - [ ] T0.5 Build the package check
+  - [x] T0.5 Build the package check
     - [x] C5a Metadata/loading/resource closure ([evidence](../tests/eval/results/tasks/T0.5.C5a.json))
-    - [ ] C5b Script/import/step policy and rewritten T0.6
-  - [ ] T0.6 Establish local validation and no-mistakes gate
+    - [x] C5b Script/import/step policy and rewritten T0.6 ([evidence](../tests/eval/results/tasks/T0.5.C5b.json))
+  - [ ] T0.6 Establish local validation and no-mistakes gate (local Node 24/26 validation and gate config delivered in C5b, gate outcome pending, [evidence](../tests/eval/results/tasks/T0.6.json))
 - Phase 1: Intent and vision
   - [ ] T1.1 Build the test fixtures
   - [ ] T1.2 Build the evaluation runner and record the baseline

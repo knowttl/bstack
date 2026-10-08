@@ -10,7 +10,7 @@ Nothing is published to npm.
 Use Node 24 or later:
 
 ```sh
-npm ci
+npm ci --ignore-scripts
 npm run check
 npm test
 npm test -- --task T0.1
@@ -20,13 +20,17 @@ npm test -- --task T0.4.C4a
 npm test -- --task T0.4.C4b
 npm test -- --task T0.4.C4c
 npm test -- --task T0.5.C5a
+npm test -- --task T0.5.C5b
+npm test -- --task T0.6
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
 
-`check` runs the C5a package checks for user-only metadata, local resource paths, reference loading and line limits.
+`check` runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy.
 It reports every detected problem with a stable rule code and exits 1 on failure.
-The remaining T0.5 script, import and step policies arrive in C5b.
 See the [package check contract](docs/command-contract.md#package-check-c5a) for exact syntax and limits.
+Local validation runs the install, package check and full tests on Node 24 and Node 26.
+The no-mistakes gate installs once, runs tests once and runs the distinct package check through `commands.lint`.
+Recorded runs on Linux do not prove support on Windows or macOS.
 `npm run eval` reports that evaluation is not built and exits 2 until T1.2.
 Tests are discovered only under `tests/scripts/` and `tests/package-check/`.
 Task suites are registered in `tests/tasks.json`.

@@ -219,12 +219,27 @@ Unreadable files or folders report `package-unreadable` and do not stop checks o
 | `skill-too-long` | After stripping a leading `---` frontmatter block terminated by another `---` line, the `SKILL.md` body has more than 500 lines. CRLF is normalised for counting and a final newline does not add a line. |
 | `reference-toc` | A reference text file has more than 100 lines, using the same line-count convention, and none of its first 20 lines is an ATX heading named `Table of contents`, `Contents` or `TOC`, case-insensitively. |
 | `host-metadata` | The leading `SKILL.md` frontmatter lacks the literal unindented line `disable-model-invocation: true`, or `agents/openai.yaml` lacks an unindented `policy:` block with a two-space-indented literal `allow_implicit_invocation: false` line. Trailing whitespace is accepted. |
+| `script-import` | Parse every scanned `.js`, `.mjs` and `.cjs` text file with Acorn's latest JavaScript grammar. Use module mode except for `.cjs`, which uses script mode. Inspect import declarations, re-exports with sources, dynamic imports and bare identifier `require(...)` calls at every depth. For string literal specifiers, accept `./` and `../` local paths, Node built-ins recognised by `node:module` isBuiltin, or a package name in the skill-root package.json dependencies or optionalDependencies. Scoped names use their first two slash-separated components, other packages their first component, so declared package subpaths pass. devDependencies and peerDependencies do not supply an installed runtime. |
+| `constant-comment` | A direct Program-body const VariableDeclaration, including one wrapped by ExportNamedDeclaration, must have an actual JavaScript line or block comment whose ending line is exactly one line before the statement's starting line. An exported declaration uses the export statement's starting line. One comment covers a declaration with several bindings or destructuring. Nested statements, functions and loop declarations are outside this control. |
+| `step-done` | In the SKILL.md body, Marked's top-level token stream recognises an ATX heading of depth three whose raw spelling starts with up to three spaces then `###` and whitespace, and whose text starts with `Step` followed by whitespace or end of text. Before the next top-level heading of any depth, a paragraph token must contain an unindented line starting exactly `Done when:`. Fenced or indented code, lists and block quotes cannot supply the heading or completion line. |
+| `language-policy` | At any scanned depth, deny basenames matching .eslintrc and .prettierrc with no extension or json, yaml, yml, js, cjs or mjs extensions, eslint.config.js/cjs/mjs, prettier.config.js/cjs/mjs, ruff.toml, .ruff.toml, .pylintrc, mypy.ini, .flake8 and biome.json/jsonc. Case is ignored. In every scanned text file, deny whole-word eslint, prettier, ruff, pylint, mypy, flake8 and biome, plus eslint-config- names with word or hyphen suffixes, case-insensitively. This includes tool lists, presets, package declarations, prose, examples and comments. The short deny list lives only in the check script. |
+| `script-syntax` | JavaScript parsing fails. Report the parser diagnostic and keep collecting problems from other files. |
+| `package-manifest` | A present skill-root package.json is invalid JSON, is not an object, or has a present dependencies or optionalDependencies field that is not an object of nonempty string values. An absent manifest supplies no runtime dependencies. |
 
-These are textual checks, including text in examples and comments.
+The C5a resource and metadata rules and the language-policy rule are textual checks, including text in examples and comments.
 They do not parse full Markdown or YAML, accept every equivalent YAML spelling, validate duplicate YAML keys, check anchor names or TOC entries, infer unquoted prose paths, resolve computed resource names, or prove host invocation behaviour.
 Markdown destinations with spaces must use angle brackets.
 Inline link labels with nested brackets and destinations with unescaped parentheses are outside this scanner's grammar.
 Quoted resource paths must be complete literals without interpolation or embedded quote delimiters.
 The contents rule proves the early heading exists, not that its entries describe the file.
-Imports are only checked for recognised local path existence in C5a.
-Import policy, constant comments, step completion criteria and the lint-config/tool deny list belong to C5b.
+Script imports and constants use parsed JavaScript nodes, so strings, regex literals, templates and comments cannot impersonate imports or declarations.
+Computed specifiers, template specifiers, require aliases, createRequire calls and package resolution are outside the literal import control.
+Bare require calls are recognised syntactically without resolving whether the identifier is shadowed.
+Local literal paths still receive the C5a resource checks, which retain their textual grammar and limits.
+Declared dependency versions are not installed or resolved by this check.
+The deny list does not recognise every tool, config spelling or per-language rule set, and does not infer whether a tool mention is a recommendation.
+The step check proves the completion-line format, not its meaningfulness.
+The design's instruction that each constant explains its reason remains an authoring and review requirement.
+The plan defines the mechanical subset as top-level constants with a preceding comment.
+This check proves the comment's syntactic presence, not its quality, and does not require comments on nested constants.
+Acorn and Marked are root development dependencies used by this checker, not dependencies shipped in the skill.
