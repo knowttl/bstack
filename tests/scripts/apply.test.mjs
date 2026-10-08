@@ -79,6 +79,20 @@ for (const [name, operation, original, payload, proposed, path] of [
   })
 }
 
+for (const [operation, original, payload, proposed, path] of [
+  ['set-heading-section', '# A\nold\r# B\rkeep\n# C\nrest\n', { heading: 'A', content: 'new\n' }, '# A\nnew\n# C\nrest\n', 'README.md'],
+  ['append-line-once', '# Rules\rrule\r', { line: 'rule' }, '# Rules\rrule\r\nrule\n', 'rules.txt']
+]) {
+  test(`apply rejects bare CR in ${operation} before matching with no project writes`, async t => {
+    const context = await setup(t, operation, original, payload, proposed, path)
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'unsupported-format')
+    assert.equal(result.problems[0].message, 'Line-based edits require LF or CRLF line endings.')
+    assert.deepEqual(result.data, {})
+  })
+}
+
 test('apply ignores a leading BOM for semantic matching while preserving bytes', async t => {
   for (const [operation, original, payload, proposed, expected] of [
     ['set-heading-section', '\uFEFF# A\none\n# A\ntwo\n', { heading: 'A', content: 'new\n' }, '\uFEFF# A\none\n# A\nnew\n', { exit: 1, code: 'ambiguous-heading', content: undefined }],

@@ -84,6 +84,7 @@ export function proposedEdit(edit, original) {
     return original.slice(0, close) + (entries.size ? ',' : '') + JSON.stringify(edit.payload.key) + ':' + value + original.slice(close)
   }
   if (format === '.json') reject('unsupported-format', 'JSON edits require set-json-key.')
+  if (['set-heading-section', 'append-line-once'].includes(edit.operation) && /\r(?!\n)/.test(original)) reject('unsupported-format', 'Line-based edits require LF or CRLF line endings.')
   if (edit.operation === 'set-heading-section') {
     if (format !== '.md') reject('unsupported-format', 'Heading sections require .md.')
     return headingSection(original, edit.payload.heading, edit.payload.content)
