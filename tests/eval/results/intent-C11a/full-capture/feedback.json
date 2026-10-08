@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "runId": "[identifier-1]",
+  "draftRevision": "51d8a3b1c9bec18c9746ae2c28bfa3d4003ba73f409add84112ec65a9408eb03",
+  "complete": true,
+  "verdicts": [
+    {
+      "id": "portability",
+      "verdict": "In vision",
+      "notes": "Optional manual transfer fits the same local household journey without accounts, servers or remote services. It is compatible with the vision without being mandatory for version one."
+    },
+    {
+      "id": "quantities",
+      "verdict": "Off mission",
+      "notes": "An item is a named pantry supply. A shopping list contains the items the household marks as needing to buy. Version one does not track quantities or stock levels. Quantity thresholds and automatic replenishment are off mission for version one."
+    }
+  ]
+}

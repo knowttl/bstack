@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "runId": "[evaluation-run]",
+  "reviewer": "C11a worker acting as the scripted fixture author",
+  "checks": [
+    {
+      "id": "interview",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 15
+    },
+    {
+      "id": "terms",
+      "passed": true,
+      "startLine": 53,
+      "endLine": 58
+    },
+    {
+      "id": "vision",
+      "passed": true,
+      "startLine": 54,
+      "endLine": 58
+    }
+  ]
+}

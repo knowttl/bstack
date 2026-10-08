@@ -3,7 +3,7 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language and vision references, board build, launch and verdict ingestion with a pinned runtime, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
@@ -35,6 +35,7 @@ npm test -- --task T1.4
 npm test -- --task T1.5
 npm test -- --task T1.6
 npm test -- --task T1.7
+npm test -- --task T2.1
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
@@ -113,6 +114,19 @@ node skills/repo-audit/scripts/repo-audit.mjs --help
 No arguments print the same help and exit 3 (usage error).
 Unsupported commands or arguments report problems using the [result contract](docs/command-contract.md#results).
 
+Run the five [research briefs](skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using independent subagents in parallel where available or the same briefs sequentially in the main thread.
+Save the common [research report](skills/repo-audit/schemas/research-report.json) in scratch, open each cited source and check it before using the observations:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs cite-check --repo <target> --report <scratch-report.json> --json
+```
+
+Use `--workspace` for a non-Git target.
+File citations record repo-relative `path:line` plus an exact-byte hash or full revision; missing paths, out-of-range lines and stale bytes fail the check.
+Web citations record URL, read date and verification status, while the checker validates metadata without fetching sources.
+Without web access, mark language and outside recommendations "not researched" with the reason.
+The [T2.1 discovery checkpoint](tests/eval/results/discovery-C11a/summary.md) records real main-thread and parallel subagent runs, citation checks, no-web limits and unchanged fixtures.
+
 To exercise the read-only shared contract test from this checkout:
 
 ```sh
@@ -146,7 +160,8 @@ The agent interprets author reasoning into --draft, and verdicts validates run, 
 Read the saved revision back and obtain explicit author approval, preserving that approval and the revision in the scratch transcript.
 The previous draft and review decisions remain available for resume.
 Missing runtime or unavailable interaction leaves the draft intact and the review blocked.
-See [build progress](docs/implementation-plan.md#progress) for outstanding live-review evidence and the [intent checkpoint](skills/repo-audit/SKILL.md#step-3-review-the-vision) for its completion boundary.
+The [completed intent checkpoint](tests/eval/results/intent-C11a/full-capture/summary.md) records a real browser review, saved revision, glossary and explicit author approval with full adapter capture.
+See [build progress](docs/implementation-plan.md#progress) for later slices and the [intent checkpoint](skills/repo-audit/SKILL.md#step-3-review-the-vision) for its completion boundary.
 
 Task evidence follows [the versioned schema](tests/eval/task-evidence.schema.json), with records and output artifacts in `tests/eval/results/tasks/`.
 Shipping slices use no-mistakes and recorded local verification, with no hosted CI or release automation.

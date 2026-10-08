@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "slice": "C10b",
-  "sourceRevision": "801eaa80f46087a52d173b98219da71b2adc9eab",
+  "slice": "C11a prerequisite",
+  "sourceRevision": "d89205180eff3547edb74f2e958ff6e1b99870fe",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs. For real agent evaluation runs the captain approved: \"per evaluation run, copy the existing Codex login into a throwaway isolated home, delete it immediately after the run, never printed or committed.\"\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, T1.1-T1.4, T1.5 and the first part of T1.6 (https://github.com/knowttl/bstack/pull/18: VISION reference and board assets, pinned lavish-axi runtime with nested install in the gate, `vision-board build` with escaping and unique card IDs, and the live probe findings recorded in design \"Evidence and limitations\").\n\nThis piece is slice C10b, the last slice of Phase 1: the rest of task T1.6 (`vision-board launch` and `verdicts`, the resumed review and the manual board run) and task T1.7 \"Complete the intent and vision review\" (old slice-table done evidence: live roundtrip, stale verdict refused, approved scratch draft, ambiguous decision blocked, workspace unchanged).",
   "amendments": [
     "Firstmate steering after a clean fresh-snapshot browser retry still failed: record unavailable interaction as blocked, commit the implementation and continue intent evaluations and validation.",
-    "Final README, command docs, design limitations and Progress were committed before the recorded clean installs, package check and suites."
+    "Final README, command docs, design limitations and Progress were committed before the recorded clean installs, package check and suites.",
+    "Firstmate authorised evaluation-only ten-minute turns and a 16 MiB per-stream adapter capture after real timeout and truncated capture. Ordinary command defaults are unchanged."
   ],
   "environment": {
     "os": "Linux 6.8.0-142-generic x86_64",
@@ -18,61 +19,13 @@
     }
   },
   "limitations": [
-    "Local validation exercised Linux and Node 24 only.",
-    "T1.6 and T1.7 remain incomplete. Automated command tests do not replace unavailable live verdict delivery or author approval.",
-    "Agent transcripts record the actual implementation revisions evaluated before the final usage/evidence commit. Packaged runtime and procedure source did not change after those runs.",
-    "Committed observation artifacts redact host paths, user names and run/session identifiers. They cannot resume the deleted evaluation homes."
+    "Local verification establishes Linux and Node 24 only.",
+    "The real new-idea procedure evaluated b83b4ae29b3bf3f6fcd36b12719f02c20672ba55. The task suite ran at the recorded sourceRevision after evidence and usage updates.",
+    "Earlier blocked runs remain blocked. This pass uses a fresh fully captured, closed and human-scored run.",
+    "Committed paths, user names and session identifiers are redacted. Conversation hashes bind retained redacted bytes and cannot resume deleted host sessions.",
+    "Intent-stage evidence does not claim protected project creation or final acceptance."
   ],
   "commands": [
-    {
-      "id": "install",
-      "executable": "npm",
-      "args": [
-        "ci",
-        "--ignore-scripts"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.install.txt"
-    },
-    {
-      "id": "runtime-install",
-      "executable": "npm",
-      "args": [
-        "ci",
-        "--omit=dev",
-        "--prefix",
-        "skills/repo-audit"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.runtime-install.txt"
-    },
-    {
-      "id": "check",
-      "executable": "npm",
-      "args": [
-        "run",
-        "check"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.check.txt"
-    },
-    {
-      "id": "test",
-      "executable": "npm",
-      "args": [
-        "test"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.test.txt"
-    },
     {
       "id": "task-T1.7",
       "executable": "npm",
@@ -85,41 +38,57 @@
       "cwd": ".",
       "exitCode": 0,
       "status": "passed",
-      "outputArtifact": "tests/eval/results/tasks/C10b.task-T1.7.txt"
+      "outputArtifact": "tests/eval/results/tasks/C11a.prerequisite-T1.7.txt"
+    },
+    {
+      "id": "new-idea-intent-score",
+      "executable": "node",
+      "args": [
+        "scripts/eval.mjs",
+        "score",
+        "--run",
+        "<redacted-evaluation-run>",
+        "--answers",
+        "<scratch>/answers.json",
+        "--transcript",
+        "<scratch>/conversation.txt",
+        "--results",
+        "<scratch>",
+        "--json"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/intent-C11a/full-capture/run.json",
+      "resultPaths": [
+        "tests/eval/results/intent-C11a/full-capture/VISION-approved.md",
+        "tests/eval/results/intent-C11a/full-capture/GLOSSARY.md"
+      ]
     }
   ],
   "taskId": "T1.7",
-  "status": "blocked",
+  "status": "passed",
   "cases": [
     {
       "id": "AC-2",
       "kind": "agent",
-      "procedure": "Real isolated ambiguous-idea --stage intent run, matched scripted offline answer and human-scored decision check. Transcript line 30 explains both outcomes and blocks foundation without selecting a stack.",
+      "procedure": "Earlier real ambiguous-idea intent procedure exposes unresolved offline access and stops without choosing a stack, with unchanged non-Git workspace.",
       "status": "passed",
-      "artifact": "tests/eval/results/intent-C10b/ambiguous-idea/summary.json"
+      "artifact": "tests/eval/results/phase1-check/summary.md"
     },
     {
       "id": "AC-9",
       "kind": "agent",
-      "procedure": "Real isolated new-idea --stage intent run. Transcript line 36 gives item, shopping list and household domain meanings, separating browser storage and TypeScript from the term list.",
+      "procedure": "Fresh human-scored real new-idea intent procedure, terms check at full captured conversation lines 53-58 and retained domain-only glossary.",
       "status": "passed",
-      "artifact": "tests/eval/results/intent-C10b/new-idea/summary.json"
+      "artifact": "tests/eval/results/intent-C11a/full-capture/run.json"
     },
     {
       "id": "AC-12",
       "kind": "agent",
-      "procedure": "Confirmed-intent checkpoint, required fact/gap summary, scratch glossary draft and approved vision after board review.",
-      "status": "blocked",
-      "artifact": "tests/eval/results/intent-C10b/new-idea/transcript.txt",
-      "reason": "Intent and term summaries exist, but the journey meaning remains unresolved and the resumed host reports unavailable scratch/terminal execution. No glossary file, board verdict or approved scratch vision was obtained.",
-      "nextPrerequisite": "Resolve the journey with a corresponding scripted answer and complete scratch glossary, board review and explicit revision approval on an available host."
-    },
-    {
-      "id": "C10b-workspaces-and-cleanup",
-      "kind": "manual",
-      "procedure": "Compared each workspace brief byte-for-byte to its fixture source and listed entries after closing the real host conversations. Both contain only brief.md, have no Git directory and their isolated homes are deleted. Adapter removes the login copy after every turn.",
+      "procedure": "Real interview, confirmed brief, domain-only scratch glossary, board review and explicit approval of saved revision 71848c6d37a696abd81195a2be231086dfc6ccb30782565fc131054d1a517b2c. Brief-only workspace unchanged and non-Git.",
       "status": "passed",
-      "artifact": "tests/eval/results/intent-C10b/new-idea/summary.json"
+      "artifact": "tests/eval/results/intent-C11a/full-capture/summary.md"
     }
   ]
 }

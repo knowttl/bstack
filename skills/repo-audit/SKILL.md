@@ -18,7 +18,7 @@ Return findings and evidence to the project's chosen workflow instead of startin
 Security hardening of created skills and licensing review are outside scope.
 
 This is a procedure under construction.
-The intent and vision steps, their references and board build, launch and verdict commands are available, while the other conditional references remain placeholders and production audit, apply and evidence commands are unavailable.
+The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available, while the other conditional references remain placeholders and production audit, apply and evidence commands are unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -264,18 +264,23 @@ Run independent briefs in parallel, except when only a few files make a hand-off
 Subagents do not edit, ask the user questions or run checks with side effects.
 Reports return concise findings with file path and line, or source links marked verified or unverified, and deterministic measurement output where relevant.
 Open each cited path before relying on a report, treating it as evidence to check rather than verified fact.
+Require repo-relative path:line citations bound to the read revision or exact file hash, and web URLs with read dates and verification status.
+Run cite-check with --report against the selected --repo or --workspace before a finding uses the report, and refresh stale citations.
+The checker establishes locations and byte freshness, while the main thread checks that sources support the claims.
 Measurements come from scripts, not subagent guesses.
 Keep bulk copying and large encoded strings out of delegation.
 If subagents are unavailable or fail, run the same briefs sequentially in the main thread, retaining only the formatted report instead of quoted files.
 Record which mode ran.
-The complete research briefs and citation checker are unavailable until T2.1.
+Load the research briefs for these questions and retain their common report format, actual host capabilities, limitations and mode.
+Research repo configs first, then official language and tool docs, then established community guides for remaining gaps.
+Without web access, mark language and outside recommendations "not researched" with the reason, using repo evidence and general principles alone.
 
 ## Load when
 
 Read only the one reference needed for the current step, once per run unless it changes.
 Every reference is linked directly here, without another skill or nested reference chain.
 Run scripts without loading their source, and pass assets to scripts without reading them as instructions.
-The intent interview, grilling, domain-language and vision references are available.
+The intent interview, grilling, domain-language, vision and research briefs are available.
 Other references remain placeholders until their owning tasks supply the procedures.
 
 | When | Open |
@@ -286,5 +291,5 @@ Other references remain placeholders until their owning tasks supply the procedu
 | No `VISION.md`, or the audit found a vision gap | `references/vision.md` |
 | Recommending principles and their checks | `references/enforcement.md` |
 | Recommending module boundaries | `references/architecture.md` |
-| Delegating research | `references/research-briefs.md` |
+| Running research in the main thread or delegating it | `references/research-briefs.md` |
 | Recording change evidence | `references/maintenance-contract.md` |
