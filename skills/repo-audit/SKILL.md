@@ -291,5 +291,5 @@ Other references remain placeholders until their owning tasks supply the procedu
 | No `VISION.md`, or the audit found a vision gap | `references/vision.md` |
 | Recommending principles and their checks | `references/enforcement.md` |
 | Recommending module boundaries | `references/architecture.md` |
-| Delegating research | `references/research-briefs.md` |
+| Running research in the main thread or delegating it | `references/research-briefs.md` |
 | Recording change evidence | `references/maintenance-contract.md` |

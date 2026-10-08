@@ -24,7 +24,8 @@ Retain concise formatted reports rather than quoted files.
 Record the actual mode as main-thread or subagents, the host and its observed subagent and web capabilities.
 An unsupported subagent checkpoint remains blocked and is never represented by main-thread evidence.
 
-All five briefs return one entry in a version 1 research report.
+Use all five briefs for the discovery checkpoint, and only relevant briefs for later bounded research.
+Each selected brief returns one entry in a version 1 research report.
 Each entry names its brief ID, actual repo-relative paths in scope, concise findings, limitations, file citations and web citations.
 The word limit below applies to findings, excluding citation metadata.
 Return candidate observations with uncertainty and source attribution, not selected recommendations or guessed measurements.

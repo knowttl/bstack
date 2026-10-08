@@ -13,7 +13,7 @@ The report follows `skills/repo-audit/schemas/research-report.json`, version 1.
 It requires the actual mode, host, observed subagent and web capabilities and one or more uniquely identified briefs.
 Brief IDs are documents, architecture, checks, language and outside.
 Each brief records its actual scope, concise findings, limitations, file citations and web citations.
-Use all five briefs for the discovery checkpoint, and only relevant briefs for later bounded research.
+The [research briefs](../skills/repo-audit/references/research-briefs.md#execution-and-report-contract) own brief selection and execution guidance.
 
 Each file citation has a repo-relative `location` in `path:line` form and a `state` with kind sha256 or revision and its lowercase hex value.
 Use forward slashes for portable repo-relative paths.
@@ -211,18 +211,19 @@ Child execution and fingerprints are implemented in C4b.
 
 ## Child commands
 
-`runCommand(target, command, { signal, env })` accepts `{ executable, args, cwd, timeoutMs, versionArgs }`.
+`runCommand(target, command, { signal, env, outputLimitBytes })` accepts `{ executable, args, cwd, timeoutMs, versionArgs }`.
 `args` and `versionArgs` are arrays of literal strings.
 `cwd` is a required target-relative directory, resolved with the path contract before spawning anything.
 `timeoutMs` defaults to 120000 and must be a positive safe integer.
 `env` defaults to `process.env`; a supplied object replaces the child environment for launcher selection, the version probe and execution without mutating the caller's environment.
-The version probe runs first with the same working directory, environment, timeout and cancellation signal.
+`outputLimitBytes` defaults to 65536 and must be a positive safe integer.
+The version probe runs first with the same working directory, environment, timeout, output limit and cancellation signal.
 A non-passing version probe blocks execution of the requested check.
 Each invocation has its own timeout.
 
 The returned execution record contains `status`, `stdout`, `stderr`, `durationMs`, `exitCode`, `signal`, `timedOut`, `cancelled`, `outputTruncated` and `error`.
 `toolVersion` contains the same record for the version probe, including its captured output.
-Output is captured as the last 65536 bytes of each stream, decoded as UTF-8, and never printed by the library.
+Output is captured as the last `outputLimitBytes` bytes of each stream, decoded as UTF-8, and never printed by the library.
 `outputTruncated` is true if either stream exceeded that limit; it does not change the child execution status.
 Missing executables or cleanup errors are blocked.
 Nonzero exits, timeouts and cancellation are failed, even if the child exits with code zero.
