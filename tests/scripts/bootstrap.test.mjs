@@ -113,6 +113,15 @@ test('ordinary full-suite invocation retains attachable evidence in a Git checko
   assert.equal(attach(directory, '.cache/full-suite.json').status, 0)
 })
 
+test('ordinary tests still execute dirty source but its evidence cannot attach', async t => {
+  const directory = await evidenceSandbox(t)
+  await writeFile(join(directory, 'tests/scripts/selected.test.mjs'), "import test from 'node:test'\ntest('dirty behaviour', () => {})\n")
+  const result = run(directory)
+  assert.equal(result.status, 0, result.stderr + result.stdout)
+  assert.match(result.stdout, /dirty behaviour/)
+  assert.equal(attach(directory, '.cache/full-suite.json').status, 1)
+})
+
 test('full-run evidence attaches identities and output without executing tests again', async t => {
   const directory = await evidenceSandbox(t,
     "import test from 'node:test'\nimport { appendFileSync } from 'node:fs'\ntest('recorded behaviour', () => appendFileSync('.cache/executions', 'run\\n'))\n")

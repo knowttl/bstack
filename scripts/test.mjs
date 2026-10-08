@@ -59,11 +59,13 @@ try {
     const host = await import('./lib/evaluation-host.mjs')
     redactEvidence = host.redactEvidence
     await mkdir(dirname(capture), { recursive: true })
-    evidence.git(root, 'diff', '--quiet', 'HEAD', '--', '.', ':!tests/eval/results/tasks')
-    if (evidence.git(root, 'ls-files', '--others', '--exclude-standard', '-z').split('\0')
-      .some(path => path && !path.startsWith('tests/eval/results/tasks/'))) throw new Error('Commit source inputs before capturing evidence')
+    const clean = spawnSync('git', ['diff', '--quiet', 'HEAD', '--', '.', ':!tests/eval/results/tasks'], { cwd: root })
+    if (clean.error) throw clean.error
+    const committed = clean.status === 0 && !evidence.git(root, 'ls-files', '--others', '--exclude-standard', '-z').split('\0')
+      .some(path => path && !path.startsWith('tests/eval/results/tasks/'))
+    if (!committed && args[0] === '--capture') throw new Error('Commit source inputs before capturing evidence')
     binding = { sourceRevision: evidence.git(root, 'rev-parse', 'HEAD'), baseRevision: evidence.git(root, 'rev-parse', 'origin/main'),
-      environment: evidence.environment(), inputs: await evidence.inputs(root) }
+      committed, environment: evidence.environment(), inputs: await evidence.inputs(root) }
   }
   const runnerArgs = ['--test', '--test-reporter=tap', ...(capture ? ['--test-reporter-destination=stdout',
     `--test-reporter=${join(root, 'scripts', 'test-reporter.mjs')}`, `--test-reporter-destination=${capture}.events`] : []), ...files]

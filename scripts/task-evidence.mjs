@@ -19,7 +19,7 @@ try {
   const results = events.trim().split('\n').map(line => JSON.parse(line))
   const summary = results.findLast(event => event.type === 'test:summary' && event.file === null)
   const suites = results.filter(event => event.type === 'test:summary' && event.file).map(event => event.file).sort()
-  if (run.schemaVersion !== 1 || run.command.exitCode !== 0 || !summary?.success ||
+  if (run.schemaVersion !== 1 || !run.committed || run.command.exitCode !== 0 || !summary?.success ||
       summary.counts.failed || summary.counts.cancelled || summary.counts.skipped || summary.counts.todo || !summary.counts.tests ||
       JSON.stringify(suites) !== JSON.stringify(run.suites) ||
       hash(output) !== run.outputSha256 || hash(events) !== run.eventsSha256) throw new Error('Full-suite evidence is incomplete or failed')
