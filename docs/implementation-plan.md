@@ -246,8 +246,8 @@ bstack/
 bstack has no hosted CI, no GitHub Actions workflows and no release automation (design "Commissioning decisions (2026-10-07)").
 Every shipping slice goes through the no-mistakes pipeline configured in `.no-mistakes.yaml`, which declares `no_ci: true`.
 Green work merges unattended.
-`auto_fix.review: 1` is the one automatic review round: a budget of one automatic repair round for review findings.
-Required validation after a change still runs, and no second autonomous repair round follows once the budget is spent.
+[The gate configuration](../.no-mistakes.yaml) owns automatic repair budgets and the build's review focus.
+Required validation after a change still runs, and no further autonomous repair round follows once the configured budget is spent.
 Recorded local runs and clean-checkout runs, as each task defines, supply the execution evidence that hosted CI would otherwise provide.
 These runs do not prove support on an operating system they did not run on.
 
