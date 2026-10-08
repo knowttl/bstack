@@ -18,7 +18,9 @@ Return findings and evidence to the project's chosen workflow instead of startin
 Security hardening of created skills and licensing review are outside scope.
 
 This is a procedure under construction.
-The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available, while the other conditional references remain placeholders and production audit, apply and evidence commands are unavailable.
+The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available.
+Steps 7 and 11 describe the available read-only audit and findings commands.
+The other conditional references remain placeholders, while complete audit integration, protected writes and automatic verification capture remain unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -179,7 +181,8 @@ Keep proposed principles separate for review instead of treating them as existin
 Avoid speculative findings, cosmetic rewrites and universal architecture prescriptions.
 Use native baselines where available, keeping known failures visible and preventing new failures from entering through a refreshed baseline.
 Exceptions need a reason, scope and removal condition.
-Findings validation and scratch rendering are unavailable until T2.5, enforcement guidance until T3.1, rule-proof until T3.2 and baseline handling until T3.3.
+Use the findings validation and scratch rendering commands in Step 11 before review.
+Enforcement guidance is unavailable until T3.1, rule-proof until T3.2 and baseline handling until T3.3.
 
 Done when: Every recommendation has a project-specific reason, evidence, principle, consequence, scope and verification method, with unresolved decisions and unsupported measurements visible.
 
@@ -199,6 +202,10 @@ Use the shared verification rules and update the existing audit record, otherwis
 State the assessed revision or working-tree state, selected changes, actual commands and outcomes, preserved behaviour, remaining debt, decisions and limitations.
 Distinguish ready for the stated next change, decisions needed and verification blocked.
 A guessed debt score does not establish readiness.
+Validate the versioned findings with `findings validate --findings <file> --json` and render the proposed audit record using `findings render --findings <file>`, with the same explicit target.
+Render returns a scratch path and distinguishes documented, observed and inferred sources, selected changes and proposed new principles.
+Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
+Capture evidence against the returned fingerprint and preserve its exact output artifact.
 Verification capture is unavailable until T2.7 and path integration until T2.8.
 Maintained enforcement arrives in T3.4 and portable maintenance evidence and document validation in Phase 3a.
 

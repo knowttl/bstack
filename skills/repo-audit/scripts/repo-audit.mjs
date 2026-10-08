@@ -21,7 +21,7 @@ if (!argv.length || (argv.length === 1 && argv[0] === '--help')) {
     if (!command) throw new CommandError('usage-error', [{ code: 'unknown-command', message: `Unknown or not implemented yet: ${argv[0]}`, fix: 'Use --help to select an available command.' }])
     const options = parseArgs(argv.slice(command.split(' ').length), commands[command].options)
     const { run } = await import(new URL(commands[command].module, import.meta.url))
-    emitResult({ command, status: 'passed', ...await run(options) }, options.json)
+    emitResult({ command, status: 'passed', ...await run(options, command) }, options.json)
   } catch (error) {
     emitResult({ command: command ?? argv[0], status: error instanceof CommandError ? error.status : 'blocked',
       problems: error instanceof CommandError ? error.problems : [{ code: 'command-unavailable', message: error.message, fix: 'Restore command resources and filesystem access.' }] }, argv.includes('--json'))
