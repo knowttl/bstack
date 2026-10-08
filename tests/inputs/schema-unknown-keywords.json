@@ -1,0 +1,1 @@
+{"type":"object","properties":{"records":{"type":"array","items":{"type":"object","format":"uri"},"uniqueItems":true}},"allOf":[]}

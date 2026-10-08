@@ -4,7 +4,7 @@ The planned production interface is `node skills/repo-audit/scripts/repo-audit.m
 Resource paths are relative to the installed skill, never the caller's current directory.
 Command-specific options and input formats belong to their owning tasks and command help.
 C4a establishes arguments, targets, paths, scratch and results.
-Production dispatch and schema validation follow in C4c.
+C4c adds command dispatch and the explicitly supported schema subset.
 
 ## Arguments and targets
 
@@ -135,8 +135,37 @@ Portable committed identity and format-specific assessment fields belong to thei
 
 Every structured format declares `schemaVersion: 1` and rejects unknown fields.
 Owning tasks define exact required contents and reject missing or duplicate joining IDs.
-C4c adds the supported schema keywords and rejects unsupported keywords.
-No schema validator or production command wiring is claimed by C4a or C4b.
+`validateData(schema, data)` first validates the schema definition, then collects data problems before throwing a failed `CommandError`.
+`validateSchema(schema)` validates definitions independently.
+The supported keywords are `$schema`, `title`, `type`, `const`, `enum`, `properties`, `required`, `additionalProperties`, `items`, `minItems`, `minLength` and `pattern`.
+`$schema` and `title` are string metadata, not external schema loaders.
+Schema nodes must be objects.
+Boolean schema nodes, references, combinators and every other keyword are unsupported.
+Unsupported keywords report `unsupported-keyword` with the keyword name and location, including inside nested definitions.
+Malformed keyword values report `invalid-schema` before data validation.
+`type` accepts one JSON type or a nonempty array of unique JSON types.
+`additionalProperties` accepts a boolean or a supported schema object.
+`items` accepts one supported schema object.
+`enum` requires nonempty unique JSON values, and `required` requires unique string field names.
+`minItems` and `minLength` require nonnegative safe integers.
+String length counts Unicode code points, and patterns use Unicode JavaScript regular expressions.
+Missing fields, unknown fields, wrong types and failed constraints report their paths and fixes.
+This subset does not implement the separate task-evidence schema's conditional keywords.
+Later owning tasks extend the subset only with tested keywords their formats use.
+
+`validateIds(records, path)` checks one joining collection for nonempty string IDs and duplicates.
+Owning commands select each collection explicitly, so IDs in unrelated collections do not collide.
+Missing, empty, whitespace-only and non-string IDs report `missing-id`.
+Repeated IDs report `duplicate-id` with the repeated value.
+
+## Command dispatch
+
+The entry point registers command metadata in `scripts/commands.mjs` and loads only the selected implementation from `scripts/commands/` after argument validation.
+`<command> --help` prints that command's options without importing its implementation or resolving a target.
+No arguments print the available and planned commands with exit 3, and global `--help` succeeds.
+Unknown and unbuilt commands are usage errors.
+Command implementations return data and inputs, while the entry point owns result emission and error exit codes.
+Unbuilt production commands remain listed as planned until their owning task registers them.
 
 ## C4a public test command
 
@@ -154,3 +183,14 @@ The fixture input supplies `command` and an optional `cancelDirectory`, whose `r
 `--mode select` accepts `executable`, `args` and launcher-selection `options` for Windows logic tests.
 `--mode fingerprint` accepts the fingerprint input object documented above.
 These fixture commands are test interfaces, not production command wiring or schema validation.
+
+## C4c public test command
+
+`node skills/repo-audit/scripts/repo-audit.mjs contract-test --workspace <directory> --input tests/inputs/schema-valid.json --json` exercises dispatch, schema validation and joining IDs through the installed entry point.
+It also accepts `--repo` and leaves the target unchanged.
+The installed [input schema](../skills/repo-audit/schemas/contract-test.json) owns the required fields, allowed values and unknown-field constraints.
+The command also checks the `records` collection with `validateIds`, as described above.
+`--schema <file>` selects an explicit definition for schema-subset tests.
+Input and schema file paths resolve from the caller's working directory, while the default schema resolves from the installed command module.
+Unreadable or malformed JSON reports `invalid-input`.
+This read-only test interface implements no audit, apply or evidence workflow.

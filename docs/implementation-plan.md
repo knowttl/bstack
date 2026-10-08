@@ -328,10 +328,10 @@ Tick each task when its "Done when" commands pass.
   - [x] T0.1 Create the repo skeleton
   - [x] T0.2 Create the skill skeleton
   - [x] T0.3 Pin upstream sources and start NOTICE
-  - [ ] T0.4 Build the shared script library
+  - [x] T0.4 Build the shared script library
     - [x] C4a Target/path/scratch and result/argument contracts ([evidence](../tests/eval/results/tasks/T0.4.C4a.json))
     - [x] C4b Child commands and fingerprints ([evidence](../tests/eval/results/tasks/T0.4.C4b.json))
-    - [ ] C4c Minimal schema contract and real command wiring
+    - [x] C4c Minimal schema contract and real command wiring ([evidence](../tests/eval/results/tasks/T0.4.C4c.json))
   - [ ] T0.5 Build the package check
   - [ ] T0.6 Establish local validation and no-mistakes gate
 - Phase 1: Intent and vision

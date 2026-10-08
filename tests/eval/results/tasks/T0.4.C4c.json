@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.4.C4c",
+  "slice": "C4c",
+  "sourceRevision": "2cfb52697777a6c4c887c1c707b185d9791e8290",
+  "intent": "\"yes approbe and begin the implementation\". Complete C4c of the approved commissioning plan.",
+  "amendments": [
+    "C4c completes T0.4 with an explicit installed schema subset and public command dispatch.",
+    "Preserve .no-mistakes.yaml byte-identical and add no workflows.",
+    "Evidence names the last tested implementation commit. Evidence-only commits need not name themselves. Any source or test fix refreshes evidence against the new implementation commit in the same round."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.node-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.npm-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "git-version",
+      "executable": "git",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.git-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.os.txt",
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.4"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.task-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "slice-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.4.C4c"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "preserved-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "--exit-code",
+        "origin/main",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.preserved-config.txt",
+      "status": "passed"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.history.txt",
+      "status": "passed"
+    },
+    {
+      "id": "workflows",
+      "executable": "git",
+      "args": [
+        "ls-files",
+        ".github/workflows/*"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.4.C4c.workflows.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C4c-schema-data",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: valid schema data dispatches from another cwd without changing the workspace",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-invalid-inputs",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: schema-invalid.json with the installed schema fails with named problems and no writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-unsupported-keywords",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-schema-definitions",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: schema-valid.json with schema-invalid-definition.json fails with named problems and no writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-missing-fields",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: schema-missing.json with the installed schema fails with named problems and no writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-array-boundary",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: schema-empty.json with the installed schema fails with named problems and no writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-types-and-empty-ids",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: schema-wrong-types.json with the installed schema fails with named problems and no writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-schema-map",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: schema-valued additional properties validates each map value",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-malformed-json",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: schema-malformed.json with the installed schema fails with named problems and no writes",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-help-without-source",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: command help succeeds with its implementation absent while execution reports blocked",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    },
+    {
+      "id": "C4c-arguments",
+      "kind": "automated",
+      "procedure": "tests/scripts/schema-contract.test.mjs: dispatch rejects unsupported arguments before loading the command",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.4.C4c.slice-test.txt"
+    }
+  ],
+  "limitations": [
+    "Linux Node 24 execution only. Other operating systems are not proved by this slice.",
+    "C4a covers targets/path/scratch and C4b covers child commands/fingerprints. C4b tests Windows npm selection on Linux, with real Windows execution pending under R26.",
+    "The installed schema subset deliberately excludes the root task-evidence schema's conditional keywords. Later input-format tasks extend it only with tested keywords."
+  ]
+}
