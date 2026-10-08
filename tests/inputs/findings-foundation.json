@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "stage": "foundation",
+  "target": {
+    "mode": "repo",
+    "root": "<resolved-target>",
+    "revision": null
+  },
+  "nextChange": "Add a price quotation flow",
+  "reviewedScope": [
+    "README.md",
+    "src/price.mjs"
+  ],
+  "sources": [
+    {
+      "id": "purpose",
+      "pointer": "README.md:1",
+      "intent": "documented",
+      "summary": "Price rules belong to the pricing module."
+    },
+    {
+      "id": "imports",
+      "pointer": "src/price.mjs:1",
+      "intent": "observed",
+      "summary": "The UI owns a duplicate price calculation."
+    },
+    {
+      "id": "risk",
+      "pointer": "src/price.mjs:1",
+      "intent": "inferred",
+      "summary": "A future pricing change may miss the UI copy."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Price calculation is duplicated.",
+      "files": [
+        "src/price.mjs"
+      ],
+      "command": null,
+      "principle": "One owner for price calculation",
+      "consequence": "Quotes can disagree.",
+      "fix": "Call the pricing interface.",
+      "scope": [
+        "src/price.mjs"
+      ],
+      "verification": "Run the quote journey.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "purpose",
+        "imports",
+        "risk"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "journey",
+    "foundation-review"
+  ],
+  "execution": [],
+  "limitations": [
+    "Outcome evidence has not been captured."
+  ]
+}

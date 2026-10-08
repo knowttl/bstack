@@ -3,4 +3,3 @@
 > node scripts/check-package.mjs
 
 check-package: passed
-

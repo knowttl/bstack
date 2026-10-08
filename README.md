@@ -3,7 +3,7 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision and research references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
@@ -39,6 +39,7 @@ npm test -- --task T2.1
 npm test -- --task T2.2
 npm test -- --task T2.3
 npm test -- --task T2.4
+npm test -- --task T2.5
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
@@ -63,6 +64,20 @@ Measurements include supporting commits, rename handling and the resolved revisi
 Only eligible files present at the range endpoint are measured, following detected lineage back through renames to addition commits.
 If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, the old lifetime's commits and co-change pairs can be attributed to the new file.
 Signals are advisory evidence, never violations, and do not establish semantic independence or observed conflicts.
+
+Validate cited findings and render a proposed audit record outside the target:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs findings validate --repo <path> --findings <file> --json
+node skills/repo-audit/scripts/repo-audit.mjs findings render --repo <path> --findings <file> --json
+```
+
+Use `--workspace` for a draft foundation without Git.
+The [findings contract](docs/command-contract.md#findings) defines the schema, complete input examples, stage outcomes and verdict precedence.
+Validation returns the current fingerprint for subsequent evidence capture.
+Rendering returns a scratch path and one readiness result with documented, observed and inferred sources, selected findings and remaining debt.
+Missing or stale evidence blocks readiness, and unresolved decisions require review.
+These commands assess supplied evidence without executing checks or applying changes.
 
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.

@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "taskId": "T2.4",
   "slice": "C12",
-  "sourceRevision": "d9d2cdc7da3003fed65198825ac88fca06b0758f",
+  "sourceRevision": "fc953e2ea6a8990c92aa29fe820efe43740b0242",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs. Tiny adjacent slices are merged; this piece merges C12a and C12b.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1 and T2.2-T2.3 (https://github.com/knowttl/bstack/pull/22: read-only `inspect` and `inventory`).\n\nThis piece is merged slice C12: task T2.4 \"Build `measure` and `overlap`\". Done evidence: rename/range/exclusion evidence, signal commits, no semantic violation inferred; declared glob semantics, shared path/contract controls.",
-  "amendments": [],
+  "amendments": ["C13 refreshed all five command artifacts against the landed C12 revision. Merge path reuse remains a documented measurement limitation rather than a violation inference."],
   "status": "passed",
   "environment": {
     "os": "Linux 6.8.0-142-generic x86_64 GNU/Linux",

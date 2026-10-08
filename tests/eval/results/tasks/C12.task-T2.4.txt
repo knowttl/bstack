@@ -7,298 +7,417 @@ TAP version 13
 # Subtest: ts-shop mixed responsibilities and coupled cluster have supporting signal commits
 ok 1 - ts-shop mixed responsibilities and coupled cluster have supporting signal commits
   ---
-  duration_ms: 4546.79879
+  duration_ms: 4448.964887
   type: 'test'
   ...
 # Subtest: py-ledger cohesive module and startup remain signals without a violation classification
 ok 2 - py-ledger cohesive module and startup remain signals without a violation classification
   ---
-  duration_ms: 738.373201
+  duration_ms: 644.433497
   type: 'test'
   ...
 # Subtest: measure joins chained renames, excludes declared formatting and generated paths, and stays read-only
 ok 3 - measure joins chained renames, excludes declared formatting and generated paths, and stays read-only
   ---
-  duration_ms: 665.603414
+  duration_ms: 534.944372
+  type: 'test'
+  ...
+# Subtest: measure omits generated-directory rename evidence
+ok 4 - measure omits generated-directory rename evidence
+  ---
+  duration_ms: 207.148568
+  type: 'test'
+  ...
+# Subtest: measure omits renames through a generated-directory destination
+ok 5 - measure omits renames through a generated-directory destination
+  ---
+  duration_ms: 256.922099
+  type: 'test'
+  ...
+# Subtest: measure omits lockfile rename evidence
+ok 6 - measure omits lockfile rename evidence
+  ---
+  duration_ms: 201.424017
+  type: 'test'
+  ...
+# Subtest: measure omits renames through a lockfile destination
+ok 7 - measure omits renames through a lockfile destination
+  ---
+  duration_ms: 249.187326
+  type: 'test'
+  ...
+# Subtest: measure omits declared-generated rename evidence
+ok 8 - measure omits declared-generated rename evidence
+  ---
+  duration_ms: 202.89709
+  type: 'test'
+  ...
+# Subtest: measure omits renames through a declared-generated destination
+ok 9 - measure omits renames through a declared-generated destination
+  ---
+  duration_ms: 263.568224
+  type: 'test'
+  ...
+# Subtest: measure retains formatting-only rename evidence
+ok 10 - measure retains formatting-only rename evidence
+  ---
+  duration_ms: 205.081205
   type: 'test'
   ...
 # Subtest: measure honours empty ranges, missing history, and deleted paths
-ok 4 - measure honours empty ranges, missing history, and deleted paths
+ok 11 - measure honours empty ranges, missing history, and deleted paths
   ---
-  duration_ms: 403.295896
+  duration_ms: 348.205624
+  type: 'test'
+  ...
+# Subtest: measure separates reused rename paths with no formatting exclusion
+ok 12 - measure separates reused rename paths with no formatting exclusion
+  ---
+  duration_ms: 353.696261
+  type: 'test'
+  ...
+# Subtest: measure separates reused rename paths with addition formatting exclusion
+ok 13 - measure separates reused rename paths with addition formatting exclusion
+  ---
+  duration_ms: 361.805056
+  type: 'test'
+  ...
+# Subtest: measure separates reused rename paths with deletion formatting exclusion
+ok 14 - measure separates reused rename paths with deletion formatting exclusion
+  ---
+  duration_ms: 380.990643
+  type: 'test'
+  ...
+# Subtest: measure separates a recreated rename source without a deletion commit
+ok 15 - measure separates a recreated rename source without a deletion commit
+  ---
+  duration_ms: 344.370259
+  type: 'test'
+  ...
+# Subtest: measure follows merged branch modifications with renamed first and exclusions 
+ok 16 - measure follows merged branch modifications with renamed first and exclusions 
+  ---
+  duration_ms: 387.747374
+  type: 'test'
+  ...
+# Subtest: measure follows merged branch modifications with modified first and exclusions 
+ok 17 - measure follows merged branch modifications with modified first and exclusions 
+  ---
+  duration_ms: 391.587996
+  type: 'test'
+  ...
+# Subtest: measure follows merged branch modifications with renamed first and exclusions renamed
+ok 18 - measure follows merged branch modifications with renamed first and exclusions renamed
+  ---
+  duration_ms: 370.043283
+  type: 'test'
+  ...
+# Subtest: measure preserves both retained rename descendants without pairing one historical path
+ok 19 - measure preserves both retained rename descendants without pairing one historical path
+  ---
+  duration_ms: 366.107623
+  type: 'test'
+  ...
+# Subtest: measure excludes gitlinks removed before the selected head
+ok 20 - measure excludes gitlinks removed before the selected head
+  ---
+  duration_ms: 294.197385
+  type: 'test'
+  ...
+# Subtest: measure excludes gitlink type changes without losing separate blob lifetimes
+ok 21 - measure excludes gitlink type changes without losing separate blob lifetimes
+  ---
+  duration_ms: 323.719026
+  type: 'test'
+  ...
+# Subtest: measure limits a reused endpoint path to its replacement lifetime
+ok 22 - measure limits a reused endpoint path to its replacement lifetime
+  ---
+  duration_ms: 335.450457
+  type: 'test'
+  ...
+# Subtest: measure and discovery apply the same generated directory conventions
+ok 23 - measure and discovery apply the same generated directory conventions
+  ---
+  duration_ms: 195.624865
+  type: 'test'
+  ...
+# Subtest: measure reads head inventory and history larger than one MiB
+ok 24 - measure reads head inventory and history larger than one MiB
+  ---
+  duration_ms: 35466.473507
   type: 'test'
   ...
 # Subtest: measure rejects missing or unsupported range ""
-ok 5 - measure rejects missing or unsupported range ""
+ok 25 - measure rejects missing or unsupported range ""
   ---
-  duration_ms: 73.744885
+  duration_ms: 63.616343
   type: 'test'
   ...
 # Subtest: measure rejects missing or unsupported range "--all"
-ok 6 - measure rejects missing or unsupported range "--all"
+ok 26 - measure rejects missing or unsupported range "--all"
   ---
-  duration_ms: 51.960676
+  duration_ms: 50.687729
   type: 'test'
   ...
 # Subtest: measure rejects missing or unsupported range "HEAD...HEAD"
-ok 7 - measure rejects missing or unsupported range "HEAD...HEAD"
+ok 27 - measure rejects missing or unsupported range "HEAD...HEAD"
   ---
-  duration_ms: 67.773817
+  duration_ms: 59.729197
   type: 'test'
   ...
 # Subtest: measure rejects missing or unsupported range "..HEAD"
-ok 8 - measure rejects missing or unsupported range "..HEAD"
+ok 28 - measure rejects missing or unsupported range "..HEAD"
   ---
-  duration_ms: 67.402192
+  duration_ms: 74.219402
   type: 'test'
   ...
 # Subtest: measure rejects missing or unsupported range "HEAD.."
-ok 9 - measure rejects missing or unsupported range "HEAD.."
+ok 29 - measure rejects missing or unsupported range "HEAD.."
   ---
-  duration_ms: 95.699719
+  duration_ms: 63.610777
   type: 'test'
   ...
 # Subtest: measure rejects unknown exclusion fields and out-of-range formatting commits
-ok 10 - measure rejects unknown exclusion fields and out-of-range formatting commits
+ok 30 - measure rejects unknown exclusion fields and out-of-range formatting commits
   ---
-  duration_ms: 804.731327
+  duration_ms: 605.945482
   type: 'test'
   ...
 # Subtest: measure preserves literal Git paths with injected win32
-ok 11 - measure preserves literal Git paths with injected win32
+ok 31 - measure preserves literal Git paths with injected win32
   ---
-  duration_ms: 157.339491
+  duration_ms: 135.33442
   type: 'test'
   ...
 # Subtest: measure preserves literal Git paths with injected darwin
-ok 12 - measure preserves literal Git paths with injected darwin
+ok 32 - measure preserves literal Git paths with injected darwin
   ---
-  duration_ms: 156.360971
+  duration_ms: 129.931153
   type: 'test'
   ...
 # Subtest: overlap reports seeded shared writes and shared contract files without target writes
-ok 13 - overlap reports seeded shared writes and shared contract files without target writes
+ok 33 - overlap reports seeded shared writes and shared contract files without target writes
   ---
-  duration_ms: 216.297555
+  duration_ms: 142.93267
   type: 'test'
   ...
 # Subtest: overlap declared glob src/**/*.ts against src/new.ts
-ok 14 - overlap declared glob src/**/*.ts against src/new.ts
+ok 34 - overlap declared glob src/**/*.ts against src/new.ts
   ---
-  duration_ms: 124.623262
+  duration_ms: 97.971614
   type: 'test'
   ...
 # Subtest: overlap declared glob src/**/*.ts against src/nested/new.ts
-ok 15 - overlap declared glob src/**/*.ts against src/nested/new.ts
+ok 35 - overlap declared glob src/**/*.ts against src/nested/new.ts
   ---
-  duration_ms: 108.362456
+  duration_ms: 105.120875
   type: 'test'
   ...
 # Subtest: overlap declared glob src/*.ts against src/nested/new.ts
-ok 16 - overlap declared glob src/*.ts against src/nested/new.ts
+ok 36 - overlap declared glob src/*.ts against src/nested/new.ts
   ---
-  duration_ms: 119.887215
+  duration_ms: 94.197591
   type: 'test'
   ...
 # Subtest: overlap declared glob src/?.ts against src/😀.ts
-ok 17 - overlap declared glob src/?.ts against src/😀.ts
+ok 37 - overlap declared glob src/?.ts against src/😀.ts
   ---
-  duration_ms: 102.501624
+  duration_ms: 95.601076
   type: 'test'
   ...
 # Subtest: overlap declared glob src/?.ts against src/ab.ts
-ok 18 - overlap declared glob src/?.ts against src/ab.ts
+ok 38 - overlap declared glob src/?.ts against src/ab.ts
   ---
-  duration_ms: 99.480823
+  duration_ms: 99.211681
   type: 'test'
   ...
 # Subtest: overlap declared glob src/a*.ts against src/*b.ts
-ok 19 - overlap declared glob src/a*.ts against src/*b.ts
+ok 39 - overlap declared glob src/a*.ts against src/*b.ts
   ---
-  duration_ms: 98.116173
+  duration_ms: 91.065082
   type: 'test'
   ...
 # Subtest: overlap declared glob src/**/*.ts against src/**/new.*
-ok 20 - overlap declared glob src/**/*.ts against src/**/new.*
+ok 40 - overlap declared glob src/**/*.ts against src/**/new.*
   ---
-  duration_ms: 106.753325
+  duration_ms: 110.401377
   type: 'test'
   ...
 # Subtest: overlap declared glob src/**/*.ts against other/**/*.ts
-ok 21 - overlap declared glob src/**/*.ts against other/**/*.ts
+ok 41 - overlap declared glob src/**/*.ts against other/**/*.ts
   ---
-  duration_ms: 88.527841
+  duration_ms: 92.490762
   type: 'test'
   ...
 # Subtest: overlap declared glob src/Foo.ts against src/foo.ts
-ok 22 - overlap declared glob src/Foo.ts against src/foo.ts
+ok 42 - overlap declared glob src/Foo.ts against src/foo.ts
   ---
-  duration_ms: 96.947468
+  duration_ms: 99.806218
   type: 'test'
   ...
 # Subtest: overlap declared glob **/package-lock.json against package-lock.json
-ok 23 - overlap declared glob **/package-lock.json against package-lock.json
+ok 43 - overlap declared glob **/package-lock.json against package-lock.json
   ---
-  duration_ms: 85.824788
+  duration_ms: 101.562661
   type: 'test'
   ...
 # Subtest: overlap declared glob **/dist/** against dist/deep/file
-ok 24 - overlap declared glob **/dist/** against dist/deep/file
+ok 44 - overlap declared glob **/dist/** against dist/deep/file
   ---
-  duration_ms: 92.904733
+  duration_ms: 86.972276
   type: 'test'
   ...
 # Subtest: overlap declared glob **/* against .hidden
-ok 25 - overlap declared glob **/* against .hidden
+ok 45 - overlap declared glob **/* against .hidden
   ---
-  duration_ms: 102.922957
+  duration_ms: 101.147236
   type: 'test'
   ...
 # Subtest: overlap declared glob src/* against src/notes ü &.txt
-ok 26 - overlap declared glob src/* against src/notes ü &.txt
+ok 46 - overlap declared glob src/* against src/notes ü &.txt
   ---
-  duration_ms: 103.98433
+  duration_ms: 96.390044
   type: 'test'
   ...
 # Subtest: overlap retains a changing contract ID across disjoint files
-ok 27 - overlap retains a changing contract ID across disjoint files
+ok 47 - overlap retains a changing contract ID across disjoint files
   ---
-  duration_ms: 96.966712
+  duration_ms: 90.102987
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path /absolute
-ok 28 - overlap rejects unsupported path /absolute
+ok 48 - overlap rejects unsupported path /absolute
   ---
-  duration_ms: 111.2038
+  duration_ms: 83.113165
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path C:/file
-ok 29 - overlap rejects unsupported path C:/file
+ok 49 - overlap rejects unsupported path C:/file
   ---
-  duration_ms: 100.601804
+  duration_ms: 83.468064
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path C:\\file
-ok 30 - overlap rejects unsupported path C:\\file
+ok 50 - overlap rejects unsupported path C:\\file
   ---
-  duration_ms: 102.994729
+  duration_ms: 83.294018
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path ../file
-ok 31 - overlap rejects unsupported path ../file
+ok 51 - overlap rejects unsupported path ../file
   ---
-  duration_ms: 106.610741
+  duration_ms: 100.282621
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path src/../file
-ok 32 - overlap rejects unsupported path src/../file
+ok 52 - overlap rejects unsupported path src/../file
   ---
-  duration_ms: 105.887789
+  duration_ms: 95.285788
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path ./file
-ok 33 - overlap rejects unsupported path ./file
+ok 53 - overlap rejects unsupported path ./file
   ---
-  duration_ms: 103.362879
+  duration_ms: 96.832566
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path src//file
-ok 34 - overlap rejects unsupported path src//file
+ok 54 - overlap rejects unsupported path src//file
   ---
-  duration_ms: 95.977752
+  duration_ms: 90.450099
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path src/
-ok 35 - overlap rejects unsupported path src/
+ok 55 - overlap rejects unsupported path src/
   ---
-  duration_ms: 82.077234
+  duration_ms: 114.628153
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path src/[ab].ts
-ok 36 - overlap rejects unsupported path src/[ab].ts
+ok 56 - overlap rejects unsupported path src/[ab].ts
   ---
-  duration_ms: 74.509854
+  duration_ms: 83.694967
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path src/{a,b}.ts
-ok 37 - overlap rejects unsupported path src/{a,b}.ts
+ok 57 - overlap rejects unsupported path src/{a,b}.ts
   ---
-  duration_ms: 95.771512
+  duration_ms: 102.764716
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path !src/file
-ok 38 - overlap rejects unsupported path !src/file
+ok 58 - overlap rejects unsupported path !src/file
   ---
-  duration_ms: 76.509194
+  duration_ms: 103.893228
   type: 'test'
   ...
 # Subtest: overlap rejects unsupported path src/a**.ts
-ok 39 - overlap rejects unsupported path src/a**.ts
+ok 59 - overlap rejects unsupported path src/a**.ts
   ---
-  duration_ms: 80.31579
+  duration_ms: 110.158663
   type: 'test'
   ...
 # Subtest: overlap rejects invalid plan {"extra":true}
-ok 40 - overlap rejects invalid plan {"extra":true}
+ok 60 - overlap rejects invalid plan {"extra":true}
   ---
-  duration_ms: 84.036397
+  duration_ms: 118.654496
   type: 'test'
   ...
 # Subtest: overlap rejects invalid plan {"schemaVersion":2}
-ok 41 - overlap rejects invalid plan {"schemaVersion":2}
+ok 61 - overlap rejects invalid plan {"schemaVersion":2}
   ---
-  duration_ms: 79.873483
+  duration_ms: 96.625819
   type: 'test'
   ...
 # Subtest: overlap rejects invalid plan {"writePaths":"src/file"}
-ok 42 - overlap rejects invalid plan {"writePaths":"src/file"}
+ok 62 - overlap rejects invalid plan {"writePaths":"src/file"}
   ---
-  duration_ms: 90.435317
+  duration_ms: 76.094921
   type: 'test'
   ...
 # Subtest: overlap rejects invalid plan {"id":"same"}
-ok 43 - overlap rejects invalid plan {"id":"same"}
+ok 63 - overlap rejects invalid plan {"id":"same"}
   ---
-  duration_ms: 80.014573
+  duration_ms: 83.64536
   type: 'test'
   ...
 # Subtest: overlap rejects invalid plan {"contracts":[{"id":"price","files":["a"]},{"id":"price","files":["b"]}]}
-ok 44 - overlap rejects invalid plan {"contracts":[{"id":"price","files":["a"]},{"id":"price","files":["b"]}]}
+ok 64 - overlap rejects invalid plan {"contracts":[{"id":"price","files":["a"]},{"id":"price","files":["b"]}]}
   ---
-  duration_ms: 81.420073
+  duration_ms: 81.494419
   type: 'test'
   ...
 # Subtest: overlap rejects invalid plan {"contracts":[{"id":"price","files":["C:/file"]}]}
-ok 45 - overlap rejects invalid plan {"contracts":[{"id":"price","files":["C:/file"]}]}
+ok 65 - overlap rejects invalid plan {"contracts":[{"id":"price","files":["C:/file"]}]}
   ---
-  duration_ms: 75.618891
+  duration_ms: 84.742683
   type: 'test'
   ...
 # Subtest: overlap requires exactly two readable plans
-ok 46 - overlap requires exactly two readable plans
+ok 66 - overlap requires exactly two readable plans
   ---
-  duration_ms: 247.716785
+  duration_ms: 237.953267
   type: 'test'
   ...
 # Subtest: overlap preserves portable declared paths with injected win32
-ok 47 - overlap preserves portable declared paths with injected win32
+ok 67 - overlap preserves portable declared paths with injected win32
   ---
-  duration_ms: 87.975513
+  duration_ms: 85.597803
   type: 'test'
   ...
 # Subtest: overlap preserves portable declared paths with injected darwin
-ok 48 - overlap preserves portable declared paths with injected darwin
+ok 68 - overlap preserves portable declared paths with injected darwin
   ---
-  duration_ms: 94.70564
+  duration_ms: 98.406492
   type: 'test'
   ...
-1..48
-# tests 48
+1..68
+# tests 68
 # suites 0
-# pass 48
+# pass 68
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 7938.425125
-
+# duration_ms 48455.115032

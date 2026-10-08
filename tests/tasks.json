@@ -20,5 +20,6 @@
   "T2.1": ["tests/scripts/cite-check.test.mjs", "tests/scripts/package-check.test.mjs"],
   "T2.2": ["tests/scripts/inspect.test.mjs"],
   "T2.3": ["tests/scripts/inventory.test.mjs"],
-  "T2.4": ["tests/scripts/measure.test.mjs", "tests/scripts/overlap.test.mjs"]
+  "T2.4": ["tests/scripts/measure.test.mjs", "tests/scripts/overlap.test.mjs"],
+  "T2.5": ["tests/scripts/findings.test.mjs", "tests/scripts/schema-contract.test.mjs"]
 }

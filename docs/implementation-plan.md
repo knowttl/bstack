@@ -363,10 +363,13 @@ Tick each task when its "Done when" commands pass.
       Generated-directory exclusions now derive from the shared discovery policy.
       Rename evidence respects the same path exclusions as frequency and co-change signals, while formatting-only exclusions retain rename evidence.
       The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records earlier local checks and named fixture controls.
-      Final evidence refresh remains pending: the outer validation executor must regenerate T2.4.json and all five C12 command-output artifacts from final runs against the final implementation commit, recording firstmate decisions as specification amendments.
-      Firstmate defers this refresh to the next slice's first evidence-only commit, using the landed implementation revision.
+      C13 refreshed T2.4.json and all five C12 command-output artifacts from fresh runs against landed C12 revision fc953e2ea6a8990c92aa29fe820efe43740b0242.
       Injected Windows/macOS cases run on Linux, while real platform execution and complete agent acceptance remain unverified.
-  - [ ] T2.5 Build the findings schema and report
+  - [x] T2.5 Build the findings schema and report
+      C13 adds the complete findings schema, tested uniqueItems validation, source and selection joins, and scratch-only reports with one stage-specific readiness result.
+      Current target, scope, intent and artifact fingerprints gate required outcomes, with verification blocked before decisions needed before ready.
+      The [findings contract](command-contract.md#findings) owns audit and foundation inputs, examples and readiness limits.
+      [T2.5 evidence](../tests/eval/results/tasks/T2.5.json) records local command controls for AC-8, AC-63 and AC-65, with real Windows/macOS and full agent acceptance still separate.
   - [ ] T2.6 Build protected writes and resume state
   - [ ] T2.7 Build verification capture and live probes
   - [ ] T2.8 Complete the existing-repo audit and apply path

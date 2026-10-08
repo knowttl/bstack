@@ -14,6 +14,7 @@ export function emitResult({ command, status, problems = [], data = {}, inputs =
   const result = { schemaVersion: 1, command, status, problems, data, inputs }
   console.log(json ? JSON.stringify(result) : [
     `${command}: ${status}`,
+    ...(data.path ? [data.path] : []),
     ...problems.map(problem => `${problem.code}: ${problem.message} Fix: ${problem.fix}`)
   ].join('\n'))
   process.exitCode = exitCodes[status]
