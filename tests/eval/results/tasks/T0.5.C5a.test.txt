@@ -7,621 +7,669 @@ TAP version 13
 # Subtest: bootstrap manifest commands and root lockfile agree
 ok 1 - bootstrap manifest commands and root lockfile agree
   ---
-  duration_ms: 7.570951
+  duration_ms: 9.45012
   type: 'test'
   ...
 # Subtest: discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
 ok 2 - discovery sorts explicit suites and excludes fixture, dependency and evaluation tests
   ---
-  duration_ms: 224.563051
+  duration_ms: 241.839634
   type: 'test'
   ...
 # Subtest: task selection executes only registered suites and rejects unknown tasks
 ok 3 - task selection executes only registered suites and rejects unknown tasks
   ---
-  duration_ms: 240.563148
+  duration_ms: 253.9537
   type: 'test'
   ...
 # Subtest: an empty selected suite fails
 ok 4 - an empty selected suite fails
   ---
-  duration_ms: 42.432861
+  duration_ms: 43.998451
   type: 'test'
   ...
 # Subtest: child commands preserve literal arguments and capture version and both output streams
 ok 5 - child commands preserve literal arguments and capture version and both output streams
   ---
-  duration_ms: 143.126395
+  duration_ms: 129.619579
   type: 'test'
   ...
 # Subtest: child output is bounded to the last 64 KiB per stream
 ok 6 - child output is bounded to the last 64 KiB per stream
   ---
-  duration_ms: 139.68594
+  duration_ms: 121.377973
   type: 'test'
   ...
 # Subtest: timeout fails and stops the child process tree before returning
 ok 7 - timeout fails and stops the child process tree before returning
   ---
-  duration_ms: 619.018554
+  duration_ms: 620.472053
   type: 'test'
   ...
 # Subtest: cancellation fails and stops the child process tree before returning
 ok 8 - cancellation fails and stops the child process tree before returning
   ---
-  duration_ms: 168.71648
+  duration_ms: 182.344588
   type: 'test'
   ...
 # Subtest: Windows cleanup failure blocks timed out check with inherited pipes
 ok 9 - Windows cleanup failure blocks timed out check with inherited pipes
   ---
-  duration_ms: 104.928872
+  duration_ms: 106.262597
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error blocks timed out check with inherited pipes
 ok 10 - Windows cleanup launch error blocks timed out check with inherited pipes
   ---
-  duration_ms: 102.050796
+  duration_ms: 102.785474
   type: 'test'
   ...
 # Subtest: Windows cleanup failure blocks timed out version probe with inherited pipes
 ok 11 - Windows cleanup failure blocks timed out version probe with inherited pipes
   ---
-  duration_ms: 102.09611
+  duration_ms: 102.179552
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error blocks timed out version probe with inherited pipes
 ok 12 - Windows cleanup launch error blocks timed out version probe with inherited pipes
   ---
-  duration_ms: 102.824328
+  duration_ms: 102.618769
   type: 'test'
   ...
 # Subtest: Windows cleanup failure blocks cancelled check with inherited pipes
 ok 13 - Windows cleanup failure blocks cancelled check with inherited pipes
   ---
-  duration_ms: 2.730913
+  duration_ms: 2.341661
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error blocks cancelled check with inherited pipes
 ok 14 - Windows cleanup launch error blocks cancelled check with inherited pipes
   ---
-  duration_ms: 2.36147
+  duration_ms: 2.555127
   type: 'test'
   ...
 # Subtest: Windows cleanup failure blocks cancelled version probe with inherited pipes
 ok 15 - Windows cleanup failure blocks cancelled version probe with inherited pipes
   ---
-  duration_ms: 1.826287
+  duration_ms: 2.48474
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error blocks cancelled version probe with inherited pipes
 ok 16 - Windows cleanup launch error blocks cancelled version probe with inherited pipes
   ---
-  duration_ms: 2.527629
+  duration_ms: 2.798313
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
 ok 17 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination succeeds
   ---
-  duration_ms: 595.217417
+  duration_ms: 604.811125
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
 ok 18 - Windows cleanup failure lets the CLI exit after timing out a live check when direct termination fails
   ---
-  duration_ms: 611.780788
+  duration_ms: 608.137364
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
 ok 19 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination succeeds
   ---
-  duration_ms: 573.81256
+  duration_ms: 575.731533
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
 ok 20 - Windows cleanup launch error lets the CLI exit after timing out a live check when direct termination fails
   ---
-  duration_ms: 575.321554
+  duration_ms: 571.514504
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
 ok 21 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination succeeds
   ---
-  duration_ms: 579.124616
+  duration_ms: 620.964266
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
 ok 22 - Windows cleanup failure lets the CLI exit after timing out a live version probe when direct termination fails
   ---
-  duration_ms: 589.625755
+  duration_ms: 601.895897
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
 ok 23 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination succeeds
   ---
-  duration_ms: 559.653155
+  duration_ms: 570.289333
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
 ok 24 - Windows cleanup launch error lets the CLI exit after timing out a live version probe when direct termination fails
   ---
-  duration_ms: 560.669494
+  duration_ms: 564.267353
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
 ok 25 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination succeeds
   ---
-  duration_ms: 141.734809
+  duration_ms: 115.448061
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
 ok 26 - Windows cleanup failure lets the CLI exit after cancelling a live check when direct termination fails
   ---
-  duration_ms: 153.336761
+  duration_ms: 115.737364
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
 ok 27 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination succeeds
   ---
-  duration_ms: 94.50574
+  duration_ms: 93.132825
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
 ok 28 - Windows cleanup launch error lets the CLI exit after cancelling a live check when direct termination fails
   ---
-  duration_ms: 115.318199
+  duration_ms: 93.189555
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
 ok 29 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination succeeds
   ---
-  duration_ms: 125.455612
+  duration_ms: 113.250112
   type: 'test'
   ...
 # Subtest: Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
 ok 30 - Windows cleanup failure lets the CLI exit after cancelling a live version probe when direct termination fails
   ---
-  duration_ms: 140.780534
+  duration_ms: 116.116504
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
 ok 31 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination succeeds
   ---
-  duration_ms: 86.82694
+  duration_ms: 84.815419
   type: 'test'
   ...
 # Subtest: Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
 ok 32 - Windows cleanup launch error lets the CLI exit after cancelling a live version probe when direct termination fails
   ---
-  duration_ms: 87.415893
+  duration_ms: 84.391366
   type: 'test'
   ...
 # Subtest: failed commands and unavailable tools cannot pass
 ok 33 - failed commands and unavailable tools cannot pass
   ---
-  duration_ms: 156.74075
+  duration_ms: 158.452334
   type: 'test'
   ...
 # Subtest: child working directories reject escape before execution
 ok 34 - child working directories reject escape before execution
   ---
-  duration_ms: 57.48392
+  duration_ms: 53.44524
   type: 'test'
   ...
 # Subtest: Windows npm selection uses Node and a JavaScript CLI with literal arguments
 ok 35 - Windows npm selection uses Node and a JavaScript CLI with literal arguments
   ---
-  duration_ms: 52.812412
+  duration_ms: 52.390407
   type: 'test'
   ...
 # Subtest: Windows npm.cmd without a supported CLI is blocked
 ok 36 - Windows npm.cmd without a supported CLI is blocked
   ---
-  duration_ms: 62.156606
+  duration_ms: 63.157433
   type: 'test'
   ...
 # Subtest: Windows tool.cmd without a supported CLI is blocked
 ok 37 - Windows tool.cmd without a supported CLI is blocked
   ---
-  duration_ms: 51.925355
+  duration_ms: 53.7848
   type: 'test'
   ...
 # Subtest: Windows tool.bat without a supported CLI is blocked
 ok 38 - Windows tool.bat without a supported CLI is blocked
   ---
-  duration_ms: 59.197017
+  duration_ms: 48.235092
   type: 'test'
   ...
 # Subtest: fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
 ok 39 - fingerprints cover exact bytes, absence, mode, repo, base and substantive inputs
   ---
-  duration_ms: 575.904737
+  duration_ms: 567.462528
   type: 'test'
   ...
 # Subtest: canonical assessment inputs ignore only derived fields and evidence serialization
 ok 40 - canonical assessment inputs ignore only derived fields and evidence serialization
   ---
-  duration_ms: 238.659679
+  duration_ms: 222.145308
   type: 'test'
   ...
 # Subtest: draft workspace stores distinct runs in scratch and leaves workspace unchanged
 ok 41 - draft workspace stores distinct runs in scratch and leaves workspace unchanged
   ---
-  duration_ms: 155.689764
+  duration_ms: 151.089492
   type: 'test'
   ...
 # Subtest: Git target resolves from a subdirectory with no commits
 ok 42 - Git target resolves from a subdirectory with no commits
   ---
-  duration_ms: 87.240416
+  duration_ms: 77.395034
   type: 'test'
   ...
 # Subtest: Git target resolves from a subdirectory with a commit
 ok 43 - Git target resolves from a subdirectory with a commit
   ---
-  duration_ms: 131.349421
+  duration_ms: 146.498324
   type: 'test'
   ...
 # Subtest: Git target preserves trailing whitespace "repo "
 ok 44 - Git target preserves trailing whitespace "repo "
   ---
-  duration_ms: 74.230454
+  duration_ms: 79.710876
   type: 'test'
   ...
 # Subtest: Git target preserves trailing whitespace "repo \\t\\r"
 ok 45 - Git target preserves trailing whitespace "repo \\t\\r"
   ---
-  duration_ms: 83.627959
+  duration_ms: 70.738276
   type: 'test'
   ...
 # Subtest: arguments reject missing target with a JSON usage error
 ok 46 - arguments reject missing target with a JSON usage error
   ---
-  duration_ms: 57.246798
+  duration_ms: 63.141106
   type: 'test'
   ...
 # Subtest: arguments reject unknown options with a JSON usage error
 ok 47 - arguments reject unknown options with a JSON usage error
   ---
-  duration_ms: 61.418523
+  duration_ms: 59.471977
   type: 'test'
   ...
 # Subtest: arguments reject missing value with a JSON usage error
 ok 48 - arguments reject missing value with a JSON usage error
   ---
-  duration_ms: 55.761442
+  duration_ms: 53.895169
   type: 'test'
   ...
 # Subtest: arguments reject duplicate option with a JSON usage error
 ok 49 - arguments reject duplicate option with a JSON usage error
   ---
-  duration_ms: 47.049861
+  duration_ms: 52.808474
   type: 'test'
   ...
 # Subtest: arguments reject conflicting targets with a JSON usage error
 ok 50 - arguments reject conflicting targets with a JSON usage error
   ---
-  duration_ms: 52.374211
+  duration_ms: 50.284345
   type: 'test'
   ...
 # Subtest: rejects traversal.json before scratch writes and reports every problem
 ok 51 - rejects traversal.json before scratch writes and reports every problem
   ---
-  duration_ms: 51.60201
+  duration_ms: 58.789532
   type: 'test'
   ...
 # Subtest: rejects absolute-paths.json before scratch writes and reports every problem
 ok 52 - rejects absolute-paths.json before scratch writes and reports every problem
   ---
-  duration_ms: 50.380872
+  duration_ms: 52.674977
   type: 'test'
   ...
 # Subtest: rejects unknown-fields.json before scratch writes and reports every problem
 ok 53 - rejects unknown-fields.json before scratch writes and reports every problem
   ---
-  duration_ms: 45.998643
+  duration_ms: 58.629759
   type: 'test'
   ...
 # Subtest: rejects invalid-types.json before scratch writes and reports every problem
 ok 54 - rejects invalid-types.json before scratch writes and reports every problem
   ---
-  duration_ms: 48.091324
+  duration_ms: 51.98529
   type: 'test'
   ...
 # Subtest: escaping existing links and new children under escaping parents are refused before writes
 ok 55 - escaping existing links and new children under escaping parents are refused before writes
   ---
-  duration_ms: 61.275517
+  duration_ms: 51.238413
   type: 'test'
   ...
 # Subtest: dangling parents are refused rather than treated as missing directories
 ok 56 - dangling parents are refused rather than treated as missing directories
   ---
-  duration_ms: 64.579893
+  duration_ms: 50.273785
   type: 'test'
   ...
 # Subtest: missing Git prerequisite returns blocked rather than passing
 ok 57 - missing Git prerequisite returns blocked rather than passing
   ---
-  duration_ms: 67.290015
+  duration_ms: 60.940578
   type: 'test'
   ...
 # Subtest: repo commands refuse workspace mode
 ok 58 - repo commands refuse workspace mode
   ---
-  duration_ms: 52.683676
+  duration_ms: 55.605235
   type: 'test'
   ...
 # Subtest: scratch refuses a cache link into the target before creating directories
 ok 59 - scratch refuses a cache link into the target before creating directories
   ---
-  duration_ms: 55.28837
+  duration_ms: 55.868834
   type: 'test'
   ...
 # Subtest: scratch follows a cache link outside the target
 ok 60 - scratch follows a cache link outside the target
   ---
-  duration_ms: 53.058052
+  duration_ms: 63.848336
   type: 'test'
   ...
 # Subtest: scratch follows a run-parent link outside the target
 ok 61 - scratch follows a run-parent link outside the target
   ---
-  duration_ms: 56.877623
+  duration_ms: 66.76504
   type: 'test'
   ...
 # Subtest: scratch refuses a run-parent link inside the target before creating directories
 ok 62 - scratch refuses a run-parent link inside the target before creating directories
   ---
-  duration_ms: 53.65949
+  duration_ms: 67.975228
   type: 'test'
   ...
 # Subtest: target aliases use the same scratch identity
 ok 63 - target aliases use the same scratch identity
   ---
-  duration_ms: 125.358384
+  duration_ms: 121.061269
   type: 'test'
   ...
 # Subtest: unavailable target absent is blocked without writes
 ok 64 - unavailable target absent is blocked without writes
   ---
-  duration_ms: 49.357818
+  duration_ms: 51.158911
   type: 'test'
   ...
 # Subtest: unavailable target brief.md is blocked without writes
 ok 65 - unavailable target brief.md is blocked without writes
   ---
-  duration_ms: 48.614194
+  duration_ms: 54.704707
   type: 'test'
   ...
 # Subtest: human output is a short summary with the same failed exit code
 ok 66 - human output is a short summary with the same failed exit code
   ---
-  duration_ms: 48.685047
+  duration_ms: 54.670729
   type: 'test'
   ...
 # Subtest: valid skeleton passes from another working directory
 ok 67 - valid skeleton passes from another working directory
   ---
-  duration_ms: 142.927036
+  duration_ms: 140.174612
   type: 'test'
   ...
 # Subtest: missing-path fails with local-path-missing
 ok 68 - missing-path fails with local-path-missing
   ---
-  duration_ms: 52.452648
+  duration_ms: 69.541699
   type: 'test'
   ...
 # Subtest: unlisted-reference fails with reference-unlisted
 ok 69 - unlisted-reference fails with reference-unlisted
   ---
-  duration_ms: 58.551848
+  duration_ms: 62.0974
   type: 'test'
   ...
 # Subtest: nested-reference fails with reference-nested
 ok 70 - nested-reference fails with reference-nested
   ---
-  duration_ms: 57.946641
+  duration_ms: 66.711017
   type: 'test'
   ...
 # Subtest: oversized-skill fails with skill-too-long
 ok 71 - oversized-skill fails with skill-too-long
   ---
-  duration_ms: 79.685441
+  duration_ms: 53.533139
   type: 'test'
   ...
 # Subtest: long-reference fails with reference-toc
 ok 72 - long-reference fails with reference-toc
   ---
-  duration_ms: 71.939007
+  duration_ms: 68.662893
   type: 'test'
   ...
 # Subtest: host-metadata fails with host-metadata
 ok 73 - host-metadata fails with host-metadata
   ---
-  duration_ms: 65.628032
+  duration_ms: 56.734323
   type: 'test'
   ...
 # Subtest: every independent problem is reported together
 ok 74 - every independent problem is reported together
   ---
-  duration_ms: 74.911248
+  duration_ms: 82.792614
   type: 'test'
   ...
 # Subtest: line limits include their boundary and exclude frontmatter
 ok 75 - line limits include their boundary and exclude frontmatter
   ---
-  duration_ms: 62.124892
+  duration_ms: 70.092103
   type: 'test'
   ...
 # Subtest: contents heading at line twenty permits a long reference
 ok 76 - contents heading at line twenty permits a long reference
   ---
-  duration_ms: 123.411943
+  duration_ms: 133.625307
   type: 'test'
   ...
 # Subtest: local paths in source and nested resources resolve from their file
 ok 77 - local paths in source and nested resources resolve from their file
   ---
-  duration_ms: 135.817231
+  duration_ms: 114.285511
+  type: 'test'
+  ...
+# Subtest: inline link location suffix preserves missing and nested reference checks
+ok 78 - inline link location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 64.870116
+  type: 'test'
+  ...
+# Subtest: image location suffix preserves missing and nested reference checks
+ok 79 - image location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 62.124045
+  type: 'test'
+  ...
+# Subtest: reference definition location suffix preserves missing and nested reference checks
+ok 80 - reference definition location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 62.762118
+  type: 'test'
+  ...
+# Subtest: angle destination location suffix preserves missing and nested reference checks
+ok 81 - angle destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 59.775598
+  type: 'test'
+  ...
+# Subtest: encoded destination location suffix preserves missing and nested reference checks
+ok 82 - encoded destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 64.682558
+  type: 'test'
+  ...
+# Subtest: quoted resource location suffix preserves missing and nested reference checks
+ok 83 - quoted resource location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 70.447253
+  type: 'test'
+  ...
+# Subtest: location suffix accepts existing resources and excludes URLs
+ok 84 - location suffix accepts existing resources and excludes URLs
+  ---
+  duration_ms: 68.08998
+  type: 'test'
+  ...
+# Subtest: unlisted reference diagnostics identify each source file
+ok 85 - unlisted reference diagnostics identify each source file
+  ---
+  duration_ms: 74.969231
   type: 'test'
   ...
 # Subtest: dependency and cache contents are excluded
-ok 78 - dependency and cache contents are excluded
+ok 86 - dependency and cache contents are excluded
   ---
-  duration_ms: 62.793726
+  duration_ms: 68.155312
   type: 'test'
   ...
 # Subtest: help and invalid arguments have explicit exits
-ok 79 - help and invalid arguments have explicit exits
+ok 87 - help and invalid arguments have explicit exits
   ---
-  duration_ms: 200.574652
+  duration_ms: 229.596379
   type: 'test'
   ...
 # Subtest: valid schema data dispatches from another cwd without changing the workspace
-ok 80 - valid schema data dispatches from another cwd without changing the workspace
+ok 88 - valid schema data dispatches from another cwd without changing the workspace
   ---
-  duration_ms: 72.361411
+  duration_ms: 75.243743
   type: 'test'
   ...
 # Subtest: schema-invalid.json with the installed schema fails with named problems and no writes
-ok 81 - schema-invalid.json with the installed schema fails with named problems and no writes
+ok 89 - schema-invalid.json with the installed schema fails with named problems and no writes
   ---
-  duration_ms: 62.293289
+  duration_ms: 70.527986
   type: 'test'
   ...
 # Subtest: schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
-ok 82 - schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
+ok 90 - schema-valid.json with schema-unknown-keywords.json fails with named problems and no writes
   ---
-  duration_ms: 65.400732
+  duration_ms: 82.395085
   type: 'test'
   ...
 # Subtest: schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
-ok 83 - schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
+ok 91 - schema-valid.json with schema-invalid-definition.json fails with named problems and no writes
   ---
-  duration_ms: 76.160337
+  duration_ms: 66.2353
   type: 'test'
   ...
 # Subtest: schema-empty.json with the installed schema fails with named problems and no writes
-ok 84 - schema-empty.json with the installed schema fails with named problems and no writes
+ok 92 - schema-empty.json with the installed schema fails with named problems and no writes
   ---
-  duration_ms: 80.291213
+  duration_ms: 63.549027
   type: 'test'
   ...
 # Subtest: schema-missing.json with the installed schema fails with named problems and no writes
-ok 85 - schema-missing.json with the installed schema fails with named problems and no writes
+ok 93 - schema-missing.json with the installed schema fails with named problems and no writes
   ---
-  duration_ms: 60.177953
+  duration_ms: 63.749935
   type: 'test'
   ...
 # Subtest: schema-wrong-types.json with the installed schema fails with named problems and no writes
-ok 86 - schema-wrong-types.json with the installed schema fails with named problems and no writes
+ok 94 - schema-wrong-types.json with the installed schema fails with named problems and no writes
   ---
-  duration_ms: 53.442644
+  duration_ms: 58.45013
   type: 'test'
   ...
 # Subtest: schema-map-invalid.json with schema-map.json fails with named problems and no writes
-ok 87 - schema-map-invalid.json with schema-map.json fails with named problems and no writes
+ok 95 - schema-map-invalid.json with schema-map.json fails with named problems and no writes
   ---
-  duration_ms: 55.422378
+  duration_ms: 55.63076
   type: 'test'
   ...
 # Subtest: schema-malformed.json with the installed schema fails with named problems and no writes
-ok 88 - schema-malformed.json with the installed schema fails with named problems and no writes
+ok 96 - schema-malformed.json with the installed schema fails with named problems and no writes
   ---
-  duration_ms: 63.717996
+  duration_ms: 65.776838
   type: 'test'
   ...
 # Subtest: schema-valued additional properties validates each map value
-ok 89 - schema-valued additional properties validates each map value
+ok 97 - schema-valued additional properties validates each map value
   ---
-  duration_ms: 50.873728
+  duration_ms: 57.553614
   type: 'test'
   ...
 # Subtest: command help succeeds with its implementation absent while execution reports blocked
-ok 90 - command help succeeds with its implementation absent while execution reports blocked
+ok 98 - command help succeeds with its implementation absent while execution reports blocked
   ---
-  duration_ms: 102.430112
+  duration_ms: 116.506254
   type: 'test'
   ...
 # Subtest: dispatch rejects unsupported arguments before loading the command
-ok 91 - dispatch rejects unsupported arguments before loading the command
+ok 99 - dispatch rejects unsupported arguments before loading the command
   ---
-  duration_ms: 34.874055
+  duration_ms: 37.513699
   type: 'test'
   ...
 # Subtest: skill metadata permits only user invocation in the documented hosts
-ok 92 - skill metadata permits only user invocation in the documented hosts
+ok 100 - skill metadata permits only user invocation in the documented hosts
   ---
-  duration_ms: 15.005124
+  duration_ms: 12.168094
   type: 'test'
   ...
 # Subtest: load when table resolves all eight bundled reference placeholders
-ok 93 - load when table resolves all eight bundled reference placeholders
+ok 101 - load when table resolves all eight bundled reference placeholders
   ---
-  duration_ms: 18.515339
+  duration_ms: 15.297816
   type: 'test'
   ...
 # Subtest: no arguments prints planned commands and returns usage exit 3
-ok 94 - no arguments prints planned commands and returns usage exit 3
+ok 102 - no arguments prints planned commands and returns usage exit 3
   ---
-  duration_ms: 51.238456
+  duration_ms: 51.517673
   type: 'test'
   ...
 # Subtest: explicit help succeeds
-ok 95 - explicit help succeeds
+ok 103 - explicit help succeeds
   ---
-  duration_ms: 60.384231
+  duration_ms: 52.577432
   type: 'test'
   ...
 # Subtest: an unimplemented command returns usage exit 3
-ok 96 - an unimplemented command returns usage exit 3
+ok 104 - an unimplemented command returns usage exit 3
   ---
-  duration_ms: 47.654217
+  duration_ms: 54.230154
   type: 'test'
   ...
 # Subtest: fetch copies exact pinned bytes and check verifies them without writing
-ok 97 - fetch copies exact pinned bytes and check verifies them without writing
+ok 105 - fetch copies exact pinned bytes and check verifies them without writing
   ---
-  duration_ms: 207.916897
+  duration_ms: 191.217331
   type: 'test'
   ...
 # Subtest: fetch refuses a listed file absent at its pin
-ok 98 - fetch refuses a listed file absent at its pin
+ok 106 - fetch refuses a listed file absent at its pin
   ---
-  duration_ms: 97.37799
+  duration_ms: 111.908553
   type: 'test'
   ...
 # Subtest: check refuses a listed file absent at its pin
-ok 99 - check refuses a listed file absent at its pin
+ok 107 - check refuses a listed file absent at its pin
   ---
-  duration_ms: 91.298962
+  duration_ms: 102.21823
   type: 'test'
   ...
 # Subtest: check refuses an absent local copy without repairing it
-ok 100 - check refuses an absent local copy without repairing it
+ok 108 - check refuses an absent local copy without repairing it
   ---
-  duration_ms: 113.934178
+  duration_ms: 98.385275
   type: 'test'
   ...
 # Subtest: check refuses modified local bytes and preserves them
-ok 101 - check refuses modified local bytes and preserves them
+ok 109 - check refuses modified local bytes and preserves them
   ---
-  duration_ms: 155.475278
+  duration_ms: 156.302308
   type: 'test'
   ...
 # Subtest: fetch rejects traversal before copying files
-ok 102 - fetch rejects traversal before copying files
+ok 110 - fetch rejects traversal before copying files
   ---
-  duration_ms: 53.10208
+  duration_ms: 59.047716
   type: 'test'
   ...
-1..102
-# tests 102
+1..110
+# tests 110
 # suites 0
-# pass 102
+# pass 110
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 8456.48553
+# duration_ms 8323.660138

@@ -2,12 +2,13 @@
   "schemaVersion": 1,
   "taskId": "T0.5.C5a",
   "slice": "C5a",
-  "sourceRevision": "607372c5e6deb06d63718876eef21af52f7e85a6",
+  "sourceRevision": "d77b73e9ee424a27f7d59b0eda0526a72c152693",
   "intent": "\"yes approbe and begin the implementation\". Complete C5a of the approved sequential commissioning plan.",
   "amendments": [
     "C5a delivers T0.5 metadata, loading and local resource checks only. T0.5 remains incomplete until C5b.",
     "Preserve .no-mistakes.yaml byte-identical and add no workflows.",
-    "Evidence names the last implementation commit tested. Evidence-only commits need not name themselves. Any source or test fix must refresh evidence in the same round."
+    "Evidence names the last implementation commit tested. Evidence-only commits need not name themselves. Any source or test fix must refresh evidence in the same round.",
+    "Refreshed after the authorised pipeline lint repair. The lint phase deferred tests and evidence refresh to the outer executor, which reran the required checks on the published implementation head."
   ],
   "status": "passed",
   "environment": {
@@ -199,6 +200,20 @@
       "id": "C5a-boundaries",
       "kind": "automated",
       "procedure": "tests/scripts/package-check.test.mjs: line limits include their boundary and exclude frontmatter; dependency and cache contents are excluded",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-location-suffixes",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: supported location-suffix destinations still receive missing and nested checks, existing resources and URLs retain their expected results",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-source-diagnostics",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: unlisted reference diagnostics identify each source file",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
     }
