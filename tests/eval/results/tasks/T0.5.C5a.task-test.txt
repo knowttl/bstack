@@ -1,0 +1,93 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T0.5.C5a
+
+Selected 1 suite(s): tests/scripts/package-check.test.mjs
+TAP version 13
+# Subtest: valid skeleton passes from another working directory
+ok 1 - valid skeleton passes from another working directory
+  ---
+  duration_ms: 135.759848
+  type: 'test'
+  ...
+# Subtest: missing-path fails with local-path-missing
+ok 2 - missing-path fails with local-path-missing
+  ---
+  duration_ms: 57.330997
+  type: 'test'
+  ...
+# Subtest: unlisted-reference fails with reference-unlisted
+ok 3 - unlisted-reference fails with reference-unlisted
+  ---
+  duration_ms: 64.218357
+  type: 'test'
+  ...
+# Subtest: nested-reference fails with reference-nested
+ok 4 - nested-reference fails with reference-nested
+  ---
+  duration_ms: 58.394825
+  type: 'test'
+  ...
+# Subtest: oversized-skill fails with skill-too-long
+ok 5 - oversized-skill fails with skill-too-long
+  ---
+  duration_ms: 56.721833
+  type: 'test'
+  ...
+# Subtest: long-reference fails with reference-toc
+ok 6 - long-reference fails with reference-toc
+  ---
+  duration_ms: 59.769013
+  type: 'test'
+  ...
+# Subtest: host-metadata fails with host-metadata
+ok 7 - host-metadata fails with host-metadata
+  ---
+  duration_ms: 63.642218
+  type: 'test'
+  ...
+# Subtest: every independent problem is reported together
+ok 8 - every independent problem is reported together
+  ---
+  duration_ms: 71.316366
+  type: 'test'
+  ...
+# Subtest: line limits include their boundary and exclude frontmatter
+ok 9 - line limits include their boundary and exclude frontmatter
+  ---
+  duration_ms: 70.988217
+  type: 'test'
+  ...
+# Subtest: contents heading at line twenty permits a long reference
+ok 10 - contents heading at line twenty permits a long reference
+  ---
+  duration_ms: 131.432075
+  type: 'test'
+  ...
+# Subtest: local paths in source and nested resources resolve from their file
+ok 11 - local paths in source and nested resources resolve from their file
+  ---
+  duration_ms: 123.74981
+  type: 'test'
+  ...
+# Subtest: dependency and cache contents are excluded
+ok 12 - dependency and cache contents are excluded
+  ---
+  duration_ms: 61.622679
+  type: 'test'
+  ...
+# Subtest: help and invalid arguments have explicit exits
+ok 13 - help and invalid arguments have explicit exits
+  ---
+  duration_ms: 215.865065
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1253.608679
