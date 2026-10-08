@@ -323,7 +323,7 @@ Absolute paths, Windows drive paths, NUL bytes and parent traversal components u
 Spaces, Unicode and metacharacters remain literal path characters.
 For a new path, resolution starts with its nearest existing parent.
 Existing links must resolve inside the target, including parents of new files.
-Dangling links are refused rather than treated as absent directories.
+Dangling links are refused rather than treated as absent directories, except during [journalled-deletion recovery](#apply-dry-run).
 Internal links are allowed and return their real destination.
 No validation operation creates target files or directories.
 Callers validate all inputs and paths before any write, and report every detected problem.
@@ -342,10 +342,11 @@ Drafts, board verdicts and resume state stay outside the selected target.
 | Linux | `$XDG_CACHE_HOME/bstack/`, otherwise `~/.cache/bstack/` |
 
 The cache directory must be absolute.
-A target subfolder uses SHA-256 of the absolute real target root, and a UUID identifies each run.
+A target subfolder uses SHA-256 of the absolute real target root, and `createScratch` assigns a UUID to each new draft run.
+Apply uses the [digest-bound run identity](#apply-dry-run) instead.
 Existing cache and run-parent links are resolved before creating directories.
 A resolved scratch location inside the target is blocked before any write.
-The returned absolute run path is explicit input to later resume operations, rather than guessing the newest run.
+Draft review commands use explicit returned scratch paths rather than guessing the newest run.
 Scratch is retained for review and resume, with no automatic deletion in C4a.
 
 ## Results
@@ -699,9 +700,9 @@ For a selected replacement, an edit has this shape:
 ```
 
 The public-command suite constructs complete plans, computes these digests independently and verifies successful and invalid previews against before/after project fingerprints.
-Plain output prints a full-file unified diff with target-relative labels and missing-final-newline markers.
+Dry-run plain output prints a full-file unified diff with target-relative labels and missing-final-newline markers.
 CRLF carriage returns remain in the diff; there is no line-ending normalisation.
-JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edits` containing each complete proposed content, original/proposed hashes and diff.
+Dry-run JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edits` containing each complete proposed content, original/proposed hashes and diff.
 An unchanged proposed file produces an empty diff.
 
 The [resume-state schema](../skills/repo-audit/schemas/resume-state.schema.json) owns the durable journal.

@@ -90,7 +90,7 @@ npm test -- --task T2.6
 ```
 
 The [apply contract](docs/command-contract.md#apply-dry-run) documents the reviewed change set, exact-byte hashes, digest and supported operations.
-Plain output prints the complete diff; JSON additionally returns complete proposed content and hashes.
+Dry-run plain output prints the complete diff; dry-run JSON additionally returns complete proposed content and hashes.
 Invalid inputs or changed preconditions leave every project file unchanged.
 Omit `--dry-run` to apply after review.
 Repeating the same plan resumes pending edits or returns `already-applied` without writes.
