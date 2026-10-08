@@ -51,7 +51,8 @@ The opening command creates a new resumable thread, and later turns must retain 
 The installed CLI's `codex exec --help` and `codex exec resume --help` define its supported options.
 The host interface follows the official [non-interactive execution documentation](https://developers.openai.com/codex/noninteractive/).
 The recorded Linux host cannot start Codex's workspace sandbox because `bwrap` cannot configure its loopback interface.
-The adapter therefore selects `danger-full-access` for the disposable fixture, while separately isolating host state and verifying skill discovery.
+The adapter therefore selects `danger-full-access` for both opening and resumed turns in the disposable fixture, while separately isolating host state and verifying skill discovery.
+The resume command explicitly sets `sandbox_mode="danger-full-access"` instead of relying on the opening command's `--sandbox` option to carry over.
 This is discovery and conversation isolation, not an operating-system security boundary.
 
 ```sh
@@ -257,3 +258,9 @@ The summaries record the actual implementation revisions evaluated, tool version
 Captured JSONL transcripts retain their line numbers with host paths, user names and thread IDs redacted.
 These observations are intent checkpoint evidence, not final acceptance selections or complete project creation.
 T1.7 remains blocked until the new-idea journey is resolved and the board and scratch approval flow can complete on an available host.
+
+## Phase 1 E2E follow-up
+
+The [Phase 1 validation](../tests/eval/results/phase1-check/summary.md) records the corrected shopping-list answer and retained Codex resume permissions.
+That summary owns the supported-flow observations, synthetic live board evidence, superseded experiment and historical verification counts.
+See [build progress](implementation-plan.md#progress) for the remaining task prerequisites.
