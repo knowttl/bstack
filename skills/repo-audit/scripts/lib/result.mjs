@@ -14,9 +14,9 @@ export function emitResult({ command, status, problems = [], data = {}, inputs =
   const result = { schemaVersion: 1, command, status, problems, data, inputs }
   console.log(json ? JSON.stringify(result) : [
     `${command}: ${status}`,
-    ...(command === 'run-checks' && data.runId ? [`capture: ${data.runId}`, data.path, data.journeyCoverage,
+    ...(command === 'run-checks' && data.runId ? [`capture: ${data.runId}`, data.journeyCoverage,
       ...data.checks.map(check => `${check.id}: ${check.status}${check.reason ? ` (${check.reason})` : ''}`)] : []),
-    ...(data.runId ? [`run: ${data.runId}`, ...(data.outcome ? [data.outcome] : []),
+    ...(data.runId && command !== 'run-checks' ? [`run: ${data.runId}`, ...(data.outcome ? [data.outcome] : []),
       ...['applied', 'pending', 'conflicting'].map(state => `${state}: ${(data[state] ?? []).join(', ') || 'none'}`),
       ...(data.affectedChecks?.length ? [`checks to rerun: ${data.affectedChecks.join(', ')}`] : []), ...(data.limitations ?? [])] : []),
     ...(data.path ? [data.path] : []),

@@ -118,7 +118,11 @@ Done when: Only selected, reviewed changes have been applied with recoverable or
 ### Step 6: Verify the outcome
 
 Follow the shared verification rules and report selected changes, actual evidence, unresolved findings and limitations.
-Verification capture is unavailable until T2.7 and the complete protected new-project path until T2.9.
+For a Git repo, capture an approved plan through `run-checks --plan <file> --json`, with the explicit target.
+Plans follow `schemas/check-plan.json` and link acceptance cases to exact source bytes and relevant input scopes.
+Bug fixes and refactors require `--phase before` capture before changes, then the same plan with `--prior-run <before-run-id>` afterward.
+Unavailable user flows remain unverified, and live probes remain C15b work.
+The complete protected new-project path remains T2.9 work.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
@@ -207,7 +211,11 @@ Validate the versioned findings with `findings validate --findings <file> --json
 Render returns a scratch path and distinguishes documented, observed and inferred sources, selected changes and proposed new principles.
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
-Verification capture is unavailable until T2.7 and path integration until T2.8.
+Capture approved checks using `run-checks --plan <file> --json`, with the explicit repo.
+The plan links checks to acceptance-source pointers and declares their relevant input scopes.
+Record bug reproduction or refactor protection through `--phase before` before changes, then reuse the plan with `--prior-run <before-run-id>` after the change.
+Keep the returned scratch output artifact, coverage and original-state order.
+Live probe records remain C15b work and path integration remains T2.8 work.
 Maintained enforcement arrives in T3.4 and portable maintenance evidence and document validation in Phase 3a.
 
 Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.
