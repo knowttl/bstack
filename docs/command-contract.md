@@ -651,9 +651,10 @@ Each edit declares a unique `id`, selected `findingId`, target-relative `path`, 
 Hashes are lowercase SHA-256 of exact UTF-8 bytes, preserving BOM and line endings.
 Explicit null means absence, while the hash of an empty string means a present empty file.
 The helper derives the full proposed content from the operation and checks it against both `proposedContent` and `proposedHash`.
-Original file bytes must match `originalHash`; a create must start absent and a delete must start present.
+For a fresh plan or dry run, current file bytes must match `originalHash`; a create must start absent and a delete must start present.
+Resume validates the saved originals against `originalHash` and derives current file states as described below.
 Complete bytes for every file are staged in memory before reporting success.
-If any file fails, no diff or proposed edits are returned and every project file remains unchanged.
+If any file fails input validation or staging, no diff or proposed edits are returned and every project file remains unchanged.
 Filesystem access failures block the command; invalid plans fail with named problems and renewed-review guidance.
 
 | Operation | Exact payload | Supported scope |
@@ -706,7 +707,6 @@ Dry-run JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edi
 An unchanged proposed file produces an empty diff.
 
 The [resume-state schema](../skills/repo-audit/schemas/resume-state.schema.json) owns the durable journal.
-It declares `schemaVersion`, `runId`, the reviewed target, `planDigest`, per-edit IDs, paths, reviewed `resolvedPath` identities, original/proposed hashes, backup paths or explicit null for absent originals, completion flags and `affectedChecks`.
 The run ID is the reviewed plan digest, under the target's existing OS-cache identity folder.
 Before any replacement, apply revalidates all targets, stages complete proposed bytes, saves exact originals in scratch and flushes the journal containing original/proposed hashes.
 Each replacement uses a flushed same-directory temporary file followed by rename, preserving existing file permissions.
@@ -726,7 +726,9 @@ All remaining files are preflighted before continuing, with another complete che
 A user change to any pending or completed file blocks all further writes.
 A repeated completed plan returns `data.outcome: "already-applied"` without updating targets, originals or journal.
 Changed digests or targets cannot reuse earlier completion.
-On write or journal I/O failure, apply returns blocked, preserves the journal and reports actual applied, pending and conflicting paths.
+On write or journal I/O failure, apply returns blocked, preserves any published journal and reports actual applied, pending and conflicting paths.
+Failure before the initial journal is published leaves targets unchanged; `state show` reports a missing journal until preparation succeeds.
+Failure after target writes can leave a partially applied set, with saved originals retained for resume.
 Resume with the unchanged plan after resolving filesystem access.
 
 `state show` requires the explicit target and `--run`, reads the journal and inspects current targets without writes.

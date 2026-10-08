@@ -8,7 +8,7 @@ The procedure defines both audit checklists, review before apply, protected writ
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
 Other conditional references remain placeholders, and later audit commands and the installer are not built yet.
-Use the procedure for bounded read-only planning, keeping blocked steps visible.
+Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
 
@@ -91,15 +91,11 @@ npm test -- --task T2.6
 
 The [apply contract](docs/command-contract.md#apply-dry-run) documents the reviewed change set, exact-byte hashes, digest and supported operations.
 Dry-run plain output prints the complete diff; dry-run JSON additionally returns complete proposed content and hashes.
-Invalid inputs or changed preconditions leave every project file unchanged.
 Omit `--dry-run` to apply after review.
 Repeating the same plan resumes pending edits or returns `already-applied` without writes.
-Originals and the journal stay in OS-cache scratch outside the project.
-User changes block all remaining writes, including recreation after deletion.
-Replacement is atomic per file where supported, never across the whole change set.
-Filesystem limitations are reported without a non-atomic fallback.
 Use `replace-file` with complete reviewed UTF-8 content when a mechanical edit is unsupported, including the audit record rendered by T2.5.
 `state show` reports actual applied, pending and conflicting files and affected checks to rerun.
+See the apply contract for preflight protection, backup and journal recovery, and filesystem limits.
 Automatic check execution remains T2.7 work.
 
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
