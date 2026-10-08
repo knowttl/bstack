@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T0.5.C5a",
+  "slice": "C5a",
+  "sourceRevision": "d77b73e9ee424a27f7d59b0eda0526a72c152693",
+  "intent": "\"yes approbe and begin the implementation\". Complete C5a of the approved sequential commissioning plan.",
+  "amendments": [
+    "C5a delivers T0.5 metadata, loading and local resource checks only. T0.5 remains incomplete until C5b.",
+    "Preserve .no-mistakes.yaml byte-identical and add no workflows.",
+    "Evidence names the last implementation commit tested. Evidence-only commits need not name themselves. Any source or test fix must refresh evidence in the same round.",
+    "Refreshed after the authorised pipeline lint repair. The lint phase deferred tests and evidence refresh to the outer executor, which reran the required checks on the published implementation head."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "node-version",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.node-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "npm-version",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.npm-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "git-version",
+      "executable": "git",
+      "args": [
+        "--version"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.git-version.txt",
+      "status": "passed"
+    },
+    {
+      "id": "os",
+      "executable": "uname",
+      "args": [
+        "-a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.os.txt",
+      "status": "passed"
+    },
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T0.5.C5a"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt",
+      "status": "passed"
+    },
+    {
+      "id": "preserved-config",
+      "executable": "git",
+      "args": [
+        "diff",
+        "--exit-code",
+        "origin/main",
+        "--",
+        ".no-mistakes.yaml"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.preserved-config.txt",
+      "status": "passed"
+    },
+    {
+      "id": "workflows",
+      "executable": "git",
+      "args": [
+        "ls-files",
+        ".github/workflows/*"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.workflows.txt",
+      "status": "passed"
+    },
+    {
+      "id": "history",
+      "executable": "git",
+      "args": [
+        "log",
+        "-1",
+        "--format=%H"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T0.5.C5a.history.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-41",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: unlisted-reference fails with reference-unlisted; nested-reference fails with reference-nested; oversized-skill fails with skill-too-long",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "AC-44",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: host-metadata fails with host-metadata",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-resource-closure",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: missing-path fails with local-path-missing; local paths in source and nested resources resolve from their file",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-reference-size",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: long-reference fails with reference-toc; contents heading at line twenty permits a long reference",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-valid-package",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: valid skeleton passes from another working directory",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-collection",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: every independent problem is reported together",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-boundaries",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: line limits include their boundary and exclude frontmatter; dependency and cache contents are excluded",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-location-suffixes",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: supported location-suffix destinations still receive missing and nested checks, existing resources and URLs retain their expected results",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    },
+    {
+      "id": "C5a-source-diagnostics",
+      "kind": "automated",
+      "procedure": "tests/scripts/package-check.test.mjs: unlisted reference diagnostics identify each source file",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T0.5.C5a.task-test.txt"
+    }
+  ],
+  "limitations": [
+    "Linux Node 24 only. No other operating system or Node 26 execution is claimed.",
+    "These syntactic checks do not prove host invocation behaviour, computed paths, full YAML/Markdown semantics or table-of-contents accuracy. Exact definitions are in docs/command-contract.md.",
+    "AC-45 script/step policies and the remaining T0.5 policies are pending C5b. AC-47 runtime closure is not proved here. Installed-package closure remains pending T4.1."
+  ]
+}

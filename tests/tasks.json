@@ -5,5 +5,7 @@
   "T0.4": ["tests/scripts/command-contract.test.mjs", "tests/scripts/child-contract.test.mjs", "tests/scripts/schema-contract.test.mjs"],
   "T0.4.C4a": ["tests/scripts/command-contract.test.mjs"],
   "T0.4.C4b": ["tests/scripts/child-contract.test.mjs"],
-  "T0.4.C4c": ["tests/scripts/schema-contract.test.mjs"]
+  "T0.4.C4c": ["tests/scripts/schema-contract.test.mjs"],
+  "T0.5": ["tests/scripts/package-check.test.mjs"],
+  "T0.5.C5a": ["tests/scripts/package-check.test.mjs"]
 }
