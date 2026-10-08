@@ -1,0 +1,61 @@
+{
+  "title": "Verification check plan version 1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "changeKind", "acceptanceSources", "acceptanceCases", "checks"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "changeKind": { "enum": ["feature", "bug-fix", "refactor", "document-config"] },
+    "acceptanceSources": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "path", "contentHash"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "path": { "type": "string", "minLength": 1 },
+          "contentHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "acceptanceCases": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "sourceId", "pointer", "outcome", "userJourney"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "sourceId": { "type": "string", "minLength": 1 },
+          "pointer": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "outcome": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "userJourney": { "type": "boolean" }
+        }
+      }
+    },
+    "checks": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "role", "command", "required", "acceptanceCases", "inputScopes"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "role": { "enum": ["outcome", "reproduction", "protection", "compatibility"] },
+          "command": {
+            "type": "object", "additionalProperties": false,
+            "required": ["executable", "args", "cwd", "versionArgs"],
+            "properties": {
+              "executable": { "type": "string", "minLength": 1, "pattern": "\\S" },
+              "args": { "type": "array", "items": { "type": "string" } },
+              "cwd": { "type": "string", "minLength": 1 },
+              "versionArgs": { "type": "array", "items": { "type": "string" } },
+              "timeoutMs": { "type": "integer" }
+            }
+          },
+          "required": { "type": "boolean" },
+          "acceptanceCases": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "inputScopes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "skipReason": { "type": "string", "minLength": 1, "pattern": "\\S" }
+        }
+      }
+    }
+  }
+}
