@@ -49,6 +49,9 @@ Both command forms require JSONL, the declared model, ignored user config and a 
 The opening command creates a new resumable thread, and later turns must retain that exact thread ID.
 The installed CLI's `codex exec --help` and `codex exec resume --help` define its supported options.
 The host interface follows the official [non-interactive execution documentation](https://developers.openai.com/codex/noninteractive/).
+The recorded Linux host cannot start Codex's workspace sandbox because `bwrap` cannot configure its loopback interface.
+The adapter therefore selects `danger-full-access` for the disposable fixture, while separately isolating host state and verifying skill discovery.
+This is discovery and conversation isolation, not an operating-system security boundary.
 
 ```sh
 npm run eval -- --scenario ambiguous-idea --mode without --stage baseline --adapter tests/eval/adapters/codex.json

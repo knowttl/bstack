@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "executable": "codex",
-  "args": ["--no-daemon", "exec", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6.1-sol", "--sandbox", "workspace-write", "-c", "model_reasoning_effort=\"low\"", "{message}"],
+  "args": ["--no-daemon", "exec", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6.1-sol", "--sandbox", "danger-full-access", "-c", "model_reasoning_effort=\"low\"", "{message}"],
   "cwd": ".",
   "versionArgs": ["--version"],
   "timeoutMs": 120000,
