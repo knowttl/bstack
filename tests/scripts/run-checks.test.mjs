@@ -282,6 +282,61 @@ test('a refactor without prior protective capture is rejected before compatibili
   assert.ok(result.data.checks.every(item => item.execution === null))
 })
 
+for (const [kind, role, code, additionalChecks] of [
+  ['refactor', 'protection', 'console.log("protected")', [check('compatibility', undefined, { role: 'compatibility' })]],
+  ['bug-fix', 'reproduction', 'process.exit(1)', []]
+]) {
+  for (const [name, mutation, inputScopes, skip] of [
+    ['changed bytes', 'fs.writeFileSync("product.txt", "changed")', ['product.txt'], false],
+    ['changed mode', 'fs.chmodSync("product.txt", 0o755)', ['product.txt'], process.platform === 'win32'],
+    ['new glob file', 'fs.writeFileSync("product-new.txt", "new")', ['product*.txt'], false],
+    ['deleted glob file', 'fs.unlinkSync("product.txt")', ['product*.txt'], false],
+    ['created absent literal', 'fs.writeFileSync("product-new.txt", "new")', ['product.txt', 'product-new.txt'], false]
+  ]) {
+    test(`before ${role} rejects ${name} from an earlier optional check`, { skip }, async t => {
+      const f = await setup(t, [check('optional', `const fs = require("node:fs"); ${mutation}`,
+        { role: 'protection', required: false, inputScopes: ['other.txt'], acceptanceCases: ['units'] }),
+      check('required', code, { role, inputScopes }), ...additionalChecks], kind)
+      f.plan.acceptanceCases.push({ ...f.plan.acceptanceCases[0], id: 'units', userJourney: false })
+      const before = await f.invoke(['--phase', 'before'])
+      assert.equal(before.exit, 1)
+      assert.equal(before.data.checks[0].status, 'passed')
+      assert.equal(before.data.checks[1].status, 'stale')
+      assert.equal(before.data.checks[1].satisfied, false)
+      assert.equal(before.data.checks[1].execution, null)
+      const after = await f.invoke(['--prior-run', before.data.runId])
+      assert.equal(after.exit, 2)
+      assert.equal(after.problems[0].code, 'missing-prior-evidence')
+      assert.ok(after.data.checks.every(item => item.execution === null))
+    })
+  }
+}
+
+test('before protection projects glob inputs without another check’s absent literal', async t => {
+  const f = await setup(t, [check('optional', undefined, { role: 'protection', required: false, inputScopes: ['other.txt'] }),
+    check('protect', undefined, { role: 'protection', inputScopes: ['*.txt'] }),
+    check('compatibility', undefined, { role: 'compatibility' })], 'refactor')
+  const before = await f.invoke(['--phase', 'before'])
+  assert.equal(before.exit, 0)
+  assert.equal(before.data.checks[1].status, 'passed')
+  assert.equal(before.data.checks[1].satisfied, true)
+})
+
+test('prior protection cannot name an original snapshot its checks never assessed', async t => {
+  const f = await refactor(t)
+  const original = await f.invoke(['--phase', 'before'])
+  await writeFile(join(f.repo, 'product.cjs'), 'exports.total = count => 10 * count\n')
+  const changed = await f.invoke(['--phase', 'before'])
+  assert.equal(changed.exit, 0)
+  const saved = JSON.parse(await readFile(changed.data.path, 'utf8'))
+  saved.originalState = original.data.originalState
+  await writeFile(changed.data.path, JSON.stringify(saved))
+  const after = await f.invoke(['--prior-run', changed.data.runId])
+  assert.equal(after.exit, 2)
+  assert.equal(after.problems[0].code, 'invalid-prior-check')
+  assert.ok(after.data.checks.every(item => item.execution === null))
+})
+
 test('a protected refactor passes only after compatibility runs against changed state', async t => {
   const f = await refactor(t)
   const before = await f.invoke(['--phase', 'before'])

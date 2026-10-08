@@ -768,6 +768,9 @@ A refactor requires all required protective checks passing in a `before` run, pl
 Missing evidence blocks before execution.
 Prior runs must belong to the same target and exact plan, precede the current run, and name a different original input state.
 The recorded original state includes the Git revision, exact input hashes, presence and modes.
+Before-phase reproduction and protection checks must match their scoped inputs in that original snapshot before execution, after execution and at final validation.
+Drift marks the check stale and prevents its version probe and command from starting when detected before execution.
+Prior evidence must bind each required check's fingerprint to the same scoped original snapshot.
 Execution order links prior capture to the after run.
 Local scratch evidence is an execution record, not an authenticated portable attestation.
 

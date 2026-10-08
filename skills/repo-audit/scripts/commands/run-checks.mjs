@@ -69,7 +69,14 @@ export async function run(options) {
   }
   if (problems.length) throw new CommandError('failed', problems)
   const planDigest = hashBytes(canonicalJSON(plan))
-  async function inputState(checks) {
+  function scopedFingerprint(state, checks) {
+    const scopes = checks.flatMap(check => check.inputScopes)
+    const globs = scopes.map(pathGlob)
+    const files = state.files.filter(file => scopes.includes(file.path) || plan.acceptanceSources.some(source => source.path === file.path) ||
+      file.present && globs.some(glob => matchesPath(glob, file.path)))
+    return hashBytes(canonicalJSON({ ...state, files }))
+  }
+  async function inputState(checks, original = null) {
     const scopes = checks.flatMap(check => check.inputScopes)
     const globs = scopes.map(pathGlob)
     const files = await repoFiles(target.root)
@@ -83,7 +90,8 @@ export async function run(options) {
     }
     const current = await fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths, inputs: { planDigest, planContentHash } })
     const fresh = planContentHash === validatedPlanContentHash && plan.acceptanceSources.every(source =>
-      current.state.files.some(file => file.path === source.path && file.present && file.contentHash === source.contentHash))
+      current.state.files.some(file => file.path === source.path && file.present && file.contentHash === source.contentHash)) &&
+      (phase !== 'before' || !original || current.fingerprint === scopedFingerprint(original.state, checks))
     return { ...current, fresh }
   }
   const originalState = await inputState(plan.checks)
@@ -104,7 +112,8 @@ export async function run(options) {
       const role = plan.changeKind === 'bug-fix' ? 'reproduction' : 'protection'
       for (const check of required(role)) {
         const captured = prior.checks?.find(item => item.id === check.id)
-        if (!captured?.satisfied || !captured.execution || captured.inputFingerprint !== captured.finalFingerprint) problem('invalid-prior-check', `Prior capture does not establish ${check.id}.`)
+        if (!captured?.satisfied || !captured.execution || captured.inputFingerprint !== captured.finalFingerprint ||
+            captured.inputFingerprint !== scopedFingerprint(prior.originalState.state, [check])) problem('invalid-prior-check', `Prior capture does not establish ${check.id}.`)
       }
     }
   }
@@ -122,12 +131,12 @@ export async function run(options) {
         inputFingerprint: null, finalFingerprint: null, execution: null, order: checks.length + 1 }
       checks.push(captured)
       if (reason) continue
-      const before = await inputState([check])
+      const before = await inputState([check], originalState)
       captured.inputFingerprint = before.fingerprint
       if (!before.fresh) {
         captured.finalFingerprint = before.fingerprint
         captured.status = 'stale'
-        captured.reason = 'Approved plan or acceptance sources changed during this run.'
+        captured.reason = 'Inputs changed during this run.'
         continue
       }
       try { captured.execution = await runCommand(target, check.command, { signal: controller.signal }) } catch (error) {
@@ -141,7 +150,7 @@ export async function run(options) {
       const reproduced = phase === 'before' && plan.changeKind === 'bug-fix' && check.role === 'reproduction'
       captured.satisfied = reproduced ? execution.status === 'failed' && execution.exitCode !== null && execution.exitCode !== 0 && !execution.signal && !execution.cancelled && !execution.timedOut && execution.toolVersion.status === 'passed' : execution.status === 'passed'
       if (reproduced && !captured.satisfied) captured.reason = 'Reproduction must execute normally and fail against the original state.'
-      const after = await inputState([check])
+      const after = await inputState([check], originalState)
       captured.finalFingerprint = after.fingerprint
       if (!after.fresh || captured.inputFingerprint !== captured.finalFingerprint) captured.status = 'stale'
     }
@@ -151,7 +160,7 @@ export async function run(options) {
   }
   for (const captured of checks.filter(check => check.execution)) {
     const check = plan.checks.find(item => item.id === captured.id)
-    const final = await inputState([check])
+    const final = await inputState([check], originalState)
     captured.finalFingerprint = final.fingerprint
     if (!final.fresh || captured.status === 'stale' || captured.inputFingerprint !== captured.finalFingerprint) {
       captured.status = 'stale'
