@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-const [path, name] = process.argv.slice(2)
+const [path] = process.argv.slice(2)
+const name = basename(dirname(process.argv[1]))
 function run(executable, args) {
   const result = spawnSync(executable, args, { cwd: path, encoding: 'utf8' })
   if (result.error?.code === 'ENOENT') { console.error(`Blocked: install ${executable}`); process.exit(2) }
@@ -11,7 +12,7 @@ function run(executable, args) {
 }
 run(process.execPath, ['--test', 'price.test.mjs'])
 if (name === 'dirty-work') {
-  assert.equal(run('git', ['status', '--porcelain']), ' M notes.md\nM  price.mjs\n D remove.md\n D rename.md\n?? new.md\n?? renamed.md'.trim())
+  assert.equal(run('git', ['status', '--porcelain', '--renames']), ' M notes.md\nM  price.mjs\n D remove.md\nR  rename.md -> renamed.md\n?? new.md'.trim())
   assert.equal(await readFile(join(path, 'notes.md'), 'utf8'), 'User edits must survive.\n')
 } else if (name === 'refactor') {
   assert.equal(run('git', ['log', '--format=%s', '-1']), 'refactor: preserve public pricing')

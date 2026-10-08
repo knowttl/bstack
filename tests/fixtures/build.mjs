@@ -49,12 +49,12 @@ try {
           git('-C', shallow, 'config', '--local', 'commit.gpgsign', 'false')
           git('-C', shallow, 'config', '--local', 'core.autocrlf', 'false')
           await rm(path, { recursive: true, force: true })
-          execFileSync(process.execPath, [join(sources, name, 'sanity.mjs'), shallow, name], { stdio: ['ignore', 'ignore', 'inherit'] })
+          execFileSync(process.execPath, [join(sources, name, 'sanity.mjs'), shallow], { stdio: ['ignore', 'ignore', 'inherit'] })
           console.log(JSON.stringify({ name, path: shallow, kind: fixture.kind }))
           continue
         }
       }
-      execFileSync(process.execPath, [join(sources, name, 'sanity.mjs'), path, name], { stdio: ['ignore', 'ignore', 'inherit'] })
+      execFileSync(process.execPath, [join(sources, name, 'sanity.mjs'), path], { stdio: ['ignore', 'ignore', 'inherit'] })
       console.log(JSON.stringify({ name, path, kind: fixture.kind }))
     }
   }

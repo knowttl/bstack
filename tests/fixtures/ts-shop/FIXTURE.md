@@ -2,7 +2,7 @@
 
 Requires Node 24 or later, npm and Git.
 TypeScript 5.9.3 is pinned in the fixture-local lockfile.
-Run `node tests/fixtures/ts-shop/sanity.mjs <built-folder> ts-shop`.
+Run `node tests/fixtures/ts-shop/sanity.mjs <built-folder>`.
 
 The two workspaces contain direct UI storage access, a route/pricing/persistence module, a cycle, a private import, a public import and a tsconfig storage alias.
 AGENTS.md has a CLAUDE.md import stub.

@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { readFile, rm } from 'node:fs/promises'
-import { join } from 'node:path'
-const [path, name = 'py-ledger'] = process.argv.slice(2)
+import { basename, dirname, join } from 'node:path'
+const [path] = process.argv.slice(2)
+const name = basename(dirname(process.argv[1]))
 function run(executable, args, expected = 0) {
   const result = spawnSync(executable, args, { cwd: path, encoding: 'utf8', env: { ...process.env, UV_PYTHON_DOWNLOADS: 'never' } })
   if (result.error?.code === 'ENOENT') { console.error(`Blocked: install ${executable}`); process.exit(2) }

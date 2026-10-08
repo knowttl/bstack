@@ -84,7 +84,7 @@ for (const name of ['dirty-work', 'refactor', 'contract-removal', 'shallow-histo
 for (const name of ['ts-shop', 'py-ledger']) {
   test(`${name} reports missing native tools as blocked`, () => {
     const entry = join(sources, name, 'sanity.mjs')
-    const args = ['--input-type=module', '-e', "const entry = process.argv[2]; process.execPath = process.argv[1]; process.argv = [process.execPath, entry, ...process.argv.slice(3)]; await import(entry)", join(sources, 'missing-node', 'node.exe'), pathToFileURL(entry).href, tmpdir(), name]
+    const args = ['--input-type=module', '-e', "import { fileURLToPath } from 'node:url'; const entry = process.argv[2]; process.execPath = process.argv[1]; process.argv = [process.execPath, fileURLToPath(entry), ...process.argv.slice(3)]; await import(entry)", join(sources, 'missing-node', 'node.exe'), pathToFileURL(entry).href, tmpdir()]
     const result = spawnSync(process.execPath, args,
       { encoding: 'utf8', env: { ...process.env, PATH: '', npm_execpath: '' } })
     assert.equal(result.status, 2)

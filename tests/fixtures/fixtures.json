@@ -52,7 +52,6 @@
       "packages/web/alias.ts",
       "packages/web/routes.ts",
       "unit.test.mjs",
-      "service.mjs",
       "journey.mjs",
       "AGENTS.md",
       "CLAUDE.md",
@@ -351,7 +350,7 @@
       "new.md": "New user file.\n",
       "renamed.md": "Rename these notes.\n"
     },
-    "stage": ["price.mjs"],
+    "stage": ["price.mjs", "rename.md", "renamed.md"],
     "remove": [
       "remove.md",
       "rename.md"

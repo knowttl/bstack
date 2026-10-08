@@ -2,7 +2,7 @@
 
 Requires Node 24 or later for the builder, Git, Python 3.12 and uv.
 The fixture-local uv.lock pins Ruff 0.14.0.
-Run `node tests/fixtures/py-ledger/sanity.mjs <built-folder> py-ledger`.
+Run `node tests/fixtures/py-ledger/sanity.mjs <built-folder>`.
 
 ledger/book.py is a large cohesive entry and balance owner.
 startup.py is thin wiring with many imports.
