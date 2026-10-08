@@ -2,11 +2,13 @@
   "schemaVersion": 1,
   "taskId": "T3.1",
   "slice": "C16",
-  "sourceRevision": "5b571427b66c81a48ff01abb803e4a4f804dfb85",
+  "sourceRevision": "a75764289ea07fe223ca9ca14558afe9804eb46f",
   "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1-T2.7 (most recently https://github.com/knowttl/bstack/pull/28: live probe record/compare and side-effect approval).\n\nThis piece is slice C16: the early reference portion of task T3.1 \"Write the enforcement and architecture references\", which must land before C17 (T2.8) loads these references. Done evidence: reviewed enforcement/architecture guidance, package check and two-stack relevance rubric.",
   "amendments": [
     "Early reference portion only. Rule-proof-driven revisions remain C19a, as Progress records.",
-    "README usage, docs and Progress updated before final implementation commit. Evidence generated from that commit."
+    "README usage, docs and Progress updated before final implementation commit. Evidence generated from that commit.",
+    "Refreshed both installs, package check, full suite, task suite and prohibited-routing searches after the first no-mistakes review and document fixes. This evidence-only commit records that implementation head.",
+    "Firstmate approved test-1 proceeding without live validation because C16 delivers reference documents only. Agent behaviour remains C17 and native enforcement remains T3.2-T3.4."
   ],
   "status": "passed",
   "environment": {
