@@ -13,7 +13,7 @@
   },
   "fixture": {
     "name": "ambiguous-idea",
-    "path": "/tmp/bstack-ambiguous-idea-vvl0C8",
+    "path": "[redacted: fixture 1]",
     "kind": "idea",
     "revision": "e15b941cb5ab07e9a1f99ce492a3a891c8cac91b"
   },
@@ -45,20 +45,20 @@
   "status": "blocked",
   "reason": "Host could not read the fixture because the workspace sandbox failed with bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted. This attempt stays blocked; rerun with the current host's unsandboxed adapter.",
   "isolation": {
-    "home": "/tmp/bstack-agent-0xkxJg",
-    "state": "/tmp/bstack-agent-0xkxJg/.codex",
+    "home": "[redacted: isolated home 1]",
+    "state": "[redacted: isolated home 1]/.codex",
     "discoveryPaths": [
-      "/tmp/bstack-agent-0xkxJg/.agents/skills",
-      "/tmp/bstack-agent-0xkxJg/.codex/skills",
-      "/tmp/bstack-ambiguous-idea-vvl0C8/.agents/skills",
-      "/tmp/bstack-ambiguous-idea-vvl0C8/.codex/skills",
-      "/tmp/.agents/skills",
-      "/tmp/.codex/skills",
+      "[redacted: isolated home 1]/.agents/skills",
+      "[redacted: isolated home 1]/.codex/skills",
+      "[redacted: fixture 1]/.agents/skills",
+      "[redacted: fixture 1]/.codex/skills",
+      "[redacted: temporary path 20]",
+      "[redacted: temporary path 21]",
       "/.agents/skills",
       "/.codex/skills",
       "/etc/codex/skills"
     ],
-    "stagedPath": "/tmp/bstack-agent-0xkxJg/.agents/skills/repo-audit",
+    "stagedPath": "[redacted: isolated home 1]/.agents/skills/repo-audit",
     "skillHash": null,
     "verified": true,
     "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
@@ -132,8 +132,8 @@
       "message": "Read brief.md and establish the project intent before recommending the foundation.",
       "result": {
         "status": "passed",
-        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"01a1197f-2a3a-7b02-a9d3-80277b2adf3a\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll read `brief.md` and any project guidance, then identify the intended outcome and constraints before recommending a foundation.\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"I couldn’t read `brief.md`: the workspace command runner failed with `bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted`.\\n\\nPlease paste the contents of `brief.md`. I’ll establish the project’s purpose, audience, core workflow, and constraints before recommending a foundation.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":76286,\"cached_input_tokens\":64256,\"cache_write_input_tokens\":0,\"output_tokens\":304,\"reasoning_output_tokens\":15}}\n",
-        "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"/tmp/bstack-agent-0xkxJg/.codex\"))\nReading additional input from stdin...\n",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[redacted: host thread 1]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll read `brief.md` and any project guidance, then identify the intended outcome and constraints before recommending a foundation.\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"agent_message\",\"text\":\"I couldn’t read `brief.md`: the workspace command runner failed with `bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted`.\\n\\nPlease paste the contents of `brief.md`. I’ll establish the project’s purpose, audience, core workflow, and constraints before recommending a foundation.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":76286,\"cached_input_tokens\":64256,\"cache_write_input_tokens\":0,\"output_tokens\":304,\"reasoning_output_tokens\":15}}\n",
+        "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"[redacted: isolated home 1]/.codex\"))\nReading additional input from stdin...\n",
         "durationMs": 15171.346131,
         "exitCode": 0,
         "signal": null,
@@ -144,7 +144,7 @@
         "toolVersion": {
           "status": "passed",
           "stdout": "codex-cli 0.160.1\n",
-          "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"/tmp/bstack-agent-0xkxJg/.codex\"))\n",
+          "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"[redacted: isolated home 1]/.codex\"))\n",
           "durationMs": 11.545654000000013,
           "exitCode": 0,
           "signal": null,
@@ -154,12 +154,16 @@
           "error": null
         }
       },
-      "sessionId": "01a1197f-2a3a-7b02-a9d3-80277b2adf3a"
+      "sessionId": "[redacted: host thread 1]"
     }
   ],
   "nextAnswer": 1,
-  "sessionId": "01a1197f-2a3a-7b02-a9d3-80277b2adf3a",
+  "sessionId": "[redacted: host thread 1]",
   "conversation": "conversation.txt",
   "authenticatedVia": "throwaway copy",
-  "conversationHash": "4fef4929c1029c70789fe141dc5beab7c91e54a81ff7e9dd3c1a553c5c6d8db8"
+  "conversationHash": "b7bcfc9637c2eb01595b8c5aa8f1b3e4dc23170958a9a847bb498dd0741f683a",
+  "redaction": {
+    "method": "Host paths, host and user names, out-of-fixture inventory and host thread IDs replaced before publication; transcript line numbers and scoring preserved.",
+    "originalConversationHash": "4fef4929c1029c70789fe141dc5beab7c91e54a81ff7e9dd3c1a553c5c6d8db8"
+  }
 }

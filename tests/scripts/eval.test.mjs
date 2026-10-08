@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm, mkdir, chmod } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -202,8 +202,8 @@ async function adapterFile(directory, mode = 'success') {
   return { adapter, path }
 }
 
-function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-idea', ...extra) {
-  const result = run(directory, '--scenario', scenario, '--mode', mode, '--stage', 'baseline', '--adapter', path, ...extra)
+function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-idea') {
+  const result = run(directory, '--scenario', scenario, '--mode', mode, '--stage', 'baseline', '--adapter', path)
   const record = result.data.data
   if (record) {
     t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
@@ -250,6 +250,7 @@ test('scripted replies resume the exact host conversation, preserve user turns a
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
   const { record } = hostStart(t, directory, path)
+  assert.equal(run(directory, 'turn', '--run', record.id).status, 2)
   assert.equal(run(directory, 'turn', '--run', record.id, '--answer', '2').status, 2)
   const reply = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
   assert.equal(reply.turns.length, 2)
@@ -261,17 +262,13 @@ test('scripted replies resume the exact host conversation, preserve user turns a
   assert.ok(transcript.includes('User: ' + record.scenario.answers[0]))
 })
 
-test('manual adapter preparation makes no host call and can later capture an opening turn', async t => {
+test('manual adapter preparation is rejected before creating a run', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
-  const { record } = hostStart(t, directory, path, 'without', 'ambiguous-idea', '--manual')
-  assert.deepEqual(record.turns, [])
-  assert.equal(record.sessionId, null)
-  const files = await inputs(directory, record)
-  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, 2)
-  const captured = run(directory, 'turn', '--run', record.id).data.data
-  assert.equal(captured.turns.length, 1)
-  assert.equal(captured.isolation.verified, true)
+  const rejected = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'without', '--stage', 'baseline', '--adapter', path, '--manual')
+  assert.equal(rejected.status, 3)
+  assert.match(rejected.stdout, /Omit --manual/)
+  assert.deepEqual(await readdir(directory), ['adapter.json'])
 })
 
 for (const mode of ['fail', 'malformed', 'incomplete', 'contaminate', 'truncate', 'hang']) {

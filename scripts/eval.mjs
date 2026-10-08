@@ -7,12 +7,12 @@ import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/sche
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { readAdapter, isolate, verifyIsolation, hostTurn, closeHost } from './lib/evaluation-host.mjs'
+import { readAdapter, isolate, hostTurn, closeHost } from './lib/evaluation-host.mjs'
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
 // Adapter runs capture host turns, while unsupported hosts retain the manual interface.
-const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--manual] [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> [--answer <one-based-script-index>] [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]'
+const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> --answer <one-based-script-index> [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]'
 
 async function child(executable, args, targetRoot = root) {
   const result = await runCommand({ root: targetRoot }, { executable, args, cwd: '.', versionArgs: ['--version'], timeoutMs: 120000 })
@@ -21,6 +21,7 @@ async function child(executable, args, targetRoot = root) {
 }
 
 async function start(opts, results) {
+  if (opts.manual && opts.adapter) fail('Adapter runs capture the opening turn automatically. Omit --manual, or omit --adapter and supply --agent and --model for a manual run.', 'usage-error')
   for (const name of ['scenario', 'mode', 'stage', ...(opts.adapter ? [] : ['agent', 'model'])]) if (!opts[name]?.trim()) fail(`Missing --${name}`, 'usage-error')
   if (!['without', 'with'].includes(opts.mode)) fail('Mode must be without or with.', 'usage-error')
   const definition = await scenario(opts.scenario)
@@ -62,8 +63,7 @@ async function start(opts, results) {
     record.conversation = 'conversation.txt'
     try {
       await isolate(record)
-      record.reason = 'Isolated fixture prepared. Awaiting manual host conversation and scoring.'
-      if (!opts.manual) await captureTurn(record, record.request, directory)
+      await captureTurn(record, record.request, directory)
     } catch (error) {
       record.reason = error.message
       record.hostFailure = true
@@ -87,16 +87,13 @@ async function captureTurn(record, message, directory) {
 
 async function turn(opts, results) {
   const record = await load(results, opts.run)
-  if (!record.adapter || record.transcript || record.isolation.cleanedAt) fail('Host turns require an open, unscored adapter run.')
-  let message = record.request
-  if (record.sessionId) {
-    if (!/^[1-9]\d*$/.test(opts.answer ?? '') || Number(opts.answer) !== record.nextAnswer ||
-        !record.scenario.answers[record.nextAnswer - 1]) fail('Supply the next one-based scripted answer index after reviewing the corresponding host question.')
-    message = record.scenario.answers[record.nextAnswer - 1]
-  } else if (opts.answer || record.turns.length) fail('The opening turn has no answer index. A failed opening needs a fresh run.')
+  if (!record.adapter || !record.sessionId || record.transcript || record.isolation.cleanedAt) fail('Host turns require an open, unscored adapter conversation. A failed opening needs a fresh run.')
+  if (!/^[1-9]\d*$/.test(opts.answer ?? '') || Number(opts.answer) !== record.nextAnswer ||
+      !record.scenario.answers[record.nextAnswer - 1]) fail('Supply the next one-based scripted answer index after reviewing the corresponding host question.')
+  const message = record.scenario.answers[record.nextAnswer - 1]
   try {
     await captureTurn(record, message, join(results, record.id))
-    if (opts.answer) record.nextAnswer++
+    record.nextAnswer++
   } catch (error) {
     record.reason = error.message
     record.hostFailure = true

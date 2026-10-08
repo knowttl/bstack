@@ -13,7 +13,7 @@
 test at tests/fixtures/excluded/failing.test.mjs:4:1
 ✖ planted fixture failure must never be discovered (1.313229ms)
   AssertionError [ERR_ASSERTION]: Fixture sources are not bstack test suites
-      at TestContext.<anonymous> (file:///home/brytton/.treehouse/bstack-a2f91a/1/bstack/tests/fixtures/excluded/failing.test.mjs:5:10)
+      at TestContext.<anonymous> (file://[redacted: checkout]/tests/fixtures/excluded/failing.test.mjs:5:10)
       at Test.runInAsyncScope (node:async_hooks:227:14)
       at Test.run (node:internal/test_runner/test:1306:25)
       at Test.start (node:internal/test_runner/test:1177:17)

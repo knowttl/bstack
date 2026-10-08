@@ -69,8 +69,6 @@ This reviewer-driven delivery uses `codex exec resume` instead of guessing which
 Do not send an answer merely because a turn completed.
 If a question cannot be answered from the approved script, close the run, record the limitation and score the unmet outcome honestly.
 The opening prompt never includes later scripted answers.
-`--manual --adapter` prepares isolated state without executing the host.
-`eval turn --run <id>` can subsequently capture its opening request without an answer index.
 Every command returns immediately after its bounded child execution and remains blocked until human scoring.
 At most one opening and one turn per scripted answer may succeed.
 A failed, incomplete, malformed, truncated or wrong-session host result stays blocked and closes the isolated home.
@@ -210,6 +208,10 @@ Task evidence records these interface checks separately from actual baseline pro
 ## Recorded initial baseline
 
 Three scored `without` runs used Codex CLI 0.160.1, `gpt-6.1-sol`, Node 24 and Linux at the baseline checkpoint.
+Before commit, baseline transcripts and every corresponding evidence copy are redacted for host paths, user and host names, out-of-fixture workspace inventories and host thread IDs.
+Run-local markers retain distinct fixtures, isolated homes and conversations without publishing their original identifiers.
+Redaction preserves JSONL events, transcript line numbers, commands, observations, reviewer verdicts and citations; conversation hashes bind the redacted bytes.
+These are historical observations rather than byte-identical raw host logs, and cannot be used to resume their deleted host sessions.
 All three retain distinct fixture paths, homes, thread IDs, transcripts and scoring artifacts.
 Their fixture revision is `e15b941cb5ab07e9a1f99ce492a3a891c8cac91b`, and each preserves its registered criteria hash and the same adapter hash.
 The [T1.2 task evidence](../tests/eval/results/tasks/T1.2.json) names their complete run records and transcript locations.

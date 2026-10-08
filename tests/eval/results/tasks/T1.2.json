@@ -9,11 +9,15 @@
     "The captain approved copying only the invoking user's Codex login into throwaway state with private permissions. The implementation removes the login after each turn and the entire isolated home on conversation close or failure.",
     "The current host's workspace sandbox cannot configure bwrap loopback. Its initial real attempt remains blocked in the history. The three scored baselines use the same unsandboxed adapter with separately verified discovery and conversation isolation.",
     "The three scored baselines retain source revision ca0618c and their original fixture revision, adapter, model and criteria hashes. The final implementation adds a failed-authentication scoring guard without changing those successful conversation paths.",
-    "Evidence-only commit follows the final tested implementation commit. No final with-skill or released-skill acceptance is claimed."
+    "Evidence-only commit follows the final tested implementation commit. No final with-skill or released-skill acceptance is claimed.",
+    "Review fixes remove manual adapter preparation and deferred opening; normal adapter starts and ordered resumed answers retain the recorded baseline conversation behavior.",
+    "Published baselines and corresponding evidence copies redact host metadata. Original source, fixture revision, adapter, model, criteria and reviewer outcomes remain unchanged; conversation hashes now bind the redacted bytes, with original hashes retained as provenance.",
+    "Historical command outputs still describe source revision cc20ef6e50180dbfd2450d3bafc002efed215cf6. Full final-commit installation, package check, repository tests, T1.2 tests and registry validation must be refreshed by the outer validation phases; this assigned review phase is limited to focused verification.",
+    "Focused review verification passed 55 evaluation CLI tests and inline archived-evidence assertions on HEAD d4acb62040ad3a82ad122b913f84768056115e17 with implementation worktree diff SHA-256 fb1d59f20974bfbf134276961c81f7cda7e0e446353130e5f42d1cbd3da62684. Final-commit full validation remains assigned to the outer phases."
   ],
-  "status": "passed",
+  "status": "blocked",
   "environment": {
-    "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
+    "os": "Linux [redacted: host name] 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
     "node": "v24.17.0",
     "tools": {
       "npm": "11.13.0",
@@ -138,6 +142,18 @@
       "exitCode": 0,
       "status": "passed",
       "outputArtifact": "tests/eval/results/tasks/T1.2.git-version.txt"
+    },
+    {
+      "id": "review-focused",
+      "executable": "node",
+      "args": [
+        "--test",
+        "tests/scripts/eval.test.mjs"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.2.review.txt"
     }
   ],
   "cases": [
@@ -179,9 +195,11 @@
     {
       "id": "C7b-conversation",
       "kind": "automated",
-      "procedure": "tests/scripts/eval.test.mjs: scripted replies resume the exact host conversation, preserve user turns and require ordered answers; manual adapter preparation makes no host call and can later capture an opening turn; host failure table; a resumed host turn cannot silently switch sessions; closing a conversation deletes isolated state and retains bound evidence for later scoring.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt"
+      "procedure": "tests/scripts/eval.test.mjs: scripted replies resume the exact host conversation, preserve user turns and require ordered answers; manual adapter preparation is rejected before creating a run; host failure table; a resumed host turn cannot silently switch sessions; closing a conversation deletes isolated state and retains bound evidence for later scoring.",
+      "status": "blocked",
+      "artifact": "tests/eval/results/tasks/T1.2.task-test.txt",
+      "reason": "The historical task-suite artifact covers the removed preparation behavior; the final task-suite evidence needs an outer validation refresh.",
+      "nextPrerequisite": "Outer T1.2 test phase against the final implementation commit."
     },
     {
       "id": "C7b-authentication",
@@ -219,6 +237,20 @@
       "artifact": null,
       "reason": "The initial baseline is recorded. Final with-skill comparisons require the completed skill and final checkpoints.",
       "nextPrerequisite": "Later skill slices and T5.2 final evaluation."
+    },
+    {
+      "id": "C7b-review-interface",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: manual adapter preparation is rejected before creating a run; scripted replies require an answer index and resume the exact host conversation. The focused evaluation file passed all 55 tests.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.review.txt"
+    },
+    {
+      "id": "C7b-publication",
+      "kind": "manual",
+      "procedure": "Inline assertions over committed evaluation artifacts verified host metadata removal, four distinct redacted run identities, three unchanged baseline verdict sets, source and criteria provenance, adapter hashes, matching run and transcript JSONL, redacted conversation hashes, original citation line counts and bounds, and byte-identical pipeline configuration with no workflows added.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.2.review.txt"
     }
   ],
   "limitations": [
@@ -227,7 +259,8 @@
     "New-idea skipped the intent interview, included browser local storage in its domain terms, and declared the generated VISION approved without scripted user approval. Its actual failed result and generated VISION remain evidence.",
     "Clear-goals reused its approved documents. Its host trace includes a broad parent-directory filename search interrupted by the host, followed by recommendations based on the fixture documents. This observation is retained without adding a scoring criterion.",
     "The 75 registry definitions remain planned until their owning tasks register completed procedures. Registry validation does not pass acceptance cases.",
-    "Fake host and dummy-login tests verify the command boundary and cleanup, not model interpretation. Raw model output is retained verbatim in run artifacts.",
-    "All live isolated homes, authentication copies and fixtures were removed after their outputs were preserved. Closed runs retain verified discovery inventory and a bound conversation hash for later scoring."
+    "Fake host and dummy-login tests verify the command boundary and cleanup, not model interpretation. Published model output is redacted for host metadata while retaining scored observations and line citations.",
+    "All live isolated homes, authentication copies and fixtures were removed after their outputs were preserved. Closed runs retain verified discovery inventory and a bound conversation hash for later scoring.",
+    "This review changes lifecycle entry points and published evidence representations without rerunning live models or handling credentials. Raw host sessions cannot be resumed from redacted archival identifiers. Final-commit full validation remains pending in the outer pipeline."
   ]
 }
