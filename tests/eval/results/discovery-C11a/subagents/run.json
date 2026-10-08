@@ -65,8 +65,8 @@
       "[isolated-home]/.codex/skills",
       "[fixture]/.agents/skills",
       "[fixture]/.codex/skills",
-      "/tmp/.agents/skills",
-      "/tmp/.codex/skills",
+      "[ancestor-skill-discovery]",
+      "[ancestor-host-discovery]",
       "/.agents/skills",
       "/.codex/skills",
       "/etc/codex/skills"
