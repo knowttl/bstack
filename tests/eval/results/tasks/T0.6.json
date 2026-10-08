@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "taskId": "T0.6",
   "slice": "C5b",
-  "sourceRevision": "5294d52757177f4de656e3bc75e0d2974b13f402",
+  "sourceRevision": "2d6e986b6d3598a4e55c2ad08d1b2bbc29c66b6d",
   "intent": "\"yes approbe and begin the implementation\". Complete C5b of the approved sequential commissioning plan.",
   "amendments": [
     "Evidence names the last implementation commit tested. Evidence-only commits need not name themselves. Any source or test fix must refresh evidence in the same round.",
     "Only commands.lint changes in .no-mistakes.yaml. No hosted CI or workflows are added.",
     "Local validation completed on Node 24 and Node 26. No-mistakes gate verification is still pending."
   ],
-  "status": "blocked",
+  "status": "passed",
   "environment": {
     "os": "Linux kraken 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux",
     "node": "v24.17.0",
@@ -299,11 +299,9 @@
     {
       "id": "C5b-no-mistakes",
       "kind": "manual",
-      "procedure": "Run no-mistakes with --skip ci and the committed verification plan.",
-      "status": "blocked",
-      "artifact": null,
-      "reason": "Gate starts after these local evidence records are committed.",
-      "nextPrerequisite": "No-mistakes review, tests, documentation, lint, push and PR gate completes."
+      "procedure": "Run no-mistakes with --skip ci and the committed verification plan. Gate run 01M4CGP8G1E855Y44EZ1D3W3WD passed on 2d6e986b6d3598a4e55c2ad08d1b2bbc29c66b6d.",
+      "status": "passed",
+      "artifact": "https://github.com/knowttl/bstack/pull/10"
     }
   ],
   "limitations": [
