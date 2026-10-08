@@ -10,7 +10,8 @@ These establish confirmed intent and draft vocabulary while keeping technical de
 Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending principles and their checks, and [architecture](skills/repo-audit/references/architecture.md) when recommending module boundaries.
 These provide evidence requirements and project-specific guidance, with native rule-proof and maintained checks still pending.
 The existing-repo audit and selected apply path are available.
-The maintenance reference remains a placeholder, while protected new-project creation, maintained enforcement, portable maintenance and the installer are pending.
+Protected new-project creation is available after the intent checkpoint and exact foundation review.
+The maintenance reference remains a placeholder, while maintained enforcement, portable maintenance and the installer are pending.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -44,6 +45,7 @@ npm test -- --task T2.3
 npm test -- --task T2.4
 npm test -- --task T2.5
 npm test -- --task T2.8
+npm test -- --task T2.9
 npm test -- --task T3.1
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
@@ -105,6 +107,21 @@ Repeating the same plan resumes pending edits or returns `already-applied` witho
 Use `replace-file` with complete reviewed UTF-8 content when a mechanical edit is unsupported, including the audit record rendered by T2.5.
 `state show` reports actual applied, pending and conflicting files and affected checks to rerun.
 See the apply contract for preflight protection, backup and journal recovery, and filesystem limits.
+
+Create an approved minimal project inside the existing idea workspace:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <idea-workspace> --plan <file> --dry-run --json
+node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <idea-workspace> --plan <file> --json
+```
+
+The [creation contract](docs/command-contract.md#protected-project-creation) documents the versioned plan, selected destination, scratch scaffold and exact diff.
+The owner selects the stack, scaffold and first journey after approving the scratch vision, then approves the exact dry-run files and declared commands.
+Creation journals directories and files through the existing protected-write engine before initialising Git only at the reviewed destination.
+Repeat the unchanged plan to resume directory, file or Git interruption.
+Unrelated files and changed scaffold bytes block continuation without overwrite.
+Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
+Later rule-proof, maintained enforcement and portable maintenance remain pending.
 
 Capture a reviewed check plan with acceptance sources and input scopes:
 

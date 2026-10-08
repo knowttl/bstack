@@ -94,7 +94,7 @@ async function replaceFile(path, bytes, mode, limitations, beforeReplace) {
   const temporary = join(dirname(path), `.bstack-${randomUUID()}.tmp`)
   try {
     await durableFile(temporary, bytes, mode)
-    if (beforeReplace) await beforeReplace()
+    if (beforeReplace) await beforeReplace(temporary)
     try { await rename(temporary, path) } catch (error) {
       if (['EXDEV', 'ENOTSUP', 'EPERM', 'EEXIST'].includes(error.code)) {
         throw new CommandError('blocked', [{ code: 'atomic-replacement-unavailable', message: 'Filesystem cannot atomically replace this file. No non-atomic fallback was attempted.', path, fix: 'Use a filesystem supporting same-directory atomic replacement and resume the run.' }])
@@ -107,7 +107,14 @@ async function replaceFile(path, bytes, mode, limitations, beforeReplace) {
   }
 }
 
-export async function applyWrites(target, plan, staged, directory, previous, affectedChecks) {
+export async function saveRecovery(path, value) {
+  const limitations = []
+  await durableDirectory(dirname(path), limitations)
+  await replaceFile(path, Buffer.from(JSON.stringify(value, null, 2) + '\n'), undefined, limitations)
+  return limitations
+}
+
+export async function applyWrites(target, plan, staged, directory, previous, affectedChecks, guard) {
   const limitations = ['Replacement is atomic per file where supported, never across the whole change set.']
   const journal = previous ?? { schemaVersion: 1, runId: plan.planDigest, target: plan.target, planDigest: plan.planDigest,
     edits: staged.map((edit, index) => ({ id: edit.id, path: edit.path, resolvedPath: edit.resolvedPath, originalHash: edit.originalHash, proposedHash: edit.proposedHash,
@@ -136,11 +143,13 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       await save()
     }
     for (const [index, edit] of staged.entries()) {
+      if (guard) await guard()
       state = await inspectJournal(journal)
       if (state.conflicting.length) throw new CommandError('blocked', [{ code: 'user-change', message: 'A user change blocks all remaining writes.', fix: 'Review conflicting target files before continuing.' }])
       if (state.edits[index].state === 'applied') continue
       const path = edit.resolvedPath
-      const beforeWrite = async () => {
+      const beforeWrite = async temporary => {
+        if (guard) await guard(temporary)
         const current = await inspectJournal(journal)
         const resolved = await resolveFilePath(target.root, edit.path, path)
         const bytes = await fileBytes(resolved)
