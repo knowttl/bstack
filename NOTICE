@@ -7,7 +7,6 @@ Adapted destinations and changes are recorded below.
 
 | Source | Pinned commit | Files adapted | What changed |
 |---|---|---|---|
-| https://github.com/mattpocock/skills | 6fd947921b935b7e1e69293a200400f0fdd5c15f | None | Raw procedures and companion formats only |
 | https://github.com/kunchenguid/vision | 7a20c38181151ec67efdf8fa2cb03a60123a7b83 | None | Raw procedure and both board assets only |
 | https://github.com/cursor/plugins (pstack) | 9f451cf875ad1239912762f67741e8e5ba6ac0f1 | None | Raw design red flags and five principle procedures only |
 | https://github.com/kunchenguid/kun | 1b2a9c7dd4b2b33eb7161399d7893c39048213be | None | Raw ENTRY.md only |
