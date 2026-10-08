@@ -665,6 +665,7 @@ Payloads reject unknown and missing fields.
 Malformed JSON, duplicate keys at any depth (including escaped equivalents), JSON arrays at the root, binary/non-UTF-8 text and unsupported extensions fail.
 Heading edits support unindented prose, nonempty ATX headings at column 0 and closed fences at column 0 with an optional plain info word containing letters, digits, underscores, plus signs, dots or hyphens.
 Outside fenced code, indented content, lists, block quotes, HTML-like markup, tables, reference definitions, empty headings, setext headings and thematic breaks are unsupported.
+Indented backtick or tilde fence markers are unsupported anywhere, including inside fenced code.
 Unsupported structures fail with `Unsupported Markdown structure; use whole-file replacement.` rather than guessing a section boundary.
 The selected heading needs a line ending and a nonempty new body must end with a newline.
 Replacement searches with zero or multiple occurrences fail.

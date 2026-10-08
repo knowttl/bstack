@@ -25,6 +25,7 @@ function headingSection(text, heading, content) {
   let offset = 0
   for (const line of lines) {
     const semanticLine = offset === 0 ? line.replace(/^\uFEFF/, '') : line
+    if (/^\s+(?:`{3,}|~{3,})/.test(semanticLine)) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
     const marker = /^(`{3,}|~{3,})(.*?)(?:\r?\n)?$/.exec(semanticLine)
     if (fence) {
       if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined

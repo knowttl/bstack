@@ -102,6 +102,24 @@ test('apply rejects backtick-containing fence info before deriving section bytes
   assert.deepEqual(result.data, {})
 })
 
+for (const marker of ['```', '~~~']) {
+  for (const indentation of [' ', '  ', '   ', '\t']) {
+    for (const [position, original] of [
+      ['inside a fence', `# A\nold\n${marker}md\nliteral\n${indentation}${marker}\n# B\nkeep\n${marker}text\nliteral\n${marker}\n# C\nrest\n`],
+      ['outside a fence', `# A\nold\n${indentation}${marker}md\nliteral\n${marker}\n# B\nkeep\n`]
+    ]) {
+      test(`heading edits reject ${JSON.stringify(indentation + marker)} ${position} without project writes`, async t => {
+        const context = await setup(t, 'set-heading-section', original, { heading: 'A', content: 'new\n' }, '# A\nnew\n# C\nrest\n')
+        const result = await preview(context)
+        assert.equal(result.exit, 1)
+        assert.equal(result.problems[0].code, 'unsupported-format')
+        assert.equal(result.problems[0].message, 'Unsupported Markdown structure; use whole-file replacement.')
+        assert.deepEqual(result.data, {})
+      })
+    }
+  }
+}
+
 test('apply rejects nonfinite JSON payload numbers before digest computation', async t => {
   for (const [value, raw, proposed] of [
     [null, '1e400', '{"a":null}\n'],
