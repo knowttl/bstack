@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-08T03-15-18.377Z-e02be0d2-09da-4ea3-be1b-31b04eca03b7",
+  "createdAt": "2026-10-08T03:15:18.378Z",
+  "sourceRevision": "ca0618c3adf9013497b39f883c413679f454e04d",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "os": "linux 6.8.0-142-generic",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "fixture": {
+    "name": "clear-goals",
+    "path": "[redacted: fixture 4]",
+    "kind": "repo",
+    "revision": "e15b941cb5ab07e9a1f99ce492a3a891c8cac91b"
+  },
+  "scenario": {
+    "id": "clear-goals",
+    "fixture": "clear-goals",
+    "request": "Audit this repo and recommend principles and checks appropriate to its approved goals.",
+    "answers": [
+      "The existing approved documents remain authoritative. Do not reopen settled decisions.",
+      "Present recommendations only."
+    ],
+    "checkpoints": [
+      "baseline",
+      "foundation",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "reuse",
+        "caseId": "AC-6",
+        "question": "Did it reach recommendations without asking the user to repeat documented goals and principles?"
+      },
+      {
+        "id": "conditional-load",
+        "caseId": "AC-38",
+        "question": "Does the opened-file record show no VISION, interview or domain-language reference opened? If the host provides no opened-file record, answer no and record the limitation."
+      }
+    ]
+  },
+  "criteriaHash": "a7207fa740cd04e9e181bce9a04b5c8d2cc4fdd8fac85f1079b02df23a2abc41",
+  "stage": "baseline",
+  "mode": "without",
+  "request": "Audit this repo and recommend principles and checks appropriate to its approved goals.",
+  "status": "passed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
+  "isolation": {
+    "home": "[redacted: isolated home 4]",
+    "state": "[redacted: isolated home 4]/.codex",
+    "discoveryPaths": [
+      "[redacted: isolated home 4]/.agents/skills",
+      "[redacted: isolated home 4]/.codex/skills",
+      "[redacted: fixture 4]/.agents/skills",
+      "[redacted: fixture 4]/.codex/skills",
+      "[redacted: temporary path 20]",
+      "[redacted: temporary path 21]",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[redacted: isolated home 4]/.agents/skills/repo-audit",
+    "skillHash": null,
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [],
+    "checkedAt": "2026-10-08T03:16:17.251Z",
+    "cleanedAt": "2026-10-08T03:16:17.276Z"
+  },
+  "transcript": "c22e4c53-c80d-44ff-a494-cbde5ee3f70a/transcript.txt",
+  "answers": "c22e4c53-c80d-44ff-a494-cbde5ee3f70a/answers.json",
+  "caseResults": [
+    {
+      "id": "reuse",
+      "caseId": "AC-6",
+      "question": "Did it reach recommendations without asking the user to repeat documented goals and principles?",
+      "passed": true,
+      "startLine": 11,
+      "endLine": 16,
+      "scoring": "human",
+      "reviewer": "C7b baseline reviewer",
+      "transcript": "c22e4c53-c80d-44ff-a494-cbde5ee3f70a/transcript.txt"
+    },
+    {
+      "id": "conditional-load",
+      "caseId": "AC-38",
+      "question": "Does the opened-file record show no VISION, interview or domain-language reference opened? If the host provides no opened-file record, answer no and record the limitation.",
+      "passed": true,
+      "startLine": 5,
+      "endLine": 16,
+      "scoring": "human",
+      "reviewer": "C7b baseline reviewer",
+      "transcript": "c22e4c53-c80d-44ff-a494-cbde5ee3f70a/transcript.txt"
+    }
+  ],
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"low\"",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 120000,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"low\"",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "adapterHash": "a5cf9e952c21c17206f10d02a5980af7470eb2a25a5d97d77a0bee00897f3a8f",
+  "turns": [
+    {
+      "message": "Audit this repo and recommend principles and checks appropriate to its approved goals.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[redacted: host thread 4]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll look for the repo’s approved goals and governance, then assess whether its implementation and checks support them.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc \\\"pwd; rg --files -g 'AGENTS.md' -g 'README*' -g '*goal*' -g '*GOAL*' -g '*princip*' -g '*policy*' -g 'package.json' -g 'pyproject.toml' -g '.github/**' -g '*approval*' -g '*charter*'\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc \\\"pwd; rg --files -g 'AGENTS.md' -g 'README*' -g '*goal*' -g '*GOAL*' -g '*princip*' -g '*policy*' -g 'package.json' -g 'pyproject.toml' -g '.github/**' -g '*approval*' -g '*charter*'\\\"\",\"aggregated_output\":\"[redacted: fixture 4]\\n\",\"exit_code\":1,\"status\":\"failed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc 'ls -la'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc 'ls -la'\",\"aggregated_output\":\"total 4132\\ndrwx------ 3 [redacted: user name] [redacted: user name]    4096 Oct  7 20:15 .\\ndrwxrwxrwt 1 root    root    4202496 Oct  7 20:15 ..\\ndrwxrwxr-x 5 [redacted: user name] [redacted: user name]    4096 Oct  7 20:15 .git\\n-rw-rw-r-- 1 [redacted: user name] [redacted: user name]     356 Oct  7 20:15 DESIGN.md\\n-rw-rw-r-- 1 [redacted: user name] [redacted: user name]     322 Oct  7 20:15 VISION.md\\n-rw-rw-r-- 1 [redacted: user name] [redacted: user name]     217 Oct  7 20:15 glossary.md\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc 'cat VISION.md DESIGN.md glossary.md'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc 'cat VISION.md DESIGN.md glossary.md'\",\"aggregated_output\":\"# Reading queue\\n\\nStatus: approved by the owner.\\nHelp one reader save articles and mark them read.\\nSuccess means a saved article can be found in the queue and marked read without losing its title or address.\\nAccounts, sharing and recommendations are outside the first version.\\nThere are no open product or stack decisions.\\n# Design\\n\\nThe approved stack is a local Node application with a JSON file for persistence.\\nThe queue owns article state and exposes save, list and mark-read operations.\\nPresentation uses the queue's public operations and never writes storage directly.\\nPreserve article titles and addresses when marking an article read.\\nThere are no open design decisions.\\n# Glossary\\n\\n- Article: a saved title and address with a read status.\\n- Queue: the reader's saved articles, including read articles.\\n- Mark read: change an article's read status while preserving its title and address.\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_4\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc 'git status --short; git log -5 --oneline; git ls-files; find .. -name AGENTS.md -print'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_4\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc 'git status --short; git log -5 --oneline; git ls-files; find .. -name AGENTS.md -print'\",\"aggregated_output\":\"81feef4 docs: record design and vocabulary\\n8f70d11 docs: approve project vision\\nDESIGN.md\\nVISION.md\\nglossary.md\\n[redacted: 249 paths outside the fixture]\\n[redacted: 9 search diagnostics outside the fixture]\\n\",\"exit_code\":130,\"status\":\"failed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_5\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc 'for p in /AGENTS.md [redacted: temporary path 1] do if [ -f \\\"$p\\\" ]; then cat \\\"$p\\\"; fi; done; rg --files --hidden -g '\\\"'\\\"'!.git/**'\\\"' .; nl -ba VISION.md; nl -ba DESIGN.md; nl -ba glossary.md\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_5\",\"type\":\"command_execution\",\"command\":\"[redacted: host executable zsh] -lc 'for p in /AGENTS.md [redacted: temporary path 1] do if [ -f \\\"$p\\\" ]; then cat \\\"$p\\\"; fi; done; rg --files --hidden -g '\\\"'\\\"'!.git/**'\\\"' .; nl -ba VISION.md; nl -ba DESIGN.md; nl -ba glossary.md\\\"\",\"aggregated_output\":\"./glossary.md\\n./DESIGN.md\\n./VISION.md\\n     1\\t# Reading queue\\n     2\\t\\n     3\\tStatus: approved by the owner.\\n     4\\tHelp one reader save articles and mark them read.\\n     5\\tSuccess means a saved article can be found in the queue and marked read without losing its title or address.\\n     6\\tAccounts, sharing and recommendations are outside the first version.\\n     7\\tThere are no open product or stack decisions.\\n     1\\t# Design\\n     2\\t\\n     3\\tThe approved stack is a local Node application with a JSON file for persistence.\\n     4\\tThe queue owns article state and exposes save, list and mark-read operations.\\n     5\\tPresentation uses the queue's public operations and never writes storage directly.\\n     6\\tPreserve article titles and addresses when marking an article read.\\n     7\\tThere are no open design decisions.\\n     1\\t# Glossary\\n     2\\t\\n     3\\t- Article: a saved title and address with a read status.\\n     4\\t- Queue: the reader's saved articles, including read articles.\\n     5\\t- Mark read: change an article's read status while preserving its title and address.\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_6\",\"type\":\"agent_message\",\"text\":\"The repo has clear, consistent approved goals, but contains only three documents—no application, tests, or automated checks. Implementation compliance therefore cannot yet be verified.\\n\\n[VISION.md]([redacted: fixture 4]/VISION.md:3) approves a single-reader queue for saving articles and marking them read, excluding accounts, sharing, and recommendations. [DESIGN.md]([redacted: fixture 4]/DESIGN.md:3) fixes local Node and JSON persistence, with the queue owning state. [glossary.md]([redacted: fixture 4]/glossary.md:4) confirms that read articles remain in the queue. There are no documented open decisions to reopen.\\n\\nRecommended principles and checks:\\n\\n| Principle | Appropriate check |\\n|---|---|\\n| Deliver the approved reading flow. | Save an article, find it through list, mark it read, and confirm it remains listed. |\\n| Preserve article identity and content. | Assert that marking read changes only read status; title, address, and other articles remain unchanged. |\\n| Make persistence reliable. | Repeat the flow across application restarts; verify JSON round-trips titles and addresses exactly. |\\n| Keep state ownership in the queue. | Review imports and storage access: presentation calls save, list, and mark-read; it never writes JSON directly. |\\n| Protect existing saved data. | Test malformed JSON and failed writes: report failure without silently replacing the queue or reporting success. |\\n| Keep operations predictable. | Test repeated mark-read calls and unknown article identifiers; neither should damage saved state. |\\n| Keep scope aligned with approval. | Review changes against the three approved operations and exclusions; retain local Node and JSON persistence. |\\n\\nStart with queue behavior tests and one persistence integration test using a temporary file. Add a presentation smoke check when the interface exists, and run these checks in CI. A small review checklist should cover architecture and scope.\\n\\nThese are proposed implementation safeguards, not additional approved product requirements. No files were changed, and no runnable tests were available.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":72651,\"cached_input_tokens\":62080,\"cache_write_input_tokens\":0,\"output_tokens\":789,\"reasoning_output_tokens\":18}}\n",
+        "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"[redacted: isolated home 4]/.codex\"))\nReading additional input from stdin...\n",
+        "durationMs": 35516.585239,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.160.1\n",
+          "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"/tmp\" (codex_home: AbsolutePathBuf(\"[redacted: isolated home 4]/.codex\"))\n",
+          "durationMs": 10.487770000000012,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "sessionId": "[redacted: host thread 4]"
+    }
+  ],
+  "nextAnswer": 1,
+  "sessionId": "[redacted: host thread 4]",
+  "conversation": "conversation.txt",
+  "authenticatedVia": "throwaway copy",
+  "conversationHash": "b5654e3cc2c12fff9f7da381c6d35fc72785a7a5fc28e1003bdd5df53cffeea8",
+  "scoredAt": "2026-10-08T03:16:46.393Z",
+  "redaction": {
+    "method": "Host paths, host and user names, out-of-fixture inventory and host thread IDs replaced before publication; transcript line numbers and scoring preserved.",
+    "originalConversationHash": "55c89b06546546401bc0451973bf295ba40d4fe46dd3ec9e1483a201314366ac"
+  }
+}

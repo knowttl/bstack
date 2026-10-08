@@ -29,7 +29,7 @@ export async function selectCommand(executable, args, { platform = process.platf
   return { executable, args }
 }
 
-export async function runCommand(target, command, { signal } = {}) {
+export async function runCommand(target, command, { signal, env = process.env } = {}) {
   const timeoutMs = command.timeoutMs ?? 120000
   if (!command.executable || !Array.isArray(command.args) || command.args.some(arg => typeof arg !== 'string') ||
       !Array.isArray(command.versionArgs) || command.versionArgs.some(arg => typeof arg !== 'string') ||
@@ -37,25 +37,26 @@ export async function runCommand(target, command, { signal } = {}) {
     throw new CommandError('usage-error', [{ code: 'invalid-command', message: 'A child command requires executable, string args and versionArgs, and a positive timeout.', fix: 'Supply the documented child-command object.' }])
   }
   const cwd = await resolvePath(target.root, command.cwd)
-  const selected = await selectCommand(command.executable, command.args)
-  const version = await selectCommand(command.executable, command.versionArgs)
-  const toolVersion = await capture(version, { cwd, timeoutMs, signal })
+  const selected = await selectCommand(command.executable, command.args, { env })
+  const version = await selectCommand(command.executable, command.versionArgs, { env })
+  const toolVersion = await capture(version, { cwd, timeoutMs, signal, env })
   if (toolVersion.status !== 'passed') return { ...toolVersion, toolVersion }
-  return { ...await capture(selected, { cwd, timeoutMs, signal }), toolVersion }
+  return { ...await capture(selected, { cwd, timeoutMs, signal, env }), toolVersion }
 }
 
-async function capture(command, { cwd, timeoutMs, signal }) {
+async function capture(command, { cwd, timeoutMs, signal, env }) {
   const started = performance.now()
   let stdout = Buffer.alloc(0)
   let stderr = Buffer.alloc(0)
   let timedOut = false
   let cancelled = signal?.aborted ?? false
   let error = null
+  let outputTruncated = false
   let cleanup = Promise.resolve()
   if (cancelled) return result(null, null)
-  const child = spawn(command.executable, command.args, { cwd, shell: false, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] })
-  child.stdout.on('data', chunk => { stdout = Buffer.concat([stdout, chunk]).subarray(-outputLimit) })
-  child.stderr.on('data', chunk => { stderr = Buffer.concat([stderr, chunk]).subarray(-outputLimit) })
+  const child = spawn(command.executable, command.args, { cwd, env, shell: false, detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe'] })
+  child.stdout.on('data', chunk => { outputTruncated ||= stdout.length + chunk.length > outputLimit; stdout = Buffer.concat([stdout, chunk]).subarray(-outputLimit) })
+  child.stderr.on('data', chunk => { outputTruncated ||= stderr.length + chunk.length > outputLimit; stderr = Buffer.concat([stderr, chunk]).subarray(-outputLimit) })
   child.on('error', failure => { error = failure.message })
   let finish
   const completion = new Promise(resolve => { finish = resolve })
@@ -93,6 +94,6 @@ async function capture(command, { cwd, timeoutMs, signal }) {
   function result(exitCode, exitSignal) {
     return { status: error ? 'blocked' : exitCode === 0 && !timedOut && !cancelled ? 'passed' : 'failed',
       stdout: stdout.toString('utf8'), stderr: stderr.toString('utf8'), durationMs: performance.now() - started,
-      exitCode, signal: exitSignal, timedOut, cancelled, error }
+      exitCode, signal: exitSignal, timedOut, cancelled, outputTruncated, error }
   }
 }

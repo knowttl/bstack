@@ -7,11 +7,12 @@ import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/sche
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { readAdapter, isolate, hostTurn, closeHost } from './lib/evaluation-host.mjs'
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
-// These public forms include the pending automatic-host path.
-const help = 'eval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]'
+// Adapter runs capture host turns, while unsupported hosts retain the manual interface.
+const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> --answer <one-based-script-index> [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]'
 
 async function child(executable, args, targetRoot = root) {
   const result = await runCommand({ root: targetRoot }, { executable, args, cwd: '.', versionArgs: ['--version'], timeoutMs: 120000 })
@@ -20,11 +21,19 @@ async function child(executable, args, targetRoot = root) {
 }
 
 async function start(opts, results) {
-  for (const name of ['scenario', 'mode', 'stage', 'agent', 'model']) if (!opts[name]?.trim()) fail(`Missing --${name}`, 'usage-error')
+  if (opts.manual && opts.adapter) fail('Adapter runs capture the opening turn automatically. Omit --manual, or omit --adapter and supply --agent and --model for a manual run.', 'usage-error')
+  for (const name of ['scenario', 'mode', 'stage', ...(opts.adapter ? [] : ['agent', 'model'])]) if (!opts[name]?.trim()) fail(`Missing --${name}`, 'usage-error')
   if (!['without', 'with'].includes(opts.mode)) fail('Mode must be without or with.', 'usage-error')
   const definition = await scenario(opts.scenario)
   if (!definition.checkpoints.includes(opts.stage)) fail(`Unknown checkpoint: ${opts.stage}`, 'usage-error')
-  if (!opts.manual) fail('Automatic host execution is blocked until C7b. Use --manual and follow docs/evaluation.md.')
+  const adapter = opts.adapter ? await readAdapter(resolve(opts.adapter)) : null
+  if (!opts.manual && !adapter) fail('Automatic execution requires --adapter. Use --manual for unsupported hosts.')
+  if (adapter) {
+    if (opts.agent || opts.model || opts.invocation) fail('The adapter owns agent, model and invocation. Omit these options.', 'usage-error')
+    opts.agent = adapter.invocation.agent
+    opts.model = adapter.invocation.model
+    if (opts.mode === 'with' && definition.invocation === 'explicit') opts.invocation = adapter.invocation.explicit
+  }
   if (opts.mode === 'with' && definition.invocation === 'explicit' && !opts.invocation?.trim()) fail('An ordinary with-skill run requires --invocation for the current host.', 'usage-error')
   if (opts.invocation && (opts.mode === 'without' || definition.invocation === 'implicit')) fail('Baseline and implicit runs use the outcome request without --invocation.', 'usage-error')
   const git = await child('git', ['rev-parse', 'HEAD'])
@@ -45,7 +54,62 @@ async function start(opts, results) {
     record.tools.npm = (await child('npm', ['--version'], fixture.path)).stdout.trim()
     record.tools.typescript = (await child('node', [join('node_modules', 'typescript', 'bin', 'tsc'), '--version'], fixture.path)).stdout.trim()
   }
+  if (adapter) {
+    record.adapter = adapter
+    record.adapterHash = hashBytes(canonicalJSON(adapter))
+    record.turns = []
+    record.nextAnswer = 1
+    record.sessionId = null
+    record.conversation = 'conversation.txt'
+    try {
+      await isolate(record)
+      await captureTurn(record, record.request, directory)
+    } catch (error) {
+      record.reason = error.message
+      record.hostFailure = true
+      if (record.isolation.home) await closeHost(record, directory).catch(() => { record.isolation.verified = false })
+    }
+  }
   await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n', { flag: 'wx' })
+  return record
+}
+
+async function captureTurn(record, message, directory) {
+  // Retain even failed host output as evidence rather than manufacturing a score.
+  try {
+    await hostTurn(record, message)
+    record.reason = 'Host turn captured. Review the question, send its scripted answer with eval turn, then score the transcript.'
+  } finally {
+    const transcript = record.turns.map(turn => `User: ${turn.message}\nHost JSONL:\n${turn.result.stdout}\nHost stderr:\n${turn.result.stderr}\n`).join('\n')
+    await writeFile(join(directory, record.conversation), transcript)
+  }
+}
+
+async function turn(opts, results) {
+  const record = await load(results, opts.run)
+  if (!record.adapter || !record.sessionId || record.transcript || record.isolation.cleanedAt) fail('Host turns require an open, unscored adapter conversation. A failed opening needs a fresh run.')
+  if (!/^[1-9]\d*$/.test(opts.answer ?? '') || Number(opts.answer) !== record.nextAnswer ||
+      !record.scenario.answers[record.nextAnswer - 1]) fail('Supply the next one-based scripted answer index after reviewing the corresponding host question.')
+  const message = record.scenario.answers[record.nextAnswer - 1]
+  try {
+    await captureTurn(record, message, join(results, record.id))
+    record.nextAnswer++
+  } catch (error) {
+    record.reason = error.message
+    record.hostFailure = true
+    record.isolation.verified = false
+    await closeHost(record, join(results, record.id)).catch(() => { record.isolation.verified = false })
+  }
+  await writeFile(join(results, record.id, 'run.json'), JSON.stringify(record, null, 2) + '\n')
+  return record
+}
+
+async function close(opts, results) {
+  const record = await load(results, opts.run)
+  if (!record.adapter) fail('Only adapter conversations have an isolated host to close.')
+  try { await closeHost(record, join(results, record.id)) }
+  catch (error) { record.reason = error.message }
+  await writeFile(join(results, record.id, 'run.json'), JSON.stringify(record, null, 2) + '\n')
   return record
 }
 
@@ -70,6 +134,16 @@ async function score(opts, results) {
   const lines = transcript.trimEnd().split(/\r?\n/).length
   for (const answer of answers.checks) if (answer.startLine < 1 || answer.endLine < answer.startLine || answer.endLine > lines) fail(`Invalid transcript location for ${answer.id}`)
   const directory = join(results, record.id)
+  if (record.adapter) {
+    if (record.hostFailure || !record.turns?.length || record.turns.some(turn => !turn.sessionId)) fail('Adapter scoring requires completed host turns. Use the manual procedure for unsupported conversations.')
+    if (transcript !== await readFile(join(results, record.id, record.conversation), 'utf8')) fail('Score the captured adapter conversation without replacing its transcript.')
+    if (record.isolation.cleanedAt) {
+      if (!record.isolation.verified || record.conversationHash !== hashBytes(transcript)) fail('Closed host evidence has unverified isolation or a changed conversation.')
+    } else {
+      try { await closeHost(record, directory) }
+      finally { await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n') }
+    }
+  }
   const attempt = randomUUID()
   await mkdir(join(directory, attempt))
   record.transcript = join(attempt, 'transcript.txt')
@@ -80,7 +154,7 @@ async function score(opts, results) {
   record.caseResults = record.scenario.checks.map(check => ({ ...check, ...answers.checks.find(answer => answer.id === check.id),
     scoring: 'human', reviewer: answers.reviewer, transcript: record.transcript }))
   record.status = record.caseResults.every(check => check.passed) ? 'passed' : 'failed'
-  record.reason = 'Human-scored transcript. Host isolation remains unverified until C7b.'
+  record.reason = record.adapter ? 'Human-scored captured host conversation with verified discovery isolation.' : 'Human-scored transcript. Host isolation remains unverified for this manual host.'
   await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n')
   return record
 }
@@ -89,6 +163,7 @@ async function compare(opts, results) {
   const before = await load(results, opts.without)
   const after = await load(results, opts.with)
   if (!before.transcript || !after.transcript) fail('Both runs need explicit scoring before comparison.')
+  if (before.adapterHash !== after.adapterHash) fail('Comparison requires the same host adapter and execution settings.')
   if (before.mode !== 'without' || after.mode !== 'with' || ['agent', 'model', 'criteriaHash', 'stage'].some(key => before[key] !== after[key]) ||
       before.scenario.id !== after.scenario.id || ['name', 'revision'].some(key => before.fixture[key] !== after.fixture[key]) ||
       ['fixture', 'request', 'answers', 'invocation'].some(key => canonicalJSON(before.scenario[key]) !== canonicalJSON(after.scenario[key]))) fail('Comparison requires the same scenario, fixture revision, agent, model, stage and criteria, with identical fixture names, requests, scripted answers and invocation modes.')
@@ -104,11 +179,11 @@ try {
   else if (!args.length) fail('Select a manual scenario, score or compare. ' + help)
   else {
     const command = args[0].startsWith('--') ? 'start' : args.shift()
-    const allowed = { start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation'], score: ['run', 'answers', 'transcript'], compare: ['without', 'with'] }
+    const allowed = { start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter'], turn: ['run', 'answer'], close: ['run'], score: ['run', 'answers', 'transcript'], compare: ['without', 'with'] }
     if (!Object.hasOwn(allowed, command)) fail(`Unknown command: ${command}`, 'usage-error')
     const opts = options(args, [...allowed[command], 'results'], command === 'start' ? ['manual'] : [])
     const results = resolve(opts.results ?? defaultResults)
-    const data = await ({ start, score, compare })[command](opts, results)
+    const data = await ({ start, turn, close, score, compare })[command](opts, results)
     if (!opts.json && command === 'start') console.log(JSON.stringify(data, null, 2))
     emitResult({ command: `eval ${command}`, status: data.status, data }, opts.json)
   }
