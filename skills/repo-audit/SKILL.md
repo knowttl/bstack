@@ -103,7 +103,8 @@ Distinguish automated rules from judgement rules.
 Include setup, formatting, lint, applicable type checks and tests.
 CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
 Avoid speculative frameworks, service layers, integrations and empty document templates.
-The enforcement and architecture references are unavailable until T3.1, with integration into this path in T2.9.
+The enforcement and architecture references are available for recommendations.
+Protected creation integration into this path remains T2.9, with native rule implementation in T3.2 to T3.4.
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
 
