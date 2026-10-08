@@ -40,7 +40,7 @@ The [implementation plan](implementation-plan.md) owns the build sequence and th
 Runtime research and build prerequisites remain assigned to the tasks that need them.
 The decisions table in "Scope and decision history" holds the only record of superseded designs.
 
-The packaging and runtime checks below remain build work, rather than verified capabilities.
+The [implementation plan](implementation-plan.md#progress) records completed packaging and runtime checks; unchecked capabilities remain build work.
 The new-project path can implement the approved foundation, but it does not build the full product during setup.
 
 ### Your current decisions
@@ -1399,24 +1399,15 @@ Documentation research alone does not satisfy an execution check.
 ## Evidence and limitations
 
 This review checked the upstream procedures and licences at pinned commits on 2026-10-06.
-The integrated audit skill, installer and runtime still need implementation and execution tests.
+The integrated audit skill and installer still need implementation and execution tests.
+The [implementation plan](implementation-plan.md#progress) records partial board runtime completion.
 
 ### VISION runtime observation (C9b10a)
 
-Research on 2026-10-08 checked the [lavish-axi package](https://www.npmjs.com/package/lavish-axi) and its [official repository](https://github.com/kunchenguid/lavish-axi), plus the installed CLI help and a synthetic live probe.
-`npm view lavish-axi version bin repository --json` reported current version 0.1.84 and executable `dist/cli.mjs`.
-The installed and live-observed version was 0.1.78.
-The skill pins 0.1.78 because this is the version exercised against the shared server, rather than assuming a newer interface behaves identically.
-No globally installed support skill is required: the nested npm install supplies the CLI and runtime closure.
-
-The CLI opens an HTML file through a background local server and returns a session URL.
-Companion files such as review.css must live beside the HTML.
-The probe used the shared host server and default state directory, without a private server or captain interaction.
-The browser displayed the full generated draft and escaped proposal text.
-An automated synthetic reviewer selected Conditional and sent the board's queued verdicts.
-`poll` returned tagged prompts containing a `Context data:` JSON object with run ID, exact draft revision, proposal ID, verdict and notes.
-The complete-round prompt included the same run and revision with the verdict list.
-Both probe sessions were ended with `end`, leaving no live review waiting for a person.
+The [T1.6 evidence record](../tests/eval/results/tasks/T1.6.json) owns tested versions, setup results and probe limitations.
+Its [captured live probe](../tests/eval/results/tasks/T1.6.runtime-probe.md) records the observed CLI and feedback transport.
+The runtime dependency declaration and nested lockfile own the exact pin, chosen for its observed interface rather than assuming a newer version behaves identically.
+See [README setup](../README.md) for the nested installation and the [board command contract](command-contract.md#vision-board-build) for generation and feedback metadata.
 
 A terminal-only agent can open the printed URL in a reachable browser, while its terminal runs the CLI's long-poll command.
 Browser sends deliver queued prompts once to that listener.
@@ -1430,10 +1421,7 @@ The board carries its run ID, exact-byte SHA-256 draft revision and unique card 
 The launcher must validate these bindings before accepting verdicts.
 The agent owns interpretation and a reviewed new draft, preserving the previous revision for resume.
 A verdict alone cannot mechanically rewrite arbitrary VISION prose.
-C9b10a implements generation and binding metadata only.
-Launch, verdict ingestion, resumed review and the approved-draft checkpoint remain C10b work, so AC-3 is not complete.
-The observed runtime's outer page title displays HTML entities literally, while the artifact title and visible board text decode them correctly.
-The installed third-party runtime is unchanged.
+The [implementation plan](implementation-plan.md#progress) records the remaining launch, verdict ingestion, resumed review and approved-draft work.
 
 | Source | Verified fact | Effect on this design |
 |---|---|---|
