@@ -5,6 +5,7 @@ import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
+import { parse } from 'yaml'
 import { emptyRepo, run, snapshot, git } from './discovery-fixture.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -26,7 +27,7 @@ async function save(context, refresh = true) {
   await writeFile(context.file, JSON.stringify(context.plan))
 }
 
-async function setup(t, operation = 'replace', original = 'old\n', payload = { search: 'old', replacement: 'new' }, proposed = 'new\n', path = 'README.md') {
+async function setup(t, operation = 'replace', original = 'old\n', payload = { search: 'old', replacement: 'new' }, proposed = 'new\n', path = 'README.md', checkIntegration) {
   const context = await emptyRepo(t)
   context.env = { ...process.env, XDG_CACHE_HOME: join(context.directory, 'cache'), LOCALAPPDATA: join(context.directory, 'cache'), HOME: context.directory, USERPROFILE: context.directory }
   context.file = join(context.directory, 'plan ü &.json')
@@ -42,8 +43,23 @@ async function setup(t, operation = 'replace', original = 'old\n', payload = { s
     selectedFindingIds: ['F-001'], reviewedScope: [{ path, resolvedPath: join(context.repo, path) }],
     edits: [{ id: 'E-001', findingId: 'F-001', path, originalHash: hash(original), proposedHash: hash(proposed), operation, payload, proposedContent: proposed }], planDigest: ''
   }
+  if (checkIntegration) context.plan.edits[0].checkIntegration = checkIntegration
   await save(context)
   return context
+}
+
+async function integration(t, path, content, original = path === 'package.json' ? '{}' : '') {
+  let proposed = content
+  let selected = [['scripts', 'check']]
+  if (path !== 'package.json') {
+    let document
+    try { document = parse(content) } catch {
+      return setup(t, 'replace-file', original, { content }, content, path, [['steps', '0', 'run']])
+    }
+    proposed = JSON.stringify(document)
+    selected = document.job ? [['job', 'script']] : [['steps', '0', Object.hasOwn(document.steps[0], 'run') ? 'run' : 'script']]
+  }
+  return setup(t, 'replace-file', original, { content: proposed }, proposed, path, selected)
 }
 
 function execute(context, fault, command = 'apply', extra = ['--plan', context.file]) {
@@ -77,6 +93,184 @@ async function preview(context) {
     assert.deepEqual(await snapshot(context.repo), before)
   }
   return result
+}
+
+for (const value of ['node check.mjs || true', 'node check.mjs || :', 'node check.mjs; true', 'node check.mjs; exit 0', 'node check.mjs &',
+  'node check.mjs | cat', '! node check.mjs', 'set +e && node check.mjs', 'sh -c "node check.mjs || :"',
+  "CI=true sh -c 'npm run check || true'", "npm test && CI=true sh -c 'npm run check || true'"]) {
+  test(`apply rejects swallowed package command failure: ${value}`, async t => {
+    const proposed = JSON.stringify({ scripts: { check: value } })
+    const context = await integration(t, 'package.json', proposed)
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'ash', 'ksh', 'fish', 'busybox sh', 'cmd.exe']) {
+  for (const prefix of ['', 'npm test && ']) {
+    const value = `${prefix}${executable} -c 'npm run check || true'`
+    for (const [path, content] of [
+      ['package.json', JSON.stringify({ scripts: { check: value } })],
+      ['ci.yml', JSON.stringify({ steps: [{ run: value }] })],
+      ['ci.yml', JSON.stringify({ job: { script: value } })]
+    ]) {
+      test(`apply rejects selected shell dispatch: ${path} ${content}`, async t => {
+        const context = await integration(t, path, content)
+        assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+      })
+    }
+  }
+}
+
+for (const [value, exit] of [
+  ["npm exec -c 'node boundaries.mjs || true'", 1],
+  ["npx --call 'node boundaries.mjs || true'", 1],
+  ["npm x --call 'node boundaries.mjs'", 1],
+  ["npm --call='node boundaries.mjs' exec", 1],
+  ["npm exec -c'node boundaries.mjs'", 1],
+  ["npm test && npm x -c 'node boundaries.mjs'", 1],
+  ["npx --call='node boundaries.mjs'", 1],
+  ["npm test && npx -c 'node boundaries.mjs'", 1],
+  ["'C:\\tools\\npm.cmd' exec --call='node boundaries.mjs'", 1],
+  ["env -S 'node boundaries.mjs'", 1],
+  ["sh -c 'node boundaries.mjs'", 1],
+  ["node check.mjs 'a || b'", 1],
+  ['node check.mjs "a && b"', 1],
+  ["node check.mjs 'a;b'", 1],
+  ["node check.mjs 'a|b'", 1],
+  ["node check.mjs 'a&b'", 1],
+  ["node check.mjs '$(check)'", 1],
+  ["node check.mjs '`check`'", 1],
+  ["node check.mjs 'a\n&&\nb'", 1],
+  ['node check.mjs a\\;b', 1],
+  ['node check.mjs a\\|b', 1],
+  ['node check.mjs a\\&b', 1],
+  ['node check.mjs \\`check\\`', 1],
+  ["npm test && node check.mjs 'a || b'", 1],
+  ['npm run check && node boundaries.mjs', 0],
+  ['npm run check &&\nnode boundaries.mjs', 0],
+  ['npm exec -- tsc --noEmit', 0],
+  ['npx tsc --noEmit', 0],
+  ['node check.mjs "literal argument"', 0]
+]) {
+  for (const [path, content] of [
+    ['package.json', JSON.stringify({ scripts: { check: value } })],
+    ['ci.yml', JSON.stringify({ steps: [{ run: value }] })],
+    ['ci.yml', JSON.stringify({ job: { script: value } })]
+  ]) {
+    test(`apply enforces bounded selected arguments: ${path} ${content}`, async t => {
+      const context = await integration(t, path, content)
+      const result = await preview(context)
+      assert.equal(result.exit, exit)
+      if (exit === 1) assert.equal(result.problems[0].code, 'ignored-check-failure')
+      else assert.equal(execute(context).exit, 0)
+    })
+  }
+}
+
+for (const [path, content] of [
+  ['config.yml', 'packages: [web, core]\n'],
+  ['package.json', '{"scripts":{"start":"node $ENTRY"}}']
+]) {
+  test(`apply permits unrelated reviewed edit: ${path}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, path), 'utf8'), content)
+  })
+}
+
+for (const [path, content, selected] of [
+  ['package.json', '{"scripts":{"check":"npm test","start":"node $ENTRY"}}', [['scripts', 'check']]],
+  ['ci.yml', '{"packages":["web","core"],"steps":[{"run":"npm test"},{"run":"echo $ENTRY","continue-on-error":true}]}', [['steps', '0', 'run']]]
+]) {
+  test(`apply validates only selected commands within an integration edit: ${path}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path, selected)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, path), 'utf8'), content)
+  })
+}
+
+for (const [path, content, selected] of [
+  ['package.json', '{"scripts":{"check":"npm test","boundaries":"node boundaries.mjs || true"}}', [['scripts', 'check'], ['scripts', 'boundaries']]],
+  ['ci.yml', '{"steps":[{"run":"npm test"},{"script":"node boundaries.mjs || true"}]}', [['steps', '0', 'run'], ['steps', '1', 'script']]],
+  ['ci.yml', '{"job":{"allow_failure":true,"steps":[{"run":"npm test"}]}}', [['job', 'steps', '0', 'run']]],
+  ['package.json', '{"scripts":{"start":"npm start"}}', [['scripts', 'check']]],
+  ['ci.yml', 'steps:\n  - run: npm test\n', [['steps', '0', 'run']]]
+]) {
+  test(`apply rejects invalid selected integration: ${path} ${content}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path, selected)
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const proposed of [
+  'steps:\n  - run: npm run check\n    continue-on-error: true\n',
+  'steps:\n  - run: npm run check || true\n',
+  'steps:\n  - run: |\n      npm run check\n      echo done\n',
+  'steps:\n  - run: "npm run check || true"\n',
+  'steps:\n  - run: npm run check\n    continue-on-error: ${{ true }}\n',
+  'job:\n  script: npm run check\n  allow_failure: true\n',
+  'steps:\n  - "run": npm run check || true\n',
+  'steps:\n  - run: [npm run check, true]\n',
+  'steps:\n  - run: *unchecked\n'
+]) {
+  test(`apply rejects ignored CI failure: ${JSON.stringify(proposed)}`, async t => {
+    const context = await integration(t, 'ci.yml', proposed)
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const key of ['run', 'script']) {
+  for (const scalar of ['npm run check\n      || true', '>\n      npm run check\n      || true',
+    '"npm run check\n      || true"', "'npm run check\n      || true'",
+    '"npm run check \\x7c\\x7c true"', "CI=true sh -c 'npm run check || true'",
+    "npm test && CI=true sh -c 'npm run check || true'"]) {
+    const proposed = `steps:\n  - ${key}: ${scalar}\n`
+    test(`apply rejects folded or prefixed CI failure: ${JSON.stringify(proposed)}`, async t => {
+      const context = await integration(t, 'ci.yml', proposed)
+      assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+    })
+  }
+  for (const scalar of ['|\n      npm run check', '|-\n      npm run check &&\n      npm test',
+    '>\n      npm run check &&\n      npm test', 'npm run check &&\n      npm test',
+    '"npm run check" # selected check', "'npm run check' # selected check", '"npm run \\x63heck"']) {
+    const proposed = `steps:\n  - ${key}: ${scalar}\n    name: Check\n`
+    test(`apply accepts decoded CI scalar with sibling: ${JSON.stringify(proposed)}`, async t => {
+      const context = await integration(t, 'ci.yml', proposed)
+      assert.equal((await preview(context)).exit, 0)
+      assert.equal(execute(context).exit, 0)
+    })
+  }
+}
+
+for (const value of ['tsc --noEmit # typecheck && node boundaries.mjs',
+  'tsc --noEmit # typecheck &&\nnode boundaries.mjs', 'tsc --noEmit && # boundary check &&\nnode boundaries.mjs']) {
+  for (const [path, proposed, original] of [
+    ['package.json', JSON.stringify({ scripts: { check: value } }), '{"scripts":{"check":"tsc --noEmit"}}'],
+    ['ci.yml', `steps:\n  - run: ${JSON.stringify(value)}\n`, ''],
+    ['ci.yml', `job:\n  script: |\n    ${value.replaceAll('\n', '\n    ')}\n`, '']
+  ]) {
+    test(`apply rejects shell comments hiding checks: ${path} ${JSON.stringify(proposed)}`, async t => {
+      const context = await integration(t, path, proposed, original)
+      assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+    })
+  }
+}
+
+for (const [path, proposed] of [
+  ['package.json', '{"scripts":{"check":"tsc --noEmit && node boundaries.mjs"}}'],
+  ['package.json', JSON.stringify({ scripts: { check: 'node check.mjs "#literal" && node boundaries.mjs' } })],
+  ['package.json', JSON.stringify({ scripts: { check: "node check.mjs '#literal' && node boundaries.mjs" } })],
+  ['package.json', JSON.stringify({ scripts: { check: 'node check.mjs \\#literal && node boundaries.mjs' } })],
+  ['ci.yml', 'steps:\n  - run: npm run check\n    continue-on-error: false\n'],
+  ['ci.yml', 'steps:\n  - run: |\n      npm run check &&\n      npm test\n']
+]) {
+  test(`apply accepts failure-preserving integration: ${path} ${JSON.stringify(proposed)}`, async t => {
+    const context = await integration(t, path, proposed)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+  })
 }
 
 for (const [name, operation, original, payload, proposed, path] of [

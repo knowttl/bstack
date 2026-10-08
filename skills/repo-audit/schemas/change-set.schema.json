@@ -39,7 +39,11 @@
           "proposedHash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
           "operation": { "enum": ["create", "replace", "replace-file", "delete", "set-heading-section", "set-json-key", "append-line-once"] },
           "payload": { "type": "object" },
-          "proposedContent": { "type": ["string", "null"] }
+          "proposedContent": { "type": ["string", "null"] },
+          "checkIntegration": {
+            "type": "array", "minItems": 1, "uniqueItems": true,
+            "items": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+          }
         }
       }
     },

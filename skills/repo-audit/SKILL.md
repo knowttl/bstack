@@ -109,7 +109,8 @@ Avoid speculative frameworks, service layers, integrations and empty document te
 The enforcement and architecture references are available for recommendations.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
 Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
-Native rule-proof and debt baseline checks are available; maintained enforcement remains T3.4 work, with portable maintenance in Phase 3a.
+Native rule-proof, debt baseline checks and maintained local enforcement integration through apply are available; portable maintenance remains Phase 3a work.
+Declare selected command paths with each apply edit's `checkIntegration` according to the [enforcement reference](references/enforcement.md#integrate-the-maintained-command).
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
 
@@ -138,7 +139,8 @@ Failed or interrupted setup and journey commands leave the created project unver
 Setup and journey commands already attempted are never rerun automatically, avoiding duplicate setup effects.
 Verify affected commands explicitly and retain fresh evidence before claiming readiness.
 Prove selected native rules using the enforcement reference's rule-proof command and preserve the scratch evidence.
-Name maintained enforcement and portable maintenance as pending later work.
+Prove selected maintained integration as described in the enforcement reference before claiming it is verified for the created project.
+Portable maintenance remains pending later work.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
@@ -213,7 +215,7 @@ Run `findings validate --repo <target> --findings <file> --json`, then `findings
 Missing execution evidence can leave the preview verification blocked without preventing review of its proposals.
 The enforcement and architecture references are available for recommendations.
 Use the enforcement reference's rule-proof and debt baseline commands for selected rules and accepted temporary debt.
-Maintained enforcement remains T3.4 work.
+Use selected apply edits to extend the existing maintained check command, preserving failures and package scope as described in the enforcement reference.
 
 Done when: Every recommendation has a project-specific reason, evidence, principle, consequence, scope and verification method, with unresolved decisions and unsupported measurements visible.
 
@@ -251,7 +253,7 @@ Render returns a scratch path and distinguishes documented, observed and inferre
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
 Capture approved checks through the shared verification rules below.
-Maintained enforcement arrives in T3.4 and portable maintenance evidence and document validation in Phase 3a.
+Selected maintained enforcement through apply is available from T3.4; portable maintenance evidence and document validation remain Phase 3a work.
 
 Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.
 
