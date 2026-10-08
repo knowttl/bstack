@@ -16,5 +16,6 @@
   "T1.4": ["tests/scripts/skill-skeleton.test.mjs", "tests/scripts/package-check.test.mjs"],
   "T1.5": ["tests/scripts/vision-board.test.mjs", "tests/scripts/package-check.test.mjs"],
   "T1.6": ["tests/scripts/vision-board.test.mjs", "tests/scripts/vision-runtime.test.mjs", "tests/scripts/vision-review.test.mjs"],
-  "T1.7": ["tests/scripts/vision-review.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/package-check.test.mjs"]
+  "T1.7": ["tests/scripts/vision-review.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/package-check.test.mjs"],
+  "T2.1": ["tests/scripts/cite-check.test.mjs", "tests/scripts/package-check.test.mjs"]
 }
