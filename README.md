@@ -9,7 +9,7 @@ Use the load-when table to read the self-contained intent interview for a new id
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
 Other conditional references remain placeholders, and later audit commands and the installer are not built yet.
 Use the procedure for bounded read-only planning, keeping blocked steps visible.
-Project edits remain blocked until the protected apply command is built.
+Project edits remain blocked until apply supports protected writes; reviewed plans can currently be previewed with `--dry-run` as described below.
 Nothing is published to npm.
 
 Use Node 24 or later:

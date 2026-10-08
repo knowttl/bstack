@@ -560,6 +560,7 @@ Open and verify source citations using cite-check before relying on them.
 These pointers identify evidence rather than duplicate authoritative principles.
 The findings validator checks source joins, not the meaning of citations or their truth.
 Unknown source IDs, duplicate joining IDs, paths outside scope and inconsistent selections fail validation.
+Duplicate JSON member names at any depth, including escaped equivalents, and numbers that decode to nonfinite values also fail validation.
 `selectedFindingIds` must match exactly the findings whose status is selected.
 Selection authorises a proposed fix, while `resolved` records its observed completion or the owner's settled decision.
 Rejecting a blocking finding does not resolve the block.
@@ -656,18 +657,22 @@ Filesystem access failures block the command; invalid plans fail with named prob
 |---|---|---|
 | `create` | `{ "content": "complete new text" }` | An absent UTF-8 `.md`, `.txt` or `.json` file; JSON must be an object without duplicate keys |
 | `replace` | `{ "search": "unique nonempty literal", "replacement": "new text" }` | One exact occurrence in `.md` or `.txt`; an empty replacement keeps the file present |
-| `delete` | `{}` | One existing UTF-8 text file; both proposed fields must be null |
+| `delete` | `{}` | One existing UTF-8 text file, without an extension restriction; both proposed fields must be null |
 | `set-heading-section` | `{ "heading": "ATX heading title", "content": "new body\n" }` | `.md`; exactly one matching nonempty ATX heading at column 0 outside fenced code, replacing its body and subsections until the next same-or-higher-level heading |
 | `set-json-key` | `{ "key": "root key", "value": { "any": "JSON value" } }` | A `.json` object; replace one root value or insert a missing root key, preserving other bytes |
 | `append-line-once` | `{ "line": "one nonempty line" }` | `.md` or `.txt`; leave an existing exact line intact, otherwise append it using CRLF when present, LF otherwise |
 
 Payloads reject unknown and missing fields.
-Malformed JSON, duplicate keys at any depth (including escaped equivalents), JSON arrays at the root, binary/non-UTF-8 text and unsupported extensions fail.
+Plan inputs reject malformed JSON, duplicate keys at any depth (including escaped equivalents) and numbers that decode to nonfinite values.
+JSON create and key edits also reject malformed JSON, duplicate keys, nonfinite numbers and non-object roots.
+All operations reject binary/non-UTF-8 text; operations other than delete reject unsupported extensions.
 Heading edits support unindented prose, nonempty ATX headings at column 0 and closed fences at column 0 with an optional plain info word containing letters, digits, underscores, plus signs, dots or hyphens.
 Outside fenced code, indented content, lists, block quotes, HTML-like markup, tables, reference definitions, empty headings, setext headings and thematic breaks are unsupported.
+Setext underlines and thematic-break lines remain unsupported with trailing spaces or tabs.
 Indented backtick or tilde fence markers are unsupported anywhere, including inside fenced code.
 Unsupported structures fail with `Unsupported Markdown structure; use whole-file replacement.` rather than guessing a section boundary.
 The selected heading needs a line ending and a nonempty new body must end with a newline.
+A leading UTF-8 BOM is ignored when matching headings, fences and existing lines, while its bytes remain preserved.
 Replacement searches with zero or multiple occurrences fail.
 Unsupported edits need the C14b reviewed whole-file interface.
 
