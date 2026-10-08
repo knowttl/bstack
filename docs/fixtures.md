@@ -4,7 +4,7 @@ T1.1 delivers idea fixtures, clear goals, both native stacks, clean boundary pro
 These sources serve later acceptance procedures, and their sanity checks do not claim those agent behaviours have passed.
 
 See [README usage](../README.md) for build commands, output and cleanup responsibilities.
-The builder copies declared files into a fresh OS temporary folder and runs the source fixture's `sanity.mjs` with that folder as its argument.
+The builder copies declared files into a fresh OS temporary folder and runs the named fixture's `sanity.mjs` with that folder as its only argument.
 Exit codes are 0 for success, 1 for a failed build or sanity check, 2 for a missing executable or input, and 3 for usage errors.
 
 The [fixture registry](../tests/fixtures/fixtures.json) declares the files to copy and, for repo fixtures, an ordered history of paths, messages and dates.
@@ -34,5 +34,5 @@ Native command results go to stderr while the builder's stdout remains JSON line
 `dirty-work` contains staged and unstaged edits, new files, a deletion and a rename.
 `refactor` preserves the public quote through a structural change.
 `contract-removal` deletes design and coverage sources with the prior policy still accessible.
-`shallow-history` makes that prior comparison unavailable.
+`shallow-history` has no accessible parent commit.
 `installer-collision` holds an isolated home with an unowned collision, edited installed content and an unrelated skill.

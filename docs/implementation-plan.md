@@ -340,7 +340,6 @@ Tick each task when its "Done when" commands pass.
   - [x] T1.1 Build the test fixtures
     - [x] C6a Isolated idea/clear-goals fixtures and builder ([evidence](../tests/eval/results/tasks/T1.1.json))
     - [x] C6bc Native stacks, boundary proofs and state variants ([evidence](../tests/eval/results/tasks/T1.1.json))
-    - [ ] C6bc Native stacks, rule-proof and remaining variants
   - [ ] T1.2 Build the evaluation runner and record the baseline
   - [ ] T1.3 Write the first `SKILL.md`
   - [ ] T1.4 Bundle the interview and domain-language modules
