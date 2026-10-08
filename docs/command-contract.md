@@ -21,7 +21,7 @@ Directory and file symlinks are not followed during recursive discovery.
 Unreadable filesystem sources block the command.
 Discovery is bounded by these traversal and name rules, rather than a semantic judgement of every repository file.
 
-`inspect` returns `data.root`, `revision` (a Git object ID or "no commits"), `changes`, `manifests` and `prerequisites`.
+`inspect` returns `data.root`, `revision` (a Git object ID, "no commits" for an unborn branch, or null when HEAD cannot be resolved), `changes`, `manifests` and `prerequisites`.
 Each change contains the two-character porcelain status and literal repo-relative path, plus `originalPath` for a rename or copy.
 Manifest entries contain the path and exact-byte SHA-256 `hash`.
 Known manifests include Node package and npm, pnpm, Yarn and Bun locks, Python pyproject, requirements, Pipfile, uv and Poetry locks, Cargo, Go, Gemfile and Composer files.
@@ -56,6 +56,7 @@ Name families accept hyphens, underscores or spaces between words where shown be
 Instruction names are exact: `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md` and `CLAUDE.local.md`, at the root or in nested scopes.
 Instruction entries also contain `directory`, `scope`, `insideRepo`, `scoped` and `local`.
 `.claude/CLAUDE.md` governs its parent scope, not the `.claude` folder alone.
+Other instruction names inside `.claude` keep that folder as their scope.
 Paths and directories inside the repo are repo-relative, using forward slashes, and the root scope is `.`.
 Instruction sources in ancestor directories, including ancestor `.claude/CLAUDE.md`, use absolute paths and have `insideRepo: false`.
 Missing repo-owned source kinds appear in `absent`, without failure or an invented fallback document.
@@ -299,13 +300,17 @@ Children that deliberately detach themselves from the managed tree are outside t
 
 `selectCommand(executable, args)` supplies the same launcher selection for the check and its version probe.
 `node` selects `process.execPath`.
-On Windows, `npm` and `npm.cmd` select npm's `npm-cli.js`, first from `npm_execpath`, then beside Node, then under PATH entries.
+On Windows, `npm`, `pnpm` and `yarn`, including their `.cmd` names, select their JavaScript CLI through one shared resolution path.
+The entry points are `node_modules/npm/bin/npm-cli.js`, `node_modules/pnpm/bin/pnpm.cjs` and `node_modules/yarn/bin/yarn.js`, searched beside Node and then under semicolon-separated PATH entries.
+For npm only, `npm_execpath` pointing to an accessible `npm-cli.js` takes precedence.
 Node executes that entry point with literal arguments.
-Missing npm entry points and other `.cmd` or `.bat` launchers are blocked with a prerequisite and fix.
+Missing entry points yield `npm-cli-unavailable`, `pnpm-cli-unavailable` or `yarn-cli-unavailable` with a prerequisite and fix.
+Other explicit `.cmd` or `.bat` launchers yield `command-file-unsupported`.
 No child uses shell interpretation.
 Direct `npm.cmd` execution returned `EINVAL` in a Windows Node `v24.16.0` probe.
 The platform constraint is documented in [Node's child-process guide](https://raw.githubusercontent.com/nodejs/node/v24.0.0/doc/api/child_process.md).
-Windows command selection is tested on Linux in C4b, while real Windows execution remains pending under R26.
+Windows command selection is tested with injected win32 on Linux in C4b and C11bc, including fixture PATH launchers for all three package managers and literal JavaScript CLI arguments.
+Real Windows process execution remains unverified under R26; the [C11bc task evidence](../tests/eval/results/tasks/T2.2.json) records this captain checklist limitation.
 
 ## Fingerprints
 
