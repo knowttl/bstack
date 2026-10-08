@@ -5,7 +5,8 @@ import { join, isAbsolute } from 'node:path'
 import { isInside, resolveLinks } from './paths.mjs'
 import { CommandError } from './result.mjs'
 
-export async function createScratch(target) {
+export async function scratchDirectory(target, runId) {
+  if (!/^[a-zA-Z0-9-]+$/.test(runId)) throw new CommandError('usage-error', [{ code: 'invalid-run', message: 'Run ID must contain only letters, digits and hyphens.', fix: 'Use the run ID returned by the command.' }])
   const cache = process.platform === 'win32' ? process.env.LOCALAPPDATA
     : process.platform === 'darwin' ? join(homedir(), 'Library', 'Caches')
       : process.env.XDG_CACHE_HOME || join(homedir(), '.cache')
@@ -18,10 +19,15 @@ export async function createScratch(target) {
   }
   // Real target identity survives aliases, while each invocation keeps its own run.
   const key = createHash('sha256').update(target.root).digest('hex')
-  const directory = await resolveLinks(join(base, key, randomUUID()))
+  const directory = await resolveLinks(join(base, key, runId))
   if (isInside(target.root, directory)) {
     throw new CommandError('blocked', [{ code: 'scratch-inside-target', message: 'Scratch links resolve inside the target.', fix: 'Repair the cache link or select a different cache directory.', path: directory }])
   }
+  return directory
+}
+
+export async function createScratch(target) {
+  const directory = await scratchDirectory(target, randomUUID())
   await mkdir(directory, { recursive: true })
   return await realpath(directory)
 }

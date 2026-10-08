@@ -2,8 +2,13 @@
 export const commands = {
   apply: {
     module: './commands/apply.mjs',
-    options: ['plan', 'dry-run'],
-    help: 'Validate a reviewed change set and preview exact file bytes without writes.\nUsage: repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> --dry-run [--json]\nPlan follows schemas/change-set.schema.json. Real writes and resume remain pending in C14b.'
+    options: ['plan', 'dry-run', 'run'],
+    help: 'Apply or resume a reviewed change set with recoverable originals.\nUsage: repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--run <id>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Repeating a plan resumes its digest-bound run.'
+  },
+  'state show': {
+    module: './commands/state.mjs',
+    options: ['run'],
+    help: 'Inspect actual pending, applied and conflicting edits without writes.\nUsage: repo-audit.mjs state show --repo <path>|--workspace <path> --run <id> [--json]'
   },
   'findings validate': {
     module: './commands/findings.mjs',
@@ -63,4 +68,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']

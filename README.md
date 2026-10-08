@@ -9,7 +9,7 @@ Use the load-when table to read the self-contained intent interview for a new id
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
 Other conditional references remain placeholders, and later audit commands and the installer are not built yet.
 Use the procedure for bounded read-only planning, keeping blocked steps visible.
-Project edits remain blocked until apply supports protected writes; reviewed plans can currently be previewed with `--dry-run` as described below.
+Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
 
 Use Node 24 or later:
@@ -79,18 +79,28 @@ Rendering returns a scratch path and one readiness result with documented, obser
 Missing or stale evidence blocks readiness, and unresolved decisions require review.
 These commands assess supplied evidence without executing checks or applying changes.
 
-Preview selected mechanical edits without changing the project:
+Preview selected edits, then apply the reviewed plan or resume its interrupted run:
 
 ```sh
 node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --dry-run
 node skills/repo-audit/scripts/repo-audit.mjs apply --workspace <path> --plan <file> --dry-run --json
+node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --json
+node skills/repo-audit/scripts/repo-audit.mjs state show --repo <path> --run <returned-run-id> --json
 npm test -- --task T2.6
 ```
 
 The [apply contract](docs/command-contract.md#apply-dry-run) documents the reviewed change set, exact-byte hashes, digest and supported operations.
 Plain output prints the complete diff; JSON additionally returns complete proposed content and hashes.
 Invalid inputs or changed preconditions leave every project file unchanged.
-C14a delivers dry run and both schemas; real writes, backups, resume, `state show` and reviewed whole-file replacement remain C14b work.
+Omit `--dry-run` to apply after review.
+Repeating the same plan resumes pending edits or returns `already-applied` without writes.
+Originals and the journal stay in OS-cache scratch outside the project.
+User changes block all remaining writes, including recreation after deletion.
+Replacement is atomic per file where supported, never across the whole change set.
+Filesystem limitations are reported without a non-atomic fallback.
+Use `replace-file` with complete reviewed UTF-8 content when a mechanical edit is unsupported, including the audit record rendered by T2.5.
+`state show` reports actual applied, pending and conflicting files and affected checks to rerun.
+Automatic check execution remains T2.7 work.
 
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
