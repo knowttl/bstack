@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "draftRevision": "7857e8a5ad05b289f70344fc0edf12e5af637e0b1f43a29aedfad26aaa7f5006",
+  "project": "Board \"fixture\" <script> & 日本語",
+  "runNote": "Synthetic review with `backticks`",
+  "cards": [{
+    "id": "H-1 <script> & 日本語",
+    "title": "Keep \"markup\" and `backticks` literal",
+    "body": "Display <script>globalThis.injected=true</script> & Unicode 日本語 as text.",
+    "tests": "It serves reviewers with literal text.",
+    "why": "Literal content is faithful. Rich formatting can improve reading."
+  }]
+}

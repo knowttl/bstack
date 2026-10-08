@@ -1,5 +1,10 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'vision-board build': {
+    module: './commands/vision-board-build.mjs',
+    options: ['draft', 'proposals'],
+    help: 'Build a revision-bound VISION review board in scratch.\nUsage: repo-audit.mjs vision-board build --repo <path>|--workspace <path> --draft <file> --proposals <file> [--json]\nDraft is UTF-8 Markdown. Proposals follow schemas/vision-proposals.json and name its exact SHA-256. Launch and verdict ingestion are pending C10b.'
+  },
   'contract-test': {
     module: './commands/contract-test.mjs',
     options: ['input', 'schema'],
@@ -8,4 +13,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['vision-board', 'cite-check', 'inspect', 'inventory', 'measure', 'overlap', 'findings validate', 'findings render', 'apply', 'state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['vision-board launch', 'vision-board verdicts', 'cite-check', 'inspect', 'inventory', 'measure', 'overlap', 'findings validate', 'findings render', 'apply', 'state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']

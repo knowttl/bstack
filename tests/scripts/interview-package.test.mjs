@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, join, resolve, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 // T1.4 owns a literal packaging contract, not evidence of model interpretation.
@@ -9,7 +9,7 @@ const skill = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/rep
 
 test('installed skill contains no external skill calls under the T1.4 search contract', async () => {
   const entries = await readdir(skill, { recursive: true, withFileTypes: true })
-  for (const entry of entries.filter(entry => entry.isFile())) {
+  for (const entry of entries.filter(entry => entry.isFile() && !relative(skill, entry.parentPath).split(sep).includes('node_modules'))) {
     const path = join(entry.parentPath, entry.name)
     const content = await readFile(path, 'utf8')
     assert.doesNotMatch(content, /Skill tool|invoke the/i, path)

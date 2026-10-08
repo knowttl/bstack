@@ -280,8 +280,7 @@ Every slice records its task IDs, the original user intent and approved amendmen
 | C7b | T1.2 one current-host adapter, isolation and baseline | C7a | Fresh sessions, no-skill discovery absence, unique transcripts, comparable model/revision/criteria |
 | C8 | T1.3 baseline-backed SKILL procedure | C7b | Gap map and package check, hard safeguards retained, unavailable later steps labelled |
 | C9a | T1.4 interview/domain references | C8, C3 | Flattened resources, no external skill calls, glossary and confirmed-intent rubric |
-| C9b | T1.5 VISION reference/assets | C9a | Package check and recorded asset/NOTICE diff |
-| C10a | T1.6 runtime probe, exact pin, board build | C9b | Clean nested install, runtime observation, safe inserted text, unique IDs |
+| C9b10a (C9b + C10a) | T1.5 VISION reference/assets and T1.6 runtime probe, exact pin, board build | C9a | Package check and recorded asset/NOTICE diff, clean nested install, runtime observation, safe inserted text, unique IDs |
 | C10b | T1.6 launch/verdict/resume and T1.7 intent checkpoint | C10a | Live roundtrip, stale verdict refused, approved scratch draft, ambiguous decision blocked, workspace unchanged |
 | C11a | T2.1 research briefs/citation validation | C10b | Correct/wrong/stale citations, no-web limits, discovery-only transcripts in available modes |
 | C11b | T2.2 inspect | C11a | Read-only fingerprint and exact missing-prerequisite result |
@@ -345,8 +344,10 @@ Tick each task when its "Done when" commands pass.
     - [x] C7b Current-host Codex adapter, fresh state and discovery isolation, resumed scripted answers and three human-scored real baselines ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
   - [x] T1.3 Write the first `SKILL.md`: bounded checklists, inline safeguards and labelled unavailable tooling ([gap map](../tests/eval/results/gap-map.md), [evidence](../tests/eval/results/tasks/T1.3.json))
   - [x] T1.4 Bundle the interview and domain-language modules - C9a flattens decision rounds, the confirmed-intent rubric, glossary discovery and formats, and separate decision records. Registered packaging search and local checks are recorded in `tests/eval/results/tasks/T1.4.json`. AC-9 and AC-12 agent checks remain assigned to T1.7.
-  - [ ] T1.5 Adapt VISION and bundle the board assets
+  - [x] T1.5 Adapt VISION and bundle the board assets
   - [ ] T1.6 Build the VISION board launcher
+    - [x] C10a (merged into C9b10a): runtime research/probe, exact nested pin and lock, local/gate setup and revision-bound board build.
+    - [ ] C10b: launch, verdict ingestion, resumed review and manual verdict-to-draft update.
   - [ ] T1.7 Complete the intent and vision review
 - Phase 2: Audit and foundation
   - [ ] T2.1 Write the research briefs and the citation check
@@ -790,6 +791,8 @@ Record the mapping in the T1.2 results folder as `gap-map.md`.
    Record a live launcher probe before adapting outside runtime behaviour.
 3. Add the `vision-board` command with three subcommands:
    - `build --draft <file> --proposals <file>` fills the template.
+   The draft is nonempty UTF-8 Markdown and proposals follow `skills/repo-audit/schemas/vision-proposals.json`.
+   Bind proposals to the exact-byte draft SHA-256 and write run/draft/card metadata beside the generated board in scratch.
    Escape every inserted value for HTML and for any script context.
    Validate that card IDs are unique.
    - `launch` starts the board.
@@ -797,6 +800,8 @@ Record the mapping in the T1.2 results folder as `gap-map.md`.
    - `verdicts` reads returned verdicts tied to a run and draft revision.
     Reject unknown, duplicate or missing card IDs and verdicts from an incompatible draft.
     Apply approved verdicts to a new draft in scratch and preserve the previous draft for resume.
+    The agent owns semantic draft revision from author reasoning, per commissioning F13.
+    Only exact structured proposal edits can make a mechanical update deterministic.
 4. Test escaping with quotes, backticks, `<script>`, `&` and Unicode.
    Test a resumed review that reads an earlier run's verdicts.
 

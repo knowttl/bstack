@@ -1,6 +1,6 @@
 no_ci: true
 commands:
-  prepare: 'npm ci --prefer-offline --ignore-scripts'
+  prepare: 'npm ci --prefer-offline --ignore-scripts && npm ci --omit=dev --prefix skills/repo-audit'
   test: 'npm test'
   lint: 'npm run check'
 document:

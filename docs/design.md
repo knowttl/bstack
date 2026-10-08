@@ -1401,6 +1401,40 @@ Documentation research alone does not satisfy an execution check.
 This review checked the upstream procedures and licences at pinned commits on 2026-10-06.
 The integrated audit skill, installer and runtime still need implementation and execution tests.
 
+### VISION runtime observation (C9b10a)
+
+Research on 2026-10-08 checked the [lavish-axi package](https://www.npmjs.com/package/lavish-axi) and its [official repository](https://github.com/kunchenguid/lavish-axi), plus the installed CLI help and a synthetic live probe.
+`npm view lavish-axi version bin repository --json` reported current version 0.1.84 and executable `dist/cli.mjs`.
+The installed and live-observed version was 0.1.78.
+The skill pins 0.1.78 because this is the version exercised against the shared server, rather than assuming a newer interface behaves identically.
+No globally installed support skill is required: the nested npm install supplies the CLI and runtime closure.
+
+The CLI opens an HTML file through a background local server and returns a session URL.
+Companion files such as review.css must live beside the HTML.
+The probe used the shared host server and default state directory, without a private server or captain interaction.
+The browser displayed the full generated draft and escaped proposal text.
+An automated synthetic reviewer selected Conditional and sent the board's queued verdicts.
+`poll` returned tagged prompts containing a `Context data:` JSON object with run ID, exact draft revision, proposal ID, verdict and notes.
+The complete-round prompt included the same run and revision with the verdict list.
+Both probe sessions were ended with `end`, leaving no live review waiting for a person.
+
+A terminal-only agent can open the printed URL in a reachable browser, while its terminal runs the CLI's long-poll command.
+Browser sends deliver queued prompts once to that listener.
+CLI help documents final feedback on Send & End, ended sessions and resumable browser disconnection.
+The probe used a bounded debugging timeout, not the normal indefinite review wait.
+No documented CLI verdict-file input was established.
+With no reachable browser, preserve the draft and mark interaction blocked rather than claim approval.
+
+The F13 commissioning correction separates deterministic transport from semantic editing.
+The board carries its run ID, exact-byte SHA-256 draft revision and unique card IDs in feedback.
+The launcher must validate these bindings before accepting verdicts.
+The agent owns interpretation and a reviewed new draft, preserving the previous revision for resume.
+A verdict alone cannot mechanically rewrite arbitrary VISION prose.
+C9b10a implements generation and binding metadata only.
+Launch, verdict ingestion, resumed review and the approved-draft checkpoint remain C10b work, so AC-3 is not complete.
+The observed runtime's outer page title displays HTML entities literally, while the artifact title and visible board text decode them correctly.
+The installed third-party runtime is unchanged.
+
 | Source | Verified fact | Effect on this design |
 |---|---|---|
 | [grill-me](https://github.com/mattpocock/skills/blob/6fd947921b935b7e1e69293a200400f0fdd5c15f/skills/productivity/grill-me/SKILL.md) | Delegates to `grilling` | Include the delegated procedure, not only the entry file |
