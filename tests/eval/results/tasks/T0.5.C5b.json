@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "taskId": "T0.5.C5b",
   "slice": "C5b",
-  "sourceRevision": "5294d52757177f4de656e3bc75e0d2974b13f402",
+  "sourceRevision": "2d6e986b6d3598a4e55c2ad08d1b2bbc29c66b6d",
   "intent": "\"yes approbe and begin the implementation\". Complete C5b of the approved sequential commissioning plan.",
   "amendments": [
     "Evidence names the last implementation commit tested. Evidence-only commits need not name themselves. Any source or test fix must refresh evidence in the same round.",
