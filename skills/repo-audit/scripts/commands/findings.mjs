@@ -2,7 +2,8 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolvePath } from '../lib/paths.mjs'
+import { resolveFilePath } from '../lib/paths.mjs'
+import { inspectJSON } from '../lib/json.mjs'
 import { createScratch } from '../lib/scratch.mjs'
 import { fingerprint, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
@@ -42,19 +43,13 @@ function render(findings, assessment) {
   return `${lines.join('\n')}\n`
 }
 
-export async function run(options, command) {
-  if (!options.findings) throw new CommandError('usage-error', [{ code: 'missing-findings', message: '--findings is required.', fix: 'Supply --findings <file>.' }])
-  const target = await resolveTarget(options, { draftOnly: true })
-  let findings
-  try { findings = JSON.parse(await readFile(options.findings, 'utf8')) } catch {
-    invalid('invalid-findings', 'Findings must be readable JSON.', options.findings)
-  }
+export async function validateFindings(findings, target) {
   const schema = JSON.parse(await readFile(new URL('../../schemas/findings.schema.json', import.meta.url), 'utf8'))
   validateData(schema, findings)
   for (const collection of ['sources', 'findings', 'execution']) validateIds(findings[collection], `$/` + collection)
   if (findings.target.root !== target.root || findings.target.mode !== target.mode) invalid('target-mismatch', 'Reviewed identity differs from the selected target.', '$/target')
   if (target.mode === 'workspace' && findings.target.revision !== null) invalid('target-mismatch', 'A draft workspace has no Git revision.', '$/target/revision')
-  for (const path of findings.reviewedScope) await resolvePath(target.root, path)
+  for (const path of findings.reviewedScope) await resolveFilePath(target.root, path)
   for (const finding of findings.findings) {
     if (!finding.files.length && finding.command === null) invalid('missing-location', 'A finding needs files or a failing command.', finding.id)
     for (const path of [...finding.scope, ...finding.files]) {
@@ -70,6 +65,17 @@ export async function run(options, command) {
     if (!findings.requiredOutcomes.includes(outcome)) invalid('missing-stage-outcome', `Stage requires outcome: ${outcome}`, '$/requiredOutcomes')
   }
   if (new Set(findings.execution.map(record => record.outcome)).size !== findings.execution.length) invalid('duplicate-outcome', 'Use one current record per outcome.', '$/execution')
+}
+
+export async function run(options, command) {
+  if (!options.findings) throw new CommandError('usage-error', [{ code: 'missing-findings', message: '--findings is required.', fix: 'Supply --findings <file>.' }])
+  const target = await resolveTarget(options, { draftOnly: true })
+  let findings
+  try { findings = inspectJSON(await readFile(options.findings, 'utf8')).value } catch (error) {
+    if (error instanceof CommandError) throw error
+    invalid('invalid-findings', 'Findings must be readable JSON.', options.findings)
+  }
+  await validateFindings(findings, target)
   const current = await fingerprint(target, { baseCommit: findings.target.revision, paths: findings.reviewedScope, inputs: findings })
   const reasons = []
   if (target.mode === 'repo') {
