@@ -3,7 +3,7 @@ import { join, relative, sep } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 // Generated dependencies, build output and Git internals are not project evidence.
-const excludedDirectories = new Set(['.git', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'])
+export const excludedDirectories = new Set(['.git', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'])
 
 export async function repoFiles(root) {
   const files = []
@@ -19,6 +19,6 @@ export async function repoFiles(root) {
 }
 
 export function readGit(root, args) {
-  return spawnSync('git', ['-C', root, ...args], { encoding: 'utf8',
+  return spawnSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: Infinity,
     env: { ...process.env, GIT_OPTIONAL_LOCKS: '0', GIT_DIR: undefined, GIT_WORK_TREE: undefined, GIT_COMMON_DIR: undefined, GIT_INDEX_FILE: undefined } })
 }

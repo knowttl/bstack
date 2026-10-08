@@ -62,7 +62,7 @@ test('explicit help succeeds', () => {
 })
 
 test('an unimplemented command returns usage exit 3', () => {
-  const result = spawnSync(process.execPath, [join(skill, 'scripts', 'repo-audit.mjs'), 'measure'], { encoding: 'utf8' })
+  const result = spawnSync(process.execPath, [join(skill, 'scripts', 'repo-audit.mjs'), 'apply'], { encoding: 'utf8' })
   assert.equal(result.status, 3, result.stderr)
   assert.match(result.stdout, /not implemented yet/)
 })
