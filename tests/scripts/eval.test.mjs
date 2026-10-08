@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
+import { tmpdir, userInfo } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
@@ -234,6 +234,27 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.ok((await readFile(join(directory, first.id, first.conversation), 'utf8')).includes(first.request))
 })
 
+for (const separator of ['\n', '\r', '\t']) {
+  test(`evidence redacts names after ${JSON.stringify(separator)} across nested JSON strings`, () => {
+    const username = userInfo().username
+    const output = `header${separator}${username}${separator}prefix-${username}-suffix`
+    const expected = `header${separator}[redacted: user name]${separator}prefix-${username}-suffix`
+    assert.equal(redactEvidence(output), expected)
+    assert.equal(JSON.parse(redactEvidence(JSON.stringify({ output }))).output, expected)
+    const record = JSON.stringify({ stdout: JSON.stringify({ output }) + '\n' })
+    assert.equal(JSON.parse(JSON.parse(redactEvidence(record)).stdout).output, expected)
+  })
+}
+
+test('evidence redacts JSONL surrounded by plain text with unmatched quotes', () => {
+  const username = userInfo().username
+  const event = JSON.stringify({ output: `header\n${username}\n` })
+  const transcript = `User: "unfinished\nHost JSONL:\n${event}\nHost stderr:\n"unfinished\n`
+  const redacted = redactEvidence(transcript)
+  assert.equal(JSON.parse(redacted.split('\n')[2]).output, 'header\n[redacted: user name]\n')
+  assert.equal(redacted.split('\n').length, transcript.split('\n').length)
+})
+
 test('captured listings and closed evidence redact host identities while retaining scoring and resume', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory, 'listing')
@@ -245,7 +266,7 @@ test('captured listings and closed evidence redact host identities while retaini
     .find(event => event.item?.command === 'ls -la').item.aggregated_output
   assert.equal(listing, 'total 8\ndrwx------ 2 [redacted: user name] [redacted: user name] 4096 Oct 8 12:00 .\n' +
     '-rw-r--r-- 1 [redacted: user name] [redacted: user name] 123 Oct 8 12:00 brief.md\n' +
-    'Owner: [redacted: user name]; group: [redacted: user name]\n')
+    'Owner: [redacted: user name]; group: [redacted: user name]\n[redacted: user name]\n[redacted: user name]\n')
   assert.ok(!transcript.includes(record.sessionId))
   assert.ok(!transcript.includes(record.fixture.path))
   assert.ok(!transcript.includes(record.isolation.home))
@@ -254,8 +275,14 @@ test('captured listings and closed evidence redact host identities while retaini
   assert.ok(!saved.includes(record.sessionId))
   assert.ok(!saved.includes(record.fixture.path))
   assert.ok(!saved.includes(record.isolation.home))
+  const closed = JSON.parse(saved)
+  const closedListing = closed.turns[0].result.stdout.trim().split('\n').map(line => JSON.parse(line))
+    .find(event => event.item?.command === 'ls -la').item.aggregated_output
+  assert.equal(closedListing, listing)
   const files = await inputs(directory, record)
   assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 0)
+  const scored = JSON.parse(await readFile(join(directory, record.id, 'run.json'), 'utf8'))
+  assert.equal(await readFile(join(directory, record.id, scored.transcript), 'utf8'), transcript)
 })
 
 test('with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request', async t => {

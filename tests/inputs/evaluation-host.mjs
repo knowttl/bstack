@@ -36,7 +36,7 @@ if (args.includes('--version')) {
       const username = userInfo().username
       const group = process.platform === 'win32' ? username : execFileSync('id', ['-gn'], { encoding: 'utf8' }).trim()
       console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution', command: 'ls -la',
-        aggregated_output: `total 8\ndrwx------ 2 ${username} ${group} 4096 Oct 8 12:00 .\n-rw-r--r-- 1 ${username} ${group} 123 Oct 8 12:00 brief.md\nOwner: ${username}; group: ${group}\n` } }))
+        aggregated_output: `total 8\ndrwx------ 2 ${username} ${group} 4096 Oct 8 12:00 .\n-rw-r--r-- 1 ${username} ${group} 123 Oct 8 12:00 brief.md\nOwner: ${username}; group: ${group}\n${username}\n${group}\n` } }))
     }
     console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: args.includes('resume') ?
       'Offline access remains unresolved. I will stop without choosing a stack.' : 'Which offline access option should we use?' + (mode === 'large' ? 'x'.repeat(70000) : ''),

@@ -21,18 +21,27 @@ export function redactEvidence(content, record) {
     [username, '[redacted: user name]'],
     [group, '[redacted: user name]']
   ].filter(([value]) => value && !/^[\[<]/.test(value))
-  // Replace complete names without changing unrelated words or existing placeholders.
-  for (const [value, placeholder] of replacements.flatMap(([value, placeholder]) =>
-    [[value, placeholder], [JSON.stringify(value).slice(1, -1), placeholder]]).sort((a, b) => b[0].length - a[0].length)) {
-    content = content.replace(new RegExp(`(?<![\\p{L}\\p{N}_-])${RegExp.escape(value)}(?![\\p{L}\\p{N}_-])`, 'gu'), () => placeholder)
-  }
-  // Host-created scratch paths can appear only in command output, outside the fixture.
+  const names = replacements.sort((a, b) => b[0].length - a[0].length)
   const scratch = tmpdir().replace(/[\\/]$/, '')
-  for (const prefix of [scratch, JSON.stringify(scratch).slice(1, -1)]) {
-    content = content.replace(new RegExp(`${RegExp.escape(prefix)}[/\\\\]+[^\\s"'\\\\;<>]+`, 'g'), '[scratch-path]')
+  function redact(value) {
+    return value.replace(/"(?:[^"\\\x00-\x1f]|\\.)*"|[^"]+|"/g, part => {
+      if (part.startsWith('"') && part.length > 1) {
+        let decoded
+        try { decoded = JSON.parse(part) } catch {}
+        if (typeof decoded === 'string') {
+          const redacted = redact(decoded)
+          return redacted === decoded ? part : JSON.stringify(redacted)
+        }
+      }
+      for (const [name, placeholder] of names) {
+        part = part.replace(new RegExp(`(?<![\\p{L}\\p{N}_-])${RegExp.escape(name)}(?![\\p{L}\\p{N}_-])`, 'gu'), () => placeholder)
+      }
+      return part.replace(new RegExp(`${RegExp.escape(scratch)}[/\\\\]+[^\\s"'\\\\;<>]+`, 'g'), '[scratch-path]')
+        .replace(/(?:\/private)?\/tmp\/[^\s"'\\;<>]+/g, '[scratch-path]')
+        .replace(/\/(?:home|Users)\/[^\s/"'\\;<>]+/g, '[host-home]')
+    })
   }
-  return content.replace(/(?:\/private)?\/tmp\/[^\s"'\\;<>]+/g, '[scratch-path]')
-    .replace(/\/(?:home|Users)\/[^\s/"'\\;<>]+/g, '[host-home]')
+  return redact(content)
 }
 
 export async function readAdapter(path) {
