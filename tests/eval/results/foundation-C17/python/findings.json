@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde"
+  },
+  "nextChange": "Balanced postings through public ledger package, preserving native Python journey and standards; recommendations only.",
+  "reviewedScope": [
+    "CONTRIBUTING.md",
+    "app.py",
+    "boundaries.py",
+    "startup.py",
+    "test_ledger.py",
+    "pyproject.toml",
+    "ledger/__init__.py",
+    "ledger/_internal.py",
+    "ledger/book.py"
+  ],
+  "sources": [
+    {
+      "id": "standards",
+      "pointer": "CONTRIBUTING.md:3",
+      "intent": "documented",
+      "summary": "Public package, ledger ownership and balanced postings using native Python checks."
+    },
+    {
+      "id": "implementation",
+      "pointer": "ledger/book.py:21",
+      "intent": "observed",
+      "summary": "Ledger owns entries and paired posting; amount quantizes using ambient Decimal context."
+    },
+    {
+      "id": "boundary",
+      "pointer": "boundaries.py:8",
+      "intent": "observed",
+      "summary": "Limited scan and exact app import matching; alternate private imports pass disposable fixtures."
+    },
+    {
+      "id": "tests",
+      "pointer": "test_ledger.py:7",
+      "intent": "observed",
+      "summary": "Only happy posting and negative posting covered."
+    },
+    {
+      "id": "journey",
+      "pointer": "startup.py:11",
+      "intent": "observed",
+      "summary": "Native Python CLI exports CSV stdout and JSON file successfully."
+    },
+    {
+      "id": "cohesion",
+      "pointer": "ledger/book.py:15",
+      "intent": "inferred",
+      "summary": "Posting and balance operations form one cohesive domain owner; splitting is not justified."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "app.py imports ledger._internal.amount.",
+      "files": [
+        "app.py",
+        "ledger/__init__.py"
+      ],
+      "command": null,
+      "principle": "External modules use the public ledger package.",
+      "consequence": "Caller depends on private normalization already owned by post().",
+      "fix": "Remove private import and pass string 10 directly to Ledger.post; retain from ledger import Ledger. Do not expose amount or add a bridge.",
+      "scope": [
+        "app.py"
+      ],
+      "verification": "opening_balance remains Decimal(10.00); boundary check passes; CLI rows unchanged.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "standards",
+        "implementation"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Boundary checker misses from ledger import _internal and allows from ledger.book import Ledger; startup and future external modules are not scanned.",
+      "files": [
+        "boundaries.py",
+        "boundaries.py",
+        "boundaries.py"
+      ],
+      "command": null,
+      "principle": "Enforce public package access across all external callers.",
+      "consequence": "Native check can be green while callers bypass the public API. find_spec can execute parent package code, so analysis is not purely static.",
+      "fix": "Extend existing AST checker to discover repository Python consumers, resolve from-import members, aliases, package entry points and internal relative imports statically. Keep internal ledger imports allowed; avoid a forwarding facade.",
+      "scope": [
+        "boundaries.py",
+        "test_ledger.py"
+      ],
+      "verification": "Disposable valid public/internal fixtures pass; direct private, from-import private, aliases and external book imports fail. Cover new/nested caller, relative resolution and cycles; unsupported dynamic imports are explicit limitations.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "standards",
+        "boundary"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "post accepts NaN when caller disables InvalidOperation trap and balanced() becomes False.",
+      "files": [
+        "ledger/_internal.py",
+        "ledger/book.py"
+      ],
+      "command": null,
+      "principle": "All successful postings preserve finite balanced entries.",
+      "consequence": "Ambient caller Decimal settings can invalidate ledger state.",
+      "fix": "Reject non-finite amounts explicitly before comparisons and mutation at shared normalization boundary. Keep two-decimal normalization and atomic import staging; define consistent public invalid-value errors. No exception permitting non-finite entries.",
+      "scope": [
+        "ledger/_internal.py",
+        "ledger/book.py",
+        "test_ledger.py"
+      ],
+      "verification": "Public tests reject NaN, sNaN and infinities under default and disabled traps, preserving exact pre-call entries; valid post/import/transfer/reverse stay balanced.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "standards",
+        "implementation"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Two tests do not protect import atomicity, transfer/reversal or native startup exports.",
+      "files": [
+        "test_ledger.py",
+        "ledger/book.py",
+        "ledger/book.py",
+        "startup.py"
+      ],
+      "command": null,
+      "principle": "Verify balanced public mutations and the native user journey.",
+      "consequence": "Passing tests miss the demonstrated NaN corruption and regressions in other public entry writers.",
+      "fix": "Expand unittest public-contract cases: balanced pairs, both account balances, zero/same-account rejection with unchanged state, transfer/reverse, balanced export/import round trip, failed import atomicity, app opening and subprocess CLI CSV/JSON agreement. Assert accepted invalid data never mutates.",
+      "scope": [
+        "test_ledger.py"
+      ],
+      "verification": "Run Python 3.12 unittest plus boundaries.py and pinned Ruff lint; startup writes only temporary test output. Preserve CSV row order, decimal strings and JSON content.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "standards",
+        "tests",
+        "journey"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "1.005 posts as 1.00 normally and 1.01 under ROUND_UP; numeric context ownership is undocumented.",
+      "files": [
+        "ledger/_internal.py"
+      ],
+      "command": null,
+      "principle": "Proposed principle: ledger owns a stable monetary rounding and precision policy.",
+      "consequence": "Same public input can produce different financial amounts across callers.",
+      "fix": "Recommend explicitly preserving current default half-even rounding in ledger-owned local context; agree supported magnitude/precision and float-input compatibility before implementation. Reuse CONTRIBUTING for policy rather than creating a new standards system.",
+      "scope": [
+        "CONTRIBUTING.md",
+        "ledger/_internal.py",
+        "ledger/book.py",
+        "test_ledger.py"
+      ],
+      "verification": "Decision-dependent: compare supported public amounts across altered rounding/precision/traps; assert agreed range rejection is atomic and balances remain exact. Exceptions require documented reason, supported scope and removal condition.",
+      "blocksNextChange": false,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "implementation",
+        "standards"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Recommendations only: no findings selected or applied; no post-change readiness claim.",
+    "Native checks and probes captured in checks.json and probes.json, not bound by run-checks to a findings fingerprint; formal preview readiness remains verification blocked.",
+    "Ruff lint passes; formatter diagnostic flags boundaries.py and ledger/book.py. Formatter is not an established documented requirement; do not silently adopt it or reformat.",
+    "No configured type-checker or CI; no hosted execution verified. Preserve existing pinned Ruff and unittest commands, do not introduce another verification stack.",
+    "Research conducted directly: small file set makes subagent handoff wasteful.",
+    "History has only initial commit; measure HEAD..HEAD provides endpoint sizes but no change-frequency/co-change basis. No two user-declared plans exist, so overlap not run.",
+    "Rounding/precision/float policy remains a decision; recommendations F-001 through F-004 do not require a new product vision."
+  ]
+}

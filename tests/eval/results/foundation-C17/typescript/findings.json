@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "nextChange": "Foundation recommendations for the existing checkout journey; no implementation or new feature selected.",
+  "reviewedScope": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "DESIGN.md",
+    "glossary.md",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "unit.test.mjs",
+    "journey.mjs",
+    "boundaries.mjs",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/core/a.ts",
+    "packages/core/b.ts",
+    "packages/core/package.json",
+    "packages/web/package.json",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts",
+    "packages/web/alias.ts",
+    "packages/web/public.ts"
+  ],
+  "sources": [
+    {
+      "id": "documents-0",
+      "pointer": "AGENTS.md:1",
+      "intent": "documented",
+      "summary": "AGENTS.md requires approved design and public core interface. DESIGN.md forbids UI storage access and fixes agreed checkout total at 10. Glossary assigns two meanings to Order. CLAUDE.md imports AGENTS.md; no consolidation proposed."
+    },
+    {
+      "id": "documents-1",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "AGENTS.md requires approved design and public core interface. DESIGN.md forbids UI storage access and fixes agreed checkout total at 10. Glossary assigns two meanings to Order. CLAUDE.md imports AGENTS.md; no consolidation proposed."
+    },
+    {
+      "id": "documents-2",
+      "pointer": "DESIGN.md:4",
+      "intent": "documented",
+      "summary": "AGENTS.md requires approved design and public core interface. DESIGN.md forbids UI storage access and fixes agreed checkout total at 10. Glossary assigns two meanings to Order. CLAUDE.md imports AGENTS.md; no consolidation proposed."
+    },
+    {
+      "id": "documents-3",
+      "pointer": "glossary.md:3",
+      "intent": "documented",
+      "summary": "AGENTS.md requires approved design and public core interface. DESIGN.md forbids UI storage access and fixes agreed checkout total at 10. Glossary assigns two meanings to Order. CLAUDE.md imports AGENTS.md; no consolidation proposed."
+    },
+    {
+      "id": "documents-4",
+      "pointer": "CLAUDE.md:1",
+      "intent": "documented",
+      "summary": "AGENTS.md requires approved design and public core interface. DESIGN.md forbids UI storage access and fixes agreed checkout total at 10. Glossary assigns two meanings to Order. CLAUDE.md imports AGENTS.md; no consolidation proposed."
+    },
+    {
+      "id": "architecture-0",
+      "pointer": "packages/web/ui.ts:1",
+      "intent": "observed",
+      "summary": "Checkout calls storage servicePrice then route postOrder; route owns total calculation and in-memory orders. Core publicly exports only price. Web imports storage directly and through alias. Core a/b form a recursive cycle, outside checkout reachability. Public quote uses allowed index import."
+    },
+    {
+      "id": "architecture-1",
+      "pointer": "packages/web/routes.ts:1",
+      "intent": "observed",
+      "summary": "Checkout calls storage servicePrice then route postOrder; route owns total calculation and in-memory orders. Core publicly exports only price. Web imports storage directly and through alias. Core a/b form a recursive cycle, outside checkout reachability. Public quote uses allowed index import."
+    },
+    {
+      "id": "architecture-2",
+      "pointer": "packages/web/alias.ts:1",
+      "intent": "observed",
+      "summary": "Checkout calls storage servicePrice then route postOrder; route owns total calculation and in-memory orders. Core publicly exports only price. Web imports storage directly and through alias. Core a/b form a recursive cycle, outside checkout reachability. Public quote uses allowed index import."
+    },
+    {
+      "id": "architecture-3",
+      "pointer": "packages/core/index.ts:1",
+      "intent": "observed",
+      "summary": "Checkout calls storage servicePrice then route postOrder; route owns total calculation and in-memory orders. Core publicly exports only price. Web imports storage directly and through alias. Core a/b form a recursive cycle, outside checkout reachability. Public quote uses allowed index import."
+    },
+    {
+      "id": "architecture-4",
+      "pointer": "packages/core/a.ts:1",
+      "intent": "observed",
+      "summary": "Checkout calls storage servicePrice then route postOrder; route owns total calculation and in-memory orders. Core publicly exports only price. Web imports storage directly and through alias. Core a/b form a recursive cycle, outside checkout reachability. Public quote uses allowed index import."
+    },
+    {
+      "id": "architecture-5",
+      "pointer": "packages/core/b.ts:1",
+      "intent": "observed",
+      "summary": "Checkout calls storage servicePrice then route postOrder; route owns total calculation and in-memory orders. Core publicly exports only price. Web imports storage directly and through alias. Core a/b form a recursive cycle, outside checkout reachability. Public quote uses allowed index import."
+    },
+    {
+      "id": "architecture-6",
+      "pointer": "packages/web/public.ts:1",
+      "intent": "observed",
+      "summary": "Checkout calls storage servicePrice then route postOrder; route owns total calculation and in-memory orders. Core publicly exports only price. Web imports storage directly and through alias. Core a/b form a recursive cycle, outside checkout reachability. Public quote uses allowed index import."
+    },
+    {
+      "id": "checks-0",
+      "pointer": "package.json:11",
+      "intent": "observed",
+      "summary": "Native scripts: strict type check, Node unit tests, localhost HTTP journey and TypeScript-resolved import/cycle boundaries. Actual results: check/test pass; journey/boundaries fail. Checker resolves static import/export aliases; no dynamic import traversal. No formatter/linter or CI configured."
+    },
+    {
+      "id": "checks-1",
+      "pointer": "tsconfig.json:5",
+      "intent": "observed",
+      "summary": "Native scripts: strict type check, Node unit tests, localhost HTTP journey and TypeScript-resolved import/cycle boundaries. Actual results: check/test pass; journey/boundaries fail. Checker resolves static import/export aliases; no dynamic import traversal. No formatter/linter or CI configured."
+    },
+    {
+      "id": "checks-2",
+      "pointer": "boundaries.mjs:11",
+      "intent": "observed",
+      "summary": "Native scripts: strict type check, Node unit tests, localhost HTTP journey and TypeScript-resolved import/cycle boundaries. Actual results: check/test pass; journey/boundaries fail. Checker resolves static import/export aliases; no dynamic import traversal. No formatter/linter or CI configured."
+    },
+    {
+      "id": "checks-3",
+      "pointer": "journey.mjs:12",
+      "intent": "observed",
+      "summary": "Native scripts: strict type check, Node unit tests, localhost HTTP journey and TypeScript-resolved import/cycle boundaries. Actual results: check/test pass; journey/boundaries fail. Checker resolves static import/export aliases; no dynamic import traversal. No formatter/linter or CI configured."
+    },
+    {
+      "id": "checks-4",
+      "pointer": "unit.test.mjs:7",
+      "intent": "observed",
+      "summary": "Native scripts: strict type check, Node unit tests, localhost HTTP journey and TypeScript-resolved import/cycle boundaries. Actual results: check/test pass; journey/boundaries fail. Checker resolves static import/export aliases; no dynamic import traversal. No formatter/linter or CI configured."
+    },
+    {
+      "id": "language-0",
+      "pointer": "tsconfig.json:10",
+      "intent": "observed",
+      "summary": "TypeScript paths inform compiler resolution without changing runtime imports. Alias runtime probe fails ERR_MODULE_NOT_FOUND despite passing type check. Reuse native TypeScript resolver and Node tests rather than adding another dependency engine."
+    },
+    {
+      "id": "language-1",
+      "pointer": "packages/web/alias.ts:1",
+      "intent": "observed",
+      "summary": "TypeScript paths inform compiler resolution without changing runtime imports. Alias runtime probe fails ERR_MODULE_NOT_FOUND despite passing type check. Reuse native TypeScript resolver and Node tests rather than adding another dependency engine."
+    },
+    {
+      "id": "language-2",
+      "pointer": "boundaries.mjs:15",
+      "intent": "observed",
+      "summary": "TypeScript paths inform compiler resolution without changing runtime imports. Alias runtime probe fails ERR_MODULE_NOT_FOUND despite passing type check. Reuse native TypeScript resolver and Node tests rather than adding another dependency engine."
+    },
+    {
+      "id": "outside-0",
+      "pointer": "packages/core/internal/database.ts:2",
+      "intent": "observed",
+      "summary": "servicePrice fetches caller URL and accepts response JSON price without checking status or payload. Journey exercises actual local HTTP transport but is a fixture, not a deployed service. No identified provider, credentials, production endpoint or service contract exists."
+    },
+    {
+      "id": "outside-1",
+      "pointer": "journey.mjs:4",
+      "intent": "observed",
+      "summary": "servicePrice fetches caller URL and accepts response JSON price without checking status or payload. Journey exercises actual local HTTP transport but is a fixture, not a deployed service. No identified provider, credentials, production endpoint or service contract exists."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Checkout returns 12 although the agreed total is 10.",
+      "files": [
+        "DESIGN.md",
+        "journey.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "command": "npm run journey",
+      "principle": "Existing commitment: agreed checkout total is 10.",
+      "consequence": "Passing mocked tests conceal a failing local HTTP checkout.",
+      "fix": "Retain expected total 10. Resolve whether service data or core pricing policy produces it; then fix that owner and add matching public-interface protection.",
+      "scope": [
+        "DESIGN.md",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/routes.ts",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "verification": "Journey must return status 201,total 10 with agreed service data; unit expectations must come from design.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "documents-2",
+        "checks-3",
+        "checks-4"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Web imports private storage directly and through a compiler alias.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/core/index.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Existing commitment: UI never touches storage; callers use public core interface.",
+      "consequence": "Storage changes leak into web; alias module also fails Node runtime resolution.",
+      "fix": "Keep transport/storage private; expose the minimum checkout-facing capability through core index; migrate web callers to public interface. Do not merely re-export raw storage. Replace private alias usage with public import.",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "tsconfig.json"
+      ],
+      "verification": "Native boundary check must reject direct/aliased private imports and allow public import; Node public callers and checkout must execute.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "architecture-0",
+        "architecture-1",
+        "architecture-2",
+        "architecture-3",
+        "language-1"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Core a and b call each other without a terminating path.",
+      "files": [
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "boundaries.mjs"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Proposed: reachable core capabilities terminate; keep static dependency cycles out of core unless justified.",
+      "consequence": "Invoking either recurses indefinitely; existing boundary command fails even though checkout does not import them.",
+      "fix": "Review intended use before removing unused cycle or replacing recursion with the intended terminating behavior. Keep this separate from checkout pricing.",
+      "scope": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "verification": "Boundary cycle diagnostic disappears; any retained public behavior has termination coverage.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "architecture-4",
+        "architecture-5"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "The standard test/type commands pass despite journey and boundary failures.",
+      "files": [
+        "package.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs"
+      ],
+      "command": null,
+      "principle": "Proposed: checkout acceptance and approved import boundary are required alongside unit/type checks.",
+      "consequence": "A contributor can report green tests while violating both approved commitments.",
+      "fix": "Add one local verification script chaining existing check,test,journey,boundaries with failure propagation; point AGENTS.md to DESIGN.md and this command. Preserve all individual commands; CI remains separately selected.",
+      "scope": [
+        "package.json",
+        "AGENTS.md"
+      ],
+      "verification": "Aggregate exits nonzero for each failing component; all four pass on a repaired final state.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "checks-0",
+        "checks-3"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "Price response and quantity are consumed without runtime validation.",
+      "files": [
+        "packages/core/internal/database.ts",
+        "packages/web/routes.ts"
+      ],
+      "command": null,
+      "principle": "Proposed: validate service data and checkout inputs before recording a purchase.",
+      "consequence": "Malformed service data or invalid quantity can produce invalid totals with status 201.",
+      "fix": "Agree valid quantity/price ranges and failure outcomes; validate at public core boundary, reject HTTP/payload errors before order mutation. Do not invent retry, timeout or currency policies.",
+      "scope": [
+        "DESIGN.md",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/routes.ts",
+        "unit.test.mjs",
+        "journey.mjs"
+      ],
+      "verification": "Valid agreed inputs succeed; malformed JSON, missing/nonfinite price, non-success HTTP and invalid quantities yield agreed failures without recording orders.",
+      "blocksNextChange": false,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "outside-0",
+        "architecture-1"
+      ]
+    },
+    {
+      "id": "F-006",
+      "problem": "Order has two conflicting glossary definitions.",
+      "files": [
+        "glossary.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Proposed: distinguish customer purchase from UI panel sequence in project vocabulary.",
+      "consequence": "Future purchase contracts may be confused with presentation order.",
+      "fix": "Review distinct terms such as Order and Panel sequence; edit existing glossary only after terminology selection; no naming migration.",
+      "scope": [
+        "glossary.md"
+      ],
+      "verification": "Review confirms each term has one domain meaning and preserves approved checkout commitments.",
+      "blocksNextChange": false,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "documents-3"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Checks captured in checks.json manually; not through an approved run-checks plan and not bound to findings fingerprint. Readiness therefore unverified.",
+    "Observed native journey and boundaries fail; passing type/unit checks do not establish checkout readiness.",
+    "Only localhost HTTP fixture observed; deployed provider behavior unverified.",
+    "One initial commit only; no meaningful history or co-change inference. No two declared plans to overlap.",
+    "Pricing relationship, validation outcomes and glossary terminology remain open; recommendations do not authorize edits.",
+    "Boundary checker covers top-level static imports/exports, not dynamic dependencies. No configured formatter/linter or CI; no new tooling prescribed.",
+    "Main-thread research selected under small-repo exception; all cited files read; cite-check output retained."
+  ]
+}

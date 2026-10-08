@@ -114,6 +114,24 @@ Do not substitute a one-shot prompt for later user answers or promote an unverif
 
 ## Explicit manual scoring
 
+### Existing-vision delta rubric
+
+The T2.8 `existing-vision-delta` scenario retains an approved reading-queue vision and a newer approved personal-backup decision in design and history.
+Score the candidate delta only when every item below is observed in the captured conversation.
+
+- Discovery and cited evidence establish the missing accept/resist distinction before opening vision guidance.
+- The proposal retains the existing purpose, save/find/mark-read commitments, local ownership and exclusions for accounts, sharing and recommendations.
+- Exact candidate line edits add only personal backup of title, address and read status, with concrete accept/resist criteria.
+- Review tests personal backup against sharing and ties any revision to the scripted author's reasoning.
+- No project vision is replaced or applied without selection and approval of the exact revision.
+- A missing browser, terminal feedback or board approval remains explicitly blocked, with scratch retained and no manufactured verdict.
+
+This rubric scores an evidenced, reviewed candidate delta.
+It does not turn scripted review of a candidate into a completed interactive board approval.
+Full board interaction and the final release checkpoint remain separate evidence.
+Compare `existing-repo` and `existing-repo-python` findings for actual differences in goals, ownership and native checks, rather than counting vocabulary changes.
+The `clear-goals` loading score uses observed command/file-open events, never a search of the skill's source as proof of interpretation.
+
 Create a scoring answers file using the checklist IDs printed by the run.
 Every check needs a Boolean verdict and a one-based inclusive line range in the transcript, whether it passed or failed.
 The reviewer is responsible for the judgement and for identifying unavailable observations as a failed check with the limitation in the transcript.

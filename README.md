@@ -9,7 +9,8 @@ Use the load-when table to read the self-contained intent interview for a new id
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
 Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending principles and their checks, and [architecture](skills/repo-audit/references/architecture.md) when recommending module boundaries.
 These provide evidence requirements and project-specific guidance, with native rule-proof and maintained checks still pending.
-The maintenance reference remains a placeholder, and later audit commands and the installer are not built yet.
+The existing-repo audit and selected apply path are available.
+The maintenance reference remains a placeholder, while protected new-project creation, maintained enforcement, portable maintenance and the installer are pending.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -42,6 +43,7 @@ npm test -- --task T2.2
 npm test -- --task T2.3
 npm test -- --task T2.4
 npm test -- --task T2.5
+npm test -- --task T2.8
 npm test -- --task T3.1
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
@@ -54,6 +56,10 @@ Local validation installs both the root development lock and the nested skill ru
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 The no-mistakes gate installs both locks, runs tests and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
+For an existing repo, explicitly invoke `repo-audit` with the target, assessed area and stated next change.
+Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation, vision review and final verification requirements.
+See the [T2.8 foundation checkpoint](tests/eval/results/foundation-C17/summary.md) for actual outcomes and blocked interactions.
+
 Collect repeatable size and change-history signals, or compare two declared change plans:
 
 ```sh
@@ -206,7 +212,7 @@ Unavailable tools or unreadable history return blocked with named problems.
 Equivalent names such as `CONTRIBUTING.md` and `architecture.md` are recognised.
 Read the discovered files to establish which source is authoritative.
 Root `CLAUDE.md`, including import-only stubs, yields a consolidation candidate requiring content review and author approval.
-Distinct nested instructions keep their scope, and equivalent nested instructions can only consolidate into `AGENTS.md` in the same scope.
+See the [existing-repo apply procedure](skills/repo-audit/SKILL.md#step-10-review-and-apply-selected-findings) for which instruction candidates this path can apply.
 Local and ancestor instructions outside the repo are possible shadowing sources and are never proposed for modification.
 Claude Code versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled may read only `CLAUDE.md`.
 Recheck current host loading behaviour before proposing removal.

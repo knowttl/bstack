@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Approved vision omits backup criteria. Newer DESIGN explicitly approves backup and identifies that gap. Two local commits establish order. No implementation or native checks.",
+      "limitations": [
+        "Three short files make delegation wasteful. No remotes or PR transcripts. No language or third-party research relevant."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "VISION.md:6",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "DESIGN.md:10",
+          "state": {
+            "kind": "sha256",
+            "value": "5865faf07f72ffae5a6a794642e25c85e45b8fb38d9656247dd9c6fd582c0ed0"
+          }
+        },
+        {
+          "location": "DESIGN.md:12",
+          "state": {
+            "kind": "sha256",
+            "value": "5865faf07f72ffae5a6a794642e25c85e45b8fb38d9656247dd9c6fd582c0ed0"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "c4df6fc9350fe8ed8552281064e0297101ea062b97034b754361ebb04410acbc"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

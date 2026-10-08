@@ -23,7 +23,8 @@ Steps 7 and 11 describe the available read-only audit and findings commands.
 The apply command previews reviewed plans with `--plan <file> --dry-run`, then writes or resumes them without `--dry-run`, preserving originals and a journal in scratch.
 Check-plan execution capture is available through the shared verification rules below.
 The enforcement and architecture references are available for recommendations.
-Only the maintenance-contract reference remains a placeholder, while complete audit integration remains unavailable.
+The existing-repo audit and selected apply path are available.
+The maintenance-contract reference remains a placeholder, and protected new-project creation remains T2.9 work.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -138,7 +139,9 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 ### Step 7: Audit the starting state
 
 Audit before interviewing.
-Resolve the selected repo and read its instructions and indexes, following them to relevant documents and implementation.
+Resolve the selected repo and read its instructions and indexes.
+First run `node scripts/repo-audit.mjs inspect --repo <target> --json`, then `node scripts/repo-audit.mjs inventory --repo <target> --json`.
+Keep both outputs in scratch before researching discovered documents and implementation.
 Inventory the existing README, vision, requirements, goals, design, architecture, decisions, principles, vocabulary, standards, prior audits, debt and planned changes using their actual names and layout.
 Inspect relevant manifests, native configs, CI, entry points, module responsibilities, interfaces, data flow, code and tests.
 Record the revision and working-tree state and preserve uncommitted user work.
@@ -147,11 +150,11 @@ Run safe native checks when prerequisites permit, recording commands and results
 Get approval before checks that affect external systems or shared data.
 Record unavailable checks and inaccessible history as limitations, rather than inventing evidence.
 Use the shared research rules below for read-heavy work.
-Run `node scripts/repo-audit.mjs inspect --repo <target> --json` to record starting Git state, manifests and prerequisite versions without writes.
-Run `node scripts/repo-audit.mjs inventory --repo <target> --json` to discover equivalent document names, absent sources and scoped instruction candidates.
 Read the discovered sources before treating them as authoritative.
 Preserve distinct nested guidance and local or outside-repo instructions.
 Instruction consolidation candidates require content review, a current host loading check and author approval before protected edits.
+Load the research briefs, run the relevant briefs, open each cited source and run `cite-check --repo <target> --report <file> --json` before relying on the report.
+Summarise documented intent, observed behaviour and inferred intent with checked citations and actual starting-check results before any question.
 Run `node scripts/repo-audit.mjs measure --repo <target> --range <base>..<head> --json` for revision-bound sizes, change frequency and co-change signals with supporting commits.
 Measurement covers eligible files present at the endpoint and follows detected lineage back through renames to addition.
 Merged deletion and unrelated path reuse can attribute old-lifetime commits and co-change pairs to the replacement; treat signals as advisory evidence, never violations.
@@ -167,11 +170,15 @@ Done when: Every relevant evidence source is inventoried or listed as unavailabl
 ### Step 8: Resolve material gaps
 
 Summarise the evidence and clarify only missing facts or contradictions that would change a recommendation.
+For each question, name the affected recommendation and why the available sources do not settle it.
 Use a targeted decision round, resolving parents first and waiting for answers.
 When the repo already answers the questions, proceed directly to recommendations without asking the user to repeat or reconfirm approved goals.
 Load interview, domain-language or vision guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
 A new vision or reviewed delta needs a material gap or requested direction change, with the same draft approval boundary as Step 3.
+For a delta, retain the approved baseline in scratch and show each proposed line edit, its gap evidence and the commitments it preserves.
+Review the real fault lines through the vision board, trace revisions to current author verdicts and obtain approval of that exact revision before selected apply.
+If there is no corresponding gap, do not open the vision, intent interview or domain-language references.
 Targeted interview, language, vision and board review procedures are available from the table below.
 
 Done when: Every material gap is resolved or explicitly blocks its dependent recommendation, settled decisions are retained, and no unnecessary interview or vision review has been opened.
@@ -185,7 +192,9 @@ Keep proposed principles separate for review instead of treating them as existin
 Avoid speculative findings, cosmetic rewrites and universal architecture prescriptions.
 Use native baselines where available, keeping known failures visible and preventing new failures from entering through a refreshed baseline.
 Exceptions need a reason, scope and removal condition.
-Use the findings validation and scratch rendering commands in Step 11 before review.
+Create findings following `schemas/findings.schema.json` in scratch.
+Run `findings validate --repo <target> --findings <file> --json`, then `findings render --repo <target> --findings <file> --json` before review.
+Missing execution evidence can leave the preview verification blocked without preventing review of its proposals.
 The enforcement and architecture references are available for recommendations.
 Native rule-proof remains T3.2 work, baseline handling T3.3 and maintained enforcement T3.4.
 
@@ -197,13 +206,26 @@ Use the shared review and write rules, preserving existing runtime behaviour and
 Reuse authoritative documents and native configs instead of duplicating vision, vocabulary, design or standards.
 AGENTS.md holds pointers and check commands, not full copies of those sources.
 Apply only selected findings.
-Protected writes and resume are available through apply, while this path's integration remains T2.8 work.
+Retain the user's selection and exact reviewed scope in scratch, then update the findings selections and prepare a change set following `schemas/change-set.schema.json`.
+Include original and proposed exact-byte hashes, resolved scope, findings digest and plan digest.
+Run `apply --repo <target> --plan <file> --dry-run` and present its complete diff before applying the unchanged approved plan without `--dry-run`.
+A selected root instruction merge retains equivalent repo-owned CLAUDE.md content in AGENTS.md and removes CLAUDE.md with a selected `delete` edit in that same plan.
+Report scoped, local and ancestor instructions as inventory classified them and never modify them in this path.
+Retain the current host loading check and compatibility limits with the instruction proposal.
+Use `state show --repo <target> --run <run-id> --json` to inspect actual states after interruption, then resume the unchanged plan and rerun affected checks.
 
 Done when: Only the user's selected findings have been applied to the reviewed target and scope, with unchanged hash preconditions and recoverable originals, otherwise writes remain blocked.
 
 ### Step 11: Verify and report readiness
 
-Use the shared verification rules and update the existing audit record, otherwise docs/repo-audit.md, through the same protected write boundary.
+After selected apply, run the approved native check plan through `run-checks --repo <target> --plan <file> --json` using the shared verification rules.
+Preserve the existing native user journey, including before/after protection for structural changes and matching live probes for outside dependencies.
+Refresh findings against the current target fingerprint and bind each outcome to actual captured artifacts and their hashes.
+Do not substitute a check-plan fingerprint for the findings fingerprint or claim that a manually attached artifact was validated by findings.
+Render the updated audit record, review its exact bytes and apply it as a separate selected `create` or `replace-file` edit.
+Use the existing audit record, otherwise docs/repo-audit.md, and retain findings and selections in scratch.
+The audit record is an assessed-state report, not a source for vision or principles.
+Its write changes target state, so refresh affected evidence and validate the final state before reporting readiness.
 State the assessed revision or working-tree state, selected changes, actual commands and outcomes, preserved behaviour, remaining debt, decisions and limitations.
 Distinguish ready for the stated next change, decisions needed and verification blocked.
 A guessed debt score does not establish readiness.
@@ -212,7 +234,6 @@ Render returns a scratch path and distinguishes documented, observed and inferre
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
 Capture approved checks through the shared verification rules below.
-Path integration remains T2.8 work.
 Maintained enforcement arrives in T3.4 and portable maintenance evidence and document validation in Phase 3a.
 
 Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.

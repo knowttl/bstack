@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "CONTRIBUTING.md"
+      ],
+      "findings": "Documented: external modules use public ledger; ledger owns entries and balances; native Python checks preserve balanced postings. README, vision, design, glossary, audit and CI are absent; this scoped audit needs no new vision.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "CONTRIBUTING.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "app.py",
+        "startup.py",
+        "ledger/__init__.py",
+        "ledger/_internal.py",
+        "ledger/book.py"
+      ],
+      "findings": "Observed: app imports private amount; startup uses public Ledger and handles CSV/JSON output. Ledger owns posting, transfer, reverse, imports and derived views. Inferred: cohesive ledger owner should remain together; no history supports a split.",
+      "limitations": [
+        "Single initial commit; no meaningful change-frequency or co-change history."
+      ],
+      "files": [
+        {
+          "location": "app.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972"
+          }
+        },
+        {
+          "location": "startup.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        },
+        {
+          "location": "ledger/__init__.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+          }
+        },
+        {
+          "location": "ledger/_internal.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+          }
+        },
+        {
+          "location": "ledger/book.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "pyproject.toml",
+        "boundaries.py",
+        "test_ledger.py"
+      ],
+      "findings": "Configured: Python 3.12, Ruff 0.14.0 E4/E7/E9/F, AST boundary check and unittest. Two tests cover happy posting and negative rejection. Checker only scans app plus immediate ledger files, ignores from-import members, and uses executable find_spec. No type checker or CI configured.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "pyproject.toml:1",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "boundaries.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        },
+        {
+          "location": "test_ledger.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "ledger/_internal.py",
+        "ledger/book.py"
+      ],
+      "findings": "Python official Decimal docs describe mutable context, rounding and traps. Observed probes show NaN post under disabled InvalidOperation trap and context-dependent rounding. Retain Decimal, unittest and AST; no language migration.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "ledger/_internal.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+          }
+        },
+        {
+          "location": "ledger/book.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://docs.python.org/3.12/library/decimal.html",
+          "readDate": "2026-10-08",
+          "verification": "verified"
+        },
+        {
+          "url": "https://docs.python.org/3.12/library/ast.html",
+          "readDate": "2026-10-08",
+          "verification": "verified"
+        }
+      ]
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "startup.py"
+      ],
+      "findings": "No third-party service boundary: local stdout and output file only; no live external probe needed.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "startup.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

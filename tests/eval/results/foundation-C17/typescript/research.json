@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API workspace",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "DESIGN.md",
+        "DESIGN.md",
+        "glossary.md",
+        "CLAUDE.md"
+      ],
+      "findings": "AGENTS.md requires approved design and public core interface. DESIGN.md forbids UI storage access and fixes agreed checkout total at 10. Glossary assigns two meanings to Order. CLAUDE.md imports AGENTS.md; no consolidation proposed.",
+      "limitations": [
+        "No README, vision, standards, decisions, prior audit, CI or planned next feature found. Existing design remains baseline."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/core/index.ts",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/web/public.ts"
+      ],
+      "findings": "Checkout calls storage servicePrice then route postOrder; route owns total calculation and in-memory orders. Core publicly exports only price. Web imports storage directly and through alias. Core a/b form a recursive cycle, outside checkout reachability. Public quote uses allowed index import.",
+      "limitations": [
+        "Only one initial commit; measured HEAD..HEAD yields sizes but no meaningful frequency or co-change history. No two declared change plans; overlap not applicable."
+      ],
+      "files": [
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/public.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "package.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "findings": "Native scripts: strict type check, Node unit tests, localhost HTTP journey and TypeScript-resolved import/cycle boundaries. Actual results: check/test pass; journey/boundaries fail. Checker resolves static import/export aliases; no dynamic import traversal. No formatter/linter or CI configured.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "package.json:11",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "tsconfig.json:5",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "boundaries.mjs:11",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "journey.mjs:12",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "unit.test.mjs:7",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "tsconfig.json",
+        "packages/web/alias.ts",
+        "boundaries.mjs"
+      ],
+      "findings": "TypeScript paths inform compiler resolution without changing runtime imports. Alias runtime probe fails ERR_MODULE_NOT_FOUND despite passing type check. Reuse native TypeScript resolver and Node tests rather than adding another dependency engine.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "tsconfig.json:10",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "boundaries.mjs:15",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://www.typescriptlang.org/tsconfig/paths.html",
+          "readDate": "2026-10-08",
+          "verification": "verified"
+        }
+      ]
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "packages/core/internal/database.ts",
+        "journey.mjs"
+      ],
+      "findings": "servicePrice fetches caller URL and accepts response JSON price without checking status or payload. Journey exercises actual local HTTP transport but is a fixture, not a deployed service. No identified provider, credentials, production endpoint or service contract exists.",
+      "limitations": [
+        "No external live service probe possible without an identified service. No outside-provider recommendation made."
+      ],
+      "files": [
+        {
+          "location": "packages/core/internal/database.ts:2",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "journey.mjs:4",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

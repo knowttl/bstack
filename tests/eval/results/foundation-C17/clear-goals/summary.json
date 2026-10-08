@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "scenario": {
+    "id": "clear-goals",
+    "fixture": "clear-goals",
+    "request": "Audit this repo and recommend principles and checks appropriate to its approved goals.",
+    "answers": [
+      "The existing approved documents remain authoritative. Do not reopen settled decisions.",
+      "Present recommendations only."
+    ],
+    "checkpoints": [
+      "baseline",
+      "foundation",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "reuse",
+        "caseId": "AC-6",
+        "question": "Did it reach recommendations without asking the user to repeat documented goals and principles?"
+      },
+      {
+        "id": "conditional-load",
+        "caseId": "AC-38",
+        "question": "Does the opened-file record show no VISION, interview or domain-language reference opened? If the host provides no opened-file record, answer no and record the limitation."
+      }
+    ]
+  },
+  "sourceRevision": "7c5e754b948b7ab80a21bfe05de6940d26871fd3",
+  "stage": "foundation",
+  "mode": "with",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "os": "linux 6.8.0-142-generic",
+  "status": "passed",
+  "criteriaHash": "a7207fa740cd04e9e181bce9a04b5c8d2cc4fdd8fac85f1079b02df23a2abc41",
+  "adapterHash": "f8645b920c468183a4022f065ca7ab6e8c5c2c898429269d18058d4779134b42",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[temporary-parent]/.agents/skills",
+      "[temporary-parent]/.codex/skills",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": "e883a6de0aa88c0dc652d8d992db3cee2724ff5d34222faf10c607d9ace008ea",
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [
+      "[isolated-home]/.agents/skills/repo-audit/SKILL.md"
+    ],
+    "checkedAt": "2026-10-08T16:01:30.313Z",
+    "cleanedAt": "2026-10-08T16:01:30.404Z"
+  },
+  "turns": [
+    {
+      "message": "$repo-audit\nAudit this repo and recommend principles and checks appropriate to its approved goals.",
+      "result": {
+        "status": "passed",
+        "exitCode": 0,
+        "durationMs": 133081.20936900002,
+        "timedOut": false,
+        "outputTruncated": false
+      }
+    }
+  ],
+  "caseResults": [
+    {
+      "id": "reuse",
+      "caseId": "AC-6",
+      "question": "Did it reach recommendations without asking the user to repeat documented goals and principles?",
+      "passed": true,
+      "startLine": 8,
+      "endLine": 37,
+      "scoring": "human",
+      "reviewer": "C17 implementation worker",
+      "transcript": "conversation.txt"
+    },
+    {
+      "id": "conditional-load",
+      "caseId": "AC-38",
+      "question": "Does the opened-file record show no VISION, interview or domain-language reference opened? If the host provides no opened-file record, answer no and record the limitation.",
+      "passed": true,
+      "startLine": 4,
+      "endLine": 39,
+      "scoring": "human",
+      "reviewer": "C17 implementation worker",
+      "transcript": "conversation.txt"
+    }
+  ],
+  "transcript": "conversation.txt",
+  "limitations": [
+    "Host paths, user names and session identifiers are redacted. Dashes are normalized to plain hyphens and transcript line numbers are retained.",
+    "This fixture contains only approved documents. The host reported application checks and runtime readiness unavailable rather than inventing an application.",
+    "No goal interview or vision, intent-interview or domain-language reference open occurred in the observed command trace.",
+    "The host additionally used the bundled Lavish presentation skill. It is not a prerequisite or acceptance proof for this audit."
+  ]
+}
