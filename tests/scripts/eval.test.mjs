@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
 
 // Each test invokes the real command with disposable evaluation records.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -233,6 +234,30 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.ok((await readFile(join(directory, first.id, first.conversation), 'utf8')).includes(first.request))
 })
 
+test('captured listings and closed evidence redact host identities while retaining scoring and resume', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'listing')
+  const { record } = hostStart(t, directory, path)
+  assert.equal(run(directory, 'turn', '--run', record.id, '--answer', '1').data.data.turns[1].sessionId, record.sessionId)
+  const transcriptPath = join(directory, record.id, record.conversation)
+  const transcript = await readFile(transcriptPath, 'utf8')
+  const listing = transcript.split('\n').filter(line => line.startsWith('{')).map(line => JSON.parse(line))
+    .find(event => event.item?.command === 'ls -la').item.aggregated_output
+  assert.equal(listing, 'total 8\ndrwx------ 2 [redacted: user name] [redacted: user name] 4096 Oct 8 12:00 .\n' +
+    '-rw-r--r-- 1 [redacted: user name] [redacted: user name] 123 Oct 8 12:00 brief.md\n' +
+    'Owner: [redacted: user name]; group: [redacted: user name]\n')
+  assert.ok(!transcript.includes(record.sessionId))
+  assert.ok(!transcript.includes(record.fixture.path))
+  assert.ok(!transcript.includes(record.isolation.home))
+  run(directory, 'close', '--run', record.id)
+  const saved = await readFile(join(directory, record.id, 'run.json'), 'utf8')
+  assert.ok(!saved.includes(record.sessionId))
+  assert.ok(!saved.includes(record.fixture.path))
+  assert.ok(!saved.includes(record.isolation.home))
+  const files = await inputs(directory, record)
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 0)
+})
+
 test('with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
@@ -377,7 +402,7 @@ for (const mode of ['without', 'with']) {
     await assert.rejects(readFile(join(record.isolation.state, 'fake-session.json')), { code: 'ENOENT' })
     const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
     assert.equal(scored.status, 0, scored.stdout)
-    assert.deepEqual(scored.data.data.turns, record.turns)
+    assert.deepEqual(scored.data.data.turns, JSON.parse(redactEvidence(JSON.stringify(record.turns), record)))
   })
 }
 

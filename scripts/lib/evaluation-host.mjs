@@ -1,12 +1,39 @@
 import { chmod, copyFile, cp, mkdir, mkdtemp, readdir, readFile, realpath, rm } from 'node:fs/promises'
 import { constants } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { homedir, tmpdir } from 'node:os'
+import { homedir, tmpdir, userInfo } from 'node:os'
+import { execFileSync } from 'node:child_process'
 import { root, text, object, array, readJSON, fail } from './evaluation.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { resolvePath } from '../../skills/repo-audit/scripts/lib/paths.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
+
+export function redactEvidence(content, record) {
+  const username = userInfo().username
+  const group = process.platform === 'win32' ? username : execFileSync('id', ['-gn'], { encoding: 'utf8' }).trim()
+  const replacements = [
+    [record?.fixture?.path, '[fixture]'],
+    [record?.isolation?.home, '[isolated-home]'],
+    [homedir(), '[host-home]'],
+    [record?.sessionId, '[identifier]'],
+    ...[...content.matchAll(/(?:thread_id|sessionId)\\?":\s*\\?"([^"\\]+)/g)].map(match => [match[1], '[identifier]']),
+    [username, '[redacted: user name]'],
+    [group, '[redacted: user name]']
+  ].filter(([value]) => value && !/^[\[<]/.test(value))
+  // Replace complete names without changing unrelated words or existing placeholders.
+  for (const [value, placeholder] of replacements.flatMap(([value, placeholder]) =>
+    [[value, placeholder], [JSON.stringify(value).slice(1, -1), placeholder]]).sort((a, b) => b[0].length - a[0].length)) {
+    content = content.replace(new RegExp(`(?<![\\p{L}\\p{N}_-])${RegExp.escape(value)}(?![\\p{L}\\p{N}_-])`, 'gu'), () => placeholder)
+  }
+  // Host-created scratch paths can appear only in command output, outside the fixture.
+  const scratch = tmpdir().replace(/[\\/]$/, '')
+  for (const prefix of [scratch, JSON.stringify(scratch).slice(1, -1)]) {
+    content = content.replace(new RegExp(`${RegExp.escape(prefix)}[/\\\\]+[^\\s"'\\\\;<>]+`, 'g'), '[scratch-path]')
+  }
+  return content.replace(/(?:\/private)?\/tmp\/[^\s"'\\;<>]+/g, '[scratch-path]')
+    .replace(/\/(?:home|Users)\/[^\s/"'\\;<>]+/g, '[host-home]')
+}
 
 export async function readAdapter(path) {
   const adapter = await readJSON(path)

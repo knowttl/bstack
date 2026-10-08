@@ -7,7 +7,7 @@ import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/sche
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { readAdapter, isolate, hostTurn, closeHost } from './lib/evaluation-host.mjs'
+import { readAdapter, isolate, hostTurn, closeHost, redactEvidence } from './lib/evaluation-host.mjs'
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
@@ -71,7 +71,7 @@ async function start(opts, results) {
       if (record.isolation.home) await closeHost(record, directory).catch(() => { record.isolation.verified = false })
     }
   }
-  await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n', { flag: 'wx' })
+  await saveRecord(record, directory, 'wx')
   return record
 }
 
@@ -82,7 +82,7 @@ async function captureTurn(record, message, directory) {
     record.reason = 'Host turn captured. Review the question, send its scripted answer with eval turn, then score the transcript.'
   } finally {
     const transcript = record.turns.map(turn => `User: ${turn.message}\nHost JSONL:\n${turn.result.stdout}\nHost stderr:\n${turn.result.stderr}\n`).join('\n')
-    await writeFile(join(directory, record.conversation), transcript)
+    await writeFile(join(directory, record.conversation), redactEvidence(transcript, record))
   }
 }
 
@@ -101,7 +101,7 @@ async function turn(opts, results) {
     record.isolation.verified = false
     await closeHost(record, join(results, record.id)).catch(() => { record.isolation.verified = false })
   }
-  await writeFile(join(results, record.id, 'run.json'), JSON.stringify(record, null, 2) + '\n')
+  await saveRecord(record, join(results, record.id))
   return record
 }
 
@@ -110,13 +110,19 @@ async function close(opts, results) {
   if (!record.adapter) fail('Only adapter conversations have an isolated host to close.')
   try { await closeHost(record, join(results, record.id)) }
   catch (error) { record.reason = error.message }
-  await writeFile(join(results, record.id, 'run.json'), JSON.stringify(record, null, 2) + '\n')
+  await saveRecord(record, join(results, record.id))
   return record
 }
 
 async function load(results, id) {
   if (!/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(id ?? '')) fail('Supply a run ID printed by eval.', 'usage-error')
   return await readJSON(join(results, id, 'run.json'))
+}
+
+async function saveRecord(record, directory, flag) {
+  const content = JSON.stringify(record, null, 2) + '\n'
+  // Open run records are private operational state required for resume and isolation checks.
+  await writeFile(join(directory, 'run.json'), record.isolation.cleanedAt ? redactEvidence(content, record) : content, { flag })
 }
 
 async function score(opts, results) {
@@ -142,7 +148,7 @@ async function score(opts, results) {
       if (!record.isolation.verified || record.conversationHash !== hashBytes(transcript)) fail('Closed host evidence has unverified isolation or a changed conversation.')
     } else {
       try { await closeHost(record, directory) }
-      finally { await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n') }
+      finally { await saveRecord(record, directory) }
     }
   }
   const attempt = randomUUID()
@@ -156,7 +162,7 @@ async function score(opts, results) {
     scoring: 'human', reviewer: answers.reviewer, transcript: record.transcript }))
   record.status = record.caseResults.every(check => check.passed) ? 'passed' : 'failed'
   record.reason = record.adapter ? 'Human-scored captured host conversation with verified discovery isolation.' : 'Human-scored transcript. Host isolation remains unverified for this manual host.'
-  await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n')
+  await saveRecord(record, directory)
   return record
 }
 
