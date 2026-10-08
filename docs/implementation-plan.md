@@ -436,6 +436,10 @@ Tick each task when its "Done when" commands pass.
       `npm test -- --task T3.4` runs the identical `npm run check` in valid and seeded disposable `ts-shop` copies, after selected initial documented debt, with exits 0 and 1 and a permitted core import under the web-scoped rule.
       Individual native rules still run against the clean T1.1 variants.
       [Task evidence](../tests/eval/results/tasks/T3.4.json) records the local control procedures and attachment status; hosted CI adapters remain unverified and real Windows/macOS execution remains captain checklist evidence.
+    - The end-of-Phase-3 validation reran the native rule-proof, debt baseline and maintained-command procedures in disposable fixtures: all 37 checks passed with TypeScript 5.9.3 and Python 3.12.3.
+      Clean public imports and permitted direction passed, each private/alias/cycle seed failed, baseline debt stayed visible with unauthorized growth rejected and fixed entries removed, and the identical maintained command returned 0/1 for valid/seeded copies while permitting the core import.
+      README incorrectly described maintained enforcement as pending after C20; the validation corrected that availability statement without changing executable behavior.
+      The full suite passed all 1,108 tests on Node 24.17.0; evidence capture requires a rerun after the documentation correction because inputs changed during that first execution.
 - Phase 3a: Maintenance
   - [ ] T3a.1 Define the project contract
   - [ ] T3a.2 Build `evidence collect`
