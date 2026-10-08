@@ -29,7 +29,7 @@ function headingSection(text, heading, content) {
       if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined
     } else if (marker) fence = marker[1]
     else {
-      if (line.includes('<!--')) reject('unsupported-format', 'HTML comments require a reviewed replacement.')
+      if (/<(?:\/?[A-Za-z]|[!?])/.test(line)) reject('unsupported-format', 'HTML-like markup requires a reviewed replacement.')
       if (/^ {0,3}(?:=+|-+)\s*$/.test(line)) reject('unsupported-format', 'Setext headings and thematic breaks require a reviewed replacement.')
       const match = /^ {0,3}(#{1,6})(?:[ \t]+(.*))?$/.exec(line.replace(/\r?\n$/, ''))
       if (match) headings.push({ title: (match[2] ?? '').replace(/(?:^|[ \t]+)#+[ \t]*$/, '').trim(), level: match[1].length, start: offset, body: offset + line.length })

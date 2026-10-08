@@ -66,6 +66,8 @@ for (const [name, operation, original, payload, proposed, path] of [
   ['existing appended line', 'append-line-once', 'old\r\nnew\r\n', { line: 'new' }, 'old\r\nnew\r\n', 'rules.txt'],
   ['heading in fenced code is preserved', 'set-heading-section', '```md\n# A\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '```md\n# A\n```\n# A\nnew\n', 'README.md'],
   ['comment in fenced code is preserved', 'set-heading-section', '```md\n<!--\n# A\n-->\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '```md\n<!--\n# A\n-->\n```\n# A\nnew\n', 'README.md'],
+  ['HTML block in fenced code is preserved', 'set-heading-section', '~~~html\n<pre>\n# A\n</pre>\n~~~\n# A\nold\n', { heading: 'A', content: 'new\n' }, '~~~html\n<pre>\n# A\n</pre>\n~~~\n# A\nnew\n', 'README.md'],
+  ['less-than prose', 'set-heading-section', '# A\nold\n# B\n1 < 2\n', { heading: 'A', content: 'new\n' }, '# A\nnew\n# B\n1 < 2\n', 'README.md'],
   ['closing heading markers', 'set-heading-section', '# A ###\nold\n# B ###\nkeep\n', { heading: 'A', content: 'new\n' }, '# A ###\nnew\n# B ###\nkeep\n', 'README.md'],
   ['CRLF empty heading boundary', 'set-heading-section', '# A\r\nold\r\n#\r\nkeep\r\n', { heading: 'A', content: 'new\r\n' }, '# A\r\nnew\r\n#\r\nkeep\r\n', 'README.md']
 ]) {
@@ -112,6 +114,35 @@ for (const [name, original] of [
     assert.equal(result.exit, 1)
     assert.equal(result.problems[0].code, 'unsupported-format')
   })
+}
+
+for (const [name, block] of [
+  ['pre', '<pre>\n# B\n</pre>\n'],
+  ['script', '<script>\n# B\n</script>\n'],
+  ['style', '<style>\n# B\n</style>\n'],
+  ['textarea', '<textarea>\n# B\n</textarea>\n'],
+  ['div', '<div>\n# B\n</div>\n'],
+  ['uppercase indented tag', '   <DIV>\n# B\n   </DIV>\n'],
+  ['multiline tag', '<div\nclass="section">\n# B\n</div>\n'],
+  ['custom tag', '<custom-element>\n# B\n</custom-element>\n'],
+  ['closing tag', '</div>\n# B\n'],
+  ['processing instruction', '<?instruction\n# B\n?>\n'],
+  ['declaration', '<!DOCTYPE\n# B\n>\n'],
+  ['CDATA', '<![CDATA[\n# B\n]]>\n']
+]) {
+  for (const [position, original] of [
+    ['before selection', `${block}# A\nold\n# C\nrest\n`],
+    ['inside selection', `# A\nold\n${block}# C\nrest\n`],
+    ['after selection', `# A\nold\n# C\nrest\n${block}`]
+  ]) {
+    test(`heading edits reject ${name} ${position} without project writes`, async t => {
+      const context = await setup(t, 'set-heading-section', original, { heading: 'A', content: 'new\n' }, '')
+      const result = await preview(context)
+      assert.equal(result.exit, 1)
+      assert.equal(result.problems[0].code, 'unsupported-format')
+      assert.deepEqual(result.data, {})
+    })
+  }
 }
 
 for (const [name, file, search, replacement] of [
