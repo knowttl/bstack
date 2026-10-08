@@ -134,16 +134,19 @@ async function score(opts, results) {
       record.scenario.checks.some(check => !answers.checks.some(answer => answer.id === check.id))) fail('Answers must name this run, a reviewer and every checklist ID exactly once.')
   const transcript = await readFile(resolve(opts.transcript), 'utf8')
   if (!transcript.trim()) fail('Transcript is empty. The run remains blocked.')
+  const lines = transcript.trimEnd().split(/\r?\n/).length
+  for (const answer of answers.checks) if (answer.startLine < 1 || answer.endLine < answer.startLine || answer.endLine > lines) fail(`Invalid transcript location for ${answer.id}`)
+  const directory = join(results, record.id)
   if (record.adapter) {
     if (record.hostFailure || !record.turns?.length || record.turns.some(turn => !turn.sessionId)) fail('Adapter scoring requires completed host turns. Use the manual procedure for unsupported conversations.')
     if (transcript !== await readFile(join(results, record.id, record.conversation), 'utf8')) fail('Score the captured adapter conversation without replacing its transcript.')
     if (record.isolation.cleanedAt) {
       if (!record.isolation.verified || record.conversationHash !== hashBytes(transcript)) fail('Closed host evidence has unverified isolation or a changed conversation.')
-    } else await closeHost(record, join(results, record.id))
+    } else {
+      try { await closeHost(record, directory) }
+      finally { await writeFile(join(directory, 'run.json'), JSON.stringify(record, null, 2) + '\n') }
+    }
   }
-  const lines = transcript.trimEnd().split(/\r?\n/).length
-  for (const answer of answers.checks) if (answer.startLine < 1 || answer.endLine < answer.startLine || answer.endLine > lines) fail(`Invalid transcript location for ${answer.id}`)
-  const directory = join(results, record.id)
   const attempt = randomUUID()
   await mkdir(join(directory, attempt))
   record.transcript = join(attempt, 'transcript.txt')

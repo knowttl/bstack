@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm, mkdir } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm, mkdir, chmod } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -303,6 +303,54 @@ test('a resumed host turn cannot silently switch sessions', async t => {
   assert.equal(reply.nextAnswer, 1)
 })
 
+for (const mode of ['without', 'with']) {
+  test(`rejected ${mode}-skill citations can be corrected without another host turn`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory)
+    const { record } = hostStart(t, directory, path, mode)
+    const files = await inputs(directory, record)
+    const transcriptPath = join(directory, record.id, record.conversation)
+    await writeFile(files.answersPath, JSON.stringify({ ...files.answers,
+      checks: [{ ...files.answers.checks[0], endLine: 100000 }] }))
+    const rejected = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
+    assert.equal(rejected.status, 2)
+    assert.match(rejected.stdout, /Invalid transcript location/)
+    assert.equal(JSON.parse(await readFile(join(record.isolation.state, 'fake-session.json'), 'utf8')).id, record.sessionId)
+    await writeFile(files.answersPath, JSON.stringify(files.answers))
+    const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
+    assert.equal(scored.status, 0, scored.stdout)
+    assert.deepEqual(scored.data.data.turns, record.turns)
+    assert.equal(scored.data.data.sessionId, record.sessionId)
+    assert.ok(scored.data.data.isolation.cleanedAt)
+  })
+
+  test(`a ${mode}-skill score artifact failure preserves cleanup for retry`, {
+    skip: process.platform === 'win32' || process.getuid?.() === 0
+  }, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory)
+    const { record } = hostStart(t, directory, path, mode)
+    const files = await inputs(directory, record)
+    const runDirectory = join(directory, record.id)
+    const transcriptPath = join(runDirectory, record.conversation)
+    await chmod(runDirectory, 0o500)
+    let rejected
+    try { rejected = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath) }
+    finally { await chmod(runDirectory, 0o700) }
+    assert.equal(rejected.status, 2)
+    assert.match(rejected.stdout, /EACCES/)
+    const saved = JSON.parse(await readFile(join(runDirectory, 'run.json'), 'utf8'))
+    assert.ok(saved.isolation.cleanedAt)
+    assert.equal(saved.isolation.verified, true)
+    assert.ok(saved.conversationHash)
+    assert.equal(saved.transcript, null)
+    await assert.rejects(readFile(join(record.isolation.state, 'fake-session.json')), { code: 'ENOENT' })
+    const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
+    assert.equal(scored.status, 0, scored.stdout)
+    assert.deepEqual(scored.data.data.turns, record.turns)
+  })
+}
+
 test('adapter scoring requires the captured conversation and rechecks isolation and staged bytes', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
@@ -313,6 +361,10 @@ test('adapter scoring requires the captured conversation and rechecks isolation 
   await writeFile(join(record.isolation.stagedPath, 'SKILL.md'), '---\nname: repo-audit\n---\nchanged\n')
   assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 2)
   await assert.rejects(readFile(join(record.isolation.stagedPath, 'SKILL.md')), { code: 'ENOENT' })
+  const rejected = JSON.parse(await readFile(join(directory, record.id, 'run.json'), 'utf8'))
+  assert.ok(rejected.isolation.cleanedAt)
+  assert.equal(rejected.isolation.verified, false)
+  assert.equal(run(directory, 'turn', '--run', record.id, '--answer', '1').status, 2)
   const { record: fresh } = hostStart(t, directory, path, 'with')
   const freshFiles = await inputs(directory, fresh)
   const scored = run(directory, 'score', '--run', fresh.id, '--answers', freshFiles.answersPath, '--transcript', join(directory, fresh.id, fresh.conversation))
