@@ -1,10 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
+import { homedir, tmpdir, userInfo } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
+import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
 
 // Each test invokes the real command with disposable evaluation records.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -51,6 +53,37 @@ test('manual run prints its fixture, request, scripted answers and checklist wit
   assert.ok(first.scenario.answers.length)
   assert.equal(first.scenario.checks[0].caseId, 'AC-2')
   assert.equal(JSON.parse(await readFile(join(directory, first.id, 'run.json'), 'utf8')).id, first.id)
+})
+
+test('manual scoring publishes redacted records, transcripts and answers with intact verdicts and citations', async t => {
+  const directory = await temporary(t)
+  const record = start(t, directory)
+  const files = await inputs(directory, record)
+  const username = userInfo().username
+  files.answers.reviewer = username
+  await writeFile(files.answersPath, JSON.stringify(files.answers))
+  const transcript = `User: ${username} opened ${record.fixture.path}\r\n` +
+    `Agent: Read ${homedir()}/notes; {"thread_id":"manual-host-session"}\r\n`
+  await writeFile(files.transcriptPath, transcript)
+  const result = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath)
+  assert.equal(result.status, 0, result.stdout)
+  const saved = await readFile(join(directory, record.id, 'run.json'), 'utf8')
+  const scored = JSON.parse(saved)
+  assert.deepEqual(result.data.data, scored)
+  assert.equal(scored.fixture.path, '[fixture]')
+  assert.equal(scored.isolation.verified, false)
+  assert.equal(scored.status, 'passed')
+  assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
+  assert.equal(scored.caseResults[0].passed, true)
+  assert.equal(scored.caseResults[0].startLine, 1)
+  assert.equal(scored.caseResults[0].endLine, 2)
+  const publishedTranscript = await readFile(join(directory, record.id, scored.transcript), 'utf8')
+  assert.equal(publishedTranscript, 'User: [redacted: user name] opened [scratch-path]\r\n' +
+    'Agent: Read [host-home]/notes; {"thread_id":"[identifier]"}\r\n')
+  const publishedAnswers = await readFile(join(directory, record.id, scored.answers), 'utf8')
+  assert.deepEqual(JSON.parse(publishedAnswers), { ...files.answers, reviewer: '[redacted: user name]' })
+  assert.equal(await readFile(files.transcriptPath, 'utf8'), transcript)
+  assert.equal(JSON.parse(await readFile(files.answersPath, 'utf8')).reviewer, username)
 })
 
 for (const missing of ['answers', 'transcript']) {
@@ -148,7 +181,7 @@ for (const passed of [true, false]) {
     assert.equal(result.status, passed ? 0 : 1)
     const scored = result.data.data
     assert.equal(scored.caseResults[0].scoring, 'human')
-    assert.equal(scored.caseResults[0].reviewer, 'Fixture reviewer')
+    assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
     assert.equal(scored.caseResults[0].startLine, 1)
     assert.equal(await readFile(join(directory, record.id, scored.transcript), 'utf8'), await readFile(files.transcriptPath, 'utf8'))
     assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, 2)
@@ -212,6 +245,86 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   return { result, record }
 }
 
+test('reviewer publication preserves JSON keys and scalar types while rejecting unsupported identities', async t => {
+  for (const [reviewer, status] of [['Alice "Ali" Chen', 0], ['123', 2], ['id', 2]]) {
+    await t.test(reviewer, async t => {
+      const directory = await temporary(t)
+      const record = start(t, directory)
+      const files = await inputs(directory, record)
+      files.answers.reviewer = reviewer
+      await writeFile(files.answersPath, JSON.stringify(files.answers))
+      const document = { id: 'stable', [reviewer]: reviewer, text: reviewer, nested: [{ [reviewer]: reviewer }], number: 123, passed: true }
+      const transcript = JSON.stringify(document, null, '\t') + '\n'
+      const redacted = redactEvidence(transcript, { caseResults: [{ reviewer }] })
+      const expected = { ...document, [reviewer]: '[redacted: user name]', text: '[redacted: user name]', nested: [{ [reviewer]: '[redacted: user name]' }] }
+      assert.deepEqual(JSON.parse(redacted), expected)
+      assert.equal(redacted.split('\n').length, transcript.split('\n').length)
+      assert.deepEqual(JSON.parse(JSON.parse(redactEvidence(JSON.stringify({ stdout: transcript }), { caseResults: [{ reviewer }] })).stdout), expected)
+      await writeFile(files.transcriptPath, transcript)
+      const result = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath)
+      assert.equal(result.status, status, result.stdout)
+      const saved = JSON.parse(await readFile(join(directory, record.id, 'run.json'), 'utf8'))
+      assert.equal(saved.id, record.id)
+      assert.equal(saved.scenario.id, record.scenario.id)
+      assert.equal(saved.scenario.checks[0].id, 'decision')
+      if (status === 2) {
+        assert.equal(saved.transcript, null)
+        assert.deepEqual(await readdir(join(directory, record.id)), ['run.json'])
+      } else {
+        assert.equal(saved.caseResults[0].reviewer, '[redacted: user name]')
+        assert.equal(saved.caseResults[0].id, 'decision')
+        assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, saved.transcript), 'utf8')), expected)
+        assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, saved.answers), 'utf8')),
+          { ...files.answers, reviewer: '[redacted: user name]' })
+      }
+    })
+  }
+})
+
+test('supplied reviewer identities including quoted nicknames are redacted throughout scoring publication', async t => {
+  for (const [host, reviewer, mode] of [
+    ['manual', 'Alice Chen', 'reviewer'],
+    ['adapter', 'Alice Chen', 'reviewer'],
+    ['closed-adapter', 'Alice Chen', 'reviewer'],
+    ['manual', 'Alice "Ali" Chen', 'reviewer-quoted'],
+    ['adapter', 'Alice "Ali" Chen', 'reviewer-quoted'],
+    ['closed-adapter', 'Alice "Ali" Chen', 'reviewer-quoted']
+  ]) {
+    await t.test(`${host}: ${reviewer}`, async t => {
+      const directory = await temporary(t)
+      const { path } = await adapterFile(directory, mode)
+      const record = host === 'manual' ? start(t, directory) : hostStart(t, directory, path).record
+      const files = await inputs(directory, record)
+      files.answers.reviewer = reviewer
+      assert.notEqual(files.answers.reviewer, userInfo().username)
+      await writeFile(files.answersPath, JSON.stringify(files.answers))
+      const transcriptPath = host === 'manual' ? files.transcriptPath : join(directory, record.id, record.conversation)
+      if (host === 'manual') await writeFile(transcriptPath, `User: Review the evidence.\nReviewer: ${reviewer}\n`)
+      if (host === 'closed-adapter') run(directory, 'close', '--run', record.id)
+      const original = await readFile(transcriptPath, 'utf8')
+      const result = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
+      assert.equal(result.status, 0, result.stdout)
+      const saved = await readFile(join(directory, record.id, 'run.json'), 'utf8')
+      const scored = JSON.parse(saved)
+      assert.deepEqual(result.data.data, scored)
+      assert.ok(!saved.includes('Alice'))
+      assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
+      assert.equal(scored.caseResults[0].passed, true)
+      assert.equal(scored.caseResults[0].startLine, 1)
+      assert.equal(scored.caseResults[0].endLine, 2)
+      const transcript = await readFile(join(directory, record.id, scored.transcript), 'utf8')
+      assert.equal(transcript, original.replaceAll(reviewer, '[redacted: user name]')
+        .replaceAll(JSON.stringify(reviewer).slice(1, -1), '[redacted: user name]'))
+      assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, scored.answers), 'utf8')),
+        { ...files.answers, reviewer: '[redacted: user name]' })
+      if (host !== 'manual') {
+        assert.equal(await readFile(transcriptPath, 'utf8'), transcript)
+        assert.equal(scored.conversationHash, createHash('sha256').update(transcript).digest('hex'))
+      }
+    })
+  }
+})
+
 test('host runs use fresh homes, caches, fixtures, threads and transcripts without discoverable repo-audit', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
@@ -231,6 +344,62 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.equal(observed.cwd, first.fixture.path)
   assert.equal(observed.message, first.scenario.request)
   assert.ok((await readFile(join(directory, first.id, first.conversation), 'utf8')).includes(first.request))
+})
+
+for (const separator of ['\n', '\r', '\t']) {
+  test(`evidence redacts names after ${JSON.stringify(separator)} across nested JSON strings`, () => {
+    const username = userInfo().username
+    const output = `header${separator}${username}${separator}prefix-${username}-suffix`
+    const expected = `header${separator}[redacted: user name]${separator}prefix-${username}-suffix`
+    assert.equal(redactEvidence(output), expected)
+    assert.equal(JSON.parse(redactEvidence(JSON.stringify({ output }))).output, expected)
+    const record = JSON.stringify({ stdout: JSON.stringify({ output }) + '\n' })
+    assert.equal(JSON.parse(JSON.parse(redactEvidence(record)).stdout).output, expected)
+  })
+}
+
+test('evidence redacts JSONL surrounded by plain text with unmatched quotes', () => {
+  const username = userInfo().username
+  const event = JSON.stringify({ output: `header\n${username}\n` })
+  const transcript = `User: "unfinished\nHost JSONL:\n${event}\nHost stderr:\n"unfinished\n`
+  const redacted = redactEvidence(transcript)
+  assert.equal(JSON.parse(redacted.split('\n')[2]).output, 'header\n[redacted: user name]\n')
+  assert.equal(redacted.split('\n').length, transcript.split('\n').length)
+})
+
+test('captured listings and closed evidence redact host identities while retaining scoring and resume', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'listing')
+  const { record } = hostStart(t, directory, path)
+  assert.equal(run(directory, 'turn', '--run', record.id, '--answer', '1').data.data.turns[1].sessionId, record.sessionId)
+  const transcriptPath = join(directory, record.id, record.conversation)
+  const transcript = await readFile(transcriptPath, 'utf8')
+  const listing = transcript.split('\n').filter(line => line.startsWith('{')).map(line => JSON.parse(line))
+    .find(event => event.item?.command === 'ls -la').item.aggregated_output
+  assert.equal(listing, 'total 8\ndrwx------ 2 [redacted: user name] [redacted: user name] 4096 Oct 8 12:00 .\n' +
+    '-rw-r--r-- 1 [redacted: user name] [redacted: user name] 123 Oct 8 12:00 brief.md\n' +
+    'Owner: [redacted: user name]; group: [redacted: user name]\n[redacted: user name]\n[redacted: user name]\n')
+  assert.ok(!transcript.includes(record.sessionId))
+  assert.ok(!transcript.includes(record.fixture.path))
+  assert.ok(!transcript.includes(record.isolation.home))
+  run(directory, 'close', '--run', record.id)
+  const saved = await readFile(join(directory, record.id, 'run.json'), 'utf8')
+  assert.ok(!saved.includes(record.sessionId))
+  assert.ok(!saved.includes(record.fixture.path))
+  assert.ok(!saved.includes(record.isolation.home))
+  const closed = JSON.parse(saved)
+  const closedListing = closed.turns[0].result.stdout.trim().split('\n').map(line => JSON.parse(line))
+    .find(event => event.item?.command === 'ls -la').item.aggregated_output
+  assert.equal(closedListing, listing)
+  const files = await inputs(directory, record)
+  files.answers.reviewer = userInfo().username
+  await writeFile(files.answersPath, JSON.stringify(files.answers))
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 0)
+  const scored = JSON.parse(await readFile(join(directory, record.id, 'run.json'), 'utf8'))
+  assert.equal(await readFile(join(directory, record.id, scored.transcript), 'utf8'), transcript)
+  assert.equal(scored.caseResults[0].reviewer, '[redacted: user name]')
+  assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, scored.answers), 'utf8')),
+    { ...files.answers, reviewer: '[redacted: user name]' })
 })
 
 test('with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request', async t => {
@@ -349,8 +518,8 @@ for (const mode of ['without', 'with']) {
     await writeFile(files.answersPath, JSON.stringify(files.answers))
     const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
     assert.equal(scored.status, 0, scored.stdout)
-    assert.deepEqual(scored.data.data.turns, record.turns)
-    assert.equal(scored.data.data.sessionId, record.sessionId)
+    assert.deepEqual(scored.data.data.turns, JSON.parse(redactEvidence(JSON.stringify(record.turns), record)))
+    assert.equal(scored.data.data.sessionId, '[identifier]')
     assert.ok(scored.data.data.isolation.cleanedAt)
   })
 
@@ -377,7 +546,7 @@ for (const mode of ['without', 'with']) {
     await assert.rejects(readFile(join(record.isolation.state, 'fake-session.json')), { code: 'ENOENT' })
     const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
     assert.equal(scored.status, 0, scored.stdout)
-    assert.deepEqual(scored.data.data.turns, record.turns)
+    assert.deepEqual(scored.data.data.turns, JSON.parse(redactEvidence(JSON.stringify(record.turns), record)))
   })
 }
 
