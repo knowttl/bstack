@@ -1,18 +1,29 @@
 no_ci: true
 commands:
   prepare: 'npm ci --prefer-offline --ignore-scripts && npm ci --omit=dev --prefix skills/repo-audit'
-  test: 'npm test'
+  test: 'npm test -- --capture .cache/full-suite.json'
   lint: 'npm run check'
 document:
   instructions: |
     docs/design.md owns the first-release requirements. docs/implementation-plan.md owns the build sequence
     and evidence; each task's evidence contract decides what a change must record.
     README.md owns installation and current usage. skills/*/SKILL.md owns each skill's agent-facing contract.
+    After all source, test and documentation fixes, attach the final Test step's captured full-suite run with
+    node scripts/task-evidence.mjs .cache/full-suite.json <task-id> before publication. Preserve existing
+    task-specific commands, acceptance cases and limitations when refreshing an existing task record.
+    For test-speed work use task-id test-speed. Never start another pipeline just to attach evidence.
+    If attachment rejects changed inputs, base or environment, run the configured full test command again
+    on the final inputs and attach that result within this run. Behavioural changes always need fresh validation.
 review:
   path_instructions:
     - path: "**"
       instructions: |
         Review focus for this build: does the change work as its plan task specifies, and is it well designed? Raise functional bugs, broken or missing flows, wrong results, crashes, hangs, data loss, regressions, unhandled errors that break a flow, missing tests for the slice's behaviour, and style, simplification and design-principle issues. Security hardening and threat-model concerns are deferred until the full app is built: do not raise them unless they cause a functional bug.
+        Repair each reported invariant across all sibling cases and shared call sites in the same round.
+        Enumerate the relevant boundary and failure cases, fix their shared cause, and verify through the public interface.
+        Before focused repair verification, install dependencies with npm ci --ignore-scripts and
+        npm ci --omit=dev --prefix skills/repo-audit. Review the whole diff again after repairs;
+        do not limit valid findings or omit style, simplification or design-principle review.
     - path: "skills/**"
       instructions: |
         Skills stay language-agnostic and dependency-light. Never commit credentials, tokens or customer data.

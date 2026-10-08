@@ -4,7 +4,10 @@ import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { spawnSync } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
+import { createServer } from 'node:http'
+import { once } from 'node:events'
+import { hash } from '../../scripts/lib/test-evidence.mjs'
 
 // Resolve package inputs from the suite location, not the shell working directory.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -84,4 +87,261 @@ test('an empty selected suite fails', async t => {
   const result = run(directory)
   assert.equal(result.status, 1)
   assert.match(result.stderr, /No test suites selected/)
+})
+
+async function evidenceSandbox(t, source = "import test from 'node:test'\ntest('recorded behaviour', () => {})\n") {
+  const directory = await sandbox(t)
+  await cp(join(root, 'scripts'), join(directory, 'scripts'), { recursive: true })
+  await cp(join(root, 'skills', 'repo-audit', 'scripts', 'lib'), join(directory, 'skills', 'repo-audit', 'scripts', 'lib'), { recursive: true })
+  await mkdir(join(directory, 'tests', 'scripts'), { recursive: true })
+  await writeFile(join(directory, 'tests', 'scripts', 'selected.test.mjs'), source)
+  await writeFile(join(directory, '.gitignore'), '.cache/\n')
+  for (const args of [['init', '-q'], ['add', '.'], ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'initial'],
+    ['update-ref', 'refs/remotes/origin/main', 'HEAD']]) {
+    const result = spawnSync('git', args, { cwd: directory, encoding: 'utf8' })
+    assert.equal(result.status, 0, result.stderr)
+  }
+  return directory
+}
+
+function attach(directory, runPath = '.cache/run.json') {
+  const { NODE_TEST_CONTEXT, ...env } = process.env
+  return spawnSync(process.execPath, [join(directory, 'scripts', 'task-evidence.mjs'), runPath, 'speed'],
+    { cwd: directory, encoding: 'utf8', env })
+}
+
+test('ordinary full-suite invocation retains attachable evidence in a Git checkout', async t => {
+  const directory = await evidenceSandbox(t)
+  assert.equal(run(directory).status, 0)
+  assert.equal(attach(directory, '.cache/full-suite.json').status, 0)
+})
+
+test('ordinary tests execute without a base and invalidate older capture', async t => {
+  const directory = await evidenceSandbox(t)
+  assert.equal(run(directory).status, 0)
+  const removed = spawnSync('git', ['update-ref', '-d', 'refs/remotes/origin/main'], { cwd: directory })
+  assert.equal(removed.status, 0)
+  const result = run(directory)
+  assert.equal(result.status, 0, result.stderr + result.stdout)
+  assert.match(result.stdout, /recorded behaviour/)
+  assert.match(result.stdout, /# tests 1/)
+  assert.equal(attach(directory, '.cache/full-suite.json').status, 1)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 1)
+})
+
+test('Windows evidence environment launches the npm JavaScript entry point', async t => {
+  const directory = await sandbox(t)
+  const cli = join(directory, 'npm-cli.js')
+  await writeFile(cli, "console.log('11.13.0')\n")
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e',
+    `import { environment } from ${JSON.stringify(join(root, 'scripts/lib/test-evidence.mjs'))};
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+    console.log(JSON.stringify(await environment()));`],
+  { encoding: 'utf8', env: { ...process.env, npm_execpath: cli } })
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(JSON.parse(result.stdout).tools.npm, '11.13.0')
+})
+
+test('attachment preserves inventory paths and captured artifact hashes', async t => {
+  const directory = await evidenceSandbox(t)
+  await cp(join(root, 'tests/fixtures/installer-collision'), join(directory, 'tests/fixtures/installer-collision'), { recursive: true })
+  const staged = spawnSync('git', ['add', '.'], { cwd: directory })
+  assert.equal(staged.status, 0)
+  const committed = spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'fixture'], { cwd: directory })
+  assert.equal(committed.status, 0)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  assert.equal(attach(directory).status, 0)
+  const capture = JSON.parse(await readFile(join(directory, '.cache/run.json'), 'utf8'))
+  const record = JSON.parse(await readFile(join(directory, 'tests/eval/results/tasks/speed.json'), 'utf8'))
+  assert.deepEqual(record.validation.inputs, capture.inputs)
+  assert.equal(hash(JSON.stringify(record.validation.inputs.files)), record.validation.inputs.sha256)
+  assert.equal(hash(await readFile(join(directory, record.commands[0].outputArtifact))), record.validation.outputSha256)
+  assert.equal(hash(await readFile(join(directory, record.validation.eventsArtifact))), record.validation.eventsSha256)
+})
+
+test('capture and attachment bind task artifacts consumed by tests', async t => {
+  const directory = await evidenceSandbox(t,
+    "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { readFileSync } from 'node:fs'\ntest('consumed task evidence', () => assert.equal(readFileSync('tests/eval/results/tasks/T0.5.C5b.node24-check.txt', 'utf8'), 'check-package: passed\\n'))\n")
+  const artifact = join(directory, 'tests/eval/results/tasks/T0.5.C5b.node24-check.txt')
+  await mkdir(dirname(artifact), { recursive: true })
+  await writeFile(artifact, 'check-package: passed\n')
+  await writeFile(join(directory, 'tests/eval/results/tasks/other.json'), '{}\n')
+  assert.equal(spawnSync('git', ['add', '.'], { cwd: directory }).status, 0)
+  assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'consumed task evidence'], { cwd: directory }).status, 0)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  assert.equal(attach(directory).status, 0)
+  const record = JSON.parse(await readFile(join(directory, 'tests/eval/results/tasks/speed.json'), 'utf8'))
+  assert.ok(record.validation.inputs.files.some(file => file.path === 'tests/eval/results/tasks/T0.5.C5b.node24-check.txt'))
+  assert.ok(record.validation.inputs.files.some(file => file.path === 'tests/eval/results/tasks/other.json'))
+  await rm(artifact)
+  assert.equal(run(directory, '--capture', '.cache/dirty.json').status, 1)
+  assert.equal(attach(directory).status, 1)
+  assert.equal(spawnSync('git', ['add', '-u'], { cwd: directory }).status, 0)
+  assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'delete consumed evidence'], { cwd: directory }).status, 0)
+  const stale = attach(directory)
+  assert.equal(stale.status, 1)
+  assert.match(stale.stderr, /Evidence inputs or environment changed/)
+  assert.equal(run(directory).status, 1)
+})
+
+test('capture streams TAP and stderr before a blocked suite finishes', { timeout: 15000 }, async t => {
+  const server = createServer()
+  t.after(() => { server.closeAllConnections(); server.close() })
+  server.listen(0, '127.0.0.1')
+  await once(server, 'listening')
+  const request = once(server, 'request')
+  const directory = await evidenceSandbox(t,
+    `import test from 'node:test'\ntest('live progress', () => { console.log('stdout progress'); console.error('stderr progress') })\ntest('blocked suite', async () => { await fetch('http://127.0.0.1:${server.address().port}/release') })\n`)
+  const { NODE_TEST_CONTEXT, ...env } = process.env
+  const child = spawn(process.execPath, [join(directory, 'scripts/test.mjs'), '--capture', '.cache/run.json'],
+    { cwd: directory, env, stdio: ['ignore', 'pipe', 'pipe'] })
+  t.after(() => child.kill())
+  const completion = once(child, 'close')
+  let terminal = ''
+  const progress = new Promise(resolve => {
+    const receive = chunk => {
+      terminal += chunk
+      if (terminal.includes('ok 1 - live progress') && terminal.includes('stdout progress') && terminal.includes('stderr progress')) resolve()
+    }
+    child.stdout.on('data', receive)
+    child.stderr.on('data', receive)
+  })
+  const [, response] = await request
+  await progress
+  assert.equal(child.exitCode, null)
+  response.end('continue')
+  const [code] = await completion
+  assert.equal(code, 0, terminal)
+  const output = await readFile(join(directory, '.cache/run.json.tap'), 'utf8')
+  assert.match(output, /stdout progress/)
+  assert.match(output, /stderr progress/)
+  assert.match(output, /ok 1 - live progress/)
+})
+
+test('ordinary tests still execute dirty source but its evidence cannot attach', async t => {
+  const directory = await evidenceSandbox(t)
+  await writeFile(join(directory, 'tests/scripts/selected.test.mjs'), "import test from 'node:test'\ntest('dirty behaviour', () => {})\n")
+  const result = run(directory)
+  assert.equal(result.status, 0, result.stderr + result.stdout)
+  assert.match(result.stdout, /dirty behaviour/)
+  assert.equal(attach(directory, '.cache/full-suite.json').status, 1)
+})
+
+test('full-run evidence attaches identities and output without executing tests again', async t => {
+  const directory = await evidenceSandbox(t,
+    "import test from 'node:test'\nimport { appendFileSync } from 'node:fs'\ntest('recorded behaviour', () => appendFileSync('.cache/executions', 'run\\n'))\n")
+  const result = run(directory, '--capture', '.cache/run.json')
+  assert.equal(result.status, 0, result.stderr + result.stdout)
+  assert.equal(attach(directory).status, 0)
+  const record = JSON.parse(await readFile(join(directory, 'tests/eval/results/tasks/speed.json'), 'utf8'))
+  assert.equal(record.validation.counts.tests, 1)
+  assert.deepEqual(record.validation.suites, ['tests/scripts/selected.test.mjs'])
+  const identities = await readFile(join(directory, record.validation.eventsArtifact), 'utf8')
+  assert.match(identities, /recorded behaviour/)
+  assert.ok(!identities.includes(directory))
+  spawnSync('git', ['add', 'tests/eval/results/tasks'], { cwd: directory })
+  const commit = spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'evidence'], { cwd: directory })
+  assert.equal(commit.status, 0)
+  assert.equal(attach(directory).status, 0)
+  assert.equal(await readFile(join(directory, '.cache/executions'), 'utf8'), 'run\n')
+})
+
+for (const change of ['source', 'new input', 'deleted input', 'base', 'output', 'identities', 'environment']) {
+  test(`full-run evidence rejects changed ${change}`, async t => {
+    const directory = await evidenceSandbox(t)
+    assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+    if (change === 'source') await writeFile(join(directory, 'tests/scripts/selected.test.mjs'), '// changed\n')
+    if (change === 'new input') await writeFile(join(directory, 'new.mjs'), '// new\n')
+    if (change === 'deleted input') await rm(join(directory, 'tests/scripts/selected.test.mjs'))
+    if (change === 'base') {
+      spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '--allow-empty', '-qm', 'new base'], { cwd: directory })
+      spawnSync('git', ['update-ref', 'refs/remotes/origin/main', 'HEAD'], { cwd: directory })
+    }
+    if (change === 'output') await writeFile(join(directory, '.cache/run.json.tap'), 'invented pass\n')
+    if (change === 'identities') await writeFile(join(directory, '.cache/run.json.events'), '{}\n')
+    if (change === 'environment') {
+      const path = join(directory, '.cache/run.json')
+      const record = JSON.parse(await readFile(path, 'utf8'))
+      record.environment.node = 'v0.0.0'
+      await writeFile(path, JSON.stringify(record))
+    }
+    assert.equal(attach(directory).status, 1)
+  })
+}
+
+test('failed full-suite evidence cannot attach a passing record', async t => {
+  const directory = await evidenceSandbox(t, "import test from 'node:test'\ntest('failure', () => { throw Error('expected') })\n")
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 1)
+  assert.equal(attach(directory).status, 1)
+})
+
+for (const option of ['skip', 'todo']) {
+  test(`full-suite evidence with ${option} cannot attach a passing record`, async t => {
+    const directory = await evidenceSandbox(t, `import test from 'node:test'\ntest('unfinished', { ${option}: true }, () => {})\n`)
+    assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+    assert.equal(attach(directory).status, 1)
+  })
+}
+
+test('capture rejects uncommitted source and invalidates an older successful capture', async t => {
+  const directory = await evidenceSandbox(t)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  await writeFile(join(directory, 'tests/scripts/selected.test.mjs'), '// changed\n')
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 1)
+  assert.equal(attach(directory).status, 1)
+})
+
+for (const [state, restoreArgs] of [['unstaged', ['--worktree']], ['staged', ['--staged', '--worktree']]]) {
+  test(`attachment rejects ${state} restoration of tested source over an untested HEAD`, async t => {
+    const directory = await evidenceSandbox(t)
+    const path = join(directory, 'tests/scripts/selected.test.mjs')
+    assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+    const capture = JSON.parse(await readFile(join(directory, '.cache/run.json'), 'utf8'))
+    await writeFile(path, "import test from 'node:test'\ntest('untested behaviour', () => {})\n")
+    assert.equal(spawnSync('git', ['add', '.'], { cwd: directory }).status, 0)
+    assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'untested source'], { cwd: directory }).status, 0)
+    assert.equal(spawnSync('git', ['restore', `--source=${capture.sourceRevision}`, ...restoreArgs, 'tests/scripts/selected.test.mjs'], { cwd: directory }).status, 0)
+    const result = attach(directory)
+    assert.equal(result.status, 1, result.stderr + result.stdout)
+    assert.match(result.stderr, /Commit source inputs before attaching evidence/)
+  })
+}
+
+test('attachment rejects untracked restoration of a file deleted from HEAD', async t => {
+  const directory = await evidenceSandbox(t)
+  const path = join(directory, 'tests/scripts/selected.test.mjs')
+  const tested = await readFile(path, 'utf8')
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  assert.equal(spawnSync('git', ['rm', 'tests/scripts/selected.test.mjs'], { cwd: directory }).status, 0)
+  assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'delete tested source'], { cwd: directory }).status, 0)
+  await mkdir(dirname(path), { recursive: true })
+  await writeFile(path, tested)
+  const result = attach(directory)
+  assert.equal(result.status, 1, result.stderr + result.stdout)
+  assert.match(result.stderr, /Commit source inputs before attaching evidence/)
+})
+
+test('capture rejects source changes made during test execution', async t => {
+  const directory = await evidenceSandbox(t,
+    "import test from 'node:test'\nimport { writeFileSync } from 'node:fs'\ntest('mutates authored input', () => writeFileSync('new.mjs', '// changed\\n'))\n")
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 1)
+  assert.equal(attach(directory).status, 1)
+})
+
+test('refreshing full-suite evidence preserves task acceptance and blocked limitations', async t => {
+  const directory = await evidenceSandbox(t)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  assert.equal(attach(directory).status, 0)
+  const path = join(directory, 'tests/eval/results/tasks/speed.json')
+  const record = JSON.parse(await readFile(path, 'utf8'))
+  record.status = 'blocked'
+  record.cases = [{ id: 'AC-1', kind: 'manual', procedure: 'approval', status: 'blocked', artifact: null,
+    reason: 'not run', nextPrerequisite: 'author review' }]
+  record.limitations = ['Manual approval remains blocked.']
+  await writeFile(path, JSON.stringify(record))
+  assert.equal(attach(directory).status, 0)
+  const updated = JSON.parse(await readFile(path, 'utf8'))
+  assert.equal(updated.status, 'blocked')
+  assert.deepEqual(updated.cases, record.cases)
+  assert.ok(updated.limitations.includes(record.limitations[0]))
 })
