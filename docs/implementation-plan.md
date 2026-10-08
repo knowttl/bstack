@@ -355,6 +355,8 @@ Tick each task when its "Done when" commands pass.
     - The retry exposed an adapter defect: Codex opened with danger-full-access, but resumed with read-only permissions and could not create review scratch.
       Recorded turn contexts confirmed the policy change.
       Resume now explicitly retains the opening sandbox policy, with a regression check through the existing fake host.
+      The regression fails with the old adapter and passes with the fix; the full suite passes all 265 tests.
+      Real resumed turns now create scratch and launch the board, but the bounded host turns timed out awaiting browser verdicts, so an approved vision is still unverified.
 - Phase 2: Audit and foundation
   - [ ] T2.1 Write the research briefs and the citation check
   - [ ] T2.2 Build `inspect`
