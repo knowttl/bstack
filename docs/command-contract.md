@@ -666,6 +666,8 @@ Payloads reject unknown and missing fields.
 Plan inputs reject malformed JSON, duplicate keys at any depth (including escaped equivalents) and numbers that decode to nonfinite values.
 JSON create and key edits also reject malformed JSON, duplicate keys, nonfinite numbers and non-object roots.
 All operations reject binary/non-UTF-8 text; operations other than delete reject unsupported extensions.
+`set-heading-section` and `append-line-once` reject any target file containing a bare carriage return (CR not followed by LF) before matching, with no project writes.
+These line-based operations support LF and CRLF without normalising existing bytes.
 Heading edits support unindented prose, nonempty ATX headings at column 0 and closed fences at column 0 with an optional plain info word containing letters, digits, underscores, plus signs, dots or hyphens.
 Outside fenced code, indented content, lists, block quotes, HTML-like markup, tables, reference definitions, empty headings, setext headings and thematic breaks are unsupported.
 Setext underlines and thematic-break lines remain unsupported with trailing spaces or tabs.
