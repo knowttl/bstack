@@ -3059,13 +3059,13 @@ ok 509 - measure separates a recreated rename source without a deletion commit
   type: 'test'
   ...
 # Subtest: measure follows merged branch modifications with renamed first and exclusions 
-ok 510 - measure follows merged branch modifications with renamed first and exclusions 
+ok 510 - measure follows merged branch modifications with renamed first and exclusions
   ---
   duration_ms: 599.129385
   type: 'test'
   ...
 # Subtest: measure follows merged branch modifications with modified first and exclusions 
-ok 511 - measure follows merged branch modifications with modified first and exclusions 
+ok 511 - measure follows merged branch modifications with modified first and exclusions
   ---
   duration_ms: 632.724685
   type: 'test'
