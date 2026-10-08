@@ -16,7 +16,7 @@ import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 async function sandbox(t) {
-  const directory = await realpath(await mkdtemp(join(tmpdir(), 'bstack child 日本語 $; ')))
+  const directory = await realpath(await mkdtemp(join(tmpdir(), 'bstack child 日本語 $ ')))
   t.after(() => rm(directory, { recursive: true, force: true }))
   return directory
 }
