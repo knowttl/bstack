@@ -188,9 +188,8 @@ These fixture commands are test interfaces, not production command wiring or sch
 
 `node skills/repo-audit/scripts/repo-audit.mjs contract-test --workspace <directory> --input tests/inputs/schema-valid.json --json` exercises dispatch, schema validation and joining IDs through the installed entry point.
 It also accepts `--repo` and leaves the target unchanged.
-The installed `schemas/contract-test.json` requires `schemaVersion: 1` and a nonempty `records` array of objects with unique nonempty string `id` fields.
-Each record may include `status` (`passed` or `failed`) and `label` (null or a nonempty string starting with an uppercase ASCII letter).
-Unknown fields fail at both levels.
+The installed [input schema](../skills/repo-audit/schemas/contract-test.json) owns the required fields, allowed values and unknown-field constraints.
+The command also checks the `records` collection with `validateIds`, as described above.
 `--schema <file>` selects an explicit definition for schema-subset tests.
 Input and schema file paths resolve from the caller's working directory, while the default schema resolves from the installed command module.
 Unreadable or malformed JSON reports `invalid-input`.
