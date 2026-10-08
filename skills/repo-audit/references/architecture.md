@@ -85,4 +85,7 @@ Record each proposed boundary's project-specific reason, source, scope, enforcem
 Reuse existing design decisions and standards rather than duplicating their rules.
 Present evidenced candidates and alternatives for selection before applying changes.
 Verification requires representative allowed and forbidden imports and compatible public behaviour, not file-count targets.
-This reference does not implement native rules or maintenance checks.
+Use rule-proof for a clean public-import control and independent private, alias or equivalent resolution bypass and cycle violations with the selected native check.
+The Python equivalent-resolution fixture exercises an intermediate public-looking bridge to private implementation; proof does not establish every possible re-export or dynamic dependency.
+Maintain these coverage limits alongside the rule evidence.
+Maintained local integration and maintenance checks remain pending.

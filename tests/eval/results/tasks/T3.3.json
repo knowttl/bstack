@@ -1,53 +1,28 @@
 {
   "schemaVersion": 1,
-  "taskId": "T3.1",
-  "slice": "C16, C19",
-  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1-T2.7 (most recently https://github.com/knowttl/bstack/pull/28: live probe record/compare and side-effect approval).\n\nThis piece is slice C16: the early reference portion of task T3.1 \"Write the enforcement and architecture references\", which must land before C17 (T2.8) loads these references. Done evidence: reviewed enforcement/architecture guidance, package check and two-stack relevance rubric.",
+  "taskId": "T3.3",
+  "slice": "C19",
+  "intent": "Build merged slice C19 sequentially: complete rule-proof-driven T3.1 reference revisions, T3.2 native rule-proof and T3.3 debt baseline handling. Prove clean public imports and permitted direction, independently seeded private imports, alias/equivalent bypasses and cycles in both stacks. Keep existing debt visible, reject new debt and unselected refresh growth, remove fixed entries and require a selected unresolved debt finding for one new entry. Preserve project-specific design guidance and add no hosted workflows.",
   "amendments": [
-    "Early reference portion only. Rule-proof-driven revisions remain C19a, as Progress records.",
-    "README usage, docs and Progress updated before final implementation commit. Evidence generated from that commit.",
-    "Refreshed both installs, package check, full suite, task suite and prohibited-routing searches after the first no-mistakes review and document fixes. This evidence-only commit records that implementation head.",
-    "Firstmate approved test-1 proceeding without live validation because C16 delivers reference documents only. Agent behaviour remains C17 and native enforcement remains T3.2-T3.4.",
-    "C19 merges the rule-proof-driven T3.1 reference revisions with T3.2 native rule-proof and T3.3 debt baseline handling, preserving C16 commands and acceptance limitations."
+    "Native stack procedures execute through the public command inside the full suite; retained TAP diagnostics record versions, exits and native outputs."
   ],
   "cases": [
     {
-      "id": "C16-package",
+      "id": "AC-67",
       "kind": "automated",
-      "procedure": "npm run check and registered T3.1 package-check and skill-skeleton suites: 60 tests pass, including language-policy boundary controls.",
+      "procedure": "tests/scripts/baseline.test.mjs: 'existing debt remains visible and checking leaves the target unchanged', 'new debt fails checking without altering the baseline', 'new debt fails refresh without a finding without altering the baseline', 'a fixed entry fails checking and refresh removes only the fixed entry', 'a selected debt finding authorizes one matching new entry', and selected finding, unrelated growth and write/rename failure controls.",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/T3.1.task-test.txt"
-    },
-    {
-      "id": "C16-reference-review",
-      "kind": "manual",
-      "procedure": "Completed authority review against T3.1, the three assigned design sections and pinned adaptations, including two-stack relevance rubric for ts-shop and py-ledger.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/T3.1.verification.md"
-    },
-    {
-      "id": "C16-routing",
-      "kind": "manual",
-      "procedure": "Prohibited-routing searches and manual review of authored skill procedure and references. All three scoped searches have no matches. The existing playbooks scope exclusion is not an instruction.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/T3.1.routing-search.txt"
-    },
-    {
-      "id": "C19-reference-review",
-      "kind": "manual",
-      "procedure": "Compared README, SKILL.md, enforcement and architecture references with the rule-proof and baseline command interfaces and native tests. References describe disposable proof, selected debt growth and static coverage limits without tool presets or development routing.",
-      "status": "passed",
-      "artifact": "tests/eval/results/tasks/C19.verification-plan.md"
+      "artifact": "tests/eval/results/tasks/T3.3.full-tests.txt"
     }
   ],
   "limitations": [
-    "C16 demonstrates useful references only. It does not claim final AC-14, AC-25, AC-47 or AC-59 agent acceptance.",
-    "Historical C16 execution did not include native rule-proof, baseline handling or maintained integration. C19 supplies T3.2/T3.3 evidence separately; maintained integration remains T3.4.",
-    "Package deny checks and routing searches are syntactic controls, not proof of model interpretation. Two-stack relevance is manual source review, not an agent run.",
-    "Local command execution ran on Linux and Node 24 only.",
+    "Executed locally on Linux and Node 24 only; no real Windows or macOS execution is claimed.",
+    "Static seeded fixtures do not establish every dynamic dependency, unsupported syntax or re-export pattern.",
+    "Maintained local integration is T3.4 work; this record does not claim final released-skill agent acceptance.",
+    "The researched TypeScript resolver and Python AST probes have no native baseline feature, so the custom schema is exercised with normalized diagnostic inputs; baseline check does not execute the native analysis.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "af8698276813a78a6b0c83603211a508ded575c4",
+  "sourceRevision": "7d6e6bc9108e2b3db1e24181b53c3f34ad52b167",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -59,117 +34,6 @@
   },
   "commands": [
     {
-      "id": "root-install",
-      "executable": "npm",
-      "args": [
-        "ci",
-        "--ignore-scripts"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.root-install.txt",
-      "status": "passed"
-    },
-    {
-      "id": "skill-install",
-      "executable": "npm",
-      "args": [
-        "ci",
-        "--omit=dev",
-        "--prefix",
-        "skills/repo-audit"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.skill-install.txt",
-      "status": "passed"
-    },
-    {
-      "id": "check",
-      "executable": "npm",
-      "args": [
-        "run",
-        "check"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.check.txt",
-      "status": "passed"
-    },
-    {
-      "id": "test",
-      "executable": "npm",
-      "args": [
-        "test"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.test.txt",
-      "status": "passed"
-    },
-    {
-      "id": "task-test",
-      "executable": "npm",
-      "args": [
-        "test",
-        "--",
-        "--task",
-        "T3.1"
-      ],
-      "cwd": ".",
-      "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.task-test.txt",
-      "status": "passed"
-    },
-    {
-      "id": "red-green",
-      "executable": "rg",
-      "args": [
-        "-n",
-        "-i",
-        "--glob",
-        "!**/node_modules/**",
-        "red-green",
-        "skills/repo-audit"
-      ],
-      "cwd": ".",
-      "exitCode": 1,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.routing-search.txt",
-      "status": "passed"
-    },
-    {
-      "id": "playbook-instruction",
-      "executable": "rg",
-      "args": [
-        "-n",
-        "-i",
-        "--glob",
-        "!**/node_modules/**",
-        "(call|invoke|dispatch|run|use|follow|load|read)[^.!?\\n]*playbook|playbook[^.!?\\n]*(must|required)",
-        "skills/repo-audit"
-      ],
-      "cwd": ".",
-      "exitCode": 1,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.routing-search.txt",
-      "status": "passed"
-    },
-    {
-      "id": "skill-calls",
-      "executable": "rg",
-      "args": [
-        "-n",
-        "-i",
-        "--glob",
-        "!**/node_modules/**",
-        "(call|invoke|dispatch|run|use|follow|load|read)[^.!?\\n]*(skill tool|[\"\\x27][^\"\\x27]*skill[\"\\x27])|Skill\\(|\\$[A-Za-z][A-Za-z-]*(-[A-Za-z-]+)",
-        "skills/repo-audit"
-      ],
-      "cwd": ".",
-      "exitCode": 1,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.routing-search.txt",
-      "status": "passed"
-    },
-    {
       "id": "full-tests",
       "executable": "node",
       "args": [
@@ -179,7 +43,7 @@
       ],
       "cwd": ".",
       "exitCode": 0,
-      "outputArtifact": "tests/eval/results/tasks/T3.1.full-tests.txt",
+      "outputArtifact": "tests/eval/results/tasks/T3.3.full-tests.txt",
       "status": "passed"
     }
   ],
@@ -2403,6 +2267,11 @@
           "sha256": "ecc67122ed5ff24a2e5dcec9c7cd7670f674e6da71d9139978f60b9975e2be89"
         },
         {
+          "path": "tests/eval/results/tasks/T3.1.json",
+          "executable": false,
+          "sha256": "ac651c3a3616781988b20ea2eeaad5152cba96f21f0e6b6218013043cb05f9be"
+        },
+        {
           "path": "tests/eval/results/tasks/T3.1.root-install.txt",
           "executable": false,
           "sha256": "1e0d7bf38d048a8a0841d94f1390afd73dfd2ac2e22346fa5c8cccc6dfff4437"
@@ -2438,34 +2307,9 @@
           "sha256": "98f468f6d5133196c71bff2283a1d00a700737bdc66e4d2513f2d4fa8baab770"
         },
         {
-          "path": "tests/eval/results/tasks/T3.2.events.jsonl",
-          "executable": false,
-          "sha256": "fc52839a3984006335111f537d49c9d4ab996af35a5fe42959201d990612c539"
-        },
-        {
-          "path": "tests/eval/results/tasks/T3.2.full-tests.txt",
-          "executable": false,
-          "sha256": "8124a330c69796b25f9e8d9165b53f7484894cb9eda44f8a3865db524c424c8a"
-        },
-        {
           "path": "tests/eval/results/tasks/T3.2.json",
           "executable": false,
-          "sha256": "6aaced2e6b9b3b2d335652d9e806b1e9346fadaa3e88ad75935456b398c95a27"
-        },
-        {
-          "path": "tests/eval/results/tasks/T3.3.events.jsonl",
-          "executable": false,
-          "sha256": "3b8f62415ec734dddad8061bcf84c184c5a052a757be9fb1ceff0ce2c0b230e6"
-        },
-        {
-          "path": "tests/eval/results/tasks/T3.3.full-tests.txt",
-          "executable": false,
-          "sha256": "54b3643012c7dafc0cf15a96f1eea1b5a0383e7a385e43f0f5934db58d2cebcf"
-        },
-        {
-          "path": "tests/eval/results/tasks/T3.3.json",
-          "executable": false,
-          "sha256": "b9555015ad582de1b1c1a5c5ba3f606923a216deded7e8a0df9c7458541cd0cd"
+          "sha256": "d5c9a30e10c204f21add496038864b9399b04e998189334d19de70f9cb3b0056"
         },
         {
           "path": "tests/eval/results/tasks/history/T0.4.C4b.a18e6a4.check.txt",
@@ -3638,7 +3482,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "cee476caf7c9431a51fd0b4b905d3465e14368739d25ea9a3ad242dd72597578"
+      "sha256": "5a807b2d8cde1ea05014347f7838608f6f52e6a3aa3e29a792a0f1ce8495eaf5"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3678,9 +3522,9 @@
       "topLevel": 885,
       "suites": 0
     },
-    "durationMs": 89616.948243,
-    "outputSha256": "e5eaf87907db72b775123b26122ba37a017ae5a7b375c3924503438c451aae12",
-    "eventsSha256": "1508f08b18d654d2edda4c144ec098e27e0cda8c2cacfc509e76f340bcc3351b",
-    "eventsArtifact": "tests/eval/results/tasks/T3.1.events.jsonl"
+    "durationMs": 74228.82076,
+    "outputSha256": "54b3643012c7dafc0cf15a96f1eea1b5a0383e7a385e43f0f5934db58d2cebcf",
+    "eventsSha256": "3b8f62415ec734dddad8061bcf84c184c5a052a757be9fb1ceff0ce2c0b230e6",
+    "eventsArtifact": "tests/eval/results/tasks/T3.3.events.jsonl"
   }
 }
