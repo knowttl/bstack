@@ -73,12 +73,12 @@ export function proposedEdit(edit, original) {
     return edit.payload.content
   }
   const format = extname(edit.path).toLowerCase()
-  if (!['.md', '.txt', '.json'].includes(format)) reject('unsupported-format', 'Mechanical edits support UTF-8 .md, .txt and JSON objects only.')
   if (edit.operation === 'create') {
     if (original !== null) reject('create-collision', 'Create requires an absent file.')
     if (format === '.json') jsonObject(edit.payload.content)
     return edit.payload.content
   }
+  if (!['.md', '.txt', '.json'].includes(format)) reject('unsupported-format', 'Mechanical edits support UTF-8 .md, .txt and JSON objects only.')
   if (original === null) reject('missing-original', 'This operation requires an existing file.')
   if (edit.operation === 'set-json-key') {
     if (format !== '.json') reject('unsupported-format', 'set-json-key requires .json.')

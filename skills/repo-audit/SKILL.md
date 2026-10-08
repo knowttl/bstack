@@ -24,7 +24,8 @@ The apply command previews reviewed plans with `--plan <file> --dry-run`, then w
 Check-plan execution capture is available through the shared verification rules below.
 The enforcement and architecture references are available for recommendations.
 The existing-repo audit and selected apply path are available.
-The maintenance-contract reference remains a placeholder, and protected new-project creation remains T2.9 work.
+Protected new-project creation is available through Step 5.
+The maintenance-contract reference remains a placeholder.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -106,23 +107,37 @@ Include setup, formatting, lint, applicable type checks and tests.
 CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
 Avoid speculative frameworks, service layers, integrations and empty document templates.
 The enforcement and architecture references are available for recommendations.
-Protected creation integration into this path remains T2.9, with native rule implementation in T3.2 to T3.4.
+Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
+Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
+Native rule-proof and maintained enforcement remain T3.2 to T3.4 work, with portable maintenance in Phase 3a.
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
 
 ### Step 5: Review and apply selected changes
 
 Present the exact changes and findings for selection using the shared review and write rules below.
-Create the minimal repo and selected foundation only through apply after review.
+Prepare a create-only change set following schemas/change-set.schema.json, including the approved VISION.md, confirmed glossary when useful and selected foundation with complete UTF-8 payloads and hashes.
+Use the resolved planned destination as the change set and findings target, with mode workspace and revision null.
+Prepare schemas/project-create.json in scratch, binding the creation plan to the change set digest and approved destination, stack, first journey, setup commands and prerequisites.
+Select an absent destination under an existing parent, or explicitly select an empty directory with allowEmpty true.
+Run project create --workspace <idea-workspace> --plan <file> --dry-run --json to build the scaffold in scratch and present the complete exact diff and declared commands.
+Only after approval of those exact bytes and commands, run the unchanged plan without --dry-run.
+Creation uses the same protected-write engine as apply and journals directory creation, files, Git initialisation and command results outside the project.
+Repeat the unchanged creation plan to resume interrupted directory, file or Git creation.
+Preserve unrelated files and user edits, inspecting retained journals before resolving any continuation conflict.
 Make the first user journey work end to end where practical, without expanding into unrelated product work.
-Protected writes are available through apply, while protected new-project creation remains T2.9 work.
+Never adopt an existing nonempty directory or change global Git config.
 
 Done when: Only selected, reviewed changes have been applied with recoverable originals and current hash preconditions, otherwise writes remain blocked.
 
 ### Step 6: Verify the outcome
 
 Follow the shared verification rules and report selected changes, actual evidence, unresolved findings and limitations.
-The complete protected new-project path remains T2.9 work.
+Read the returned creation record for the captured setup and native first-journey results.
+Failed or interrupted setup and journey commands leave the created project unverified and available for recovery.
+Setup and journey commands already attempted are never rerun automatically, avoiding duplicate setup effects.
+Verify affected commands explicitly and retain fresh evidence before claiming readiness.
+Name native rule-proof, maintained enforcement and portable maintenance as pending later work.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 

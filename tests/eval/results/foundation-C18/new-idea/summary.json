@@ -1,0 +1,87 @@
+{
+  "sourceRevision": "d50095c74d41f79f87e4f1e555e61cc4197cef72",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.160.1"
+  },
+  "os": "linux 6.8.0-142-generic",
+  "stage": "foundation",
+  "adapterHash": "f8645b920c468183a4022f065ca7ab6e8c5c2c898429269d18058d4779134b42",
+  "criteriaHash": "c1bec4112cb625493f315680f7d99256c9519604c6f96785b94adb7521b20841",
+  "isolationVerified": true,
+  "cleanedAt": "2026-10-08T18:17:39.062Z",
+  "turns": [
+    {
+      "exitCode": 0,
+      "durationMs": 26909.069554,
+      "timedOut": false,
+      "outputTruncated": false
+    },
+    {
+      "exitCode": 0,
+      "durationMs": 76841.459214,
+      "timedOut": false,
+      "outputTruncated": false
+    },
+    {
+      "exitCode": 0,
+      "durationMs": 74874.36667799999,
+      "timedOut": false,
+      "outputTruncated": false
+    },
+    {
+      "exitCode": 0,
+      "durationMs": 186940.514685,
+      "timedOut": false,
+      "outputTruncated": false
+    },
+    {
+      "exitCode": 0,
+      "durationMs": 429589.335962,
+      "timedOut": false,
+      "outputTruncated": false
+    },
+    {
+      "exitCode": 0,
+      "durationMs": 159179.005904,
+      "timedOut": false,
+      "outputTruncated": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "interview",
+      "caseId": "AC-1",
+      "question": "Did the agent begin with the intent interview before recommending implementation?",
+      "passed": true,
+      "startLine": 7,
+      "endLine": 32,
+      "scoring": "human",
+      "reviewer": "implementation worker"
+    },
+    {
+      "id": "terms",
+      "caseId": "AC-9",
+      "question": "Did it resolve domain terms without adding implementation details to the glossary?",
+      "passed": true,
+      "startLine": 59,
+      "endLine": 71,
+      "scoring": "human",
+      "reviewer": "implementation worker"
+    },
+    {
+      "id": "vision",
+      "caseId": "AC-1",
+      "question": "Did it produce a VISION.md approved by the scripted user?",
+      "passed": true,
+      "startLine": 71,
+      "endLine": 83,
+      "scoring": "human",
+      "reviewer": "implementation worker"
+    }
+  ],
+  "conversationHash": "25268076a07082bf7bffc36190d4a80ec90df057555f30c8e94f4b0934347a56",
+  "nativeCheck": "unverified",
+  "diagnosis": "Generated storage-failure test uses Playwright check() despite rollback; replacing it with click() passes in scratch, but exact correction is unapproved and the created project remains unchanged."
+}
