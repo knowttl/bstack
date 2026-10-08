@@ -545,7 +545,7 @@ Acorn and Marked are root development dependencies used by this checker, not dep
 
 ## Findings
 
-`findings validate --findings <file>` and `findings render --findings <file>` require an explicit `--repo` or draft-only `--workspace` target.
+`findings validate --findings <file> --json` and `findings render --findings <file>` require an explicit `--repo` or draft-only `--workspace` target.
 The [findings schema](../skills/repo-audit/schemas/findings.schema.json) owns every field.
 Complete [audit](../tests/inputs/findings-audit.json) and [foundation](../tests/inputs/findings-foundation.json) examples deliberately lack execution evidence and therefore cannot claim ready.
 Replace their target placeholder with the resolved root and record the current full Git HEAD, or null for a repo without commits or a non-Git workspace.

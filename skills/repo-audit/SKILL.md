@@ -199,7 +199,7 @@ Use the shared verification rules and update the existing audit record, otherwis
 State the assessed revision or working-tree state, selected changes, actual commands and outcomes, preserved behaviour, remaining debt, decisions and limitations.
 Distinguish ready for the stated next change, decisions needed and verification blocked.
 A guessed debt score does not establish readiness.
-Validate the versioned findings with `findings validate --findings <file>` and render the proposed audit record using `findings render --findings <file>`, with the same explicit target.
+Validate the versioned findings with `findings validate --findings <file> --json` and render the proposed audit record using `findings render --findings <file>`, with the same explicit target.
 Render returns a scratch path and distinguishes documented, observed and inferred sources, selected changes and proposed new principles.
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
