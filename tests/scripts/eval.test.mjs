@@ -111,6 +111,34 @@ test('comparison blocks different models and unscored runs', async t => {
   assert.match(comparison.stdout, /same scenario, fixture revision, agent, model, stage and criteria/)
 })
 
+for (const [section, field, value] of [
+  ['scenario', 'fixture', 'ts-rule-proof'],
+  ['fixture', 'name', 'ts-rule-proof'],
+  ['scenario', 'request', 'Audit this existing repository.'],
+  ['scenario', 'answers', ['Choose online access instead.']],
+  ['scenario', 'invocation', 'implicit']
+]) {
+  for (const mode of ['without', 'with']) {
+    test(`comparison blocks changed ${section}.${field} in the ${mode} run`, async t => {
+      const directory = await temporary(t)
+      const baseline = start(t, directory)
+      const withSkill = start(t, directory, 'with', '--invocation', '/repo-audit')
+      for (const [record, passed] of [[baseline, false], [withSkill, true]]) {
+        const files = await inputs(directory, record, passed)
+        assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, passed ? 0 : 1)
+      }
+      const changed = mode === 'without' ? baseline : withSkill
+      const path = join(directory, changed.id, 'run.json')
+      const record = JSON.parse(await readFile(path, 'utf8'))
+      record[section][field] = value
+      await writeFile(path, JSON.stringify(record))
+      const comparison = run(directory, 'compare', '--without', baseline.id, '--with', withSkill.id)
+      assert.equal(comparison.status, 2, comparison.stdout)
+      assert.equal(comparison.data.status, 'blocked')
+    })
+  }
+}
+
 for (const passed of [true, false]) {
   test(`manual scoring records a ${passed ? 'passing' : 'failing'} reviewer verdict and preserves its transcript`, async t => {
     const directory = await temporary(t)

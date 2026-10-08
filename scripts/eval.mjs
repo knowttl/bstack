@@ -90,7 +90,8 @@ async function compare(opts, results) {
   const after = await load(results, opts.with)
   if (!before.transcript || !after.transcript) fail('Both runs need explicit scoring before comparison.')
   if (before.mode !== 'without' || after.mode !== 'with' || ['agent', 'model', 'criteriaHash', 'stage'].some(key => before[key] !== after[key]) ||
-      before.scenario.id !== after.scenario.id || before.fixture.revision !== after.fixture.revision) fail('Comparison requires the same scenario, fixture revision, agent, model, stage and criteria.')
+      before.scenario.id !== after.scenario.id || ['name', 'revision'].some(key => before.fixture[key] !== after.fixture[key]) ||
+      ['fixture', 'request', 'answers', 'invocation'].some(key => canonicalJSON(before.scenario[key]) !== canonicalJSON(after.scenario[key]))) fail('Comparison requires the same scenario, fixture revision, agent, model, stage and criteria, with identical fixture names, requests, scripted answers and invocation modes.')
   const lost = before.caseResults.filter(check => check.passed && !after.caseResults.find(item => item.id === check.id)?.passed)
   const gained = after.caseResults.filter(check => check.passed && !before.caseResults.find(item => item.id === check.id)?.passed)
   return { status: !lost.length && (gained.length > 0 || before.caseResults.every(check => check.passed)) ? 'passed' : 'failed',

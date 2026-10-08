@@ -71,6 +71,7 @@ npm run eval -- compare --without <baseline-id> --with <with-skill-id>
 ```
 
 Comparison requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.
+The scenario fixture, built fixture name, outcome request, ordered scripted answers and invocation mode must also match.
 No previously passing check may fail with the skill.
 At least one more check must pass with the skill, unless every check already passed in the baseline and still passes.
 Unscored or incomparable runs stay blocked.
