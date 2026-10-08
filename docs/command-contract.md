@@ -760,6 +760,7 @@ The plan and acceptance sources are always fingerprinted too.
 The author owns the scope's completeness.
 An optional `skipReason` records why execution cannot run, leaving the check and any affected user flow unverified.
 All references, command objects, paths and scopes are validated before any check runs.
+The scratch destination is created and validated before any version probe or check, and reused for the final artifact.
 
 Before runs execute reproduction and protection checks.
 After runs execute outcome, protection and compatibility checks, plus reproduction checks to confirm the bug now succeeds.

@@ -55,6 +55,19 @@ test('capture records literal arguments, output tails, versions, fingerprint and
   assert.deepEqual(await snapshot(f.repo), original)
 })
 
+for (const phase of ['before', 'after']) {
+  test(`${phase} capture rejects scratch inside the target before any command executes`, { skip: process.platform === 'darwin' }, async t => {
+    const f = await setup(t, [check('journey', 'require("node:fs").writeFileSync("check-executed", "")', { role: 'protection' })])
+    f.plan.checks[0].command.versionArgs = ['-e', 'require("node:fs").writeFileSync("version-executed", "")']
+    await writeFile(f.path, JSON.stringify(f.plan))
+    const original = await snapshot(f.repo)
+    const result = run('run-checks', f.repo, { ...f.env, XDG_CACHE_HOME: f.repo, LOCALAPPDATA: f.repo }, ['--plan', f.path, '--phase', phase])
+    assert.equal(result.exit, 2)
+    assert.equal(result.problems[0].code, 'scratch-inside-target')
+    assert.deepEqual(await snapshot(f.repo), original)
+  })
+}
+
 test('ts-shop passing units cannot hide the failed checkout journey', async t => {
   const f = await setup(t)
   const repo = build(t, 'ts-shop')

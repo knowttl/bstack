@@ -106,6 +106,7 @@ export async function run(options) {
       }
     }
   }
+  const directory = await createScratch(target)
   const checks = []
   const controller = new AbortController()
   const cancel = () => controller.abort()
@@ -159,7 +160,6 @@ export async function run(options) {
   if (unsatisfied.some(check => check.status === 'failed')) status = 'failed'
   if (phase === 'after' && coverage.some(item => item.userJourney && item.status !== 'passed')) status = coverage.some(item => item.userJourney && item.status === 'failed') ? 'failed' : 'blocked'
   const journeyCoverage = coverage.some(item => item.userJourney && item.status === 'passed') ? 'User journey evidence captured.' : 'No user journey is verified by this result.'
-  const directory = await createScratch(target)
   const data = { schemaVersion: 1, runId: basename(directory), phase, status, planDigest, originalState, finalState, startedAt,
     completedAt: new Date().toISOString(), priorRun: prior?.runId ?? null, executionOrder: [...(prior ? [prior.runId] : []), basename(directory)], checks, coverage, journeyCoverage,
     limitations: ['Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Live probes remain unverified until C15b.'] }
