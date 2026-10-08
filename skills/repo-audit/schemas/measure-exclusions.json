@@ -1,0 +1,10 @@
+{
+  "title": "History exclusions version 1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "generatedPaths", "formattingCommits"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatedPaths": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "formattingCommits": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+  }
+}

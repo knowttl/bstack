@@ -355,7 +355,17 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.1 Write the research briefs and the citation check - five bounded read-only briefs, common report schema and exact-byte citation validation; [real discovery checkpoints](../tests/eval/results/discovery-C11a/summary.md) record sequential TypeScript/Python fallback and parallel subagent execution, checked citations, no-web limits and unchanged fixtures.
   - [x] T2.2 Build `inspect`. C11bc records read-only Git state, manifest hashes and prerequisite versions, with fixture fingerprint, missing-tool and unreadable-history tests in `tests/eval/results/tasks/T2.2.json`.
   - [x] T2.3 Build `inventory`. C11bc records equivalent document sources, absent kinds and scoped instruction candidates, with native fixtures and root, nested, local and ancestor cases in `tests/eval/results/tasks/T2.3.json`.
-  - [ ] T2.4 Build `measure` and `overlap`
+  - [x] T2.4 Build `measure` and `overlap`
+    - C12 implements revision-bound byte sizes, change and co-change commits, rename lineage, reported lock/generated/declared-formatting exclusions and shared declared write and contract paths.
+      Measurement follows merged ancestry with no fixed Git-output capture limit and excludes historical gitlink events.
+      The firstmate-approved scope measures only endpoint files, following detected lineage back through renames to addition.
+      The firstmate accepts merged deletion and unrelated path reuse as an attribution limitation: old-lifetime commits and co-change pairs can support the replacement's advisory signals, never violations, without changing the definition of a change.
+      Generated-directory exclusions now derive from the shared discovery policy.
+      Rename evidence respects the same path exclusions as frequency and co-change signals, while formatting-only exclusions retain rename evidence.
+      The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records earlier local checks and named fixture controls.
+      Final evidence refresh remains pending: the outer validation executor must regenerate T2.4.json and all five C12 command-output artifacts from final runs against the final implementation commit, recording firstmate decisions as specification amendments.
+      Firstmate defers this refresh to the next slice's first evidence-only commit, using the landed implementation revision.
+      Injected Windows/macOS cases run on Linux, while real platform execution and complete agent acceptance remain unverified.
   - [ ] T2.5 Build the findings schema and report
   - [ ] T2.6 Build protected writes and resume state
   - [ ] T2.7 Build verification capture and live probes

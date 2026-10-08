@@ -146,7 +146,14 @@ Run `node scripts/repo-audit.mjs inventory --repo <target> --json` to discover e
 Read the discovered sources before treating them as authoritative.
 Preserve distinct nested guidance and local or outside-repo instructions.
 Instruction consolidation candidates require content review, a current host loading check and author approval before protected edits.
-Deterministic architecture measurements remain unavailable until T2.4.
+Run `node scripts/repo-audit.mjs measure --repo <target> --range <base>..<head> --json` for revision-bound sizes, change frequency and co-change signals with supporting commits.
+Measurement covers eligible files present at the endpoint and follows detected lineage back through renames to addition.
+Merged deletion and unrelated path reuse can attribute old-lifetime commits and co-change pairs to the replacement; treat signals as advisory evidence, never violations.
+Use `--exclusions <file>` following `schemas/measure-exclusions.json` for project-generated paths and explicitly identified broad formatting commits.
+Compare two declared plans with `node scripts/repo-audit.mjs overlap --repo <target> --plans <file> <file> --json`, following `schemas/overlap-plan.json`.
+Plan paths use forward slashes, case-sensitive `*` and `?` within segments and whole-segment `**` for recursive matching, including planned new files.
+Signals do not establish violations, observed conflicts or semantic independence.
+Import and dependency analysis remains the native language tool's job.
 Manual observations do not establish that those helpers ran.
 
 Done when: Every relevant evidence source is inventoried or listed as unavailable, the starting state and native check results are recorded, and the audit distinguishes documented intent, observed behaviour and inferred intent with file citations.

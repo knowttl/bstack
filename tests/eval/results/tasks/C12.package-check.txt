@@ -1,0 +1,6 @@
+
+> bstack@0.0.0 check
+> node scripts/check-package.mjs
+
+check-package: passed
+

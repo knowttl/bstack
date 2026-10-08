@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T2.4",
+  "slice": "C12",
+  "sourceRevision": "d9d2cdc7da3003fed65198825ac88fca06b0758f",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs. Tiny adjacent slices are merged; this piece merges C12a and C12b.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1, T2.1 and T2.2-T2.3 (https://github.com/knowttl/bstack/pull/22: read-only `inspect` and `inventory`).\n\nThis piece is merged slice C12: task T2.4 \"Build `measure` and `overlap`\". Done evidence: rename/range/exclusion evidence, signal commits, no semantic violation inferred; declared glob semantics, shared path/contract controls.",
+  "amendments": [],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64 GNU/Linux",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "root-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C12.root-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "skill-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--prefix",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C12.skill-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "package-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C12.package-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "full-tests",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C12.full-tests.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.4",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.4"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C12.task-T2.4.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-50",
+      "kind": "automated",
+      "procedure": "ts-shop mixed responsibilities and coupled cluster have supporting signal commits; measure joins chained renames, excludes declared formatting and generated paths, and stays read-only.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C12.task-T2.4.txt"
+    },
+    {
+      "id": "AC-51",
+      "kind": "automated",
+      "procedure": "py-ledger cohesive module and startup remain signals without a violation classification.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C12.task-T2.4.txt"
+    },
+    {
+      "id": "AC-53",
+      "kind": "automated",
+      "procedure": "overlap reports seeded shared writes and shared contract files without target writes; overlap retains a changing contract ID across disjoint files; overlap declared glob src/**/*.ts against src/new.ts; overlap declared glob src/*.ts against src/nested/new.ts.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C12.task-T2.4.txt"
+    }
+  ],
+  "limitations": [
+    "Recorded execution is Linux and Node 24. Real Windows and macOS command execution remains unverified captain checklist evidence. Injected win32 and darwin tests cover portable literal paths and platform selection on Linux.",
+    "Automated task controls cover measurement and overlap command behaviour. Full agent acceptance for architecture candidate judgement in AC-50, AC-51 and AC-53 remains planned in the acceptance registry.",
+    "Signals do not establish semantic violations, import or dependency analysis, observed merge conflicts or semantic independence.",
+    "Generated exclusions use reported directory and lock-name conventions plus declared project patterns. Broad formatting commits require explicit declaration and are not inferred.",
+    "Sizes describe the resolved Git head. Rename detection uses Git 50% similarity and lineage within the selected history range. Merge commits use first-parent diffs. Shallow history can omit ancestors."
+  ]
+}
