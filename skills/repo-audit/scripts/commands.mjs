@@ -1,9 +1,19 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'probe record': {
+    module: './commands/probe.mjs',
+    options: ['name', 'phase', 'spec', 'approved-by-user', 'command'],
+    help: 'Capture a live call in scratch.\nUsage: repo-audit.mjs probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]\nDescriptor follows schemas/probe-spec.json. Side effects require approval for each call. Unavailable calls remain unverified.'
+  },
+  'probe compare': {
+    module: './commands/probe.mjs',
+    options: ['name', 'before', 'after'],
+    help: 'Require a successful matching live probe pair for an outside dependency.\nUsage: repo-audit.mjs probe compare --repo <path> --name <n> --before <run-id> --after <run-id> [--json]\nMissing, mismatched, unsuccessful or stale evidence cannot pass.'
+  },
   'run-checks': {
     module: './commands/run-checks.mjs',
     options: ['plan', 'phase', 'prior-run'],
-    help: 'Capture declared checks and user outcome coverage in scratch.\nUsage: repo-audit.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]\nPhase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Live probes remain unavailable.'
+    help: 'Capture declared checks and user outcome coverage in scratch.\nUsage: repo-audit.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]\nPhase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Outside dependencies also require probe record and probe compare.'
   },
   apply: {
     module: './commands/apply.mjs',
@@ -73,4 +83,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']

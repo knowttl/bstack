@@ -1,0 +1,615 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T2.7
+
+Selected 2 suite(s): tests/scripts/probe.test.mjs, tests/scripts/run-checks.test.mjs
+TAP version 13
+# Subtest: matching live calls capture literal arguments and pass across changed product inputs without target writes
+ok 1 - matching live calls capture literal arguments and pass across changed product inputs without target writes
+  ---
+  duration_ms: 715.430766
+  type: 'test'
+  ...
+# Subtest: comparison rejects a missing before probe
+ok 2 - comparison rejects a missing before probe
+  ---
+  duration_ms: 371.069165
+  type: 'test'
+  ...
+# Subtest: comparison rejects a missing after probe
+ok 3 - comparison rejects a missing after probe
+  ---
+  duration_ms: 486.318372
+  type: 'test'
+  ...
+# Subtest: comparison rejects changed endpoint
+ok 4 - comparison rejects changed endpoint
+  ---
+  duration_ms: 665.269587
+  type: 'test'
+  ...
+# Subtest: comparison rejects changed command
+ok 5 - comparison rejects changed command
+  ---
+  duration_ms: 570.943059
+  type: 'test'
+  ...
+# Subtest: comparison rejects changed environment
+ok 6 - comparison rejects changed environment
+  ---
+  duration_ms: 555.669473
+  type: 'test'
+  ...
+# Subtest: side-effect approval is refused before either version or live command and binds only the specific call
+ok 7 - side-effect approval is refused before either version or live command and binds only the specific call
+  ---
+  duration_ms: 774.227948
+  type: 'test'
+  ...
+# Subtest: a child argument cannot approve a side-effecting call
+ok 8 - a child argument cannot approve a side-effecting call
+  ---
+  duration_ms: 104.63179
+  type: 'test'
+  ...
+# Subtest: missing executable retains its reason and cannot verify the pair
+ok 9 - missing executable retains its reason and cannot verify the pair
+  ---
+  duration_ms: 464.397628
+  type: 'test'
+  ...
+# Subtest: timeout retains its reason and cannot verify the pair
+ok 10 - timeout retains its reason and cannot verify the pair
+  ---
+  duration_ms: 588.786056
+  type: 'test'
+  ...
+# Subtest: failed assertion retains its reason and cannot verify the pair
+ok 11 - failed assertion retains its reason and cannot verify the pair
+  ---
+  duration_ms: 484.968246
+  type: 'test'
+  ...
+# Subtest: declared input changes during a probe block its capture
+ok 12 - declared input changes during a probe block its capture
+  ---
+  duration_ms: 171.712562
+  type: 'test'
+  ...
+# Subtest: a later input change invalidates the after capture
+ok 13 - a later input change invalidates the after capture
+  ---
+  duration_ms: 491.98649
+  type: 'test'
+  ...
+# Subtest: a later environment change invalidates the after capture
+ok 14 - a later environment change invalidates the after capture
+  ---
+  duration_ms: 407.440022
+  type: 'test'
+  ...
+# Subtest: a later descriptor change invalidates the after capture
+ok 15 - a later descriptor change invalidates the after capture
+  ---
+  duration_ms: 423.518004
+  type: 'test'
+  ...
+# Subtest: comparison rejects swapped phases and capture reuse
+ok 16 - comparison rejects swapped phases and capture reuse
+  ---
+  duration_ms: 473.930127
+  type: 'test'
+  ...
+# Subtest: malformed descriptors and unsafe scopes do not execute the probe
+ok 17 - malformed descriptors and unsafe scopes do not execute the probe
+  ---
+  duration_ms: 158.644408
+  type: 'test'
+  ...
+# Subtest: ts-shop live stand-in disagrees with the passing mock so its probe pair is not ready
+ok 18 - ts-shop live stand-in disagrees with the passing mock so its probe pair is not ready
+  ---
+  duration_ms: 5232.895271
+  type: 'test'
+  ...
+# Subtest: capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes
+ok 19 - capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes
+  ---
+  duration_ms: 369.879814
+  type: 'test'
+  ...
+# Subtest: before capture rejects scratch inside the target before any command executes
+ok 20 - before capture rejects scratch inside the target before any command executes
+  ---
+  duration_ms: 159.332405
+  type: 'test'
+  ...
+# Subtest: after capture rejects scratch inside the target before any command executes
+ok 21 - after capture rejects scratch inside the target before any command executes
+  ---
+  duration_ms: 225.12729
+  type: 'test'
+  ...
+# Subtest: ts-shop passing units cannot hide the failed checkout journey
+ok 22 - ts-shop passing units cannot hide the failed checkout journey
+  ---
+  duration_ms: 5747.018524
+  type: 'test'
+  ...
+# Subtest: failed required check cannot pass and does not verify the user flow
+ok 23 - failed required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 181.558378
+  type: 'test'
+  ...
+# Subtest: skipped required check cannot pass and does not verify the user flow
+ok 24 - skipped required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 121.52605
+  type: 'test'
+  ...
+# Subtest: unavailable required check cannot pass and does not verify the user flow
+ok 25 - unavailable required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 135.902643
+  type: 'test'
+  ...
+# Subtest: timed out required check cannot pass and does not verify the user flow
+ok 26 - timed out required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 1135.374479
+  type: 'test'
+  ...
+# Subtest: failed version required check cannot pass and does not verify the user flow
+ok 27 - failed version required check cannot pass and does not verify the user flow
+  ---
+  duration_ms: 160.759433
+  type: 'test'
+  ...
+# Subtest: cancelled required check stays unverified even with other passing checks
+ok 28 - cancelled required check stays unverified even with other passing checks
+  ---
+  duration_ms: 221.975477
+  type: 'test'
+  ...
+# Subtest: a result covering no user journey explicitly reports that limit
+ok 29 - a result covering no user journey explicitly reports that limit
+  ---
+  duration_ms: 178.638846
+  type: 'test'
+  ...
+# Subtest: an uncovered user flow remains unverified despite passing units
+ok 30 - an uncovered user flow remains unverified despite passing units
+  ---
+  duration_ms: 194.556333
+  type: 'test'
+  ...
+# Subtest: changed own bytes block the capture
+ok 31 - changed own bytes block the capture
+  ---
+  duration_ms: 176.713229
+  type: 'test'
+  ...
+# Subtest: changed new glob file block the capture
+ok 32 - changed new glob file block the capture
+  ---
+  duration_ms: 163.113186
+  type: 'test'
+  ...
+# Subtest: changed deleted glob file block the capture
+ok 33 - changed deleted glob file block the capture
+  ---
+  duration_ms: 146.407026
+  type: 'test'
+  ...
+# Subtest: a later input change blocks all executed checks
+ok 34 - a later input change blocks all executed checks
+  ---
+  duration_ms: 214.618705
+  type: 'test'
+  ...
+# Subtest: inputs restored before completion leave the boundary fingerprints equal
+ok 35 - inputs restored before completion leave the boundary fingerprints equal
+  ---
+  duration_ms: 216.681166
+  type: 'test'
+  ...
+# Subtest: changed inputs block the capture even when a command also fails
+ok 36 - changed inputs block the capture even when a command also fails
+  ---
+  duration_ms: 147.342455
+  type: 'test'
+  ...
+# Subtest: a product file replaced by a directory retains completed command evidence
+ok 37 - a product file replaced by a directory retains completed command evidence
+  ---
+  duration_ms: 219.408798
+  type: 'test'
+  ...
+# Subtest: a product file replaced by a dangling link retains completed command evidence
+ok 38 - a product file replaced by a dangling link retains completed command evidence
+  ---
+  duration_ms: 225.236766
+  type: 'test'
+  ...
+# Subtest: a acceptance source replaced by a directory retains completed command evidence
+ok 39 - a acceptance source replaced by a directory retains completed command evidence
+  ---
+  duration_ms: 255.731863
+  type: 'test'
+  ...
+# Subtest: a acceptance source replaced by a dangling link retains completed command evidence
+ok 40 - a acceptance source replaced by a dangling link retains completed command evidence
+  ---
+  duration_ms: 272.322305
+  type: 'test'
+  ...
+# Subtest: a plan replaced by a directory retains completed command evidence
+ok 41 - a plan replaced by a directory retains completed command evidence
+  ---
+  duration_ms: 228.391684
+  type: 'test'
+  ...
+# Subtest: an external plan edited during capture blocks results
+ok 42 - an external plan edited during capture blocks results
+  ---
+  duration_ms: 235.660384
+  type: 'test'
+  ...
+# Subtest: an external plan deleted during capture blocks results
+ok 43 - an external plan deleted during capture blocks results
+  ---
+  duration_ms: 230.741592
+  type: 'test'
+  ...
+# Subtest: an optional check's edited plan blocks the whole capture
+ok 44 - an optional check's edited plan blocks the whole capture
+  ---
+  duration_ms: 270.168095
+  type: 'test'
+  ...
+# Subtest: an optional check's deleted plan blocks the whole capture
+ok 45 - an optional check's deleted plan blocks the whole capture
+  ---
+  duration_ms: 290.387677
+  type: 'test'
+  ...
+# Subtest: an optional check's edited acceptance source blocks the whole capture
+ok 46 - an optional check's edited acceptance source blocks the whole capture
+  ---
+  duration_ms: 236.219864
+  type: 'test'
+  ...
+# Subtest: an optional check's deleted acceptance source blocks the whole capture
+ok 47 - an optional check's deleted acceptance source blocks the whole capture
+  ---
+  duration_ms: 220.251292
+  type: 'test'
+  ...
+# Subtest: before capture with no active required check runs no commands
+ok 48 - before capture with no active required check runs no commands
+  ---
+  duration_ms: 139.258615
+  type: 'test'
+  ...
+# Subtest: after capture with no active required check runs no commands
+ok 49 - after capture with no active required check runs no commands
+  ---
+  duration_ms: 105.451653
+  type: 'test'
+  ...
+# Subtest: glob capture fingerprints the literal file src/app/[id]/page.ts
+ok 50 - glob capture fingerprints the literal file src/app/[id]/page.ts
+  ---
+  duration_ms: 344.651144
+  type: 'test'
+  ...
+# Subtest: glob capture fingerprints the literal file src/{name}.ts
+ok 51 - glob capture fingerprints the literal file src/{name}.ts
+  ---
+  duration_ms: 378.992506
+  type: 'test'
+  ...
+# Subtest: glob capture fingerprints the literal file src/star*.ts
+ok 52 - glob capture fingerprints the literal file src/star*.ts
+  ---
+  duration_ms: 316.729197
+  type: 'test'
+  ...
+# Subtest: glob capture fingerprints the literal file src/question?.ts
+ok 53 - glob capture fingerprints the literal file src/question?.ts
+  ---
+  duration_ms: 315.641217
+  type: 'test'
+  ...
+# Subtest: a later file cwd is rejected before any version probe or check runs
+ok 54 - a later file cwd is rejected before any version probe or check runs
+  ---
+  duration_ms: 112.304753
+  type: 'test'
+  ...
+# Subtest: a later missing cwd is rejected before any version probe or check runs
+ok 55 - a later missing cwd is rejected before any version probe or check runs
+  ---
+  duration_ms: 133.871621
+  type: 'test'
+  ...
+# Subtest: a later NUL executable is rejected before any version probe or check runs
+ok 56 - a later NUL executable is rejected before any version probe or check runs
+  ---
+  duration_ms: 129.021743
+  type: 'test'
+  ...
+# Subtest: a later NUL argument is rejected before any version probe or check runs
+ok 57 - a later NUL argument is rejected before any version probe or check runs
+  ---
+  duration_ms: 114.699476
+  type: 'test'
+  ...
+# Subtest: a later NUL version argument is rejected before any version probe or check runs
+ok 58 - a later NUL version argument is rejected before any version probe or check runs
+  ---
+  duration_ms: 123.032008
+  type: 'test'
+  ...
+# Subtest: invalid unknown field is rejected before any command runs
+ok 59 - invalid unknown field is rejected before any command runs
+  ---
+  duration_ms: 147.16057
+  type: 'test'
+  ...
+# Subtest: invalid duplicate check is rejected before any command runs
+ok 60 - invalid duplicate check is rejected before any command runs
+  ---
+  duration_ms: 181.061375
+  type: 'test'
+  ...
+# Subtest: invalid missing case is rejected before any command runs
+ok 61 - invalid missing case is rejected before any command runs
+  ---
+  duration_ms: 163.745195
+  type: 'test'
+  ...
+# Subtest: invalid missing source is rejected before any command runs
+ok 62 - invalid missing source is rejected before any command runs
+  ---
+  duration_ms: 134.327884
+  type: 'test'
+  ...
+# Subtest: invalid missing pointer is rejected before any command runs
+ok 63 - invalid missing pointer is rejected before any command runs
+  ---
+  duration_ms: 143.856419
+  type: 'test'
+  ...
+# Subtest: invalid stale source is rejected before any command runs
+ok 64 - invalid stale source is rejected before any command runs
+  ---
+  duration_ms: 147.717285
+  type: 'test'
+  ...
+# Subtest: invalid unsafe scope is rejected before any command runs
+ok 65 - invalid unsafe scope is rejected before any command runs
+  ---
+  duration_ms: 199.084296
+  type: 'test'
+  ...
+# Subtest: invalid unsafe cwd is rejected before any command runs
+ok 66 - invalid unsafe cwd is rejected before any command runs
+  ---
+  duration_ms: 224.436901
+  type: 'test'
+  ...
+# Subtest: invalid invalid timeout is rejected before any command runs
+ok 67 - invalid invalid timeout is rejected before any command runs
+  ---
+  duration_ms: 213.753446
+  type: 'test'
+  ...
+# Subtest: invalid string command is rejected before any command runs
+ok 68 - invalid string command is rejected before any command runs
+  ---
+  duration_ms: 212.504142
+  type: 'test'
+  ...
+# Subtest: invalid agent execution claim is rejected before any command runs
+ok 69 - invalid agent execution claim is rejected before any command runs
+  ---
+  duration_ms: 246.975947
+  type: 'test'
+  ...
+# Subtest: a refactor without prior protective capture is rejected before compatibility runs
+ok 70 - a refactor without prior protective capture is rejected before compatibility runs
+  ---
+  duration_ms: 244.175591
+  type: 'test'
+  ...
+# Subtest: before protection with an unavailable final snapshot cannot serve as prior evidence
+ok 71 - before protection with an unavailable final snapshot cannot serve as prior evidence
+  ---
+  duration_ms: 535.385969
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by changed bytes from an optional check
+ok 72 - before protection capture is blocked by changed bytes from an optional check
+  ---
+  duration_ms: 615.60806
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by changed mode from an optional check
+ok 73 - before protection capture is blocked by changed mode from an optional check
+  ---
+  duration_ms: 836.348733
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by new glob file from an optional check
+ok 74 - before protection capture is blocked by new glob file from an optional check
+  ---
+  duration_ms: 586.020271
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by deleted glob file from an optional check
+ok 75 - before protection capture is blocked by deleted glob file from an optional check
+  ---
+  duration_ms: 643.733295
+  type: 'test'
+  ...
+# Subtest: before protection capture is blocked by created absent literal from an optional check
+ok 76 - before protection capture is blocked by created absent literal from an optional check
+  ---
+  duration_ms: 1280.595015
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by changed bytes from an optional check
+ok 77 - before reproduction capture is blocked by changed bytes from an optional check
+  ---
+  duration_ms: 966.84204
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by changed mode from an optional check
+ok 78 - before reproduction capture is blocked by changed mode from an optional check
+  ---
+  duration_ms: 643.749518
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by new glob file from an optional check
+ok 79 - before reproduction capture is blocked by new glob file from an optional check
+  ---
+  duration_ms: 663.757047
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by deleted glob file from an optional check
+ok 80 - before reproduction capture is blocked by deleted glob file from an optional check
+  ---
+  duration_ms: 836.328525
+  type: 'test'
+  ...
+# Subtest: before reproduction capture is blocked by created absent literal from an optional check
+ok 81 - before reproduction capture is blocked by created absent literal from an optional check
+  ---
+  duration_ms: 838.670578
+  type: 'test'
+  ...
+# Subtest: before capture includes glob inputs and another check’s absent literal
+ok 82 - before capture includes glob inputs and another check’s absent literal
+  ---
+  duration_ms: 694.07893
+  type: 'test'
+  ...
+# Subtest: capture combines glob discovery with excluded build output from a literal scope
+ok 83 - capture combines glob discovery with excluded build output from a literal scope
+  ---
+  duration_ms: 1248.572221
+  type: 'test'
+  ...
+# Subtest: capture combines glob discovery with explicit symlink from a literal scope
+ok 84 - capture combines glob discovery with explicit symlink from a literal scope
+  ---
+  duration_ms: 1090.566445
+  type: 'test'
+  ...
+# Subtest: before capture blocks changes to an inactive check’s declared inputs
+ok 85 - before capture blocks changes to an inactive check’s declared inputs
+  ---
+  duration_ms: 653.886629
+  type: 'test'
+  ...
+# Subtest: prior protection requires matching original and final snapshots
+ok 86 - prior protection requires matching original and final snapshots
+  ---
+  duration_ms: 1008.318278
+  type: 'test'
+  ...
+# Subtest: a protected refactor passes only after compatibility runs against changed state
+ok 87 - a protected refactor passes only after compatibility runs against changed state
+  ---
+  duration_ms: 1077.722274
+  type: 'test'
+  ...
+# Subtest: failed protection cannot establish prior refactor evidence
+ok 88 - failed protection cannot establish prior refactor evidence
+  ---
+  duration_ms: 630.023556
+  type: 'test'
+  ...
+# Subtest: skipped protection cannot establish prior refactor evidence
+ok 89 - skipped protection cannot establish prior refactor evidence
+  ---
+  duration_ms: 425.91398
+  type: 'test'
+  ...
+# Subtest: changing the check plan cannot reuse prior protection
+ok 90 - changing the check plan cannot reuse prior protection
+  ---
+  duration_ms: 500.597578
+  type: 'test'
+  ...
+# Subtest: after capture cannot pretend to be prior refactor protection
+ok 91 - after capture cannot pretend to be prior refactor protection
+  ---
+  duration_ms: 956.265783
+  type: 'test'
+  ...
+# Subtest: compatibility failure prevents a protected refactor from passing
+ok 92 - compatibility failure prevents a protected refactor from passing
+  ---
+  duration_ms: 764.100219
+  type: 'test'
+  ...
+# Subtest: bug fix requires normally failing reproduction before and passing reproduction after
+ok 93 - bug fix requires normally failing reproduction before and passing reproduction after
+  ---
+  duration_ms: 794.11817
+  type: 'test'
+  ...
+# Subtest: passing reproduction before change cannot satisfy the bug prerequisite
+ok 94 - passing reproduction before change cannot satisfy the bug prerequisite
+  ---
+  duration_ms: 318.083352
+  type: 'test'
+  ...
+# Subtest: a reproduction timeout is not a recorded bug
+ok 95 - a reproduction timeout is not a recorded bug
+  ---
+  duration_ms: 1230.145104
+  type: 'test'
+  ...
+# Subtest: a reproduction version failure is not a recorded bug
+ok 96 - a reproduction version failure is not a recorded bug
+  ---
+  duration_ms: 172.216494
+  type: 'test'
+  ...
+# Subtest: a reproduction unavailable tool is not a recorded bug
+ok 97 - a reproduction unavailable tool is not a recorded bug
+  ---
+  duration_ms: 139.846829
+  type: 'test'
+  ...
+# Subtest: bug-fix requires a required reproduction check in its plan
+ok 98 - bug-fix requires a required reproduction check in its plan
+  ---
+  duration_ms: 110.371781
+  type: 'test'
+  ...
+# Subtest: refactor requires a required protection check in its plan
+ok 99 - refactor requires a required protection check in its plan
+  ---
+  duration_ms: 105.908296
+  type: 'test'
+  ...
+# Subtest: refactor requires a required compatibility check in its plan
+ok 100 - refactor requires a required compatibility check in its plan
+  ---
+  duration_ms: 130.829444
+  type: 'test'
+  ...
+1..100
+# tests 100
+# suites 0
+# pass 100
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37693.81925
