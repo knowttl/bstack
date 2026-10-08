@@ -1,5 +1,15 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'rule-proof': {
+    module: './commands/rule-proof.mjs',
+    options: ['check-plan', 'check-id', 'valid', 'violation', 'expect'],
+    help: 'Prove a selected native check against disposable valid and violation copies.\nUsage: repo-audit.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]\nUses schemas/check-plan.json. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.'
+  },
+  'baseline check': {
+    module: './commands/baseline.mjs',
+    options: ['baseline', 'violations', 'refresh', 'finding', 'findings', 'entry'],
+    help: 'Check visible temporary debt and reject new or fixed entries.\nUsage: repo-audit.mjs baseline check --repo <path> --baseline <repo-relative-file> --violations <file> [--refresh [--finding <id> --findings <file> --entry <file>]] [--json]\nBaseline follows schemas/baseline.schema.json; violations are an array of rule/path/key objects. Refresh removes fixed entries. Adding one entry requires a selected unresolved debt finding in its scope. A failing refresh writes nothing.'
+  },
   'project create': {
     module: './commands/project.mjs',
     options: ['plan', 'dry-run'],
@@ -88,4 +98,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']

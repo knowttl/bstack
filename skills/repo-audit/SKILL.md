@@ -109,7 +109,7 @@ Avoid speculative frameworks, service layers, integrations and empty document te
 The enforcement and architecture references are available for recommendations.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
 Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
-Native rule-proof and maintained enforcement remain T3.2 to T3.4 work, with portable maintenance in Phase 3a.
+Native rule-proof and debt baseline checks are available; maintained enforcement remains T3.4 work, with portable maintenance in Phase 3a.
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
 
@@ -137,7 +137,8 @@ Read the returned creation record for the captured setup and native first-journe
 Failed or interrupted setup and journey commands leave the created project unverified and available for recovery.
 Setup and journey commands already attempted are never rerun automatically, avoiding duplicate setup effects.
 Verify affected commands explicitly and retain fresh evidence before claiming readiness.
-Name native rule-proof, maintained enforcement and portable maintenance as pending later work.
+Prove selected native rules using the enforcement reference's rule-proof command and preserve the scratch evidence.
+Name maintained enforcement and portable maintenance as pending later work.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
@@ -211,7 +212,8 @@ Create findings following `schemas/findings.schema.json` in scratch.
 Run `findings validate --repo <target> --findings <file> --json`, then `findings render --repo <target> --findings <file> --json` before review.
 Missing execution evidence can leave the preview verification blocked without preventing review of its proposals.
 The enforcement and architecture references are available for recommendations.
-Native rule-proof remains T3.2 work, baseline handling T3.3 and maintained enforcement T3.4.
+Use the enforcement reference's rule-proof and debt baseline commands for selected rules and accepted temporary debt.
+Maintained enforcement remains T3.4 work.
 
 Done when: Every recommendation has a project-specific reason, evidence, principle, consequence, scope and verification method, with unresolved decisions and unsupported measurements visible.
 

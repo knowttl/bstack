@@ -311,9 +311,8 @@ Every slice records its task IDs, the original user intent and approved amendmen
 | C16 | T3.1 enforcement and architecture references | C8, C3, before C17 | Reviewed enforcement/architecture guidance, package check and two-stack relevance rubric |
 | C17 | T2.8 existing foundation integration | C15b and C16 | Audit before interview, clear-goals loading trace where observable, reviewed vision delta, different project recommendations, current native journey preserved |
 | C18 | T2.9 protected creation | C17 | Approved minimal journey, destination collision/no-write controls, directory/Git journal and interruption recovery |
-| C19a | T3.2 rule-proof and resulting reference revisions | C18 | Valid/private/alias/cycle proof with native tools in both clean stacks |
-| C19b | T3.3 baseline | C19a | Existing debt visible, new debt/unauthorised refresh rejected, fixed entry removal |
-| C20 | Rewritten T3.4 maintained local integration | C19b | Exact same command passes/fails disposable controls, web/core scoping, no swallowed failures |
+| C19 | T3.2 rule-proof, resulting T3.1 reference revisions and T3.3 baseline | C18 | Valid/private/alias/cycle proof with native tools in both clean stacks; existing debt visible, new debt/unauthorised refresh rejected, fixed entry removal |
+| C20 | Rewritten T3.4 maintained local integration | C19 | Exact same command passes/fails disposable controls, web/core scoping, no swallowed failures |
 | C21 | T3a.1 contract and T3a.2 collect | C20 | Valid pointers/leaf graph, full Git path inventory and explicit absent base blocked. Split contract and collector if needed |
 | C22a | T3a.3 assessment/freshness validation | C21 | No-impact/updated/decision cases, forged inventory and stale review rejected |
 | C22b | T3a.3 previous-policy/acceptance-source controls | C22a | Removed scope/config/checker cannot erase prior coverage, initial-contract provenance and approved acceptance changes |
@@ -416,13 +415,20 @@ Tick each task when its "Done when" commands pass.
     This slice adds no corrective skill guidance for that observation.
     [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks; Windows/macOS, later enforcement and maintenance remain pending.
 - Phase 3: Enforcement
-  - [ ] T3.1 Write the enforcement and architecture references (before T2.8)
+  - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
       `npm test -- --task T3.1` reuses package and skill command-interface suites, with package check and routing searches recorded in [task evidence](../tests/eval/results/tasks/T3.1.json).
       This checkpoint claims useful references only.
-      Rule-proof-driven reference revisions land with T3.2 in C19a, so the parent task remains open until that checkpoint.
-  - [ ] T3.2 Build `rule-proof`
-  - [ ] T3.3 Build debt baseline handling
+      C19 adds rule-proof usage, equivalent-resolution coverage limits and debt baseline guidance after native proof in both stacks.
+  - [x] T3.2 Build `rule-proof`
+    - C19 proves clean public imports and permitted direction, plus independently seeded private, alias/equivalent bridge and cycle violations using the researched TypeScript resolver and Python AST tools.
+      `npm test -- --task T3.2` also covers failed clean setup, missing tools, failed versions, wrong diagnostics, passing violations, timeouts and invalid selection.
+      [Task evidence](../tests/eval/results/tasks/T3.2.json) retains full-suite native versions, clean controls and independently seeded diagnostics with AC-52, AC-60 and AC-66 links.
+  - [x] T3.3 Build debt baseline handling
+    - Neither researched fixture tool has a native baseline feature; C19 supplies the baseline schema and `baseline check` with visible retained debt, new-debt rejection, fixed-entry removal and one-entry growth only for a selected unresolved debt finding.
+      `npm test -- --task T3.3` covers unauthorized refresh, selection, scope and metadata boundaries and no partial refresh writes.
+      [Task evidence](../tests/eval/results/tasks/T3.3.json) retains full-suite baseline checks and the AC-67 link, with Linux-only execution and native-analysis limitations.
+      Real Windows and macOS execution remains captain checklist evidence.
   - [ ] T3.4 Integrate scoped checks with the maintained local command
 - Phase 3a: Maintenance
   - [ ] T3a.1 Define the project contract
@@ -1225,7 +1231,7 @@ Phase evidence from the design: valid cases pass, and seeded violations fail thr
 **Depends on:** T1.3 and T0.3.
 Complete it before T2.8, which loads these references when it recommends principles and boundaries.
 This early checkpoint demonstrates useful references only, without claiming that rule-proof or maintenance exists.
-Native rule implementation stays in T3.2 to T3.4, and any reference revision that rule-proof results require lands with T3.2 (slice C19a).
+Native rule implementation stays in T3.2 to T3.4, and any reference revision that rule-proof results require lands with T3.2 in merged slice C19 alongside T3.3.
 
 **Inputs and outputs:** Approved principles and architecture sources -> enforcement and architecture references.
 

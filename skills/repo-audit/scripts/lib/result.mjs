@@ -14,6 +14,10 @@ export function emitResult({ command, status, problems = [], data = {}, inputs =
   const result = { schemaVersion: 1, command, status, problems, data, inputs }
   console.log(json ? JSON.stringify(result) : [
     `${command}: ${status}`,
+    ...(command === 'baseline check' ? [
+      ...data.debt?.map(entry => `debt: ${entry.rule} ${entry.path} ${entry.key}. Reason: ${entry.reason} Removal: ${entry.removalCondition}`) ?? [],
+      ...(data.refreshed ? ['baseline refreshed'] : [])
+    ] : []),
     ...(command === 'run-checks' && data.runId ? [`capture: ${data.runId}`, data.journeyCoverage,
       ...data.checks.map(check => `${check.id}: ${check.status}${check.reason ? ` (${check.reason})` : ''}`)] : []),
     ...(data.runId && command !== 'run-checks' ? [`run: ${data.runId}`, ...(data.outcome ? [data.outcome] : []),
