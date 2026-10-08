@@ -235,7 +235,12 @@ For a Git repo, capture an approved plan through `run-checks --repo <target> --p
 Use `schemas/check-plan.json` as the plan format, linking acceptance cases to approved source bytes and declaring relevant input scopes.
 Capture bug reproduction or refactor protection with `--phase before` before applying changes, then reuse the plan with `--prior-run <before-run-id>` afterward.
 Preserve the returned scratch artifact, coverage and execution order.
-Live probe capture remains C15b work.
+For each outside dependency, use `probe record --repo <target> --name <dependency> --phase before|after --spec <file> --json -- <executable> [args...]` with the same call before and after the change.
+The descriptor follows `schemas/probe-spec.json` and declares the endpoint, relevant environment keys, side effects, assumption and input scopes.
+The command must assert the agreed outcome and fail on disagreement.
+Use `probe compare --repo <target> --name <dependency> --before <run-id> --after <run-id> --json` to verify the pair against current inputs.
+Every side-effecting call requires explicit approval through `--approved-by-user` before the command delimiter.
+Retain both scratch records and the comparison alongside check evidence.
 
 | Change | Required evidence |
 |---|---|

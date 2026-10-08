@@ -34,7 +34,7 @@ export async function emptyRepo(t) {
 
 export function run(command, repo, env = process.env, extra = [], platform) {
   const injected = platform ? ['--import', join(checkout, 'tests', 'inputs', 'injected-platform.mjs')] : []
-  const result = spawnSync(process.execPath, [...injected, join(checkout, 'skills', 'repo-audit', 'scripts', 'repo-audit.mjs'), command, '--repo', repo, '--json', ...extra], { encoding: 'utf8', maxBuffer: Infinity, cwd: tmpdir(), env: platform ? { ...env, BSTACK_TEST_PLATFORM: platform } : env })
+  const result = spawnSync(process.execPath, [...injected, join(checkout, 'skills', 'repo-audit', 'scripts', 'repo-audit.mjs'), ...command.split(' '), '--repo', repo, '--json', ...extra], { encoding: 'utf8', maxBuffer: Infinity, cwd: tmpdir(), env: platform ? { ...env, BSTACK_TEST_PLATFORM: platform } : env })
   assert.equal(result.stderr, '')
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }

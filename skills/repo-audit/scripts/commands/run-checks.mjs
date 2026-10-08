@@ -162,7 +162,7 @@ export async function run(options) {
   const journeyCoverage = coverage.some(item => item.userJourney && item.status === 'passed') ? 'User journey evidence captured.' : 'No user journey is verified by this result.'
   const data = { schemaVersion: 1, runId: basename(directory), phase, status, planDigest, originalState, finalState, startedAt,
     completedAt: new Date().toISOString(), priorRun: prior?.runId ?? null, executionOrder: [...(prior ? [prior.runId] : []), basename(directory)], checks, coverage, journeyCoverage,
-    limitations: ['Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Live probes remain unverified until C15b.'] }
+    limitations: ['Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Outside dependencies require separate live probe record and compare evidence.'] }
   const path = join(directory, 'checks.json')
   await writeFile(path, JSON.stringify(data, null, 2) + '\n', { flag: 'wx' })
   return { status, problems, inputs: { repo: target.root, plan: options.plan, phase }, data: { ...data, path } }
