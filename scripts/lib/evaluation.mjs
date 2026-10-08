@@ -82,7 +82,8 @@ export async function checkRegistry(path) {
         if (!names.includes(procedure.name)) fail(`Completed procedure must name an existing literal test: ${procedure.name}`)
       } else {
         if (procedure.path !== 'tests/eval/scenarios/scenarios.json') fail('Agent and manual procedures must name a scenario.')
-        await scenario(procedure.name)
+        const definition = await scenario(procedure.name)
+        if (!definition.checks.some(check => check.caseId === item.id)) fail(`Scenario ${procedure.name} does not check ${item.id}`)
       }
       for (const file of [procedure.path, ...procedure.artifacts]) {
         if (!(await stat(resolve(root, file))).isFile() || !(await readFile(resolve(root, file))).length) fail(`Evidence is missing or empty: ${file}`)

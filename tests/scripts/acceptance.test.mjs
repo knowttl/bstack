@@ -47,6 +47,29 @@ for (const [name, mutate] of [
   })
 }
 
+for (const evidenceType of ['agent', 'manual']) {
+  for (const [caseId, name, expected] of [
+    ['AC-1', 'ambiguous-idea', 2],
+    ['AC-2', 'ambiguous-idea', 0],
+    ['AC-9', 'new-idea', 0]
+  ]) {
+    test(`completed ${evidenceType} procedure ${expected ? 'blocks' : 'accepts'} ${name} for ${caseId}`, async t => {
+      const directory = await temporary(t)
+      const data = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+      const entry = data.cases.find(item => item.id === caseId)
+      entry.evidenceType = evidenceType
+      entry.procedure = { status: 'completed', path: 'tests/eval/scenarios/scenarios.json', name,
+        artifacts: ['tests/eval/scenarios/scenarios.json'] }
+      const path = join(directory, 'cases.json')
+      await writeFile(path, JSON.stringify(data))
+      const result = run('--check-registry', '--registry', path)
+      assert.equal(result.status, expected, result.stdout)
+      if (expected) assert.equal(result.data.problems[0].message, `Scenario ${name} does not check ${caseId}`)
+      else assert.deepEqual(result.data.data, { registered: 75, planned: 74, passed: 0 })
+    })
+  }
+}
+
 test('duplicate final selections are blocked independently of run history', async t => {
   const directory = await temporary(t)
   const path = join(directory, 'selections.json')

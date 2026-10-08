@@ -90,6 +90,7 @@ A planned procedure has `status: planned` and a nonempty `description`.
 A completed procedure has `status: completed`, `path`, `name` and nonempty `artifacts`.
 Automated procedures name a registered suite and an existing literal top-level `test` name.
 Agent and manual procedures name `tests/eval/scenarios/scenarios.json` and an existing scenario ID.
+That scenario must contain a check for the registered acceptance case.
 Completed procedure and artifact paths must exist as nonempty files.
 Registry validation proves registration and definitions, and reports zero passed cases.
 It never scores planned or completed definitions as acceptance evidence.
