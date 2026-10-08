@@ -80,7 +80,8 @@ async function preview(context) {
 }
 
 for (const value of ['node check.mjs || true', 'node check.mjs || :', 'node check.mjs; true', 'node check.mjs; exit 0', 'node check.mjs &',
-  'node check.mjs | cat', '! node check.mjs', 'set +e && node check.mjs', 'sh -c "node check.mjs || :"']) {
+  'node check.mjs | cat', '! node check.mjs', 'set +e && node check.mjs', 'sh -c "node check.mjs || :"',
+  "CI=true sh -c 'npm run check || true'", "npm test && CI=true sh -c 'npm run check || true'"]) {
   test(`apply rejects swallowed package command failure: ${value}`, async t => {
     const proposed = JSON.stringify({ scripts: { check: value } })
     const context = await setup(t, 'replace-file', '{}', { content: proposed }, proposed, 'package.json')
@@ -103,6 +104,29 @@ for (const proposed of [
     const context = await setup(t, 'replace-file', '', { content: proposed }, proposed, 'ci.yml')
     assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
   })
+}
+
+for (const key of ['run', 'script']) {
+  for (const scalar of ['npm run check\n      || true', '>\n      npm run check\n      || true',
+    '"npm run check\n      || true"', "'npm run check\n      || true'",
+    '"npm run check \\x7c\\x7c true"', "CI=true sh -c 'npm run check || true'",
+    "npm test && CI=true sh -c 'npm run check || true'"]) {
+    const proposed = `steps:\n  - ${key}: ${scalar}\n`
+    test(`apply rejects folded or prefixed CI failure: ${JSON.stringify(proposed)}`, async t => {
+      const context = await setup(t, 'replace-file', '', { content: proposed }, proposed, 'ci.yml')
+      assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+    })
+  }
+  for (const scalar of ['|\n      npm run check', '|-\n      npm run check &&\n      npm test',
+    '>\n      npm run check &&\n      npm test', 'npm run check &&\n      npm test',
+    '"npm run check" # selected check', "'npm run check' # selected check", '"npm run \\x63heck"']) {
+    const proposed = `steps:\n  - ${key}: ${scalar}\n    name: Check\n`
+    test(`apply accepts decoded CI scalar with sibling: ${JSON.stringify(proposed)}`, async t => {
+      const context = await setup(t, 'replace-file', '', { content: proposed }, proposed, 'ci.yml')
+      assert.equal((await preview(context)).exit, 0)
+      assert.equal(execute(context).exit, 0)
+    })
+  }
 }
 
 for (const [path, proposed] of [

@@ -1,4 +1,5 @@
 import { basename } from 'node:path'
+import { isAlias, isMap, isScalar, parseDocument, visit } from 'yaml'
 import { inspectJSON } from './json.mjs'
 import { CommandError } from './result.mjs'
 
@@ -11,6 +12,9 @@ function reject(path) {
 // A bounded command grammar avoids claiming to understand arbitrary shell programs.
 // Quoted arguments are literal; shell control flow must use fail-fast && chains.
 function command(text, path) {
+  const lines = text.trim().split(/\r?\n/).map(line => line.trim()).filter(Boolean)
+  if (lines.slice(0, -1).some(line => !line.endsWith('&&'))) reject(path)
+  text = lines.join(' ')
   let quote = null
   let escaped = false
   let word = ''
@@ -37,6 +41,7 @@ function command(text, path) {
   for (const [index, word] of words.entries()) {
     if (word === '&&' && words[index - 1] === '&&') reject(path)
     if (word === '&&') { first = true; continue }
+    if (first && /^[A-Za-z_][A-Za-z0-9_]*=/.test(word)) reject(path)
     if (first && ['set', 'exit', 'trap', 'eval', 'exec', 'env', 'sh', 'bash', 'zsh', 'cmd', 'powershell', 'pwsh']
       .includes(word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.exe$/, ''))) reject(path)
     first = false
@@ -56,33 +61,17 @@ export function validateCheckIntegration(path, original, proposed) {
     }
   }
   if (!/\.(ya?ml)$/i.test(path)) return
-  const lines = proposed.split(/\r?\n/)
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
-    if (/^\s*[\[{]|:\s*[\[{*&!]/.test(line) && !/^\s*#/.test(line)) reject(path)
-    const setting = line.match(/^\s*(?:-\s*)?(?:['"])?(continue-on-error|allow_failure)(?:['"])?\s*:\s*(.*?)\s*(?:#.*)?$/)
-    if (setting && setting[2] !== 'false') reject(path)
-    const run = line.match(/^(\s*)(?:-\s*)?(?:['"])?(?:run|script)(?:['"])?\s*:\s*(.*)$/)
-    if (!run) continue
-    let value = run[2].trim()
-    if (/^[\[{*&!]/.test(value)) reject(path)
-    if (/^[|>][+-]?$/.test(value)) {
-      const block = []
-      while (i + 1 < lines.length && (!lines[i + 1].trim() || lines[i + 1].match(/^\s*/)[0].length > run[1].length)) {
-        const next = lines[++i].trim()
-        if (next && !next.startsWith('#')) block.push(next)
-      }
-      value = block.join(' ')
-      // Each line must explicitly propagate failure to the next command.
-      if (block.slice(0, -1).some(item => !item.endsWith('&&'))) reject(path)
-    } else if (value.startsWith('"') || value.startsWith("'")) {
-      if (value.startsWith('"')) {
-        try { value = JSON.parse(value) } catch { reject(path) }
-      } else {
-        if (!value.endsWith("'")) reject(path)
-        value = value.slice(1, -1).replaceAll("''", "'")
-      }
+  const document = parseDocument(proposed)
+  if (document.errors.length || document.warnings.length) reject(path)
+  visit(document, (_, node) => {
+    if (isAlias(node) || node?.anchor || node?.tag || node?.flow) reject(path)
+    if (!isMap(node)) return
+    for (const { key, value } of node.items) {
+      if (!isScalar(key)) reject(path)
+      if (['continue-on-error', 'allow_failure'].includes(key.value) && (!isScalar(value) || value.value !== false)) reject(path)
+      if (!['run', 'script'].includes(key.value)) continue
+      if (!isScalar(value) || typeof value.value !== 'string') reject(path)
+      command(value.value, path)
     }
-    command(value, path)
-  }
+  })
 }
