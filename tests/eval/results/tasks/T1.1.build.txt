@@ -1,3 +1,67 @@
-{"name":"new-idea","path":"/tmp/bstack-new-idea-44ZZWk","kind":"idea"}
-{"name":"ambiguous-idea","path":"/tmp/bstack-ambiguous-idea-6uJoZf","kind":"idea"}
-{"name":"clear-goals","path":"/tmp/bstack-clear-goals-yQsHoz","kind":"repo"}
+{"name":"new-idea","path":"/tmp/bstack-new-idea-PYVSEA","kind":"idea"}
+{"name":"ambiguous-idea","path":"/tmp/bstack-ambiguous-idea-hxBNq4","kind":"idea"}
+{"name":"clear-goals","path":"/tmp/bstack-clear-goals-wt4jSO","kind":"repo"}
+ts-shop: npm ci --ignore-scripts --no-audit --no-fund exited 0
+ts-shop: npm run check exited 0
+ts-shop: npm test exited 0
+ts-shop: /home/brytton/.nvm/versions/node/v24.17.0/bin/node boundaries.mjs exited 1
+ts-shop: /home/brytton/.nvm/versions/node/v24.17.0/bin/node --input-type=module -e import { postOrder } from './packages/web/routes.ts'; if (postOrder(6).total !== 64.8) process.exit(1) exited 0
+ts-shop: /home/brytton/.nvm/versions/node/v24.17.0/bin/node journey.mjs exited 1
+{"name":"ts-shop","path":"/tmp/bstack-ts-shop-E8sPee","kind":"repo"}
+py-ledger: uv sync --locked --python 3.12 exited 0
+py-ledger: uv run --no-sync ruff check . exited 0
+py-ledger: uv run --no-sync python -m unittest exited 0
+py-ledger: uv run --no-sync python -c from app import opening_balance; assert opening_balance() == 10 exited 0
+py-ledger: uv run --no-sync python boundaries.py exited 1
+py-ledger: uv run --no-sync python startup.py startup-output.json exited 0
+{"name":"py-ledger","path":"/tmp/bstack-py-ledger-Ex9HIx","kind":"repo"}
+ts-rule-proof: npm ci --ignore-scripts --no-audit --no-fund exited 0
+ts-rule-proof: npm run check exited 0
+ts-rule-proof: npm test exited 0
+ts-rule-proof: /home/brytton/.nvm/versions/node/v24.17.0/bin/node boundaries.mjs exited 0
+{"name":"ts-rule-proof","path":"/tmp/bstack-ts-rule-proof-qAIiX6","kind":"repo"}
+ts-rule-proof-private: npm ci --ignore-scripts --no-audit --no-fund exited 0
+ts-rule-proof-private: npm run check exited 0
+ts-rule-proof-private: npm test exited 0
+ts-rule-proof-private: /home/brytton/.nvm/versions/node/v24.17.0/bin/node boundaries.mjs exited 1
+{"name":"ts-rule-proof-private","path":"/tmp/bstack-ts-rule-proof-private-vOdFim","kind":"repo"}
+ts-rule-proof-alias: npm ci --ignore-scripts --no-audit --no-fund exited 0
+ts-rule-proof-alias: npm run check exited 0
+ts-rule-proof-alias: npm test exited 0
+ts-rule-proof-alias: /home/brytton/.nvm/versions/node/v24.17.0/bin/node boundaries.mjs exited 1
+{"name":"ts-rule-proof-alias","path":"/tmp/bstack-ts-rule-proof-alias-igFZGY","kind":"repo"}
+ts-rule-proof-cycle: npm ci --ignore-scripts --no-audit --no-fund exited 0
+ts-rule-proof-cycle: npm run check exited 0
+ts-rule-proof-cycle: npm test exited 0
+ts-rule-proof-cycle: /home/brytton/.nvm/versions/node/v24.17.0/bin/node boundaries.mjs exited 1
+{"name":"ts-rule-proof-cycle","path":"/tmp/bstack-ts-rule-proof-cycle-riMji0","kind":"repo"}
+py-rule-proof: uv sync --locked --python 3.12 exited 0
+py-rule-proof: uv run --no-sync ruff check . exited 0
+py-rule-proof: uv run --no-sync python -m unittest exited 0
+py-rule-proof: uv run --no-sync python -c from app import opening_balance; assert opening_balance() == 10 exited 0
+py-rule-proof: uv run --no-sync python boundaries.py exited 0
+{"name":"py-rule-proof","path":"/tmp/bstack-py-rule-proof-wJX5Km","kind":"repo"}
+py-rule-proof-private: uv sync --locked --python 3.12 exited 0
+py-rule-proof-private: uv run --no-sync ruff check . exited 0
+py-rule-proof-private: uv run --no-sync python -m unittest exited 0
+py-rule-proof-private: uv run --no-sync python -c from app import opening_balance; assert opening_balance() == 10 exited 0
+py-rule-proof-private: uv run --no-sync python boundaries.py exited 1
+{"name":"py-rule-proof-private","path":"/tmp/bstack-py-rule-proof-private-7vCddg","kind":"repo"}
+py-rule-proof-alias: uv sync --locked --python 3.12 exited 0
+py-rule-proof-alias: uv run --no-sync ruff check . exited 0
+py-rule-proof-alias: uv run --no-sync python -m unittest exited 0
+py-rule-proof-alias: uv run --no-sync python -c from app import opening_balance; assert opening_balance() == 10 exited 0
+py-rule-proof-alias: uv run --no-sync python boundaries.py exited 1
+{"name":"py-rule-proof-alias","path":"/tmp/bstack-py-rule-proof-alias-NDlq0H","kind":"repo"}
+py-rule-proof-cycle: uv sync --locked --python 3.12 exited 0
+py-rule-proof-cycle: uv run --no-sync ruff check . exited 0
+py-rule-proof-cycle: uv run --no-sync python -m unittest exited 0
+py-rule-proof-cycle: uv run --no-sync python -c from app import opening_balance; assert opening_balance() == 10 exited 0
+py-rule-proof-cycle: uv run --no-sync python boundaries.py exited 1
+{"name":"py-rule-proof-cycle","path":"/tmp/bstack-py-rule-proof-cycle-X4bpqt","kind":"repo"}
+{"name":"dirty-work","path":"/tmp/bstack-dirty-work-mBLXxY","kind":"repo"}
+{"name":"refactor","path":"/tmp/bstack-refactor-1Cq50v","kind":"repo"}
+{"name":"contract-removal","path":"/tmp/bstack-contract-removal-c0AMHS","kind":"repo"}
+Cloning into '/tmp/bstack-shallow-history-shallow-K3z4Se'...
+{"name":"shallow-history","path":"/tmp/bstack-shallow-history-shallow-K3z4Se","kind":"repo"}
+{"name":"installer-collision","path":"/tmp/bstack-installer-collision-CoVo5n","kind":"repo"}
