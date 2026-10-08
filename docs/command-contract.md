@@ -6,6 +6,94 @@ Command-specific options and input formats belong to their owning tasks and comm
 C4a establishes arguments, targets, paths, scratch and results.
 C4c adds command dispatch and the explicitly supported schema subset.
 
+## Measure and overlap
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs measure --repo <path> --range <base>..<head> [--exclusions <file>] --json
+node skills/repo-audit/scripts/repo-audit.mjs overlap --repo <path> --plans <file> <file> --json
+```
+
+Both commands require a Git repo, accept optional `--json`, and make no writes or scratch files.
+Input JSON filenames resolve from the caller's working directory.
+Missing options and unsupported arguments are usage errors, malformed inputs fail with named problems, and unavailable Git objects block measurement.
+The schemas reject unknown fields and use `schemaVersion: 1`.
+
+### Measurement
+
+`--range` is required, either a two-dot range excluding commits reachable from base, or a single revision including all its reachable history.
+Both endpoints resolve to commit IDs before collection.
+Three-dot and omitted endpoints are usage errors.
+`data.range` retains the requested range, resolved base (null for a single revision), head and resolved range.
+`data.shallow` identifies locally truncated history.
+The command never fetches missing history.
+
+`data.files` reports repo-relative paths, `bytes` at the resolved head, `changeCount` and supporting `commits` newest first.
+Sizes come from Git blobs, so working-tree changes and untracked files cannot alter measurement.
+The resolved head is the size evidence revision, including for files unchanged in the selected history range.
+A removed historical file has null bytes.
+Gitlinks are excluded as non-blobs.
+`data.coChangePairs` gives sorted path pairs, change counts and their supporting commits.
+There are no size or frequency thresholds, violation classifications or import analysis.
+
+History uses `git log` with 50% similarity rename detection and first-parent diffs for merge commits.
+Older names join the newest name found within the selected range, including chained renames.
+`data.renames` retains commit, original path, destination path and canonical path.
+Renames outside the range are not inferred.
+Counts describe same-commit changes, rather than observed merge conflicts.
+
+Default exclusions cover lock basenames at every depth: package-lock.json, npm-shrinkwrap.json, pnpm-lock.yaml, yarn.lock, bun.lock, bun.lockb, uv.lock, poetry.lock, Pipfile.lock, Cargo.lock, go.sum, Gemfile.lock and composer.lock.
+Generated directory conventions are .git, node_modules, .venv, venv, __pycache__, dist, build and .cache at every depth.
+Declare other generated files and broad formatting commits with the [exclusions schema](../skills/repo-audit/schemas/measure-exclusions.json):
+
+```json
+{
+  "schemaVersion": 1,
+  "generatedPaths": ["generated/**", "src/*.generated.*"],
+  "formattingCommits": ["<commit-in-the-range>"]
+}
+```
+
+Formatting commits resolve to full IDs and must belong to the range.
+The command excludes their changes from frequency and co-change while retaining their rename evidence.
+Formatting is explicitly identified by the caller, never guessed from size or commit messages.
+`data.exclusions` reports all applied rules, matching observed paths with their reason and pattern, and resolved formatting commit IDs.
+An excluded original or destination name excludes that rename event.
+No formatting commits are excluded when none are declared.
+
+### Declared overlap plans and glob semantics
+
+Each file follows the [overlap plan schema](../skills/repo-audit/schemas/overlap-plan.json):
+
+```json
+{
+  "schemaVersion": 1,
+  "id": "change-a",
+  "writePaths": ["src/**/*.mjs", "new-file.md"],
+  "contracts": [{ "id": "pricing", "files": ["contracts/price.json"] }]
+}
+```
+
+Plan IDs must differ, and changed contract IDs must be unique within each plan.
+`contracts` declares contracts the change will modify, rather than every contract it reads.
+Empty write and contract arrays are valid.
+Both write paths and contract files use these semantics:
+
+- Paths are repo-relative and case-sensitive on every platform, with `/` as the separator.
+- `*` matches zero or more Unicode characters within one nonempty path segment, and `?` matches one Unicode character excluding `/`.
+- Whole-segment `**` matches recursively across zero or more directories, so `src/**/*.mjs` includes `src/file.mjs` and `src/nested/file.mjs`.
+  A trailing `/**` matches descendants beneath its prefix.
+- Dotfiles match normally.
+  Other characters are literal, with no escaping, negation, character classes, brace expansion or extglobs.
+- Absolute paths, drive prefixes, backslashes, empty segments, `.` and `..` segments, NUL and unsupported glob syntax fail with `invalid-glob`.
+
+`data.sharedPaths` lists every intersecting declaration pair with `left`, `right` and a concrete `examplePath`.
+The example witnesses an intersection and need not exist in the working tree.
+Pattern comparison therefore includes planned new files, rather than expanding only the current repo inventory.
+`data.sharedContracts` reports pairs sharing a contract ID or intersecting contract file patterns, with both IDs, `sameId` and intersecting `files` in the same witness format.
+The same changed contract ID remains a signal even when its declared files differ.
+Disjoint declarations do not prove semantic independence or predict every conflict.
+The agent reviews shared changing interfaces and representations before making that judgement.
+
 ## Inspect and inventory
 
 ```sh

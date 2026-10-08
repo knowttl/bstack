@@ -355,7 +355,10 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.1 Write the research briefs and the citation check - five bounded read-only briefs, common report schema and exact-byte citation validation; [real discovery checkpoints](../tests/eval/results/discovery-C11a/summary.md) record sequential TypeScript/Python fallback and parallel subagent execution, checked citations, no-web limits and unchanged fixtures.
   - [x] T2.2 Build `inspect`. C11bc records read-only Git state, manifest hashes and prerequisite versions, with fixture fingerprint, missing-tool and unreadable-history tests in `tests/eval/results/tasks/T2.2.json`.
   - [x] T2.3 Build `inventory`. C11bc records equivalent document sources, absent kinds and scoped instruction candidates, with native fixtures and root, nested, local and ancestor cases in `tests/eval/results/tasks/T2.3.json`.
-  - [ ] T2.4 Build `measure` and `overlap`
+  - [x] T2.4 Build `measure` and `overlap`
+    - C12 implements revision-bound byte sizes, change and co-change commits, rename lineage, reported lock/generated/declared-formatting exclusions and shared declared write and contract paths.
+      The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records local checks and named fixture controls.
+      Injected Windows/macOS cases run on Linux, while real platform execution and complete agent acceptance remain unverified.
   - [ ] T2.5 Build the findings schema and report
   - [ ] T2.6 Build protected writes and resume state
   - [ ] T2.7 Build verification capture and live probes
