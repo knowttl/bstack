@@ -1421,13 +1421,10 @@ The board carries its run ID, exact-byte SHA-256 draft revision and unique card 
 The launcher must validate these bindings before accepting verdicts.
 The agent owns interpretation and a reviewed new draft, preserving the previous revision for resume.
 A verdict alone cannot mechanically rewrite arbitrary VISION prose.
-The launcher now validates target and preserved draft metadata before opening the pinned runtime.
-Verdict ingestion accepts the complete-round Context data JSON and an agent-revised Markdown draft, validates run, draft and all card IDs, then saves the revised bytes and reasoning in new scratch while preserving the original draft.
-It leaves explicit approval of the saved revision to the author.
-The [C10b manual procedure](../tests/eval/results/tasks/C10b.manual-board.md) opened the board on the shared server, but a clean retry still encountered changing browser snapshot generations before Record verdict.
-No verdict delivery or manual revised draft is claimed, and the session was ended.
-The [intent checkpoint](evaluation.md#intent-checkpoint-c10b) records actual isolated Codex runs, including a passing ambiguous decision and an unavailable new-idea vision review.
-The [implementation plan](implementation-plan.md#progress) retains T1.6 and T1.7 as incomplete until their missing live and approved-draft evidence is available.
+See the [launch and verdict contract](command-contract.md#vision-board-launch-and-verdicts) for implemented transport and scratch metadata.
+The [C10b manual procedure](../tests/eval/results/tasks/C10b.manual-board.md) owns the live board observations and interaction limitation.
+The [intent checkpoint](evaluation.md#intent-checkpoint-c10b) owns the isolated agent-run observations.
+The [implementation plan](implementation-plan.md#progress) records task completion and outstanding evidence.
 
 | Source | Verified fact | Effect on this design |
 |---|---|---|

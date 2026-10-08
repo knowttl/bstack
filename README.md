@@ -146,9 +146,7 @@ The agent interprets author reasoning into --draft, and verdicts validates run, 
 Read the saved revision back and obtain explicit author approval, preserving that approval and the revision in the scratch transcript.
 The previous draft and review decisions remain available for resume.
 Missing runtime or unavailable interaction leaves the draft intact and the review blocked.
-The C10b manual browser attempt remains blocked by changing snapshot generations, so AC-3 is still unverified despite passing command tests.
-The intent checkpoint stops after confirmed intent, resolved vocabulary and approved scratch vision when available.
-Protected creation in Step 5 remains a later prerequisite.
+See [build progress](docs/implementation-plan.md#progress) for outstanding live-review evidence and the [intent checkpoint](skills/repo-audit/SKILL.md#step-3-review-the-vision) for its completion boundary.
 
 Task evidence follows [the versioned schema](tests/eval/task-evidence.schema.json), with records and output artifacts in `tests/eval/results/tasks/`.
 Shipping slices use no-mistakes and recorded local verification, with no hosted CI or release automation.

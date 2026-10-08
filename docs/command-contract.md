@@ -81,11 +81,11 @@ Follow the runtime's ended-session and browser-disconnection instructions.
 With no reachable browser, preserve scratch and report interaction blocked.
 Runtime launch failures return blocked exit 2 with the nested install and server-access fix, leaving draft.md unchanged.
 The runtime inherits the host's server and state configuration.
-For this build's live verification, LAVISH_AXI_HOST=192.168.2.84 selects the shared server with its default state directory.
+See the [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md) for the observed server setup and interaction limits.
 
 Verdicts takes the complete-round Context data JSON embedded in the terminal's vision-verdict prompt.
 Copy that JSON unchanged to a scratch file, retaining the captured terminal response as provenance.
-The installed schemas/vision-verdicts.json defines the input:
+The installed [vision-verdicts schema](../skills/repo-audit/schemas/vision-verdicts.json) defines the input fields and accepted verdict labels:
 
 ```json
 {
@@ -99,7 +99,6 @@ The installed schemas/vision-verdicts.json defines the input:
 
 Every original card must occur exactly once.
 Unknown, missing, blank or duplicate IDs, unknown fields or verdict labels, incomplete rounds and incompatible run or draft bindings fail with exit 1 before creating a new scratch draft.
-Accepted labels are In vision, Off mission and Conditional.
 The agent interprets author reasoning into the nonempty UTF-8 revised Markdown supplied as --draft.
 The script validates transport and saves those exact revised bytes, rather than inferring semantic edits or author approval.
 On success it creates new scratch draft.md and review.json, returning their paths, the revised hash, previousDraft and approval: pending-author-review.
