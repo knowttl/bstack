@@ -139,7 +139,7 @@ test('destination symlink collision leaves both the link and its target unchange
   assert.deepEqual(await readdir(outside), [])
 })
 
-for (const fault of ['directory', 'file', 'git', 'partial-git']) {
+for (const fault of ['directory', 'temporary', 'partial-temporary', 'file', 'git', 'partial-git']) {
   test(`interruption after ${fault} creation resumes without duplicate setup effects`, async t => {
     const context = await setup(t)
     context.plan.setupCommands.push({ ...context.plan.journeyCommand, id: 'setup', args: ['-e', "require('node:fs').appendFileSync('setup-count.txt','once\\n')"] })
@@ -196,5 +196,17 @@ test('malformed JSON plan leaves the workspace unchanged', async t => {
   await writeFile(context.file, '{"schemaVersion":1,')
   const before = await snapshot(context.workspace)
   assert.notEqual(execute(context).exit, 0)
+  assert.deepEqual(await snapshot(context.workspace), before)
+})
+
+test('a changed recorded temporary blocks recovery without removing user bytes', async t => {
+  const context = await setup(t)
+  assert.equal(execute(context, { fault: 'temporary' }).exit, 91)
+  const temporary = (await readdir(context.destination)).find(path => path.startsWith('.bstack-'))
+  await writeFile(join(context.destination, temporary), 'user bytes\n')
+  const before = await snapshot(context.workspace)
+  const result = execute(context)
+  assert.equal(result.exit, 2)
+  assert.equal(result.problems[0].code, 'user-change')
   assert.deepEqual(await snapshot(context.workspace), before)
 })

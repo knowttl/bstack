@@ -1,5 +1,5 @@
 import { readFile, open, mkdir, rename, unlink, stat } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { scratchDirectory } from './scratch.mjs'
 import { resolveFilePath } from './paths.mjs'
@@ -90,9 +90,10 @@ async function durableDirectory(directory, limitations) {
   }
 }
 
-async function replaceFile(path, bytes, mode, limitations, beforeReplace) {
+async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary) {
   const temporary = join(dirname(path), `.bstack-${randomUUID()}.tmp`)
   try {
+    if (prepareTemporary) await prepareTemporary(temporary)
     await durableFile(temporary, bytes, mode)
     if (beforeReplace) await beforeReplace(temporary)
     try { await rename(temporary, path) } catch (error) {
@@ -127,7 +128,27 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
     if (state.conflicting.length || (!previous && state.edits.some((edit, index) => edit.actualHash !== staged[index].originalHash))) {
       throw new CommandError('blocked', [{ code: 'changed-precondition', message: 'Target bytes changed before execution.', fix: 'Review the changed files before applying.' }])
     }
-    if (previous && !state.pending.length) return { ...state, journal: journalPath, outcome: 'already-applied', limitations }
+    if (previous) {
+      const hasTemporaries = journal.edits.some(edit => edit.temporary)
+      for (const [index, recorded] of journal.edits.entries()) {
+        if (!recorded.temporary) continue
+        const path = await resolveFilePath(target.root, recorded.path, recorded.resolvedPath)
+        if (dirname(recorded.temporary) !== dirname(path) || !/^\.bstack-[0-9a-f-]{36}\.tmp$/.test(basename(recorded.temporary))) throw new Error('Recovery temporary path differs from its write directory.')
+        await resolveFilePath(dirname(path), basename(recorded.temporary), recorded.temporary)
+        const bytes = await fileBytes(recorded.temporary)
+        const proposed = Buffer.from(staged[index].proposedContent ?? '')
+        if (bytes !== null && (bytes.length > proposed.length || !bytes.equals(proposed.subarray(0, bytes.length)))) {
+          throw new CommandError('blocked', [{ code: 'user-change', message: 'The recorded temporary contains unrelated bytes.', path: recorded.temporary, fix: 'Preserve and review the changed temporary before resuming.' }])
+        }
+        if (bytes !== null) {
+          await unlink(recorded.temporary)
+          await syncDirectory(dirname(recorded.temporary), limitations)
+        }
+        recorded.temporary = null
+      }
+      if (hasTemporaries) await save()
+      if (!state.pending.length) return { ...state, journal: journalPath, outcome: 'already-applied', limitations }
+    }
     await durableDirectory(directory, limitations)
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
@@ -165,8 +186,12 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       } else {
         await durableDirectory(dirname(path), limitations)
         const mode = edit.originalHash === null ? undefined : (await stat(path)).mode
-        await replaceFile(path, Buffer.from(edit.proposedContent), mode, limitations, beforeWrite)
+        await replaceFile(path, Buffer.from(edit.proposedContent), mode, limitations, beforeWrite, async temporary => {
+          journal.edits[index].temporary = temporary
+          await save()
+        })
       }
+      journal.edits[index].temporary = null
       journal.edits[index].completed = true
       await save()
     }

@@ -23,12 +23,12 @@ async function exists(path) {
   }
 }
 
-async function inventory(root, files, directories, gitAllowed = false, temporary) {
+async function inventory(root, files, directories, gitAllowed = false, temporaries = []) {
   if (!await exists(root)) return
   async function visit(directory, prefix = '') {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
       const path = prefix + entry.name
-      if (join(root, path) === temporary && entry.isFile()) continue
+      if (temporaries.includes(join(root, path)) && entry.isFile()) continue
       if (gitAllowed && path === '.git' && entry.isDirectory()) continue
       if (entry.isDirectory() && directories.has(path)) await visit(join(directory, entry.name), path + '/')
       else if (!entry.isFile() || !files.has(path)) block('destination-collision', 'Unrelated paths block project creation.', path)
@@ -90,7 +90,8 @@ export async function run(options) {
   const git = (args, root = destination) => spawnSync('git', ['-C', root, ...args], { encoding: 'utf8', env })
   const gitVersion = git(['--version'], parent)
   if (gitVersion.error || gitVersion.status !== 0) block('git-unavailable', 'Git is required before creating the destination.')
-  if (!previous?.commandsStarted) await inventory(destination, files, directories, previous?.gitStarted)
+  const temporaries = journal?.edits.map(edit => edit.temporary).filter(Boolean) ?? []
+  if (!previous?.commandsStarted) await inventory(destination, files, directories, previous?.gitStarted, temporaries)
   if (await exists(join(destination, '.git'))) {
     const head = git(['rev-parse', '--show-toplevel'])
     if (!previous?.gitStarted || (previous.gitComplete && (head.status !== 0 || await realpath(head.stdout.trim()) !== destination))) block('git-collision', 'Existing Git metadata does not identify this reviewed creation.')
@@ -123,7 +124,7 @@ export async function run(options) {
       }
     }
     const applied = await applyWrites(target, changeSet, staged, prepared.directory, journal, findings.requiredOutcomes,
-      recovery.commandsStarted ? undefined : temporary => inventory(destination, files, directories, recovery.gitStarted, temporary))
+      recovery.commandsStarted ? undefined : temporary => inventory(destination, files, directories, recovery.gitStarted, [...temporaries, temporary]))
     if (applied.status) return { inputs, ...applied, data: { ...applied.data, recovery: recoveryPath } }
     if (!recovery.gitComplete) {
       await inventory(destination, files, directories, recovery.gitStarted)

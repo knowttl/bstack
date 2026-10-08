@@ -11,6 +11,16 @@ const destination = process.env.BSTACK_TEST_DESTINATION
 const nativeMkdir = fs.mkdir
 const nativeRename = fs.rename
 const nativeSpawnSync = child.spawnSync
+const nativeOpen = fs.open
+fs.open = async (...args) => {
+  const handle = await nativeOpen(...args)
+  if (['temporary', 'partial-temporary'].includes(fault) && args[1] === 'wx' && args[0].startsWith(destination)) {
+    if (fault === 'partial-temporary') handle.writeFile = async bytes => { await handle.write(bytes.subarray(0, 1)); process.exit(91) }
+    const sync = handle.sync.bind(handle)
+    handle.sync = async () => { await sync(); process.exit(91) }
+  }
+  return handle
+}
 fs.mkdir = async (...args) => {
   const result = await nativeMkdir(...args)
   if (fault === 'directory' && args[0] === destination) process.exit(91)
