@@ -210,3 +210,14 @@ test('a changed recorded temporary blocks recovery without removing user bytes',
   assert.equal(result.problems[0].code, 'user-change')
   assert.deepEqual(await snapshot(context.workspace), before)
 })
+
+test('removed Git metadata blocks a completed creation without recreating it', async t => {
+  const context = await setup(t)
+  assert.equal(execute(context).exit, 0)
+  await rm(join(context.destination, '.git'), { recursive: true })
+  const before = await snapshot(context.workspace)
+  const result = execute(context)
+  assert.equal(result.exit, 2)
+  assert.equal(result.problems[0].code, 'git-collision')
+  assert.deepEqual(await snapshot(context.workspace), before)
+})

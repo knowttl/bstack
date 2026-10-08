@@ -92,6 +92,7 @@ export async function run(options) {
   if (gitVersion.error || gitVersion.status !== 0) block('git-unavailable', 'Git is required before creating the destination.')
   const temporaries = journal?.edits.map(edit => edit.temporary).filter(Boolean) ?? []
   if (!previous?.commandsStarted) await inventory(destination, files, directories, previous?.gitStarted, temporaries)
+  if (previous?.gitComplete && !await exists(join(destination, '.git'))) block('git-collision', 'Previously initialised Git metadata is missing. Review its removal before continuing.')
   if (await exists(join(destination, '.git'))) {
     const head = git(['rev-parse', '--show-toplevel'])
     if (!previous?.gitStarted || (previous.gitComplete && (head.status !== 0 || await realpath(head.stdout.trim()) !== destination))) block('git-collision', 'Existing Git metadata does not identify this reviewed creation.')
