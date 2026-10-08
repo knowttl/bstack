@@ -22,5 +22,6 @@
   "T2.3": ["tests/scripts/inventory.test.mjs"],
   "T2.4": ["tests/scripts/measure.test.mjs", "tests/scripts/overlap.test.mjs"],
   "T2.5": ["tests/scripts/findings.test.mjs", "tests/scripts/schema-contract.test.mjs"],
-  "T2.6": ["tests/scripts/apply.test.mjs"]
+  "T2.6": ["tests/scripts/apply.test.mjs"],
+  "T2.7": ["tests/scripts/run-checks.test.mjs"]
 }
