@@ -1,4 +1,4 @@
-import { lstat, realpath } from 'node:fs/promises'
+import { lstat, realpath, stat } from 'node:fs/promises'
 import { dirname, isAbsolute, join, relative, resolve, sep, win32 } from 'node:path'
 import { CommandError } from './result.mjs'
 
@@ -38,4 +38,18 @@ export async function resolveLinks(destination) {
     }
   }
   return join(await realpath(parent), ...missing)
+}
+
+export async function resolveFilePath(root, input) {
+  const path = await resolvePath(root, input)
+  if (/[*?\[\]{}]/.test(input)) {
+    throw new CommandError('failed', [{ code: 'invalid-scope', message: 'Reviewed scope cannot contain globs.', fix: 'List concrete file paths, including planned absent files.', path: input }])
+  }
+  try {
+    if ((await stat(path)).isFile()) return path
+  } catch (error) {
+    if (error.code === 'ENOENT') return path
+    throw error
+  }
+  throw new CommandError('failed', [{ code: 'invalid-scope', message: 'Reviewed scope must identify a regular file or a planned absent file.', fix: 'List concrete file paths, including planned absent files.', path: input }])
 }

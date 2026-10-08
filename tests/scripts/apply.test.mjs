@@ -64,7 +64,10 @@ for (const [name, operation, original, payload, proposed, path] of [
   ['new JSON key preserves exact existing values', 'set-json-key', '{"big":9007199254740993}\n', { key: 'scripts', value: { test: 'new' } }, '{"big":9007199254740993,"scripts":{"test":"new"}}\n', 'config.json'],
   ['append line', 'append-line-once', 'old', { line: 'new' }, 'old\nnew\n', 'rules.txt'],
   ['existing appended line', 'append-line-once', 'old\r\nnew\r\n', { line: 'new' }, 'old\r\nnew\r\n', 'rules.txt'],
-  ['heading in fenced code is preserved', 'set-heading-section', '```md\n# A\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '```md\n# A\n```\n# A\nnew\n', 'README.md']
+  ['heading in fenced code is preserved', 'set-heading-section', '```md\n# A\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '```md\n# A\n```\n# A\nnew\n', 'README.md'],
+  ['comment in fenced code is preserved', 'set-heading-section', '```md\n<!--\n# A\n-->\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '```md\n<!--\n# A\n-->\n```\n# A\nnew\n', 'README.md'],
+  ['closing heading markers', 'set-heading-section', '# A ###\nold\n# B ###\nkeep\n', { heading: 'A', content: 'new\n' }, '# A ###\nnew\n# B ###\nkeep\n', 'README.md'],
+  ['CRLF empty heading boundary', 'set-heading-section', '# A\r\nold\r\n#\r\nkeep\r\n', { heading: 'A', content: 'new\r\n' }, '# A\r\nnew\r\n#\r\nkeep\r\n', 'README.md']
 ]) {
   test(`apply dry run stages ${name} with no project writes`, async t => {
     const context = await setup(t, operation, original, payload, proposed, path)
@@ -84,6 +87,74 @@ test('apply prints the exact selected-delete diff in plain and JSON output', asy
   assert.equal(result.status, 0)
   assert.equal(result.stdout, `apply: passed\n${expected}\n`)
   assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const boundary of ['#', '#   ', '# ###', '##', '###', '####', '#####', '######']) {
+  test(`heading edits preserve the empty ${JSON.stringify(boundary)} section`, async t => {
+    const level = boundary.trim().split(' ')[0].length
+    const heading = '#'.repeat(level) + ' A\n'
+    const context = await setup(t, 'set-heading-section', `${heading}old\n${boundary}\nkeep\n# C\nrest\n`,
+      { heading: 'A', content: 'new\n' }, `${heading}new\n${boundary}\nkeep\n# C\nrest\n`)
+    const result = await preview(context)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(result.data.edits[0].proposedContent, context.plan.edits[0].proposedContent)
+  })
+}
+
+for (const [name, original] of [
+  ['comment before selected heading', '<!--\n# A\n-->\n# A\nold\n'],
+  ['comment inside selected section', '# A\nold\n<!--\n# B\n-->\nkeep\n# C\nrest\n'],
+  ['inline comment', '# A\nold <!-- # B -->\n# C\nrest\n']
+]) {
+  test(`heading edits reject ${name} without project writes`, async t => {
+    const context = await setup(t, 'set-heading-section', original, { heading: 'A', content: 'new\n' }, '')
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'unsupported-format')
+  })
+}
+
+for (const [name, file, search, replacement] of [
+  ['plan member', 'file', '"originalHash":', '"originalHash":"discarded","originalHash":'],
+  ['escaped plan member', 'file', '"originalHash":', '"original\\u0048ash":"discarded","originalHash":'],
+  ['nested payload member', 'file', '"value":{"a":1}', '"value":{"a":0,"\\u0061":1}'],
+  ['findings member', 'findingsFile', '"nextChange":', '"nextChange":"discarded","nextChange":']
+]) {
+  test(`apply rejects duplicate ${name} before hashing with no project writes`, async t => {
+    const context = await setup(t, 'set-json-key', '{"a":0}\n', { key: 'a', value: { a: 1 } }, '{"a":{"a":1}}\n', 'config.json')
+    const input = await readFile(context[file], 'utf8')
+    await writeFile(context[file], input.replace(search, replacement))
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'duplicate-key')
+  })
+}
+
+for (const [path, code] of [
+  ['docs', 'invalid-scope'], ['docs/*.md', 'invalid-scope'], ['docs/?.md', 'invalid-scope'],
+  ['docs/[ab].md', 'invalid-scope'], ['docs/{a,b}.md', 'invalid-scope'], ['README.md/child', 'unresolved-path']
+]) {
+  for (const scope of ['plan', 'both']) {
+    test(`apply rejects unedited ${JSON.stringify(path)} in ${scope} scope without project writes`, async t => {
+      const context = await setup(t)
+      await mkdir(join(context.repo, 'docs'))
+      context.plan.reviewedScope.push({ path, resolvedPath: join(context.repo, path) })
+      if (scope === 'both') context.findings.reviewedScope.push(path)
+      await save(context)
+      const result = await preview(context)
+      assert.notEqual(result.exit, 0)
+      assert.ok(result.problems.some(problem => problem.code === code), JSON.stringify(result))
+    })
+  }
+}
+
+test('apply accepts unedited concrete planned files in reviewed scope', async t => {
+  const context = await setup(t)
+  const path = 'future/new.md'
+  context.findings.reviewedScope.push(path)
+  context.plan.reviewedScope.push({ path, resolvedPath: join(context.repo, path) })
+  await save(context)
+  assert.equal((await preview(context)).exit, 0)
 })
 
 for (const [name, mutate, code, refresh = true] of [

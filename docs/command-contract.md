@@ -663,7 +663,7 @@ Filesystem access failures block the command; invalid plans fail with named prob
 
 Payloads reject unknown and missing fields.
 Malformed JSON, duplicate keys at any depth (including escaped equivalents), JSON arrays at the root, binary/non-UTF-8 text and unsupported extensions fail.
-Heading edits reject setext headings, thematic breaks and unclosed fences rather than guessing a Markdown section boundary.
+Heading edits recognize empty ATX headings as section boundaries and reject HTML comments outside fenced code, setext headings, thematic breaks and unclosed fences rather than guessing a Markdown section boundary.
 The selected heading needs a line ending and a nonempty new body must end with a newline.
 Replacement searches with zero or multiple occurrences fail.
 Unsupported edits need the C14b reviewed whole-file interface.

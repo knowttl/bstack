@@ -1,42 +1,21 @@
 import { extname } from 'node:path'
 import { validateData } from './schema.mjs'
 import { CommandError } from './result.mjs'
+import { inspectJSON } from './json.mjs'
 
 function reject(code, message) {
   throw new CommandError('failed', [{ code, message, fix: 'Review a supported, unambiguous mechanical edit and its complete proposed bytes.' }])
 }
 
-// JSON.parse accepts duplicate keys. Inspect tokens before allowing an edit.
 function jsonObject(text) {
-  let value
-  try { value = JSON.parse(text) } catch { reject('unsupported-format', 'Expected valid JSON.') }
-  if (value === null || typeof value !== 'object' || Array.isArray(value)) reject('unsupported-format', 'Expected a JSON object at the root.')
-  const tokens = [...text.matchAll(/"(?:[^"\\]|\\.)*"|[{}\[\],:]|[^\s{}\[\],:]+/g)]
-  const entries = new Map()
-  let index = 0
-  function consume(root = false) {
-    const token = tokens[index++][0]
-    if (token !== '{' && token !== '[') return
-    const keys = new Set()
-    const close = token === '{' ? '}' : ']'
-    while (tokens[index][0] !== close) {
-      let key
-      if (token === '{') {
-        key = JSON.parse(tokens[index++][0])
-        if (keys.has(key)) reject('duplicate-key', `Duplicate JSON key: ${key}`)
-        keys.add(key)
-        index++ // The JSON parser already validated the colon.
-      }
-      const start = tokens[index].index
-      consume()
-      const last = tokens[index - 1]
-      if (root) entries.set(key, { start, end: last.index + last[0].length })
-      if (tokens[index][0] === ',') index++
-    }
-    index++
+  let parsed
+  try { parsed = inspectJSON(text) } catch (error) {
+    if (error instanceof CommandError) throw error
+    reject('unsupported-format', 'Expected valid JSON.')
   }
-  consume(true)
-  return { entries, close: tokens[index - 1].index }
+  const { value } = parsed
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) reject('unsupported-format', 'Expected a JSON object at the root.')
+  return parsed
 }
 
 function headingSection(text, heading, content) {
@@ -50,9 +29,10 @@ function headingSection(text, heading, content) {
       if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined
     } else if (marker) fence = marker[1]
     else {
+      if (line.includes('<!--')) reject('unsupported-format', 'HTML comments require a reviewed replacement.')
       if (/^ {0,3}(?:=+|-+)\s*$/.test(line)) reject('unsupported-format', 'Setext headings and thematic breaks require a reviewed replacement.')
-      const match = /^ {0,3}(#{1,6})[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*(?:\r?\n)?$/.exec(line)
-      if (match) headings.push({ title: match[2], level: match[1].length, start: offset, body: offset + line.length })
+      const match = /^ {0,3}(#{1,6})(?:[ \t]+(.*))?$/.exec(line.replace(/\r?\n$/, ''))
+      if (match) headings.push({ title: (match[2] ?? '').replace(/(?:^|[ \t]+)#+[ \t]*$/, '').trim(), level: match[1].length, start: offset, body: offset + line.length })
     }
     offset += line.length
   }

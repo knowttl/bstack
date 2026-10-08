@@ -2,7 +2,8 @@ import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolvePath } from '../lib/paths.mjs'
+import { resolvePath, resolveFilePath } from '../lib/paths.mjs'
+import { inspectJSON } from '../lib/json.mjs'
 import { canonicalJSON, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
 import { proposedEdit, exactDiff } from '../lib/proposed-edit.mjs'
@@ -14,7 +15,10 @@ function reject(code, message, path) {
 }
 
 async function input(file) {
-  try { return JSON.parse(await readFile(file, 'utf8')) } catch { reject('invalid-input', 'Input must be readable JSON.', file) }
+  try { return inspectJSON(await readFile(file, 'utf8')).value } catch (error) {
+    if (error instanceof CommandError) throw error
+    reject('invalid-input', 'Input must be readable JSON.', file)
+  }
 }
 
 export async function run(options) {
@@ -42,7 +46,7 @@ export async function run(options) {
   const problems = []
   for (const entry of plan.reviewedScope) {
     try {
-      const path = await resolvePath(target.root, entry.path)
+      const path = await resolveFilePath(target.root, entry.path)
       if (path !== entry.resolvedPath) reject('unresolved-scope', 'Reviewed scope resolution has changed.', entry.path)
       if (scope.has(entry.path)) reject('overlapping-scope', 'Reviewed scope paths must be unique.', entry.path)
       scope.set(entry.path, path)

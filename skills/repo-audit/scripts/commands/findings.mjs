@@ -2,7 +2,8 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolvePath } from '../lib/paths.mjs'
+import { resolveFilePath } from '../lib/paths.mjs'
+import { inspectJSON } from '../lib/json.mjs'
 import { createScratch } from '../lib/scratch.mjs'
 import { fingerprint, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
@@ -48,7 +49,7 @@ export async function validateFindings(findings, target) {
   for (const collection of ['sources', 'findings', 'execution']) validateIds(findings[collection], `$/` + collection)
   if (findings.target.root !== target.root || findings.target.mode !== target.mode) invalid('target-mismatch', 'Reviewed identity differs from the selected target.', '$/target')
   if (target.mode === 'workspace' && findings.target.revision !== null) invalid('target-mismatch', 'A draft workspace has no Git revision.', '$/target/revision')
-  for (const path of findings.reviewedScope) await resolvePath(target.root, path)
+  for (const path of findings.reviewedScope) await resolveFilePath(target.root, path)
   for (const finding of findings.findings) {
     if (!finding.files.length && finding.command === null) invalid('missing-location', 'A finding needs files or a failing command.', finding.id)
     for (const path of [...finding.scope, ...finding.files]) {
@@ -70,7 +71,8 @@ export async function run(options, command) {
   if (!options.findings) throw new CommandError('usage-error', [{ code: 'missing-findings', message: '--findings is required.', fix: 'Supply --findings <file>.' }])
   const target = await resolveTarget(options, { draftOnly: true })
   let findings
-  try { findings = JSON.parse(await readFile(options.findings, 'utf8')) } catch {
+  try { findings = inspectJSON(await readFile(options.findings, 'utf8')).value } catch (error) {
+    if (error instanceof CommandError) throw error
     invalid('invalid-findings', 'Findings must be readable JSON.', options.findings)
   }
   await validateFindings(findings, target)
