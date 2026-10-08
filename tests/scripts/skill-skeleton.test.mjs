@@ -49,7 +49,7 @@ test('no arguments prints planned commands and returns usage exit 3', () => {
   assert.equal(result.status, 3, result.stderr)
   assert.match(result.stdout, /Usage:/)
   assert.match(result.stdout, /not implemented yet/)
-  for (const command of ['vision-board', 'cite-check', 'inspect', 'inventory', 'measure', 'overlap', 'findings validate', 'findings render', 'apply', 'state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']) {
+  for (const command of ['vision-board build', 'vision-board launch', 'vision-board verdicts', 'cite-check', 'inspect', 'inventory', 'measure', 'overlap', 'findings validate', 'findings render', 'apply', 'state show', 'run-checks', 'probe record', 'probe compare', 'rule-proof', 'baseline check', 'contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']) {
     assert.ok(result.stdout.split('\n').includes(`  ${command}`), command)
   }
   assert.match(result.stdout, /usage error \(exit 3\)/)

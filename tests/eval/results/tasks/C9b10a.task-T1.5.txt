@@ -1,0 +1,417 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T1.5
+
+Selected 2 suite(s): tests/scripts/package-check.test.mjs, tests/scripts/vision-board.test.mjs
+TAP version 13
+# Subtest: valid skeleton passes from another working directory
+ok 1 - valid skeleton passes from another working directory
+  ---
+  duration_ms: 295.331507
+  type: 'test'
+  ...
+# Subtest: missing-path fails with local-path-missing
+ok 2 - missing-path fails with local-path-missing
+  ---
+  duration_ms: 91.560571
+  type: 'test'
+  ...
+# Subtest: unlisted-reference fails with reference-unlisted
+ok 3 - unlisted-reference fails with reference-unlisted
+  ---
+  duration_ms: 124.411495
+  type: 'test'
+  ...
+# Subtest: nested-reference fails with reference-nested
+ok 4 - nested-reference fails with reference-nested
+  ---
+  duration_ms: 164.659506
+  type: 'test'
+  ...
+# Subtest: oversized-skill fails with skill-too-long
+ok 5 - oversized-skill fails with skill-too-long
+  ---
+  duration_ms: 288.208872
+  type: 'test'
+  ...
+# Subtest: long-reference fails with reference-toc
+ok 6 - long-reference fails with reference-toc
+  ---
+  duration_ms: 190.521171
+  type: 'test'
+  ...
+# Subtest: host-metadata fails with host-metadata
+ok 7 - host-metadata fails with host-metadata
+  ---
+  duration_ms: 221.169376
+  type: 'test'
+  ...
+# Subtest: undeclared-import fails with script-import
+ok 8 - undeclared-import fails with script-import
+  ---
+  duration_ms: 142.643628
+  type: 'test'
+  ...
+# Subtest: unexplained-constant fails with constant-comment
+ok 9 - unexplained-constant fails with constant-comment
+  ---
+  duration_ms: 198.921575
+  type: 'test'
+  ...
+# Subtest: unfinished-step fails with step-done
+ok 10 - unfinished-step fails with step-done
+  ---
+  duration_ms: 266.37544
+  type: 'test'
+  ...
+# Subtest: language-policy fails with language-policy
+ok 11 - language-policy fails with language-policy
+  ---
+  duration_ms: 229.395316
+  type: 'test'
+  ...
+# Subtest: every independent problem is reported together
+ok 12 - every independent problem is reported together
+  ---
+  duration_ms: 313.833239
+  type: 'test'
+  ...
+# Subtest: line limits include their boundary and exclude frontmatter
+ok 13 - line limits include their boundary and exclude frontmatter
+  ---
+  duration_ms: 341.307635
+  type: 'test'
+  ...
+# Subtest: contents heading at line twenty permits a long reference
+ok 14 - contents heading at line twenty permits a long reference
+  ---
+  duration_ms: 277.652086
+  type: 'test'
+  ...
+# Subtest: local paths in source and nested resources resolve from their file
+ok 15 - local paths in source and nested resources resolve from their file
+  ---
+  duration_ms: 325.038575
+  type: 'test'
+  ...
+# Subtest: inline link location suffix preserves missing and nested reference checks
+ok 16 - inline link location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 198.923245
+  type: 'test'
+  ...
+# Subtest: image location suffix preserves missing and nested reference checks
+ok 17 - image location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 166.300119
+  type: 'test'
+  ...
+# Subtest: reference definition location suffix preserves missing and nested reference checks
+ok 18 - reference definition location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 155.767357
+  type: 'test'
+  ...
+# Subtest: angle destination location suffix preserves missing and nested reference checks
+ok 19 - angle destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 162.273744
+  type: 'test'
+  ...
+# Subtest: encoded destination location suffix preserves missing and nested reference checks
+ok 20 - encoded destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 152.456469
+  type: 'test'
+  ...
+# Subtest: quoted resource location suffix preserves missing and nested reference checks
+ok 21 - quoted resource location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 238.205882
+  type: 'test'
+  ...
+# Subtest: location suffix accepts existing resources and excludes URLs
+ok 22 - location suffix accepts existing resources and excludes URLs
+  ---
+  duration_ms: 158.088175
+  type: 'test'
+  ...
+# Subtest: unlisted reference diagnostics identify each source file
+ok 23 - unlisted reference diagnostics identify each source file
+  ---
+  duration_ms: 213.352071
+  type: 'test'
+  ...
+# Subtest: dependency and cache contents are excluded
+ok 24 - dependency and cache contents are excluded
+  ---
+  duration_ms: 188.913159
+  type: 'test'
+  ...
+# Subtest: help and invalid arguments have explicit exits
+ok 25 - help and invalid arguments have explicit exits
+  ---
+  duration_ms: 397.19557
+  type: 'test'
+  ...
+# Subtest: imports accept built-ins, local files and declared runtime package subpaths
+ok 26 - imports accept built-ins, local files and declared runtime package subpaths
+  ---
+  duration_ms: 171.338833
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'undeclared'
+ok 27 - import policy refuses import 'undeclared'
+  ---
+  duration_ms: 149.153189
+  type: 'test'
+  ...
+# Subtest: import policy refuses export * from 'undeclared'
+ok 28 - import policy refuses export * from 'undeclared'
+  ---
+  duration_ms: 167.097252
+  type: 'test'
+  ...
+# Subtest: import policy refuses await import('undeclared')
+ok 29 - import policy refuses await import('undeclared')
+  ---
+  duration_ms: 166.094448
+  type: 'test'
+  ...
+# Subtest: import policy refuses require('undeclared')
+ok 30 - import policy refuses require('undeclared')
+  ---
+  duration_ms: 159.777205
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'node:not-a-builtin'
+ok 31 - import policy refuses import 'node:not-a-builtin'
+  ---
+  duration_ms: 122.140989
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'dev-only'
+ok 32 - import policy refuses import 'dev-only'
+  ---
+  duration_ms: 107.927497
+  type: 'test'
+  ...
+# Subtest: strings, comments, regexes and nested constants do not impersonate script policy
+ok 33 - strings, comments, regexes and nested constants do not impersonate script policy
+  ---
+  duration_ms: 137.969585
+  type: 'test'
+  ...
+# Subtest: computed dispatch imports remain outside the literal import control
+ok 34 - computed dispatch imports remain outside the literal import control
+  ---
+  duration_ms: 119.251603
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return passes
+ok 35 - CommonJS top-level return passes
+  ---
+  duration_ms: 139.89701
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return preserves script-import
+ok 36 - CommonJS top-level return preserves script-import
+  ---
+  duration_ms: 129.918656
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return preserves constant-comment
+ok 37 - CommonJS top-level return preserves constant-comment
+  ---
+  duration_ms: 104.783503
+  type: 'test'
+  ...
+# Subtest: js module rejects top-level return
+ok 38 - js module rejects top-level return
+  ---
+  duration_ms: 112.668264
+  type: 'test'
+  ...
+# Subtest: mjs module rejects top-level return
+ok 39 - mjs module rejects top-level return
+  ---
+  duration_ms: 119.98892
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+ok 40 - constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+  ---
+  duration_ms: 111.944125
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+ok 41 - constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+  ---
+  duration_ms: 112.262909
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+ok 42 - constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+  ---
+  duration_ms: 133.587389
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+ok 43 - constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+  ---
+  duration_ms: 125.666335
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "export const first = 1 // Too late.\\n"
+ok 44 - constant comment boundary "export const first = 1 // Too late.\\n"
+  ---
+  duration_ms: 123.379392
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "if (true) { const nested = 1 }\\n"
+ok 45 - constant comment boundary "if (true) { const nested = 1 }\\n"
+  ---
+  duration_ms: 107.762454
+  type: 'test'
+  ...
+# Subtest: invalid script and manifest refuse unverified imports while other problems collect
+ok 46 - invalid script and manifest refuse unverified imports while other problems collect
+  ---
+  duration_ms: 107.596438
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+ok 47 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+  ---
+  duration_ms: 137.198508
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+ok 48 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+  ---
+  duration_ms: 126.068232
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+ok 49 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+  ---
+  duration_ms: 156.325887
+  type: 'test'
+  ...
+# Subtest: step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+ok 50 - step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+  ---
+  duration_ms: 127.453341
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+ok 51 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+  ---
+  duration_ms: 131.962401
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+ok 52 - language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+  ---
+  duration_ms: 154.08918
+  type: 'test'
+  ...
+# Subtest: language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+ok 53 - language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+  ---
+  duration_ms: 132.590791
+  type: 'test'
+  ...
+# Subtest: language policy boundary .ruff.toml ""
+ok 54 - language policy boundary .ruff.toml ""
+  ---
+  duration_ms: 120.376716
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+ok 55 - language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+  ---
+  duration_ms: 125.747922
+  type: 'test'
+  ...
+# Subtest: board build renders escaped text and preserves raw revision-bound verdict data
+ok 56 - board build renders escaped text and preserves raw revision-bound verdict data
+  ---
+  duration_ms: 840.349002
+  type: 'test'
+  ...
+# Subtest: board rejects duplicate IDs before scratch writes
+ok 57 - board rejects duplicate IDs before scratch writes
+  ---
+  duration_ms: 102.09363
+  type: 'test'
+  ...
+# Subtest: board rejects blank IDs before scratch writes
+ok 58 - board rejects blank IDs before scratch writes
+  ---
+  duration_ms: 104.024565
+  type: 'test'
+  ...
+# Subtest: board rejects missing IDs before scratch writes
+ok 59 - board rejects missing IDs before scratch writes
+  ---
+  duration_ms: 253.136987
+  type: 'test'
+  ...
+# Subtest: board rejects stale draft before scratch writes
+ok 60 - board rejects stale draft before scratch writes
+  ---
+  duration_ms: 194.650255
+  type: 'test'
+  ...
+# Subtest: board rejects unknown fields before scratch writes
+ok 61 - board rejects unknown fields before scratch writes
+  ---
+  duration_ms: 194.532122
+  type: 'test'
+  ...
+# Subtest: board rejects empty cards before scratch writes
+ok 62 - board rejects empty cards before scratch writes
+  ---
+  duration_ms: 261.404526
+  type: 'test'
+  ...
+# Subtest: board rejects wrong field types before scratch writes
+ok 63 - board rejects wrong field types before scratch writes
+  ---
+  duration_ms: 95.979527
+  type: 'test'
+  ...
+# Subtest: board rejects an empty draft without scratch writes
+ok 64 - board rejects an empty draft without scratch writes
+  ---
+  duration_ms: 132.611106
+  type: 'test'
+  ...
+# Subtest: board rejects an invalid UTF-8 draft without scratch writes
+ok 65 - board rejects an invalid UTF-8 draft without scratch writes
+  ---
+  duration_ms: 91.935629
+  type: 'test'
+  ...
+# Subtest: board reports missing files, missing options and unknown options
+ok 66 - board reports missing files, missing options and unknown options
+  ---
+  duration_ms: 290.607791
+  type: 'test'
+  ...
+# Subtest: board ships the unchanged upstream stylesheet beside its generated HTML
+ok 67 - board ships the unchanged upstream stylesheet beside its generated HTML
+  ---
+  duration_ms: 155.582178
+  type: 'test'
+  ...
+1..67
+# tests 67
+# suites 0
+# pass 67
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9538.00299

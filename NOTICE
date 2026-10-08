@@ -5,9 +5,12 @@ The exact copied paths are listed in upstream/sources.json.
 These development sources live outside the installed skill.
 Adapted destinations and changes are recorded below.
 
+The VISION template's introductory comment uses plain slot names and "document title" instead of a literal title tag.
+This keeps substitutions out of instructions and prevents the observed runtime's title extractor from treating comment text as the page title.
+
 | Source | Pinned commit | Files adapted | What changed |
 |---|---|---|---|
-| https://github.com/kunchenguid/vision | 7a20c38181151ec67efdf8fa2cb03a60123a7b83 | None | Raw procedure and both board assets only |
+| https://github.com/kunchenguid/vision | 7a20c38181151ec67efdf8fa2cb03a60123a7b83 | skills/repo-audit/references/vision.md, skills/repo-audit/assets/vision/review-template.html, skills/repo-audit/assets/vision/review.css | Adapted the procedure for confirmed-author new-idea evidence, one proposal per real unresolved trade-off and reviewed existing-vision deltas. Removed standalone skill invocation and unpinned runtime instructions, kept review in scratch and protected project writes behind apply. F13 assigns semantic revision to the agent and run/draft/card binding to the launcher. Stylesheet copied unchanged. Template slot instructions now describe JSON draft/run metadata and the pinned runtime. Replaced the draft template literal with a JSON slot and added REVIEW metadata. Escaped card ID, title, body, tests, why and ledger ID at HTML insertion. Namespaced card queue keys and added REVIEW metadata to individual and complete-round payloads. Layout, stylesheet and other review mechanics are unchanged |
 | https://github.com/cursor/plugins (pstack) | 9f451cf875ad1239912762f67741e8e5ba6ac0f1 | None | Raw design red flags and five principle procedures only |
 | https://github.com/kunchenguid/kun | 1b2a9c7dd4b2b33eb7161399d7893c39048213be | None | Raw ENTRY.md only |
 | https://github.com/mattpocock/skills | 6fd947921b935b7e1e69293a200400f0fdd5c15f | skills/repo-audit/references/grilling.md | Adapted productivity/grilling/SKILL.md into bounded decision rounds with parent decisions first, recommendations and confirmation. Removed host-specific dispatch instructions and external calls |

@@ -3,7 +3,7 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), T1.4 interview and domain-language references, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language and vision references, board generation with a pinned runtime, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
@@ -16,6 +16,7 @@ Use Node 24 or later:
 
 ```sh
 npm ci --ignore-scripts
+npm ci --omit=dev --prefix skills/repo-audit
 npm run check
 npm test
 npm test -- --task T0.1
@@ -31,6 +32,8 @@ npm test -- --task T1.1
 npm test -- --task T1.2
 npm test -- --task T1.3
 npm test -- --task T1.4
+npm test -- --task T1.5
+npm test -- --task T1.6
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
@@ -38,8 +41,9 @@ node scripts/check-package.mjs --skill skills/repo-audit
 `check` runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy.
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](docs/command-contract.md#package-check) for exact syntax and limits.
-Local validation runs the install, package check and full tests on Node 24 and Node 26.
-The no-mistakes gate installs once, runs tests once and runs the distinct package check through `commands.lint`.
+Local validation installs both the root development lock and the nested skill runtime lock, then runs the package check and full tests.
+T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
+The no-mistakes gate installs both locks, runs tests and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
 The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
@@ -115,6 +119,20 @@ node skills/repo-audit/scripts/repo-audit.mjs contract-test --help
 ```
 
 See the [public test command contract](docs/command-contract.md#c4c-public-test-command) for input and schema validation details.
+
+Build a synthetic VISION board in scratch outside the target:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs vision-board build --workspace . --draft tests/inputs/vision-draft.md --proposals tests/inputs/vision-proposals.json --json
+node skills/repo-audit/scripts/repo-audit.mjs vision-board build --help
+```
+
+For a real draft, supply nonempty UTF-8 Markdown and [versioned proposals](skills/repo-audit/schemas/vision-proposals.json) naming its exact-byte SHA-256 as `draftRevision`.
+The JSON result returns the board path, run ID, revision and card IDs.
+Scratch preserves the draft, proposals, manifest and stylesheet without changing the target.
+The [board command contract](docs/command-contract.md#vision-board-build) documents inputs and failure behaviour.
+Board launch, verdict ingestion and resumed review remain pending C10b.
+Generated HTML alone does not establish approval or complete AC-3.
 
 Task evidence follows [the versioned schema](tests/eval/task-evidence.schema.json), with records and output artifacts in `tests/eval/results/tasks/`.
 Shipping slices use no-mistakes and recorded local verification, with no hosted CI or release automation.

@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T1.6",
+  "slice": "C9b10a",
+  "sourceRevision": "13965c7a5be9d58bfdda9d4f274aae16682aa51b",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Landed: Phase 0, T1.1-T1.3 and T1.4 (https://github.com/knowttl/bstack/pull/17: interview and domain-language references). The merged slice table combines C9b and C10a as C9b10a, preserving both task IDs and the union of their done evidence.\n\nThis piece is merged slice C9b10a (old C9b + C10a): task T1.5 \"Adapt VISION and bundle the board assets\", then the first part of task T1.6 \"Build the VISION board launcher\" - the runtime research and live probe, the exact pin with its nested lockfile and gate setup, and the `vision-board build` subcommand. Merged done evidence: package check and recorded asset/NOTICE diff; clean nested install, runtime observation, safe inserted text, unique IDs. The `launch` and `verdicts` subcommands, the resumed review and the manual board run are C10b.",
+  "amendments": [
+    "README, command/runtime documentation and Progress were updated before final implementation validation. This evidence-only commit records those runs.",
+    "F13 read from the approved commissioning report: deterministic run/draft/card binding belongs to the launcher, semantic draft revision belongs to the agent."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0",
+      "lavish-axi": "0.1.78",
+      "npm-registry-current-lavish-axi": "0.1.84"
+    }
+  },
+  "commands": [
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/C9b10a.install.txt"
+    },
+    {
+      "id": "runtime-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--prefix",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/C9b10a.runtime-install.txt"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/C9b10a.check.txt"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/C9b10a.test.txt"
+    },
+    {
+      "id": "task-T1.6",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T1.6"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/C9b10a.task-T1.6.txt"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C10a-escaping-and-IDs",
+      "kind": "automated",
+      "procedure": "board build renders escaped text and preserves raw revision-bound verdict data exercises emitted HTML/script with quotes, backticks, template expressions, script tags, ampersands and Unicode. Command cases reject duplicate/missing IDs, stale draft, malformed fields, invalid UTF-8, empty draft and unavailable inputs before scratch writes.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C9b10a.task-T1.6.txt"
+    },
+    {
+      "id": "C10a-fresh-runtime",
+      "kind": "automated",
+      "procedure": "gate prepare installs both locks and runs the pinned runtime without global support skills executes the real parsed prepare command in a fresh disposable checkout and empty isolated home, then executes explicit nested CLI version and installed command help.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C9b10a.task-T1.6.txt"
+    },
+    {
+      "id": "C10a-live-runtime",
+      "kind": "manual",
+      "procedure": "Synthetic pre-adaptation shared-server launch and terminal feedback, followed by generated-board browser selection, complete-round send, terminal tagged feedback with matching raw run/draft/card context and session end. Captured post-adaptation output is redacted only for host and session identifiers.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.6.runtime-probe.md"
+    },
+    {
+      "id": "AC-3",
+      "kind": "manual",
+      "procedure": "Full launch/verdict-to-draft update and resumed author review.",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "This slice supplies build and runtime research only. Launch/verdict ingestion, semantic draft revision and resumed review are not implemented.",
+      "nextPrerequisite": "C10b completes T1.6 and its manual author-review procedure."
+    }
+  ],
+  "limitations": [
+    "Local runs exercised Linux and Node 24 only. No other OS or Node version was tested in this slice.",
+    "Structural reference review does not prove model interpretation. No new agent evaluation or real author approval was performed.",
+    "T1.6 remains unticked until C10b, despite passed C10a slice evidence. The runtime returns JSON context embedded in tagged prompt text, not a standalone verdict file.",
+    "The observed third-party outer page title retains HTML entities. The artifact title and visible board content decode correctly."
+  ]
+}
