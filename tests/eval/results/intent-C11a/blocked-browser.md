@@ -57,3 +57,41 @@ The isolated-home absence was confirmed.
 The closed raw run and conversation remain in temporary scratch for supervisor inspection.
 No credentials, original host paths, user names or session IDs appear in this artifact.
 Next prerequisite: a fresh supervised run with board interaction delivered before the adapter timeout, or firstmate direction for that bound.
+
+## Final authorised retry with live observation
+
+Firstmate authorised one further attempt with the unchanged timeout and directed escalation if it also timed out.
+This attempt tested `8a93e78` on the same Linux, Node and Codex versions, using the unchanged scenario and adapter.
+The browser started with tab 1 selected before the run.
+The opening turn completed in 52342 ms and asked how missing items are identified.
+Only the first scripted reply was delivered through the evaluation interface.
+A native `tail -f` and `rg` watcher on the isolated Codex session log reported the board URL immediately when launch completed at 2026-10-08T06:45:24.952Z.
+The browser opened the board immediately, selected per-card verdicts, supplied reasoning and clicked Record verdict for each card.
+It then clicked Send my verdicts back at 2026-10-08T06:46:19Z.
+No direct handler, transport call or fabricated complete-round input was used.
+
+The live pinned listener returned `status: feedback` and all three `vision-verdict` prompts, including the complete round bound to draft hash `402b00b4d0a07eaccba31cb7de86441a83ec1935b91844883fb74cddbbbeff32`.
+The returned card verdicts were:
+
+- `portable-household-list`: In vision, because optional manual file transfer keeps household data local without accounts, servers or remote services, and is an acceptance boundary rather than a required version-one feature.
+- `stock-thresholds`: Off mission, because version one has no quantity or stock-level tracking and the household explicitly marks named supplies as needing to buy.
+
+The real agent responded:
+
+> Your verdicts establish that optional manual file transfer fits the vision, but is not required for version one. They also settle “missing”: the household marks items it needs to buy; version one does not track quantities or use stock thresholds.
+>
+> I’ll fold both decisions into the vision and glossary, then present the saved revision for approval.
+
+The turn then timed out after 120017 ms with SIGKILL and no child exit code.
+The adapter deleted the isolated home at 2026-10-08T06:46:30.476Z.
+No saved revised vision, successful verdicts command or explicit revision approval is evidenced in the captured conversation.
+The board verdicts are real transport evidence, but they do not complete T1.7.
+The evaluation command returned blocked with the reason `Host turn unavailable or incomplete (null). Follow the manual procedure.`
+No additional retry or timeout change is authorised.
+
+Send & End was clicked in the shipped UI after timeout, and the task browser bridge and private Lavish server both returned stopped.
+Private server state was removed.
+The isolated home was confirmed absent, and the fixture still contained only brief.md with bytes matching its source.
+Raw closed run and conversation artifacts remain in temporary scratch for firstmate inspection, with no login copy retained.
+T1.7 completion is dropped from this slice's implementation scope pending firstmate's captain escalation.
+T2.1 remains unstarted because its plan dependency is incomplete.
