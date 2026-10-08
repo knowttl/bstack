@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T1.4",
+  "slice": "C9a",
+  "sourceRevision": "bc0a757afe4cb79087415a1adf895cb47d0e5813",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline (`.no-mistakes.yaml` owns the review budget and focus) with automatic merge of green work. Landed: Phase 0, T1.1, T1.2 and T1.3 (https://github.com/knowttl/bstack/pull/16: the first SKILL.md and the baseline gap map).\n\nThis piece is slice C9a: task T1.4 \"Bundle the interview and domain-language modules\" (slice done evidence: flattened resources, no external skill calls, glossary and confirmed-intent rubric).",
+  "amendments": [
+    "README usage and plan Progress were updated before final implementation validation. This evidence-only commit records those runs."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.4.install.txt"
+    },
+    {
+      "id": "check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.4.check.txt"
+    },
+    {
+      "id": "test",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.4.test.txt"
+    },
+    {
+      "id": "task-test",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T1.4"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "passed",
+      "outputArtifact": "tests/eval/results/tasks/T1.4.task-test.txt"
+    }
+  ],
+  "cases": [
+    {
+      "id": "C9a-package",
+      "kind": "automated",
+      "procedure": "Registered interview-package test searches the entire installed folder for the T1.4 forbidden external calls. Registered package-check suite tests flat resource loading and package constraints.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.4.task-test.txt"
+    },
+    {
+      "id": "C9a-reference-review",
+      "kind": "manual",
+      "procedure": "Compared all three references with T1.4, design Establish the project intent, Glossary requirements and Keep decisions separate, and pinned grilling, domain-modeling, glossary and ADR formats and domain discovery. Confirmed standalone decision rounds, confirmed-intent rubric, contextual glossary drafts, separate decisions and NOTICE adaptation pins. Confirmed unchanged .no-mistakes.yaml against origin/main.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T1.4.verification.md"
+    }
+  ],
+  "limitations": [
+    "Structural checks establish packaging only. AC-9 and AC-12 model interpretation checks are assigned to T1.7 and no new agent session ran in C9a.",
+    "Local verification ran on Node 24 and Linux only. Other conditional references, protected writes and production audit commands remain unavailable as labelled."
+  ]
+}

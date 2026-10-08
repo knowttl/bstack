@@ -18,7 +18,7 @@ Return findings and evidence to the project's chosen workflow instead of startin
 Security hardening of created skills and licensing review are outside scope.
 
 This is a procedure under construction.
-The bundled conditional references are placeholders, and production audit, board, apply and evidence commands are unavailable.
+The interview and domain-language references are available, while the other conditional references remain placeholders and production audit, board, apply and evidence commands are unavailable.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -45,7 +45,7 @@ Use available facts instead of asking the user to look them up.
 Finish with the agreed goal, boundaries, decisions and remaining uncertainties.
 New or changed intent needs user confirmation before dependent implementation.
 An unresolved choice such as offline access blocks a dependent stack recommendation.
-The complete interview procedure is unavailable until T1.4.
+Load the intent interview from the table below for this step.
 
 Done when: The intent interview has established the required facts or named the gaps, the user has confirmed new or changed intent, and every dependent decision is resolved or explicitly blocked.
 
@@ -56,7 +56,7 @@ Use the project's vocabulary source, otherwise propose GLOSSARY.md only when use
 Keep canonical domain concepts and their distinctions in the glossary.
 Keep storage choices, frameworks and other implementation details in the design instead of treating them as domain terms.
 Naming migrations are separate selected changes.
-The domain-language procedure is unavailable until T1.4.
+Load domain-language guidance from the table below when terms are unclear or conflict.
 
 Done when: Each term needed for the first journey has a resolved meaning or a named unresolved decision, and the proposed vocabulary contains no implementation details or empty template entries.
 
@@ -142,7 +142,7 @@ When the repo already answers the questions, proceed directly to recommendations
 Load interview, domain-language or vision guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
 A new vision or reviewed delta needs a material gap or requested direction change, with the same draft approval boundary as Step 3.
-Targeted interview and language procedures are unavailable until T1.4, and vision review until T1.5 and T1.6.
+Targeted interview and language procedures are available from the table below, while vision review remains unavailable until T1.5 and T1.6.
 
 Done when: Every material gap is resolved or explicitly blocks its dependent recommendation, settled decisions are retained, and no unnecessary interview or vision review has been opened.
 
@@ -263,7 +263,8 @@ The complete research briefs and citation checker are unavailable until T2.1.
 Read only the one reference needed for the current step, once per run unless it changes.
 Every reference is linked directly here, without another skill or nested reference chain.
 Run scripts without loading their source, and pass assets to scripts without reading them as instructions.
-All references below remain placeholders until their owning tasks supply the procedures.
+The intent interview, grilling and domain-language references are available.
+Other references remain placeholders until their owning tasks supply the procedures.
 
 | When | Open |
 |---|---|

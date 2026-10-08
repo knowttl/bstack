@@ -238,5 +238,5 @@ No real agent sessions or ablation runs were added in this slice, and no advice 
 `npm test -- --task T1.3` reuses the existing package and metadata suites.
 These checks validate packaging and the command surface, not the effectiveness of natural-language instructions.
 The baseline-to-guidance review is recorded separately in [task evidence](../tests/eval/results/tasks/T1.3.json).
-Conditional references, board review and production audit helpers remain unavailable as labelled in SKILL.md.
+See [README](../README.md) for current procedure availability and [SKILL.md](../skills/repo-audit/SKILL.md#load-when) for conditional reference loading.
 The interview checkpoint in T1.7 and subsequent foundation and final evaluations own their actual execution evidence.

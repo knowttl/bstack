@@ -3,9 +3,11 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
 
-This checkout contains the T1.3 [repo-audit procedure](skills/repo-audit/SKILL.md) and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), T1.4 interview and domain-language references, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
-Bundled conditional references remain placeholders, and production audit commands and the installer are not built yet.
+Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
+These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
+Other conditional references remain placeholders, and production audit commands and the installer are not built yet.
 Use the procedure for bounded read-only planning, keeping blocked steps visible.
 Project edits remain blocked until the protected apply command is built.
 Nothing is published to npm.
@@ -28,6 +30,7 @@ npm test -- --task T0.6
 npm test -- --task T1.1
 npm test -- --task T1.2
 npm test -- --task T1.3
+npm test -- --task T1.4
 node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```

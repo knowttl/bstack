@@ -12,5 +12,6 @@
   "T0.6": ["tests/scripts/package-check.test.mjs"],
   "T1.1": ["tests/scripts/fixtures.test.mjs"],
   "T1.2": ["tests/scripts/eval.test.mjs", "tests/scripts/acceptance.test.mjs", "tests/scripts/child-contract.test.mjs"],
-  "T1.3": ["tests/scripts/package-check.test.mjs", "tests/scripts/skill-skeleton.test.mjs"]
+  "T1.3": ["tests/scripts/package-check.test.mjs", "tests/scripts/skill-skeleton.test.mjs"],
+  "T1.4": ["tests/scripts/interview-package.test.mjs", "tests/scripts/package-check.test.mjs"]
 }

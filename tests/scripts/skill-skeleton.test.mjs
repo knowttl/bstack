@@ -23,7 +23,7 @@ test('skill metadata permits only user invocation in the documented hosts', asyn
   assert.equal(policy.policy?.allow_implicit_invocation, false)
 })
 
-test('load when table resolves all eight bundled reference placeholders', async () => {
+test('load when table resolves all eight bundled references', async () => {
   const document = await readFile(join(skill, 'SKILL.md'), 'utf8')
   const tokens = marked.lexer(document)
   const heading = tokens.findIndex(token => token.type === 'heading' && token.text === 'Load when')
