@@ -142,10 +142,12 @@ node skills/repo-audit/scripts/repo-audit.mjs vision-board verdicts --workspace 
 
 Open the runtime's printed URL in a reachable browser and use the pinned terminal listener to receive feedback.
 Save the complete-round Context data JSON unchanged as --input.
+For terminal-only review, present the full draft and proposal cards in the conversation, collect each author's verdict and reasoning, and save them in the same [complete-round format](docs/command-contract.md#vision-board-launch-and-verdicts) with the build's run ID and draft revision.
+Conversation review uses build and verdicts without launching a blocking listener.
 The agent interprets author reasoning into --draft, and verdicts validates run, original draft and every card before preserving the revised bytes and decisions in new scratch.
 Read the saved revision back and obtain explicit author approval, preserving that approval and the revision in the scratch transcript.
 The previous draft and review decisions remain available for resume.
-Missing runtime or unavailable interaction leaves the draft intact and the review blocked.
+Missing prerequisites for the chosen review channel leave the draft intact and the review blocked.
 See [build progress](docs/implementation-plan.md#progress) for outstanding live-review evidence and the [intent checkpoint](skills/repo-audit/SKILL.md#step-3-review-the-vision) for its completion boundary.
 
 Task evidence follows [the versioned schema](tests/eval/task-evidence.schema.json), with records and output artifacts in `tests/eval/results/tasks/`.

@@ -4,7 +4,7 @@
     {
       "id": "new-idea",
       "fixture": "new-idea",
-      "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md.",
+      "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md. Review vision proposals in this conversation rather than waiting for browser feedback.",
       "answers": [
         "The brief contains the approved goals and stack. Keep version one local to a household.",
         "An item is a named pantry supply. A shopping list contains the items the household marks as needing to buy. Version one does not track quantities or stock levels.",

@@ -73,16 +73,18 @@ Silence and interrupted sessions do not count as approval.
 Write the approved reasoning so the eventual VISION.md stands on its own.
 Load the adapted vision procedure for this step and build the board through the documented command interface.
 For a new idea, use the existing non-Git directory as --workspace and keep all drafts, vocabulary, transcripts and verdicts outside it in scratch.
-Run vision-board build with --draft and --proposals, then vision-board launch with the returned --board path and the same target.
-Use --json to read the runtime output and returned listener command, then run that pinned listener in the terminal to receive board feedback.
-The host needs a browser that can reach the printed review URL.
-Save the complete-round Context data JSON from the terminal feedback unchanged, including its run ID, draft revision and every card verdict.
+Run vision-board build with --draft and --proposals, and offer the board for review.
+When the author reviews in the conversation, present the full draft and each proposal with its ID and both-sides reasoning, then collect the author's verdict and reasoning for every card without launching a blocking listener.
+Record those conversation verdicts in the version 1 complete-round JSON with the build's runId, draftRevision, complete: true and one { id, verdict, notes } entry per card, retaining the conversation as provenance.
+Accept only In vision, Off mission or Conditional verdicts; clarify an ambiguous or missing verdict instead of choosing for the author.
+For browser review, run vision-board launch with the returned --board path and the same target, use --json to read the URL and listener command, then run the pinned listener to receive feedback.
+Save the browser's complete-round Context data JSON unchanged, including its run ID, draft revision and every card verdict.
 Interpret the author's reasoning into a new semantic draft with an edit-to-verdict explanation.
 Run vision-board verdicts with --board, --input pointing to that complete-round JSON and --draft pointing to the revised draft.
 The command validates the bindings, saves the revised draft and decisions in new scratch and preserves the original draft.
 Read the saved revision back, present it for explicit approval, and retain that approval with its exact revision in the scratch transcript.
 For another board round, use the saved draft and matching new proposals, retaining the previous review.json decisions as evidence.
-If launch, browser access, feedback or author approval is unavailable, preserve scratch for resume and keep the step blocked with the missing prerequisite and fix.
+If the chosen review channel, feedback or author approval is unavailable, preserve scratch for resume and keep the step blocked with the missing prerequisite and fix.
 At this intent checkpoint, stop after the approved scratch vision, resolved vocabulary and confirmed summary.
 Name protected creation in Step 5 as the later prerequisite without creating Git or project files.
 
