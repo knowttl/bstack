@@ -3,6 +3,7 @@ import { lstat, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { platform, release, arch } from 'node:os'
+import { selectCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 
 export function git(root, ...args) {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim()
@@ -12,9 +13,10 @@ export function hash(value) {
   return createHash('sha256').update(value).digest('hex')
 }
 
-export function environment() {
+export async function environment() {
+  const npm = await selectCommand('npm', ['--version'])
   return { os: `${platform()} ${release()} ${arch()}`, node: process.version,
-    tools: { npm: execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim(),
+    tools: { npm: execFileSync(npm.executable, npm.args, { encoding: 'utf8' }).trim(),
       git: execFileSync('git', ['--version'], { encoding: 'utf8' }).trim() } }
 }
 

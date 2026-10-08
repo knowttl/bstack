@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { hash } from '../../scripts/lib/test-evidence.mjs'
 
 // Resolve package inputs from the suite location, not the shell working directory.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -111,6 +112,49 @@ test('ordinary full-suite invocation retains attachable evidence in a Git checko
   const directory = await evidenceSandbox(t)
   assert.equal(run(directory).status, 0)
   assert.equal(attach(directory, '.cache/full-suite.json').status, 0)
+})
+
+test('ordinary tests execute without a base and invalidate older capture', async t => {
+  const directory = await evidenceSandbox(t)
+  assert.equal(run(directory).status, 0)
+  const removed = spawnSync('git', ['update-ref', '-d', 'refs/remotes/origin/main'], { cwd: directory })
+  assert.equal(removed.status, 0)
+  const result = run(directory)
+  assert.equal(result.status, 0, result.stderr + result.stdout)
+  assert.match(result.stdout, /recorded behaviour/)
+  assert.match(result.stdout, /# tests 1/)
+  assert.equal(attach(directory, '.cache/full-suite.json').status, 1)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 1)
+})
+
+test('Windows evidence environment launches the npm JavaScript entry point', async t => {
+  const directory = await sandbox(t)
+  const cli = join(directory, 'npm-cli.js')
+  await writeFile(cli, "console.log('11.13.0')\n")
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e',
+    `import { environment } from ${JSON.stringify(join(root, 'scripts/lib/test-evidence.mjs'))};
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+    console.log(JSON.stringify(await environment()));`],
+  { encoding: 'utf8', env: { ...process.env, npm_execpath: cli } })
+  assert.equal(result.status, 0, result.stderr)
+  assert.equal(JSON.parse(result.stdout).tools.npm, '11.13.0')
+})
+
+test('attachment preserves inventory paths and captured artifact hashes', async t => {
+  const directory = await evidenceSandbox(t)
+  await cp(join(root, 'tests/fixtures/installer-collision'), join(directory, 'tests/fixtures/installer-collision'), { recursive: true })
+  const staged = spawnSync('git', ['add', '.'], { cwd: directory })
+  assert.equal(staged.status, 0)
+  const committed = spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'fixture'], { cwd: directory })
+  assert.equal(committed.status, 0)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  assert.equal(attach(directory).status, 0)
+  const capture = JSON.parse(await readFile(join(directory, '.cache/run.json'), 'utf8'))
+  const record = JSON.parse(await readFile(join(directory, 'tests/eval/results/tasks/speed.json'), 'utf8'))
+  assert.deepEqual(record.validation.inputs, capture.inputs)
+  assert.equal(hash(JSON.stringify(record.validation.inputs.files)), record.validation.inputs.sha256)
+  assert.equal(hash(await readFile(join(directory, record.commands[0].outputArtifact))), record.validation.outputSha256)
+  assert.equal(hash(await readFile(join(directory, record.validation.eventsArtifact))), record.validation.eventsSha256)
 })
 
 test('ordinary tests still execute dirty source but its evidence cannot attach', async t => {

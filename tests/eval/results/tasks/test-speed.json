@@ -1036,22 +1036,22 @@
           "sha256": "91316535afbaf9d54bd113e9bbaf0fccc8453448d189fcfa6a4502b2c07b2cbc"
         },
         {
-          "path": "tests/fixtures/installer-collision[host-home]/skills/repo-audit/SKILL.md",
+          "path": "tests/fixtures/installer-collision/home/.agents/skills/repo-audit/SKILL.md",
           "executable": false,
           "sha256": "07fcfc503ed0273a616ec21123fdbdf27cd15ce36be8415d54459e1c7ea87f50"
         },
         {
-          "path": "tests/fixtures/installer-collision[host-home]/skills/unrelated/SKILL.md",
+          "path": "tests/fixtures/installer-collision/home/.agents/skills/unrelated/SKILL.md",
           "executable": false,
           "sha256": "8609b57ca4f32c7e86276946c0e4493c7a93ad487a525f1d98a6a35a9a78973e"
         },
         {
-          "path": "tests/fixtures/installer-collision[host-home]/skills/repo-audit/SKILL.md",
+          "path": "tests/fixtures/installer-collision/home/.claude/skills/repo-audit/SKILL.md",
           "executable": false,
           "sha256": "e29ed63bb4e794a9744bc3b39149a65feac1e37eaf1c49f13ecea9dda44cb3cb"
         },
         {
-          "path": "tests/fixtures/installer-collision[host-home]/skills/repo-audit/install-manifest.json",
+          "path": "tests/fixtures/installer-collision/home/.claude/skills/repo-audit/install-manifest.json",
           "executable": false,
           "sha256": "077d8656e73acf8fcee2e8c24bc1d3d37afb1839276fb2ee7793069924dee375"
         },

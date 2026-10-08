@@ -60,7 +60,8 @@ Read only the task and the shared contract it needs.
 - Record unavailable verification as blocked, with a reason and the next prerequisite.
 - On resume, inspect the current files and rerun checks affected by changes since the saved evidence.
 
-In a Git checkout, `npm test` captures its full-suite output and test identities from committed source inputs in `.cache/full-suite.json`.
+In a Git checkout with available evidence metadata, `npm test` captures its full-suite output and test identities from committed source inputs in `.cache/full-suite.json`.
+When capture metadata is unavailable, ordinary `npm test` still executes the full suite; explicit capture remains strict.
 The no-mistakes Test command passes `--capture .cache/full-suite.json` explicitly; both commands execute the same full suite.
 After the final source, test and documentation fixes, Document attaches that run with `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>` before publication.
 The generator reads the saved run rather than executing another suite or starting another pipeline.

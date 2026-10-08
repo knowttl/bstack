@@ -32,7 +32,7 @@ try {
     throw new Error('Usage: npm test -- [--task <id> | --capture <run.json>]')
   }
   // Ordinary gate runs retain evidence too; standalone discovery fixtures have no Git checkout.
-  const capture = args[0] === '--capture' ? resolve(root, args[1]) :
+  let capture = args[0] === '--capture' ? resolve(root, args[1]) :
     !args.length && existsSync(join(root, '.git')) ? join(root, '.cache', 'full-suite.json') : null
   if (capture) {
     if (!relative(join(root, '.cache'), capture) || relative(join(root, '.cache'), capture).startsWith('..')) {
@@ -55,17 +55,23 @@ try {
   let evidence
   let redactEvidence
   if (capture) {
-    evidence = await import('./lib/test-evidence.mjs')
-    const host = await import('./lib/evaluation-host.mjs')
-    redactEvidence = host.redactEvidence
-    await mkdir(dirname(capture), { recursive: true })
-    const clean = spawnSync('git', ['diff', '--quiet', 'HEAD', '--', '.', ':!tests/eval/results/tasks'], { cwd: root })
-    if (clean.error) throw clean.error
-    const committed = clean.status === 0 && !evidence.git(root, 'ls-files', '--others', '--exclude-standard', '-z').split('\0')
-      .some(path => path && !path.startsWith('tests/eval/results/tasks/'))
-    if (!committed && args[0] === '--capture') throw new Error('Commit source inputs before capturing evidence')
-    binding = { sourceRevision: evidence.git(root, 'rev-parse', 'HEAD'), baseRevision: evidence.git(root, 'rev-parse', 'origin/main'),
-      committed, environment: evidence.environment(), inputs: await evidence.inputs(root) }
+    try {
+      evidence = await import('./lib/test-evidence.mjs')
+      const host = await import('./lib/evaluation-host.mjs')
+      redactEvidence = host.redactEvidence
+      await mkdir(dirname(capture), { recursive: true })
+      const clean = spawnSync('git', ['diff', '--quiet', 'HEAD', '--', '.', ':!tests/eval/results/tasks'], { cwd: root })
+      if (clean.error) throw clean.error
+      const committed = clean.status === 0 && !evidence.git(root, 'ls-files', '--others', '--exclude-standard', '-z').split('\0')
+        .some(path => path && !path.startsWith('tests/eval/results/tasks/'))
+      if (!committed && args[0] === '--capture') throw new Error('Commit source inputs before capturing evidence')
+      binding = { sourceRevision: evidence.git(root, 'rev-parse', 'HEAD'), baseRevision: evidence.git(root, 'rev-parse', 'origin/main'),
+        committed, environment: await evidence.environment(), inputs: await evidence.inputs(root) }
+    } catch (error) {
+      if (args[0] === '--capture') throw error
+      console.error(`Evidence capture unavailable: ${error.message}`)
+      capture = null
+    }
   }
   const runnerArgs = ['--test', '--test-reporter=tap', ...(capture ? ['--test-reporter-destination=stdout',
     `--test-reporter=${join(root, 'scripts', 'test-reporter.mjs')}`, `--test-reporter-destination=${capture}.events`] : []), ...files]
