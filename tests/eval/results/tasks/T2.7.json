@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T2.7",
+  "slice": "C15a",
+  "sourceRevision": "431b703ba38c418eee42eb8f52aba3e2d082d73d",
+  "intent": "\"yes approbe and begin the implementation\" started the bstack build slice by slice, strictly one at a time (\"keep it sequential\"). Later: \"i'm only not concerned about security hardening, threat-model concerns. Style and simplification and following proper design principles are still important.\" - build the full app fast, but review the core properly so slices and phases do not leave bugs.\n\nThe plans of record are in the repo: `docs/design.md` (requirements and decisions, including R24: licensing is out of scope) and `docs/implementation-plan.md` (tasks, task evidence contract). knowttl/bstack is public, has no GitHub Actions or workflows and no release automation, and ships through the no-mistakes pipeline with automatic merge of green work. Landed: Phase 0, Phase 1 and T2.1-T2.6 (most recently https://github.com/knowttl/bstack/pull/26: protected writes, journal, resume and selected delete).\n\nThis piece is slice C15a, the first part of task T2.7 \"Build verification capture and live probes\": check plans, capture and prior protection. Done evidence: failed journey despite passing units, failed/skipped/stale/timeout checks rejected, prior refactor proof.",
+  "amendments": [
+    "Regenerated all command artifacts after the first pipeline repaired capture freshness, command and phase preflight, literal input paths and reproduction coverage.",
+    "Firstmate authorized the two-boundary fingerprint contract: compare all declared inputs before and after execution and block changed inputs; no mid-run tracking.",
+    "Final snapshot failures retain completed command evidence, and scratch setup precedes command execution.",
+    "The second pipeline's document step clarified phase and journey verdicts and removed inherited NODE_TEST_CONTEXT from the fixture command environment; regenerated all required command artifacts against that final harness."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux 6.8.0-142-generic x86_64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "root-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--ignore-scripts"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C15a.root-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "skill-install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--omit=dev",
+        "--prefix",
+        "skills/repo-audit"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C15a.skill-install.txt",
+      "status": "passed"
+    },
+    {
+      "id": "package-check",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C15a.package-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "full-tests",
+      "executable": "npm",
+      "args": [
+        "test"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C15a.full-tests.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-T2.7",
+      "executable": "npm",
+      "args": [
+        "test",
+        "--",
+        "--task",
+        "T2.7"
+      ],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C15a.task-T2.7.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-26",
+      "kind": "automated",
+      "procedure": "bug fix requires normally failing reproduction before and passing reproduction after; a protected refactor passes only after compatibility runs against changed state",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+    },
+    {
+      "id": "AC-27",
+      "kind": "automated",
+      "procedure": "ts-shop passing units cannot hide the failed checkout journey",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+    },
+    {
+      "id": "AC-29",
+      "kind": "automated",
+      "procedure": "an uncovered user flow remains unverified despite passing units; cancelled required check stays unverified even with other passing checks",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+    },
+    {
+      "id": "AC-31",
+      "kind": "automated",
+      "procedure": "ts-shop passing units cannot hide the failed checkout journey",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+    },
+    {
+      "id": "AC-71",
+      "kind": "automated",
+      "procedure": "failed/skipped/unavailable/timed out/failed version required check cannot pass; changed declared inputs block the capture; a later input change blocks all executed checks; unavailable final snapshots retain completed command evidence; invalid scratch setup runs no commands",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C15a.task-T2.7.txt"
+    },
+    {
+      "id": "AC-30",
+      "kind": "automated",
+      "procedure": "Live probe records, matching before/after calls and specific side-effect approval",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C15a implements check capture and prior protection only.",
+      "nextPrerequisite": "Implement C15b live probe pair and approval."
+    },
+    {
+      "id": "AC-32",
+      "kind": "automated",
+      "procedure": "Live probe records, matching before/after calls and specific side-effect approval",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C15a implements check capture and prior protection only.",
+      "nextPrerequisite": "Implement C15b live probe pair and approval."
+    },
+    {
+      "id": "AC-33",
+      "kind": "automated",
+      "procedure": "Live probe records, matching before/after calls and specific side-effect approval",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C15a implements check capture and prior protection only.",
+      "nextPrerequisite": "Implement C15b live probe pair and approval."
+    }
+  ],
+  "limitations": [
+    "C15a is partial T2.7. Live probe records, comparisons and side-effect approval remain C15b.",
+    "82 targeted tests and 749 full-suite tests passed on Linux Node 24. Real Windows/macOS execution remains captain checklist evidence. No hosted CI ran.",
+    "Case mappings establish command-interface controls, not complete fresh-agent acceptance. Local scratch capture trusts declared scopes and approved source authority. AC-31 exercises the fixture disagreement and non-ready verdict, not live probe record/compare.",
+    "Boundary fingerprints do not detect transient input changes restored before completion."
+  ]
+}
