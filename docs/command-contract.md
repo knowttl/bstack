@@ -197,9 +197,9 @@ The same output fills that generator's section in each declared document.
 Nonzero exits, unavailable tools, timeouts, cancellation, invalid UTF-8 and truncated output cannot establish freshness.
 
 `--check` compares section bytes and fails with `stale-generated-section` for each stale section.
-Before and after each generator, including its version probe, the command snapshots project file bytes, modes, directories and link targets, including ignored files but excluding Git metadata.
-Changed project state fails the generator's read-only contract in either form; the command does not undo the generator's changes.
-This detects changes surviving execution, rather than providing an operating-system sandbox or proving the generator reads only its declared inputs.
+During each generator, including its version probe, the command watches every existing project directory for changes and snapshots project file bytes, modes, directories and link targets before and after execution, including ignored files but excluding Git metadata.
+Project changes fail the generator's read-only contract in either form, including files created and removed or bytes changed and restored before execution finishes; the command does not undo the generator's changes.
+Write detection does not provide an operating-system sandbox or prove that the generator reads only its declared inputs.
 
 Without `--check`, complete proposed documents render only to scratch.
 The result names `generated-proposals.json` and includes each changed document's original hash, proposed hash, complete replacement payload and exact diff.

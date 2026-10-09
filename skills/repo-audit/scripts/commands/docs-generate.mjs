@@ -1,5 +1,7 @@
 import { lstat, readdir, readFile, readlink, writeFile } from 'node:fs/promises'
+import { watch } from 'node:fs'
 import { join } from 'node:path'
+import { setImmediate } from 'node:timers/promises'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
 import { canonicalJSON, hashBytes } from '../lib/fingerprint.mjs'
@@ -14,9 +16,10 @@ function reject(code, path, message) {
 }
 
 // Include ignored files and links: a Git status check misses their mutations.
-async function projectState(root) {
+async function projectState(root, watchDirectory = () => {}) {
   const records = []
   async function walk(directory, prefix = '') {
+    watchDirectory(directory)
     for (const name of (await readdir(directory)).sort()) {
       if (name === '.git') continue
       const path = prefix + name
@@ -78,9 +81,24 @@ export async function run(options) {
   const results = []
   try {
     for (const generator of contract.generators) {
-      const before = await projectState(target.root)
-      const execution = await runCommand(target, generator.command, { signal: controller.signal, exactOutput: true })
-      if (await projectState(target.root) !== before) reject('generator-mutated-project', generator.id, 'Generator changed project files; its read-only contract failed.')
+      const watchers = []
+      let changed = false
+      let watchError = null
+      let execution
+      try {
+        const before = await projectState(target.root, directory => {
+          const watcher = watch(directory, (event, filename) => { if (filename !== '.git') changed = true })
+          watchers.push(watcher)
+          watcher.on('error', error => { watchError = error })
+        })
+        execution = await runCommand(target, generator.command, { signal: controller.signal, exactOutput: true })
+        const after = await projectState(target.root)
+        await setImmediate()
+        if (watchError) throw watchError
+        if (changed || after !== before) reject('generator-mutated-project', generator.id, 'Generator changed project files; its read-only contract failed.')
+      } finally {
+        for (const watcher of watchers) watcher.close()
+      }
       if (execution.status !== 'passed' || execution.outputTruncated) reject('generator-failed', generator.id, execution.error ?? 'Generator failed or its captured output was truncated.')
       if (execution.stdout.includes('\0')) reject('unsupported-format', generator.id, 'Generated sections cannot contain NUL bytes.')
       for (const [resolved, path] of destinations.get(generator)) {

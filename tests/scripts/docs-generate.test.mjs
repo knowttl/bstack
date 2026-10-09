@@ -80,6 +80,33 @@ for (const [name, source] of [
   })
 }
 
+for (const [name, mutation] of [
+  ['temporary file', "writeFileSync('temporary', 'data'); readFileSync('temporary'); unlinkSync('temporary')"],
+  ['ignored file', "writeFileSync('.cache/temporary', 'data'); unlinkSync('.cache/temporary')"],
+  ['restored bytes', "const original = readFileSync('src/old.mjs'); writeFileSync('src/old.mjs', 'changed'); writeFileSync('src/old.mjs', original)"],
+  ['temporary directory', "mkdirSync('temporary'); writeFileSync('temporary/file', 'data'); rmSync('temporary', { recursive: true })"],
+  ['temporary link', "symlinkSync('README.md', 'temporary'); unlinkSync('temporary')"],
+  ['descendant command', "spawnSync(process.execPath, ['-e', \"require('node:fs').writeFileSync('temporary', 'data'); require('node:fs').unlinkSync('temporary')\"])"],
+]) {
+  for (const phase of ['generator', 'version probe']) {
+    for (const [mode, args] of [['check', ['--check']], ['regeneration', []]]) {
+      test(`${mode} rejects ${name} writes during ${phase} even when snapshots match`, async t => {
+        const source = `import { writeFileSync, readFileSync, unlinkSync, mkdirSync, rmSync, symlinkSync } from 'node:fs'; import { spawnSync } from 'node:child_process'; ${mutation}; process.stdout.write('\\nold\\n')`
+        const f = await setup(t, phase === 'generator' ? source : "process.stdout.write('\\nold\\n')")
+        await mkdir(join(f.repo, '.cache'))
+        await writeFile(join(f.repo, '.gitignore'), '.cache/\n')
+        if (phase === 'version probe') f.contract.generators[0].command.versionArgs = ['-e', source]
+        await f.save()
+        const before = await snapshot(f.repo)
+        const result = run('docs generate', f.repo, f.env, args)
+        assert.equal(result.exit, 1, JSON.stringify(result))
+        assert.equal(result.problems[0].code, 'generator-mutated-project')
+        assert.deepEqual(await snapshot(f.repo), before)
+      })
+    }
+  }
+}
+
 for (const source of ["process.exit(2)", "process.stdout.write('x'.repeat(70000))", "process.stdout.write(Buffer.from([255]))"]) {
   test(`unsuccessful or inexact generator output cannot pass: ${source}`, async t => {
     const f = await setup(t, source)
