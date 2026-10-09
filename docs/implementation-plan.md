@@ -480,7 +480,7 @@ Tick each task when its "Done when" commands pass.
       Paired reviewed `move-rule` edits preserve one unchanged rule and one exact link, using an existing selected authority where available.
       Both edits and their final link are validated before protected writes; missing pairs, ambiguous anchors, duplicate rules and changed preconditions leave both files intact.
       Task evidence attaches to `tests/eval/results/tasks/T3a.5.json`; registered agent acceptance procedures remain separate from these mechanical checks.
-      Clean-checkout execution remains the C24b half of T3a.6.
+      See C24b below for clean-checkout execution evidence.
   - [x] T3a.6 Build and prove the standalone checker in a clean checkout
     - [x] C24a Standalone generation and freshness (steps 1 and 2)
       - The [generation contract](command-contract.md#standalone-checker-generation) owns deterministic bundling, embedded schemas and build identity, mutation-free freshness checks, scratch regeneration and selected-plan installation.
