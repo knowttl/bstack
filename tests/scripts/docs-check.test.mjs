@@ -356,3 +356,124 @@ for (const target of ['<a id="custom"></a>\n', '# Title {#custom}\n', '# Title &
     assert.match(result.data.coverageLimits[0].reason, /Heading fragment coverage/)
   })
 }
+
+for (const sample of [
+  '> [target]: missing.md\n>\n> [Guide][target]',
+  '- [target]: missing.md\n\n  [Guide][target]',
+  '1. [target]: missing.md\n\n   [Guide][target]',
+  '> > [target]: missing.md\n> >\n> > [Guide][]\n> > [Guide]: missing.md',
+  '- > [target]: missing.md\n  >\n  > [Guide][target]',
+  '> - [target]: missing.md\n>\n>   [Guide][target]'
+]) {
+  test(`shared container parsing checks rendered reference definitions: ${sample}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), sample + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'broken-local-link')
+    assert.equal(result.data.documents[0].links, 1)
+  })
+}
+
+for (const heading of [
+  '> ## Details',
+  '- ## Details',
+  '1. ## Details',
+  '> > ## Details',
+  '- > ## Details',
+  '> - ## Details',
+  '> Details\n> ---',
+  '- Details\n  ===',
+  '- Guide:\n\n    ## Details'
+]) {
+  test(`shared container parsing resolves heading fragments: ${heading}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), heading + '\n\n[Details](#details)\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+  })
+}
+
+for (const [format, text] of [
+  ['markdown-bold', '> **Order**:\n> A request.\n'],
+  ['markdown-bold', '- **Order**:\n  A request.\n'],
+  ['markdown-bold', '- Guide:\n\n    **Order**:\n    A request.\n'],
+  ['markdown-bold', '> - **Order**:\n>   A request.\n'],
+  ['markdown-bold', '- > **Order**:\n  > A request.\n'],
+  ['markdown-table', '> | Term | Definition |\n> | --- | --- |\n> | Order | A request. |\n'],
+  ['markdown-table', '- | Term | Definition |\n  | --- | --- |\n  | Order | A request. |\n']
+]) {
+  test(`shared container parsing recognizes ${format} entries: ${text}`, async t => {
+    const f = await glossary(t, text, format)
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+test('shared container parsing detects glossary duplicates across containers', async t => {
+  const f = await glossary(t, '**Order**:\nA request.\n\n> **Order**:\n> Another request.\n')
+  assert.equal(run('docs check', f.repo).problems[0].code, 'duplicate-term')
+})
+
+for (const [heading, wrongFragment] of [
+  ['# [Guide](guide(new).md)', 'guidemd'],
+  ['# [Guide](<guide(new).md> "a ( title")', 'guidemd-a--title'],
+  ['# [Guide][target]\n\n[target]: guide.md', 'guidetarget'],
+  ['# [Guide][]\n\n[Guide]: guide.md', 'guideguide'],
+  ['# [Guide]\n\n[Guide]: guide.md', 'guidetarget'],
+  ['# ![Guide](guide(new).md)', 'guidemd'],
+  ['[Guide](guide(new).md)\n---', 'guidemd'],
+  ['[Guide][target]\n===\n\n[target]: guide.md', 'guidetarget'],
+  ['> ## [Guide](guide(new).md)', 'guidemd'],
+  ['- ## [Guide][target]\n\n[target]: guide.md', 'guidetarget']
+]) {
+  for (const [fragment, exit] of [['guide', 0], [wrongFragment, 1]]) {
+    test(`shared linked-heading parsing resolves ${fragment} with exit ${exit}: ${heading}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), `[Guide](other.md#${fragment})\n`)
+      await writeFile(join(f.repo, 'other.md'), heading + '\n')
+      await writeFile(join(f.repo, 'guide(new).md'), '# Guide\n')
+      await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+      f.contract.documents.push({ id: 'linked-heading', path: 'other.md' })
+      await f.save()
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+    })
+  }
+}
+
+for (const [heading, fragment] of [
+  ['# `[Guide](missing.md)`', 'guidemissingmd'],
+  ['# [Guide][unknown]', 'guideunknown']
+]) {
+  test(`shared linked-heading parsing preserves literal syntax: ${heading}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), heading + `\n\n[Heading](#${fragment})\n`)
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+for (const heading of [
+  '# Overview',
+  '   ## Overview',
+  '##',
+  'Overview\n---',
+  'First line\nsecond line\n===',
+  '> ## Overview',
+  '- ## Overview',
+  '> Overview\n> ---',
+  '# [Overview](https://example.invalid)',
+  '[Overview](https://example.invalid)\n---'
+]) {
+  for (const [definition, exit] of [['', 1], ['A request.\n', 0]]) {
+    test(`shared glossary boundaries stop at ${heading} with exit ${exit}`, async t => {
+      const f = await glossary(t, '**Order**:\n' + definition + '\n' + heading + '\nNotes.\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+    })
+  }
+}
+
+test('shared glossary parsing excludes term-like setext headings', async t => {
+  const f = await glossary(t, '**Order**:\n---\nNotes.\n')
+  assert.equal(run('docs check', f.repo).problems[0].code, 'invalid-glossary')
+})

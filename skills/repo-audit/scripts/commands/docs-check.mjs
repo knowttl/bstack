@@ -2,14 +2,19 @@ import { readFile } from 'node:fs/promises'
 import { extname } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
-import { markdownBody, markdownProse, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
+import { markdownBody, markdownProse, markdownHeadings, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { loadContract } from './contract.mjs'
 
 function glossaryEntries(text, format) {
   const body = markdownProse(text)
   if (format === 'markdown-bold') {
-    return [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*([\s\S]*?)(?=^\*\*[^*\n]+\*\*:|^#{1,6}\s|(?![\s\S]))/gm)]
-      .map(match => ({ term: match[1].trim(), definition: match[2].trim() }))
+    const headings = markdownHeadings(body)
+    const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)]
+      .filter(match => !headings.some(heading => heading.start <= match.index && match.index < heading.end))
+    return entries.map((match, index) => {
+      const end = Math.min(entries[index + 1]?.index ?? body.length, headings.find(heading => heading.start > match.index)?.start ?? body.length)
+      return { term: match[1].trim(), definition: body.slice(match.index + match[0].length, end).trim() }
+    })
   }
   if (format === 'markdown-table') {
     const lines = body.split('\n')

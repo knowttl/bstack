@@ -69,10 +69,12 @@ export function markdownBody(text) {
   let paragraph = false
   let offset = 0
   let codeEnd = 0
+  let bodyDepth = 0
   const lists = []
   const source = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n')
   const code = new Map(inlineCodeRanges(source).map(range => [range.start, range.end]))
   return source.split('\n').map(raw => {
+    const previousBase = lists.at(-1) ?? 0
     const lineOffset = offset
     offset += raw.length + 1
     let expanded = raw.replace(/^\t+/, tabs => '    '.repeat(tabs.length))
@@ -118,8 +120,13 @@ export function markdownBody(text) {
     if (item) lists.push(base + item[0].length)
     if (opening) { fence = { marker: opening[1], indent: lists.at(-1) ?? 0, depth }; paragraph = false; return '' }
     if (/^ {4}/.test(line) && !paragraph) return ''
-    paragraph = !!line.trim() && !atxStart.test(line) && !setextUnderline.test(line) && !thematicBreak.test(line)
-    return quotePrefix + line
+    let content = line
+    while (quotes.test(content) || listItem.test(content)) content = content.replace(quotes, '').replace(listItem, '')
+    if (depth || item || base) content = content.replace(/^ {0,3}/, '')
+    const boundary = item || depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0)
+    bodyDepth = depth
+    paragraph = !!content.trim() && !atxStart.test(content) && !setextUnderline.test(content) && !thematicBreak.test(content)
+    return (boundary ? '\n' : '') + content
   }).join('\n')
 }
 
@@ -134,20 +141,23 @@ export function markdownProse(text) {
   return output + body.slice(start)
 }
 
-function markdownHeadings(text) {
+export function markdownHeadings(body) {
   const headings = []
   let paragraph = []
-  for (const line of markdownBody(text).split('\n')) {
+  let offset = 0
+  for (const line of body.split('\n')) {
+    const start = offset
+    offset += line.length + 1
     const atx = atxHeading.exec(line)
+    const isATX = atxStart.test(line)
     const setext = setextUnderline.test(line)
-    const heading = atx?.[1] ?? (setext && paragraph.length ? paragraph.join('\n') : null)
-    if (heading === null) {
-      if (!line.trim() || atxStart.test(line) || quotes.test(line) || listItem.test(line) || referenceDefinition.test(line) || thematicBreak.test(line) || setext) paragraph = []
-      else paragraph.push(line.trim())
+    if (!isATX && (!setext || !paragraph.length)) {
+      if (!line.trim() || referenceDefinition.test(line) || thematicBreak.test(line) || setext) paragraph = []
+      else paragraph.push({ text: line.trim(), start })
       continue
     }
+    headings.push({ text: isATX ? atx?.[1] ?? '' : paragraph.map(line => line.text).join('\n'), start: isATX ? start : paragraph[0].start, end: offset })
     paragraph = []
-    headings.push(heading)
   }
   return headings
 }
@@ -155,9 +165,16 @@ function markdownHeadings(text) {
 export function markdownAnchors(text) {
   const anchors = new Set()
   const counts = new Map()
-  for (const heading of markdownHeadings(text)) {
-    if (headingEntity.test(heading)) continue
-    const title = heading.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]+>/g, '')
+  const definitions = markdownDefinitions(markdownProse(text))
+  for (const heading of markdownHeadings(markdownBody(text))) {
+    if (headingEntity.test(heading.text)) continue
+    let title = ''
+    let start = 0
+    for (const link of markdownReferences(heading.text, definitions)) {
+      title += heading.text.slice(start, link.start) + link.label
+      start = link.end
+    }
+    title = (title + heading.text.slice(start)).replace(/<[^>]+>/g, '')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
     const count = counts.get(slug) ?? 0
     counts.set(slug, count + 1)
@@ -166,21 +183,26 @@ export function markdownAnchors(text) {
   return anchors
 }
 
-// Bounded Markdown destinations: balanced parentheses, angle paths and optional titles.
-export function markdownLinks(text) {
-  const body = markdownProse(text)
+const referenceLabel = value => value.trim().replace(/\s+/g, ' ').toLowerCase()
+const linkDestination = value => /^<([^>\n]+)>|^(\S+)/.exec(value.trim())
+
+function markdownDefinitions(body) {
   const definitions = new Map()
-  const links = []
-  const label = value => value.trim().replace(/\s+/g, ' ').toLowerCase()
-  const destination = value => /^<([^>\n]+)>|^(\S+)/.exec(value.trim())
   for (const match of body.matchAll(/^ {0,3}\[([^\]]+)\]:\s*(.+)$/gm)) {
-    const path = destination(match[2])
-    if (path && !definitions.has(label(match[1]))) definitions.set(label(match[1]), path[1] ?? path[2])
+    const path = linkDestination(match[2])
+    if (path && !definitions.has(referenceLabel(match[1]))) definitions.set(referenceLabel(match[1]), path[1] ?? path[2])
   }
-  const prose = body.replace(/^ {0,3}\[[^\]]+\]:.*$/gm, '')
+  return definitions
+}
+
+function markdownReferences(body, definitions = markdownDefinitions(body)) {
+  const links = []
+  const prose = body.replace(/^ {0,3}\[[^\]]+\]:.*$/gm, value => ' '.repeat(value.length))
+  const code = inlineCodeRanges(prose)
   let consumed = 0
   for (const match of prose.matchAll(/(?<!!)!?\[([^\]\n]*)\]/g)) {
     if (match.index < consumed) continue
+    if (code.some(range => range.start <= match.index && match.index < range.end)) continue
     if (match.index > 0 && prose[match.index - 1] === '\\') continue
     const start = match.index + match[0].length
     if (prose[start] === '(') {
@@ -203,17 +225,21 @@ export function markdownLinks(text) {
       }
       if (!depth) {
         consumed = end
-        const path = destination(prose.slice(start + 1, end - 1))
-        if (path) links.push(path[1] ?? path[2])
+        const path = linkDestination(prose.slice(start + 1, end - 1))
+        if (path) links.push({ href: path[1] ?? path[2], label: match[1], start: match.index, end })
       }
     } else {
       const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start))
       if (reference) consumed = start + reference[0].length
-      const path = definitions.get(label(reference?.[1] || match[1]))
-      if (path) links.push(path)
+      const path = definitions.get(referenceLabel(reference?.[1] || match[1]))
+      if (path) links.push({ href: path, label: match[1], start: match.index, end: reference ? consumed : start })
     }
   }
   return links
+}
+
+export function markdownLinks(text) {
+  return markdownReferences(markdownProse(text)).map(link => link.href)
 }
 
 export async function checkLocalLink(root, source, href, documents = new Map()) {
@@ -229,24 +255,28 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
   const destination = resolve(root, dirname(source), pathPart || source.split('/').at(-1))
   if (!isInside(root, destination)) return problem('Link escapes the selected target')
   const local = relative(root, destination).split('\\').join('/')
-  if (documents.has(local) && documents.get(local) === null) return problem('Missing destination in proposed documents')
   try {
     const resolved = await resolvePath(root, local || '.')
+    if (documents.has(resolved) && documents.get(resolved) === null) return problem('Missing destination in proposed documents')
     // File systems differ in case sensitivity; references must preserve actual case.
     let parent = root
     for (const segment of local.split('/').filter(Boolean)) {
-      if (join(parent, segment) === destination && documents.has(local)) break
       if (!(await readdir(parent)).includes(segment)) {
-        if (documents.has(local)) break
+        if (documents.has(resolved)) {
+          try { await stat(join(parent, segment)); return problem('Wrong-case destination') } catch (error) {
+            if (error.code !== 'ENOENT') throw error
+          }
+          break
+        }
         return problem('Missing or wrong-case destination')
       }
       parent = join(parent, segment)
     }
-    if (!documents.has(local)) await stat(resolved)
+    if (!documents.has(resolved)) await stat(resolved)
     if (fragment && ['.md', '.markdown'].includes(extname(local).toLowerCase())) {
       const unsupported = () => ({ code: 'unsupported-link-fragment', path: source, message: `Heading fragment coverage is limited for ${href}.`,
         fix: 'Review this reference using the document renderer.' })
-      let text = documents.get(local)
+      let text = documents.get(resolved)
       if (text === undefined) {
         try { text = new TextDecoder('utf-8', { fatal: true }).decode(await readFile(resolved)) } catch (error) {
           if (error instanceof TypeError) return unsupported()
@@ -255,7 +285,7 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
       }
       if (!markdownAnchors(text).has(fragment)) {
         if (text.includes('\0') || /<[^>]+\b(?:id|name)\s*=|\{#[^}]+\}/m.test(markdownBody(text)) ||
-            markdownHeadings(text).some(heading => headingEntity.test(heading))) return unsupported()
+            markdownHeadings(markdownBody(text)).some(heading => headingEntity.test(heading.text))) return unsupported()
         return problem('Missing heading fragment')
       }
     }
