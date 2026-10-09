@@ -58,6 +58,7 @@ For npm, script lookup uses the nearest ancestor within the repo containing `pac
 Script bodies use the [selected integration grammar](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command), including literal arguments and fail-fast `&&` chains.
 Backslashes and shell escaping are rejected in script bodies, including quoted arguments; paths use forward slashes.
 Script tokens also reject unsupported unquoted expansion syntax; quoted wildcard literals and direct child-command literal arguments remain supported.
+Percent and exclamation characters are rejected in all script quote states to exclude Windows environment expansion; direct child-command arrays retain these literal characters.
 The validator follows script aliases and declared npm, pnpm and yarn pre/post lifecycle scripts, rejecting cycles, missing scripts and aggregate calls.
 Declared pnpm hooks are inspected even when local configuration disables them, so enabling hooks cannot introduce aggregate recursion.
 Unsupported package-manager invocation syntax and shell programs require a reviewed direct leaf command.

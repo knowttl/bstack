@@ -122,6 +122,21 @@ for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'as
 }
 
 for (const [value, exit] of [
+  ['node "%CHECKER%"', 1],
+  ["node '%CHECKER%'", 1],
+  ['"%CHECKER%" --version', 1],
+  ["'%CHECKER%' --version", 1],
+  ['prefix"%CHECKER%"suffix --version', 1],
+  ['node "prefix%CHECKER%suffix"', 1],
+  ['node "prefix"%CHECKER%"suffix"', 1],
+  ['node "!CHECKER!"', 1],
+  ["node '!CHECKER!'", 1],
+  ['"!CHECKER!" --version', 1],
+  ["'!CHECKER!' --version", 1],
+  ['prefix"!CHECKER!"suffix --version', 1],
+  ['!CHECKER! --version', 1],
+  ['node "prefix!CHECKER!suffix"', 1],
+  ['node "prefix"!CHECKER!"suffix"', 1],
   ['node .bstack/bin/bstack-*.mjs', 1],
   ['.bstack/bin/bstack-*.mjs', 1],
   ['node check.mjs file?.mjs', 1],
