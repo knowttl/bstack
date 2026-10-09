@@ -12,7 +12,7 @@ function commit(repo) {
   return git(repo, 'rev-parse', 'HEAD')
 }
 
-async function fixture(t, { initial = false, checker = false } = {}) {
+async function fixture(t, { initial = false, committedInitial = false, checker = false } = {}) {
   const f = await maintenanceRepo(t)
   // Use the internal-fix fixture's approved pricing contract and implementation.
   await writeFile(join(f.repo, 'README.md'), await readFile(new URL('../fixtures/maintenance/DESIGN.md', import.meta.url)))
@@ -27,7 +27,11 @@ async function fixture(t, { initial = false, checker = false } = {}) {
     f.contract.checks[0].command.args = ['check.mjs']
   }
   await f.save()
-  f.base = initial ? 'empty' : commit(f.repo)
+  if (committedInitial) {
+    await rm(join(f.repo, '.bstack/project.json'))
+    f.base = commit(f.repo)
+    await f.save()
+  } else f.base = initial ? 'empty' : commit(f.repo)
   await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return quantity * 12; }\n')
   f.priorOptions = () => f.previousContract ? ['--previous-contract', f.previousContract] : []
   f.validate = () => run('evidence validate', f.repo, process.env, ['--base', f.base, '--assessment', f.assessmentPath, '--contract', f.contractPath ?? '.bstack/project.json', ...f.priorOptions()])
@@ -305,6 +309,11 @@ for (const [name, wrap] of [
   ['inline line comment', text => `const factor = 12; // ${text}`],
   ['inline comment after a string', text => `const source = "https://example.invalid"; // ${text}`],
   ['inline comment in a fenced example', text => '```js\nconst factor = 12; // ' + text + '\n```'],
+  ['prose apostrophe', text => `Don't change pricing. <!-- ${text} -->`],
+  ['multiple prose apostrophes', text => `Don't change users' pricing. <!-- ${text} -->`],
+  ['unmatched single quote', text => `Pricing 'example <!-- ${text} -->`],
+  ['unmatched double quote', text => `Pricing "example <!-- ${text} -->`],
+  ['unmatched backtick', text => 'Pricing `example <!-- ' + text + ' -->'],
   ['template-expression comment', text => 'const label = `price: ${quantity /* ' + text + ' */}`;'],
   ['nested template-expression comment', text => 'const label = `price: ${`unit: ${quantity /* ' + text + ' */}`}`;'],
   ['timestamp metadata', text => `updated: ${text}`]
@@ -325,12 +334,16 @@ for (const [name, wrap] of [
   })
 }
 
-test('changing only an inline line comment cannot establish an updated rule', async t => {
+for (const [name, prefix, suffix] of [
+  ['inline line comment', 'const factor = 12; // ', ''],
+  ['HTML comment after a prose apostrophe', "Don't change pricing. <!-- ", ' -->']
+]) {
+test(`changing only an ${name} cannot establish an updated rule`, async t => {
   const f = await fixture(t)
-  const document = '# Pricing contract\n\nA quote is quantity multiplied by 12.\nconst factor = 12; // '
-  await writeFile(join(f.repo, 'README.md'), document + 'old wording\n')
+  const document = '# Pricing contract\n\nA quote is quantity multiplied by 12.\n' + prefix
+  await writeFile(join(f.repo, 'README.md'), document + 'old wording' + suffix + '\n')
   f.base = commit(f.repo)
-  await writeFile(join(f.repo, 'README.md'), document + 'new wording\n')
+  await writeFile(join(f.repo, 'README.md'), document + 'new wording' + suffix + '\n')
   await f.collect()
   await f.complete()
   const value = f.assessment.documents[0].assessment
@@ -339,6 +352,7 @@ test('changing only an inline line comment cannot establish an updated rule', as
   await f.write()
   blocked(f.validate(), 'meaningless-document-delta')
 })
+}
 
 for (const [name, before, after, oldExcerpt, newExcerpt] of [
   ['double quoted URL', 'const source = "https://old.invalid";', 'const source = "https://new.invalid";', 'https://old.invalid', 'https://new.invalid'],
@@ -457,17 +471,18 @@ test('comparison with a non-ancestor is unsupported', async t => {
   blocked(f.validate(), 'unsupported-comparison-base')
 })
 
-test('initial contract requires an explicit selected foundation finding', async t => {
-  const f = await fixture(t, { initial: true })
+for (const [name, options] of [['unborn repository', { initial: true }], ['committed repository', { committedInitial: true }]]) {
+test(`initial contract in an ${name} requires an explicit selected foundation finding`, async t => {
+  const f = await fixture(t, options)
   await f.complete()
   blocked(f.validate(), 'previous-contract-unavailable')
   f.assessment.foundation = { findingId: 'F-001', record: {
-    schemaVersion: 1, stage: 'foundation', target: { mode: 'repo', root: f.repo, revision: null }, nextChange: 'Establish pricing checks',
+    schemaVersion: 1, stage: 'foundation', target: { mode: 'repo', root: f.repo, revision: f.assessment.head }, nextChange: 'Establish pricing checks',
     reviewedScope: ['.bstack/project.json'], sources: [{ id: 'intent', pointer: 'README.md', intent: 'documented', summary: 'Preserve pricing' }],
     findings: [{ id: 'F-001', problem: 'Missing maintenance policy', files: ['.bstack/project.json'], command: null, principle: 'Preserve pricing', consequence: 'Drift',
       fix: 'Install contract', scope: ['.bstack/project.json'], verification: 'syntax', blocksNextChange: true, category: 'missing-protection',
       status: 'selected', newPrinciple: false, resolved: false, sourceIds: ['intent'] }], selectedFindingIds: ['F-001'], requiredOutcomes: ['syntax', 'journey', 'foundation-review'], execution: [], limitations: [] } }
-  f.assessment.decisions = [{ id: 'initial-pricing', source: 'ACCEPTANCE.md', status: 'approved', oldCase: '[absent]', newCase: 'A quote is quantity multiplied by 12.',
+  f.assessment.decisions = [{ id: 'initial-pricing', source: 'ACCEPTANCE.md', status: 'approved', oldCase: options.initial ? '[absent]' : 'A quote is quantity multiplied by 12.', newCase: 'A quote is quantity multiplied by 12.',
     affectedWork: ['pricing foundation'], approval: { path: 'APPROVAL.md', pointer: 'Owner approved', version: 'current' } }]
   await f.write()
   await f.capture()
@@ -478,6 +493,7 @@ test('initial contract requires an explicit selected foundation finding', async 
   await f.write()
   blocked(f.validate(), 'unselected-foundation')
 })
+}
 
 test('an unavailable prior contract cannot silently become a new policy', async t => {
   const f = await fixture(t)
@@ -485,8 +501,9 @@ test('an unavailable prior contract cannot silently become a new policy', async 
   f.base = commit(f.repo)
   await mkdir(join(f.repo, '.bstack'), { recursive: true })
   await f.save()
-  blocked(run('evidence collect', f.repo, process.env, ['--base', f.base]), 'previous-contract-reconciliation-required')
-  blocked(f.validate(), 'previous-contract-reconciliation-required')
+  await f.collect()
+  await f.complete()
+  blocked(f.validate(), 'previous-contract-unavailable')
 })
 
 test('unsupported previous contract version is blocked with a migration prerequisite', async t => {

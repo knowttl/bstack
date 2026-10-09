@@ -128,6 +128,7 @@ Dates within definitions and rules remain meaningful, including YAML `date` fiel
 An unrelated meaningful edit cannot justify a cosmetic asserted delta.
 Normalization is conservative structural screening, not a parser for arbitrary documentation formats or proof of semantic agreement.
 Comment screening preserves prose URLs and quoted literal text, including template text, while excluding comments inside template expressions.
+Prose apostrophes and unmatched quote delimiters do not protect comments from screening.
 Delta excerpts are screened at their occurrence in the document so full excerpts can include comments alongside changed rule text.
 A `decision-needed` result names `dependentWork` and remains blocked until the substantive assessment is resolved and reviewed again.
 
@@ -138,7 +139,8 @@ Custom prior authority must be explicitly reconciled with `--previous-contract <
 The assessment records `previousContract`, and changing that selection invalidates its review binding.
 Unrelated fixture contracts are not discovered by their JSON shape.
 If a default prior and a different explicitly selected prior coexist, validation blocks for reconciliation instead of dropping either.
-An unresolved prior location blocks before an initial foundation finding can substitute for existing policy.
+When no default or explicit prior is available, possible existing policy data blocks for explicit reconciliation rather than being selected by shape.
+If the comparison tree contains no possible prior policy, collection permits an initial assessment and validation requires its selected foundation finding, including in committed repositories.
 A deleted prior requires reconciliation unless Git records a clear rename of that same file to the proposed location.
 Previous scopes, document pointers, rule relationships and check declarations remain obligations even when the new contract removes them.
 An absent previous contract blocks with a named prerequisite unless `foundation: {"findingId": "F-001", "record": <findings record>}` explicitly selects a foundation finding covering the new contract, target and revision.
