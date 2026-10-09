@@ -35,5 +35,7 @@
   "T3a.3": ["tests/scripts/evidence-validate.test.mjs", "tests/scripts/evidence-collect.test.mjs"],
   "T3a.4": ["tests/scripts/docs-generate.test.mjs"],
   "T3a.5": ["tests/scripts/docs-check.test.mjs", "tests/scripts/apply.test.mjs"],
-  "C24a": ["tests/scripts/checker-generation.test.mjs"]
+  "C24a": ["tests/scripts/checker-generation.test.mjs"],
+  "C24b": ["tests/scripts/checker-execution.test.mjs"],
+  "T3a.6": ["tests/scripts/checker-generation.test.mjs", "tests/scripts/checker-execution.test.mjs"]
 }
