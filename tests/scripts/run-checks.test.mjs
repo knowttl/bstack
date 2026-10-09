@@ -159,6 +159,33 @@ for (const command of [
   })
 }
 
+for (const command of [
+  { executable: 'node', args: ['check.mjs', 'checks'], cwd: '.', versionArgs: ['--version'] },
+  { executable: 'node', args: ['../check.mjs', '.'], cwd: 'checks', versionArgs: ['--version'] },
+  { executable: 'node', args: ['--version'], cwd: '.', versionArgs: ['check.mjs', '--config=checks'] },
+  ...['npm', 'pnpm', 'yarn'].map(executable => ({ executable, args: ['run', 'verify'], cwd: '.', versionArgs: ['--version'] }))
+]) {
+  test(`linked directory inputs bind target edits and deletions for ${command.executable} ${command.cwd} ${command.args.join(' ')}`, async t => {
+    const f = await setup(t)
+    await mkdir(join(f.repo, 'rules'))
+    await symlink('rules', join(f.repo, 'checks'))
+    await writeFile(join(f.repo, 'rules/value'), '0')
+    await writeFile(join(f.repo, 'check.mjs'), 'process.exit(0)\n')
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { verify: 'node check.mjs checks' } }))
+    git(f.repo, 'add', '.')
+    f.plan.checks[0].command = command
+    const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.ok(first.state.files.some(file => file.path === 'rules/value' && file.present))
+    await writeFile(join(f.repo, 'rules/value'), '1')
+    const edited = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.notEqual(edited.fingerprint, first.fingerprint)
+    await rm(join(f.repo, 'rules/value'))
+    const deleted = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.ok(deleted.state.files.some(file => file.path === 'rules/value' && !file.present))
+    assert.notEqual(deleted.fingerprint, edited.fingerprint)
+  })
+}
+
 for (const manager of ['npm', 'pnpm', 'yarn']) {
   for (const [name, scripts, args, versionArgs = ['--version']] of [
     ['main', { verify: 'node check.mjs --config=rules.json' }, ['run', 'verify']],

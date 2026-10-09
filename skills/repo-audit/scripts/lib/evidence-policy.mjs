@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import { posix, win32 } from 'node:path'
 import { readGit } from './discovery.mjs'
 import { inspectJSON } from './json.mjs'
 import { validateData, validateIds } from './schema.mjs'
@@ -8,12 +9,44 @@ import { resolvePath } from './paths.mjs'
 
 export function baseText(root, base, path) {
   if (base.kind === 'empty-tree') return ''
-  const tree = readGit(root, ['ls-tree', '-z', base.objectId, '--', path])
-  if (tree.status === 0 && (!tree.stdout || tree.stdout.split(' ')[1] !== 'blob')) return ''
-  const result = readGit(root, ['show', `${base.objectId}:${path}`])
-  if (result.status === 0) return result.stdout
-  throw new CommandError('blocked', [{ code: 'previous-source-unavailable', path,
-    message: 'The comparison source cannot be read.', fix: 'Restore the comparison commit and its blobs before validating evidence.' }])
+  function unavailable(message) {
+    throw new CommandError('blocked', [{ code: 'previous-source-unavailable', path,
+      message, fix: 'Restore an internal, acyclic source and its blobs in the comparison tree before validating evidence.' }])
+  }
+  const pending = path.split('/')
+  const parts = []
+  const links = new Set()
+  if (posix.isAbsolute(path) || win32.isAbsolute(path)) unavailable('The comparison source escapes the repository.')
+  while (pending.length) {
+    const part = pending.shift()
+    if (!part || part === '.') continue
+    if (part === '..') {
+      if (!parts.length) unavailable('The comparison source escapes the repository.')
+      parts.pop()
+      continue
+    }
+    parts.push(part)
+    const current = parts.join('/')
+    const tree = readGit(root, ['--literal-pathspecs', 'ls-tree', '-z', base.objectId, '--', current])
+    if (tree.status !== 0) unavailable('The comparison tree cannot be read.')
+    if (!tree.stdout) {
+      if (links.size) unavailable('The comparison link target is missing.')
+      return ''
+    }
+    const [mode, kind] = tree.stdout.split(' ')
+    if (kind === 'tree') continue
+    if (kind !== 'blob') return ''
+    const result = readGit(root, ['show', `${base.objectId}:${current}`])
+    if (result.status !== 0) unavailable('The comparison source cannot be read.')
+    if (mode === '120000') {
+      if (links.has(current)) unavailable('The comparison source contains a link cycle.')
+      links.add(current)
+      if (posix.isAbsolute(result.stdout) || win32.isAbsolute(result.stdout)) unavailable('The comparison link escapes the repository.')
+      parts.pop()
+      pending.unshift(...result.stdout.split('/'))
+    } else return pending.length ? '' : result.stdout
+  }
+  return ''
 }
 
 // Discover prior config even when the proposed contract moved or removed its old location.

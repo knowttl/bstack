@@ -134,6 +134,7 @@ A `decision-needed` result names `dependentWork` and remains blocked until the s
 
 `coverage` lists affected authoritative rule IDs.
 The validator reads the previous contract from the base commit and the proposed contract from the current tree.
+Historical sources resolve internal file and directory links entirely within the comparison tree; escaping, cyclic and missing link targets block validation.
 The prior policy defaults to `.bstack/project.json` at the comparison base, independently of the proposed `--contract` path.
 Custom prior authority must be explicitly reconciled with `--previous-contract <repo-relative-file>` on both collection and validation.
 The assessment records `previousContract`, and changing that selection invalidates its review binding.
@@ -163,6 +164,8 @@ Repeated completed assessments have stable fingerprints.
 Changing code, source citations, the base, coverage, decisions or a no-impact reason invalidates the review.
 The shared fingerprint contract includes exact current bytes, presence and modes for changed paths, policy pointers, cited sources and check inputs, plus canonical substantive assessment data.
 Explicit directory arguments in check commands, resolved package scripts and version probes contribute their file inventory to selection and freshness, including deleted tracked inputs.
+Internal directory links and command working-directory links resolve to that inventory while retaining lexical inputs.
+Initialized submodule fingerprints include tracked link targets and source contents so retargeting a link invalidates captured execution and review bindings.
 Only the top-level `fingerprint` and `execution` fields are excluded from that data.
 The assessment file's raw bytes are excluded when it lives in the target; its substantive data remains included, avoiding a self-referential hash.
 
