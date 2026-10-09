@@ -37,7 +37,7 @@ function nodeCommand(args, extra = {}) {
 
 test('child commands preserve literal arguments and capture version and both output streams', async t => {
   const directory = await sandbox(t)
-  const args = ['spaces here', '日本語', '$HOME', '$(touch injected)', '; touch injected', '"quoted"', '%PATH%', '&echo wrong']
+  const args = ['spaces here', '日本語', '$HOME', '$(touch injected)', '; touch injected', '"quoted"', "'leaf'", 'le"af"', '%PATH%', '!PATH!', '&echo wrong', 'leaf\r']
   const result = await invoke(directory, 'run', { command: nodeCommand(['-e',
     'console.log(JSON.stringify(process.argv.slice(1))); console.error("diagnostic")', ...args]) })
   assert.equal(result.code, 0)
@@ -50,6 +50,16 @@ test('child commands preserve literal arguments and capture version and both out
   assert.equal(result.data.cancelled, false)
   assert.ok(result.data.durationMs >= 0)
   await assert.rejects(readFile(join(directory, 'injected')), { code: 'ENOENT' })
+})
+
+test('direct version probes preserve percent and exclamation argument literals', async t => {
+  const directory = await sandbox(t)
+  const args = ['%PATH%', '!PATH!', 'prefix%PATH%"suffix', 'prefix!PATH!suffix', "'leaf'", 'le"af"', '@npm', 'file>out', 'file<input', '日本語\u00a0file', 'leaf\r']
+  const commandArgs = ['-e', 'console.log(JSON.stringify(process.argv.slice(1)))', ...args]
+  const result = await invoke(directory, 'run', { command: nodeCommand(commandArgs, { versionArgs: commandArgs }) })
+  assert.equal(result.code, 0)
+  assert.deepEqual(JSON.parse(result.data.stdout), args)
+  assert.deepEqual(JSON.parse(result.data.toolVersion.stdout), args)
 })
 
 test('child output is bounded to the last 64 KiB per stream', async t => {

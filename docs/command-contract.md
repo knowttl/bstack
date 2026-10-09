@@ -6,6 +6,94 @@ Command-specific options and input formats belong to their owning tasks and comm
 C4a establishes arguments, targets, paths, scratch and results.
 C4c adds command dispatch and the explicitly supported schema subset.
 
+## Project contract and change collection
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs contract validate --repo <target> [--contract <repo-relative-file>] --json
+node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base <ref> [--contract <repo-relative-file>] --json
+```
+
+Both commands require a Git working tree and accept `--contract`, defaulting to `.bstack/project.json`.
+The selected contract path resolves from the target root, independent of the caller's working directory.
+The installed [project schema](../skills/repo-audit/schemas/project.schema.json) owns version 1 and rejects unknown fields and versions.
+Existing config is usable only if it expresses the entire contract without loss.
+No adapter is provided for the discovered native check configs: their rules and scripts do not express document relationships, generators and acceptance pointers.
+Unsupported formats block with the prerequisite to review a standalone contract.
+Validation never executes project commands or writes the target.
+
+Each collection has unique nonblank IDs in its own namespace.
+Documents have `id` and an existing concrete `path`.
+Scopes have `id`, nonempty `paths` globs, `documentIds` and `ruleIds`.
+Rules have `id`, an existing `path`, an opaque nonblank source `pointer`, and `checkIds` referencing leaf checks; an empty list records a judgement rule.
+Checks have `id`, a [child command](#child-commands) and nonempty `inputScopes` globs.
+Generators additionally have nonempty concrete `outputPaths`, which may name planned absent files.
+Acceptance sources have `id`, an existing `path` and a nonblank `pointer` identifying the authoritative acceptance section.
+Pointers identify source locations for review; this validator checks file presence, not arbitrary prose anchors or semantic correctness.
+The contract never stores copied glossary definitions, rule explanations or standards text.
+
+For example, save this contract in a repo with `README.md` and `src/entry.mjs`:
+
+```json
+{
+  "schemaVersion": 1,
+  "documents": [{ "id": "design", "path": "README.md" }],
+  "scopes": [{ "id": "code", "paths": ["src/**"], "documentIds": ["design"], "ruleIds": ["boundary"] }],
+  "rules": [{ "id": "boundary", "path": "README.md", "pointer": "#Boundaries", "checkIds": ["syntax"] }],
+  "checks": [{ "id": "syntax", "command": { "executable": "node", "args": ["--check", "src/entry.mjs"], "cwd": ".", "versionArgs": ["--version"] }, "inputScopes": ["src/**"] }],
+  "generators": [],
+  "acceptanceSources": [{ "id": "requirements", "path": "README.md", "pointer": "#Acceptance" }]
+}
+```
+
+Paths use repo-relative `/` separators, with exact case on every operating system.
+Scope and input globs reuse the [overlap matcher](#measure-and-overlap): `*` and `?` match within segments and `**` as a whole segment matches zero or more segments.
+Absolute paths, traversal, empty or dot segments, backslashes, partial globstars and bracket/brace/extglob syntax fail.
+Source pointers and generator outputs are concrete paths, without wildcards.
+Existing generator output components and the selected contract path also require exact case; absent planned output components are allowed.
+Command `cwd` follows the child-command contract, including `.` for the root, and must exist.
+Unknown document, rule or check references fail.
+
+Leaf checks and generators cannot invoke `evidence validate`, `docs check` or the standalone `bstack-check.mjs` aggregate.
+Aggregate filenames are recognised in executable and argument positions by case-insensitive basename, using either path separator and ignoring `.exe`, `.cmd` and `.bat` suffixes.
+The `evidence validate` and `docs check` argument pairs require those exact spellings.
+Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
+For npm, script lookup uses the nearest ancestor within the repo containing `package.json` or `node_modules`, and script bodies are inspected from that directory.
+For Yarn, lookup uses the nearest ancestor within the repo containing `package.json`, without stopping at `node_modules`.
+Script bodies use the [selected integration grammar](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command), which owns token, quoting, whitespace and unsupported shell-transformation rules.
+That grammar applies to every command in pre/main/post and nested script bodies reached from checks, generators or their version probes; direct child-command arrays retain literal arguments under the [child-command contract](#child-commands).
+The validator follows script aliases and declared npm, pnpm and yarn pre/post lifecycle scripts, rejecting cycles, missing scripts and aggregate calls.
+Declared pnpm hooks are inspected even when local configuration disables them, so enabling hooks cannot introduce aggregate recursion.
+Unsupported package-manager invocation syntax and shell programs require a reviewed direct leaf command.
+Other child executables are opaque reviewed leaves; validation does not statically analyse arbitrary program implementations for hidden aggregate calls.
+
+Collection requires an explicit base.
+In a repo with a current commit, `<ref>` resolves to a commit and `data.base` records its requested `ref`, `kind: "commit"` and exact `objectId`.
+Before the first commit, use `--base empty`; the base records `kind: "empty-tree"` and the Git empty-tree object ID, with `head: null`.
+A missing base always blocks, produces no assessment, and never substitutes an empty comparison.
+A shallow clone missing the base reports `git fetch --unshallow origin` followed by `git fetch origin <ref>`; the helper never fetches automatically.
+
+`data.changes` retains source (`committed`, `staged`, `unstaged` or `new`), Git status, path and an `oldPath` for detected renames.
+Committed changes are the endpoint diff from the resolved base to the current HEAD; staged changes compare HEAD to the index, and unstaged changes compare the index to the working tree.
+Untracked files respect Git ignore rules.
+The inventory unions these differences, so staged and working-tree changes that cancel each other remain visible.
+Git detects renames with 50% similarity; both original and destination paths map independently through scopes, while undetected moves remain deletions and additions.
+The owning repo's Git inventory reports submodules at their gitlink path, including dirty submodules, rather than traversing another repo's files.
+`data.paths` is the sorted unique union, including new and deleted paths.
+Collection permits absent document, rule and acceptance-source pointers only when the live Git comparison records their deletion or rename.
+Git-proven removed spellings remain collectable during case-only renames; ordinary source pointers still require exact case.
+Removed source paths retain concrete lexical validation but do not require their current replacement to be a file.
+Those paths remain in the inventory and affected documents remain candidates; `contract validate` still requires every source pointer to exist.
+`data.mappings` records matching scope, document and rule IDs for each path.
+`data.candidateDocuments` is the union of scoped documents and changed document paths themselves.
+Paths with no document relationship remain in `data.unmappedPaths`, including paths in scopes that name only rules.
+
+The command writes one `assessment.json` skeleton to [scratch](#scratch) and returns its absolute path in `data.path`.
+The skeleton preserves the live inventory, mapping, document entries with `assessment: null`, unmapped impact entries with `assessment: null`, and empty decisions, coverage and execution lists.
+These are pending semantic assessments, not no-impact claims or passing check evidence.
+Every collection recomputes from Git and the working tree; no supplied inventory option exists.
+The shared live inventory is also the input for the later assessment validator, which must recompute rather than trust the skeleton's path list.
+Assessment validation, freshness and portable clean-checkout execution remain T3a.3 through T3a.6 work.
+
 ## Measure and overlap
 
 ```sh

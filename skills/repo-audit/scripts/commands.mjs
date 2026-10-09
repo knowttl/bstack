@@ -1,5 +1,15 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'contract validate': {
+    module: './commands/contract.mjs',
+    options: ['contract'],
+    help: 'Validate project source pointers, scopes and leaf commands without execution.\nUsage: repo-audit.mjs contract validate --repo <path> [--contract <repo-relative-file>] [--json]\nDefaults to .bstack/project.json; input follows schemas/project.schema.json. Unsupported config formats need a reviewed standalone contract.'
+  },
+  'evidence collect': {
+    module: './commands/evidence.mjs',
+    options: ['contract', 'base'],
+    help: 'Collect the live Git change inventory and save a document assessment skeleton to scratch.\nUsage: repo-audit.mjs evidence collect --repo <path> --base <ref> [--contract <repo-relative-file>] [--json]\nUse --base empty before the first commit. An unavailable base blocks comparison. Renames map both paths through case-sensitive scopes. Collection is not semantic assessment or readiness validation.'
+  },
   'rule-proof': {
     module: './commands/rule-proof.mjs',
     options: ['check-plan', 'check-id', 'valid', 'violation', 'expect'],
@@ -98,4 +108,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['contract validate', 'evidence collect', 'evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['evidence validate', 'docs generate', 'docs check']

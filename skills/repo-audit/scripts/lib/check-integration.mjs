@@ -8,39 +8,54 @@ function reject(path) {
     fix: 'Review selected command paths and failure-preserving commands, use JSON syntax for marked CI edits, and prove exit codes in disposable controls.' }])
 }
 
+export function isIndirectExecutable(executable) {
+  const name = executable.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+  return ['set', 'exit', 'trap', 'eval', 'exec', 'env', 'command', 'builtin', 'source', '.',
+    'sh', 'bash', 'rbash', 'zsh', 'dash', 'ash', 'ksh', 'ksh88', 'ksh93', 'mksh', 'pdksh', 'yash', 'posh',
+    'csh', 'tcsh', 'fish', 'busybox', 'time', 'nohup', 'nice', 'timeout', 'setsid', 'sudo', 'doas', 'xargs',
+    'cmd', 'powershell', 'pwsh', 'call', 'start'].includes(name)
+}
+
 // A bounded command grammar avoids claiming to understand arbitrary shell programs.
 // Quoted arguments are literal; shell control flow must use fail-fast && chains.
-function command(text, path) {
-  text = text.trim()
+export function integrationCommand(text, path) {
+  if (text.includes('\r')) reject(path)
+  text = text.replace(/^[ \t\n]+|[ \t\n]+$/g, '')
   let quote = null
-  let escaped = false
   let word = ''
   const words = []
   const flush = () => {
-    if (/[|;&`\r\n]|\$\(/.test(word)) reject(path)
+    if (/[|;&`\n]|\$\(/.test(word)) reject(path)
     if (word) words.push(word)
     word = ''
   }
   for (let i = 0; i < text.length; i++) {
     const char = text[i]
-    if (escaped) { word += char; escaped = false; continue }
-    if (char === '\\' && quote !== "'") { escaped = true; continue }
-    if (char === quote) { quote = null; continue }
-    if (!quote && (char === '"' || char === "'")) { quote = char; continue }
-    if (quote === "'") { word += char; continue }
+    if ("\\%!'".includes(char) || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(char)) reject(path)
+    if (char === quote) {
+      if (!word || (i + 1 < text.length && !/[ \t\n]/.test(text[i + 1]))) reject(path)
+      quote = null
+      continue
+    }
+    if (char === '"') {
+      if (word || (i > 0 && !/[ \t\n]/.test(text[i - 1]))) reject(path)
+      quote = char
+      continue
+    }
     if (char === '`' || char === '$') reject(path)
     if (quote) { word += char; continue }
+    if (char === '@' && !word && (!words.length || words.at(-1) === '&&')) reject(path)
     if (char === '&' && text[i + 1] === '&') { flush(); words.push('&&'); i++; continue }
-    if (char === '\n' || char === '\r') {
+    if (char === '\n') {
       flush()
       if (words.at(-1) !== '&&') reject(path)
       continue
     }
-    if ('#|;&!<>(){}'.includes(char)) reject(path)
-    if (/\s/.test(char)) flush()
+    if ('#|;&<>(){}*?[]~^'.includes(char)) reject(path)
+    if (char === ' ' || char === '\t') flush()
     else word += char
   }
-  if (quote || escaped) reject(path)
+  if (quote) reject(path)
   flush()
   if (!words.length || words[0] === '&&' || words.at(-1) === '&&') reject(path)
   let first = true
@@ -50,17 +65,14 @@ function command(text, path) {
     if (first && /^[A-Za-z_][A-Za-z0-9_]*=/.test(word)) reject(path)
     if (!first) continue
     const executable = word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
-    if (['set', 'exit', 'trap', 'eval', 'exec', 'env', 'command', 'builtin', 'source', '.',
-      'sh', 'bash', 'rbash', 'zsh', 'dash', 'ash', 'ksh', 'ksh88', 'ksh93', 'mksh', 'pdksh', 'yash', 'posh',
-      'csh', 'tcsh', 'fish', 'busybox', 'time', 'nohup', 'nice', 'timeout', 'setsid', 'sudo', 'doas', 'xargs',
-      'cmd', 'powershell', 'pwsh', 'call', 'start']
-      .includes(executable)) reject(path)
+    if (isIndirectExecutable(word)) reject(path)
     const next = words.indexOf('&&', index + 1)
     const args = words.slice(index + 1, next === -1 ? words.length : next)
     if ((executable === 'npx' || (executable === 'npm' && args.some(arg => ['exec', 'x'].includes(arg)))) &&
       args.some(arg => /^--call(?:=|$)|^-[^-]*c/.test(arg))) reject(path)
     first = false
   }
+  return words
 }
 
 export function validateCheckIntegration(path, proposed, selected) {
@@ -82,6 +94,6 @@ export function validateCheckIntegration(path, proposed, selected) {
       value = value[key]
     }
     if (typeof value !== 'string') reject(path)
-    command(value, path)
+    integrationCommand(value, path)
   }
 }

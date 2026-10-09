@@ -444,8 +444,20 @@ Tick each task when its "Done when" commands pass.
       README incorrectly described maintained enforcement as pending after C20; the validation corrected that availability statement without changing executable behavior.
       The [task evidence contract](#task-evidence-contract) requires attachment of the final full-suite capture after documentation fixes; the [T3.4 record](../tests/eval/results/tasks/T3.4.json) owns attached counts, environment and input binding.
 - Phase 3a: Maintenance
-  - [ ] T3a.1 Define the project contract
-  - [ ] T3a.2 Build `evidence collect`
+  - [x] T3a.1 Define the project contract
+    - C21 adds the installed `schemas/project.schema.json` version 1 and `contract validate` with explicit `--contract`, defaulting to `.bstack/project.json`.
+      The contract stores document, rule and acceptance pointers, scope relationships, leaf command objects and generator inputs/outputs, without copied standards or glossary text.
+      Public-command tests reject invalid versions, missing and mis-cased sources, duplicate IDs, unknown references, escaping or unsupported paths, shell strings and direct or package-script aggregate recursion.
+      Existing discovered native configs do not express these relationships; unsupported formats require a reviewed standalone contract rather than a lossy adapter.
+      Final gate evidence attaches to `tests/eval/results/tasks/T3a.1.json` using the task evidence contract.
+  - [x] T3a.2 Build `evidence collect`
+    - C21 collects live committed endpoint differences, staged, unstaged and new paths, retaining both sides of detected renames and all deletions.
+      It resolves and records the exact base commit, records an explicit empty tree before the first commit, and blocks unavailable bases with full-history fetch prerequisites for shallow clones.
+      Contract scopes map document candidates with unmapped impact assessments preserved in a scratch skeleton.
+      Public-command tests cover all change categories, literal filenames, scope case and globstar matching, absent bases, shallow history and fresh recomputation after edits.
+      Final gate evidence attaches to `tests/eval/results/tasks/T3a.2.json` with AC-19 and AC-20 links.
+      Collection is not semantic assessment or readiness validation; T3a.3 owns the assessment validator and will consume the shared live Git inventory.
+      Execution is local Linux; real Windows/macOS execution remains captain checklist evidence.
   - [ ] T3a.3 Build `evidence validate`
   - [ ] T3a.4 Build generated-fact freshness checks
   - [ ] T3a.5 Build document reference checks

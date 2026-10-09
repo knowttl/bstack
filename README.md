@@ -121,7 +121,8 @@ Creation journals directories and files through the existing protected-write eng
 Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
 Maintained enforcement is available through selected `apply` edits, as described below.
-Portable maintenance remains pending.
+Project contract validation and change collection are available below.
+Assessment validation and portable maintenance remain pending.
 
 Prove a selected native rule against prepared clean and independently seeded fixtures:
 
@@ -152,6 +153,24 @@ Declare selected command paths in each edit's `checkIntegration` using the [enfo
 The identical maintained-command disposable controls remain the enforcement proof.
 CI integration requires the project's selection and its adapter behaviour remains unverified until hosted execution is observed.
 Run `npm test -- --task T3.4` for the maintained-command, baseline and web/core scope controls.
+
+Validate the project's small maintenance contract and collect the final changed paths:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs contract validate --repo <target> --contract .bstack/project.json --json
+node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base <ref> --json
+# Before the first commit:
+node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base empty --json
+npm test -- --task T3a.1
+npm test -- --task T3a.2
+```
+
+`--contract` defaults to `.bstack/project.json` and accepts another repo-relative JSON contract path.
+The [maintenance contract](docs/command-contract.md#project-contract-and-change-collection) defines the schema, pointers, scopes, leaf checks and supported matching rules.
+Collection resolves the base, includes committed, staged, unstaged and new changes, and maps both paths of detected renames.
+It returns candidate documents, unmapped paths and a scratch assessment path without changing the target.
+Missing bases block collection; shallow history reports the required fetch commands.
+The skeleton still needs semantic assessment and review; collection does not establish readiness.
 
 Capture a reviewed check plan with acceptance sources and input scopes:
 
