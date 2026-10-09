@@ -113,6 +113,75 @@ test('glossary samples inside code do not create duplicate entries', async t => 
   assert.equal(run('docs check', f.repo).exit, 0)
 })
 
+for (const text of [
+  '![](missing.png)',
+  '[](missing.md)',
+  '[Guide](missing.md "a ( note")',
+  "[Guide](missing.md 'a ) note')",
+  '[guide][target]\n[target]: missing.md\n[target]: README.md',
+  '- Guide:\n    [reference](missing.md)',
+  '- Guide:\n\n    [reference](missing.md)',
+  '- Guide:\n    - Nested:\n        [reference](missing.md)',
+  'Paragraph\n    [reference](missing.md)'
+]) {
+  test(`rendered local reference fails when missing: ${text}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'broken-local-link')
+  })
+}
+
+for (const text of [
+  '    [reference](missing.md)',
+  '- Guide:\n\n      [reference](missing.md)',
+  '- Guide:\n    ```md\n    [reference](missing.md)\n    ```',
+  '`` [reference](missing.md) ` sample ``'
+]) {
+  test(`code does not contribute local references: ${text}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(result.data.documents[0].links, 0)
+  })
+}
+
+for (const [format, entry] of [
+  ['markdown-bold', '**Order**:\nA request.\n'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | A request. |\n']
+]) {
+  for (const delimiter of ['`', '``']) {
+    test(`${format} ignores multiline ${delimiter} code-span examples`, async t => {
+      const f = await glossary(t, entry + '\nExample: ' + delimiter + '\n' + entry + delimiter + '\n', format)
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, 0, JSON.stringify(result))
+    })
+  }
+}
+
+test('masking code spans preserves glossary entry boundaries', async t => {
+  const f = await glossary(t, '**Order**:\nA request.\n\n`sample`**Order**:\nAn example.\n')
+  assert.equal(run('docs check', f.repo).exit, 0)
+})
+
+for (const [fragment, exit] of [['first-line-second-line', 0], ['second-line', 1], ['first-line-second-line-1', 0]]) {
+  test(`multiline setext heading resolves ${fragment} with exit ${exit}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), `[Heading](other.md#${fragment})\n`)
+    await writeFile(join(f.repo, 'other.md'), '# Earlier\n\nFirst line\nsecond line\n---\n\nFirst line\nsecond line\n===\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+  })
+}
+
+test('list continuation headings remain available as fragment targets', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '- Guide:\n\n    ## Details\n\n[Details](#details)\n')
+  assert.equal(run('docs check', f.repo).exit, 0)
+})
+
 for (const target of ['<a id="custom"></a>\n', '# Title {#custom}\n', '# Title &amp; details\n']) {
   test(`unsupported heading fragments report coverage: ${target}`, async t => {
     const f = await maintenanceRepo(t)

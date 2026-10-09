@@ -103,8 +103,12 @@ export async function prepareChangeSet(options, target) {
     let linkedPath
     try { linkedPath = resolve(dirname(scope.get(sourcePath)), decodeURIComponent(href.split('#')[0])) } catch { reject('invalid-rule-link', 'Invalid link encoding.', sourcePath) }
     if (linkedPath !== scope.get(destinationPath)) reject('invalid-rule-link', 'The replacement must link to the selected destination.', sourcePath)
-    const problem = await checkLocalLink(target.root, sourcePath, href, documents)
-    if (problem) throw new CommandError('failed', [problem])
+    for (const document of [source, destination]) {
+      for (const reference of markdownLinks(document.proposedContent)) {
+        const problem = await checkLocalLink(target.root, document.path, reference, documents)
+        if (problem) throw new CommandError('failed', [problem])
+      }
+    }
   }
   for (const edit of plan.edits.filter(edit => edit.operation === 'move-rule')) {
     if (!plan.edits.some(candidate => candidate.operation === 'move-rule' && candidate.path === edit.payload.sourcePath &&

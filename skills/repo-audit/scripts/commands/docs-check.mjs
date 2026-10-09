@@ -2,11 +2,11 @@ import { readFile } from 'node:fs/promises'
 import { extname } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
-import { markdownBody, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
+import { markdownBody, markdownProse, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { loadContract } from './contract.mjs'
 
 function glossaryEntries(text, format) {
-  const body = markdownBody(text)
+  const body = markdownProse(text)
   if (format === 'markdown-bold') {
     return [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*([\s\S]*?)(?=^\*\*[^*\n]+\*\*:|^#{1,6}\s|(?![\s\S]))/gm)]
       .map(match => ({ term: match[1].trim(), definition: match[2].trim() }))
