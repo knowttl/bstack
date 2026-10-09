@@ -92,7 +92,78 @@ The skeleton preserves the live inventory, mapping, document entries with `asses
 These are pending semantic assessments, not no-impact claims or passing check evidence.
 Every collection recomputes from Git and the working tree; no supplied inventory option exists.
 The shared live inventory is also the input for the later assessment validator, which must recompute rather than trust the skeleton's path list.
-Assessment validation, freshness and portable clean-checkout execution remain T3a.3 through T3a.6 work.
+Assessment validation and local freshness are implemented below; portable clean-checkout execution remains T3a.6 work.
+
+### Assessment validation
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] --json
+```
+
+The caller-relative assessment follows `schemas/evidence.schema.json`.
+Collection now includes the local real repo path and a null review fingerprint, and unions previous/proposed document candidates so removed coverage remains visible.
+Comparison supports an ancestor commit, or `empty` only before the first commit.
+Unavailable comparison objects block with their restoration prerequisite.
+Validation recomputes all changed paths, change categories, mappings, candidate documents and unmapped paths from Git; a supplied incomplete inventory cannot establish coverage.
+
+Each document or unmapped-path entry's `assessment` follows `schemas/impact-assessment.json`:
+
+```json
+{
+  "result": "no-impact",
+  "changedBehavior": "The quote function now uses an explicit statement terminator.",
+  "changedPaths": ["src/price.mjs"],
+  "reason": "The pricing definition still specifies quantity multiplied by 12, which the internal fix preserves.",
+  "citations": [{"path": "DESIGN.md", "pointer": "quantity multiplied by 12", "version": "base"}],
+  "dependentWork": []
+}
+```
+
+Every relevant changed path must appear in the entry's `changedPaths`.
+Document assessments cite the authoritative document itself, using literal nonempty source excerpts from `base` or `current` bytes.
+An `updated` result also requires `delta: {"before": "old definition", "after": "new definition"}` excerpts that actually disappeared and appeared in that document.
+Empty before/after excerpts describe additions/deletions.
+Dates, timestamp metadata, whitespace and HTML or C-style comments alone cannot establish an updated definition or rule.
+An unrelated meaningful edit cannot justify a cosmetic asserted delta.
+Normalization is conservative structural screening, not a parser for arbitrary documentation formats or proof of semantic agreement.
+A `decision-needed` result names `dependentWork` and remains blocked until the substantive assessment is resolved and reviewed again.
+
+`coverage` lists affected authoritative rule IDs.
+The validator reads the previous contract from the base commit and the proposed contract from the current tree.
+It discovers a prior maintenance JSON contract even when its location changed, and requires reconciliation when more than one prior candidate exists.
+Previous scopes, document pointers, rule relationships and check declarations remain obligations even when the new contract removes them.
+An absent previous contract blocks with a named prerequisite unless `foundation: {"findingId": "F-001", "record": <findings record>}` explicitly selects a foundation finding covering the new contract, target and revision.
+That record uses the existing findings schema, `stage: "foundation"`, and a selected finding and ID.
+An unsupported previous version or invalid previous policy blocks for a reviewed migration rather than trusting proposed coverage.
+
+An acceptance-source replacement requires a decision naming `source` (repo-relative path), literal `oldCase`, approved `newCase` and nonempty `affectedWork`.
+Decisions have unique `id` and `status: "pending" | "approved"`.
+An approved replacement also supplies an `approval` citation in the same path/pointer/version format, from a source separate from the acceptance sources being checked.
+The old/new case excerpts must exist in the base/current source respectively; `[absent]` explicitly denotes an initially absent or deleted source.
+Pending decisions block all dependent work even with passing executable checks.
+The helper verifies provenance structure and binding, not whether an owner actually approved a natural-language statement.
+The project's selected review process must assess that authorization and semantic correctness against the diff.
+
+Validation returns the current `data.fingerprint`, including on stale-review blocked results.
+After reviewing the substantive claims against the live diff, the selected reviewer records that value in the assessment's top-level `fingerprint`.
+The validator never writes or automatically approves the review binding.
+Repeated completed assessments have stable fingerprints.
+Changing code, source citations, the base, coverage, decisions or a no-impact reason invalidates the review.
+The shared fingerprint contract includes exact current bytes, presence and modes for changed paths, policy pointers, cited sources and check inputs, plus canonical substantive assessment data.
+Only the top-level `fingerprint` and `execution` fields are excluded from that data.
+The assessment file's raw bytes are excluded when it lives in the target; its substantive data remains included, avoiding a self-referential hash.
+
+`execution` references existing local captures as `[{"runId": "<run-id>", "plan": "<caller-relative-plan.json>"}]`.
+The validator reads `checks.json` from the target's scratch run and recomputes the capture's current input state through the same hashing function as `run-checks`.
+An after capture must have passed with equal original, final and current fingerprints and the exact plan digest.
+Each required check must have executed successfully with its exact declared command and version probe, and its plan must include the previous/proposed check input scopes and both policy locations and authoritative source paths.
+Changed literal and deleted inputs must be represented in the capture; a glob that omits a deleted path needs that path declared explicitly in the capture plan.
+Changed check commands require successful captures of both declarations.
+Missing, failed, unavailable, skipped or stale captures cannot pass.
+Attaching or replacing execution references does not alter the substantive review fingerprint.
+Keep assessment execution records outside leaf-check product scopes so writing capture references cannot invalidate the leaf capture.
+This validates local captures only; generated-fact freshness, running a prior checker implementation and portable standalone execution remain later tasks.
+Human summaries and JSON results report structural proof limits.
 
 ## Measure and overlap
 

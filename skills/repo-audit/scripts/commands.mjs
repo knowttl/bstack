@@ -10,6 +10,11 @@ export const commands = {
     options: ['contract', 'base'],
     help: 'Collect the live Git change inventory and save a document assessment skeleton to scratch.\nUsage: repo-audit.mjs evidence collect --repo <path> --base <ref> [--contract <repo-relative-file>] [--json]\nUse --base empty before the first commit. An unavailable base blocks comparison. Renames map both paths through case-sensitive scopes. Collection is not semantic assessment or readiness validation.'
   },
+  'evidence validate': {
+    module: './commands/evidence-validate.mjs',
+    options: ['contract', 'base', 'assessment'],
+    help: 'Validate live change coverage, substantive review freshness and captured required checks.\nUsage: repo-audit.mjs evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] [--json]\nAssessment follows schemas/evidence.schema.json. Returns the current review fingerprint; review must bind it explicitly. Missing prior policy, decisions or checks block completion. Structural validation cannot prove semantic correctness.'
+  },
   'rule-proof': {
     module: './commands/rule-proof.mjs',
     options: ['check-plan', 'check-id', 'valid', 'violation', 'expect'],
@@ -108,4 +113,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['evidence validate', 'docs generate', 'docs check']
+export const plannedCommands = ['docs generate', 'docs check']

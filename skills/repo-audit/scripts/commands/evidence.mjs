@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
 import { createScratch } from '../lib/scratch.mjs'
-import { pathGlob, matchesPath } from '../lib/glob.mjs'
+import { previousPolicy, mapInventory } from '../lib/evidence-policy.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { loadContract } from './contract.mjs'
 
@@ -66,17 +66,11 @@ export async function run(options) {
   const inventory = collectInventory(target.root, options.base)
   const removedPaths = new Set(inventory.changes.filter(change => change.status === 'D' || change.status.startsWith('R')).map(change => change.oldPath ?? change.path))
   const { contract, path: contractPath } = await loadContract(target, options.contract, removedPaths)
-  const scopes = contract.scopes.map(scope => ({ ...scope, globs: scope.paths.map(pathGlob) }))
-  const mappings = inventory.paths.map(path => {
-    const matching = scopes.filter(scope => scope.globs.some(glob => matchesPath(glob, path)))
-    return { path, scopeIds: matching.map(scope => scope.id),
-      documentIds: [...new Set(matching.flatMap(scope => scope.documentIds))], ruleIds: [...new Set(matching.flatMap(scope => scope.ruleIds))] }
-  })
-  const unmappedPaths = mappings.filter(mapping => !mapping.documentIds.length).map(mapping => mapping.path)
-  const candidateDocuments = contract.documents.filter(document => mappings.some(mapping => mapping.documentIds.includes(document.id) || mapping.path === document.path))
-  const assessment = { schemaVersion: 1, contract: contractPath, ...inventory, mappings, unmappedPaths,
+  const previous = await previousPolicy(target.root, inventory.base, contractPath)
+  const { mappings, unmappedPaths, candidateDocuments } = mapInventory(inventory, [contract, ...(previous ? [previous.contract] : [])])
+  const assessment = { schemaVersion: 1, repo: target.root, contract: contractPath, ...inventory, mappings, unmappedPaths,
     documents: candidateDocuments.map(document => ({ ...document, assessment: null })),
-    unmappedAssessments: unmappedPaths.map(path => ({ path, assessment: null })), decisions: [], coverage: [], execution: [] }
+    unmappedAssessments: unmappedPaths.map(path => ({ path, assessment: null })), decisions: [], coverage: [], execution: [], fingerprint: null }
   const directory = await createScratch(target)
   const path = join(directory, 'assessment.json')
   await writeFile(path, JSON.stringify(assessment, null, 2) + '\n')
