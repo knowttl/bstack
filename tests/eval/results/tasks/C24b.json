@@ -50,7 +50,7 @@
       "status": "passed"
     }
   ],
-  "sourceRevision": "507a50a36f54fdffddf7188bb6f08d26a28dbd33",
+  "sourceRevision": "1664ef16247bf00765ee68a1bbf666beaab5cf48",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -141,7 +141,7 @@
         {
           "path": "scripts/checker-entry.mjs",
           "executable": false,
-          "sha256": "e0339f0a63b3edab31f9b9aa81ac10f79ee482f784375ec07edf0de94de6ae1c"
+          "sha256": "30dcef5ddf1b155abe4e6afca549c961cabad38f06fa80a9f0fc90688db2ee3c"
         },
         {
           "path": "scripts/eval.mjs",
@@ -341,7 +341,7 @@
         {
           "path": "skills/repo-audit/scripts/bstack-check.mjs",
           "executable": false,
-          "sha256": "7d63f10229f3d969ba1cb99f20c6072d177be807ff29229e1c767ce19390f184"
+          "sha256": "96f1b08a8a3a24fcc1cb18662383a5e502271a81ce79f72ece9f3ce79fb7cbdd"
         },
         {
           "path": "skills/repo-audit/scripts/commands.mjs",
@@ -3471,7 +3471,7 @@
         {
           "path": "tests/scripts/checker-execution.test.mjs",
           "executable": false,
-          "sha256": "955534832452dd4229a34cf653185de46b623349d8b2f13825fb68bc169e8fd1"
+          "sha256": "fea1aa8df5b553d8af79f3f4cdd6be68a452f1ee610dc9e8e57464dfd6b881d0"
         },
         {
           "path": "tests/scripts/checker-generation.test.mjs",
@@ -3774,7 +3774,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "de897ba9d5e93092f9fecbe391f954fc2c0ce3d6ba6b81905beed7dc3157d146"
+      "sha256": "0400164697507900c6c83a82c6e81287a99ca4af15e9a4cee4ee0f56b40f352e"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3814,18 +3814,18 @@
     ],
     "postCaptureDocumentation": [],
     "counts": {
-      "tests": 2432,
+      "tests": 2439,
       "failed": 0,
-      "passed": 2432,
+      "passed": 2439,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2423,
+      "topLevel": 2430,
       "suites": 0
     },
-    "durationMs": 206518.327523,
-    "outputSha256": "5e7e6dd31a0581336d417c480007bb364873acc982c4d0c5afd4eb4cb72c9b61",
-    "eventsSha256": "e794fff7d4e225ee85bb4f981b32bc4a86f6f5494e195c8384d9edd256057d5b",
+    "durationMs": 186351.089338,
+    "outputSha256": "5f6605ed5e0fae730607f38737e75c9b972b08e86c32acf47ff81c88276785dd",
+    "eventsSha256": "ec77d74ea160761bb49a68d95862f4f6275bdea8cd375bb5ea97898b142656f5",
     "eventsArtifact": "tests/eval/results/tasks/C24b.events.jsonl"
   }
 }
