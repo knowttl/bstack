@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile, rename, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { git, run, snapshot } from './discovery-fixture.mjs'
@@ -225,4 +225,34 @@ for (const collection of ['documents', 'rules', 'acceptanceSources']) {
     await f.save()
     assert.equal((await collect(t, f, base)).problems[0]?.code, 'missing-path')
   })
+}
+
+for (const collection of ['documents', 'rules', 'acceptanceSources']) {
+  for (const source of ['committed', 'staged', 'unstaged']) {
+    for (const replacement of ['directory', 'ancestor file']) {
+      test(`collect retains ${source} removed ${collection} source replaced by ${replacement}`, async t => {
+        const f = await maintenanceRepo(t)
+        await mkdir(join(f.repo, 'config'))
+        await writeFile(join(f.repo, 'config/rules'), '# Rules\n')
+        f.contract[collection][0].path = 'config/rules'
+        await f.save()
+        const base = commit(f.repo)
+        await rm(join(f.repo, 'config'), { recursive: true })
+        if (replacement === 'directory') {
+          await mkdir(join(f.repo, 'config/rules'), { recursive: true })
+          await writeFile(join(f.repo, 'config/rules/imports.json'), '{}\n')
+        } else await writeFile(join(f.repo, 'config'), 'replacement\n')
+        if (source === 'staged') git(f.repo, 'add', '-A')
+        if (source === 'committed') commit(f.repo)
+        const result = await collect(t, f, base)
+        assert.equal(result.exit, 0, JSON.stringify(result))
+        assert.ok(result.data.paths.includes('config/rules'))
+        assert.deepEqual(result.data.changes.find(change => change.path === 'config/rules'), { source, status: 'D', path: 'config/rules' })
+        if (collection === 'documents') assert.deepEqual(result.data.candidateDocuments, f.contract.documents)
+        const skeleton = JSON.parse(await readFile(result.data.path, 'utf8'))
+        assert.deepEqual(skeleton.paths, result.data.paths)
+        assert.notEqual(run('contract validate', f.repo).exit, 0)
+      })
+    }
+  }
 }
