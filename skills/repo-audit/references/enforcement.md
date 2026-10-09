@@ -92,6 +92,10 @@ Unmarked edits, other package scripts, other CI commands and unrelated configura
 The plan digest binds these selections alongside the complete proposed bytes.
 Selected commands use literal arguments and fail-fast top-level `&&` chains; line breaks between commands are allowed only after `&&`.
 Tokens are nonempty unquoted words or whole double-quoted literals, separated by whitespace.
+Only ASCII spaces and tabs separate tokens; CR/LF line breaks are allowed after `&&`, and leading/trailing ASCII whitespace is ignored.
+Unicode whitespace remains literal; other ASCII control characters are unsupported.
+Unquoted `<` and `>` redirection, including attached forms, and unquoted leading executable `@` prefixes are unsupported in every command of a chain.
+Double-quoted redirection characters and `@` remain literal, as do unquoted `@` argument characters.
 Single quotes anywhere, mixed quoted/unquoted tokens and adjacent quoted fragments are unsupported in executable and argument positions.
 Backslashes and shell escaping are unsupported, including inside quoted arguments; use forward-slash paths and quotes for literal spaces.
 Percent and exclamation characters are unsupported in every script token, including double-quoted literals, because Windows can expand environment variables despite quotes.
