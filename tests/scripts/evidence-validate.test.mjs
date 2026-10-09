@@ -237,6 +237,51 @@ test('updated document needs a meaningful changed definition excerpt', async t =
   assert.equal(f.validate().exit, 0)
 })
 
+for (const [before, after] of [
+  ['Invoices must be paid before 2026-10-01', 'Invoices must be paid before 2026-11-01'],
+  ['Invoices must be paid before 2026-11-01', 'Invoices must be paid before 2026-10-01'],
+  ['The rule takes effect at 2026-10-01T12:00:00Z', 'The rule takes effect at 2026-11-01T12:00:00Z']
+]) {
+  test(`a date inside a rule remains a meaningful document delta: ${after}`, async t => {
+    const f = await fixture(t)
+    await writeFile(join(f.repo, 'README.md'), `# Pricing contract\n\n${before}.\n`)
+    f.base = commit(f.repo)
+    await writeFile(join(f.repo, 'README.md'), `# Pricing contract\n\n${after}.\n`)
+    await f.collect()
+    await f.complete()
+    const value = f.assessment.documents[0].assessment
+    value.result = 'updated'
+    value.changedBehavior = after
+    value.reason = 'The documented date changes the deadline or effective time of the rule.'
+    value.delta = { before, after }
+    await f.write()
+    await f.capture()
+    await f.bind()
+    assert.equal(f.validate().exit, 0)
+  })
+}
+
+for (const [before, after] of [
+  ['Updated: 2026-10-01', 'Updated: 2026-11-01'],
+  ['Timestamp: 2026-10-01T12:00:00Z', 'Timestamp: 2026-11-01T12:00:00Z'],
+  ['2026-10-01T12:00:00Z', '2026-11-01T12:00:00Z']
+]) {
+  test(`timestamp metadata cannot establish an updated rule: ${after}`, async t => {
+    const f = await fixture(t)
+    const document = await readFile(join(f.repo, 'README.md'), 'utf8')
+    await writeFile(join(f.repo, 'README.md'), `${document}\n${before}\n`)
+    f.base = commit(f.repo)
+    await writeFile(join(f.repo, 'README.md'), `${document}\n${after}\n`)
+    await f.collect()
+    await f.complete()
+    const value = f.assessment.documents[0].assessment
+    value.result = 'updated'
+    value.delta = { before, after }
+    await f.write()
+    blocked(f.validate(), 'meaningless-document-delta')
+  })
+}
+
 test('an unrelated meaningful edit cannot establish an asserted cosmetic rule update', async t => {
   const f = await fixture(t)
   await writeFile(join(f.repo, 'README.md'), '# Pricing contract\n\nA quote is quantity multiplied by 12.\nA new unrelated definition.\n<!-- rule confirmed -->\n')

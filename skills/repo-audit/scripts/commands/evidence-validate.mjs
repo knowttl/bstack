@@ -31,7 +31,7 @@ function meaningful(text) {
   return text.replace(/(`{3,}|"(?:\\[\s\S]|[^"\\\r\n])*"|'(?:\\[\s\S]|[^'\\\r\n])*'|`(?:\\[\s\S]|[^`\\])*`)|<!--[\s\S]*?-->|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*/g,
     (match, literal) => literal ?? '')
     .replace(/^\s*(?:date|updated|last[- ]updated|timestamp)\s*:.*$/gim, '')
-    .replace(/\b\d{4}-\d{2}-\d{2}(?:T[\d:.]+(?:Z|[+-]\d{2}:\d{2}))?\b/g, '').replace(/\s+/g, '')
+    .replace(/^[ \t]*\d{4}-\d{2}-\d{2}(?:T[\d:.]+(?:Z|[+-]\d{2}:\d{2}))?[ \t]*\r?$/gm, '').replace(/\s+/g, '')
 }
 
 function successful(result) {
@@ -112,7 +112,7 @@ export async function run(options) {
           !before.includes(delta.before) || !after.includes(delta.after) ||
           !oldDocument.includes(oldExcerpt) || !newDocument.includes(newExcerpt) ||
           (delta.before && newDocument.includes(oldExcerpt)) || (delta.after && oldDocument.includes(newExcerpt))) {
-        problem('meaningless-document-delta', `Updated ${entry.path} needs an actual changed definition or rule excerpt, beyond dates, whitespace or comments.`)
+        problem('meaningless-document-delta', `Updated ${entry.path} needs an actual changed definition or rule excerpt, beyond timestamp metadata, whitespace or comments.`)
       }
     }
   }
