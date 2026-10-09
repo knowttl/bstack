@@ -153,10 +153,10 @@ export function markdownHeadings(body) {
     const setext = setextUnderline.test(line)
     if (!isATX && (!setext || !paragraph.length)) {
       if (!line.trim() || referenceDefinition.test(line) || thematicBreak.test(line) || setext) paragraph = []
-      else paragraph.push({ text: line.trim(), start })
+      else paragraph.push({ text: line, start })
       continue
     }
-    headings.push({ text: isATX ? atx?.[1] ?? '' : paragraph.map(line => line.text).join('\n'), start: isATX ? start : paragraph[0].start, end: offset })
+    headings.push({ text: isATX ? atx?.[1] ?? '' : paragraph.map(line => line.text).join('\n').trim(), start: isATX ? start : paragraph[0].start, end: offset })
     paragraph = []
   }
   return headings
@@ -187,8 +187,18 @@ export function markdownAnchors(text) {
       start = link.end
     }
     title += heading.text.slice(start)
-    const code = inlineCodeRanges(title)
-    title = title.replace(/<[^>]+>/g, (tag, index) => code.some(range => range.start <= index && index < range.end) ? tag : '')
+    let rendered = ''
+    start = 0
+    for (const range of inlineCodeRanges(title)) {
+      rendered += title.slice(start, range.start).replace(/<[^>]+>/g, '').replace(/[ \t]*\n[ \t]*/g, '\n')
+      const span = title.slice(range.start, range.end)
+      const delimiter = /^`+/.exec(span)[0].length
+      let content = span.slice(delimiter, -delimiter).replace(/\n/g, ' ')
+      if (content.startsWith(' ') && content.endsWith(' ') && /[^ ]/.test(content)) content = content.slice(1, -1)
+      rendered += content
+      start = range.end
+    }
+    title = rendered + title.slice(start).replace(/<[^>]+>/g, '').replace(/[ \t]*\n[ \t]*/g, '\n')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
     let count = counts.get(slug) ?? 0
     let anchor = slug + (count ? `-${count}` : '')

@@ -588,3 +588,69 @@ for (const heading of [
     })
   }
 }
+
+for (const [heading, fragment, wrongFragment] of [
+  ['# ` Array<T> `', 'arrayt', '-arrayt-'],
+  ['` Array<T> `\n---', 'arrayt', '-arrayt-'],
+  ['> ## ` Array<T> `', 'arrayt', '-arrayt-'],
+  ['- ` Array<T> `\n  ===', 'arrayt', '-arrayt-'],
+  ['# [` Array<T> `](https://example.invalid)', 'arrayt', '-arrayt-'],
+  ['[` Array<T> `][type]\n---\n\n[type]: https://example.invalid', 'arrayt', '-arrayt-'],
+  ['`\nArray<T>\n`\n---', 'arrayt', '-arrayt-'],
+  ['`Array\n<T>`\n---', 'array-t', 'arrayt'],
+  ['# `  Array<T>  `', '-arrayt-', 'arrayt'],
+  ['# Start`   `End', 'start---end', 'start-end'],
+  ['Start` \n `End\n---', 'start---end', 'start-end'],
+  ['First line  \n second line\n---', 'first-line-second-line', 'first-line---second-line'],
+  ['# `` `Array<T>` ``', 'arrayt', '-arrayt-']
+]) {
+  for (const [target, exit] of [[fragment, 0], [wrongFragment, 1]]) {
+    test(`code-span whitespace resolves ${target} with exit ${exit}: ${heading}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), heading + `\n\n[Local](#${target})\n[Other](other.md#${target})\n`)
+      await writeFile(join(f.repo, 'other.md'), heading + '\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.filter(problem => problem.code === 'broken-local-link').length, exit ? 2 : 0)
+      assert.deepEqual(result.data.coverageLimits, [])
+    })
+  }
+}
+
+for (const [row, exit] of [
+  [String.raw`| Order | Either A \| B. |`, 0],
+  [String.raw`| A \| B | Either C \| D. |`, 0],
+  [String.raw`| Order | Either A \\\| B. |`, 0],
+  [String.raw`| Order | Either A \\| B. |`, 1],
+  [String.raw`| A\\| Definition. |`, 0],
+  [String.raw`| A\\\\| Definition. |`, 0],
+  [String.raw`| A\| Definition. |`, 1],
+  [String.raw`| A\\\| Definition. |`, 1],
+  [String.raw`| A \| B | |`, 1]
+]) {
+  test(`escaped glossary pipes respect cell boundaries with exit ${exit}: ${row}`, async t => {
+    const f = await glossary(t, '| Term | Definition |\n| --- | --- |\n' + row + '\n', 'markdown-table')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+    assert.equal(result.problems.some(problem => problem.code === 'invalid-glossary'), exit === 1)
+  })
+}
+
+for (const [term, canonical] of [
+  [String.raw`A\|B`, 'A|B'],
+  [String.raw`A\\\|B`, String.raw`A\|B`],
+  [String.raw`A\\\\\|B`, String.raw`A\\|B`],
+  [String.raw`A\\B`, String.raw`A\B`]
+]) {
+  for (const [context, exit] of [['ordering', 1], ['billing', 0]]) {
+    test(`escaped glossary pipes compare decoded ${term} in context ${context}`, async t => {
+      const f = await glossary(t, `| Term | Definition |\n| --- | --- |\n| ${term} | A choice. |\n`, 'markdown-table')
+      f.contract.documents.push({ id: 'other-terms', path: 'OTHER.md', glossary: { context, format: 'markdown-bold' } })
+      await writeFile(join(f.repo, 'OTHER.md'), `**${canonical.toLowerCase()}**:\nAnother choice.\n`)
+      await f.save()
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.some(problem => problem.code === 'duplicate-term'), exit === 1)
+    })
+  }
+}
