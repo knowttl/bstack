@@ -489,6 +489,31 @@ test('explicit prior policy takes precedence over unrelated fixture contracts', 
   assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
 })
 
+test('deleting a weaker fixture cannot replace the authoritative prior policy', async t => {
+  const f = await fixture(t)
+  const checks = structuredClone(f.contract.checks)
+  const weak = { ...f.contract, documents: [], scopes: [], rules: [], checks: [], acceptanceSources: [] }
+  await mkdir(join(f.repo, 'fixtures'))
+  await writeFile(join(f.repo, 'fixtures/policy'), JSON.stringify(weak))
+  f.base = commit(f.repo)
+  await rm(join(f.repo, 'fixtures/policy'))
+  f.contract = weak
+  await f.save()
+  await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { const price = quantity * 12; return price; }\n')
+  await f.collect()
+  assert.deepEqual(f.assessment.documents.map(item => item.id), ['design'])
+  await f.complete()
+  const result = await f.bind()
+  assert.equal(result.data.previousContract, '.bstack/project.json')
+  blocked(f.validate(), 'required-check-missing')
+  await f.capture(checks)
+  assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+  await writeFile(join(f.repo, 'ACCEPTANCE.md'), 'A quote is quantity multiplied by 13.\n')
+  await f.collect()
+  await f.complete()
+  blocked(f.validate(), 'acceptance-decision-required')
+})
+
 test('a replacement over an existing weaker contract preserves removed authoritative obligations', async t => {
   const f = await fixture(t)
   const checks = structuredClone(f.contract.checks)
@@ -577,6 +602,40 @@ for (const [name, command, path, before, after] of [
     const stale = f.validate()
     blocked(stale, 'stale-review')
     blocked(stale, 'stale-execution')
+  })
+}
+
+for (const [name, scripts] of [
+  ['main', { verify: 'node check.mjs' }],
+  ['pre', { preverify: 'node check.mjs', verify: 'node other.mjs' }],
+  ['post', { verify: 'node other.mjs', postverify: 'node check.mjs' }],
+  ['nested', { verify: 'npm run inner', inner: 'node check.mjs' }]
+]) {
+  test(`an unscoped npm ${name} checker needs execution and invalidates a refreshed review`, async t => {
+    const f = await fixture(t, { checker: true })
+    await writeFile(join(f.repo, 'other.mjs'), 'process.exit(0)\n')
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+    f.contract.checks[0].command = { executable: 'npm', args: ['run', 'verify'], cwd: '.', versionArgs: ['--version'] }
+    await f.save()
+    f.base = commit(f.repo)
+    await writeFile(join(f.repo, 'check.mjs'), 'process.exit(1)\n')
+    await f.collect()
+    await f.complete()
+    await f.bind()
+    assert.deepEqual(f.validate().data.requiredCheckIds, ['syntax'])
+    blocked(f.validate(), 'required-check-missing')
+    await writeFile(join(f.repo, 'check.mjs'), 'process.exit(0);\n')
+    await f.collect()
+    await f.complete()
+    await f.capture()
+    await f.bind()
+    assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+    await writeFile(join(f.repo, 'check.mjs'), 'process.exit(1)\n')
+    blocked(f.validate(), 'stale-review')
+    await f.bind()
+    const stale = f.validate()
+    blocked(stale, 'stale-execution')
+    blocked(stale, 'required-check-missing')
   })
 }
 

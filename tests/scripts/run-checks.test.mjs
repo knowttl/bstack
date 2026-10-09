@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { emptyRepo, build, run, snapshot } from './discovery-fixture.mjs'
+import { checkInputState } from '../../skills/repo-audit/scripts/commands/run-checks.mjs'
 
 // Exercise the installed CLI from an unrelated directory with isolated cache evidence.
 const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -132,6 +133,36 @@ test('cancelled required check stays unverified even with other passing checks',
   assert.equal(result.data.checks[1].satisfied, false)
   assert.equal(result.data.coverage[0].status, 'unverified')
 })
+
+for (const manager of ['npm', 'pnpm', 'yarn']) {
+  for (const [name, scripts, args, versionArgs = ['--version']] of [
+    ['main', { verify: 'node check.mjs --config=rules.json' }, ['run', 'verify']],
+    ['pre', { preverify: 'node check.mjs --config=rules.json', verify: 'node other.mjs' }, ['run', 'verify']],
+    ['post', { verify: 'node other.mjs', postverify: 'node check.mjs --config=rules.json' }, ['run', 'verify']],
+    ['nested', { verify: `${manager} run inner`, preinner: 'node other.mjs', inner: 'node check.mjs --config=rules.json', postinner: 'node other.mjs' }, ['run', 'verify']],
+    ['lifecycle', { pretest: 'node other.mjs', test: 'node check.mjs --config=rules.json', posttest: 'node other.mjs' }, ['test']],
+    ['version', { verify: 'node check.mjs --config=rules.json' }, ['--version'], ['run', 'verify']]
+  ]) {
+    test(`${manager} ${name} script checker and config bytes bind capture inputs`, async t => {
+      const f = await setup(t)
+      await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+      await writeFile(join(f.repo, 'check.mjs'), 'process.exit(0)\n')
+      await writeFile(join(f.repo, 'other.mjs'), 'process.exit(0)\n')
+      await writeFile(join(f.repo, 'rules.json'), '{}\n')
+      f.plan.checks[0].command = { executable: manager, args, cwd: '.', versionArgs }
+      const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+      assert.ok(first.state.files.some(file => file.path === 'check.mjs'))
+      assert.ok(first.state.files.some(file => file.path === 'rules.json'))
+      assert.ok(first.state.files.some(file => file.path === 'package.json'))
+      await writeFile(join(f.repo, 'check.mjs'), 'process.exit(1)\n')
+      const checkerChanged = await checkInputState({ root: f.repo }, f.plan, f.path)
+      assert.notEqual(checkerChanged.fingerprint, first.fingerprint)
+      await writeFile(join(f.repo, 'rules.json'), '{"enabled":true}\n')
+      const configChanged = await checkInputState({ root: f.repo }, f.plan, f.path)
+      assert.notEqual(configChanged.fingerprint, checkerChanged.fingerprint)
+    })
+  }
+}
 
 test('a checker that changes its own unscoped file blocks capture', async t => {
   const f = await setup(t)

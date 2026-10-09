@@ -1,5 +1,5 @@
 import { readFile, stat, writeFile } from 'node:fs/promises'
-import { basename, dirname, join, relative, resolve } from 'node:path'
+import { basename, join, relative, resolve } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { inspectJSON } from '../lib/json.mjs'
@@ -10,26 +10,25 @@ import { repoFiles, readGit } from '../lib/discovery.mjs'
 import { canonicalJSON, hashBytes, fingerprint } from '../lib/fingerprint.mjs'
 import { createScratch, scratchDirectory } from '../lib/scratch.mjs'
 import { runCommand } from '../lib/run.mjs'
+import { leafCommand } from './contract.mjs'
 
 export async function checkCommandPaths(target, checks, paths = []) {
   const known = new Set([...paths, ...await repoFiles(target.root),
     ...readGit(target.root, ['ls-files', '-z']).stdout.split('\0'),
     ...readGit(target.root, ['ls-tree', '-r', '--name-only', '-z', 'HEAD']).stdout.split('\0')].filter(Boolean))
-  return new Map(checks.map(check => {
-    const command = check.command
-    const executable = command.executable.includes('/') || command.executable.includes('\\') ? [command.executable] : []
-    const name = basename(command.executable).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
-    const arguments_ = [...command.args, ...command.versionArgs].map(arg => arg.startsWith('-') ? arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : '' : arg)
-    const named = [...executable, ...arguments_]
-    if (['npm', 'pnpm', 'yarn'].includes(name)) {
-      let directory = resolve(target.root, command.cwd)
-      if (name !== 'pnpm') while (directory !== target.root && isInside(target.root, directory) && !known.has(relative(target.root, join(directory, 'package.json')).split('\\').join('/'))) directory = dirname(directory)
-      named.push(join(directory, 'package.json'))
-    }
-    return [check, [...new Set(named.filter(Boolean).map(input => resolve(target.root, command.cwd, input))
+  return new Map(await Promise.all(checks.map(async check => {
+    const name = check.command.executable.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+    const resolved = ['npm', 'pnpm', 'yarn'].includes(name) ? await leafCommand(target.root, check.command)
+      : { commands: [check.command], configPaths: [] }
+    const named = resolved.commands.flatMap(command => {
+      const executable = command.executable.includes('/') || command.executable.includes('\\') ? [command.executable] : []
+      const arguments_ = [...command.args, ...(command.versionArgs ?? [])].map(arg => arg.startsWith('-') ? arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : '' : arg)
+      return [...executable, ...arguments_].filter(Boolean).map(input => resolve(target.root, command.cwd, input))
+    })
+    return [check, [...new Set([...resolved.configPaths, ...named]
       .filter(path => isInside(target.root, path)).map(path => relative(target.root, path).split('\\').join('/'))
       .filter(path => known.has(path)))]]
-  }))
+  })))
 }
 
 export async function checkInputState(target, plan, planPath) {
