@@ -5,6 +5,35 @@ import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { run, snapshot } from './discovery-fixture.mjs'
 
+for (const executable of ['npm', 'pnpm', 'yarn']) {
+  for (const collection of ['checks', 'generators']) {
+    for (const field of ['args', 'versionArgs']) {
+      for (const hook of ['precheck', 'check', 'postcheck', 'nested']) {
+        test(`portable alias quoting rejects ${executable} ${collection} ${field} ${hook}`, async t => {
+          const f = await maintenanceRepo(t)
+          const scripts = { check: 'node --version', leaf: 'node --version', "'leaf'": 'node .bstack/bin/bstack-check.mjs', [hook]: `${executable} run 'leaf'` }
+          if (hook === 'nested') scripts.check = `${executable} run nested`
+          await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+          f.contract[collection][0].command = {
+            executable, args: ['--version'], cwd: '.', versionArgs: ['--version'], [field]: ['run', 'check']
+          }
+          await f.save()
+          assert.equal(run('contract validate', f.repo).problems[0]?.code, 'ignored-check-failure')
+        })
+      }
+      test(`portable double-quoted aliases validate ${executable} ${collection} ${field}`, async t => {
+        const f = await maintenanceRepo(t)
+        await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: `${executable} run "leaf name"`, 'leaf name': '"node" "--version"' } }))
+        f.contract[collection][0].command = {
+          executable, args: ['--version'], cwd: '.', versionArgs: ['--version'], [field]: ['run', 'check']
+        }
+        await f.save()
+        assert.equal(run('contract validate', f.repo).exit, 0)
+      })
+    }
+  }
+}
+
 for (const collection of ['checks', 'generators']) {
   for (const path of ['.bstack/bin/BSTACK-check.mjs', '.bstack/bin/BSTACK-CHECK.MJS', '.bstack\\bin\\BSTACK-check.mjs', '.bstack\\bin\\BSTACK-CHECK.MJS']) {
     for (const field of ['executable', 'args', 'versionArgs']) {
@@ -331,7 +360,7 @@ for (const collection of ['checks', 'generators']) {
     }
     test(`direct literal expansions in ${collection} ${field} validate`, async t => {
       const f = await maintenanceRepo(t)
-      f.contract[collection][0].command[field] = ['tools/lint.mjs', '*.mjs', '?', '[ab]', '~', '%NAME%', '!NAME!', '^']
+      f.contract[collection][0].command[field] = ['tools/lint.mjs', '*.mjs', '?', '[ab]', '~', '%NAME%', '!NAME!', '^', "'leaf'", 'le"af"']
       await f.save()
       assert.equal(run('contract validate', f.repo).exit, 0)
     })

@@ -122,6 +122,23 @@ for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'as
 }
 
 for (const [value, exit] of [
+  ["npm run 'leaf'", 1],
+  ["'node' --version", 1],
+  ["no'de' --version", 1],
+  ["node le'af'", 1],
+  ['no"de" --version', 1],
+  ['"no"de --version', 1],
+  ['"no""de" --version', 1],
+  ['node le"af"', 1],
+  ['node "le"af', 1],
+  ['node "le""af"', 1],
+  ['node "leaf"&& node --version', 1],
+  ['node --version &&"node" --version', 1],
+  ['node ""', 1],
+  ['node "unterminated', 1],
+  ["node \"literal'argument\"", 1],
+  ["node check.mjs '#literal' && node boundaries.mjs", 1],
+  ['"node" "literal argument" && "node" "*.mjs"', 0],
   ['node "%CHECKER%"', 1],
   ["node '%CHECKER%'", 1],
   ['"%CHECKER%" --version', 1],
@@ -148,7 +165,7 @@ for (const [value, exit] of [
   ['node check.mjs ${ENTRY}', 1],
   ['node check.mjs {a,b}', 1],
   ['node check.mjs @(entry)', 1],
-  ["node check.mjs '*.mjs' '?' '[ab]' '~' '${ENTRY}' '{a,b}' '@(entry)'", 0],
+  ["node check.mjs '*.mjs' '?' '[ab]' '~' '${ENTRY}' '{a,b}' '@(entry)'", 1],
   ['node check.mjs "*.mjs" "?" "[ab]" "~" "{a,b}" "@(entry)"', 0],
   ['"tools/bstack-*.mjs" "literal argument"', 0],
   ['node .bstack\\bin\\bstack-check.mjs', 1],
@@ -295,7 +312,6 @@ for (const value of ['tsc --noEmit # typecheck && node boundaries.mjs',
 for (const [path, proposed] of [
   ['package.json', '{"scripts":{"check":"tsc --noEmit && node boundaries.mjs"}}'],
   ['package.json', JSON.stringify({ scripts: { check: 'node check.mjs "#literal" && node boundaries.mjs' } })],
-  ['package.json', JSON.stringify({ scripts: { check: "node check.mjs '#literal' && node boundaries.mjs" } })],
   ['ci.yml', 'steps:\n  - run: npm run check\n    continue-on-error: false\n'],
   ['ci.yml', 'steps:\n  - run: |\n      npm run check &&\n      npm test\n']
 ]) {
