@@ -1,11 +1,11 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
-import { basename, join } from 'node:path'
+import { basename, join, relative, resolve, sep } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
 import { pathGlob } from '../lib/glob.mjs'
-import { integrationCommand } from '../lib/check-integration.mjs'
+import { integrationCommand, isIndirectExecutable } from '../lib/check-integration.mjs'
 import { CommandError } from '../lib/result.mjs'
 
 function reject(code, path, message, status = 'failed') {
@@ -15,6 +15,7 @@ function reject(code, path, message, status = 'failed') {
 // Native script aliases are inspected without execution; opaque programs remain reviewed leaf checks.
 async function leafCommand(root, command, stack = []) {
   const cwd = await resolvePath(root, command.cwd)
+  await exactPathCase(root, command.cwd)
   if (!(await stat(cwd)).isDirectory()) reject('invalid-cwd', command.cwd, 'Child command cwd must be an existing directory.')
   if (command.timeoutMs !== undefined && (!Number.isSafeInteger(command.timeoutMs) || command.timeoutMs <= 0)) reject('invalid-command', command.cwd, 'Timeout must be a positive safe integer.')
   async function visit(executable, args) {
@@ -23,7 +24,7 @@ async function leafCommand(root, command, stack = []) {
         args.some((arg, i) => ['evidence', 'docs'].includes(arg) && ['validate', 'check'].includes(args[i + 1]))) {
       reject('recursive-check', command.cwd, 'Leaf commands cannot invoke aggregate maintenance validation.')
     }
-    if (['sh', 'bash', 'zsh', 'cmd', 'powershell', 'pwsh'].includes(name)) reject('unsupported-leaf', executable, 'Shell programs cannot declare a verifiable leaf command.')
+    if (isIndirectExecutable(executable)) reject('unsupported-leaf', executable, 'Shell programs and command wrappers cannot declare a verifiable leaf command.')
     if (!['npm', 'pnpm', 'yarn'].includes(name)) return
     let script
     if (args.length === 1 && ['test', 'start', 'stop', 'restart'].includes(args[0])) script = args[0]
@@ -35,7 +36,7 @@ async function leafCommand(root, command, stack = []) {
     if (typeof scripts[script] !== 'string') reject('missing-script', path, `Missing package script: ${script}`)
     const key = `${path}:${script}`
     if (stack.includes(key)) reject('recursive-check', path, 'Package script graph contains a cycle.')
-    for (const id of [name === 'npm' ? `pre${script}` : null, script, name === 'npm' ? `post${script}` : null].filter(Boolean)) {
+    for (const id of [`pre${script}`, script, `post${script}`]) {
       if (scripts[id] === undefined) continue
       const words = integrationCommand(scripts[id], path)
       let start = 0
@@ -50,22 +51,30 @@ async function leafCommand(root, command, stack = []) {
   if (command.versionArgs.length) await visit(command.executable, command.versionArgs)
 }
 
-// Require the exact Git spelling even on a case-insensitive filesystem.
+async function exactPathCase(root, input, allowMissing = false) {
+  let parent = root
+  for (const segment of relative(root, resolve(root, input)).split(sep).filter(Boolean)) {
+    const entries = await readdir(parent)
+    if (!entries.includes(segment)) {
+      if (allowMissing && !entries.some(entry => entry.toLowerCase() === segment.toLowerCase())) return
+      reject('missing-path', input, 'Path is absent or has different path case.')
+    }
+    parent = join(parent, segment)
+  }
+}
+
 async function existingPointer(root, input) {
   const glob = pathGlob(input)
   if (/[*?]/.test(glob.pattern)) reject('invalid-pointer', input, 'Source pointers must be concrete paths.')
   const path = await resolveFilePath(root, input)
-  let parent = root
-  for (const segment of input.split('/')) {
-    if (!(await readdir(parent)).includes(segment)) reject('missing-path', input, 'Source pointer is absent or has different path case.')
-    parent = join(parent, segment)
-  }
+  await exactPathCase(root, input)
   if (!(await stat(path)).isFile()) reject('missing-path', input, 'Source pointers must identify existing files.')
 }
 
 export async function loadContract(target, input = '.bstack/project.json') {
   pathGlob(input)
   const path = await resolveFilePath(target.root, input)
+  await exactPathCase(target.root, input, true)
   let contract
   try { contract = inspectJSON(await readFile(path, 'utf8')).value } catch (error) {
     if (error instanceof CommandError) throw error
@@ -91,6 +100,7 @@ export async function loadContract(target, input = '.bstack/project.json') {
   for (const generator of contract.generators) for (const output of generator.outputPaths) {
     pathGlob(output)
     await resolveFilePath(target.root, output)
+    await exactPathCase(target.root, output, true)
   }
   return { contract, path: input }
 }
