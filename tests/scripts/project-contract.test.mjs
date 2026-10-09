@@ -163,3 +163,69 @@ test('exact case command directories and existing output parents validate', asyn
   await f.save()
   assert.equal(run('contract validate', f.repo).exit, 0)
 })
+
+for (const [topic, action, exit] of [
+  ['docs', 'check', 1], ['evidence', 'validate', 1],
+  ['docs', 'validate', 0], ['evidence', 'check', 0]
+]) {
+  for (const collection of ['checks', 'generators']) {
+    for (const field of ['args', 'versionArgs']) {
+      test(`${topic} ${action} as ${collection} ${field} exits ${exit}`, async t => {
+        const f = await maintenanceRepo(t)
+        f.contract[collection][0].command[field] = ['tools/lint.mjs', topic, action]
+        await f.save()
+        assert.equal(run('contract validate', f.repo).exit, exit)
+      })
+    }
+  }
+  test(`nested script ${topic} ${action} exits ${exit}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: {
+      check: 'npm run leaf', leaf: `node tools/lint.mjs ${topic} ${action}`
+    } }))
+    f.contract.checks[0].command = { executable: 'npm', args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] }
+    await f.save()
+    assert.equal(run('contract validate', f.repo).exit, exit)
+  })
+}
+
+for (const collection of ['checks', 'generators']) {
+  for (const field of ['args', 'versionArgs']) {
+    for (const [name, scripts, exit] of [
+      ['nested leaves', { check: 'npm run leaf', leaf: 'node --check src/change.mjs' }, 0],
+      ['nested aggregate', { check: 'npm run leaf', leaf: 'node repo-audit.mjs evidence validate' }, 1],
+      ['cycle', { check: 'npm run leaf', leaf: 'npm run check' }, 1],
+      ['lifecycle aggregate', { check: 'node --version', precheck: 'node repo-audit.mjs docs check' }, 1]
+    ]) {
+      test(`npm ancestor package ${name} in ${collection} ${field} exits ${exit}`, async t => {
+        const f = await maintenanceRepo(t)
+        await mkdir(join(f.repo, 'src/deep'))
+        await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+        f.contract[collection][0].command = {
+          executable: 'npm', args: ['--version'], cwd: 'src/deep', versionArgs: ['--version'], [field]: ['run', 'check']
+        }
+        await f.save()
+        assert.equal(run('contract validate', f.repo).exit, exit)
+      })
+    }
+  }
+}
+
+test('npm ancestor lookup selects the nearest package', async t => {
+  const f = await maintenanceRepo(t)
+  await mkdir(join(f.repo, 'src/deep'))
+  await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: 'node repo-audit.mjs docs check' } }))
+  await writeFile(join(f.repo, 'src/package.json'), JSON.stringify({ scripts: { check: 'npm run leaf', leaf: 'node --version' } }))
+  f.contract.checks[0].command = { executable: 'npm', args: ['run', 'check'], cwd: 'src/deep', versionArgs: ['--version'] }
+  await f.save()
+  assert.equal(run('contract validate', f.repo).exit, 0)
+})
+
+test('npm ancestor lookup stops at node_modules without a package', async t => {
+  const f = await maintenanceRepo(t)
+  await mkdir(join(f.repo, 'src/node_modules'))
+  await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: 'node --version' } }))
+  f.contract.checks[0].command = { executable: 'npm', args: ['run', 'check'], cwd: 'src', versionArgs: ['--version'] }
+  await f.save()
+  assert.notEqual(run('contract validate', f.repo).exit, 0)
+})
