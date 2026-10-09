@@ -10,7 +10,7 @@ import { repoFiles, readGit } from '../lib/discovery.mjs'
 import { canonicalJSON, hashBytes, fingerprint } from '../lib/fingerprint.mjs'
 import { createScratch, scratchDirectory } from '../lib/scratch.mjs'
 import { runCommand } from '../lib/run.mjs'
-import { leafCommand } from './contract.mjs'
+import { leafCommand, packageManifestPath } from './contract.mjs'
 
 export async function checkCommandPaths(target, checks, paths = []) {
   const known = new Set([...paths, ...await repoFiles(target.root),
@@ -18,8 +18,15 @@ export async function checkCommandPaths(target, checks, paths = []) {
     ...readGit(target.root, ['ls-tree', '-r', '--name-only', '-z', 'HEAD']).stdout.split('\0')].filter(Boolean))
   return new Map(await Promise.all(checks.map(async check => {
     const name = check.command.executable.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
-    const resolved = ['npm', 'pnpm', 'yarn'].includes(name) ? await leafCommand(target.root, check.command)
-      : { commands: [check.command], configPaths: [] }
+    const resolved = { commands: [check.command], configPaths: [] }
+    if (['npm', 'pnpm', 'yarn'].includes(name)) {
+      resolved.configPaths.push(await packageManifestPath(target.root, await resolvePath(target.root, check.command.cwd), name))
+      try {
+        const aliases = await leafCommand(target.root, check.command, [], true)
+        resolved.commands.push(...aliases.commands)
+        resolved.configPaths.push(...aliases.configPaths)
+      } catch {}
+    }
     const named = resolved.commands.flatMap(command => {
       const executable = command.executable.includes('/') || command.executable.includes('\\') ? [command.executable] : []
       const arguments_ = [...command.args, ...(command.versionArgs ?? [])].map(arg => arg.startsWith('-') ? arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : '' : arg)
