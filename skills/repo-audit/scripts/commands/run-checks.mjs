@@ -1,15 +1,61 @@
 import { readFile, stat, writeFile } from 'node:fs/promises'
-import { basename, join } from 'node:path'
+import { basename, join, relative, resolve } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
-import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
+import { isInside, resolvePath } from '../lib/paths.mjs'
 import { pathGlob, matchesPath } from '../lib/glob.mjs'
 import { repoFiles, readGit } from '../lib/discovery.mjs'
 import { canonicalJSON, hashBytes, fingerprint } from '../lib/fingerprint.mjs'
 import { createScratch, scratchDirectory } from '../lib/scratch.mjs'
 import { runCommand } from '../lib/run.mjs'
+import { leafCommand, packageManifestPath } from './contract.mjs'
+
+export async function checkCommandPaths(target, checks, paths = []) {
+  const known = new Set([...paths, ...await repoFiles(target.root),
+    ...readGit(target.root, ['ls-files', '-z']).stdout.split('\0'),
+    ...readGit(target.root, ['ls-tree', '-r', '--name-only', '-z', 'HEAD']).stdout.split('\0')].filter(Boolean))
+  return new Map(await Promise.all(checks.map(async check => {
+    const name = check.command.executable.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+    const resolved = { commands: [check.command], configPaths: [] }
+    if (['npm', 'pnpm', 'yarn'].includes(name)) {
+      resolved.configPaths.push(await packageManifestPath(target.root, await resolvePath(target.root, check.command.cwd), name))
+      try {
+        const aliases = await leafCommand(target.root, check.command, [], true)
+        resolved.commands.push(...aliases.commands)
+        resolved.configPaths.push(...aliases.configPaths)
+      } catch {}
+    }
+    const named = (await Promise.all(resolved.commands.map(async command => {
+      const cwd = await resolvePath(target.root, command.cwd)
+      const executable = command.executable.includes('/') || command.executable.includes('\\') ? [command.executable] : []
+      const arguments_ = [...command.args, ...(command.versionArgs ?? [])].map(arg => arg.startsWith('-') ? arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : '' : arg)
+      return [...executable, ...arguments_].filter(Boolean).flatMap(input => [resolve(target.root, command.cwd, input), resolve(cwd, input)])
+    }))).flat()
+    const internal = [...resolved.configPaths, ...named].filter(path => isInside(target.root, path))
+    const actual = await Promise.all(internal.map(path => resolvePath(target.root, relative(target.root, path) || '.', undefined, true)))
+    return [check, [...new Set([...internal, ...actual]
+      .filter(path => isInside(target.root, path)).map(path => relative(target.root, path).split('\\').join('/'))
+      .flatMap(path => [...known].filter(file => file === path || file.startsWith(path ? `${path}/` : ''))))]]
+  })))
+}
+
+export async function checkInputState(target, plan, planPath) {
+  const scopes = plan.checks.flatMap(check => check.inputScopes)
+  const globs = scopes.map(pathGlob)
+  const files = await repoFiles(target.root)
+  const declaredPaths = [...scopes.filter(scope => !/[*?]/.test(scope)), ...plan.acceptanceSources.map(source => source.path)]
+  const commandPaths = await checkCommandPaths(target, plan.checks)
+  const paths = [...declaredPaths, ...[...commandPaths.values()].flat(), ...files.filter(path => globs.some(glob => matchesPath(glob, path)))]
+  const head = readGit(target.root, ['rev-parse', '--verify', 'HEAD'])
+  let planContentHash = null
+  try { planContentHash = hashBytes(await readFile(planPath)) } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+  }
+  return fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths,
+    inputs: { planDigest: hashBytes(canonicalJSON(plan)), planContentHash } })
+}
 
 export async function run(options) {
   if (!options.plan || (options.phase && !['before', 'after'].includes(options.phase)) || (options.phase === 'before' && options['prior-run'])) {
@@ -36,7 +82,7 @@ export async function run(options) {
   const problems = []
   const problem = (code, message) => problems.push({ code, message, fix: 'Review the check plan and capture the required evidence against the correct state.' })
   for (const source of plan.acceptanceSources) {
-    const path = await resolveFilePath(target.root, source.path)
+    const path = await resolvePath(target.root, source.path)
     let bytes
     try { bytes = await readFile(path) } catch { problem('acceptance-source-unavailable', `Source ${source.id} is unavailable.`); continue }
     if (hashBytes(bytes) !== source.contentHash) problem('stale-acceptance-source', `Source ${source.id} no longer matches its approved bytes.`)
@@ -70,18 +116,7 @@ export async function run(options) {
   if (problems.length) throw new CommandError('failed', problems)
   const planDigest = hashBytes(canonicalJSON(plan))
   async function inputState() {
-    const scopes = plan.checks.flatMap(check => check.inputScopes)
-    const globs = scopes.map(pathGlob)
-    const files = await repoFiles(target.root)
-    const declaredPaths = [...scopes.filter(scope => !/[*?]/.test(scope)), ...plan.acceptanceSources.map(source => source.path)]
-    for (const path of declaredPaths) await resolveFilePath(target.root, path)
-    const paths = [...declaredPaths, ...files.filter(path => globs.some(glob => matchesPath(glob, path)))]
-    const head = readGit(target.root, ['rev-parse', '--verify', 'HEAD'])
-    let planContentHash = null
-    try { planContentHash = hashBytes(await readFile(options.plan)) } catch (error) {
-      if (error.code !== 'ENOENT') throw error
-    }
-    return fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths, inputs: { planDigest, planContentHash } })
+    return checkInputState(target, plan, options.plan)
   }
   const originalState = await inputState()
   if (originalState.state.inputs.planContentHash !== validatedPlanContentHash || !plan.acceptanceSources.every(source =>
