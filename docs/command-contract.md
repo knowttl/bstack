@@ -50,6 +50,7 @@ Each distinct required leaf command runs once across the comparison and current 
 Identical commands share that execution while retaining each previous/proposed declaration's coverage obligation.
 Result validation uses only these current executions, never saved `execution` references in the assessment.
 Final validation rechecks committed assessment bytes, document references and generated facts under both policies against the target tree, including ignored link destinations and generator inputs, outputs and command sources.
+Results retain the [document reference coverage limits](#document-references) observed under either policy, including comparison and final validation results.
 Changed review inputs block final validation, and failed or incomplete required executions cannot pass.
 The leaf phase writes a fresh scratch `checker-result.json` containing source and base objects, their computed merge base, timestamps and captured command results, including failures.
 Execution and final-validation exceptions retain results from already completed leaves.
@@ -63,10 +64,15 @@ Commit implementation changes before collecting portable review:
 
 ```sh
 node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base <ancestor-commit> --portable .bstack/assessment.json --json
-node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <target>/.bstack/assessment.json --json
 ```
 
 Copy the returned skeleton to the explicitly selected repo-relative assessment path and complete its substantive claims through the selected review process.
+Then validate the completed record:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <target>/.bstack/assessment.json --json
+```
+
 Validation returns the fingerprint to record after review, even while leaf execution is still missing.
 Commit the completed, bound assessment separately and run the installed aggregate.
 Portable records use `repo: "."` and retain the reviewed implementation commit in `head`.
@@ -817,8 +823,8 @@ Callers represent an absent original or proposed file with `null`, never the has
 
 `fingerprint(target, { baseCommit, paths, inputs, evidencePath })` returns `{ fingerprint, state }`.
 The caller supplies the resolved base commit and JSON assessment inputs.
-The state includes the real local target root, base commit, sorted unique paths and substantive inputs.
-Each inventoried file records its path, presence, filesystem mode, lexical link target and exact-byte content hash.
+For local records, the state includes the real target root, base commit, sorted unique paths and substantive inputs.
+Local inventoried files record their path, presence, filesystem mode, lexical link target and exact-byte content hash.
 Initialized submodule fingerprints include tracked link targets and source contents so retargeting a link invalidates captured execution and review bindings.
 Absent files record `present: false`, `mode: null` and `contentHash: null`.
 Unreadable inputs and unsafe paths refuse the operation rather than producing a fingerprint.
