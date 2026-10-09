@@ -651,7 +651,7 @@ Unreadable inputs and unsafe paths refuse the operation rather than producing a 
 
 Only the top-level `inputs.fingerprint` and `inputs.execution` fields are omitted as derived data.
 All other fields, including nested fields with those names, remain substantive.
-When `evidencePath` is supplied, that path stays inventoried with its presence and mode, but its serialized content is not hashed.
+When `evidencePath` is supplied, its resolved file and every inventoried alias retain presence, mode and link state, but their serialized content is not hashed.
 The caller must include the evidence's substantive fields in `inputs`.
 This avoids a self-referential evidence hash without omitting the assessment itself.
 Portable committed identity and format-specific assessment fields belong to their later owning tasks.
