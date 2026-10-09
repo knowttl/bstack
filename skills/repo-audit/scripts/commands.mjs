@@ -1,5 +1,10 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'docs check': {
+    module: './commands/docs-check.mjs',
+    options: ['contract'],
+    help: 'Check registered document paths, local Markdown links and supported glossary structures without writes.\nUsage: repo-audit.mjs docs check --repo <path> [--contract <repo-relative-file>] [--json]\nDefaults to .bstack/project.json. Register glossary context and format on documents; markdown-bold and markdown-table are supported. Unsupported formats report coverage limits. Duplicate terms fail only within one context.'
+  },
   'docs generate': {
     module: './commands/docs-generate.mjs',
     options: ['contract', 'check'],
@@ -118,4 +123,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['docs check']
+export const plannedCommands = []

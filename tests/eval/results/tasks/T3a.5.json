@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T3a.5",
+  "slice": "C23b",
+  "sourceRevision": "33e00b89e99919e9e0d646ae981e0d9870a1bfbd",
+  "intent": "Build registered document reference checks, context-specific supported glossary validation and paired protected rule relocation only.",
+  "amendments": [],
+  "status": "passed",
+  "environment": {
+    "os": "linux 6.8.0-142-generic x64",
+    "node": "v24.17.0",
+    "tools": { "npm": "11.13.0", "git": "git version 2.54.0" }
+  },
+  "commands": [],
+  "cases": [
+    {
+      "id": "AC-13",
+      "kind": "automated",
+      "procedure": "tests/scripts/docs-check.test.mjs: duplicate glossary terms fail within one context; same term across glossary files in ordering has exit 1; same term across glossary files in billing has exit 0. These public-command tests verify mechanical context scoping, not the separately registered agent procedure.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3a.5.full-tests.txt"
+    },
+    {
+      "id": "AC-15",
+      "kind": "automated",
+      "procedure": "tests/scripts/apply.test.mjs: move-rule leaves one rule and one link in existing authority; move-rule leaves one rule and one link in selected new authority; move-rule leaves one rule and one link in new nested authority. Dry run preserves all target bytes, paired application matches complete reviewed contents and repeated application resumes safely.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3a.5.full-tests.txt"
+    },
+    {
+      "id": "C23b-reference-controls",
+      "kind": "automated",
+      "procedure": "Public-command document tests cover missing registered paths, inline/image/reference links, parent traversal inside the target, heading fragments, wrong-case or absent destinations, escaping symlinks, malformed URL encoding, empty supported glossaries, code samples and unsupported format and fragment coverage limits.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3a.5.full-tests.txt"
+    },
+    {
+      "id": "C23b-move-controls",
+      "kind": "automated",
+      "procedure": "Public-command move-rule tests reject missing source or destination edits, mismatched payloads, wrong or external destination links, missing heading fragments, missing or repeated insertion anchors, duplicate destination rules, ambiguous or absent source rules and changed destination preconditions before either target file is written.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3a.5.full-tests.txt"
+    }
+  ],
+  "limitations": [
+    "docs/command-contract.md#document-references owns supported Markdown and glossary structures; unsupported formats and fragment rendering remain explicit coverage limits.",
+    "Semantic definitions, synonyms and the choice of authoritative standards home remain selected review judgements.",
+    "Automated AC-13 and AC-15 checks prove mechanical behavior only; the acceptance registry's agent procedures remain planned for separate evaluation.",
+    "Local Linux and Node 24 execution does not establish real Windows or macOS execution.",
+    "T3a.6 clean-checkout standalone checking and all later tasks were not started."
+  ]
+}
