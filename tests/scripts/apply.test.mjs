@@ -203,6 +203,32 @@ test('move-rule resolves rule fragments against the staged destination', async t
   assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
 })
 
+for (const rule of [
+  '## One source\n\n- ```md\n  [Example](missing.md)\n  ```\n\n[Design](README.md#design)\n',
+  '## One source\n\n> ~~~md\n> [Example](missing.md)\n> ~~~\n\n[Design](README.md#design)\n',
+  '## One source\n\nIntroduction\n***\nDetails\n---\n\n[Details](#details)\n'
+]) {
+  test(`move-rule validates rendered references in staged Markdown blocks: ${rule}`, async t => {
+    const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+    const result = execute(context)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+  })
+}
+
+for (const rule of [
+  '## One source\n\n<!--\n```\n-->\n[Check](missing.md)\n',
+  '## One source\n\nA literal `\n\n[Check](missing.md)\n\nUse `value`.\n'
+]) {
+  test(`move-rule rejects rendered references after inert syntax without writes: ${rule}`, async t => {
+    const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
 test('move-rule rejects rule references to files deleted by the same plan', async t => {
   const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n[Check](check.mjs)\n')
   await writeFile(join(context.repo, 'check.mjs'), 'export {}\n')
