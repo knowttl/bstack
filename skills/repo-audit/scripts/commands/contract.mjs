@@ -1,5 +1,5 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
-import { basename, join, relative, resolve, sep } from 'node:path'
+import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
@@ -21,7 +21,7 @@ async function leafCommand(root, command, stack = []) {
   async function visit(executable, args) {
     const name = basename(executable).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
     if (name === 'bstack-check.mjs' || args.some(arg => basename(arg) === 'bstack-check.mjs') ||
-        args.some((arg, i) => ['evidence', 'docs'].includes(arg) && ['validate', 'check'].includes(args[i + 1]))) {
+        args.some((arg, i) => (arg === 'evidence' && args[i + 1] === 'validate') || (arg === 'docs' && args[i + 1] === 'check'))) {
       reject('recursive-check', command.cwd, 'Leaf commands cannot invoke aggregate maintenance validation.')
     }
     if (isIndirectExecutable(executable)) reject('unsupported-leaf', executable, 'Shell programs and command wrappers cannot declare a verifiable leaf command.')
@@ -31,7 +31,15 @@ async function leafCommand(root, command, stack = []) {
     else if (args[0] === 'run' && args.length === 2) script = args[1]
     else if (args.length === 1 && ['--version', '-v'].includes(args[0])) return
     else reject('unsupported-leaf', executable, 'Package script leaves support run <script>, lifecycle aliases and --version only.')
-    const path = join(cwd, 'package.json')
+    let packageDirectory = cwd
+    if (name === 'npm') {
+      while (packageDirectory !== root) {
+        const entries = await readdir(packageDirectory)
+        if (entries.includes('package.json') || entries.includes('node_modules')) break
+        packageDirectory = dirname(packageDirectory)
+      }
+    }
+    const path = join(packageDirectory, 'package.json')
     const scripts = inspectJSON(await readFile(path, 'utf8')).value.scripts ?? {}
     if (typeof scripts[script] !== 'string') reject('missing-script', path, `Missing package script: ${script}`)
     const key = `${path}:${script}`
@@ -42,7 +50,7 @@ async function leafCommand(root, command, stack = []) {
       let start = 0
       for (let end = 0; end <= words.length; end++) {
         if (end !== words.length && words[end] !== '&&') continue
-        await leafCommand(root, { ...command, executable: words[start], args: words.slice(start + 1, end), versionArgs: [] }, [...stack, key])
+        await leafCommand(root, { ...command, cwd: relative(root, packageDirectory) || '.', executable: words[start], args: words.slice(start + 1, end), versionArgs: [] }, [...stack, key])
         start = end + 1
       }
     }
