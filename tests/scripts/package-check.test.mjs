@@ -16,7 +16,8 @@ function run(...args) {
 }
 
 test('valid skeleton passes from another working directory', () => {
-  assert.equal(run().status, 0)
+  const installed = run()
+  assert.equal(installed.status, 0, installed.stdout + installed.stderr)
   const result = run('--skill', join(fixtures, 'valid'))
   assert.equal(result.status, 0, result.stdout + result.stderr)
   assert.match(result.stdout, /check-package: passed/)
