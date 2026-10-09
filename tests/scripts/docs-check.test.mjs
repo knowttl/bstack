@@ -242,3 +242,41 @@ test('ordinary linked headings and percent-encoded paths remain supported', asyn
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.deepEqual(result.data.coverageLimits, [])
 })
+
+for (const filename of ['_guide_.md', '*guide*.md']) {
+  for (const text of [`[Guide](${filename})\n`, `![Guide](${filename})\n`, `[Guide][target]\n[target]: ${filename}\n`]) {
+    for (const exists of [false, true]) {
+      test(`ordinary destination bytes retain path validation with exists=${exists}: ${text}`, async t => {
+        const f = await maintenanceRepo(t)
+        await writeFile(join(f.repo, 'README.md'), text)
+        if (exists) await writeFile(join(f.repo, filename), '# Guide\n')
+        const result = run('docs check', f.repo)
+        assert.equal(result.exit, exists ? 0 : 1, JSON.stringify(result))
+        assert.deepEqual(result.data.coverageLimits, [])
+        assert.equal(result.problems.some(problem => problem.code === 'broken-local-link'), !exists)
+      })
+    }
+  }
+}
+
+test('ordinary destination bytes preserve fragment target checks', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '[Guide](target.md#guide)\n[Missing](target.md#absent)\n')
+  await writeFile(join(f.repo, 'target.md'), '# Guide\n[Guide](_guide_.md)\n![Guide](*guide*.md)\n[Guide][target]\n[target]: _guide_.md\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 1)
+  assert.deepEqual(result.data.coverageLimits, [])
+  assert.equal(result.problems.length, 1)
+  assert.equal(result.problems[0].code, 'broken-local-link')
+})
+
+for (const text of ['[_Guide_](_missing_.md)\n', '# _Rule_\n[Guide](_missing_.md)\n', '[*Guide*](*missing*.md)\n']) {
+  test('unusual emphasis remains coverage limited around ordinary destinations: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text)
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0)
+    assert.deepEqual(result.problems, [])
+    assert.ok(result.data.coverageLimits.some(limit => limit.path === 'README.md'))
+  })
+}

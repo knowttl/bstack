@@ -128,7 +128,10 @@ export function markdownCoverageLimit(text) {
   if (/[`\\]/.test(body)) return 'Inline code and escaped Markdown require renderer review.'
   if (/<[^>]+>|&[\w#]+;|\{#[^}]+\}/.test(body)) return 'HTML, entities and custom anchors require renderer review.'
   if (/\[[^\]\n]*\[/.test(body)) return 'Nested links require renderer review.'
-  const prose = body.replace(/^\*\*[^*\n]+\*\*:[ \t]*/gm, '').split('\n').filter(line => !thematicBreak.test(line)).join('\n')
+  const prose = body
+    .replace(/(!?\[[^\]\n]*\]\()([^)\n]*)(\))/g, (match, label, destination, end) => linkDestination(destination) ? label + ' '.repeat(destination.length) + end : match)
+    .replace(/(^ {0,3}\[[^\]\n]+\]:[ \t]*)(.*)$/gm, (match, label, destination) => linkDestination(destination) ? label + ' '.repeat(destination.length) : match)
+    .replace(/^\*\*[^*\n]+\*\*:[ \t]*/gm, '').split('\n').filter(line => !thematicBreak.test(line)).join('\n')
   if (/(?:^|[^\p{L}\p{N}_])_+\S[\s\S]*?\S_+(?![\p{L}\p{N}_])|\*+\S/u.test(prose)) return 'Inline emphasis requires renderer review.'
   for (const match of body.matchAll(/!?\[[^\]\n]*\]\(([^)\n]*)\)/g)) {
     if (!linkDestination(match[1])) return 'Only ordinary destinations without titles are checked.'

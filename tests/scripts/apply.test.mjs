@@ -80,7 +80,7 @@ async function ruleMove(t, destination = '# Standards\n', destinationPath = 'CON
   return context
 }
 
-for (const [name, destination, path] of [['existing authority', '# Standards\n', 'CONTRIBUTING.md'], ['selected new authority', null, 'CODING_STANDARDS.md'], ['new nested authority', null, 'docs/CODING_STANDARDS.md']]) {
+for (const [name, destination, path] of [['existing authority', '# Standards\n', 'CONTRIBUTING.md'], ['selected new authority', null, 'CODING_STANDARDS.md'], ['new nested authority', null, 'docs/CODING_STANDARDS.md'], ['underscore authority', '# Standards\n', '_STANDARDS_.md'], ['new underscore authority', null, '_STANDARDS_.md']]) {
   test(`move-rule leaves one rule and one link in ${name}`, async t => {
     const context = await ruleMove(t, destination, path)
     const before = await snapshot(context.repo)
@@ -233,6 +233,29 @@ for (const [link, exit] of [
       assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
     }
   })
+}
+
+for (const text of ['[Guide](_missing_.md)\n', '![Guide](*missing*.md)\n', '[Guide][target]\n[target]: _missing_.md\n']) {
+  for (const path of ['README.md', 'CONTRIBUTING.md']) {
+    test('move-rule rejects ordinary broken destinations in staged ' + path + ': ' + text, async t => {
+      const rule = '## One source\n\n' + (path === 'CONTRIBUTING.md' ? text : 'Move this rule.\n')
+      const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+      const source = context.plan.edits[0]
+      const retained = path === 'README.md' ? text + '\n' : ''
+      const original = retained + '# Design\n' + rule
+      await writeFile(join(context.repo, source.path), original)
+      source.originalHash = hash(original)
+      source.proposedContent = retained + source.proposedContent
+      source.proposedHash = hash(source.proposedContent)
+      await save(context)
+      const before = await snapshot(context.repo)
+      const result = execute(context)
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.equal(result.problems[0].code, 'broken-local-link')
+      assert.equal(result.problems[0].path, path)
+      assert.deepEqual(await snapshot(context.repo), before)
+    })
+  }
 }
 
 for (const text of [
