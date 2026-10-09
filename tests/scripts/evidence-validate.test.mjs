@@ -25,7 +25,6 @@ async function fixture(t, { initial = false, checker = false } = {}) {
   if (checker) {
     await writeFile(join(f.repo, 'check.mjs'), 'process.exit(0)\n')
     f.contract.checks[0].command.args = ['check.mjs']
-    f.contract.checks[0].inputScopes.push('check.mjs')
   }
   await f.save()
   f.base = initial ? 'empty' : commit(f.repo)
@@ -489,6 +488,97 @@ test('explicit prior policy takes precedence over unrelated fixture contracts', 
   await f.bind()
   assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
 })
+
+test('a replacement over an existing weaker contract preserves removed authoritative obligations', async t => {
+  const f = await fixture(t)
+  const checks = structuredClone(f.contract.checks)
+  const weak = { ...f.contract, documents: [], scopes: [], rules: [], checks: [], acceptanceSources: [] }
+  await mkdir(join(f.repo, 'fixtures'))
+  await writeFile(join(f.repo, 'fixtures/policy'), JSON.stringify(weak))
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { const price = quantity * 12; return price; }\n')
+  await rm(join(f.repo, '.bstack/project.json'))
+  f.contract = weak
+  f.contractPath = 'fixtures/policy'
+  await f.collect()
+  assert.deepEqual(f.assessment.documents.map(item => item.id), ['design'])
+  await f.complete()
+  const result = await f.bind()
+  assert.equal(result.data.previousContract, '.bstack/project.json')
+  blocked(f.validate(), 'required-check-missing')
+  await f.capture(checks)
+  assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+  await writeFile(join(f.repo, 'ACCEPTANCE.md'), 'A quote is quantity multiplied by 13.\n')
+  await f.collect()
+  await f.complete()
+  blocked(f.validate(), 'acceptance-decision-required')
+})
+
+test('moving an extensionless contract preserves prior coverage', async t => {
+  const f = await fixture(t)
+  await rename(join(f.repo, '.bstack/project.json'), join(f.repo, 'policy'))
+  f.base = commit(f.repo)
+  await rename(join(f.repo, 'policy'), join(f.repo, 'replacement'))
+  f.contractPath = 'replacement'
+  f.contract.documents = []
+  f.contract.scopes = []
+  f.contract.rules = []
+  f.contract.checks = []
+  await writeFile(join(f.repo, 'replacement'), JSON.stringify(f.contract))
+  await f.collect()
+  await f.complete()
+  const result = await f.bind()
+  assert.equal(result.data.previousContract, 'policy')
+  blocked(f.validate(), 'required-check-missing')
+})
+
+for (const [text, code] of [['not JSON', 'previous-contract-unavailable'], ['{}', 'previous-contract-version'], ['null', 'previous-contract-version'], ['{"schemaVersion":1}', 'previous-contract-invalid']]) {
+  test(`a removed unreadable or unsupported default policy blocks replacement: ${text}`, async t => {
+    const f = await fixture(t)
+    await writeFile(join(f.repo, '.bstack/project.json'), text)
+    f.base = commit(f.repo)
+    await rm(join(f.repo, '.bstack/project.json'))
+    f.contractPath = 'replacement'
+    await writeFile(join(f.repo, 'replacement'), JSON.stringify(f.contract))
+    const collected = run('evidence collect', f.repo, process.env, ['--base', f.base, '--contract', f.contractPath])
+    blocked(collected, code)
+    blocked(f.validate(), code)
+  })
+}
+
+for (const [name, command, path, before, after] of [
+  ['checker', { executable: 'node', args: ['check.mjs'], cwd: '.', versionArgs: ['--version'] }, 'check.mjs', 'process.exit(0)\n', 'process.exit(1)\n'],
+  ['config argument', { executable: 'node', args: ['check.mjs', '--config=rules.json'], cwd: '.', versionArgs: ['--version'] }, 'rules.json', '{"enabled":true}', '{"enabled":false}'],
+  ['separate config argument', { executable: 'node', args: ['check.mjs', '--config', 'rules.json'], cwd: '.', versionArgs: ['--version'] }, 'rules.json', '{"enabled":true}', '{"enabled":false}'],
+  ['checker in another working directory', { executable: 'node', args: ['../check.mjs'], cwd: 'src', versionArgs: ['--version'] }, 'check.mjs', 'process.exit(0)\n', 'process.exit(1)\n'],
+  ['package config', { executable: 'npm', args: ['run', 'verify'], cwd: '.', versionArgs: ['--version'] }, 'package.json', '{"scripts":{"verify":"node check.mjs"}}', '{"scripts":{"verify":"node --check check.mjs"}}'],
+  ['ancestor package config', { executable: 'npm', args: ['run', 'verify'], cwd: 'src', versionArgs: ['--version'] }, 'package.json', '{"scripts":{"verify":"node check.mjs"}}', '{"scripts":{"verify":"node --check check.mjs"}}']
+]) {
+  test(`changing an unscoped declared ${name} requires execution and invalidates review`, async t => {
+    const f = await fixture(t, { checker: true })
+    f.contract.checks[0].command = command
+    await writeFile(join(f.repo, path), before)
+    await f.save()
+    f.base = commit(f.repo)
+    await writeFile(join(f.repo, path), after)
+    await f.collect()
+    await f.complete()
+    await f.bind()
+    const result = f.validate()
+    assert.deepEqual(result.data.requiredCheckIds, ['syntax'])
+    blocked(result, 'required-check-missing')
+    await writeFile(join(f.repo, path), before)
+    await f.collect()
+    await f.complete()
+    await f.capture()
+    await f.bind()
+    assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+    await writeFile(join(f.repo, path), after)
+    const stale = f.validate()
+    blocked(stale, 'stale-review')
+    blocked(stale, 'stale-execution')
+  })
+}
 
 test('unchanged fixture contracts cannot become the previous policy for an initial contract', async t => {
   const f = await fixture(t)

@@ -12,7 +12,7 @@ import { CommandError } from '../lib/result.mjs'
 import { baseText, previousPolicy, mapInventory } from '../lib/evidence-policy.mjs'
 import { collectInventory } from './evidence.mjs'
 import { loadContract } from './contract.mjs'
-import { checkInputState } from './run-checks.mjs'
+import { checkCommandPaths, checkInputState } from './run-checks.mjs'
 import { validateFindings } from './findings.mjs'
 
 // Literal bundled resources remain discoverable to the package validator.
@@ -50,7 +50,7 @@ export async function run(options) {
   }
   const removed = new Set(inventory.changes.filter(change => change.status === 'D' || change.oldPath).map(change => change.oldPath ?? change.path))
   const proposed = await loadContract(target, options.contract, removed)
-  const previous = await previousPolicy(target.root, inventory.base, proposed.path, inventory.paths)
+  const previous = await previousPolicy(target.root, inventory.base, proposed.path, inventory)
   const contracts = [proposed.contract, ...(previous ? [previous.contract] : [])]
   const mapping = mapInventory(inventory, contracts)
   let assessment
@@ -130,7 +130,9 @@ export async function run(options) {
   }
   for (const decision of assessment.decisions) if (decision.status !== 'approved') problem('unresolved-decision', `Decision ${decision.id} blocks ${decision.affectedWork.join(', ')}.`)
   const affectedRules = contracts.flatMap(contract => contract.rules.filter(rule => mapping.mappings.some(item => item.ruleIds.includes(rule.id) || item.path === rule.path)))
+  const commandPaths = await checkCommandPaths(target, contracts.flatMap(contract => contract.checks), inventory.paths)
   const requiredChecks = contracts.flatMap(contract => contract.checks.filter(check => affectedRules.some(rule => rule.checkIds.includes(check.id)) ||
+    commandPaths.get(check).some(path => inventory.paths.includes(path)) ||
     inventory.paths.some(path => check.inputScopes.some(scope => matchesPath(pathGlob(scope), path))) || inventory.paths.includes(proposed.path) || inventory.paths.includes(previous?.path)))
     .filter((check, i, all) => all.findIndex(item => equal(item, check)) === i)
   for (const rule of affectedRules) if (!assessment.coverage.includes(rule.id)) problem('missing-rule-coverage', `Rule ${rule.id} from previous/proposed policy has no assessment coverage.`)
@@ -154,7 +156,7 @@ export async function run(options) {
       const declared = plan.checks.find(item => item.id === check.id && item.required && equal(item.command, check.command) && check.inputScopes.every(scope => item.inputScopes.includes(scope)))
       const executed = capture.checks?.find(item => item.id === check.id && item.required && item.satisfied && item.status === 'passed' && equal(item.command, check.command))
       const result = executed?.execution
-      const relevant = [...policyInputs, ...inventory.paths.filter(path => check.inputScopes.some(scope => matchesPath(pathGlob(scope), path)))]
+      const relevant = [...policyInputs, ...commandPaths.get(check), ...inventory.paths.filter(path => check.inputScopes.some(scope => matchesPath(pathGlob(scope), path)))]
       return declared && successful(result) && successful(result.toolVersion) &&
         relevant.every(path => current.state.files.some(file => file.path === path))
     })) problem('required-check-missing', `Required previous/proposed check ${check.id} has no successful matching capture.`)
@@ -162,6 +164,7 @@ export async function run(options) {
   const files = await repoFiles(target.root)
   const scopes = contracts.flatMap(contract => contract.checks.flatMap(check => check.inputScopes)).map(pathGlob)
   const paths = [...inventory.paths, proposed.path, ...(previous ? [previous.path] : []), ...citedPaths,
+    ...[...commandPaths.values()].flat(),
     ...contracts.flatMap(contract => [...contract.documents, ...contract.rules, ...contract.acceptanceSources].map(item => item.path)),
     ...contracts.flatMap(contract => contract.checks.flatMap(check => check.inputScopes.filter(scope => !/[*?]/.test(scope)))),
     ...files.filter(path => scopes.some(scope => matchesPath(scope, path)))]
