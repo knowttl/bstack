@@ -1602,10 +1602,6 @@ Select a committed assessment path when the project's selected delivery path nee
 Local-only reviews can keep evidence in scratch, but cannot claim clean-checkout assessment coverage.
 The caller passes the assessment path, source revision and comparison base explicitly.
 If several records cover the same change, require an explicit selection instead of guessing the newest one.
-Portable collection uses `--portable <repo-relative-assessment>` after implementation is committed.
-The selected record retains that implementation commit in `head` and uses `repo: "."`; only the selected record may differ in subsequent submitted commits.
-Its own path is excluded from inventory to avoid a self-referential record, while its substantive claims remain fingerprinted.
-Commit the reviewed fingerprint before aggregate execution, which requires unchanged committed record bytes and captures its own fresh results.
 The [execution contract](command-contract.md#standalone-checker-execution) owns exact collection, binding, prior-checker and fetch behavior.
 
 Use explicit source and base objects.
