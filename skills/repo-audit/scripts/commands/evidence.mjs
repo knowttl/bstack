@@ -7,6 +7,7 @@ import { previousPolicy, mapInventory } from '../lib/evidence-policy.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { loadContract } from './contract.mjs'
 import { relative, resolve } from 'node:path'
+import { resolveLinks } from '../lib/paths.mjs'
 
 // Inventory reads are independent of ambient Git overrides, just like target resolution.
 const gitEnv = { ...process.env, GIT_DIR: undefined, GIT_WORK_TREE: undefined, GIT_COMMON_DIR: undefined, GIT_INDEX_FILE: undefined }
@@ -66,7 +67,7 @@ export async function run(options) {
   const target = await resolveTarget(options)
   const inventory = collectInventory(target.root, options.base)
   if (options.portable) {
-    const path = relative(target.root, resolve(target.root, options.portable)).split('\\').join('/')
+    const path = relative(target.root, await resolveLinks(resolve(target.root, options.portable))).split('\\').join('/')
     if (!inventory.head || path.startsWith('../') || path === '..' || !path) throw new CommandError('usage-error', [{
       code: 'invalid-portable-assessment', message: 'Portable collection needs a committed source and an internal assessment path.',
       fix: 'Commit source changes, then supply --portable <repo-relative-assessment>.' }])
