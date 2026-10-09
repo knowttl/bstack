@@ -33,10 +33,10 @@ async function leafCommand(root, command, stack = []) {
     else if (args.length === 1 && ['--version', '-v'].includes(args[0])) return
     else reject('unsupported-leaf', executable, 'Package script leaves support run <script>, lifecycle aliases and --version only.')
     let packageDirectory = cwd
-    if (name === 'npm') {
+    if (name === 'npm' || name === 'yarn') {
       while (packageDirectory !== root) {
         const entries = await readdir(packageDirectory)
-        if (entries.includes('package.json') || entries.includes('node_modules')) break
+        if (entries.includes('package.json') || (name === 'npm' && entries.includes('node_modules'))) break
         packageDirectory = dirname(packageDirectory)
       }
     }
