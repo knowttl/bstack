@@ -2677,11 +2677,16 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     }
   }
   await checkAssessment();
+  const coverageLimits = /* @__PURE__ */ new Map();
+  function retainCoverageLimits(result) {
+    for (const limit of result.data?.coverageLimits ?? []) coverageLimits.set(canonicalJSON(limit), limit);
+    return { ...result, data: { ...result.data, coverageLimits: [...coverageLimits.values()] } };
+  }
   async function checkStructure() {
     for (const policy of preflight.data.policies) {
-      const docs = await run2({ ...options, coveragePolicy: policy });
+      const docs = retainCoverageLimits(await run2({ ...options, coveragePolicy: policy }));
       if (docs.status !== "passed") return docs;
-      const facts = await checkGeneratedFacts({ ...options, coveragePolicy: policy });
+      const facts = retainCoverageLimits(await checkGeneratedFacts({ ...options, coveragePolicy: policy }));
       if (facts.status !== "passed") return facts;
     }
     return null;
@@ -2703,7 +2708,7 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     await writeFile3(path, bytes.stdout, { flag: "wx" });
     const checker = await import(pathToFileURL(path).href);
     if (typeof checker.runChecker !== "function") blocked("previous-checker-incompatible", "The comparison checker does not support clean-checkout validation.", "Record an explicit migration decision and coverage for the prior policy.");
-    previous = await checker.runChecker(options, { comparisonPolicy: true });
+    previous = retainCoverageLimits(await checker.runChecker(options, { comparisonPolicy: true }));
     if (previous.status !== "passed") return { ...previous, data: { ...previous.data, phase: "previous-policy" } };
   }
   const startedAt = (/* @__PURE__ */ new Date()).toISOString();
@@ -2735,6 +2740,7 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     process.removeListener("SIGINT", cancel);
     process.removeListener("SIGTERM", cancel);
   }
+  validated = retainCoverageLimits(validated);
   const status = currentResults.some((record) => record.execution.status === "failed") ? "failed" : validated.status;
   const data = {
     ...validated.data,
@@ -2783,4 +2789,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"c2c425d836dd2f7aa0527d7df1f9d5a96c8e12bd3ba4d5998e8bb2ed2548b6e7"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"f766bb4d069ccd1c23f4504e09eeaaa1d96ed50581e2ad576023bb96caf9aa99"}
