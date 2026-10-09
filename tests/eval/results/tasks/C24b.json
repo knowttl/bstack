@@ -94,11 +94,6 @@
           "sha256": "03319611068eca0bf434ac80fb7850c9c8aef5f54834d78da987aca6f269479f"
         },
         {
-          "path": "docs/command-contract.md",
-          "executable": false,
-          "sha256": "2d3dda5e695812e9674cc6e24a4c14ca65a9c508761dac2af91bca307d22fcc8"
-        },
-        {
           "path": "docs/design.md",
           "executable": false,
           "sha256": "9c5b98e2f9f8dc5b608238fd5e75ebe8d6740cc03bf670fef0d4450cf9c1f990"
@@ -112,11 +107,6 @@
           "path": "docs/fixtures.md",
           "executable": false,
           "sha256": "4d15f4e7f576053e2944a7074dd9ab1c90c9394de5489b6827eecef5a4bbc4f9"
-        },
-        {
-          "path": "docs/implementation-plan.md",
-          "executable": false,
-          "sha256": "e46e376dc74c7dc748a03a26d553051ffb16314cb12efdfef298cf9d7d8e0ab7"
         },
         {
           "path": "package-lock.json",
@@ -3774,7 +3764,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "0400164697507900c6c83a82c6e81287a99ca4af15e9a4cee4ee0f56b40f352e"
+      "sha256": "2ae61ea452f4991bf2a31e2a5f30855195291d9643da58ec8e547e43c3df58a3"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3812,7 +3802,34 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "docs/command-contract.md",
+        "before": {
+          "path": "docs/command-contract.md",
+          "executable": false,
+          "sha256": "2d3dda5e695812e9674cc6e24a4c14ca65a9c508761dac2af91bca307d22fcc8"
+        },
+        "after": {
+          "path": "docs/command-contract.md",
+          "executable": false,
+          "sha256": "e1315a36cd6a7f0681f42323ecdc473c9343febef8d008706a8d5f1b71b7e2a8"
+        }
+      },
+      {
+        "path": "docs/implementation-plan.md",
+        "before": {
+          "path": "docs/implementation-plan.md",
+          "executable": false,
+          "sha256": "e46e376dc74c7dc748a03a26d553051ffb16314cb12efdfef298cf9d7d8e0ab7"
+        },
+        "after": {
+          "path": "docs/implementation-plan.md",
+          "executable": false,
+          "sha256": "52d52557d0d14aff810c5566dac4de11bfc2e7f85c98f5dac3c3dbd023415ca7"
+        }
+      }
+    ],
     "counts": {
       "tests": 2439,
       "failed": 0,
