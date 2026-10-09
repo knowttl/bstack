@@ -35,9 +35,29 @@ function meaningful(text, excerpt, path) {
   let language = sourceLanguage
   let fence = null
   const erase = (start, end) => { for (let i = start; i < end; i++) if (!/[\r\n]/.test(text[i])) screened[i] = ' ' }
-  function scan(start, expression = false) {
+  const protect = (start, end) => { for (let i = start; i < end; i++) literals.add(i) }
+  function scan(start, expression = false, shellEnd = null) {
     let braces = 0
+    let parentheses = 0
+    const heredocs = []
     for (let i = start; i < text.length;) {
+      if (literals.has(i)) { i++; continue }
+      if (text[i] === '\n' && heredocs.length) {
+        let end = i + 1
+        for (const { delimiter, tabs } of heredocs) {
+          while (end < text.length) {
+            const newline = text.indexOf('\n', end)
+            const next = newline < 0 ? text.length : newline + 1
+            const line = text.slice(end, newline < 0 ? text.length : newline).replace(/\r$/, '')
+            end = next
+            if ((tabs ? line.replace(/^\t*/, '') : line) === delimiter) break
+          }
+        }
+        protect(i + 1, end)
+        heredocs.length = 0
+        i = end
+        continue
+      }
       if (!expression && (i === 0 || text[i - 1] === '\n')) {
         const delimiter = text.slice(i).match(/^[ \t]*(`{3,}|~{3,})([^\r\n]*)/)
         if (delimiter && (!fence || (delimiter[1][0] === fence[0] && delimiter[1].length >= fence.length && !delimiter[2].trim()))) {
@@ -45,6 +65,42 @@ function meaningful(text, excerpt, path) {
           fence = fence ? null : delimiter[1]
           i += delimiter[0].length
           continue
+        }
+      }
+      const shell = /^(?:shell|sh|bash|zsh)$/i.test(language)
+      if (shell && text[i] === '\\') { protect(i, i + 2); i += 2; continue }
+      if (shellEnd && text[i] === shellEnd && parentheses === 0) return i + 1
+      if (shellEnd === ')' && text[i] === '(') parentheses++
+      else if (shellEnd === ')' && text[i] === ')') parentheses--
+      if (shell && text.startsWith('<<', i) && text[i - 1] !== '<' && text[i + 2] !== '<') {
+        const heredoc = text.slice(i).match(/^<<(-?)[ \t]*(?:'([^'\r\n]+)'|"([^"\r\n]+)"|\\?([\w]+))/)
+        if (heredoc) {
+          heredocs.push({ delimiter: heredoc[2] ?? heredoc[3] ?? heredoc[4], tabs: Boolean(heredoc[1]) })
+          i += heredoc[0].length
+          continue
+        }
+      }
+      if (/^(?:yaml|yml)$/i.test(language) && /[|>]/.test(text[i]) &&
+          /^[|>](?:[1-9][+-]?|[+-][1-9]?)?[ \t]*(?:#[^\r\n]*)?(?:\r?\n|$)/.test(text.slice(i))) {
+        const lineStart = text.lastIndexOf('\n', i - 1) + 1
+        const prefix = text.slice(lineStart, i)
+        if (/(?:^\s*-\s*|:\s*)$/.test(prefix)) {
+          const indentation = prefix.match(/^ */)[0].length
+          const explicit = text.slice(i).match(/^[|>][+-]?([1-9])/)
+          let required = explicit ? indentation + Number(explicit[1]) : null
+          let end = text.indexOf('\n', i) + 1
+          const start = end
+          while (end > 0 && end < text.length) {
+            const newline = text.indexOf('\n', end)
+            const line = text.slice(end, newline < 0 ? text.length : newline)
+            const indent = line.match(/^ */)[0].length
+            if (line.trim()) {
+              if (required === null) required = indent > indentation ? indent : indentation + 1
+              if (indent < required) break
+            }
+            end = newline < 0 ? text.length : newline + 1
+          }
+          protect(start, end)
         }
       }
       const url = text.slice(i).match(/^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'`<>]*/)
@@ -55,20 +111,33 @@ function meaningful(text, excerpt, path) {
       const comment = text.startsWith('<!--', i) ? ['-->', 4] : text.startsWith('/*', i) ? ['*/', 2] : text.startsWith('//', i) ? ['\n', 2] : hashComment ? ['\n', 1] : null
       if (comment) {
         const end = text.indexOf(comment[0], i + comment[1])
-        const next = end < 0 ? text.length : end + comment[0].length
+        const next = end < 0 ? text.length : end + (comment[0] === '\n' ? 0 : comment[0].length)
         erase(i, next)
         i = next
         continue
       }
       if (text.startsWith('```', i)) { while (text[i] === '`') i++; continue }
-      const quote = text[i]
-      const closedLiteral = text.slice(i).match(/^(?:"(?:\\[^\r\n]|[^"\\\r\n])*"|'(?:\\[^\r\n]|[^'\\\r\n])*'|`(?:\\[\s\S]|[^`\\])*`)/)
-      if (closedLiteral && !(quote === "'" && /[\p{L}\p{N}_]/u.test(text[i - 1] ?? ''))) {
-        literals.add(i++)
+      if (shell && (text[i] === '`' || text.startsWith('$(', i))) {
+        i = text[i] === '`' ? scan(i + 1, false, '`') : scan(i + 2, false, ')')
+        continue
+      }
+      const triple = /^(?:python|py)$/i.test(language) && (text.startsWith('"""', i) || text.startsWith("'''", i))
+      const quote = triple ? text.slice(i, i + 3) : text[i]
+      const multiline = triple || shell || /^(?:yaml|yml)$/i.test(language)
+      const closedLiteral = triple ? text.indexOf(quote, i + 3) >= 0 : multiline ?
+        text.slice(i).match(/^(?:"(?:\\[\s\S]|[^"\\])*"|'[^']*')/) :
+        text.slice(i).match(/^(?:"(?:\\[^\r\n]|[^"\\\r\n])*"|'(?:\\[^\r\n]|[^'\\\r\n])*'|`(?:\\[\s\S]|[^`\\])*`)/)
+      if (closedLiteral && !(!multiline && quote === "'" && /[\p{L}\p{N}_]/u.test(text[i - 1] ?? ''))) {
+        protect(i, i + quote.length)
+        i += quote.length
         while (i < text.length) {
-          if (text[i] === '\\') { literals.add(i++); literals.add(i++); continue }
-          if (text[i] === quote) { literals.add(i++); break }
-          if (quote !== '`' && /[\r\n]/.test(text[i])) break
+          if (text[i] === '\\' && (quote !== "'" || !multiline)) { literals.add(i++); literals.add(i++); continue }
+          if (text.startsWith(quote, i)) { protect(i, i + quote.length); i += quote.length; break }
+          if (!multiline && quote !== '`' && /[\r\n]/.test(text[i])) break
+          if (shell && quote === '"' && (text[i] === '`' || text.startsWith('$(', i))) {
+            i = text[i] === '`' ? scan(i + 1, false, '`') : scan(i + 2, false, ')')
+            continue
+          }
           if (quote === '`' && text.startsWith('${', i)) { i = scan(i + 2, true); continue }
           literals.add(i++)
         }
