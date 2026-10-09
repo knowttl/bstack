@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import { readFile, stat, realpath } from 'node:fs/promises'
 import { resolvePath } from './paths.mjs'
+import { readGit, repoFiles } from './discovery.mjs'
 
 export function hashBytes(bytes) {
   return createHash('sha256').update(bytes).digest('hex')
@@ -16,15 +17,26 @@ export function canonicalJSON(value) {
 
 export async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) {
   const root = await realpath(target.root)
+  const gitlinks = new Map(readGit(root, ['ls-files', '--stage', '-z']).stdout.split('\0')
+    .filter(entry => entry.startsWith('160000 ')).map(entry => [entry.slice(entry.indexOf('\t') + 1), entry.split(' ')[1]]))
   const files = []
   for (const path of [...new Set(paths)].sort()) {
     const resolved = await resolvePath(root, path)
     try {
       const info = await stat(resolved)
+      let contentHash = null
+      if (info.isFile() && path !== evidencePath) contentHash = hashBytes(await readFile(resolved))
+      else if (info.isDirectory() && gitlinks.has(path)) {
+        const head = readGit(resolved, ['rev-parse', '--show-toplevel'])
+        const initialized = head.status === 0 && await realpath(head.stdout.trim()) === resolved
+        const contents = initialized ? await fingerprint({ root: resolved }, { baseCommit: readGit(resolved, ['rev-parse', 'HEAD']).stdout.trim(),
+          paths: await repoFiles(resolved), inputs: {} }) : null
+        contentHash = hashBytes(canonicalJSON({ gitlink: gitlinks.get(path), contents: contents?.fingerprint ?? null }))
+      }
       files.push({ path, present: true, mode: info.mode,
-        contentHash: path === evidencePath ? null : hashBytes(await readFile(resolved)) })
+        contentHash })
     } catch (error) {
-      if (error.code !== 'ENOENT') throw error
+      if (!['ENOENT', 'ENOTDIR'].includes(error.code)) throw error
       files.push({ path, present: false, mode: null, contentHash: null })
     }
   }

@@ -4,7 +4,7 @@ import { resolveTarget } from '../lib/repo.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
-import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
+import { resolvePath } from '../lib/paths.mjs'
 import { pathGlob, matchesPath } from '../lib/glob.mjs'
 import { repoFiles, readGit } from '../lib/discovery.mjs'
 import { canonicalJSON, hashBytes, fingerprint } from '../lib/fingerprint.mjs'
@@ -16,7 +16,6 @@ export async function checkInputState(target, plan, planPath) {
   const globs = scopes.map(pathGlob)
   const files = await repoFiles(target.root)
   const declaredPaths = [...scopes.filter(scope => !/[*?]/.test(scope)), ...plan.acceptanceSources.map(source => source.path)]
-  for (const path of declaredPaths) await resolveFilePath(target.root, path)
   const paths = [...declaredPaths, ...files.filter(path => globs.some(glob => matchesPath(glob, path)))]
   const head = readGit(target.root, ['rev-parse', '--verify', 'HEAD'])
   let planContentHash = null
@@ -52,7 +51,7 @@ export async function run(options) {
   const problems = []
   const problem = (code, message) => problems.push({ code, message, fix: 'Review the check plan and capture the required evidence against the correct state.' })
   for (const source of plan.acceptanceSources) {
-    const path = await resolveFilePath(target.root, source.path)
+    const path = await resolvePath(target.root, source.path)
     let bytes
     try { bytes = await readFile(path) } catch { problem('acceptance-source-unavailable', `Source ${source.id} is unavailable.`); continue }
     if (hashBytes(bytes) !== source.contentHash) problem('stale-acceptance-source', `Source ${source.id} no longer matches its approved bytes.`)

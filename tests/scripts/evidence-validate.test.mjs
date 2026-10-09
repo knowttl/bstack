@@ -248,6 +248,95 @@ test('an unrelated meaningful edit cannot establish an asserted cosmetic rule up
   blocked(f.validate(), 'meaningless-document-delta')
 })
 
+for (const [name, wrap] of [
+  ['HTML comment', text => `<!-- ${text} -->`],
+  ['block comment', text => `/* ${text} */`],
+  ['line comment', text => `// ${text}`],
+  ['timestamp metadata', text => `updated: ${text}`]
+]) {
+  test(`an unrelated meaningful edit cannot validate excerpts inside ${name}`, async t => {
+    const f = await fixture(t)
+    const document = '# Pricing contract\n\nA quote is quantity multiplied by 12.\n'
+    await writeFile(join(f.repo, 'README.md'), document + wrap('old wording') + '\n')
+    f.base = commit(f.repo)
+    await writeFile(join(f.repo, 'README.md'), document + wrap('new wording') + '\nAn unrelated definition.\n')
+    await f.collect()
+    await f.complete()
+    const value = f.assessment.documents[0].assessment
+    value.result = 'updated'
+    value.delta = { before: 'old wording', after: 'new wording' }
+    await f.write()
+    blocked(f.validate(), 'meaningless-document-delta')
+  })
+}
+
+for (const replacement of ['directory', 'ancestor file']) {
+  for (const result of ['no-impact', 'updated', 'acceptance']) {
+    test(`${result} evidence supports a historical source replaced by ${replacement}`, async t => {
+      const f = await fixture(t)
+      const document = '# Pricing contract\n\nA quote is quantity multiplied by 12.\n'
+      await mkdir(join(f.repo, 'config'))
+      await writeFile(join(f.repo, 'config/rules'), document)
+      if (result === 'acceptance') f.contract.acceptanceSources[0].path = 'config/rules'
+      else {
+        f.contract.documents[0].path = 'config/rules'
+        f.contract.rules[0].path = 'config/rules'
+      }
+      f.contract.checks[0].inputScopes.push('config/rules')
+      await f.save()
+      f.base = commit(f.repo)
+      await rm(join(f.repo, 'config'), { recursive: true })
+      if (replacement === 'directory') {
+        await mkdir(join(f.repo, 'config/rules'), { recursive: true })
+        await writeFile(join(f.repo, 'config/rules/imports.json'), '{}\n')
+      } else await writeFile(join(f.repo, 'config'), 'replacement\n')
+      await f.collect()
+      await f.complete()
+      if (result === 'updated') {
+        const value = f.assessment.documents[0].assessment
+        value.result = 'updated'
+        value.delta = { before: document, after: '' }
+      }
+      if (result === 'acceptance') f.assessment.decisions = [{ id: 'remove-source', status: 'approved', source: 'config/rules',
+        oldCase: 'quantity multiplied by 12', newCase: '[absent]', affectedWork: ['pricing work'],
+        approval: { path: 'APPROVAL.md', pointer: 'Owner approved', version: 'base' } }]
+      await f.write()
+      await f.capture()
+      await f.bind()
+      assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+      if (result !== 'acceptance') {
+        f.assessment.documents[0].assessment.citations[0].version = 'current'
+        await f.write()
+        blocked(f.validate(), 'citation-unavailable')
+      }
+    })
+  }
+}
+
+test('changed initialized submodule inputs bind and become stale after content edits', async t => {
+  const f = await fixture(t)
+  const source = join(f.directory, 'submodule-source')
+  await mkdir(source)
+  git(source, 'init', '-q')
+  await writeFile(join(source, 'rule.txt'), 'old rule\n')
+  commit(source)
+  git(f.repo, '-c', 'protocol.file.allow=always', 'submodule', 'add', source, 'vendor')
+  f.contract.checks[0].inputScopes.push('vendor')
+  await f.save()
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'vendor/rule.txt'), 'new rule\n')
+  commit(join(f.repo, 'vendor'))
+  await f.collect()
+  await f.complete()
+  await f.capture()
+  await f.bind()
+  assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+  await writeFile(join(f.repo, 'vendor/rule.txt'), 'another rule\n')
+  const result = f.validate()
+  blocked(result, 'stale-review')
+  blocked(result, 'stale-execution')
+})
+
 test('unavailable comparison base names a prerequisite', async t => {
   const f = await fixture(t)
   f.base = 'missing'

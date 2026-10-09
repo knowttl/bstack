@@ -210,13 +210,14 @@ for (const [input, pathFor, replacements] of [
       assert.equal(result.exit, 2)
       assert.equal(result.status, 'blocked')
       assert.equal(result.problems[0].message, 'inputs changed during run')
-      assert.equal(result.data.finalState, null)
+      if (name === 'directory' && input !== 'plan') assert.notEqual(result.data.finalState.fingerprint, result.data.originalState.fingerprint)
+      else assert.equal(result.data.finalState, null)
       assert.deepEqual(result.data.checks.map(item => item.execution.stdout), ['completed\n', 'replaced\n'])
       assert.deepEqual(result.data.checks.map(item => item.execution.exitCode), [0, 0])
       assert.equal(result.data.coverage[0].status, 'unverified')
       const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
       assert.equal(saved.status, 'blocked')
-      assert.equal(saved.finalState, null)
+      assert.deepEqual(saved.finalState, result.data.finalState)
       assert.deepEqual(saved.checks, result.data.checks)
     })
   }
@@ -347,12 +348,12 @@ test('a refactor without prior protective capture is rejected before compatibili
   assert.ok(result.data.checks.every(item => item.execution === null))
 })
 
-test('before protection with an unavailable final snapshot cannot serve as prior evidence', async t => {
+test('before protection with a retyped input cannot serve as prior evidence', async t => {
   const f = await refactor(t)
   f.plan.checks[0].command.args = ['-e', 'const fs = require("node:fs"); fs.unlinkSync("product.cjs"); fs.mkdirSync("product.cjs"); console.log("completed")']
   const before = await f.invoke(['--phase', 'before'])
   assert.equal(before.exit, 2)
-  assert.equal(before.data.finalState, null)
+  assert.notEqual(before.data.finalState.fingerprint, before.data.originalState.fingerprint)
   assert.equal(before.data.checks[0].execution.stdout, 'completed\n')
   await rm(join(f.repo, 'product.cjs'), { recursive: true })
   await writeFile(join(f.repo, 'product.cjs'), 'exports.total = count => 10 * count\n')

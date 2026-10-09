@@ -35,7 +35,7 @@ export async function resolveLinks(destination, allowMissingLinks = false) {
       await lstat(parent)
       break
     } catch (error) {
-      if (error.code !== 'ENOENT') throw error
+      if (!['ENOENT', 'ENOTDIR'].includes(error.code)) throw error
       missing.unshift(relative(dirname(parent), parent))
       parent = dirname(parent)
     }

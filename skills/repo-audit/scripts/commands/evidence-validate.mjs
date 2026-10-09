@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
+import { resolvePath } from '../lib/paths.mjs'
 import { readGit, repoFiles } from '../lib/discovery.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
@@ -80,7 +80,7 @@ export async function run(options) {
   const citedPaths = []
   async function citation(cite) {
     validateData((await schema('impact-assessment.json')).properties.citations.items, cite)
-    const path = await resolveFilePath(target.root, cite.path)
+    const path = await resolvePath(target.root, cite.path)
     citedPaths.push(cite.path)
     const text = cite.version === 'base' ? baseText(target.root, inventory.base, cite.path) : await readFile(path, 'utf8').catch(() => '')
     if (!text.includes(cite.pointer)) problem('citation-unavailable', `Citation ${cite.path} does not contain the ${cite.version} source pointer.`)
@@ -100,10 +100,14 @@ export async function run(options) {
     }
     if (value.result === 'updated') {
       const before = baseText(target.root, inventory.base, entry.path)
-      const after = await readFile(await resolveFilePath(target.root, entry.path), 'utf8').catch(() => '')
+      const after = await readFile(await resolvePath(target.root, entry.path), 'utf8').catch(() => '')
       const delta = value.delta
-      if (!document || !delta || meaningful(before) === meaningful(after) || meaningful(delta.before) === meaningful(delta.after) ||
-          !before.includes(delta.before) || !after.includes(delta.after) || (delta.before && after.includes(delta.before)) || (delta.after && before.includes(delta.after))) {
+      const oldDocument = meaningful(before)
+      const newDocument = meaningful(after)
+      if (!document || !delta || oldDocument === newDocument || meaningful(delta.before) === meaningful(delta.after) ||
+          !before.includes(delta.before) || !after.includes(delta.after) ||
+          !oldDocument.includes(meaningful(delta.before)) || !newDocument.includes(meaningful(delta.after)) ||
+          (delta.before && newDocument.includes(meaningful(delta.before))) || (delta.after && oldDocument.includes(meaningful(delta.after)))) {
         problem('meaningless-document-delta', `Updated ${entry.path} needs an actual changed definition or rule excerpt, beyond dates, whitespace or comments.`)
       }
     }
@@ -113,7 +117,7 @@ export async function run(options) {
   const sources = contracts.flatMap(contract => contract.acceptanceSources)
   for (const source of sources) {
     const before = baseText(target.root, inventory.base, source.path)
-    const after = await readFile(await resolveFilePath(target.root, source.path), 'utf8').catch(() => '')
+    const after = await readFile(await resolvePath(target.root, source.path), 'utf8').catch(() => '')
     if (before === after) continue
     const decision = assessment.decisions.find(item => item.source === source.path && item.status === 'approved')
     if (!decision || !decision.approval || !(before ? before.includes(decision.oldCase) : decision.oldCase === '[absent]') ||

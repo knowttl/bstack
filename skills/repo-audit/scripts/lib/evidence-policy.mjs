@@ -7,10 +7,10 @@ import { CommandError } from './result.mjs'
 
 export function baseText(root, base, path) {
   if (base.kind === 'empty-tree') return ''
+  const tree = readGit(root, ['ls-tree', '-z', base.objectId, '--', path])
+  if (tree.status === 0 && (!tree.stdout || tree.stdout.split(' ')[1] !== 'blob')) return ''
   const result = readGit(root, ['show', `${base.objectId}:${path}`])
   if (result.status === 0) return result.stdout
-  const tree = readGit(root, ['ls-tree', '-z', base.objectId, '--', path])
-  if (tree.status === 0 && !tree.stdout) return ''
   throw new CommandError('blocked', [{ code: 'previous-source-unavailable', path,
     message: 'The comparison source cannot be read.', fix: 'Restore the comparison commit and its blobs before validating evidence.' }])
 }
