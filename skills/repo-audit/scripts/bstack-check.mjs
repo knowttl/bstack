@@ -442,7 +442,7 @@ async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) 
       files.push({
         path,
         present: true,
-        mode: info.mode,
+        mode: portable ? info.isFile() && linkTarget === null ? info.mode & 64 : 0 : info.mode,
         linkTarget,
         contentHash
       });
@@ -459,7 +459,7 @@ async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) 
   const state = {
     root: portable ? "." : root,
     baseCommit,
-    files: portable ? files.map((file) => ({ ...file, mode: file.mode === null ? null : file.mode & 73 })) : files,
+    files,
     inputs: substantive
   };
   return { fingerprint: hashBytes(canonicalJSON(state)), state };
@@ -2701,16 +2701,11 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
   const cancel = () => controller.abort();
   process.on("SIGINT", cancel);
   process.on("SIGTERM", cancel);
+  let validated;
   try {
     for (const check of preflight.data.requiredChecks) {
       currentResults.push({ check, execution: await runCommand(target, check.command, { signal: controller.signal }) });
     }
-  } finally {
-    process.removeListener("SIGINT", cancel);
-    process.removeListener("SIGTERM", cancel);
-  }
-  let validated;
-  try {
     validated = await run3({ ...options, currentResults });
   } catch (error) {
     validated = {
@@ -2723,6 +2718,9 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
       inputs: preflight.inputs,
       data: preflight.data
     };
+  } finally {
+    process.removeListener("SIGINT", cancel);
+    process.removeListener("SIGTERM", cancel);
   }
   const status = currentResults.some((record) => record.execution.status === "failed") ? "failed" : validated.status;
   const data = {
@@ -2772,4 +2770,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"bd1b3817f15c9d1d9016aa342528c88e9d1f2cb4ba7dc1dc910e51f02f7391c0"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"e4c26f518ccc418f8c5cff7e8a594e9c38eb2f33c4c0bddf4d3a4d0574824fc2"}
