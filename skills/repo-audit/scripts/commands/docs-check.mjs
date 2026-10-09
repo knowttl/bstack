@@ -2,32 +2,30 @@ import { readFile } from 'node:fs/promises'
 import { extname } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
-import { markdownBody, markdownProse, markdownHeadings, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
+import { markdownBody, markdownCoverageLimit, markdownHeadings, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { loadContract } from './contract.mjs'
 
 function glossaryEntries(text, format) {
-  const source = markdownBody(text)
-  const body = markdownProse(text)
+  const body = markdownBody(text)
   if (format === 'markdown-bold') {
-    const headings = markdownHeadings(source)
+    const headings = markdownHeadings(body)
     const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)]
       .filter(match => !headings.some(heading => heading.start <= match.index && match.index < heading.end))
     return entries.map((match, index) => {
       const end = Math.min(entries[index + 1]?.index ?? body.length, headings.find(heading => heading.start > match.index)?.start ?? body.length)
-      return { term: source.slice(match.index + 2, match.index + 2 + match[1].length).trim(), definition: source.slice(match.index + match[1].length + 5, end).trim() }
+      return { term: match[1].trim(), definition: body.slice(match.index + match[0].length, end).trim() }
     })
   }
   if (format === 'markdown-table') {
     const lines = body.split('\n')
-    const sourceLines = source.split('\n')
     const entries = []
     for (let i = 0; i < lines.length - 1; i++) {
       if (!/^\|\s*Term\s*\|\s*Definition\s*\|[ \t]*$/i.test(lines[i]) || !/^\|\s*:?-+:?\s*\|\s*:?-+:?\s*\|[ \t]*$/.test(lines[i + 1])) continue
       i += 2
       for (; i < lines.length && lines[i].startsWith('|'); i++) {
-        const row = /^\|((?:\\.|[^|\\])*)\|((?:\\.|[^|\\])*)\|[ \t]*$/.exec(sourceLines[i])
-        const cells = row?.slice(1).map(cell => cell.replace(/\\([\\|])/g, '$1').trim())
-        entries.push(cells ? { term: cells[0], definition: cells[1] } : { term: '', definition: '' })
+        const row = /^\|([^|]*)\|([^|]*)\|[ \t]*$/.exec(lines[i])
+        if (!row) return null
+        entries.push({ term: row[1].trim(), definition: row[2].trim() })
       }
     }
     return entries
@@ -54,6 +52,12 @@ export async function run(options) {
       coverageLimits.push({ path, reason: 'Local links require supported Markdown text.' })
       continue
     }
+    const limit = markdownCoverageLimit(text)
+    if (limit) {
+      coverageLimits.push({ path, reason: limit })
+      documents.push({ path, links: 0 })
+      continue
+    }
     const links = markdownLinks(text)
     for (const href of links) {
       const problem = await checkLocalLink(target.root, path, href)
@@ -66,7 +70,7 @@ export async function run(options) {
       const { context, format } = document.glossary
       const entries = glossaryEntries(text, format)
       if (entries === null) {
-        coverageLimits.push({ path, reason: `Unsupported glossary format: ${format}` })
+        coverageLimits.push({ path, reason: `Unsupported glossary format or fields: ${format}` })
         continue
       }
       if (!entries.length || entries.some(entry => !entry.term || !entry.definition)) problems.push({ code: 'invalid-glossary', path,

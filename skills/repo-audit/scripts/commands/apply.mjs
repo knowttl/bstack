@@ -11,7 +11,7 @@ import { CommandError } from '../lib/result.mjs'
 import { validateFindings } from './findings.mjs'
 import { loadJournal, journalOriginal, inspectJournal, fileBytes, applyWrites } from '../lib/protected-write.mjs'
 import { validateCheckIntegration } from '../lib/check-integration.mjs'
-import { markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
+import { markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 
 function reject(code, message, path) {
   throw new CommandError('failed', [{ code, message, path, fix: 'Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again.' }])
@@ -88,6 +88,7 @@ export async function prepareChangeSet(options, target) {
   }
   if (problems.length) throw new CommandError('failed', problems)
   const documents = new Map(staged.map(edit => [edit.resolvedPath, edit.proposedContent]))
+  const coverageLimits = []
   for (const edit of plan.edits.filter(edit => edit.operation === 'move-rule' && edit.path === edit.payload.sourcePath)) {
     const { sourcePath, destinationPath, rule, link } = edit.payload
     const pair = plan.edits.filter(candidate => candidate.operation === 'move-rule' &&
@@ -102,14 +103,20 @@ export async function prepareChangeSet(options, target) {
     if (links.length !== 1 || /^[A-Za-z][A-Za-z0-9+.-]*:|^\/\//.test(href)) reject('invalid-rule-link', 'The replacement must link to the selected local destination.', sourcePath)
     let linkedPath
     try {
-      const pathPart = decodeURIComponent(href.split('#')[0].split('?')[0]).replace(/\\([()])/g, '$1')
+      const pathPart = decodeURIComponent(href.split('#')[0].split('?')[0])
       linkedPath = await resolvePath(target.root, relative(target.root, resolve(target.root, dirname(sourcePath), pathPart)))
     } catch { reject('invalid-rule-link', 'The replacement must resolve to the selected local destination.', sourcePath) }
     if (linkedPath !== scope.get(destinationPath)) reject('invalid-rule-link', 'The replacement must link to the selected destination.', sourcePath)
     for (const document of [source, destination]) {
+      const limit = markdownCoverageLimit(document.proposedContent)
+      if (limit) {
+        coverageLimits.push({ path: document.path, reason: limit })
+        continue
+      }
       for (const reference of markdownLinks(document.proposedContent)) {
         const problem = await checkLocalLink(target.root, document.path, reference, documents)
-        if (problem) throw new CommandError('failed', [problem])
+        if (problem?.code === 'unsupported-link-fragment') coverageLimits.push({ path: document.path, reason: problem.message })
+        else if (problem) throw new CommandError('failed', [problem])
       }
     }
   }
@@ -117,13 +124,14 @@ export async function prepareChangeSet(options, target) {
     if (!plan.edits.some(candidate => candidate.operation === 'move-rule' && candidate.path === edit.payload.sourcePath &&
         candidate.findingId === edit.findingId && canonicalJSON(candidate.payload) === canonicalJSON(edit.payload))) reject('incomplete-rule-move', 'A move requires matching selected source and destination edits.', edit.path)
   }
-  return { inputs: { target, plan: options.plan }, plan, staged, directory, journal, findings }
+  return { inputs: { target, plan: options.plan }, plan, staged, directory, journal, findings, coverageLimits }
 }
 
 export async function run(options) {
   const target = await resolveTarget(options, { draftOnly: true })
-  const { inputs, plan, staged, directory, journal, findings } = await prepareChangeSet(options, target)
+  const { inputs, plan, staged, directory, journal, findings, coverageLimits } = await prepareChangeSet(options, target)
   const { planDigest } = plan
+  if (coverageLimits.length) return { inputs, status: 'blocked', data: { planDigest, coverageLimits } }
   if (options['dry-run']) return { inputs, data: { planDigest, dryRun: true,
     edits: staged.map(({ originalBytes, resolvedPath, ...edit }) => edit), diff: staged.map(edit => edit.diff).join('') } }
   if (journal) {
