@@ -6,6 +6,50 @@ import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { run, snapshot } from './discovery-fixture.mjs'
 
 for (const executable of ['npm', 'pnpm', 'yarn']) {
+  for (const [script, leaf, code] of [
+    [`@${executable} run leaf`, 'leaf', 'ignored-check-failure'],
+    [`${executable} run leaf\u00a0`, 'leaf\u00a0', undefined],
+    [`${executable} run leaf\u2003name`, 'leaf\u2003name', undefined],
+    [`${executable} run \uFEFFleaf`, '\uFEFFleaf', undefined]
+  ]) {
+    test(`native literal token boundary ${executable}: ${script}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: script, [leaf]: 'node --version' } }))
+      f.contract.checks[0].command = { executable, args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] }
+      await f.save()
+      const result = run('contract validate', f.repo)
+      assert.equal(result.problems[0]?.code, code)
+      assert.equal(result.exit, code ? 1 : 0)
+    })
+  }
+}
+
+for (const collection of ['checks', 'generators']) {
+  for (const field of ['args', 'versionArgs']) {
+    for (const hook of ['precheck', 'check', 'postcheck', 'nested']) {
+      for (const [script, code] of [
+        ['node .bstack/bin/bstack-check.mjs>out', 'ignored-check-failure'],
+        ['@npm run leaf', 'ignored-check-failure'],
+        ['node --version && @npm run leaf', 'ignored-check-failure'],
+        ['npm run leaf\u00a0', 'recursive-check']
+      ]) {
+        test(`literal script transformations ${collection} ${field} ${hook}: ${script}`, async t => {
+          const f = await maintenanceRepo(t)
+          const scripts = { check: 'node --version', leaf: 'node --version', 'leaf\u00a0': 'node .bstack/bin/bstack-check.mjs', [hook]: script }
+          if (hook === 'nested') scripts.check = 'npm run nested'
+          await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+          f.contract[collection][0].command = {
+            executable: 'npm', args: ['--version'], cwd: '.', versionArgs: ['--version'], [field]: ['run', 'check']
+          }
+          await f.save()
+          assert.equal(run('contract validate', f.repo).problems[0]?.code, code)
+        })
+      }
+    }
+  }
+}
+
+for (const executable of ['npm', 'pnpm', 'yarn']) {
   for (const collection of ['checks', 'generators']) {
     for (const field of ['args', 'versionArgs']) {
       for (const hook of ['precheck', 'check', 'postcheck', 'nested']) {
@@ -360,7 +404,7 @@ for (const collection of ['checks', 'generators']) {
     }
     test(`direct literal expansions in ${collection} ${field} validate`, async t => {
       const f = await maintenanceRepo(t)
-      f.contract[collection][0].command[field] = ['tools/lint.mjs', '*.mjs', '?', '[ab]', '~', '%NAME%', '!NAME!', '^', "'leaf'", 'le"af"']
+      f.contract[collection][0].command[field] = ['tools/lint.mjs', '*.mjs', '?', '[ab]', '~', '%NAME%', '!NAME!', '^', "'leaf'", 'le"af"', '@npm', 'file>out', 'file<input', '日本語\u00a0file']
       await f.save()
       assert.equal(run('contract validate', f.repo).exit, 0)
     })
