@@ -203,11 +203,23 @@ test('move-rule resolves rule fragments against the staged destination', async t
   assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
 })
 
-for (const heading of ['## `Array<T>`', '`Array<T>`\n---', '> ## `Array<T>`', '## <em>[`Array<T>`](https://example.invalid)</em>']) {
+for (const [heading, fragment, wrongFragment] of [
+  ['## `Array<T>`', 'arrayt', 'array'],
+  ['`Array<T>`\n---', 'arrayt', 'array'],
+  ['> ## `Array<T>`', 'arrayt', 'array'],
+  ['## <em>[`Array<T>`](https://example.invalid)</em>', 'arrayt', 'array'],
+  ['## ` Array<T> `', 'arrayt', '-arrayt-'],
+  ['`\nArray<T>\n`\n---', 'arrayt', '-arrayt-'],
+  ['`Array\n<T>`\n---', 'array-t', 'arrayt'],
+  ['- ## ` Array<T> `', 'arrayt', '-arrayt-'],
+  ['## [` Array<T> `](https://example.invalid)', 'arrayt', '-arrayt-'],
+  ['## Start`   `End', 'start---end', 'start-end'],
+  ['Start` \n `End\n---', 'start---end', 'start-end']
+]) {
   for (const path of ['README.md', 'CONTRIBUTING.md']) {
-    for (const [fragment, exit] of [['arrayt', 0], ['array', 1]]) {
-      test(`move-rule checks code-bearing headings in staged ${path} for ${fragment}: ${heading}`, async t => {
-        const rule = `## One source\n\n${heading}\n\n[Type](${path}#${fragment})\n`
+    for (const [target, exit] of [[fragment, 0], [wrongFragment, 1]]) {
+      test(`move-rule checks code-bearing headings in staged ${path} for ${target}: ${heading}`, async t => {
+        const rule = `## One source\n\n${heading}\n\n[Type](${path}#${target})\n`
         const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
         const source = context.plan.edits[0]
         const retained = heading + '\n\n'
