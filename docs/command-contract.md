@@ -139,8 +139,9 @@ Custom prior authority must be explicitly reconciled with `--previous-contract <
 The assessment records `previousContract`, and changing that selection invalidates its review binding.
 Unrelated fixture contracts are not discovered by their JSON shape.
 If a default prior and a different explicitly selected prior coexist, validation blocks for reconciliation instead of dropping either.
-When no default or explicit prior is available, possible existing policy data blocks for explicit reconciliation rather than being selected by shape.
-If the comparison tree contains no possible prior policy, collection permits an initial assessment and validation requires its selected foundation finding, including in committed repositories.
+When no default or explicit prior is available, selecting an existing or renamed contract blocks for explicit prior-authority reconciliation.
+A newly added contract can reach foundation validation, including in committed repositories containing sample contracts.
+The selected foundation review must establish that this is a first installation; structural validation cannot infer custom prior authority from unrelated file contents.
 A deleted prior requires reconciliation unless Git records a clear rename of that same file to the proposed location.
 Previous scopes, document pointers, rule relationships and check declarations remain obligations even when the new contract removes them.
 An absent previous contract blocks with a named prerequisite unless `foundation: {"findingId": "F-001", "record": <findings record>}` explicitly selects a foundation finding covering the new contract, target and revision.

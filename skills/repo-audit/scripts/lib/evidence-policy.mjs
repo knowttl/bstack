@@ -29,16 +29,9 @@ export async function previousPolicy(root, base, contractPath, inventory, priorP
   if (priorPath) await resolvePath(root, priorPath, undefined, true)
   const selected = [...new Set([...(paths.includes('.bstack/project.json') ? ['.bstack/project.json'] : []), ...(priorPath ? [priorPath] : [])])]
   if (!selected.length) {
-    for (const path of paths) {
-      const source = baseText(root, base, path)
-      let value
-      try { value = inspectJSON(source).value } catch { continue }
-      if (value && typeof value === 'object' && ['documents', 'scopes', 'checks'].every(key => Object.hasOwn(value, key))) {
-        throw new CommandError('blocked', [{ code: 'previous-contract-reconciliation-required', path,
-          message: 'A possible existing policy needs explicit prior-authority reconciliation.',
-          fix: 'Reconcile prior authority and supply --previous-contract <repo-relative-file> from the comparison base.' }])
-      }
-    }
+    if (paths.includes(contractPath) || relocated.size) throw new CommandError('blocked', [{ code: 'previous-contract-reconciliation-required', path: contractPath,
+      message: 'The existing selected contract needs explicit prior-authority reconciliation.',
+      fix: 'Reconcile prior authority and supply --previous-contract <repo-relative-file> from the comparison base.' }])
     return null
   }
   for (const path of selected) {
