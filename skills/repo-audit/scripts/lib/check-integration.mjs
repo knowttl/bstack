@@ -10,7 +10,7 @@ function reject(path) {
 
 // A bounded command grammar avoids claiming to understand arbitrary shell programs.
 // Quoted arguments are literal; shell control flow must use fail-fast && chains.
-function command(text, path) {
+export function integrationCommand(text, path) {
   text = text.trim()
   let quote = null
   let escaped = false
@@ -61,6 +61,7 @@ function command(text, path) {
       args.some(arg => /^--call(?:=|$)|^-[^-]*c/.test(arg))) reject(path)
     first = false
   }
+  return words
 }
 
 export function validateCheckIntegration(path, proposed, selected) {
@@ -82,6 +83,6 @@ export function validateCheckIntegration(path, proposed, selected) {
       value = value[key]
     }
     if (typeof value !== 'string') reject(path)
-    command(value, path)
+    integrationCommand(value, path)
   }
 }

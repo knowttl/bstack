@@ -29,5 +29,7 @@
   "T3.1": ["tests/scripts/package-check.test.mjs", "tests/scripts/skill-skeleton.test.mjs"],
   "T3.2": ["tests/scripts/rule-proof.test.mjs"],
   "T3.3": ["tests/scripts/baseline.test.mjs"],
-  "T3.4": ["tests/scripts/maintained-checks.test.mjs", "tests/scripts/apply.test.mjs", "tests/scripts/rule-proof.test.mjs"]
+  "T3.4": ["tests/scripts/maintained-checks.test.mjs", "tests/scripts/apply.test.mjs", "tests/scripts/rule-proof.test.mjs"],
+  "T3a.1": ["tests/scripts/project-contract.test.mjs"],
+  "T3a.2": ["tests/scripts/evidence-collect.test.mjs"]
 }
