@@ -16,13 +16,16 @@ export function baseText(root, base, path) {
 }
 
 // Discover prior config even when the proposed contract moved or removed its old location.
-export async function previousPolicy(root, base, contractPath) {
+export async function previousPolicy(root, base, contractPath, changedPaths) {
   if (base.kind === 'empty-tree') return null
   const tree = readGit(root, ['ls-tree', '-r', '--name-only', '-z', base.objectId])
   if (tree.status !== 0) throw new CommandError('blocked', [{ code: 'previous-contract-unavailable',
     message: 'Previous policy tree is unavailable.', fix: 'Restore the comparison tree and previous contract objects.' }])
   const candidates = []
-  for (const path of tree.stdout.split('\0').filter(path => path && (path === contractPath || path.endsWith('.json')))) {
+  const paths = tree.stdout.split('\0').filter(Boolean)
+  const selected = paths.includes(contractPath) ? [contractPath] : paths.filter(path =>
+    path === '.bstack/project.json' || (path.endsWith('.json') && changedPaths.includes(path)))
+  for (const path of selected) {
     const text = baseText(root, base, path)
     let value
     try { value = inspectJSON(text).value } catch (error) {

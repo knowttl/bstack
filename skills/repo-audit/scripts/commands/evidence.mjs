@@ -66,7 +66,7 @@ export async function run(options) {
   const inventory = collectInventory(target.root, options.base)
   const removedPaths = new Set(inventory.changes.filter(change => change.status === 'D' || change.status.startsWith('R')).map(change => change.oldPath ?? change.path))
   const { contract, path: contractPath } = await loadContract(target, options.contract, removedPaths)
-  const previous = await previousPolicy(target.root, inventory.base, contractPath)
+  const previous = await previousPolicy(target.root, inventory.base, contractPath, inventory.paths)
   const { mappings, unmappedPaths, candidateDocuments } = mapInventory(inventory, [contract, ...(previous ? [previous.contract] : [])])
   const assessment = { schemaVersion: 1, repo: target.root, contract: contractPath, ...inventory, mappings, unmappedPaths,
     documents: candidateDocuments.map(document => ({ ...document, assessment: null })),
