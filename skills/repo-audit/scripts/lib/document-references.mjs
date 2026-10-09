@@ -5,22 +5,63 @@ import { CommandError } from './result.mjs'
 
 export function markdownBody(text) {
   let fence
-  return text.replace(/^\uFEFF/, '').split(/\r?\n/).map(line => {
+  let paragraph = false
+  const lists = []
+  return text.replace(/^\uFEFF/, '').split(/\r?\n/).map(raw => {
+    const expanded = raw.replace(/^\t+/, tabs => '    '.repeat(tabs.length))
+    const indent = /^ */.exec(expanded)[0].length
+    if (expanded.trim()) {
+      while (lists.length && indent < lists.at(-1)) lists.pop()
+    }
+    const base = lists.at(-1) ?? 0
+    const line = expanded.slice(Math.min(indent, base))
+    const item = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/.exec(line)
+    if (!fence && item) lists.push(base + item[0].length)
     const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
     if (fence) {
       if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined
       return ''
     }
-    if (marker) { fence = marker[1]; return '' }
-    return /^(?: {4}|\t)/.test(line) ? '' : line
-  }).join('\n').replace(/<!--[\s\S]*?(?:-->|$)/g, '')
+    if (marker) { fence = marker[1]; paragraph = false; return '' }
+    if (/^ {4}/.test(line) && !paragraph) return ''
+    paragraph = !!line.trim() && !/^ {0,3}(?:#{1,6}(?:\s|$)|(?:=+|-+)\s*$)/.test(line)
+    return line
+  }).join('\n').replace(/<!--[\s\S]*?(?:-->|$)/g, value => value.replace(/[^\n]/g, ' '))
+}
+
+export function markdownProse(text) {
+  const body = markdownBody(text)
+  const runs = [...body.matchAll(/`+/g)]
+  let output = ''
+  let start = 0
+  for (let i = 0; i < runs.length; i++) {
+    const opening = runs[i]
+    if (opening.index > 0 && /(?:^|[^\\])(?:\\\\)*\\$/.test(body.slice(0, opening.index))) continue
+    const closing = runs.findIndex((run, index) => index > i && run[0].length === opening[0].length)
+    if (closing < 0) continue
+    const end = runs[closing].index + runs[closing][0].length
+    output += body.slice(start, opening.index) + body.slice(opening.index, end).replace(/[^\n]/g, ' ')
+    start = end
+    i = closing
+  }
+  return output + body.slice(start)
 }
 
 export function markdownAnchors(text) {
   const anchors = new Set()
   const counts = new Map()
-  for (const match of markdownBody(text).matchAll(/^ {0,3}#{1,6}\s+(.+?)\s*#*\s*$|^([^\n]+)\n {0,3}(?:=+|-+)\s*$/gm)) {
-    const title = (match[1] ?? match[2]).replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]+>/g, '')
+  let paragraph = []
+  for (const line of markdownBody(text).split('\n')) {
+    const atx = /^ {0,3}#{1,6}[ \t]+(.+?)[ \t]*#*[ \t]*$/.exec(line)
+    const setext = /^ {0,3}(?:=+|-+)[ \t]*$/.test(line)
+    const heading = atx?.[1] ?? (setext && paragraph.length ? paragraph.join('\n') : null)
+    if (heading === null) {
+      if (!line.trim() || /^ {0,3}(?:>|(?:[-+*]|\d+[.)])[ \t]+|\[[^\]]+\]:)/.test(line) || setext) paragraph = []
+      else paragraph.push(line.trim())
+      continue
+    }
+    paragraph = []
+    const title = heading.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]+>/g, '')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
     const count = counts.get(slug) ?? 0
     counts.set(slug, count + 1)
@@ -31,18 +72,18 @@ export function markdownAnchors(text) {
 
 // Bounded Markdown destinations: balanced parentheses, angle paths and optional titles.
 export function markdownLinks(text) {
-  const body = markdownBody(text).replace(/(`+)[\s\S]*?\1/g, '')
+  const body = markdownProse(text)
   const definitions = new Map()
   const links = []
   const label = value => value.trim().replace(/\s+/g, ' ').toLowerCase()
   const destination = value => /^<([^>\n]+)>|^(\S+)/.exec(value.trim())
   for (const match of body.matchAll(/^ {0,3}\[([^\]]+)\]:\s*(.+)$/gm)) {
     const path = destination(match[2])
-    if (path) definitions.set(label(match[1]), path[1] ?? path[2])
+    if (path && !definitions.has(label(match[1]))) definitions.set(label(match[1]), path[1] ?? path[2])
   }
   const prose = body.replace(/^ {0,3}\[[^\]]+\]:.*$/gm, '')
   let consumed = 0
-  for (const match of prose.matchAll(/(?<!!)!?\[([^\]\n]+)\]/g)) {
+  for (const match of prose.matchAll(/(?<!!)!?\[([^\]\n]*)\]/g)) {
     if (match.index < consumed) continue
     if (match.index > 0 && prose[match.index - 1] === '\\') continue
     const start = match.index + match[0].length
@@ -50,9 +91,15 @@ export function markdownLinks(text) {
       let end = start + 1
       let depth = 1
       let angle = false
+      let quote
       for (; end < prose.length && depth; end++) {
         const char = prose[end]
         if (char === '\\') { end++; continue }
+        if (quote) {
+          if (char === quote) quote = undefined
+          continue
+        }
+        if (!angle && depth === 1 && /["']/.test(char) && /\s/.test(prose[end - 1])) { quote = char; continue }
         if (char === '<') angle = true
         if (char === '>') angle = false
         if (!angle && char === '(') depth++
@@ -86,6 +133,7 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
   const destination = resolve(root, dirname(source), pathPart || source.split('/').at(-1))
   if (!isInside(root, destination)) return problem('Link escapes the selected target')
   const local = relative(root, destination).split('\\').join('/')
+  if (documents.has(local) && documents.get(local) === null) return problem('Missing destination in proposed documents')
   try {
     const resolved = await resolvePath(root, local || '.')
     // File systems differ in case sensitivity; references must preserve actual case.

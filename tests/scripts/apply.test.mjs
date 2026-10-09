@@ -62,12 +62,14 @@ async function integration(t, path, content, original = path === 'package.json' 
   return setup(t, 'replace-file', original, { content: proposed }, proposed, path, selected)
 }
 
-async function ruleMove(t, destination = '# Standards\n', destinationPath = 'CONTRIBUTING.md') {
-  const rule = '## One source\n\nKeep one authoritative source for each rule.\n'
+async function ruleMove(t, destination = '# Standards\n', destinationPath = 'CONTRIBUTING.md', rule = '## One source\n\nKeep one authoritative source for each rule.\n') {
   const link = `[One source](${destinationPath}#one-source)\n`
   const payload = { sourcePath: 'README.md', destinationPath, rule, link, destinationAnchor: destination === null ? '' : '# Standards\n' }
   const context = await setup(t, 'move-rule', '# Design\n' + rule, payload, '# Design\n' + link)
-  if (destination !== null) await writeFile(join(context.repo, destinationPath), destination)
+  if (destination !== null) {
+    await mkdir(dirname(join(context.repo, destinationPath)), { recursive: true })
+    await writeFile(join(context.repo, destinationPath), destination)
+  }
   context.findings.reviewedScope.push(destinationPath)
   context.findings.findings[0].scope.push(destinationPath)
   context.plan.reviewedScope.push({ path: destinationPath, resolvedPath: join(context.repo, destinationPath) })
@@ -140,6 +142,79 @@ test('move-rule validates the destination precondition before writing the source
   await writeFile(join(context.repo, 'CONTRIBUTING.md'), '# User edits\n')
   const before = await snapshot(context.repo)
   assert.equal(execute(context).problems[0].code, 'changed-precondition')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const destination of ['# Standards\n', null]) {
+  test(`move-rule rejects broken relocated references in ${destination === null ? 'new' : 'existing'} destinations`, async t => {
+    const context = await ruleMove(t, destination, 'docs/STANDARDS.md', '## One source\n\n[Design](README.md#design)\n')
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+    assert.equal(result.problems[0].path, 'docs/STANDARDS.md')
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+test('move-rule rejects references that escape after relocation to the root', async t => {
+  const context = await ruleMove(t, '# Standards\n', 'CONTRIBUTING.md', '## One source\n\n[Check](../check.mjs)\n')
+  await mkdir(join(context.repo, 'docs'))
+  await writeFile(join(context.repo, 'check.mjs'), 'export {}\n')
+  const source = context.plan.edits[0]
+  const original = '# Design\n' + source.payload.rule
+  await writeFile(join(context.repo, 'docs/DESIGN.md'), original)
+  context.findings.reviewedScope[0] = 'docs/DESIGN.md'
+  context.findings.findings[0].scope[0] = 'docs/DESIGN.md'
+  context.findings.findings[0].files[0] = 'docs/DESIGN.md'
+  context.plan.reviewedScope[0] = { path: 'docs/DESIGN.md', resolvedPath: join(context.repo, 'docs/DESIGN.md') }
+  source.path = 'docs/DESIGN.md'
+  for (const edit of context.plan.edits) edit.payload = { ...edit.payload, sourcePath: source.path, link: '[One source](../CONTRIBUTING.md#one-source)\n' }
+  source.proposedContent = '# Design\n' + source.payload.link
+  source.proposedHash = hash(source.proposedContent)
+  await save(context)
+  const before = await snapshot(context.repo)
+  const result = execute(context)
+  assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+  assert.equal(result.problems[0].path, 'CONTRIBUTING.md')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+test('move-rule rejects remaining source references to removed headings', async t => {
+  const context = await ruleMove(t)
+  const source = context.plan.edits[0]
+  const reference = '\n[Rule](#one-source)\n'
+  const original = '# Design\n' + source.payload.rule + reference
+  await writeFile(join(context.repo, source.path), original)
+  source.originalHash = hash(original)
+  source.proposedContent += reference
+  source.proposedHash = hash(source.proposedContent)
+  await save(context)
+  const before = await snapshot(context.repo)
+  const result = execute(context)
+  assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+  assert.equal(result.problems[0].path, 'README.md')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+test('move-rule resolves rule fragments against the staged destination', async t => {
+  const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n[Rule](#one-source)\n[Design](README.md#design)\n')
+  const result = execute(context)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+})
+
+test('move-rule rejects rule references to files deleted by the same plan', async t => {
+  const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n[Check](check.mjs)\n')
+  await writeFile(join(context.repo, 'check.mjs'), 'export {}\n')
+  context.findings.reviewedScope.push('check.mjs')
+  context.findings.findings[0].scope.push('check.mjs')
+  context.plan.reviewedScope.push({ path: 'check.mjs', resolvedPath: join(context.repo, 'check.mjs') })
+  context.plan.edits.push({ id: 'E-003', findingId: 'F-001', path: 'check.mjs', originalHash: hash('export {}\n'),
+    proposedHash: null, operation: 'delete', payload: {}, proposedContent: null })
+  await save(context)
+  const before = await snapshot(context.repo)
+  const result = execute(context)
+  assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
   assert.deepEqual(await snapshot(context.repo), before)
 })
 
