@@ -214,7 +214,18 @@ for (const [heading, fragment, wrongFragment] of [
   ['- ## ` Array<T> `', 'arrayt', '-arrayt-'],
   ['## [` Array<T> `](https://example.invalid)', 'arrayt', '-arrayt-'],
   ['## Start`   `End', 'start---end', 'start-end'],
-  ['Start` \n `End\n---', 'start---end', 'start-end']
+  ['Start` \n `End\n---', 'start---end', 'start-end'],
+  ['## _Rule_', 'rule', '_rule_'],
+  ['__Rule__\n---', 'rule', '__rule__'],
+  ['> ## _Rule_', 'rule', '_rule_'],
+  ['- __Rule__\n  ===', 'rule', '__rule__'],
+  ['## [_`rule_name`_](https://example.invalid)', 'rule_name', '_rule_name_'],
+  ['## `_Rule_`', '_rule_', 'rule'],
+  [String.raw`## \_Rule\_`, '_rule_', 'rule'],
+  ['## \\\\[Guide](https://example.invalid)', 'guide', 'guidehttpsexampleinvalid'],
+  ['## \\[Guide](https://example.invalid)', 'guidehttpsexampleinvalid', 'guide'],
+  ['## \\\\[Guide][target]\n\n[target]: https://example.invalid', 'guide', 'guidetarget'],
+  ['\\[Guide][target]\n---\n\n[target]: https://example.invalid', 'guidetarget', 'guide']
 ]) {
   for (const path of ['README.md', 'CONTRIBUTING.md']) {
     for (const [target, exit] of [[fragment, 0], [wrongFragment, 1]]) {
@@ -223,6 +234,41 @@ for (const [heading, fragment, wrongFragment] of [
         const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
         const source = context.plan.edits[0]
         const retained = heading + '\n\n'
+        const original = retained + '# Design\n' + rule
+        await writeFile(join(context.repo, source.path), original)
+        source.originalHash = hash(original)
+        source.proposedContent = retained + source.proposedContent
+        source.proposedHash = hash(source.proposedContent)
+        await save(context)
+        const before = await snapshot(context.repo)
+        const result = execute(context)
+        assert.equal(result.exit, exit, JSON.stringify(result))
+        if (exit) {
+          assert.equal(result.problems[0].code, 'broken-local-link')
+          assert.deepEqual(await snapshot(context.repo), before)
+        } else {
+          assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), source.proposedContent)
+          assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+        }
+      })
+    }
+  }
+}
+
+for (const [slashes, escapedExit] of [[1, 0], [2, 1], [3, 0], [4, 1]]) {
+  for (const [reference, exit] of [
+    ['\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit],
+    ['\\'.repeat(slashes) + '[Guide][]\n\n[Guide]: missing.md', escapedExit],
+    ['\\'.repeat(slashes) + '[Guide][target]\n\n[target]: missing.md', 1],
+    ['\\'.repeat(slashes) + '![Guide](missing.md)', 1],
+    ['!' + '\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit]
+  ]) {
+    for (const path of ['README.md', 'CONTRIBUTING.md']) {
+      test(`move-rule validates escape parity in staged ${path} with exit ${exit}: ${reference}`, async t => {
+        const rule = '## One source\n\n' + (path === 'CONTRIBUTING.md' ? reference + '\n' : 'Move this rule.\n')
+        const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+        const source = context.plan.edits[0]
+        const retained = path === 'README.md' ? reference + '\n\n' : ''
         const original = retained + '# Design\n' + rule
         await writeFile(join(context.repo, source.path), original)
         source.originalHash = hash(original)
