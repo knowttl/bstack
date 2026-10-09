@@ -12,7 +12,7 @@ function commit(repo) {
   return git(repo, 'rev-parse', 'HEAD')
 }
 
-async function fixture(t, { initial = false, committedInitial = false, checker = false } = {}) {
+async function fixture(t, { initial = false, committedInitial = false, sampleContract = false, checker = false } = {}) {
   const f = await maintenanceRepo(t)
   // Use the internal-fix fixture's approved pricing contract and implementation.
   await writeFile(join(f.repo, 'README.md'), await readFile(new URL('../fixtures/maintenance/DESIGN.md', import.meta.url)))
@@ -28,6 +28,10 @@ async function fixture(t, { initial = false, committedInitial = false, checker =
   }
   await f.save()
   if (committedInitial) {
+    if (sampleContract) {
+      await mkdir(join(f.repo, 'fixtures'))
+      await writeFile(join(f.repo, 'fixtures/project.json'), JSON.stringify(f.contract))
+    }
     await rm(join(f.repo, '.bstack/project.json'))
     f.base = commit(f.repo)
     await f.save()
@@ -471,8 +475,8 @@ test('comparison with a non-ancestor is unsupported', async t => {
   blocked(f.validate(), 'unsupported-comparison-base')
 })
 
-for (const [name, options] of [['unborn repository', { initial: true }], ['committed repository', { committedInitial: true }]]) {
-test(`initial contract in an ${name} requires an explicit selected foundation finding`, async t => {
+for (const [name, options] of [['an unborn repository', { initial: true }], ['a committed repository', { committedInitial: true }], ['a committed repository with a sample contract', { committedInitial: true, sampleContract: true }]]) {
+test(`initial contract in ${name} requires an explicit selected foundation finding`, async t => {
   const f = await fixture(t, options)
   await f.complete()
   blocked(f.validate(), 'previous-contract-unavailable')
@@ -573,6 +577,21 @@ test('explicit custom prior selection cannot suppress the default prior', async 
   blocked(f.validate(), 'ambiguous-previous-contract')
 })
 
+for (const [name, contractPath, select] of [
+  ['existing', 'policy', () => {}],
+  ['renamed', 'replacement', repo => git(repo, 'mv', 'policy', 'replacement')]
+]) {
+  test(`an unresolved ${name} custom prior still blocks collection and validation`, async t => {
+    const f = await fixture(t)
+    await rename(join(f.repo, '.bstack/project.json'), join(f.repo, 'policy'))
+    f.base = commit(f.repo)
+    select(f.repo)
+    f.contractPath = contractPath
+    blocked(run('evidence collect', f.repo, process.env, ['--base', f.base, '--contract', contractPath]), 'previous-contract-reconciliation-required')
+    blocked(f.validate(), 'previous-contract-reconciliation-required')
+  })
+}
+
 test('editing the recorded prior policy invalidates its review', async t => {
   const f = await fixture(t)
   await f.complete()
@@ -594,8 +613,9 @@ for (const priorPath of ['policy.json', 'policy']) {
     await writeFile(join(f.repo, f.contractPath), JSON.stringify(weak))
     await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return quantity * 13; }\n')
     await writeFile(join(f.repo, 'ACCEPTANCE.md'), 'A quote is quantity multiplied by 13.\n')
-    blocked(run('evidence collect', f.repo, process.env, ['--base', f.base, '--contract', f.contractPath]), 'previous-contract-reconciliation-required')
-    blocked(f.validate(), 'previous-contract-reconciliation-required')
+    await f.collect()
+    await f.complete()
+    blocked(f.validate(), 'previous-contract-unavailable')
     f.previousContract = priorPath
     await f.collect()
     assert.equal(f.assessment.previousContract, priorPath)
@@ -824,8 +844,10 @@ test('unchanged fixture contracts cannot become the previous policy for an initi
   f.base = commit(f.repo)
   await mkdir(join(f.repo, '.bstack'), { recursive: true })
   await f.save()
-  blocked(run('evidence collect', f.repo, process.env, ['--base', f.base]), 'previous-contract-reconciliation-required')
-  blocked(f.validate(), 'previous-contract-reconciliation-required')
+  await f.collect()
+  assert.equal(f.assessment.previousContract, null)
+  await f.complete()
+  blocked(f.validate(), 'previous-contract-unavailable')
 })
 
 test('changed check commands require both old and new successful captures', async t => {
