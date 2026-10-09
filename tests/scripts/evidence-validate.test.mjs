@@ -305,6 +305,8 @@ for (const [name, wrap] of [
   ['inline line comment', text => `const factor = 12; // ${text}`],
   ['inline comment after a string', text => `const source = "https://example.invalid"; // ${text}`],
   ['inline comment in a fenced example', text => '```js\nconst factor = 12; // ' + text + '\n```'],
+  ['template-expression comment', text => 'const label = `price: ${quantity /* ' + text + ' */}`;'],
+  ['nested template-expression comment', text => 'const label = `price: ${`unit: ${quantity /* ' + text + ' */}`}`;'],
   ['timestamp metadata', text => `updated: ${text}`]
 ]) {
   test(`an unrelated meaningful edit cannot validate excerpts inside ${name}`, async t => {
@@ -340,8 +342,13 @@ test('changing only an inline line comment cannot establish an updated rule', as
 
 for (const [name, before, after, oldExcerpt, newExcerpt] of [
   ['double quoted URL', 'const source = "https://old.invalid";', 'const source = "https://new.invalid";', 'https://old.invalid', 'https://new.invalid'],
+  ['prose URL', 'Requests use https://old.invalid', 'Requests use https://new.invalid', 'Requests use https://old.invalid', 'Requests use https://new.invalid'],
+  ['full excerpt with a line comment', 'const factor = 12; // units', 'const factor = 13; // units', 'const factor = 12; // units', 'const factor = 13; // units'],
+  ['full excerpt with a block comment', 'const factor = 12 /* units */;', 'const factor = 13 /* units */;', 'const factor = 12 /* units */;', 'const factor = 13 /* units */;'],
+  ['full template-expression excerpt', 'const label = `price: ${quantity * 12 /* units */}`;', 'const label = `price: ${quantity * 13 /* units */}`;', 'const label = `price: ${quantity * 12 /* units */}`;', 'const label = `price: ${quantity * 13 /* units */}`;'],
   ['single quoted comment marker', "const rule = 'old // wording';", "const rule = 'new // wording';", 'old // wording', 'new // wording'],
   ['template comment marker', 'const rule = `old // wording`;', 'const rule = `new // wording`;', 'old // wording', 'new // wording'],
+  ['multiline template update label', 'const rule = `\nupdated: old wording\n`;', 'const rule = `\nupdated: new wording\n`;', 'updated: old wording', 'updated: new wording'],
   ['escaped quote', 'const rule = "escaped \\" old // wording";', 'const rule = "escaped \\" new // wording";', 'old // wording', 'new // wording'],
   ['block comment marker', 'const rule = "old /* wording */";', 'const rule = "new /* wording */";', 'old /* wording */', 'new /* wording */'],
   ['HTML comment marker', 'const rule = "old <!-- wording -->";', 'const rule = "new <!-- wording -->";', 'old <!-- wording -->', 'new <!-- wording -->']
@@ -688,6 +695,41 @@ for (const [text, code] of [['not JSON', 'previous-contract-unavailable'], ['{}'
     blocked(f.validate(), code)
   })
 }
+
+test('unscoped directory check inputs select checks and invalidate captures after review refresh', async t => {
+  const f = await fixture(t, { checker: true })
+  await mkdir(join(f.repo, 'checks'))
+  await writeFile(join(f.repo, 'checks/value'), '0')
+  await writeFile(join(f.repo, 'check.mjs'), "import { readFileSync } from 'node:fs'; process.exit(Number(readFileSync('checks/value', 'utf8')))\n")
+  f.contract.checks[0].command.args = ['check.mjs', 'checks']
+  await f.save()
+  f.base = commit(f.repo)
+  await f.collect()
+  await f.complete()
+  await f.capture()
+  await f.bind()
+  assert.equal(f.validate().exit, 0)
+  await writeFile(join(f.repo, 'checks/value'), '1')
+  await f.collect()
+  await f.complete()
+  await f.bind()
+  const missing = f.validate()
+  assert.deepEqual(missing.data.requiredCheckIds, ['syntax'])
+  blocked(missing, 'required-check-missing')
+  await writeFile(join(f.repo, 'checks/value'), '0')
+  await f.collect()
+  await f.complete()
+  await f.capture()
+  await f.bind()
+  const captured = f.assessment.execution
+  await writeFile(join(f.repo, 'checks/value'), '1')
+  await f.collect()
+  await f.complete()
+  f.assessment.execution = captured
+  await f.write()
+  await f.bind()
+  blocked(f.validate(), 'stale-execution')
+})
 
 for (const [name, command, path, before, after] of [
   ['checker', { executable: 'node', args: ['check.mjs'], cwd: '.', versionArgs: ['--version'] }, 'check.mjs', 'process.exit(0)\n', 'process.exit(1)\n'],

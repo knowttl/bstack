@@ -127,6 +127,8 @@ Update metadata explicitly labeled `updated` or `last updated`, whitespace and H
 Dates within definitions and rules remain meaningful, including YAML `date` fields, standalone payment deadlines and effective dates.
 An unrelated meaningful edit cannot justify a cosmetic asserted delta.
 Normalization is conservative structural screening, not a parser for arbitrary documentation formats or proof of semantic agreement.
+Comment screening preserves prose URLs and quoted literal text, including template text, while excluding comments inside template expressions.
+Delta excerpts are screened at their occurrence in the document so full excerpts can include comments alongside changed rule text.
 A `decision-needed` result names `dependentWork` and remains blocked until the substantive assessment is resolved and reviewed again.
 
 `coverage` lists affected authoritative rule IDs.
@@ -157,6 +159,7 @@ The validator never writes or automatically approves the review binding.
 Repeated completed assessments have stable fingerprints.
 Changing code, source citations, the base, coverage, decisions or a no-impact reason invalidates the review.
 The shared fingerprint contract includes exact current bytes, presence and modes for changed paths, policy pointers, cited sources and check inputs, plus canonical substantive assessment data.
+Explicit directory arguments in check commands, resolved package scripts and version probes contribute their file inventory to selection and freshness, including deleted tracked inputs.
 Only the top-level `fingerprint` and `execution` fields are excluded from that data.
 The assessment file's raw bytes are excluded when it lives in the target; its substantive data remains included, avoiding a self-referential hash.
 

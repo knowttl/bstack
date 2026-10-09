@@ -5,7 +5,7 @@ import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { emptyRepo, build, run, snapshot } from './discovery-fixture.mjs'
+import { emptyRepo, build, run, snapshot, git } from './discovery-fixture.mjs'
 import { checkInputState } from '../../skills/repo-audit/scripts/commands/run-checks.mjs'
 
 // Exercise the installed CLI from an unrelated directory with isolated cache evidence.
@@ -133,6 +133,31 @@ test('cancelled required check stays unverified even with other passing checks',
   assert.equal(result.data.checks[1].satisfied, false)
   assert.equal(result.data.coverage[0].status, 'unverified')
 })
+
+for (const command of [
+  { executable: 'node', args: ['check.mjs', 'checks'], cwd: '.', versionArgs: ['--version'] },
+  { executable: 'node', args: ['--version'], cwd: '.', versionArgs: ['check.mjs', '--config=checks'] },
+  ...['npm', 'pnpm', 'yarn'].map(executable => ({ executable, args: ['run', 'verify'], cwd: '.', versionArgs: ['--version'] }))
+]) {
+  test(`explicit directory inputs retain edited and deleted files for ${command.executable} ${command.args.join(' ')}`, async t => {
+    const f = await setup(t)
+    await mkdir(join(f.repo, 'checks'))
+    await writeFile(join(f.repo, 'checks/value'), '0')
+    await writeFile(join(f.repo, 'check.mjs'), 'process.exit(0)\n')
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { verify: `${command.executable} run inner`, inner: 'node check.mjs checks' } }))
+    git(f.repo, 'add', '.')
+    f.plan.checks[0].command = command
+    const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.ok(first.state.files.some(file => file.path === 'checks/value' && file.present))
+    await writeFile(join(f.repo, 'checks/value'), '1')
+    const edited = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.notEqual(edited.fingerprint, first.fingerprint)
+    await rm(join(f.repo, 'checks'), { recursive: true })
+    const deleted = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.ok(deleted.state.files.some(file => file.path === 'checks/value' && !file.present))
+    assert.notEqual(deleted.fingerprint, edited.fingerprint)
+  })
+}
 
 for (const manager of ['npm', 'pnpm', 'yarn']) {
   for (const [name, scripts, args, versionArgs = ['--version']] of [
