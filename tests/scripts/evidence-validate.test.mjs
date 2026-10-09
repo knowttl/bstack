@@ -476,22 +476,18 @@ test('moving the config preserves previous coverage and required checks', async 
   assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
 })
 
-test('explicit prior policy takes precedence over unrelated fixture contracts', async t => {
+test('multiple possible prior policies require explicit reconciliation', async t => {
   const f = await fixture(t)
   await mkdir(join(f.repo, 'fixtures'))
   await writeFile(join(f.repo, 'fixtures/project.json'), JSON.stringify(f.contract))
   f.base = commit(f.repo)
   await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return 12 * quantity }\n')
-  await f.collect()
-  await f.complete()
-  await f.capture()
-  await f.bind()
-  assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+  blocked(run('evidence collect', f.repo, process.env, ['--base', f.base]), 'ambiguous-previous-contract')
+  blocked(f.validate(), 'ambiguous-previous-contract')
 })
 
 test('deleting a weaker fixture cannot replace the authoritative prior policy', async t => {
   const f = await fixture(t)
-  const checks = structuredClone(f.contract.checks)
   const weak = { ...f.contract, documents: [], scopes: [], rules: [], checks: [], acceptanceSources: [] }
   await mkdir(join(f.repo, 'fixtures'))
   await writeFile(join(f.repo, 'fixtures/policy'), JSON.stringify(weak))
@@ -503,19 +499,33 @@ test('deleting a weaker fixture cannot replace the authoritative prior policy', 
   blocked(run('evidence collect', f.repo, process.env, ['--base', f.base]), 'previous-contract-reconciliation-required')
   blocked(f.validate(), 'previous-contract-reconciliation-required')
   await writeFile(join(f.repo, 'fixtures/policy'), JSON.stringify(weak))
-  await f.collect()
-  assert.deepEqual(f.assessment.documents.map(item => item.id), ['design'])
-  await f.complete()
-  const result = await f.bind()
-  assert.equal(result.data.previousContract, '.bstack/project.json')
-  blocked(f.validate(), 'required-check-missing')
-  await f.capture(checks)
-  assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
-  await writeFile(join(f.repo, 'ACCEPTANCE.md'), 'A quote is quantity multiplied by 13.\n')
-  await f.collect()
-  await f.complete()
-  blocked(f.validate(), 'acceptance-decision-required')
+  blocked(run('evidence collect', f.repo, process.env, ['--base', f.base]), 'ambiguous-previous-contract')
+  blocked(f.validate(), 'ambiguous-previous-contract')
 })
+
+for (const priorPath of ['.bstack/project.json', 'policy.json', 'policy']) {
+  for (const [name, contractPath, select] of [
+    ['selected', 'fixtures/policy', () => {}],
+    ['renamed', 'replacement', repo => git(repo, 'mv', 'fixtures/policy', 'replacement')]
+  ]) {
+    test(`a ${name} fixture cannot suppress unchanged prior ${priorPath}`, async t => {
+      const f = await fixture(t)
+      await rename(join(f.repo, '.bstack/project.json'), join(f.repo, 'prior-policy'))
+      await rename(join(f.repo, 'prior-policy'), join(f.repo, priorPath))
+      const weak = { ...f.contract, documents: [], scopes: [], rules: [], checks: [], acceptanceSources: [] }
+      await mkdir(join(f.repo, 'fixtures'))
+      await writeFile(join(f.repo, 'fixtures/policy'), JSON.stringify(weak))
+      f.base = commit(f.repo)
+      select(f.repo)
+      f.contractPath = contractPath
+      await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return quantity * 13; }\n')
+      await writeFile(join(f.repo, 'ACCEPTANCE.md'), 'A quote is quantity multiplied by 13.\n')
+      const collected = run('evidence collect', f.repo, process.env, ['--base', f.base, '--contract', f.contractPath])
+      blocked(collected, 'ambiguous-previous-contract')
+      blocked(f.validate(), 'ambiguous-previous-contract')
+    })
+  }
+}
 
 for (const priorPath of ['.bstack/project.json', 'policy.json', 'policy']) {
   for (const destination of ['existing', 'new']) {
