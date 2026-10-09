@@ -30,7 +30,7 @@ export function integrationCommand(text, path) {
   }
   for (let i = 0; i < text.length; i++) {
     const char = text[i]
-    if (char === '\\') reject(path)
+    if ('\\%!'.includes(char)) reject(path)
     if (char === quote) { quote = null; continue }
     if (!quote && (char === '"' || char === "'")) { quote = char; continue }
     if (quote === "'") { word += char; continue }
@@ -42,7 +42,7 @@ export function integrationCommand(text, path) {
       if (words.at(-1) !== '&&') reject(path)
       continue
     }
-    if ('#|;&!<>(){}*?[]~%^'.includes(char)) reject(path)
+    if ('#|;&<>(){}*?[]~^'.includes(char)) reject(path)
     if (/\s/.test(char)) flush()
     else word += char
   }
