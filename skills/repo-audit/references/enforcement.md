@@ -91,7 +91,19 @@ Every selected path must resolve to a string command in the complete proposed by
 Unmarked edits, other package scripts, other CI commands and unrelated configuration fields pass through the ordinary protected-write validation unchanged.
 The plan digest binds these selections alongside the complete proposed bytes.
 Selected commands use literal arguments and fail-fast top-level `&&` chains; line breaks between commands are allowed only after `&&`.
-Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted and escaped arguments.
+Tokens are nonempty unquoted words or whole double-quoted literals, separated by whitespace.
+Only ASCII spaces and tabs separate tokens; LF line breaks are allowed after `&&`, and leading/trailing spaces, tabs and LF are ignored.
+Carriage returns are unsupported anywhere in a command, including CRLF, quoted tokens and leading/trailing whitespace.
+Unicode whitespace remains literal; other ASCII control characters are unsupported.
+Unquoted `<` and `>` redirection, including attached forms, and unquoted leading executable `@` prefixes are unsupported in every command of a chain.
+Double-quoted redirection characters and `@` remain literal, as do unquoted `@` argument characters.
+Single quotes anywhere, mixed quoted/unquoted tokens and adjacent quoted fragments are unsupported in executable and argument positions.
+Backslashes and shell escaping are unsupported, including inside quoted arguments; use forward-slash paths and quotes for literal spaces.
+Percent and exclamation characters are unsupported in every script token, including double-quoted literals, because Windows can expand environment variables despite quotes.
+Dollar signs and backticks are unsupported in every token, including double-quoted literals.
+Unquoted wildcard and bracket patterns, tilde expansion, variable and command substitution, brace expansion, extglobs and caret escaping are unsupported in executable and argument positions.
+Quoted wildcard, bracket and tilde characters remain literal, as do direct child-command argument arrays, which run without a shell.
+Every decoded word is rejected if it contains `|`, `&`, `;` or a newline, including quoted arguments.
 Quotes do not make shell control syntax acceptable as an argument.
 Failure-masking operators (`||`, pipelines, separators, background execution and negation), unquoted shell comments, assignment prefixes, shell dispatch and substitutions fail with `ignored-check-failure` before any writes.
 Shell dispatch includes `command`, `builtin`, shell executables, executable paths to those programs and their `.exe`/`.cmd`/`.bat` forms in every `&&` segment.
