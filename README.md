@@ -51,7 +51,7 @@ node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs --skill skills/repo-audit
 ```
 
-`check` runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy.
+`check` runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](docs/command-contract.md#standalone-checker-generation).
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](docs/command-contract.md#package-check) for exact syntax and limits.
 Local validation installs both the root development lock and the nested skill runtime lock, then runs the package check and full tests.
@@ -288,6 +288,17 @@ node upstream/fetch.mjs --check
 Both commands require network access and exit 1 if a listed remote file is missing or unavailable.
 Fetching replaces local copies only after every listed remote file downloads successfully.
 `--check` writes nothing and also exits 1 for missing or modified local copies.
+
+Generate the standalone maintenance validator artifact from this checkout after installing the root development dependencies.
+The generated file requires Node 24 or later and Git for repository validation.
+Check freshness without writes, or generate current bytes and an installation proposal in scratch:
+
+```sh
+node scripts/generate-checker.mjs --repo . --check
+node scripts/generate-checker.mjs --repo <target> --json
+```
+
+See the [generation contract](docs/command-contract.md#standalone-checker-generation) for scratch outputs, selected-plan installation, protection of existing copies and the C24a slice boundary.
 
 To view the available and planned commands:
 
