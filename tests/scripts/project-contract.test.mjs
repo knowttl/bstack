@@ -5,6 +5,29 @@ import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { run, snapshot } from './discovery-fixture.mjs'
 
+for (const collection of ['checks', 'generators']) {
+  for (const field of ['args', 'versionArgs']) {
+    for (const words of [['docs', 'generate'], ['docs', 'check'], ['evidence', 'validate']]) {
+      for (const [entry, code] of [['scripts/docs.mjs', undefined], ['repo-audit.mjs', 'recursive-check']]) {
+        for (const [route, scripts, executable, args] of [
+          ['direct', {}, 'node', [entry, ...words]],
+          ['package hook', { check: 'npm run leaf', leaf: 'node --version', preleaf: `node ${entry} ${words.join(' ')}` }, 'npm', ['run', 'check']]
+        ]) {
+          test(`maintenance entry points: ${collection} ${field} ${route} ${entry} ${words.join(' ')}`, async t => {
+            const f = await maintenanceRepo(t)
+            await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+            f.contract[collection][0].command = { executable, args: ['--version'], cwd: '.', versionArgs: ['--version'], [field]: args }
+            await f.save()
+            const result = run('contract validate', f.repo)
+            assert.equal(result.problems[0]?.code, code)
+            assert.equal(result.exit, code ? 1 : 0)
+          })
+        }
+      }
+    }
+  }
+}
+
 for (const executable of ['npm', 'pnpm', 'yarn']) {
   for (const [script, leaf, code] of [
     [`@${executable} run leaf`, 'leaf', 'ignored-check-failure'],
