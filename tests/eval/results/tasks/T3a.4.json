@@ -22,20 +22,20 @@
     {
       "id": "C23a-read-only-controls",
       "kind": "automated",
-      "procedure": "Public-command cases reject existing-file changes, ignored-file creation, deletion and symlink creation, unsuccessful child execution, invalid UTF-8 and truncated output. Recursive generation is rejected before execution.",
+      "procedure": "Public-command cases reject existing-file changes, ignored-file creation, deletion and symlink creation, plus transient file, directory, link, restored-byte and descendant-command writes during generators and version probes in both check and regeneration modes. They reject unsuccessful child execution, invalid UTF-8 and truncated output. Recursive generation is rejected before execution.",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/T3a.4.full-tests.txt"
     }
   ],
   "limitations": [
-    "Snapshots detect surviving project changes including ignored files and links, excluding Git metadata; they do not sandbox commands or detect changes restored before execution ends.",
+    "docs/command-contract.md#generated-facts owns the write-detection contract and its proof limits.",
     "Generators remain responsible for reading their declared authoritative input scopes and producing deterministic UTF-8 stdout.",
     "Local Linux and Node 24 execution does not establish real Windows or macOS execution.",
     "Document reference checks and portable standalone checker execution remain later tasks.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
   "status": "passed",
-  "sourceRevision": "8895a9ff87e6a6429199e3383e2108fcb633f5ac",
+  "sourceRevision": "06b39f100cd5440284e3eb581a323c9d87bf9581",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -49,7 +49,9 @@
       "id": "full-tests",
       "executable": "node",
       "args": [
-        "scripts/test.mjs"
+        "scripts/test.mjs",
+        "--capture",
+        ".cache/full-suite.json"
       ],
       "cwd": ".",
       "exitCode": 0,
@@ -87,16 +89,6 @@
           "sha256": "c6c3eb43d29f65a17bc030c8592cbbfe0edc753e497f145ac6b9b31f7886d0fe"
         },
         {
-          "path": "README.md",
-          "executable": false,
-          "sha256": "4759063f81d583896d773c8044de9546d86b44efee54ba57f113fce03e8ff2e2"
-        },
-        {
-          "path": "docs/command-contract.md",
-          "executable": false,
-          "sha256": "8c142e7ac97b31f16b744bec845d231aa5160dd6dd5df8875e98f02dedd65fd8"
-        },
-        {
           "path": "docs/design.md",
           "executable": false,
           "sha256": "8532d6181bdff7cb98e52dc572723fbedfbe6d9ae3a5e9ff812d66a80c6074bf"
@@ -110,11 +102,6 @@
           "path": "docs/fixtures.md",
           "executable": false,
           "sha256": "4d15f4e7f576053e2944a7074dd9ab1c90c9394de5489b6827eecef5a4bbc4f9"
-        },
-        {
-          "path": "docs/implementation-plan.md",
-          "executable": false,
-          "sha256": "380151681cb7238569e618476fdd9ae03e27449342b29dd0a574a7111eb147d0"
         },
         {
           "path": "package-lock.json",
@@ -354,12 +341,12 @@
         {
           "path": "skills/repo-audit/scripts/commands/contract.mjs",
           "executable": false,
-          "sha256": "8f9343496875a167e9e0e7f7891fabffc9bb24b2fb892c86c173327e4ff63893"
+          "sha256": "143a1e12dda9cc4e92b287adac8bffc2e60ea79b4c3aeb1342c2515d8605ff20"
         },
         {
           "path": "skills/repo-audit/scripts/commands/docs-generate.mjs",
           "executable": false,
-          "sha256": "5481767b4721a316be73e21cb68e099ac91ed8583e82c37d8cdc6f9a4959c59b"
+          "sha256": "c140d9404b28b0ad8c8c07075419c4fa4a4c56f61d8e2f92a0ca01684fb45c15"
         },
         {
           "path": "skills/repo-audit/scripts/commands/evidence-validate.mjs",
@@ -3404,7 +3391,7 @@
         {
           "path": "tests/scripts/docs-generate.test.mjs",
           "executable": false,
-          "sha256": "01cbb7ec8ab03772911d0ea7239a810320fe4ae862a1cb7895e5d80824390c9a"
+          "sha256": "d4d0ff6c6aeff07334384e15175084fbc07dd572d22e3ab235937f9f5e641593"
         },
         {
           "path": "tests/scripts/eval.test.mjs",
@@ -3479,7 +3466,7 @@
         {
           "path": "tests/scripts/project-contract.test.mjs",
           "executable": false,
-          "sha256": "8369ba1dbc97e10a6a22e85a6622ebfb84097dca038c25e6a69a816a446b922f"
+          "sha256": "182ffb5d1f51f418323d24edab49a68af2a2d0c688ce8ff4583b5fa56e7ea607"
         },
         {
           "path": "tests/scripts/project.test.mjs",
@@ -3672,7 +3659,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "68e89c88cdd91ebacf78ad188bc1371d44010f5fd241ad728c9fbdef23719212"
+      "sha256": "5990e3da6955626b3975b3df608e1838520c5201156a5a73596454fcd3d0e886"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3707,20 +3694,60 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "README.md",
+        "before": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "4759063f81d583896d773c8044de9546d86b44efee54ba57f113fce03e8ff2e2"
+        },
+        "after": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "73ea189c9d592ffac10c34cc0684742e283be34172bc57f16b55a17257d279cb"
+        }
+      },
+      {
+        "path": "docs/command-contract.md",
+        "before": {
+          "path": "docs/command-contract.md",
+          "executable": false,
+          "sha256": "30d9285eb6ae5057802f7bc2af019ce13e7a19c210d6d430e28280752cb13e96"
+        },
+        "after": {
+          "path": "docs/command-contract.md",
+          "executable": false,
+          "sha256": "259cd1391302a988ba1d54110644fa59a44e8fc6736d0155a0e370970e6a46cf"
+        }
+      },
+      {
+        "path": "docs/implementation-plan.md",
+        "before": {
+          "path": "docs/implementation-plan.md",
+          "executable": false,
+          "sha256": "380151681cb7238569e618476fdd9ae03e27449342b29dd0a574a7111eb147d0"
+        },
+        "after": {
+          "path": "docs/implementation-plan.md",
+          "executable": false,
+          "sha256": "36021811d87f3467cdc4404467b086be934fd987805ac78446029af7be05e29a"
+        }
+      }
+    ],
     "counts": {
-      "tests": 2148,
+      "tests": 2223,
       "failed": 0,
-      "passed": 2148,
+      "passed": 2223,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2139,
+      "topLevel": 2214,
       "suites": 0
     },
-    "durationMs": 210240.59344,
-    "outputSha256": "71cf390893bf130417f4589ac205dbcddea22379f0f8fc1a65978e2dbcb53f09",
-    "eventsSha256": "2cf77fa70d42f28f716faeec34cfd9d7451d8d7490fbd38b5f69df130532f2da",
+    "durationMs": 181371.928429,
+    "outputSha256": "111191c902223e69cf377331d5e42e1a49cbbf4e796f19efc59f9ba7ab155dcf",
+    "eventsSha256": "d6d781a0ffc352f246d9c4473c91a9a3ca53d0da2fc6d658c1c8782d83a2d102",
     "eventsArtifact": "tests/eval/results/tasks/T3a.4.events.jsonl"
   }
 }
