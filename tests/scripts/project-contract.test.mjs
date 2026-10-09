@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { copyFile, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { run, snapshot } from './discovery-fixture.mjs'
@@ -83,4 +83,83 @@ test('unsupported existing format reports the standalone-contract prerequisite',
   const result = run('contract validate', f.repo, process.env, ['--contract', 'existing.yaml'])
   assert.equal(result.exit, 2)
   assert.match(result.problems[0].message, /reviewed standalone contract/)
+})
+
+for (const executable of ['npm', 'yarn', 'pnpm']) {
+  for (const collection of ['checks', 'generators']) {
+    for (const field of ['args', 'versionArgs']) {
+      for (const hook of ['precheck', 'postcheck']) {
+        test(`${executable} ${hook} aggregate rejects ${collection} ${field}`, async t => {
+          const f = await maintenanceRepo(t)
+          await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: {
+            check: 'node --check src/change.mjs', [hook]: 'node .bstack/bin/bstack-check.mjs'
+          } }))
+          f.contract[collection][0].command = {
+            executable, args: ['--version'], cwd: '.', versionArgs: ['--version'], [field]: ['run', 'check']
+          }
+          await f.save()
+          assert.equal(run('contract validate', f.repo).problems[0]?.code, 'recursive-check')
+        })
+      }
+    }
+  }
+  test(`${executable} lifecycle cycle rejects the contract`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: {
+      check: 'node --version', precheck: `${executable} run check`
+    } }))
+    f.contract.checks[0].command = { executable, args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] }
+    await f.save()
+    assert.equal(run('contract validate', f.repo).problems[0]?.code, 'recursive-check')
+  })
+  test(`${executable} valid lifecycle leaves validate`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: {
+      check: 'node --check src/change.mjs', precheck: 'node --version', postcheck: 'node --version'
+    } }))
+    f.contract.checks[0].command = { executable, args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] }
+    await f.save()
+    assert.equal(run('contract validate', f.repo).exit, 0)
+  })
+}
+
+for (const executable of ['dash', 'fish', 'ksh', 'env', 'tools/DASH.exe']) {
+  for (const collection of ['checks', 'generators']) {
+    for (const field of ['args', 'versionArgs']) {
+      test(`${executable} cannot hide an aggregate in ${collection} ${field}`, async t => {
+        const f = await maintenanceRepo(t)
+        f.contract[collection][0].command = {
+          executable, args: [], cwd: '.', versionArgs: [], [field]: ['-c', 'node repo-audit.mjs evidence validate']
+        }
+        await f.save()
+        assert.equal(run('contract validate', f.repo).problems[0]?.code, 'unsupported-leaf')
+      })
+    }
+  }
+}
+
+for (const [name, prepare, extra] of [
+  ['selected contract filename', async f => { await copyFile(join(f.repo, '.bstack/project.json'), join(f.repo, '.bstack/Contract.json')) }, ['--contract', '.bstack/contract.json']],
+  ['selected contract directory', async () => {}, ['--contract', '.Bstack/project.json']],
+  ['check cwd', async f => { f.contract.checks[0].command.cwd = 'SRC' }],
+  ['generator cwd', async f => { f.contract.generators[0].command.cwd = 'SRC' }],
+  ['existing output', async f => { f.contract.generators[0].outputPaths = ['readme.md'] }],
+  ['planned output parent', async f => { await mkdir(join(f.repo, 'Docs')); f.contract.generators[0].outputPaths = ['docs/new.html'] }]
+]) {
+  test(`wrong case ${name} rejects the contract`, async t => {
+    const f = await maintenanceRepo(t)
+    await prepare(f)
+    await f.save()
+    assert.equal(run('contract validate', f.repo, process.env, extra).problems[0]?.code, 'missing-path')
+  })
+}
+
+test('exact case command directories and existing output parents validate', async t => {
+  const f = await maintenanceRepo(t)
+  await mkdir(join(f.repo, 'Docs'))
+  f.contract.checks[0].command.cwd = './src/'
+  f.contract.generators[0].command.cwd = 'src/.'
+  f.contract.generators[0].outputPaths = ['Docs/new/subdir/output.html', 'README.md']
+  await f.save()
+  assert.equal(run('contract validate', f.repo).exit, 0)
 })

@@ -55,7 +55,8 @@ Unknown document, rule or check references fail.
 Leaf checks and generators cannot invoke `evidence validate`, `docs check` or the standalone `bstack-check.mjs` aggregate.
 Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
 Script bodies use the [selected integration grammar](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command), including literal arguments and fail-fast `&&` chains.
-The validator follows script aliases and npm pre/post lifecycle scripts, rejecting cycles, missing scripts and aggregate calls.
+The validator follows script aliases and declared npm, pnpm and yarn pre/post lifecycle scripts, rejecting cycles, missing scripts and aggregate calls.
+Declared pnpm hooks are inspected even when local configuration disables them, so enabling hooks cannot introduce aggregate recursion.
 Unsupported package-manager invocation syntax and shell programs require a reviewed direct leaf command.
 Other child executables are opaque reviewed leaves; validation does not statically analyse arbitrary program implementations for hidden aggregate calls.
 
