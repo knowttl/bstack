@@ -8,7 +8,8 @@ const listItem = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/
 const atxStart = /^ {0,3}#{1,6}(?:[ \t]|$)/
 const atxHeading = /^ {0,3}#{1,6}[ \t]+(.+?)[ \t]*#*[ \t]*$/
 const setextUnderline = /^ {0,3}(?:=+|-+)[ \t]*$/
-const referenceDefinition = /^ {0,3}\[[^\]]+\]:/
+const bracketLabel = String.raw`(?:\\.|[^\]\\\n])`
+const referenceDefinition = new RegExp(`^ {0,3}\\[(${bracketLabel}+)\\]:`)
 const thematicBreak = /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})$/
 const headingEntity = /&[\w#]+;/
 const tableSeparator = /^\|(?:[ \t]*:?-+:?[ \t]*\|){2,}[ \t]*$/
@@ -224,7 +225,7 @@ const linkDestination = value => /^<([^>\n]+)>|^(\S+)/.exec(value.trim())
 
 function markdownDefinitions(body) {
   const definitions = new Map()
-  for (const match of body.matchAll(/^ {0,3}\[([^\]]+)\]:\s*(.+)$/gm)) {
+  for (const match of body.matchAll(new RegExp(referenceDefinition.source + '\\s*(.+)$', 'gm'))) {
     const path = linkDestination(match[2])
     if (path && !definitions.has(referenceLabel(match[1]))) definitions.set(referenceLabel(match[1]), path[1] ?? path[2])
   }
@@ -233,10 +234,10 @@ function markdownDefinitions(body) {
 
 function markdownReferences(body, definitions = markdownDefinitions(body)) {
   const links = []
-  const prose = body.replace(/^ {0,3}\[[^\]]+\]:.*$/gm, value => ' '.repeat(value.length))
+  const prose = body.replace(new RegExp(referenceDefinition.source + '.*$', 'gm'), value => ' '.repeat(value.length))
   const code = inlineCodeRanges(prose)
   let consumed = 0
-  for (const match of prose.matchAll(/!?\[([^\]\n]*)\]/g)) {
+  for (const match of prose.matchAll(new RegExp(`!?\\[(${bracketLabel}*)\\]`, 'g'))) {
     if (match.index < consumed) continue
     if (code.some(range => range.start <= match.index && match.index < range.end)) continue
     const opening = match.index + (match[0].startsWith('!') && isEscaped(prose, match.index) ? 1 : 0)
@@ -266,7 +267,7 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
         if (path) links.push({ href: path[1] ?? path[2], label: match[1], start: opening, end })
       }
     } else {
-      const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start))
+      const reference = new RegExp(`^\\[(${bracketLabel}*)\\]`).exec(prose.slice(start))
       if (reference) consumed = start + reference[0].length
       const path = definitions.get(referenceLabel(reference?.[1] || match[1]))
       if (path) links.push({ href: path, label: match[1], start: opening, end: reference ? consumed : start })
