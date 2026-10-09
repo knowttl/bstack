@@ -193,3 +193,36 @@ test('collect retains deletion of a shared document rule and acceptance source',
   assert.deepEqual(result.data.paths, ['README.md'])
   assert.deepEqual(result.data.candidateDocuments, f.contract.documents)
 })
+
+for (const collection of ['documents', 'rules', 'acceptanceSources']) {
+  for (const source of ['committed', 'staged', 'unstaged']) {
+    test(`collect retains ${source} case-only rename of ${collection}`, async t => {
+      const f = await maintenanceRepo(t)
+      const path = `${collection.toUpperCase()}.md`
+      const destination = `${collection.toLowerCase()}.md`
+      await writeFile(join(f.repo, path), '# Source\n')
+      f.contract[collection][0].path = path
+      await f.save()
+      const base = commit(f.repo)
+      await rename(join(f.repo, path), join(f.repo, 'rename-temp.md'))
+      await rename(join(f.repo, 'rename-temp.md'), join(f.repo, destination))
+      if (source === 'staged') git(f.repo, 'add', '-A')
+      if (source === 'committed') commit(f.repo)
+      const result = await collect(t, f, base)
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.deepEqual(result.data.paths, [path, destination].sort())
+      if (collection === 'documents') assert.deepEqual(result.data.candidateDocuments, f.contract.documents)
+      const skeleton = JSON.parse(await readFile(result.data.path, 'utf8'))
+      assert.deepEqual(skeleton.paths, result.data.paths)
+      assert.equal(run('contract validate', f.repo).problems[0]?.code, 'missing-path')
+    })
+  }
+  test(`collect rejects unrelated wrong-case ${collection} pointer`, async t => {
+    const f = await maintenanceRepo(t)
+    const base = commit(f.repo)
+    await rm(join(f.repo, 'src/delete.mjs'))
+    f.contract[collection][0].path = 'readme.md'
+    await f.save()
+    assert.equal((await collect(t, f, base)).problems[0]?.code, 'missing-path')
+  })
+}
