@@ -19,8 +19,9 @@ async function leafCommand(root, command, stack = []) {
   if (!(await stat(cwd)).isDirectory()) reject('invalid-cwd', command.cwd, 'Child command cwd must be an existing directory.')
   if (command.timeoutMs !== undefined && (!Number.isSafeInteger(command.timeoutMs) || command.timeoutMs <= 0)) reject('invalid-command', command.cwd, 'Timeout must be a positive safe integer.')
   async function visit(executable, args) {
-    const name = executable.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
-    if (name === 'bstack-check.mjs' || args.some(arg => arg.split(/[\\/]/).at(-1) === 'bstack-check.mjs') ||
+    const names = [executable, ...args].map(word => word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, ''))
+    const [name] = names
+    if (names.includes('bstack-check.mjs') ||
         args.some((arg, i) => (arg === 'evidence' && args[i + 1] === 'validate') || (arg === 'docs' && args[i + 1] === 'check'))) {
       reject('recursive-check', command.cwd, 'Leaf commands cannot invoke aggregate maintenance validation.')
     }

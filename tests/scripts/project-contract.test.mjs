@@ -5,6 +5,48 @@ import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { run, snapshot } from './discovery-fixture.mjs'
 
+for (const collection of ['checks', 'generators']) {
+  for (const path of ['.bstack/bin/BSTACK-check.mjs', '.bstack/bin/BSTACK-CHECK.MJS', '.bstack\\bin\\BSTACK-check.mjs', '.bstack\\bin\\BSTACK-CHECK.MJS']) {
+    for (const field of ['executable', 'args', 'versionArgs']) {
+      test(`aggregate basename case in ${collection} ${field}: ${path}`, async t => {
+        const f = await maintenanceRepo(t)
+        f.contract[collection][0].command[field] = field === 'executable' ? path : [path]
+        await f.save()
+        assert.equal(run('contract validate', f.repo).problems[0]?.code, 'recursive-check')
+      })
+    }
+  }
+  for (const field of ['args', 'versionArgs']) {
+    test(`distinct basename case in ${collection} ${field} remains literal`, async t => {
+      const f = await maintenanceRepo(t)
+      f.contract[collection][0].command[field] = ['.bstack/bin/BSTACK-CHECK.MJS.extra', '.bstack\\bin\\OTHER-CHECK.MJS']
+      await f.save()
+      assert.equal(run('contract validate', f.repo).exit, 0)
+    })
+    for (const executable of ['npm', 'pnpm', 'yarn']) {
+      for (const [hook, scripts, code] of [
+        ['precheck', { check: 'node --version', precheck: 'node .bstack/bin/BSTACK-check.mjs' }, 'recursive-check'],
+        ['check', { check: '.bstack/bin/BSTACK-CHECK.MJS' }, 'recursive-check'],
+        ['postcheck', { check: 'node --version', postcheck: 'node .bstack/bin/BSTACK-CHECK.MJS' }, 'recursive-check'],
+        ['nested', { check: `${executable} run leaf`, leaf: 'node .bstack/bin/BSTACK-CHECK.MJS' }, 'recursive-check'],
+        ['distinct nested', { check: `${executable} run leaf`, leaf: 'node .bstack/bin/BSTACK-CHECK.MJS.extra' }, undefined]
+      ]) {
+        test(`aggregate basename case in ${executable} ${collection} ${field} ${hook}`, async t => {
+          const f = await maintenanceRepo(t)
+          await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+          f.contract[collection][0].command = {
+            executable, args: ['--version'], cwd: '.', versionArgs: ['--version'], [field]: ['run', 'check']
+          }
+          await f.save()
+          const result = run('contract validate', f.repo)
+          assert.equal(result.problems[0]?.code, code)
+          assert.equal(result.exit, code ? 1 : 0)
+        })
+      }
+    }
+  }
+}
+
 test('valid pointers, native leaf commands and planned generator outputs validate without writes', async t => {
   const f = await maintenanceRepo(t)
   const before = await snapshot(f.repo)
