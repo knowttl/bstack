@@ -30,8 +30,8 @@ async function schema(name) {
 function meaningful(text) {
   return text.replace(/(`{3,}|"(?:\\[\s\S]|[^"\\\r\n])*"|'(?:\\[\s\S]|[^'\\\r\n])*'|`(?:\\[\s\S]|[^`\\])*`)|<!--[\s\S]*?-->|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*/g,
     (match, literal) => literal ?? '')
-    .replace(/^\s*(?:date|updated|last[- ]updated|timestamp)\s*:.*$/gim, '')
-    .replace(/^[ \t]*\d{4}-\d{2}-\d{2}(?:T[\d:.]+(?:Z|[+-]\d{2}:\d{2}))?[ \t]*\r?$/gm, '').replace(/\s+/g, '')
+    .replace(/^[ \t]*(?:updated|last[- ]updated)[ \t]*:.*$/gim, '')
+    .replace(/\s+/g, '')
 }
 
 function successful(result) {

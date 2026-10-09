@@ -183,13 +183,13 @@ test('committed assessment execution changes avoid a self-referential review has
   assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
 })
 
-test('adding only a date cannot establish an updated definition', async t => {
+test('adding only update metadata cannot establish an updated definition', async t => {
   const f = await fixture(t)
-  await writeFile(join(f.repo, 'README.md'), '# Pricing contract\n\nA quote is quantity multiplied by 12.\n2026-10-08\n')
+  await writeFile(join(f.repo, 'README.md'), '# Pricing contract\n\nA quote is quantity multiplied by 12.\nUpdated: 2026-10-08\n')
   await f.collect()
   await f.complete()
   f.assessment.documents[0].assessment.result = 'updated'
-  f.assessment.documents[0].assessment.delta = { before: '', after: '2026-10-08' }
+  f.assessment.documents[0].assessment.delta = { before: '', after: 'Updated: 2026-10-08' }
   await f.write()
   blocked(f.validate(), 'meaningless-document-delta')
 })
@@ -205,13 +205,13 @@ test('decision-needed stays blocked with all executable checks passing', async t
   blocked(f.validate(), 'decision-needed')
 })
 
-for (const text of ['# Pricing contract\n\nA quote is quantity multiplied by 12.\n\n2026-10-08\n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n<!-- approved -->\n', '# Pricing contract\n\n  A quote is quantity multiplied by 12. \n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n// approved\n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n/* approved */\n']) {
+for (const text of ['# Pricing contract\n\nA quote is quantity multiplied by 12.\n\nUpdated: 2026-10-08\n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n<!-- approved -->\n', '# Pricing contract\n\n  A quote is quantity multiplied by 12. \n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n// approved\n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n/* approved */\n']) {
   test(`cosmetic document edit cannot prove an updated rule: ${JSON.stringify(text)}`, async t => {
     const f = await fixture(t)
     // Start with the same timestamp so a changed date is the only substantive-looking delta.
-    await writeFile(join(f.repo, 'README.md'), '# Pricing contract\n\nA quote is quantity multiplied by 12.\n\n2026-10-07\n')
+    await writeFile(join(f.repo, 'README.md'), '# Pricing contract\n\nA quote is quantity multiplied by 12.\n\nUpdated: 2026-10-07\n')
     f.base = commit(f.repo)
-    await writeFile(join(f.repo, 'README.md'), text.includes('2026-10-08') ? text : text + '\n2026-10-07\n')
+    await writeFile(join(f.repo, 'README.md'), text.includes('2026-10-08') ? text : text + '\nUpdated: 2026-10-07\n')
     await f.collect()
     await f.complete()
     f.assessment.documents[0].assessment.result = 'updated'
@@ -240,13 +240,18 @@ test('updated document needs a meaningful changed definition excerpt', async t =
 for (const [before, after] of [
   ['Invoices must be paid before 2026-10-01', 'Invoices must be paid before 2026-11-01'],
   ['Invoices must be paid before 2026-11-01', 'Invoices must be paid before 2026-10-01'],
-  ['The rule takes effect at 2026-10-01T12:00:00Z', 'The rule takes effect at 2026-11-01T12:00:00Z']
+  ['The rule takes effect at 2026-10-01T12:00:00Z', 'The rule takes effect at 2026-11-01T12:00:00Z'],
+  ['payment_deadline:\n date: 2026-10-01', 'payment_deadline:\n date: 2026-11-01'],
+  ['payment_deadline:\n date: 2026-11-01', 'payment_deadline:\n date: 2026-10-01'],
+  ['Payment deadline:\n2026-10-01', 'Payment deadline:\n2026-11-01'],
+  ['Payment deadline:\n2026-11-01', 'Payment deadline:\n2026-10-01'],
+  ['event:\n timestamp: 2026-10-01T12:00:00Z', 'event:\n timestamp: 2026-11-01T12:00:00Z']
 ]) {
   test(`a date inside a rule remains a meaningful document delta: ${after}`, async t => {
     const f = await fixture(t)
-    await writeFile(join(f.repo, 'README.md'), `# Pricing contract\n\n${before}.\n`)
+    await writeFile(join(f.repo, 'README.md'), `# Pricing contract\n\n${before}\n`)
     f.base = commit(f.repo)
-    await writeFile(join(f.repo, 'README.md'), `# Pricing contract\n\n${after}.\n`)
+    await writeFile(join(f.repo, 'README.md'), `# Pricing contract\n\n${after}\n`)
     await f.collect()
     await f.complete()
     const value = f.assessment.documents[0].assessment
@@ -263,8 +268,8 @@ for (const [before, after] of [
 
 for (const [before, after] of [
   ['Updated: 2026-10-01', 'Updated: 2026-11-01'],
-  ['Timestamp: 2026-10-01T12:00:00Z', 'Timestamp: 2026-11-01T12:00:00Z'],
-  ['2026-10-01T12:00:00Z', '2026-11-01T12:00:00Z']
+  ['Last updated: 2026-10-01T12:00:00Z', 'Last updated: 2026-11-01T12:00:00Z'],
+  ['last-updated: 2026-10-01T12:00:00+02:00\r', 'last-updated: 2026-11-01T12:00:00+02:00\r']
 ]) {
   test(`timestamp metadata cannot establish an updated rule: ${after}`, async t => {
     const f = await fixture(t)
