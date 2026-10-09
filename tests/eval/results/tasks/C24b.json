@@ -50,7 +50,7 @@
       "status": "passed"
     }
   ],
-  "sourceRevision": "986d35adbccd66ca6121ebfbfa54c03a0e4e2f31",
+  "sourceRevision": "507a50a36f54fdffddf7188bb6f08d26a28dbd33",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -91,12 +91,12 @@
         {
           "path": "README.md",
           "executable": false,
-          "sha256": "ec2bf40ae0593bc820478166258788dce4407c0b4b286940180f662eb7f32340"
+          "sha256": "03319611068eca0bf434ac80fb7850c9c8aef5f54834d78da987aca6f269479f"
         },
         {
           "path": "docs/command-contract.md",
           "executable": false,
-          "sha256": "d0b91ba55637f399e10495152cc01f6a725d181d09fb44ca8cba73111c18957c"
+          "sha256": "2d3dda5e695812e9674cc6e24a4c14ca65a9c508761dac2af91bca307d22fcc8"
         },
         {
           "path": "docs/design.md",
@@ -116,7 +116,7 @@
         {
           "path": "docs/implementation-plan.md",
           "executable": false,
-          "sha256": "1ecad7fdf945f54b751739bf15463fd435db3d9ee6e5ff1f73d6bc6dc4b1dd0d"
+          "sha256": "e46e376dc74c7dc748a03a26d553051ffb16314cb12efdfef298cf9d7d8e0ab7"
         },
         {
           "path": "package-lock.json",
@@ -141,7 +141,7 @@
         {
           "path": "scripts/checker-entry.mjs",
           "executable": false,
-          "sha256": "3223d4a8d96c1204ba4b947104b09dabd7bf9737602effbd05eeb9392bb783ce"
+          "sha256": "e0339f0a63b3edab31f9b9aa81ac10f79ee482f784375ec07edf0de94de6ae1c"
         },
         {
           "path": "scripts/eval.mjs",
@@ -186,7 +186,7 @@
         {
           "path": "skills/repo-audit/SKILL.md",
           "executable": false,
-          "sha256": "889bdeb443c280ac9051cb6b43aeb2d96522126ee3792bb460cbd838a4e711d1"
+          "sha256": "f74f5c0ad79f44ab3ecddbc931835446affbcb558a3079177cc060a8edc44edd"
         },
         {
           "path": "skills/repo-audit/agents/openai.yaml",
@@ -341,7 +341,7 @@
         {
           "path": "skills/repo-audit/scripts/bstack-check.mjs",
           "executable": false,
-          "sha256": "a85e75bcb7b490a695e08dd2a05c7a12b102581e35c8a3fa721f798ace6e79ef"
+          "sha256": "7d63f10229f3d969ba1cb99f20c6072d177be807ff29229e1c767ce19390f184"
         },
         {
           "path": "skills/repo-audit/scripts/commands.mjs",
@@ -376,22 +376,22 @@
         {
           "path": "skills/repo-audit/scripts/commands/docs-check.mjs",
           "executable": false,
-          "sha256": "0d6f41921b1788ab9af16afec673bf23a962c90bacc65c2ace7407f1e103302f"
+          "sha256": "f09409c4696a12ab10a317315549966938b2d322d53f9e95a211d0da5e98d784"
         },
         {
           "path": "skills/repo-audit/scripts/commands/docs-generate.mjs",
           "executable": false,
-          "sha256": "c140d9404b28b0ad8c8c07075419c4fa4a4c56f61d8e2f92a0ca01684fb45c15"
+          "sha256": "487a684257b9b759a69d7e410dc2f436fc3603c5440dc81bd45dca9735304556"
         },
         {
           "path": "skills/repo-audit/scripts/commands/evidence-validate.mjs",
           "executable": false,
-          "sha256": "1f3dbfa6342de1275c1ef779e28fe366c8da4f5d0dee9ec92668286c195ac374"
+          "sha256": "8aa0eb22bb0505965f50cefc73350d60e496fc892cbebaa17b4cbf85b5d7790d"
         },
         {
           "path": "skills/repo-audit/scripts/commands/evidence.mjs",
           "executable": false,
-          "sha256": "6ba5ef5609f8909fa0c775eb5d74144285069a31f1f22cad577d1d9305313658"
+          "sha256": "c7cb901597a603cc7b7d7ec826bf6bb1082661096922b492960959ebbd70cddd"
         },
         {
           "path": "skills/repo-audit/scripts/commands/findings.mjs",
@@ -486,7 +486,7 @@
         {
           "path": "skills/repo-audit/scripts/lib/fingerprint.mjs",
           "executable": false,
-          "sha256": "bba26241e6c7d44dc1b530c0487d6d89718300634e54c370a6514092c3d4b432"
+          "sha256": "3ccdd02b7da28861c723f050e41dcdbed9f72489f6acbc3df351d9e503697151"
         },
         {
           "path": "skills/repo-audit/scripts/lib/glob.mjs",
@@ -1464,9 +1464,14 @@
           "sha256": "0b6b762972ee37aa1a7de997866acdffa119b280f3b18958a98c3194dc7b7ba2"
         },
         {
+          "path": "tests/eval/results/tasks/C24b.review-tests.txt",
+          "executable": false,
+          "sha256": "a5b4f1c6908ebbff9fe4133d6b1289217092037e83dea683a47e0638d4cd060c"
+        },
+        {
           "path": "tests/eval/results/tasks/C24b.verification.md",
           "executable": false,
-          "sha256": "f373cd4fbe65bdde17e1b3b4b667e5be4b97ba5383ed7fd89c5055b59c09f7d7"
+          "sha256": "c5945e7ad4c310b409fb61d50a09d84830277aaf2985c0730cb771c734283cf9"
         },
         {
           "path": "tests/eval/results/tasks/C9b10a.check.txt",
@@ -3466,7 +3471,7 @@
         {
           "path": "tests/scripts/checker-execution.test.mjs",
           "executable": false,
-          "sha256": "b711d32fcbccc0753a6171de15b354ff212ec18864ea88b82846ae3ca85abb4f"
+          "sha256": "955534832452dd4229a34cf653185de46b623349d8b2f13825fb68bc169e8fd1"
         },
         {
           "path": "tests/scripts/checker-generation.test.mjs",
@@ -3769,7 +3774,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "c44111e2e039736f4e258a05fffacfd51075ba969ffc1aa5847cdba9d8f221be"
+      "sha256": "de897ba9d5e93092f9fecbe391f954fc2c0ce3d6ba6b81905beed7dc3157d146"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3809,18 +3814,18 @@
     ],
     "postCaptureDocumentation": [],
     "counts": {
-      "tests": 2406,
+      "tests": 2432,
       "failed": 0,
-      "passed": 2406,
+      "passed": 2432,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2397,
+      "topLevel": 2423,
       "suites": 0
     },
-    "durationMs": 188918.012984,
-    "outputSha256": "94147e85ae1466d1165681431de419f6edf821767c15307db7c2d113b8396185",
-    "eventsSha256": "21866251a7f0ace251f621b9bc4428a903cf3784190c86098b6524573d4777c7",
+    "durationMs": 206518.327523,
+    "outputSha256": "5e7e6dd31a0581336d417c480007bb364873acc982c4d0c5afd4eb4cb72c9b61",
+    "eventsSha256": "e794fff7d4e225ee85bb4f981b32bc4a86f6f5494e195c8384d9edd256057d5b",
     "eventsArtifact": "tests/eval/results/tasks/C24b.events.jsonl"
   }
 }
