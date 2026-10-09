@@ -123,7 +123,8 @@ Every relevant changed path must appear in the entry's `changedPaths`.
 Document assessments cite the authoritative document itself, using literal nonempty source excerpts from `base` or `current` bytes.
 An `updated` result also requires `delta: {"before": "old definition", "after": "new definition"}` excerpts that actually disappeared and appeared in that document.
 Empty before/after excerpts describe additions/deletions.
-Dates, timestamp metadata, whitespace and HTML or C-style comments alone cannot establish an updated definition or rule.
+Labeled timestamp metadata, standalone timestamp lines, whitespace and HTML or C-style comments alone cannot establish an updated definition or rule.
+Dates within definitions and rules remain meaningful, including payment deadlines and effective dates.
 An unrelated meaningful edit cannot justify a cosmetic asserted delta.
 Normalization is conservative structural screening, not a parser for arbitrary documentation formats or proof of semantic agreement.
 A `decision-needed` result names `dependentWork` and remains blocked until the substantive assessment is resolved and reviewed again.
