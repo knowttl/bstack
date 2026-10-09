@@ -57,6 +57,7 @@ export async function resolveFilePath(root, input, reviewedPath, allowMissingLin
     if ((await stat(path)).isFile()) return path
   } catch (error) {
     if (error.code === 'ENOENT') return path
+    if (error.code === 'ENOTDIR') throw new CommandError('blocked', [{ code: 'unresolved-path', message: 'An existing path or link cannot be resolved.', fix: 'Repair the link or select a resolvable path.', path: input }])
     throw error
   }
   throw new CommandError('failed', [{ code: 'invalid-scope', message: 'Reviewed scope must identify a regular file or a planned absent file.', fix: 'List concrete file paths, including planned absent files.', path: input }])
