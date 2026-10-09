@@ -17,6 +17,7 @@ import { validateFindings } from './findings.mjs'
 import evidenceSchema from '../../schemas/evidence.schema.json' with { type: 'json' }
 import impactSchema from '../../schemas/impact-assessment.json' with { type: 'json' }
 import checkSchema from '../../schemas/check-plan.json' with { type: 'json' }
+import findingsSchema from '../../schemas/findings.schema.json' with { type: 'json' }
 
 // This conservative normalization rejects cosmetic proof, not semantic disagreement.
 function meaningful(text, excerpt, path) {
@@ -211,10 +212,12 @@ export async function run(options) {
   if (!previous) {
     const foundation = assessment.foundation
     if (foundation) {
-      await validateFindings(foundation.record, target)
-      const finding = foundation.record.findings.find(item => item.id === foundation.findingId)
-      if (foundation.record.stage !== 'foundation' || foundation.record.target.root !== target.root ||
-          foundation.record.target.revision !== inventory.head || !foundation.record.selectedFindingIds.includes(foundation.findingId) ||
+      validateData(findingsSchema, foundation.record)
+      const record = assessment.repo === '.' ? { ...foundation.record, target: { ...foundation.record.target, root: target.root } } : foundation.record
+      await validateFindings(record, target)
+      const finding = record.findings.find(item => item.id === foundation.findingId)
+      if (record.stage !== 'foundation' || record.target.root !== target.root ||
+          record.target.revision !== inventory.head || !record.selectedFindingIds.includes(foundation.findingId) ||
           finding?.status !== 'selected' || !finding.scope.includes(proposed.path)) problem('unselected-foundation', 'Initial contract needs a selected foundation finding covering this contract and target.')
     } else problem('previous-contract-unavailable', 'Prerequisite: restore the previous contract or supply the explicitly selected initial foundation finding.')
   }
