@@ -344,6 +344,32 @@ test('moving the config preserves previous coverage and required checks', async 
   assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
 })
 
+test('explicit prior policy takes precedence over unrelated fixture contracts', async t => {
+  const f = await fixture(t)
+  await mkdir(join(f.repo, 'fixtures'))
+  await writeFile(join(f.repo, 'fixtures/project.json'), JSON.stringify(f.contract))
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return 12 * quantity }\n')
+  await f.collect()
+  await f.complete()
+  await f.capture()
+  await f.bind()
+  assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+})
+
+test('unchanged fixture contracts cannot become the previous policy for an initial contract', async t => {
+  const f = await fixture(t)
+  await mkdir(join(f.repo, 'fixtures'))
+  await writeFile(join(f.repo, 'fixtures/project.json'), JSON.stringify(f.contract))
+  git(f.repo, 'rm', '.bstack/project.json')
+  f.base = commit(f.repo)
+  await mkdir(join(f.repo, '.bstack'), { recursive: true })
+  await f.save()
+  await f.collect()
+  await f.complete()
+  blocked(f.validate(), 'previous-contract-unavailable')
+})
+
 test('changed check commands require both old and new successful captures', async t => {
   const f = await fixture(t)
   const old = structuredClone(f.contract.checks)

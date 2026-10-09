@@ -130,7 +130,9 @@ A `decision-needed` result names `dependentWork` and remains blocked until the s
 
 `coverage` lists affected authoritative rule IDs.
 The validator reads the previous contract from the base commit and the proposed contract from the current tree.
-It discovers a prior maintenance JSON contract even when its location changed, and requires reconciliation when more than one prior candidate exists.
+The explicit contract path takes precedence when it exists at the base.
+For a moved config, discovery considers the default prior location and JSON locations in the changed-path inventory, preserving deleted and renamed policies while excluding unchanged fixture contracts.
+Multiple prior candidates require reconciliation before validation.
 Previous scopes, document pointers, rule relationships and check declarations remain obligations even when the new contract removes them.
 An absent previous contract blocks with a named prerequisite unless `foundation: {"findingId": "F-001", "record": <findings record>}` explicitly selects a foundation finding covering the new contract, target and revision.
 That record uses the existing findings schema, `stage: "foundation"`, and a selected finding and ID.
