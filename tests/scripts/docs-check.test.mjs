@@ -654,3 +654,66 @@ for (const [term, canonical] of [
     })
   }
 }
+
+for (const [heading, fragment, wrongFragment] of [
+  ['# _Rule_', 'rule', '_rule_'],
+  ['# __Rule__', 'rule', '__rule__'],
+  ['_Rule_\n---', 'rule', '_rule_'],
+  ['> ## __Rule__', 'rule', '__rule__'],
+  ['- _Rule_\n  ===', 'rule', '_rule_'],
+  ['# [_Rule_](https://example.invalid)', 'rule', '_rule_'],
+  ['[__Rule__][target]\n---\n\n[target]: https://example.invalid', 'rule', '__rule__'],
+  ['# _`Rule`_', 'rule', '_rule_'],
+  ['# [_`rule_name`_](https://example.invalid)', 'rule_name', '_rule_name_'],
+  ['# `_Rule_`', '_rule_', 'rule'],
+  [String.raw`# \_Rule\_`, '_rule_', 'rule'],
+  ['# rule_name', 'rule_name', 'rulename'],
+  ['# _Two words_', 'two-words', '_two-words_']
+]) {
+  for (const [target, exit] of [[fragment, 0], [wrongFragment, 1]]) {
+    test(`underscore headings resolve ${target} with exit ${exit}: ${heading}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), heading + `\n\n[Local](#${target})\n[Other](other.md#${target})\n`)
+      await writeFile(join(f.repo, 'other.md'), heading + '\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.filter(problem => problem.code === 'broken-local-link').length, exit ? 2 : 0)
+      assert.deepEqual(result.data.coverageLimits, [])
+    })
+  }
+}
+
+for (const [slashes, escapedExit] of [[0, 1], [1, 0], [2, 1], [3, 0], [4, 1]]) {
+  for (const [reference, exit] of [
+    ['\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit],
+    ['\\'.repeat(slashes) + '[Guide][]\n\n[Guide]: missing.md', escapedExit],
+    ['\\'.repeat(slashes) + '[Guide]\n\n[Guide]: missing.md', escapedExit],
+    ['\\'.repeat(slashes) + '[Guide][target]\n\n[target]: missing.md', 1],
+    ['\\'.repeat(slashes) + '![Guide](missing.md)', 1],
+    ['\\'.repeat(slashes) + '![Guide][]\n\n[Guide]: missing.md', 1],
+    ['!' + '\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit]
+  ]) {
+    test(`link escape parity has exit ${exit}: ${reference}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), reference + '\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.filter(problem => problem.code === 'broken-local-link').length, exit)
+    })
+  }
+}
+
+for (const [slashes, inlineFragment, referenceFragment] of [[1, 'guidehttpsexampleinvalid', 'guidetarget'], [2, 'guide', 'guide'], [3, 'guidehttpsexampleinvalid', 'guidetarget'], [4, 'guide', 'guide']]) {
+  for (const [heading, fragment] of [
+    ['# ' + '\\'.repeat(slashes) + '[Guide](https://example.invalid)', inlineFragment],
+    ['\\'.repeat(slashes) + '[Guide](https://example.invalid)\n---', inlineFragment],
+    ['# ' + '\\'.repeat(slashes) + '[Guide][target]\n\n[target]: https://example.invalid', referenceFragment],
+    ['\\'.repeat(slashes) + '[Guide][target]\n---\n\n[target]: https://example.invalid', referenceFragment]
+  ]) {
+    test(`link escape parity reconstructs heading ${fragment}: ${heading}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), heading + `\n\n[Heading](#${fragment})\n`)
+      assert.equal(run('docs check', f.repo).exit, 0)
+    })
+  }
+}
