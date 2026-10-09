@@ -887,7 +887,8 @@ It does not drive an implementation sequence or select a playbook.
 The [command contract](command-contract.md#assessment-validation) defines their supported inputs and proof limits.
 `docs generate --check` checks generated facts, and `docs check` checks document references.
 The C24a standalone artifact bundles these validators, maintenance evidence validation, schemas and build identity, with exact-byte freshness checks and scratch regeneration.
-The aggregate command and clean-checkout execution remain C24b.
+The standalone aggregate implements input preflight, fresh leaf execution and result validation in C24b.
+The [execution contract](command-contract.md#standalone-checker-execution) defines committed portable assessment identity and previous-policy controls.
 
 | Required input or result | Purpose |
 |---|---|

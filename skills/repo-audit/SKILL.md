@@ -109,7 +109,7 @@ Avoid speculative frameworks, service layers, integrations and empty document te
 The enforcement and architecture references are available for recommendations.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
 Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
-Native rule-proof, debt baseline checks and maintained local enforcement integration through apply are available; portable maintenance remains Phase 3a work.
+Native rule-proof, debt baseline checks and maintained local enforcement integration through apply are available.
 Declare selected command paths with each apply edit's `checkIntegration` according to the [enforcement reference](references/enforcement.md#integrate-the-maintained-command).
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
@@ -140,7 +140,7 @@ Setup and journey commands already attempted are never rerun automatically, avoi
 Verify affected commands explicitly and retain fresh evidence before claiming readiness.
 Prove selected native rules using the enforcement reference's rule-proof command and preserve the scratch evidence.
 Prove selected maintained integration as described in the enforcement reference before claiming it is verified for the created project.
-Portable maintenance remains pending later work.
+Maintenance guidance remains pending.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
@@ -253,7 +253,7 @@ Render returns a scratch path and distinguishes documented, observed and inferre
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
 Capture approved checks through the shared verification rules below.
-Selected maintained enforcement through apply is available from T3.4; portable maintenance evidence remains Phase 3a work.
+Selected maintained enforcement through apply is available from T3.4.
 
 Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.
 
