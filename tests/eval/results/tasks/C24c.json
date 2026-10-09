@@ -10,7 +10,7 @@
       "kind": "automated",
       "procedure": "tests/scripts/eval.test.mjs: fake-only ts-shop maintenance in with mode validates review and fresh standalone checks without an interview or full audit",
       "status": "passed",
-      "artifact": "tests/eval/results/tasks/C24c.full-tests.txt"
+      "artifact": "docs/C24c-maintenance-transcript.md"
     },
     {
       "id": "Phase-3a-fake-only",
