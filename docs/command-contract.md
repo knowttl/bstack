@@ -56,6 +56,7 @@ Leaf checks and generators cannot invoke `evidence validate`, `docs check` or th
 Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
 For npm, script lookup uses the nearest ancestor within the repo containing `package.json` or `node_modules`, and script bodies are inspected from that directory.
 Script bodies use the [selected integration grammar](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command), including literal arguments and fail-fast `&&` chains.
+Backslashes and shell escaping are rejected in script bodies, including quoted arguments; paths use forward slashes.
 The validator follows script aliases and declared npm, pnpm and yarn pre/post lifecycle scripts, rejecting cycles, missing scripts and aggregate calls.
 Declared pnpm hooks are inspected even when local configuration disables them, so enabling hooks cannot introduce aggregate recursion.
 Unsupported package-manager invocation syntax and shell programs require a reviewed direct leaf command.
@@ -74,6 +75,8 @@ The inventory unions these differences, so staged and working-tree changes that 
 Git detects renames with 50% similarity; both original and destination paths map independently through scopes, while undetected moves remain deletions and additions.
 The owning repo's Git inventory reports submodules at their gitlink path, including dirty submodules, rather than traversing another repo's files.
 `data.paths` is the sorted unique union, including new and deleted paths.
+Collection permits absent document, rule and acceptance-source pointers only when the live Git comparison records their deletion or rename.
+Those paths remain in the inventory and affected documents remain candidates; `contract validate` still requires every source pointer to exist.
 `data.mappings` records matching scope, document and rule IDs for each path.
 `data.candidateDocuments` is the union of scoped documents and changed document paths themselves.
 Paths with no document relationship remain in `data.unmappedPaths`, including paths in scopes that name only rules.

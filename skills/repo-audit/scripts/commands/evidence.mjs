@@ -63,8 +63,9 @@ export function collectInventory(root, base) {
 export async function run(options) {
   if (!options.base) throw new CommandError('usage-error', [{ code: 'missing-base', message: 'An explicit comparison base is required.', fix: 'Supply --base <ref>, or --base empty before the first commit.' }])
   const target = await resolveTarget(options)
-  const { contract, path: contractPath } = await loadContract(target, options.contract)
   const inventory = collectInventory(target.root, options.base)
+  const removedPaths = new Set(inventory.changes.filter(change => change.status === 'D' || change.status.startsWith('R')).map(change => change.oldPath ?? change.path))
+  const { contract, path: contractPath } = await loadContract(target, options.contract, removedPaths)
   const scopes = contract.scopes.map(scope => ({ ...scope, globs: scope.paths.map(pathGlob) }))
   const mappings = inventory.paths.map(path => {
     const matching = scopes.filter(scope => scope.globs.some(glob => matchesPath(glob, path)))

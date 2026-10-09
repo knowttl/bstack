@@ -1,5 +1,5 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
-import { basename, dirname, join, relative, resolve, sep } from 'node:path'
+import { dirname, join, relative, resolve, sep } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
@@ -19,8 +19,8 @@ async function leafCommand(root, command, stack = []) {
   if (!(await stat(cwd)).isDirectory()) reject('invalid-cwd', command.cwd, 'Child command cwd must be an existing directory.')
   if (command.timeoutMs !== undefined && (!Number.isSafeInteger(command.timeoutMs) || command.timeoutMs <= 0)) reject('invalid-command', command.cwd, 'Timeout must be a positive safe integer.')
   async function visit(executable, args) {
-    const name = basename(executable).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
-    if (name === 'bstack-check.mjs' || args.some(arg => basename(arg) === 'bstack-check.mjs') ||
+    const name = executable.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+    if (name === 'bstack-check.mjs' || args.some(arg => arg.split(/[\\/]/).at(-1) === 'bstack-check.mjs') ||
         args.some((arg, i) => (arg === 'evidence' && args[i + 1] === 'validate') || (arg === 'docs' && args[i + 1] === 'check'))) {
       reject('recursive-check', command.cwd, 'Leaf commands cannot invoke aggregate maintenance validation.')
     }
@@ -71,15 +71,21 @@ async function exactPathCase(root, input, allowMissing = false) {
   }
 }
 
-async function existingPointer(root, input) {
+async function sourcePointer(root, input, allowMissing) {
   const glob = pathGlob(input)
   if (/[*?]/.test(glob.pattern)) reject('invalid-pointer', input, 'Source pointers must be concrete paths.')
   const path = await resolveFilePath(root, input)
-  await exactPathCase(root, input)
-  if (!(await stat(path)).isFile()) reject('missing-path', input, 'Source pointers must identify existing files.')
+  await exactPathCase(root, input, allowMissing)
+  try {
+    if ((await stat(path)).isFile()) return
+  } catch (error) {
+    if (allowMissing && error.code === 'ENOENT') return
+    throw error
+  }
+  reject('missing-path', input, 'Source pointers must identify existing files.')
 }
 
-export async function loadContract(target, input = '.bstack/project.json') {
+export async function loadContract(target, input = '.bstack/project.json', removedPaths = new Set()) {
   pathGlob(input)
   const path = await resolveFilePath(target.root, input)
   await exactPathCase(target.root, input, true)
@@ -94,7 +100,7 @@ export async function loadContract(target, input = '.bstack/project.json') {
   const reference = (ids, collection, path) => {
     for (const id of ids) if (!contract[collection].some(record => record.id === id)) reject('unknown-id', path, `Unknown ${collection} ID: ${id}`)
   }
-  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) await existingPointer(target.root, entry.path)
+  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) await sourcePointer(target.root, entry.path, removedPaths.has(entry.path))
   for (const scope of contract.scopes) {
     scope.paths.forEach(pathGlob)
     reference(scope.documentIds, 'documents', scope.id)
