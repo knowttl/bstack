@@ -3,12 +3,19 @@ import { dirname, extname, join, relative, resolve } from 'node:path'
 import { isInside, resolvePath } from './paths.mjs'
 import { CommandError } from './result.mjs'
 
+// Strip quote containers before checking their rendered block content.
 const quotes = /^(?: {0,3}>[ \t]?)+/
+// List markers determine the indentation of their continuation blocks.
 const listItem = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/
+// Empty ATX headings still interrupt paragraphs.
 const atxStart = /^ {0,3}#{1,6}(?:[ \t]|$)/
+// Extract ATX titles without their optional closing markers.
 const atxHeading = /^ {0,3}#{1,6}[ \t]+(.+?)[ \t]*#*[ \t]*$/
+// Setext underlines turn the preceding paragraph into a heading.
 const setextUnderline = /^ {0,3}(?:=+|-+)[ \t]*$/
+// Reference definitions are excluded from heading paragraphs.
 const referenceDefinition = /^ {0,3}\[([^\]\n]+)\]:/
+// Thematic breaks end paragraphs and are excluded from prose emphasis checks.
 const thematicBreak = /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})$/
 
 function fenceMarker(line) {
@@ -120,7 +127,9 @@ export function markdownAnchors(text) {
   return anchors
 }
 
+// Reference labels match regardless of case or repeated whitespace.
 const referenceLabel = value => value.trim().replace(/\s+/g, ' ').toLowerCase()
+// Keep destination parsing bounded to ordinary tokens without markup or titles.
 const linkDestination = value => /^[^\s()[\]<>\\`]+$/.test(value.trim()) ? value.trim() : null
 
 export function markdownCoverageLimit(text) {
