@@ -312,7 +312,7 @@ for (const [topic, action, exit] of [
     for (const field of ['args', 'versionArgs']) {
       test(`${topic} ${action} as ${collection} ${field} exits ${exit}`, async t => {
         const f = await maintenanceRepo(t)
-        f.contract[collection][0].command[field] = ['tools/lint.mjs', topic, action]
+        f.contract[collection][0].command[field] = ['repo-audit.mjs', topic, action]
         await f.save()
         assert.equal(run('contract validate', f.repo).exit, exit)
       })
@@ -321,7 +321,7 @@ for (const [topic, action, exit] of [
   test(`nested script ${topic} ${action} exits ${exit}`, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: {
-      check: 'npm run leaf', leaf: `node tools/lint.mjs ${topic} ${action}`
+      check: 'npm run leaf', leaf: `node repo-audit.mjs ${topic} ${action}`
     } }))
     f.contract.checks[0].command = { executable: 'npm', args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] }
     await f.save()
