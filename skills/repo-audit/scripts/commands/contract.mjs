@@ -71,18 +71,13 @@ async function exactPathCase(root, input, allowMissing = false) {
   }
 }
 
-async function sourcePointer(root, input, allowMissing) {
+async function sourcePointer(root, input, removed) {
   const glob = pathGlob(input)
   if (/[*?]/.test(glob.pattern)) reject('invalid-pointer', input, 'Source pointers must be concrete paths.')
   const path = await resolveFilePath(root, input)
-  await exactPathCase(root, input, allowMissing)
-  try {
-    if ((await stat(path)).isFile()) return
-  } catch (error) {
-    if (allowMissing && error.code === 'ENOENT') return
-    throw error
-  }
-  reject('missing-path', input, 'Source pointers must identify existing files.')
+  if (removed) return
+  await exactPathCase(root, input)
+  if (!(await stat(path)).isFile()) reject('missing-path', input, 'Source pointers must identify existing files.')
 }
 
 export async function loadContract(target, input = '.bstack/project.json', removedPaths = new Set()) {
