@@ -13,11 +13,13 @@ function reject(code, path, message, status = 'failed') {
 }
 
 // Native script aliases are inspected without execution; opaque programs remain reviewed leaf checks.
-async function leafCommand(root, command, stack = []) {
+export async function leafCommand(root, command, stack = []) {
   const cwd = await resolvePath(root, command.cwd)
   await exactPathCase(root, command.cwd)
   if (!(await stat(cwd)).isDirectory()) reject('invalid-cwd', command.cwd, 'Child command cwd must be an existing directory.')
   if (command.timeoutMs !== undefined && (!Number.isSafeInteger(command.timeoutMs) || command.timeoutMs <= 0)) reject('invalid-command', command.cwd, 'Timeout must be a positive safe integer.')
+  const commands = []
+  const configPaths = []
   async function visit(executable, args) {
     const names = [executable, ...args].map(word => word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, ''))
     const [name] = names
@@ -26,7 +28,10 @@ async function leafCommand(root, command, stack = []) {
       reject('recursive-check', command.cwd, 'Leaf commands cannot invoke aggregate maintenance validation.')
     }
     if (isIndirectExecutable(executable)) reject('unsupported-leaf', executable, 'Shell programs and command wrappers cannot declare a verifiable leaf command.')
-    if (!['npm', 'pnpm', 'yarn'].includes(name)) return
+    if (!['npm', 'pnpm', 'yarn'].includes(name)) {
+      commands.push({ executable, args, cwd: relative(root, cwd) || '.' })
+      return
+    }
     let script
     if (args.length === 1 && ['test', 'start', 'stop', 'restart'].includes(args[0])) script = args[0]
     else if (args[0] === 'run' && args.length === 2) script = args[1]
@@ -41,6 +46,7 @@ async function leafCommand(root, command, stack = []) {
       }
     }
     const path = join(packageDirectory, 'package.json')
+    configPaths.push(path)
     const scripts = inspectJSON(await readFile(path, 'utf8')).value.scripts ?? {}
     if (typeof scripts[script] !== 'string') reject('missing-script', path, `Missing package script: ${script}`)
     const key = `${path}:${script}`
@@ -51,13 +57,16 @@ async function leafCommand(root, command, stack = []) {
       let start = 0
       for (let end = 0; end <= words.length; end++) {
         if (end !== words.length && words[end] !== '&&') continue
-        await leafCommand(root, { ...command, cwd: relative(root, packageDirectory) || '.', executable: words[start], args: words.slice(start + 1, end), versionArgs: [] }, [...stack, key])
+        const resolved = await leafCommand(root, { ...command, cwd: relative(root, packageDirectory) || '.', executable: words[start], args: words.slice(start + 1, end), versionArgs: [] }, [...stack, key])
+        commands.push(...resolved.commands)
+        configPaths.push(...resolved.configPaths)
         start = end + 1
       }
     }
   }
   await visit(command.executable, command.args)
   if (command.versionArgs.length) await visit(command.executable, command.versionArgs)
+  return { commands, configPaths }
 }
 
 async function exactPathCase(root, input, allowMissing = false) {
