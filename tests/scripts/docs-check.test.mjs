@@ -137,7 +137,8 @@ for (const text of [
   '    [reference](missing.md)',
   '- Guide:\n\n      [reference](missing.md)',
   '- Guide:\n    ```md\n    [reference](missing.md)\n    ```',
-  '`` [reference](missing.md) ` sample ``'
+  '`` [reference](missing.md) ` sample ``',
+  'Example: `\n| [reference](missing.md)\n`'
 ]) {
   test(`code does not contribute local references: ${text}`, async t => {
     const f = await maintenanceRepo(t)
@@ -148,15 +149,178 @@ for (const text of [
   })
 }
 
+for (const [format, entry, exit, duplicate] of [
+  ['markdown-bold', '**Order**:\nA request.\n', 0, false],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | A request. |\n', 1, true]
+]) {
+  for (const delimiter of ['`', '``']) {
+    test(`${format} respects multiline ${delimiter} code-span block boundaries`, async t => {
+      const f = await glossary(t, entry + '\nExample: ' + delimiter + '\n' + entry + delimiter + '\n', format)
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.some(problem => problem.code === 'duplicate-term'), duplicate)
+    })
+  }
+}
+
+for (const [container, sample] of [
+  ['list backticks', '- ```md\n  [Example](missing-example.md)\n  ```'],
+  ['list tildes', '- ~~~md\n  [Example](missing-example.md)\n  ~~~'],
+  ['ordered list', '1. ```md\n   [Example](missing-example.md)\n   ```'],
+  ['nested list', '- Outer\n  - ```md\n    [Example](missing-example.md)\n    ```'],
+  ['blockquote backticks', '> ```md\n> [Example](missing-example.md)\n> ```'],
+  ['blockquote tildes', '> ~~~md\n> [Example](missing-example.md)\n> ~~~'],
+  ['nested blockquote', '> > ~~~md\n> > [Example](missing-example.md)\n> > ~~~'],
+  ['list in blockquote', '> - ```md\n>   [Example](missing-example.md)\n>   ```'],
+  ['blockquote in list', '- > ~~~md\n  > [Example](missing-example.md)\n  > ~~~']
+]) {
+  for (const [href, exit] of [['README.md', 0], ['missing.md', 1]]) {
+    test(`container ${container} excludes code and checks ${href}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), sample + `\n\n[Guide](${href})\n`)
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.data.documents[0].links, 1)
+    })
+  }
+}
+
+for (const sample of [
+  '- ```md\n  [Example](missing-example.md)\n\n',
+  '> ~~~md\n> [Example](missing-example.md)\n\n'
+]) {
+  test(`container fences end when their container ends: ${sample}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), sample + '[Guide](missing.md)\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.data.documents[0].links, 1)
+  })
+}
+
+for (const sample of [
+  '<!--\n```\n-->\n',
+  '<!--\n~~~\n-->\n',
+  '<!--\n- ```md\n-->\n',
+  '<!--\n> ~~~\n-->\n',
+  '```md\n<!--\n```\n\n',
+  '    <!--\n\n',
+  '`<!--`\n\n',
+  'Example: `\n<!--\n`\n\n',
+  '```<!--` -->\n'
+]) {
+  test(`comment syntax preserves the following rendered link: ${sample}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), sample + '[Guide](missing.md)\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.data.documents[0].links, 1)
+  })
+}
+
 for (const [format, entry] of [
   ['markdown-bold', '**Order**:\nA request.\n'],
   ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | A request. |\n']
 ]) {
-  for (const delimiter of ['`', '``']) {
-    test(`${format} ignores multiline ${delimiter} code-span examples`, async t => {
-      const f = await glossary(t, entry + '\nExample: ' + delimiter + '\n' + entry + delimiter + '\n', format)
+  test(`comment delimiters cannot hide ${format} duplicate entries`, async t => {
+    const f = await glossary(t, entry + '\n<!--\n```\n-->\n\n' + entry, format)
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'duplicate-term')
+  })
+  test(`commented ${format} examples do not create duplicate entries`, async t => {
+    const f = await glossary(t, entry + '\n<!--\n' + entry + '\n-->\n', format)
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+for (const text of [
+  'A literal `\n\n[Guide](missing.md)\n\nUse `value`.',
+  'A literal `\n# Section\n[Guide](missing.md)\nUse `value`.',
+  '- A literal `\n- [Guide](missing.md)\n- Use `value`.',
+  'A literal `\n> [Guide](missing.md)\nUse `value`.',
+  'A literal `\n***\n[Guide](missing.md)\nUse `value`.',
+  'A literal `\n---\n[Guide](missing.md)\nUse `value`.',
+  'A literal `\n[guide]: missing.md\n[Guide][guide]\nUse `value`.'
+]) {
+  test(`unmatched backticks cannot hide another block: ${text}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'broken-local-link')
+  })
+}
+
+for (const sample of [
+  '- Example: `\n    [Example](missing.md)\n    `',
+  '> Example: `\n> [Example](missing.md)\n> `',
+  '- > Example: `\n  > [Example](missing.md)\n  > `',
+  '> - Example: `\n>   [Example](missing.md)\n>   `'
+]) {
+  test(`container multiline code spans exclude examples: ${sample}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), sample + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(result.data.documents[0].links, 0)
+  })
+}
+
+test('comment-contained backticks cannot expose later commented links', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '<!-- ` --> prose <!-- [Example](missing.md) ` -->\n\n[Guide](README.md)\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 1)
+})
+
+test('comment syntax inside code cannot remove later heading anchors', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '```md\n<!--\n```\n\n## Details\n\n[Details](#details)\n')
+  assert.equal(run('docs check', f.repo).exit, 0)
+})
+
+test('entity-like text in code does not limit supported heading fragments', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '# Real\n\n```md\nTitle &amp; details\n---\n```\n\n[Real](#real)\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+test('unmatched backticks cannot hide duplicate bold glossary entries in later paragraphs', async t => {
+  const f = await glossary(t, '**Order**:\nA request.\n\nA literal `\n\n**Order**:\nAnother request.\n\nUse `value`.\n')
+  assert.equal(run('docs check', f.repo).problems[0].code, 'duplicate-term')
+})
+
+test('unmatched backticks cannot cross glossary table rows', async t => {
+  const f = await glossary(t, '| Term | Definition |\n| --- | --- |\n| Order | A request. |\n| Other | A literal ` |\n| Order | Use `value`. |\n', 'markdown-table')
+  const result = run('docs check', f.repo)
+  assert.equal(result.problems[0].code, 'duplicate-term', JSON.stringify(result))
+})
+
+for (const separator of ['***', '* * *', '___', '_ _ _', '- - -', '\n---']) {
+  for (const [fragment, exit] of [['details', 0], ['introduction--details', 1]]) {
+    test(`setext heading after ${separator} resolves ${fragment} with exit ${exit}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), `[Details](other.md#${fragment})\n`)
+      await writeFile(join(f.repo, 'other.md'), `Introduction\n${separator}\nDetails\n---\n`)
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+    })
+  }
+}
+
+for (const target of ['# Title &amp; details\n', 'Title &amp; details\n---\n', 'Title\n&amp; details\n===\n', 'Title &#38; details\n---\n']) {
+  for (const fragment of ['title--details', 'title-amp-details']) {
+    test(`entity headings report fragment coverage for ${fragment}: ${target}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), `[Title](other.md#${fragment})\n`)
+      await writeFile(join(f.repo, 'other.md'), target)
       const result = run('docs check', f.repo)
       assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.match(result.data.coverageLimits[0].reason, /Heading fragment coverage/)
     })
   }
 }
