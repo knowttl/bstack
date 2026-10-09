@@ -1269,7 +1269,7 @@ function glossaryEntries(text, format) {
 }
 async function run2(options) {
   const target = await resolveTarget(options);
-  const { contract, path: contractPath } = await loadContract(target, options.contract);
+  const { contract, path: contractPath } = options.coveragePolicy ?? await loadContract(target, options.contract);
   const problems = [];
   const coverageLimits = [];
   const terms = /* @__PURE__ */ new Map();
@@ -2305,6 +2305,7 @@ async function run3(options) {
   const inventory = collectInventory(target.root, options.base);
   let assessment;
   try {
+    options = { ...options, assessment: await resolveLinks(resolve7(options.assessment)) };
     assessment = inspectJSON(await readFile6(options.assessment, "utf8")).value;
   } catch (error) {
     if (error instanceof CommandError) throw error;
@@ -2461,6 +2462,7 @@ async function run3(options) {
     data: {
       ...inventory,
       ...mapping,
+      policies: [proposed, ...previous ? [previous] : []],
       previousContract: previous?.path ?? null,
       requiredCheckIds: [...new Set(requiredChecks.map((check) => check.id))],
       requiredChecks,
@@ -2538,10 +2540,11 @@ function sections(text, path) {
 }
 async function run4(options) {
   const target = await resolveTarget(options);
-  const { contract, path: contractPath } = await loadContract(target, options.contract);
+  const { contract, path: contractPath } = options.coveragePolicy ?? await loadContract(target, options.contract);
   const documents = /* @__PURE__ */ new Map();
   const destinations = /* @__PURE__ */ new Map();
   for (const generator of contract.generators) {
+    await leafCommand(target.root, generator.command);
     if (!/^[^\s<>]+$/.test(generator.id)) reject3("invalid-marker-id", contractPath, "Generator IDs must be single marker tokens.");
     const outputs = /* @__PURE__ */ new Map();
     destinations.set(generator, outputs);
@@ -2660,7 +2663,7 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     fix: "Supply --repo <path> --base <ref> --assessment <file> [--contract <path>]."
   }]);
   const target = await resolveTarget(options);
-  options = { ...options, assessment: resolve8(options.assessment) };
+  options = { ...options, assessment: await resolveLinks(resolve8(options.assessment)) };
   const selected = await readFile8(options.assessment, "utf8").then(JSON.parse).catch(() => null);
   if (selected?.previousContract) options["previous-contract"] = selected.previousContract;
   const preflight = await run3({ ...options, preflight: true });
@@ -2674,10 +2677,12 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     }
   }
   await checkAssessment();
-  const docs = await run2(options);
-  if (docs.status !== "passed") return { ...docs, data: { ...docs.data, phase: "preflight" } };
-  const facts = await checkGeneratedFacts(options);
-  if (facts.status !== "passed") return { ...facts, data: { ...facts.data, phase: "preflight" } };
+  for (const policy of preflight.data.policies) {
+    const docs = await run2({ ...options, coveragePolicy: policy });
+    if (docs.status !== "passed") return { ...docs, data: { ...docs.data, phase: "preflight" } };
+    const facts = await checkGeneratedFacts({ ...options, coveragePolicy: policy });
+    if (facts.status !== "passed") return { ...facts, data: { ...facts.data, phase: "preflight" } };
+  }
   for (const check of preflight.data.requiredChecks) await leafCommand(target.root, check.command);
   const directory = await createScratch(target);
   let previous = null;
@@ -2744,7 +2749,7 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
   await writeFile3(data.path, JSON.stringify({ status, problems: validated.problems, data }, null, 2) + "\n", { flag: "wx" });
   return { ...validated, status, data };
 }
-if (process.argv[1] && resolve8(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (process.argv[1] && await resolveLinks(resolve8(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2);
   if (argv.length === 1 && argv[0] === "--help") console.log("Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]");
   else {
@@ -2773,4 +2778,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"98f6843f2a5ac8b49a6f8afe1910be5e299053fccfaeebe26aa9d59a7500d1b5"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"5be0dc681307ac8028d6cc253dec912e39ca7a7a01207bbf62c7df57dc2f9c32"}
