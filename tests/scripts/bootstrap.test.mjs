@@ -116,6 +116,35 @@ test('ordinary full-suite invocation retains attachable evidence in a Git checko
   assert.equal(attach(directory, '.cache/full-suite.json').status, 0)
 })
 
+test('post-capture documentation attaches while source changes require fresh evidence', async t => {
+  const directory = await evidenceSandbox(t)
+  await mkdir(join(directory, 'docs'))
+  const plan = '# Plan\n## Progress\nPending\n## Acceptance case coverage\nBound assignments\n'
+  await writeFile(join(directory, 'docs/implementation-plan.md'), plan)
+  assert.equal(spawnSync('git', ['add', '.'], { cwd: directory }).status, 0)
+  assert.equal(spawnSync('git', ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'plan'], { cwd: directory }).status, 0)
+  assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
+  await writeFile(join(directory, 'README.md'), 'Updated usage prose\n')
+  await writeFile(join(directory, 'docs/usage.md'), 'Usage prose\n')
+  await writeFile(join(directory, 'docs/implementation-plan.md'), plan.replace('Pending', 'Completed'))
+  const attached = attach(directory)
+  assert.equal(attached.status, 0, attached.stderr + attached.stdout)
+  const record = JSON.parse(await readFile(join(directory, 'tests/eval/results/tasks/speed.json'), 'utf8'))
+  assert.deepEqual(record.validation.postCaptureDocumentation, [
+    { path: 'README.md', before: null, after: { path: 'README.md', executable: false, sha256: hash('Updated usage prose\n') } },
+    { path: 'docs/implementation-plan.md', before: { path: 'docs/implementation-plan.md', executable: false, sha256: hash(plan) },
+      after: { path: 'docs/implementation-plan.md', executable: false, sha256: hash(plan.replace('Pending', 'Completed')) } },
+    { path: 'docs/usage.md', before: null, after: { path: 'docs/usage.md', executable: false, sha256: hash('Usage prose\n') } }
+  ])
+  await writeFile(join(directory, 'docs/implementation-plan.md'), plan.replace('Bound assignments', 'Changed assignments'))
+  assert.equal(attach(directory).status, 1)
+  await writeFile(join(directory, 'docs/implementation-plan.md'), plan.replace('Pending', 'Completed'))
+  await writeFile(join(directory, 'tests/scripts/selected.test.mjs'), '// changed source\n')
+  const rejected = attach(directory)
+  assert.equal(rejected.status, 1)
+  assert.match(rejected.stderr, /Commit source inputs before attaching evidence/)
+})
+
 test('ordinary tests execute without a base and invalidate older capture', async t => {
   const directory = await evidenceSandbox(t)
   assert.equal(run(directory).status, 0)
