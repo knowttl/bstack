@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
-import { dirname, resolve } from 'node:path'
+import { dirname, relative, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
+import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { canonicalJSON, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
@@ -87,7 +87,7 @@ export async function prepareChangeSet(options, target) {
     }
   }
   if (problems.length) throw new CommandError('failed', problems)
-  const documents = new Map(staged.map(edit => [edit.path, edit.proposedContent]))
+  const documents = new Map(staged.map(edit => [edit.resolvedPath, edit.proposedContent]))
   for (const edit of plan.edits.filter(edit => edit.operation === 'move-rule' && edit.path === edit.payload.sourcePath)) {
     const { sourcePath, destinationPath, rule, link } = edit.payload
     const pair = plan.edits.filter(candidate => candidate.operation === 'move-rule' &&
@@ -101,7 +101,10 @@ export async function prepareChangeSet(options, target) {
     const href = links[0]
     if (links.length !== 1 || /^[A-Za-z][A-Za-z0-9+.-]*:|^\/\//.test(href)) reject('invalid-rule-link', 'The replacement must link to the selected local destination.', sourcePath)
     let linkedPath
-    try { linkedPath = resolve(dirname(scope.get(sourcePath)), decodeURIComponent(href.split('#')[0])) } catch { reject('invalid-rule-link', 'Invalid link encoding.', sourcePath) }
+    try {
+      const pathPart = decodeURIComponent(href.split('#')[0].split('?')[0]).replace(/\\([()])/g, '$1')
+      linkedPath = await resolvePath(target.root, relative(target.root, resolve(target.root, dirname(sourcePath), pathPart)))
+    } catch { reject('invalid-rule-link', 'The replacement must resolve to the selected local destination.', sourcePath) }
     if (linkedPath !== scope.get(destinationPath)) reject('invalid-rule-link', 'The replacement must link to the selected destination.', sourcePath)
     for (const document of [source, destination]) {
       for (const reference of markdownLinks(document.proposedContent)) {
