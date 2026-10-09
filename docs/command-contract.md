@@ -124,6 +124,7 @@ Document assessments cite the authoritative document itself, using literal nonem
 An `updated` result also requires `delta: {"before": "old definition", "after": "new definition"}` excerpts that actually disappeared and appeared in that document.
 Empty before/after excerpts describe additions/deletions.
 Update metadata explicitly labeled `updated` or `last updated`, whitespace and HTML or C-style comments alone cannot establish an updated definition or rule.
+Hash comments in YAML, Python and shell files or labeled fenced examples also cannot establish an updated definition or rule.
 Dates within definitions and rules remain meaningful, including YAML `date` fields, standalone payment deadlines and effective dates.
 An unrelated meaningful edit cannot justify a cosmetic asserted delta.
 Normalization is conservative structural screening, not a parser for arbitrary documentation formats or proof of semantic agreement.

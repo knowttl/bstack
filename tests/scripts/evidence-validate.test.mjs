@@ -314,6 +314,10 @@ for (const [name, wrap] of [
   ['inline line comment', text => `const factor = 12; // ${text}`],
   ['inline comment after a string', text => `const source = "https://example.invalid"; // ${text}`],
   ['inline comment in a fenced example', text => '```js\nconst factor = 12; // ' + text + '\n```'],
+  ['YAML hash comment', text => '```yaml\nmultiplier: 12 # ' + text + '\n```'],
+  ['Python hash comment', text => '```python\nmultiplier = 12# ' + text + '\n```'],
+  ['shell hash comment', text => '~~~sh\nmultiplier=12 # ' + text + '\n~~~'],
+  ['shell hash comment after a separator', text => '```bash\nmultiplier=12;# ' + text + '\n```'],
   ['prose apostrophe', text => `Don't change pricing. <!-- ${text} -->`],
   ['multiple prose apostrophes', text => `Don't change users' pricing. <!-- ${text} -->`],
   ['unmatched single quote', text => `Pricing 'example <!-- ${text} -->`],
@@ -341,6 +345,9 @@ for (const [name, wrap] of [
 
 for (const [name, prefix, suffix] of [
   ['inline line comment', 'const factor = 12; // ', ''],
+  ['YAML hash comment', '```yaml\nmultiplier: 12 # ', '\n```'],
+  ['Python hash comment', '```python\nmultiplier = 12# ', '\n```'],
+  ['shell hash comment', '~~~bash\nmultiplier=12 # ', '\n~~~'],
   ['HTML comment after a prose apostrophe', "Don't change pricing. <!-- ", ' -->']
 ]) {
 test(`changing only an ${name} cannot establish an updated rule`, async t => {
@@ -364,6 +371,14 @@ for (const [name, before, after, oldExcerpt, newExcerpt] of [
   ['prose URL', 'Requests use https://old.invalid', 'Requests use https://new.invalid', 'Requests use https://old.invalid', 'Requests use https://new.invalid'],
   ['full excerpt with a line comment', 'const factor = 12; // units', 'const factor = 13; // units', 'const factor = 12; // units', 'const factor = 13; // units'],
   ['full excerpt with a block comment', 'const factor = 12 /* units */;', 'const factor = 13 /* units */;', 'const factor = 12 /* units */;', 'const factor = 13 /* units */;'],
+  ['YAML full excerpt with a hash comment', '```yaml\nmultiplier: 12 # units\n```', '```yaml\nmultiplier: 13 # units\n```', 'multiplier: 12 # units', 'multiplier: 13 # units'],
+  ['Python full excerpt with a hash comment', '```py\nmultiplier = 12# units\n```', '```py\nmultiplier = 13# units\n```', 'multiplier = 12# units', 'multiplier = 13# units'],
+  ['shell full excerpt with a hash comment', '~~~shell\nmultiplier=12 # units\n~~~', '~~~shell\nmultiplier=13 # units\n~~~', 'multiplier=12 # units', 'multiplier=13 # units'],
+  ['YAML quoted hash', '```yml\nrule: "old # wording"\n```', '```yml\nrule: "new # wording"\n```', 'old # wording', 'new # wording'],
+  ['Python quoted hash', '```python\nrule = "old # wording"\n```', '```python\nrule = "new # wording"\n```', 'old # wording', 'new # wording'],
+  ['shell quoted hash', '```zsh\nrule="old # wording"\n```', '```zsh\nrule="new # wording"\n```', 'old # wording', 'new # wording'],
+  ['YAML URL fragment', '```yaml\nsource: https://example.invalid/#old\n```', '```yaml\nsource: https://example.invalid/#new\n```', 'https://example.invalid/#old', 'https://example.invalid/#new'],
+  ['Markdown heading after a YAML fence', '```yaml\nmultiplier: 12\n```\n# Old definition', '```yaml\nmultiplier: 12\n```\n# New definition', '# Old definition', '# New definition'],
   ['full template-expression excerpt', 'const label = `price: ${quantity * 12 /* units */}`;', 'const label = `price: ${quantity * 13 /* units */}`;', 'const label = `price: ${quantity * 12 /* units */}`;', 'const label = `price: ${quantity * 13 /* units */}`;'],
   ['single quoted comment marker', "const rule = 'old // wording';", "const rule = 'new // wording';", 'old // wording', 'new // wording'],
   ['template comment marker', 'const rule = `old // wording`;', 'const rule = `new // wording`;', 'old // wording', 'new // wording'],
@@ -387,6 +402,30 @@ for (const [name, before, after, oldExcerpt, newExcerpt] of [
     await f.capture()
     await f.bind()
     assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+  })
+}
+
+for (const [path, rule] of [
+  ['rules.yaml', 'multiplier: 12 # '],
+  ['rules.py', 'multiplier = 12# '],
+  ['rules.sh', 'multiplier=12 # ']
+]) {
+  test(`hash comments in ${path} cannot establish an updated rule`, async t => {
+    const f = await fixture(t)
+    f.contract.documents[0].path = path
+    f.contract.rules[0].path = path
+    f.contract.checks[0].inputScopes.push(path)
+    await f.save()
+    await writeFile(join(f.repo, path), '# Pricing contract\n' + rule + 'old wording\n')
+    f.base = commit(f.repo)
+    await writeFile(join(f.repo, path), '# Pricing contract\n' + rule + 'new wording\n')
+    await f.collect()
+    await f.complete()
+    const value = f.assessment.documents[0].assessment
+    value.result = 'updated'
+    value.delta = { before: 'old wording', after: 'new wording' }
+    await f.write()
+    blocked(f.validate(), 'meaningless-document-delta')
   })
 }
 
