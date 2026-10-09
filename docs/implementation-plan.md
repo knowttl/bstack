@@ -65,13 +65,13 @@ When capture metadata is unavailable, ordinary `npm test` still executes the ful
 The [gate configuration](../.no-mistakes.yaml) owns the explicit capture command; ordinary and explicit capture execute the same full suite.
 After the final source, test and documentation fixes, Document attaches that run with `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>` before publication.
 The generator reads the saved run rather than executing another suite or starting another pipeline.
-Its validation binding records the tested head, resolved base, command, environment, selected suite paths, test identities, counts, timing, output hashes and complete authored input inventory.
-An evidence-only descendant can reuse the tested head when the generator confirms ancestry and identical inputs, base and environment at the final head.
-The record cannot contain its own commit hash; publication identifies the final head, and the input binding proves that head has the tested contents.
+The saved run records the tested head, resolved base, command, environment, selected suite paths, test identities, counts, timing, output hashes and complete authored input inventory.
+Attachment can reuse the tested head when the generator confirms ancestry and identical bound inputs, base and environment, subject to the exclusions below.
+The record cannot contain its own commit hash; publication identifies the final head, and the validation input binding proves that its bound inputs have the tested contents.
 Capture includes every authored task artifact.
 Explicit capture requires committed inputs; ordinary tests can capture dirty inputs, but that evidence cannot be attached.
 Attachment excludes its own `<task-id>.json`, `<task-id>.full-tests.txt` and `<task-id>.events.jsonl` files from both inventories and the commitment check.
-It also permits post-capture prose changes in `README.md` and top-level `docs/*.md` other than `docs/design.md`, recording their before/after inventory entries in `validation.postCaptureDocumentation`.
+It also permits committed or uncommitted post-capture prose changes, additions and removals in `README.md` and top-level `docs/*.md` other than `docs/design.md`, recording their before/after inventory entries in `validation.postCaptureDocumentation`.
 For `docs/implementation-plan.md`, only the Progress section may change; requirements, task contracts and acceptance assignments remain evidence inputs.
 Executable documentation, skill instructions, nested documentation, source, scripts, tests, fixtures and all other inputs remain bound and require fresh capture when changed.
 Every other task artifact remains an input, including evidence consumed by acceptance tests.
