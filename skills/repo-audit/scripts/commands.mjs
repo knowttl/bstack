@@ -1,5 +1,10 @@
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
+  'docs generate': {
+    module: './commands/docs-generate.mjs',
+    options: ['contract', 'check'],
+    help: 'Compare registered generated sections or render proposed documents in scratch.\nUsage: repo-audit.mjs docs generate --repo <path> [--contract <repo-relative-file>] [--check] [--json]\nGenerator IDs identify markers in outputPaths; stdout is the exact section body. Without --check, review scratch proposals and apply through a selected change set with apply --plan <file>.'
+  },
   'contract validate': {
     module: './commands/contract.mjs',
     options: ['contract'],
@@ -113,4 +118,4 @@ export const commands = {
 }
 
 // Owning tasks register production commands when their implementations land.
-export const plannedCommands = ['docs generate', 'docs check']
+export const plannedCommands = ['docs check']

@@ -468,7 +468,11 @@ Tick each task when its "Done when" commands pass.
       Public-command controls cover forged incomplete inventories, missing impact inputs, stale code/reasons/acceptance/checkers, cosmetic document deltas and stable completed review bindings.
       Final full-suite evidence attaches to `tests/eval/results/tasks/T3a.3.json` and names the last implementation commit.
       Semantic agreement and owner approval authenticity require the project's selected reviewer; local scratch captures are not portable attestations.
-  - [ ] T3a.4 Build generated-fact freshness checks
+  - [x] T3a.4 Build generated-fact freshness checks
+    - The [generated-facts command contract](command-contract.md#generated-facts) owns marker validation, exact-byte comparison, transient-write detection and reviewed scratch regeneration.
+      Public-command tests prove stale bytes fail, reviewed regeneration passes, surrounding bytes survive and read-only violations fail.
+      Final full-suite evidence attaches to `tests/eval/results/tasks/T3a.4.json` with AC-18 linked to the regeneration journey.
+      Local Linux execution does not establish real Windows/macOS execution.
   - [ ] T3a.5 Build document reference checks
   - [ ] T3a.6 Build and prove the standalone checker in a clean checkout
   - [ ] T3a.7 Write the maintenance reference
