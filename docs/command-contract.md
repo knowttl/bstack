@@ -178,7 +178,36 @@ Changed check commands require successful captures of both declarations.
 Missing, failed, unavailable, skipped or stale captures cannot pass.
 Attaching or replacing execution references does not alter the substantive review fingerprint.
 Keep assessment execution records outside leaf-check product scopes so writing capture references cannot invalidate the leaf capture.
-This validates local captures only; generated-fact freshness, running a prior checker implementation and portable standalone execution remain later tasks.
+This validates local captures only; running a prior checker implementation and portable standalone execution remain later tasks.
+
+## Generated facts
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --check --json
+node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --json
+```
+
+Both forms load the project contract, with the same optional `--contract` override as `contract validate`.
+Each registered generator's unique `id` is its marker ID, `outputPaths` names its documents, and `inputScopes` names its authoritative inputs.
+Every output document must already contain exactly one corresponding section between `<!-- bstack:generated <id> -->` and `<!-- bstack:end -->`.
+IDs used as markers are single tokens without whitespace or angle brackets.
+Duplicate, nested, malformed and unmatched markers in those documents fail before commands execute.
+The child command's stdout is the exact UTF-8 body between markers, including any leading or trailing newlines; no whitespace normalization occurs.
+The same output fills that generator's section in each declared document.
+Nonzero exits, unavailable tools, timeouts, cancellation, invalid UTF-8 and truncated output cannot establish freshness.
+
+`--check` compares section bytes and fails with `stale-generated-section` for each stale section.
+Before and after each generator, including its version probe, the command snapshots project file bytes, modes, directories and link targets, including ignored files but excluding Git metadata.
+Changed project state fails the generator's read-only contract in either form; the command does not undo the generator's changes.
+This detects changes surviving execution, rather than providing an operating-system sandbox or proving the generator reads only its declared inputs.
+
+Without `--check`, complete proposed documents render only to scratch.
+The result names `generated-proposals.json` and includes each changed document's original hash, proposed hash, complete replacement payload and exact diff.
+Surrounding document bytes and marker comments remain unchanged.
+These proposals do not authorize writes or select findings.
+Bind chosen proposals to selected findings in a reviewed change set, review `apply --plan <file> --dry-run`, then use `apply --plan <file>`.
+The existing protected apply contract still enforces finding selection, scope, original hashes, complete proposed bytes and the reviewed digest.
+No separate regeneration write path bypasses those protections.
 Human summaries and JSON results report structural proof limits.
 
 ## Measure and overlap
