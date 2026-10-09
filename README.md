@@ -163,6 +163,8 @@ node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> -
 node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base empty --json
 npm test -- --task T3a.1
 npm test -- --task T3a.2
+node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <target> --base <ref> --assessment <assessment.json> --contract .bstack/project.json --json
+npm test -- --task T3a.3
 ```
 
 `--contract` defaults to `.bstack/project.json` and accepts another repo-relative JSON contract path.
@@ -171,6 +173,14 @@ Collection resolves the base, includes committed, staged, unstaged and new chang
 It returns candidate documents, unmapped paths and a scratch assessment path without changing the target.
 Missing bases block collection; shallow history reports the required fetch commands.
 The skeleton still needs semantic assessment and review; collection does not establish readiness.
+Fill every candidate document and unmapped-path assessment with the changed behaviour, changed paths, source citations and a specific impact reason.
+An `updated` result also names the actual before/after definition or rule excerpts; cosmetic changes cannot prove maintenance.
+The [assessment validation contract](docs/command-contract.md#assessment-validation) documents review binding, initial foundation provenance, prior coverage and acceptance decisions.
+Validation returns `data.fingerprint` even when review is stale.
+Have the selected reviewer assess the substantive claims against the diff, then record that fingerprint in the assessment and validate again.
+Attach `run-checks` captures as execution entries containing `runId` and the caller-relative `plan` path.
+Required checks must match both previous and proposed policy; unresolved decisions remain blocked even when those checks pass.
+Structural validation cannot prove semantic correctness or authenticate an owner's approval.
 
 Capture a reviewed check plan with acceptance sources and input scopes:
 
