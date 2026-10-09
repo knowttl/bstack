@@ -37,7 +37,7 @@ function nodeCommand(args, extra = {}) {
 
 test('child commands preserve literal arguments and capture version and both output streams', async t => {
   const directory = await sandbox(t)
-  const args = ['spaces here', '日本語', '$HOME', '$(touch injected)', '; touch injected', '"quoted"', '%PATH%', '!PATH!', '&echo wrong']
+  const args = ['spaces here', '日本語', '$HOME', '$(touch injected)', '; touch injected', '"quoted"', "'leaf'", 'le"af"', '%PATH%', '!PATH!', '&echo wrong']
   const result = await invoke(directory, 'run', { command: nodeCommand(['-e',
     'console.log(JSON.stringify(process.argv.slice(1))); console.error("diagnostic")', ...args]) })
   assert.equal(result.code, 0)
@@ -54,7 +54,7 @@ test('child commands preserve literal arguments and capture version and both out
 
 test('direct version probes preserve percent and exclamation argument literals', async t => {
   const directory = await sandbox(t)
-  const args = ['%PATH%', '!PATH!', 'prefix%PATH%"suffix', 'prefix!PATH!suffix']
+  const args = ['%PATH%', '!PATH!', 'prefix%PATH%"suffix', 'prefix!PATH!suffix', "'leaf'", 'le"af"']
   const commandArgs = ['-e', 'console.log(JSON.stringify(process.argv.slice(1)))', ...args]
   const result = await invoke(directory, 'run', { command: nodeCommand(commandArgs, { versionArgs: commandArgs }) })
   assert.equal(result.code, 0)

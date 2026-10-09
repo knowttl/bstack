@@ -91,8 +91,10 @@ Every selected path must resolve to a string command in the complete proposed by
 Unmarked edits, other package scripts, other CI commands and unrelated configuration fields pass through the ordinary protected-write validation unchanged.
 The plan digest binds these selections alongside the complete proposed bytes.
 Selected commands use literal arguments and fail-fast top-level `&&` chains; line breaks between commands are allowed only after `&&`.
+Tokens are nonempty unquoted words or whole double-quoted literals, separated by whitespace.
+Single quotes anywhere, mixed quoted/unquoted tokens and adjacent quoted fragments are unsupported in executable and argument positions.
 Backslashes and shell escaping are unsupported, including inside quoted arguments; use forward-slash paths and quotes for literal spaces.
-Percent and exclamation characters are unsupported in every script token, including single quotes, double quotes and mixed quoting, because Windows can expand environment variables despite quotes.
+Percent and exclamation characters are unsupported in every script token, including double-quoted literals, because Windows can expand environment variables despite quotes.
 Unquoted wildcard and bracket patterns, tilde expansion, variable and command substitution, brace expansion, extglobs and caret escaping are unsupported in executable and argument positions.
 Quoted wildcard, bracket and tilde characters remain literal, as do direct child-command argument arrays, which run without a shell.
 Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted arguments.
