@@ -49,7 +49,7 @@ export async function run(options) {
   }
   const removed = new Set(inventory.changes.filter(change => change.status === 'D' || change.oldPath).map(change => change.oldPath ?? change.path))
   const proposed = await loadContract(target, options.contract, removed)
-  const previous = await previousPolicy(target.root, inventory.base, proposed.path)
+  const previous = await previousPolicy(target.root, inventory.base, proposed.path, inventory.paths)
   const contracts = [proposed.contract, ...(previous ? [previous.contract] : [])]
   const mapping = mapInventory(inventory, contracts)
   let assessment
