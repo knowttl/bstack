@@ -46,11 +46,16 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     }
   }
   await checkAssessment()
+  const coverageLimits = new Map()
+  function retainCoverageLimits(result) {
+    for (const limit of result.data?.coverageLimits ?? []) coverageLimits.set(canonicalJSON(limit), limit)
+    return { ...result, data: { ...result.data, coverageLimits: [...coverageLimits.values()] } }
+  }
   async function checkStructure() {
     for (const policy of preflight.data.policies) {
-      const docs = await checkDocuments({ ...options, coveragePolicy: policy })
+      const docs = retainCoverageLimits(await checkDocuments({ ...options, coveragePolicy: policy }))
       if (docs.status !== 'passed') return docs
-      const facts = await checkGeneratedFacts({ ...options, coveragePolicy: policy })
+      const facts = retainCoverageLimits(await checkGeneratedFacts({ ...options, coveragePolicy: policy }))
       if (facts.status !== 'passed') return facts
     }
     return null
@@ -70,7 +75,7 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     await writeFile(path, bytes.stdout, { flag: 'wx' })
     const checker = await import(pathToFileURL(path).href)
     if (typeof checker.runChecker !== 'function') blocked('previous-checker-incompatible', 'The comparison checker does not support clean-checkout validation.', 'Record an explicit migration decision and coverage for the prior policy.')
-    previous = await checker.runChecker(options, { comparisonPolicy: true })
+    previous = retainCoverageLimits(await checker.runChecker(options, { comparisonPolicy: true }))
     if (previous.status !== 'passed') return { ...previous, data: { ...previous.data, phase: 'previous-policy' } }
   }
   const startedAt = new Date().toISOString()
@@ -96,6 +101,7 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     process.removeListener('SIGINT', cancel)
     process.removeListener('SIGTERM', cancel)
   }
+  validated = retainCoverageLimits(validated)
   const status = currentResults.some(record => record.execution.status === 'failed') ? 'failed' : validated.status
   const data = { ...validated.data, phase: 'result-validation', startedAt, completedAt: new Date().toISOString(),
     sourceRevision: readGit(target.root, ['rev-parse', 'HEAD']).stdout.trim(), comparison: {
