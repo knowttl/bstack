@@ -78,6 +78,7 @@ The owning repo's Git inventory reports submodules at their gitlink path, includ
 `data.paths` is the sorted unique union, including new and deleted paths.
 Collection permits absent document, rule and acceptance-source pointers only when the live Git comparison records their deletion or rename.
 Git-proven removed spellings remain collectable during case-only renames; ordinary source pointers still require exact case.
+Removed source paths retain concrete lexical validation but do not require their current replacement to be a file.
 Those paths remain in the inventory and affected documents remain candidates; `contract validate` still requires every source pointer to exist.
 `data.mappings` records matching scope, document and rule IDs for each path.
 `data.candidateDocuments` is the union of scoped documents and changed document paths themselves.

@@ -74,8 +74,8 @@ async function exactPathCase(root, input, allowMissing = false) {
 async function sourcePointer(root, input, removed) {
   const glob = pathGlob(input)
   if (/[*?]/.test(glob.pattern)) reject('invalid-pointer', input, 'Source pointers must be concrete paths.')
-  const path = await resolveFilePath(root, input)
   if (removed) return
+  const path = await resolveFilePath(root, input)
   await exactPathCase(root, input)
   if (!(await stat(path)).isFile()) reject('missing-path', input, 'Source pointers must identify existing files.')
 }
