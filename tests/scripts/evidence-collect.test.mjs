@@ -118,9 +118,9 @@ for (const source of ['staged', 'unstaged']) {
 
 test('globstar includes zero segments and path case stays distinct', async t => {
   const f = await maintenanceRepo(t)
-  const base = commit(f.repo)
   f.contract.scopes[0].paths = ['src/**/*.mjs']
   await f.save()
+  const base = commit(f.repo)
   await writeFile(join(f.repo, 'src/direct.mjs'), '')
   await writeFile(join(f.repo, 'src/upper.MJS'), '')
   const result = await collect(t, f, base)

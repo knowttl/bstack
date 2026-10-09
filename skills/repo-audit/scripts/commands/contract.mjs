@@ -12,12 +12,26 @@ function reject(code, path, message, status = 'failed') {
   throw new CommandError(status, [{ code, path, message, fix: 'Review the version 1 project contract and its authoritative source pointers.' }])
 }
 
+export async function packageManifestPath(root, cwd, name) {
+  let directory = cwd
+  if (name === 'npm' || name === 'yarn') {
+    while (directory !== root) {
+      const entries = await readdir(directory)
+      if (entries.includes('package.json') || (name === 'npm' && entries.includes('node_modules'))) break
+      directory = dirname(directory)
+    }
+  }
+  return join(directory, 'package.json')
+}
+
 // Native script aliases are inspected without execution; opaque programs remain reviewed leaf checks.
-async function leafCommand(root, command, stack = []) {
+export async function leafCommand(root, command, stack = [], discovery = false) {
   const cwd = await resolvePath(root, command.cwd)
   await exactPathCase(root, command.cwd)
   if (!(await stat(cwd)).isDirectory()) reject('invalid-cwd', command.cwd, 'Child command cwd must be an existing directory.')
   if (command.timeoutMs !== undefined && (!Number.isSafeInteger(command.timeoutMs) || command.timeoutMs <= 0)) reject('invalid-command', command.cwd, 'Timeout must be a positive safe integer.')
+  const commands = []
+  const configPaths = []
   async function visit(executable, args) {
     const names = [executable, ...args].map(word => word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, ''))
     const [name] = names
@@ -26,38 +40,44 @@ async function leafCommand(root, command, stack = []) {
       reject('recursive-check', command.cwd, 'Leaf commands cannot invoke aggregate maintenance validation.')
     }
     if (isIndirectExecutable(executable)) reject('unsupported-leaf', executable, 'Shell programs and command wrappers cannot declare a verifiable leaf command.')
-    if (!['npm', 'pnpm', 'yarn'].includes(name)) return
+    if (!['npm', 'pnpm', 'yarn'].includes(name)) {
+      commands.push({ executable, args, cwd: relative(root, cwd) || '.' })
+      return
+    }
     let script
-    if (args.length === 1 && ['test', 'start', 'stop', 'restart'].includes(args[0])) script = args[0]
-    else if (args[0] === 'run' && args.length === 2) script = args[1]
+    if ((args.length === 1 || discovery) && ['test', 'start', 'stop', 'restart'].includes(args[0])) script = args[0]
+    else if (args[0] === 'run' && (args.length === 2 || discovery && args.length >= 2)) script = args[1]
     else if (args.length === 1 && ['--version', '-v'].includes(args[0])) return
     else reject('unsupported-leaf', executable, 'Package script leaves support run <script>, lifecycle aliases and --version only.')
-    let packageDirectory = cwd
-    if (name === 'npm' || name === 'yarn') {
-      while (packageDirectory !== root) {
-        const entries = await readdir(packageDirectory)
-        if (entries.includes('package.json') || (name === 'npm' && entries.includes('node_modules'))) break
-        packageDirectory = dirname(packageDirectory)
-      }
-    }
-    const path = join(packageDirectory, 'package.json')
+    const path = await packageManifestPath(root, cwd, name)
+    const packageDirectory = dirname(path)
+    configPaths.push(path)
     const scripts = inspectJSON(await readFile(path, 'utf8')).value.scripts ?? {}
     if (typeof scripts[script] !== 'string') reject('missing-script', path, `Missing package script: ${script}`)
     const key = `${path}:${script}`
     if (stack.includes(key)) reject('recursive-check', path, 'Package script graph contains a cycle.')
     for (const id of [`pre${script}`, script, `post${script}`]) {
       if (scripts[id] === undefined) continue
-      const words = integrationCommand(scripts[id], path)
+      let words
+      try { words = integrationCommand(scripts[id], path) } catch (error) {
+        if (!discovery) throw error
+        continue
+      }
       let start = 0
       for (let end = 0; end <= words.length; end++) {
         if (end !== words.length && words[end] !== '&&') continue
-        await leafCommand(root, { ...command, cwd: relative(root, packageDirectory) || '.', executable: words[start], args: words.slice(start + 1, end), versionArgs: [] }, [...stack, key])
+        const resolved = await leafCommand(root, { ...command, cwd: relative(root, packageDirectory) || '.', executable: words[start], args: words.slice(start + 1, end), versionArgs: [] }, [...stack, key], discovery)
+        commands.push(...resolved.commands)
+        configPaths.push(...resolved.configPaths)
         start = end + 1
       }
     }
   }
-  await visit(command.executable, command.args)
-  if (command.versionArgs.length) await visit(command.executable, command.versionArgs)
+  for (const args of [command.args, ...(command.versionArgs.length ? [command.versionArgs] : [])]) {
+    if (discovery) await visit(command.executable, args).catch(() => {})
+    else await visit(command.executable, args)
+  }
+  return { commands, configPaths }
 }
 
 async function exactPathCase(root, input, allowMissing = false) {
