@@ -1,0 +1,88 @@
+{
+  "title": "Project maintenance contract version 1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "documents", "scopes", "rules", "checks", "generators", "acceptanceSources"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "documents": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "path"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "path": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "scopes": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "paths", "documentIds", "ruleIds"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "paths": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "documentIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "ruleIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "rules": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "path", "pointer", "checkIds"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "path": { "type": "string", "minLength": 1 },
+          "pointer": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "checkIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "checks": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "command", "inputScopes"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "command": {
+            "type": "object", "additionalProperties": false, "required": ["executable", "args", "cwd", "versionArgs"],
+            "properties": {
+              "executable": { "type": "string", "minLength": 1, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+              "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+              "cwd": { "type": "string", "minLength": 1 },
+              "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+              "timeoutMs": { "type": "integer" }
+            }
+          },
+          "inputScopes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "generators": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "command", "inputScopes", "outputPaths"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "command": {
+            "type": "object", "additionalProperties": false, "required": ["executable", "args", "cwd", "versionArgs"],
+            "properties": {
+              "executable": { "type": "string", "minLength": 1, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+              "args": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+              "cwd": { "type": "string", "minLength": 1 },
+              "versionArgs": { "type": "array", "items": { "type": "string", "pattern": "^[^\\u0000]*$" } },
+              "timeoutMs": { "type": "integer" }
+            }
+          },
+          "inputScopes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "outputPaths": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "acceptanceSources": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "path", "pointer"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "path": { "type": "string", "minLength": 1 },
+          "pointer": { "type": "string", "minLength": 1, "pattern": "\\S" }
+        }
+      }
+    }
+  }
+}
