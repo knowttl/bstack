@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
-import { readFile, stat, realpath } from 'node:fs/promises'
+import { readFile, stat, realpath, lstat, readlink } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { resolvePath } from './paths.mjs'
 import { readGit, repoFiles } from './discovery.mjs'
 
@@ -21,7 +22,13 @@ export async function fingerprint(target, { baseCommit, paths, inputs, evidenceP
     .filter(entry => entry.startsWith('160000 ')).map(entry => [entry.slice(entry.indexOf('\t') + 1), entry.split(' ')[1]]))
   const files = []
   for (const path of [...new Set(paths)].sort()) {
-    const resolved = await resolvePath(root, path)
+    const resolved = await resolvePath(root, path, undefined, true)
+    let linkTarget = null
+    try {
+      if ((await lstat(resolve(root, path))).isSymbolicLink()) linkTarget = await readlink(resolve(root, path))
+    } catch (error) {
+      if (!['ENOENT', 'ENOTDIR'].includes(error.code)) throw error
+    }
     try {
       const info = await stat(resolved)
       let contentHash = null
@@ -30,14 +37,14 @@ export async function fingerprint(target, { baseCommit, paths, inputs, evidenceP
         const head = readGit(resolved, ['rev-parse', '--show-toplevel'])
         const initialized = head.status === 0 && await realpath(head.stdout.trim()) === resolved
         const contents = initialized ? await fingerprint({ root: resolved }, { baseCommit: readGit(resolved, ['rev-parse', 'HEAD']).stdout.trim(),
-          paths: await repoFiles(resolved), inputs: {} }) : null
+          paths: [...await repoFiles(resolved), ...readGit(resolved, ['ls-files', '-z']).stdout.split('\0').filter(Boolean)], inputs: {} }) : null
         contentHash = hashBytes(canonicalJSON({ gitlink: gitlinks.get(path), contents: contents?.fingerprint ?? null }))
       }
-      files.push({ path, present: true, mode: info.mode,
+      files.push({ path, present: true, mode: info.mode, linkTarget,
         contentHash })
     } catch (error) {
       if (!['ENOENT', 'ENOTDIR'].includes(error.code)) throw error
-      files.push({ path, present: false, mode: null, contentHash: null })
+      files.push({ path, present: false, mode: null, linkTarget, contentHash: null })
     }
   }
   // Only the explicitly named derived fields are omitted, never arbitrary nested data.

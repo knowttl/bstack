@@ -27,12 +27,15 @@ export async function checkCommandPaths(target, checks, paths = []) {
         resolved.configPaths.push(...aliases.configPaths)
       } catch {}
     }
-    const named = resolved.commands.flatMap(command => {
+    const named = (await Promise.all(resolved.commands.map(async command => {
+      const cwd = await resolvePath(target.root, command.cwd)
       const executable = command.executable.includes('/') || command.executable.includes('\\') ? [command.executable] : []
       const arguments_ = [...command.args, ...(command.versionArgs ?? [])].map(arg => arg.startsWith('-') ? arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : '' : arg)
-      return [...executable, ...arguments_].filter(Boolean).map(input => resolve(target.root, command.cwd, input))
-    })
-    return [check, [...new Set([...resolved.configPaths, ...named]
+      return [...executable, ...arguments_].filter(Boolean).flatMap(input => [resolve(target.root, command.cwd, input), resolve(cwd, input)])
+    }))).flat()
+    const internal = [...resolved.configPaths, ...named].filter(path => isInside(target.root, path))
+    const actual = await Promise.all(internal.map(path => resolvePath(target.root, relative(target.root, path) || '.', undefined, true)))
+    return [check, [...new Set([...internal, ...actual]
       .filter(path => isInside(target.root, path)).map(path => relative(target.root, path).split('\\').join('/'))
       .flatMap(path => [...known].filter(file => file === path || file.startsWith(path ? `${path}/` : ''))))]]
   })))
