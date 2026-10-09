@@ -27,16 +27,32 @@ async function schema(name) {
 }
 
 // This conservative normalization rejects cosmetic proof, not semantic disagreement.
-function meaningful(text, excerpt) {
+function meaningful(text, excerpt, path) {
   const screened = text.split('')
   const literals = new Set()
+  const hashLanguages = /^(?:yaml|yml|python|py|shell|sh|bash|zsh)$/i
+  const sourceLanguage = path?.split('.').at(-1) ?? ''
+  let language = sourceLanguage
+  let fence = null
   const erase = (start, end) => { for (let i = start; i < end; i++) if (!/[\r\n]/.test(text[i])) screened[i] = ' ' }
   function scan(start, expression = false) {
     let braces = 0
     for (let i = start; i < text.length;) {
+      if (!expression && (i === 0 || text[i - 1] === '\n')) {
+        const delimiter = text.slice(i).match(/^[ \t]*(`{3,}|~{3,})([^\r\n]*)/)
+        if (delimiter && (!fence || (delimiter[1][0] === fence[0] && delimiter[1].length >= fence.length && !delimiter[2].trim()))) {
+          language = fence ? sourceLanguage : delimiter[2].trim().split(/\s+/)[0]
+          fence = fence ? null : delimiter[1]
+          i += delimiter[0].length
+          continue
+        }
+      }
       const url = text.slice(i).match(/^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'`<>]*/)
       if (url) { i += url[0].length; continue }
-      const comment = text.startsWith('<!--', i) ? ['-->', 4] : text.startsWith('/*', i) ? ['*/', 2] : text.startsWith('//', i) ? ['\n', 2] : null
+      const hashComment = text[i] === '#' && hashLanguages.test(language) &&
+        (/^(?:python|py)$/i.test(language) || i === 0 || /\s/.test(text[i - 1]) ||
+          (/^(?:shell|sh|bash|zsh)$/i.test(language) && /[;&|()]/.test(text[i - 1])))
+      const comment = text.startsWith('<!--', i) ? ['-->', 4] : text.startsWith('/*', i) ? ['*/', 2] : text.startsWith('//', i) ? ['\n', 2] : hashComment ? ['\n', 1] : null
       if (comment) {
         const end = text.indexOf(comment[0], i + comment[1])
         const next = end < 0 ? text.length : end + comment[0].length
@@ -146,10 +162,10 @@ export async function run(options) {
       const before = baseText(target.root, inventory.base, entry.path)
       const after = await readFile(await resolvePath(target.root, entry.path), 'utf8').catch(() => '')
       const delta = value.delta
-      const oldDocument = meaningful(before)
-      const newDocument = meaningful(after)
-      const oldExcerpt = delta && meaningful(before, delta.before)
-      const newExcerpt = delta && meaningful(after, delta.after)
+      const oldDocument = meaningful(before, undefined, entry.path)
+      const newDocument = meaningful(after, undefined, entry.path)
+      const oldExcerpt = delta && meaningful(before, delta.before, entry.path)
+      const newExcerpt = delta && meaningful(after, delta.after, entry.path)
       if (!document || !delta || oldDocument === newDocument || oldExcerpt === newExcerpt ||
           (delta.before && !oldExcerpt) || (delta.after && !newExcerpt) ||
           !before.includes(delta.before) || !after.includes(delta.after) ||
