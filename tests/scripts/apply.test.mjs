@@ -122,6 +122,20 @@ for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'as
 }
 
 for (const [value, exit] of [
+  ['node .bstack/bin/bstack-*.mjs', 1],
+  ['.bstack/bin/bstack-*.mjs', 1],
+  ['node check.mjs file?.mjs', 1],
+  ['node check.mjs [ab].mjs', 1],
+  ['node check.mjs file].mjs', 1],
+  ['node check.mjs ~', 1],
+  ['node check.mjs %ENTRY%', 1],
+  ['node check.mjs ^entry', 1],
+  ['node check.mjs ${ENTRY}', 1],
+  ['node check.mjs {a,b}', 1],
+  ['node check.mjs @(entry)', 1],
+  ["node check.mjs '*.mjs' '?' '[ab]' '~' '${ENTRY}' '{a,b}' '@(entry)'", 0],
+  ['node check.mjs "*.mjs" "?" "[ab]" "~" "{a,b}" "@(entry)"', 0],
+  ['"tools/bstack-*.mjs" "literal argument"', 0],
   ['node .bstack\\bin\\bstack-check.mjs', 1],
   ['node ".bstack\\bin\\bstack-check.mjs"', 1],
   ["node '.bstack\\bin\\bstack-check.mjs'", 1],

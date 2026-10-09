@@ -271,3 +271,39 @@ for (const executable of ['npm', 'pnpm', 'yarn']) {
     assert.equal(run('contract validate', f.repo).problems[0]?.code, 'ignored-check-failure')
   })
 }
+
+for (const collection of ['checks', 'generators']) {
+  for (const field of ['args', 'versionArgs']) {
+    for (const hook of ['precheck', 'check', 'postcheck']) {
+      for (const script of ['node .bstack/bin/bstack-*.mjs', '.bstack/bin/bstack-*.mjs']) {
+        test(`unquoted expansion in ${collection} ${field} ${hook}: ${script}`, async t => {
+          const f = await maintenanceRepo(t)
+          await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: 'node --version', [hook]: script } }))
+          f.contract[collection][0].command = {
+            executable: 'npm', args: ['--version'], cwd: '.', versionArgs: ['--version'], [field]: ['run', 'check']
+          }
+          await f.save()
+          assert.equal(run('contract validate', f.repo).problems[0]?.code, 'ignored-check-failure')
+        })
+      }
+    }
+    test(`direct literal expansions in ${collection} ${field} validate`, async t => {
+      const f = await maintenanceRepo(t)
+      f.contract[collection][0].command[field] = ['tools/lint.mjs', '*.mjs', '?', '[ab]', '~', '%NAME%', '^']
+      await f.save()
+      assert.equal(run('contract validate', f.repo).exit, 0)
+    })
+  }
+}
+
+for (const executable of ['npm', 'pnpm', 'yarn']) {
+  test(`${executable} nested script rejects unquoted expansion`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: {
+      check: `${executable} run leaf`, leaf: 'node .bstack/bin/bstack-*.mjs'
+    } }))
+    f.contract.checks[0].command = { executable, args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] }
+    await f.save()
+    assert.equal(run('contract validate', f.repo).problems[0]?.code, 'ignored-check-failure')
+  })
+}

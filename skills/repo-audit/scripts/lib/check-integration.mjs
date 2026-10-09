@@ -42,7 +42,7 @@ export function integrationCommand(text, path) {
       if (words.at(-1) !== '&&') reject(path)
       continue
     }
-    if ('#|;&!<>(){}'.includes(char)) reject(path)
+    if ('#|;&!<>(){}*?[]~%^'.includes(char)) reject(path)
     if (/\s/.test(char)) flush()
     else word += char
   }
