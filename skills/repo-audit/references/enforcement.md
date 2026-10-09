@@ -100,9 +100,10 @@ Double-quoted redirection characters and `@` remain literal, as do unquoted `@` 
 Single quotes anywhere, mixed quoted/unquoted tokens and adjacent quoted fragments are unsupported in executable and argument positions.
 Backslashes and shell escaping are unsupported, including inside quoted arguments; use forward-slash paths and quotes for literal spaces.
 Percent and exclamation characters are unsupported in every script token, including double-quoted literals, because Windows can expand environment variables despite quotes.
+Dollar signs and backticks are unsupported in every token, including double-quoted literals.
 Unquoted wildcard and bracket patterns, tilde expansion, variable and command substitution, brace expansion, extglobs and caret escaping are unsupported in executable and argument positions.
 Quoted wildcard, bracket and tilde characters remain literal, as do direct child-command argument arrays, which run without a shell.
-Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted arguments.
+Every decoded word is rejected if it contains `|`, `&`, `;` or a newline, including quoted arguments.
 Quotes do not make shell control syntax acceptable as an argument.
 Failure-masking operators (`||`, pipelines, separators, background execution and negation), unquoted shell comments, assignment prefixes, shell dispatch and substitutions fail with `ignored-check-failure` before any writes.
 Shell dispatch includes `command`, `builtin`, shell executables, executable paths to those programs and their `.exe`/`.cmd`/`.bat` forms in every `&&` segment.
