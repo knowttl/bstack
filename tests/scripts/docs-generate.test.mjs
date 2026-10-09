@@ -158,6 +158,14 @@ test('aliased destinations combine sections and replace each generator section o
   assert.equal(checked.data.sections.length, 2)
 })
 
+test('an independent project generator accepts docs generate arguments', async t => {
+  const f = await setup(t, "process.stdout.write('\\nold\\n')")
+  f.contract.generators[0].command.args = ['render.mjs', 'docs', 'generate']
+  f.contract.generators[0].command.versionArgs = ['render.mjs', 'docs', 'generate']
+  await f.save()
+  assert.equal(run('docs generate', f.repo, f.env, ['--check']).exit, 0)
+})
+
 test('recursive docs generation is rejected as a child command', async t => {
   const f = await setup(t)
   f.contract.generators[0].command.args = ['repo-audit.mjs', 'docs', 'generate']
