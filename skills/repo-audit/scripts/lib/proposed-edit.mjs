@@ -2,6 +2,7 @@ import { extname } from 'node:path'
 import { validateData } from './schema.mjs'
 import { CommandError } from './result.mjs'
 import { inspectJSON } from './json.mjs'
+import { isMarkdownLinkLine } from './document-references.mjs'
 
 function reject(code, message) {
   throw new CommandError('failed', [{ code, message, fix: 'Review a supported, unambiguous mechanical edit and its complete proposed bytes.' }])
@@ -73,7 +74,7 @@ export function proposedEdit(edit, original) {
     const { sourcePath, destinationPath, rule, link, destinationAnchor } = edit.payload
     if (sourcePath === destinationPath || ![sourcePath, destinationPath].includes(edit.path) ||
         ![sourcePath, destinationPath].every(path => extname(path).toLowerCase() === '.md')) reject('invalid-rule-move', 'Rule moves require two distinct Markdown paths.')
-    if (!rule.endsWith('\n') || !/^\[[^\]\r\n]+\]\([^\r\n]+\)\r?\n$/.test(link)) reject('invalid-rule-move', 'Supply a complete newline-terminated rule block and an exact Markdown link line.')
+    if (!rule.endsWith('\n') || !isMarkdownLinkLine(link)) reject('invalid-rule-move', 'Supply a complete newline-terminated rule block and an exact Markdown link line.')
     if (edit.path === sourcePath) {
       if (original === null) reject('missing-original', 'The source rule must exist.')
       const position = original.indexOf(rule)

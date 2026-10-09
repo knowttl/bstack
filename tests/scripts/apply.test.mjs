@@ -203,6 +203,60 @@ test('move-rule resolves rule fragments against the staged destination', async t
   assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
 })
 
+for (const [link, exit] of [
+  [String.raw`[A \] B](CONTRIBUTING.md#one-source)` + '\n', 0],
+  [String.raw`[A \\\] B](CONTRIBUTING.md#one-source)` + '\n', 0],
+  [String.raw`[A \\](CONTRIBUTING.md#one-source)` + '\r\n', 0],
+  [String.raw`[A \\] B](CONTRIBUTING.md#one-source)` + '\n', 1],
+  ['[One source](CONTRIBUTING.md#one-source)', 1],
+  ['[One source](CONTRIBUTING.md#one-source)\n\n', 1],
+  ['[One source](CONTRIBUTING.md#one-source)\n[Second](CONTRIBUTING.md)\n', 1],
+  ['[One source](CONTRIBUTING.md#one-source) trailing\n', 1],
+  ['![One source](CONTRIBUTING.md#one-source)\n', 1],
+  ['`[One source](CONTRIBUTING.md#one-source)`\n', 1]
+]) {
+  test(`move-rule validates the exact escaped-label replacement with exit ${exit}: ${link}`, async t => {
+    const context = await ruleMove(t)
+    for (const edit of context.plan.edits) edit.payload = { ...edit.payload, link }
+    context.plan.edits[0].proposedContent = '# Design\n' + link
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+    await save(context)
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+    if (exit) {
+      assert.equal(result.problems[0].code, 'invalid-rule-move')
+      assert.deepEqual(await snapshot(context.repo), before)
+    } else {
+      assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), context.plan.edits[0].proposedContent)
+      assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+    }
+  })
+}
+
+for (const reference of ['[Guide][`b`]', '[`b`][]', '[`b`]', '![Guide][`b`]', '[Guide](`missing`.md)']) {
+  for (const path of ['README.md', 'CONTRIBUTING.md']) {
+    test(`move-rule preserves opaque references in staged ${path}: ${reference}`, async t => {
+      const references = '[`a`]: https://example.invalid\n[`b`]: missing.md\n\n' + reference + '\n'
+      const rule = '## One source\n\n' + (path === 'CONTRIBUTING.md' ? references : 'Move this rule.\n')
+      const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+      const source = context.plan.edits[0]
+      const retained = path === 'README.md' ? references + '\n' : ''
+      const original = retained + '# Design\n' + rule
+      await writeFile(join(context.repo, source.path), original)
+      source.originalHash = hash(original)
+      source.proposedContent = retained + source.proposedContent
+      source.proposedHash = hash(source.proposedContent)
+      await save(context)
+      const before = await snapshot(context.repo)
+      const result = execute(context)
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.equal(result.problems[0].code, 'broken-local-link')
+      assert.deepEqual(await snapshot(context.repo), before)
+    })
+  }
+}
+
 for (const [heading, fragment, wrongFragment] of [
   ['## `Array<T>`', 'arrayt', 'array'],
   ['`Array<T>`\n---', 'arrayt', 'array'],

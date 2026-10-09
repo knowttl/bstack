@@ -750,6 +750,70 @@ for (const [headerTail, separatorTail, rowTail] of [[' \t', '', ''], ['', ' \t',
   }
 }
 
+for (const reference of ['[Guide][`b`]', '[`b`][]', '[`b`]', '![Guide][`b`]']) {
+  test(`opaque reference identities retain the broken destination: ${reference}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), '[`a`]: https://example.invalid\n[`b`]: missing.md\n\n' + reference + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'broken-local-link')
+    assert.match(result.problems[0].message, /missing\.md$/)
+  })
+}
+
+for (const reference of ['[Guide](`missing`.md)', '[Guide][target]\n\n[target]: `missing`.md']) {
+  test(`opaque reference destinations retain code-like bytes: ${reference}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), reference + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'broken-local-link')
+    await writeFile(join(f.repo, '`missing`.md'), '# Guide\n')
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+for (const heading of ['# [Guide][`target`]', '[Guide][`target`]\n---', '> ## [Guide][`target`]']) {
+  test(`opaque reference identities reconstruct linked headings: ${heading}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), heading + '\n\n[`other`]: https://example.invalid\n[`target`]: https://example.invalid\n\n[Heading](#guide)\n')
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+for (const [format, text, exit, code] of [
+  ['markdown-bold', '**Order**: `request`\n', 0, undefined],
+  ['markdown-bold', '**`Order`**: A request.\n', 0, undefined],
+  ['markdown-bold', '**`a`**: First.\n\n**`b`**: Second.\n', 0, undefined],
+  ['markdown-bold', '**`Order`**: `request`\n\n**`order`**: Another.\n', 1, 'duplicate-term'],
+  ['markdown-bold', '**Order**: \n', 1, 'invalid-glossary'],
+  ['markdown-bold', '**Order**: `request`\n\nExample: `\n**Order**: Sample.\n`\n', 0, undefined],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| `Order` | `request` |\n', 0, undefined],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| `a` | First. |\n| `b` | Second. |\n', 0, undefined],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| `Order` | `request` |\n| `order` | Another. |\n', 1, 'duplicate-term'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | |\n', 1, 'invalid-glossary'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| `Order` | `request` |\n\n```md\n| Term | Definition |\n| --- | --- |\n| `Order` | Sample. |\n```\n', 0, undefined]
+]) {
+  test(`glossary source fields preserve ${format} with exit ${exit}: ${text}`, async t => {
+    const f = await glossary(t, text, format)
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+    assert.equal(result.problems[0]?.code, code)
+  })
+}
+
+for (const [context, exit] of [['ordering', 1], ['billing', 0]]) {
+  test(`glossary source fields compare code-bearing terms in ${context}`, async t => {
+    const f = await glossary(t, '**`Order`**: `request`\n')
+    f.contract.documents.push({ id: 'other-terms', path: 'OTHER.md', glossary: { context, format: 'markdown-table' } })
+    await writeFile(join(f.repo, 'OTHER.md'), '| Term | Definition |\n| --- | --- |\n| `order` | A request. |\n')
+    await f.save()
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+    assert.equal(result.problems.some(problem => problem.code === 'duplicate-term'), exit === 1)
+  })
+}
+
 for (const [slashes, escapedExit] of [[0, 1], [1, 0], [2, 1], [3, 0], [4, 1]]) {
   for (const [reference, exit] of [
     ['\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit],
