@@ -165,10 +165,11 @@ export function markdownHeadings(body) {
 }
 
 function hasNestedHeadingMarkup(text) {
+  const body = markdownBody(text)
   const prose = markdownProse(text)
   let labels = ''
   let start = 0
-  for (const link of markdownReferences(prose)) {
+  for (const link of markdownReferences(body)) {
     const end = link.start + link.label.length + (prose[link.start] === '!' ? 3 : 2)
     labels += prose.slice(start, end)
     start = link.end
@@ -179,7 +180,7 @@ function hasNestedHeadingMarkup(text) {
 export function markdownAnchors(text) {
   const anchors = new Set()
   const counts = new Map()
-  const definitions = markdownDefinitions(markdownProse(text))
+  const definitions = markdownDefinitions(markdownBody(text))
   for (const heading of markdownHeadings(markdownBody(text))) {
     if (headingEntity.test(heading.text) || hasNestedHeadingMarkup(heading.text)) continue
     let title = ''
@@ -277,7 +278,14 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
 }
 
 export function markdownLinks(text) {
-  return markdownReferences(markdownProse(text)).map(link => link.href)
+  return markdownReferences(markdownBody(text)).map(link => link.href)
+}
+
+export function isMarkdownLinkLine(text) {
+  const line = text.endsWith('\r\n') ? text.slice(0, -2) : text.endsWith('\n') ? text.slice(0, -1) : ''
+  if (!line.startsWith('[') || /[\r\n]/.test(line)) return false
+  const links = markdownReferences(line)
+  return links.length === 1 && links[0].start === 0 && links[0].end === line.length && links[0].label.length > 0
 }
 
 export async function checkLocalLink(root, source, href, documents = new Map()) {
