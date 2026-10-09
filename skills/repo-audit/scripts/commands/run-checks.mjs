@@ -1,22 +1,44 @@
 import { readFile, stat, writeFile } from 'node:fs/promises'
-import { basename, join } from 'node:path'
+import { basename, dirname, join, relative, resolve } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
-import { resolvePath } from '../lib/paths.mjs'
+import { isInside, resolvePath } from '../lib/paths.mjs'
 import { pathGlob, matchesPath } from '../lib/glob.mjs'
 import { repoFiles, readGit } from '../lib/discovery.mjs'
 import { canonicalJSON, hashBytes, fingerprint } from '../lib/fingerprint.mjs'
 import { createScratch, scratchDirectory } from '../lib/scratch.mjs'
 import { runCommand } from '../lib/run.mjs'
 
+export async function checkCommandPaths(target, checks, paths = []) {
+  const known = new Set([...paths, ...await repoFiles(target.root),
+    ...readGit(target.root, ['ls-files', '-z']).stdout.split('\0'),
+    ...readGit(target.root, ['ls-tree', '-r', '--name-only', '-z', 'HEAD']).stdout.split('\0')].filter(Boolean))
+  return new Map(checks.map(check => {
+    const command = check.command
+    const executable = command.executable.includes('/') || command.executable.includes('\\') ? [command.executable] : []
+    const name = basename(command.executable).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+    const arguments_ = [...command.args, ...command.versionArgs].map(arg => arg.startsWith('-') ? arg.includes('=') ? arg.slice(arg.indexOf('=') + 1) : '' : arg)
+    const named = [...executable, ...arguments_]
+    if (['npm', 'pnpm', 'yarn'].includes(name)) {
+      let directory = resolve(target.root, command.cwd)
+      if (name !== 'pnpm') while (directory !== target.root && isInside(target.root, directory) && !known.has(relative(target.root, join(directory, 'package.json')).split('\\').join('/'))) directory = dirname(directory)
+      named.push(join(directory, 'package.json'))
+    }
+    return [check, [...new Set(named.filter(Boolean).map(input => resolve(target.root, command.cwd, input))
+      .filter(path => isInside(target.root, path)).map(path => relative(target.root, path).split('\\').join('/'))
+      .filter(path => known.has(path)))]]
+  }))
+}
+
 export async function checkInputState(target, plan, planPath) {
   const scopes = plan.checks.flatMap(check => check.inputScopes)
   const globs = scopes.map(pathGlob)
   const files = await repoFiles(target.root)
   const declaredPaths = [...scopes.filter(scope => !/[*?]/.test(scope)), ...plan.acceptanceSources.map(source => source.path)]
-  const paths = [...declaredPaths, ...files.filter(path => globs.some(glob => matchesPath(glob, path)))]
+  const commandPaths = await checkCommandPaths(target, plan.checks)
+  const paths = [...declaredPaths, ...[...commandPaths.values()].flat(), ...files.filter(path => globs.some(glob => matchesPath(glob, path)))]
   const head = readGit(target.root, ['rev-parse', '--verify', 'HEAD'])
   let planContentHash = null
   try { planContentHash = hashBytes(await readFile(planPath)) } catch (error) {
