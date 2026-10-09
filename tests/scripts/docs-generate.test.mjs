@@ -1,7 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile, writeFile, mkdir } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, symlink } from 'node:fs/promises'
 import { join } from 'node:path'
+import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { run, snapshot } from './discovery-fixture.mjs'
 import { canonicalJSON, hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
@@ -92,6 +94,41 @@ test('multiple sections preserve surrounding bytes and use independent generator
   const result = run('docs generate', f.repo, f.env)
   assert.equal(result.exit, 0)
   assert.equal(result.data.proposals[0].proposedContent, `${original.replace('\nold\n', '\nnew\n')}<!-- bstack:generated second -->second${end}`)
+})
+
+test('plain regeneration output exposes a readable proposal file', async t => {
+  const f = await setup(t)
+  const result = spawnSync(process.execPath, [fileURLToPath(new URL('../../skills/repo-audit/scripts/repo-audit.mjs', import.meta.url)),
+    'docs', 'generate', '--repo', f.repo], { encoding: 'utf8', env: f.env })
+  assert.equal(result.status, 0, result.stderr)
+  const [status, path] = result.stdout.trim().split('\n')
+  assert.equal(status, 'docs generate: passed')
+  const { proposals } = JSON.parse(await readFile(path, 'utf8'))
+  assert.equal(proposals[0].proposedContent, original.replace('\nold\n', '\nnew\n'))
+  assert.equal(await readFile(join(f.repo, 'README.md'), 'utf8'), original)
+})
+
+test('aliased destinations combine sections and replace each generator section once', async t => {
+  const document = `${original}<!-- bstack:generated second -->old${end}`
+  const f = await setup(t, "process.stdout.write('\\nnew\\n')", document)
+  await mkdir(join(f.repo, 'docs'))
+  await symlink('../README.md', join(f.repo, 'docs/readme.md'))
+  f.contract.generators[0].outputPaths = ['README.md', 'docs/readme.md']
+  f.contract.generators.push({ ...f.contract.generators[0], id: 'second', outputPaths: ['docs/readme.md'],
+    command: { executable: 'node', args: ['-e', "process.stdout.write('second')"], cwd: '.', versionArgs: ['--version'] } })
+  await f.save()
+  const result = run('docs generate', f.repo, f.env)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.proposals.length, 1)
+  assert.equal(result.data.sections.length, 2)
+  assert.equal(result.data.proposals[0].path, 'README.md')
+  const content = `${original.replace('\nold\n', '\nnew\n')}<!-- bstack:generated second -->second${end}`
+  assert.equal(result.data.proposals[0].proposedContent, content)
+  assert.equal(await readFile(join(f.repo, 'README.md'), 'utf8'), document)
+  await writeFile(join(f.repo, 'README.md'), content)
+  const checked = run('docs generate', f.repo, f.env, ['--check'])
+  assert.equal(checked.exit, 0, JSON.stringify(checked))
+  assert.equal(checked.data.sections.length, 2)
 })
 
 test('recursive docs generation is rejected as a child command', async t => {
