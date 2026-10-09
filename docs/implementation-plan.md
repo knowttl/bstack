@@ -473,7 +473,14 @@ Tick each task when its "Done when" commands pass.
       Public-command tests prove stale bytes fail, reviewed regeneration passes, surrounding bytes survive and read-only violations fail.
       Final full-suite evidence attaches to `tests/eval/results/tasks/T3a.4.json` with AC-18 linked to the regeneration journey.
       Local Linux execution does not establish real Windows/macOS execution.
-  - [ ] T3a.5 Build document reference checks
+  - [x] T3a.5 Build document reference checks
+    - The [document-reference contract](command-contract.md#document-references) owns registered path and local link checks, glossary formats and explicit context identities.
+      Public-command tests prove duplicate terms fail within a context, including across files, while the same word in different contexts passes.
+      Unsupported formats and unsupported fragment rendering produce coverage limits without target writes.
+      Paired reviewed `move-rule` edits preserve one unchanged rule and one exact link, using an existing selected authority where available.
+      Both edits and their final link are validated before protected writes; missing pairs, ambiguous anchors, duplicate rules and changed preconditions leave both files intact.
+      Task evidence attaches to `tests/eval/results/tasks/T3a.5.json`; registered agent acceptance procedures remain separate from these mechanical checks.
+      The clean-checkout standalone checker remains T3a.6 and was not started.
   - [ ] T3a.6 Build and prove the standalone checker in a clean checkout
   - [ ] T3a.7 Write the maintenance reference
 - Phase 4: Installation

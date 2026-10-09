@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
-import { dirname, resolve } from 'node:path'
+import { dirname, relative, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
+import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { canonicalJSON, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
@@ -11,6 +11,7 @@ import { CommandError } from '../lib/result.mjs'
 import { validateFindings } from './findings.mjs'
 import { loadJournal, journalOriginal, inspectJournal, fileBytes, applyWrites } from '../lib/protected-write.mjs'
 import { validateCheckIntegration } from '../lib/check-integration.mjs'
+import { markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 
 function reject(code, message, path) {
   throw new CommandError('failed', [{ code, message, path, fix: 'Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again.' }])
@@ -86,13 +87,51 @@ export async function prepareChangeSet(options, target) {
     }
   }
   if (problems.length) throw new CommandError('failed', problems)
-  return { inputs: { target, plan: options.plan }, plan, staged, directory, journal, findings }
+  const documents = new Map(staged.map(edit => [edit.resolvedPath, edit.proposedContent]))
+  const coverageLimits = []
+  for (const edit of plan.edits.filter(edit => edit.operation === 'move-rule' && edit.path === edit.payload.sourcePath)) {
+    const { sourcePath, destinationPath, rule, link } = edit.payload
+    const pair = plan.edits.filter(candidate => candidate.operation === 'move-rule' &&
+      candidate.findingId === edit.findingId && canonicalJSON(candidate.payload) === canonicalJSON(edit.payload))
+    if (pair.length !== 2 || !pair.some(candidate => candidate.path === destinationPath)) reject('incomplete-rule-move', 'A move requires matching selected source and destination edits.', sourcePath)
+    const source = staged.find(candidate => candidate.path === sourcePath)
+    const destination = staged.find(candidate => candidate.path === destinationPath)
+    if (source.resolvedPath === destination.resolvedPath || source.proposedContent.includes(rule) ||
+        destination.proposedContent.split(rule).length !== 2 || source.proposedContent.split(link).length !== 2) reject('invalid-rule-move', 'The final files must contain one rule at the destination and one link at the source.', sourcePath)
+    const links = markdownLinks(link)
+    const href = links[0]
+    if (links.length !== 1 || /^[A-Za-z][A-Za-z0-9+.-]*:|^\/\//.test(href)) reject('invalid-rule-link', 'The replacement must link to the selected local destination.', sourcePath)
+    let linkedPath
+    try {
+      const pathPart = decodeURIComponent(href.split('#')[0].split('?')[0])
+      linkedPath = await resolvePath(target.root, relative(target.root, resolve(target.root, dirname(sourcePath), pathPart)))
+    } catch { reject('invalid-rule-link', 'The replacement must resolve to the selected local destination.', sourcePath) }
+    if (linkedPath !== scope.get(destinationPath)) reject('invalid-rule-link', 'The replacement must link to the selected destination.', sourcePath)
+    for (const document of [source, destination]) {
+      const limit = markdownCoverageLimit(document.proposedContent)
+      if (limit) {
+        coverageLimits.push({ path: document.path, reason: limit })
+        continue
+      }
+      for (const reference of markdownLinks(document.proposedContent)) {
+        const problem = await checkLocalLink(target.root, document.path, reference, documents)
+        if (problem?.code === 'unsupported-link-fragment') coverageLimits.push({ path: document.path, reason: problem.message })
+        else if (problem) throw new CommandError('failed', [problem])
+      }
+    }
+  }
+  for (const edit of plan.edits.filter(edit => edit.operation === 'move-rule')) {
+    if (!plan.edits.some(candidate => candidate.operation === 'move-rule' && candidate.path === edit.payload.sourcePath &&
+        candidate.findingId === edit.findingId && canonicalJSON(candidate.payload) === canonicalJSON(edit.payload))) reject('incomplete-rule-move', 'A move requires matching selected source and destination edits.', edit.path)
+  }
+  return { inputs: { target, plan: options.plan }, plan, staged, directory, journal, findings, coverageLimits }
 }
 
 export async function run(options) {
   const target = await resolveTarget(options, { draftOnly: true })
-  const { inputs, plan, staged, directory, journal, findings } = await prepareChangeSet(options, target)
+  const { inputs, plan, staged, directory, journal, findings, coverageLimits } = await prepareChangeSet(options, target)
   const { planDigest } = plan
+  if (coverageLimits.length) return { inputs, status: 'blocked', data: { planDigest, coverageLimits } }
   if (options['dry-run']) return { inputs, data: { planDigest, dryRun: true,
     edits: staged.map(({ originalBytes, resolvedPath, ...edit }) => edit), diff: staged.map(edit => edit.diff).join('') } }
   if (journal) {

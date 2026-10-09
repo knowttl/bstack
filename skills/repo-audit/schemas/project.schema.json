@@ -9,7 +9,14 @@
         "type": "object", "additionalProperties": false, "required": ["id", "path"],
         "properties": {
           "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
-          "path": { "type": "string", "minLength": 1 }
+          "path": { "type": "string", "minLength": 1 },
+          "glossary": {
+            "type": "object", "additionalProperties": false, "required": ["context", "format"],
+            "properties": {
+              "context": { "type": "string", "minLength": 1, "pattern": "\\S" },
+              "format": { "type": "string", "minLength": 1, "pattern": "\\S" }
+            }
+          }
         }
       }
     },
