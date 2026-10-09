@@ -121,8 +121,8 @@ Creation journals directories and files through the existing protected-write eng
 Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
 Maintained enforcement is available through selected `apply` edits, as described below.
-Project contract validation and change collection are available below.
-Assessment validation and portable maintenance remain pending.
+Project contract validation, change collection and local assessment validation are available below.
+Portable maintenance remains pending.
 
 Prove a selected native rule against prepared clean and independently seeded fixtures:
 
