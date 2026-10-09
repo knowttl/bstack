@@ -203,6 +203,27 @@ test('move-rule resolves rule fragments against the staged destination', async t
   assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
 })
 
+for (const headings of ['## Rule\n## Rule-1\n## Rule\n', 'Rule\n---\nRule-1\n===\nRule\n---\n']) {
+  for (const path of ['README.md', 'CONTRIBUTING.md']) {
+    test(`move-rule resolves colliding heading anchors in staged ${path}: ${headings}`, async t => {
+      const rule = `## One source\n\n${headings}\n[Last](${path}#rule-2)\n`
+      const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+      const source = context.plan.edits[0]
+      const retained = headings + '\n[Last](#rule-2)\n\n'
+      const original = retained + '# Design\n' + rule
+      await writeFile(join(context.repo, source.path), original)
+      source.originalHash = hash(original)
+      source.proposedContent = retained + source.proposedContent
+      source.proposedHash = hash(source.proposedContent)
+      await save(context)
+      const result = execute(context)
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), source.proposedContent)
+      assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+    })
+  }
+}
+
 for (const rule of [
   '## One source\n\n- ```md\n  [Example](missing.md)\n  ```\n\n[Design](README.md#design)\n',
   '## One source\n\n> ~~~md\n> [Example](missing.md)\n> ~~~\n\n[Design](README.md#design)\n',

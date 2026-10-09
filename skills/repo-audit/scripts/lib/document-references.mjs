@@ -188,9 +188,11 @@ export function markdownAnchors(text) {
     }
     title = (title + heading.text.slice(start)).replace(/<[^>]+>/g, '')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
-    const count = counts.get(slug) ?? 0
+    let count = counts.get(slug) ?? 0
+    let anchor = slug + (count ? `-${count}` : '')
+    while (anchors.has(anchor)) anchor = `${slug}-${++count}`
     counts.set(slug, count + 1)
-    anchors.add(slug + (count ? `-${count}` : ''))
+    anchors.add(anchor)
   }
   return anchors
 }

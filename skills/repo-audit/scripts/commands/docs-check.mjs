@@ -8,7 +8,7 @@ import { loadContract } from './contract.mjs'
 function glossaryEntries(text, format) {
   const body = markdownProse(text)
   if (format === 'markdown-bold') {
-    const headings = markdownHeadings(body)
+    const headings = markdownHeadings(markdownBody(text))
     const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)]
       .filter(match => !headings.some(heading => heading.start <= match.index && match.index < heading.end))
     return entries.map((match, index) => {
