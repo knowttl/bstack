@@ -43,7 +43,7 @@
     "Linux and Node 24 execution does not establish real Windows or macOS execution.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "9a8506b450c7c6c0b74de908de1b8c3ec96a9034",
+  "sourceRevision": "623eb4968fbfce94620920010aca156cf1d85597",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -112,12 +112,12 @@
         {
           "path": "README.md",
           "executable": false,
-          "sha256": "57d8c49faee1748b10fd078b86dd67a410fc435fc40e33383199a8c6f1e47df7"
+          "sha256": "3b9434ddd3fac0f8f6329f81744dadff0dc2c050c29816275471ee2385398ce7"
         },
         {
           "path": "docs/command-contract.md",
           "executable": false,
-          "sha256": "605d2bec09d70d8ea87044ad84b39749eb05455a4a1ce0ada138fd7ff4ee1f96"
+          "sha256": "e97cc1a4e2f40311e030944abdd63f7bcf016bb747b7c68404a3e0a92916e2b2"
         },
         {
           "path": "docs/design.md",
@@ -137,7 +137,7 @@
         {
           "path": "docs/implementation-plan.md",
           "executable": false,
-          "sha256": "44a174963e756a614926e8cad4b8c6ec7b07f68b5d7a09bdfd8ed4324fac6d42"
+          "sha256": "79b2731adf6c5aa36c82cd3dc35539a851d9100cb36a1a3e30b77e67f954d553"
         },
         {
           "path": "package-lock.json",
@@ -3765,7 +3765,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "912190c75de54d323c7bac5f186a6d06ba37a729a9f1742361680f3bf5d4b4ed"
+      "sha256": "ad0c457773247364bb15edceab28bc343262b9ca63e8a07d92b2c6a1b233dc45"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3813,9 +3813,9 @@
       "topLevel": 2384,
       "suites": 0
     },
-    "durationMs": 195451.491721,
-    "outputSha256": "da10d0477d9f631bcd87353da8c7ae962520b63890116cf36e752999606c478f",
-    "eventsSha256": "9c724eec021ea91b5d13e97a7ed83803a03b7b5dc691eb67edde588eba22d9c6",
+    "durationMs": 175836.934463,
+    "outputSha256": "de521d2adf09e394cb3ed0de7b4d3e8f057b4881dbe7f4c147ddbfac4a707c91",
+    "eventsSha256": "2ac9e168eb392c420f9f94d0f06351bef9906cde17629d6487f5ced8a54a2f34",
     "eventsArtifact": "tests/eval/results/tasks/C24a.events.jsonl"
   }
 }
