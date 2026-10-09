@@ -192,6 +192,48 @@ test('committed assessment execution changes avoid a self-referential review has
   assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
 })
 
+test('linked assessment aliases exclude derived fields from the review hash', async t => {
+  const f = await fixture(t)
+  f.assessmentPath = join(f.repo, '.bstack/review.json')
+  await f.write()
+  await symlink('review.json', join(f.repo, '.bstack/latest.json'))
+  await symlink('review.json', join(f.repo, '.bstack/another.json'))
+  await f.collect()
+  f.assessmentPath = join(f.repo, '.bstack/latest.json')
+  await f.complete()
+  await f.bind()
+  const fingerprint = f.assessment.fingerprint
+  assert.equal(f.validate().data.fingerprint, fingerprint)
+  await f.capture()
+  assert.equal(f.validate().data.fingerprint, fingerprint)
+  await f.capture()
+  assert.equal(f.validate().data.fingerprint, fingerprint)
+  assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+})
+
+for (const change of ['substantive reason', 'link state']) {
+  test(`linked assessment ${change} remains bound to review`, async t => {
+    const f = await fixture(t)
+    f.assessmentPath = join(f.repo, '.bstack/review.json')
+    await f.write()
+    await symlink('review.json', join(f.repo, '.bstack/latest.json'))
+    await f.collect()
+    f.assessmentPath = join(f.repo, '.bstack/latest.json')
+    await f.complete()
+    await f.capture()
+    await f.bind()
+    assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
+    if (change === 'substantive reason') {
+      f.assessment.documents[0].assessment.reason = 'A revised substantive explanation preserves the pricing contract.'
+      await f.write()
+    } else {
+      await rm(f.assessmentPath)
+      await symlink('./review.json', f.assessmentPath)
+    }
+    blocked(f.validate(), 'stale-review')
+  })
+}
+
 test('adding only update metadata cannot establish an updated definition', async t => {
   const f = await fixture(t)
   await writeFile(join(f.repo, 'README.md'), '# Pricing contract\n\nA quote is quantity multiplied by 12.\nUpdated: 2026-10-08\n')
@@ -326,6 +368,11 @@ for (const [name, wrap] of [
   ['hash comment after a YAML scalar', text => '```yaml\nrule: |\n # literal rule\nmultiplier: 12 # ' + text + '\n```'],
   ['hash comment after a Python triple quote', text => '```python\nrule = """\n# literal rule\n"""\nmultiplier = 12 # ' + text + '\n```'],
   ['hash comment after a shell heredoc', text => '```sh\ncat <<RULE\n# literal rule\nRULE\nprintf 12 # ' + text + '\n```'],
+  ['hash comment after a hyphenated shell heredoc', text => '```sh\ncat <<END-RULE\nbody\nEND-RULE\nprintf 12 # ' + text + '\n```'],
+  ['hash comment after a mixed-quoted shell heredoc', text => '```sh\ncat <<END"-RULE"\nbody\nEND-RULE\nprintf 12 # ' + text + '\n```'],
+  ['hash comment after a shell arithmetic shift', text => '```bash\nvalue=$((12 << 1))\nprintf 12 # ' + text + '\n```'],
+  ['hash comment after a quoted shell arithmetic shift', text => '```bash\nvalue="$((12 << 1))"\nprintf 12 # ' + text + '\n```'],
+  ['hash comment after a shell arithmetic command', text => '```bash\n((value = 12 << 1))\nprintf 12 # ' + text + '\n```'],
   ['prose apostrophe', text => `Don't change pricing. <!-- ${text} -->`],
   ['multiple prose apostrophes', text => `Don't change users' pricing. <!-- ${text} -->`],
   ['unmatched single quote', text => `Pricing 'example <!-- ${text} -->`],
@@ -359,6 +406,7 @@ for (const [name, prefix, suffix] of [
   ['shell backtick command comment', '```sh\nvalue=`printf 12 # ', '\n`\n```'],
   ['shell parenthesized command comment', '```sh\nvalue=$(printf 12 # ', '\n)\n```'],
   ['shell quoted command comment', '```sh\nvalue="$(printf 12 # ', '\n)"\n```'],
+  ['hash comment after a hyphenated shell heredoc', '```sh\ncat <<END-RULE\nbody\nEND-RULE\nprintf 12 # ', '\n```'],
   ['HTML comment after a prose apostrophe', "Don't change pricing. <!-- ", ' -->']
 ]) {
 test(`changing only an ${name} cannot establish an updated rule`, async t => {
@@ -393,6 +441,10 @@ for (const [name, before, after, oldExcerpt, newExcerpt] of [
   ['YAML literal block scalar', '```yaml\nrule: |\n # old definition\n```', '```yaml\nrule: |\n # new definition\n```', '# old definition', '# new definition'],
   ['YAML folded block scalar', '```yml\nrule: >-\n # old definition\n```', '```yml\nrule: >-\n # new definition\n```', '# old definition', '# new definition'],
   ['YAML explicit scalar indentation', '```yaml\nrule: |2\n  updated: old definition\n```', '```yaml\nrule: |2\n  updated: new definition\n```', 'updated: old definition', 'updated: new definition'],
+  ['YAML anchored block scalar', '```yaml\nrule: &pricing |\n # old definition\n```', '```yaml\nrule: &pricing |\n # new definition\n```', '# old definition', '# new definition'],
+  ['Python floor division', '```python\nlimit = quantity // 12\n```', '```python\nlimit = quantity // 13\n```', 'quantity // 12', 'quantity // 13'],
+  ['YAML plain slash text', '```yaml\nrule: old // definition\n```', '```yaml\nrule: new // definition\n```', 'old // definition', 'new // definition'],
+  ['shell arithmetic shift', '```bash\nvalue=$((12 << 1))\n```', '```bash\nvalue=$((13 << 1))\n```', '12 << 1', '13 << 1'],
   ['Python triple double quote', '```python\nrule = """\n# old definition\n"""\n```', '```python\nrule = """\n# new definition\n"""\n```', '# old definition', '# new definition'],
   ['Python triple single quote', "```py\nrule = '''\nupdated: old definition\n'''\n```", "```py\nrule = '''\nupdated: new definition\n'''\n```", 'updated: old definition', 'updated: new definition'],
   ['shell heredoc body', '```sh\ncat <<RULE\n# old definition\nRULE\n```', '```sh\ncat <<RULE\n# new definition\nRULE\n```', '# old definition', '# new definition'],

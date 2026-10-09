@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { readFile, stat, realpath, lstat, readlink } from 'node:fs/promises'
 import { resolve } from 'node:path'
-import { resolvePath } from './paths.mjs'
+import { resolvePath, resolveLinks } from './paths.mjs'
 import { readGit, repoFiles } from './discovery.mjs'
 
 export function hashBytes(bytes) {
@@ -18,6 +18,7 @@ export function canonicalJSON(value) {
 
 export async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) {
   const root = await realpath(target.root)
+  const evidenceFile = evidencePath ? await resolveLinks(resolve(root, evidencePath), true) : null
   const gitlinks = new Map(readGit(root, ['ls-files', '--stage', '-z']).stdout.split('\0')
     .filter(entry => entry.startsWith('160000 ')).map(entry => [entry.slice(entry.indexOf('\t') + 1), entry.split(' ')[1]]))
   const files = []
@@ -32,12 +33,12 @@ export async function fingerprint(target, { baseCommit, paths, inputs, evidenceP
     try {
       const info = await stat(resolved)
       let contentHash = null
-      if (info.isFile() && path !== evidencePath) contentHash = hashBytes(await readFile(resolved))
+      if (info.isFile() && resolved !== evidenceFile) contentHash = hashBytes(await readFile(resolved))
       else if (info.isDirectory() && gitlinks.has(path)) {
         const head = readGit(resolved, ['rev-parse', '--show-toplevel'])
         const initialized = head.status === 0 && await realpath(head.stdout.trim()) === resolved
         const contents = initialized ? await fingerprint({ root: resolved }, { baseCommit: readGit(resolved, ['rev-parse', 'HEAD']).stdout.trim(),
-          paths: [...await repoFiles(resolved), ...readGit(resolved, ['ls-files', '-z']).stdout.split('\0').filter(Boolean)], inputs: {} }) : null
+          paths: [...await repoFiles(resolved), ...readGit(resolved, ['ls-files', '-z']).stdout.split('\0').filter(Boolean)], inputs: {}, evidencePath: evidenceFile }) : null
         contentHash = hashBytes(canonicalJSON({ gitlink: gitlinks.get(path), contents: contents?.fingerprint ?? null }))
       }
       files.push({ path, present: true, mode: info.mode, linkTarget,

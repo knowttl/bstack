@@ -270,7 +270,7 @@ test('fingerprints cover exact bytes, absence, mode, repo, base and substantive 
   const initial = await invoke(directory, 'fingerprint', input)
   assert.equal(initial.code, 0)
   assert.equal(initial.data.state.files[1].contentHash, createHash('sha256').update('a\r\n').digest('hex'))
-  assert.deepEqual(initial.data.state.files[0], { path: 'absent', present: false, mode: null, contentHash: null })
+  assert.deepEqual(initial.data.state.files[0], { path: 'absent', present: false, mode: null, linkTarget: null, contentHash: null })
   assert.equal((await invoke(directory, 'fingerprint', input)).data.fingerprint, initial.data.fingerprint)
   await writeFile(path, 'a\n')
   assert.notEqual((await invoke(directory, 'fingerprint', input)).data.fingerprint, initial.data.fingerprint)
