@@ -563,3 +563,28 @@ test('shared glossary boundaries ignore code samples containing headings', async
   const result = run('docs check', f.repo)
   assert.equal(result.exit, 0, JSON.stringify(result))
 })
+
+for (const heading of [
+  '# `Array<T>`',
+  '`Array<T>`\n---',
+  '> ## `Array<T>`',
+  '- `Array<T>`\n  ===',
+  '# [`Array<T>`](https://example.invalid)',
+  '[`Array<T>`][type]\n---\n\n[type]: https://example.invalid',
+  '# ![`Array<T>`](https://example.invalid)',
+  '# <em>`Array<T>`</em>',
+  '# <em>Array</em>T',
+  '# ``Array<T>``'
+]) {
+  for (const [fragment, exit] of [['arrayt', 0], ['array', 1]]) {
+    test(`code-bearing headings resolve ${fragment} with exit ${exit}: ${heading}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), heading + `\n\n[Local](#${fragment})\n[Other](other.md#${fragment})\n`)
+      await writeFile(join(f.repo, 'other.md'), heading + '\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.filter(problem => problem.code === 'broken-local-link').length, exit ? 2 : 0)
+      assert.deepEqual(result.data.coverageLimits, [])
+    })
+  }
+}

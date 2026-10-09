@@ -186,7 +186,9 @@ export function markdownAnchors(text) {
       title += heading.text.slice(start, link.start) + link.label
       start = link.end
     }
-    title = (title + heading.text.slice(start)).replace(/<[^>]+>/g, '')
+    title += heading.text.slice(start)
+    const code = inlineCodeRanges(title)
+    title = title.replace(/<[^>]+>/g, (tag, index) => code.some(range => range.start <= index && index < range.end) ? tag : '')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
     let count = counts.get(slug) ?? 0
     let anchor = slug + (count ? `-${count}` : '')
