@@ -17,8 +17,8 @@ export const commands = {
   },
   'evidence collect': {
     module: './commands/evidence.mjs',
-    options: ['contract', 'base', 'previous-contract'],
-    help: 'Collect the live Git change inventory and save a document assessment skeleton to scratch.\nUsage: repo-audit.mjs evidence collect --repo <path> --base <ref> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Use --base empty before the first commit. An unavailable base blocks comparison. Renames map both paths through case-sensitive scopes. Collection is not semantic assessment or readiness validation.'
+    options: ['contract', 'base', 'previous-contract', 'portable'],
+    help: 'Collect the live Git change inventory and save a document assessment skeleton to scratch.\nUsage: repo-audit.mjs evidence collect --repo <path> --base <ref> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--portable <repo-relative-assessment>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Portable review requires committed implementation and excludes only the selected record from inventory. Use --base empty before the first commit. An unavailable base blocks comparison. Renames map both paths through case-sensitive scopes. Collection is not semantic assessment or readiness validation.'
   },
   'evidence validate': {
     module: './commands/evidence-validate.mjs',

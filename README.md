@@ -298,7 +298,19 @@ node scripts/generate-checker.mjs --repo . --check
 node scripts/generate-checker.mjs --repo <target> --json
 ```
 
-See the [generation contract](docs/command-contract.md#standalone-checker-generation) for scratch outputs, selected-plan installation, protection of existing copies and the C24a slice boundary.
+See the [generation contract](docs/command-contract.md#standalone-checker-generation) for scratch outputs, selected-plan installation and protection of existing copies.
+
+Run the installed aggregate with an explicit repository, agreed ancestor base and selected assessment:
+
+```sh
+node .bstack/bin/bstack-check.mjs --repo <target> --base <commit> --assessment <assessment.json> --json
+```
+
+It preflights review, documents and generated facts, executes each required leaf once per checker invocation, and validates its fresh results without editing the assessment.
+For clean-checkout evidence, commit implementation changes first, collect with `evidence collect --repo <target> --base <commit> --portable .bstack/assessment.json`, complete the returned review at that selected path, and bind its fingerprint using `evidence validate`.
+Commit the completed assessment separately, then run the aggregate in both the working checkout and a different-root clean clone with a fresh home and cache.
+The [execution contract](docs/command-contract.md#standalone-checker-execution) defines portable identity, previous-policy validation and the missing-base fetch prerequisite.
+Hosted CI behavior remains unverified.
 
 To view the available and planned commands:
 

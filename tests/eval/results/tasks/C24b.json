@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C24b",
+  "slice": "C24b",
+  "intent": "Execute the standalone checker in a different-root clean clone with explicit inputs, a committed unchanged portable assessment, isolated home and cache, fresh leaf execution and previous-policy controls.",
+  "amendments": [],
+  "status": "passed",
+  "commands": [],
+  "cases": [
+    {
+      "id": "AC-24",
+      "kind": "automated",
+      "procedure": "tests/scripts/checker-execution.test.mjs: different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C24b.full-tests.txt"
+    },
+    {
+      "id": "AC-58",
+      "kind": "automated",
+      "procedure": "tests/scripts/checker-execution.test.mjs: the clean clone invokes the maintained npm aggregate without an agent, installed skill or target dependencies and preserves failures",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C24b.full-tests.txt"
+    },
+    {
+      "id": "C24b-controls",
+      "kind": "automated",
+      "procedure": "tests/scripts/checker-execution.test.mjs: missing review/base, stale documents, incomplete review, failed leaves, saved successes, recursion and cycles cannot pass; shallow fetch restores passing execution; an extracted prior checker rejects contract deletion and policy changes execute comparison checks",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C24b.full-tests.txt"
+    }
+  ],
+  "limitations": [
+    "Hosted CI behavior and forge enforcement remain unverified; no hosted CI run is required.",
+    "Execution was on Linux with Node 24; real Windows and macOS execution remain unverified.",
+    "Structural validation cannot authenticate semantic review or owner approval; transient input changes restored before final capture remain undetected.",
+    "Absent or incompatible prior checkers block for a recorded migration and explicit prior coverage; this slice does not waive or implement that migration."
+  ]
+}
