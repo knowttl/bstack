@@ -219,11 +219,14 @@ node skills/repo-audit/scripts/repo-audit.mjs docs check --repo <target> [--cont
 The command loads the project contract and verifies every registered document, rule and acceptance source path without executing checks or generators or writing files.
 For UTF-8 `.md` and `.markdown` sources it checks local inline links, images and defined reference links, including collapsed and shortcut references.
 Relative destinations resolve from the source document, may traverse parents inside the selected target, must use exact path case and cannot escape through symlinks.
-Percent-encoded paths, balanced parentheses, angle-bracket destinations and optional titles are supported.
+Ordinary destinations contain no whitespace, backslashes, parentheses, brackets, angle brackets or backticks; paths can use percent encoding.
+Optional titles and other destination spellings are coverage limits.
 Heading fragments use lowercase ATX or setext heading slugs, with punctuation removed, whitespace changed to hyphens and repeated headings suffixed `-1`, `-2` and so on.
 External URLs are not fetched.
-Code fences, indented code, inline code and HTML comments do not contribute links or glossary entries.
-Raw HTML links, explicit HTML anchors, custom heading IDs, HTML entities and complex nested inline markup are outside the Markdown parser's supported reference coverage.
+Code fences, indented code and HTML comments do not contribute links or glossary entries.
+Inline code, escaped labels, emphasis, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
+When such markup occurs outside excluded blocks, the source document's links and glossary are left for renderer review; registered paths are still verified.
+A fragment target containing such markup also reports a coverage limit rather than a missing heading.
 Fragments in non-Markdown targets are not validated.
 Unsupported document encodings and formats produce `data.coverageLimits`, also visible in plain output, rather than a readiness failure or a forced rewrite.
 Broken supported local references fail with `broken-local-link`.
@@ -235,6 +238,10 @@ The supported formats are:
 
 - `markdown-bold`: entries beginning at column zero with `**Term**:`, followed by a definition on that line or subsequent lines until the next entry or heading.
 - `markdown-table`: two-column tables with `Term` and `Definition` headers and a Markdown separator row, with one term and definition per row.
+
+Glossary fields use plain text; code spans, escaped pipes and other field markup are coverage limits.
+Unusual table rows report coverage limits rather than invalid or empty fields.
+Trailing horizontal whitespace on ordinary table lines is accepted.
 
 Supported glossaries require at least one entry and nonempty canonical terms and definitions.
 Term comparison normalizes Unicode to NFC, lowercases text and collapses whitespace.
@@ -960,9 +967,11 @@ Both paths must be in that finding's reviewed scope, with independently reviewed
 The source rule is a nonempty newline-terminated literal block occurring exactly once at a line boundary.
 An existing destination needs a unique nonempty newline-terminated insertion anchor and must not already contain the rule.
 For an explicitly selected new destination, use an empty anchor; its complete content is the rule block.
-The replacement is one exact newline-terminated Markdown link line pointing to the selected destination, with any heading fragment verified against the final proposed bytes.
+The replacement is one exact newline-terminated ordinary inline link line pointing to the selected destination, with any heading fragment verified against the final proposed bytes.
+Replacement labels contain no brackets, backslashes, backticks or emphasis markers; destinations follow the ordinary contract above and cannot include titles or trailing text.
 The final source must contain no copy of the rule and exactly one replacement link; the final destination must contain exactly one copy of the unchanged rule.
 Apply validates the paired edits and all other file changes before writing either file, then uses the existing recoverable protected-write journal.
+If either proposed document or a fragment target exceeds reference coverage, apply returns `blocked` with `data.coverageLimits` and writes neither file, including in dry runs.
 As with other operations, this validates inputs together but does not promise a single atomic filesystem transaction; interruption uses the documented resume protocol.
 Prefer an existing authoritative design section or CONTRIBUTING.md over creating CODING_STANDARDS.md.
 Choosing the authoritative home and judging semantically equivalent duplicate rules remain part of selected review, rather than filename-based automation.
