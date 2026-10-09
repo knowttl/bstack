@@ -8,6 +8,14 @@ function reject(path) {
     fix: 'Review selected command paths and failure-preserving commands, use JSON syntax for marked CI edits, and prove exit codes in disposable controls.' }])
 }
 
+export function isIndirectExecutable(executable) {
+  const name = executable.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+  return ['set', 'exit', 'trap', 'eval', 'exec', 'env', 'command', 'builtin', 'source', '.',
+    'sh', 'bash', 'rbash', 'zsh', 'dash', 'ash', 'ksh', 'ksh88', 'ksh93', 'mksh', 'pdksh', 'yash', 'posh',
+    'csh', 'tcsh', 'fish', 'busybox', 'time', 'nohup', 'nice', 'timeout', 'setsid', 'sudo', 'doas', 'xargs',
+    'cmd', 'powershell', 'pwsh', 'call', 'start'].includes(name)
+}
+
 // A bounded command grammar avoids claiming to understand arbitrary shell programs.
 // Quoted arguments are literal; shell control flow must use fail-fast && chains.
 export function integrationCommand(text, path) {
@@ -50,11 +58,7 @@ export function integrationCommand(text, path) {
     if (first && /^[A-Za-z_][A-Za-z0-9_]*=/.test(word)) reject(path)
     if (!first) continue
     const executable = word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
-    if (['set', 'exit', 'trap', 'eval', 'exec', 'env', 'command', 'builtin', 'source', '.',
-      'sh', 'bash', 'rbash', 'zsh', 'dash', 'ash', 'ksh', 'ksh88', 'ksh93', 'mksh', 'pdksh', 'yash', 'posh',
-      'csh', 'tcsh', 'fish', 'busybox', 'time', 'nohup', 'nice', 'timeout', 'setsid', 'sudo', 'doas', 'xargs',
-      'cmd', 'powershell', 'pwsh', 'call', 'start']
-      .includes(executable)) reject(path)
+    if (isIndirectExecutable(word)) reject(path)
     const next = words.indexOf('&&', index + 1)
     const args = words.slice(index + 1, next === -1 ? words.length : next)
     if ((executable === 'npx' || (executable === 'npm' && args.some(arg => ['exec', 'x'].includes(arg)))) &&
