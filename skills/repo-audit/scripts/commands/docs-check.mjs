@@ -23,8 +23,9 @@ function glossaryEntries(text, format) {
       if (!/^\|\s*Term\s*\|\s*Definition\s*\|$/i.test(lines[i]) || !/^\|\s*:?-+:?\s*\|\s*:?-+:?\s*\|$/.test(lines[i + 1])) continue
       i += 2
       for (; i < lines.length && lines[i].startsWith('|'); i++) {
-        const row = /^\|([^|]*)\|([^|]*)\|$/.exec(lines[i])
-        entries.push(row ? { term: row[1].trim(), definition: row[2].trim() } : { term: '', definition: '' })
+        const row = /^\|((?:\\.|[^|\\])*)\|((?:\\.|[^|\\])*)\|$/.exec(lines[i])
+        const cells = row?.slice(1).map(cell => cell.replace(/\\([\\|])/g, '$1').trim())
+        entries.push(cells ? { term: cells[0], definition: cells[1] } : { term: '', definition: '' })
       }
     }
     return entries
