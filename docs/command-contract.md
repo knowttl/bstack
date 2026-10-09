@@ -53,9 +53,9 @@ Existing generator output components and the selected contract path also require
 Command `cwd` follows the child-command contract, including `.` for the root, and must exist.
 Unknown document, rule or check references fail.
 
-Leaf checks and generators cannot invoke `evidence validate`, `docs check` or the standalone `bstack-check.mjs` aggregate.
+Leaf checks and generators cannot invoke bstack's `evidence validate`, `docs check`, `docs generate` or the standalone `bstack-check.mjs` aggregate.
 Aggregate filenames are recognised in executable and argument positions by case-insensitive basename, using either path separator and ignoring `.exe`, `.cmd` and `.bat` suffixes.
-The `evidence validate` and `docs check` argument pairs require those exact spellings.
+The `evidence validate`, `docs check` and `docs generate` argument pairs require those exact spellings and a `repo-audit.mjs` executable or argument; independent project tools may use those argument pairs.
 Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
 For npm, script lookup uses the nearest ancestor within the repo containing `package.json` or `node_modules`, and script bodies are inspected from that directory.
 For Yarn, lookup uses the nearest ancestor within the repo containing `package.json`, without stopping at `node_modules`.

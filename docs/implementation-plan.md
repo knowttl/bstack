@@ -469,13 +469,10 @@ Tick each task when its "Done when" commands pass.
       Final full-suite evidence attaches to `tests/eval/results/tasks/T3a.3.json` and names the last implementation commit.
       Semantic agreement and owner approval authenticity require the project's selected reviewer; local scratch captures are not portable attestations.
   - [x] T3a.4 Build generated-fact freshness checks
-    - Registered generator IDs identify exact-byte sections in their output documents.
-      Marker validation rejects duplicate, nested, malformed, missing and unmatched sections before executing child commands.
-      Checks detect surviving project file, mode and link mutations, including ignored files, and reject unsuccessful or inexact output.
-      Regeneration renders complete proposals and exact diffs to scratch for the existing selected, hash-bound protected apply path.
+    - The [generated-facts command contract](command-contract.md#generated-facts) owns marker validation, exact-byte comparison, transient-write detection and reviewed scratch regeneration.
       Public-command tests prove stale bytes fail, reviewed regeneration passes, surrounding bytes survive and read-only violations fail.
       Final full-suite evidence attaches to `tests/eval/results/tasks/T3a.4.json` with AC-18 linked to the regeneration journey.
-      Mutation snapshots are not an operating-system sandbox; local Linux execution does not establish real Windows/macOS execution.
+      Local Linux execution does not establish real Windows/macOS execution.
   - [ ] T3a.5 Build document reference checks
   - [ ] T3a.6 Build and prove the standalone checker in a clean checkout
   - [ ] T3a.7 Write the maintenance reference
