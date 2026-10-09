@@ -2677,12 +2677,17 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     }
   }
   await checkAssessment();
-  for (const policy of preflight.data.policies) {
-    const docs = await run2({ ...options, coveragePolicy: policy });
-    if (docs.status !== "passed") return { ...docs, data: { ...docs.data, phase: "preflight" } };
-    const facts = await checkGeneratedFacts({ ...options, coveragePolicy: policy });
-    if (facts.status !== "passed") return { ...facts, data: { ...facts.data, phase: "preflight" } };
+  async function checkStructure() {
+    for (const policy of preflight.data.policies) {
+      const docs = await run2({ ...options, coveragePolicy: policy });
+      if (docs.status !== "passed") return docs;
+      const facts = await checkGeneratedFacts({ ...options, coveragePolicy: policy });
+      if (facts.status !== "passed") return facts;
+    }
+    return null;
   }
+  const structure = await checkStructure();
+  if (structure) return { ...structure, data: { ...structure.data, phase: "preflight" } };
   for (const check of preflight.data.requiredChecks) await leafCommand(target.root, check.command);
   const directory = await createScratch(target);
   let previous = null;
@@ -2714,7 +2719,7 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
       currentResults.push({ check, execution: captured ? captured.execution : await runCommand(target, check.command, { signal: controller.signal }) });
     }
     await checkAssessment();
-    validated = await run3({ ...options, currentResults });
+    validated = await checkStructure() ?? await run3({ ...options, currentResults });
   } catch (error) {
     validated = {
       status: error instanceof CommandError ? error.status : "blocked",
@@ -2778,4 +2783,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"5be0dc681307ac8028d6cc253dec912e39ca7a7a01207bbf62c7df57dc2f9c32"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"c2c425d836dd2f7aa0527d7df1f9d5a96c8e12bd3ba4d5998e8bb2ed2548b6e7"}

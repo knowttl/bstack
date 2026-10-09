@@ -19,9 +19,9 @@ function commit(repo) {
   return git(repo, 'rev-parse', 'HEAD')
 }
 
-function check(f, extra = [], checker = join(f.repo, checkerPath)) {
+function check(f, extra = [], checker = join(f.repo, checkerPath), assessment = join(f.repo, assessmentPath)) {
   const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--base', f.base,
-    '--assessment', join(f.repo, assessmentPath), '--json', ...extra], { cwd: f.directory, env: f.env, encoding: 'utf8' })
+    '--assessment', assessment, '--json', ...extra], { cwd: f.directory, env: f.env, encoding: 'utf8' })
   assert.equal(result.stderr, '')
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
@@ -102,6 +102,90 @@ async function fixture(t, { initial = false, submodule = false, diagnostic = fal
   await f.write()
   commit(f.repo)
   return f
+}
+
+async function bindReview(f, portable = assessmentPath) {
+  const collected = run('evidence collect', f.repo, f.env, ['--base', f.base, '--portable', portable])
+  assert.equal(collected.exit, 0, JSON.stringify(collected))
+  f.assessment = JSON.parse(await readFile(collected.data.path, 'utf8'))
+  f.assessment.coverage = ['boundary']
+  f.complete()
+  await f.write()
+  const bound = run('evidence validate', f.repo, f.env, ['--base', f.base, '--assessment', join(f.repo, portable)])
+  assert.ok(bound.data.fingerprint, JSON.stringify(bound))
+  f.assessment.fingerprint = bound.data.fingerprint
+  await f.write()
+  commit(f.repo)
+}
+
+for (const state of ['committed', 'untracked', 'absent', 'escaping']) test(`portable collection resolves ${state} assessment directory aliases`, { skip: process.platform === 'win32' }, async t => {
+  const f = await fixture(t)
+  const destination = state === 'escaping' ? join(f.directory, 'outside') : '.bstack'
+  if (state === 'escaping') await mkdir(destination)
+  await symlink(destination, join(f.repo, 'reviews'), 'dir')
+  if (state === 'untracked') git(f.repo, 'rm', '--cached', assessmentPath)
+  if (state === 'absent') await rm(join(f.repo, assessmentPath))
+  if (state === 'untracked') {
+    git(f.repo, 'add', 'reviews')
+    git(f.repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'assessment alias')
+  } else commit(f.repo)
+  if (state === 'escaping') {
+    const rejected = run('evidence collect', f.repo, f.env, ['--base', f.base, '--portable', 'reviews/assessment.json'])
+    assert.equal(rejected.exit, 3, JSON.stringify(rejected))
+    assert.equal(rejected.problems[0].code, 'invalid-portable-assessment')
+    return
+  }
+  await bindReview(f, 'reviews/assessment.json')
+  assert.ok(!f.assessment.paths.includes(assessmentPath))
+  const checked = check(f, [], join(f.repo, checkerPath), join(f.repo, 'reviews/assessment.json'))
+  assert.equal(checked.exit, 0, JSON.stringify(checked))
+  assert.equal(checked.data.fingerprint, f.assessment.fingerprint)
+})
+
+const structuralChanges = [
+  ['link destination', "writeFileSync('build/API.md', '# Other\\n')", 'broken-local-link'],
+  ['generator input', "writeFileSync('build/input.txt', 'new\\n')", 'stale-generated-section'],
+  ['generator output', "writeFileSync('build/FACTS.md', '# Missing markers\\n')", 'missing-marker'],
+  ['generator command', "writeFileSync('build/generate.mjs', \"process.stdout.write('new\\\\n')\\n\")", 'stale-generated-section'],
+  ['unchanged generator output', "writeFileSync('build/input.txt', 'old\\n')", null]
+]
+for (const policy of ['proposed', 'previous']) for (const [change, mutation, code] of structuralChanges) {
+  test(`${policy} policy rechecks ignored ${change} after the leaf`, async t => {
+    const f = await fixture(t)
+    await mkdir(join(f.repo, 'build'))
+    await writeFile(join(f.repo, '.gitignore'), 'build/\n')
+    if (change === 'link destination') {
+      await writeFile(join(f.repo, 'GUIDE.md'), '# Source\n[Price](build/API.md#price)\n')
+      await writeFile(join(f.repo, 'build/API.md'), '# Price\n')
+      f.contract.documents.push({ id: 'guide', path: 'GUIDE.md' })
+    } else {
+      await writeFile(join(f.repo, 'build/input.txt'), 'old\n')
+      await writeFile(join(f.repo, 'build/FACTS.md'), '<!-- bstack:generated facts -->old\n<!-- bstack:end -->\n')
+      await writeFile(join(f.repo, 'build/generate.mjs'), "import { readFileSync } from 'node:fs'; process.stdout.write(readFileSync('build/input.txt', 'utf8'))\n")
+      f.contract.generators.push({ id: 'facts', command: { executable: 'node', args: ['build/generate.mjs'], cwd: '.', versionArgs: ['--version'] }, inputScopes: ['build/input.txt'], outputPaths: ['build/FACTS.md'] })
+    }
+    await writeFile(join(f.repo, 'leaf.mjs'), `import { appendFileSync, writeFileSync } from 'node:fs'; ${mutation}; appendFileSync(process.env.BSTACK_LEAF_LOG, 'run\\n'); console.log('leaf completed');\n`)
+    await f.save()
+    f.base = commit(f.repo)
+    if (policy === 'previous') {
+      if (change === 'link destination') f.contract.documents.pop()
+      else f.contract.generators = []
+      await f.save()
+    }
+    await writeFile(join(f.repo, 'src/change.mjs'), 'export const price = 12;;\n')
+    commit(f.repo)
+    await bindReview(f)
+    const before = await readFile(join(f.repo, assessmentPath))
+    const result = check(f)
+    assert.equal(result.exit, code ? 1 : 0, JSON.stringify(result))
+    if (code) assert.ok(result.problems.some(problem => problem.code === code), JSON.stringify(result))
+    const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
+    assert.equal(saved.data.checks.length, 1)
+    assert.equal(saved.data.checks[0].execution.exitCode, 0)
+    assert.equal(saved.data.checks[0].execution.stdout, 'leaf completed\n')
+    assert.equal(await readFile(f.env.BSTACK_LEAF_LOG, 'utf8'), 'run\n')
+    assert.deepEqual(await readFile(join(f.repo, assessmentPath)), before)
+  })
 }
 
 test('portable initial foundation survives cloning while revision and selection remain required', async t => {

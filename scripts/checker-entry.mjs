@@ -46,12 +46,17 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     }
   }
   await checkAssessment()
-  for (const policy of preflight.data.policies) {
-    const docs = await checkDocuments({ ...options, coveragePolicy: policy })
-    if (docs.status !== 'passed') return { ...docs, data: { ...docs.data, phase: 'preflight' } }
-    const facts = await checkGeneratedFacts({ ...options, coveragePolicy: policy })
-    if (facts.status !== 'passed') return { ...facts, data: { ...facts.data, phase: 'preflight' } }
+  async function checkStructure() {
+    for (const policy of preflight.data.policies) {
+      const docs = await checkDocuments({ ...options, coveragePolicy: policy })
+      if (docs.status !== 'passed') return docs
+      const facts = await checkGeneratedFacts({ ...options, coveragePolicy: policy })
+      if (facts.status !== 'passed') return facts
+    }
+    return null
   }
+  const structure = await checkStructure()
+  if (structure) return { ...structure, data: { ...structure.data, phase: 'preflight' } }
   // Validate old leaves too, before any leaf is started.
   for (const check of preflight.data.requiredChecks) await leafCommand(target.root, check.command)
   const directory = await createScratch(target)
@@ -82,7 +87,7 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
       currentResults.push({ check, execution: captured ? captured.execution : await runCommand(target, check.command, { signal: controller.signal }) })
     }
     await checkAssessment()
-    validated = await validateEvidence({ ...options, currentResults })
+    validated = await checkStructure() ?? await validateEvidence({ ...options, currentResults })
   } catch (error) {
     validated = { status: error instanceof CommandError ? error.status : 'blocked',
       problems: error instanceof CommandError ? error.problems : [{ code: 'checker-unavailable', message: error.message,

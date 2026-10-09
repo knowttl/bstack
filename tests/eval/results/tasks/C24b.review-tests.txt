@@ -1,289 +1,120 @@
-Final source SHA-256:
-5d76507de28cfbc6388a7eb9d546eb605f2e37f6a442e100b34993c757a12255  scripts/checker-entry.mjs
-8dc233eb15e45c118bec9efe19287af026fa20651a80830cc4fa14470bfcb4e6  skills/repo-audit/scripts/bstack-check.mjs
-f09409c4696a12ab10a317315549966938b2d322d53f9e95a211d0da5e98d784  skills/repo-audit/scripts/commands/docs-check.mjs
-487a684257b9b759a69d7e410dc2f436fc3603c5440dc81bd45dca9735304556  skills/repo-audit/scripts/commands/docs-generate.mjs
-8aa0eb22bb0505965f50cefc73350d60e496fc892cbebaa17b4cbf85b5d7790d  skills/repo-audit/scripts/commands/evidence-validate.mjs
-514374293e23f7195a4af1ad5b2d50f7325b19022ddca43b6fc1b49a0c7387ff  tests/scripts/checker-execution.test.mjs
-
-Initial focused command: TMPDIR="$PWD/node_modules/.review-temp" node --test tests/scripts/checker-execution.test.mjs tests/scripts/docs-check.test.mjs tests/scripts/docs-generate.test.mjs
-Exit code: 1
-The initial alias test exposed a lexical entry-point guard; the guard was corrected and the checker tests rerun below.
-All 126 document-validator tests passed with their current source bytes.
-
-✔ portable initial foundation survives cloning while revision and selection remain required (1250.483741ms)
-✖ repository and assessment aliases preserve portable review identity (704.593394ms)
-✔ removed document registration cannot bypass previous structural coverage (1032.326002ms)
-✔ removed generator registration cannot bypass previous structural coverage (1192.016293ms)
-✔ portable initialized submodule fingerprints survive cloning and retain content coverage (1340.943395ms)
-✔ final validation failure preserves fresh failed leaf diagnostics (636.410336ms)
-✔ portable executable files and directory scopes survive clone permissions (1346.893197ms)
-✔ execution exception preserves diagnostics from the preceding failed leaf (555.461122ms)
-✔ different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review (1381.434573ms)
-✔ clean checker rejects missing assessment (387.548085ms)
-✔ clean checker rejects stale document (417.760946ms)
-✔ clean checker rejects incomplete assessment (479.093341ms)
-✔ clean checker rejects missing base (396.614997ms)
-✔ clean checker rejects failed leaf (1198.020635ms)
-✔ clean checker rejects saved success (1176.479027ms)
-✔ preflight rejects recursive leaves before execution (468.780646ms)
-✔ preflight rejects cycle leaves before execution (490.354869ms)
-✔ shallow clone blocks missing comparison until the documented fetch (1005.571238ms)
-✔ extracted comparison checker rejects a removed contract even after the proposed checker is replaced (443.759944ms)
-✔ policy scope widening preserves coverage with one execution per command (1140.603543ms)
-✔ policy scope narrowing preserves coverage with one execution per command (1093.077239ms)
-✔ policy command replacement preserves coverage with one execution per command (1122.097433ms)
-✔ current invocation rejects assessment byte changes and retains execution diagnostics (519.384792ms)
-✔ comparison invocation rejects assessment byte changes and retains execution diagnostics (654.026195ms)
-✔ checker requires explicit inputs and accepts only its documented options (399.701425ms)
-✔ duplicate glossary terms fail within one context (131.368052ms)
-✔ same term across glossary files in ordering has exit 1 (90.604332ms)
-✔ same term across glossary files in billing has exit 0 (85.585885ms)
-✔ markdown-bold rejects invalid-glossary: # Empty
- (89.321222ms)
-✔ markdown-bold rejects invalid-glossary: **Order**:
-
-**Customer**:
-A buyer.
- (84.308215ms)
-✔ markdown-table rejects invalid-glossary: | Term | Definition |
-| --- | --- |
-| Order | |
- (87.885355ms)
-✔ markdown-table rejects duplicate-term: | Term | Definition |
-| --- | --- |
-| Order | A request. |
-| ORDER | A request. |
- (86.419396ms)
-✔ unsupported glossary format is a coverage limit and keeps existing bytes (107.153031ms)
-✔ registered missing source fails document checks (82.11182ms)
-✔ local inline, image and reference links resolve ordinary paths and fragments (85.123935ms)
-✔ broken local link fails: missing.md (94.158497ms)
-✔ broken local link fails: readme.md (89.454448ms)
-✔ broken local link fails: #absent (92.30754ms)
-✔ broken local link fails: README.md#absent (84.956774ms)
-✔ broken local link fails: missing.png (92.564932ms)
-✔ broken local link fails: ../outside.md (81.960952ms)
-✔ broken local link fails: /README.md (82.196408ms)
-✔ broken local link fails: %ZZ.md (86.371288ms)
-✔ local links through an escaping symlink fail (84.020161ms)
-✔ nested source documents resolve parent links inside the selected target (89.184138ms)
-✔ non-Markdown sources report reference coverage limits (78.630104ms)
-✔ glossary samples inside code do not create duplicate entries (96.993287ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: [`a]: README.md
-[b`]: missing.md
-
-[First][`a] [Second][b`] (99.828529ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: [`a`]: https://example.invalid
-[`b`]: missing.md
-[Guide][`b`] (99.796531ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: `[Guide](missing.md)` (98.034875ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: # ` Array<T> `
-[Heading](#arrayt) (89.719752ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: [A \] B](missing.md) (100.94745ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: \\[Guide](missing.md) (93.078709ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: # _Rule_
-[Heading](#rule) (106.561219ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: # __Rule__
-[Heading](#rule) (95.481255ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: # [![Logo](logo.svg)](guide.md)
-[Heading](#logo) (102.732179ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: [Guide](guide.md "Title") (102.100836ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: [Guide](guide.md unexpected) (107.013449ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: [Guide](<guide.md>) (100.855119ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: [Guide](guide(new).md) (114.597353ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: <a href="missing.md">Guide</a> (107.186394ms)
-✔ unusual Markdown reports source coverage without a missing-reference verdict: # Title &amp; details
-[Heading](#title--details) (100.116836ms)
-✔ unusual fragment targets report coverage: # _Rule_ #rule (108.377127ms)
-✔ unusual fragment targets report coverage: # _Rule_ #absent (87.960041ms)
-✔ unusual fragment targets report coverage: # `Rule` #rule (90.571855ms)
-✔ unusual fragment targets report coverage: # `Rule` #absent (88.053148ms)
-✔ unusual fragment targets report coverage: # [![Logo](logo.svg)](guide.md) #rule (84.490038ms)
-✔ unusual fragment targets report coverage: # [![Logo](logo.svg)](guide.md) #absent (88.07844ms)
-✔ unusual glossary fields report coverage: markdown-bold **Order**: `request`
- (89.94674ms)
-✔ unusual glossary fields report coverage: markdown-bold **`Order`**: A request.
- (87.687321ms)
-✔ unusual glossary fields report coverage: markdown-table | Term | Definition |
-| --- | --- |
-| `Order` | A request. |
- (98.830992ms)
-✔ unusual glossary fields report coverage: markdown-table | Term | Definition |
-| --- | --- |
-| Order | `request` |
- (88.126642ms)
-✔ unusual glossary fields report coverage: markdown-table | Term | Definition |
-| --- | --- |
-| A \| B | Choice. |
- (91.312951ms)
-✔ unusual glossary fields report coverage: markdown-table | Term | Definition |
-| --- | --- |
-| Order | Extra | Cell |
- (89.541455ms)
-✔ ordinary glossary definitions stop at headings with exit 1: ## Overview (90.03659ms)
-✔ ordinary glossary definitions stop at headings with exit 0: ## Overview (95.431805ms)
-✔ ordinary glossary definitions stop at headings with exit 1:    ## Overview (89.819775ms)
-✔ ordinary glossary definitions stop at headings with exit 0:    ## Overview (97.240366ms)
-✔ ordinary glossary definitions stop at headings with exit 1: Overview
---- (81.245137ms)
-✔ ordinary glossary definitions stop at headings with exit 0: Overview
---- (82.000195ms)
-✔ ordinary glossary definitions stop at headings with exit 1: > Overview
-> === (94.766042ms)
-✔ ordinary glossary definitions stop at headings with exit 0: > Overview
-> === (106.688587ms)
-✔ ordinary glossary table whitespace preserves valid entries (84.153661ms)
-✔ ordinary glossary table whitespace preserves duplicate-term (95.901674ms)
-✔ ordinary glossary table whitespace preserves invalid-glossary (85.196623ms)
-✔ ordinary heading anchors retain unique suffixes: # Rule
-# Rule-1
-# Rule
- (91.991636ms)
-✔ ordinary heading anchors retain unique suffixes: Rule
----
-Rule-1
-===
-Rule
----
- (98.549931ms)
-✔ excluded block examples do not suppress an ordinary broken reference (86.503493ms)
-✔ unusual markup still verifies every registered path (88.243058ms)
-✔ ordinary collapsed and shortcut references retain their destinations (92.312662ms)
-✔ ordinary linked headings and percent-encoded paths remain supported (85.756884ms)
-✔ ordinary destination bytes retain path validation with exists=false: [Guide](_guide_.md)
- (99.258332ms)
-✔ ordinary destination bytes retain path validation with exists=true: [Guide](_guide_.md)
- (84.956437ms)
-✔ ordinary destination bytes retain path validation with exists=false: ![Guide](_guide_.md)
- (90.305815ms)
-✔ ordinary destination bytes retain path validation with exists=true: ![Guide](_guide_.md)
- (94.699044ms)
-✔ ordinary destination bytes retain path validation with exists=false: [Guide][target]
-[target]: _guide_.md
- (88.463477ms)
-✔ ordinary destination bytes retain path validation with exists=true: [Guide][target]
-[target]: _guide_.md
- (95.052333ms)
-✔ ordinary destination bytes retain path validation with exists=false: [Guide](*guide*.md)
- (83.245656ms)
-✔ ordinary destination bytes retain path validation with exists=true: [Guide](*guide*.md)
- (80.02868ms)
-✔ ordinary destination bytes retain path validation with exists=false: ![Guide](*guide*.md)
- (83.027612ms)
-✔ ordinary destination bytes retain path validation with exists=true: ![Guide](*guide*.md)
- (89.008073ms)
-✔ ordinary destination bytes retain path validation with exists=false: [Guide][target]
-[target]: *guide*.md
- (86.308409ms)
-✔ ordinary destination bytes retain path validation with exists=true: [Guide][target]
-[target]: *guide*.md
- (84.819262ms)
-✔ ordinary destination bytes preserve fragment target checks (99.811163ms)
-✔ unusual emphasis remains coverage limited around ordinary destinations: [_Guide_](_missing_.md)
- (96.837881ms)
-✔ unusual emphasis remains coverage limited around ordinary destinations: # _Rule_
-[Guide](_missing_.md)
- (83.494719ms)
-✔ unusual emphasis remains coverage limited around ordinary destinations: [*Guide*](*missing*.md)
- (86.044213ms)
-✔ stale sections pass after scratch proposals are reviewed and protected apply writes them (628.537277ms)
-✔ duplicate markers reject before executing generators (80.907907ms)
-✔ nested markers reject before executing generators (95.986053ms)
-✔ orphan end markers reject before executing generators (92.037341ms)
-✔ unclosed start markers reject before executing generators (83.816654ms)
-✔ unterminated comment markers reject before executing generators (92.15223ms)
-✔ missing markers reject before executing generators (115.041163ms)
-✔ mutation of existing file fails the read-only contract (145.106928ms)
-✔ mutation of ignored file fails the read-only contract (152.471333ms)
-✔ mutation of deleted file fails the read-only contract (147.977718ms)
-✔ mutation of link fails the read-only contract (130.934188ms)
-✔ check rejects temporary file writes during generator even when snapshots match (152.700352ms)
-✔ regeneration rejects temporary file writes during generator even when snapshots match (168.887452ms)
-✔ check rejects temporary file writes during version probe even when snapshots match (207.87223ms)
-✔ regeneration rejects temporary file writes during version probe even when snapshots match (185.771618ms)
-✔ check rejects ignored file writes during generator even when snapshots match (147.811235ms)
-✔ regeneration rejects ignored file writes during generator even when snapshots match (158.382355ms)
-✔ check rejects ignored file writes during version probe even when snapshots match (216.210892ms)
-✔ regeneration rejects ignored file writes during version probe even when snapshots match (195.49186ms)
-✔ check rejects restored bytes writes during generator even when snapshots match (187.005272ms)
-✔ regeneration rejects restored bytes writes during generator even when snapshots match (163.48929ms)
-✔ check rejects restored bytes writes during version probe even when snapshots match (192.559231ms)
-✔ regeneration rejects restored bytes writes during version probe even when snapshots match (203.526114ms)
-✔ check rejects temporary directory writes during generator even when snapshots match (160.012807ms)
-✔ regeneration rejects temporary directory writes during generator even when snapshots match (154.139655ms)
-✔ check rejects temporary directory writes during version probe even when snapshots match (200.089285ms)
-✔ regeneration rejects temporary directory writes during version probe even when snapshots match (196.237211ms)
-✔ check rejects temporary link writes during generator even when snapshots match (166.131648ms)
-✔ regeneration rejects temporary link writes during generator even when snapshots match (199.089617ms)
-✔ check rejects temporary link writes during version probe even when snapshots match (187.355123ms)
-✔ regeneration rejects temporary link writes during version probe even when snapshots match (198.353818ms)
-✔ check rejects descendant command writes during generator even when snapshots match (204.89908ms)
-✔ regeneration rejects descendant command writes during generator even when snapshots match (187.727535ms)
-✔ check rejects descendant command writes during version probe even when snapshots match (237.522809ms)
-✔ regeneration rejects descendant command writes during version probe even when snapshots match (232.685141ms)
-✔ unsuccessful or inexact generator output cannot pass: process.exit(2) (139.851187ms)
-✔ unsuccessful or inexact generator output cannot pass: process.stdout.write('x'.repeat(70000)) (148.070194ms)
-✔ unsuccessful or inexact generator output cannot pass: process.stdout.write(Buffer.from([255])) (135.92301ms)
-✔ multiple sections preserve surrounding bytes and use independent generator outputs (187.923042ms)
-✔ plain regeneration output exposes a readable proposal file (138.858971ms)
-✔ aliased destinations combine sections and replace each generator section once (379.286841ms)
-✔ an independent project generator accepts docs generate arguments (169.50093ms)
-✔ recursive docs generation is rejected as a child command (79.20518ms)
-✔ an unchanged section passes without target writes or scratch proposals (282.906091ms)
-ℹ tests 151
-ℹ suites 0
-ℹ pass 150
-ℹ fail 1
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 20912.946089
-
-✖ failing tests:
-
-test at tests/scripts/checker-execution.test.mjs:129:1
-✖ repository and assessment aliases preserve portable review identity (704.593394ms)
-  SyntaxError: Unexpected end of JSON input
-      at JSON.parse (<anonymous>)
-      at check (file:///home/brytton/.no-mistakes/worktrees/06ec4bfb76a3/01M4H93V7E39Y7FE0DW0EVR5A1/tests/scripts/checker-execution.test.mjs:26:41)
-      at TestContext.<anonymous> (file:///home/brytton/.no-mistakes/worktrees/06ec4bfb76a3/01M4H93V7E39Y7FE0DW0EVR5A1/tests/scripts/checker-execution.test.mjs:136:19)
-      at async Test.run (node:internal/test_runner/test:1313:7)
-      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7)
-
-Final checker command: TMPDIR="$PWD/node_modules/.review-temp" node --test tests/scripts/checker-execution.test.mjs
+Command: TMPDIR="$PWD/node_modules/.review-temp" node --test tests/scripts/checker-execution.test.mjs tests/scripts/evidence-collect.test.mjs
 Exit code: 0
 
-✔ portable initial foundation survives cloning while revision and selection remain required (1230.307498ms)
-✔ repository and assessment aliases preserve portable review identity (1101.439933ms)
-✔ removed document registration cannot bypass previous structural coverage (959.979783ms)
-✔ removed generator registration cannot bypass previous structural coverage (1112.616181ms)
-✔ portable initialized submodule fingerprints survive cloning and retain content coverage (1250.741224ms)
-✔ final validation failure preserves fresh failed leaf diagnostics (626.258355ms)
-✔ portable executable files and directory scopes survive clone permissions (1289.764287ms)
-✔ execution exception preserves diagnostics from the preceding failed leaf (557.23765ms)
-✔ different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review (1480.146949ms)
-✔ clean checker rejects missing assessment (408.783313ms)
-✔ clean checker rejects stale document (411.332309ms)
-✔ clean checker rejects incomplete assessment (488.056766ms)
-✔ clean checker rejects missing base (412.359469ms)
-✔ clean checker rejects failed leaf (1271.277412ms)
-✔ clean checker rejects saved success (1224.370667ms)
-✔ preflight rejects recursive leaves before execution (502.73141ms)
-✔ preflight rejects cycle leaves before execution (490.950645ms)
-✔ shallow clone blocks missing comparison until the documented fetch (1177.601107ms)
-✔ extracted comparison checker rejects a removed contract even after the proposed checker is replaced (502.200148ms)
-✔ policy scope widening preserves coverage with one execution per command (1201.08496ms)
-✔ policy scope narrowing preserves coverage with one execution per command (1160.458389ms)
-✔ policy command replacement preserves coverage with one execution per command (1218.241768ms)
-✔ current invocation rejects assessment byte changes and retains execution diagnostics (537.077969ms)
-✔ comparison invocation rejects assessment byte changes and retains execution diagnostics (669.58833ms)
-✔ checker requires explicit inputs and accepts only its documented options (444.793399ms)
-ℹ tests 25
+Source SHA-256:
+e0339f0a63b3edab31f9b9aa81ac10f79ee482f784375ec07edf0de94de6ae1c  scripts/checker-entry.mjs
+7d63f10229f3d969ba1cb99f20c6072d177be807ff29229e1c767ce19390f184  skills/repo-audit/scripts/bstack-check.mjs
+c7cb901597a603cc7b7d7ec826bf6bb1082661096922b492960959ebbd70cddd  skills/repo-audit/scripts/commands/evidence.mjs
+955534832452dd4229a34cf653185de46b623349d8b2f13825fb68bc169e8fd1  tests/scripts/checker-execution.test.mjs
+b1a459f12e9dc04837520197624b5e88df70f4cdda4e810f66cf8ec871ae2c71  tests/scripts/evidence-collect.test.mjs
+
+✔ portable collection resolves committed assessment directory aliases (959.737434ms)
+✔ portable collection resolves untracked assessment directory aliases (982.40418ms)
+✔ portable collection resolves absent assessment directory aliases (1016.912743ms)
+✔ portable collection resolves escaping assessment directory aliases (435.47266ms)
+✔ proposed policy rechecks ignored link destination after the leaf (926.971679ms)
+✔ proposed policy rechecks ignored generator input after the leaf (1147.441515ms)
+✔ proposed policy rechecks ignored generator output after the leaf (1017.466997ms)
+✔ proposed policy rechecks ignored generator command after the leaf (1034.716528ms)
+✔ proposed policy rechecks ignored unchanged generator output after the leaf (1210.37633ms)
+✔ previous policy rechecks ignored link destination after the leaf (1070.44082ms)
+✔ previous policy rechecks ignored generator input after the leaf (1208.181958ms)
+✔ previous policy rechecks ignored generator output after the leaf (1193.111129ms)
+✔ previous policy rechecks ignored generator command after the leaf (1118.1761ms)
+✔ previous policy rechecks ignored unchanged generator output after the leaf (1413.155516ms)
+✔ portable initial foundation survives cloning while revision and selection remain required (1290.386357ms)
+✔ repository and assessment aliases preserve portable review identity (1098.405062ms)
+✔ removed document registration cannot bypass previous structural coverage (958.686336ms)
+✔ removed generator registration cannot bypass previous structural coverage (1115.548673ms)
+✔ portable initialized submodule fingerprints survive cloning and retain content coverage (1305.579661ms)
+✔ final validation failure preserves fresh failed leaf diagnostics (596.541253ms)
+✔ portable executable files and directory scopes survive clone permissions (1323.27396ms)
+✔ execution exception preserves diagnostics from the preceding failed leaf (560.955911ms)
+✔ different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review (1586.810357ms)
+✔ clean checker rejects missing assessment (389.923452ms)
+✔ clean checker rejects stale document (384.014893ms)
+✔ clean checker rejects incomplete assessment (451.83453ms)
+✔ clean checker rejects missing base (369.528094ms)
+✔ clean checker rejects failed leaf (1500.151378ms)
+✔ clean checker rejects saved success (1308.850556ms)
+✔ preflight rejects recursive leaves before execution (508.706004ms)
+✔ preflight rejects cycle leaves before execution (519.898218ms)
+✔ shallow clone blocks missing comparison until the documented fetch (1035.389309ms)
+✔ extracted comparison checker rejects a removed contract even after the proposed checker is replaced (431.342699ms)
+✔ policy scope widening preserves coverage with one execution per command (1119.223351ms)
+✔ policy scope narrowing preserves coverage with one execution per command (1141.757807ms)
+✔ policy command replacement preserves coverage with one execution per command (1247.741797ms)
+✔ current invocation rejects assessment byte changes and retains execution diagnostics (558.179755ms)
+✔ comparison invocation rejects assessment byte changes and retains execution diagnostics (734.258542ms)
+✔ checker requires explicit inputs and accepts only its documented options (429.961864ms)
+✔ collects committed, staged, unstaged, new, renamed and deleted paths together (197.428061ms)
+✔ unborn repo records an explicit empty tree including staged and new files (107.592974ms)
+✔ missing base blocks an unborn repo rather than returning an empty comparison (85.790998ms)
+✔ missing base blocks committed history (88.608317ms)
+✔ shallow history names the exact full-history fetch prerequisite (140.965167ms)
+✔ resolves a named base once to its commit ID and recomputes after working-tree changes (238.401732ms)
+✔ staged rename maps both old and new scopes (141.548391ms)
+✔ unstaged rename maps both old and new scopes (141.489941ms)
+✔ globstar includes zero segments and path case stays distinct (130.13946ms)
+✔ collection requires an explicit base and rejects supplied inventories (109.169265ms)
+✔ a scope without document relationships still requires an unmapped impact assessment (130.862332ms)
+✔ collect retains committed delete of documents source pointer (221.142614ms)
+✔ collect retains committed rename of documents source pointer (202.114159ms)
+✔ collect retains staged delete of documents source pointer (199.886665ms)
+✔ collect retains staged rename of documents source pointer (235.160269ms)
+✔ collect retains unstaged delete of documents source pointer (202.887544ms)
+✔ collect retains unstaged rename of documents source pointer (196.616385ms)
+✔ collect rejects unrelated missing documents pointer (113.871375ms)
+✔ collect retains committed delete of rules source pointer (215.42519ms)
+✔ collect retains committed rename of rules source pointer (226.434586ms)
+✔ collect retains staged delete of rules source pointer (226.970798ms)
+✔ collect retains staged rename of rules source pointer (198.603299ms)
+✔ collect retains unstaged delete of rules source pointer (208.162323ms)
+✔ collect retains unstaged rename of rules source pointer (203.069569ms)
+✔ collect rejects unrelated missing rules pointer (116.260548ms)
+✔ collect retains committed delete of acceptanceSources source pointer (218.13163ms)
+✔ collect retains committed rename of acceptanceSources source pointer (226.157265ms)
+✔ collect retains staged delete of acceptanceSources source pointer (237.326122ms)
+✔ collect retains staged rename of acceptanceSources source pointer (221.853418ms)
+✔ collect retains unstaged delete of acceptanceSources source pointer (194.686576ms)
+✔ collect retains unstaged rename of acceptanceSources source pointer (198.335741ms)
+✔ collect rejects unrelated missing acceptanceSources pointer (111.867825ms)
+✔ collect retains deletion of a shared document rule and acceptance source (128.356384ms)
+✔ collect retains committed case-only rename of documents (227.433715ms)
+✔ collect retains staged case-only rename of documents (193.470809ms)
+✔ collect retains unstaged case-only rename of documents (193.731946ms)
+✔ collect rejects unrelated wrong-case documents pointer (109.593797ms)
+✔ collect retains committed case-only rename of rules (200.017973ms)
+✔ collect retains staged case-only rename of rules (194.84655ms)
+✔ collect retains unstaged case-only rename of rules (194.171434ms)
+✔ collect rejects unrelated wrong-case rules pointer (106.761825ms)
+✔ collect retains committed case-only rename of acceptanceSources (203.55501ms)
+✔ collect retains staged case-only rename of acceptanceSources (213.948566ms)
+✔ collect retains unstaged case-only rename of acceptanceSources (199.423765ms)
+✔ collect rejects unrelated wrong-case acceptanceSources pointer (110.08048ms)
+✔ collect retains committed removed documents source replaced by directory (207.818432ms)
+✔ collect retains committed removed documents source replaced by ancestor file (234.254618ms)
+✔ collect retains staged removed documents source replaced by directory (199.645587ms)
+✔ collect retains staged removed documents source replaced by ancestor file (203.737102ms)
+✔ collect retains unstaged removed documents source replaced by directory (192.859713ms)
+✔ collect retains unstaged removed documents source replaced by ancestor file (209.112526ms)
+✔ collect retains committed removed rules source replaced by directory (217.708172ms)
+✔ collect retains committed removed rules source replaced by ancestor file (227.755172ms)
+✔ collect retains staged removed rules source replaced by directory (219.067177ms)
+✔ collect retains staged removed rules source replaced by ancestor file (209.974524ms)
+✔ collect retains unstaged removed rules source replaced by directory (201.269633ms)
+✔ collect retains unstaged removed rules source replaced by ancestor file (201.558043ms)
+✔ collect retains committed removed acceptanceSources source replaced by directory (218.580922ms)
+✔ collect retains committed removed acceptanceSources source replaced by ancestor file (224.445971ms)
+✔ collect retains staged removed acceptanceSources source replaced by directory (218.204302ms)
+✔ collect retains staged removed acceptanceSources source replaced by ancestor file (199.303329ms)
+✔ collect retains unstaged removed acceptanceSources source replaced by directory (213.788381ms)
+✔ collect retains unstaged removed acceptanceSources source replaced by ancestor file (206.426233ms)
+ℹ tests 102
 ℹ suites 0
-ℹ pass 25
+ℹ pass 102
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 21808.974739
+ℹ duration_ms 36793.564342
