@@ -69,21 +69,19 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
   const cancel = () => controller.abort()
   process.on('SIGINT', cancel)
   process.on('SIGTERM', cancel)
+  let validated
   try {
     for (const check of preflight.data.requiredChecks) {
       currentResults.push({ check, execution: await runCommand(target, check.command, { signal: controller.signal }) })
     }
-  } finally {
-    process.removeListener('SIGINT', cancel)
-    process.removeListener('SIGTERM', cancel)
-  }
-  let validated
-  try {
     validated = await validateEvidence({ ...options, currentResults })
   } catch (error) {
     validated = { status: error instanceof CommandError ? error.status : 'blocked',
       problems: error instanceof CommandError ? error.problems : [{ code: 'checker-unavailable', message: error.message,
         fix: 'Restore the selected inputs and Node 24 runtime.' }], inputs: preflight.inputs, data: preflight.data }
+  } finally {
+    process.removeListener('SIGINT', cancel)
+    process.removeListener('SIGTERM', cancel)
   }
   const status = currentResults.some(record => record.execution.status === 'failed') ? 'failed' : validated.status
   const data = { ...validated.data, phase: 'result-validation', startedAt, completedAt: new Date().toISOString(),
