@@ -91,7 +91,7 @@ The command writes one `assessment.json` skeleton to [scratch](#scratch) and ret
 The skeleton preserves the live inventory, mapping, document entries with `assessment: null`, unmapped impact entries with `assessment: null`, and empty decisions, coverage and execution lists.
 These are pending semantic assessments, not no-impact claims or passing check evidence.
 Every collection recomputes from Git and the working tree; no supplied inventory option exists.
-The shared live inventory is also the input for the later assessment validator, which must recompute rather than trust the skeleton's path list.
+The shared live inventory is also the input for [assessment validation](#assessment-validation), which recomputes rather than trusting the skeleton's path list.
 Assessment validation and local freshness are implemented below; portable clean-checkout execution remains T3a.6 work.
 
 ### Assessment validation
@@ -164,12 +164,10 @@ After reviewing the substantive claims against the live diff, the selected revie
 The validator never writes or automatically approves the review binding.
 Repeated completed assessments have stable fingerprints.
 Changing code, source citations, the base, coverage, decisions or a no-impact reason invalidates the review.
-The shared fingerprint contract includes exact current bytes, presence and modes for changed paths, policy pointers, cited sources and check inputs, plus canonical substantive assessment data.
+The review uses the [shared fingerprint contract](#fingerprints) with changed paths, policy pointers, cited sources and check inputs, plus substantive assessment data.
 Explicit directory arguments in check commands, resolved package scripts and version probes contribute their file inventory to selection and freshness, including deleted tracked inputs.
 Internal directory links and command working-directory links resolve to that inventory while retaining lexical inputs.
-Initialized submodule fingerprints include tracked link targets and source contents so retargeting a link invalidates captured execution and review bindings.
-Only the top-level `fingerprint` and `execution` fields are excluded from that data.
-The assessment file's raw bytes are excluded when it lives in the target; its substantive data remains included, avoiding a self-referential hash.
+The selected assessment supplies `evidencePath` and its substantive fields through `inputs`.
 
 `execution` references existing local captures as `[{"runId": "<run-id>", "plan": "<caller-relative-plan.json>"}]`.
 The validator reads `checks.json` from the target's scratch run and recomputes the capture's current input state through the same hashing function as `run-checks`.
@@ -645,7 +643,8 @@ Callers represent an absent original or proposed file with `null`, never the has
 `fingerprint(target, { baseCommit, paths, inputs, evidencePath })` returns `{ fingerprint, state }`.
 The caller supplies the resolved base commit and JSON assessment inputs.
 The state includes the real local target root, base commit, sorted unique paths and substantive inputs.
-Each inventoried file records its path, presence, filesystem mode and exact-byte content hash.
+Each inventoried file records its path, presence, filesystem mode, lexical link target and exact-byte content hash.
+Initialized submodule fingerprints include tracked link targets and source contents so retargeting a link invalidates captured execution and review bindings.
 Absent files record `present: false`, `mode: null` and `contentHash: null`.
 Unreadable inputs and unsafe paths refuse the operation rather than producing a fingerprint.
 
@@ -654,7 +653,7 @@ All other fields, including nested fields with those names, remain substantive.
 When `evidencePath` is supplied, its resolved file and every inventoried alias retain presence, mode and link state, but their serialized content is not hashed.
 The caller must include the evidence's substantive fields in `inputs`.
 This avoids a self-referential evidence hash without omitting the assessment itself.
-Portable committed identity and format-specific assessment fields belong to their later owning tasks.
+Portable committed identity remains later work; [the assessment schema](../skills/repo-audit/schemas/evidence.schema.json) owns the implemented assessment format.
 
 ## Structured inputs and later contracts
 
