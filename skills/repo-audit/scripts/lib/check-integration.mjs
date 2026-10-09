@@ -19,12 +19,13 @@ export function isIndirectExecutable(executable) {
 // A bounded command grammar avoids claiming to understand arbitrary shell programs.
 // Quoted arguments are literal; shell control flow must use fail-fast && chains.
 export function integrationCommand(text, path) {
-  text = text.replace(/^[ \t\r\n]+|[ \t\r\n]+$/g, '')
+  if (text.includes('\r')) reject(path)
+  text = text.replace(/^[ \t\n]+|[ \t\n]+$/g, '')
   let quote = null
   let word = ''
   const words = []
   const flush = () => {
-    if (/[|;&`\r\n]|\$\(/.test(word)) reject(path)
+    if (/[|;&`\n]|\$\(/.test(word)) reject(path)
     if (word) words.push(word)
     word = ''
   }
@@ -32,12 +33,12 @@ export function integrationCommand(text, path) {
     const char = text[i]
     if ("\\%!'".includes(char) || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(char)) reject(path)
     if (char === quote) {
-      if (!word || (i + 1 < text.length && !/[ \t\r\n]/.test(text[i + 1]))) reject(path)
+      if (!word || (i + 1 < text.length && !/[ \t\n]/.test(text[i + 1]))) reject(path)
       quote = null
       continue
     }
     if (char === '"') {
-      if (word || (i > 0 && !/[ \t\r\n]/.test(text[i - 1]))) reject(path)
+      if (word || (i > 0 && !/[ \t\n]/.test(text[i - 1]))) reject(path)
       quote = char
       continue
     }
@@ -45,7 +46,7 @@ export function integrationCommand(text, path) {
     if (quote) { word += char; continue }
     if (char === '@' && !word && (!words.length || words.at(-1) === '&&')) reject(path)
     if (char === '&' && text[i + 1] === '&') { flush(); words.push('&&'); i++; continue }
-    if (char === '\n' || char === '\r') {
+    if (char === '\n') {
       flush()
       if (words.at(-1) !== '&&') reject(path)
       continue
