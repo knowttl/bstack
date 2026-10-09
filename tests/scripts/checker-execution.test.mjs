@@ -149,6 +149,47 @@ const structuralChanges = [
   ['generator command', "writeFileSync('build/generate.mjs', \"process.stdout.write('new\\\\n')\\n\")", 'stale-generated-section'],
   ['unchanged generator output', "writeFileSync('build/input.txt', 'old\\n')", null]
 ]
+for (const outcome of ['success', 'preflight failure', 'leaf failure', 'late limit']) test(`checker retains document coverage limits on ${outcome}`, async t => {
+  const f = await fixture(t)
+  await writeFile(join(f.repo, 'LEGACY.rst'), 'Source\n======\n')
+  await writeFile(join(f.repo, 'GUIDE.md'), '# Source\n<a href="missing.md">HTML link</a>\n')
+  f.contract.documents.push({ id: 'legacy', path: 'LEGACY.rst' }, { id: 'guide', path: 'GUIDE.md' })
+  if (outcome === 'preflight failure') {
+    await writeFile(join(f.repo, 'BAD.md'), '# Source\n[Missing](missing.md)\n')
+    f.contract.documents.push({ id: 'bad', path: 'BAD.md' })
+  }
+  if (outcome === 'leaf failure') await writeFile(join(f.repo, 'leaf.mjs'), "console.log('leaf diagnostic'); process.exit(1)\n")
+  if (outcome === 'late limit') {
+    await mkdir(join(f.repo, 'build'))
+    await writeFile(join(f.repo, '.gitignore'), 'build/\n')
+    await writeFile(join(f.repo, 'build/API.md'), '# Source\n')
+    f.contract.documents.push({ id: 'api', path: 'build/API.md' })
+    await writeFile(join(f.repo, 'leaf.mjs'), "import { writeFileSync } from 'node:fs'; writeFileSync('build/API.md', '<a href=\"missing.md\">HTML link</a>\\n');\n")
+  }
+  await f.save()
+  f.base = commit(f.repo)
+  f.contract.documents = f.contract.documents.filter(document => !['legacy', 'bad'].includes(document.id))
+  await f.save()
+  commit(f.repo)
+  await bindReview(f)
+  const result = check(f)
+  assert.equal(result.exit, outcome === 'late limit' ? 2 : ['preflight failure', 'leaf failure'].includes(outcome) ? 1 : 0, JSON.stringify(result))
+  const expected = [
+    { path: 'GUIDE.md', reason: 'HTML, entities and custom anchors require renderer review.' },
+    { path: 'LEGACY.rst', reason: 'Local links require supported Markdown text.' },
+    ...(outcome === 'late limit' ? [{ path: 'build/API.md', reason: 'HTML, entities and custom anchors require renderer review.' }] : [])
+  ]
+  assert.deepEqual(result.data.coverageLimits, expected)
+  if (outcome === 'preflight failure') {
+    assert.equal(result.data.phase, 'preflight')
+    await assert.rejects(readFile(f.env.BSTACK_LEAF_LOG), { code: 'ENOENT' })
+  } else {
+    const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
+    assert.deepEqual(saved.data.coverageLimits, expected)
+    if (outcome === 'success') assert.deepEqual(result.data.previous.data.coverageLimits, expected)
+  }
+})
+
 for (const policy of ['proposed', 'previous']) for (const [change, mutation, code] of structuralChanges) {
   test(`${policy} policy rechecks ignored ${change} after the leaf`, async t => {
     const f = await fixture(t)
