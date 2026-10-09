@@ -54,16 +54,21 @@ export async function run(options) {
   const target = await resolveTarget(options)
   const { contract, path: contractPath } = await loadContract(target, options.contract)
   const documents = new Map()
+  const destinations = new Map()
   for (const generator of contract.generators) {
     if (!/^[^\s<>]+$/.test(generator.id)) reject('invalid-marker-id', contractPath, 'Generator IDs must be single marker tokens.')
+    const outputs = new Map()
+    destinations.set(generator, outputs)
     for (const path of generator.outputPaths) {
-      if (!documents.has(path)) {
-        const bytes = await readFile(await resolveFilePath(target.root, path))
+      const resolved = await resolveFilePath(target.root, path)
+      if (!documents.has(resolved)) {
+        const bytes = await readFile(resolved)
         let original
         try { original = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes) } catch { reject('unsupported-format', path, 'Generated documents must be valid UTF-8.') }
-        documents.set(path, { original, markers: sections(original, path), replacements: [] })
+        documents.set(resolved, { path, original, markers: sections(original, path), replacements: [] })
       }
-      if (!documents.get(path).markers.has(generator.id)) reject('missing-marker', path, `Missing registered marker: ${generator.id}`)
+      if (!documents.get(resolved).markers.has(generator.id)) reject('missing-marker', path, `Missing registered marker: ${generator.id}`)
+      if (!outputs.has(resolved)) outputs.set(resolved, path)
     }
   }
   const controller = new AbortController()
@@ -78,8 +83,8 @@ export async function run(options) {
       if (await projectState(target.root) !== before) reject('generator-mutated-project', generator.id, 'Generator changed project files; its read-only contract failed.')
       if (execution.status !== 'passed' || execution.outputTruncated) reject('generator-failed', generator.id, execution.error ?? 'Generator failed or its captured output was truncated.')
       if (execution.stdout.includes('\0')) reject('unsupported-format', generator.id, 'Generated sections cannot contain NUL bytes.')
-      for (const path of generator.outputPaths) {
-        const document = documents.get(path)
+      for (const [resolved, path] of destinations.get(generator)) {
+        const document = documents.get(resolved)
         const marker = document.markers.get(generator.id)
         const current = document.original.slice(marker.start, marker.end)
         results.push({ id: generator.id, path, current: current === execution.stdout })
@@ -96,7 +101,8 @@ export async function run(options) {
       message: `Generated section is stale: ${result.id}`, fix: 'Run docs generate, review its scratch proposals and apply a selected change set.' })) }
   const directory = await createScratch(target)
   const proposals = []
-  for (const [path, document] of documents) {
+  for (const document of documents.values()) {
+    const { path } = document
     let content = document.original
     for (const replacement of document.replacements.sort((a, b) => b.start - a.start)) content = content.slice(0, replacement.start) + replacement.content + content.slice(replacement.end)
     // Generated output cannot introduce ambiguous marker structure.
@@ -108,6 +114,6 @@ export async function run(options) {
   }
   const file = join(directory, 'generated-proposals.json')
   await writeFile(file, JSON.stringify({ proposals }, null, 2) + '\n', { flag: 'wx' })
-  return { inputs, data: { sections: results, proposalsPath: file, proposals,
+  return { inputs, data: { sections: results, path: file, proposalsPath: file, proposals,
     next: 'Select findings, bind these complete proposals to a reviewed change set, then use apply --plan <file> --dry-run and apply --plan <file>.' } }
 }
