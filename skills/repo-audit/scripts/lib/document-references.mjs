@@ -12,6 +12,7 @@ const referenceDefinition = /^ {0,3}\[[^\]]+\]:/
 const thematicBreak = /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})$/
 const headingEntity = /&[\w#]+;/
 const tableSeparator = /^\|(?:[ \t]*:?-+:?[ \t]*\|){2,}[ \t]*$/
+const isEscaped = (text, index) => /(?:^|[^\\])(?:\\\\)*\\$/.test(text.slice(0, index))
 
 function fenceMarker(line) {
   const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
@@ -53,7 +54,7 @@ function inlineCodeRanges(text) {
     const runs = [...block.text.matchAll(/`+/g)]
     for (let i = 0; i < runs.length; i++) {
       const opening = runs[i]
-      if (opening.index > 0 && /(?:^|[^\\])(?:\\\\)*\\$/.test(block.text.slice(0, opening.index))) continue
+      if (isEscaped(block.text, opening.index)) continue
       const closing = runs.findIndex((run, index) => index > i && run[0].length === opening[0].length)
       if (closing < 0) continue
       ranges.push({ start: block.start + opening.index, end: block.start + runs[closing].index + runs[closing][0].length })
@@ -187,6 +188,15 @@ export function markdownAnchors(text) {
       start = link.end
     }
     title += heading.text.slice(start)
+    const code = inlineCodeRanges(title)
+    const emphasis = title.replace(/_/g, (marker, index) => code.some(range => range.start <= index && index < range.end) || isEscaped(title, index) ? 'x' : marker)
+    let plain = ''
+    start = 0
+    for (const match of emphasis.matchAll(/(?<![\p{L}\p{N}_])(_{1,2})(?=\S)([\s\S]*?\S)\1(?![\p{L}\p{N}_])/gu)) {
+      plain += title.slice(start, match.index) + title.slice(match.index + match[1].length, match.index + match[0].length - match[1].length)
+      start = match.index + match[0].length
+    }
+    title = plain + title.slice(start)
     let rendered = ''
     start = 0
     for (const range of inlineCodeRanges(title)) {
@@ -226,10 +236,11 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
   const prose = body.replace(/^ {0,3}\[[^\]]+\]:.*$/gm, value => ' '.repeat(value.length))
   const code = inlineCodeRanges(prose)
   let consumed = 0
-  for (const match of prose.matchAll(/(?<!!)!?\[([^\]\n]*)\]/g)) {
+  for (const match of prose.matchAll(/!?\[([^\]\n]*)\]/g)) {
     if (match.index < consumed) continue
     if (code.some(range => range.start <= match.index && match.index < range.end)) continue
-    if (match.index > 0 && prose[match.index - 1] === '\\') continue
+    const opening = match.index + (match[0].startsWith('!') && isEscaped(prose, match.index) ? 1 : 0)
+    if (isEscaped(prose, opening)) continue
     const start = match.index + match[0].length
     if (prose[start] === '(') {
       let end = start + 1
@@ -252,13 +263,13 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
       if (!depth) {
         consumed = end
         const path = linkDestination(prose.slice(start + 1, end - 1))
-        if (path) links.push({ href: path[1] ?? path[2], label: match[1], start: match.index, end })
+        if (path) links.push({ href: path[1] ?? path[2], label: match[1], start: opening, end })
       }
     } else {
       const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start))
       if (reference) consumed = start + reference[0].length
       const path = definitions.get(referenceLabel(reference?.[1] || match[1]))
-      if (path) links.push({ href: path, label: match[1], start: match.index, end: reference ? consumed : start })
+      if (path) links.push({ href: path, label: match[1], start: opening, end: reference ? consumed : start })
     }
   }
   return links
