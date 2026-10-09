@@ -463,7 +463,7 @@ test('a contract cannot remove its own document coverage or required check', asy
 
 test('moving the config preserves previous coverage and required checks', async t => {
   const f = await fixture(t)
-  await rename(join(f.repo, '.bstack/project.json'), join(f.repo, 'policy.json'))
+  git(f.repo, 'mv', '.bstack/project.json', 'policy.json')
   f.contractPath = 'policy.json'
   f.contract.scopes = []
   await writeFile(join(f.repo, 'policy.json'), JSON.stringify(f.contract))
@@ -500,6 +500,9 @@ test('deleting a weaker fixture cannot replace the authoritative prior policy', 
   f.contract = weak
   await f.save()
   await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { const price = quantity * 12; return price; }\n')
+  blocked(run('evidence collect', f.repo, process.env, ['--base', f.base]), 'previous-contract-reconciliation-required')
+  blocked(f.validate(), 'previous-contract-reconciliation-required')
+  await writeFile(join(f.repo, 'fixtures/policy'), JSON.stringify(weak))
   await f.collect()
   assert.deepEqual(f.assessment.documents.map(item => item.id), ['design'])
   await f.complete()
@@ -514,36 +517,34 @@ test('deleting a weaker fixture cannot replace the authoritative prior policy', 
   blocked(f.validate(), 'acceptance-decision-required')
 })
 
-test('a replacement over an existing weaker contract preserves removed authoritative obligations', async t => {
-  const f = await fixture(t)
-  const checks = structuredClone(f.contract.checks)
-  const weak = { ...f.contract, documents: [], scopes: [], rules: [], checks: [], acceptanceSources: [] }
-  await mkdir(join(f.repo, 'fixtures'))
-  await writeFile(join(f.repo, 'fixtures/policy'), JSON.stringify(weak))
-  f.base = commit(f.repo)
-  await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { const price = quantity * 12; return price; }\n')
-  await rm(join(f.repo, '.bstack/project.json'))
-  f.contract = weak
-  f.contractPath = 'fixtures/policy'
-  await f.collect()
-  assert.deepEqual(f.assessment.documents.map(item => item.id), ['design'])
-  await f.complete()
-  const result = await f.bind()
-  assert.equal(result.data.previousContract, '.bstack/project.json')
-  blocked(f.validate(), 'required-check-missing')
-  await f.capture(checks)
-  assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
-  await writeFile(join(f.repo, 'ACCEPTANCE.md'), 'A quote is quantity multiplied by 13.\n')
-  await f.collect()
-  await f.complete()
-  blocked(f.validate(), 'acceptance-decision-required')
-})
+for (const priorPath of ['.bstack/project.json', 'policy.json', 'policy']) {
+  for (const destination of ['existing', 'new']) {
+    test(`deleted ${priorPath} requires reconciliation before selecting a ${destination} replacement`, async t => {
+      const f = await fixture(t)
+      await rename(join(f.repo, '.bstack/project.json'), join(f.repo, 'prior-policy'))
+      await rename(join(f.repo, 'prior-policy'), join(f.repo, priorPath))
+      const weak = { ...f.contract, documents: [], scopes: [], rules: [], checks: [], acceptanceSources: [] }
+      await mkdir(join(f.repo, 'fixtures'))
+      await writeFile(join(f.repo, 'fixtures/existing'), JSON.stringify(weak))
+      f.base = commit(f.repo)
+      await rm(join(f.repo, priorPath))
+      f.contractPath = `fixtures/${destination}`
+      await writeFile(join(f.repo, f.contractPath), JSON.stringify(weak))
+      await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return quantity * 13; }\n')
+      await writeFile(join(f.repo, 'ACCEPTANCE.md'), 'A quote is quantity multiplied by 13.\n')
+      const collected = run('evidence collect', f.repo, process.env, ['--base', f.base, '--contract', f.contractPath])
+      blocked(collected, 'previous-contract-reconciliation-required')
+      assert.equal(collected.problems[0].path, priorPath)
+      blocked(f.validate(), 'previous-contract-reconciliation-required')
+    })
+  }
+}
 
 test('moving an extensionless contract preserves prior coverage', async t => {
   const f = await fixture(t)
   await rename(join(f.repo, '.bstack/project.json'), join(f.repo, 'policy'))
   f.base = commit(f.repo)
-  await rename(join(f.repo, 'policy'), join(f.repo, 'replacement'))
+  git(f.repo, 'mv', 'policy', 'replacement')
   f.contractPath = 'replacement'
   f.contract.documents = []
   f.contract.scopes = []

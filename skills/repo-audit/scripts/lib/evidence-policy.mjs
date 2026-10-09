@@ -27,9 +27,7 @@ export async function previousPolicy(root, base, contractPath, inventory) {
   const relocated = new Set(inventory.changes.filter(change => change.status.startsWith('R') && change.path === contractPath).map(change => change.oldPath))
   const fallback = paths.includes(contractPath) ? [contractPath] : paths.filter(path =>
     path === '.bstack/project.json' || inventory.paths.includes(path))
-  const authoritativeRemoved = paths.filter(path => removed.has(path) &&
-    (path === '.bstack/project.json' || path === contractPath || relocated.has(path)))
-  const selected = authoritativeRemoved.length ? authoritativeRemoved : fallback
+  const selected = [...new Set([...paths.filter(path => removed.has(path)), ...(relocated.size ? [] : fallback)])]
   for (const path of selected) {
     const authoritative = path === contractPath || path === '.bstack/project.json' || relocated.has(path)
     const text = baseText(root, base, path)
@@ -54,6 +52,9 @@ export async function previousPolicy(root, base, contractPath, inventory) {
       throw new CommandError('blocked', [{ code: 'previous-contract-invalid', path,
         message: 'Previous coverage policy is invalid.', fix: 'Restore or review a migration of the previous policy; proposed coverage cannot replace it.' }])
     }
+    if (removed.has(path) && !relocated.has(path)) throw new CommandError('blocked', [{ code: 'previous-contract-reconciliation-required', path,
+      message: 'A possible prior contract was deleted without a clear rename to the proposed location.',
+      fix: 'Explicitly reconcile the deleted policy and its obligations; restore its prior location or record a clear Git rename before validating.' }])
     candidates.push({ path, contract: value })
   }
   if (candidates.length > 1) throw new CommandError('blocked', [{ code: 'ambiguous-previous-contract',

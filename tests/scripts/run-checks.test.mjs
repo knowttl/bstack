@@ -141,7 +141,10 @@ for (const manager of ['npm', 'pnpm', 'yarn']) {
     ['post', { verify: 'node other.mjs', postverify: 'node check.mjs --config=rules.json' }, ['run', 'verify']],
     ['nested', { verify: `${manager} run inner`, preinner: 'node other.mjs', inner: 'node check.mjs --config=rules.json', postinner: 'node other.mjs' }, ['run', 'verify']],
     ['lifecycle', { pretest: 'node other.mjs', test: 'node check.mjs --config=rules.json', posttest: 'node other.mjs' }, ['test']],
-    ['version', { verify: 'node check.mjs --config=rules.json' }, ['--version'], ['run', 'verify']]
+    ['version', { verify: 'node check.mjs --config=rules.json' }, ['--version'], ['run', 'verify']],
+    ['forwarded arguments', { verify: 'node check.mjs --config=rules.json' }, ['run', 'verify', '--', '--filter', 'pricing']],
+    ['forwarded nested arguments', { verify: `${manager} run inner -- --filter pricing`, inner: 'node check.mjs --config=rules.json' }, ['run', 'verify']],
+    ['opaque pre hook', { preverify: 'node other.mjs; node other.mjs', verify: 'node check.mjs --config=rules.json' }, ['run', 'verify']]
   ]) {
     test(`${manager} ${name} script checker and config bytes bind capture inputs`, async t => {
       const f = await setup(t)
@@ -162,6 +165,30 @@ for (const manager of ['npm', 'pnpm', 'yarn']) {
       assert.notEqual(configChanged.fingerprint, checkerChanged.fingerprint)
     })
   }
+}
+
+for (const [name, script, args, versionArgs] of [
+  ['forwarded main arguments', 'node check.mjs', ['run', 'verify', '--', '--filter', 'pricing'], ['--version']],
+  ['forwarded version arguments', 'node check.mjs', ['--version'], ['run', 'verify', '--', '--filter', 'pricing']],
+  ['opaque main script', 'node check.mjs; node check.mjs', ['run', 'verify'], ['--version']],
+  ['opaque version script', 'node check.mjs; node check.mjs', ['--version'], ['run', 'verify']]
+]) {
+  test(`capture preserves an existing npm command with ${name}`, async t => {
+    const f = await setup(t)
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { verify: script } }))
+    await writeFile(join(f.repo, 'check.mjs'), 'console.log("completed", JSON.stringify(process.argv.slice(2)))\n')
+    f.plan.checks[0].command = { executable: 'npm', args, cwd: '.', versionArgs }
+    f.plan.checks[0].inputScopes.push('check.mjs')
+    const result = await f.invoke()
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.checks[0].command, f.plan.checks[0].command)
+    const execution = result.data.checks[0].execution
+    assert.equal(execution.exitCode, 0)
+    assert.equal(execution.toolVersion.exitCode, 0)
+    assert.match(execution.stdout + execution.toolVersion.stdout, /completed/)
+    assert.equal(result.data.coverage[0].status, 'passed')
+    assert.ok(result.data.originalState.state.files.some(file => file.path === 'package.json'))
+  })
 }
 
 test('a checker that changes its own unscoped file blocks capture', async t => {
