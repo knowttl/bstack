@@ -411,6 +411,7 @@ function canonicalJSON(value) {
   return JSON.stringify(value);
 }
 async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) {
+  const portable = inputs.repo === ".";
   const root = await realpath4(target.root);
   const evidenceFile = evidencePath ? await resolveLinks(resolve3(root, evidencePath), true) : null;
   const gitlinks = new Map(readGit(root, ["ls-files", "--stage", "-z"]).stdout.split("\0").filter((entry) => entry.startsWith("160000 ")).map((entry) => [entry.slice(entry.indexOf("	") + 1), entry.split(" ")[1]]));
@@ -433,7 +434,7 @@ async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) 
         const contents = initialized ? await fingerprint({ root: resolved }, {
           baseCommit: readGit(resolved, ["rev-parse", "HEAD"]).stdout.trim(),
           paths: [...await repoFiles(resolved), ...readGit(resolved, ["ls-files", "-z"]).stdout.split("\0").filter(Boolean)],
-          inputs: {},
+          inputs: portable ? { repo: "." } : {},
           evidencePath: evidenceFile
         }) : null;
         contentHash = hashBytes(canonicalJSON({ gitlink: gitlinks.get(path), contents: contents?.fingerprint ?? null }));
@@ -451,7 +452,10 @@ async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) 
     }
   }
   const { fingerprint: derivedFingerprint, execution, ...substantive } = inputs;
-  const portable = inputs.repo === ".";
+  if (portable && substantive.foundation) substantive.foundation = {
+    ...substantive.foundation,
+    record: { ...substantive.foundation.record, target: { ...substantive.foundation.record.target, root: "." } }
+  };
   const state = {
     root: portable ? "." : root,
     baseCommit,
@@ -2341,9 +2345,11 @@ async function run3(options) {
   if (!previous) {
     const foundation = assessment.foundation;
     if (foundation) {
-      await validateFindings(foundation.record, target);
-      const finding = foundation.record.findings.find((item) => item.id === foundation.findingId);
-      if (foundation.record.stage !== "foundation" || foundation.record.target.root !== target.root || foundation.record.target.revision !== inventory.head || !foundation.record.selectedFindingIds.includes(foundation.findingId) || finding?.status !== "selected" || !finding.scope.includes(proposed.path)) problem("unselected-foundation", "Initial contract needs a selected foundation finding covering this contract and target.");
+      validateData(findings_schema_default, foundation.record);
+      const record = assessment.repo === "." ? { ...foundation.record, target: { ...foundation.record.target, root: target.root } } : foundation.record;
+      await validateFindings(record, target);
+      const finding = record.findings.find((item) => item.id === foundation.findingId);
+      if (record.stage !== "foundation" || record.target.root !== target.root || record.target.revision !== inventory.head || !record.selectedFindingIds.includes(foundation.findingId) || finding?.status !== "selected" || !finding.scope.includes(proposed.path)) problem("unselected-foundation", "Initial contract needs a selected foundation finding covering this contract and target.");
     } else problem("previous-contract-unavailable", "Prerequisite: restore the previous contract or supply the explicitly selected initial foundation finding.");
   }
   const citedPaths = [];
@@ -2703,7 +2709,21 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     process.removeListener("SIGINT", cancel);
     process.removeListener("SIGTERM", cancel);
   }
-  const validated = await run3({ ...options, currentResults });
+  let validated;
+  try {
+    validated = await run3({ ...options, currentResults });
+  } catch (error) {
+    validated = {
+      status: error instanceof CommandError ? error.status : "blocked",
+      problems: error instanceof CommandError ? error.problems : [{
+        code: "checker-unavailable",
+        message: error.message,
+        fix: "Restore the selected inputs and Node 24 runtime."
+      }],
+      inputs: preflight.inputs,
+      data: preflight.data
+    };
+  }
   const status = currentResults.some((record) => record.execution.status === "failed") ? "failed" : validated.status;
   const data = {
     ...validated.data,
@@ -2752,4 +2772,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"c876e519f8204c6c2b5c1c22771e43109809de20c80dd369218530eb30452669"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"bd1b3817f15c9d1d9016aa342528c88e9d1f2cb4ba7dc1dc910e51f02f7391c0"}

@@ -17,6 +17,7 @@ export function canonicalJSON(value) {
 }
 
 export async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) {
+  const portable = inputs.repo === '.'
   const root = await realpath(target.root)
   const evidenceFile = evidencePath ? await resolveLinks(resolve(root, evidencePath), true) : null
   const gitlinks = new Map(readGit(root, ['ls-files', '--stage', '-z']).stdout.split('\0')
@@ -38,7 +39,7 @@ export async function fingerprint(target, { baseCommit, paths, inputs, evidenceP
         const head = readGit(resolved, ['rev-parse', '--show-toplevel'])
         const initialized = head.status === 0 && await realpath(head.stdout.trim()) === resolved
         const contents = initialized ? await fingerprint({ root: resolved }, { baseCommit: readGit(resolved, ['rev-parse', 'HEAD']).stdout.trim(),
-          paths: [...await repoFiles(resolved), ...readGit(resolved, ['ls-files', '-z']).stdout.split('\0').filter(Boolean)], inputs: {}, evidencePath: evidenceFile }) : null
+          paths: [...await repoFiles(resolved), ...readGit(resolved, ['ls-files', '-z']).stdout.split('\0').filter(Boolean)], inputs: portable ? { repo: '.' } : {}, evidencePath: evidenceFile }) : null
         contentHash = hashBytes(canonicalJSON({ gitlink: gitlinks.get(path), contents: contents?.fingerprint ?? null }))
       }
       files.push({ path, present: true, mode: info.mode, linkTarget,
@@ -50,7 +51,8 @@ export async function fingerprint(target, { baseCommit, paths, inputs, evidenceP
   }
   // Only the explicitly named derived fields are omitted, never arbitrary nested data.
   const { fingerprint: derivedFingerprint, execution, ...substantive } = inputs
-  const portable = inputs.repo === '.'
+  if (portable && substantive.foundation) substantive.foundation = { ...substantive.foundation,
+    record: { ...substantive.foundation.record, target: { ...substantive.foundation.record.target, root: '.' } } }
   const state = { root: portable ? '.' : root, baseCommit,
     files: portable ? files.map(file => ({ ...file, mode: file.mode === null ? null : file.mode & 0o111 })) : files,
     inputs: substantive }
