@@ -6,6 +6,7 @@ import { createScratch } from '../lib/scratch.mjs'
 import { previousPolicy, mapInventory } from '../lib/evidence-policy.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { loadContract } from './contract.mjs'
+import { relative, resolve } from 'node:path'
 
 // Inventory reads are independent of ambient Git overrides, just like target resolution.
 const gitEnv = { ...process.env, GIT_DIR: undefined, GIT_WORK_TREE: undefined, GIT_COMMON_DIR: undefined, GIT_INDEX_FILE: undefined }
@@ -64,11 +65,21 @@ export async function run(options) {
   if (!options.base) throw new CommandError('usage-error', [{ code: 'missing-base', message: 'An explicit comparison base is required.', fix: 'Supply --base <ref>, or --base empty before the first commit.' }])
   const target = await resolveTarget(options)
   const inventory = collectInventory(target.root, options.base)
+  if (options.portable) {
+    const path = relative(target.root, resolve(target.root, options.portable)).split('\\').join('/')
+    if (!inventory.head || path.startsWith('../') || path === '..' || !path) throw new CommandError('usage-error', [{
+      code: 'invalid-portable-assessment', message: 'Portable collection needs a committed source and an internal assessment path.',
+      fix: 'Commit source changes, then supply --portable <repo-relative-assessment>.' }])
+    if (inventory.changes.some(change => change.oldPath && [change.oldPath, change.path].includes(path) || change.source !== 'committed' && change.path !== path)) throw new CommandError('blocked', [{
+      code: 'uncommitted-source', message: 'Commit source changes before collecting portable review.', fix: 'Commit the reviewed implementation first.' }])
+    inventory.changes = inventory.changes.filter(change => change.path !== path && change.oldPath !== path)
+    inventory.paths = inventory.paths.filter(item => item !== path)
+  }
   const removedPaths = new Set(inventory.changes.filter(change => change.status === 'D' || change.status.startsWith('R')).map(change => change.oldPath ?? change.path))
   const { contract, path: contractPath } = await loadContract(target, options.contract, removedPaths)
   const previous = await previousPolicy(target.root, inventory.base, contractPath, inventory, options['previous-contract'])
   const { mappings, unmappedPaths, candidateDocuments } = mapInventory(inventory, [contract, ...(previous ? [previous.contract] : [])])
-  const assessment = { schemaVersion: 1, repo: target.root, contract: contractPath, previousContract: previous?.path ?? null, ...inventory, mappings, unmappedPaths,
+  const assessment = { schemaVersion: 1, repo: options.portable ? '.' : target.root, contract: contractPath, previousContract: previous?.path ?? null, ...inventory, mappings, unmappedPaths,
     documents: candidateDocuments.map(document => ({ ...document, assessment: null })),
     unmappedAssessments: unmappedPaths.map(path => ({ path, assessment: null })), decisions: [], coverage: [], execution: [], fingerprint: null }
   const directory = await createScratch(target)

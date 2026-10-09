@@ -169,6 +169,27 @@ export async function run(options) {
     message: 'Explicit base and assessment are required.', fix: 'Supply --base <ref> --assessment <file> [--contract <path>].' }])
   const target = await resolveTarget(options)
   const inventory = collectInventory(target.root, options.base)
+  let assessment
+  try { assessment = inspectJSON(await readFile(options.assessment, 'utf8')).value } catch (error) {
+    if (error instanceof CommandError) throw error
+    throw new CommandError('blocked', [{ code: 'assessment-unavailable', message: 'Assessment file is unavailable.', fix: 'Collect and complete an assessment, then pass its readable path with --assessment.' }])
+  }
+  validateData(evidenceSchema, assessment)
+  if (assessment.repo === '.') {
+    const path = relative(target.root, resolve(options.assessment)).split('\\').join('/')
+    const source = readGit(target.root, ['rev-parse', '--verify', '--end-of-options', `${assessment.head}^{commit}`])
+    const delta = readGit(target.root, ['diff', '--name-only', '-z', assessment.head ?? '', 'HEAD', '--'])
+    if (!assessment.head || source.status !== 0 || delta.status !== 0 || path.startsWith('../') || path === '..' ||
+        readGit(target.root, ['merge-base', '--is-ancestor', assessment.head, 'HEAD']).status !== 0 ||
+        delta.stdout.split('\0').some(item => item && item !== path) ||
+        inventory.changes.some(change => change.oldPath && [change.oldPath, change.path].includes(path) || change.source !== 'committed' && change.path !== path)) {
+      throw new CommandError('blocked', [{ code: 'portable-source-mismatch', message: 'Portable review must name the committed source; only its selected assessment may differ from HEAD.',
+        fix: 'Commit source changes and recollect portable review against the agreed base.' }])
+    }
+    inventory.head = assessment.head
+    inventory.changes = inventory.changes.filter(change => change.path !== path && change.oldPath !== path)
+    inventory.paths = inventory.paths.filter(item => item !== path)
+  }
   if (inventory.head && readGit(target.root, ['merge-base', '--is-ancestor', inventory.base.objectId, inventory.head]).status !== 0) {
     throw new CommandError('blocked', [{ code: 'unsupported-comparison-base', message: 'The base must be an ancestor of HEAD.', fix: 'Select the agreed ancestor commit, or empty only before the first commit.' }])
   }
@@ -177,18 +198,12 @@ export async function run(options) {
   const previous = await previousPolicy(target.root, inventory.base, proposed.path, inventory, options['previous-contract'])
   const contracts = [proposed.contract, ...(previous ? [previous.contract] : [])]
   const mapping = mapInventory(inventory, contracts)
-  let assessment
-  try { assessment = inspectJSON(await readFile(options.assessment, 'utf8')).value } catch (error) {
-    if (error instanceof CommandError) throw error
-    throw new CommandError('blocked', [{ code: 'assessment-unavailable', message: 'Assessment file is unavailable.', fix: 'Collect and complete an assessment, then pass its readable path with --assessment.' }])
-  }
-  validateData(evidenceSchema, assessment)
   validateIds(assessment.decisions, 'decisions')
   const problems = []
   const problem = (code, message) => problems.push({ code, message, fix: 'Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks.' })
   const equal = (a, b) => canonicalJSON(a) === canonicalJSON(b)
   for (const key of ['base', 'head', 'changes', 'paths']) if (!equal(assessment[key], inventory[key])) problem('inventory-mismatch', `Assessment ${key} does not match the complete live comparison.`)
-  if (assessment.repo !== target.root || assessment.contract !== proposed.path) problem('target-mismatch', 'Assessment names a different repo or contract.')
+  if (!['.', target.root].includes(assessment.repo) || assessment.contract !== proposed.path) problem('target-mismatch', 'Assessment names a different repo or contract.')
   if (assessment.previousContract !== (previous?.path ?? null)) problem('target-mismatch', 'Assessment names a different previous policy.')
   if (!equal(assessment.mappings, mapping.mappings) || !equal(assessment.unmappedPaths, mapping.unmappedPaths) ||
       !equal(assessment.documents.map(({ id, path }) => ({ id, path })), mapping.candidateDocuments) ||
@@ -263,7 +278,7 @@ export async function run(options) {
     .filter((check, i, all) => all.findIndex(item => equal(item, check)) === i)
   for (const rule of affectedRules) if (!assessment.coverage.includes(rule.id)) problem('missing-rule-coverage', `Rule ${rule.id} from previous/proposed policy has no assessment coverage.`)
   const captures = []
-  for (const record of assessment.execution) {
+  for (const record of options.preflight || options.currentResults ? [] : assessment.execution) {
     try {
       const plan = inspectJSON(await readFile(record.plan, 'utf8')).value
       validateData(checkSchema, plan)
@@ -278,6 +293,13 @@ export async function run(options) {
   const policyInputs = [...new Set([proposed.path, ...(previous ? [previous.path] : []), ...contracts.flatMap(contract =>
     [...contract.documents, ...contract.rules, ...contract.acceptanceSources].map(item => item.path))])]
   for (const check of requiredChecks) {
+    if (options.preflight) continue
+    if (options.currentResults) {
+      if (!options.currentResults.some(record => equal(record.check, check) && successful(record.execution) && successful(record.execution.toolVersion))) {
+        problem('required-check-missing', `Required previous/proposed check ${check.id} did not pass in this invocation.`)
+      }
+      continue
+    }
     if (!captures.some(({ plan, capture, current }) => {
       const declared = plan.checks.find(item => item.id === check.id && item.required && equal(item.command, check.command) && check.inputScopes.every(scope => item.inputScopes.includes(scope)))
       const executed = capture.checks?.find(item => item.id === check.id && item.required && item.satisfied && item.status === 'passed' && equal(item.command, check.command))
@@ -299,5 +321,5 @@ export async function run(options) {
   if (assessment.fingerprint !== binding.fingerprint) problem('stale-review', 'Substantive review inputs changed or have not been bound to the current fingerprint.')
   return { status: problems.length ? 'blocked' : 'passed', problems, inputs: { repo: target.root, base: options.base, assessment: options.assessment, contract: proposed.path },
     data: { ...inventory, ...mapping, previousContract: previous?.path ?? null, requiredCheckIds: [...new Set(requiredChecks.map(check => check.id))],
-      fingerprint: binding.fingerprint, limitations: ['Structural validation cannot prove that explanations or document deltas agree semantically with code, or authenticate owner approval. The selected review process must assess these claims.', 'Local execution records are not authenticated portable attestations. Captures cover declared inputs only; transient changes restored before capture completion are not detected.'] } }
+      requiredChecks, fingerprint: binding.fingerprint, limitations: ['Structural validation cannot prove that explanations or document deltas agree semantically with code, or authenticate owner approval. The selected review process must assess these claims.', 'Local execution records are not authenticated portable attestations. Captures cover declared inputs only; transient changes restored before capture completion are not detected.'] } }
 }

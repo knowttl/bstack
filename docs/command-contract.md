@@ -30,9 +30,76 @@ An existing user-edited checker requires review of its specific replacement, nev
 C24a exports `validateContract`, `checkDocuments`, `checkGeneratedFacts`, `validateEvidence` and `validateData` from the same sources as the skill commands.
 `checkGeneratedFacts` always selects check mode and cannot create regeneration proposals.
 The existing validators retain their coverage and proof limits, including generated commands' read-only contract and local evidence captures' lack of portable attestation.
-This slice provides the artifact and installation path only.
-It does not expose the aggregate `--repo --base --assessment` runner, execute required leaf checks, implement clean-checkout policy, install a CI adapter or write maintenance guidance.
-Those execution requirements remain C24b and T3a.7.
+C24b adds the aggregate execution interface below.
+Maintenance guidance remains T3a.7, and hosted CI behavior is unverified.
+
+## Standalone checker execution
+
+```sh
+node .bstack/bin/bstack-check.mjs --repo <path> --base <ancestor-commit> --assessment <file> [--contract <repo-relative-file>] [--json]
+```
+
+Node 24 and Git are required; the installed file needs no dependencies, skill installation or agent session.
+The caller selects every input explicitly; the assessment path is caller-relative and the contract defaults to `.bstack/project.json`.
+The result uses the shared exit codes: 0 passed, 1 failed, 2 blocked and 3 usage error.
+
+Preflight validates the live inventory, previous/proposed contracts, substantive assessments, source citations, review fingerprint, document references and generated facts.
+It inspects package script dependencies and every required previous/proposed leaf for cycles and obvious aggregate recursion before executing leaves.
+Generated-fact commands retain their existing read-only contract.
+Each affected required leaf declaration runs once in each checker invocation, with its declared version probe and normal timeout/cancellation handling.
+Result validation uses only these current executions, never saved `execution` references in the assessment.
+Changed review inputs block final validation, and failed or incomplete required executions cannot pass.
+Completed leaf execution writes a fresh scratch `checker-result.json` containing source and base objects, their computed merge base, timestamps and current command results, including failures.
+The selected ancestor policy requires that merge base to equal the assessment's comparison object.
+The checker never edits the assessment.
+Opaque leaf programs retain the existing review boundary: only supported direct invocations and package aliases are inspected for recursion.
+
+### Portable committed review
+
+Commit implementation changes before collecting portable review:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base <ancestor-commit> --portable .bstack/assessment.json --json
+node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <target>/.bstack/assessment.json --json
+```
+
+Copy the returned skeleton to the explicitly selected repo-relative assessment path and complete its substantive claims through the selected review process.
+Validation returns the fingerprint to record after review, even while leaf execution is still missing.
+Commit the completed, bound assessment separately and run the installed aggregate.
+Portable records use `repo: "."` and retain the reviewed implementation commit in `head`.
+That commit must be an ancestor of submitted HEAD, with no subsequent source changes except the selected assessment itself.
+Portable inventory omits that record's own path, and portable fingerprints replace absolute roots with `.` and normalize modes to executable bits.
+The record's substantive claims are still hashed; this narrow self-exclusion avoids making its own commit or serialized hash self-referential.
+Renaming the selected record together with a source path is unsupported.
+The aggregate requires the selected file's bytes to match its committed HEAD blob.
+Local records retain absolute-root and live-HEAD behavior and cannot claim portable clean-checkout evidence.
+Neither format authenticates semantic review or owner approval.
+
+Clone into a different root, use a fresh isolated home and cache with no installed repo-audit skill, and pass the same base and committed record explicitly.
+No earlier cache entry or leaf success can satisfy that clone's current run.
+Missing assessment files and missing comparison objects block rather than producing an empty diff.
+A shallow checkout missing its base reports the required fetch:
+
+```sh
+git fetch --unshallow origin
+git fetch origin <required-base-commit>
+```
+
+For a full clone with a missing object, fetch the required commit explicitly.
+After rebasing or changing the agreed base, recollect, review, bind and commit the assessment again.
+`--base empty` remains supported only before a repository's first commit, using an explicitly selected initial foundation assessment.
+
+### Previous-policy execution
+
+When a change modifies the installed checker or either contract location, the aggregate extracts the base's `.bstack/bin/bstack-check.mjs` to scratch and invokes its exported `runChecker` against the proposed target and selected assessment before its current leaf phase.
+That comparison invocation has its own fresh leaf results; it does not recurse into another comparison invocation.
+The explicit assessment carries the reconciled `previousContract` path, including custom prior authority.
+Previous scopes and required checks remain obligations when the proposed policy removes them.
+A deleted prior config without a clear Git rename stays blocked for reconciliation, including when a replacement checker would return success.
+For independently selected delivery checks, extract and run the prior file directly with the same explicit inputs as well.
+An absent or incompatible prior checker blocks for a recorded migration decision and explicit prior coverage; this slice does not silently waive that prerequisite.
+A selected first-installation foundation with no previous policy has no prior checker to execute.
+The delivery process must actually invoke these checks; changed scripts can omit their own checker, so forge enforcement and hosted CI behavior remain unverified.
 
 The planned production interface is `node skills/repo-audit/scripts/repo-audit.mjs <command> [options]`.
 Resource paths are relative to the installed skill, never the caller's current directory.
@@ -126,7 +193,7 @@ The skeleton preserves the live inventory, mapping, document entries with `asses
 These are pending semantic assessments, not no-impact claims or passing check evidence.
 Every collection recomputes from Git and the working tree; no supplied inventory option exists.
 The shared live inventory is also the input for [assessment validation](#assessment-validation), which recomputes rather than trusting the skeleton's path list.
-Assessment validation and local freshness are implemented below; portable clean-checkout execution remains T3a.6 work.
+Assessment validation and local freshness are implemented below; the standalone execution contract above owns portable clean-checkout behavior.
 
 ### Assessment validation
 
@@ -756,7 +823,7 @@ All other fields, including nested fields with those names, remain substantive.
 When `evidencePath` is supplied, its resolved file and every inventoried alias retain presence, mode and link state, but their serialized content is not hashed.
 The caller must include the evidence's substantive fields in `inputs`.
 This avoids a self-referential evidence hash without omitting the assessment itself.
-Portable committed identity remains later work; [the assessment schema](../skills/repo-audit/schemas/evidence.schema.json) owns the implemented assessment format.
+Portable committed identity follows the standalone execution contract above; [the assessment schema](../skills/repo-audit/schemas/evidence.schema.json) owns the implemented assessment format.
 
 ## Structured inputs and later contracts
 
