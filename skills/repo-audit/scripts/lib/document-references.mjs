@@ -162,12 +162,24 @@ export function markdownHeadings(body) {
   return headings
 }
 
+function hasNestedHeadingMarkup(text) {
+  const prose = markdownProse(text)
+  let labels = ''
+  let start = 0
+  for (const link of markdownReferences(prose)) {
+    const end = link.start + link.label.length + (prose[link.start] === '!' ? 3 : 2)
+    labels += prose.slice(start, end)
+    start = link.end
+  }
+  return /(?:^|[^\\])(?:\\\\)*\[(?:\\.|[^\]\\])*\[/.test(labels + prose.slice(start))
+}
+
 export function markdownAnchors(text) {
   const anchors = new Set()
   const counts = new Map()
   const definitions = markdownDefinitions(markdownProse(text))
   for (const heading of markdownHeadings(markdownBody(text))) {
-    if (headingEntity.test(heading.text)) continue
+    if (headingEntity.test(heading.text) || hasNestedHeadingMarkup(heading.text)) continue
     let title = ''
     let start = 0
     for (const link of markdownReferences(heading.text, definitions)) {
@@ -283,9 +295,11 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
           throw error
         }
       }
+      const headings = markdownHeadings(markdownBody(text))
+      if (headings.some(heading => hasNestedHeadingMarkup(heading.text))) return unsupported()
       if (!markdownAnchors(text).has(fragment)) {
         if (text.includes('\0') || /<[^>]+\b(?:id|name)\s*=|\{#[^}]+\}/m.test(markdownBody(text)) ||
-            markdownHeadings(markdownBody(text)).some(heading => headingEntity.test(heading.text))) return unsupported()
+            headings.some(heading => headingEntity.test(heading.text))) return unsupported()
         return problem('Missing heading fragment')
       }
     }

@@ -337,6 +337,23 @@ for (const rule of [
   })
 }
 
+for (const heading of ['## [![Logo](logo.svg)](guide.md)', '[![Logo](logo.svg)](guide.md)\n---']) {
+  test(`move-rule reports unsupported staged heading fragments without writes: ${heading}`, async t => {
+    const context = await ruleMove(t, null, 'CONTRIBUTING.md', heading + '\n')
+    await writeFile(join(context.repo, 'logo.svg'), '<svg/>\n')
+    await writeFile(join(context.repo, 'guide.md'), '# Guide\n')
+    const link = '[Logo](CONTRIBUTING.md#logo)\n'
+    for (const edit of context.plan.edits) edit.payload = { ...edit.payload, link }
+    context.plan.edits[0].proposedContent = '# Design\n' + link
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+    await save(context)
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.problems[0].code, 'unsupported-link-fragment', JSON.stringify(result))
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
 for (const [name, original] of [
   ['ambiguous source', '# Design\n## One source\n\nKeep one authoritative source for each rule.\n## One source\n\nKeep one authoritative source for each rule.\n'],
   ['absent source', '# Design\nAnother rule.\n'],

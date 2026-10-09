@@ -357,6 +357,64 @@ for (const target of ['<a id="custom"></a>\n', '# Title {#custom}\n', '# Title &
   })
 }
 
+for (const target of [
+  '# [![Logo](logo.svg)](guide.md)',
+  '[![Logo](logo.svg)](guide.md)\n---',
+  'Title\n[![Logo](logo.svg)](guide.md)\n===',
+  '> ## [![Logo](logo.svg)](guide.md)',
+  '- ## [![Logo](logo.svg)](guide.md)',
+  '# [![Logo](logo.svg)][guide]\n\n[guide]: guide.md',
+  '# [![Logo][icon]](guide.md)\n\n[icon]: logo.svg',
+  '# [Outer [Inner](guide.md)](guide.md)',
+  '# \\\\[![Logo](logo.svg)](guide.md)'
+]) {
+  for (const fragment of ['logo', 'logoguidemd']) {
+    test(`nested heading markup reports coverage for ${fragment}: ${target}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), `[Logo](other.md#${fragment})\n`)
+      await writeFile(join(f.repo, 'other.md'), target + '\n')
+      await writeFile(join(f.repo, 'logo.svg'), '<svg/>\n')
+      await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.deepEqual(result.problems, [])
+      assert.match(result.data.coverageLimits[0].reason, /Heading fragment coverage/)
+    })
+  }
+}
+
+for (const target of [
+  '# Plain\n\n`[![Logo](logo.svg)](guide.md)`',
+  '# Plain\n\n```md\n# [![Logo](logo.svg)](guide.md)\n```',
+  '# Plain\n\n<!--\n# [![Logo](logo.svg)](guide.md)\n-->',
+  '# Plain\n\n[![Logo](logo.svg)](guide.md)',
+  '# `[![Logo](logo.svg)](guide.md)`\n\n# Plain',
+  '# Plain \\[literal \\[brackets]]',
+  '# Plain [Guide](guide.md) [Logo](logo.svg)',
+  '# [Plain](docs[a[b]].md)',
+  '# [Plain](guide.md "title [a[b]]")',
+  '# [Plain \\[literal](guide.md)'
+]) {
+  test(`nested heading detection preserves supported and literal content: ${target}`, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), '[Absent](other.md#absent)\n')
+    await writeFile(join(f.repo, 'other.md'), target + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'broken-local-link')
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+test('nested heading markup limits fragment checks throughout the document', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '[Logo](other.md#logo-1)\n')
+  await writeFile(join(f.repo, 'other.md'), '# [![Logo](logo.svg)](guide.md)\n\n# Logo\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.match(result.data.coverageLimits[0].reason, /Heading fragment coverage/)
+})
+
 for (const sample of [
   '> [target]: missing.md\n>\n> [Guide][target]',
   '- [target]: missing.md\n\n  [Guide][target]',
