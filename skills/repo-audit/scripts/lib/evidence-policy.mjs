@@ -25,10 +25,7 @@ export async function previousPolicy(root, base, contractPath, inventory) {
   const paths = tree.stdout.split('\0').filter(Boolean)
   const removed = new Set(inventory.changes.filter(change => change.status === 'D' || change.status.startsWith('R')).map(change => change.oldPath ?? change.path))
   const relocated = new Set(inventory.changes.filter(change => change.status.startsWith('R') && change.path === contractPath).map(change => change.oldPath))
-  const fallback = paths.includes(contractPath) ? [contractPath] : paths.filter(path =>
-    path === '.bstack/project.json' || inventory.paths.includes(path))
-  const selected = [...new Set([...paths.filter(path => removed.has(path)), ...(relocated.size ? [] : fallback)])]
-  for (const path of selected) {
+  for (const path of paths) {
     const authoritative = path === contractPath || path === '.bstack/project.json' || relocated.has(path)
     const text = baseText(root, base, path)
     let value
@@ -57,6 +54,7 @@ export async function previousPolicy(root, base, contractPath, inventory) {
       fix: 'Explicitly reconcile the deleted policy and its obligations; restore its prior location or record a clear Git rename before validating.' }])
     candidates.push({ path, contract: value })
   }
+  if (!candidates.some(item => item.path === contractPath || item.path === '.bstack/project.json' || inventory.paths.includes(item.path))) return null
   if (candidates.length > 1) throw new CommandError('blocked', [{ code: 'ambiguous-previous-contract',
     message: 'Multiple prior maintenance contracts exist.', fix: 'Select and reconcile the authoritative previous policy before validating.' }])
   return candidates[0] ?? null
