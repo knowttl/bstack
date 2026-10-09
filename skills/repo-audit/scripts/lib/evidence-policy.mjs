@@ -4,6 +4,7 @@ import { inspectJSON } from './json.mjs'
 import { validateData, validateIds } from './schema.mjs'
 import { pathGlob, matchesPath } from './glob.mjs'
 import { CommandError } from './result.mjs'
+import { resolvePath } from './paths.mjs'
 
 export function baseText(root, base, path) {
   if (base.kind === 'empty-tree') return ''
@@ -16,7 +17,7 @@ export function baseText(root, base, path) {
 }
 
 // Discover prior config even when the proposed contract moved or removed its old location.
-export async function previousPolicy(root, base, contractPath, inventory) {
+export async function previousPolicy(root, base, contractPath, inventory, priorPath) {
   if (base.kind === 'empty-tree') return null
   const tree = readGit(root, ['ls-tree', '-r', '--name-only', '-z', base.objectId])
   if (tree.status !== 0) throw new CommandError('blocked', [{ code: 'previous-contract-unavailable',
@@ -25,16 +26,20 @@ export async function previousPolicy(root, base, contractPath, inventory) {
   const paths = tree.stdout.split('\0').filter(Boolean)
   const removed = new Set(inventory.changes.filter(change => change.status === 'D' || change.status.startsWith('R')).map(change => change.oldPath ?? change.path))
   const relocated = new Set(inventory.changes.filter(change => change.status.startsWith('R') && change.path === contractPath).map(change => change.oldPath))
-  for (const path of paths) {
-    const authoritative = path === contractPath || path === '.bstack/project.json' || relocated.has(path)
+  if (priorPath) await resolvePath(root, priorPath, undefined, true)
+  const selected = [...new Set([...(paths.includes('.bstack/project.json') ? ['.bstack/project.json'] : []), ...(priorPath ? [priorPath] : [])])]
+  if (!selected.length) throw new CommandError('blocked', [{ code: 'previous-contract-reconciliation-required',
+    message: 'The authoritative prior policy location is unresolved.',
+    fix: 'Reconcile prior authority and supply --previous-contract <repo-relative-file> from the comparison base. Use --base empty only before the first commit.' }])
+  for (const path of selected) {
+    if (!paths.includes(path)) throw new CommandError('blocked', [{ code: 'previous-contract-unavailable', path,
+      message: 'The selected previous contract is absent from the comparison base.', fix: 'Select the authoritative contract path at the comparison base.' }])
     const text = baseText(root, base, path)
     let value
     try { value = inspectJSON(text).value } catch (error) {
-      if (!authoritative) continue
       throw new CommandError('blocked', [{ code: 'previous-contract-unavailable', path,
         message: 'Previous contract is not readable JSON.', fix: 'Restore or explicitly migrate the previous policy before validating.' }])
     }
-    if (!authoritative && (!value || typeof value !== 'object' || !['documents', 'scopes', 'checks'].every(key => Object.hasOwn(value, key)))) continue
     if (value?.schemaVersion !== 1) throw new CommandError('blocked', [{ code: 'previous-contract-version', path,
       message: 'Previous contract version is unsupported.', fix: 'Provide a reviewed migration for the previous contract version.' }])
     try {
@@ -54,10 +59,9 @@ export async function previousPolicy(root, base, contractPath, inventory) {
       fix: 'Explicitly reconcile the deleted policy and its obligations; restore its prior location or record a clear Git rename before validating.' }])
     candidates.push({ path, contract: value })
   }
-  if (!candidates.some(item => item.path === contractPath || item.path === '.bstack/project.json' || inventory.paths.includes(item.path))) return null
   if (candidates.length > 1) throw new CommandError('blocked', [{ code: 'ambiguous-previous-contract',
     message: 'Multiple prior maintenance contracts exist.', fix: 'Select and reconcile the authoritative previous policy before validating.' }])
-  return candidates[0] ?? null
+  return candidates[0]
 }
 
 export function mapInventory(inventory, contracts) {

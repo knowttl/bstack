@@ -130,9 +130,13 @@ A `decision-needed` result names `dependentWork` and remains blocked until the s
 
 `coverage` lists affected authoritative rule IDs.
 The validator reads the previous contract from the base commit and the proposed contract from the current tree.
-The explicit contract path takes precedence when it exists at the base.
-For a moved config, discovery considers the default prior location and JSON locations in the changed-path inventory, preserving deleted and renamed policies while excluding unchanged fixture contracts.
-Multiple prior candidates require reconciliation before validation.
+The prior policy defaults to `.bstack/project.json` at the comparison base, independently of the proposed `--contract` path.
+Custom prior authority must be explicitly reconciled with `--previous-contract <repo-relative-file>` on both collection and validation.
+The assessment records `previousContract`, and changing that selection invalidates its review binding.
+Unrelated fixture contracts are not discovered by their JSON shape.
+If a default prior and a different explicitly selected prior coexist, validation blocks for reconciliation instead of dropping either.
+An unresolved prior location blocks before an initial foundation finding can substitute for existing policy.
+A deleted prior requires reconciliation unless Git records a clear rename of that same file to the proposed location.
 Previous scopes, document pointers, rule relationships and check declarations remain obligations even when the new contract removes them.
 An absent previous contract blocks with a named prerequisite unless `foundation: {"findingId": "F-001", "record": <findings record>}` explicitly selects a foundation finding covering the new contract, target and revision.
 That record uses the existing findings schema, `stage: "foundation"`, and a selected finding and ID.

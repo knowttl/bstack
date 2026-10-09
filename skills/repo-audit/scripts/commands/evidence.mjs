@@ -66,9 +66,9 @@ export async function run(options) {
   const inventory = collectInventory(target.root, options.base)
   const removedPaths = new Set(inventory.changes.filter(change => change.status === 'D' || change.status.startsWith('R')).map(change => change.oldPath ?? change.path))
   const { contract, path: contractPath } = await loadContract(target, options.contract, removedPaths)
-  const previous = await previousPolicy(target.root, inventory.base, contractPath, inventory)
+  const previous = await previousPolicy(target.root, inventory.base, contractPath, inventory, options['previous-contract'])
   const { mappings, unmappedPaths, candidateDocuments } = mapInventory(inventory, [contract, ...(previous ? [previous.contract] : [])])
-  const assessment = { schemaVersion: 1, repo: target.root, contract: contractPath, ...inventory, mappings, unmappedPaths,
+  const assessment = { schemaVersion: 1, repo: target.root, contract: contractPath, previousContract: previous?.path ?? null, ...inventory, mappings, unmappedPaths,
     documents: candidateDocuments.map(document => ({ ...document, assessment: null })),
     unmappedAssessments: unmappedPaths.map(path => ({ path, assessment: null })), decisions: [], coverage: [], execution: [], fingerprint: null }
   const directory = await createScratch(target)
