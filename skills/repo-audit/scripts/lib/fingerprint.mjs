@@ -50,6 +50,9 @@ export async function fingerprint(target, { baseCommit, paths, inputs, evidenceP
   }
   // Only the explicitly named derived fields are omitted, never arbitrary nested data.
   const { fingerprint: derivedFingerprint, execution, ...substantive } = inputs
-  const state = { root, baseCommit, files, inputs: substantive }
+  const portable = inputs.repo === '.'
+  const state = { root: portable ? '.' : root, baseCommit,
+    files: portable ? files.map(file => ({ ...file, mode: file.mode === null ? null : file.mode & 0o111 })) : files,
+    inputs: substantive }
   return { fingerprint: hashBytes(canonicalJSON(state)), state }
 }
