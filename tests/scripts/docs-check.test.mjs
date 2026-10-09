@@ -520,7 +520,12 @@ for (const heading of [
   '- ## Overview',
   '> Overview\n> ---',
   '# [Overview](https://example.invalid)',
-  '[Overview](https://example.invalid)\n---'
+  '[Overview](https://example.invalid)\n---',
+  '# `Status`',
+  '   ## `Status`',
+  '`Status`\n---',
+  '> `Status`\n> ===',
+  '- ## `Status`'
 ]) {
   for (const [definition, exit] of [['', 1], ['A request.\n', 0]]) {
     test(`shared glossary boundaries stop at ${heading} with exit ${exit}`, async t => {
@@ -534,4 +539,27 @@ for (const heading of [
 test('shared glossary parsing excludes term-like setext headings', async t => {
   const f = await glossary(t, '**Order**:\n---\nNotes.\n')
   assert.equal(run('docs check', f.repo).problems[0].code, 'invalid-glossary')
+})
+
+for (const headings of [
+  '# Rule\n# Rule-1\n# Rule\n',
+  'Rule\n---\nRule-1\n===\nRule\n---\n',
+  '# Rule-1\nRule\n---\n## Rule\n'
+]) {
+  for (const [fragment, exit] of [['rule', 0], ['rule-1', 0], ['rule-2', 0], ['rule-3', 1]]) {
+    test(`anchor collisions resolve ${fragment} with exit ${exit}: ${headings}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), headings + `\n[Local](#${fragment})\n[Other](other.md#${fragment})\n`)
+      await writeFile(join(f.repo, 'other.md'), headings)
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.filter(problem => problem.code === 'broken-local-link').length, exit ? 2 : 0)
+    })
+  }
+}
+
+test('shared glossary boundaries ignore code samples containing headings', async t => {
+  const f = await glossary(t, '**Order**:\n\nExample: `Status\n**Order**: Sample.`\n\nA request.\n\n```md\n# Status\n**Order**:\n```\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
 })
