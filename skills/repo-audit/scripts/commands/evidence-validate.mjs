@@ -50,7 +50,7 @@ export async function run(options) {
   }
   const removed = new Set(inventory.changes.filter(change => change.status === 'D' || change.oldPath).map(change => change.oldPath ?? change.path))
   const proposed = await loadContract(target, options.contract, removed)
-  const previous = await previousPolicy(target.root, inventory.base, proposed.path, inventory)
+  const previous = await previousPolicy(target.root, inventory.base, proposed.path, inventory, options['previous-contract'])
   const contracts = [proposed.contract, ...(previous ? [previous.contract] : [])]
   const mapping = mapInventory(inventory, contracts)
   let assessment
@@ -65,6 +65,7 @@ export async function run(options) {
   const equal = (a, b) => canonicalJSON(a) === canonicalJSON(b)
   for (const key of ['base', 'head', 'changes', 'paths']) if (!equal(assessment[key], inventory[key])) problem('inventory-mismatch', `Assessment ${key} does not match the complete live comparison.`)
   if (assessment.repo !== target.root || assessment.contract !== proposed.path) problem('target-mismatch', 'Assessment names a different repo or contract.')
+  if (assessment.previousContract !== (previous?.path ?? null)) problem('target-mismatch', 'Assessment names a different previous policy.')
   if (!equal(assessment.mappings, mapping.mappings) || !equal(assessment.unmappedPaths, mapping.unmappedPaths) ||
       !equal(assessment.documents.map(({ id, path }) => ({ id, path })), mapping.candidateDocuments) ||
       !equal(assessment.unmappedAssessments.map(item => item.path), mapping.unmappedPaths)) problem('coverage-mismatch', 'Assessments omit or replace live previous/proposed document or unmapped-path coverage.')
