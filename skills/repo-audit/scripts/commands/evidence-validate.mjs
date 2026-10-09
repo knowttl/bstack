@@ -14,17 +14,9 @@ import { collectInventory } from './evidence.mjs'
 import { loadContract } from './contract.mjs'
 import { checkCommandPaths, checkInputState } from './run-checks.mjs'
 import { validateFindings } from './findings.mjs'
-
-// Literal bundled resources remain discoverable to the package validator.
-const schemaPaths = {
-  'evidence.schema.json': new URL('../../schemas/evidence.schema.json', import.meta.url),
-  'impact-assessment.json': new URL('../../schemas/impact-assessment.json', import.meta.url),
-  'check-plan.json': new URL('../../schemas/check-plan.json', import.meta.url)
-}
-
-async function schema(name) {
-  return JSON.parse(await readFile(schemaPaths[name], 'utf8'))
-}
+import evidenceSchema from '../../schemas/evidence.schema.json' with { type: 'json' }
+import impactSchema from '../../schemas/impact-assessment.json' with { type: 'json' }
+import checkSchema from '../../schemas/check-plan.json' with { type: 'json' }
 
 // This conservative normalization rejects cosmetic proof, not semantic disagreement.
 function meaningful(text, excerpt, path) {
@@ -190,7 +182,7 @@ export async function run(options) {
     if (error instanceof CommandError) throw error
     throw new CommandError('blocked', [{ code: 'assessment-unavailable', message: 'Assessment file is unavailable.', fix: 'Collect and complete an assessment, then pass its readable path with --assessment.' }])
   }
-  validateData(await schema('evidence.schema.json'), assessment)
+  validateData(evidenceSchema, assessment)
   validateIds(assessment.decisions, 'decisions')
   const problems = []
   const problem = (code, message) => problems.push({ code, message, fix: 'Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks.' })
@@ -213,7 +205,7 @@ export async function run(options) {
   }
   const citedPaths = []
   async function citation(cite) {
-    validateData((await schema('impact-assessment.json')).properties.citations.items, cite)
+    validateData(impactSchema.properties.citations.items, cite)
     const path = await resolvePath(target.root, cite.path)
     citedPaths.push(cite.path)
     const text = cite.version === 'base' ? baseText(target.root, inventory.base, cite.path) : await readFile(path, 'utf8').catch(() => '')
@@ -222,7 +214,7 @@ export async function run(options) {
   async function impact(entry, document) {
     if (!entry.assessment) { problem('missing-assessment', `Missing substantive assessment for ${entry.path}.`); return }
     const value = entry.assessment
-    validateData(await schema('impact-assessment.json'), value)
+    validateData(impactSchema, value)
     if (value.changedPaths.some(path => !inventory.paths.includes(path))) problem('unsupported-impact-path', `Assessment ${entry.path} names unchanged paths.`)
     const expected = document ? mapping.mappings.filter(item => item.documentIds.includes(entry.id) || item.path === entry.path).map(item => item.path) : [entry.path]
     if (expected.some(path => !value.changedPaths.includes(path))) problem('omitted-impact-path', `Assessment ${entry.path} omits changed behaviour inputs.`)
@@ -274,7 +266,7 @@ export async function run(options) {
   for (const record of assessment.execution) {
     try {
       const plan = inspectJSON(await readFile(record.plan, 'utf8')).value
-      validateData(await schema('check-plan.json'), plan)
+      validateData(checkSchema, plan)
       const capture = JSON.parse(await readFile(join(await scratchDirectory(target, record.runId), 'checks.json'), 'utf8'))
       const current = await checkInputState(target, plan, record.plan)
       if (capture.schemaVersion !== 1 || capture.runId !== record.runId || capture.phase !== 'after' || capture.status !== 'passed' ||

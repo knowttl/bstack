@@ -885,7 +885,9 @@ The maintenance helper validates a change-specific assessment through one docume
 It does not drive an implementation sequence or select a playbook.
 `evidence collect` and `evidence validate` implement local collection, assessment structure, review freshness and required execution matching.
 The [command contract](command-contract.md#assessment-validation) defines their supported inputs and proof limits.
-Generated-fact checks, reference checks and the portable standalone checker remain later implementation tasks.
+`docs generate --check` checks generated facts, and `docs check` checks document references.
+The C24a standalone artifact bundles these validators, maintenance evidence validation, schemas and build identity, with exact-byte freshness checks and scratch regeneration.
+The aggregate command and clean-checkout execution remain C24b.
 
 | Required input or result | Purpose |
 |---|---|

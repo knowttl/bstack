@@ -8,6 +8,7 @@ import { createScratch } from '../lib/scratch.mjs'
 import { fingerprint, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
 import { CommandError } from '../lib/result.mjs'
+import schema from '../../schemas/findings.schema.json' with { type: 'json' }
 
 // Audit assesses the starting state. Foundation additionally reviews selected setup.
 const stageOutcomes = { audit: ['starting-checks'], foundation: ['journey', 'foundation-review'] }
@@ -44,7 +45,6 @@ function render(findings, assessment) {
 }
 
 export async function validateFindings(findings, target, deletionScope = []) {
-  const schema = JSON.parse(await readFile(new URL('../../schemas/findings.schema.json', import.meta.url), 'utf8'))
   validateData(schema, findings)
   for (const collection of ['sources', 'findings', 'execution']) validateIds(findings[collection], `$/` + collection)
   if (findings.target.root !== target.root || findings.target.mode !== target.mode) invalid('target-mismatch', 'Reviewed identity differs from the selected target.', '$/target')
