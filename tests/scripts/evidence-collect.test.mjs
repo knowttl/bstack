@@ -145,3 +145,51 @@ test('a scope without document relationships still requires an unmapped impact a
   assert.deepEqual(result.data.unmappedPaths, ['src/change.mjs'])
   assert.deepEqual(result.data.candidateDocuments, [])
 })
+
+for (const collection of ['documents', 'rules', 'acceptanceSources']) {
+  for (const source of ['committed', 'staged', 'unstaged']) {
+    for (const action of ['delete', 'rename']) {
+      test(`collect retains ${source} ${action} of ${collection} source pointer`, async t => {
+        const f = await maintenanceRepo(t)
+        const path = `${collection}.md`
+        await writeFile(join(f.repo, path), '# Source\n')
+        f.contract[collection][0].path = path
+        await f.save()
+        const base = commit(f.repo)
+        if (action === 'rename') await rename(join(f.repo, path), join(f.repo, 'moved.md'))
+        else await rm(join(f.repo, path))
+        if (source === 'staged') git(f.repo, 'add', '.')
+        if (source === 'committed') commit(f.repo)
+        const result = await collect(t, f, base)
+        assert.equal(result.exit, 0, JSON.stringify(result))
+        assert.ok(result.data.paths.includes(path))
+        assert.ok(result.data.changes.some(change => change.source === source && (change.path === path || change.oldPath === path)))
+        if (action === 'rename') assert.ok(result.data.paths.includes('moved.md'))
+        const skeleton = JSON.parse(await readFile(result.data.path, 'utf8'))
+        assert.deepEqual(skeleton.paths, result.data.paths)
+        if (collection === 'documents') assert.deepEqual(result.data.candidateDocuments, f.contract.documents)
+        assert.equal(run('contract validate', f.repo).problems[0]?.code, 'missing-path')
+      })
+    }
+  }
+  test(`collect rejects unrelated missing ${collection} pointer`, async t => {
+    const f = await maintenanceRepo(t)
+    const base = commit(f.repo)
+    await rm(join(f.repo, 'src/delete.mjs'))
+    f.contract[collection][0].path = 'never-existed.md'
+    await f.save()
+    const result = await collect(t, f, base)
+    assert.equal(result.problems[0]?.code, 'missing-path')
+    assert.equal(result.data.path, undefined)
+  })
+}
+
+test('collect retains deletion of a shared document rule and acceptance source', async t => {
+  const f = await maintenanceRepo(t)
+  const base = commit(f.repo)
+  await rm(join(f.repo, 'README.md'))
+  const result = await collect(t, f, base)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.paths, ['README.md'])
+  assert.deepEqual(result.data.candidateDocuments, f.contract.documents)
+})

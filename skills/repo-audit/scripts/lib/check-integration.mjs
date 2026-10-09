@@ -21,7 +21,6 @@ export function isIndirectExecutable(executable) {
 export function integrationCommand(text, path) {
   text = text.trim()
   let quote = null
-  let escaped = false
   let word = ''
   const words = []
   const flush = () => {
@@ -31,8 +30,7 @@ export function integrationCommand(text, path) {
   }
   for (let i = 0; i < text.length; i++) {
     const char = text[i]
-    if (escaped) { word += char; escaped = false; continue }
-    if (char === '\\' && quote !== "'") { escaped = true; continue }
+    if (char === '\\') reject(path)
     if (char === quote) { quote = null; continue }
     if (!quote && (char === '"' || char === "'")) { quote = char; continue }
     if (quote === "'") { word += char; continue }
@@ -48,7 +46,7 @@ export function integrationCommand(text, path) {
     if (/\s/.test(char)) flush()
     else word += char
   }
-  if (quote || escaped) reject(path)
+  if (quote) reject(path)
   flush()
   if (!words.length || words[0] === '&&' || words.at(-1) === '&&') reject(path)
   let first = true
