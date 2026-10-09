@@ -16,39 +16,45 @@ export function baseText(root, base, path) {
 }
 
 // Discover prior config even when the proposed contract moved or removed its old location.
-export async function previousPolicy(root, base, contractPath, changedPaths) {
+export async function previousPolicy(root, base, contractPath, inventory) {
   if (base.kind === 'empty-tree') return null
   const tree = readGit(root, ['ls-tree', '-r', '--name-only', '-z', base.objectId])
   if (tree.status !== 0) throw new CommandError('blocked', [{ code: 'previous-contract-unavailable',
     message: 'Previous policy tree is unavailable.', fix: 'Restore the comparison tree and previous contract objects.' }])
   const candidates = []
   const paths = tree.stdout.split('\0').filter(Boolean)
-  const selected = paths.includes(contractPath) ? [contractPath] : paths.filter(path =>
-    path === '.bstack/project.json' || (path.endsWith('.json') && changedPaths.includes(path)))
-  for (const path of selected) {
-    const text = baseText(root, base, path)
-    let value
-    try { value = inspectJSON(text).value } catch (error) {
-      if (path !== contractPath) continue
-      throw new CommandError('blocked', [{ code: 'previous-contract-unavailable', path,
-        message: 'Previous contract is not readable JSON.', fix: 'Restore or explicitly migrate the previous policy before validating.' }])
-    }
-    if (path !== contractPath && (!value || !Array.isArray(value.documents) || !Array.isArray(value.scopes) || !Array.isArray(value.checks))) continue
-    if (value.schemaVersion !== 1) throw new CommandError('blocked', [{ code: 'previous-contract-version', path,
-      message: 'Previous contract version is unsupported.', fix: 'Provide a reviewed migration for the previous contract version.' }])
-    try {
-      validateData(JSON.parse(await readFile(new URL('../../schemas/project.schema.json', import.meta.url), 'utf8')), value)
-      for (const key of ['documents', 'scopes', 'rules', 'checks', 'generators', 'acceptanceSources']) validateIds(value[key], key)
-      for (const scope of value.scopes) {
-        scope.paths.forEach(pathGlob)
-        if (scope.documentIds.some(id => !value.documents.some(doc => doc.id === id)) || scope.ruleIds.some(id => !value.rules.some(rule => rule.id === id))) throw new Error('Unknown scope reference')
+  const removed = new Set(inventory.changes.filter(change => change.status === 'D' || change.status.startsWith('R')).map(change => change.oldPath ?? change.path))
+  const relocated = new Set(inventory.changes.filter(change => change.status.startsWith('R') && change.path === contractPath).map(change => change.oldPath))
+  const fallback = paths.includes(contractPath) ? [contractPath] : paths.filter(path =>
+    path === '.bstack/project.json' || inventory.paths.includes(path))
+  for (const selected of [paths.filter(path => removed.has(path)), fallback]) {
+    for (const path of selected) {
+      const authoritative = path === contractPath || path === '.bstack/project.json' || relocated.has(path)
+      const text = baseText(root, base, path)
+      let value
+      try { value = inspectJSON(text).value } catch (error) {
+        if (!authoritative) continue
+        throw new CommandError('blocked', [{ code: 'previous-contract-unavailable', path,
+          message: 'Previous contract is not readable JSON.', fix: 'Restore or explicitly migrate the previous policy before validating.' }])
       }
-      for (const rule of value.rules) if (rule.checkIds.some(id => !value.checks.some(check => check.id === id))) throw new Error('Unknown check reference')
-    } catch {
-      throw new CommandError('blocked', [{ code: 'previous-contract-invalid', path,
-        message: 'Previous coverage policy is invalid.', fix: 'Restore or review a migration of the previous policy; proposed coverage cannot replace it.' }])
+      if (!authoritative && (!value || typeof value !== 'object' || !['documents', 'scopes', 'checks'].every(key => Object.hasOwn(value, key)))) continue
+      if (value?.schemaVersion !== 1) throw new CommandError('blocked', [{ code: 'previous-contract-version', path,
+        message: 'Previous contract version is unsupported.', fix: 'Provide a reviewed migration for the previous contract version.' }])
+      try {
+        validateData(JSON.parse(await readFile(new URL('../../schemas/project.schema.json', import.meta.url), 'utf8')), value)
+        for (const key of ['documents', 'scopes', 'rules', 'checks', 'generators', 'acceptanceSources']) validateIds(value[key], key)
+        for (const scope of value.scopes) {
+          scope.paths.forEach(pathGlob)
+          if (scope.documentIds.some(id => !value.documents.some(doc => doc.id === id)) || scope.ruleIds.some(id => !value.rules.some(rule => rule.id === id))) throw new Error('Unknown scope reference')
+        }
+        for (const rule of value.rules) if (rule.checkIds.some(id => !value.checks.some(check => check.id === id))) throw new Error('Unknown check reference')
+      } catch {
+        throw new CommandError('blocked', [{ code: 'previous-contract-invalid', path,
+          message: 'Previous coverage policy is invalid.', fix: 'Restore or review a migration of the previous policy; proposed coverage cannot replace it.' }])
+      }
+      candidates.push({ path, contract: value })
     }
-    candidates.push({ path, contract: value })
+    if (candidates.length) break
   }
   if (candidates.length > 1) throw new CommandError('blocked', [{ code: 'ambiguous-previous-contract',
     message: 'Multiple prior maintenance contracts exist.', fix: 'Select and reconcile the authoritative previous policy before validating.' }])

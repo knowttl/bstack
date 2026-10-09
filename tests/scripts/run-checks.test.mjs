@@ -133,6 +133,18 @@ test('cancelled required check stays unverified even with other passing checks',
   assert.equal(result.data.coverage[0].status, 'unverified')
 })
 
+test('a checker that changes its own unscoped file blocks capture', async t => {
+  const f = await setup(t)
+  await writeFile(join(f.repo, 'check.mjs'), 'import { writeFileSync } from "node:fs"; writeFileSync("check.mjs", "process.exit(0)\\n"); console.log("completed")\n')
+  f.plan.checks[0].command.args = ['check.mjs']
+  const result = await f.invoke()
+  assert.equal(result.exit, 2)
+  assert.equal(result.problems[0].code, 'inputs-changed-during-run')
+  assert.equal(result.data.checks[0].execution.stdout, 'completed\n')
+  assert.notEqual(result.data.originalState.fingerprint, result.data.finalState.fingerprint)
+  assert.equal(result.data.coverage[0].status, 'unverified')
+})
+
 test('a result covering no user journey explicitly reports that limit', async t => {
   const f = await setup(t)
   f.plan.acceptanceCases[0].userJourney = false
