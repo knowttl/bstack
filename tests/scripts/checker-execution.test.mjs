@@ -26,7 +26,7 @@ function check(f, extra = [], checker = join(f.repo, checkerPath)) {
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
-async function fixture(t, { initial = false, submodule = false, diagnostic = false } = {}) {
+async function fixture(t, { initial = false, submodule = false, diagnostic = false, portableModes = false, executionError = false } = {}) {
   const f = await maintenanceRepo(t)
   f.env = { ...process.env, HOME: join(f.directory, 'home'), USERPROFILE: join(f.directory, 'home'),
     CODEX_HOME: join(f.directory, 'home/.codex'), XDG_CONFIG_HOME: join(f.directory, 'home/config'),
@@ -41,14 +41,30 @@ async function fixture(t, { initial = false, submodule = false, diagnostic = fal
   f.contract.generators = []
   f.contract.checks[0].command.args = ['leaf.mjs']
   if (diagnostic) await writeFile(join(f.repo, 'leaf.mjs'), "import { writeFileSync } from 'node:fs'; writeFileSync('diagnostic.txt', 'details'); console.log('leaf diagnostic'); process.exit(1)\n")
+  if (executionError) {
+    await mkdir(join(f.repo, 'leaf-work'))
+    await writeFile(join(f.repo, 'leaf-work/input.txt'), 'input\n')
+    await writeFile(join(f.repo, 'leaf.mjs'), "import { rmSync, symlinkSync } from 'node:fs'; rmSync('leaf-work', { recursive: true }); symlinkSync('missing-work', 'leaf-work'); console.log('first leaf diagnostic'); process.exit(1)\n")
+    f.contract.checks.push({ id: 'second', command: { executable: 'node', args: ['--version'], cwd: 'leaf-work', versionArgs: ['--version'] }, inputScopes: ['src/**'] })
+  }
   if (submodule) {
     const module = join(f.directory, 'module')
     await mkdir(module)
     git(module, 'init', '-q')
     await writeFile(join(module, 'content.txt'), 'reviewed module\n')
+    if (portableModes) await chmod(join(module, 'content.txt'), 0o744)
     commit(module)
     git(f.repo, '-c', 'protocol.file.allow=always', 'submodule', 'add', '-q', module, 'vendor')
     f.contract.checks[0].inputScopes.push('vendor')
+    if (portableModes) {
+      await chmod(join(f.repo, 'vendor'), 0o700)
+      await chmod(join(f.repo, 'vendor/content.txt'), 0o744)
+    }
+  }
+  if (portableModes) {
+    f.contract.checks[0].inputScopes.push('src')
+    await chmod(join(f.repo, 'src'), 0o700)
+    await chmod(join(f.repo, 'src/change.mjs'), 0o744)
   }
   await f.save()
   if (initial) await rm(join(f.repo, '.bstack/project.json'))
@@ -135,6 +151,39 @@ test('final validation failure preserves fresh failed leaf diagnostics', async t
   assert.deepEqual(saved.problems, result.problems)
   assert.equal(saved.data.checks[0].execution.exitCode, 1)
   assert.equal(saved.data.checks[0].execution.stdout, 'leaf diagnostic\n')
+})
+
+test('portable executable files and directory scopes survive clone permissions', { skip: process.platform === 'win32' }, async t => {
+  const f = await fixture(t, { submodule: true, portableModes: true })
+  const local = check(f)
+  assert.equal(local.exit, 0, JSON.stringify(local))
+  const clone = join(f.directory, 'clone')
+  git(f.directory, '-c', 'protocol.file.allow=always', 'clone', '-q', '--no-local', '--recurse-submodules', f.repo, clone)
+  f.repo = clone
+  await chmod(join(clone, 'src'), 0o755)
+  await chmod(join(clone, 'src/change.mjs'), 0o755)
+  await chmod(join(clone, 'vendor'), 0o755)
+  await chmod(join(clone, 'vendor/content.txt'), 0o755)
+  const clean = check(f)
+  assert.equal(clean.exit, 0, JSON.stringify(clean))
+  assert.equal(clean.data.fingerprint, local.data.fingerprint)
+  const options = { baseCommit: f.base, paths: ['vendor'], inputs: { repo: '.' } }
+  const before = await fingerprint({ root: clone }, options)
+  await chmod(join(clone, 'vendor/content.txt'), 0o644)
+  assert.notEqual((await fingerprint({ root: clone }, options)).fingerprint, before.fingerprint)
+})
+
+test('execution exception preserves diagnostics from the preceding failed leaf', { skip: process.platform === 'win32' }, async t => {
+  const f = await fixture(t, { executionError: true })
+  const result = check(f)
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.ok(result.problems.some(problem => problem.code === 'unresolved-path'), JSON.stringify(result))
+  const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
+  assert.equal(saved.status, 'failed')
+  assert.deepEqual(saved.problems, result.problems)
+  assert.equal(saved.data.checks.length, 1)
+  assert.equal(saved.data.checks[0].execution.exitCode, 1)
+  assert.equal(saved.data.checks[0].execution.stdout, 'first leaf diagnostic\n')
 })
 
 test('different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review', async t => {

@@ -42,7 +42,7 @@ export async function fingerprint(target, { baseCommit, paths, inputs, evidenceP
           paths: [...await repoFiles(resolved), ...readGit(resolved, ['ls-files', '-z']).stdout.split('\0').filter(Boolean)], inputs: portable ? { repo: '.' } : {}, evidencePath: evidenceFile }) : null
         contentHash = hashBytes(canonicalJSON({ gitlink: gitlinks.get(path), contents: contents?.fingerprint ?? null }))
       }
-      files.push({ path, present: true, mode: info.mode, linkTarget,
+      files.push({ path, present: true, mode: portable ? info.isFile() && linkTarget === null ? info.mode & 0o100 : 0 : info.mode, linkTarget,
         contentHash })
     } catch (error) {
       if (!['ENOENT', 'ENOTDIR'].includes(error.code)) throw error
@@ -54,7 +54,7 @@ export async function fingerprint(target, { baseCommit, paths, inputs, evidenceP
   if (portable && substantive.foundation) substantive.foundation = { ...substantive.foundation,
     record: { ...substantive.foundation.record, target: { ...substantive.foundation.record.target, root: '.' } } }
   const state = { root: portable ? '.' : root, baseCommit,
-    files: portable ? files.map(file => ({ ...file, mode: file.mode === null ? null : file.mode & 0o111 })) : files,
+    files,
     inputs: substantive }
   return { fingerprint: hashBytes(canonicalJSON(state)), state }
 }
