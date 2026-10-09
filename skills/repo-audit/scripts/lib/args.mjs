@@ -17,7 +17,7 @@ export function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: 'duplicate-option', message: `Repeated option: ${token}`, fix: 'Supply each option once.' })
     }
-    if (name === 'json' || name === 'dry-run' || name === 'approved-by-user' || name === 'refresh') options[name] = true
+    if (name === 'json' || name === 'dry-run' || name === 'approved-by-user' || name === 'refresh' || name === 'check') options[name] = true
     else if (!argv[index + 1] || argv[index + 1].startsWith('--')) {
       problems.push({ code: 'missing-value', message: `Missing value for ${token}`, fix: 'Supply a nonempty value after the option.' })
     } else if (name === 'plans') {
