@@ -203,6 +203,35 @@ test('move-rule resolves rule fragments against the staged destination', async t
   assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
 })
 
+for (const heading of ['## `Array<T>`', '`Array<T>`\n---', '> ## `Array<T>`', '## <em>[`Array<T>`](https://example.invalid)</em>']) {
+  for (const path of ['README.md', 'CONTRIBUTING.md']) {
+    for (const [fragment, exit] of [['arrayt', 0], ['array', 1]]) {
+      test(`move-rule checks code-bearing headings in staged ${path} for ${fragment}: ${heading}`, async t => {
+        const rule = `## One source\n\n${heading}\n\n[Type](${path}#${fragment})\n`
+        const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+        const source = context.plan.edits[0]
+        const retained = heading + '\n\n'
+        const original = retained + '# Design\n' + rule
+        await writeFile(join(context.repo, source.path), original)
+        source.originalHash = hash(original)
+        source.proposedContent = retained + source.proposedContent
+        source.proposedHash = hash(source.proposedContent)
+        await save(context)
+        const before = await snapshot(context.repo)
+        const result = execute(context)
+        assert.equal(result.exit, exit, JSON.stringify(result))
+        if (exit) {
+          assert.equal(result.problems[0].code, 'broken-local-link')
+          assert.deepEqual(await snapshot(context.repo), before)
+        } else {
+          assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), source.proposedContent)
+          assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+        }
+      })
+    }
+  }
+}
+
 for (const headings of ['## Rule\n## Rule-1\n## Rule\n', 'Rule\n---\nRule-1\n===\nRule\n---\n']) {
   for (const path of ['README.md', 'CONTRIBUTING.md']) {
     test(`move-rule resolves colliding heading anchors in staged ${path}: ${headings}`, async t => {
