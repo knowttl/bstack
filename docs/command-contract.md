@@ -129,6 +129,7 @@ Dates within definitions and rules remain meaningful, including YAML `date` fiel
 An unrelated meaningful edit cannot justify a cosmetic asserted delta.
 Normalization is conservative structural screening, not a parser for arbitrary documentation formats or proof of semantic agreement.
 Comment screening preserves prose URLs and quoted literal text, including template text, while excluding comments inside template expressions.
+Language context preserves YAML block scalars, Python triple-quoted strings and shell heredoc bodies, while screening comments inside shell command substitutions.
 Prose apostrophes and unmatched quote delimiters do not protect comments from screening.
 Delta excerpts are screened at their occurrence in the document so full excerpts can include comments alongside changed rule text.
 A `decision-needed` result names `dependentWork` and remains blocked until the substantive assessment is resolved and reviewed again.
