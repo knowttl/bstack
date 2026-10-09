@@ -332,7 +332,7 @@ for (const [input, pathFor, replacements] of [
       assert.equal(result.exit, 2)
       assert.equal(result.status, 'blocked')
       assert.equal(result.problems[0].message, 'inputs changed during run')
-      if (name === 'directory' && input !== 'plan') assert.notEqual(result.data.finalState.fingerprint, result.data.originalState.fingerprint)
+      if (input !== 'plan') assert.notEqual(result.data.finalState.fingerprint, result.data.originalState.fingerprint)
       else assert.equal(result.data.finalState, null)
       assert.deepEqual(result.data.checks.map(item => item.execution.stdout), ['completed\n', 'replaced\n'])
       assert.deepEqual(result.data.checks.map(item => item.execution.exitCode), [0, 0])
