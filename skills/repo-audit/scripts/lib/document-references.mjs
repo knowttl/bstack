@@ -3,64 +3,160 @@ import { dirname, extname, join, relative, resolve } from 'node:path'
 import { isInside, resolvePath } from './paths.mjs'
 import { CommandError } from './result.mjs'
 
+const quotes = /^(?: {0,3}>[ \t]?)+/
+const listItem = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/
+const atxStart = /^ {0,3}#{1,6}(?:[ \t]|$)/
+const atxHeading = /^ {0,3}#{1,6}[ \t]+(.+?)[ \t]*#*[ \t]*$/
+const setextUnderline = /^ {0,3}(?:=+|-+)[ \t]*$/
+const referenceDefinition = /^ {0,3}\[[^\]]+\]:/
+const thematicBreak = /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})$/
+const headingEntity = /&[\w#]+;/
+const tableSeparator = /^\|(?:[ \t]*:?-+:?[ \t]*\|){2,}[ \t]*$/
+
+function fenceMarker(line) {
+  const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
+  return marker && (marker[1][0] !== '`' || !marker[2].includes('`')) ? marker : null
+}
+
+function inlineCodeRanges(text) {
+  const blocks = []
+  let block = ''
+  let start = 0
+  let offset = 0
+  let quoteDepth = 0
+  let table = false
+  const lines = text.split(/(?<=\n)/)
+  for (const [index, line] of lines.entries()) {
+    const prefix = quotes.exec(line)?.[0] ?? ''
+    const content = line.slice(prefix.length).replace(/\n$/, '')
+    const inner = content.replace(listItem, '')
+    const innerPrefix = quotes.exec(inner)?.[0] ?? ''
+    const depth = (prefix + innerPrefix).split('>').length - 1
+    const semantic = inner.slice(innerPrefix.length)
+    table = semantic.trimStart().startsWith('|') && (depth === quoteDepth && !listItem.test(content) && table ||
+      tableSeparator.test((lines[index + 1] ?? '').replace(quotes, '').trim()))
+    const separate = atxStart.test(semantic) || setextUnderline.test(semantic) || thematicBreak.test(semantic) ||
+      referenceDefinition.test(semantic) || !!fenceMarker(semantic) || table
+    if (!content.trim() || separate || listItem.test(content) || depth !== quoteDepth) {
+      if (block) blocks.push({ text: block, start })
+      block = ''
+    }
+    if (!block) start = offset
+    block += line
+    if (separate || !content.trim()) { blocks.push({ text: block, start }); block = '' }
+    quoteDepth = depth
+    offset += line.length
+  }
+  if (block) blocks.push({ text: block, start })
+  const ranges = []
+  for (const block of blocks) {
+    const runs = [...block.text.matchAll(/`+/g)]
+    for (let i = 0; i < runs.length; i++) {
+      const opening = runs[i]
+      if (opening.index > 0 && /(?:^|[^\\])(?:\\\\)*\\$/.test(block.text.slice(0, opening.index))) continue
+      const closing = runs.findIndex((run, index) => index > i && run[0].length === opening[0].length)
+      if (closing < 0) continue
+      ranges.push({ start: block.start + opening.index, end: block.start + runs[closing].index + runs[closing][0].length })
+      i = closing
+    }
+  }
+  return ranges
+}
+
 export function markdownBody(text) {
   let fence
+  let comment = false
   let paragraph = false
+  let offset = 0
+  let codeEnd = 0
   const lists = []
-  return text.replace(/^\uFEFF/, '').split(/\r?\n/).map(raw => {
-    const expanded = raw.replace(/^\t+/, tabs => '    '.repeat(tabs.length))
+  const source = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n')
+  const code = new Map(inlineCodeRanges(source).map(range => [range.start, range.end]))
+  return source.split('\n').map(raw => {
+    const lineOffset = offset
+    offset += raw.length + 1
+    let expanded = raw.replace(/^\t+/, tabs => '    '.repeat(tabs.length))
+    let prefix = quotes.exec(expanded)?.[0] ?? ''
+    if (lists.length && prefix.startsWith(' '.repeat(lists.at(-1)))) prefix = ''
+    const quoted = expanded.slice(prefix.length)
+    const rawIndent = /^ */.exec(quoted)[0].length
+    const currentBase = lists.filter(base => base <= rawIndent).at(-1) ?? 0
+    const current = quoted.slice(currentBase)
+    const semantic = current.replace(listItem, '').replace(quotes, '')
+    const depth = (prefix + (quotes.exec(current.replace(listItem, ''))?.[0] ?? '')).split('>').length - 1
+    if (fence && raw.trim() && (rawIndent < fence.indent || depth < fence.depth)) fence = undefined
+    if (fence) {
+      const marker = fenceMarker(semantic)
+      if (marker && marker[1][0] === fence.marker[0] && marker[1].length >= fence.marker.length && !marker[2].trim()) fence = undefined
+      return ''
+    }
+    if (!comment && /^ {4}/.test(current) && !paragraph) return ''
+    const opening = comment ? null : fenceMarker(semantic)
+    if (!opening) {
+      raw = raw.replace(/<!--|-->|./g, (token, index) => {
+        if (comment) {
+          if (token === '-->') comment = false
+          return ' '.repeat(token.length)
+        }
+        codeEnd = code.get(lineOffset + index) ?? codeEnd
+        if (lineOffset + index < codeEnd) return token
+        if (token === '<!--') { comment = true; return ' '.repeat(token.length) }
+        return token
+      })
+      expanded = raw.replace(/^\t+/, tabs => '    '.repeat(tabs.length))
+    }
+    let quotePrefix = quotes.exec(expanded)?.[0] ?? ''
+    if (lists.length && quotePrefix.startsWith(' '.repeat(lists.at(-1)))) quotePrefix = ''
+    expanded = expanded.slice(quotePrefix.length)
     const indent = /^ */.exec(expanded)[0].length
     if (expanded.trim()) {
       while (lists.length && indent < lists.at(-1)) lists.pop()
     }
     const base = lists.at(-1) ?? 0
     const line = expanded.slice(Math.min(indent, base))
-    const item = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/.exec(line)
-    if (!fence && item) lists.push(base + item[0].length)
-    const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
-    if (fence) {
-      if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined
-      return ''
-    }
-    if (marker) { fence = marker[1]; paragraph = false; return '' }
+    const item = listItem.exec(line)
+    if (item) lists.push(base + item[0].length)
+    if (opening) { fence = { marker: opening[1], indent: lists.at(-1) ?? 0, depth }; paragraph = false; return '' }
     if (/^ {4}/.test(line) && !paragraph) return ''
-    paragraph = !!line.trim() && !/^ {0,3}(?:#{1,6}(?:\s|$)|(?:=+|-+)\s*$)/.test(line)
-    return line
-  }).join('\n').replace(/<!--[\s\S]*?(?:-->|$)/g, value => value.replace(/[^\n]/g, ' '))
+    paragraph = !!line.trim() && !atxStart.test(line) && !setextUnderline.test(line) && !thematicBreak.test(line)
+    return quotePrefix + line
+  }).join('\n')
 }
 
 export function markdownProse(text) {
   const body = markdownBody(text)
-  const runs = [...body.matchAll(/`+/g)]
   let output = ''
   let start = 0
-  for (let i = 0; i < runs.length; i++) {
-    const opening = runs[i]
-    if (opening.index > 0 && /(?:^|[^\\])(?:\\\\)*\\$/.test(body.slice(0, opening.index))) continue
-    const closing = runs.findIndex((run, index) => index > i && run[0].length === opening[0].length)
-    if (closing < 0) continue
-    const end = runs[closing].index + runs[closing][0].length
-    output += body.slice(start, opening.index) + body.slice(opening.index, end).replace(/[^\n]/g, ' ')
-    start = end
-    i = closing
+  for (const range of inlineCodeRanges(body)) {
+    output += body.slice(start, range.start) + body.slice(range.start, range.end).replace(/[^\n]/g, ' ')
+    start = range.end
   }
   return output + body.slice(start)
+}
+
+function markdownHeadings(text) {
+  const headings = []
+  let paragraph = []
+  for (const line of markdownBody(text).split('\n')) {
+    const atx = atxHeading.exec(line)
+    const setext = setextUnderline.test(line)
+    const heading = atx?.[1] ?? (setext && paragraph.length ? paragraph.join('\n') : null)
+    if (heading === null) {
+      if (!line.trim() || atxStart.test(line) || quotes.test(line) || listItem.test(line) || referenceDefinition.test(line) || thematicBreak.test(line) || setext) paragraph = []
+      else paragraph.push(line.trim())
+      continue
+    }
+    paragraph = []
+    headings.push(heading)
+  }
+  return headings
 }
 
 export function markdownAnchors(text) {
   const anchors = new Set()
   const counts = new Map()
-  let paragraph = []
-  for (const line of markdownBody(text).split('\n')) {
-    const atx = /^ {0,3}#{1,6}[ \t]+(.+?)[ \t]*#*[ \t]*$/.exec(line)
-    const setext = /^ {0,3}(?:=+|-+)[ \t]*$/.test(line)
-    const heading = atx?.[1] ?? (setext && paragraph.length ? paragraph.join('\n') : null)
-    if (heading === null) {
-      if (!line.trim() || /^ {0,3}(?:>|(?:[-+*]|\d+[.)])[ \t]+|\[[^\]]+\]:)/.test(line) || setext) paragraph = []
-      else paragraph.push(line.trim())
-      continue
-    }
-    paragraph = []
+  for (const heading of markdownHeadings(text)) {
+    if (headingEntity.test(heading)) continue
     const title = heading.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]+>/g, '')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
     const count = counts.get(slug) ?? 0
@@ -158,7 +254,8 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
         }
       }
       if (!markdownAnchors(text).has(fragment)) {
-        if (text.includes('\0') || /<[^>]+\b(?:id|name)\s*=|\{#[^}]+\}|^\s*#{1,6}[^\n]*&[\w#]+;/m.test(markdownBody(text))) return unsupported()
+        if (text.includes('\0') || /<[^>]+\b(?:id|name)\s*=|\{#[^}]+\}/m.test(markdownBody(text)) ||
+            markdownHeadings(text).some(heading => headingEntity.test(heading))) return unsupported()
         return problem('Missing heading fragment')
       }
     }
