@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T3a.4",
+  "slice": "C23a",
+  "intent": "Build registered generated-fact freshness checks and scratch regeneration through selected reviewed protected change sets.",
+  "amendments": [],
+  "cases": [
+    {
+      "id": "AC-18",
+      "kind": "automated",
+      "procedure": "tests/scripts/docs-generate.test.mjs: stale sections pass after scratch proposals are reviewed and protected apply writes them. The public command rejects stale bytes, renders complete proposals without target writes, previews their exact diff through protected apply, applies a selected hash-bound change set, then passes freshness.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3a.4.full-tests.txt"
+    },
+    {
+      "id": "C23a-marker-controls",
+      "kind": "automated",
+      "procedure": "Public-command cases reject duplicate, nested, missing, malformed and unmatched markers before executing generators; multiple independent sections preserve surrounding document bytes.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3a.4.full-tests.txt"
+    },
+    {
+      "id": "C23a-read-only-controls",
+      "kind": "automated",
+      "procedure": "Public-command cases reject existing-file changes, ignored-file creation, deletion and symlink creation, unsuccessful child execution, invalid UTF-8 and truncated output. Recursive generation is rejected before execution.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T3a.4.full-tests.txt"
+    }
+  ],
+  "limitations": [
+    "Snapshots detect surviving project changes including ignored files and links, excluding Git metadata; they do not sandbox commands or detect changes restored before execution ends.",
+    "Generators remain responsible for reading their declared authoritative input scopes and producing deterministic UTF-8 stdout.",
+    "Local Linux and Node 24 execution does not establish real Windows or macOS execution.",
+    "Document reference checks and portable standalone checker execution remain later tasks."
+  ],
+  "status": "passed"
+}
