@@ -20,10 +20,10 @@ function glossaryEntries(text, format) {
     const lines = body.split('\n')
     const entries = []
     for (let i = 0; i < lines.length - 1; i++) {
-      if (!/^\|\s*Term\s*\|\s*Definition\s*\|$/i.test(lines[i]) || !/^\|\s*:?-+:?\s*\|\s*:?-+:?\s*\|$/.test(lines[i + 1])) continue
+      if (!/^\|\s*Term\s*\|\s*Definition\s*\|[ \t]*$/i.test(lines[i]) || !/^\|\s*:?-+:?\s*\|\s*:?-+:?\s*\|[ \t]*$/.test(lines[i + 1])) continue
       i += 2
       for (; i < lines.length && lines[i].startsWith('|'); i++) {
-        const row = /^\|((?:\\.|[^|\\])*)\|((?:\\.|[^|\\])*)\|$/.exec(lines[i])
+        const row = /^\|((?:\\.|[^|\\])*)\|((?:\\.|[^|\\])*)\|[ \t]*$/.exec(lines[i])
         const cells = row?.slice(1).map(cell => cell.replace(/\\([\\|])/g, '$1').trim())
         entries.push(cells ? { term: cells[0], definition: cells[1] } : { term: '', definition: '' })
       }

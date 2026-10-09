@@ -683,6 +683,73 @@ for (const [heading, fragment, wrongFragment] of [
   }
 }
 
+for (const [heading, fragment, wrongFragment] of [
+  [String.raw`# [A \] B](https://example.invalid)`, 'a--b', 'a-b'],
+  [String.raw`![A \] B](https://example.invalid)` + '\n---', 'a--b', 'a-b'],
+  [String.raw`> ## [A \] B][target]` + '\n\n[target]: https://example.invalid', 'a--b', 'a--btarget'],
+  [String.raw`- ## [A \] B][]` + '\n\n' + String.raw`[A \] B]: https://example.invalid`, 'a--b', 'a-b'],
+  [String.raw`# [A \] B]` + '\n\n' + String.raw`[A \] B]: https://example.invalid`, 'a--b', 'a-b'],
+  [String.raw`# [A \\](https://example.invalid)`, 'a-', 'a'],
+  [String.raw`# [A \[ B](https://example.invalid)`, 'a--b', 'a-b']
+]) {
+  for (const [target, exit] of [[fragment, 0], [wrongFragment, 1]]) {
+    test(`escaped bracket headings resolve ${target} with exit ${exit}: ${heading}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), heading + `\n\n[Local](#${target})\n[Other](other.md#${target})\n`)
+      await writeFile(join(f.repo, 'other.md'), heading + '\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.filter(problem => problem.code === 'broken-local-link').length, exit ? 2 : 0)
+      assert.deepEqual(result.data.coverageLimits, [])
+    })
+  }
+}
+
+for (const [slashes, labelExit, boundaryExit] of [[1, 1, 0], [2, 0, 1], [3, 1, 0], [4, 0, 1]]) {
+  const label = 'A ' + '\\'.repeat(slashes) + '] B'
+  for (const [reference, exit] of [
+    [`[${label}](missing.md)`, labelExit],
+    [`![${label}](missing.md)`, labelExit],
+    [`[Guide][${label}]\n\n[${label}]: missing.md`, labelExit],
+    [`[${label}][]\n\n[${label}]: missing.md`, labelExit],
+    [`[${label}]\n\n[${label}]: missing.md`, labelExit],
+    ['[A ' + '\\'.repeat(slashes) + '](missing.md)', boundaryExit]
+  ]) {
+    test(`escaped bracket parity has exit ${exit}: ${reference}`, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), reference + '\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems.filter(problem => problem.code === 'broken-local-link').length, exit)
+    })
+  }
+}
+
+test('escaped bracket definitions mask destinations and titles from link extraction', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), String.raw`[A \] B]: https://example.invalid "[Trap](missing.md)"` + '\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 0)
+})
+
+for (const [headerTail, separatorTail, rowTail] of [[' \t', '', ''], ['', ' \t', ''], ['', '', ' \t'], ['\t ', '\t ', '\t ']]) {
+  for (const [rows, exit, code] of [
+    [['| Order | A request. |'], 0, undefined],
+    [[String.raw`| A \| B | Either C \| D. |`], 0, undefined],
+    [[String.raw`| A \| B | A choice. |`, String.raw`| a \| b | Another choice. |`], 1, 'duplicate-term'],
+    [['| Order | |'], 1, 'invalid-glossary']
+  ]) {
+    test(`glossary trailing whitespace preserves ${code ?? 'valid entries'}: ${JSON.stringify([headerTail, separatorTail, rowTail])}`, async t => {
+      const text = '| Term | Definition |' + headerTail + '\n| --- | --- |' + separatorTail + '\n' + rows.map(row => row + rowTail).join('\n') + '\n'
+      const f = await glossary(t, text, 'markdown-table')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, exit, JSON.stringify(result))
+      assert.equal(result.problems[0]?.code, code)
+    })
+  }
+}
+
 for (const [slashes, escapedExit] of [[0, 1], [1, 0], [2, 1], [3, 0], [4, 1]]) {
   for (const [reference, exit] of [
     ['\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit],

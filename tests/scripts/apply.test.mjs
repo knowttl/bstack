@@ -225,7 +225,10 @@ for (const [heading, fragment, wrongFragment] of [
   ['## \\\\[Guide](https://example.invalid)', 'guide', 'guidehttpsexampleinvalid'],
   ['## \\[Guide](https://example.invalid)', 'guidehttpsexampleinvalid', 'guide'],
   ['## \\\\[Guide][target]\n\n[target]: https://example.invalid', 'guide', 'guidetarget'],
-  ['\\[Guide][target]\n---\n\n[target]: https://example.invalid', 'guidetarget', 'guide']
+  ['\\[Guide][target]\n---\n\n[target]: https://example.invalid', 'guidetarget', 'guide'],
+  [String.raw`## [A \] B](https://example.invalid)`, 'a--b', 'a-b'],
+  [String.raw`![A \] B](https://example.invalid)` + '\n---', 'a--b', 'a-b'],
+  [String.raw`> ## [A \] B][]` + '\n\n' + String.raw`[A \] B]: https://example.invalid`, 'a--b', 'a-b']
 ]) {
   for (const path of ['README.md', 'CONTRIBUTING.md']) {
     for (const [target, exit] of [[fragment, 0], [wrongFragment, 1]]) {
@@ -255,13 +258,18 @@ for (const [heading, fragment, wrongFragment] of [
   }
 }
 
-for (const [slashes, escapedExit] of [[1, 0], [2, 1], [3, 0], [4, 1]]) {
+for (const [slashes, escapedExit, labelExit] of [[1, 0, 1], [2, 1, 0], [3, 0, 1], [4, 1, 0]]) {
   for (const [reference, exit] of [
     ['\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit],
     ['\\'.repeat(slashes) + '[Guide][]\n\n[Guide]: missing.md', escapedExit],
     ['\\'.repeat(slashes) + '[Guide][target]\n\n[target]: missing.md', 1],
     ['\\'.repeat(slashes) + '![Guide](missing.md)', 1],
-    ['!' + '\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit]
+    ['!' + '\\'.repeat(slashes) + '[Guide](missing.md)', escapedExit],
+    ['[A ' + '\\'.repeat(slashes) + '] B](missing.md)', labelExit],
+    ['![A ' + '\\'.repeat(slashes) + '] B](missing.md)', labelExit],
+    ['[Guide][A ' + '\\'.repeat(slashes) + '] B]\n\n[A ' + '\\'.repeat(slashes) + '] B]: missing.md', labelExit],
+    ['[A ' + '\\'.repeat(slashes) + '] B][]\n\n[A ' + '\\'.repeat(slashes) + '] B]: missing.md', labelExit],
+    ['[A ' + '\\'.repeat(slashes) + '] B]\n\n[A ' + '\\'.repeat(slashes) + '] B]: missing.md', labelExit]
   ]) {
     for (const path of ['README.md', 'CONTRIBUTING.md']) {
       test(`move-rule validates escape parity in staged ${path} with exit ${exit}: ${reference}`, async t => {
