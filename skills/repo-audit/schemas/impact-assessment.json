@@ -1,0 +1,24 @@
+{
+  "type": "object", "additionalProperties": false,
+  "required": ["result", "changedBehavior", "changedPaths", "reason", "citations", "dependentWork"],
+  "properties": {
+    "result": { "enum": ["updated", "no-impact", "decision-needed"] },
+    "changedBehavior": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "changedPaths": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "reason": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "citations": {
+      "type": "array", "minItems": 1, "items": {
+        "type": "object", "additionalProperties": false, "required": ["path", "pointer", "version"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 }, "pointer": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "version": { "enum": ["base", "current"] }
+        }
+      }
+    },
+    "dependentWork": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1, "pattern": "\\S" } },
+    "delta": {
+      "type": "object", "additionalProperties": false, "required": ["before", "after"],
+      "properties": { "before": { "type": "string" }, "after": { "type": "string" } }
+    }
+  }
+}

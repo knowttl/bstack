@@ -24,6 +24,9 @@ export function emitResult({ command, status, problems = [], data = {}, inputs =
       ...['applied', 'pending', 'conflicting'].map(state => `${state}: ${(data[state] ?? []).join(', ') || 'none'}`),
       ...(data.affectedChecks?.length ? [`checks to rerun: ${data.affectedChecks.join(', ')}`] : []), ...(data.limitations ?? [])] : []),
     ...(data.path ? [data.path] : []),
+    ...(command === 'evidence validate' ? [
+      ...(data.fingerprint ? [`review fingerprint: ${data.fingerprint}`] : []), ...(data.limitations ?? [])
+    ] : []),
     ...(data.diff ? [data.diff] : []),
     ...problems.map(problem => `${problem.code}: ${problem.message} Fix: ${problem.fix}`)
   ].join('\n'))

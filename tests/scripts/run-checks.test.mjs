@@ -5,7 +5,8 @@ import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { emptyRepo, build, run, snapshot } from './discovery-fixture.mjs'
+import { emptyRepo, build, run, snapshot, git } from './discovery-fixture.mjs'
+import { checkInputState } from '../../skills/repo-audit/scripts/commands/run-checks.mjs'
 
 // Exercise the installed CLI from an unrelated directory with isolated cache evidence.
 const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -133,6 +134,127 @@ test('cancelled required check stays unverified even with other passing checks',
   assert.equal(result.data.coverage[0].status, 'unverified')
 })
 
+for (const command of [
+  { executable: 'node', args: ['check.mjs', 'checks'], cwd: '.', versionArgs: ['--version'] },
+  { executable: 'node', args: ['--version'], cwd: '.', versionArgs: ['check.mjs', '--config=checks'] },
+  ...['npm', 'pnpm', 'yarn'].map(executable => ({ executable, args: ['run', 'verify'], cwd: '.', versionArgs: ['--version'] }))
+]) {
+  test(`explicit directory inputs retain edited and deleted files for ${command.executable} ${command.args.join(' ')}`, async t => {
+    const f = await setup(t)
+    await mkdir(join(f.repo, 'checks'))
+    await writeFile(join(f.repo, 'checks/value'), '0')
+    await writeFile(join(f.repo, 'check.mjs'), 'process.exit(0)\n')
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { verify: `${command.executable} run inner`, inner: 'node check.mjs checks' } }))
+    git(f.repo, 'add', '.')
+    f.plan.checks[0].command = command
+    const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.ok(first.state.files.some(file => file.path === 'checks/value' && file.present))
+    await writeFile(join(f.repo, 'checks/value'), '1')
+    const edited = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.notEqual(edited.fingerprint, first.fingerprint)
+    await rm(join(f.repo, 'checks'), { recursive: true })
+    const deleted = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.ok(deleted.state.files.some(file => file.path === 'checks/value' && !file.present))
+    assert.notEqual(deleted.fingerprint, edited.fingerprint)
+  })
+}
+
+for (const command of [
+  { executable: 'node', args: ['check.mjs', 'checks'], cwd: '.', versionArgs: ['--version'] },
+  { executable: 'node', args: ['../check.mjs', '.'], cwd: 'checks', versionArgs: ['--version'] },
+  { executable: 'node', args: ['--version'], cwd: '.', versionArgs: ['check.mjs', '--config=checks'] },
+  ...['npm', 'pnpm', 'yarn'].map(executable => ({ executable, args: ['run', 'verify'], cwd: '.', versionArgs: ['--version'] }))
+]) {
+  test(`linked directory inputs bind target edits and deletions for ${command.executable} ${command.cwd} ${command.args.join(' ')}`, async t => {
+    const f = await setup(t)
+    await mkdir(join(f.repo, 'rules'))
+    await symlink('rules', join(f.repo, 'checks'))
+    await writeFile(join(f.repo, 'rules/value'), '0')
+    await writeFile(join(f.repo, 'check.mjs'), 'process.exit(0)\n')
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { verify: 'node check.mjs checks' } }))
+    git(f.repo, 'add', '.')
+    f.plan.checks[0].command = command
+    const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.ok(first.state.files.some(file => file.path === 'rules/value' && file.present))
+    await writeFile(join(f.repo, 'rules/value'), '1')
+    const edited = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.notEqual(edited.fingerprint, first.fingerprint)
+    await rm(join(f.repo, 'rules/value'))
+    const deleted = await checkInputState({ root: f.repo }, f.plan, f.path)
+    assert.ok(deleted.state.files.some(file => file.path === 'rules/value' && !file.present))
+    assert.notEqual(deleted.fingerprint, edited.fingerprint)
+  })
+}
+
+for (const manager of ['npm', 'pnpm', 'yarn']) {
+  for (const [name, scripts, args, versionArgs = ['--version']] of [
+    ['main', { verify: 'node check.mjs --config=rules.json' }, ['run', 'verify']],
+    ['pre', { preverify: 'node check.mjs --config=rules.json', verify: 'node other.mjs' }, ['run', 'verify']],
+    ['post', { verify: 'node other.mjs', postverify: 'node check.mjs --config=rules.json' }, ['run', 'verify']],
+    ['nested', { verify: `${manager} run inner`, preinner: 'node other.mjs', inner: 'node check.mjs --config=rules.json', postinner: 'node other.mjs' }, ['run', 'verify']],
+    ['lifecycle', { pretest: 'node other.mjs', test: 'node check.mjs --config=rules.json', posttest: 'node other.mjs' }, ['test']],
+    ['version', { verify: 'node check.mjs --config=rules.json' }, ['--version'], ['run', 'verify']],
+    ['forwarded arguments', { verify: 'node check.mjs --config=rules.json' }, ['run', 'verify', '--', '--filter', 'pricing']],
+    ['forwarded nested arguments', { verify: `${manager} run inner -- --filter pricing`, inner: 'node check.mjs --config=rules.json' }, ['run', 'verify']],
+    ['opaque pre hook', { preverify: 'node other.mjs; node other.mjs', verify: 'node check.mjs --config=rules.json' }, ['run', 'verify']]
+  ]) {
+    test(`${manager} ${name} script checker and config bytes bind capture inputs`, async t => {
+      const f = await setup(t)
+      await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+      await writeFile(join(f.repo, 'check.mjs'), 'process.exit(0)\n')
+      await writeFile(join(f.repo, 'other.mjs'), 'process.exit(0)\n')
+      await writeFile(join(f.repo, 'rules.json'), '{}\n')
+      f.plan.checks[0].command = { executable: manager, args, cwd: '.', versionArgs }
+      const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+      assert.ok(first.state.files.some(file => file.path === 'check.mjs'))
+      assert.ok(first.state.files.some(file => file.path === 'rules.json'))
+      assert.ok(first.state.files.some(file => file.path === 'package.json'))
+      await writeFile(join(f.repo, 'check.mjs'), 'process.exit(1)\n')
+      const checkerChanged = await checkInputState({ root: f.repo }, f.plan, f.path)
+      assert.notEqual(checkerChanged.fingerprint, first.fingerprint)
+      await writeFile(join(f.repo, 'rules.json'), '{"enabled":true}\n')
+      const configChanged = await checkInputState({ root: f.repo }, f.plan, f.path)
+      assert.notEqual(configChanged.fingerprint, checkerChanged.fingerprint)
+    })
+  }
+}
+
+for (const [name, script, args, versionArgs] of [
+  ['forwarded main arguments', 'node check.mjs', ['run', 'verify', '--', '--filter', 'pricing'], ['--version']],
+  ['forwarded version arguments', 'node check.mjs', ['--version'], ['run', 'verify', '--', '--filter', 'pricing']],
+  ['opaque main script', 'node check.mjs; node check.mjs', ['run', 'verify'], ['--version']],
+  ['opaque version script', 'node check.mjs; node check.mjs', ['--version'], ['run', 'verify']]
+]) {
+  test(`capture preserves an existing npm command with ${name}`, async t => {
+    const f = await setup(t)
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { verify: script } }))
+    await writeFile(join(f.repo, 'check.mjs'), 'console.log("completed", JSON.stringify(process.argv.slice(2)))\n')
+    f.plan.checks[0].command = { executable: 'npm', args, cwd: '.', versionArgs }
+    f.plan.checks[0].inputScopes.push('check.mjs')
+    const result = await f.invoke()
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.checks[0].command, f.plan.checks[0].command)
+    const execution = result.data.checks[0].execution
+    assert.equal(execution.exitCode, 0)
+    assert.equal(execution.toolVersion.exitCode, 0)
+    assert.match(execution.stdout + execution.toolVersion.stdout, /completed/)
+    assert.equal(result.data.coverage[0].status, 'passed')
+    assert.ok(result.data.originalState.state.files.some(file => file.path === 'package.json'))
+  })
+}
+
+test('a checker that changes its own unscoped file blocks capture', async t => {
+  const f = await setup(t)
+  await writeFile(join(f.repo, 'check.mjs'), 'import { writeFileSync } from "node:fs"; writeFileSync("check.mjs", "process.exit(0)\\n"); console.log("completed")\n')
+  f.plan.checks[0].command.args = ['check.mjs']
+  const result = await f.invoke()
+  assert.equal(result.exit, 2)
+  assert.equal(result.problems[0].code, 'inputs-changed-during-run')
+  assert.equal(result.data.checks[0].execution.stdout, 'completed\n')
+  assert.notEqual(result.data.originalState.fingerprint, result.data.finalState.fingerprint)
+  assert.equal(result.data.coverage[0].status, 'unverified')
+})
+
 test('a result covering no user journey explicitly reports that limit', async t => {
   const f = await setup(t)
   f.plan.acceptanceCases[0].userJourney = false
@@ -210,13 +332,14 @@ for (const [input, pathFor, replacements] of [
       assert.equal(result.exit, 2)
       assert.equal(result.status, 'blocked')
       assert.equal(result.problems[0].message, 'inputs changed during run')
-      assert.equal(result.data.finalState, null)
+      if (input !== 'plan') assert.notEqual(result.data.finalState.fingerprint, result.data.originalState.fingerprint)
+      else assert.equal(result.data.finalState, null)
       assert.deepEqual(result.data.checks.map(item => item.execution.stdout), ['completed\n', 'replaced\n'])
       assert.deepEqual(result.data.checks.map(item => item.execution.exitCode), [0, 0])
       assert.equal(result.data.coverage[0].status, 'unverified')
       const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
       assert.equal(saved.status, 'blocked')
-      assert.equal(saved.finalState, null)
+      assert.deepEqual(saved.finalState, result.data.finalState)
       assert.deepEqual(saved.checks, result.data.checks)
     })
   }
@@ -347,12 +470,12 @@ test('a refactor without prior protective capture is rejected before compatibili
   assert.ok(result.data.checks.every(item => item.execution === null))
 })
 
-test('before protection with an unavailable final snapshot cannot serve as prior evidence', async t => {
+test('before protection with a retyped input cannot serve as prior evidence', async t => {
   const f = await refactor(t)
   f.plan.checks[0].command.args = ['-e', 'const fs = require("node:fs"); fs.unlinkSync("product.cjs"); fs.mkdirSync("product.cjs"); console.log("completed")']
   const before = await f.invoke(['--phase', 'before'])
   assert.equal(before.exit, 2)
-  assert.equal(before.data.finalState, null)
+  assert.notEqual(before.data.finalState.fingerprint, before.data.originalState.fingerprint)
   assert.equal(before.data.checks[0].execution.stdout, 'completed\n')
   await rm(join(f.repo, 'product.cjs'), { recursive: true })
   await writeFile(join(f.repo, 'product.cjs'), 'exports.total = count => 10 * count\n')

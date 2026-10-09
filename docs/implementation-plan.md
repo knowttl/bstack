@@ -456,9 +456,18 @@ Tick each task when its "Done when" commands pass.
       Contract scopes map document candidates with unmapped impact assessments preserved in a scratch skeleton.
       Public-command tests cover all change categories, literal filenames, scope case and globstar matching, absent bases, shallow history and fresh recomputation after edits.
       Final gate evidence attaches to `tests/eval/results/tasks/T3a.2.json` with AC-19 and AC-20 links.
-      Collection is not semantic assessment or readiness validation; T3a.3 owns the assessment validator and will consume the shared live Git inventory.
+      Collection is not semantic assessment or readiness validation; T3a.3 consumes the shared live Git inventory.
       Execution is local Linux; real Windows/macOS execution remains captain checklist evidence.
-  - [ ] T3a.3 Build `evidence validate`
+  - [x] T3a.3 Build `evidence validate`
+    - C22a adds versioned substantive assessments and recomputes the complete live inventory and previous/proposed document candidates.
+      Each assessment names changed behaviour, source excerpts, impact reasons and dependent work; meaningful before/after excerpts are required for updated documents.
+      Review fingerprints cover substantive assessments and relevant file bytes while excluding top-level derived fingerprints, execution references and the assessment file's raw bytes.
+      Required previous/proposed leaf checks consume current `run-checks` captures, and unresolved decisions remain blocked regardless of passing checks.
+      Prior policy is read from the comparison commit, including a moved config; removed scopes, checks and documents cannot erase coverage.
+      Initial contracts require a selected foundation finding, unsupported prior versions name a migration prerequisite, and acceptance replacements require separately cited approval of the old and new cases.
+      Public-command controls cover forged incomplete inventories, missing impact inputs, stale code/reasons/acceptance/checkers, cosmetic document deltas and stable completed review bindings.
+      Final full-suite evidence attaches to `tests/eval/results/tasks/T3a.3.json` and names the last implementation commit.
+      Semantic agreement and owner approval authenticity require the project's selected reviewer; local scratch captures are not portable attestations.
   - [ ] T3a.4 Build generated-fact freshness checks
   - [ ] T3a.5 Build document reference checks
   - [ ] T3a.6 Build and prove the standalone checker in a clean checkout
