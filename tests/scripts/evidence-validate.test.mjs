@@ -252,6 +252,9 @@ for (const [name, wrap] of [
   ['HTML comment', text => `<!-- ${text} -->`],
   ['block comment', text => `/* ${text} */`],
   ['line comment', text => `// ${text}`],
+  ['inline line comment', text => `const factor = 12; // ${text}`],
+  ['inline comment after a string', text => `const source = "https://example.invalid"; // ${text}`],
+  ['inline comment in a fenced example', text => '```js\nconst factor = 12; // ' + text + '\n```'],
   ['timestamp metadata', text => `updated: ${text}`]
 ]) {
   test(`an unrelated meaningful edit cannot validate excerpts inside ${name}`, async t => {
@@ -267,6 +270,47 @@ for (const [name, wrap] of [
     value.delta = { before: 'old wording', after: 'new wording' }
     await f.write()
     blocked(f.validate(), 'meaningless-document-delta')
+  })
+}
+
+test('changing only an inline line comment cannot establish an updated rule', async t => {
+  const f = await fixture(t)
+  const document = '# Pricing contract\n\nA quote is quantity multiplied by 12.\nconst factor = 12; // '
+  await writeFile(join(f.repo, 'README.md'), document + 'old wording\n')
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'README.md'), document + 'new wording\n')
+  await f.collect()
+  await f.complete()
+  const value = f.assessment.documents[0].assessment
+  value.result = 'updated'
+  value.delta = { before: 'old wording', after: 'new wording' }
+  await f.write()
+  blocked(f.validate(), 'meaningless-document-delta')
+})
+
+for (const [name, before, after, oldExcerpt, newExcerpt] of [
+  ['double quoted URL', 'const source = "https://old.invalid";', 'const source = "https://new.invalid";', 'https://old.invalid', 'https://new.invalid'],
+  ['single quoted comment marker', "const rule = 'old // wording';", "const rule = 'new // wording';", 'old // wording', 'new // wording'],
+  ['template comment marker', 'const rule = `old // wording`;', 'const rule = `new // wording`;', 'old // wording', 'new // wording'],
+  ['escaped quote', 'const rule = "escaped \\" old // wording";', 'const rule = "escaped \\" new // wording";', 'old // wording', 'new // wording'],
+  ['block comment marker', 'const rule = "old /* wording */";', 'const rule = "new /* wording */";', 'old /* wording */', 'new /* wording */'],
+  ['HTML comment marker', 'const rule = "old <!-- wording -->";', 'const rule = "new <!-- wording -->";', 'old <!-- wording -->', 'new <!-- wording -->']
+]) {
+  test(`updated evidence preserves meaningful content in a ${name}`, async t => {
+    const f = await fixture(t)
+    const document = '# Pricing contract\n\nA quote is quantity multiplied by 12.\n'
+    await writeFile(join(f.repo, 'README.md'), document + before + '\n')
+    f.base = commit(f.repo)
+    await writeFile(join(f.repo, 'README.md'), document + after + '\n')
+    await f.collect()
+    await f.complete()
+    const value = f.assessment.documents[0].assessment
+    value.result = 'updated'
+    value.delta = { before: oldExcerpt, after: newExcerpt }
+    await f.write()
+    await f.capture()
+    await f.bind()
+    assert.equal(f.validate().exit, 0, JSON.stringify(f.validate()))
   })
 }
 
