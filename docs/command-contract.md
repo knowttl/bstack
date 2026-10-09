@@ -46,10 +46,13 @@ The result uses the shared exit codes: 0 passed, 1 failed, 2 blocked and 3 usage
 Preflight validates the live inventory, previous/proposed contracts, substantive assessments, source citations, review fingerprint, document references and generated facts.
 It inspects package script dependencies and every required previous/proposed leaf for cycles and obvious aggregate recursion before executing leaves.
 Generated-fact commands retain their existing read-only contract.
-Each affected required leaf declaration runs once in each checker invocation, with its declared version probe and normal timeout/cancellation handling.
+Each distinct required leaf command runs once across the comparison and current invocation, with its declared version probe and normal timeout/cancellation handling.
+Identical commands share that execution while retaining each previous/proposed declaration's coverage obligation.
 Result validation uses only these current executions, never saved `execution` references in the assessment.
+Final validation rechecks committed assessment bytes, document references and generated facts under both policies against the target tree, including ignored link destinations and generator inputs, outputs and command sources.
 Changed review inputs block final validation, and failed or incomplete required executions cannot pass.
-Completed leaf execution writes a fresh scratch `checker-result.json` containing source and base objects, their computed merge base, timestamps and current command results, including failures.
+The leaf phase writes a fresh scratch `checker-result.json` containing source and base objects, their computed merge base, timestamps and captured command results, including failures.
+Execution and final-validation exceptions retain results from already completed leaves.
 The selected ancestor policy requires that merge base to equal the assessment's comparison object.
 The checker never edits the assessment.
 Opaque leaf programs retain the existing review boundary: only supported direct invocations and package aliases are inspected for recursion.
@@ -69,6 +72,8 @@ Commit the completed, bound assessment separately and run the installed aggregat
 Portable records use `repo: "."` and retain the reviewed implementation commit in `head`.
 That commit must be an ancestor of submitted HEAD, with no subsequent source changes except the selected assessment itself.
 Portable inventory omits that record's own path, and portable fingerprints replace absolute roots with `.` and normalize modes to executable bits.
+Collection, validation and committed blob lookup use the same physical repository and assessment identity for containment checks and inventory exclusion.
+Collection resolves an absent planned assessment path through its existing parent directories.
 The record's substantive claims are still hashed; this narrow self-exclusion avoids making its own commit or serialized hash self-referential.
 Renaming the selected record together with a source path is unsupported.
 The aggregate requires the selected file's bytes to match its committed HEAD blob.
@@ -92,7 +97,7 @@ After rebasing or changing the agreed base, recollect, review, bind and commit t
 ### Previous-policy execution
 
 When a change modifies the installed checker or either contract location, the aggregate extracts the base's `.bstack/bin/bstack-check.mjs` to scratch and invokes its exported `runChecker` against the proposed target and selected assessment before its current leaf phase.
-That comparison invocation has its own fresh leaf results; it does not recurse into another comparison invocation.
+It does not recurse into another comparison invocation; command reuse follows the leaf execution rules above.
 The explicit assessment carries the reconciled `previousContract` path, including custom prior authority.
 Previous scopes and required checks remain obligations when the proposed policy removes them.
 A deleted prior config without a clear Git rename stays blocked for reconciliation, including when a replacement checker would return success.
@@ -279,7 +284,7 @@ Changed check commands require successful captures of both declarations.
 Missing, failed, unavailable, skipped or stale captures cannot pass.
 Attaching or replacing execution references does not alter the substantive review fingerprint.
 Keep assessment execution records outside leaf-check product scopes so writing capture references cannot invalidate the leaf capture.
-This validates local captures only; running a prior checker implementation and portable standalone execution remain later tasks.
+This validates local captures only; prior-checker execution and portable results follow the [standalone execution contract](#standalone-checker-execution).
 
 ## Generated facts
 

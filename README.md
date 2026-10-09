@@ -11,7 +11,7 @@ Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending
 These provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
-The maintenance reference remains a placeholder, while portable maintenance and the installer are pending.
+The maintenance reference remains a placeholder, and the installer is pending.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -306,10 +306,7 @@ Run the installed aggregate with an explicit repository, agreed ancestor base an
 node .bstack/bin/bstack-check.mjs --repo <target> --base <commit> --assessment <assessment.json> --json
 ```
 
-It preflights review, documents and generated facts, executes each required leaf once per checker invocation, and validates its fresh results without editing the assessment.
-For clean-checkout evidence, commit implementation changes first, collect with `evidence collect --repo <target> --base <commit> --portable .bstack/assessment.json`, complete the returned review at that selected path, and bind its fingerprint using `evidence validate`.
-Commit the completed assessment separately, then run the aggregate in both the working checkout and a different-root clean clone with a fresh home and cache.
-The [execution contract](docs/command-contract.md#standalone-checker-execution) defines portable identity, previous-policy validation and the missing-base fetch prerequisite.
+See the [execution contract](docs/command-contract.md#standalone-checker-execution) for portable review preparation, fresh leaf execution, previous-policy validation and the missing-base fetch prerequisite.
 Hosted CI behavior remains unverified.
 
 To view the available and planned commands:
