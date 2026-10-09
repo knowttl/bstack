@@ -358,44 +358,6 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   }
 }
 
-// skills/repo-audit/scripts/commands/contract.mjs
-import { readFile as readFile2, readdir as readdir2, stat as stat4 } from "node:fs/promises";
-import { dirname as dirname3, join as join5, relative as relative3, resolve as resolve4, sep as sep3 } from "node:path";
-
-// skills/repo-audit/scripts/lib/json.mjs
-function inspectJSON(text) {
-  const value = JSON.parse(text, (key, value2) => {
-    if (typeof value2 === "number" && !Number.isFinite(value2)) throw new CommandError("failed", [{ code: "nonfinite-number", message: "JSON numbers must be finite.", fix: "Supply finite numbers in every JSON value." }]);
-    return value2;
-  });
-  const tokens = [...text.matchAll(/"(?:[^"\\]|\\.)*"|[{}\[\],:]|[^\s{}\[\],:]+/g)];
-  const entries = /* @__PURE__ */ new Map();
-  let index = 0;
-  function consume(root = false) {
-    const token = tokens[index++][0];
-    if (token !== "{" && token !== "[") return;
-    const keys = /* @__PURE__ */ new Set();
-    const close = token === "{" ? "}" : "]";
-    while (tokens[index][0] !== close) {
-      let key;
-      if (token === "{") {
-        key = JSON.parse(tokens[index++][0]);
-        if (keys.has(key)) throw new CommandError("failed", [{ code: "duplicate-key", message: `Duplicate JSON key: ${key}`, fix: "Supply JSON with unique member names in every object." }]);
-        keys.add(key);
-        index++;
-      }
-      const start = tokens[index].index;
-      consume();
-      const last = tokens[index - 1];
-      if (root && token === "{") entries.set(key, { start, end: last.index + last[0].length });
-      if (tokens[index][0] === ",") index++;
-    }
-    index++;
-  }
-  consume(true);
-  return { value, entries, close: tokens[index - 1].index };
-}
-
 // skills/repo-audit/scripts/lib/fingerprint.mjs
 import { createHash as createHash2 } from "node:crypto";
 import { readFile, stat as stat3, realpath as realpath4, lstat as lstat2, readlink as readlink2 } from "node:fs/promises";
@@ -463,6 +425,44 @@ async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) 
     inputs: substantive
   };
   return { fingerprint: hashBytes(canonicalJSON(state)), state };
+}
+
+// skills/repo-audit/scripts/commands/contract.mjs
+import { readFile as readFile2, readdir as readdir2, stat as stat4 } from "node:fs/promises";
+import { dirname as dirname3, join as join5, relative as relative3, resolve as resolve4, sep as sep3 } from "node:path";
+
+// skills/repo-audit/scripts/lib/json.mjs
+function inspectJSON(text) {
+  const value = JSON.parse(text, (key, value2) => {
+    if (typeof value2 === "number" && !Number.isFinite(value2)) throw new CommandError("failed", [{ code: "nonfinite-number", message: "JSON numbers must be finite.", fix: "Supply finite numbers in every JSON value." }]);
+    return value2;
+  });
+  const tokens = [...text.matchAll(/"(?:[^"\\]|\\.)*"|[{}\[\],:]|[^\s{}\[\],:]+/g)];
+  const entries = /* @__PURE__ */ new Map();
+  let index = 0;
+  function consume(root = false) {
+    const token = tokens[index++][0];
+    if (token !== "{" && token !== "[") return;
+    const keys = /* @__PURE__ */ new Set();
+    const close = token === "{" ? "}" : "]";
+    while (tokens[index][0] !== close) {
+      let key;
+      if (token === "{") {
+        key = JSON.parse(tokens[index++][0]);
+        if (keys.has(key)) throw new CommandError("failed", [{ code: "duplicate-key", message: `Duplicate JSON key: ${key}`, fix: "Supply JSON with unique member names in every object." }]);
+        keys.add(key);
+        index++;
+      }
+      const start = tokens[index].index;
+      consume();
+      const last = tokens[index - 1];
+      if (root && token === "{") entries.set(key, { start, end: last.index + last[0].length });
+      if (tokens[index][0] === ",") index++;
+    }
+    index++;
+  }
+  consume(true);
+  return { value, entries, close: tokens[index - 1].index };
 }
 
 // skills/repo-audit/scripts/lib/schema.mjs
@@ -2666,13 +2666,14 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
   const preflight = await run3({ ...options, preflight: true });
   if (preflight.status !== "passed") return { ...preflight, data: { ...preflight.data, phase: "preflight" } };
   const assessment = JSON.parse(await readFile8(options.assessment, "utf8"));
-  if (assessment.repo === ".") {
-    const path = relative7(target.root, options.assessment).split("\\").join("/");
-    const committed = readGit(target.root, ["show", `HEAD:${path}`]);
-    if (committed.status !== 0 || committed.stdout !== await readFile8(options.assessment, "utf8")) {
+  const assessmentFile = relative7(target.root, options.assessment).split("\\").join("/");
+  const committed = assessment.repo === "." ? readGit(target.root, ["show", `HEAD:${assessmentFile}`]) : null;
+  async function checkAssessment() {
+    if (committed && (committed.status !== 0 || committed.stdout !== await readFile8(options.assessment, "utf8"))) {
       blocked("assessment-not-committed", "Clean-checkout review must use the unchanged selected committed assessment.", "Bind and commit the completed portable assessment before execution.");
     }
   }
+  await checkAssessment();
   const docs = await run2(options);
   if (docs.status !== "passed") return { ...docs, data: { ...docs.data, phase: "preflight" } };
   const facts = await checkGeneratedFacts(options);
@@ -2704,8 +2705,10 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
   let validated;
   try {
     for (const check of preflight.data.requiredChecks) {
-      currentResults.push({ check, execution: await runCommand(target, check.command, { signal: controller.signal }) });
+      const captured = [...previous?.data.checks ?? [], ...currentResults].find((record) => canonicalJSON(record.check.command) === canonicalJSON(check.command));
+      currentResults.push({ check, execution: captured ? captured.execution : await runCommand(target, check.command, { signal: controller.signal }) });
     }
+    await checkAssessment();
     validated = await run3({ ...options, currentResults });
   } catch (error) {
     validated = {
@@ -2770,4 +2773,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"e4c26f518ccc418f8c5cff7e8a594e9c38eb2f33c4c0bddf4d3a4d0574824fc2"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"98f6843f2a5ac8b49a6f8afe1910be5e299053fccfaeebe26aa9d59a7500d1b5"}

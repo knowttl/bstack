@@ -1,0 +1,38 @@
+Command: TMPDIR="$PWD/node_modules/.review-temp" node --test tests/scripts/checker-execution.test.mjs
+Exit code: 0
+
+Source SHA-256:
+1df5d7cb48738ebdc1c055cb0a462c8664b8e5c7b934a5058953ffae04e47db6  scripts/checker-entry.mjs
+96b827955caa61c9b660f6445ac45d70bfce702decc0fa086bec600c99e1d064  skills/repo-audit/scripts/bstack-check.mjs
+73d5f1decdfa5a2e102644c4f0bb57c74a61cedd195f9a715909ebb3a310a1dd  tests/scripts/checker-execution.test.mjs
+
+✔ portable initial foundation survives cloning while revision and selection remain required (1189.145886ms)
+✔ portable initialized submodule fingerprints survive cloning and retain content coverage (1210.549333ms)
+✔ final validation failure preserves fresh failed leaf diagnostics (539.957654ms)
+✔ portable executable files and directory scopes survive clone permissions (1172.582006ms)
+✔ execution exception preserves diagnostics from the preceding failed leaf (522.129243ms)
+✔ different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review (1393.693257ms)
+✔ clean checker rejects missing assessment (392.47865ms)
+✔ clean checker rejects stale document (397.055489ms)
+✔ clean checker rejects incomplete assessment (472.611306ms)
+✔ clean checker rejects missing base (383.972367ms)
+✔ clean checker rejects failed leaf (1176.655891ms)
+✔ clean checker rejects saved success (1197.913884ms)
+✔ preflight rejects recursive leaves before execution (462.163035ms)
+✔ preflight rejects cycle leaves before execution (504.82982ms)
+✔ shallow clone blocks missing comparison until the documented fetch (1037.772714ms)
+✔ extracted comparison checker rejects a removed contract even after the proposed checker is replaced (425.142551ms)
+✔ policy scope widening preserves coverage with one execution per command (1090.863032ms)
+✔ policy scope narrowing preserves coverage with one execution per command (1151.877434ms)
+✔ policy command replacement preserves coverage with one execution per command (1224.62381ms)
+✔ current invocation rejects assessment byte changes and retains execution diagnostics (571.430985ms)
+✔ comparison invocation rejects assessment byte changes and retains execution diagnostics (698.951206ms)
+✔ checker requires explicit inputs and accepts only its documented options (426.338104ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17728.474544

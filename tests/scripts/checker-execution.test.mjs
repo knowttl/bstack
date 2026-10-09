@@ -26,7 +26,7 @@ function check(f, extra = [], checker = join(f.repo, checkerPath)) {
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
-async function fixture(t, { initial = false, submodule = false, diagnostic = false, portableModes = false, executionError = false } = {}) {
+async function fixture(t, { initial = false, submodule = false, diagnostic = false, portableModes = false, executionError = false, formatAssessment = false, policyChange = false } = {}) {
   const f = await maintenanceRepo(t)
   f.env = { ...process.env, HOME: join(f.directory, 'home'), USERPROFILE: join(f.directory, 'home'),
     CODEX_HOME: join(f.directory, 'home/.codex'), XDG_CONFIG_HOME: join(f.directory, 'home/config'),
@@ -41,6 +41,7 @@ async function fixture(t, { initial = false, submodule = false, diagnostic = fal
   f.contract.generators = []
   f.contract.checks[0].command.args = ['leaf.mjs']
   if (diagnostic) await writeFile(join(f.repo, 'leaf.mjs'), "import { writeFileSync } from 'node:fs'; writeFileSync('diagnostic.txt', 'details'); console.log('leaf diagnostic'); process.exit(1)\n")
+  if (formatAssessment) await writeFile(join(f.repo, 'leaf.mjs'), "import { readFileSync, writeFileSync } from 'node:fs'; const path = '.bstack/assessment.json'; writeFileSync(path, JSON.stringify(JSON.parse(readFileSync(path, 'utf8')))); console.log('assessment formatted'); process.exit(0)\n")
   if (executionError) {
     await mkdir(join(f.repo, 'leaf-work'))
     await writeFile(join(f.repo, 'leaf-work/input.txt'), 'input\n')
@@ -70,6 +71,10 @@ async function fixture(t, { initial = false, submodule = false, diagnostic = fal
   if (initial) await rm(join(f.repo, '.bstack/project.json'))
   f.base = commit(f.repo)
   if (initial) await f.save()
+  if (policyChange) {
+    f.contract.scopes[0].paths.push('extra/**')
+    await f.save()
+  }
   await writeFile(join(f.repo, 'src/change.mjs'), 'export const price = 12;\n')
   commit(f.repo)
   const collected = run('evidence collect', f.repo, f.env, ['--base', f.base, '--portable', assessmentPath])
@@ -308,9 +313,11 @@ test('extracted comparison checker rejects a removed contract even after the pro
   assert.equal(result.problems[0].code, 'previous-contract-reconciliation-required')
 })
 
-test('policy changes execute the extracted comparison checker before the current leaf phase', async t => {
+for (const change of ['scope widening', 'scope narrowing', 'command replacement']) test(`policy ${change} preserves coverage with one execution per command`, async t => {
   const f = await fixture(t)
-  f.contract.scopes[0].paths.push('extra/**')
+  if (change === 'scope widening') f.contract.checks[0].inputScopes.push('extra/**')
+  if (change === 'scope narrowing') f.contract.checks[0].inputScopes = ['src/change.mjs']
+  if (change === 'command replacement') f.contract.checks[0].command.args.push('changed')
   await f.save()
   commit(f.repo)
   const collected = run('evidence collect', f.repo, f.env, ['--base', f.base, '--portable', assessmentPath])
@@ -326,9 +333,28 @@ test('policy changes execute the extracted comparison checker before the current
   const result = check(f)
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.equal(result.data.previous.status, 'passed')
-  assert.equal(result.data.previous.data.checks.length, 1)
-  assert.equal(result.data.checks.length, 1)
-  assert.equal(await readFile(f.env.BSTACK_LEAF_LOG, 'utf8'), 'run\nrun\n')
+  assert.equal(result.data.previous.data.checks.length, 2)
+  assert.equal(result.data.checks.length, 2)
+  assert.deepEqual(result.data.checks.map(record => record.check.inputScopes), [f.contract.checks[0].inputScopes, ['src/**']])
+  assert.ok(result.data.checks.every(record => record.execution.status === 'passed'))
+  assert.equal(await readFile(f.env.BSTACK_LEAF_LOG, 'utf8'), change === 'command replacement' ? 'run\nrun\n' : 'run\n')
+})
+
+for (const phase of ['current', 'comparison']) test(`${phase} invocation rejects assessment byte changes and retains execution diagnostics`, async t => {
+  const f = await fixture(t, { formatAssessment: true, policyChange: phase === 'comparison' })
+  const before = await readFile(join(f.repo, assessmentPath), 'utf8')
+  const result = check(f)
+  assert.equal(result.exit, 2, JSON.stringify(result))
+  assert.ok(result.problems.some(problem => problem.code === 'assessment-not-committed'), JSON.stringify(result))
+  const after = await readFile(join(f.repo, assessmentPath), 'utf8')
+  assert.notEqual(after, before)
+  assert.deepEqual(JSON.parse(after), JSON.parse(before))
+  const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
+  assert.equal(saved.status, 'blocked')
+  assert.equal(saved.data.checks.length, 1)
+  assert.equal(saved.data.checks[0].execution.exitCode, 0)
+  assert.equal(saved.data.checks[0].execution.stdout, 'assessment formatted\n')
+  assert.equal(result.data.phase, phase === 'comparison' ? 'previous-policy' : 'result-validation')
 })
 
 test('checker requires explicit inputs and accepts only its documented options', async t => {

@@ -6,6 +6,7 @@ import { resolveTarget } from '../skills/repo-audit/scripts/lib/repo.mjs'
 import { readGit } from '../skills/repo-audit/scripts/lib/discovery.mjs'
 import { createScratch } from '../skills/repo-audit/scripts/lib/scratch.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
+import { canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
 import { leafCommand } from '../skills/repo-audit/scripts/commands/contract.mjs'
 import { run as checkDocuments } from '../skills/repo-audit/scripts/commands/docs-check.mjs'
@@ -36,13 +37,14 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
   const preflight = await validateEvidence({ ...options, preflight: true })
   if (preflight.status !== 'passed') return { ...preflight, data: { ...preflight.data, phase: 'preflight' } }
   const assessment = JSON.parse(await readFile(options.assessment, 'utf8'))
-  if (assessment.repo === '.') {
-    const path = relative(target.root, options.assessment).split('\\').join('/')
-    const committed = readGit(target.root, ['show', `HEAD:${path}`])
-    if (committed.status !== 0 || committed.stdout !== await readFile(options.assessment, 'utf8')) {
+  const assessmentFile = relative(target.root, options.assessment).split('\\').join('/')
+  const committed = assessment.repo === '.' ? readGit(target.root, ['show', `HEAD:${assessmentFile}`]) : null
+  async function checkAssessment() {
+    if (committed && (committed.status !== 0 || committed.stdout !== await readFile(options.assessment, 'utf8'))) {
       blocked('assessment-not-committed', 'Clean-checkout review must use the unchanged selected committed assessment.', 'Bind and commit the completed portable assessment before execution.')
     }
   }
+  await checkAssessment()
   const docs = await checkDocuments(options)
   if (docs.status !== 'passed') return { ...docs, data: { ...docs.data, phase: 'preflight' } }
   const facts = await checkGeneratedFacts(options)
@@ -72,8 +74,11 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
   let validated
   try {
     for (const check of preflight.data.requiredChecks) {
-      currentResults.push({ check, execution: await runCommand(target, check.command, { signal: controller.signal }) })
+      const captured = [...previous?.data.checks ?? [], ...currentResults]
+        .find(record => canonicalJSON(record.check.command) === canonicalJSON(check.command))
+      currentResults.push({ check, execution: captured ? captured.execution : await runCommand(target, check.command, { signal: controller.signal }) })
     }
+    await checkAssessment()
     validated = await validateEvidence({ ...options, currentResults })
   } catch (error) {
     validated = { status: error instanceof CommandError ? error.status : 'blocked',
