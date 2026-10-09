@@ -91,7 +91,8 @@ Every selected path must resolve to a string command in the complete proposed by
 Unmarked edits, other package scripts, other CI commands and unrelated configuration fields pass through the ordinary protected-write validation unchanged.
 The plan digest binds these selections alongside the complete proposed bytes.
 Selected commands use literal arguments and fail-fast top-level `&&` chains; line breaks between commands are allowed only after `&&`.
-Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted and escaped arguments.
+Backslashes and shell escaping are unsupported, including inside quoted arguments; use forward-slash paths and quotes for literal spaces.
+Every decoded word is rejected if it contains `|`, `&`, `;`, `$(`, a backtick or a newline, including quoted arguments.
 Quotes do not make shell control syntax acceptable as an argument.
 Failure-masking operators (`||`, pipelines, separators, background execution and negation), unquoted shell comments, assignment prefixes, shell dispatch and substitutions fail with `ignored-check-failure` before any writes.
 Shell dispatch includes `command`, `builtin`, shell executables, executable paths to those programs and their `.exe`/`.cmd`/`.bat` forms in every `&&` segment.

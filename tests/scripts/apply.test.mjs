@@ -122,6 +122,11 @@ for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'as
 }
 
 for (const [value, exit] of [
+  ['node .bstack\\bin\\bstack-check.mjs', 1],
+  ['node ".bstack\\bin\\bstack-check.mjs"', 1],
+  ["node '.bstack\\bin\\bstack-check.mjs'", 1],
+  ['node check.mjs literal\\ argument', 1],
+  ['node check.mjs \\#literal && node boundaries.mjs', 1],
   ["npm exec -c 'node boundaries.mjs || true'", 1],
   ["npx --call 'node boundaries.mjs || true'", 1],
   ["npm x --call 'node boundaries.mjs'", 1],
@@ -262,7 +267,6 @@ for (const [path, proposed] of [
   ['package.json', '{"scripts":{"check":"tsc --noEmit && node boundaries.mjs"}}'],
   ['package.json', JSON.stringify({ scripts: { check: 'node check.mjs "#literal" && node boundaries.mjs' } })],
   ['package.json', JSON.stringify({ scripts: { check: "node check.mjs '#literal' && node boundaries.mjs" } })],
-  ['package.json', JSON.stringify({ scripts: { check: 'node check.mjs \\#literal && node boundaries.mjs' } })],
   ['ci.yml', 'steps:\n  - run: npm run check\n    continue-on-error: false\n'],
   ['ci.yml', 'steps:\n  - run: |\n      npm run check &&\n      npm test\n']
 ]) {
