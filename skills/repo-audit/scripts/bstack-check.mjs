@@ -2695,6 +2695,10 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
   if (structure) return { ...structure, data: { ...structure.data, phase: "preflight" } };
   for (const check of preflight.data.requiredChecks) await leafCommand(target.root, check.command);
   const directory = await createScratch(target);
+  async function saveResult(result) {
+    await writeFile3(result.data.path, JSON.stringify({ status: result.status, problems: result.problems, data: result.data }, null, 2) + "\n", { flag: "wx" });
+    return result;
+  }
   let previous = null;
   const policyChanged = preflight.data.paths.some((path) => [
     preflight.inputs.contract,
@@ -2709,7 +2713,8 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     const checker = await import(pathToFileURL(path).href);
     if (typeof checker.runChecker !== "function") blocked("previous-checker-incompatible", "The comparison checker does not support clean-checkout validation.", "Record an explicit migration decision and coverage for the prior policy.");
     previous = retainCoverageLimits(await checker.runChecker(options, { comparisonPolicy: true }));
-    if (previous.status !== "passed") return { ...previous, data: { ...previous.data, phase: "previous-policy" } };
+    previous = await saveResult({ ...previous, data: { ...previous.data, phase: "previous-policy", path: join10(directory, "comparison-result.json") } });
+    if (previous.status !== "passed") return previous;
   }
   const startedAt = (/* @__PURE__ */ new Date()).toISOString();
   const currentResults = [];
@@ -2757,8 +2762,7 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
     previous,
     path: join10(directory, "checker-result.json")
   };
-  await writeFile3(data.path, JSON.stringify({ status, problems: validated.problems, data }, null, 2) + "\n", { flag: "wx" });
-  return { ...validated, status, data };
+  return saveResult({ ...validated, status, data });
 }
 if (process.argv[1] && await resolveLinks(resolve8(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2);
@@ -2789,4 +2793,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"f766bb4d069ccd1c23f4504e09eeaaa1d96ed50581e2ad576023bb96caf9aa99"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"2ab1ea6092aecc018c2e7ed6fceaf96acad3228bf33deec2ba9f4a970580b09c"}
