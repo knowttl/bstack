@@ -58,6 +58,7 @@ Aggregate filenames are recognised in executable and argument positions by case-
 The `evidence validate` and `docs check` argument pairs require those exact spellings.
 Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
 For npm, script lookup uses the nearest ancestor within the repo containing `package.json` or `node_modules`, and script bodies are inspected from that directory.
+For Yarn, lookup uses the nearest ancestor within the repo containing `package.json`, without stopping at `node_modules`.
 Script bodies use the [selected integration grammar](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command), which owns token, quoting, whitespace and unsupported shell-transformation rules.
 That grammar applies to every command in pre/main/post and nested script bodies reached from checks, generators or their version probes; direct child-command arrays retain literal arguments under the [child-command contract](#child-commands).
 The validator follows script aliases and declared npm, pnpm and yarn pre/post lifecycle scripts, rejecting cycles, missing scripts and aggregate calls.

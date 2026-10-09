@@ -8,6 +8,7 @@ import { run, snapshot } from './discovery-fixture.mjs'
 for (const executable of ['npm', 'pnpm', 'yarn']) {
   for (const [script, leaf, code] of [
     [`@${executable} run leaf`, 'leaf', 'ignored-check-failure'],
+    [`${executable} run leaf\r`, 'leaf\r', 'ignored-check-failure'],
     [`${executable} run leaf\u00a0`, 'leaf\u00a0', undefined],
     [`${executable} run leaf\u2003name`, 'leaf\u2003name', undefined],
     [`${executable} run \uFEFFleaf`, '\uFEFFleaf', undefined]
@@ -31,11 +32,12 @@ for (const collection of ['checks', 'generators']) {
         ['node .bstack/bin/bstack-check.mjs>out', 'ignored-check-failure'],
         ['@npm run leaf', 'ignored-check-failure'],
         ['node --version && @npm run leaf', 'ignored-check-failure'],
-        ['npm run leaf\u00a0', 'recursive-check']
+        ['npm run leaf\u00a0', 'recursive-check'],
+        ['npm run leaf\r', 'ignored-check-failure']
       ]) {
         test(`literal script transformations ${collection} ${field} ${hook}: ${script}`, async t => {
           const f = await maintenanceRepo(t)
-          const scripts = { check: 'node --version', leaf: 'node --version', 'leaf\u00a0': 'node .bstack/bin/bstack-check.mjs', [hook]: script }
+          const scripts = { check: 'node --version', leaf: 'node --version', 'leaf\u00a0': 'node .bstack/bin/bstack-check.mjs', 'leaf\r': 'node .bstack/bin/bstack-check.mjs', [hook]: script }
           if (hook === 'nested') scripts.check = 'npm run nested'
           await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
           f.contract[collection][0].command = {
@@ -304,46 +306,49 @@ for (const [topic, action, exit] of [
   })
 }
 
-for (const collection of ['checks', 'generators']) {
-  for (const field of ['args', 'versionArgs']) {
-    for (const [name, scripts, exit] of [
-      ['nested leaves', { check: 'npm run leaf', leaf: 'node --check src/change.mjs' }, 0],
-      ['nested aggregate', { check: 'npm run leaf', leaf: 'node repo-audit.mjs evidence validate' }, 1],
-      ['cycle', { check: 'npm run leaf', leaf: 'npm run check' }, 1],
-      ['lifecycle aggregate', { check: 'node --version', precheck: 'node repo-audit.mjs docs check' }, 1]
-    ]) {
-      test(`npm ancestor package ${name} in ${collection} ${field} exits ${exit}`, async t => {
-        const f = await maintenanceRepo(t)
-        await mkdir(join(f.repo, 'src/deep'))
-        await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
-        f.contract[collection][0].command = {
-          executable: 'npm', args: ['--version'], cwd: 'src/deep', versionArgs: ['--version'], [field]: ['run', 'check']
-        }
-        await f.save()
-        assert.equal(run('contract validate', f.repo).exit, exit)
-      })
+for (const executable of ['npm', 'yarn']) {
+  for (const collection of ['checks', 'generators']) {
+    for (const field of ['args', 'versionArgs']) {
+      for (const [name, scripts, exit] of [
+        ['nested leaves', { check: `${executable} run leaf`, leaf: 'node --check src/change.mjs' }, 0],
+        ['nested aggregate', { check: `${executable} run leaf`, leaf: 'node repo-audit.mjs evidence validate' }, 1],
+        ['cycle', { check: `${executable} run leaf`, leaf: `${executable} run check` }, 1],
+        ['lifecycle aggregate', { check: 'node --version', precheck: 'node repo-audit.mjs docs check' }, 1],
+        ['post lifecycle aggregate', { check: 'node --version', postcheck: 'node repo-audit.mjs docs check' }, 1]
+      ]) {
+        test(`${executable} ancestor package ${name} in ${collection} ${field} exits ${exit}`, async t => {
+          const f = await maintenanceRepo(t)
+          await mkdir(join(f.repo, 'src/deep'))
+          await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+          f.contract[collection][0].command = {
+            executable, args: ['--version'], cwd: 'src/deep', versionArgs: ['--version'], [field]: ['run', 'check']
+          }
+          await f.save()
+          assert.equal(run('contract validate', f.repo).exit, exit)
+        })
+      }
     }
   }
+
+  test(`${executable} ancestor lookup selects the nearest package`, async t => {
+    const f = await maintenanceRepo(t)
+    await mkdir(join(f.repo, 'src/deep'))
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: 'node repo-audit.mjs docs check' } }))
+    await writeFile(join(f.repo, 'src/package.json'), JSON.stringify({ scripts: { check: `${executable} run leaf`, leaf: 'node --version' } }))
+    f.contract.checks[0].command = { executable, args: ['run', 'check'], cwd: 'src/deep', versionArgs: ['--version'] }
+    await f.save()
+    assert.equal(run('contract validate', f.repo).exit, 0)
+  })
+
+  test(`${executable} ancestor lookup ${executable === 'npm' ? 'stops at' : 'passes'} node_modules without a package`, async t => {
+    const f = await maintenanceRepo(t)
+    await mkdir(join(f.repo, 'src/node_modules'))
+    await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: 'node --version' } }))
+    f.contract.checks[0].command = { executable, args: ['run', 'check'], cwd: 'src', versionArgs: ['--version'] }
+    await f.save()
+    assert.equal(run('contract validate', f.repo).exit, executable === 'npm' ? 2 : 0)
+  })
 }
-
-test('npm ancestor lookup selects the nearest package', async t => {
-  const f = await maintenanceRepo(t)
-  await mkdir(join(f.repo, 'src/deep'))
-  await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: 'node repo-audit.mjs docs check' } }))
-  await writeFile(join(f.repo, 'src/package.json'), JSON.stringify({ scripts: { check: 'npm run leaf', leaf: 'node --version' } }))
-  f.contract.checks[0].command = { executable: 'npm', args: ['run', 'check'], cwd: 'src/deep', versionArgs: ['--version'] }
-  await f.save()
-  assert.equal(run('contract validate', f.repo).exit, 0)
-})
-
-test('npm ancestor lookup stops at node_modules without a package', async t => {
-  const f = await maintenanceRepo(t)
-  await mkdir(join(f.repo, 'src/node_modules'))
-  await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { check: 'node --version' } }))
-  f.contract.checks[0].command = { executable: 'npm', args: ['run', 'check'], cwd: 'src', versionArgs: ['--version'] }
-  await f.save()
-  assert.notEqual(run('contract validate', f.repo).exit, 0)
-})
 
 for (const collection of ['checks', 'generators']) {
   for (const field of ['args', 'versionArgs']) {
@@ -404,7 +409,7 @@ for (const collection of ['checks', 'generators']) {
     }
     test(`direct literal expansions in ${collection} ${field} validate`, async t => {
       const f = await maintenanceRepo(t)
-      f.contract[collection][0].command[field] = ['tools/lint.mjs', '*.mjs', '?', '[ab]', '~', '%NAME%', '!NAME!', '^', "'leaf'", 'le"af"', '@npm', 'file>out', 'file<input', '日本語\u00a0file']
+      f.contract[collection][0].command[field] = ['tools/lint.mjs', '*.mjs', '?', '[ab]', '~', '%NAME%', '!NAME!', '^', "'leaf'", 'le"af"', '@npm', 'file>out', 'file<input', '日本語\u00a0file', 'leaf\r']
       await f.save()
       assert.equal(run('contract validate', f.repo).exit, 0)
     })
