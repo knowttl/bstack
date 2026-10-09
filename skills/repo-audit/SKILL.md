@@ -253,7 +253,7 @@ Render returns a scratch path and distinguishes documented, observed and inferre
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
 Capture approved checks through the shared verification rules below.
-Selected maintained enforcement through apply is available from T3.4; portable maintenance evidence and document validation remain Phase 3a work.
+Selected maintained enforcement through apply is available from T3.4; portable maintenance evidence remains Phase 3a work.
 
 Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.
 
