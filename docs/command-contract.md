@@ -10,7 +10,7 @@ Its exported `buildVersion` records the package version, bundler version and a d
 Changed source bytes invalidate freshness even when their bundled executable output would be equivalent.
 
 With `--check`, generation stays in memory and compares exact bytes against `skills/repo-audit/scripts/bstack-check.mjs` in the source checkout.
-The command returns `passed` (exit 0) for current bytes or `stale-checker` (exit 1) for absent or different bytes.
+The command returns `passed` (exit 0) for current bytes or `failed` with problem code `stale-checker` (exit 1) for absent or different bytes.
 It creates no scratch directory and changes neither source nor target.
 `npm run check` runs this freshness gate after package validation.
 
