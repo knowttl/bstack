@@ -28,8 +28,9 @@ async function schema(name) {
 
 // This conservative normalization rejects cosmetic proof, not semantic disagreement.
 function meaningful(text) {
-  return text.replace(/<!--[\s\S]*?-->/g, '').replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/^\s*\/\/.*$/gm, '').replace(/^\s*(?:date|updated|last[- ]updated|timestamp)\s*:.*$/gim, '')
+  return text.replace(/(`{3,}|"(?:\\[\s\S]|[^"\\\r\n])*"|'(?:\\[\s\S]|[^'\\\r\n])*'|`(?:\\[\s\S]|[^`\\])*`)|<!--[\s\S]*?-->|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*/g,
+    (match, literal) => literal ?? '')
+    .replace(/^\s*(?:date|updated|last[- ]updated|timestamp)\s*:.*$/gim, '')
     .replace(/\b\d{4}-\d{2}-\d{2}(?:T[\d:.]+(?:Z|[+-]\d{2}:\d{2}))?\b/g, '').replace(/\s+/g, '')
 }
 
@@ -104,10 +105,12 @@ export async function run(options) {
       const delta = value.delta
       const oldDocument = meaningful(before)
       const newDocument = meaningful(after)
-      if (!document || !delta || oldDocument === newDocument || meaningful(delta.before) === meaningful(delta.after) ||
+      const oldExcerpt = delta?.before.replace(/\s+/g, '')
+      const newExcerpt = delta?.after.replace(/\s+/g, '')
+      if (!document || !delta || oldDocument === newDocument || oldExcerpt === newExcerpt ||
           !before.includes(delta.before) || !after.includes(delta.after) ||
-          !oldDocument.includes(meaningful(delta.before)) || !newDocument.includes(meaningful(delta.after)) ||
-          (delta.before && newDocument.includes(meaningful(delta.before))) || (delta.after && oldDocument.includes(meaningful(delta.after)))) {
+          !oldDocument.includes(oldExcerpt) || !newDocument.includes(newExcerpt) ||
+          (delta.before && newDocument.includes(oldExcerpt)) || (delta.after && oldDocument.includes(newExcerpt))) {
         problem('meaningless-document-delta', `Updated ${entry.path} needs an actual changed definition or rule excerpt, beyond dates, whitespace or comments.`)
       }
     }
