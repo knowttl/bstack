@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { environment, git, hash, inputs, inputsCommitted } from './lib/test-evidence.mjs'
+import { environment, git, hash, inputs, inputsCommitted, postCaptureDocumentation } from './lib/test-evidence.mjs'
 
 // Task artifacts live in one portable directory, independent of the shell cwd.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -27,6 +27,9 @@ try {
       hash(output) !== run.outputSha256 || hash(events) !== run.eventsSha256) throw new Error('Full-suite evidence is incomplete or failed')
   if (run.baseRevision !== git(root, 'rev-parse', 'origin/main')) throw new Error('Evidence base changed; run the full suite again')
   git(root, 'merge-base', '--is-ancestor', run.sourceRevision, 'HEAD')
+  const current = await inputs(root)
+  const documentation = await postCaptureDocumentation(root, run, current)
+  excluded.push(...documentation.map(change => change.path))
   if (!inputsCommitted(root, excluded)) throw new Error('Commit source inputs before attaching evidence')
   const files = run.inputs.files.filter(file => !excluded.includes(file.path))
   const binding = { files, sha256: hash(JSON.stringify(files)) }
@@ -44,6 +47,7 @@ try {
     commands: [...(previous?.commands ?? []).filter(command => command.id !== 'full-tests'),
       { id: 'full-tests', ...run.command, outputArtifact: `${prefix}.full-tests.txt`, status: 'passed' }],
     validation: { baseRevision: run.baseRevision, inputs: binding, suites: run.suites,
+      postCaptureDocumentation: documentation,
       counts: summary.counts, durationMs: summary.duration_ms, outputSha256: run.outputSha256,
       eventsSha256: run.eventsSha256, eventsArtifact: `${prefix}.events.jsonl` },
     limitations: [...new Set([...(previous?.limitations ?? []),
