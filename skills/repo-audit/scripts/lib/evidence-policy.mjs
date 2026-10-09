@@ -28,9 +28,19 @@ export async function previousPolicy(root, base, contractPath, inventory, priorP
   const relocated = new Set(inventory.changes.filter(change => change.status.startsWith('R') && change.path === contractPath).map(change => change.oldPath))
   if (priorPath) await resolvePath(root, priorPath, undefined, true)
   const selected = [...new Set([...(paths.includes('.bstack/project.json') ? ['.bstack/project.json'] : []), ...(priorPath ? [priorPath] : [])])]
-  if (!selected.length) throw new CommandError('blocked', [{ code: 'previous-contract-reconciliation-required',
-    message: 'The authoritative prior policy location is unresolved.',
-    fix: 'Reconcile prior authority and supply --previous-contract <repo-relative-file> from the comparison base. Use --base empty only before the first commit.' }])
+  if (!selected.length) {
+    for (const path of paths) {
+      const source = baseText(root, base, path)
+      let value
+      try { value = inspectJSON(source).value } catch { continue }
+      if (value && typeof value === 'object' && ['documents', 'scopes', 'checks'].every(key => Object.hasOwn(value, key))) {
+        throw new CommandError('blocked', [{ code: 'previous-contract-reconciliation-required', path,
+          message: 'A possible existing policy needs explicit prior-authority reconciliation.',
+          fix: 'Reconcile prior authority and supply --previous-contract <repo-relative-file> from the comparison base.' }])
+      }
+    }
+    return null
+  }
   for (const path of selected) {
     if (!paths.includes(path)) throw new CommandError('blocked', [{ code: 'previous-contract-unavailable', path,
       message: 'The selected previous contract is absent from the comparison base.', fix: 'Select the authoritative contract path at the comparison base.' }])

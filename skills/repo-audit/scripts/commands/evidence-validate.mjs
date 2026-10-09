@@ -46,7 +46,8 @@ function meaningful(text, excerpt) {
       }
       if (text.startsWith('```', i)) { while (text[i] === '`') i++; continue }
       const quote = text[i]
-      if ('"\'`'.includes(quote)) {
+      const closedLiteral = text.slice(i).match(/^(?:"(?:\\[^\r\n]|[^"\\\r\n])*"|'(?:\\[^\r\n]|[^'\\\r\n])*'|`(?:\\[\s\S]|[^`\\])*`)/)
+      if (closedLiteral && !(quote === "'" && /[\p{L}\p{N}_]/u.test(text[i - 1] ?? ''))) {
         literals.add(i++)
         while (i < text.length) {
           if (text[i] === '\\') { literals.add(i++); literals.add(i++); continue }
