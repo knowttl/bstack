@@ -134,7 +134,7 @@ Change one only by editing this table with the reason.
 | Project contract | `.bstack/project.json`, versioned schema, only when the project has no existing config that can hold it |
 | Debt baseline | The native tool's own baseline or suppression feature where one exists. Otherwise `.bstack/baseline.json` |
 | Change evidence record | Scratch for local review. A project whose selected delivery path needs portable review evidence commits `.bstack/evidence/<change-id>.json`, or an equivalent existing path, and passes that path explicitly to the checker |
-| Checker in a clean checkout | `apply` copies one dependency-free validator into the target repo as `.bstack/bin/bstack-check.mjs`, with the bstack version in its header. Each run, local or in a CI the project selects, passes an explicit repo, base and assessment path to it |
+| Checker in a clean checkout | Installation and build identity follow the [generation contract](command-contract.md#standalone-checker-generation). C24b adds execution with an explicit repo, base and assessment path, locally or in a CI the project selects |
 | Fixtures | Built by a script into a temporary folder, with a scripted Git history. No nested Git repos are committed |
 | Upstream sources | Raw copies at their pinned commits in `upstream/`, outside the skill folder. Adaptations live in `skills/repo-audit/` and are recorded in `NOTICE` |
 | Step format in `SKILL.md` | Each step is a `### Step N: <name>` heading followed by a line that starts `Done when:` |
