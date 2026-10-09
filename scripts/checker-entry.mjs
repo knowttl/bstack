@@ -7,6 +7,7 @@ import { readGit } from '../skills/repo-audit/scripts/lib/discovery.mjs'
 import { createScratch } from '../skills/repo-audit/scripts/lib/scratch.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { resolveLinks } from '../skills/repo-audit/scripts/lib/paths.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
 import { leafCommand } from '../skills/repo-audit/scripts/commands/contract.mjs'
 import { run as checkDocuments } from '../skills/repo-audit/scripts/commands/docs-check.mjs'
@@ -30,7 +31,7 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     code: 'missing-checker-input', message: 'Explicit repo, base and assessment are required.',
     fix: 'Supply --repo <path> --base <ref> --assessment <file> [--contract <path>].' }])
   const target = await resolveTarget(options)
-  options = { ...options, assessment: resolve(options.assessment) }
+  options = { ...options, assessment: await resolveLinks(resolve(options.assessment)) }
   // The explicitly selected record carries any reconciled custom prior path.
   const selected = await readFile(options.assessment, 'utf8').then(JSON.parse).catch(() => null)
   if (selected?.previousContract) options['previous-contract'] = selected.previousContract
@@ -45,10 +46,12 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     }
   }
   await checkAssessment()
-  const docs = await checkDocuments(options)
-  if (docs.status !== 'passed') return { ...docs, data: { ...docs.data, phase: 'preflight' } }
-  const facts = await checkGeneratedFacts(options)
-  if (facts.status !== 'passed') return { ...facts, data: { ...facts.data, phase: 'preflight' } }
+  for (const policy of preflight.data.policies) {
+    const docs = await checkDocuments({ ...options, coveragePolicy: policy })
+    if (docs.status !== 'passed') return { ...docs, data: { ...docs.data, phase: 'preflight' } }
+    const facts = await checkGeneratedFacts({ ...options, coveragePolicy: policy })
+    if (facts.status !== 'passed') return { ...facts, data: { ...facts.data, phase: 'preflight' } }
+  }
   // Validate old leaves too, before any leaf is started.
   for (const check of preflight.data.requiredChecks) await leafCommand(target.root, check.command)
   const directory = await createScratch(target)
@@ -99,7 +102,7 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
 }
 
 // Importing the bundled validators never starts the aggregate.
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (process.argv[1] && await resolveLinks(resolve(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2)
   if (argv.length === 1 && argv[0] === '--help') console.log('Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]')
   else {
