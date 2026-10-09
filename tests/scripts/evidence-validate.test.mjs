@@ -1,10 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile, writeFile, rename, rm, mkdir } from 'node:fs/promises'
+import { readFile, writeFile, rename, rm, mkdir, symlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { git, run } from './discovery-fixture.mjs'
 import { hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { baseText } from '../../skills/repo-audit/scripts/lib/evidence-policy.mjs'
 
 function commit(repo) {
   git(repo, 'add', '.')
@@ -456,6 +457,141 @@ test('changed initialized submodule inputs bind and become stale after content e
   blocked(result, 'stale-execution')
 })
 
+test('tracked submodule link retargeting invalidates capture with unchanged parent inventory', async t => {
+  const f = await fixture(t, { checker: true })
+  const source = join(f.directory, 'submodule-source')
+  await mkdir(source)
+  git(source, 'init', '-q')
+  await writeFile(join(source, 'pass.txt'), '0')
+  await writeFile(join(source, 'fail.txt'), '1')
+  await writeFile(join(source, 'rule.txt'), 'original')
+  await symlink('pass.txt', join(source, 'current'))
+  commit(source)
+  git(f.repo, '-c', 'protocol.file.allow=always', 'submodule', 'add', source, 'vendor')
+  await writeFile(join(f.repo, 'check.mjs'), "import { readFileSync } from 'node:fs'; process.exit(Number(readFileSync('vendor/current', 'utf8')))\n")
+  f.contract.checks[0].inputScopes.push('vendor')
+  await f.save()
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'vendor/rule.txt'), 'dirty')
+  await f.collect()
+  await f.complete()
+  await f.capture()
+  await f.bind()
+  assert.equal(f.validate().exit, 0)
+  const changes = f.assessment.changes
+  await rm(join(f.repo, 'vendor/current'))
+  await symlink('fail.txt', join(f.repo, 'vendor/current'))
+  const stale = f.validate()
+  assert.deepEqual(stale.data.changes, changes)
+  blocked(stale, 'stale-review')
+  blocked(stale, 'stale-execution')
+  await f.bind()
+  blocked(f.validate(), 'stale-execution')
+})
+
+for (const [name, path] of [
+  ['file link', 'file-link'],
+  ['chained file link', 'chain-link'],
+  ['directory link', 'directory-link/value'],
+  ['relative parent link', 'nested/parent-link']
+]) {
+  test(`historical sources read comparison-tree contents through a ${name}`, async t => {
+    const f = await fixture(t)
+    await mkdir(join(f.repo, 'source'))
+    await mkdir(join(f.repo, 'nested'))
+    await writeFile(join(f.repo, 'source/value'), 'historical rule')
+    await symlink('source/value', join(f.repo, 'file-link'))
+    await symlink('file-link', join(f.repo, 'chain-link'))
+    await symlink('source', join(f.repo, 'directory-link'))
+    await symlink('../source/value', join(f.repo, 'nested/parent-link'))
+    f.base = commit(f.repo)
+    await writeFile(join(f.repo, 'source/value'), 'current rule')
+    assert.equal(baseText(f.repo, { kind: 'commit', objectId: f.base }, path), 'historical rule')
+  })
+}
+
+for (const target of ['../outside', '/outside', 'C:\\outside', 'bad-link', 'missing-target']) {
+  test(`historical source links block unsafe or unavailable target ${target}`, async t => {
+    const f = await fixture(t)
+    await symlink(target, join(f.repo, 'bad-link'))
+    f.base = commit(f.repo)
+    assert.throws(() => baseText(f.repo, { kind: 'commit', objectId: f.base }, 'bad-link'),
+      error => error.status === 'blocked' && error.problems[0].code === 'previous-source-unavailable')
+  })
+}
+
+test('linked historical documents cannot claim unchanged content as updated', async t => {
+  const f = await fixture(t)
+  await rename(join(f.repo, 'README.md'), join(f.repo, 'DESIGN.md'))
+  await symlink('DESIGN.md', join(f.repo, 'README.md'))
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return 12 * quantity; }\n')
+  await f.collect()
+  await f.complete()
+  const value = f.assessment.documents[0].assessment
+  value.result = 'updated'
+  value.delta = { before: 'DESIGN.md', after: 'quantity multiplied by 12' }
+  await f.write()
+  await f.capture()
+  await f.bind()
+  blocked(f.validate(), 'meaningless-document-delta')
+})
+
+test('a linked previous contract preserves ordinary successful validation', async t => {
+  const f = await fixture(t)
+  await rename(join(f.repo, '.bstack/project.json'), join(f.repo, '.bstack/policy.json'))
+  await symlink('policy.json', join(f.repo, '.bstack/project.json'))
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return 12 * quantity; }\n')
+  await f.collect()
+  await f.complete()
+  await f.capture()
+  await f.bind()
+  assert.equal(f.validate().exit, 0)
+})
+
+test('linked historical documents accept a real meaningful update', async t => {
+  const f = await fixture(t)
+  await rename(join(f.repo, 'README.md'), join(f.repo, 'DESIGN.md'))
+  await symlink('DESIGN.md', join(f.repo, 'README.md'))
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'DESIGN.md'), '# Pricing contract\n\nA quote is quantity multiplied by 13.\n')
+  await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return quantity * 13; }\n')
+  await f.collect()
+  await f.complete()
+  const value = f.assessment.documents[0].assessment
+  value.result = 'updated'
+  value.delta = { before: 'quantity multiplied by 12', after: 'quantity multiplied by 13' }
+  await f.write()
+  await f.capture()
+  await f.bind()
+  assert.equal(f.validate().exit, 0)
+})
+
+test('linked historical acceptance sources compare source contents', async t => {
+  const f = await fixture(t)
+  await rename(join(f.repo, 'ACCEPTANCE.md'), join(f.repo, 'REQUIREMENTS.md'))
+  await symlink('REQUIREMENTS.md', join(f.repo, 'ACCEPTANCE.md'))
+  f.base = commit(f.repo)
+  await writeFile(join(f.repo, 'src/change.mjs'), 'export function quote(quantity) { return 12 * quantity; }\n')
+  await f.collect()
+  await f.complete()
+  await f.capture()
+  await f.bind()
+  assert.equal(f.validate().exit, 0)
+  await writeFile(join(f.repo, 'REQUIREMENTS.md'), 'A quote is quantity multiplied by 13.\n')
+  await f.collect()
+  await f.complete()
+  blocked(f.validate(), 'acceptance-decision-required')
+  f.assessment.decisions = [{ id: 'price-change', source: 'ACCEPTANCE.md', status: 'approved',
+    oldCase: 'A quote is quantity multiplied by 12.', newCase: 'A quote is quantity multiplied by 13.',
+    affectedWork: ['pricing'], approval: { path: 'APPROVAL.md', pointer: 'Owner approved', version: 'current' } }]
+  await f.write()
+  await f.capture()
+  await f.bind()
+  assert.equal(f.validate().exit, 0)
+})
+
 test('unavailable comparison base names a prerequisite', async t => {
   const f = await fixture(t)
   f.base = 'missing'
@@ -733,9 +869,13 @@ for (const [text, code] of [['not JSON', 'previous-contract-unavailable'], ['{}'
   })
 }
 
-test('unscoped directory check inputs select checks and invalidate captures after review refresh', async t => {
+for (const [name, setupDirectory] of [
+  ['directory', async repo => mkdir(join(repo, 'checks'))],
+  ['linked directory', async repo => { await mkdir(join(repo, 'rules')); await symlink('rules', join(repo, 'checks')) }]
+]) {
+test(`unscoped ${name} check inputs select checks and invalidate captures after review refresh`, async t => {
   const f = await fixture(t, { checker: true })
-  await mkdir(join(f.repo, 'checks'))
+  await setupDirectory(f.repo)
   await writeFile(join(f.repo, 'checks/value'), '0')
   await writeFile(join(f.repo, 'check.mjs'), "import { readFileSync } from 'node:fs'; process.exit(Number(readFileSync('checks/value', 'utf8')))\n")
   f.contract.checks[0].command.args = ['check.mjs', 'checks']
@@ -767,6 +907,7 @@ test('unscoped directory check inputs select checks and invalidate captures afte
   await f.bind()
   blocked(f.validate(), 'stale-execution')
 })
+}
 
 for (const [name, command, path, before, after] of [
   ['checker', { executable: 'node', args: ['check.mjs'], cwd: '.', versionArgs: ['--version'] }, 'check.mjs', 'process.exit(0)\n', 'process.exit(1)\n'],
