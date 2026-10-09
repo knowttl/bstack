@@ -53,9 +53,9 @@ Existing generator output components and the selected contract path also require
 Command `cwd` follows the child-command contract, including `.` for the root, and must exist.
 Unknown document, rule or check references fail.
 
-Leaf checks and generators cannot invoke `evidence validate`, `docs check` or the standalone `bstack-check.mjs` aggregate.
+Leaf checks and generators cannot invoke bstack's `evidence validate`, `docs check`, `docs generate` or the standalone `bstack-check.mjs` aggregate.
 Aggregate filenames are recognised in executable and argument positions by case-insensitive basename, using either path separator and ignoring `.exe`, `.cmd` and `.bat` suffixes.
-The `evidence validate` and `docs check` argument pairs require those exact spellings.
+The `evidence validate`, `docs check` and `docs generate` argument pairs require those exact spellings and a `repo-audit.mjs` executable or argument; independent project tools may use those argument pairs.
 Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
 For npm, script lookup uses the nearest ancestor within the repo containing `package.json` or `node_modules`, and script bodies are inspected from that directory.
 For Yarn, lookup uses the nearest ancestor within the repo containing `package.json`, without stopping at `node_modules`.
@@ -178,7 +178,36 @@ Changed check commands require successful captures of both declarations.
 Missing, failed, unavailable, skipped or stale captures cannot pass.
 Attaching or replacing execution references does not alter the substantive review fingerprint.
 Keep assessment execution records outside leaf-check product scopes so writing capture references cannot invalidate the leaf capture.
-This validates local captures only; generated-fact freshness, running a prior checker implementation and portable standalone execution remain later tasks.
+This validates local captures only; running a prior checker implementation and portable standalone execution remain later tasks.
+
+## Generated facts
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --check --json
+node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --json
+```
+
+Both forms load the project contract, with the same optional `--contract` override as `contract validate`.
+Each registered generator's unique `id` is its marker ID, `outputPaths` names its documents, and `inputScopes` names its authoritative inputs.
+Every output document must already contain exactly one corresponding section between `<!-- bstack:generated <id> -->` and `<!-- bstack:end -->`.
+IDs used as markers are single tokens without whitespace or angle brackets.
+Duplicate, nested, malformed and unmatched markers in those documents fail before commands execute.
+The child command's stdout is the exact UTF-8 body between markers, including any leading or trailing newlines; no whitespace normalization occurs.
+The same output fills that generator's section in each declared document.
+Nonzero exits, unavailable tools, timeouts, cancellation, invalid UTF-8 and truncated output cannot establish freshness.
+
+`--check` compares section bytes and fails with `stale-generated-section` for each stale section.
+During each generator, including its version probe, the command watches every existing project directory for changes and snapshots project file bytes, modes, directories and link targets before and after execution, including ignored files but excluding Git metadata.
+Project changes fail the generator's read-only contract in either form, including files created and removed or bytes changed and restored before execution finishes; the command does not undo the generator's changes.
+Write detection does not provide an operating-system sandbox or prove that the generator reads only its declared inputs.
+
+Without `--check`, complete proposed documents render only to scratch.
+The result names `generated-proposals.json` and includes each changed document's original hash, proposed hash, complete replacement payload and exact diff.
+Surrounding document bytes and marker comments remain unchanged.
+These proposals do not authorize writes or select findings.
+Bind chosen proposals to selected findings in a reviewed change set, review `apply --plan <file> --dry-run`, then use `apply --plan <file>`.
+The existing protected apply contract still enforces finding selection, scope, original hashes, complete proposed bytes and the reviewed digest.
+No separate regeneration write path bypasses those protections.
 Human summaries and JSON results report structural proof limits.
 
 ## Measure and overlap

@@ -5,6 +5,29 @@ import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { run, snapshot } from './discovery-fixture.mjs'
 
+for (const collection of ['checks', 'generators']) {
+  for (const field of ['args', 'versionArgs']) {
+    for (const words of [['docs', 'generate'], ['docs', 'check'], ['evidence', 'validate']]) {
+      for (const [entry, code] of [['scripts/docs.mjs', undefined], ['repo-audit.mjs', 'recursive-check']]) {
+        for (const [route, scripts, executable, args] of [
+          ['direct', {}, 'node', [entry, ...words]],
+          ['package hook', { check: 'npm run leaf', leaf: 'node --version', preleaf: `node ${entry} ${words.join(' ')}` }, 'npm', ['run', 'check']]
+        ]) {
+          test(`maintenance entry points: ${collection} ${field} ${route} ${entry} ${words.join(' ')}`, async t => {
+            const f = await maintenanceRepo(t)
+            await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts }))
+            f.contract[collection][0].command = { executable, args: ['--version'], cwd: '.', versionArgs: ['--version'], [field]: args }
+            await f.save()
+            const result = run('contract validate', f.repo)
+            assert.equal(result.problems[0]?.code, code)
+            assert.equal(result.exit, code ? 1 : 0)
+          })
+        }
+      }
+    }
+  }
+}
+
 for (const executable of ['npm', 'pnpm', 'yarn']) {
   for (const [script, leaf, code] of [
     [`@${executable} run leaf`, 'leaf', 'ignored-check-failure'],
@@ -289,7 +312,7 @@ for (const [topic, action, exit] of [
     for (const field of ['args', 'versionArgs']) {
       test(`${topic} ${action} as ${collection} ${field} exits ${exit}`, async t => {
         const f = await maintenanceRepo(t)
-        f.contract[collection][0].command[field] = ['tools/lint.mjs', topic, action]
+        f.contract[collection][0].command[field] = ['repo-audit.mjs', topic, action]
         await f.save()
         assert.equal(run('contract validate', f.repo).exit, exit)
       })
@@ -298,7 +321,7 @@ for (const [topic, action, exit] of [
   test(`nested script ${topic} ${action} exits ${exit}`, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: {
-      check: 'npm run leaf', leaf: `node tools/lint.mjs ${topic} ${action}`
+      check: 'npm run leaf', leaf: `node repo-audit.mjs ${topic} ${action}`
     } }))
     f.contract.checks[0].command = { executable: 'npm', args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] }
     await f.save()

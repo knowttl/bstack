@@ -121,7 +121,7 @@ Creation journals directories and files through the existing protected-write eng
 Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
 Maintained enforcement is available through selected `apply` edits, as described below.
-Project contract validation, change collection and local assessment validation are available below.
+Project contract validation, change collection, local assessment validation and generated-fact freshness checks are available below.
 Portable maintenance remains pending.
 
 Prove a selected native rule against prepared clean and independently seeded fixtures:
@@ -181,6 +181,16 @@ Have the selected reviewer assess the substantive claims against the diff, then 
 Attach `run-checks` captures as execution entries containing `runId` and the caller-relative `plan` path.
 Required checks must match both previous and proposed policy; unresolved decisions remain blocked even when those checks pass.
 Structural validation cannot prove semantic correctness or authenticate an owner's approval.
+
+Check registered generated sections or prepare reviewed regeneration proposals:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --check --json
+node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --json
+```
+
+The [generated-facts contract](docs/command-contract.md#generated-facts) defines registration, markers, exact-byte output and write detection.
+Review scratch proposals through a selected protected `apply` change set before updating documents.
 
 Capture a reviewed check plan with acceptance sources and input scopes:
 

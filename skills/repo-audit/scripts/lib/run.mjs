@@ -32,7 +32,7 @@ export async function selectCommand(executable, args, { platform = process.platf
   return { executable, args }
 }
 
-export async function runCommand(target, command, { signal, env = process.env, outputLimitBytes = outputLimit } = {}) {
+export async function runCommand(target, command, { signal, env = process.env, outputLimitBytes = outputLimit, exactOutput = false } = {}) {
   const timeoutMs = command.timeoutMs ?? 120000
   if (!command.executable || !Array.isArray(command.args) || command.args.some(arg => typeof arg !== 'string') ||
       !Array.isArray(command.versionArgs) || command.versionArgs.some(arg => typeof arg !== 'string') ||
@@ -44,10 +44,10 @@ export async function runCommand(target, command, { signal, env = process.env, o
   const version = await selectCommand(command.executable, command.versionArgs, { env })
   const toolVersion = await capture(version, { cwd, timeoutMs, signal, env, outputLimitBytes })
   if (toolVersion.status !== 'passed') return { ...toolVersion, toolVersion }
-  return { ...await capture(selected, { cwd, timeoutMs, signal, env, outputLimitBytes }), toolVersion }
+  return { ...await capture(selected, { cwd, timeoutMs, signal, env, outputLimitBytes, exactOutput }), toolVersion }
 }
 
-async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes }) {
+async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes, exactOutput }) {
   const started = performance.now()
   let stdout = Buffer.alloc(0)
   let stderr = Buffer.alloc(0)
@@ -95,6 +95,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes 
   return result(exitCode, exitSignal)
 
   function result(exitCode, exitSignal) {
+    if (exactOutput && !Buffer.from(stdout.toString('utf8')).equals(stdout)) error ??= 'Generated output must be valid UTF-8.'
     return { status: error ? 'blocked' : exitCode === 0 && !timedOut && !cancelled ? 'passed' : 'failed',
       stdout: stdout.toString('utf8'), stderr: stderr.toString('utf8'), durationMs: performance.now() - started,
       exitCode, signal: exitSignal, timedOut, cancelled, outputTruncated, error }
