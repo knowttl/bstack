@@ -35,7 +35,7 @@ function glossaryEntries(text, format) {
 
 export async function run(options) {
   const target = await resolveTarget(options)
-  const { contract, path: contractPath } = await loadContract(target, options.contract)
+  const { contract, path: contractPath } = options.coveragePolicy ?? await loadContract(target, options.contract)
   const problems = []
   const coverageLimits = []
   const terms = new Map()

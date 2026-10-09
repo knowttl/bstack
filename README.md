@@ -11,7 +11,7 @@ Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending
 These provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
-The maintenance reference remains a placeholder, while portable maintenance and the installer are pending.
+The maintenance reference remains a placeholder, and the installer is pending.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -298,7 +298,16 @@ node scripts/generate-checker.mjs --repo . --check
 node scripts/generate-checker.mjs --repo <target> --json
 ```
 
-See the [generation contract](docs/command-contract.md#standalone-checker-generation) for scratch outputs, selected-plan installation, protection of existing copies and the C24a slice boundary.
+See the [generation contract](docs/command-contract.md#standalone-checker-generation) for scratch outputs, selected-plan installation and protection of existing copies.
+
+Run the installed aggregate with an explicit repository, agreed ancestor base and selected assessment:
+
+```sh
+node .bstack/bin/bstack-check.mjs --repo <target> --base <commit> --assessment <assessment.json> --json
+```
+
+See the [execution contract](docs/command-contract.md#standalone-checker-execution) for portable review preparation, fresh leaf execution, previous-policy validation and the missing-base fetch prerequisite.
+Hosted CI behavior remains unverified.
 
 To view the available and planned commands:
 
