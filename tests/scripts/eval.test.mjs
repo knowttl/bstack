@@ -245,6 +245,31 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   return { result, record }
 }
 
+test('fake-only ts-shop maintenance in with mode validates review and fresh standalone checks without an interview or full audit', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'maintenance')
+  const result = run(directory, '--scenario', 'maintenance', '--mode', 'with', '--stage', 'maintenance', '--adapter', path)
+  assert.equal(result.status, 2, result.stdout)
+  const record = result.data.data
+  t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+  t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+  assert.equal(record.fixture.name, 'ts-shop')
+  assert.equal(record.isolation.verified, true)
+  const transcript = await readFile(join(directory, record.id, 'conversation.txt'), 'utf8')
+  assert.match(transcript, /Fake-only bounded maintenance complete/)
+  assert.match(transcript, /Existing checkout journey remains failed/)
+  assert.doesNotMatch(transcript, /Which offline access option/)
+  const assessment = JSON.parse(await readFile(join(record.fixture.path, '.bstack/assessment.json'), 'utf8'))
+  assert.equal(assessment.documents[0].assessment.result, 'no-impact')
+  assert.deepEqual(assessment.paths, ['packages/core/internal/database.ts'])
+  assert.equal(record.status, 'blocked')
+  assert.deepEqual(record.caseResults, [])
+  const closed = run(directory, 'close', '--run', record.id)
+  assert.equal(closed.status, 2, closed.stdout)
+  assert.equal(closed.data.data.isolation.verified, true)
+  assert.ok(closed.data.data.isolation.cleanedAt)
+})
+
 test('reviewer publication preserves JSON keys and scalar types while rejecting unsupported identities', async t => {
   for (const [reviewer, status] of [['Alice "Ali" Chen', 0], ['123', 2], ['id', 2]]) {
     await t.test(reviewer, async t => {
