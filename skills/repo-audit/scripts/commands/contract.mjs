@@ -7,6 +7,7 @@ import { validateData, validateIds } from '../lib/schema.mjs'
 import { pathGlob } from '../lib/glob.mjs'
 import { integrationCommand, isIndirectExecutable } from '../lib/check-integration.mjs'
 import { CommandError } from '../lib/result.mjs'
+import schema from '../../schemas/project.schema.json' with { type: 'json' }
 
 function reject(code, path, message, status = 'failed') {
   throw new CommandError(status, [{ code, path, message, fix: 'Review the version 1 project contract and its authoritative source pointers.' }])
@@ -110,7 +111,6 @@ export async function loadContract(target, input = '.bstack/project.json', remov
     if (error instanceof CommandError) throw error
     reject('contract-unavailable', input, 'Contract must be readable JSON. Unsupported existing formats require a reviewed standalone contract.', 'blocked')
   }
-  const schema = JSON.parse(await readFile(new URL('../../schemas/project.schema.json', import.meta.url), 'utf8'))
   validateData(schema, contract)
   for (const collection of ['documents', 'scopes', 'rules', 'checks', 'generators', 'acceptanceSources']) validateIds(contract[collection], `$/` + collection)
   const reference = (ids, collection, path) => {

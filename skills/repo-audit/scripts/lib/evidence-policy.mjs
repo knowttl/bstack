@@ -1,4 +1,3 @@
-import { readFile } from 'node:fs/promises'
 import { posix, win32 } from 'node:path'
 import { readGit } from './discovery.mjs'
 import { inspectJSON } from './json.mjs'
@@ -6,6 +5,7 @@ import { validateData, validateIds } from './schema.mjs'
 import { pathGlob, matchesPath } from './glob.mjs'
 import { CommandError } from './result.mjs'
 import { resolvePath } from './paths.mjs'
+import schema from '../../schemas/project.schema.json' with { type: 'json' }
 
 export function baseText(root, base, path) {
   if (base.kind === 'empty-tree') return ''
@@ -79,7 +79,7 @@ export async function previousPolicy(root, base, contractPath, inventory, priorP
     if (value?.schemaVersion !== 1) throw new CommandError('blocked', [{ code: 'previous-contract-version', path,
       message: 'Previous contract version is unsupported.', fix: 'Provide a reviewed migration for the previous contract version.' }])
     try {
-      validateData(JSON.parse(await readFile(new URL('../../schemas/project.schema.json', import.meta.url), 'utf8')), value)
+      validateData(schema, value)
       for (const key of ['documents', 'scopes', 'rules', 'checks', 'generators', 'acceptanceSources']) validateIds(value[key], key)
       for (const scope of value.scopes) {
         scope.paths.forEach(pathGlob)
