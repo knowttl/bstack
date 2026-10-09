@@ -71,7 +71,7 @@
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
   "status": "passed",
-  "sourceRevision": "73ef351531796933db7bac6e4e75ea696925d816",
+  "sourceRevision": "8887b144bcd2fef3448a764ba9f1625ecf0d2ed0",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -127,12 +127,12 @@
         {
           "path": "README.md",
           "executable": false,
-          "sha256": "99b0dd184712f78aa532009106ee437ba0e3ab8046e314fbe2e38ba3e82d77dd"
+          "sha256": "4759063f81d583896d773c8044de9546d86b44efee54ba57f113fce03e8ff2e2"
         },
         {
           "path": "docs/command-contract.md",
           "executable": false,
-          "sha256": "49b4cd0865170b6421166cd81d2f158a0d3f584d6989a01a3281978456d27f46"
+          "sha256": "a680d566959327dad94ad172e10500e113f94b8dcb50ee96c055a92195425eb0"
         },
         {
           "path": "docs/design.md",
@@ -302,7 +302,7 @@
         {
           "path": "skills/repo-audit/schemas/evidence.schema.json",
           "executable": false,
-          "sha256": "be5c5310e534c1388ebcbd6db729cc6a890b6376b627cd9607d078745ed44dc7"
+          "sha256": "072959c322b776427f4f578a4894529e0a285b1245726cf1723eedc9baf7b810"
         },
         {
           "path": "skills/repo-audit/schemas/findings.schema.json",
@@ -367,7 +367,7 @@
         {
           "path": "skills/repo-audit/scripts/commands.mjs",
           "executable": false,
-          "sha256": "c49ce505eaba682b2b5cb63c6bb679b372f4a6ea6b83cc3e9cc8835fd43d3f71"
+          "sha256": "3796ab34db21878c6d3181ec995b4cb138239cabc5af270bd0032a9e92e06f88"
         },
         {
           "path": "skills/repo-audit/scripts/commands/apply.mjs",
@@ -392,17 +392,17 @@
         {
           "path": "skills/repo-audit/scripts/commands/contract.mjs",
           "executable": false,
-          "sha256": "340a76cf9bcc3677681dc812b7b8f6df41fb360aea21bcb853ca55f4c1d26584"
+          "sha256": "d76b2639bf483a0bd6ca155da839f1be7773954cefeffffcfac54372808dbe28"
         },
         {
           "path": "skills/repo-audit/scripts/commands/evidence-validate.mjs",
           "executable": false,
-          "sha256": "f2aed3282be696e99cdc8eb9d514099b2792871aba94a32bb33220aa570b7e6b"
+          "sha256": "f34fbef1432e5f2fa9ac932b1bfd24f7b8c08fad829b831177e4e3905911f746"
         },
         {
           "path": "skills/repo-audit/scripts/commands/evidence.mjs",
           "executable": false,
-          "sha256": "618e175877ba2b82d09a4e4076d6706fb9cfd003989a9b72e9034197ffc40652"
+          "sha256": "bbe0779c5f8d1bb399c5ab11381baf743a56ba29758564cca618f490a86816f0"
         },
         {
           "path": "skills/repo-audit/scripts/commands/findings.mjs",
@@ -447,7 +447,7 @@
         {
           "path": "skills/repo-audit/scripts/commands/run-checks.mjs",
           "executable": false,
-          "sha256": "af15302c491925ffc34d781c749a9aefc7f7d9a35f456c4657cb4bd0a5c33883"
+          "sha256": "562d2a77f6e543eac458383a43c4980d4c493fae44e02aa38b1ac0fea55ca29f"
         },
         {
           "path": "skills/repo-audit/scripts/commands/state.mjs",
@@ -487,12 +487,12 @@
         {
           "path": "skills/repo-audit/scripts/lib/evidence-policy.mjs",
           "executable": false,
-          "sha256": "2dd288c69c323129c3c7d6580688b35e9f303629196fa2c24a043e1355b75009"
+          "sha256": "71291c485e9a558319e38323287892f3fdce1f7b6c678e3e2b3d9d2dd63a3830"
         },
         {
           "path": "skills/repo-audit/scripts/lib/fingerprint.mjs",
           "executable": false,
-          "sha256": "93a827bcb866860415ca713b3d4746d328482cbe81589356951df297a3d48f62"
+          "sha256": "6af7e357d5db040743cf7675f83993b3065330a35a2d3b37863573b4a134dbf6"
         },
         {
           "path": "skills/repo-audit/scripts/lib/glob.mjs",
@@ -507,7 +507,7 @@
         {
           "path": "skills/repo-audit/scripts/lib/paths.mjs",
           "executable": false,
-          "sha256": "32722ee02bef945b145db5dd7cf5758775935039167f505a0a2ec2dc425b9713"
+          "sha256": "2f209d55cd56676c7e17abf8d9e33d52a2d1201220242fb68586a5afd2a4fac2"
         },
         {
           "path": "skills/repo-audit/scripts/lib/proposed-edit.mjs",
@@ -3402,7 +3402,7 @@
         {
           "path": "tests/scripts/child-contract.test.mjs",
           "executable": false,
-          "sha256": "83702e86dc8ef530435559725f5c6cc8b2bb0424cd1865295c929c0bf13656c2"
+          "sha256": "a4e7f51efb62416b2fcc3be6c510cf7b662ae4d119739e981022f8f880c14801"
         },
         {
           "path": "tests/scripts/cite-check.test.mjs",
@@ -3432,7 +3432,7 @@
         {
           "path": "tests/scripts/evidence-validate.test.mjs",
           "executable": false,
-          "sha256": "6be0954d91c98fa29f9c996453ff0127ebdf08a9c6e13709645909220e79341b"
+          "sha256": "eb043f87a2663e13b440e2326087844961c35e83e15ddf0f4849d3bbb265d907"
         },
         {
           "path": "tests/scripts/existing-repo.test.mjs",
@@ -3507,7 +3507,7 @@
         {
           "path": "tests/scripts/run-checks.test.mjs",
           "executable": false,
-          "sha256": "2e478fc00b3ed092b35b1414783884f90e6d822fa06e3e4136cb57f2b1e2fd71"
+          "sha256": "c69c638e1f2602eb7e51fab5f1b9852f686657a25bd50bf368c4582fe52609fe"
         },
         {
           "path": "tests/scripts/schema-contract.test.mjs",
@@ -3685,7 +3685,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "98c7a3ec2adaacba8919be68efda28c18657fc32a13a79fb46ec9c805c0d4231"
+      "sha256": "52ace85ed3b221291c5a3aea09507fa95ea98ef907ce34baa6f70e7932e35cc5"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3721,18 +3721,18 @@
     ],
     "postCaptureDocumentation": [],
     "counts": {
-      "tests": 1940,
+      "tests": 2131,
       "failed": 0,
-      "passed": 1940,
+      "passed": 2131,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 1931,
+      "topLevel": 2122,
       "suites": 0
     },
-    "durationMs": 145558.943206,
-    "outputSha256": "86cbe2155c3d31fc4011e39cf851e874684f6c41e3172939e53b1fb11886fef0",
-    "eventsSha256": "80336c7574b77d06078e31549645d090a9d121e72d6748aeb714d45eca92fbb5",
+    "durationMs": 188213.22559,
+    "outputSha256": "80191dc7e0adb798f40b3b60f1326e243fe560956c0acbb60741de757c7b4e3a",
+    "eventsSha256": "5fdde2d8df5980f2ef92ef8339b9e260732896263cfaa1f2bc0e1615e2fd7c9a",
     "eventsArtifact": "tests/eval/results/tasks/T3a.3.events.jsonl"
   }
 }
