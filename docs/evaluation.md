@@ -18,6 +18,7 @@ The T3a.7 fake-host procedure executes real collection, review binding, local st
 It preserves the seeded checkout failure and reports that limitation independently of passing maintained unit checks.
 Run `npm test -- --task T3a.7` for that procedure and the standalone checker controls.
 Fake-host transcripts establish deterministic command and isolation behaviour only; they remain unscored and do not establish real-model compliance with AC-23.
+The [C24c captured transcript](C24c-maintenance-transcript.md) records the completed fake-only maintenance and standalone flow, including the existing failed checkout journey.
 Phase 3a's full fake-only suite precedes installation; T4.3 still owns fresh real-agent final maintenance acceptance.
 An approved scenario stays in the evaluation even when its baseline passes.
 
