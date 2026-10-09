@@ -27,11 +27,52 @@ async function schema(name) {
 }
 
 // This conservative normalization rejects cosmetic proof, not semantic disagreement.
-function meaningful(text) {
-  return text.replace(/(`{3,}|"(?:\\[\s\S]|[^"\\\r\n])*"|'(?:\\[\s\S]|[^'\\\r\n])*'|`(?:\\[\s\S]|[^`\\])*`)|<!--[\s\S]*?-->|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*/g,
-    (match, literal) => literal ?? '')
-    .replace(/^[ \t]*(?:updated|last[- ]updated)[ \t]*:.*$/gim, '')
-    .replace(/\s+/g, '')
+function meaningful(text, excerpt) {
+  const screened = text.split('')
+  const literals = new Set()
+  const erase = (start, end) => { for (let i = start; i < end; i++) if (!/[\r\n]/.test(text[i])) screened[i] = ' ' }
+  function scan(start, expression = false) {
+    let braces = 0
+    for (let i = start; i < text.length;) {
+      const url = text.slice(i).match(/^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^\s"'`<>]*/)
+      if (url) { i += url[0].length; continue }
+      const comment = text.startsWith('<!--', i) ? ['-->', 4] : text.startsWith('/*', i) ? ['*/', 2] : text.startsWith('//', i) ? ['\n', 2] : null
+      if (comment) {
+        const end = text.indexOf(comment[0], i + comment[1])
+        const next = end < 0 ? text.length : end + comment[0].length
+        erase(i, next)
+        i = next
+        continue
+      }
+      if (text.startsWith('```', i)) { while (text[i] === '`') i++; continue }
+      const quote = text[i]
+      if ('"\'`'.includes(quote)) {
+        literals.add(i++)
+        while (i < text.length) {
+          if (text[i] === '\\') { literals.add(i++); literals.add(i++); continue }
+          if (text[i] === quote) { literals.add(i++); break }
+          if (quote !== '`' && /[\r\n]/.test(text[i])) break
+          if (quote === '`' && text.startsWith('${', i)) { i = scan(i + 2, true); continue }
+          literals.add(i++)
+        }
+        continue
+      }
+      if (expression && text[i] === '}' && braces-- === 0) return i + 1
+      if (expression && text[i] === '{') braces++
+      i++
+    }
+    return text.length
+  }
+  scan(0)
+  const document = screened.join('').replace(/^[ \t]*(?:updated|last[- ]updated)[ \t]*:.*$/gim,
+    (match, offset) => literals.has(offset + match.search(/\S/)) ? match : ' '.repeat(match.length))
+  if (excerpt === undefined) return document.replace(/\s+/g, '')
+  if (!excerpt) return ''
+  for (let index = text.indexOf(excerpt); index >= 0; index = text.indexOf(excerpt, index + 1)) {
+    const value = document.slice(index, index + excerpt.length).replace(/\s+/g, '')
+    if (value) return value
+  }
+  return ''
 }
 
 function successful(result) {
@@ -106,9 +147,10 @@ export async function run(options) {
       const delta = value.delta
       const oldDocument = meaningful(before)
       const newDocument = meaningful(after)
-      const oldExcerpt = delta?.before.replace(/\s+/g, '')
-      const newExcerpt = delta?.after.replace(/\s+/g, '')
+      const oldExcerpt = delta && meaningful(before, delta.before)
+      const newExcerpt = delta && meaningful(after, delta.after)
       if (!document || !delta || oldDocument === newDocument || oldExcerpt === newExcerpt ||
+          (delta.before && !oldExcerpt) || (delta.after && !newExcerpt) ||
           !before.includes(delta.before) || !after.includes(delta.after) ||
           !oldDocument.includes(oldExcerpt) || !newDocument.includes(newExcerpt) ||
           (delta.before && newDocument.includes(oldExcerpt)) || (delta.after && oldDocument.includes(newExcerpt))) {

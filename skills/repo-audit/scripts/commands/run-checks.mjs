@@ -34,7 +34,7 @@ export async function checkCommandPaths(target, checks, paths = []) {
     })
     return [check, [...new Set([...resolved.configPaths, ...named]
       .filter(path => isInside(target.root, path)).map(path => relative(target.root, path).split('\\').join('/'))
-      .filter(path => known.has(path)))]]
+      .flatMap(path => [...known].filter(file => file === path || file.startsWith(path ? `${path}/` : ''))))]]
   })))
 }
 
