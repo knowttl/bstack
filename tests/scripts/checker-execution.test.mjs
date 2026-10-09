@@ -190,6 +190,47 @@ for (const outcome of ['success', 'preflight failure', 'leaf failure', 'late lim
   }
 })
 
+for (const outcome of ['passed', 'failed', 'blocked']) test(`${outcome} comparison artifact retains limits from a coverage-unaware checker`, async t => {
+  const f = await fixture(t)
+  await writeFile(join(f.repo, 'LEGACY.rst'), 'Source\n======\n')
+  f.contract.documents.push({ id: 'legacy', path: 'LEGACY.rst' })
+  await f.save()
+  await cp(join(f.repo, checkerPath), join(f.repo, '.bstack/bin/validator.mjs'))
+  await writeFile(join(f.repo, checkerPath), `
+import { writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+export async function runChecker(options, mode) {
+  const checker = await import(pathToFileURL(join(options.repo, '.bstack/bin/validator.mjs')).href)
+  const result = await checker.runChecker(options, mode)
+  delete result.data.coverageLimits
+  await writeFile(result.data.path, JSON.stringify({ status: result.status, problems: result.problems, data: result.data }))
+  return result
+}
+`)
+  await writeFile(join(f.repo, 'leaf.mjs'), `import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
+${outcome === 'blocked' ? "writeFileSync('.bstack/assessment.json', JSON.stringify(JSON.parse(readFileSync('.bstack/assessment.json', 'utf8'))));" : ''}
+appendFileSync(process.env.BSTACK_LEAF_LOG, 'run\\n'); console.log('leaf diagnostic'); process.exit(${outcome === 'failed' ? 1 : 0})\n`)
+  f.base = commit(f.repo)
+  await cp(join(root, 'skills/repo-audit/scripts/bstack-check.mjs'), join(f.repo, checkerPath))
+  await writeFile(join(f.repo, 'src/change.mjs'), 'export const price = 12;;\n')
+  commit(f.repo)
+  await bindReview(f)
+  const before = await readFile(join(f.repo, assessmentPath))
+  const result = check(f)
+  assert.equal(result.status, outcome, JSON.stringify(result))
+  const comparison = outcome === 'passed' ? result.data.previous : result
+  const saved = JSON.parse(await readFile(comparison.data.path, 'utf8'))
+  assert.deepEqual(saved.data, comparison.data)
+  assert.equal(saved.status, outcome)
+  assert.deepEqual(saved.problems, comparison.problems)
+  assert.deepEqual(saved.data.coverageLimits, [{ path: 'LEGACY.rst', reason: 'Local links require supported Markdown text.' }])
+  assert.equal(saved.data.checks[0].execution.stdout, 'leaf diagnostic\n')
+  assert.equal(saved.data.checks[0].execution.exitCode, outcome === 'failed' ? 1 : 0)
+  assert.equal(await readFile(f.env.BSTACK_LEAF_LOG, 'utf8'), 'run\n')
+  if (outcome !== 'blocked') assert.deepEqual(await readFile(join(f.repo, assessmentPath)), before)
+})
+
 for (const policy of ['proposed', 'previous']) for (const [change, mutation, code] of structuralChanges) {
   test(`${policy} policy rechecks ignored ${change} after the leaf`, async t => {
     const f = await fixture(t)

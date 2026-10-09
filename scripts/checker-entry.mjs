@@ -65,6 +65,10 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
   // Validate old leaves too, before any leaf is started.
   for (const check of preflight.data.requiredChecks) await leafCommand(target.root, check.command)
   const directory = await createScratch(target)
+  async function saveResult(result) {
+    await writeFile(result.data.path, JSON.stringify({ status: result.status, problems: result.problems, data: result.data }, null, 2) + '\n', { flag: 'wx' })
+    return result
+  }
   let previous = null
   const policyChanged = preflight.data.paths.some(path => [preflight.inputs.contract,
     preflight.data.previousContract, '.bstack/bin/bstack-check.mjs'].includes(path))
@@ -76,7 +80,8 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     const checker = await import(pathToFileURL(path).href)
     if (typeof checker.runChecker !== 'function') blocked('previous-checker-incompatible', 'The comparison checker does not support clean-checkout validation.', 'Record an explicit migration decision and coverage for the prior policy.')
     previous = retainCoverageLimits(await checker.runChecker(options, { comparisonPolicy: true }))
-    if (previous.status !== 'passed') return { ...previous, data: { ...previous.data, phase: 'previous-policy' } }
+    previous = await saveResult({ ...previous, data: { ...previous.data, phase: 'previous-policy', path: join(directory, 'comparison-result.json') } })
+    if (previous.status !== 'passed') return previous
   }
   const startedAt = new Date().toISOString()
   const currentResults = []
@@ -108,8 +113,7 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
       source: preflight.data.head, base: preflight.data.base.objectId,
       mergeBase: preflight.data.base.kind === 'commit' ? readGit(target.root, ['merge-base', preflight.data.head, preflight.data.base.objectId]).stdout.trim() || null : null },
     checks: currentResults, previous, path: join(directory, 'checker-result.json') }
-  await writeFile(data.path, JSON.stringify({ status, problems: validated.problems, data }, null, 2) + '\n', { flag: 'wx' })
-  return { ...validated, status, data }
+  return saveResult({ ...validated, status, data })
 }
 
 // Importing the bundled validators never starts the aggregate.
