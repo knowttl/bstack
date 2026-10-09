@@ -58,12 +58,39 @@ export function proposedEdit(edit, original) {
     create: { content: { type: 'string' } },
     replace: { search: { type: 'string', minLength: 1 }, replacement: { type: 'string' } },
     'replace-file': { content: { type: 'string' } },
+    'move-rule': {
+      sourcePath: { type: 'string', minLength: 1 }, destinationPath: { type: 'string', minLength: 1 },
+      rule: { type: 'string', minLength: 1, pattern: '\\S' }, link: { type: 'string', minLength: 1 },
+      destinationAnchor: { type: 'string' }
+    },
     delete: {},
     'set-heading-section': { heading: { type: 'string', pattern: '\\S' }, content: { type: 'string' } },
     'set-json-key': { key: { type: 'string', minLength: 1 }, value: {} },
     'append-line-once': { line: { type: 'string', minLength: 1, pattern: '^[^\\r\\n]+$' } }
   }[edit.operation]
   validateData({ type: 'object', additionalProperties: false, required: Object.keys(fields), properties: fields }, edit.payload)
+  if (edit.operation === 'move-rule') {
+    const { sourcePath, destinationPath, rule, link, destinationAnchor } = edit.payload
+    if (sourcePath === destinationPath || ![sourcePath, destinationPath].includes(edit.path) ||
+        ![sourcePath, destinationPath].every(path => extname(path).toLowerCase() === '.md')) reject('invalid-rule-move', 'Rule moves require two distinct Markdown paths.')
+    if (!rule.endsWith('\n') || !/^\[[^\]\r\n]+\]\([^\r\n]+\)\r?\n$/.test(link)) reject('invalid-rule-move', 'Supply a complete newline-terminated rule block and an exact Markdown link line.')
+    if (edit.path === sourcePath) {
+      if (original === null) reject('missing-original', 'The source rule must exist.')
+      const position = original.indexOf(rule)
+      if (position < 0 || original.indexOf(rule, position + 1) >= 0 || position > 0 && original[position - 1] !== '\n') reject('ambiguous-rule', 'The source rule block must occur exactly once at a line boundary.')
+      return original.slice(0, position) + link + original.slice(position + rule.length)
+    }
+    if (original === null) {
+      if (destinationAnchor) reject('invalid-rule-move', 'A new destination has no insertion anchor.')
+      return rule
+    }
+    if (!destinationAnchor || !destinationAnchor.endsWith('\n')) reject('ambiguous-rule-destination', 'An existing destination needs a newline-terminated exact insertion anchor.')
+    const position = original.indexOf(destinationAnchor)
+    if (position < 0 || original.indexOf(destinationAnchor, position + 1) >= 0) reject('ambiguous-rule-destination', 'The destination insertion anchor must occur exactly once.')
+    if (original.includes(rule)) reject('duplicate-rule', 'The destination already contains the source rule.')
+    const end = position + destinationAnchor.length
+    return original.slice(0, end) + rule + original.slice(end)
+  }
   if (edit.operation === 'delete') {
     if (original === null) reject('missing-original', 'Delete requires an existing file.')
     return null

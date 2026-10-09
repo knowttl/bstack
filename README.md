@@ -192,6 +192,18 @@ node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --js
 The [generated-facts contract](docs/command-contract.md#generated-facts) defines registration, markers, exact-byte output and write detection.
 Review scratch proposals through a selected protected `apply` change set before updating documents.
 
+Check registered source paths, local Markdown links and context-specific glossary entries:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs docs check --repo <target> --json
+npm test -- --task T3a.5
+```
+
+The [document-reference contract](docs/command-contract.md#document-references) defines supported links and glossary registration.
+Duplicate terms fail only within one registered context; unsupported formats report coverage limits.
+Use paired reviewed [`move-rule` edits](docs/command-contract.md#apply-dry-run) to preserve one authoritative rule and replace its old location with an exact link.
+Prefer an existing standards source such as CONTRIBUTING.md or a design section before selecting a new file.
+
 Capture a reviewed check plan with acceptance sources and input scopes:
 
 ```sh

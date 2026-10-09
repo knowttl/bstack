@@ -62,6 +62,103 @@ async function integration(t, path, content, original = path === 'package.json' 
   return setup(t, 'replace-file', original, { content: proposed }, proposed, path, selected)
 }
 
+async function ruleMove(t, destination = '# Standards\n', destinationPath = 'CONTRIBUTING.md') {
+  const rule = '## One source\n\nKeep one authoritative source for each rule.\n'
+  const link = `[One source](${destinationPath}#one-source)\n`
+  const payload = { sourcePath: 'README.md', destinationPath, rule, link, destinationAnchor: destination === null ? '' : '# Standards\n' }
+  const context = await setup(t, 'move-rule', '# Design\n' + rule, payload, '# Design\n' + link)
+  if (destination !== null) await writeFile(join(context.repo, destinationPath), destination)
+  context.findings.reviewedScope.push(destinationPath)
+  context.findings.findings[0].scope.push(destinationPath)
+  context.plan.reviewedScope.push({ path: destinationPath, resolvedPath: join(context.repo, destinationPath) })
+  const proposed = destination === null ? rule : destination + rule
+  context.plan.edits.push({ id: 'E-002', findingId: 'F-001', path: destinationPath, originalHash: hash(destination),
+    proposedHash: hash(proposed), operation: 'move-rule', payload, proposedContent: proposed })
+  await save(context)
+  return context
+}
+
+for (const [name, destination, path] of [['existing authority', '# Standards\n', 'CONTRIBUTING.md'], ['selected new authority', null, 'CODING_STANDARDS.md'], ['new nested authority', null, 'docs/CODING_STANDARDS.md']]) {
+  test(`move-rule leaves one rule and one link in ${name}`, async t => {
+    const context = await ruleMove(t, destination, path)
+    const before = await snapshot(context.repo)
+    assert.equal(execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run']).exit, 0)
+    assert.deepEqual(await snapshot(context.repo), before)
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), context.plan.edits[0].proposedContent)
+    assert.equal(await readFile(join(context.repo, path), 'utf8'), context.plan.edits[1].proposedContent)
+    assert.equal(execute(context).exit, 0, 'unchanged move resumes safely')
+  })
+}
+
+for (const [name, change, code] of [
+  ['missing destination edit', context => context.plan.edits.pop(), 'incomplete-rule-move'],
+  ['missing source edit', context => context.plan.edits.shift(), 'incomplete-rule-move'],
+  ['mismatched payload', context => { context.plan.edits[1].payload = { ...context.plan.edits[1].payload, link: '[Other](README.md)\n' } }, 'incomplete-rule-move'],
+  ['wrong destination link', context => {
+    context.plan.edits.forEach(edit => { edit.payload = { ...edit.payload, link: '[Other](README.md)\n' } })
+    context.plan.edits[0].proposedContent = '# Design\n[Other](README.md)\n'
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+  }, 'invalid-rule-link'],
+  ['missing heading link', context => {
+    context.plan.edits.forEach(edit => { edit.payload = { ...edit.payload, link: '[Other](CONTRIBUTING.md#absent)\n' } })
+    context.plan.edits[0].proposedContent = '# Design\n[Other](CONTRIBUTING.md#absent)\n'
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+  }, 'broken-local-link'],
+  ['external link', context => {
+    context.plan.edits.forEach(edit => { edit.payload = { ...edit.payload, link: '[Other](https://example.invalid)\n' } })
+    context.plan.edits[0].proposedContent = '# Design\n[Other](https://example.invalid)\n'
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+  }, 'invalid-rule-link']
+]) {
+  test(`move-rule rejects ${name} before writing either file`, async t => {
+    const context = await ruleMove(t)
+    change(context)
+    await save(context)
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.problems[0].code, code, JSON.stringify(result))
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+for (const [name, destination, code] of [
+  ['missing insertion anchor', '# Different\n', 'ambiguous-rule-destination'],
+  ['ambiguous insertion anchor', '# Standards\n# Standards\n', 'ambiguous-rule-destination'],
+  ['duplicate rule', '# Standards\n## One source\n\nKeep one authoritative source for each rule.\n', 'duplicate-rule']
+]) {
+  test(`move-rule rejects ${name} without replacing the source`, async t => {
+    const context = await ruleMove(t, destination)
+    const before = await snapshot(context.repo)
+    assert.equal(execute(context).problems[0].code, code)
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+test('move-rule validates the destination precondition before writing the source', async t => {
+  const context = await ruleMove(t)
+  await writeFile(join(context.repo, 'CONTRIBUTING.md'), '# User edits\n')
+  const before = await snapshot(context.repo)
+  assert.equal(execute(context).problems[0].code, 'changed-precondition')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const [name, original] of [
+  ['ambiguous source', '# Design\n## One source\n\nKeep one authoritative source for each rule.\n## One source\n\nKeep one authoritative source for each rule.\n'],
+  ['absent source', '# Design\nAnother rule.\n'],
+  ['partial line source', '# Design\nPrefix ## One source\n\nKeep one authoritative source for each rule.\n']
+]) {
+  test(`move-rule rejects ${name} before writing the destination`, async t => {
+    const context = await ruleMove(t)
+    await writeFile(join(context.repo, 'README.md'), original)
+    context.plan.edits[0].originalHash = hash(original)
+    await save(context)
+    const before = await snapshot(context.repo)
+    assert.equal(execute(context).problems[0].code, 'ambiguous-rule')
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
 function execute(context, fault, command = 'apply', extra = ['--plan', context.file]) {
   const result = spawnSync(process.execPath, [...(fault ? ['--import', join(root, 'tests/inputs/write-fault.mjs')] : []),
     join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), ...command.split(' '), '--repo', context.repo, '--json', ...extra],

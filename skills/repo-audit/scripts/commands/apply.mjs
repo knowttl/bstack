@@ -11,6 +11,7 @@ import { CommandError } from '../lib/result.mjs'
 import { validateFindings } from './findings.mjs'
 import { loadJournal, journalOriginal, inspectJournal, fileBytes, applyWrites } from '../lib/protected-write.mjs'
 import { validateCheckIntegration } from '../lib/check-integration.mjs'
+import { markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 
 function reject(code, message, path) {
   throw new CommandError('failed', [{ code, message, path, fix: 'Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again.' }])
@@ -86,6 +87,29 @@ export async function prepareChangeSet(options, target) {
     }
   }
   if (problems.length) throw new CommandError('failed', problems)
+  const documents = new Map(staged.map(edit => [edit.path, edit.proposedContent]))
+  for (const edit of plan.edits.filter(edit => edit.operation === 'move-rule' && edit.path === edit.payload.sourcePath)) {
+    const { sourcePath, destinationPath, rule, link } = edit.payload
+    const pair = plan.edits.filter(candidate => candidate.operation === 'move-rule' &&
+      candidate.findingId === edit.findingId && canonicalJSON(candidate.payload) === canonicalJSON(edit.payload))
+    if (pair.length !== 2 || !pair.some(candidate => candidate.path === destinationPath)) reject('incomplete-rule-move', 'A move requires matching selected source and destination edits.', sourcePath)
+    const source = staged.find(candidate => candidate.path === sourcePath)
+    const destination = staged.find(candidate => candidate.path === destinationPath)
+    if (source.resolvedPath === destination.resolvedPath || source.proposedContent.includes(rule) ||
+        destination.proposedContent.split(rule).length !== 2 || source.proposedContent.split(link).length !== 2) reject('invalid-rule-move', 'The final files must contain one rule at the destination and one link at the source.', sourcePath)
+    const links = markdownLinks(link)
+    const href = links[0]
+    if (links.length !== 1 || /^[A-Za-z][A-Za-z0-9+.-]*:|^\/\//.test(href)) reject('invalid-rule-link', 'The replacement must link to the selected local destination.', sourcePath)
+    let linkedPath
+    try { linkedPath = resolve(dirname(scope.get(sourcePath)), decodeURIComponent(href.split('#')[0])) } catch { reject('invalid-rule-link', 'Invalid link encoding.', sourcePath) }
+    if (linkedPath !== scope.get(destinationPath)) reject('invalid-rule-link', 'The replacement must link to the selected destination.', sourcePath)
+    const problem = await checkLocalLink(target.root, sourcePath, href, documents)
+    if (problem) throw new CommandError('failed', [problem])
+  }
+  for (const edit of plan.edits.filter(edit => edit.operation === 'move-rule')) {
+    if (!plan.edits.some(candidate => candidate.operation === 'move-rule' && candidate.path === edit.payload.sourcePath &&
+        candidate.findingId === edit.findingId && canonicalJSON(candidate.payload) === canonicalJSON(edit.payload))) reject('incomplete-rule-move', 'A move requires matching selected source and destination edits.', edit.path)
+  }
   return { inputs: { target, plan: options.plan }, plan, staged, directory, journal, findings }
 }
 
