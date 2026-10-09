@@ -883,7 +883,9 @@ Do not use a changed date, added comment or changed file hash as proof of semant
 
 The maintenance helper validates a change-specific assessment through one documented command interface.
 It does not drive an implementation sequence or select a playbook.
-The command and its schema still need implementation and execution tests.
+`evidence collect` and `evidence validate` implement local collection, assessment structure, review freshness and required execution matching.
+The [command contract](command-contract.md#assessment-validation) defines their supported inputs and proof limits.
+Generated-fact checks, reference checks and the portable standalone checker remain later implementation tasks.
 
 | Required input or result | Purpose |
 |---|---|

@@ -11,6 +11,22 @@ import { canonicalJSON, hashBytes, fingerprint } from '../lib/fingerprint.mjs'
 import { createScratch, scratchDirectory } from '../lib/scratch.mjs'
 import { runCommand } from '../lib/run.mjs'
 
+export async function checkInputState(target, plan, planPath) {
+  const scopes = plan.checks.flatMap(check => check.inputScopes)
+  const globs = scopes.map(pathGlob)
+  const files = await repoFiles(target.root)
+  const declaredPaths = [...scopes.filter(scope => !/[*?]/.test(scope)), ...plan.acceptanceSources.map(source => source.path)]
+  for (const path of declaredPaths) await resolveFilePath(target.root, path)
+  const paths = [...declaredPaths, ...files.filter(path => globs.some(glob => matchesPath(glob, path)))]
+  const head = readGit(target.root, ['rev-parse', '--verify', 'HEAD'])
+  let planContentHash = null
+  try { planContentHash = hashBytes(await readFile(planPath)) } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+  }
+  return fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths,
+    inputs: { planDigest: hashBytes(canonicalJSON(plan)), planContentHash } })
+}
+
 export async function run(options) {
   if (!options.plan || (options.phase && !['before', 'after'].includes(options.phase)) || (options.phase === 'before' && options['prior-run'])) {
     throw new CommandError('usage-error', [{ code: 'invalid-check-options', message: 'Supply a plan and phase before or after. Prior runs apply only after changes.', fix: 'Use --plan <file> [--phase before|after] [--prior-run <id>].' }])
@@ -70,18 +86,7 @@ export async function run(options) {
   if (problems.length) throw new CommandError('failed', problems)
   const planDigest = hashBytes(canonicalJSON(plan))
   async function inputState() {
-    const scopes = plan.checks.flatMap(check => check.inputScopes)
-    const globs = scopes.map(pathGlob)
-    const files = await repoFiles(target.root)
-    const declaredPaths = [...scopes.filter(scope => !/[*?]/.test(scope)), ...plan.acceptanceSources.map(source => source.path)]
-    for (const path of declaredPaths) await resolveFilePath(target.root, path)
-    const paths = [...declaredPaths, ...files.filter(path => globs.some(glob => matchesPath(glob, path)))]
-    const head = readGit(target.root, ['rev-parse', '--verify', 'HEAD'])
-    let planContentHash = null
-    try { planContentHash = hashBytes(await readFile(options.plan)) } catch (error) {
-      if (error.code !== 'ENOENT') throw error
-    }
-    return fingerprint(target, { baseCommit: head.status === 0 ? head.stdout.trim() : null, paths, inputs: { planDigest, planContentHash } })
+    return checkInputState(target, plan, options.plan)
   }
   const originalState = await inputState()
   if (originalState.state.inputs.planContentHash !== validatedPlanContentHash || !plan.acceptanceSources.every(source =>
