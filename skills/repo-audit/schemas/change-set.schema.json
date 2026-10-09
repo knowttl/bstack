@@ -37,7 +37,7 @@
           "path": { "type": "string", "pattern": "\\S" },
           "originalHash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
           "proposedHash": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
-          "operation": { "enum": ["create", "replace", "replace-file", "delete", "set-heading-section", "set-json-key", "append-line-once"] },
+          "operation": { "enum": ["create", "replace", "replace-file", "delete", "set-heading-section", "set-json-key", "append-line-once", "move-rule"] },
           "payload": { "type": "object" },
           "proposedContent": { "type": ["string", "null"] },
           "checkIntegration": {

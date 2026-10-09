@@ -210,6 +210,46 @@ The existing protected apply contract still enforces finding selection, scope, o
 No separate regeneration write path bypasses those protections.
 Human summaries and JSON results report structural proof limits.
 
+## Document references
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs docs check --repo <target> [--contract <repo-relative-file>] --json
+```
+
+The command loads the project contract and verifies every registered document, rule and acceptance source path without executing checks or generators or writing files.
+For UTF-8 `.md` and `.markdown` sources it checks local inline links, images and defined reference links, including collapsed and shortcut references.
+Relative destinations resolve from the source document, may traverse parents inside the selected target, must use exact path case and cannot escape through symlinks.
+Ordinary destinations contain no whitespace, backslashes, parentheses, brackets, angle brackets or backticks; paths can use percent encoding.
+Optional titles and other destination spellings are coverage limits.
+Heading fragments use lowercase ATX or setext heading slugs, with punctuation removed, whitespace changed to hyphens and repeated headings suffixed `-1`, `-2` and so on.
+External URLs are not fetched.
+Code fences, indented code and HTML comments do not contribute links or glossary entries.
+Inline code, escaped labels, emphasis, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
+When such markup occurs outside excluded blocks, the source document's links and glossary are left for renderer review; registered paths are still verified.
+A fragment target containing such markup also reports a coverage limit rather than a missing heading.
+Fragments in non-Markdown targets are not validated.
+Unsupported document encodings and formats produce `data.coverageLimits`, also visible in plain output, rather than a readiness failure or a forced rewrite.
+Broken supported local references fail with `broken-local-link`.
+The command checks registered sources only, not every document reachable through their links.
+
+Register a glossary on its document record as `"glossary": { "context": "ordering", "format": "markdown-bold" }`.
+Context is an explicit domain identity; document headings and filenames do not select or split contexts.
+The supported formats are:
+
+- `markdown-bold`: entries beginning at column zero with `**Term**:`, followed by a definition on that line or subsequent lines until the next entry or heading.
+- `markdown-table`: two-column tables with `Term` and `Definition` headers and a Markdown separator row, with one term and definition per row.
+
+Glossary fields use plain text; code spans, escaped pipes and other field markup are coverage limits.
+Unusual table rows report coverage limits rather than invalid or empty fields.
+Trailing horizontal whitespace on ordinary table lines is accepted.
+
+Supported glossaries require at least one entry and nonempty canonical terms and definitions.
+Term comparison normalizes Unicode to NFC, lowercases text and collapses whitespace.
+Duplicate canonical terms fail within the same registered context, including across files.
+The same word in two different contexts is valid.
+Synonyms, contradictory definitions and domain relevance remain reviewer judgements.
+An unrecognized glossary format reports a coverage limit while supported local links in that document are still checked.
+
 ## Measure and overlap
 
 ```sh
@@ -920,6 +960,21 @@ Filesystem access failures block the command; invalid plans fail with named prob
 | `set-heading-section` | `{ "heading": "ATX heading title", "content": "new body\n" }` | `.md`; exactly one matching nonempty ATX heading at column 0 outside fenced code, replacing its body and subsections until the next same-or-higher-level heading |
 | `set-json-key` | `{ "key": "root key", "value": { "any": "JSON value" } }` | A `.json` object; replace one root value or insert a missing root key, preserving other bytes |
 | `append-line-once` | `{ "line": "one nonempty line" }` | `.md` or `.txt`; leave an existing exact line intact, otherwise append it using CRLF when present, LF otherwise |
+| `move-rule` | `{ "sourcePath": "DESIGN.md", "destinationPath": "CONTRIBUTING.md", "rule": "complete rule block\n", "link": "[Rule](CONTRIBUTING.md#rule)\n", "destinationAnchor": "unique insertion text\n" }` | Two matching selected `.md` edits; replace the source rule with the exact link and insert the unchanged rule after the destination anchor |
+
+For `move-rule`, supply one source edit and one destination edit with identical payloads and the same selected finding.
+Both paths must be in that finding's reviewed scope, with independently reviewed original/proposed hashes and complete proposed content.
+The source rule is a nonempty newline-terminated literal block occurring exactly once at a line boundary.
+An existing destination needs a unique nonempty newline-terminated insertion anchor and must not already contain the rule.
+For an explicitly selected new destination, use an empty anchor; its complete content is the rule block.
+The replacement is one exact newline-terminated ordinary inline link line pointing to the selected destination, with any heading fragment verified against the final proposed bytes.
+Replacement labels contain no brackets, backslashes, backticks or emphasis markers; destinations follow the ordinary contract above and cannot include titles or trailing text.
+The final source must contain no copy of the rule and exactly one replacement link; the final destination must contain exactly one copy of the unchanged rule.
+Apply validates the paired edits and all other file changes before writing either file, then uses the existing recoverable protected-write journal.
+If either proposed document or a fragment target exceeds reference coverage, apply returns `blocked` with `data.coverageLimits` and writes neither file, including in dry runs.
+As with other operations, this validates inputs together but does not promise a single atomic filesystem transaction; interruption uses the documented resume protocol.
+Prefer an existing authoritative design section or CONTRIBUTING.md over creating CODING_STANDARDS.md.
+Choosing the authoritative home and judging semantically equivalent duplicate rules remain part of selected review, rather than filename-based automation.
 
 Payloads reject unknown and missing fields.
 Plan inputs reject malformed JSON, duplicate keys at any depth (including escaped equivalents) and numbers that decode to nonfinite values.
