@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, readFile, writeFile, rm, readdir, chmod } from 'node:fs/promises'
+import { cp, mkdir, readFile, writeFile, rm, readdir, chmod, symlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
@@ -124,6 +124,69 @@ test('portable initial foundation survives cloning while revision and selection 
   f.assessment.foundation.record.findings[0].status = 'proposed'
   await f.write()
   assert.ok(check(f).problems.some(problem => problem.code === 'unselected-foundation'))
+})
+
+test('repository and assessment aliases preserve portable review identity', { skip: process.platform === 'win32' }, async t => {
+  const f = await fixture(t)
+  const direct = check(f)
+  assert.equal(direct.exit, 0, JSON.stringify(direct))
+  const alias = join(f.directory, 'alias')
+  await symlink(f.repo, alias, 'dir')
+  f.repo = alias
+  const aliased = check(f)
+  assert.equal(aliased.exit, 0, JSON.stringify(aliased))
+  assert.equal(aliased.data.fingerprint, direct.data.fingerprint)
+  assert.equal(aliased.data.checks.length, 1)
+  const validated = run('evidence validate', alias, f.env, ['--base', f.base, '--assessment', join(alias, assessmentPath)])
+  assert.equal(validated.data.fingerprint, direct.data.fingerprint, JSON.stringify(validated))
+  assert.ok(!validated.problems.some(problem => problem.code === 'portable-source-mismatch'))
+})
+
+for (const policy of ['document', 'generator']) test(`removed ${policy} registration cannot bypass previous structural coverage`, async t => {
+  const f = await fixture(t)
+  if (policy === 'document') {
+    await writeFile(join(f.repo, 'GUIDE.md'), '# Source\n[Target](link-target.md)\n')
+    await writeFile(join(f.repo, 'link-target.md'), '# Target\n')
+    f.contract.documents.push({ id: 'guide', path: 'GUIDE.md' })
+  } else {
+    await writeFile(join(f.repo, 'facts.txt'), 'old\n')
+    await writeFile(join(f.repo, 'generate.mjs'), "import { readFileSync } from 'node:fs'; process.stdout.write(readFileSync('facts.txt', 'utf8'))\n")
+    await writeFile(join(f.repo, 'GUIDE.md'), '# Source\n<!-- bstack:generated facts -->old\n<!-- bstack:end -->\n')
+    f.contract.generators.push({ id: 'facts', command: { executable: 'node', args: ['generate.mjs'], cwd: '.', versionArgs: ['--version'] }, inputScopes: ['facts.txt'], outputPaths: ['GUIDE.md'] })
+  }
+  await f.save()
+  f.base = commit(f.repo)
+  const command = policy === 'document' ? 'docs check' : 'docs generate'
+  const extra = policy === 'document' ? [] : ['--check']
+  assert.equal(run(command, f.repo, f.env, extra).exit, 0)
+  if (policy === 'document') {
+    f.contract.documents.pop()
+    await rm(join(f.repo, 'link-target.md'))
+  } else {
+    f.contract.generators = []
+    await writeFile(join(f.repo, 'facts.txt'), 'new\n')
+  }
+  await f.save()
+  commit(f.repo)
+  const collected = run('evidence collect', f.repo, f.env, ['--base', f.base, '--portable', assessmentPath])
+  assert.equal(collected.exit, 0, JSON.stringify(collected))
+  f.assessment = JSON.parse(await readFile(collected.data.path, 'utf8'))
+  f.assessment.coverage = ['boundary']
+  f.complete()
+  await f.write()
+  const bound = run('evidence validate', f.repo, f.env, ['--base', f.base, '--assessment', join(f.repo, assessmentPath)])
+  assert.ok(bound.data.fingerprint, JSON.stringify(bound))
+  f.assessment.fingerprint = bound.data.fingerprint
+  await f.write()
+  commit(f.repo)
+  assert.equal(run(command, f.repo, f.env, extra).exit, 0)
+  const result = check(f)
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.equal(result.data.phase, 'preflight')
+  assert.equal(result.inputs.contract, '.bstack/project.json')
+  assert.ok(result.problems.some(problem => problem.path === 'GUIDE.md' && problem.code ===
+    (policy === 'document' ? 'broken-local-link' : 'stale-generated-section')), JSON.stringify(result))
+  await assert.rejects(readFile(f.env.BSTACK_LEAF_LOG), { code: 'ENOENT' })
 })
 
 test('portable initialized submodule fingerprints survive cloning and retain content coverage', async t => {

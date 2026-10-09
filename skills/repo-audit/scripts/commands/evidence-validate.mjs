@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, relative, resolve } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolvePath } from '../lib/paths.mjs'
+import { resolvePath, resolveLinks } from '../lib/paths.mjs'
 import { readGit, repoFiles } from '../lib/discovery.mjs'
 import { inspectJSON } from '../lib/json.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
@@ -171,7 +171,10 @@ export async function run(options) {
   const target = await resolveTarget(options)
   const inventory = collectInventory(target.root, options.base)
   let assessment
-  try { assessment = inspectJSON(await readFile(options.assessment, 'utf8')).value } catch (error) {
+  try {
+    options = { ...options, assessment: await resolveLinks(resolve(options.assessment)) }
+    assessment = inspectJSON(await readFile(options.assessment, 'utf8')).value
+  } catch (error) {
     if (error instanceof CommandError) throw error
     throw new CommandError('blocked', [{ code: 'assessment-unavailable', message: 'Assessment file is unavailable.', fix: 'Collect and complete an assessment, then pass its readable path with --assessment.' }])
   }
@@ -323,6 +326,6 @@ export async function run(options) {
     evidencePath: relative(target.root, resolve(options.assessment)) })
   if (assessment.fingerprint !== binding.fingerprint) problem('stale-review', 'Substantive review inputs changed or have not been bound to the current fingerprint.')
   return { status: problems.length ? 'blocked' : 'passed', problems, inputs: { repo: target.root, base: options.base, assessment: options.assessment, contract: proposed.path },
-    data: { ...inventory, ...mapping, previousContract: previous?.path ?? null, requiredCheckIds: [...new Set(requiredChecks.map(check => check.id))],
+    data: { ...inventory, ...mapping, policies: [proposed, ...(previous ? [previous] : [])], previousContract: previous?.path ?? null, requiredCheckIds: [...new Set(requiredChecks.map(check => check.id))],
       requiredChecks, fingerprint: binding.fingerprint, limitations: ['Structural validation cannot prove that explanations or document deltas agree semantically with code, or authenticate owner approval. The selected review process must assess these claims.', 'Local execution records are not authenticated portable attestations. Captures cover declared inputs only; transient changes restored before capture completion are not detected.'] } }
 }
