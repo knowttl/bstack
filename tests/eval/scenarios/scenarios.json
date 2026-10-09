@@ -167,8 +167,8 @@
     },
     {
       "id": "maintenance",
-      "fixture": "refactor",
-      "request": "Validate this internal refactor against the existing pricing contract and document maintenance requirements.",
+      "fixture": "ts-shop",
+      "request": "Perform bounded maintenance for an internal pricing refactor on ts-shop using references/maintenance-contract.md and the existing approved sources. Collect and assess the final diff, validate locally and with the standalone checker, and report existing failed journeys separately. Do not repeat the goal interview or full audit, change approved acceptance, or claim the seeded checkout defects are fixed.",
       "answers": [
         "The public pricing behaviour is unchanged. Use the existing acceptance sources and comparison base."
       ],

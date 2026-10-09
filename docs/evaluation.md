@@ -13,6 +13,12 @@ Each scenario names a fixture registered by the existing builder, an outcome req
 Each check has a unique ID, design acceptance ID and scoring question.
 The initial scenarios cover new ideas, ambiguous ideas, a seeded existing repo, clear goals and implicit invocation.
 Maintenance and representative-extension scenarios are defined before their later owning tasks use them.
+The maintenance checkpoint uses `ts-shop` and the [maintenance reference](../skills/repo-audit/references/maintenance-contract.md), with no goal interview or full audit.
+The T3a.7 fake-host procedure executes real collection, review binding, local standalone validation and a different-root clone with an empty home and cache.
+It preserves the seeded checkout failure and reports that limitation independently of passing maintained unit checks.
+Run `npm test -- --task T3a.7` for that procedure and the standalone checker controls.
+Fake-host transcripts establish deterministic command and isolation behaviour only; they remain unscored and do not establish real-model compliance with AC-23.
+Phase 3a's full fake-only suite precedes installation; T4.3 still owns fresh real-agent final maintenance acceptance.
 An approved scenario stays in the evaluation even when its baseline passes.
 
 ```sh

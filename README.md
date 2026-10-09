@@ -11,7 +11,8 @@ Use [enforcement](skills/repo-audit/references/enforcement.md) when recommending
 These provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
-The maintenance reference remains a placeholder, and the installer is pending.
+Use the [maintenance reference](skills/repo-audit/references/maintenance-contract.md) for bounded change assessment and local or standalone validation without repeating the interview or full audit.
+The installer is pending.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -122,7 +123,7 @@ Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
 Maintained enforcement is available through selected `apply` edits, as described below.
 Project contract validation, change collection, local assessment validation and generated-fact freshness checks are available below.
-Portable maintenance remains pending.
+Portable maintenance is available through the [standalone checker](docs/command-contract.md#standalone-checker-execution), using an explicit base and committed assessment.
 
 Prove a selected native rule against prepared clean and independently seeded fixtures:
 
@@ -168,7 +169,8 @@ npm test -- --task T3a.3
 ```
 
 `--contract` defaults to `.bstack/project.json` and accepts another repo-relative JSON contract path.
-The [maintenance contract](docs/command-contract.md#project-contract-and-change-collection) defines the schema, pointers, scopes, leaf checks and supported matching rules.
+The [collection command contract](docs/command-contract.md#project-contract-and-change-collection) defines the schema, pointers, scopes, leaf checks and supported matching rules.
+Follow the [maintenance procedure](skills/repo-audit/references/maintenance-contract.md) to assess each candidate, resolve decisions and supply evidence to the project's selected delivery gate.
 Collection resolves the base, includes committed, staged, unstaged and new changes, and maps both paths of detected renames.
 It returns candidate documents, unmapped paths and a scratch assessment path without changing the target.
 Missing bases block collection; shallow history reports the required fetch commands.

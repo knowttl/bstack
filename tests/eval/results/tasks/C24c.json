@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C24c",
+  "slice": "C24c",
+  "intent": "Write bounded maintenance guidance and complete Phase 3a fake-only validation, including ts-shop with-mode maintenance and standalone clean-checkout checks.",
+  "amendments": [],
+  "cases": [
+    {
+      "id": "AC-23-fake-control",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: fake-only ts-shop maintenance in with mode validates review and fresh standalone checks without an interview or full audit",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C24c.full-tests.txt"
+    },
+    {
+      "id": "Phase-3a-fake-only",
+      "kind": "automated",
+      "procedure": "Full suite including project contract, collection, assessment, generation, references, protected edits, and standalone positive and negative controls",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C24c.full-tests.txt"
+    }
+  ],
+  "limitations": [
+    "Fake-host transcripts execute real commands but are not real-model semantic review or final AC-23 agent acceptance; T4.3 remains pending.",
+    "The seeded ts-shop checkout journey remains failed with expected total 10 and actual total 12; passing narrow maintained checks does not establish product readiness.",
+    "Hosted CI, forge enforcement and real Windows/macOS execution remain unverified.",
+    "No installation work, release or tag is included."
+  ],
+  "status": "passed",
+  "commands": []
+}
