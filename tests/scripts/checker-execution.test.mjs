@@ -1,12 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, readFile, writeFile, rm, readdir } from 'node:fs/promises'
+import { cp, mkdir, readFile, writeFile, rm, readdir, chmod } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { git, run } from './discovery-fixture.mjs'
 import { selectCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
+import { fingerprint } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const assessmentPath = '.bstack/assessment.json'
@@ -25,7 +26,7 @@ function check(f, extra = [], checker = join(f.repo, checkerPath)) {
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
-async function fixture(t) {
+async function fixture(t, { initial = false, submodule = false, diagnostic = false } = {}) {
   const f = await maintenanceRepo(t)
   f.env = { ...process.env, HOME: join(f.directory, 'home'), USERPROFILE: join(f.directory, 'home'),
     CODEX_HOME: join(f.directory, 'home/.codex'), XDG_CONFIG_HOME: join(f.directory, 'home/config'),
@@ -39,14 +40,32 @@ async function fixture(t) {
   await writeFile(join(f.repo, 'leaf.mjs'), "import { appendFileSync } from 'node:fs'; appendFileSync(process.env.BSTACK_LEAF_LOG, 'run\\n'); process.exit(0)\n")
   f.contract.generators = []
   f.contract.checks[0].command.args = ['leaf.mjs']
+  if (diagnostic) await writeFile(join(f.repo, 'leaf.mjs'), "import { writeFileSync } from 'node:fs'; writeFileSync('diagnostic.txt', 'details'); console.log('leaf diagnostic'); process.exit(1)\n")
+  if (submodule) {
+    const module = join(f.directory, 'module')
+    await mkdir(module)
+    git(module, 'init', '-q')
+    await writeFile(join(module, 'content.txt'), 'reviewed module\n')
+    commit(module)
+    git(f.repo, '-c', 'protocol.file.allow=always', 'submodule', 'add', '-q', module, 'vendor')
+    f.contract.checks[0].inputScopes.push('vendor')
+  }
   await f.save()
+  if (initial) await rm(join(f.repo, '.bstack/project.json'))
   f.base = commit(f.repo)
+  if (initial) await f.save()
   await writeFile(join(f.repo, 'src/change.mjs'), 'export const price = 12;\n')
   commit(f.repo)
   const collected = run('evidence collect', f.repo, f.env, ['--base', f.base, '--portable', assessmentPath])
   assert.equal(collected.exit, 0, JSON.stringify(collected))
   f.assessment = JSON.parse(await readFile(collected.data.path, 'utf8'))
   f.assessment.coverage = ['boundary']
+  if (initial) f.assessment.foundation = { findingId: 'F-001', record: {
+    schemaVersion: 1, stage: 'foundation', target: { mode: 'repo', root: f.repo, revision: f.assessment.head }, nextChange: 'Establish pricing checks',
+    reviewedScope: ['.bstack/project.json'], sources: [{ id: 'intent', pointer: 'README.md', intent: 'documented', summary: 'Preserve pricing' }],
+    findings: [{ id: 'F-001', problem: 'Missing maintenance policy', files: ['.bstack/project.json'], command: null, principle: 'Preserve pricing', consequence: 'Drift',
+      fix: 'Install contract', scope: ['.bstack/project.json'], verification: 'syntax', blocksNextChange: true, category: 'missing-protection',
+      status: 'selected', newPrinciple: false, resolved: false, sourceIds: ['intent'] }], selectedFindingIds: ['F-001'], requiredOutcomes: ['syntax', 'journey', 'foundation-review'], execution: [], limitations: [] } }
   f.complete = () => {
     for (const entry of [...f.assessment.documents, ...f.assessment.unmappedAssessments]) entry.assessment = {
       result: 'no-impact', changedBehavior: 'The source update preserves price 12 and the documented public contract.',
@@ -63,6 +82,60 @@ async function fixture(t) {
   commit(f.repo)
   return f
 }
+
+test('portable initial foundation survives cloning while revision and selection remain required', async t => {
+  const f = await fixture(t, { initial: true })
+  const local = check(f)
+  assert.equal(local.exit, 0, JSON.stringify(local))
+  const before = await readFile(join(f.repo, assessmentPath))
+  const clone = join(f.directory, 'clone')
+  git(f.directory, 'clone', '-q', '--no-local', f.repo, clone)
+  f.repo = clone
+  const clean = check(f)
+  assert.equal(clean.exit, 0, JSON.stringify(clean))
+  assert.equal(clean.data.fingerprint, local.data.fingerprint)
+  assert.deepEqual(await readFile(join(clone, assessmentPath)), before)
+  f.assessment.foundation.record.target.revision = f.base
+  await f.write()
+  assert.ok(check(f).problems.some(problem => problem.code === 'unselected-foundation'))
+  f.assessment.foundation.record.target.revision = f.assessment.head
+  f.assessment.foundation.record.selectedFindingIds = []
+  f.assessment.foundation.record.findings[0].status = 'proposed'
+  await f.write()
+  assert.ok(check(f).problems.some(problem => problem.code === 'unselected-foundation'))
+})
+
+test('portable initialized submodule fingerprints survive cloning and retain content coverage', async t => {
+  const f = await fixture(t, { submodule: true })
+  const local = check(f)
+  assert.equal(local.exit, 0, JSON.stringify(local))
+  const source = f.repo
+  const clone = join(f.directory, 'clone')
+  git(f.directory, '-c', 'protocol.file.allow=always', 'clone', '-q', '--no-local', '--recurse-submodules', source, clone)
+  f.repo = clone
+  await chmod(join(clone, 'vendor/content.txt'), 0o600)
+  const clean = check(f)
+  assert.equal(clean.exit, 0, JSON.stringify(clean))
+  assert.equal(clean.data.fingerprint, local.data.fingerprint)
+  const options = { baseCommit: f.base, paths: ['vendor'], inputs: { repo: '.' } }
+  const before = await fingerprint({ root: clone }, options)
+  await writeFile(join(clone, 'vendor/content.txt'), 'changed module\n')
+  const after = await fingerprint({ root: clone }, options)
+  assert.notEqual(after.fingerprint, before.fingerprint)
+})
+
+test('final validation failure preserves fresh failed leaf diagnostics', async t => {
+  const f = await fixture(t, { diagnostic: true })
+  const result = check(f)
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.ok(result.problems.some(problem => problem.code === 'portable-source-mismatch'))
+  assert.equal(result.data.phase, 'result-validation')
+  const saved = JSON.parse(await readFile(result.data.path, 'utf8'))
+  assert.equal(saved.status, 'failed')
+  assert.deepEqual(saved.problems, result.problems)
+  assert.equal(saved.data.checks[0].execution.exitCode, 1)
+  assert.equal(saved.data.checks[0].execution.stdout, 'leaf diagnostic\n')
+})
 
 test('different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review', async t => {
   const f = await fixture(t)

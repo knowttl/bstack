@@ -77,7 +77,14 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     process.removeListener('SIGINT', cancel)
     process.removeListener('SIGTERM', cancel)
   }
-  const validated = await validateEvidence({ ...options, currentResults })
+  let validated
+  try {
+    validated = await validateEvidence({ ...options, currentResults })
+  } catch (error) {
+    validated = { status: error instanceof CommandError ? error.status : 'blocked',
+      problems: error instanceof CommandError ? error.problems : [{ code: 'checker-unavailable', message: error.message,
+        fix: 'Restore the selected inputs and Node 24 runtime.' }], inputs: preflight.inputs, data: preflight.data }
+  }
   const status = currentResults.some(record => record.execution.status === 'failed') ? 'failed' : validated.status
   const data = { ...validated.data, phase: 'result-validation', startedAt, completedAt: new Date().toISOString(),
     sourceRevision: readGit(target.root, ['rev-parse', 'HEAD']).stdout.trim(), comparison: {
