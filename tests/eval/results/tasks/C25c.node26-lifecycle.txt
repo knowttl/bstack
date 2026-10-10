@@ -1,0 +1,37 @@
+✔ copy install validates the complete package and exact ownership in isolated user scope (4354.38077ms)
+✔ copy install validates the complete package and exact ownership in isolated project scope (4330.958926ms)
+✔ clean user update removes obsolete ownership and clean uninstall removes only installer content (6835.801073ms)
+✔ clean project update removes obsolete ownership and clean uninstall removes only installer content (6604.461353ms)
+✔ noninteractive update reports actual mixed versions, preserves edits and unowned collisions, then accepts specific decisions with backups (5853.916564ms)
+✔ uninstall retains edited ownership until explicit hash-bound cleanup and preserves unowned runtime (5334.008718ms)
+✔ link lifecycle previews source runtime, verifies repeats and preserves target in isolated user scope (5349.561536ms)
+✔ link lifecycle previews source runtime, verifies repeats and preserves target in isolated project scope (5362.663335ms)
+✔ link lifecycle preserves unowned directory (1990.123563ms)
+✔ link lifecycle preserves unowned link (2044.890292ms)
+✔ link lifecycle preserves changed target (3235.480443ms)
+✔ link lifecycle preserves replaced link (3285.063244ms)
+✔ link lifecycle preserves replacement directory (3270.523481ms)
+✔ link installation preserves an existing invalid runtime (1649.392936ms)
+✔ link installation preserves an existing valid runtime (1919.748777ms)
+✔ owned link removal preserves source with invalid manifest without validating the target package (2228.602717ms)
+✔ owned link removal preserves source with missing manifest without validating the target package (2193.763961ms)
+✔ all-host link preflight refuses a later collision before preparing source runtime (1286.114065ms)
+✔ link repeat rejects a replaced source directory while removal preserves it (2949.045381ms)
+✔ interrupted link activation preserves a replacement entry and target (2817.488613ms)
+✔ failed link runtime never activates and retry preserves failed stage content (3552.838973ms)
+✔ interrupted link runtime preserves a replaced preparation stage (2483.452542ms)
+✔ link runtime preparation supports separate source and destination filesystems (2239.484712ms)
+✔ tagged checkout link recovery preserves source binding after link-runtime (3511.472458ms)
+✔ tagged checkout link recovery preserves source binding after link-prepared (3592.35022ms)
+✔ tagged checkout link recovery preserves source binding after link-activate (3585.501375ms)
+✔ link lifecycle resumes after link-runtime while preserving target content (4061.964057ms)
+✔ link lifecycle resumes after link-activate while preserving target content (4249.00584ms)
+✔ link lifecycle resumes after link-unlink while preserving target content (2282.159059ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 102541.20596
