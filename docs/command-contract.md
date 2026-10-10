@@ -778,12 +778,12 @@ Child execution and fingerprints are implemented in C4b.
 
 ## Installer copy and preview (C25a)
 
-`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]` installs, updates or removes the skill beside the installer.
+`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]` installs, updates or removes the skill beside the installer.
 The scope and host are required, project scope requires an existing project directory, and user scope rejects `--project`.
 Unknown, repeated or missing arguments return usage error before dependency calls, except that `--replace` and `--adopt-runtime` can repeat for distinct decisions.
 `--help` prints the supported interface.
-`--link` is recognised but blocked, rather than silently running copy mode.
-Links and OS acceptance belong to C25c.
+`--link` selects the developer-checkout link lifecycle described below.
+Three-OS acceptance belongs to C25c and remains incomplete until all real OS records exist.
 
 Claude uses `.claude/skills/repo-audit`, and agents uses `.agents/skills/repo-audit`, beneath the selected real home or project root.
 `all` selects both, deduplicates their canonical destinations and checks every destination before staging any copy.
@@ -871,7 +871,42 @@ Filesystem directory-flush limitations come from the shared recovery writer, and
 JSON uses the existing result envelope and exit codes 0 passed, 1 failed, 2 blocked and 3 usage error.
 Plain output adds the same source version, destinations and planned changes.
 `npm test -- --task C25b` runs local/fake dependency snapshots in disposable roots, including update/removal conflicts, mixed versions, hash-bound decisions, runtime failure, interruption boundaries and C25a collision controls.
-Real Windows/macOS execution, link lifecycle and current-agent loading remain unverified.
+Real Windows/macOS execution and current-agent loading remain unverified.
+
+### Developer checkout links (C25c)
+
+`--link` installs a directory symlink on Linux/macOS or a directory junction on Windows to the source skill folder.
+The source remains a developer checkout, and reports use `mode: link` even at an exact tag.
+All selected destinations are checked before mutation, and occupied unowned destinations or copy-to-link conversions block.
+External ownership records identify the absolute source and destination, source directory identity, source hashes and version, and link device, inode, creation time and literal target.
+Verification checks the directory entry without following it, then checks source resolution before an install or update.
+An identical target reached through a replacement link does not transfer ownership.
+
+Preview creates no directories, dependencies or records.
+It lists `source-runtime-install` when the source needs its pin, before the planned link action.
+Runtime preparation uses the existing child runner and Windows npm adapter in a sibling stage, then moves the verified runtime into an absent source `node_modules` before activating the link.
+A failed stage and its captured runtime result remain available; a retry prepares a fresh stage without erasing failed-stage content.
+An occupied source runtime differing from the pin blocks and must be prepared explicitly by the developer.
+The installer preserves every existing source runtime and never removes runtime data through a link.
+Prepared runtime identity and authored hashes are verified before activation.
+Successful preparation removes unchanged staged authored files and empty directories, retaining unrelated stage content.
+
+A repeated link installation verifies the same source, owned entry and pinned runtime with no source changes.
+Updating source files is a separate developer action; rerunning `--link` records the current checkout as `linked-checkout-update` without copying or replacing authored files.
+An install/update without `--link` against existing link ownership blocks with `link-mode-required`.
+`--uninstall` can identify link ownership without repeating `--link` and unlinks only that entry.
+It removes the external ownership and journal records and retains the entire target, including edited files, unrelated content and runtime.
+Removal does not validate the target manifest or authored package, while the installer still needs its own shared helpers to execute.
+Copy replacement and adoption decisions do not apply to links.
+
+The shared durable recovery writer records link operations before mutation.
+Prepared links have a recorded identity before rename, so a retry can recognise activation even when the journal save was interrupted.
+Recovery rejects changed source bytes during installation and changed link identity or target during every lifecycle operation.
+Removal can resume after unlink without touching the target.
+Multiple hosts complete sequentially, preserving earlier completed ownership if a later host fails.
+Process interruption tests do not establish power-loss recovery.
+`npm test -- --task C25c` includes the copy and link lifecycle suites in disposable homes/projects with local fake runtimes.
+Linux Node 24/26 execution supplements, and does not replace, the required real Windows and macOS runs for AC-74.
 
 ## Child commands
 
