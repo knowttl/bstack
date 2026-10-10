@@ -82,7 +82,7 @@ async function install(selected) {
     if (error.code !== 'ERR_MODULE_NOT_FOUND') throw error
     reject('blocked', 'missing-checker-prerequisite', 'Package validation dependencies are unavailable in the source checkout.', 'Run npm ci in the source checkout, then retry installation.')
   }
-  const problems = await checkPackage(source)
+  const problems = await checkPackage(source, { sourcePreflight: true })
   if (problems.length) throw new CommandError('failed', problems)
   const files = await authored(source)
   const manifest = JSON.parse(await readFile(join(source, 'package.json'), 'utf8'))
@@ -106,6 +106,7 @@ async function install(selected) {
   for (const host of hosts) {
     const parent = await resolvePath(root, `.${host}/skills`)
     const destination = join(parent, 'repo-audit')
+    if (destinations.some(entry => entry.destination === destination)) continue
     const ownership = join(parent, '.bstack-install.json')
     const journal = join(parent, '.bstack-install-journal.json')
     if (await exists(journal)) reject('blocked', 'pending-recovery', `A pending installation journal exists: ${journal}`, 'Preserve the journal and staged files for inspection. Automated resume is pending C25b.')
