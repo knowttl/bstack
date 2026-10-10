@@ -25,7 +25,7 @@ Check-plan execution capture is available through the shared verification rules 
 The enforcement and architecture references are available for recommendations.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available through Step 5.
-The maintenance-contract reference remains a placeholder.
+Routine maintenance uses the maintenance-contract reference directly, without repeating either audit checklist or the goal interview.
 The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
@@ -140,7 +140,7 @@ Setup and journey commands already attempted are never rerun automatically, avoi
 Verify affected commands explicitly and retain fresh evidence before claiming readiness.
 Prove selected native rules using the enforcement reference's rule-proof command and preserve the scratch evidence.
 Prove selected maintained integration as described in the enforcement reference before claiming it is verified for the created project.
-Maintenance guidance remains pending.
+Load the maintenance-contract reference from the table below when recording change evidence.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
@@ -359,7 +359,7 @@ Read only the one reference needed for the current step, once per run unless it 
 Every reference is linked directly here, without another skill or nested reference chain.
 Run scripts without loading their source, and pass assets to scripts without reading them as instructions.
 The intent interview, grilling, domain-language, vision, research briefs, enforcement and architecture references are available.
-Only the maintenance-contract reference remains a placeholder until its owning task supplies the procedure.
+The maintenance-contract reference covers bounded change evidence and local or standalone validation.
 
 | When | Open |
 |---|---|
