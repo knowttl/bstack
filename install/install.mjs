@@ -112,6 +112,7 @@ async function install(selected) {
       journal: join(parent, '.bstack-install-journal.json') })
   }
   const generatedPaths = destinations.flatMap(entry => [entry.destination, entry.ownership])
+  const generatedParents = destinations.map(entry => entry.parent)
   for (const host of ['claude', 'agents'].filter(host => !hosts.includes(host))) {
     let parent
     try { parent = await realpath(join(root, `.${host}/skills`)) } catch (error) {
@@ -119,6 +120,7 @@ async function install(selected) {
       throw error
     }
     generatedPaths.push(join(parent, 'repo-audit'), join(parent, '.bstack-install.json'))
+    generatedParents.push(parent)
   }
   const dirty = await child(checkout, 'git', ['status', '--porcelain', '--untracked-files=no'])
   const untracked = await child(checkout, 'git', ['ls-files', '--others', '--exclude-standard', '--', '.',
@@ -129,7 +131,12 @@ async function install(selected) {
       `:(glob,exclude)**/.${host}/skills/.bstack-install-journal.json`,
       `:(glob,exclude)**/.${host}/skills/.bstack-install.json`]),
     ...generatedPaths.filter(path => isInside(checkout, path))
-      .map(path => `:(literal,exclude)${relative(checkout, path).replaceAll('\\', '/')}`)])
+      .map(path => `:(literal,exclude)${relative(checkout, path).replaceAll('\\', '/')}`),
+    ...generatedParents.filter(path => isInside(checkout, path)).flatMap(path => {
+      const parent = relative(checkout, path).replaceAll('\\', '/').replace(/[*?\[\]]/g, '\\$&')
+      return ['.bstack-stage-*/**', '.bstack-backup-*/**', '.bstack-install-journal.json']
+        .map(pattern => `:(glob,exclude)${parent ? parent + '/' : ''}${pattern}`)
+    })])
   const sourceDirty = Boolean(dirty.stdout.trim() || untracked.stdout.trim())
   const version = tag.status === 'passed' && /^v\d+\.\d+\.\d+$/.test(tag.stdout.trim()) && dirty.status === 'passed' && untracked.status === 'passed' && !sourceDirty ?
     tag.stdout.trim() : `development:${revision.status === 'passed' ? revision.stdout.trim() : 'unversioned'}${sourceDirty ? ':dirty' : ''}`
@@ -172,25 +179,25 @@ async function install(selected) {
     }
     entry.action = action
   }
-  const changes = (await Promise.all(destinations.map(async entry => entry.action === 'resume' && entry.recovery.plan ? await previewRecovery(entry, runtimeVersion) : entry.action === 'no-op' ? [] : entry.plan ? [
-    ...entry.plan.operations.map(operation => ({ action: operation.proposedHash === null ? 'remove' : 'replace', path: join(entry.destination, operation.path), hash: operation.proposedHash })),
-    ...entry.plan.conflicts.map(conflict => ({ action: 'preserve', path: join(entry.destination, conflict.path) })),
-    ...(entry.plan.runtimeAllowed ? [{ action: selected.uninstall ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }] : [])
-  ] : [
-    ...files.map(file => ({ action: 'copy', path: join(entry.destination, file.path), hash: file.hash })),
-    { action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime },
-    { action: 'ownership', path: entry.ownership }, { action: 'journal', path: entry.journal }]))).flat()
-  const data = { sourceVersion: version, mode: 'copy', preview: Boolean(selected['dry-run']), destinations, changes, installations: [] }
+  const data = { sourceVersion: version, mode: 'copy', preview: Boolean(selected['dry-run']), destinations, changes: [], installations: [] }
   const report = () => ({ ...data, destinations: destinations.map(({ host, parent, destination, ownership, journal, action, plan }) =>
     ({ host, parent, destination, ownership, journal, action, ...(plan ? { conflicts: plan.conflicts } : {}) })) })
-  for (const decision of selected.replace ?? []) {
-    if (!destinations.some(entry => entry.plan?.operations.some(operation => `${entry.host}:${operation.path}:${operation.originalHash ?? 'absent'}` === decision))) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
-  }
-  if (selected['dry-run']) {
-    for (const entry of destinations.filter(entry => entry.action === 'resume' && !entry.recovery.plan)) data.installations.push(await resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child))
-    return report()
-  }
   try {
+    data.changes = (await Promise.all(destinations.map(async entry => entry.action === 'resume' && entry.recovery.plan ? await previewRecovery(entry, runtimeVersion) : entry.action === 'no-op' ? [] : entry.plan ? [
+      ...entry.plan.operations.map(operation => ({ action: operation.proposedHash === null ? 'remove' : 'replace', path: join(entry.destination, operation.path), hash: operation.proposedHash })),
+      ...entry.plan.conflicts.map(conflict => ({ action: 'preserve', path: join(entry.destination, conflict.path) })),
+      ...(entry.plan.runtimeAllowed ? [{ action: selected.uninstall ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }] : [])
+    ] : [
+      ...files.map(file => ({ action: 'copy', path: join(entry.destination, file.path), hash: file.hash })),
+      { action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime },
+      { action: 'ownership', path: entry.ownership }, { action: 'journal', path: entry.journal }]))).flat()
+    for (const decision of selected.replace ?? []) {
+      if (!destinations.some(entry => entry.plan?.operations.some(operation => `${entry.host}:${operation.path}:${operation.originalHash ?? 'absent'}` === decision))) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
+    }
+    if (selected['dry-run']) {
+      for (const entry of destinations.filter(entry => entry.action === 'resume' && !entry.recovery.plan)) data.installations.push(await resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child))
+      return report()
+    }
     for (const entry of destinations.filter(entry => entry.action !== 'no-op')) {
       if (entry.action === 'resume') {
         if (entry.recovery.plan) {
