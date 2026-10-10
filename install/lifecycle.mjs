@@ -1,5 +1,5 @@
 import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, rename, rm, rmdir, unlink, writeFile } from 'node:fs/promises'
-import { basename, dirname, join } from 'node:path'
+import { basename, dirname, join, relative } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { resolvePath } from '../skills/repo-audit/scripts/lib/paths.mjs'
@@ -31,12 +31,14 @@ export async function previewRecovery(entry, runtimeVersion) {
 export async function inspectInstallation(entry, runtimeVersion) {
   let record
   try { record = JSON.parse(await readFile(entry.ownership, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
+  let journal
+  try { journal = JSON.parse(await readFile(entry.journal, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
+  if (!record && journal && !journal.update && !journal.plan && await exists(entry.destination) &&
+      (['activated', 'completed'].includes(journal.state) || !await exists(journal.stage))) record = journal.record
   if (!record) return { destination: entry.destination, sourceVersion: 'not-installed' }
   const files = {}
   const fileVersions = { ...Object.fromEntries(Object.keys(record.files).map(path => [path, record.sourceVersion])), ...record.fileVersions }
   for (const path of Object.keys(record.files)) files[path] = (await state(entry.destination, path)).hash
-  let journal
-  try { journal = JSON.parse(await readFile(entry.journal, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
   for (const operation of journal?.plan?.operations ?? []) {
     const actual = await state(entry.destination, operation.path)
     if (actual.hash === operation.proposedHash) {
@@ -44,14 +46,18 @@ export async function inspectInstallation(entry, runtimeVersion) {
       else { files[operation.path] = actual.hash; fileVersions[operation.path] = operation.version }
     }
   }
-  let runtime = record.runtime
-  if (runtime) {
+  const runtimePath = join(entry.destination, 'node_modules')
+  let runtimeStat
+  try { runtimeStat = await lstat(runtimePath) } catch (error) { if (error.code !== 'ENOENT') throw error }
+  let runtime = null
+  if (record.runtime || runtimeStat) {
     let version = null
     try { version = JSON.parse(await readFile(join(entry.destination, 'node_modules/lavish-axi/package.json'), 'utf8')).version } catch {}
-    runtime = { ...runtime, version, verified: version !== null && await runtimeVersion(entry.destination, version) }
+    runtime = { path: runtimePath, created: Boolean(record.runtime?.created && runtimeStat?.isDirectory() && !runtimeStat.isSymbolicLink()),
+      version, verified: version !== null && await runtimeVersion(entry.destination, version) }
   }
   return { destination: entry.destination, files, fileVersions, runtime,
-    sourceVersion: canonicalJSON(files) === canonicalJSON(record.files) && (!runtime || runtime.verified && runtime.version === record.runtime.version) ? record.sourceVersion : 'mixed' }
+    sourceVersion: canonicalJSON(files) === canonicalJSON(record.files) && (!runtime || runtime.verified && runtime.version === record.runtime?.version) ? record.sourceVersion : 'mixed' }
 }
 
 async function state(destination, path) {
@@ -165,6 +171,17 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion) {
   }
   for (const [index, operation] of journal.plan.operations.entries()) {
     const actual = await state(entry.destination, operation.path)
+    if (operation.temporary) {
+      const temporary = join(dirname(join(entry.destination, operation.path)), `.bstack-install-${index}.tmp`)
+      if (operation.temporary !== temporary) blocked('journal-mismatch', 'Temporary does not match the recorded operation.')
+      const pending = await state(entry.destination, relative(entry.destination, temporary))
+      if (pending.hash !== null) {
+        const proposed = await readFile(join(journal.stage, operation.path))
+        if (hashBytes(proposed) !== operation.proposedHash) blocked('staged-package-changed', 'Staged file differs from the recorded plan.')
+        if (!pending.bytes || pending.bytes.length > proposed.length || !pending.bytes.equals(proposed.subarray(0, pending.bytes.length))) blocked('temporary-changed', 'Installation temporary contains unrelated bytes.')
+        await unlink(temporary)
+      }
+    }
     // A crash can follow a file rename and precede the journal update.
     if (actual.hash !== operation.proposedHash) {
       if (actual.hash !== operation.originalHash) {
@@ -198,10 +215,6 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion) {
           operation.temporary = temporary
           await saveRecovery(entry.journal, journal)
         }
-        try {
-          const bytes = await readFile(temporary)
-          if (bytes.length > proposed.length || !bytes.equals(proposed.subarray(0, bytes.length))) blocked('temporary-changed', 'Installation temporary contains unrelated bytes.')
-        } catch (error) { if (error.code !== 'ENOENT') throw error }
         await copyFile(staged, temporary)
         if ((await state(entry.destination, operation.path)).hash !== actual.hash) blocked('changed-precondition', 'File changed before replacement.')
         await rename(temporary, target)
@@ -245,8 +258,7 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion) {
   const record = { ...journal.record, files: journal.files, fileVersions: journal.fileVersions, runtime,
     sourceVersion: complete ? journal.plan.version : journal.plan.uninstall && !Object.keys(journal.files).length && !runtime ? 'uninstalled' : 'mixed' }
   await saveRecovery(entry.ownership, record)
-  const report = { destination: entry.destination, sourceVersion: record.sourceVersion, files: actualFiles,
-    fileVersions: record.fileVersions, runtime, conflicts, backup: journal.backup }
+  const report = { ...await inspectInstallation(entry, runtimeVersion), conflicts, backup: journal.backup }
   if (journal.plan.uninstall) {
     await removeEmpty(entry.destination, Object.keys(journal.record.files))
     try { report.retained = await retained(entry.destination) } catch (error) { if (error.code !== 'ENOENT') throw error; report.retained = [] }
@@ -306,7 +318,7 @@ export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVer
   }
   await saveRecovery(entry.ownership, journal.record)
   await unlink(entry.journal)
-  return { destination: entry.destination, sourceVersion: journal.record.sourceVersion, resumed: true }
+  return { ...await inspectInstallation(entry, runtimeVersion), resumed: true }
 }
 
 async function exists(path) {

@@ -609,6 +609,109 @@ for (const boundary of ['applying', 'partial-temp', 'file-rename', 'runtime-back
   })
 }
 
+for (const boundary of ['copy-rename', 'activated', 'completed']) {
+  test(`edited activated copy reports actual state after ${boundary}`, async t => {
+    const f = await fixture(t)
+    const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
+    await interrupt(f, boundary)
+    assert.equal(f.run(...args).status, 86)
+    delete f.env.NODE_OPTIONS
+    const destination = join(f.project, '.agents/skills/repo-audit')
+    await writeFile(join(destination, 'SKILL.md'), 'User edit\n')
+    const before = await inventory(f.project)
+    for (const preview of [true, false]) {
+      const result = f.run(...args, ...(preview ? ['--dry-run'] : []))
+      assert.equal(result.status, 2, result.stdout)
+      const report = result.value.data.installations[0]
+      assert.equal(report.sourceVersion, 'mixed')
+      assert.equal(report.files['SKILL.md'], createHash('sha256').update('User edit\n').digest('hex'))
+      assert.equal(report.runtime.version, '0.1.78')
+      assert.equal(report.runtime.verified, true)
+      assert.deepEqual(await inventory(f.project), before)
+    }
+  })
+}
+
+for (const uninstall of [false, true]) {
+  test(`blocked ${uninstall ? 'uninstall' : 'update'} reports actual replacement runtime`, async t => {
+    const f = await lifecycle(t)
+    const runtime = join(f.project, 'other-runtime')
+    await mkdir(join(runtime, 'lavish-axi/dist'), { recursive: true })
+    await writeFile(join(runtime, 'lavish-axi/package.json'), JSON.stringify({ version: '0.2.0' }))
+    await writeFile(join(runtime, 'lavish-axi/dist/cli.mjs'), "console.log('0.2.0')\n")
+    await rm(join(f.destination, 'node_modules'), { recursive: true })
+    await symlink(runtime, join(f.destination, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir')
+    const result = f.run(...f.args, ...(uninstall ? ['--uninstall'] : []))
+    assert.equal(result.status, 2, result.stdout)
+    const report = result.value.data.installations[0]
+    assert.equal(report.sourceVersion, 'mixed')
+    assert.equal(report.runtime.version, '0.2.0')
+    assert.equal(report.runtime.verified, true)
+    assert.equal(report.runtime.created, false)
+    assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).runtime.version, '0.1.78')
+    assert.equal(await readlink(join(f.destination, 'node_modules')), runtime)
+  })
+}
+
+for (const change of ['edited destination', 'proposed destination', 'edited temporary']) {
+  test(`interrupted update handles ${change} without orphaning temporary ownership`, async t => {
+    const f = await lifecycle(t)
+    await interrupt(f, 'partial-temp')
+    assert.equal(f.run(...f.args).status, 86)
+    delete f.env.NODE_OPTIONS
+    const journal = JSON.parse(await readFile(f.journal, 'utf8'))
+    const operation = journal.plan.operations.find(operation => operation.temporary)
+    const target = join(f.destination, operation.path)
+    if (change === 'edited temporary') await writeFile(operation.temporary, 'User temporary\n')
+    else await writeFile(target, change === 'edited destination' ? 'Later user edit\n' : await readFile(join(journal.stage, operation.path)))
+    const result = f.run(...f.args)
+    if (change === 'edited temporary') {
+      assert.equal(result.status, 2, result.stdout)
+      assert.equal(result.value.problems[0].code, 'temporary-changed')
+      assert.equal(await readFile(operation.temporary, 'utf8'), 'User temporary\n')
+      assert.equal(JSON.parse(await readFile(f.journal, 'utf8')).plan.operations[0].temporary, operation.temporary)
+    } else {
+      assert.equal(result.status, change === 'edited destination' ? 2 : 0, result.stdout)
+      await assert.rejects(lstat(operation.temporary), { code: 'ENOENT' })
+      if (change === 'edited destination') {
+        assert.equal(await readFile(target, 'utf8'), 'Later user edit\n')
+        const conflict = result.value.data.installations[0].conflicts.find(conflict => conflict.path === operation.path)
+        const replaced = f.run(...f.args, ...conflict.decision.split(' '))
+        assert.equal(replaced.status, 0, replaced.stdout)
+        assert.equal(replaced.value.data.installations[0].sourceVersion, 'v0.0.2')
+      }
+    }
+  })
+}
+
+test('aliased lifecycle artifacts preserve tagged source versions for both hosts', async t => {
+  const f = await fixture(t)
+  for (const host of ['agents', 'claude']) {
+    const parent = join(f.checkout, `installed-${host}`)
+    await mkdir(parent)
+    await mkdir(join(f.checkout, `.${host}`))
+    await symlink(parent, join(f.checkout, `.${host}/skills`), process.platform === 'win32' ? 'junction' : 'dir')
+  }
+  f.git('add', '.')
+  f.git('commit', '-m', 'record host aliases')
+  f.git('tag', 'v0.0.1')
+  const args = ['--scope', 'project', '--project', f.checkout, '--host', 'agents']
+  assert.equal(f.run(...args).status, 0)
+  const target = join(f.checkout, 'installed-agents/repo-audit/SKILL.md')
+  await writeFile(target, 'User edit\n')
+  const conflict = f.run(...args).value.data.installations[0].conflicts[0]
+  assert.equal(f.run(...args, ...conflict.decision.split(' ')).status, 0)
+  assert.equal((await readdir(join(f.checkout, 'installed-agents'))).some(path => path.startsWith('.bstack-backup-')), true)
+  for (const host of ['agents', 'claude']) {
+    const preview = f.run('--scope', 'project', '--project', f.checkout, '--host', host, '--dry-run')
+    assert.equal(preview.status, 0, preview.stdout)
+    assert.equal(preview.value.data.sourceVersion, 'v0.0.1')
+    if (host === 'agents') assert.deepEqual(preview.value.data.changes, [])
+  }
+  await writeFile(join(f.checkout, 'installed-agents/unrelated.md'), 'User content\n')
+  assert.match(f.run(...args, '--dry-run').value.data.sourceVersion, /:dirty$/)
+})
+
 test('uninstall resumes after a file deletion and reports a later edited owned file', async t => {
   const f = await lifecycle(t)
   await interrupt(f, 'file-remove')
