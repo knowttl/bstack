@@ -156,13 +156,13 @@ export async function matchesReplacement(entry, decision, runtimeVersion) {
     const actual = await state(entry.destination, operation.path)
     if (`${entry.host}:${operation.path}:${actual.hash ?? 'absent'}` === decision || actual.hash === operation.proposedHash) return true
   }
-  if (!entry.recovery || entry.cleanup) return false
+  if (!entry.recovery) return false
   const report = await inspectInstallation(entry, runtimeVersion)
   return report.conflicts.some(conflict => conflict.decision === `--replace ${decision}`)
 }
 
 export async function approveRecoveryReplacements(entry, selected, runtimeVersion) {
-  if (!entry.recovery || entry.cleanup || !selected.replace?.length) return
+  if (!entry.recovery || !selected.replace?.length) return
   const report = await inspectInstallation(entry, runtimeVersion)
   const approved = report.conflicts.filter(conflict => selected.replace.includes(conflict.decision.slice('--replace '.length)) && conflict.decision.startsWith('--replace '))
   if (!approved.length || selected['dry-run']) return
@@ -182,6 +182,16 @@ export async function approveRecoveryReplacements(entry, selected, runtimeVersio
     journal.fileVersions = { ...journal.record.fileVersions }
     plan = journal.plan = { operations: [], conflicts: [], desired: journal.record.files, version: journal.record.sourceVersion,
       runtime: journal.record.runtime.version, uninstall: false, runtimeAllowed: true }
+  }
+  if (entry.cleanup) {
+    for (const file of entry.sourceFiles.filter(file => Object.hasOwn(plan.desired, file.path))) {
+      if (file.hash !== plan.desired[file.path]) blocked('journal-source-changed', 'Resume requires the original source package and pinned runtime.')
+      const staged = await state(journal.stage, file.path)
+      if (staged.hash === file.hash) continue
+      if (staged.hash !== null) blocked('staged-package-changed', 'Cleanup recovery stage contains changed authored content.')
+      await mkdir(dirname(join(journal.stage, file.path)), { recursive: true })
+      await writeFile(await resolvePath(journal.stage, file.path), file.bytes, { flag: 'wx', mode: file.mode })
+    }
   }
   for (const conflict of approved) {
     const actual = await state(entry.destination, conflict.path)
@@ -444,6 +454,7 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
     }
   }
   for (const [index, operation] of journal.plan.operations.entries()) {
+    if (entry.cleanup && canonicalJSON(operation) === canonicalJSON(entry.cleanup.recovery?.plan?.operations[index])) continue
     const actual = await state(entry.destination, operation.path)
     if (operation.temporary) {
       const temporary = join(dirname(join(entry.destination, operation.path)), `.bstack-install-${index}.tmp`)
