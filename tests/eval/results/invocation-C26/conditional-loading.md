@@ -48,5 +48,5 @@ Redacted transcripts and installer/host records are retained as test-phase evide
 | `after-loading-conversation.jsonl` | `e708188adf05c24cfdda5247651bdd667cd7434a3ac6636ec367ae8bba7645f4` |
 | `final-loading-conversation.jsonl` | `682cf366ed8aff8e767483e173930fcfd6f6b0432002e3448593e121c7233075` |
 
-This targeted verification does not rerun plain invocation, the full suite or C27 acceptance, and does not refresh the historical full-suite task evidence.
-The previously observed plain-invocation result remains historical evidence.
+This targeted verification did not rerun plain invocation, the full suite or C27 acceptance.
+The later [fresh paired validation](summary.md#fresh-paired-validation-on-current-bytes) supersedes it for current-byte invocation and command-visible loading observations.
