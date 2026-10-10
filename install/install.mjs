@@ -190,6 +190,11 @@ async function install(selected) {
     if (await exists(journal)) {
       entry.recovery = JSON.parse(await readFile(journal, 'utf8'))
       if (Boolean(entry.recovery.plan?.uninstall) !== Boolean(selected.uninstall)) reject('blocked', 'pending-recovery', 'Resume the original operation before changing lifecycle mode.', help)
+      const plan = entry.recovery.plan ?? entry.recovery.update?.plan
+      const target = plan ?? { version: entry.recovery.record.sourceVersion, desired: entry.recovery.record.files, runtime: entry.recovery.record.runtime.version }
+      if (target.version !== version || canonicalJSON(target.desired) !== canonicalJSON(selected.uninstall ? {} : hashes) || target.runtime !== runtime) {
+        reject('blocked', 'journal-source-changed', 'Resume requires the original source package and pinned runtime.', 'Restore the source version, authored files and pinned runtime recorded by the interrupted operation before retrying.')
+      }
       entry.action = 'resume'
       continue
     }
