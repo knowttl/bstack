@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C25a",
+  "slice": "C25a",
+  "sourceRevision": "e33a2c8593b43a44b2c5322395170c07585f5a37",
+  "intent": "Implement the install preview, first copy installation and exact authored-file ownership portion of T4.1 with isolated source-closure, no-op, collision and nested runtime failure controls.",
+  "amendments": [],
+  "status": "passed",
+  "environment": {
+    "os": "linux 6.8.0-142-generic x64",
+    "node": "v24.17.0",
+    "tools": { "npm": "11.13.0", "git": "git version 2.54.0" }
+  },
+  "commands": [],
+  "cases": [
+    {
+      "id": "AC-73-copy-controls",
+      "kind": "automated",
+      "procedure": "tests/scripts/install.test.mjs: copy install validates the complete package and exact ownership in isolated user scope; copy install validates the complete package and exact ownership in isolated project scope; dry run lists every authored copy and runtime action without changing homes, project or source; all-host install preserves the existing installer collision fixture before any staging; nested npm failure retains a recoverable stage and journal without activating or claiming ownership",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C25a.full-tests.txt"
+    },
+    {
+      "id": "AC-74",
+      "kind": "manual",
+      "procedure": "Complete installer lifecycle on real Windows, macOS and Linux with supplementary Node 24 and Node 26 execution",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C25a verifies only Linux Node 24 copy controls using disposable local/fake runtime snapshots.",
+      "nextPrerequisite": "C25b lifecycle completion and C25c links plus recorded real operating-system runs."
+    }
+  ],
+  "limitations": [
+    "Only the C25a copy/preview/ownership slice is complete. AC-73 full lifecycle remains pending C25b/C25c.",
+    "Update, uninstall and interrupted-run completion are explicitly blocked pending C25b. Link mode is explicitly blocked pending C25c.",
+    "Installer controls use a locally packed fake lavish-axi 0.1.78 dependency and disposable Git snapshots with offline npm. They do not establish real runtime board interactions.",
+    "No release, real release tag, npm publication or hosted CI workflow was created.",
+    "Current-agent loading remains T4.2 work, and real Windows/macOS plus Node 26 installer acceptance remain pending.",
+    "Test fixtures remove disposable homes, source snapshots, npm caches, stages and fake package tarballs through test teardown. No dev stack, image or shared cache is created or removed."
+  ]
+}

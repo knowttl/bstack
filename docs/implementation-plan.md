@@ -504,6 +504,13 @@ Tick each task when its "Done when" commands pass.
       Installation and release remain pending.
 - Phase 4: Installation
   - [ ] T4.1 Build the installer
+    - [x] C25a Install preview, copy and ownership
+      - `node install/install.mjs` supports explicit user/project scope and Claude/agents/all destinations, source closure and prerequisite checks, mutation-free preview, staged locked runtime installation, package validation and recoverable activation.
+        Exact authored-file SHA-256 ownership lives outside each installed skill, and the created runtime directory is recorded separately.
+        `npm test -- --task C25a` verifies isolated homes/projects, complete copy validation, no-op repeat, unowned collision preservation, source failures and nested npm installation failure with a preserved stage and journal.
+        [C25a evidence](../tests/eval/results/tasks/C25a.json) binds the final full suite.
+        Updates, uninstall and interrupted-run completion remain C25b work, while link mode and real OS acceptance remain C25c work.
+        AC-73 lifecycle coverage and AC-74 three-OS acceptance are incomplete, and current-agent loading remains T4.2 work.
   - [ ] T4.2 Run the basic tests in the current agent
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release

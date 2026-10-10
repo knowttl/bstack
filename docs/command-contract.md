@@ -776,6 +776,56 @@ When `data.path` is present, plain output also prints that path after the status
 Child output must go to captured artifacts, never alongside the JSON envelope.
 Child execution and fingerprints are implemented in C4b.
 
+## Installer copy and preview (C25a)
+
+`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--json]` installs the skill beside the installer.
+The scope and host are required, project scope requires an existing project directory, and user scope rejects `--project`.
+Unknown, repeated or missing arguments return usage error before dependency calls.
+`--help` prints the supported interface.
+`--link` and `--uninstall` are recognised but blocked, rather than silently running copy mode.
+Updates, removal and interrupted-run completion belong to C25b, and links and OS acceptance belong to C25c.
+
+Claude uses `.claude/skills/repo-audit`, and agents uses `.agents/skills/repo-audit`, beneath the selected real home or project root.
+`all` selects both and checks every destination before staging either one.
+Escaping destination links are rejected through the shared path resolver.
+An occupied folder without matching external ownership is always blocked, including an empty folder or one containing files identical to source.
+The installer never adopts an existing dependency directory.
+
+Preflight requires Node 24+, Git, npm and the root package-checker dependencies installed by `npm ci`.
+It validates authored package closure and matching manifest/lock dependencies with an exact lavish-axi pin.
+The source version is a clean exact `v<major>.<minor>.<patch>` tag, otherwise `development:<commit>[:dirty]` or `development:unversioned`.
+No tag or release is created.
+`--dry-run` returns every authored destination path and exact-byte hash, runtime installation and ownership/journal paths.
+It creates no directories, stage, dependencies or records.
+No-op repeats have no changes after verifying source version, authored hashes and the installed pinned runtime.
+Changed owned files or a different source/runtime block with `update-pending`.
+Unowned extra files remain untouched on a no-op repeat.
+
+Copy installation stages only authored files in a unique `.bstack-stage-*` sibling of the destination.
+Git data, node_modules, caches and scratch are excluded.
+The shared child runner executes `npm ci --omit=dev --no-audit --no-fund` in the stage, including the Windows npm adapter and bounded command capture.
+The package checker, authored hashes and installed lavish-axi version must pass before activation.
+Dependency scripts that alter authored files cannot activate a copy.
+The source skill and its runtime are never changed by copy installation.
+
+Each host skills parent holds `.bstack-install.json` with schema version 1, copy mode, source version, absolute destination, exact authored `files` hashes and a separate `runtime` record with path, version and `created: true`.
+Mutable caches, backups and dependency contents are absent from `files`.
+`.bstack-install-journal.json` holds the stage, intended ownership and activation state before the directory rename.
+The destination is rechecked after runtime installation, then the validated stage is renamed into place and ownership is durably saved through the existing recovery writer.
+Successful installation removes its journal.
+Multiple host destinations activate sequentially, so a later failure can leave an earlier host installed and owned.
+The operation is not an atomic transaction across hosts.
+
+Runtime or application failure returns non-passing output and retains the stage or activated destination plus its journal, including bounded runtime failure output.
+An npm failure never activates or claims ownership of the destination.
+A pending journal blocks another installation, preserving evidence for C25b recovery rather than pretending resume is complete.
+Inspect the named journal and actual stage/destination before any explicit cleanup decision.
+Filesystem directory-flush limitations come from the shared recovery writer, and power-loss recovery is not established by this slice.
+JSON uses the existing result envelope and exit codes 0 passed, 1 failed, 2 blocked and 3 usage error.
+Plain output adds the same source version, destinations and planned changes.
+`npm test -- --task C25a` runs local/fake dependency snapshots in disposable roots, including nested npm failure and collision controls.
+Real Windows/macOS execution, the complete lifecycle and current-agent loading remain unverified.
+
 ## Child commands
 
 `runCommand(target, command, { signal, env, outputLimitBytes })` accepts `{ executable, args, cwd, timeoutMs, versionArgs }`.
@@ -944,6 +994,9 @@ Computed specifiers, template specifiers, require aliases, createRequire calls a
 Bare require calls are recognised syntactically without resolving whether the identifier is shadowed.
 Local literal paths still receive the C5a resource checks, which retain their textual grammar and limits.
 Declared dependency versions are not installed or resolved by this check.
+Local resource paths outside the authored skill, or into excluded cache/scratch directories, fail with `package-closure` even when they exist in the checkout.
+Paths into `node_modules/<declared-runtime-package>/` are deferred to runtime installation rather than requiring dependencies before source preflight.
+The installer reuses the exported package validation and verifies the locked runtime after staging.
 The deny list does not recognise every tool, config spelling or per-language rule set, and does not infer whether a tool mention is a recommendation.
 The step check proves the completion-line format, not its meaningfulness.
 The design's instruction that each constant explains its reason remains an authoring and review requirement.
