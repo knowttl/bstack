@@ -1,4 +1,4 @@
-import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rename, writeFile } from 'node:fs/promises'
+import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rename, unlink, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -7,7 +7,7 @@ import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mj
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { planLifecycle, applyLifecycle, finishLifecycle, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision, matchesReplacement, matchesRuntimeAdoption } from './lifecycle.mjs'
+import { planLifecycle, applyLifecycle, finishLifecycle, verifyCleanup, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision, matchesReplacement, matchesRuntimeAdoption } from './lifecycle.mjs'
 
 // Installation always selects the complete skill beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
@@ -111,7 +111,8 @@ async function install(selected) {
     destinations.push({ host, parent, destination, ownership: join(parent, '.bstack-install.json'),
       journal: join(parent, '.bstack-install-journal.json') })
   }
-  const generatedPaths = destinations.flatMap(entry => [entry.destination, entry.ownership])
+  const cleanupPath = join(root, '.bstack-install-cleanup.json')
+  const generatedPaths = [cleanupPath, ...destinations.flatMap(entry => [entry.destination, entry.ownership])]
   const generatedParents = destinations.map(entry => entry.parent)
   for (const host of ['claude', 'agents'].filter(host => !hosts.includes(host))) {
     let parent
@@ -141,10 +142,26 @@ async function install(selected) {
   const version = tag.status === 'passed' && /^v\d+\.\d+\.\d+$/.test(tag.stdout.trim()) && dirty.status === 'passed' && untracked.status === 'passed' && !sourceDirty ?
     tag.stdout.trim() : `development:${revision.status === 'passed' ? revision.stdout.trim() : 'unversioned'}${sourceDirty ? ':dirty' : ''}`
   const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
+  const cleanupBinding = hashBytes(Buffer.from(canonicalJSON({ destinations: destinations.map(entry => entry.destination), uninstall: Boolean(selected.uninstall), version, hashes, runtime })))
+  let cleanup
+  if (await exists(cleanupPath)) {
+    if (await resolvePath(root, '.bstack-install-cleanup.json') !== cleanupPath) reject('blocked', 'changed-destination', 'Cleanup record canonical path changed.', help)
+    cleanup = JSON.parse(await readFile(cleanupPath, 'utf8'))
+    if (cleanup.schemaVersion !== 1 || cleanup.binding !== cleanupBinding) reject('blocked', 'pending-recovery', 'Resume the original command before changing cleanup inputs or hosts.', help)
+  }
   for (const entry of destinations) {
     const { destination, ownership, journal } = entry
     entry.adoptionBinding = hashBytes(Buffer.from(canonicalJSON({ destination, uninstall: Boolean(selected.uninstall), version, hashes, runtime })))
     await verifyDestination(entry)
+    if (cleanup) {
+      const saved = cleanup.entries.find(saved => saved.destination === destination)
+      if (!saved) reject('blocked', 'journal-mismatch', 'Cleanup record does not match selected hosts.', help)
+      entry.cleanup = saved
+      entry.recovery = saved.recovery
+      entry.previous = saved.previous
+      entry.action = 'cleanup'
+      continue
+    }
     if (await exists(journal)) {
       entry.recovery = JSON.parse(await readFile(journal, 'utf8'))
       if (Boolean(entry.recovery.plan?.uninstall) !== Boolean(selected.uninstall)) reject('blocked', 'pending-recovery', 'Resume the original operation before changing lifecycle mode.', help)
@@ -192,7 +209,7 @@ async function install(selected) {
   const report = () => ({ ...data, destinations: destinations.map(({ host, parent, destination, ownership, journal, action, plan }) =>
     ({ host, parent, destination, ownership, journal, action, ...(plan ? { conflicts: plan.conflicts } : {}) })) })
   try {
-    data.changes = (await Promise.all(destinations.map(async entry => entry.action === 'resume' && entry.recovery.plan ? await previewRecovery(entry, runtimeVersion) : entry.action === 'no-op' ? [] : entry.plan ? [
+    data.changes = (await Promise.all(destinations.map(async entry => entry.action === 'cleanup' || entry.action === 'no-op' ? [] : entry.action === 'resume' && entry.recovery.plan ? await previewRecovery(entry, runtimeVersion) : entry.plan ? [
       ...entry.plan.operations.map(operation => ({ action: operation.proposedHash === null ? 'remove' : 'replace', path: join(entry.destination, operation.path), hash: operation.proposedHash })),
       ...entry.plan.conflicts.map(conflict => ({ action: 'preserve', path: join(entry.destination, conflict.path) })),
       ...(entry.plan.runtimeAllowed ? [{ action: selected.uninstall ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }] : [])
@@ -208,10 +225,16 @@ async function install(selected) {
     }
     for (const entry of destinations.filter(entry => entry.adoptRuntime)) data.changes.push({ action: 'runtime-adopt', path: entry.previous.runtime.path }, { action: 'ownership', path: entry.ownership })
     if (selected['dry-run']) {
+      for (const entry of destinations.filter(entry => entry.cleanup)) await verifyCleanup(entry, runtimeVersion)
       for (const entry of destinations.filter(entry => entry.action === 'resume' && !entry.recovery.plan)) data.installations.push(await resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child))
       return report()
     }
     for (const entry of destinations) {
+      if (entry.cleanup) {
+        await verifyCleanup(entry, runtimeVersion)
+        data.installations.push(structuredClone(entry.cleanup.report))
+        continue
+      }
       if (entry.adoptRuntime) {
         const previous = JSON.parse(await readFile(entry.ownership, 'utf8'))
         const actual = await legacyRuntimeDecision(entry, previous, runtimeVersion)
@@ -296,9 +319,22 @@ async function install(selected) {
       }
       data.limitations = limitations
     }
-    for (const entry of destinations.filter(entry => entry.recovery || entry.previous?.acceptedAdoption)) {
-      await finishLifecycle(entry, data.installations.find(installation => installation.destination === entry.destination))
+    if (!cleanup && destinations.some(entry => entry.recovery || entry.previous?.acceptedAdoption)) {
+      cleanup = { schemaVersion: 1, binding: cleanupBinding, entries: [] }
+      for (const entry of destinations) {
+        const saved = { destination: entry.destination, recovery: entry.recovery, previous: entry.previous,
+          record: await exists(entry.ownership) ? JSON.parse(await readFile(entry.ownership, 'utf8')) : null,
+          report: data.installations.find(installation => installation.destination === entry.destination) ?? { destination: entry.destination, files: {}, runtime: null, sourceVersion: 'not-installed' } }
+        entry.cleanup = saved
+        cleanup.entries.push(saved)
+      }
+      await saveRecovery(cleanupPath, cleanup)
     }
+    for (const entry of destinations.filter(entry => entry.cleanup)) {
+      entry.saveCleanup = () => saveRecovery(cleanupPath, cleanup)
+      await finishLifecycle(entry, data.installations.find(installation => installation.destination === entry.destination), runtimeVersion)
+    }
+    if (cleanup) await unlink(cleanupPath)
   } catch (error) {
     for (const entry of destinations) {
       if (!data.installations.some(installation => installation.destination === entry.destination)) data.installations.push(await inspectInstallation(entry, runtimeVersion))

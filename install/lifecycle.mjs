@@ -78,6 +78,7 @@ async function matchesAcceptedRuntime(entry, record, journal) {
   if (!record.acceptedAdoption) return true
   const path = record.runtime.path
   const moved = journal?.stage && join(journal.stage, 'previous-runtime')
+  if (moved && entry.cleanup?.runtimeRemoval && !await exists(moved)) return true
   const directory = moved && await exists(moved) ? moved : path
   if (await ownsRuntime(directory, { ...record.runtime, path: directory })) {
     return await runtimeFingerprint(entry, record.runtime, directory) === record.acceptedAdoption.value
@@ -425,29 +426,57 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
   return report
 }
 
-export async function finishLifecycle(entry, report) {
+export async function finishLifecycle(entry, report, runtimeVersion) {
   await verifyDestination(entry)
   const journal = entry.recovery
-  const record = JSON.parse(await readFile(entry.ownership, 'utf8'))
+  const record = entry.cleanup.record
+  await verifyCleanup(entry, runtimeVersion)
+  if (!record) return
   if (!await matchesAcceptedRuntime(entry, journal?.record ?? record, journal)) blocked('runtime-conflict', 'Accepted runtime contents changed before cleanup.')
-  if (journal?.plan?.uninstall && !Object.keys(record.files).length && !record.runtime) await unlink(entry.ownership)
+  if (journal?.plan?.uninstall && !Object.keys(record.files).length && !record.runtime) {
+    if (await exists(entry.ownership)) await unlink(entry.ownership)
+  }
   else if (record.acceptedAdoption) {
-    delete record.acceptedAdoption
-    await saveRecovery(entry.ownership, record)
+    const saved = { ...record }
+    delete saved.acceptedAdoption
+    await saveRecovery(entry.ownership, saved)
   }
   if (journal?.plan && journal.stage) {
     for (const [name, owned] of [['node_modules', journal.stagedRuntime], ['previous-runtime', journal.record.runtime]]) {
       const path = join(journal.stage, name)
       if (name === 'previous-runtime' && !await matchesAcceptedRuntime(entry, journal.record, journal)) blocked('runtime-conflict', 'Accepted runtime contents changed before cleanup.')
-      if (owned && await ownsRuntime(path, { ...owned, path })) await rm(path, { recursive: true, force: true })
+      if (owned && await ownsRuntime(path, { ...owned, path })) {
+        if (name === 'previous-runtime') {
+          entry.cleanup.runtimeRemoval = true
+          await entry.saveCleanup()
+        }
+        await rm(path, { recursive: true, force: true })
+      }
     }
     for (const [path, hash] of Object.entries(journal.plan.desired)) {
       if ((await state(journal.stage, path)).hash === hash) await unlink(join(journal.stage, path))
     }
-    await removeEmpty(journal.stage, Object.keys(journal.plan.desired))
+    if (await exists(journal.stage)) await removeEmpty(journal.stage, Object.keys(journal.plan.desired))
     if (await exists(journal.stage)) report.retainedStage = journal.stage
   }
-  if (journal) await unlink(entry.journal)
+  if (journal && await exists(entry.journal)) await unlink(entry.journal)
+}
+
+export async function verifyCleanup(entry, runtimeVersion) {
+  await verifyDestination(entry)
+  const journal = entry.recovery
+  if (journal && (journal.schemaVersion !== 1 || journal.ownership !== entry.ownership || journal.record.destination !== entry.destination ||
+      journal.stage && (dirname(journal.stage) !== entry.parent || !basename(journal.stage).startsWith('.bstack-stage-')))) blocked('journal-mismatch', 'Cleanup journal paths do not match the selected installation.')
+  const { record, report } = entry.cleanup
+  const retiredOwnership = entry.recovery?.plan?.uninstall && !Object.keys(record.files).length && !record.runtime
+  if (record && !retiredOwnership && !await exists(entry.ownership)) blocked('cleanup-conflict', 'Ownership disappeared before cleanup.')
+  const paths = new Set([...Object.keys(entry.recovery?.record.files ?? {}), ...Object.keys(entry.recovery?.plan?.desired ?? {}), ...Object.keys(report.files ?? {})])
+  for (const path of paths) {
+    if ((await state(entry.destination, path)).hash !== (report.files[path] ?? null)) blocked('cleanup-conflict', `Installed file changed before cleanup: ${path}`)
+  }
+  const runtime = join(entry.destination, 'node_modules')
+  if (report.runtime?.created ? !await ownsRuntime(runtime, record.runtime) : !report.runtime && await exists(runtime)) blocked('runtime-conflict', 'Installed runtime changed before cleanup.')
+  if (report.runtime?.verified && !await runtimeVersion(entry.destination, report.runtime.version)) blocked('runtime-conflict', 'Installed runtime version changed before cleanup.')
 }
 
 export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child) {
