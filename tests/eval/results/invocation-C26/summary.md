@@ -1,6 +1,7 @@
 # C26: current-agent invocation and loading
 
-The final installed runs passed the bounded T4.2 checks on Linux with Codex CLI 0.162.1, `gpt-6.1-sol`, medium reasoning and Node v24.17.0.
+The retained invocation pair passed the bounded T4.2 checks on Linux with Codex CLI 0.162.1, `gpt-6.1-sol`, medium reasoning and Node v24.17.0 before the later loading-rule correction.
+The [conditional-loading recheck](conditional-loading.md) owns observations on the corrected skill bytes; it reran explicit invocation only.
 The C26 implementation worker reviewed the captured command events and scored the bounded observations below against T4.2 and the cited design cases.
 These are development observations, not C27 full-path acceptance, final case selections or a host/model matrix.
 
@@ -10,8 +11,8 @@ Each run built a new `clear-goals` fixture through `node tests/fixtures/build.mj
 The actual installer command was `node install/install.mjs --scope project --project <fixture> --host agents --json`, with the child's home and cache set to that run's disposable directories.
 The installer returned exit 0, copied 73 authored files and verified its pinned runtime.
 The capture procedure checked each installed authored file against both its recorded ownership hash and the source checkout, then checked the authored snapshot again after the host turn.
-The final implicit and explicit snapshots both have SHA-256 `30eae6c2b9ed7da8b7eac72b7048e86a971cfdec7890bd5d0ef0fbefe6900438`.
-Both installed `SKILL.md` files and the final source file have SHA-256 `da8985e4d1d824acf962542d083666159e127b7bfb1edb048987dc0c69175703`.
+The retained implicit and explicit snapshots both have SHA-256 `30eae6c2b9ed7da8b7eac72b7048e86a971cfdec7890bd5d0ef0fbefe6900438`.
+Both installed `SKILL.md` files and the source file at that checkpoint have SHA-256 `da8985e4d1d824acf962542d083666159e127b7bfb1edb048987dc0c69175703`.
 The installer truthfully labels this an untagged dirty development checkout based on `9dba001cd8f7cdeaab18bb7c3dcd455f0bb2843f`, including the uncommitted C26 changes and generated evidence.
 
 The capture reused the existing fixture builder, adapter parser, isolation setup, child-command runner and evidence redactor.
@@ -93,7 +94,8 @@ The [first plain run](implicit-before-guard/conversation.txt) failed AC-42: with
 The [pre-guard explicit run](explicit-before-guard/conversation.txt) separately demonstrated explicit invocation but is historical evidence only.
 The skill now explicitly requires the user's host command or menu selection and treats incidental discovery during an ordinary audit as repository content, rather than permission to execute the procedure.
 The [guard checkpoint](implicit-guard-check/conversation.txt) stopped procedure execution after opening the guarded skill, with no bundled command/reference use and an unchanged fixture.
-The final plain and explicit runs above both used the settled skill bytes, including the two schema load conditions; earlier attempts are not promoted into that final pair.
+The plain and explicit runs above both used the entry-guard checkpoint bytes, including the two schema load conditions; earlier attempts are not promoted into that pair.
+The later content-search and schema restrictions changed those bytes, so this pair is historical evidence for the current skill.
 
 All turns used distinct disposable fixtures, homes and fresh host threads.
 Transcript identifiers and host paths are redacted, while captured command events and line numbers are retained.
