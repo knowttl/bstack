@@ -12,10 +12,30 @@ These provide project-specific guidance, native rule-proof, debt baseline checks
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
 Use the [maintenance reference](skills/repo-audit/references/maintenance-contract.md) for bounded change assessment and local or standalone validation without repeating the interview or full audit.
-The installer is pending.
+The C25a installer supports first copy installations, previews and verified no-op repeats.
+Updates, uninstall and interrupted-run completion remain pending C25b, and links plus real operating-system acceptance remain pending C25c.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
+
+From a local clone, install the source-checker dependencies with `npm ci`, then preview or copy the complete skill into an existing project:
+
+```sh
+node install/install.mjs --scope project --project <project-path> --host all --dry-run
+node install/install.mjs --scope project --project <project-path> --host all --json
+node scripts/check-package.mjs --skill <project-path>/.agents/skills/repo-audit
+npm test -- --task C25a
+```
+
+Use `--scope user --host agents` for the current home, or `--host claude` for Claude Code alone.
+`--host all` selects both `.agents/skills/repo-audit` and `.claude/skills/repo-audit` beneath the selected home or project.
+Node 24 or later, Git and npm are prerequisites.
+The installer stages the authored package, installs the locked runtime with npm and validates it before activation.
+An occupied unowned destination blocks installation, and an edited or changed owned installation blocks until the later update support is available.
+Dry run writes no files and installs no dependencies.
+The [installer contract](docs/command-contract.md#installer-copy-and-preview-c25a) describes ownership, failure journals and the limits of this slice.
+An exact clean semantic Git tag is reported as the source version, while untagged or dirty sources are explicitly labelled development.
+Installation tests use disposable release snapshots and a locally packed fake runtime, and do not establish real Windows/macOS runs or current-agent skill loading.
 
 Use Node 24 or later:
 
