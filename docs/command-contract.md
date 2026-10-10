@@ -31,7 +31,8 @@ C24a exports `validateContract`, `checkDocuments`, `checkGeneratedFacts`, `valid
 `checkGeneratedFacts` always selects check mode and cannot create regeneration proposals.
 The existing validators retain their coverage and proof limits, including generated commands' read-only contract and local evidence captures' lack of portable attestation.
 C24b adds the aggregate execution interface below.
-Maintenance guidance remains T3a.7, and hosted CI behavior is unverified.
+The [maintenance reference](../skills/repo-audit/references/maintenance-contract.md) owns the bounded maintenance procedure.
+Hosted CI behavior is unverified.
 
 ## Standalone checker execution
 
