@@ -778,12 +778,12 @@ Child execution and fingerprints are implemented in C4b.
 
 ## Installer copy and preview (C25a)
 
-`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--json]` installs the skill beside the installer.
+`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--json]` installs, updates or removes the skill beside the installer.
 The scope and host are required, project scope requires an existing project directory, and user scope rejects `--project`.
-Unknown, repeated or missing arguments return usage error before dependency calls.
+Unknown, repeated or missing arguments return usage error before dependency calls, except that `--replace` can repeat for distinct conflicts.
 `--help` prints the supported interface.
-`--link` and `--uninstall` are recognised but blocked, rather than silently running copy mode.
-Updates, removal and interrupted-run completion belong to C25b, and links and OS acceptance belong to C25c.
+`--link` is recognised but blocked, rather than silently running copy mode.
+Links and OS acceptance belong to C25c.
 
 Claude uses `.claude/skills/repo-audit`, and agents uses `.agents/skills/repo-audit`, beneath the selected real home or project root.
 `all` selects both, deduplicates their canonical destinations and checks every destination before staging any copy.
@@ -800,7 +800,10 @@ No tag or release is created.
 `--dry-run` returns every authored destination path and exact-byte hash, runtime installation and ownership/journal paths.
 It creates no directories, stage, dependencies or records.
 No-op repeats have no changes after verifying source version, exactly the recorded authored paths and hashes, and the installed pinned runtime.
-Changed owned files or a different source/runtime block with `update-pending`.
+Rerunning against a different source version or changed installation plans an update.
+Updates replace unchanged owned files and remove obsolete owned files only when their recorded hashes still match.
+Missing owned files, edited files and newly conflicting unowned files are preserved until a specific decision.
+Preview lists replacements, removals, runtime changes and preserved conflicts without applying decisions.
 Unowned extra content, including symlinks, remains untouched on a no-op repeat.
 Owned files must remain regular files, and source and staged authored inventories reject symlinks.
 
@@ -813,6 +816,24 @@ The source skill and its runtime are never changed by copy installation.
 
 Each host skills parent holds `.bstack-install.json` with schema version 1, copy mode, source version, absolute destination, exact authored `files` hashes and a separate `runtime` record with path, version and `created: true`.
 Mutable caches, backups and dependency contents are absent from `files`.
+Lifecycle records also retain `fileVersions`, preserving the source provenance of each owned hash.
+An incomplete update records `sourceVersion: "mixed"`, retains the last owned hashes of edited files, and reports actual installed hashes separately under `data.installations[].files`.
+The report includes file versions, runtime state, conflicts, backup location and retained paths where applicable.
+The top-level `sourceVersion` identifies the requested source, while each installation report identifies its actual state.
+
+Conflicts include the installed and proposed hashes, complete replacement diff and the precise `--replace <host>:<path>:<actual-hash|absent>` value.
+Regular files and missing paths can be explicitly replaced or removed, but a directory or link cannot be approved through a file replacement decision.
+Stale or unmatched replacement decisions return usage error before staging.
+An interactive plain-output terminal asks for `yes` separately for each conflicting path, while JSON or noninteractive execution preserves conflicts unless their exact decisions are supplied as flags.
+Each accepted destructive decision saves the existing bytes in a unique `.bstack-backup-*` sibling, preserving the authored relative path inside that directory.
+Backups are retained outside the installed skill and never become authored ownership.
+Noninteractive unresolved conflicts return blocked exit 2 after applying independent safe changes and saving actual mixed ownership.
+
+`--uninstall` removes unchanged owned files and only the separately recorded runtime directory created by this installer.
+It prunes empty directories without following links and reports every retained path.
+Retained owned files keep their original ownership hashes and versions for later explicit cleanup and return blocked.
+Unowned retained files alone do not block successful removal, and ownership is removed when no owned file or runtime remains.
+A later install into that remaining unowned folder blocks instead of adopting it.
 `.bstack-install-journal.json` holds the stage, intended ownership and activation state before the directory rename.
 The destination is rechecked after runtime installation, then the validated stage is renamed into place and ownership is durably saved through the existing recovery writer.
 Successful installation removes its journal.
@@ -821,13 +842,21 @@ The operation is not an atomic transaction across hosts.
 
 Runtime or application failure returns non-passing output and retains the stage or activated destination plus its journal, including bounded runtime failure output.
 An npm failure never activates or claims ownership of the destination.
-A pending journal blocks another installation, preserving evidence for C25b recovery rather than pretending resume is complete.
-Inspect the named journal and actual stage/destination before any explicit cleanup decision.
+Rerunning the original lifecycle command resumes a pending journal from actual hashes.
+First-copy recovery supports staging, prepared, activated and completed states, including interruption immediately after directory activation but before its journal save.
+Missing authored stage files can be reconstructed from the unchanged source during staging, while changed bytes block and survive.
+Staging retries a failed pinned runtime installation and validates the resulting package and hashes before activation.
+Prepared recovery verifies the pinned runtime without rerunning an already completed installation.
+Updates and removal record per-file original/proposed hashes before mutation and infer completed operations from actual bytes, including a crash between mutation and journal save.
+Runtime updates preserve the old owned directory in the stage before activating the validated runtime, allowing recovery between those renames.
+Unrelated destination content survives resume, and unrelated content added to an update stage is retained and reported rather than discarded with the stage.
+Switching between install and uninstall while a journal is pending blocks until the original operation is resolved.
+Inspect the named journal, actual stage and destination before any explicit cleanup decision.
 Filesystem directory-flush limitations come from the shared recovery writer, and power-loss recovery is not established by this slice.
 JSON uses the existing result envelope and exit codes 0 passed, 1 failed, 2 blocked and 3 usage error.
 Plain output adds the same source version, destinations and planned changes.
-`npm test -- --task C25a` runs local/fake dependency snapshots in disposable roots, including nested npm failure and collision controls.
-Real Windows/macOS execution, the complete lifecycle and current-agent loading remain unverified.
+`npm test -- --task C25b` runs local/fake dependency snapshots in disposable roots, including update/removal conflicts, mixed versions, hash-bound decisions, runtime failure, interruption boundaries and C25a collision controls.
+Real Windows/macOS execution, link lifecycle and current-agent loading remain unverified.
 
 ## Child commands
 

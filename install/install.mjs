@@ -7,13 +7,14 @@ import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mj
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, previewRecovery } from './lifecycle.mjs'
 
 // Installation always selects the complete skill beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
 // These directories contain runtime or scratch data rather than authored files.
 const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
 // Both human and machine output describe the same supported slice.
-const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--json]\nCopy installs require Node 24+, Git, npm and root development dependencies (npm ci).\nUser scope uses the current home. Project scope requires an existing --project directory.\n--link and --uninstall are reserved and currently blocked. Updates and interrupted-run resume are pending.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --json'
+const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--json]\nCopy installs require Node 24+, Git, npm and root development dependencies (npm ci).\nUser scope uses the current home. Project scope requires an existing --project directory.\nRepeat --replace for specific conflicts after reviewing their diff. Interrupted runs resume automatically.\n--link is deferred to C25c.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --uninstall --json'
 
 function reject(status, code, message, fix) {
   throw new CommandError(status, [{ code, message, fix }])
@@ -23,18 +24,22 @@ function options(args) {
   const values = {}
   for (let index = 0; index < args.length; index++) {
     const key = args[index].replace(/^--/, '')
-    if (!args[index].startsWith('--') || !['scope', 'project', 'host', 'dry-run', 'json', 'link', 'uninstall'].includes(key) || Object.hasOwn(values, key)) {
+    if (!args[index].startsWith('--') || !['scope', 'project', 'host', 'dry-run', 'json', 'link', 'uninstall', 'replace'].includes(key) || (key !== 'replace' && Object.hasOwn(values, key))) {
       reject('usage-error', 'invalid-arguments', `Unknown or repeated argument: ${args[index]}`, help)
     }
-    if (['scope', 'project', 'host'].includes(key)) {
+    if (['scope', 'project', 'host', 'replace'].includes(key)) {
       const value = args[++index]
       if (!value || value.startsWith('--')) reject('usage-error', 'missing-value', `--${key} requires a value.`, help)
-      values[key] = value
+      if (key === 'replace') {
+        if (!/^(claude|agents):.+:(?:[a-f0-9]{64}|absent)$/.test(value)) reject('usage-error', 'invalid-replacement', 'Replacement must name host, path and the displayed actual hash.', help)
+        values.replace ??= []
+        values.replace.push(value)
+      } else values[key] = value
     } else values[key] = true
   }
   if (!['user', 'project'].includes(values.scope) || !['claude', 'agents', 'all'].includes(values.host) ||
       (values.scope === 'project') !== Boolean(values.project)) reject('usage-error', 'invalid-target', 'Select --scope and --host, with --project only for project scope.', help)
-  if (values.link || values.uninstall) reject('blocked', 'unsupported-lifecycle', 'Link and uninstall modes are not available in C25a.', 'Use copy installation. C25b owns removal and C25c owns links.')
+  if (values.link) reject('blocked', 'unsupported-lifecycle', 'Link lifecycle is deferred to C25c.', 'Use copy installation.')
   return values
 }
 
@@ -119,6 +124,9 @@ async function install(selected) {
   const untracked = await child(checkout, 'git', ['ls-files', '--others', '--exclude-standard', '--', '.',
     ...['claude', 'agents'].flatMap(host => [
       `:(glob,exclude)**/.${host}/skills/repo-audit/**`,
+      `:(glob,exclude)**/.${host}/skills/.bstack-stage-*/**`,
+      `:(glob,exclude)**/.${host}/skills/.bstack-backup-*/**`,
+      `:(glob,exclude)**/.${host}/skills/.bstack-install-journal.json`,
       `:(glob,exclude)**/.${host}/skills/.bstack-install.json`]),
     ...generatedPaths.filter(path => isInside(checkout, path))
       .map(path => `:(literal,exclude)${relative(checkout, path).replaceAll('\\', '/')}`)])
@@ -128,14 +136,19 @@ async function install(selected) {
   const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
   for (const entry of destinations) {
     const { destination, ownership, journal } = entry
-    if (await exists(journal)) reject('blocked', 'pending-recovery', `A pending installation journal exists: ${journal}`, 'Preserve the journal and staged files for inspection. Automated resume is pending C25b.')
+    if (await exists(journal)) {
+      entry.recovery = JSON.parse(await readFile(journal, 'utf8'))
+      if (Boolean(entry.recovery.plan?.uninstall) !== Boolean(selected.uninstall)) reject('blocked', 'pending-recovery', 'Resume the original operation before changing lifecycle mode.', help)
+      entry.action = 'resume'
+      continue
+    }
     let previous
     if (await exists(ownership)) previous = JSON.parse(await readFile(ownership, 'utf8'))
-    let action = 'copy'
+    let action = selected.uninstall ? 'no-op' : 'copy'
     if (await exists(destination)) {
       if (!previous || previous.destination !== destination || previous.mode !== 'copy' || previous.schemaVersion !== 1) reject('blocked', 'unowned-collision', `Occupied unowned destination: ${destination}`, 'Preserve the existing folder and select an empty installation destination.')
       if ((await lstat(destination)).isSymbolicLink()) reject('blocked', 'unsupported-lifecycle', `Destination is a link: ${destination}`, 'Link lifecycle support is pending C25c.')
-      let unchanged = previous.sourceVersion === version && canonicalJSON(previous.files) === canonicalJSON(hashes)
+      let unchanged = !selected.uninstall && previous.sourceVersion === version && canonicalJSON(previous.files) === canonicalJSON(hashes)
       if (unchanged) {
         for (const [path, hash] of Object.entries(previous.files)) {
           const installedPath = join(destination, path)
@@ -147,60 +160,109 @@ async function install(selected) {
       }
       if (!unchanged ||
           previous.runtime?.path !== join(destination, 'node_modules') || !previous.runtime.created ||
-          !await runtimeVersion(destination, runtime)) reject('blocked', 'update-pending', `Installation differs from this source or runtime: ${destination}`, 'Preserve installed files. Update and conflict handling are pending C25b.')
-      action = 'no-op'
-    } else if (previous) reject('blocked', 'ownership-conflict', `Ownership exists without its installation: ${ownership}`, 'Preserve the ownership record for recovery inspection.')
+          !await runtimeVersion(destination, runtime)) {
+        entry.previous = previous
+        entry.plan = await planLifecycle(entry, files, version, runtime, selected)
+        action = selected.uninstall ? 'uninstall' : 'update'
+      } else action = 'no-op'
+    } else if (previous) {
+      entry.previous = previous
+      entry.plan = await planLifecycle(entry, files, version, runtime, selected)
+      action = selected.uninstall ? 'uninstall' : 'update'
+    }
     entry.action = action
   }
-  const changes = destinations.flatMap(entry => entry.action === 'no-op' ? [] : [
+  const changes = (await Promise.all(destinations.map(async entry => entry.action === 'resume' && entry.recovery.plan ? await previewRecovery(entry, runtimeVersion) : entry.action === 'no-op' ? [] : entry.plan ? [
+    ...entry.plan.operations.map(operation => ({ action: operation.proposedHash === null ? 'remove' : 'replace', path: join(entry.destination, operation.path), hash: operation.proposedHash })),
+    ...entry.plan.conflicts.map(conflict => ({ action: 'preserve', path: join(entry.destination, conflict.path) })),
+    ...(entry.plan.runtimeAllowed ? [{ action: selected.uninstall ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }] : [])
+  ] : [
     ...files.map(file => ({ action: 'copy', path: join(entry.destination, file.path), hash: file.hash })),
     { action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime },
-    { action: 'ownership', path: entry.ownership }, { action: 'journal', path: entry.journal }])
-  const data = { sourceVersion: version, mode: 'copy', preview: Boolean(selected['dry-run']), destinations, changes }
-  if (selected['dry-run']) return data
-  for (const entry of destinations.filter(entry => entry.action === 'copy')) {
-    await mkdir(entry.parent, { recursive: true })
-    const stage = await mkdtemp(join(entry.parent, '.bstack-stage-'))
-    const record = { schemaVersion: 1, mode: 'copy', sourceVersion: version, destination: entry.destination, files: hashes,
-      runtime: { path: join(entry.destination, 'node_modules'), created: true, version: runtime } }
-    const journal = { schemaVersion: 1, state: 'staging', stage, ownership: entry.ownership, record }
-    const limitations = await saveRecovery(entry.journal, journal)
-    try {
-      for (const file of files) {
-        const path = join(stage, file.path)
-        await mkdir(dirname(path), { recursive: true })
-        await writeFile(path, file.bytes, { flag: 'wx', mode: file.mode })
-      }
-      const result = await child(stage, 'npm', ['ci', '--omit=dev', '--no-audit', '--no-fund'])
-      if (result.status !== 'passed') {
-        journal.runtimeResult = result
-        reject(result.status, 'runtime-install-failed', `Pinned runtime installation failed. Recovery: ${entry.journal}`, 'Inspect the staged package and journal. The destination has not been activated.')
-      }
-      const stagedProblems = await checkPackage(stage)
-      if (stagedProblems.length) throw new CommandError('failed', stagedProblems)
-      if (canonicalJSON(Object.fromEntries((await authored(stage)).map(file => [file.path, file.hash]))) !== canonicalJSON(hashes) || !await runtimeVersion(stage, runtime)) {
-        reject('failed', 'staged-package-changed', 'Staged authored files or pinned runtime do not match the validated source.', 'Inspect the preserved stage and runtime installation output.')
-      }
-      journal.state = 'prepared'
-      await saveRecovery(entry.journal, journal)
-      // Check the empty destination again after dependency scripts have finished.
-      if (await exists(entry.destination) || await exists(entry.ownership) || await resolvePath(root, `.${entry.host}/skills`) !== entry.parent) reject('blocked', 'changed-destination', 'Installation destination changed during staging.', 'Preserve the new content and inspect the journal.')
-      await rename(stage, entry.destination)
-      journal.state = 'activated'
-      await saveRecovery(entry.journal, journal)
-      await saveRecovery(entry.ownership, record)
-      journal.state = 'completed'
-      await saveRecovery(entry.journal, journal)
-      // A completed journal is no longer recovery state.
-      await unlink(entry.journal)
-    } catch (error) {
-      journal.error = error.message
-      await saveRecovery(entry.journal, journal)
-      throw error
-    }
-    data.limitations = limitations
+    { action: 'ownership', path: entry.ownership }, { action: 'journal', path: entry.journal }]))).flat()
+  const data = { sourceVersion: version, mode: 'copy', preview: Boolean(selected['dry-run']), destinations, changes, installations: [] }
+  const report = () => ({ ...data, destinations: destinations.map(({ host, parent, destination, ownership, journal, action, plan }) =>
+    ({ host, parent, destination, ownership, journal, action, ...(plan ? { conflicts: plan.conflicts } : {}) })) })
+  for (const decision of selected.replace ?? []) {
+    if (!destinations.some(entry => entry.plan?.operations.some(operation => `${entry.host}:${operation.path}:${operation.originalHash ?? 'absent'}` === decision))) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
   }
-  return data
+  if (selected['dry-run']) {
+    for (const entry of destinations.filter(entry => entry.action === 'resume' && !entry.recovery.plan)) data.installations.push(await resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child))
+    return report()
+  }
+  try {
+    for (const entry of destinations.filter(entry => entry.action !== 'no-op')) {
+      if (entry.action === 'resume') {
+        if (entry.recovery.plan) {
+          data.installations.push(await applyLifecycle(entry, entry.recovery.plan, entry.recovery.stage, runtimeVersion))
+        } else data.installations.push(await resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child))
+        continue
+      }
+      if (entry.action === 'uninstall') {
+        data.installations.push(await applyLifecycle(entry, entry.plan, null, runtimeVersion))
+        continue
+      }
+      await mkdir(entry.parent, { recursive: true })
+      const stage = await mkdtemp(join(entry.parent, '.bstack-stage-'))
+      const record = { schemaVersion: 1, mode: 'copy', sourceVersion: version, destination: entry.destination, files: hashes,
+        runtime: { path: join(entry.destination, 'node_modules'), created: true, version: runtime } }
+      const journal = { schemaVersion: 1, state: 'staging', stage, ownership: entry.ownership, record,
+        ...(entry.plan ? { update: { previous: entry.previous, plan: entry.plan } } : {}) }
+      const limitations = await saveRecovery(entry.journal, journal)
+      try {
+        for (const file of files) {
+          const path = join(stage, file.path)
+          await mkdir(dirname(path), { recursive: true })
+          await writeFile(path, file.bytes, { flag: 'wx', mode: file.mode })
+        }
+        const result = await child(stage, 'npm', ['ci', '--omit=dev', '--no-audit', '--no-fund'])
+        if (result.status !== 'passed') {
+          journal.runtimeResult = result
+          reject(result.status, 'runtime-install-failed', `Pinned runtime installation failed. Recovery: ${entry.journal}`, 'Inspect the staged package and journal. The destination has not been activated.')
+        }
+        const stagedProblems = await checkPackage(stage)
+        if (stagedProblems.length) throw new CommandError('failed', stagedProblems)
+        if (canonicalJSON(Object.fromEntries((await authored(stage)).map(file => [file.path, file.hash]))) !== canonicalJSON(hashes) || !await runtimeVersion(stage, runtime)) {
+          reject('failed', 'staged-package-changed', 'Staged authored files or pinned runtime do not match the validated source.', 'Inspect the preserved stage and runtime installation output.')
+        }
+        journal.state = 'prepared'
+        await saveRecovery(entry.journal, journal)
+        if (entry.action === 'update') {
+          // The validated stage becomes the recoverable per-file update plan.
+          entry.recovery = null
+          data.installations.push(await applyLifecycle(entry, entry.plan, stage, runtimeVersion))
+          continue
+        }
+        // Check the empty destination again after dependency scripts have finished.
+        if (await exists(entry.destination) || await exists(entry.ownership) || await resolvePath(root, `.${entry.host}/skills`) !== entry.parent) reject('blocked', 'changed-destination', 'Installation destination changed during staging.', 'Preserve the new content and inspect the journal.')
+        await rename(stage, entry.destination)
+        journal.state = 'activated'
+        await saveRecovery(entry.journal, journal)
+        await saveRecovery(entry.ownership, record)
+        journal.state = 'completed'
+        await saveRecovery(entry.journal, journal)
+        // A completed journal is no longer recovery state.
+        await unlink(entry.journal)
+        data.installations.push({ destination: entry.destination, sourceVersion: version, files: hashes, runtime: record.runtime })
+      } catch (error) {
+        // Per-file application owns its journal once staging has finished.
+        if (entry.action !== 'update' || journal.state !== 'prepared') {
+          journal.error = error.message
+          await saveRecovery(entry.journal, journal)
+        }
+        throw error
+      }
+      data.limitations = limitations
+    }
+  } catch (error) {
+    for (const entry of destinations) {
+      if (!data.installations.some(installation => installation.destination === entry.destination)) data.installations.push(await inspectInstallation(entry, runtimeVersion))
+    }
+    error.data = report()
+    throw error
+  }
+  data.blocked = data.installations.some(installation => installation.conflicts?.length)
+  return report()
 }
 
 try {
@@ -211,9 +273,16 @@ try {
     const data = await install(selected)
     if (!selected.json) console.log([`source: ${data.sourceVersion}`, ...data.destinations.map(entry => `${entry.action}: ${entry.destination}`),
       ...data.changes.map(change => `${change.action}: ${change.path}`)].join('\n'))
-    emitResult({ command: 'install', status: 'passed', data }, selected.json)
+    if (!selected.json) for (const installation of data.installations) {
+      console.log(`installed state: ${installation.sourceVersion}`)
+      for (const conflict of installation.conflicts ?? []) console.log(`${conflict.diff}\nDecision: ${conflict.decision}`)
+      if (installation.retained?.length) console.log(`retained: ${installation.retained.join(', ')}`)
+      if (installation.backup) console.log(`backup: ${installation.backup}`)
+    }
+    emitResult({ command: 'install', status: data.blocked ? 'blocked' : 'passed', data }, selected.json)
   }
 } catch (error) {
   emitResult({ command: 'install', status: error instanceof CommandError ? error.status : 'blocked',
+    data: error.data,
     problems: error instanceof CommandError ? error.problems : [{ code: 'install-io-failure', message: error.message, fix: 'Check source and destination access. Preserve any journal and stage for inspection.' }] }, process.argv.includes('--json'))
 }
