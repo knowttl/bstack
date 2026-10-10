@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C25c",
+  "slice": "C25c",
+  "sourceRevision": "04816d8970af704a103627bf20d0136f861a91d9",
+  "environment": {
+    "os": "linux 6.8.0-142-generic x64",
+    "node": "v24.17.0",
+    "tools": { "npm": "11.13.0", "git": "git version 2.54.0" }
+  },
+  "intent": "Implement owned symlink or Windows junction lifecycle with runtime preparation before activation, explicit developer-checkout updates and target-preserving removal, and record available real operating-system execution without substituting Linux for Windows or macOS.",
+  "amendments": [],
+  "cases": [
+    {
+      "id": "AC-73-link-lifecycle",
+      "kind": "automated",
+      "procedure": "tests/scripts/install.test.mjs: link lifecycle previews source runtime, verifies repeats and preserves target in isolated user/project scope; link lifecycle preserves unowned directory/changed target/replaced link/replacement directory; link installation preserves an existing invalid/valid runtime; owned link removal preserves source with invalid/missing manifest without validating the target package; all-host link preflight refuses a later collision before preparing source runtime",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Final-input capture pending.",
+      "nextPrerequisite": "Run and attach final-input full-suite capture through the existing evidence validator."
+    },
+    {
+      "id": "AC-73-link-recovery",
+      "kind": "automated",
+      "procedure": "tests/scripts/install.test.mjs: failed link runtime never activates and retry preserves failed stage content; link lifecycle resumes after link-runtime/link-activate/link-unlink while preserving target content; interrupted link activation preserves a replacement entry and target; interrupted link runtime preserves a replaced preparation stage",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Final-input capture pending.",
+      "nextPrerequisite": "Run and attach final-input full-suite capture through the existing evidence validator."
+    },
+    {
+      "id": "AC-74",
+      "kind": "manual",
+      "procedure": "docs/C25c-operating-systems.md: complete copy/link lifecycle on real Windows, macOS and Linux with supplementary Node 24 and Node 26 execution",
+      "status": "blocked",
+      "artifact": "docs/C25c-operating-systems.md",
+      "reason": "This host is Linux; no Windows or macOS endpoint or manual execution record was supplied. uname -s returned Linux, and command -v powershell.exe pwsh sw_vers found none.",
+      "nextPrerequisite": "Provide real Windows and macOS local/manual lifecycle captures at the final source revision, including versions, commands, exit codes and cleanup observations."
+    }
+  ],
+  "limitations": [
+    "C25c and AC-74 remain blocked until real Windows and macOS executions are recorded. Linux Node 24/26 execution does not substitute for either OS.",
+    "Lifecycle tests use disposable isolated homes/projects, Git snapshots and locally packed fake lavish-axi runtimes with offline npm, not real runtime board interactions.",
+    "The installer itself still requires its shared JavaScript helpers; target manifest validation is bypassed for owned-link removal.",
+    "An existing source runtime differing from the pin is preserved and requires explicit developer preparation. Link removal never deletes source runtime or target content.",
+    "Process-interruption tests do not establish power-loss recovery; directory-flush limitations follow the shared recovery writer.",
+    "Current-agent invocation/loading remains C26 and real-model acceptance remains C27.",
+    "No release, tag, npm publication or hosted CI workflow was created.",
+    "Fixture teardown removes task-created disposable homes/projects, source snapshots, npm caches, fake tarballs, stages, links and backups. No task-created dev stack, image or shared cache requires cleanup."
+  ],
+  "status": "blocked",
+  "commands": [
+    {
+      "id": "full-tests",
+      "executable": "node",
+      "args": ["scripts/test.mjs", "--capture", ".cache/full-suite.json"],
+      "cwd": ".",
+      "exitCode": null,
+      "outputArtifact": null,
+      "status": "blocked",
+      "reason": "Final-input full-suite capture and attachment pending.",
+      "nextPrerequisite": "Commit final source, capture the full suite, then attach it with scripts/task-evidence.mjs."
+    }
+  ]
+}
