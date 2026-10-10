@@ -156,17 +156,18 @@ export async function matchesReplacement(entry, decision, runtimeVersion) {
     const actual = await state(entry.destination, operation.path)
     if (`${entry.host}:${operation.path}:${actual.hash ?? 'absent'}` === decision || actual.hash === operation.proposedHash) return true
   }
-  if (!entry.recovery) return false
+  if (!entry.recovery && !entry.cleanup?.record) return false
   const report = await inspectInstallation(entry, runtimeVersion)
   return report.conflicts.some(conflict => conflict.decision === `--replace ${decision}`)
 }
 
 export async function approveRecoveryReplacements(entry, selected, runtimeVersion) {
-  if (!entry.recovery || !selected.replace?.length) return
+  if ((!entry.recovery && !entry.cleanup?.record) || !selected.replace?.length) return
   const report = await inspectInstallation(entry, runtimeVersion)
   const approved = report.conflicts.filter(conflict => selected.replace.includes(conflict.decision.slice('--replace '.length)) && conflict.decision.startsWith('--replace '))
   if (!approved.length || selected['dry-run']) return
-  const journal = entry.recovery
+  const journal = entry.recovery ??= { schemaVersion: 1, state: 'completed', ownership: entry.ownership,
+    record: structuredClone(entry.cleanup.record) }
   let plan = journal.plan ?? journal.update?.plan
   if (!plan) {
     if (!['activated', 'completed'].includes(journal.state) && await exists(journal.stage)) return
