@@ -494,8 +494,14 @@ Tick each task when its "Done when" commands pass.
         Missing review, stale documents, failed checks, earlier success, recursive leaves and a shallow missing base cannot pass; the documented fetch restores the shallow positive control.
         An extracted prior checker rejects a deleted contract even when the proposed checker returns success.
         Full-suite evidence attaches to `tests/eval/results/tasks/C24b.json`.
-        Hosted CI behavior remains unverified; maintenance guidance remains C24c.
-  - [ ] T3a.7 Write the maintenance reference
+        Hosted CI behavior remains unverified; maintenance guidance is documented in C24c below.
+  - [x] T3a.7 Write the maintenance reference
+    - C24c supplies the [maintenance procedure](../skills/repo-audit/references/maintenance-contract.md) for final change collection, substantive document and unmapped-path assessments, owner decisions, local captures and standalone clean-checkout validation.
+      Routine maintenance reuses approved sources without repeating the interview or full audit, and returns evidence to the project's selected delivery gate without assuming hosted CI.
+      The `ts-shop` with-mode fake host executes the collection, review binding and local/clean standalone flows while preserving and reporting the existing failed checkout journey.
+      `npm test -- --task T3a.7` includes that isolated procedure and the standalone checker controls; [C24c evidence](../tests/eval/results/tasks/C24c.json) records the full Phase 3a fake-only suite.
+      Fake-host execution does not establish real-model semantic judgement or AC-23 final agent acceptance; T4.3 owns the fresh final transcript.
+      Installation and release remain pending.
 - Phase 4: Installation
   - [ ] T4.1 Build the installer
   - [ ] T4.2 Run the basic tests in the current agent

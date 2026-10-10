@@ -65,7 +65,6 @@ Capture the maintained command, tool version, output, exit code and relevant inp
 The same maintained command must work locally and in the project's CI when the project selects one, without ignoring failures.
 For behaviour compatibility, preserve agreed acceptance outcomes rather than proving only that unit checks are green.
 These are evidence requirements for selected enforcement, not a development workflow.
-Maintenance validation remains Phase 3a work.
 
 ## Integrate the maintained command
 
