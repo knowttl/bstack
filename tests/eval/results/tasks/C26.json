@@ -58,10 +58,11 @@
     "The documentation-only fixture has no application or native starting checks, so explicit product readiness remains verification blocked even though invocation and bounded audit execution succeed.",
     "Historical prehost, failing implicit, pre-guard explicit and guard-check attempts are retained separately and are not the selected final installed-byte pair.",
     "Windows and macOS execution is unverified and outside Linux-only AC-74 acceptance under R27. No release, tag, publication or hosted workflow was performed.",
-    "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
+    "Full-suite execution does not replace task-specific agent or manual acceptance procedures.",
+    "The 2688-test capture predates publication-only redaction of implicit/conversation.txt and implicit/observations.json; its original input binding was 9a8b2dec0026c66068014bf5a8b2818eb5c4488593aed71624ad0e3c1e968a21. The refreshed binding identifies published bytes, not a fresh full-suite execution; final-input validation and attachment remain blocked."
   ],
   "sourceRevision": "2b2f0feb883837a92d2fe4a81d0d3289fe24a068",
-  "status": "passed",
+  "status": "blocked",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -198,7 +199,9 @@
       "cwd": ".",
       "exitCode": 0,
       "outputArtifact": "tests/eval/results/tasks/C26.full-tests.txt",
-      "status": "passed"
+      "status": "blocked",
+      "reason": "Published invocation evidence was redacted after this historical full-suite capture.",
+      "nextPrerequisite": "The outer validation phase must capture final inputs and reattach task evidence through scripts/task-evidence.mjs."
     }
   ],
   "validation": {
@@ -1183,7 +1186,7 @@
         {
           "path": "tests/eval/results/invocation-C26/implicit/conversation.txt",
           "executable": false,
-          "sha256": "9ee110afaef52aded394eae93ca687eba4929b90c65cad7bf2c5dc5cb81da2b3"
+          "sha256": "3942dbe292e7dc0e342004d8e233604ccacff13572c94cb8722b460ed9445623"
         },
         {
           "path": "tests/eval/results/invocation-C26/implicit/installer.json",
@@ -1193,7 +1196,7 @@
         {
           "path": "tests/eval/results/invocation-C26/implicit/observations.json",
           "executable": false,
-          "sha256": "46e37931863a6304c03e4ca951f346e5712397d984a92d7bdd1ac9bf64c439d7"
+          "sha256": "5f2d53b8c4b89d43585f91b9a93e1f8479064cc42d4a3c1e57d26fbd7797aec9"
         },
         {
           "path": "tests/eval/results/invocation-C26/implicit/support-tools.json",
@@ -4166,7 +4169,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "9a8b2dec0026c66068014bf5a8b2818eb5c4488593aed71624ad0e3c1e968a21"
+      "sha256": "fdf5aaa55f537a2f81e4e9681fc10ec4d9b5f73e495842c1e6b2f6b255429f4e"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
