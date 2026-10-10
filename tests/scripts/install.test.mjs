@@ -118,6 +118,45 @@ for (const scope of ['user', 'project']) {
   })
 }
 
+for (const scope of ['user', 'project']) {
+  for (const host of ['claude', 'agents']) {
+    test(`all-host install deduplicates ${scope} destinations aliased to ${host}`, async t => {
+      const f = await fixture(t)
+      const selected = scope === 'user' ? f.home : f.project
+      const parent = join(selected, `.${host}/skills`)
+      const alias = host === 'claude' ? 'agents' : 'claude'
+      await mkdir(parent, { recursive: true })
+      await mkdir(join(selected, `.${alias}`))
+      await symlink(parent, join(selected, `.${alias}/skills`), process.platform === 'win32' ? 'junction' : 'dir')
+      const args = ['--scope', scope, ...(scope === 'project' ? ['--project', f.project] : []), '--host', 'all']
+      const preview = f.run(...args, '--dry-run')
+      assert.equal(preview.status, 0, preview.stdout + preview.stderr)
+      assert.equal(preview.value.data.destinations.length, 1)
+      assert.equal(preview.value.data.changes.filter(change => change.action === 'runtime-install').length, 1)
+      assert.deepEqual(await readdir(parent), [])
+      const installed = f.run(...args)
+      assert.equal(installed.status, 0, installed.stdout + installed.stderr)
+      assert.equal(installed.value.data.destinations.length, 1)
+      assert.deepEqual((await readdir(parent)).sort(), ['.bstack-install.json', 'repo-audit'])
+      const repeated = f.run(...args)
+      assert.equal(repeated.status, 0, repeated.stdout + repeated.stderr)
+      assert.deepEqual(repeated.value.data.changes, [])
+      assert.deepEqual(repeated.value.data.destinations.map(entry => entry.action), ['no-op'])
+    })
+  }
+}
+
+test('installed package validation rejects a removed runtime launcher', async t => {
+  const f = await fixture(t)
+  const installed = f.run('--scope', 'project', '--project', f.project, '--host', 'agents')
+  assert.equal(installed.status, 0, installed.stdout + installed.stderr)
+  const destination = join(f.project, '.agents/skills/repo-audit')
+  await rm(join(destination, 'node_modules/lavish-axi/dist/cli.mjs'))
+  const checked = command(process.execPath, [join(root, 'scripts/check-package.mjs'), '--skill', destination], f.project, f.env)
+  assert.equal(checked.status, 1, checked.stdout + checked.stderr)
+  assert.match(checked.stdout, /local-path-missing:.*node_modules\/lavish-axi\/dist\/cli\.mjs/)
+})
+
 test('dry run lists every authored copy and runtime action without changing homes, project or source', async t => {
   const f = await fixture(t, true)
   const before = await Promise.all([inventory(f.home), inventory(f.project), inventory(f.source)])

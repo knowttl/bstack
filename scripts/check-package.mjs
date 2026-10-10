@@ -73,7 +73,7 @@ function paths(text) {
   })
 }
 
-export async function checkPackage(skill) {
+export async function checkPackage(skill, { sourcePreflight = false } = {}) {
   const problems = []
   const files = new Map()
   const add = (code, path, message, fix) => problems.push({ code, path, message: `${path}: ${message}`, fix })
@@ -154,8 +154,9 @@ export async function checkPackage(skill) {
       if (!path) continue
       const target = resolve(/^(?:references|scripts|schemas|assets|agents)\//.test(path) ? skill : dirname(join(skill, file)), path)
       const targetName = relative(skill, target).split(sep).join('/')
-      if (targetName.startsWith('node_modules/') && dependencies.has(targetName.slice('node_modules/'.length).split('/').slice(0, targetName.startsWith('node_modules/@') ? 2 : 1).join('/'))) continue
-      if (targetName === '..' || targetName.startsWith('../') || isAbsolute(targetName) || targetName.split('/').some(part => excluded.has(part))) {
+      const runtimeResource = targetName.startsWith('node_modules/') && dependencies.has(targetName.slice('node_modules/'.length).split('/').slice(0, targetName.startsWith('node_modules/@') ? 2 : 1).join('/'))
+      if (runtimeResource && sourcePreflight) continue
+      if (targetName === '..' || targetName.startsWith('../') || isAbsolute(targetName) || (!runtimeResource && targetName.split('/').some(part => excluded.has(part)))) {
         add('package-closure', file, `Local resource is outside the authored package: ${raw}`, 'Bundle the resource inside the skill folder and reference its authored path.')
         continue
       }
