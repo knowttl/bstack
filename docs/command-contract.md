@@ -862,6 +862,8 @@ Staging retries a failed pinned runtime installation and validates the resulting
 Prepared recovery verifies the pinned runtime without rerunning an already completed installation.
 Updates and removal record per-file original/proposed hashes before mutation and infer completed operations from actual bytes, including a crash between mutation and journal save.
 Runtime updates preserve the old owned directory in the stage before activating the validated runtime, allowing recovery between those renames.
+Runtime removal records entry identities and contents before deletion; retries accept missing recorded entries but preserve and block on changed, recreated or new content.
+Verified recovery-writer temporaries do not change the source version, and failure reports refresh every selected host's actual hashes and runtime while retaining conflict and backup details.
 Unrelated destination content survives resume, and unrelated content added to an update stage is retained and reported rather than discarded with the stage.
 Switching between install and uninstall while a journal is pending blocks until the original operation is resolved.
 Inspect the named journal, actual stage and destination before any explicit cleanup decision.

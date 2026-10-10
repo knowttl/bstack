@@ -123,6 +123,26 @@ async function install(selected) {
     generatedPaths.push(join(parent, 'repo-audit'), join(parent, '.bstack-install.json'))
     generatedParents.push(parent)
   }
+  for (const parent of new Set([root, ...generatedParents].filter(path => isInside(checkout, path)))) {
+    let names
+    try { names = await readdir(parent) } catch (error) { if (error.code === 'ENOENT') continue; throw error }
+    for (const name of names.filter(name => /^\.bstack-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.tmp$/.test(name))) {
+      const path = join(parent, name)
+      if (!(await lstat(path)).isFile()) continue
+      let value
+      try { value = JSON.parse(await readFile(path, 'utf8')) } catch { continue }
+      if (value?.schemaVersion !== 1) continue
+      const destination = join(parent, 'repo-audit')
+      const ownership = join(parent, '.bstack-install.json')
+      const record = value.record ?? value
+      const hostWrite = generatedParents.includes(parent) && record.mode === 'copy' && record.destination === destination &&
+        record.files && record.sourceVersion && (!value.record || value.ownership === ownership &&
+          ['staging', 'prepared', 'activated', 'completed', 'applying'].includes(value.state))
+      const cleanupWrite = parent === root && /^[0-9a-f]{64}$/.test(value.binding ?? '') && Array.isArray(value.entries) &&
+        value.entries.length > 0 && value.entries.every(saved => generatedParents.some(parent => join(parent, 'repo-audit') === saved.destination))
+      if (hostWrite || cleanupWrite) generatedPaths.push(path)
+    }
+  }
   const dirty = await child(checkout, 'git', ['status', '--porcelain', '--untracked-files=no'])
   const untracked = await child(checkout, 'git', ['ls-files', '--others', '--exclude-standard', '--', '.',
     ...['claude', 'agents'].flatMap(host => [
@@ -337,7 +357,11 @@ async function install(selected) {
     if (cleanup) await unlink(cleanupPath)
   } catch (error) {
     for (const entry of destinations) {
-      if (!data.installations.some(installation => installation.destination === entry.destination)) data.installations.push(await inspectInstallation(entry, runtimeVersion))
+      const index = data.installations.findIndex(installation => installation.destination === entry.destination)
+      const actual = await inspectInstallation(entry, runtimeVersion)
+      const refreshed = { ...(index === -1 ? entry.cleanup?.report : data.installations[index]), ...actual }
+      if (index === -1) data.installations.push(refreshed)
+      else data.installations[index] = refreshed
     }
     error.data = report()
     throw error
