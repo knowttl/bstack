@@ -574,6 +574,8 @@ fs.rename = async (from, to) => {
     const journal = JSON.parse(await fs.readFile(to, 'utf8'))
     if (boundary === journal.state) process.exit(86)
   }
+  if (boundary === 'ownership-adopt' && path.endsWith('/.bstack-install.json') && JSON.parse(await fs.readFile(to, 'utf8')).acceptedAdoption) process.exit(86)
+  if (boundary === 'approved-file-rename' && path.endsWith('/repo-audit/SKILL.md')) process.exit(86)
   if (boundary === 'copy-rename' && path.endsWith('/skills/repo-audit')) process.exit(86)
   if (boundary === 'copy-edit' && path.endsWith('/skills/repo-audit')) await fs.writeFile(join(to, 'SKILL.md'), 'Late user edit\\n')
   if (boundary === 'ownership-edit' && !edited && path.endsWith('/.bstack-install.json')) {
@@ -877,7 +879,7 @@ for (const operation of ['replacement', 'obsolete removal', 'uninstall']) {
     const journal = JSON.parse(await readFile(f.journal, 'utf8'))
     const backup = join(journal.backup, path)
     assert.equal(await readFile(backup, 'utf8'), 'Approved us')
-    const result = f.run(...args)
+    const result = f.run(...args, ...decision)
     assert.equal(result.status, 0, result.stdout)
     assert.equal(await readFile(backup, 'utf8'), 'Approved user content\n')
     if (operation === 'replacement') assert.equal(await readFile(join(f.destination, path), 'utf8'), 'Version two\n')
@@ -908,13 +910,64 @@ test('partial backup recovery preserves changed backup content', async t => {
   const journal = JSON.parse(await readFile(f.journal, 'utf8'))
   const backup = join(journal.backup, 'current.md')
   await writeFile(backup, 'User backup edit\n')
-  const result = f.run(...f.args)
+  const result = f.run(...f.args, ...decision)
   assert.equal(result.status, 2, result.stdout)
   assert.equal(result.value.problems[0].code, 'backup-changed')
   assert.equal(await readFile(backup, 'utf8'), 'User backup edit\n')
   assert.equal(await readFile(join(f.destination, 'current.md'), 'utf8'), 'Approved user content\n')
   await lstat(f.journal)
 })
+
+for (const [operation, boundary] of [
+  ['repeat', 'ownership-adopt'],
+  ['update', 'ownership-adopt'], ['update', 'staging'], ['update', 'prepared'],
+  ['update', 'applying'], ['update', 'partial-backup'], ['update', 'approved-file-rename'],
+  ['uninstall', 'ownership-adopt'], ['uninstall', 'applying'], ['uninstall', 'partial-backup'], ['uninstall', 'runtime-remove']
+]) {
+  test(`legacy ${operation} replays its exact approved command after ${boundary}`, async t => {
+    const f = await legacyInstallation(t)
+    if (operation !== 'repeat') await writeFile(join(f.destination, 'SKILL.md'), 'Approved user content\n')
+    const args = [...f.args, ...(operation === 'uninstall' ? ['--uninstall'] : [])]
+    const preview = f.run(...args, '--dry-run')
+    const decisions = preview.value.data.destinations[0].conflicts.flatMap(conflict => conflict.decision.split(' '))
+    const command = [...args, ...decisions]
+    await interrupt(f, boundary)
+    assert.equal(f.run(...command).status, 86)
+    delete f.env.NODE_OPTIONS
+    const resumed = f.run(...command)
+    assert.equal(resumed.status, 0, resumed.stdout)
+    assert.equal(resumed.value.data.installations[0].sourceVersion, operation === 'uninstall' ? 'uninstalled' : 'v0.0.1')
+    if (operation !== 'uninstall') {
+      assert.equal(await readFile(join(f.destination, 'SKILL.md'), 'utf8'), await readFile(join(f.source, 'SKILL.md'), 'utf8'))
+      assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).acceptedAdoption, undefined)
+      assert.equal(f.run(...command).status, 3)
+    }
+  })
+}
+
+for (const change of ['approved file', 'runtime content', 'runtime identity', 'source']) {
+  test(`approved command replay rejects changed ${change} after staging`, async t => {
+    const f = await legacyInstallation(t)
+    await writeFile(join(f.destination, 'SKILL.md'), 'Approved user content\n')
+    const preview = f.run(...f.args, '--dry-run')
+    const decisions = preview.value.data.destinations[0].conflicts.flatMap(conflict => conflict.decision.split(' '))
+    await interrupt(f, 'staging')
+    assert.equal(f.run(...f.args, ...decisions).status, 86)
+    delete f.env.NODE_OPTIONS
+    if (change === 'approved file') await writeFile(join(f.destination, 'SKILL.md'), 'Later user content\n')
+    if (change === 'runtime content') await writeFile(join(f.destination, 'node_modules/keep.txt'), 'Later runtime content\n')
+    if (change === 'runtime identity') {
+      await rename(join(f.destination, 'node_modules'), join(f.project, 'original-runtime'))
+      await cp(join(f.project, 'original-runtime'), join(f.destination, 'node_modules'), { recursive: true })
+    }
+    if (change === 'source') await writeFile(join(f.source, 'new.md'), 'Later source\n')
+    const before = await inventory(f.project)
+    const result = f.run(...f.args, ...decisions)
+    assert.equal(result.status, 3, result.stdout)
+    assert.equal(result.value.problems[0].code, change === 'approved file' ? 'stale-replacement' : 'stale-runtime-decision')
+    assert.deepEqual(await inventory(f.project), before)
+  })
+}
 
 for (const boundary of ['staging', 'prepared', 'copy-rename', 'activated', 'completed']) {
   test(`first copy resumes after interruption at ${boundary} using actual hashes`, async t => {
