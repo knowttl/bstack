@@ -1307,6 +1307,49 @@ for (const path of ['added.md', 'edited.md']) {
   })
 }
 
+for (const operation of ['update', 'copy repair']) {
+  for (const host of ['claude', 'agents']) {
+    for (const change of ['release', 'authored files']) {
+      test(`pending ${operation} binds ${change} before either host mutates with ${host} recovery`, async t => {
+        const f = await fixture(t)
+        const args = ['--scope', 'project', '--project', f.project, '--host', 'all']
+        f.git('tag', 'v0.0.1')
+        if (operation === 'update') {
+          assert.equal(f.run(...args).status, 0)
+          await writeFile(join(f.source, 'current.md'), 'Version two\n')
+          f.git('add', '.')
+          f.git('commit', '-m', 'second release')
+          f.git('tag', 'v0.0.2')
+        } else {
+          await interrupt(f, 'copy-rename')
+          assert.equal(f.run('--scope', 'project', '--project', f.project, '--host', host).status, 86)
+          delete f.env.NODE_OPTIONS
+          await writeFile(join(f.project, `.${host}/skills/repo-audit/SKILL.md`), 'Approved user edit\n')
+          const conflict = f.run(...args).value.data.installations.find(report => report.conflicts.length).conflicts[0]
+          args.push(...conflict.decision.split(' '))
+        }
+        const revision = f.git('rev-parse', 'HEAD')
+        await interrupt(f, host === 'agents' ? 'agents-applying' : 'applying')
+        assert.equal(f.run(...args).status, 86)
+        delete f.env.NODE_OPTIONS
+        const before = await inventory(f.project)
+        if (change === 'authored files') await writeFile(join(f.source, 'current.md'), 'Version three\n')
+        f.git('add', '.')
+        f.git('commit', '--allow-empty', '-m', 'third release')
+        f.git('tag', 'v0.0.3')
+        const rejected = f.run(...args)
+        assert.equal(rejected.status, 2, rejected.stdout)
+        assert.equal(rejected.value.problems[0].code, 'journal-source-changed')
+        assert.deepEqual(await inventory(f.project), before)
+        f.git('checkout', '--detach', revision)
+        const resumed = f.run(...args)
+        assert.equal(resumed.status, 0, resumed.stdout)
+        assert.deepEqual(resumed.value.data.installations.map(report => report.sourceVersion), [operation === 'update' ? 'v0.0.2' : 'v0.0.1', operation === 'update' ? 'v0.0.2' : 'v0.0.1'])
+      })
+    }
+  }
+}
+
 test('activated copy replacement preserves original source binding', async t => {
   const f = await fixture(t)
   const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
