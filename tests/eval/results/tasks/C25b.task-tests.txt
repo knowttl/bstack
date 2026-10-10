@@ -7,663 +7,1359 @@ TAP version 13
 # Subtest: copy install validates the complete package and exact ownership in isolated user scope
 ok 1 - copy install validates the complete package and exact ownership in isolated user scope
   ---
-  duration_ms: 4362.876609
+  duration_ms: 5080.267383
   type: 'test'
   ...
 # Subtest: copy install validates the complete package and exact ownership in isolated project scope
 ok 2 - copy install validates the complete package and exact ownership in isolated project scope
   ---
-  duration_ms: 4517.517303
+  duration_ms: 4947.898524
   type: 'test'
   ...
 # Subtest: all-host install deduplicates user destinations aliased to claude
 ok 3 - all-host install deduplicates user destinations aliased to claude
   ---
-  duration_ms: 3333.653549
+  duration_ms: 3602.228619
   type: 'test'
   ...
 # Subtest: all-host install deduplicates user destinations aliased to agents
 ok 4 - all-host install deduplicates user destinations aliased to agents
   ---
-  duration_ms: 3450.478649
+  duration_ms: 3741.79291
   type: 'test'
   ...
 # Subtest: all-host install deduplicates project destinations aliased to claude
 ok 5 - all-host install deduplicates project destinations aliased to claude
   ---
-  duration_ms: 3255.878977
+  duration_ms: 3623.510069
   type: 'test'
   ...
 # Subtest: all-host install deduplicates project destinations aliased to agents
 ok 6 - all-host install deduplicates project destinations aliased to agents
   ---
-  duration_ms: 3216.222334
+  duration_ms: 3660.158944
   type: 'test'
   ...
 # Subtest: repeat installs preserve development source version at checkout
 ok 7 - repeat installs preserve development source version at checkout
   ---
-  duration_ms: 7165.2881
+  duration_ms: 8290.736337
   type: 'test'
   ...
 # Subtest: repeat installs preserve tagged source version at checkout
 ok 8 - repeat installs preserve tagged source version at checkout
   ---
-  duration_ms: 7331.935846
+  duration_ms: 8759.479999
   type: 'test'
   ...
 # Subtest: repeat installs preserve development source version at nested
 ok 9 - repeat installs preserve development source version at nested
   ---
-  duration_ms: 7036.885783
+  duration_ms: 8677.102001
   type: 'test'
   ...
 # Subtest: repeat installs preserve tagged source version at nested
 ok 10 - repeat installs preserve tagged source version at nested
   ---
-  duration_ms: 7060.443157
+  duration_ms: 8511.747615
   type: 'test'
   ...
 # Subtest: repeat installs preserve development source version at aliased
 ok 11 - repeat installs preserve development source version at aliased
   ---
-  duration_ms: 6475.45231
+  duration_ms: 7239.569402
   type: 'test'
   ...
 # Subtest: repeat installs preserve tagged source version at aliased
 ok 12 - repeat installs preserve tagged source version at aliased
   ---
-  duration_ms: 6429.049086
+  duration_ms: 7033.391017
   type: 'test'
   ...
 # Subtest: repeat installs preserve development source version at distinct aliases
 ok 13 - repeat installs preserve development source version at distinct aliases
   ---
-  duration_ms: 7256.455706
+  duration_ms: 8316.948903
   type: 'test'
   ...
 # Subtest: repeat installs preserve tagged source version at distinct aliases
 ok 14 - repeat installs preserve tagged source version at distinct aliases
   ---
-  duration_ms: 7645.537674
+  duration_ms: 8229.064693
   type: 'test'
   ...
 # Subtest: repeat user install preserves unrelated content including symlinks
 ok 15 - repeat user install preserves unrelated content including symlinks
   ---
-  duration_ms: 4063.171475
+  duration_ms: 4698.459345
   type: 'test'
   ...
 # Subtest: repeat project install preserves unrelated content including symlinks
 ok 16 - repeat project install preserves unrelated content including symlinks
   ---
-  duration_ms: 4047.672587
+  duration_ms: 4653.075227
   type: 'test'
   ...
 # Subtest: repeat install rejects an owned file replaced with missing
 ok 17 - repeat install rejects an owned file replaced with missing
   ---
-  duration_ms: 3976.655296
+  duration_ms: 4794.20883
   type: 'test'
   ...
 # Subtest: repeat install rejects an owned file replaced with directory
 ok 18 - repeat install rejects an owned file replaced with directory
   ---
-  duration_ms: 4179.034018
+  duration_ms: 4740.524926
   type: 'test'
   ...
 # Subtest: repeat install rejects an owned file replaced with symlink
 ok 19 - repeat install rejects an owned file replaced with symlink
   ---
-  duration_ms: 4085.223425
+  duration_ms: 4702.868048
   type: 'test'
   ...
 # Subtest: tracked source changes remain dirty inside installation paths
 ok 20 - tracked source changes remain dirty inside installation paths
   ---
-  duration_ms: 2619.746387
+  duration_ms: 2824.637846
   type: 'test'
   ...
 # Subtest: installed package validation rejects a removed runtime launcher
 ok 21 - installed package validation rejects a removed runtime launcher
   ---
-  duration_ms: 2244.044661
+  duration_ms: 2632.770898
   type: 'test'
   ...
 # Subtest: dry run lists every authored copy and runtime action without changing homes, project or source
 ok 22 - dry run lists every authored copy and runtime action without changing homes, project or source
   ---
-  duration_ms: 1366.162572
+  duration_ms: 1385.936524
   type: 'test'
   ...
 # Subtest: all-host install preserves the existing installer collision fixture before any staging
 ok 23 - all-host install preserves the existing installer collision fixture before any staging
   ---
-  duration_ms: 1330.630056
+  duration_ms: 1340.085968
   type: 'test'
   ...
 # Subtest: source preflight rejects missing-resource without destination mutations
 ok 24 - source preflight rejects missing-resource without destination mutations
   ---
-  duration_ms: 1057.845481
+  duration_ms: 1117.408258
   type: 'test'
   ...
 # Subtest: source preflight rejects outside-resource without destination mutations
 ok 25 - source preflight rejects outside-resource without destination mutations
   ---
-  duration_ms: 1123.913916
+  duration_ms: 1097.90235
   type: 'test'
   ...
 # Subtest: source preflight rejects unpinned-runtime without destination mutations
 ok 26 - source preflight rejects unpinned-runtime without destination mutations
   ---
-  duration_ms: 1146.874341
+  duration_ms: 1091.224661
   type: 'test'
   ...
 # Subtest: source preflight rejects lock-mismatch without destination mutations
 ok 27 - source preflight rejects lock-mismatch without destination mutations
   ---
-  duration_ms: 1094.259041
+  duration_ms: 1132.436364
   type: 'test'
   ...
 # Subtest: source preflight rejects symlink-source without destination mutations
 ok 28 - source preflight rejects symlink-source without destination mutations
   ---
-  duration_ms: 1089.362706
+  duration_ms: 1097.007446
   type: 'test'
   ...
 # Subtest: nested npm failure retains a recoverable stage and journal without activating or claiming ownership
 ok 29 - nested npm failure retains a recoverable stage and journal without activating or claiming ownership
   ---
-  duration_ms: 3241.774298
+  duration_ms: 3225.709654
   type: 'test'
   ...
 # Subtest: edited installations preserve conflicts and link mode remains deferred
 ok 30 - edited installations preserve conflicts and link mode remains deferred
   ---
-  duration_ms: 3455.967989
+  duration_ms: 3937.932967
   type: 'test'
   ...
 # Subtest: exact local snapshot tags are reported while dirty source is labelled development
 ok 31 - exact local snapshot tags are reported while dirty source is labelled development
   ---
-  duration_ms: 1825.03158
+  duration_ms: 1916.228222
   type: 'test'
   ...
 # Subtest: invalid inputs fail before prerequisite or destination work
 ok 32 - invalid inputs fail before prerequisite or destination work
   ---
-  duration_ms: 1136.674164
+  duration_ms: 1130.52748
   type: 'test'
   ...
 # Subtest: unavailable checker dependency returns a structured prerequisite without mutations
 ok 33 - unavailable checker dependency returns a structured prerequisite without mutations
   ---
-  duration_ms: 849.824076
+  duration_ms: 820.721385
   type: 'test'
   ...
 # Subtest: missing system tools block before creating installation state
 ok 34 - missing system tools block before creating installation state
   ---
-  duration_ms: 1146.130432
+  duration_ms: 1162.960728
   type: 'test'
   ...
 # Subtest: clean user update removes obsolete ownership and clean uninstall removes only installer content
 ok 35 - clean user update removes obsolete ownership and clean uninstall removes only installer content
   ---
-  duration_ms: 7028.491871
+  duration_ms: 7427.503601
   type: 'test'
   ...
 # Subtest: clean project update removes obsolete ownership and clean uninstall removes only installer content
 ok 36 - clean project update removes obsolete ownership and clean uninstall removes only installer content
   ---
-  duration_ms: 7387.67378
+  duration_ms: 7208.387185
   type: 'test'
   ...
 # Subtest: noninteractive update reports actual mixed versions, preserves edits and unowned collisions, then accepts specific decisions with backups
 ok 37 - noninteractive update reports actual mixed versions, preserves edits and unowned collisions, then accepts specific decisions with backups
   ---
-  duration_ms: 5782.265505
+  duration_ms: 6467.119535
   type: 'test'
   ...
 # Subtest: stale replacement decisions preserve later edits before any staging
 ok 38 - stale replacement decisions preserve later edits before any staging
   ---
-  duration_ms: 3434.995049
+  duration_ms: 3828.886821
   type: 'test'
   ...
 # Subtest: uninstall retains edited ownership until explicit hash-bound cleanup and preserves unowned runtime
 ok 39 - uninstall retains edited ownership until explicit hash-bound cleanup and preserves unowned runtime
   ---
-  duration_ms: 5065.092963
+  duration_ms: 5817.848566
+  type: 'test'
+  ...
+# Subtest: completion blocks a late update edit to current.md with an actionable decision
+ok 40 - completion blocks a late update edit to current.md with an actionable decision
+  ---
+  duration_ms: 5671.806863
+  type: 'test'
+  ...
+# Subtest: completion blocks a late update edit to SKILL.md with an actionable decision
+ok 41 - completion blocks a late update edit to SKILL.md with an actionable decision
+  ---
+  duration_ms: 5777.383232
+  type: 'test'
+  ...
+# Subtest: completion blocks a late update edit to retired.md with an actionable decision
+ok 42 - completion blocks a late update edit to retired.md with an actionable decision
+  ---
+  duration_ms: 5790.742124
+  type: 'test'
+  ...
+# Subtest: completion blocks runtime drift during final version verification
+ok 43 - completion blocks runtime drift during final version verification
+  ---
+  duration_ms: 4012.618916
+  type: 'test'
+  ...
+# Subtest: completion blocks first-copy edits after activation
+ok 44 - completion blocks first-copy edits after activation
+  ---
+  duration_ms: 3875.790362
+  type: 'test'
+  ...
+# Subtest: completion blocks resumed-copy edits after prepared
+ok 45 - completion blocks resumed-copy edits after prepared
+  ---
+  duration_ms: 4864.28641
+  type: 'test'
+  ...
+# Subtest: completion blocks resumed-copy edits after activated
+ok 46 - completion blocks resumed-copy edits after activated
+  ---
+  duration_ms: 4795.275597
+  type: 'test'
+  ...
+# Subtest: completion retains ownership for a file recreated during uninstall
+ok 47 - completion retains ownership for a file recreated during uninstall
+  ---
+  duration_ms: 4572.948567
+  type: 'test'
+  ...
+# Subtest: completion blocks edits during repeat-install runtime verification
+ok 48 - completion blocks edits during repeat-install runtime verification
+  ---
+  duration_ms: 6402.733947
+  type: 'test'
+  ...
+# Subtest: uninstall preserves a runtime recreated after interrupted removal
+ok 49 - uninstall preserves a runtime recreated after interrupted removal
+  ---
+  duration_ms: 4150.128814
+  type: 'test'
+  ...
+# Subtest: activated copy repair replays approval after partial-backup for agents
+ok 50 - activated copy repair replays approval after partial-backup for agents
+  ---
+  duration_ms: 4467.258145
+  type: 'test'
+  ...
+# Subtest: activated copy repair rejects later edits after partial-backup for agents
+ok 51 - activated copy repair rejects later edits after partial-backup for agents
+  ---
+  duration_ms: 4579.613624
+  type: 'test'
+  ...
+# Subtest: activated copy repair replays approval after approved-file-rename for agents
+ok 52 - activated copy repair replays approval after approved-file-rename for agents
+  ---
+  duration_ms: 4812.615959
+  type: 'test'
+  ...
+# Subtest: activated copy repair rejects later edits after approved-file-rename for agents
+ok 53 - activated copy repair rejects later edits after approved-file-rename for agents
+  ---
+  duration_ms: 4351.414064
+  type: 'test'
+  ...
+# Subtest: activated copy repair replays approval after partial-backup for all
+ok 54 - activated copy repair replays approval after partial-backup for all
+  ---
+  duration_ms: 6235.916631
+  type: 'test'
+  ...
+# Subtest: activated copy repair rejects later edits after partial-backup for all
+ok 55 - activated copy repair rejects later edits after partial-backup for all
+  ---
+  duration_ms: 4999.843954
+  type: 'test'
+  ...
+# Subtest: activated copy repair replays approval after approved-file-rename for all
+ok 56 - activated copy repair replays approval after approved-file-rename for all
+  ---
+  duration_ms: 6274.778868
+  type: 'test'
+  ...
+# Subtest: activated copy repair rejects later edits after approved-file-rename for all
+ok 57 - activated copy repair rejects later edits after approved-file-rename for all
+  ---
+  duration_ms: 5358.00772
+  type: 'test'
+  ...
+# Subtest: update preserves a replacement runtime directory
+ok 58 - update preserves a replacement runtime directory
+  ---
+  duration_ms: 3850.818191
+  type: 'test'
+  ...
+# Subtest: uninstall preserves a replacement runtime directory
+ok 59 - uninstall preserves a replacement runtime directory
+  ---
+  duration_ms: 3616.164779
+  type: 'test'
+  ...
+# Subtest: update recovery rejects a changed canonical destination
+ok 60 - update recovery rejects a changed canonical destination
+  ---
+  duration_ms: 4309.273581
+  type: 'test'
+  ...
+# Subtest: uninstall recovery rejects a changed canonical destination
+ok 61 - uninstall recovery rejects a changed canonical destination
+  ---
+  duration_ms: 3636.547909
+  type: 'test'
+  ...
+# Subtest: first copy recovery rejects a changed canonical destination
+ok 62 - first copy recovery rejects a changed canonical destination
+  ---
+  duration_ms: 2695.237225
+  type: 'test'
+  ...
+# Subtest: update recovery preserves a replacement previous runtime in its stage
+ok 63 - update recovery preserves a replacement previous runtime in its stage
+  ---
+  duration_ms: 4711.594254
+  type: 'test'
+  ...
+# Subtest: prepared copy recovery preserves a replacement staged runtime
+ok 64 - prepared copy recovery preserves a replacement staged runtime
+  ---
+  duration_ms: 2988.914745
+  type: 'test'
+  ...
+# Subtest: legacy runtime ownership does not adopt a directory without identity
+ok 65 - legacy runtime ownership does not adopt a directory without identity
+  ---
+  duration_ms: 3708.686311
+  type: 'test'
+  ...
+# Subtest: legacy runtime decision enables C25a repeat
+ok 66 - legacy runtime decision enables C25a repeat
+  ---
+  duration_ms: 5271.019907
+  type: 'test'
+  ...
+# Subtest: legacy runtime decision enables C25a update
+ok 67 - legacy runtime decision enables C25a update
+  ---
+  duration_ms: 5887.096692
+  type: 'test'
+  ...
+# Subtest: legacy runtime decision enables C25a uninstall
+ok 68 - legacy runtime decision enables C25a uninstall
+  ---
+  duration_ms: 5372.878042
+  type: 'test'
+  ...
+# Subtest: legacy runtime decision rejects stale replacement and preserves content
+ok 69 - legacy runtime decision rejects stale replacement and preserves content
+  ---
+  duration_ms: 3753.59019
+  type: 'test'
+  ...
+# Subtest: legacy runtime decision rejects stale content and preserves content
+ok 70 - legacy runtime decision rejects stale content and preserves content
+  ---
+  duration_ms: 3615.001553
+  type: 'test'
+  ...
+# Subtest: legacy runtime decision rejects stale invalid version and preserves content
+ok 71 - legacy runtime decision rejects stale invalid version and preserves content
+  ---
+  duration_ms: 3488.87752
+  type: 'test'
+  ...
+# Subtest: partial backup resumes an approved replacement from verified original bytes
+ok 72 - partial backup resumes an approved replacement from verified original bytes
+  ---
+  duration_ms: 5346.690506
+  type: 'test'
+  ...
+# Subtest: partial backup resumes an approved obsolete removal from verified original bytes
+ok 73 - partial backup resumes an approved obsolete removal from verified original bytes
+  ---
+  duration_ms: 5479.666131
+  type: 'test'
+  ...
+# Subtest: partial backup resumes an approved uninstall from verified original bytes
+ok 74 - partial backup resumes an approved uninstall from verified original bytes
+  ---
+  duration_ms: 5367.132864
+  type: 'test'
+  ...
+# Subtest: legacy runtime adoption rechecks content before saving ownership
+ok 75 - legacy runtime adoption rechecks content before saving ownership
+  ---
+  duration_ms: 3691.758192
+  type: 'test'
+  ...
+# Subtest: partial backup recovery preserves changed backup content
+ok 76 - partial backup recovery preserves changed backup content
+  ---
+  duration_ms: 5099.111192
+  type: 'test'
+  ...
+# Subtest: legacy repeat replays its exact approved command after ownership-adopt
+ok 77 - legacy repeat replays its exact approved command after ownership-adopt
+  ---
+  duration_ms: 5207.182908
+  type: 'test'
+  ...
+# Subtest: legacy update replays its exact approved command after ownership-adopt
+ok 78 - legacy update replays its exact approved command after ownership-adopt
+  ---
+  duration_ms: 5974.884075
+  type: 'test'
+  ...
+# Subtest: legacy update replays its exact approved command after staging
+ok 79 - legacy update replays its exact approved command after staging
+  ---
+  duration_ms: 6019.350972
+  type: 'test'
+  ...
+# Subtest: legacy update replays its exact approved command after prepared
+ok 80 - legacy update replays its exact approved command after prepared
+  ---
+  duration_ms: 6069.417094
+  type: 'test'
+  ...
+# Subtest: legacy update replays its exact approved command after applying
+ok 81 - legacy update replays its exact approved command after applying
+  ---
+  duration_ms: 6245.929483
+  type: 'test'
+  ...
+# Subtest: legacy update replays its exact approved command after partial-backup
+ok 82 - legacy update replays its exact approved command after partial-backup
+  ---
+  duration_ms: 6369.147206
+  type: 'test'
+  ...
+# Subtest: legacy update replays its exact approved command after approved-file-rename
+ok 83 - legacy update replays its exact approved command after approved-file-rename
+  ---
+  duration_ms: 6138.707564
+  type: 'test'
+  ...
+# Subtest: legacy uninstall replays its exact approved command after ownership-adopt
+ok 84 - legacy uninstall replays its exact approved command after ownership-adopt
+  ---
+  duration_ms: 4765.615052
+  type: 'test'
+  ...
+# Subtest: legacy uninstall replays its exact approved command after applying
+ok 85 - legacy uninstall replays its exact approved command after applying
+  ---
+  duration_ms: 5015.282964
+  type: 'test'
+  ...
+# Subtest: legacy uninstall replays its exact approved command after partial-backup
+ok 86 - legacy uninstall replays its exact approved command after partial-backup
+  ---
+  duration_ms: 4933.805098
+  type: 'test'
+  ...
+# Subtest: legacy uninstall replays its exact approved command after runtime-remove
+ok 87 - legacy uninstall replays its exact approved command after runtime-remove
+  ---
+  duration_ms: 5255.647142
+  type: 'test'
+  ...
+# Subtest: cross-host repeat replays both hosts' decisions after agents-ownership-adopt
+ok 88 - cross-host repeat replays both hosts' decisions after agents-ownership-adopt
+  ---
+  duration_ms: 5712.171701
+  type: 'test'
+  ...
+# Subtest: cross-host update replays both hosts' decisions after agents-staging
+ok 89 - cross-host update replays both hosts' decisions after agents-staging
+  ---
+  duration_ms: 7944.821812
+  type: 'test'
+  ...
+# Subtest: cross-host update replays both hosts' decisions after agents-applying
+ok 90 - cross-host update replays both hosts' decisions after agents-applying
+  ---
+  duration_ms: 7738.511166
+  type: 'test'
+  ...
+# Subtest: cross-host uninstall replays both hosts' decisions after agents-applying
+ok 91 - cross-host uninstall replays both hosts' decisions after agents-applying
+  ---
+  duration_ms: 7278.748023
+  type: 'test'
+  ...
+# Subtest: cross-host replay rejects a changed completed host file
+ok 92 - cross-host replay rejects a changed completed host file
+  ---
+  duration_ms: 6918.286528
+  type: 'test'
+  ...
+# Subtest: cross-host replay rejects a changed completed host runtime
+ok 93 - cross-host replay rejects a changed completed host runtime
+  ---
+  duration_ms: 6420.714907
+  type: 'test'
+  ...
+# Subtest: partial runtime deletion upgrade recovers while preserving none
+ok 94 - partial runtime deletion upgrade recovers while preserving none
+  ---
+  duration_ms: 5924.675045
+  type: 'test'
+  ...
+# Subtest: partial runtime deletion upgrade recovers while preserving new content
+ok 95 - partial runtime deletion upgrade recovers while preserving new content
+  ---
+  duration_ms: 6546.390135
+  type: 'test'
+  ...
+# Subtest: partial runtime deletion upgrade recovers while preserving edited content
+ok 96 - partial runtime deletion upgrade recovers while preserving edited content
+  ---
+  duration_ms: 6614.305112
+  type: 'test'
+  ...
+# Subtest: partial runtime deletion upgrade recovers while preserving replacement directory
+ok 97 - partial runtime deletion upgrade recovers while preserving replacement directory
+  ---
+  duration_ms: 6588.388041
+  type: 'test'
+  ...
+# Subtest: partial runtime deletion uninstall recovers while preserving none
+ok 98 - partial runtime deletion uninstall recovers while preserving none
+  ---
+  duration_ms: 5184.545415
+  type: 'test'
+  ...
+# Subtest: partial runtime deletion uninstall recovers while preserving new content
+ok 99 - partial runtime deletion uninstall recovers while preserving new content
+  ---
+  duration_ms: 5343.339526
+  type: 'test'
+  ...
+# Subtest: partial runtime deletion uninstall recovers while preserving edited content
+ok 100 - partial runtime deletion uninstall recovers while preserving edited content
+  ---
+  duration_ms: 5241.796595
+  type: 'test'
+  ...
+# Subtest: partial runtime deletion uninstall recovers while preserving replacement directory
+ok 101 - partial runtime deletion uninstall recovers while preserving replacement directory
+  ---
+  duration_ms: 5136.365577
+  type: 'test'
+  ...
+# Subtest: incomplete recovery writer ownership empty preserves source binding
+ok 102 - incomplete recovery writer ownership empty preserves source binding
+  ---
+  duration_ms: 5980.311756
+  type: 'test'
+  ...
+# Subtest: incomplete recovery writer ownership partial preserves source binding
+ok 103 - incomplete recovery writer ownership partial preserves source binding
+  ---
+  duration_ms: 6493.093175
+  type: 'test'
+  ...
+# Subtest: incomplete recovery writer journal empty preserves source binding
+ok 104 - incomplete recovery writer journal empty preserves source binding
+  ---
+  duration_ms: 5901.037087
+  type: 'test'
+  ...
+# Subtest: incomplete recovery writer journal partial preserves source binding
+ok 105 - incomplete recovery writer journal partial preserves source binding
+  ---
+  duration_ms: 5980.289685
+  type: 'test'
+  ...
+# Subtest: incomplete recovery writer cleanup empty preserves source binding
+ok 106 - incomplete recovery writer cleanup empty preserves source binding
+  ---
+  duration_ms: 6141.681645
+  type: 'test'
+  ...
+# Subtest: incomplete recovery writer cleanup partial preserves source binding
+ok 107 - incomplete recovery writer cleanup partial preserves source binding
+  ---
+  duration_ms: 5908.925694
+  type: 'test'
+  ...
+# Subtest: failure snapshot retains unowned collisions when a later host fails
+ok 108 - failure snapshot retains unowned collisions when a later host fails
+  ---
+  duration_ms: 6245.521366
+  type: 'test'
+  ...
+# Subtest: failure snapshot retains edited approved additions and recorded backups
+ok 109 - failure snapshot retains edited approved additions and recorded backups
+  ---
+  duration_ms: 6893.113419
+  type: 'test'
+  ...
+# Subtest: failure conflict snapshot refreshes edited unowned collisions during runtime failure
+ok 110 - failure conflict snapshot refreshes edited unowned collisions during runtime failure
+  ---
+  duration_ms: 7970.544341
+  type: 'test'
+  ...
+# Subtest: equal-byte added.md ownership conflict requires its displayed decision
+ok 111 - equal-byte added.md ownership conflict requires its displayed decision
+  ---
+  duration_ms: 5602.36989
+  type: 'test'
+  ...
+# Subtest: equal-byte edited.md ownership conflict requires its displayed decision
+ok 112 - equal-byte edited.md ownership conflict requires its displayed decision
+  ---
+  duration_ms: 5550.102339
+  type: 'test'
+  ...
+# Subtest: activated copy replacement preserves original source binding
+ok 113 - activated copy replacement preserves original source binding
+  ---
+  duration_ms: 4792.037604
+  type: 'test'
+  ...
+# Subtest: recovery writer temporary preserves tagged source binding at staging
+ok 114 - recovery writer temporary preserves tagged source binding at staging
+  ---
+  duration_ms: 3643.738281
+  type: 'test'
+  ...
+# Subtest: recovery writer temporary preserves tagged source binding at prepared
+ok 115 - recovery writer temporary preserves tagged source binding at prepared
+  ---
+  duration_ms: 3677.080322
+  type: 'test'
+  ...
+# Subtest: recovery writer temporary preserves tagged source binding at ownership
+ok 116 - recovery writer temporary preserves tagged source binding at ownership
+  ---
+  duration_ms: 3790.096051
+  type: 'test'
+  ...
+# Subtest: recovery writer temporary preserves tagged source binding at cleanup
+ok 117 - recovery writer temporary preserves tagged source binding at cleanup
+  ---
+  duration_ms: 3856.057965
+  type: 'test'
+  ...
+# Subtest: cross-host failure refreshes earlier actual state and preserves backup details
+ok 118 - cross-host failure refreshes earlier actual state and preserves backup details
+  ---
+  duration_ms: 7113.200326
+  type: 'test'
+  ...
+# Subtest: cleanup failure reports recreated files after earlier ownership retirement
+ok 119 - cleanup failure reports recreated files after earlier ownership retirement
+  ---
+  duration_ms: 6497.009643
+  type: 'test'
+  ...
+# Subtest: moved adoption resumes after runtime-backup with original flags
+ok 120 - moved adoption resumes after runtime-backup with original flags
+  ---
+  duration_ms: 5677.795385
+  type: 'test'
+  ...
+# Subtest: moved adoption resumes after runtime-rename with original flags
+ok 121 - moved adoption resumes after runtime-rename with original flags
+  ---
+  duration_ms: 5843.860853
+  type: 'test'
+  ...
+# Subtest: moved adoption preserves edits after runtime-backup with original flags
+ok 122 - moved adoption preserves edits after runtime-backup with original flags
+  ---
+  duration_ms: 5642.720028
+  type: 'test'
+  ...
+# Subtest: moved adoption preserves edits after runtime-rename with original flags
+ok 123 - moved adoption preserves edits after runtime-rename with original flags
+  ---
+  duration_ms: 5535.82076
+  type: 'test'
+  ...
+# Subtest: moved adoption preserves edits after runtime-backup without original flags
+ok 124 - moved adoption preserves edits after runtime-backup without original flags
+  ---
+  duration_ms: 5477.800256
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact update flags after cleanup-file-claude
+ok 125 - command cleanup replays exact update flags after cleanup-file-claude
+  ---
+  duration_ms: 8427.972485
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact update flags after cleanup-file-agents
+ok 126 - command cleanup replays exact update flags after cleanup-file-agents
+  ---
+  duration_ms: 8033.457166
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact update flags after cleanup-staged-runtime-claude
+ok 127 - command cleanup replays exact update flags after cleanup-staged-runtime-claude
+  ---
+  duration_ms: 8163.206692
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact update flags after cleanup-staged-runtime-agents
+ok 128 - command cleanup replays exact update flags after cleanup-staged-runtime-agents
+  ---
+  duration_ms: 8489.632301
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact update flags after cleanup-journal-claude
+ok 129 - command cleanup replays exact update flags after cleanup-journal-claude
+  ---
+  duration_ms: 8055.282925
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact update flags after cleanup-journal-agents
+ok 130 - command cleanup replays exact update flags after cleanup-journal-agents
+  ---
+  duration_ms: 8368.345839
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact upgrade flags after cleanup-runtime-claude
+ok 131 - command cleanup replays exact upgrade flags after cleanup-runtime-claude
+  ---
+  duration_ms: 8892.271532
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact upgrade flags after cleanup-runtime-agents
+ok 132 - command cleanup replays exact upgrade flags after cleanup-runtime-agents
+  ---
+  duration_ms: 8733.672295
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact repeat flags after cleanup-receipt-claude
+ok 133 - command cleanup replays exact repeat flags after cleanup-receipt-claude
+  ---
+  duration_ms: 6364.889518
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact repeat flags after cleanup-receipt-agents
+ok 134 - command cleanup replays exact repeat flags after cleanup-receipt-agents
+  ---
+  duration_ms: 6463.231349
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact uninstall flags after cleanup-ownership-claude
+ok 135 - command cleanup replays exact uninstall flags after cleanup-ownership-claude
+  ---
+  duration_ms: 8367.593416
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact uninstall flags after cleanup-ownership-agents
+ok 136 - command cleanup replays exact uninstall flags after cleanup-ownership-agents
+  ---
+  duration_ms: 7003.908025
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact uninstall flags after cleanup-journal-claude
+ok 137 - command cleanup replays exact uninstall flags after cleanup-journal-claude
+  ---
+  duration_ms: 7058.277802
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact uninstall flags after cleanup-journal-agents
+ok 138 - command cleanup replays exact uninstall flags after cleanup-journal-agents
+  ---
+  duration_ms: 7036.769035
+  type: 'test'
+  ...
+# Subtest: command cleanup replays exact update flags after cleanup-failure-agents
+ok 139 - command cleanup replays exact update flags after cleanup-failure-agents
+  ---
+  duration_ms: 8660.043925
+  type: 'test'
+  ...
+# Subtest: command cleanup rejects changed installed file after earlier host cleanup
+ok 140 - command cleanup rejects changed installed file after earlier host cleanup
+  ---
+  duration_ms: 7662.593704
+  type: 'test'
+  ...
+# Subtest: command cleanup rejects changed moved runtime after earlier host cleanup
+ok 141 - command cleanup rejects changed moved runtime after earlier host cleanup
+  ---
+  duration_ms: 7883.460768
+  type: 'test'
+  ...
+# Subtest: moved adoption preserves edits detected at final cleanup
+ok 142 - moved adoption preserves edits detected at final cleanup
+  ---
+  duration_ms: 4984.065128
+  type: 'test'
+  ...
+# Subtest: approved command replay rejects changed approved file after staging
+ok 143 - approved command replay rejects changed approved file after staging
+  ---
+  duration_ms: 4163.315706
+  type: 'test'
+  ...
+# Subtest: approved command replay rejects changed runtime content after staging
+ok 144 - approved command replay rejects changed runtime content after staging
+  ---
+  duration_ms: 4041.717639
+  type: 'test'
+  ...
+# Subtest: approved command replay rejects changed runtime identity after staging
+ok 145 - approved command replay rejects changed runtime identity after staging
+  ---
+  duration_ms: 4432.246287
+  type: 'test'
+  ...
+# Subtest: approved command replay rejects changed source after staging
+ok 146 - approved command replay rejects changed source after staging
+  ---
+  duration_ms: 4468.307306
   type: 'test'
   ...
 # Subtest: first copy resumes after interruption at staging using actual hashes
-ok 40 - first copy resumes after interruption at staging using actual hashes
+ok 147 - first copy resumes after interruption at staging using actual hashes
   ---
-  duration_ms: 3843.521054
+  duration_ms: 4183.93237
   type: 'test'
   ...
 # Subtest: first copy resumes after interruption at prepared using actual hashes
-ok 41 - first copy resumes after interruption at prepared using actual hashes
+ok 148 - first copy resumes after interruption at prepared using actual hashes
   ---
-  duration_ms: 4343.370794
+  duration_ms: 4634.391796
   type: 'test'
   ...
 # Subtest: first copy resumes after interruption at copy-rename using actual hashes
-ok 42 - first copy resumes after interruption at copy-rename using actual hashes
+ok 149 - first copy resumes after interruption at copy-rename using actual hashes
   ---
-  duration_ms: 4248.766753
+  duration_ms: 4563.212067
   type: 'test'
   ...
 # Subtest: first copy resumes after interruption at activated using actual hashes
-ok 43 - first copy resumes after interruption at activated using actual hashes
+ok 150 - first copy resumes after interruption at activated using actual hashes
   ---
-  duration_ms: 4174.777543
+  duration_ms: 4507.405583
   type: 'test'
   ...
 # Subtest: first copy resumes after interruption at completed using actual hashes
-ok 44 - first copy resumes after interruption at completed using actual hashes
+ok 151 - first copy resumes after interruption at completed using actual hashes
   ---
-  duration_ms: 4128.141222
+  duration_ms: 4624.5982
   type: 'test'
   ...
 # Subtest: update resumes after interruption at applying without repeating completed mutations
-ok 45 - update resumes after interruption at applying without repeating completed mutations
+ok 152 - update resumes after interruption at applying without repeating completed mutations
   ---
-  duration_ms: 4910.819233
+  duration_ms: 5255.042635
   type: 'test'
   ...
 # Subtest: update resumes after interruption at partial-temp without repeating completed mutations
-ok 46 - update resumes after interruption at partial-temp without repeating completed mutations
+ok 153 - update resumes after interruption at partial-temp without repeating completed mutations
   ---
-  duration_ms: 4806.957478
+  duration_ms: 5287.772011
   type: 'test'
   ...
 # Subtest: update resumes after interruption at file-rename without repeating completed mutations
-ok 47 - update resumes after interruption at file-rename without repeating completed mutations
+ok 154 - update resumes after interruption at file-rename without repeating completed mutations
   ---
-  duration_ms: 4964.929838
+  duration_ms: 5347.215078
   type: 'test'
   ...
 # Subtest: update resumes after interruption at runtime-backup without repeating completed mutations
-ok 48 - update resumes after interruption at runtime-backup without repeating completed mutations
+ok 155 - update resumes after interruption at runtime-backup without repeating completed mutations
   ---
-  duration_ms: 4880.994688
+  duration_ms: 5463.070125
   type: 'test'
   ...
 # Subtest: update resumes after interruption at runtime-rename without repeating completed mutations
-ok 49 - update resumes after interruption at runtime-rename without repeating completed mutations
+ok 156 - update resumes after interruption at runtime-rename without repeating completed mutations
   ---
-  duration_ms: 5128.887113
+  duration_ms: 5477.636241
+  type: 'test'
+  ...
+# Subtest: edited activated copy reports actual state after copy-rename
+ok 157 - edited activated copy reports actual state after copy-rename
+  ---
+  duration_ms: 5175.866698
+  type: 'test'
+  ...
+# Subtest: edited activated copy reports actual state after activated
+ok 158 - edited activated copy reports actual state after activated
+  ---
+  duration_ms: 5655.802996
+  type: 'test'
+  ...
+# Subtest: edited activated copy reports actual state after completed
+ok 159 - edited activated copy reports actual state after completed
+  ---
+  duration_ms: 5446.981277
+  type: 'test'
+  ...
+# Subtest: blocked update reports actual replacement runtime
+ok 160 - blocked update reports actual replacement runtime
+  ---
+  duration_ms: 3946.024105
+  type: 'test'
+  ...
+# Subtest: blocked uninstall reports actual replacement runtime
+ok 161 - blocked uninstall reports actual replacement runtime
+  ---
+  duration_ms: 3773.435025
+  type: 'test'
+  ...
+# Subtest: interrupted update handles edited destination without orphaning temporary ownership
+ok 162 - interrupted update handles edited destination without orphaning temporary ownership
+  ---
+  duration_ms: 6458.116975
+  type: 'test'
+  ...
+# Subtest: interrupted update handles proposed destination without orphaning temporary ownership
+ok 163 - interrupted update handles proposed destination without orphaning temporary ownership
+  ---
+  duration_ms: 4693.599049
+  type: 'test'
+  ...
+# Subtest: interrupted update handles edited temporary without orphaning temporary ownership
+ok 164 - interrupted update handles edited temporary without orphaning temporary ownership
+  ---
+  duration_ms: 4341.551922
+  type: 'test'
+  ...
+# Subtest: aliased lifecycle artifacts preserve tagged source versions for both hosts
+ok 165 - aliased lifecycle artifacts preserve tagged source versions for both hosts
+  ---
+  duration_ms: 7442.932874
   type: 'test'
   ...
 # Subtest: uninstall resumes after a file deletion and reports a later edited owned file
-ok 50 - uninstall resumes after a file deletion and reports a later edited owned file
+ok 166 - uninstall resumes after a file deletion and reports a later edited owned file
   ---
-  duration_ms: 4179.496705
+  duration_ms: 4332.14326
   type: 'test'
   ...
 # Subtest: changed staged recovery bytes block without overwriting or deleting unrelated content
-ok 51 - changed staged recovery bytes block without overwriting or deleting unrelated content
+ok 167 - changed staged recovery bytes block without overwriting or deleting unrelated content
   ---
-  duration_ms: 2758.147306
+  duration_ms: 2745.108513
   type: 'test'
   ...
 # Subtest: runtime failure on update reports the unchanged installed version and retries the verified stage
-ok 52 - runtime failure on update reports the unchanged installed version and retries the verified stage
+ok 168 - runtime failure on update reports the unchanged installed version and retries the verified stage
   ---
-  duration_ms: 4929.477894
+  duration_ms: 5322.716793
   type: 'test'
   ...
 # Subtest: valid skeleton passes from another working directory
-ok 53 - valid skeleton passes from another working directory
+ok 169 - valid skeleton passes from another working directory
   ---
-  duration_ms: 372.229429
+  duration_ms: 401.609058
   type: 'test'
   ...
 # Subtest: missing-path fails with local-path-missing
-ok 54 - missing-path fails with local-path-missing
+ok 170 - missing-path fails with local-path-missing
   ---
-  duration_ms: 75.08016
+  duration_ms: 92.587917
   type: 'test'
   ...
 # Subtest: unlisted-reference fails with reference-unlisted
-ok 55 - unlisted-reference fails with reference-unlisted
+ok 171 - unlisted-reference fails with reference-unlisted
   ---
-  duration_ms: 84.028033
+  duration_ms: 80.91012
   type: 'test'
   ...
 # Subtest: nested-reference fails with reference-nested
-ok 56 - nested-reference fails with reference-nested
+ok 172 - nested-reference fails with reference-nested
   ---
-  duration_ms: 86.058678
+  duration_ms: 83.05604
   type: 'test'
   ...
 # Subtest: oversized-skill fails with skill-too-long
-ok 57 - oversized-skill fails with skill-too-long
+ok 173 - oversized-skill fails with skill-too-long
   ---
-  duration_ms: 82.717188
+  duration_ms: 81.741801
   type: 'test'
   ...
 # Subtest: long-reference fails with reference-toc
-ok 58 - long-reference fails with reference-toc
+ok 174 - long-reference fails with reference-toc
   ---
-  duration_ms: 73.322868
+  duration_ms: 85.482112
   type: 'test'
   ...
 # Subtest: host-metadata fails with host-metadata
-ok 59 - host-metadata fails with host-metadata
+ok 175 - host-metadata fails with host-metadata
   ---
-  duration_ms: 76.133314
+  duration_ms: 80.493063
   type: 'test'
   ...
 # Subtest: undeclared-import fails with script-import
-ok 60 - undeclared-import fails with script-import
+ok 176 - undeclared-import fails with script-import
   ---
-  duration_ms: 80.956055
+  duration_ms: 88.637641
   type: 'test'
   ...
 # Subtest: unexplained-constant fails with constant-comment
-ok 61 - unexplained-constant fails with constant-comment
+ok 177 - unexplained-constant fails with constant-comment
   ---
-  duration_ms: 84.002112
+  duration_ms: 93.073234
   type: 'test'
   ...
 # Subtest: unfinished-step fails with step-done
-ok 62 - unfinished-step fails with step-done
+ok 178 - unfinished-step fails with step-done
   ---
-  duration_ms: 80.76106
+  duration_ms: 86.849365
   type: 'test'
   ...
 # Subtest: language-policy fails with language-policy
-ok 63 - language-policy fails with language-policy
+ok 179 - language-policy fails with language-policy
   ---
-  duration_ms: 75.410198
+  duration_ms: 98.750225
   type: 'test'
   ...
 # Subtest: every independent problem is reported together
-ok 64 - every independent problem is reported together
+ok 180 - every independent problem is reported together
   ---
-  duration_ms: 104.69186
+  duration_ms: 111.13118
   type: 'test'
   ...
 # Subtest: line limits include their boundary and exclude frontmatter
-ok 65 - line limits include their boundary and exclude frontmatter
+ok 181 - line limits include their boundary and exclude frontmatter
   ---
-  duration_ms: 94.851509
+  duration_ms: 104.382619
   type: 'test'
   ...
 # Subtest: contents heading at line twenty permits a long reference
-ok 66 - contents heading at line twenty permits a long reference
+ok 182 - contents heading at line twenty permits a long reference
   ---
-  duration_ms: 179.287797
+  duration_ms: 180.96305
   type: 'test'
   ...
 # Subtest: local paths in source and nested resources resolve from their file
-ok 67 - local paths in source and nested resources resolve from their file
+ok 183 - local paths in source and nested resources resolve from their file
   ---
-  duration_ms: 176.361776
+  duration_ms: 169.076937
   type: 'test'
   ...
 # Subtest: inline link location suffix preserves missing and nested reference checks
-ok 68 - inline link location suffix preserves missing and nested reference checks
+ok 184 - inline link location suffix preserves missing and nested reference checks
   ---
-  duration_ms: 119.259568
+  duration_ms: 101.263278
   type: 'test'
   ...
 # Subtest: image location suffix preserves missing and nested reference checks
-ok 69 - image location suffix preserves missing and nested reference checks
+ok 185 - image location suffix preserves missing and nested reference checks
   ---
-  duration_ms: 101.083883
+  duration_ms: 99.161878
   type: 'test'
   ...
 # Subtest: reference definition location suffix preserves missing and nested reference checks
-ok 70 - reference definition location suffix preserves missing and nested reference checks
+ok 186 - reference definition location suffix preserves missing and nested reference checks
   ---
-  duration_ms: 98.413524
+  duration_ms: 86.833213
   type: 'test'
   ...
 # Subtest: angle destination location suffix preserves missing and nested reference checks
-ok 71 - angle destination location suffix preserves missing and nested reference checks
+ok 187 - angle destination location suffix preserves missing and nested reference checks
   ---
-  duration_ms: 84.0352
+  duration_ms: 93.167403
   type: 'test'
   ...
 # Subtest: encoded destination location suffix preserves missing and nested reference checks
-ok 72 - encoded destination location suffix preserves missing and nested reference checks
+ok 188 - encoded destination location suffix preserves missing and nested reference checks
   ---
-  duration_ms: 96.838119
+  duration_ms: 85.685481
   type: 'test'
   ...
 # Subtest: quoted resource location suffix preserves missing and nested reference checks
-ok 73 - quoted resource location suffix preserves missing and nested reference checks
+ok 189 - quoted resource location suffix preserves missing and nested reference checks
   ---
-  duration_ms: 100.579227
+  duration_ms: 90.359073
   type: 'test'
   ...
 # Subtest: location suffix accepts existing resources and excludes URLs
-ok 74 - location suffix accepts existing resources and excludes URLs
+ok 190 - location suffix accepts existing resources and excludes URLs
   ---
-  duration_ms: 92.897486
+  duration_ms: 92.054105
   type: 'test'
   ...
 # Subtest: unlisted reference diagnostics identify each source file
-ok 75 - unlisted reference diagnostics identify each source file
+ok 191 - unlisted reference diagnostics identify each source file
   ---
-  duration_ms: 94.293519
+  duration_ms: 93.900349
   type: 'test'
   ...
 # Subtest: dependency and cache contents are excluded
-ok 76 - dependency and cache contents are excluded
+ok 192 - dependency and cache contents are excluded
   ---
-  duration_ms: 105.612749
+  duration_ms: 97.94121
   type: 'test'
   ...
 # Subtest: help and invalid arguments have explicit exits
-ok 77 - help and invalid arguments have explicit exits
+ok 193 - help and invalid arguments have explicit exits
   ---
-  duration_ms: 331.345558
+  duration_ms: 334.02561
   type: 'test'
   ...
 # Subtest: referenced dependencies resources must exist
-ok 78 - referenced dependencies resources must exist
+ok 194 - referenced dependencies resources must exist
   ---
-  duration_ms: 193.664049
+  duration_ms: 185.156414
   type: 'test'
   ...
 # Subtest: referenced optionalDependencies resources must exist
-ok 79 - referenced optionalDependencies resources must exist
+ok 195 - referenced optionalDependencies resources must exist
   ---
-  duration_ms: 199.63383
+  duration_ms: 197.032507
   type: 'test'
   ...
 # Subtest: imports accept built-ins, local files and declared runtime package subpaths
-ok 80 - imports accept built-ins, local files and declared runtime package subpaths
+ok 196 - imports accept built-ins, local files and declared runtime package subpaths
   ---
-  duration_ms: 111.048379
+  duration_ms: 101.890746
   type: 'test'
   ...
 # Subtest: import policy refuses import 'undeclared'
-ok 81 - import policy refuses import 'undeclared'
+ok 197 - import policy refuses import 'undeclared'
   ---
-  duration_ms: 99.692441
+  duration_ms: 97.27343
   type: 'test'
   ...
 # Subtest: import policy refuses export * from 'undeclared'
-ok 82 - import policy refuses export * from 'undeclared'
+ok 198 - import policy refuses export * from 'undeclared'
   ---
-  duration_ms: 87.607603
+  duration_ms: 99.892548
   type: 'test'
   ...
 # Subtest: import policy refuses await import('undeclared')
-ok 83 - import policy refuses await import('undeclared')
+ok 199 - import policy refuses await import('undeclared')
   ---
-  duration_ms: 105.568162
+  duration_ms: 93.195389
   type: 'test'
   ...
 # Subtest: import policy refuses require('undeclared')
-ok 84 - import policy refuses require('undeclared')
+ok 200 - import policy refuses require('undeclared')
   ---
-  duration_ms: 99.771803
+  duration_ms: 104.897382
   type: 'test'
   ...
 # Subtest: import policy refuses import 'node:not-a-builtin'
-ok 85 - import policy refuses import 'node:not-a-builtin'
+ok 201 - import policy refuses import 'node:not-a-builtin'
   ---
-  duration_ms: 96.22848
+  duration_ms: 105.269642
   type: 'test'
   ...
 # Subtest: import policy refuses import 'dev-only'
-ok 86 - import policy refuses import 'dev-only'
+ok 202 - import policy refuses import 'dev-only'
   ---
-  duration_ms: 97.598173
+  duration_ms: 87.519834
   type: 'test'
   ...
 # Subtest: strings, comments, regexes and nested constants do not impersonate script policy
-ok 87 - strings, comments, regexes and nested constants do not impersonate script policy
+ok 203 - strings, comments, regexes and nested constants do not impersonate script policy
   ---
-  duration_ms: 92.725498
+  duration_ms: 108.454725
   type: 'test'
   ...
 # Subtest: computed dispatch imports remain outside the literal import control
-ok 88 - computed dispatch imports remain outside the literal import control
+ok 204 - computed dispatch imports remain outside the literal import control
   ---
-  duration_ms: 86.907197
+  duration_ms: 120.491552
   type: 'test'
   ...
 # Subtest: CommonJS top-level return passes
-ok 89 - CommonJS top-level return passes
+ok 205 - CommonJS top-level return passes
   ---
-  duration_ms: 94.148677
+  duration_ms: 92.100583
   type: 'test'
   ...
 # Subtest: CommonJS top-level return preserves script-import
-ok 90 - CommonJS top-level return preserves script-import
+ok 206 - CommonJS top-level return preserves script-import
   ---
-  duration_ms: 103.559931
+  duration_ms: 103.731215
   type: 'test'
   ...
 # Subtest: CommonJS top-level return preserves constant-comment
-ok 91 - CommonJS top-level return preserves constant-comment
+ok 207 - CommonJS top-level return preserves constant-comment
   ---
-  duration_ms: 94.736236
+  duration_ms: 97.950781
   type: 'test'
   ...
 # Subtest: js module rejects top-level return
-ok 92 - js module rejects top-level return
+ok 208 - js module rejects top-level return
   ---
-  duration_ms: 97.625093
+  duration_ms: 91.132761
   type: 'test'
   ...
 # Subtest: mjs module rejects top-level return
-ok 93 - mjs module rejects top-level return
+ok 209 - mjs module rejects top-level return
   ---
-  duration_ms: 97.461679
+  duration_ms: 93.608405
   type: 'test'
   ...
 # Subtest: constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
-ok 94 - constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+ok 210 - constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
   ---
-  duration_ms: 104.024229
+  duration_ms: 106.323174
   type: 'test'
   ...
 # Subtest: constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
-ok 95 - constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+ok 211 - constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
   ---
-  duration_ms: 96.614335
+  duration_ms: 96.46357
   type: 'test'
   ...
 # Subtest: constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
-ok 96 - constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+ok 212 - constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
   ---
-  duration_ms: 101.61344
+  duration_ms: 114.409196
   type: 'test'
   ...
 # Subtest: constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
-ok 97 - constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+ok 213 - constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
   ---
-  duration_ms: 125.893397
+  duration_ms: 89.477756
   type: 'test'
   ...
 # Subtest: constant comment boundary "export const first = 1 // Too late.\\n"
-ok 98 - constant comment boundary "export const first = 1 // Too late.\\n"
+ok 214 - constant comment boundary "export const first = 1 // Too late.\\n"
   ---
-  duration_ms: 120.850366
+  duration_ms: 105.931089
   type: 'test'
   ...
 # Subtest: constant comment boundary "if (true) { const nested = 1 }\\n"
-ok 99 - constant comment boundary "if (true) { const nested = 1 }\\n"
+ok 215 - constant comment boundary "if (true) { const nested = 1 }\\n"
   ---
-  duration_ms: 100.509956
+  duration_ms: 102.790327
   type: 'test'
   ...
 # Subtest: invalid script and manifest refuse unverified imports while other problems collect
-ok 100 - invalid script and manifest refuse unverified imports while other problems collect
+ok 216 - invalid script and manifest refuse unverified imports while other problems collect
   ---
-  duration_ms: 96.693648
+  duration_ms: 103.091855
   type: 'test'
   ...
 # Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
-ok 101 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+ok 217 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
   ---
-  duration_ms: 110.0131
+  duration_ms: 94.765741
   type: 'test'
   ...
 # Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
-ok 102 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+ok 218 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
   ---
-  duration_ms: 89.755629
+  duration_ms: 99.969283
   type: 'test'
   ...
 # Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
-ok 103 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+ok 219 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
   ---
-  duration_ms: 112.422536
+  duration_ms: 101.181969
   type: 'test'
   ...
 # Subtest: step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
-ok 104 - step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+ok 220 - step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
   ---
-  duration_ms: 89.639946
+  duration_ms: 103.648145
   type: 'test'
   ...
 # Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
-ok 105 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+ok 221 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
   ---
-  duration_ms: 95.861312
+  duration_ms: 101.544884
   type: 'test'
   ...
 # Subtest: language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
-ok 106 - language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+ok 222 - language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
   ---
-  duration_ms: 96.875875
+  duration_ms: 95.705264
   type: 'test'
   ...
 # Subtest: language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
-ok 107 - language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+ok 223 - language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
   ---
-  duration_ms: 89.142896
+  duration_ms: 98.464829
   type: 'test'
   ...
 # Subtest: language policy boundary .ruff.toml ""
-ok 108 - language policy boundary .ruff.toml ""
+ok 224 - language policy boundary .ruff.toml ""
   ---
-  duration_ms: 103.726262
+  duration_ms: 104.004632
   type: 'test'
   ...
 # Subtest: language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
-ok 109 - language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+ok 225 - language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
   ---
-  duration_ms: 105.999476
+  duration_ms: 80.246838
   type: 'test'
   ...
-1..109
-# tests 109
+1..225
+# tests 225
 # suites 0
-# pass 109
+# pass 225
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 209696.159697
+# duration_ms 888182.868267
