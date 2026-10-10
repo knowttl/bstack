@@ -53,8 +53,13 @@ export async function inspectInstallation(entry, runtimeVersion) {
   if (record.runtime || runtimeStat) {
     let version = null
     try { version = JSON.parse(await readFile(join(entry.destination, 'node_modules/lavish-axi/package.json'), 'utf8')).version } catch {}
+    const verifiedVersion = version
+    const verified = version !== null && await runtimeVersion(entry.destination, version)
+    version = null
+    try { version = JSON.parse(await readFile(join(entry.destination, 'node_modules/lavish-axi/package.json'), 'utf8')).version } catch {}
+    try { runtimeStat = await lstat(runtimePath) } catch (error) { if (error.code !== 'ENOENT') throw error; runtimeStat = null }
     runtime = { path: runtimePath, created: Boolean(record.runtime?.created && runtimeStat?.isDirectory() && !runtimeStat.isSymbolicLink()),
-      version, verified: version !== null && await runtimeVersion(entry.destination, version) }
+      version, verified: verified && version === verifiedVersion }
   }
   return { destination: entry.destination, files, fileVersions, runtime,
     sourceVersion: canonicalJSON(files) === canonicalJSON(record.files) && (!runtime || runtime.verified && runtime.version === record.runtime?.version) ? record.sourceVersion : 'mixed' }
@@ -84,6 +89,27 @@ function conflictFor(entry, path, actual, original, proposed, bytes) {
     after.map(line => '+' + line).join('\n')
   return { path, actualHash: actual.hash, ownedHash: original, proposedHash: proposed, diff,
     decision: actual.hash === 'non-file' ? 'Restore the owned regular file or review this path before retrying.' : `--replace ${entry.host}:${path}:${actual.hash ?? 'absent'}` }
+}
+
+export async function inspectCompletion(entry, files, runtime, runtimeVersion, conflicts = []) {
+  const report = await inspectInstallation(entry, runtimeVersion)
+  report.conflicts = [...conflicts]
+  for (const file of files) {
+    const actual = await state(entry.destination, file.path)
+    if (actual.hash !== null || file.hash !== null) report.files[file.path] = actual.hash
+    else delete report.files[file.path]
+    if (actual.hash !== file.hash && !report.conflicts.some(conflict => conflict.path === file.path)) {
+      report.conflicts.push(conflictFor(entry, file.path, actual, file.ownedHash ?? file.hash, file.hash, file.bytes))
+    }
+  }
+  if (runtime !== null && (!report.runtime?.verified || report.runtime.version !== runtime || !report.runtime.created) &&
+      !report.conflicts.some(conflict => conflict.path === 'node_modules')) {
+    report.conflicts.push({ path: 'node_modules', actualHash: report.runtime?.version ?? 'absent',
+      diff: `Expected runtime ${runtime}; found ${report.runtime?.version ?? 'absent'} (${report.runtime?.verified ? 'verified' : 'unverified'}).`,
+      decision: 'Review runtime ownership and restore the pinned runtime before retrying.' })
+  }
+  if (report.conflicts.length) report.sourceVersion = 'mixed'
+  return report
 }
 
 export async function planLifecycle(entry, files, version, runtime, selected) {
@@ -251,14 +277,30 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion) {
       runtime = { path: target, created: true, version: journal.plan.runtime }
     } else runtime = { path: target, created: true, version: journal.plan.runtime }
   }
-  const actualFiles = {}
-  for (const path of Object.keys(journal.files)) actualFiles[path] = (await state(entry.destination, path)).hash
   const complete = !journal.plan.uninstall && !conflicts.length && canonicalJSON(journal.files) === canonicalJSON(journal.plan.desired) &&
-    canonicalJSON(actualFiles) === canonicalJSON(journal.plan.desired) && runtime?.version === journal.plan.runtime
+    runtime?.version === journal.plan.runtime
   const record = { ...journal.record, files: journal.files, fileVersions: journal.fileVersions, runtime,
     sourceVersion: complete ? journal.plan.version : journal.plan.uninstall && !Object.keys(journal.files).length && !runtime ? 'uninstalled' : 'mixed' }
   await saveRecovery(entry.ownership, record)
-  const report = { ...await inspectInstallation(entry, runtimeVersion), conflicts, backup: journal.backup }
+  const expected = [
+    ...await Promise.all(Object.entries(journal.plan.desired).map(async ([path, hash]) => {
+      const bytes = await readFile(join(journal.stage, path))
+      if (hashBytes(bytes) !== hash) blocked('staged-package-changed', 'Staged file differs from the recorded plan.')
+      return { path, hash, bytes }
+    })),
+    ...Object.keys(journal.record.files).filter(path => !Object.hasOwn(journal.plan.desired, path))
+      .map(path => ({ path, hash: null, bytes: Buffer.alloc(0), ownedHash: journal.record.files[path] }))
+  ]
+  const report = { ...await inspectCompletion(entry, expected, journal.plan.uninstall ? null : journal.plan.runtime, runtimeVersion, conflicts), backup: journal.backup }
+  for (const conflict of report.conflicts) {
+    if (conflict.path !== 'node_modules' && !Object.hasOwn(record.files, conflict.path) && conflict.ownedHash !== null) {
+      record.files[conflict.path] = conflict.ownedHash
+      record.fileVersions[conflict.path] = journal.record.fileVersions?.[conflict.path] ?? journal.record.sourceVersion
+      report.fileVersions[conflict.path] = record.fileVersions[conflict.path]
+    }
+  }
+  record.sourceVersion = report.sourceVersion
+  await saveRecovery(entry.ownership, record)
   if (journal.plan.uninstall) {
     await removeEmpty(entry.destination, Object.keys(journal.record.files))
     try { report.retained = await retained(entry.destination) } catch (error) { if (error.code !== 'ENOENT') throw error; report.retained = [] }
@@ -317,8 +359,10 @@ export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVer
     await rename(journal.stage, entry.destination)
   }
   await saveRecovery(entry.ownership, journal.record)
+  const report = await inspectCompletion(entry, files, runtime, runtimeVersion)
+  if (report.conflicts.length) await saveRecovery(entry.ownership, { ...journal.record, sourceVersion: 'mixed' })
   await unlink(entry.journal)
-  return { ...await inspectInstallation(entry, runtimeVersion), resumed: true }
+  return { ...report, resumed: true }
 }
 
 async function exists(path) {
