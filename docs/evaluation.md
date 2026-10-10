@@ -8,7 +8,7 @@ No C7a manual score proves host isolation or an acceptance case for the released
 
 ## Scenarios and runs
 
-See the [C26 current-agent checkpoint](../tests/eval/results/invocation-C26/summary.md) for installer-backed invocation observations and its [conditional-loading recheck](../tests/eval/results/invocation-C26/conditional-loading.md) for the later explicit run on corrected loading rules.
+See the [C26 current-agent checkpoint](../tests/eval/results/invocation-C26/summary.md#fresh-paired-validation-on-current-bytes) for fresh installer-backed plain and explicit invocation observations on the corrected loading rules, retained artifacts and telemetry limitations.
 
 `tests/eval/scenarios/scenarios.json` is version 1.
 Each scenario names a fixture registered by the existing builder, an outcome request, an ordered answer script, allowed checkpoints, invocation mode and yes-or-no checks.

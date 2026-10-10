@@ -531,9 +531,8 @@ Tick each task when its "Done when" commands pass.
         The final Node 24 full suite includes mixed copy/link removal and retained-stage recovery repairs; the Node 26 supplement retains its historical source provenance.
         Current-agent loading remains C26 and real-model acceptance remains C27.
   - [ ] T4.2 Run the basic tests in the current agent
-    - [C26 current-host observations](../tests/eval/results/invocation-C26/summary.md) retain the installer-backed invocation pair and its limitations.
-      The later [conditional-loading recheck](../tests/eval/results/invocation-C26/conditional-loading.md) records the explicit run on corrected loading rules; plain invocation has not been rerun on those bytes.
-      [Task evidence](../tests/eval/results/tasks/C26.json) remains blocked pending final-input full-suite capture and attachment by the outer validation phase.
+    - [C26 current-host observations](../tests/eval/results/invocation-C26/summary.md#fresh-paired-validation-on-current-bytes) retain the fresh plain and explicit installed sessions on current corrected skill bytes, plus historical attempts and telemetry limitations.
+      [Task evidence](../tests/eval/results/tasks/C26.json) remains blocked until the outer Test phase refreshes task-specific selections and attaches full-suite evidence on the published inputs, as specified in the checkpoint.
       C27 retains final full-path acceptance.
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release
