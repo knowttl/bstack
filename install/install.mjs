@@ -7,14 +7,14 @@ import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mj
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime } from './lifecycle.mjs'
+import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision } from './lifecycle.mjs'
 
 // Installation always selects the complete skill beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
 // These directories contain runtime or scratch data rather than authored files.
 const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
 // Both human and machine output describe the same supported slice.
-const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--json]\nCopy installs require Node 24+, Git, npm and root development dependencies (npm ci).\nUser scope uses the current home. Project scope requires an existing --project directory.\nRepeat --replace for specific conflicts after reviewing their diff. Interrupted runs resume automatically.\n--link is deferred to C25c.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --uninstall --json'
+const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]\nCopy installs require Node 24+, Git, npm and root development dependencies (npm ci).\nUser scope uses the current home. Project scope requires an existing --project directory.\nRepeat --replace for specific conflicts after reviewing their diff. Use the displayed --adopt-runtime decision to confirm legacy runtime ownership. Interrupted runs resume automatically.\n--link is deferred to C25c.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --uninstall --json'
 
 function reject(status, code, message, fix) {
   throw new CommandError(status, [{ code, message, fix }])
@@ -24,16 +24,16 @@ function options(args) {
   const values = {}
   for (let index = 0; index < args.length; index++) {
     const key = args[index].replace(/^--/, '')
-    if (!args[index].startsWith('--') || !['scope', 'project', 'host', 'dry-run', 'json', 'link', 'uninstall', 'replace'].includes(key) || (key !== 'replace' && Object.hasOwn(values, key))) {
+    if (!args[index].startsWith('--') || !['scope', 'project', 'host', 'dry-run', 'json', 'link', 'uninstall', 'replace', 'adopt-runtime'].includes(key) || (!['replace', 'adopt-runtime'].includes(key) && Object.hasOwn(values, key))) {
       reject('usage-error', 'invalid-arguments', `Unknown or repeated argument: ${args[index]}`, help)
     }
-    if (['scope', 'project', 'host', 'replace'].includes(key)) {
+    if (['scope', 'project', 'host', 'replace', 'adopt-runtime'].includes(key)) {
       const value = args[++index]
       if (!value || value.startsWith('--')) reject('usage-error', 'missing-value', `--${key} requires a value.`, help)
-      if (key === 'replace') {
-        if (!/^(claude|agents):.+:(?:[a-f0-9]{64}|absent)$/.test(value)) reject('usage-error', 'invalid-replacement', 'Replacement must name host, path and the displayed actual hash.', help)
-        values.replace ??= []
-        values.replace.push(value)
+      if (['replace', 'adopt-runtime'].includes(key)) {
+        if (!(key === 'replace' ? /^(claude|agents):.+:(?:[a-f0-9]{64}|absent)$/ : /^(claude|agents):[a-f0-9]{64}$/).test(value)) reject('usage-error', 'invalid-replacement', 'Decision must match the displayed host and hash.', help)
+        values[key] ??= []
+        values[key].push(value)
       } else values[key] = value
     } else values[key] = true
   }
@@ -156,6 +156,12 @@ async function install(selected) {
     if (await exists(destination)) {
       if (!previous || previous.destination !== destination || previous.mode !== 'copy' || previous.schemaVersion !== 1) reject('blocked', 'unowned-collision', `Occupied unowned destination: ${destination}`, 'Preserve the existing folder and select an empty installation destination.')
       if ((await lstat(destination)).isSymbolicLink()) reject('blocked', 'unsupported-lifecycle', `Destination is a link: ${destination}`, 'Link lifecycle support is pending C25c.')
+      entry.runtimeDecision = await legacyRuntimeDecision(entry, previous, runtimeVersion)
+      if (entry.runtimeDecision && selected['adopt-runtime']?.includes(entry.runtimeDecision.value)) {
+        entry.adoptRuntime = entry.runtimeDecision.value
+        previous.runtime = entry.runtimeDecision.runtime
+      }
+      entry.previous = previous
       let unchanged = !selected.uninstall && previous.sourceVersion === version && canonicalJSON(previous.files) === canonicalJSON(hashes)
       if (unchanged) {
         for (const [path, hash] of Object.entries(previous.files)) {
@@ -196,11 +202,21 @@ async function install(selected) {
     for (const decision of selected.replace ?? []) {
       if (!destinations.some(entry => entry.plan?.operations.some(operation => `${entry.host}:${operation.path}:${operation.originalHash ?? 'absent'}` === decision))) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
     }
+    for (const decision of selected['adopt-runtime'] ?? []) {
+      if (!destinations.some(entry => entry.adoptRuntime === decision)) reject('usage-error', 'stale-runtime-decision', 'Runtime decision does not match current verified legacy ownership.', 'Review the current runtime and use its displayed decision.')
+    }
+    for (const entry of destinations.filter(entry => entry.adoptRuntime)) data.changes.push({ action: 'runtime-adopt', path: entry.previous.runtime.path }, { action: 'ownership', path: entry.ownership })
     if (selected['dry-run']) {
       for (const entry of destinations.filter(entry => entry.action === 'resume' && !entry.recovery.plan)) data.installations.push(await resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child))
       return report()
     }
     for (const entry of destinations) {
+      if (entry.adoptRuntime) {
+        const previous = JSON.parse(await readFile(entry.ownership, 'utf8'))
+        const actual = await legacyRuntimeDecision(entry, previous, runtimeVersion)
+        if (actual?.value !== entry.adoptRuntime) reject('usage-error', 'stale-runtime-decision', 'Runtime changed before legacy ownership could be saved.', 'Review the current runtime and use its displayed decision.')
+        await saveRecovery(entry.ownership, { ...previous, runtime: actual.runtime })
+      }
       if (entry.action === 'no-op') {
         if (!selected.uninstall) {
           const installation = await inspectCompletion(entry, files, runtime, runtimeVersion)
