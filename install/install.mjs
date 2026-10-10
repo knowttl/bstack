@@ -7,7 +7,7 @@ import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mj
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, previewRecovery } from './lifecycle.mjs'
+import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery } from './lifecycle.mjs'
 
 // Installation always selects the complete skill beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
@@ -198,7 +198,18 @@ async function install(selected) {
       for (const entry of destinations.filter(entry => entry.action === 'resume' && !entry.recovery.plan)) data.installations.push(await resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child))
       return report()
     }
-    for (const entry of destinations.filter(entry => entry.action !== 'no-op')) {
+    for (const entry of destinations) {
+      if (entry.action === 'no-op') {
+        if (!selected.uninstall) {
+          const installation = await inspectCompletion(entry, files, runtime, runtimeVersion)
+          if (installation.conflicts.length) {
+            const record = JSON.parse(await readFile(entry.ownership, 'utf8'))
+            await saveRecovery(entry.ownership, { ...record, sourceVersion: 'mixed' })
+          }
+          data.installations.push(installation)
+        }
+        continue
+      }
       if (entry.action === 'resume') {
         if (entry.recovery.plan) {
           data.installations.push(await applyLifecycle(entry, entry.recovery.plan, entry.recovery.stage, runtimeVersion))
@@ -248,9 +259,11 @@ async function install(selected) {
         await saveRecovery(entry.ownership, record)
         journal.state = 'completed'
         await saveRecovery(entry.journal, journal)
+        const installation = await inspectCompletion(entry, files, runtime, runtimeVersion)
+        if (installation.conflicts.length) await saveRecovery(entry.ownership, { ...record, sourceVersion: 'mixed' })
         // A completed journal is no longer recovery state.
         await unlink(entry.journal)
-        data.installations.push({ destination: entry.destination, sourceVersion: version, files: hashes, runtime: record.runtime })
+        data.installations.push(installation)
       } catch (error) {
         // Per-file application owns its journal once staging has finished.
         if (entry.action !== 'update' || journal.state !== 'prepared') {

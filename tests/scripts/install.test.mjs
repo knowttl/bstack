@@ -525,10 +525,12 @@ async function interrupt(f, boundary) {
   const hook = join(f.directory, 'interrupt.mjs')
   await writeFile(hook, `import fs from 'node:fs/promises'
 import { syncBuiltinESMExports } from 'node:module'
+import { dirname, join } from 'node:path'
 const rename = fs.rename
 const unlink = fs.unlink
 const copyFile = fs.copyFile
 const boundary = ${JSON.stringify(boundary)}
+let edited = false
 fs.copyFile = async (from, to) => {
   if (boundary === 'partial-temp' && String(to).replaceAll('\\\\', '/').includes('/repo-audit/.bstack-install-') && String(to).endsWith('.tmp')) {
     const bytes = await fs.readFile(from)
@@ -545,6 +547,11 @@ fs.rename = async (from, to) => {
     if (boundary === journal.state) process.exit(86)
   }
   if (boundary === 'copy-rename' && path.endsWith('/skills/repo-audit')) process.exit(86)
+  if (boundary === 'copy-edit' && path.endsWith('/skills/repo-audit')) await fs.writeFile(join(to, 'SKILL.md'), 'Late user edit\\n')
+  if (boundary === 'ownership-edit' && !edited && path.endsWith('/.bstack-install.json')) {
+    edited = true
+    await fs.writeFile(join(dirname(to), 'repo-audit/current.md'), 'Late user edit\\n')
+  }
   if (boundary === 'file-rename' && path.endsWith('/repo-audit/current.md')) process.exit(86)
   if (boundary === 'runtime-backup' && path.endsWith('/previous-runtime')) process.exit(86)
   if (boundary === 'runtime-rename' && path.endsWith('/repo-audit/node_modules')) process.exit(86)
@@ -559,6 +566,112 @@ syncBuiltinESMExports()
 `)
   f.env.NODE_OPTIONS = `--import=${JSON.stringify(hook)}`
 }
+
+async function editOnVersionCheck(f, directory, path, contents, check) {
+  await writeFile(join(directory, 'node_modules/lavish-axi/dist/cli.mjs'), `import { readFileSync, writeFileSync } from 'node:fs'
+const counter = ${JSON.stringify(join(f.directory, 'version-check-count'))}
+let count = 0
+try { count = Number(readFileSync(counter, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
+writeFileSync(counter, String(++count))
+if (count === ${check}) writeFileSync(${JSON.stringify(path)}, ${JSON.stringify(contents)})
+console.log('0.1.78')
+`)
+}
+
+for (const path of ['current.md', 'SKILL.md', 'retired.md']) {
+  test(`completion blocks a late update edit to ${path} with an actionable decision`, async t => {
+    const f = await lifecycle(t)
+    await editOnVersionCheck(f, f.destination, join(f.destination, path), 'Late user edit\n', 2)
+    const result = f.run(...f.args)
+    assert.equal(result.status, 2, result.stdout)
+    const report = result.value.data.installations[0]
+    assert.equal(report.sourceVersion, 'mixed')
+    const conflict = report.conflicts.find(conflict => conflict.path === path)
+    assert.match(conflict.diff, /-Late user edit/)
+    assert.equal(await readFile(join(f.destination, path), 'utf8'), 'Late user edit\n')
+    const ownership = JSON.parse(await readFile(f.ownership, 'utf8'))
+    assert.equal(ownership.sourceVersion, 'mixed')
+    assert.equal(Object.hasOwn(ownership.files, path), true)
+    await writeFile(join(f.destination, 'node_modules/lavish-axi/dist/cli.mjs'), "console.log('0.1.78')\n")
+    const retried = f.run(...f.args, ...conflict.decision.split(' '))
+    assert.equal(retried.status, 0, retried.stdout)
+    assert.equal(retried.value.data.installations[0].sourceVersion, 'v0.0.2')
+  })
+}
+
+test('completion blocks runtime drift during final version verification', async t => {
+  const f = await lifecycle(t)
+  await editOnVersionCheck(f, f.destination, join(f.destination, 'node_modules/lavish-axi/package.json'), JSON.stringify({ version: '0.2.0' }), 2)
+  const result = f.run(...f.args)
+  assert.equal(result.status, 2, result.stdout)
+  const report = result.value.data.installations[0]
+  assert.equal(report.sourceVersion, 'mixed')
+  assert.equal(report.runtime.version, '0.2.0')
+  assert.equal(report.runtime.verified, false)
+  assert.equal(report.conflicts[0].path, 'node_modules')
+  assert.match(report.conflicts[0].decision, /restore the pinned runtime/)
+})
+
+test('completion blocks first-copy edits after activation', async t => {
+  const f = await fixture(t)
+  const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
+  await interrupt(f, 'copy-edit')
+  const result = f.run(...args)
+  assert.equal(result.status, 2, result.stdout)
+  const report = result.value.data.installations[0]
+  assert.equal(report.sourceVersion, 'mixed')
+  assert.equal(report.conflicts[0].path, 'SKILL.md')
+  assert.match(report.conflicts[0].diff, /-Late user edit/)
+  delete f.env.NODE_OPTIONS
+  assert.equal(f.run(...args, ...report.conflicts[0].decision.split(' ')).status, 0)
+})
+
+for (const boundary of ['prepared', 'activated']) {
+  test(`completion blocks resumed-copy edits after ${boundary}`, async t => {
+    const f = await fixture(t)
+    const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
+    await interrupt(f, boundary)
+    assert.equal(f.run(...args).status, 86)
+    delete f.env.NODE_OPTIONS
+    const parent = join(f.project, '.agents/skills')
+    const destination = join(parent, 'repo-audit')
+    const journal = JSON.parse(await readFile(join(parent, '.bstack-install-journal.json'), 'utf8'))
+    await editOnVersionCheck(f, boundary === 'prepared' ? journal.stage : destination, join(destination, 'SKILL.md'), 'Late user edit\n', 3)
+    const result = f.run(...args)
+    assert.equal(result.status, 2, result.stdout)
+    const report = result.value.data.installations[0]
+    assert.equal(report.sourceVersion, 'mixed')
+    assert.equal(report.conflicts[0].path, 'SKILL.md')
+    assert.equal(await readFile(join(destination, 'SKILL.md'), 'utf8'), 'Late user edit\n')
+    assert.equal(f.run(...args, ...report.conflicts[0].decision.split(' ')).status, 0)
+  })
+}
+
+test('completion retains ownership for a file recreated during uninstall', async t => {
+  const f = await lifecycle(t)
+  await interrupt(f, 'ownership-edit')
+  const result = f.run(...f.args, '--uninstall')
+  assert.equal(result.status, 2, result.stdout)
+  const report = result.value.data.installations[0]
+  assert.equal(report.sourceVersion, 'mixed')
+  assert.equal(report.conflicts[0].path, 'current.md')
+  assert.deepEqual(report.retained, ['current.md'])
+  assert.equal(await readFile(join(f.destination, 'current.md'), 'utf8'), 'Late user edit\n')
+  assert.deepEqual(Object.keys(JSON.parse(await readFile(f.ownership, 'utf8')).files), ['current.md'])
+  delete f.env.NODE_OPTIONS
+  assert.equal(f.run(...f.args, '--uninstall', ...report.conflicts[0].decision.split(' ')).status, 0)
+})
+
+test('completion blocks edits during repeat-install runtime verification', async t => {
+  const f = await lifecycle(t)
+  assert.equal(f.run(...f.args).status, 0)
+  await editOnVersionCheck(f, f.destination, join(f.destination, 'current.md'), 'Late user edit\n', 1)
+  const result = f.run(...f.args)
+  assert.equal(result.status, 2, result.stdout)
+  assert.equal(result.value.data.installations[0].sourceVersion, 'mixed')
+  assert.equal(result.value.data.installations[0].conflicts[0].path, 'current.md')
+  assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).sourceVersion, 'mixed')
+})
 
 for (const boundary of ['staging', 'prepared', 'copy-rename', 'activated', 'completed']) {
   test(`first copy resumes after interruption at ${boundary} using actual hashes`, async t => {
