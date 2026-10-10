@@ -83,7 +83,7 @@ async function install(selected) {
   if (!(await lstat(root)).isDirectory()) reject('blocked', 'invalid-directory', 'Installation root must be an existing directory.', 'Select an existing home or project directory.')
   const source = join(checkout, 'skills/repo-audit')
   const hosts = selected.host === 'all' ? ['claude', 'agents'] : [selected.host]
-  const destinations = []
+  let destinations = []
   for (const host of hosts) {
     const parent = await resolvePath(root, `.${host}/skills`)
     const destination = join(parent, 'repo-audit')
@@ -92,16 +92,32 @@ async function install(selected) {
   }
   const linked = []
   const linkStages = []
+  const linkDestinations = []
+  const cleanupPath = join(root, '.bstack-install-cleanup.json')
+  const pendingCleanup = await exists(cleanupPath) ? JSON.parse(await readFile(cleanupPath, 'utf8')) : null
   for (const entry of destinations) {
+    const modes = []
     for (const path of [entry.ownership, entry.journal]) {
       if (await exists(path)) {
         const saved = JSON.parse(await readFile(path, 'utf8'))
         linked.push(saved.mode ?? saved.record?.mode)
+        modes.push(saved.mode ?? saved.record?.mode)
         if ((saved.mode ?? saved.record?.mode) === 'link') linkStages.push(...(saved.runtimeStages ?? saved.record?.runtimeStages ?? []))
       }
     }
+    if (modes.includes('link') || selected.uninstall && pendingCleanup?.linkDestinations?.includes(entry.destination)) linkDestinations.push(entry)
   }
-  if (selected.uninstall && (selected.link || linked.includes('link'))) {
+  let linkRemoval
+  let linkPreview
+  if (selected.uninstall && linkDestinations.length) {
+    if (!linked.includes('copy') && !pendingCleanup) return installLinks({ root, source, destinations, selected, version: 'not-requested' })
+    destinations = destinations.filter(entry => !linkDestinations.includes(entry))
+    const linkSelected = { ...selected,
+      replace: selected.replace?.filter(value => linkDestinations.some(entry => value.startsWith(entry.host + ':'))),
+      'adopt-runtime': selected['adopt-runtime']?.filter(value => linkDestinations.some(entry => value.startsWith(entry.host + ':'))) }
+    linkRemoval = { root, source, destinations: linkDestinations, selected: linkSelected, version: 'not-requested', copyRemoval: true }
+    linkPreview = await installLinks({ ...linkRemoval, selected: { ...linkSelected, 'dry-run': true } })
+  } else if (selected.uninstall && selected.link && !linked.includes('copy') && !pendingCleanup) {
     return installLinks({ root, source, destinations, selected, version: 'not-requested' })
   }
   let checkPackage
@@ -125,10 +141,9 @@ async function install(selected) {
   const revision = await child(checkout, 'git', ['rev-parse', '--verify', 'HEAD'])
   const tag = await child(checkout, 'git', ['describe', '--tags', '--exact-match', 'HEAD'])
   for (const entry of destinations) entry.sourceFiles = files
-  const cleanupPath = join(root, '.bstack-install-cleanup.json')
-  const generatedPaths = [cleanupPath, ...destinations.flatMap(entry => [entry.destination, entry.ownership])]
+  const generatedPaths = [cleanupPath, ...[...destinations, ...linkDestinations].flatMap(entry => [entry.destination, entry.ownership])]
   generatedPaths.push(...linkStages.filter(path => dirname(path) === dirname(source) && /^\.bstack-stage-/.test(path.split(/[\\/]/).at(-1))))
-  const generatedParents = destinations.map(entry => entry.parent)
+  const generatedParents = [...destinations, ...linkDestinations].map(entry => entry.parent)
   for (const host of ['claude', 'agents'].filter(host => !hosts.includes(host))) {
     let parent
     try { parent = await realpath(join(root, `.${host}/skills`)) } catch (error) {
@@ -188,8 +203,8 @@ async function install(selected) {
   const version = tag.status === 'passed' && /^v\d+\.\d+\.\d+$/.test(tag.stdout.trim()) && dirty.status === 'passed' && untracked.status === 'passed' && !sourceDirty ?
     tag.stdout.trim() : `development:${revision.status === 'passed' ? revision.stdout.trim() : 'unversioned'}${sourceDirty ? ':dirty' : ''}`
   const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
-  if (selected.link || linked.includes('link')) {
-    if (!selected.link && !selected.uninstall) reject('blocked', 'link-mode-required', 'Updating a linked checkout requires --link.', 'Review the source checkout and rerun with --link.')
+  if (!selected.uninstall && (selected.link || linked.includes('link'))) {
+    if (!selected.link) reject('blocked', 'link-mode-required', 'Updating a linked checkout requires --link.', 'Review the source checkout and rerun with --link.')
     return installLinks({ root, source, files, hashes, version, runtime, destinations, selected, child, runtimeVersion, checkPackage, authored })
   }
   const cleanupBinding = hashBytes(Buffer.from(canonicalJSON({ destinations: destinations.map(entry => entry.destination), uninstall: Boolean(selected.uninstall), version, hashes, runtime })))
@@ -262,8 +277,11 @@ async function install(selected) {
     entry.action = action
   }
   const data = { sourceVersion: version, mode: 'copy', preview: Boolean(selected['dry-run']), destinations, changes: [], installations: [] }
-  const report = () => ({ ...data, destinations: destinations.map(({ host, parent, destination, ownership, journal, action, plan }) =>
-    ({ host, parent, destination, ownership, journal, action, ...(plan ? { conflicts: plan.conflicts } : {}) })) })
+  const report = () => ({ ...data, mode: linkRemoval ? 'mixed' : data.mode,
+    destinations: [...destinations.map(({ host, parent, destination, ownership, journal, action, plan }) =>
+      ({ host, parent, destination, ownership, journal, action, ...(plan ? { conflicts: plan.conflicts } : {}) })), ...(linkPreview?.destinations ?? [])],
+    changes: [...data.changes, ...(linkPreview?.changes ?? [])],
+    installations: [...data.installations, ...(linkPreview?.installations ?? [])] })
   try {
     data.changes = (await Promise.all(destinations.map(async entry => entry.action === 'cleanup' || entry.action === 'no-op' ? [] : entry.action === 'resume' && entry.recovery.plan ? await previewRecovery(entry, runtimeVersion) : entry.plan ? [
       ...entry.plan.operations.map(operation => ({ action: operation.proposedHash === null ? 'remove' : 'replace', path: join(entry.destination, operation.path), hash: operation.proposedHash })),
@@ -384,7 +402,8 @@ async function install(selected) {
       data.limitations = limitations
     }
     if (!cleanup && destinations.some(entry => entry.recovery || entry.previous?.acceptedAdoption)) {
-      cleanup = { schemaVersion: 1, binding: cleanupBinding, entries: [] }
+      cleanup = { schemaVersion: 1, binding: cleanupBinding, entries: [],
+        ...(linkRemoval ? { linkDestinations: linkDestinations.map(entry => entry.destination) } : {}) }
       for (const entry of destinations) {
         const saved = { destination: entry.destination, recovery: entry.recovery, previous: entry.previous,
           record: await exists(entry.ownership) ? JSON.parse(await readFile(entry.ownership, 'utf8')) : null,
@@ -398,6 +417,7 @@ async function install(selected) {
       entry.saveCleanup = () => saveRecovery(cleanupPath, cleanup)
       await finishLifecycle(entry, data.installations.find(installation => installation.destination === entry.destination), runtimeVersion)
     }
+    if (linkRemoval) linkPreview = await installLinks(linkRemoval)
     if (cleanup) await unlink(cleanupPath)
   } catch (error) {
     for (const entry of destinations) {
