@@ -7,7 +7,7 @@ import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mj
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { planLifecycle, applyLifecycle, finishLifecycle, verifyCleanup, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision, matchesReplacement, matchesRuntimeAdoption } from './lifecycle.mjs'
+import { planLifecycle, applyLifecycle, finishLifecycle, verifyCleanup, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision, matchesReplacement, matchesRuntimeAdoption, approveRecoveryReplacements } from './lifecycle.mjs'
 
 // Installation always selects the complete skill beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
@@ -243,11 +243,12 @@ async function install(selected) {
       { action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime },
       { action: 'ownership', path: entry.ownership }, { action: 'journal', path: entry.journal }]))).flat()
     for (const decision of selected.replace ?? []) {
-      if (!(await Promise.all(destinations.map(entry => matchesReplacement(entry, decision)))).some(Boolean)) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
+      if (!(await Promise.all(destinations.map(entry => matchesReplacement(entry, decision, runtimeVersion)))).some(Boolean)) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
     }
     for (const decision of selected['adopt-runtime'] ?? []) {
       if (!(await Promise.all(destinations.map(entry => matchesRuntimeAdoption(entry, decision, runtimeVersion)))).some(Boolean)) reject('usage-error', 'stale-runtime-decision', 'Runtime decision does not match current verified legacy ownership.', 'Review the current runtime and use its displayed decision.')
     }
+    for (const entry of destinations) await approveRecoveryReplacements(entry, selected, runtimeVersion)
     for (const entry of destinations.filter(entry => entry.adoptRuntime)) data.changes.push({ action: 'runtime-adopt', path: entry.previous.runtime.path }, { action: 'ownership', path: entry.ownership })
     if (selected['dry-run']) {
       for (const entry of destinations.filter(entry => entry.cleanup)) await verifyCleanup(entry, runtimeVersion)

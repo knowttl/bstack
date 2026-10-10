@@ -147,13 +147,59 @@ async function matchesAcceptedRuntime(entry, record, journal) {
   return Boolean(journal?.plan?.uninstall && !await exists(path))
 }
 
-export async function matchesReplacement(entry, decision) {
+export async function matchesReplacement(entry, decision, runtimeVersion) {
   const plan = entry.plan ?? entry.recovery?.plan ?? entry.recovery?.update?.plan
-  const operation = plan?.operations.find(operation => `${entry.host}:${operation.path}:${operation.originalHash ?? 'absent'}` === decision)
-  if (!operation) return false
+  const operation = plan?.operations.find(operation => [operation.originalHash, ...(operation.acceptedHashes ?? [])]
+    .some(hash => `${entry.host}:${operation.path}:${hash ?? 'absent'}` === decision))
   await verifyDestination(entry)
-  const actual = await state(entry.destination, operation.path)
-  return actual.hash === operation.originalHash || actual.hash === operation.proposedHash
+  if (operation) {
+    const actual = await state(entry.destination, operation.path)
+    if (`${entry.host}:${operation.path}:${actual.hash ?? 'absent'}` === decision || actual.hash === operation.proposedHash) return true
+  }
+  if (!entry.recovery || entry.cleanup) return false
+  const report = await inspectInstallation(entry, runtimeVersion)
+  return report.conflicts.some(conflict => conflict.decision === `--replace ${decision}`)
+}
+
+export async function approveRecoveryReplacements(entry, selected, runtimeVersion) {
+  if (!entry.recovery || entry.cleanup || !selected.replace?.length) return
+  const report = await inspectInstallation(entry, runtimeVersion)
+  const approved = report.conflicts.filter(conflict => selected.replace.includes(conflict.decision.slice('--replace '.length)) && conflict.decision.startsWith('--replace '))
+  if (!approved.length || selected['dry-run']) return
+  const journal = entry.recovery
+  let plan = journal.plan ?? journal.update?.plan
+  if (!plan) {
+    if (!['activated', 'completed'].includes(journal.state) && await exists(journal.stage)) return
+    if (canonicalJSON(Object.fromEntries(entry.sourceFiles.map(file => [file.path, file.hash]))) !== canonicalJSON(journal.record.files)) blocked('journal-source-changed', 'Resume requires the original source package and pinned runtime.')
+    const stage = await mkdtemp(join(entry.parent, '.bstack-stage-'))
+    for (const file of entry.sourceFiles) {
+      await mkdir(dirname(join(stage, file.path)), { recursive: true })
+      await writeFile(join(stage, file.path), file.bytes, { mode: file.mode })
+    }
+    journal.stage = stage
+    journal.state = 'applying'
+    journal.files = { ...journal.record.files }
+    journal.fileVersions = { ...journal.record.fileVersions }
+    plan = journal.plan = { operations: [], conflicts: [], desired: journal.record.files, version: journal.record.sourceVersion,
+      runtime: journal.record.runtime.version, uninstall: false, runtimeAllowed: true }
+  }
+  for (const conflict of approved) {
+    const actual = await state(entry.destination, conflict.path)
+    if (actual.hash !== conflict.actualHash) blocked('changed-precondition', 'File changed before recovery approval.')
+    let operation = plan.operations.find(operation => operation.path === conflict.path)
+    if (operation) {
+      operation.acceptedHashes = [...(operation.acceptedHashes ?? []), operation.originalHash]
+      operation.originalHash = actual.hash
+      operation.backupName = `${operation.path}.${actual.hash}`
+    } else {
+      operation = { path: conflict.path, originalHash: actual.hash, proposedHash: conflict.proposedHash,
+        ownedHash: conflict.ownedHash, version: conflict.proposedHash === null ? null : plan.version }
+      plan.operations.push(operation)
+    }
+    operation.backup = actual.bytes !== null
+    plan.conflicts = plan.conflicts.filter(item => item.path !== conflict.path)
+  }
+  await saveRecovery(entry.journal, journal)
 }
 
 export async function matchesRuntimeAdoption(entry, decision, runtimeVersion) {
@@ -220,7 +266,8 @@ export async function inspectInstallation(entry, runtimeVersion, previousReport)
     const actual = await state(entry.destination, path)
     if (Object.hasOwn(record.files, path) || actual.hash !== null) files[path] = actual.hash
     const proposal = proposals.get(path)
-    if (!proposal || actual.hash === proposal.proposedHash || Object.hasOwn(proposal, 'originalHash') && actual.hash === proposal.originalHash) continue
+    const unresolved = plan?.conflicts.some(conflict => conflict.path === path)
+    if (!proposal || !unresolved && (actual.hash === proposal.proposedHash || Object.hasOwn(proposal, 'originalHash') && actual.hash === proposal.originalHash)) continue
     let bytes = Buffer.alloc(0)
     if (proposal.proposedHash !== null) {
       const source = entry.sourceFiles.find(file => file.path === path && file.hash === proposal.proposedHash)
@@ -409,6 +456,22 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
         await unlink(temporary)
       }
     }
+    if (operation.backup && actual.hash === operation.originalHash) {
+      journal.backup ??= await mkdtemp(join(entry.parent, '.bstack-backup-'))
+      await saveRecovery(entry.journal, journal)
+      const backupName = operation.backupName ?? operation.path
+      const backup = join(journal.backup, backupName)
+      await mkdir(dirname(backup), { recursive: true })
+      try { await writeFile(backup, actual.bytes, { flag: 'wx' }) } catch (error) {
+        if (error.code !== 'EEXIST') throw error
+        const saved = await state(journal.backup, backupName)
+        if (!saved.bytes || saved.bytes.length > actual.bytes.length || !saved.bytes.equals(actual.bytes.subarray(0, saved.bytes.length))) blocked('backup-changed', 'Recorded backup contains unrelated content.')
+        if (saved.hash !== actual.hash) {
+          if ((await state(entry.destination, operation.path)).hash !== operation.originalHash) blocked('changed-precondition', 'File changed before backup completion.')
+          await writeFile(backup, actual.bytes)
+        }
+      }
+    }
     // A crash can follow a file rename and precede the journal update.
     if (actual.hash !== operation.proposedHash) {
       if (actual.hash !== operation.originalHash) {
@@ -418,21 +481,6 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
       }
       const target = join(entry.destination, operation.path)
       await resolvePath(entry.destination, operation.path, target)
-      if (operation.backup) {
-        journal.backup ??= await mkdtemp(join(entry.parent, '.bstack-backup-'))
-        await saveRecovery(entry.journal, journal)
-        const backup = join(journal.backup, operation.path)
-        await mkdir(dirname(backup), { recursive: true })
-        try { await writeFile(backup, actual.bytes, { flag: 'wx' }) } catch (error) {
-          if (error.code !== 'EEXIST') throw error
-          const saved = await state(journal.backup, operation.path)
-          if (!saved.bytes || saved.bytes.length > actual.bytes.length || !saved.bytes.equals(actual.bytes.subarray(0, saved.bytes.length))) blocked('backup-changed', 'Recorded backup contains unrelated content.')
-          if (saved.hash !== actual.hash) {
-            if ((await state(entry.destination, operation.path)).hash !== operation.originalHash) blocked('changed-precondition', 'File changed before backup completion.')
-            await writeFile(backup, actual.bytes)
-          }
-        }
-      }
       if (operation.proposedHash === null) {
         if ((await state(entry.destination, operation.path)).hash !== actual.hash) blocked('changed-precondition', 'File changed before removal.')
         await unlink(target)
