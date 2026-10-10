@@ -248,10 +248,10 @@ export async function inspectInstallation(entry, runtimeVersion, previousReport)
   try { journal = JSON.parse(await readFile(entry.journal, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
   journal ??= entry.recovery ?? entry.cleanup?.recovery
   const plan = journal?.plan ?? journal?.update?.plan ?? entry.plan
-  if (!record && journal && !journal.update && !journal.plan && await exists(entry.destination) &&
-      (['activated', 'completed'].includes(journal.state) || !await exists(journal.stage))) record = journal.record
   record ??= entry.cleanup?.record
-  if (!record) return { destination: entry.destination, sourceVersion: 'not-installed' }
+  if (!record && !entry.cleanup && journal && !journal.update && await exists(entry.destination) &&
+      (['activated', 'completed', 'applying'].includes(journal.state) || !await exists(journal.stage))) record = journal.record
+  if (!record) return { destination: entry.destination, sourceVersion: 'not-installed', conflicts: [] }
   const files = {}
   const reportedConflicts = [...(plan?.conflicts ?? []), ...(entry.cleanup?.report.conflicts ?? []), ...(previousReport?.conflicts ?? [])]
   const proposals = new Map(Object.entries(record.files).map(([path, hash]) => [path, { path, ownedHash: hash, proposedHash: hash }]))

@@ -816,6 +816,68 @@ test('uninstall preserves a runtime recreated after interrupted removal', async 
   await lstat(f.journal)
 })
 
+for (const host of ['agents', 'all']) {
+  for (const boundary of ['partial-backup', 'approved-file-rename']) {
+    for (const edited of [false, true]) {
+      test(`activated copy repair ${edited ? 'rejects later edits' : 'replays approval'} after ${boundary} for ${host}`, async t => {
+        const f = await fixture(t)
+        const args = ['--scope', 'project', '--project', f.project, '--host', host]
+        await interrupt(f, 'copy-rename')
+        assert.equal(f.run(...args).status, 86)
+        delete f.env.NODE_OPTIONS
+        if (host === 'all') {
+          await interrupt(f, 'staging')
+          assert.equal(f.run('--scope', 'project', '--project', f.project, '--host', 'agents').status, 86)
+          delete f.env.NODE_OPTIONS
+        }
+        const parent = join(f.project, host === 'all' ? '.claude/skills' : '.agents/skills')
+        const destination = join(parent, 'repo-audit')
+        await writeFile(join(destination, 'SKILL.md'), 'Approved user edit\n')
+        const blocked = f.run(...args)
+        assert.equal(blocked.status, 2, blocked.stdout)
+        const conflict = blocked.value.data.installations[0].conflicts.find(conflict => conflict.path === 'SKILL.md')
+        const approvedArgs = [...args, ...conflict.decision.split(' ')]
+        await interrupt(f, boundary)
+        assert.equal(f.run(...approvedArgs).status, 86)
+        delete f.env.NODE_OPTIONS
+        await assert.rejects(lstat(join(parent, '.bstack-install.json')), { code: 'ENOENT' })
+        const journal = JSON.parse(await readFile(join(parent, '.bstack-install-journal.json'), 'utf8'))
+        const backup = journal.backup
+        if (edited) {
+          await writeFile(join(destination, 'SKILL.md'), 'Later user edit\n')
+          const before = await inventory(f.project)
+          const rejected = f.run(...approvedArgs)
+          assert.equal(rejected.status, 3, rejected.stdout)
+          assert.equal(rejected.value.problems[0].code, 'stale-replacement')
+          const report = rejected.value.data.installations[0]
+          assert.equal(report.sourceVersion, 'mixed')
+          assert.equal(report.backup, backup)
+          assert.equal(report.files['SKILL.md'], createHash('sha256').update('Later user edit\n').digest('hex'))
+          const current = report.conflicts.find(conflict => conflict.path === 'SKILL.md')
+          assert.equal(current.actualHash, report.files['SKILL.md'])
+          assert.equal(current.proposedHash, conflict.proposedHash)
+          assert.ok(current.diff.includes('-Later user edit\n'))
+          assert.equal(current.decision, `--replace ${host === 'all' ? 'claude' : 'agents'}:SKILL.md:${report.files['SKILL.md']}`)
+          if (host === 'all') {
+            assert.equal(rejected.value.data.installations[1].sourceVersion, 'not-installed')
+            assert.deepEqual(rejected.value.data.installations[1].conflicts, [])
+          }
+          assert.deepEqual(await inventory(f.project), before)
+        } else {
+          const resumed = f.run(...approvedArgs)
+          assert.equal(resumed.status, 0, resumed.stdout)
+          assert.equal(resumed.value.data.installations.length, host === 'all' ? 2 : 1)
+          assert.equal(await readFile(join(backup, 'SKILL.md'), 'utf8'), 'Approved user edit\n')
+          assert.equal(await readFile(join(destination, 'SKILL.md'), 'utf8'), await readFile(join(f.source, 'SKILL.md'), 'utf8'))
+          const record = JSON.parse(await readFile(join(parent, '.bstack-install.json'), 'utf8'))
+          assert.equal(record.files['SKILL.md'], conflict.proposedHash)
+          for (const report of resumed.value.data.installations) assert.equal(report.sourceVersion, record.sourceVersion)
+        }
+      })
+    }
+  }
+}
+
 for (const uninstall of [false, true]) {
   test(`${uninstall ? 'uninstall' : 'update'} preserves a replacement runtime directory`, async t => {
     const f = await lifecycle(t)
