@@ -1,0 +1,2 @@
+{"schemaVersion":1,"command":"acceptance","status":"passed","problems":[],"data":{"registered":75,"planned":75,"passed":0},"inputs":{}}
+

@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "stdout": "router unavailable on PATH\nakashic unavailable on PATH\nno-mistakes unavailable on PATH\n",
+  "stderr": "",
+  "durationMs": 2.0421699999999987,
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "cancelled": false,
+  "outputTruncated": false,
+  "error": null,
+  "toolVersion": {
+    "status": "passed",
+    "stdout": "",
+    "stderr": "",
+    "durationMs": 2.075686999999988,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "cancelled": false,
+    "outputTruncated": false,
+    "error": null
+  }
+}

@@ -738,7 +738,7 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Install, update and removal work on Windows, macOS and Linux without losing unrelated files or user edits."
+        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Install, update and removal work on Linux without losing unrelated files or user edits. R27 accepts Linux-only installer evidence; Windows and macOS remain unverified and outside the acceptance scope."
       }
     },
     {

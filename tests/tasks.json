@@ -42,5 +42,6 @@
   "C25a": ["tests/scripts/install.test.mjs", "tests/scripts/package-check.test.mjs"],
   "C25b": ["tests/scripts/install.test.mjs", "tests/scripts/package-check.test.mjs"],
   "C25c": ["tests/scripts/install.test.mjs", "tests/scripts/package-check.test.mjs"],
-  "T4.1": ["tests/scripts/install.test.mjs"]
+  "T4.1": ["tests/scripts/install.test.mjs"],
+  "T4.2": ["tests/scripts/install.test.mjs", "tests/scripts/package-check.test.mjs", "tests/scripts/eval.test.mjs"]
 }

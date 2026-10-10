@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C26",
+  "slice": "C26",
+  "sourceRevision": "9dba001cd8f7cdeaab18bb7c3dcd455f0bb2843f",
+  "intent": "Run T4.2 in the current agent through installer-backed isolated plain and explicit invocations, observing loading conditions without requiring router, akashic or no-mistakes.",
+  "amendments": ["R27: AC-74 installer acceptance is Linux-only; Windows and macOS remain unverified and outside this task's acceptance scope."],
+  "status": "passed",
+  "environment": {"os": "linux 6.8.0-142-generic x64", "node": "v24.17.0", "tools": {"codex": "codex-cli 0.162.1", "model": "gpt-6.1-sol medium"}},
+  "commands": [
+    {"id": "implicit-install", "executable": "node", "args": ["install/install.mjs", "--scope", "project", "--project", "[fixture]", "--host", "agents", "--json"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/invocation-C26/implicit/installer.json", "status": "passed"},
+    {"id": "explicit-install", "executable": "node", "args": ["install/install.mjs", "--scope", "project", "--project", "[fixture]", "--host", "agents", "--json"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/invocation-C26/explicit/installer.json", "status": "passed"},
+    {"id": "implicit-host", "executable": "codex", "args": ["--no-daemon", "exec", "--disable", "multi_agent", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6.1-sol", "--sandbox", "danger-full-access", "-c", "model_reasoning_effort=\"medium\"", "audit this repo"], "cwd": "[fixture]", "exitCode": 0, "outputArtifact": "tests/eval/results/invocation-C26/implicit/conversation.txt", "resultPaths": ["tests/eval/results/invocation-C26/implicit/observations.json"], "status": "passed"},
+    {"id": "explicit-host", "executable": "codex", "args": ["--no-daemon", "exec", "--disable", "multi_agent", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6.1-sol", "--sandbox", "danger-full-access", "-c", "model_reasoning_effort=\"medium\"", "$repo-audit\nAudit this repo and recommend principles and checks appropriate to its approved goals. Present recommendations only."], "cwd": "[fixture]", "exitCode": 0, "outputArtifact": "tests/eval/results/invocation-C26/explicit/conversation.txt", "resultPaths": ["tests/eval/results/invocation-C26/explicit/observations.json"], "status": "passed"},
+    {"id": "check", "executable": "npm", "args": ["run", "check"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C26.check.txt", "status": "passed"},
+    {"id": "registry", "executable": "node", "args": ["scripts/acceptance.mjs", "--check-registry"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C26.registry.txt", "status": "passed"}
+  ],
+  "cases": [
+    {"id": "AC-39", "kind": "agent", "procedure": "T4.2: manually review explicit transcript lines 10, 18 and 20 against the shipped load-when table, as mapped in the C26 summary.", "status": "passed", "artifact": "tests/eval/results/invocation-C26/summary.md"},
+    {"id": "AC-40", "kind": "agent", "procedure": "T4.2: review the complete explicit command trace for script execution versus source reads and absent board-asset reads. Board interaction is not exercised in this bounded checkpoint.", "status": "passed", "artifact": "tests/eval/results/invocation-C26/explicit/conversation.txt"},
+    {"id": "AC-42", "kind": "agent", "procedure": "T4.2: exact plain request in a fresh installed session; review all command events for no bundled command, reference or schema use. Incidental SKILL.md reading and independent Lavish report creation remain visible.", "status": "passed", "artifact": "tests/eval/results/invocation-C26/implicit/conversation.txt"},
+    {"id": "AC-43", "kind": "agent", "procedure": "T4.2: fresh explicit $repo-audit request opens the skill and executes installed inspect/inventory at transcript lines 10-14, proceeding to recommendations.", "status": "passed", "artifact": "tests/eval/results/invocation-C26/explicit/conversation.txt"},
+    {"id": "AC-56", "kind": "manual", "procedure": "T4.2: isolated home/fixture and actual child-PATH probes show router, akashic and no-mistakes unavailable; explicit audit commands execute without invoking them.", "status": "passed", "artifact": "tests/eval/results/invocation-C26/explicit/support-tools.json"},
+    {"id": "AC-75", "kind": "agent", "procedure": "T4.2 bounded discovery and audit execution through the project-installed skill, fresh Codex thread, actual command events and recommendations; C27 complete paths remain pending.", "status": "passed", "artifact": "tests/eval/results/invocation-C26/summary.md"}
+  ],
+  "limitations": [
+    "This records bounded current-host development observations, not final acceptance selections, complete product paths, or a host/model matrix; C27 owns final full-path evidence.",
+    "Codex exposes command-driven file opens, not comprehensive automatic startup-loader telemetry. Loading verdicts use only observed commands and outputs.",
+    "The plain host still reads SKILL.md as repository content; the guard prevents execution of its procedure rather than blocking filesystem reads.",
+    "The plain host independently discovers the Lavish skill in the installed runtime and creates a disposable .lavish report. Its fixture is not unchanged; explicit fixture bytes are unchanged. These are not bstack board observations.",
+    "The documentation-only fixture has no application or native starting checks, so explicit product readiness remains verification blocked even though invocation and bounded audit execution succeed.",
+    "Historical prehost, failing implicit, pre-guard explicit and guard-check attempts are retained separately and are not the selected final installed-byte pair.",
+    "Windows and macOS execution is unverified and outside Linux-only AC-74 acceptance under R27. No release, tag, publication or hosted workflow was performed."
+  ]
+}
