@@ -361,8 +361,9 @@ Without web access, mark language and outside recommendations "not researched" w
 Read only the one reference needed for the current step, once per run unless it changes.
 Every reference is linked directly here, without another skill or nested reference chain.
 Run scripts without loading their source, and pass assets to scripts without reading them as instructions.
-The intent interview, grilling, domain-language, vision, research briefs, enforcement and architecture references are available.
-The maintenance-contract reference covers bounded change evidence and local or standalone validation.
+Content searches also read files: restrict each search to named resources whose load conditions apply to the current step.
+Never recursively search bundled reference or schema directories to discover guidance or configuration; use this table and documented command help instead.
+Load a schema only to prepare or validate input for a command required by the current step; audit recommendations use `schemas/findings.schema.json`, not the change-maintenance schema.
 
 | When | Open |
 |---|---|
