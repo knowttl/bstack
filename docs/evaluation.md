@@ -8,9 +8,7 @@ No C7a manual score proves host isolation or an acceptance case for the released
 
 ## Scenarios and runs
 
-The [C26 current-agent checkpoint](../tests/eval/results/invocation-C26/summary.md) records installer-backed plain and explicit sessions, actual command-open observations, an implicit invocation regression and its entry-guard correction.
-It includes the host's incidental read of SKILL.md, independent Lavish activity during an ordinary audit, exact installed-byte hashes and isolated cleanup.
-It does not substitute prose compliance for loading telemetry or establish C27 full-path acceptance.
+See the [C26 current-agent checkpoint](../tests/eval/results/invocation-C26/summary.md) for installer-backed invocation observations and its [conditional-loading recheck](../tests/eval/results/invocation-C26/conditional-loading.md) for the later explicit run on corrected loading rules.
 
 `tests/eval/scenarios/scenarios.json` is version 1.
 Each scenario names a fixture registered by the existing builder, an outcome request, an ordered answer script, allowed checkpoints, invocation mode and yes-or-no checks.
