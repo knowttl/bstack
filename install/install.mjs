@@ -91,11 +91,13 @@ async function install(selected) {
     destinations.push({ host, parent, destination, ownership: join(parent, '.bstack-install.json'), journal: join(parent, '.bstack-install-journal.json') })
   }
   const linked = []
+  const linkStages = []
   for (const entry of destinations) {
     for (const path of [entry.ownership, entry.journal]) {
       if (await exists(path)) {
         const saved = JSON.parse(await readFile(path, 'utf8'))
         linked.push(saved.mode ?? saved.record?.mode)
+        if ((saved.mode ?? saved.record?.mode) === 'link') linkStages.push(...(saved.runtimeStages ?? saved.record?.runtimeStages ?? []))
       }
     }
   }
@@ -125,6 +127,7 @@ async function install(selected) {
   for (const entry of destinations) entry.sourceFiles = files
   const cleanupPath = join(root, '.bstack-install-cleanup.json')
   const generatedPaths = [cleanupPath, ...destinations.flatMap(entry => [entry.destination, entry.ownership])]
+  generatedPaths.push(...linkStages.filter(path => dirname(path) === dirname(source) && /^\.bstack-stage-/.test(path.split(/[\\/]/).at(-1))))
   const generatedParents = destinations.map(entry => entry.parent)
   for (const host of ['claude', 'agents'].filter(host => !hosts.includes(host))) {
     let parent
@@ -134,6 +137,12 @@ async function install(selected) {
     }
     generatedPaths.push(join(parent, 'repo-audit'), join(parent, '.bstack-install.json'))
     generatedParents.push(parent)
+    for (const path of [join(parent, '.bstack-install.json'), join(parent, '.bstack-install-journal.json')]) {
+      if (!await exists(path)) continue
+      const saved = JSON.parse(await readFile(path, 'utf8'))
+      if ((saved.mode ?? saved.record?.mode) === 'link') generatedPaths.push(...(saved.runtimeStages ?? saved.record?.runtimeStages ?? [])
+        .filter(path => dirname(path) === dirname(source) && /^\.bstack-stage-/.test(path.split(/[\\/]/).at(-1))))
+    }
   }
   for (const parent of new Set([root, ...generatedParents].filter(path => isInside(checkout, path)))) {
     let names

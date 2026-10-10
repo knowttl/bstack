@@ -55,8 +55,8 @@ export async function installLinks(context) {
     if (saved && !selected.uninstall && canonicalJSON(saved.sourceIdentity) !== canonicalJSON(sourceIdentity)) blocked('changed-link', 'Source directory identity changed.')
     if (entry.recovery && (entry.recovery.schemaVersion !== 1 || entry.recovery.ownership !== entry.ownership ||
         entry.recovery.uninstall !== Boolean(selected.uninstall))) blocked('pending-recovery', 'Resume the original link operation before changing lifecycle mode.')
-    for (const path of [entry.recovery?.runtimeStage, entry.recovery?.linkStage].filter(Boolean)) {
-      if (dirname(path) !== entry.parent || !basename(path).startsWith('.bstack-stage-')) blocked('journal-mismatch', 'Recorded stage does not match the link parent.')
+    for (const [path, parent] of [[entry.recovery?.runtimeStage, dirname(source)], [entry.recovery?.linkStage, entry.parent]]) {
+      if (path && (dirname(path) !== parent || !basename(path).startsWith('.bstack-stage-'))) blocked('journal-mismatch', 'Recorded stage does not match its preparation parent.')
     }
     if (entry.recovery?.runtimeStage && await stat(entry.recovery.runtimeStage) && canonicalJSON(await runtimeIdentity(entry.recovery.runtimeStage)) !== canonicalJSON(entry.recovery.stageIdentity)) blocked('runtime-conflict', 'Runtime preparation stage was replaced.')
     if (entry.recovery && !selected.uninstall && (saved.sourceVersion !== version || canonicalJSON(saved.files) !== canonicalJSON(hashes) || saved.runtime.version !== runtime)) blocked('journal-source-changed', 'Interrupted link installation requires its original source bytes and runtime.')
@@ -116,8 +116,9 @@ export async function installLinks(context) {
         if (!journal.runtime) {
           if (await stat(join(source, 'node_modules'))) blocked('runtime-conflict', 'Source runtime appeared before preparation.')
           // Failed stages stay available for inspection; retries never erase them.
-          const stage = await mkdtemp(join(entry.parent, '.bstack-stage-'))
+          const stage = await mkdtemp(join(dirname(source), '.bstack-stage-'))
           journal.runtimeStage = stage
+          journal.runtimeStages = [...(journal.runtimeStages ?? entry.previous?.runtimeStages ?? []), stage]
           journal.stageIdentity = await runtimeIdentity(stage)
           await saveRecovery(entry.journal, journal)
           for (const file of files) {
@@ -161,7 +162,9 @@ export async function installLinks(context) {
         await rename(journal.linkStage, entry.destination)
       }
       await verifyLink(entry.destination, journal.record)
-      journal.record = { ...journal.record, sourceVersion: version, files: hashes, runtime: { version: runtime, path: join(source, 'node_modules'), created: false } }
+      journal.record = { ...journal.record, sourceVersion: version, files: hashes,
+        ...(journal.runtimeStages ? { runtimeStages: journal.runtimeStages } : {}),
+        runtime: { version: runtime, path: join(source, 'node_modules'), created: false } }
       await saveRecovery(entry.ownership, journal.record)
       if (journal.runtimeStage) {
         if (await stat(journal.runtimeStage) && canonicalJSON(await runtimeIdentity(journal.runtimeStage)) !== canonicalJSON(journal.stageIdentity)) blocked('runtime-conflict', 'Runtime stage changed before cleanup.')
