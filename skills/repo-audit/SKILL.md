@@ -7,6 +7,9 @@ disable-model-invocation: true
 ## Scope
 
 Only the user starts repo-audit.
+Start this procedure only when the user's message explicitly invokes `$repo-audit`, `/repo-audit`, `/skill:repo-audit` or selects it through the host's skills menu.
+A plain request such as "audit this repo" does not invoke it.
+If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
 Establish a project-specific foundation for a new idea or audit an existing repo, then apply only the changes the user selects.
 An empty repo can be a new idea, and an established repo can need only a scoped reassessment.
 Resolve the target, requested area and stated next change before proceeding.
@@ -370,4 +373,6 @@ The maintenance-contract reference covers bounded change evidence and local or s
 | Recommending principles and their checks | `references/enforcement.md` |
 | Recommending module boundaries | `references/architecture.md` |
 | Running research in the main thread or delegating it | `references/research-briefs.md` |
+| Preparing a research report for citation checking | `schemas/research-report.json` |
+| Recording or validating audit recommendations | `schemas/findings.schema.json` |
 | Recording change evidence | `references/maintenance-contract.md` |
