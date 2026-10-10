@@ -1567,8 +1567,8 @@ for (const change of ['approved file', 'runtime content', 'runtime identity', 's
     if (change === 'source') await writeFile(join(f.source, 'new.md'), 'Later source\n')
     const before = await inventory(f.project)
     const result = f.run(...f.args, ...decisions)
-    assert.equal(result.status, 3, result.stdout)
-    assert.equal(result.value.problems[0].code, change === 'approved file' ? 'stale-replacement' : 'stale-runtime-decision')
+    assert.equal(result.status, change === 'source' ? 2 : 3, result.stdout)
+    assert.equal(result.value.problems[0].code, change === 'source' ? 'journal-source-changed' : change === 'approved file' ? 'stale-replacement' : 'stale-runtime-decision')
     assert.deepEqual(await inventory(f.project), before)
   })
 }
