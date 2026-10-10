@@ -108,7 +108,7 @@ async function install(selected) {
     const parent = await resolvePath(root, `.${host}/skills`)
     const destination = join(parent, 'repo-audit')
     if (destinations.some(entry => entry.destination === destination)) continue
-    destinations.push({ host, parent, destination, ownership: join(parent, '.bstack-install.json'),
+    destinations.push({ host, parent, destination, sourceFiles: files, ownership: join(parent, '.bstack-install.json'),
       journal: join(parent, '.bstack-install-journal.json') })
   }
   const cleanupPath = join(root, '.bstack-install-cleanup.json')

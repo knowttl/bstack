@@ -201,19 +201,34 @@ export async function inspectInstallation(entry, runtimeVersion, previousReport)
   let journal
   try { journal = JSON.parse(await readFile(entry.journal, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
   journal ??= entry.recovery ?? entry.cleanup?.recovery
-  const plan = journal?.plan ?? journal?.update?.plan
+  const plan = journal?.plan ?? journal?.update?.plan ?? entry.plan
   if (!record && journal && !journal.update && !journal.plan && await exists(entry.destination) &&
       (['activated', 'completed'].includes(journal.state) || !await exists(journal.stage))) record = journal.record
   record ??= entry.cleanup?.record
   if (!record) return { destination: entry.destination, sourceVersion: 'not-installed' }
   const files = {}
+  const reportedConflicts = [...(plan?.conflicts ?? []), ...(entry.cleanup?.report.conflicts ?? []), ...(previousReport?.conflicts ?? [])]
+  const proposals = new Map(Object.entries(record.files).map(([path, hash]) => [path, { path, ownedHash: hash, proposedHash: hash }]))
+  for (const conflict of reportedConflicts.filter(conflict => conflict.path !== 'node_modules')) proposals.set(conflict.path, conflict)
+  for (const operation of plan?.operations ?? []) proposals.set(operation.path, operation)
+  const conflicts = []
   const fileVersions = { ...Object.fromEntries(Object.keys(record.files).map(path => [path, record.sourceVersion])), ...record.fileVersions }
   for (const path of new Set([...Object.keys(record.files), ...Object.keys(entry.cleanup?.report.files ?? {}),
     ...Object.keys(previousReport?.files ?? {}), ...Object.keys(journal?.record.files ?? {}),
     ...(plan?.operations ?? []).map(operation => operation.path),
-    ...(plan?.conflicts ?? []).filter(conflict => conflict.path !== 'node_modules').map(conflict => conflict.path)])) {
+    ...reportedConflicts.filter(conflict => conflict.path !== 'node_modules').map(conflict => conflict.path)])) {
     const actual = await state(entry.destination, path)
     if (Object.hasOwn(record.files, path) || actual.hash !== null) files[path] = actual.hash
+    const proposal = proposals.get(path)
+    if (!proposal || actual.hash === proposal.proposedHash || Object.hasOwn(proposal, 'originalHash') && actual.hash === proposal.originalHash) continue
+    let bytes = Buffer.alloc(0)
+    if (proposal.proposedHash !== null) {
+      const source = entry.sourceFiles.find(file => file.path === path && file.hash === proposal.proposedHash)
+      if (source) bytes = source.bytes
+      else if (journal?.stage) bytes = await readFile(join(journal.stage, path))
+      if (hashBytes(bytes) !== proposal.proposedHash) blocked('staged-package-changed', 'Conflict proposal differs from its recorded hash.')
+    }
+    conflicts.push(conflictFor(entry, path, actual, proposal.ownedHash ?? null, proposal.proposedHash, bytes))
   }
   for (const operation of plan?.operations ?? []) {
     const actual = await state(entry.destination, operation.path)
@@ -236,8 +251,14 @@ export async function inspectInstallation(entry, runtimeVersion, previousReport)
     runtime = { path: runtimePath, created: await ownsRuntime(runtimePath, record.runtime),
       version, verified: verified && version === verifiedVersion }
   }
+  if (reportedConflicts.some(conflict => conflict.path === 'node_modules')) {
+    const decision = await legacyRuntimeDecision(entry, journal?.record ?? record, runtimeVersion)
+    conflicts.push({ path: 'node_modules', actualHash: runtime?.version ?? 'absent',
+      diff: `Expected runtime ${plan?.runtime ?? record.runtime?.version ?? 'absent'}; found ${runtime?.version ?? 'absent'} (${runtime?.verified ? 'verified' : 'unverified'}).`,
+      decision: decision?.decision ?? 'Review runtime ownership and restore the pinned runtime before retrying.' })
+  }
   return { destination: entry.destination, files, fileVersions, runtime,
-    conflicts: previousReport?.conflicts ?? entry.cleanup?.report.conflicts ?? plan?.conflicts ?? [],
+    conflicts,
     backup: journal?.backup ?? previousReport?.backup ?? entry.cleanup?.report.backup,
     sourceVersion: canonicalJSON(files) === canonicalJSON(record.files) && (!runtime || runtime.verified && runtime.version === record.runtime?.version) ? record.sourceVersion : 'mixed' }
 }
@@ -269,8 +290,7 @@ function conflictFor(entry, path, actual, original, proposed, bytes) {
 }
 
 export async function inspectCompletion(entry, files, runtime, runtimeVersion, conflicts = []) {
-  const report = await inspectInstallation(entry, runtimeVersion)
-  report.conflicts = [...conflicts]
+  const report = await inspectInstallation(entry, runtimeVersion, { conflicts })
   for (const file of files) {
     const actual = await state(entry.destination, file.path)
     if (actual.hash !== null || file.hash !== null) report.files[file.path] = actual.hash
