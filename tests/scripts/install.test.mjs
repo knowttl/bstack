@@ -612,6 +612,9 @@ fs.copyFile = async (from, to) => {
   return copyFile(from, to)
 }
 fs.rename = async (from, to) => {
+  if (boundary === 'different-filesystems' && String(to).replaceAll('\\\\', '/').endsWith('/skills/repo-audit/node_modules') && !String(from).startsWith(join(dirname(dirname(to)), '.bstack-stage-'))) {
+    throw Object.assign(new Error('cross-device runtime activation'), { code: 'EXDEV' })
+  }
   if (boundary === 'link-prepared' && String(from).endsWith('.tmp') && String(to).endsWith('.bstack-install-journal.json')) {
     const value = JSON.parse(await fs.readFile(from, 'utf8'))
     if (value.linkStage) process.exit(86)
@@ -2100,6 +2103,16 @@ test('interrupted link runtime preserves a replaced preparation stage', async t 
   assert.equal(result.status, 2, result.stdout)
   assert.equal(result.value.problems[0].code, 'runtime-conflict')
   assert.deepEqual(await inventory(target), before)
+})
+
+test('link runtime preparation supports separate source and destination filesystems', async t => {
+  const f = await fixture(t)
+  await interrupt(f, 'different-filesystems')
+  const args = ['--scope', 'project', '--project', f.project, '--host', 'agents', '--link']
+  const installed = f.run(...args)
+  assert.equal(installed.status, 0, installed.stdout)
+  assert.equal(await readlink(join(f.project, '.agents/skills/repo-audit')), f.source)
+  assert.equal(await readFile(join(f.source, 'node_modules/lavish-axi/package.json'), 'utf8'), await readFile(join(f.project, '.agents/skills/repo-audit/node_modules/lavish-axi/package.json'), 'utf8'))
 })
 
 for (const boundary of ['link-runtime', 'link-prepared', 'link-activate']) {

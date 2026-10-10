@@ -884,7 +884,9 @@ An identical target reached through a replacement link does not transfer ownersh
 
 Preview creates no directories, dependencies or records.
 It lists `source-runtime-install` when the source needs its pin, before the planned link action.
-Runtime preparation uses the existing child runner and Windows npm adapter in a sibling stage, then moves the verified runtime into an absent source `node_modules` before activating the link.
+Runtime preparation uses the existing child runner and Windows npm adapter in a stage beside the source skill, then moves the verified runtime into an absent source `node_modules` before activating the link.
+Keeping runtime preparation beside its activation path supports a source and destination on different filesystems.
+Recorded runtime-stage paths are excluded from source dirtiness, including retained failed-stage content.
 A failed stage and its captured runtime result remain available; a retry prepares a fresh stage without erasing failed-stage content.
 An occupied source runtime differing from the pin blocks and must be prepared explicitly by the developer.
 The installer preserves every existing source runtime and never removes runtime data through a link.
