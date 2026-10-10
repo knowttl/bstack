@@ -412,6 +412,23 @@ async function lifecycle(t, scope = 'project') {
   return { ...f, args, parent, destination, ownership, journal }
 }
 
+async function legacyInstallation(t) {
+  const f = await fixture(t)
+  f.git('tag', 'v0.0.1')
+  f.git('update-index', '--assume-unchanged', 'install/install.mjs')
+  const installer = command('git', ['show', '98b9ab1d8de5f9a238dde2383295c2c04450d852:install/install.mjs'], root, f.env)
+  assert.equal(installer.status, 0, installer.stderr)
+  await writeFile(join(f.checkout, 'install/install.mjs'), installer.stdout)
+  const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
+  assert.equal(f.run(...args).status, 0)
+  await cp(join(root, 'install/install.mjs'), join(f.checkout, 'install/install.mjs'))
+  const parent = join(f.project, '.agents/skills')
+  const destination = join(parent, 'repo-audit')
+  const ownership = join(parent, '.bstack-install.json')
+  assert.equal(JSON.parse(await readFile(ownership, 'utf8')).runtime.identity, undefined)
+  return { ...f, args, parent, destination, ownership }
+}
+
 for (const scope of ['user', 'project']) {
   test(`clean ${scope} update removes obsolete ownership and clean uninstall removes only installer content`, async t => {
     const f = await lifecycle(t, scope)
@@ -532,8 +549,16 @@ const rename = fs.rename
 const unlink = fs.unlink
 const copyFile = fs.copyFile
 const rm = fs.rm
+const writeFile = fs.writeFile
 const boundary = ${JSON.stringify(boundary)}
 let edited = false
+fs.writeFile = async (path, bytes, options) => {
+  if (boundary === 'partial-backup' && String(path).replaceAll('\\\\', '/').includes('/.bstack-backup-')) {
+    await writeFile(path, bytes.subarray(0, Math.floor(bytes.length / 2)), options)
+    process.exit(86)
+  }
+  return writeFile(path, bytes, options)
+}
 fs.copyFile = async (from, to) => {
   if (boundary === 'partial-temp' && String(to).replaceAll('\\\\', '/').includes('/repo-audit/.bstack-install-') && String(to).endsWith('.tmp')) {
     const bytes = await fs.readFile(from)
@@ -779,16 +804,116 @@ test('prepared copy recovery preserves a replacement staged runtime', async t =>
 })
 
 test('legacy runtime ownership does not adopt a directory without identity', async t => {
-  const f = await lifecycle(t)
-  const record = JSON.parse(await readFile(f.ownership, 'utf8'))
-  delete record.runtime.identity
-  await writeFile(f.ownership, JSON.stringify(record))
+  const f = await legacyInstallation(t)
   await writeFile(join(f.destination, 'node_modules/keep.txt'), 'Legacy content\n')
   const result = f.run(...f.args)
   assert.equal(result.status, 2, result.stdout)
   assert.equal(result.value.data.installations[0].runtime.created, false)
   assert.equal(await readFile(join(f.destination, 'node_modules/keep.txt'), 'utf8'), 'Legacy content\n')
   assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).runtime.identity, undefined)
+})
+
+for (const operation of ['repeat', 'update', 'uninstall']) {
+  test(`legacy runtime decision enables C25a ${operation}`, async t => {
+    const f = await legacyInstallation(t)
+    if (operation === 'update') {
+      await writeFile(join(f.source, 'new.md'), 'Version two\n')
+      f.git('add', '.')
+      f.git('commit', '-m', 'new release')
+      f.git('tag', 'v0.0.2')
+    }
+    const args = [...f.args, ...(operation === 'uninstall' ? ['--uninstall'] : [])]
+    const before = await inventory(f.project)
+    const preview = f.run(...args, '--dry-run')
+    assert.equal(preview.status, 0, preview.stdout)
+    assert.deepEqual(await inventory(f.project), before)
+    const decision = preview.value.data.destinations[0].conflicts.find(conflict => conflict.path === 'node_modules').decision.split(' ')
+    assert.equal(decision[0], '--adopt-runtime')
+    const approvedPreview = f.run(...args, ...decision, '--dry-run')
+    assert.equal(approvedPreview.status, 0, approvedPreview.stdout)
+    assert.equal(approvedPreview.value.data.changes.some(change => change.action === 'runtime-adopt'), true)
+    assert.deepEqual(await inventory(f.project), before)
+    const result = f.run(...args, ...decision)
+    assert.equal(result.status, 0, result.stdout)
+    assert.equal(result.value.data.installations[0].sourceVersion, operation === 'uninstall' ? 'uninstalled' : operation === 'update' ? 'v0.0.2' : 'v0.0.1')
+    if (operation === 'uninstall') await assert.rejects(lstat(f.destination), { code: 'ENOENT' })
+    else assert.equal(result.value.data.installations[0].runtime.created, true)
+    const repeated = f.run(...args)
+    assert.equal(repeated.status, 0, repeated.stdout)
+    assert.deepEqual(repeated.value.data.changes, [])
+  })
+}
+
+for (const change of ['replacement', 'content', 'invalid version']) {
+  test(`legacy runtime decision rejects stale ${change} and preserves content`, async t => {
+    const f = await legacyInstallation(t)
+    const preview = f.run(...f.args, '--dry-run')
+    const decision = preview.value.data.destinations[0].conflicts[0].decision.split(' ')
+    if (change === 'replacement') {
+      await rename(join(f.destination, 'node_modules'), join(f.project, 'original-runtime'))
+      await cp(join(f.project, 'original-runtime'), join(f.destination, 'node_modules'), { recursive: true })
+    }
+    if (change === 'invalid version') await writeFile(join(f.destination, 'node_modules/lavish-axi/dist/cli.mjs'), "console.log('changed')\n")
+    if (change !== 'replacement') await writeFile(join(f.destination, 'node_modules/keep.txt'), 'User content\n')
+    const before = await inventory(f.project)
+    const result = f.run(...f.args, ...decision)
+    assert.equal(result.status, 3, result.stdout)
+    assert.equal(result.value.problems[0].code, 'stale-runtime-decision')
+    assert.deepEqual(await inventory(f.project), before)
+  })
+}
+
+for (const operation of ['replacement', 'obsolete removal', 'uninstall']) {
+  test(`partial backup resumes an approved ${operation} from verified original bytes`, async t => {
+    const f = await lifecycle(t)
+    const path = operation === 'obsolete removal' ? 'retired.md' : 'current.md'
+    await writeFile(join(f.destination, path), 'Approved user content\n')
+    const args = [...f.args, ...(operation === 'uninstall' ? ['--uninstall'] : [])]
+    const preview = f.run(...args, '--dry-run')
+    const decision = preview.value.data.destinations[0].conflicts.find(conflict => conflict.path === path).decision.split(' ')
+    await interrupt(f, 'partial-backup')
+    assert.equal(f.run(...args, ...decision).status, 86)
+    delete f.env.NODE_OPTIONS
+    const journal = JSON.parse(await readFile(f.journal, 'utf8'))
+    const backup = join(journal.backup, path)
+    assert.equal(await readFile(backup, 'utf8'), 'Approved us')
+    const result = f.run(...args)
+    assert.equal(result.status, 0, result.stdout)
+    assert.equal(await readFile(backup, 'utf8'), 'Approved user content\n')
+    if (operation === 'replacement') assert.equal(await readFile(join(f.destination, path), 'utf8'), 'Version two\n')
+    else await assert.rejects(lstat(join(f.destination, path)), { code: 'ENOENT' })
+  })
+}
+
+test('legacy runtime adoption rechecks content before saving ownership', async t => {
+  const f = await legacyInstallation(t)
+  await editOnVersionCheck(f, f.destination, join(f.destination, 'node_modules/keep.txt'), 'Late runtime edit\n', 3)
+  const preview = f.run(...f.args, '--dry-run')
+  const decision = preview.value.data.destinations[0].conflicts[0].decision.split(' ')
+  const result = f.run(...f.args, ...decision)
+  assert.equal(result.status, 3, result.stdout)
+  assert.equal(result.value.problems[0].code, 'stale-runtime-decision')
+  assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).runtime.identity, undefined)
+  assert.equal(await readFile(join(f.destination, 'node_modules/keep.txt'), 'utf8'), 'Late runtime edit\n')
+})
+
+test('partial backup recovery preserves changed backup content', async t => {
+  const f = await lifecycle(t)
+  await writeFile(join(f.destination, 'current.md'), 'Approved user content\n')
+  const preview = f.run(...f.args, '--dry-run')
+  const decision = preview.value.data.destinations[0].conflicts.find(conflict => conflict.path === 'current.md').decision.split(' ')
+  await interrupt(f, 'partial-backup')
+  assert.equal(f.run(...f.args, ...decision).status, 86)
+  delete f.env.NODE_OPTIONS
+  const journal = JSON.parse(await readFile(f.journal, 'utf8'))
+  const backup = join(journal.backup, 'current.md')
+  await writeFile(backup, 'User backup edit\n')
+  const result = f.run(...f.args)
+  assert.equal(result.status, 2, result.stdout)
+  assert.equal(result.value.problems[0].code, 'backup-changed')
+  assert.equal(await readFile(backup, 'utf8'), 'User backup edit\n')
+  assert.equal(await readFile(join(f.destination, 'current.md'), 'utf8'), 'Approved user content\n')
+  await lstat(f.journal)
 })
 
 for (const boundary of ['staging', 'prepared', 'copy-rename', 'activated', 'completed']) {

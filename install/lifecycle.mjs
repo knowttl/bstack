@@ -1,4 +1,4 @@
-import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, rename, rm, rmdir, unlink, writeFile } from 'node:fs/promises'
+import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rename, rm, rmdir, unlink, writeFile } from 'node:fs/promises'
 import { basename, dirname, join, relative } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
@@ -37,6 +37,34 @@ export async function ownsRuntime(path, runtime) {
     if (error.code === 'ENOENT' || error instanceof CommandError) return false
     throw error
   }
+}
+
+export async function legacyRuntimeDecision(entry, record, runtimeVersion) {
+  const path = join(entry.destination, 'node_modules')
+  if (!record.runtime?.created || record.runtime.path !== path || record.runtime.identity) return null
+  await verifyDestination(entry)
+  let identity
+  try { identity = await runtimeIdentity(path) } catch (error) {
+    if (error.code === 'ENOENT' || error instanceof CommandError) return null
+    throw error
+  }
+  if (!await runtimeVersion(entry.destination, record.runtime.version)) return null
+  const contents = []
+  async function collect(directory, prefix = '') {
+    for (const item of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
+      const name = prefix + item.name
+      const target = join(directory, item.name)
+      if (item.isDirectory()) { contents.push({ path: name, type: 'directory' }); await collect(target, name + '/') }
+      else if (item.isFile()) contents.push({ path: name, hash: hashBytes(await readFile(target)) })
+      else if (item.isSymbolicLink()) contents.push({ path: name, link: await readlink(target) })
+      else blocked('runtime-conflict', 'Legacy runtime contains an unsupported entry.')
+    }
+  }
+  await collect(path)
+  await verifyDestination(entry)
+  if (canonicalJSON(identity) !== canonicalJSON(await runtimeIdentity(path))) blocked('runtime-conflict', 'Legacy runtime directory changed during verification.')
+  const value = `${entry.host}:${hashBytes(Buffer.from(canonicalJSON({ path, identity, contents })))}`
+  return { value, decision: `--adopt-runtime ${value}`, runtime: { ...record.runtime, identity } }
 }
 
 export async function previewRecovery(entry, runtimeVersion) {
@@ -176,7 +204,7 @@ export async function planLifecycle(entry, files, version, runtime, selected) {
   let runtimeStat
   try { runtimeStat = await lstat(runtimePath) } catch (error) { if (error.code !== 'ENOENT') throw error }
   const runtimeAllowed = !runtimeStat || await ownsRuntime(runtimePath, previous.runtime)
-  if (!runtimeAllowed && (!selected.uninstall || previous.runtime?.created)) conflicts.push({ path: 'node_modules', actualHash: 'unowned-runtime', diff: 'Preserve runtime directory whose ownership or type cannot be verified.', decision: 'Review runtime ownership before retrying.' })
+  if (!runtimeAllowed && (!selected.uninstall || previous.runtime?.created)) conflicts.push({ path: 'node_modules', actualHash: 'unowned-runtime', diff: 'Preserve runtime directory whose ownership or type cannot be verified.', decision: entry.runtimeDecision?.decision ?? 'Review runtime ownership before retrying.' })
   return { operations, conflicts, desired, version, runtime, uninstall: Boolean(selected.uninstall),
     runtimeAllowed }
 }
@@ -257,7 +285,13 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
         const backup = join(journal.backup, operation.path)
         await mkdir(dirname(backup), { recursive: true })
         try { await writeFile(backup, actual.bytes, { flag: 'wx' }) } catch (error) {
-          if (error.code !== 'EEXIST' || hashBytes(await readFile(backup)) !== actual.hash) throw error
+          if (error.code !== 'EEXIST') throw error
+          const saved = await state(journal.backup, operation.path)
+          if (!saved.bytes || saved.bytes.length > actual.bytes.length || !saved.bytes.equals(actual.bytes.subarray(0, saved.bytes.length))) blocked('backup-changed', 'Recorded backup contains unrelated content.')
+          if (saved.hash !== actual.hash) {
+            if ((await state(entry.destination, operation.path)).hash !== operation.originalHash) blocked('changed-precondition', 'File changed before backup completion.')
+            await writeFile(backup, actual.bytes)
+          }
         }
       }
       if (operation.proposedHash === null) {
