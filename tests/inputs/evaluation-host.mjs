@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { userInfo } from 'node:os'
 import { execFileSync } from 'node:child_process'
+import { maintenanceSession } from './maintenance-session.mjs'
 
 // Modes emulate only the external host's conversation and failure boundary.
 const args = process.argv.slice(2)
@@ -40,7 +41,9 @@ if (args.includes('--version')) {
       console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution', command: 'ls -la',
         aggregated_output: `total 8\ndrwx------ 2 ${username} ${group} 4096 Oct 8 12:00 .\n-rw-r--r-- 1 ${username} ${group} 123 Oct 8 12:00 brief.md\nOwner: ${username}; group: ${group}\n${username}\n${group}\n` } }))
     }
-    console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: args.includes('resume') ?
+    if (mode === 'maintenance') {
+      for (const event of await maintenanceSession()) console.log(JSON.stringify(event))
+    } else console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: args.includes('resume') ?
       'Offline access remains unresolved. I will stop without choosing a stack.' : 'Which offline access option should we use?' + (mode === 'large' ? 'x'.repeat(70000) : ''),
     observed: { message, home: process.env.HOME, state: process.env.CODEX_HOME, cache: process.env.XDG_CACHE_HOME, cwd: process.cwd(), sandboxPolicy } } }))
     if (mode === 'truncate') process.stdout.write('x'.repeat(70000))
