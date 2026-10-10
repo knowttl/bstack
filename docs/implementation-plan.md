@@ -509,8 +509,16 @@ Tick each task when its "Done when" commands pass.
         Exact authored-file SHA-256 ownership lives outside each installed skill, and the created runtime directory is recorded separately.
         `npm test -- --task C25a` verifies isolated homes/projects, complete copy validation, no-op repeat, unowned collision preservation, source failures and nested npm installation failure with a preserved stage and journal.
         [C25a evidence](../tests/eval/results/tasks/C25a.json) binds the final full suite.
-        Updates, uninstall and interrupted-run completion remain C25b work, while link mode and real OS acceptance remain C25c work.
+        C25b below completes updates, uninstall and interrupted-run completion, while link mode and real OS acceptance remain C25c work.
         AC-73 lifecycle coverage and AC-74 three-OS acceptance are incomplete, and current-agent loading remains T4.2 work.
+    - [x] C25b Copy update, uninstall and interruption
+      - Updates replace unchanged owned files and remove unchanged obsolete files, preserving edited and unowned content with concrete diffs and hash-bound replacement decisions.
+        Noninteractive conflicts return blocked with actual file hashes, per-file version provenance and mixed ownership, and explicit replacements retain backups.
+        Uninstall removes unchanged ownership and the created runtime, reports retained paths and preserves edited ownership for explicit later cleanup.
+        Recovery verifies actual hashes across first-copy activation, per-file update/removal and runtime rename boundaries.
+        `npm test -- --task C25b` uses disposable homes/projects and locally packed fake runtimes, including runtime failure and retry.
+        [C25b evidence](../tests/eval/results/tasks/C25b.json) binds the final full suite.
+        Link lifecycle and three-OS acceptance remain C25c work, and current-agent loading remains C26 work.
   - [ ] T4.2 Run the basic tests in the current agent
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release
