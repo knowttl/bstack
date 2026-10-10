@@ -7,7 +7,7 @@ import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mj
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery } from './lifecycle.mjs'
+import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime } from './lifecycle.mjs'
 
 // Installation always selects the complete skill beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
@@ -143,6 +143,7 @@ async function install(selected) {
   const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
   for (const entry of destinations) {
     const { destination, ownership, journal } = entry
+    await verifyDestination(entry)
     if (await exists(journal)) {
       entry.recovery = JSON.parse(await readFile(journal, 'utf8'))
       if (Boolean(entry.recovery.plan?.uninstall) !== Boolean(selected.uninstall)) reject('blocked', 'pending-recovery', 'Resume the original operation before changing lifecycle mode.', help)
@@ -167,6 +168,7 @@ async function install(selected) {
       }
       if (!unchanged ||
           previous.runtime?.path !== join(destination, 'node_modules') || !previous.runtime.created ||
+          !await ownsRuntime(join(destination, 'node_modules'), previous.runtime) ||
           !await runtimeVersion(destination, runtime)) {
         entry.previous = previous
         entry.plan = await planLifecycle(entry, files, version, runtime, selected)
@@ -204,7 +206,7 @@ async function install(selected) {
           const installation = await inspectCompletion(entry, files, runtime, runtimeVersion)
           if (installation.conflicts.length) {
             const record = JSON.parse(await readFile(entry.ownership, 'utf8'))
-            await saveRecovery(entry.ownership, { ...record, sourceVersion: 'mixed' })
+            await saveRecovery(entry.ownership, { ...record, fileVersions: installation.fileVersions, sourceVersion: 'mixed' })
           }
           data.installations.push(installation)
         }
@@ -223,6 +225,7 @@ async function install(selected) {
       await mkdir(entry.parent, { recursive: true })
       const stage = await mkdtemp(join(entry.parent, '.bstack-stage-'))
       const record = { schemaVersion: 1, mode: 'copy', sourceVersion: version, destination: entry.destination, files: hashes,
+        fileVersions: Object.fromEntries(Object.keys(hashes).map(path => [path, version])),
         runtime: { path: join(entry.destination, 'node_modules'), created: true, version: runtime } }
       const journal = { schemaVersion: 1, state: 'staging', stage, ownership: entry.ownership, record,
         ...(entry.plan ? { update: { previous: entry.previous, plan: entry.plan } } : {}) }
@@ -244,11 +247,12 @@ async function install(selected) {
           reject('failed', 'staged-package-changed', 'Staged authored files or pinned runtime do not match the validated source.', 'Inspect the preserved stage and runtime installation output.')
         }
         journal.state = 'prepared'
+        record.runtime.identity = await runtimeIdentity(join(stage, 'node_modules'))
         await saveRecovery(entry.journal, journal)
         if (entry.action === 'update') {
           // The validated stage becomes the recoverable per-file update plan.
           entry.recovery = null
-          data.installations.push(await applyLifecycle(entry, entry.plan, stage, runtimeVersion))
+          data.installations.push(await applyLifecycle(entry, entry.plan, stage, runtimeVersion, { ...record.runtime, path: join(stage, 'node_modules') }))
           continue
         }
         // Check the empty destination again after dependency scripts have finished.
@@ -260,7 +264,7 @@ async function install(selected) {
         journal.state = 'completed'
         await saveRecovery(entry.journal, journal)
         const installation = await inspectCompletion(entry, files, runtime, runtimeVersion)
-        if (installation.conflicts.length) await saveRecovery(entry.ownership, { ...record, sourceVersion: 'mixed' })
+        if (installation.conflicts.length) await saveRecovery(entry.ownership, { ...record, fileVersions: installation.fileVersions, sourceVersion: 'mixed' })
         // A completed journal is no longer recovery state.
         await unlink(entry.journal)
         data.installations.push(installation)

@@ -10,11 +10,44 @@ function blocked(code, message) {
   throw new CommandError('blocked', [{ code, message, fix: 'Preserve the installation and journal. Review the reported paths before retrying.' }])
 }
 
+export async function verifyDestination(entry) {
+  const record = entry.recovery?.record ?? entry.previous
+  let destination
+  try { destination = await resolvePath(entry.parent, basename(entry.destination)) } catch (error) {
+    if (!(error instanceof CommandError)) throw error
+    blocked('changed-destination', 'Installation destination no longer matches its canonical path.')
+  }
+  if (destination !== entry.destination || record && record.destination !== entry.destination) {
+    blocked('changed-destination', 'Installation destination no longer matches its canonical path.')
+  }
+}
+
+export async function runtimeIdentity(path) {
+  const stat = await lstat(path, { bigint: true })
+  if (!stat.isDirectory() || stat.isSymbolicLink()) blocked('runtime-conflict', 'Runtime is not a regular directory.')
+  return { dev: String(stat.dev), ino: String(stat.ino), birthtimeNs: String(stat.birthtimeNs) }
+}
+
+export async function ownsRuntime(path, runtime) {
+  if (!runtime?.created || runtime.path !== path || !runtime.identity) return false
+  try {
+    if (await resolvePath(dirname(path), basename(path)) !== path) return false
+    return canonicalJSON(await runtimeIdentity(path)) === canonicalJSON(runtime.identity)
+  } catch (error) {
+    if (error.code === 'ENOENT' || error instanceof CommandError) return false
+    throw error
+  }
+}
+
 export async function previewRecovery(entry, runtimeVersion) {
+  await verifyDestination(entry)
   const journal = entry.recovery
   if (journal.schemaVersion !== 1 || journal.state !== 'applying' || journal.record.mode !== 'copy' ||
       journal.record.destination !== entry.destination || journal.ownership !== entry.ownership ||
       journal.stage && (dirname(journal.stage) !== entry.parent || !basename(journal.stage).startsWith('.bstack-stage-'))) blocked('journal-mismatch', 'Journal does not match the selected installation.')
+  const runtimePath = join(entry.destination, 'node_modules')
+  if (journal.plan.runtimeAllowed && await exists(runtimePath) && !await ownsRuntime(runtimePath, journal.record.runtime) &&
+      !await ownsRuntime(runtimePath, journal.stagedRuntime && { ...journal.stagedRuntime, path: runtimePath })) blocked('runtime-conflict', 'Runtime directory identity changed before recovery.')
   const changes = []
   for (const operation of journal.plan.operations) {
     const actual = await state(entry.destination, operation.path)
@@ -57,8 +90,7 @@ export async function inspectInstallation(entry, runtimeVersion) {
     const verified = version !== null && await runtimeVersion(entry.destination, version)
     version = null
     try { version = JSON.parse(await readFile(join(entry.destination, 'node_modules/lavish-axi/package.json'), 'utf8')).version } catch {}
-    try { runtimeStat = await lstat(runtimePath) } catch (error) { if (error.code !== 'ENOENT') throw error; runtimeStat = null }
-    runtime = { path: runtimePath, created: Boolean(record.runtime?.created && runtimeStat?.isDirectory() && !runtimeStat.isSymbolicLink()),
+    runtime = { path: runtimePath, created: await ownsRuntime(runtimePath, record.runtime),
       version, verified: verified && version === verifiedVersion }
   }
   return { destination: entry.destination, files, fileVersions, runtime,
@@ -113,6 +145,7 @@ export async function inspectCompletion(entry, files, runtime, runtimeVersion, c
 }
 
 export async function planLifecycle(entry, files, version, runtime, selected) {
+  await verifyDestination(entry)
   const previous = entry.previous
   const desired = selected.uninstall ? {} : Object.fromEntries(files.map(file => [file.path, file.hash]))
   const operations = []
@@ -142,7 +175,7 @@ export async function planLifecycle(entry, files, version, runtime, selected) {
   const runtimePath = join(entry.destination, 'node_modules')
   let runtimeStat
   try { runtimeStat = await lstat(runtimePath) } catch (error) { if (error.code !== 'ENOENT') throw error }
-  const runtimeAllowed = !runtimeStat || Boolean(previous.runtime?.created && previous.runtime.path === runtimePath && runtimeStat.isDirectory() && !runtimeStat.isSymbolicLink())
+  const runtimeAllowed = !runtimeStat || await ownsRuntime(runtimePath, previous.runtime)
   if (!runtimeAllowed && (!selected.uninstall || previous.runtime?.created)) conflicts.push({ path: 'node_modules', actualHash: 'unowned-runtime', diff: 'Preserve runtime directory whose ownership or type cannot be verified.', decision: 'Review runtime ownership before retrying.' })
   return { operations, conflicts, desired, version, runtime, uninstall: Boolean(selected.uninstall),
     runtimeAllowed }
@@ -178,11 +211,12 @@ async function retained(directory, prefix = '') {
   return paths.sort()
 }
 
-export async function applyLifecycle(entry, plan, stage, runtimeVersion) {
+export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedRuntime) {
+  await verifyDestination(entry)
   let journal = entry.recovery
   if (!journal) {
     journal = { schemaVersion: 1, state: 'applying', stage, ownership: entry.ownership, record: entry.previous,
-      plan, files: { ...entry.previous.files }, fileVersions: { ...Object.fromEntries(Object.keys(entry.previous.files)
+      plan, stagedRuntime, files: { ...entry.previous.files }, fileVersions: { ...Object.fromEntries(Object.keys(entry.previous.files)
         .map(path => [path, entry.previous.sourceVersion])), ...entry.previous.fileVersions } }
     await saveRecovery(entry.journal, journal)
   }
@@ -260,22 +294,25 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion) {
     const target = join(entry.destination, 'node_modules')
     let current
     try { current = await lstat(target) } catch (error) { if (error.code !== 'ENOENT') throw error }
-    if (current && (!current.isDirectory() || current.isSymbolicLink() || !runtime?.created)) blocked('runtime-conflict', 'Runtime ownership or type changed before activation.')
+    await verifyDestination(entry)
+    const activatedRuntime = journal.stagedRuntime && { ...journal.stagedRuntime, path: target }
+    if (current && !await ownsRuntime(target, runtime) && !(await ownsRuntime(target, activatedRuntime) && await runtimeVersion(entry.destination, journal.plan.runtime))) blocked('runtime-conflict', 'Runtime directory identity changed before activation.')
     if (journal.plan.uninstall) {
-      if (runtime?.created) await rm(target, { recursive: true, force: true })
+      if (current) await rm(target, { recursive: true, force: true })
       runtime = null
     } else if (!await runtimeVersion(entry.destination, journal.plan.runtime)) {
       const old = join(journal.stage, 'previous-runtime')
+      if (!await ownsRuntime(join(journal.stage, 'node_modules'), journal.stagedRuntime)) blocked('runtime-conflict', 'Staged runtime directory identity changed before activation.')
       if (!await runtimeVersion(journal.stage, journal.plan.runtime)) blocked('runtime-conflict', 'Staged pinned runtime changed before activation.')
       if (current && await exists(old)) blocked('runtime-conflict', 'An occupied runtime appeared after the old runtime was saved.')
       await mkdir(entry.destination, { recursive: true })
       // Save the old directory before activating the staged runtime.
-      journal.runtimeChanging = true
-      await saveRecovery(entry.journal, journal)
+      await verifyDestination(entry)
+      if (await exists(target) && !await ownsRuntime(target, runtime)) blocked('runtime-conflict', 'Runtime directory identity changed before replacement.')
       try { await lstat(target); await rename(target, old) } catch (error) { if (error.code !== 'ENOENT') throw error }
       await rename(join(journal.stage, 'node_modules'), target)
-      runtime = { path: target, created: true, version: journal.plan.runtime }
-    } else runtime = { path: target, created: true, version: journal.plan.runtime }
+      runtime = { ...journal.stagedRuntime, path: target }
+    } else runtime = await ownsRuntime(target, runtime) ? runtime : activatedRuntime
   }
   const complete = !journal.plan.uninstall && !conflicts.length && canonicalJSON(journal.files) === canonicalJSON(journal.plan.desired) &&
     runtime?.version === journal.plan.runtime
@@ -311,7 +348,10 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion) {
     for (const [path, hash] of Object.entries(journal.plan.desired)) {
       if ((await state(journal.stage, path)).hash === hash) await unlink(join(journal.stage, path))
     }
-    for (const name of ['node_modules', 'previous-runtime']) await rm(join(journal.stage, name), { recursive: true, force: true })
+    for (const [name, owned] of [['node_modules', journal.stagedRuntime], ['previous-runtime', journal.record.runtime]]) {
+      const path = join(journal.stage, name)
+      if (owned && await ownsRuntime(path, { ...owned, path })) await rm(path, { recursive: true, force: true })
+    }
     await removeEmpty(journal.stage, Object.keys(journal.plan.desired))
     if (await exists(journal.stage)) report.retainedStage = journal.stage
   }
@@ -319,6 +359,7 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion) {
 }
 
 export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child) {
+  await verifyDestination(entry)
   const journal = entry.recovery
   if (journal.record.destination !== entry.destination || journal.ownership !== entry.ownership ||
       dirname(journal.stage) !== entry.parent || !basename(journal.stage).startsWith('.bstack-stage-')) blocked('journal-mismatch', 'Journal paths do not match the selected installation.')
@@ -349,18 +390,24 @@ export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVer
   if (!await runtimeVersion(directory, runtime)) blocked('pending-recovery', 'Runtime installation did not produce the pinned runtime.')
   const problems = await checkPackage(directory)
   if (problems.length) throw new CommandError('blocked', problems)
+  if (!journal.record.runtime.identity && !activated) {
+    journal.record.runtime.identity = await runtimeIdentity(join(directory, 'node_modules'))
+    await saveRecovery(entry.journal, journal)
+  }
+  if (journal.record.runtime.identity && !await ownsRuntime(join(directory, 'node_modules'), { ...journal.record.runtime, path: join(directory, 'node_modules') })) blocked('runtime-conflict', 'Prepared runtime directory identity changed before recovery.')
   if (journal.update) {
     entry.previous = journal.update.previous
     entry.recovery = null
-    return applyLifecycle(entry, journal.update.plan, journal.stage, runtimeVersion)
+    return applyLifecycle(entry, journal.update.plan, journal.stage, runtimeVersion, { ...journal.record.runtime, path: join(journal.stage, 'node_modules') })
   }
   if (!activated) {
+    await verifyDestination(entry)
     if (await exists(entry.destination) || await exists(entry.ownership)) blocked('recovery-conflict', 'Destination became occupied before activation.')
     await rename(journal.stage, entry.destination)
   }
   await saveRecovery(entry.ownership, journal.record)
   const report = await inspectCompletion(entry, files, runtime, runtimeVersion)
-  if (report.conflicts.length) await saveRecovery(entry.ownership, { ...journal.record, sourceVersion: 'mixed' })
+  if (report.conflicts.length) await saveRecovery(entry.ownership, { ...journal.record, fileVersions: report.fileVersions, sourceVersion: 'mixed' })
   await unlink(entry.journal)
   return { ...report, resumed: true }
 }
