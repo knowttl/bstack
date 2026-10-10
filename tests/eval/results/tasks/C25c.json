@@ -3,7 +3,7 @@
   "taskId": "C25c",
   "slice": "C25c",
   "intent": "Implement owned symlink or Windows junction lifecycle with runtime preparation before activation, explicit developer-checkout updates and target-preserving removal, and record available real operating-system execution without substituting Linux for Windows or macOS.",
-  "amendments": [],
+  "amendments": ["R27, 2026-10-10: owner ruled \"only linux is good\". Accept Linux-only installer lifecycle evidence for C25c/AC-74; Windows/macOS execution remains unverified and outside support/acceptance scope, with no remaining OS gate."],
   "cases": [
     {
       "id": "AC-73-link-lifecycle",
@@ -21,16 +21,14 @@
     },
     {
       "id": "AC-74",
-      "kind": "manual",
-      "procedure": "docs/C25c-operating-systems.md: complete copy/link lifecycle on real Windows, macOS and Linux with supplementary Node 24 and Node 26 execution",
-      "status": "blocked",
-      "artifact": "docs/C25c-operating-systems.md",
-      "reason": "This host is Linux; no Windows or macOS endpoint or manual execution record was supplied. uname -s returned Linux, and command -v powershell.exe pwsh sw_vers found none.",
-      "nextPrerequisite": "Provide real Windows and macOS local/manual lifecycle captures at the final source revision, including versions, commands, exit codes and cleanup observations."
+      "kind": "automated",
+      "procedure": "docs/C25c-operating-systems.md and final full-suite capture: real Linux copy/link lifecycle in isolated homes, including mixed-mode uninstall, failed-runtime stage preservation and interrupted cleanup recovery, under owner scope amendment R27; historical Node 26 supplement records its separate revision",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C25c.full-tests.txt"
     }
   ],
   "limitations": [
-    "C25c and AC-74 remain blocked until real Windows and macOS executions are recorded. Linux Node 24/26 execution does not substitute for either OS.",
+    "R27 accepts Linux-only lifecycle evidence for C25c/AC-74. Windows/macOS execution remains unverified and outside support/acceptance scope; no Windows/macOS gate remains and Linux evidence makes no platform execution claim for either OS.",
     "The 29-test Linux Node 26 lifecycle supplement ran at source revision 4413302241d7ff890defb69e3742474edf0559c2 with Node v26.11.1, npm 11.20.0 and Git 2.54.0. The final full-suite capture records its own committed input revision and primary Node 24 environment.",
     "The separate-filesystem test injects EXDEV at the filesystem rename boundary; it is deterministic lifecycle coverage, not a claim of another OS or a real separate-volume run.",
     "Lifecycle tests use disposable isolated homes/projects, Git snapshots and locally packed fake lavish-axi runtimes with offline npm, not real runtime board interactions.",
@@ -51,7 +49,7 @@
       "git": "git version 2.54.0"
     }
   },
-  "status": "blocked",
+  "status": "passed",
   "commands": [
     {
       "id": "package-and-checker",

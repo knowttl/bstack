@@ -783,7 +783,8 @@ The scope and host are required, project scope requires an existing project dire
 Unknown, repeated or missing arguments return usage error before dependency calls, except that `--replace` and `--adopt-runtime` can repeat for distinct decisions.
 `--help` prints the supported interface.
 `--link` selects the developer-checkout link lifecycle described below.
-Three-OS acceptance belongs to C25c and remains incomplete until all real OS records exist.
+C25c and AC-74 use Linux-only installer acceptance under the owner's 2026-10-10 scope amendment.
+Windows and macOS execution remains unverified and is outside this acceptance scope.
 
 Claude uses `.claude/skills/repo-audit`, and agents uses `.agents/skills/repo-audit`, beneath the selected real home or project root.
 `all` selects both, deduplicates their canonical destinations and checks every destination before staging any copy.
@@ -908,7 +909,8 @@ Removal can resume after unlink without touching the target.
 Multiple hosts complete sequentially, preserving earlier completed ownership if a later host fails.
 Process interruption tests do not establish power-loss recovery.
 `npm test -- --task C25c` includes the copy and link lifecycle suites in disposable homes/projects with local fake runtimes.
-Linux Node 24/26 execution supplements, and does not replace, the required real Windows and macOS runs for AC-74.
+Real Linux lifecycle execution and the Node 24/26 records satisfy the owner-amended platform scope for AC-74.
+No Windows/macOS run is claimed or required under that amendment.
 
 ## Child commands
 
