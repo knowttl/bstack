@@ -126,6 +126,11 @@ async function install(selected) {
   for (const parent of new Set([root, ...generatedParents].filter(path => isInside(checkout, path)))) {
     let names
     try { names = await readdir(parent) } catch (error) { if (error.code === 'ENOENT') continue; throw error }
+    for (const name of names) {
+      const match = /^\.bstack-recovery-(\.bstack-install(?:-journal|-cleanup)?\.json)-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.tmp$/.exec(name)
+      if (match && (match[1] === '.bstack-install-cleanup.json' ? parent === root : generatedParents.includes(parent)) &&
+          (await lstat(join(parent, name))).isFile()) generatedPaths.push(join(parent, name))
+    }
     for (const name of names.filter(name => /^\.bstack-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.tmp$/.test(name))) {
       const path = join(parent, name)
       if (!(await lstat(path)).isFile()) continue
@@ -358,7 +363,7 @@ async function install(selected) {
   } catch (error) {
     for (const entry of destinations) {
       const index = data.installations.findIndex(installation => installation.destination === entry.destination)
-      const actual = await inspectInstallation(entry, runtimeVersion)
+      const actual = await inspectInstallation(entry, runtimeVersion, index === -1 ? entry.cleanup?.report : data.installations[index])
       const refreshed = { ...(index === -1 ? entry.cleanup?.report : data.installations[index]), ...actual }
       if (index === -1) data.installations.push(refreshed)
       else data.installations[index] = refreshed
@@ -370,6 +375,17 @@ async function install(selected) {
   return report()
 }
 
+function printInstallations(data) {
+  for (const installation of data?.installations ?? []) {
+    console.log(`installation: ${installation.destination}\ninstalled state: ${installation.sourceVersion}`)
+    for (const [path, hash] of Object.entries(installation.files ?? {})) console.log(`file: ${path} ${hash ?? 'absent'}`)
+    if (installation.runtime) console.log(`runtime: ${installation.runtime.version ?? 'unknown'} verified=${installation.runtime.verified}`)
+    for (const conflict of installation.conflicts ?? []) console.log(`${conflict.diff}\nDecision: ${conflict.decision}`)
+    if (installation.retained?.length) console.log(`retained: ${installation.retained.join(', ')}`)
+    if (installation.backup) console.log(`backup: ${installation.backup}`)
+  }
+}
+
 try {
   const args = process.argv.slice(2)
   if (!args.length || (args.length === 1 && args[0] === '--help')) console.log(help)
@@ -378,15 +394,11 @@ try {
     const data = await install(selected)
     if (!selected.json) console.log([`source: ${data.sourceVersion}`, ...data.destinations.map(entry => `${entry.action}: ${entry.destination}`),
       ...data.changes.map(change => `${change.action}: ${change.path}`)].join('\n'))
-    if (!selected.json) for (const installation of data.installations) {
-      console.log(`installed state: ${installation.sourceVersion}`)
-      for (const conflict of installation.conflicts ?? []) console.log(`${conflict.diff}\nDecision: ${conflict.decision}`)
-      if (installation.retained?.length) console.log(`retained: ${installation.retained.join(', ')}`)
-      if (installation.backup) console.log(`backup: ${installation.backup}`)
-    }
+    if (!selected.json) printInstallations(data)
     emitResult({ command: 'install', status: data.blocked ? 'blocked' : 'passed', data }, selected.json)
   }
 } catch (error) {
+  if (!process.argv.includes('--json')) printInstallations(error.data)
   emitResult({ command: 'install', status: error instanceof CommandError ? error.status : 'blocked',
     data: error.data,
     problems: error instanceof CommandError ? error.problems : [{ code: 'install-io-failure', message: error.message, fix: 'Check source and destination access. Preserve any journal and stage for inspection.' }] }, process.argv.includes('--json'))

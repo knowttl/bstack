@@ -195,11 +195,13 @@ export async function previewRecovery(entry, runtimeVersion) {
   return changes
 }
 
-export async function inspectInstallation(entry, runtimeVersion) {
+export async function inspectInstallation(entry, runtimeVersion, previousReport) {
   let record
   try { record = JSON.parse(await readFile(entry.ownership, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
   let journal
   try { journal = JSON.parse(await readFile(entry.journal, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
+  journal ??= entry.recovery ?? entry.cleanup?.recovery
+  const plan = journal?.plan ?? journal?.update?.plan
   if (!record && journal && !journal.update && !journal.plan && await exists(entry.destination) &&
       (['activated', 'completed'].includes(journal.state) || !await exists(journal.stage))) record = journal.record
   record ??= entry.cleanup?.record
@@ -207,11 +209,13 @@ export async function inspectInstallation(entry, runtimeVersion) {
   const files = {}
   const fileVersions = { ...Object.fromEntries(Object.keys(record.files).map(path => [path, record.sourceVersion])), ...record.fileVersions }
   for (const path of new Set([...Object.keys(record.files), ...Object.keys(entry.cleanup?.report.files ?? {}),
-    ...Object.keys(entry.cleanup?.recovery?.record.files ?? {})])) {
+    ...Object.keys(previousReport?.files ?? {}), ...Object.keys(journal?.record.files ?? {}),
+    ...(plan?.operations ?? []).map(operation => operation.path),
+    ...(plan?.conflicts ?? []).filter(conflict => conflict.path !== 'node_modules').map(conflict => conflict.path)])) {
     const actual = await state(entry.destination, path)
     if (Object.hasOwn(record.files, path) || actual.hash !== null) files[path] = actual.hash
   }
-  for (const operation of journal?.plan?.operations ?? []) {
+  for (const operation of plan?.operations ?? []) {
     const actual = await state(entry.destination, operation.path)
     if (actual.hash === operation.proposedHash) {
       if (actual.hash === null) { delete files[operation.path]; delete fileVersions[operation.path] }
@@ -233,6 +237,8 @@ export async function inspectInstallation(entry, runtimeVersion) {
       version, verified: verified && version === verifiedVersion }
   }
   return { destination: entry.destination, files, fileVersions, runtime,
+    conflicts: previousReport?.conflicts ?? entry.cleanup?.report.conflicts ?? plan?.conflicts ?? [],
+    backup: journal?.backup ?? previousReport?.backup ?? entry.cleanup?.report.backup,
     sourceVersion: canonicalJSON(files) === canonicalJSON(record.files) && (!runtime || runtime.verified && runtime.version === record.runtime?.version) ? record.sourceVersion : 'mixed' }
 }
 
