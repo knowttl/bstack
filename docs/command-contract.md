@@ -778,9 +778,9 @@ Child execution and fingerprints are implemented in C4b.
 
 ## Installer copy and preview (C25a)
 
-`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--json]` installs, updates or removes the skill beside the installer.
+`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]` installs, updates or removes the skill beside the installer.
 The scope and host are required, project scope requires an existing project directory, and user scope rejects `--project`.
-Unknown, repeated or missing arguments return usage error before dependency calls, except that `--replace` can repeat for distinct conflicts.
+Unknown, repeated or missing arguments return usage error before dependency calls, except that `--replace` and `--adopt-runtime` can repeat for distinct decisions.
 `--help` prints the supported interface.
 `--link` is recognised but blocked, rather than silently running copy mode.
 Links and OS acceptance belong to C25c.
@@ -826,12 +826,16 @@ Regular files and missing paths can be explicitly replaced or removed, but a dir
 Stale or unmatched replacement decisions return usage error before staging.
 An interactive plain-output terminal asks for `yes` separately for each conflicting path, while JSON or noninteractive execution preserves conflicts unless their exact decisions are supplied as flags.
 Each accepted destructive decision saves the existing bytes in a unique `.bstack-backup-*` sibling, preserving the authored relative path inside that directory.
+Interrupted backup writes resume only when the saved bytes are a prefix of the still-verified approved original; changed backups are preserved and block recovery.
 Backups are retained outside the installed skill and never become authored ownership.
 Noninteractive unresolved conflicts return blocked exit 2 after applying independent safe changes and saving actual mixed ownership.
 
 `--uninstall` removes unchanged owned files and only the separately recorded runtime directory created by this installer.
 Runtime ownership includes the directory's device, inode and creation time, checked before replacement, removal and recovery.
-A replacement runtime or a legacy ownership record without directory identity is preserved and blocks runtime mutation until reviewed.
+A replacement runtime or a legacy ownership record without directory identity is preserved until reviewed.
+For a C25a record, a verified pinned runtime offers `--adopt-runtime <host>:<displayed-hash>` to explicitly confirm its ownership before repeat, update or removal.
+The decision binds the canonical path, directory identity, file bytes and link targets; changed or unmatched decisions return usage error before mutation.
+Dry run previews adoption without saving it, and application rechecks the decision before persisting directory identity.
 Recovery rejects a destination whose canonical path changed, including a replacement directory link.
 It prunes empty directories without following links and reports every retained path.
 Retained owned files keep their original ownership hashes and versions for later explicit cleanup and return blocked.
