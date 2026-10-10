@@ -412,14 +412,14 @@ async function lifecycle(t, scope = 'project') {
   return { ...f, args, parent, destination, ownership, journal }
 }
 
-async function legacyInstallation(t) {
+async function legacyInstallation(t, host = 'agents') {
   const f = await fixture(t)
   f.git('tag', 'v0.0.1')
   f.git('update-index', '--assume-unchanged', 'install/install.mjs')
   const installer = command('git', ['show', '98b9ab1d8de5f9a238dde2383295c2c04450d852:install/install.mjs'], root, f.env)
   assert.equal(installer.status, 0, installer.stderr)
   await writeFile(join(f.checkout, 'install/install.mjs'), installer.stdout)
-  const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
+  const args = ['--scope', 'project', '--project', f.project, '--host', host]
   assert.equal(f.run(...args).status, 0)
   await cp(join(root, 'install/install.mjs'), join(f.checkout, 'install/install.mjs'))
   const parent = join(f.project, '.agents/skills')
@@ -427,6 +427,27 @@ async function legacyInstallation(t) {
   const ownership = join(parent, '.bstack-install.json')
   assert.equal(JSON.parse(await readFile(ownership, 'utf8')).runtime.identity, undefined)
   return { ...f, args, parent, destination, ownership }
+}
+
+async function upgradeRuntime(f) {
+  const dependency = join(f.directory, 'dependency')
+  await writeFile(join(dependency, 'package.json'), JSON.stringify({ name: 'lavish-axi', version: '0.1.79', type: 'module' }))
+  await writeFile(join(dependency, 'dist/cli.mjs'), "console.log('0.1.79')\n")
+  const packed = command('npm', ['pack', '--json', '--ignore-scripts'], dependency, f.env)
+  assert.equal(packed.status, 0, packed.stderr)
+  const tarball = join(dependency, JSON.parse(packed.stdout)[0].filename)
+  const manifest = JSON.parse(await readFile(join(f.source, 'package.json'), 'utf8'))
+  manifest.dependencies['lavish-axi'] = '0.1.79'
+  await rm(join(f.source, 'package-lock.json'))
+  const locked = command('npm', ['install', '--package-lock-only', '--ignore-scripts', '--no-audit', '--no-fund', tarball], f.source, f.env)
+  assert.equal(locked.status, 0, locked.stdout + locked.stderr)
+  const lock = JSON.parse(await readFile(join(f.source, 'package-lock.json'), 'utf8'))
+  lock.packages[''].dependencies = manifest.dependencies
+  await writeFile(join(f.source, 'package.json'), JSON.stringify(manifest, null, 2) + '\n')
+  await writeFile(join(f.source, 'package-lock.json'), JSON.stringify(lock, null, 2) + '\n')
+  f.git('add', '.')
+  f.git('commit', '-m', 'runtime upgrade')
+  f.git('tag', 'v0.0.2')
 }
 
 for (const scope of ['user', 'project']) {
@@ -573,8 +594,14 @@ fs.rename = async (from, to) => {
   if (path.endsWith('/.bstack-install-journal.json')) {
     const journal = JSON.parse(await fs.readFile(to, 'utf8'))
     if (boundary === journal.state) process.exit(86)
+    if (boundary === 'agents-' + journal.state && path.includes('/.agents/')) process.exit(86)
   }
   if (boundary === 'ownership-adopt' && path.endsWith('/.bstack-install.json') && JSON.parse(await fs.readFile(to, 'utf8')).acceptedAdoption) process.exit(86)
+  if (boundary === 'agents-ownership-adopt' && path.includes('/.agents/') && path.endsWith('/.bstack-install.json') && JSON.parse(await fs.readFile(to, 'utf8')).acceptedAdoption) process.exit(86)
+  if (boundary === 'moved-cleanup-edit' && path.endsWith('/.bstack-install.json') && JSON.parse(await fs.readFile(to, 'utf8')).runtime?.version === '0.1.79') {
+    const journal = JSON.parse(await fs.readFile(join(dirname(to), '.bstack-install-journal.json'), 'utf8'))
+    await fs.writeFile(join(journal.stage, 'previous-runtime/keep.txt'), 'Cleanup runtime edit\\n')
+  }
   if (boundary === 'approved-file-rename' && path.endsWith('/repo-audit/SKILL.md')) process.exit(86)
   if (boundary === 'copy-rename' && path.endsWith('/skills/repo-audit')) process.exit(86)
   if (boundary === 'copy-edit' && path.endsWith('/skills/repo-audit')) await fs.writeFile(join(to, 'SKILL.md'), 'Late user edit\\n')
@@ -944,6 +971,96 @@ for (const [operation, boundary] of [
     }
   })
 }
+
+for (const [operation, boundary] of [
+  ['repeat', 'agents-ownership-adopt'], ['update', 'agents-staging'], ['update', 'agents-applying'], ['uninstall', 'agents-applying']
+]) {
+  test(`cross-host ${operation} replays both hosts' decisions after ${boundary}`, async t => {
+    const f = await legacyInstallation(t, 'all')
+    const claude = join(f.project, '.claude/skills/repo-audit')
+    if (operation !== 'repeat') {
+      await writeFile(join(claude, 'SKILL.md'), 'Approved user content\n')
+      await writeFile(join(f.destination, 'SKILL.md'), 'Approved user content\n')
+    }
+    await writeFile(join(claude, 'keep.txt'), 'Unowned Claude content\n')
+    await writeFile(join(f.destination, 'keep.txt'), 'Unowned agents content\n')
+    const args = [...f.args, ...(operation === 'uninstall' ? ['--uninstall'] : [])]
+    const preview = f.run(...args, '--dry-run')
+    const decisions = preview.value.data.destinations.flatMap(entry => entry.conflicts.flatMap(conflict => conflict.decision.split(' ')))
+    await interrupt(f, boundary)
+    assert.equal(f.run(...args, ...decisions).status, 86)
+    delete f.env.NODE_OPTIONS
+    const result = f.run(...args, ...decisions)
+    assert.equal(result.status, 0, result.stdout)
+    assert.deepEqual(result.value.data.installations.map(entry => entry.sourceVersion), [operation === 'uninstall' ? 'uninstalled' : 'v0.0.1', operation === 'uninstall' ? 'uninstalled' : 'v0.0.1'])
+    assert.equal(await readFile(join(claude, 'keep.txt'), 'utf8'), 'Unowned Claude content\n')
+    assert.equal(await readFile(join(f.destination, 'keep.txt'), 'utf8'), 'Unowned agents content\n')
+    await assert.rejects(lstat(join(f.project, '.claude/skills/.bstack-install-journal.json')), { code: 'ENOENT' })
+    await assert.rejects(lstat(join(f.project, '.agents/skills/.bstack-install-journal.json')), { code: 'ENOENT' })
+  })
+}
+
+for (const change of ['file', 'runtime']) {
+  test(`cross-host replay rejects a changed completed host ${change}`, async t => {
+    const f = await legacyInstallation(t, 'all')
+    const claude = join(f.project, '.claude/skills/repo-audit')
+    await writeFile(join(claude, 'SKILL.md'), 'Approved user content\n')
+    await writeFile(join(f.destination, 'SKILL.md'), 'Approved user content\n')
+    const preview = f.run(...f.args, '--dry-run')
+    const decisions = preview.value.data.destinations.flatMap(entry => entry.conflicts.flatMap(conflict => conflict.decision.split(' ')))
+    await interrupt(f, 'agents-staging')
+    assert.equal(f.run(...f.args, ...decisions).status, 86)
+    delete f.env.NODE_OPTIONS
+    await writeFile(join(claude, change === 'file' ? 'SKILL.md' : 'node_modules/keep.txt'), 'Later user content\n')
+    const before = await inventory(f.project)
+    const result = f.run(...f.args, ...decisions)
+    assert.equal(result.status, 3, result.stdout)
+    assert.equal(result.value.problems[0].code, change === 'file' ? 'stale-replacement' : 'stale-runtime-decision')
+    assert.deepEqual(await inventory(f.project), before)
+  })
+}
+
+for (const [boundary, edited, flags] of [
+  ['runtime-backup', false, true], ['runtime-rename', false, true],
+  ['runtime-backup', true, true], ['runtime-rename', true, true], ['runtime-backup', true, false]
+]) {
+  test(`moved adoption ${edited ? 'preserves edits' : 'resumes'} after ${boundary} ${flags ? 'with' : 'without'} original flags`, async t => {
+    const f = await legacyInstallation(t)
+    await upgradeRuntime(f)
+    const preview = f.run(...f.args, '--dry-run')
+    assert.equal(preview.status, 0, preview.stdout)
+    const decision = preview.value.data.destinations[0].conflicts.find(conflict => conflict.path === 'node_modules').decision.split(' ')
+    await interrupt(f, boundary)
+    assert.equal(f.run(...f.args, ...decision).status, 86)
+    delete f.env.NODE_OPTIONS
+    const journal = JSON.parse(await readFile(join(f.parent, '.bstack-install-journal.json'), 'utf8'))
+    const old = join(journal.stage, 'previous-runtime')
+    if (edited) await writeFile(join(old, 'keep.txt'), 'Moved runtime edit\n')
+    const result = f.run(...f.args, ...(flags ? decision : []))
+    assert.equal(result.status, edited ? flags ? 3 : 2 : 0, result.stdout)
+    if (edited) {
+      assert.equal(result.value.problems[0].code, flags ? 'stale-runtime-decision' : 'runtime-conflict')
+      assert.equal(await readFile(join(old, 'keep.txt'), 'utf8'), 'Moved runtime edit\n')
+    } else {
+      assert.equal(result.value.data.installations[0].runtime.version, '0.1.79')
+      await assert.rejects(lstat(old), { code: 'ENOENT' })
+    }
+  })
+}
+
+test('moved adoption preserves edits detected at final cleanup', async t => {
+  const f = await legacyInstallation(t)
+  await upgradeRuntime(f)
+  const preview = f.run(...f.args, '--dry-run')
+  const decision = preview.value.data.destinations[0].conflicts.find(conflict => conflict.path === 'node_modules').decision.split(' ')
+  await interrupt(f, 'moved-cleanup-edit')
+  const result = f.run(...f.args, ...decision)
+  assert.equal(result.status, 2, result.stdout)
+  assert.equal(result.value.problems[0].code, 'runtime-conflict')
+  const journal = JSON.parse(await readFile(join(f.parent, '.bstack-install-journal.json'), 'utf8'))
+  assert.equal(await readFile(join(journal.stage, 'previous-runtime/keep.txt'), 'utf8'), 'Cleanup runtime edit\n')
+  assert.equal(result.value.data.installations[0].runtime.version, '0.1.79')
+})
 
 for (const change of ['approved file', 'runtime content', 'runtime identity', 'source']) {
   test(`approved command replay rejects changed ${change} after staging`, async t => {
