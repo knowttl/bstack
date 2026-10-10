@@ -569,7 +569,7 @@ import { dirname, join } from 'node:path'
 const rename = fs.rename
 const unlink = fs.unlink
 const copyFile = fs.copyFile
-const rm = fs.rm
+const rmdir = fs.rmdir
 const writeFile = fs.writeFile
 const boundary = ${JSON.stringify(boundary)}
 let edited = false
@@ -589,6 +589,10 @@ fs.copyFile = async (from, to) => {
   return copyFile(from, to)
 }
 fs.rename = async (from, to) => {
+  if (boundary.startsWith('writer-') && String(from).endsWith('.tmp')) {
+    const value = JSON.parse(await fs.readFile(from, 'utf8'))
+    if (boundary === 'writer-' + value.state || boundary === 'writer-cleanup' && value.entries || boundary === 'writer-ownership' && value.mode === 'copy') process.exit(86)
+  }
   const result = await rename(from, to)
   const path = String(to).replaceAll('\\\\', '/')
   if (path.endsWith('/.bstack-install.json') && boundary.startsWith('cleanup-receipt-') && path.includes('/.' + boundary.slice('cleanup-receipt-'.length) + '/')) {
@@ -601,6 +605,7 @@ fs.rename = async (from, to) => {
     const journal = JSON.parse(await fs.readFile(to, 'utf8'))
     if (boundary === journal.state) process.exit(86)
     if (boundary === 'agents-' + journal.state && path.includes('/.agents/')) process.exit(86)
+    if (boundary === 'earlier-host-edit' && journal.state === 'prepared' && path.includes('/.agents/')) await fs.writeFile(join(dirname(to), '../../.claude/skills/repo-audit/SKILL.md'), 'Later host edit\\n')
   }
   if (boundary === 'ownership-adopt' && path.endsWith('/.bstack-install.json') && JSON.parse(await fs.readFile(to, 'utf8')).acceptedAdoption) process.exit(86)
   if (boundary === 'agents-ownership-adopt' && path.includes('/.agents/') && path.endsWith('/.bstack-install.json') && JSON.parse(await fs.readFile(to, 'utf8')).acceptedAdoption) process.exit(86)
@@ -624,6 +629,8 @@ fs.unlink = async path => {
   const normalized = String(path).replaceAll('\\\\', '/')
   if (boundary === 'cleanup-failure-agents' && normalized.includes('/.agents/') && normalized.includes('/.bstack-stage-') && normalized.endsWith('/SKILL.md')) throw Object.assign(new Error('Fixture cleanup failure'), { code: 'EACCES' })
   const result = await unlink(path)
+  if (boundary === 'partial-runtime-uninstall' && normalized.includes('/repo-audit/node_modules/')) process.exit(86)
+  if (boundary === 'partial-runtime-cleanup' && normalized.includes('/previous-runtime/')) process.exit(86)
   for (const host of ['claude', 'agents']) {
     if (normalized.includes('/.' + host + '/')) {
       if (boundary === 'cleanup-file-' + host && normalized.includes('/.bstack-stage-') && normalized.endsWith('/SKILL.md')) process.exit(86)
@@ -634,8 +641,8 @@ fs.unlink = async path => {
   if (boundary === 'file-remove' && String(path).replaceAll('\\\\', '/').endsWith('/repo-audit/current.md')) process.exit(86)
   return result
 }
-fs.rm = async (path, options) => {
-  const result = await rm(path, options)
+fs.rmdir = async path => {
+  const result = await rmdir(path)
   const normalized = String(path).replaceAll('\\\\', '/')
   for (const host of ['claude', 'agents']) {
     if (normalized.includes('/.' + host + '/') && normalized.includes('/.bstack-stage-')) {
@@ -1044,6 +1051,107 @@ for (const change of ['file', 'runtime']) {
     assert.deepEqual(await inventory(f.project), before)
   })
 }
+
+for (const operation of ['upgrade', 'uninstall']) {
+  for (const change of ['none', 'new content', 'edited content', 'replacement directory']) {
+    test(`partial runtime deletion ${operation} recovers while preserving ${change}`, async t => {
+      const f = await legacyInstallation(t)
+      if (operation === 'upgrade') await upgradeRuntime(f)
+      const args = [...f.args, ...(operation === 'uninstall' ? ['--uninstall'] : [])]
+      const decision = f.run(...args, '--dry-run').value.data.destinations[0].conflicts.find(conflict => conflict.path === 'node_modules').decision.split(' ')
+      await interrupt(f, operation === 'upgrade' ? 'partial-runtime-cleanup' : 'partial-runtime-uninstall')
+      assert.equal(f.run(...args, ...decision).status, 86)
+      delete f.env.NODE_OPTIONS
+      const journal = JSON.parse(await readFile(join(f.parent, '.bstack-install-journal.json'), 'utf8'))
+      const path = operation === 'upgrade' ? join(journal.stage, 'previous-runtime') : join(f.destination, 'node_modules')
+      await assert.rejects(lstat(join(path, 'lavish-axi/package.json')), { code: 'ENOENT' })
+      if (change === 'new content') await writeFile(join(path, 'keep.txt'), 'Keep runtime\n')
+      if (change === 'edited content') await writeFile(join(path, 'lavish-axi/dist/cli.mjs'), 'Keep runtime\n')
+      if (change === 'replacement directory') {
+        await rename(path, path + '-original')
+        await mkdir(path)
+        await writeFile(join(path, 'keep.txt'), 'Keep runtime\n')
+      }
+      const before = await inventory(path)
+      const result = f.run(...args, ...decision)
+      assert.equal(result.status, change === 'none' ? 0 : 2, result.stdout)
+      if (change === 'none') await assert.rejects(lstat(path), { code: 'ENOENT' })
+      else {
+        assert.equal(result.value.problems[0].code, 'runtime-conflict')
+        assert.deepEqual(await inventory(path), before)
+        const withoutDecision = f.run(...args)
+        assert.equal(withoutDecision.status, 2, withoutDecision.stdout)
+        assert.deepEqual(await inventory(path), before)
+      }
+    })
+  }
+}
+
+for (const boundary of ['staging', 'prepared', 'ownership', 'cleanup']) {
+  test(`recovery writer temporary preserves tagged source binding at ${boundary}`, async t => {
+    const f = await fixture(t)
+    f.git('tag', 'v0.0.1')
+    const args = ['--scope', 'project', '--project', f.checkout, '--host', 'agents']
+    await interrupt(f, 'writer-' + boundary)
+    assert.equal(f.run(...args).status, 86)
+    delete f.env.NODE_OPTIONS
+    const resumed = f.run(...args)
+    assert.equal(resumed.status, 0, resumed.stdout)
+    assert.equal(resumed.value.data.sourceVersion, 'v0.0.1')
+    const names = await readdir(boundary === 'cleanup' ? f.checkout : join(f.checkout, '.agents/skills'))
+    assert.equal(names.some(name => name.endsWith('.tmp')), true)
+    await writeFile(join(f.checkout, '.bstack-00000000-0000-0000-0000-000000000000.tmp'), 'Unrelated source\n')
+    const changed = f.run(...args, '--dry-run')
+    assert.equal(changed.status, 0, changed.stdout)
+    assert.match(changed.value.data.sourceVersion, /:dirty$/)
+  })
+}
+
+test('cross-host failure refreshes earlier actual state and preserves backup details', async t => {
+  const f = await legacyInstallation(t, 'all')
+  const claude = join(f.project, '.claude/skills/repo-audit')
+  await writeFile(join(claude, 'SKILL.md'), 'Approved edit\n')
+  await writeFile(join(f.source, 'current.md'), 'New release\n')
+  f.git('add', '.')
+  f.git('commit', '-m', 'fixture update')
+  f.git('tag', 'v0.0.2')
+  const preview = f.run(...f.args, '--dry-run')
+  const decisions = preview.value.data.destinations.flatMap(entry => entry.conflicts.flatMap(conflict => conflict.decision.split(' ')))
+  await interrupt(f, 'earlier-host-edit')
+  const result = f.run(...f.args, ...decisions)
+  assert.equal(result.status, 2, result.stdout)
+  const report = result.value.data.installations.find(report => report.destination === claude)
+  assert.equal(report.sourceVersion, 'mixed')
+  assert.equal(report.files['SKILL.md'], createHash('sha256').update('Later host edit\n').digest('hex'))
+  assert.equal(await readFile(join(report.backup, 'SKILL.md'), 'utf8'), 'Approved edit\n')
+  assert.deepEqual(report.conflicts, [])
+  delete f.env.NODE_OPTIONS
+  const repeated = f.run(...f.args, ...decisions)
+  assert.equal(repeated.status, 3, repeated.stdout)
+  const refreshed = repeated.value.data.installations.find(report => report.destination === claude)
+  assert.equal(refreshed.files['SKILL.md'], report.files['SKILL.md'])
+  assert.equal(refreshed.sourceVersion, 'mixed')
+  assert.equal(refreshed.backup, report.backup)
+  assert.deepEqual(refreshed.conflicts, report.conflicts)
+})
+
+test('cleanup failure reports recreated files after earlier ownership retirement', async t => {
+  const f = await legacyInstallation(t, 'all')
+  const claude = join(f.project, '.claude/skills/repo-audit')
+  await writeFile(join(claude, 'keep.txt'), 'Unowned content\n')
+  const args = [...f.args, '--uninstall']
+  const decisions = f.run(...args, '--dry-run').value.data.destinations.flatMap(entry => entry.conflicts.flatMap(conflict => conflict.decision.split(' ')))
+  await interrupt(f, 'cleanup-journal-claude')
+  assert.equal(f.run(...args, ...decisions).status, 86)
+  delete f.env.NODE_OPTIONS
+  await writeFile(join(claude, 'SKILL.md'), 'Recreated content\n')
+  const result = f.run(...args, ...decisions)
+  assert.equal(result.status, 2, result.stdout)
+  const report = result.value.data.installations.find(report => report.destination === claude)
+  assert.equal(report.sourceVersion, 'mixed')
+  assert.equal(report.files['SKILL.md'], createHash('sha256').update('Recreated content\n').digest('hex'))
+  assert.equal(await readFile(join(claude, 'keep.txt'), 'utf8'), 'Unowned content\n')
+})
 
 for (const [boundary, edited, flags] of [
   ['runtime-backup', false, true], ['runtime-rename', false, true],

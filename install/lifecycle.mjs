@@ -1,4 +1,4 @@
-import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rename, rm, rmdir, unlink, writeFile } from 'node:fs/promises'
+import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rename, rmdir, unlink, writeFile } from 'node:fs/promises'
 import { basename, dirname, join, relative } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
@@ -37,6 +37,61 @@ export async function ownsRuntime(path, runtime) {
     if (error.code === 'ENOENT' || error instanceof CommandError) return false
     throw error
   }
+}
+
+async function runtimeEntry(path, name) {
+  const stat = await lstat(path, { bigint: true })
+  const identity = { dev: String(stat.dev), ino: String(stat.ino), birthtimeNs: String(stat.birthtimeNs) }
+  const item = { path: name, identity }
+  if (stat.isDirectory()) return { ...item, type: 'directory' }
+  else if (stat.isFile()) return { ...item, hash: hashBytes(await readFile(path)) }
+  else if (stat.isSymbolicLink()) return { ...item, link: await readlink(path) }
+  else blocked('runtime-conflict', 'Runtime contains an unsupported entry.')
+}
+
+async function runtimeEntries(directory, prefix = '') {
+  const entries = []
+  for (const name of (await readdir(directory)).sort()) {
+    const path = join(directory, name)
+    const item = await runtimeEntry(path, prefix + name)
+    entries.push(item)
+    if (item.type === 'directory') entries.push(...await runtimeEntries(path, item.path + '/'))
+  }
+  return entries
+}
+
+async function verifyRuntimeRemoval(entry, removal) {
+  await verifyDestination(entry)
+  if (removal.entries.some(item => !item.path || item.path.split('/').some(part => part === '..' || part === '') || item.path.startsWith('/'))) blocked('journal-mismatch', 'Runtime removal entry path changed.')
+  if (!await exists(removal.path)) return
+  if (canonicalJSON(await runtimeIdentity(removal.path)) !== canonicalJSON(removal.identity)) blocked('runtime-conflict', 'Runtime directory identity changed during removal.')
+  const expected = new Map(removal.entries.map(item => [item.path, canonicalJSON(item)]))
+  for (const item of await runtimeEntries(removal.path)) {
+    if (expected.get(item.path) !== canonicalJSON(item)) blocked('runtime-conflict', 'Runtime contents changed during removal.')
+  }
+}
+
+async function removeRuntime(entry, path, owned, removals, key, save) {
+  if (!removals[key]) {
+    if (!await ownsRuntime(path, { ...owned, path })) blocked('runtime-conflict', 'Runtime directory identity changed before removal.')
+    const removal = { path, identity: owned.identity, entries: await runtimeEntries(path) }
+    if (!await matchesAcceptedRuntime(entry, entry.recovery?.record ?? entry.previous, entry.recovery)) blocked('runtime-conflict', 'Accepted runtime contents changed before removal.')
+    removals[key] = removal
+    await save()
+  }
+  const removal = removals[key]
+  if (removal.path !== path || canonicalJSON(removal.identity) !== canonicalJSON(owned.identity)) blocked('journal-mismatch', 'Runtime removal identity changed.')
+  await verifyRuntimeRemoval(entry, removal)
+  for (const item of [...removal.entries].reverse()) {
+    const target = join(path, item.path)
+    if (!await exists(target)) continue
+    await verifyDestination(entry)
+    if (canonicalJSON(await runtimeEntry(target, item.path)) !== canonicalJSON(item)) blocked('runtime-conflict', 'Runtime entry changed during removal.')
+    if (item.type === 'directory') await rmdir(target)
+    else await unlink(target)
+  }
+  await verifyRuntimeRemoval(entry, removal)
+  if (await exists(path)) await rmdir(path)
 }
 
 export async function legacyRuntimeDecision(entry, record, runtimeVersion) {
@@ -78,7 +133,13 @@ async function matchesAcceptedRuntime(entry, record, journal) {
   if (!record.acceptedAdoption) return true
   const path = record.runtime.path
   const moved = journal?.stage && join(journal.stage, 'previous-runtime')
-  if (moved && entry.cleanup?.runtimeRemoval && !await exists(moved)) return true
+  const removal = entry.cleanup?.runtimeRemovals?.['previous-runtime'] ?? journal?.runtimeRemoval
+  if (removal) {
+    if (removal.path !== (entry.cleanup?.runtimeRemovals?.['previous-runtime'] ? moved : path) ||
+        canonicalJSON(removal.identity) !== canonicalJSON(record.runtime.identity)) return false
+    await verifyRuntimeRemoval(entry, removal)
+    return true
+  }
   const directory = moved && await exists(moved) ? moved : path
   if (await ownsRuntime(directory, { ...record.runtime, path: directory })) {
     return await runtimeFingerprint(entry, record.runtime, directory) === record.acceptedAdoption.value
@@ -101,6 +162,7 @@ export async function matchesRuntimeAdoption(entry, decision, runtimeVersion) {
   if (record?.acceptedAdoption?.value !== decision || record.acceptedAdoption.binding !== entry.adoptionBinding) return false
   await verifyDestination(entry)
   if (!await matchesAcceptedRuntime(entry, record, entry.recovery)) return false
+  if (entry.recovery?.runtimeRemoval || entry.cleanup?.runtimeRemovals?.['previous-runtime']) return true
   const path = join(entry.destination, 'node_modules')
   if (await ownsRuntime(path, record.runtime)) {
     const actual = await legacyRuntimeDecision(entry, { ...record, runtime: { ...record.runtime, identity: undefined } }, runtimeVersion)
@@ -140,10 +202,15 @@ export async function inspectInstallation(entry, runtimeVersion) {
   try { journal = JSON.parse(await readFile(entry.journal, 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
   if (!record && journal && !journal.update && !journal.plan && await exists(entry.destination) &&
       (['activated', 'completed'].includes(journal.state) || !await exists(journal.stage))) record = journal.record
+  record ??= entry.cleanup?.record
   if (!record) return { destination: entry.destination, sourceVersion: 'not-installed' }
   const files = {}
   const fileVersions = { ...Object.fromEntries(Object.keys(record.files).map(path => [path, record.sourceVersion])), ...record.fileVersions }
-  for (const path of Object.keys(record.files)) files[path] = (await state(entry.destination, path)).hash
+  for (const path of new Set([...Object.keys(record.files), ...Object.keys(entry.cleanup?.report.files ?? {}),
+    ...Object.keys(entry.cleanup?.recovery?.record.files ?? {})])) {
+    const actual = await state(entry.destination, path)
+    if (Object.hasOwn(record.files, path) || actual.hash !== null) files[path] = actual.hash
+  }
   for (const operation of journal?.plan?.operations ?? []) {
     const actual = await state(entry.destination, operation.path)
     if (actual.hash === operation.proposedHash) {
@@ -378,7 +445,7 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
     const activatedRuntime = journal.stagedRuntime && { ...journal.stagedRuntime, path: target }
     if (current && !await ownsRuntime(target, runtime) && !(await ownsRuntime(target, activatedRuntime) && await runtimeVersion(entry.destination, journal.plan.runtime))) blocked('runtime-conflict', 'Runtime directory identity changed before activation.')
     if (journal.plan.uninstall) {
-      if (current) await rm(target, { recursive: true, force: true })
+      if (current) await removeRuntime(entry, target, runtime, journal, 'runtimeRemoval', () => saveRecovery(entry.journal, journal))
       runtime = null
     } else if (!await runtimeVersion(entry.destination, journal.plan.runtime)) {
       const old = join(journal.stage, 'previous-runtime')
@@ -445,12 +512,9 @@ export async function finishLifecycle(entry, report, runtimeVersion) {
     for (const [name, owned] of [['node_modules', journal.stagedRuntime], ['previous-runtime', journal.record.runtime]]) {
       const path = join(journal.stage, name)
       if (name === 'previous-runtime' && !await matchesAcceptedRuntime(entry, journal.record, journal)) blocked('runtime-conflict', 'Accepted runtime contents changed before cleanup.')
-      if (owned && await ownsRuntime(path, { ...owned, path })) {
-        if (name === 'previous-runtime') {
-          entry.cleanup.runtimeRemoval = true
-          await entry.saveCleanup()
-        }
-        await rm(path, { recursive: true, force: true })
+      if (entry.cleanup.runtimeRemovals?.[name] || owned && await ownsRuntime(path, { ...owned, path })) {
+        entry.cleanup.runtimeRemovals ??= {}
+        await removeRuntime(entry, path, owned, entry.cleanup.runtimeRemovals, name, entry.saveCleanup)
       }
     }
     for (const [path, hash] of Object.entries(journal.plan.desired)) {
