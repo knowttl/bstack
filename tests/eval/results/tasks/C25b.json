@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C25b",
+  "slice": "C25b",
+  "sourceRevision": "712338a0800f35a3e0f7121c3d99bd9088ce0151",
+  "intent": "Complete the copy update, uninstall and interruption portion of T4.1, preserving edited and unowned content, reporting actual mixed state, retaining ownership for explicit cleanup and resuming from verified hashes.",
+  "amendments": [],
+  "status": "passed",
+  "environment": {
+    "os": "linux 6.8.0-142-generic x64",
+    "node": "v24.17.0",
+    "tools": { "npm": "11.13.0", "git": "git version 2.54.0" }
+  },
+  "commands": [
+    {
+      "id": "package-and-checker",
+      "executable": "npm",
+      "args": ["run", "check"],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C25b.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task-tests",
+      "executable": "npm",
+      "args": ["test", "--", "--task", "C25b"],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C25b.task-tests.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-73-copy-lifecycle",
+      "kind": "automated",
+      "procedure": "tests/scripts/install.test.mjs: clean user/project update removes obsolete ownership and clean uninstall removes only installer content; noninteractive update reports actual mixed versions, preserves edits and unowned collisions, then accepts specific decisions with backups; stale replacement decisions preserve later edits before any staging; uninstall retains edited ownership until explicit hash-bound cleanup and preserves unowned runtime",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C25b.task-tests.txt"
+    },
+    {
+      "id": "AC-73-copy-recovery",
+      "kind": "automated",
+      "procedure": "tests/scripts/install.test.mjs: first copy resumes after interruption at staging/prepared/copy-rename/activated/completed using actual hashes; update resumes after interruption at applying/partial-temp/file-rename/runtime-backup/runtime-rename without repeating completed mutations; uninstall resumes after a file deletion and reports a later edited owned file; changed staged recovery bytes block without overwriting or deleting unrelated content; runtime failure on update reports the unchanged installed version and retries the verified stage",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C25b.task-tests.txt"
+    },
+    {
+      "id": "AC-74",
+      "kind": "manual",
+      "procedure": "Complete copy/link lifecycle on real Windows, macOS and Linux with supplementary Node 24 and Node 26 execution",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "C25b verifies Linux Node 24 copy lifecycle controls in disposable isolated homes/projects with locally packed fake runtimes.",
+      "nextPrerequisite": "C25c owned-link lifecycle and recorded real operating-system executions."
+    }
+  ],
+  "limitations": [
+    "AC-73 complete lifecycle remains pending C25c links. Real Windows/macOS and supplementary Node 26 installer acceptance remain pending C25c.",
+    "The installer tests use disposable isolated homes/projects, Git snapshots and locally packed fake lavish-axi runtimes with offline npm. They do not establish real runtime board interactions.",
+    "Current-agent invocation and loading remain C26 work.",
+    "No release, real release tag, npm publication or hosted CI workflow was created.",
+    "Filesystem directory-flush limitations follow the shared recovery writer. Power-loss recovery is not established by process-interruption tests.",
+    "Fixture teardown removes task-created disposable homes/projects, npm caches, fake runtime tarballs, stages and backups. No task-created dev stack, image or shared cache requires cleanup.",
+    "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
+  ]
+}
