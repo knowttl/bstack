@@ -1186,8 +1186,9 @@ test('failure snapshot retains edited approved additions and recorded backups', 
   assert.ok(plain.stdout.includes(`backup: ${report.backup}`))
   assert.ok(plain.stdout.includes(conflict.diff))
   assert.ok(plain.stdout.includes(`Decision: ${conflict.decision}`))
-  assert.equal(f.run(...f.args).status, 2)
-  assert.equal(f.run(...f.args, ...conflict.decision.split(' ')).status, 0)
+  const approved = f.run(...f.args, ...conflict.decision.split(' '))
+  assert.equal(approved.status, 0, approved.stdout)
+  assert.equal(await readFile(join(approved.value.data.installations[0].backup, `added.md.${conflict.actualHash}`), 'utf8'), 'Edited addition\n')
   assert.equal(await readFile(join(f.destination, 'added.md'), 'utf8'), 'New package file\n')
 })
 
@@ -1220,9 +1221,49 @@ test('failure conflict snapshot refreshes edited unowned collisions during runti
   assert.ok(plain.stdout.includes(conflict.diff))
   assert.ok(plain.stdout.includes(`Decision: ${conflict.decision}`))
   f.env.BSTACK_FIXTURE_RUNTIME_FAIL = '0'
-  assert.equal(f.run(...args).status, 2)
-  assert.equal(f.run(...args, ...conflict.decision.split(' ')).status, 0)
+  const approved = f.run(...args, ...conflict.decision.split(' '))
+  assert.equal(approved.status, 0, approved.stdout)
+  assert.equal(await readFile(join(approved.value.data.installations[0].backup, 'added.md'), 'utf8'), 'Later collision\n')
   assert.equal(await readFile(join(destination, 'added.md'), 'utf8'), 'Proposed addition\n')
+})
+
+for (const path of ['added.md', 'edited.md']) {
+  test(`equal-byte ${path} ownership conflict requires its displayed decision`, async t => {
+    const f = await lifecycle(t)
+    const proposed = await readFile(join(f.source, path))
+    await writeFile(join(f.destination, path), proposed)
+    const blocked = f.run(...f.args)
+    assert.equal(blocked.status, 2, blocked.stdout)
+    const conflict = blocked.value.data.installations[0].conflicts.find(conflict => conflict.path === path)
+    assert.equal(conflict.actualHash, conflict.proposedHash)
+    const approved = f.run(...f.args, ...conflict.decision.split(' '))
+    assert.equal(approved.status, 0, approved.stdout)
+    assert.equal(approved.value.data.installations[0].sourceVersion, 'v0.0.2')
+    assert.deepEqual(await readFile(join(approved.value.data.installations[0].backup, path)), proposed)
+    const record = JSON.parse(await readFile(f.ownership, 'utf8'))
+    assert.equal(record.files[path], conflict.proposedHash)
+  })
+}
+
+test('activated copy replacement preserves original source binding', async t => {
+  const f = await fixture(t)
+  const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
+  await interrupt(f, 'copy-rename')
+  assert.equal(f.run(...args).status, 86)
+  delete f.env.NODE_OPTIONS
+  const destination = join(f.project, '.agents/skills/repo-audit')
+  await writeFile(join(destination, 'SKILL.md'), 'User edit\n')
+  const conflict = f.run(...args).value.data.installations[0].conflicts.find(conflict => conflict.path === 'SKILL.md')
+  const sourcePath = join(f.source, 'references/architecture.md')
+  const original = await readFile(sourcePath)
+  await writeFile(sourcePath, Buffer.concat([original, Buffer.from('\nChanged source\n')]))
+  const before = await inventory(f.project)
+  const rejected = f.run(...args, ...conflict.decision.split(' '))
+  assert.equal(rejected.status, 2, rejected.stdout)
+  assert.equal(rejected.value.problems[0].code, 'journal-source-changed')
+  assert.deepEqual(await inventory(f.project), before)
+  await writeFile(sourcePath, original)
+  assert.equal(f.run(...args, ...conflict.decision.split(' ')).status, 0)
 })
 
 for (const boundary of ['staging', 'prepared', 'ownership', 'cleanup']) {
@@ -1501,6 +1542,13 @@ for (const boundary of ['copy-rename', 'activated', 'completed']) {
       assert.equal(conflict.decision, `--replace agents:SKILL.md:${report.files['SKILL.md']}`)
       assert.deepEqual(await inventory(f.project), before)
     }
+    const blocked = f.run(...args)
+    const conflict = blocked.value.data.installations[0].conflicts.find(conflict => conflict.path === 'SKILL.md')
+    const approved = f.run(...args, ...conflict.decision.split(' '))
+    assert.equal(approved.status, 0, approved.stdout)
+    assert.equal(await readFile(join(approved.value.data.installations[0].backup, 'SKILL.md'), 'utf8'), 'User edit\n')
+    const record = JSON.parse(await readFile(join(f.project, '.agents/skills/.bstack-install.json'), 'utf8'))
+    assert.equal(record.files['SKILL.md'], conflict.proposedHash)
   })
 }
 
