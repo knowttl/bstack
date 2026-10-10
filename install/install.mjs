@@ -91,10 +91,10 @@ async function install(selected) {
     destinations.push({ host, parent, destination, ownership: join(parent, '.bstack-install.json'), journal: join(parent, '.bstack-install-journal.json') })
   }
   const linked = []
-  const linkStages = []
   const linkDestinations = []
   const cleanupPath = join(root, '.bstack-install-cleanup.json')
   const pendingCleanup = await exists(cleanupPath) ? JSON.parse(await readFile(cleanupPath, 'utf8')) : null
+  const linkStages = [...(pendingCleanup?.runtimeStages ?? [])]
   for (const entry of destinations) {
     const modes = []
     for (const path of [entry.ownership, entry.journal]) {
@@ -403,7 +403,7 @@ async function install(selected) {
     }
     if (!cleanup && destinations.some(entry => entry.recovery || entry.previous?.acceptedAdoption)) {
       cleanup = { schemaVersion: 1, binding: cleanupBinding, entries: [],
-        ...(linkRemoval ? { linkDestinations: linkDestinations.map(entry => entry.destination) } : {}) }
+        ...(linkRemoval ? { linkDestinations: linkDestinations.map(entry => entry.destination), runtimeStages: linkStages } : {}) }
       for (const entry of destinations) {
         const saved = { destination: entry.destination, recovery: entry.recovery, previous: entry.previous,
           record: await exists(entry.ownership) ? JSON.parse(await readFile(entry.ownership, 'utf8')) : null,
