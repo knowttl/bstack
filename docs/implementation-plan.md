@@ -501,9 +501,16 @@ Tick each task when its "Done when" commands pass.
       The `ts-shop` with-mode fake host executes the collection, review binding and local/clean standalone flows while preserving and reporting the existing failed checkout journey.
       `npm test -- --task T3a.7` includes that isolated procedure and the standalone checker controls; [C24c evidence](../tests/eval/results/tasks/C24c.json) records the full Phase 3a fake-only suite.
       Fake-host execution does not establish real-model semantic judgement or AC-23 final agent acceptance; T4.3 owns the fresh final transcript.
-      Installation and release remain pending.
+      See Phase 4 below for installation progress; release remains pending.
 - Phase 4: Installation
   - [ ] T4.1 Build the installer
+    - [x] C25a Install preview, copy and ownership
+      - `node install/install.mjs` supports explicit user/project scope and Claude/agents/all destinations, source closure and prerequisite checks, mutation-free preview, staged locked runtime installation, package validation and recoverable activation.
+        Exact authored-file SHA-256 ownership lives outside each installed skill, and the created runtime directory is recorded separately.
+        `npm test -- --task C25a` verifies isolated homes/projects, complete copy validation, no-op repeat, unowned collision preservation, source failures and nested npm installation failure with a preserved stage and journal.
+        [C25a evidence](../tests/eval/results/tasks/C25a.json) binds the final full suite.
+        Updates, uninstall and interrupted-run completion remain C25b work, while link mode and real OS acceptance remain C25c work.
+        AC-73 lifecycle coverage and AC-74 three-OS acceptance are incomplete, and current-agent loading remains T4.2 work.
   - [ ] T4.2 Run the basic tests in the current agent
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release

@@ -1,5 +1,5 @@
 import { readdir, readFile, stat } from 'node:fs/promises'
-import { dirname, join, relative, resolve, sep } from 'node:path'
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { isBuiltin } from 'node:module'
 import { parse } from 'acorn'
@@ -73,7 +73,7 @@ function paths(text) {
   })
 }
 
-async function check(skill) {
+export async function checkPackage(skill, { sourcePreflight = false } = {}) {
   const problems = []
   const files = new Map()
   const add = (code, path, message, fix) => problems.push({ code, path, message: `${path}: ${message}`, fix })
@@ -154,6 +154,12 @@ async function check(skill) {
       if (!path) continue
       const target = resolve(/^(?:references|scripts|schemas|assets|agents)\//.test(path) ? skill : dirname(join(skill, file)), path)
       const targetName = relative(skill, target).split(sep).join('/')
+      const runtimeResource = targetName.startsWith('node_modules/') && dependencies.has(targetName.slice('node_modules/'.length).split('/').slice(0, targetName.startsWith('node_modules/@') ? 2 : 1).join('/'))
+      if (runtimeResource && sourcePreflight) continue
+      if (targetName === '..' || targetName.startsWith('../') || isAbsolute(targetName) || (!runtimeResource && targetName.split('/').some(part => excluded.has(part)))) {
+        add('package-closure', file, `Local resource is outside the authored package: ${raw}`, 'Bundle the resource inside the skill folder and reference its authored path.')
+        continue
+      }
       if (reference && targetName.startsWith('references/')) {
         add('reference-nested', file, `Reference points to another reference: ${raw}`, 'Link each reference directly from SKILL.md instead.')
       }
@@ -165,14 +171,17 @@ async function check(skill) {
   return problems
 }
 
-// The checker accepts one package selection and no production-command options.
-const args = process.argv.slice(2)
-if (args.length === 1 && args[0] === '--help') {
-  console.log('Usage: node scripts/check-package.mjs [--skill <folder>]\nChecks authored skill metadata, resources, imports, constants, steps and language policy.\nDefault: skills/repo-audit/ in this checkout.\nExample: node scripts/check-package.mjs --skill tests/package-check/valid')
-} else if (args.length && (args.length !== 2 || args[0] !== '--skill' || !args[1] || args[1].startsWith('--'))) {
-  emitResult({ command: 'check-package', status: 'usage-error', problems: [{ code: 'invalid-arguments', message: 'Expected only --skill <folder>.', fix: 'Run node scripts/check-package.mjs --help.' }] }, false)
-} else {
-  const skill = args.length ? resolve(args[1]) : defaultSkill
-  const problems = await check(skill)
-  emitResult({ command: 'check-package', status: problems.length ? 'failed' : 'passed', problems, inputs: { skill } }, false)
+async function main() {
+  const args = process.argv.slice(2)
+  if (args.length === 1 && args[0] === '--help') {
+    console.log('Usage: node scripts/check-package.mjs [--skill <folder>]\nChecks authored skill metadata, resources, imports, constants, steps and language policy.\nDefault: skills/repo-audit/ in this checkout.\nExample: node scripts/check-package.mjs --skill tests/package-check/valid')
+  } else if (args.length && (args.length !== 2 || args[0] !== '--skill' || !args[1] || args[1].startsWith('--'))) {
+    emitResult({ command: 'check-package', status: 'usage-error', problems: [{ code: 'invalid-arguments', message: 'Expected only --skill <folder>.', fix: 'Run node scripts/check-package.mjs --help.' }] }, false)
+  } else {
+    const skill = args.length ? resolve(args[1]) : defaultSkill
+    const problems = await checkPackage(skill)
+    emitResult({ command: 'check-package', status: problems.length ? 'failed' : 'passed', problems, inputs: { skill } }, false)
+  }
 }
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await main()
