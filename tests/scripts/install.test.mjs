@@ -2045,6 +2045,47 @@ for (const scope of ['user', 'project']) {
 }
 
 for (const copyHost of ['claude', 'agents']) {
+  test(`mixed-mode tagged checkout removal preserves failed runtime stages after link cleanup for ${copyHost} copy`, async t => {
+    const f = await fixture(t, true)
+    f.git('tag', 'v0.0.1')
+    const args = ['--scope', 'project', '--project', f.checkout]
+    const linkHost = copyHost === 'claude' ? 'agents' : 'claude'
+    const linkParent = join(f.checkout, `.${linkHost}/skills`)
+    const copy = join(f.checkout, `.${copyHost}/skills/repo-audit`)
+    f.env.BSTACK_FIXTURE_RUNTIME_FAIL = '0'
+    assert.equal(f.run(...args, '--host', copyHost).status, 0)
+    f.env.BSTACK_FIXTURE_RUNTIME_FAIL = '1'
+    const failed = f.run(...args, '--host', linkHost, '--link')
+    assert.equal(failed.status, 2, failed.stdout)
+    assert.equal(failed.value.problems[0].code, 'runtime-install-failed')
+    const journal = JSON.parse(await readFile(join(linkParent, '.bstack-install-journal.json'), 'utf8'))
+    await writeFile(join(journal.runtimeStage, 'keep.txt'), 'Unrelated failed-stage content\n')
+    f.env.BSTACK_FIXTURE_RUNTIME_FAIL = '0'
+    const installed = f.run(...args, '--host', linkHost, '--link')
+    assert.equal(installed.status, 0, installed.stdout)
+    assert.equal(installed.value.data.sourceVersion, 'v0.0.1')
+    await writeFile(join(copy, 'keep.txt'), 'Unrelated copy content\n')
+    await writeFile(join(f.source, 'node_modules/keep.txt'), 'Unrelated target content\n')
+    const stageBefore = await inventory(journal.runtimeStage)
+    const sourceBefore = await inventory(f.source)
+    const command = [...args, '--host', 'all', '--uninstall']
+    await interrupt(f, `cleanup-journal-${linkHost}`)
+    assert.equal(f.run(...command).status, 86)
+    delete f.env.NODE_OPTIONS
+    await assert.rejects(lstat(join(linkParent, '.bstack-install.json')), { code: 'ENOENT' })
+    await assert.rejects(lstat(join(linkParent, '.bstack-install-journal.json')), { code: 'ENOENT' })
+    const preview = f.run(...command, '--dry-run')
+    assert.equal(preview.status, 0, preview.stdout)
+    assert.equal(preview.value.data.sourceVersion, 'v0.0.1')
+    const resumed = f.run(...command)
+    assert.equal(resumed.status, 0, resumed.stdout)
+    assert.equal(resumed.value.data.sourceVersion, 'v0.0.1')
+    assert.deepEqual(await inventory(journal.runtimeStage), stageBefore)
+    assert.deepEqual(await inventory(f.source), sourceBefore)
+    assert.equal(await readFile(join(copy, 'keep.txt'), 'utf8'), 'Unrelated copy content\n')
+    await assert.rejects(lstat(join(f.checkout, '.bstack-install-cleanup.json')), { code: 'ENOENT' })
+  })
+
   test(`mixed-mode tagged checkout removal retains source binding after link cleanup for ${copyHost} copy`, async t => {
     const f = await fixture(t)
     f.git('tag', 'v0.0.1')
