@@ -35,7 +35,7 @@
       "args": [
         "scripts/test.mjs",
         "--capture",
-        ".cache/full-suite.json"
+        ".cache/C24c-final-full-suite.json"
       ],
       "cwd": ".",
       "exitCode": 0,
@@ -43,7 +43,7 @@
       "status": "passed"
     }
   ],
-  "sourceRevision": "226c612a41baae7a5aa2ec3359349ee1a6eff906",
+  "sourceRevision": "8f9ceb4806fa729d673d77696102265e5c47ae27",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -87,14 +87,24 @@
           "sha256": "42b953edb086c92e2ca0b17fdc05d26264de6ae314c25fbc8d73d2c52d63bcdc"
         },
         {
+          "path": "docs/C24c-maintenance-transcript.md",
+          "executable": false,
+          "sha256": "d4def0cfd5666846cb526605f187d74859a663855a2faa802c801b4c4777421a"
+        },
+        {
           "path": "docs/command-contract.md",
           "executable": false,
-          "sha256": "e1315a36cd6a7f0681f42323ecdc473c9343febef8d008706a8d5f1b71b7e2a8"
+          "sha256": "5c14d8422114a125a1a430062b8a52e088393fc0d6de458dd7a15e77dc9103ae"
         },
         {
           "path": "docs/design.md",
           "executable": false,
           "sha256": "9c5b98e2f9f8dc5b608238fd5e75ebe8d6740cc03bf670fef0d4450cf9c1f990"
+        },
+        {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "a1eb92cef03e91bb8726c93b392529108392cae82b663fbb4c2649162d2cc21e"
         },
         {
           "path": "docs/fixtures.md",
@@ -174,7 +184,7 @@
         {
           "path": "skills/repo-audit/SKILL.md",
           "executable": false,
-          "sha256": "a16f8336f6bab070b8663a5cf89ab0a353930ba86c5e59f86ce2d515a442dd32"
+          "sha256": "ef5596afb53c7fb312e3ff9b087bbeee313bad1cbe7c7b13fb5dd37af510db42"
         },
         {
           "path": "skills/repo-audit/agents/openai.yaml",
@@ -204,7 +214,7 @@
         {
           "path": "skills/repo-audit/references/architecture.md",
           "executable": false,
-          "sha256": "554e4f379729968d2e37949c265107a0887161ba635cc8c4213e4a6ad97e9653"
+          "sha256": "e5e649c5f6aef46331381a61937888bb8f04e8dcc442704c9d968cc54cc6d552"
         },
         {
           "path": "skills/repo-audit/references/domain-language.md",
@@ -214,7 +224,7 @@
         {
           "path": "skills/repo-audit/references/enforcement.md",
           "executable": false,
-          "sha256": "3988346c7a78c0b75dfc1cb325b614addfed37fc941be84612a3f56c27c3ffb6"
+          "sha256": "05e6499070f517955267d865067f98e14ede5364efe6dfed9d3fbbacc3b8c586"
         },
         {
           "path": "skills/repo-audit/references/grilling.md",
@@ -3782,7 +3792,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "31837429119b6bb3e9eb55f0ff54a71f70871769ed83894c392ea70847c48807"
+      "sha256": "d5cd481d5b0ae85d07ca825d08b108773535f7bea9967810810ac98f613cebf2"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3820,30 +3830,7 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [
-      {
-        "path": "docs/C24c-maintenance-transcript.md",
-        "before": null,
-        "after": {
-          "path": "docs/C24c-maintenance-transcript.md",
-          "executable": false,
-          "sha256": "d4def0cfd5666846cb526605f187d74859a663855a2faa802c801b4c4777421a"
-        }
-      },
-      {
-        "path": "docs/evaluation.md",
-        "before": {
-          "path": "docs/evaluation.md",
-          "executable": false,
-          "sha256": "828aab1587f9f22f433546c3cda021ad8c757e6b02855171dd2bd15cafab98c2"
-        },
-        "after": {
-          "path": "docs/evaluation.md",
-          "executable": false,
-          "sha256": "a1eb92cef03e91bb8726c93b392529108392cae82b663fbb4c2649162d2cc21e"
-        }
-      }
-    ],
+    "postCaptureDocumentation": [],
     "counts": {
       "tests": 2440,
       "failed": 0,
@@ -3854,9 +3841,9 @@
       "topLevel": 2431,
       "suites": 0
     },
-    "durationMs": 185357.204855,
-    "outputSha256": "c2d8ed6709bd9100732884982ad068a5709a8d2abfa0265f88e4d6aa415b5746",
-    "eventsSha256": "047995a983d822c097c2e3d5bb0f7194ccc5a66977bf2dd04693e8591fe39810",
+    "durationMs": 186847.290388,
+    "outputSha256": "55b15bf6cbdf303dc16fe1dedf0bfc1e11362d7fbdd3e2ddb7a69897315d1356",
+    "eventsSha256": "6de4e0f4be49df3e3d226485e746a357471780730f2d7dd8f7968ed8d3c9dc0b",
     "eventsArtifact": "tests/eval/results/tasks/C24c.events.jsonl"
   }
 }
