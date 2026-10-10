@@ -31,7 +31,7 @@
     "Test fixtures remove disposable homes, source snapshots, npm caches, stages and fake package tarballs through test teardown. No dev stack, image or shared cache is created or removed.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "d36e2f999654139a8d459c7856ffcfec575845c5",
+  "sourceRevision": "fd29dad1bb581117923d4ff451f4d68978a41ce5",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -123,7 +123,7 @@
         {
           "path": "install/install.mjs",
           "executable": false,
-          "sha256": "0a2271bc80f42a49563e633cc729fb687c5fdd79c616130d370efd899cc9ad1d"
+          "sha256": "c7a112678b042295f1d204a6695adcedfd4ed0b9715bcc3f5bb351b25d002a93"
         },
         {
           "path": "package-lock.json",
@@ -143,7 +143,7 @@
         {
           "path": "scripts/check-package.mjs",
           "executable": false,
-          "sha256": "71a99b29937faac4bfa15e48e51e1728797c74f5a6313ae724a1355c9526f469"
+          "sha256": "c8a1d60a449b114b08fcdece6c20fd9fed3ee5eae9241b062f3eca5250af8a4f"
         },
         {
           "path": "scripts/checker-entry.mjs",
@@ -3588,7 +3588,7 @@
         {
           "path": "tests/scripts/install.test.mjs",
           "executable": false,
-          "sha256": "e4624914b440804d6ac978e2f3346d16a98a0e7ce0bbe80e16faf1186d896dec"
+          "sha256": "8699aaee71e40c067e92b98a1b7c1a3c0873ed060ccb4368e38789233fbce83f"
         },
         {
           "path": "tests/scripts/inventory.test.mjs",
@@ -3618,7 +3618,7 @@
         {
           "path": "tests/scripts/package-check.test.mjs",
           "executable": false,
-          "sha256": "9af8068faeceb203a425e4d0e37a2a1d0aaa6aa6b049b1effca24f26cea46a2c"
+          "sha256": "ed12c90b22732190a11e8b56a78436675b9f55c3404b0f5e97456afbb2847888"
         },
         {
           "path": "tests/scripts/probe.test.mjs",
@@ -3821,7 +3821,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "09f0161b5a09d768d984946cdb92c51f80091f8634bd98fcb296e36b5b926f1b"
+      "sha256": "486fa4a6be0e12001af400eb8e903c875d35ef466f5c85e83834c7845f2b8d58"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3862,18 +3862,18 @@
     ],
     "postCaptureDocumentation": [],
     "counts": {
-      "tests": 2454,
+      "tests": 2476,
       "failed": 0,
-      "passed": 2454,
+      "passed": 2476,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2445,
+      "topLevel": 2467,
       "suites": 0
     },
-    "durationMs": 191253.014568,
-    "outputSha256": "16f67feb53b9b43eb3bc6de8bedbc31afb36dc2d6d7fcd1b67e8ec77a08a90c3",
-    "eventsSha256": "3adfe271e8b514fcddcf2b339b2cfaf66c8f3ce354298b26948d2503e6cca1cc",
+    "durationMs": 186586.180507,
+    "outputSha256": "432baa6ef5cf1e5ab279a9ed181cb27267d3e665a17514b42d81f3244aab27c4",
+    "eventsSha256": "49d4ce1b4e2e10b6ca65cfa4d588cccdb879252dc874452fad987cc09a3f03fa",
     "eventsArtifact": "tests/eval/results/tasks/C25a.events.jsonl"
   }
 }
