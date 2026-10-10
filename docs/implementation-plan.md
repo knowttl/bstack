@@ -530,13 +530,11 @@ Tick each task when its "Done when" commands pass.
         R27 accepts Linux-only evidence for C25c/AC-74; Windows and macOS execution remains unverified and outside the support/acceptance scope, with no remaining OS gate.
         The final Node 24 full suite includes mixed copy/link removal and retained-stage recovery repairs; the Node 26 supplement retains its historical source provenance.
         Current-agent loading remains C26 and real-model acceptance remains C27.
-  - [x] T4.2 Run the basic tests in the current agent
-    - [C26 current-host observations](../tests/eval/results/invocation-C26/summary.md) record fresh installer-backed plain and explicit Codex CLI 0.162.1 sessions with `gpt-6.1-sol` at medium reasoning on Linux.
-      An ordinary audit initially followed the installed skill after reading it as repository content; the explicit-entry guard now stops that procedure without an explicit user invocation.
-      The final explicit command executes installed audit commands, and observed reference/schema reads match their load conditions without script-source or board-asset reads.
-      The final plain request still reads the skill as repository content and independently creates a Lavish report, but does not execute repo-audit commands or open its references.
-      The record distinguishes command-open telemetry from unavailable automatic-loader traces, confirms router/akashic/no-mistakes unavailable on the child PATH, and preserves all earlier attempts and cleanup observations.
-      [Task evidence](../tests/eval/results/tasks/C26.json) binds the final-input full suite; C27 retains final full-path acceptance.
+  - [ ] T4.2 Run the basic tests in the current agent
+    - [C26 current-host observations](../tests/eval/results/invocation-C26/summary.md) retain the installer-backed invocation pair and its limitations.
+      The later [conditional-loading recheck](../tests/eval/results/invocation-C26/conditional-loading.md) records the explicit run on corrected loading rules; plain invocation has not been rerun on those bytes.
+      [Task evidence](../tests/eval/results/tasks/C26.json) remains blocked pending final-input full-suite capture and attachment by the outer validation phase.
+      C27 retains final full-path acceptance.
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release
   - [ ] T5.1 Write worked examples and limitations
