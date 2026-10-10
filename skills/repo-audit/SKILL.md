@@ -140,7 +140,7 @@ Setup and journey commands already attempted are never rerun automatically, avoi
 Verify affected commands explicitly and retain fresh evidence before claiming readiness.
 Prove selected native rules using the enforcement reference's rule-proof command and preserve the scratch evidence.
 Prove selected maintained integration as described in the enforcement reference before claiming it is verified for the created project.
-Maintenance guidance remains pending.
+Load the maintenance-contract reference from the table below when recording change evidence.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
