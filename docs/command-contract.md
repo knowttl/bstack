@@ -838,6 +838,8 @@ The decision binds the canonical path, directory identity, file bytes and link t
 Dry run previews adoption without saving it, and application rechecks the decision before persisting directory identity.
 An accepted adoption decision is retained with its operation binding until completion, so an interrupted command can be rerun with its original decision flags.
 Completion plans, stages and adoption receipts remain available until every selected host finishes, including uninstall ownership for retained unowned content.
+Before destructive final cleanup, `.bstack-install-cleanup.json` in the selected home or project records all hosts' verified results and original decisions.
+Retries verify those results and resume cleanup directly, retaining command provenance through stage removal, ownership cleanup and per-host journal retirement until the command record is retired last.
 The accepted content fingerprint follows an adopted original runtime into the stage and is checked again before recovery and cleanup; changed originals are preserved.
 Recovery validates replacement flags against the recorded plan and original or completed file hashes, and rejects adoption replays whose operation or verified runtime preconditions changed.
 Recovery rejects a destination whose canonical path changed, including a replacement directory link.
