@@ -404,7 +404,7 @@ export async function planLifecycle(entry, files, version, runtime, selected) {
     runtimeAllowed }
 }
 
-async function removeEmpty(directory, files) {
+export async function removeEmpty(directory, files) {
   const directories = new Set([directory])
   for (const path of files) {
     try { if (await resolvePath(directory, path) !== join(directory, path)) continue } catch (error) { if (error instanceof CommandError) continue; throw error }

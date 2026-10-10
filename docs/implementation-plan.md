@@ -519,6 +519,13 @@ Tick each task when its "Done when" commands pass.
         `npm test -- --task C25b` uses disposable homes/projects and locally packed fake runtimes, including runtime failure and retry.
         [C25b evidence](../tests/eval/results/tasks/C25b.json) requires a fresh final-input full-suite capture and attachment after the lifecycle fixes settle.
         Link lifecycle and three-OS acceptance remain C25c work, and current-agent loading remains C26 work.
+    - [ ] C25c Links and operating-system execution evidence
+      - Link installation prepares the pinned source runtime before activating a symlink or Windows junction.
+        Preview declares that source mutation, repeats verify the same link and target, and updates explicitly record a developer checkout in link mode.
+        Removal unlinks only the owned directory entry, retaining the target and its runtime, edits and unrelated content.
+        Isolated tests cover copy/link lifecycle, changed and replaced links, failed runtime preparation and interruption boundaries.
+        Real Windows and macOS runs remain unavailable, and AC-74 remains blocked pending their recorded local or manual executions.
+        Linux Node 24 and Node 26 supplement those records; current-agent loading remains C26 and real-model acceptance remains C27.
   - [ ] T4.2 Run the basic tests in the current agent
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release
