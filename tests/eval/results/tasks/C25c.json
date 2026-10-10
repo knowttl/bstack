@@ -3,7 +3,9 @@
   "taskId": "C25c",
   "slice": "C25c",
   "intent": "Implement owned symlink or Windows junction lifecycle with runtime preparation before activation, explicit developer-checkout updates and target-preserving removal, and record available real operating-system execution without substituting Linux for Windows or macOS.",
-  "amendments": ["R27, 2026-10-10: owner ruled \"only linux is good\". Accept Linux-only installer lifecycle evidence for C25c/AC-74; Windows/macOS execution remains unverified and outside support/acceptance scope, with no remaining OS gate."],
+  "amendments": [
+    "R27, 2026-10-10: owner ruled \"only linux is good\". Accept Linux-only installer lifecycle evidence for C25c/AC-74; Windows/macOS execution remains unverified and outside support/acceptance scope, with no remaining OS gate."
+  ],
   "cases": [
     {
       "id": "AC-73-link-lifecycle",
@@ -40,7 +42,7 @@
     "Fixture teardown removes task-created disposable homes/projects, source snapshots, npm caches, fake tarballs, stages, links and backups. No task-created dev stack, image or shared cache requires cleanup.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "5fa2cf11d947bdcdcb17fa8f3c716a4fc69c6eaf",
+  "sourceRevision": "b1cfe4beae8c01f3505f75a5f4857ed80a0d4ddc",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -122,7 +124,7 @@
         {
           "path": "README.md",
           "executable": false,
-          "sha256": "c3b514e7e40bd71dafa7b7bc54d4b81dc26ce310e650a77eaf73c152eeaaacc3"
+          "sha256": "94f92a385d807fc06a46fd75e690ab09422926965f1a69a8f604690833820251"
         },
         {
           "path": "docs/C24c-maintenance-transcript.md",
@@ -132,17 +134,17 @@
         {
           "path": "docs/C25c-operating-systems.md",
           "executable": false,
-          "sha256": "c6a26da58f643fe6e6f2e0697c915adb29da832efe8715dd98a1bd36c16ff49c"
+          "sha256": "25fe7c9d8d281da9601a4b7884d50f64d29c10a05df164b091141ce305f558bd"
         },
         {
           "path": "docs/command-contract.md",
           "executable": false,
-          "sha256": "8aaef051e29f150b21c2213ccd55a5c968cb90b26340b95aec45bd1111cefaab"
+          "sha256": "a5620d6365f950f363dadd84ab143ef81ac831421ea3b54b25e6f4b7ca6b17b4"
         },
         {
           "path": "docs/design.md",
           "executable": false,
-          "sha256": "5cf9cd2751fdf117073b0bbf0c9189630ebab9cad1c78a95f8e93a5e8a6ee49f"
+          "sha256": "4d7e8c7d9bca1e44eb6b0616b24bc47c9eedae0876c68d8a4158731f7c04989d"
         },
         {
           "path": "docs/evaluation.md",
@@ -157,12 +159,12 @@
         {
           "path": "docs/implementation-plan.md",
           "executable": false,
-          "sha256": "1cca343331bb192eee8a6b1ac1682218e79d6b1c317c55832838b9246e34fafc"
+          "sha256": "bf9e29e619215fa234651acbc3216fced570fba9e5ef69a812a5adac4bb7c378"
         },
         {
           "path": "install/install.mjs",
           "executable": false,
-          "sha256": "7c19c765c7945f5fb94395103d11f4575f4934492f7ea461bf32c591d91d12f0"
+          "sha256": "08dc6d39a0cd13618c6dc809e880c52733d3a71eac6559fa6d7afac4c5ae6f72"
         },
         {
           "path": "install/lifecycle.mjs",
@@ -172,7 +174,7 @@
         {
           "path": "install/links.mjs",
           "executable": false,
-          "sha256": "73a4a8b7e1edd3f283eec6041b688dcdf969d825c17918e9a9f325e9942467ba"
+          "sha256": "1552409f88cab2e126b6f69371d8ebbc9c5aca4fbeb11b4a2252b219673eefa3"
         },
         {
           "path": "package-lock.json",
@@ -3687,7 +3689,7 @@
         {
           "path": "tests/scripts/install.test.mjs",
           "executable": false,
-          "sha256": "83a62e9aa95778ec25c6fa0f3af1f82751d1bf5e6638d4fbb6efcd6bf17a2004"
+          "sha256": "63eba04ec056f804e43ce08198fe4cfd5092fc080b6dbddd9b2ef57482fcd652"
         },
         {
           "path": "tests/scripts/inventory.test.mjs",
@@ -3920,7 +3922,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "6a4dbc6317c7358660d47689fddb099ef7c90cc41fce9cd259f495cfaeef4c80"
+      "sha256": "991b7298e7d1d21c37fd63c0b1cd0761379c9afea19be76d34bb2526db7660bc"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3961,18 +3963,18 @@
     ],
     "postCaptureDocumentation": [],
     "counts": {
-      "tests": 2648,
+      "tests": 2688,
       "failed": 0,
-      "passed": 2648,
+      "passed": 2688,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2639,
+      "topLevel": 2679,
       "suites": 0
     },
-    "durationMs": 1125591.855937,
-    "outputSha256": "896f40f0dc9a2f97535fa3938eee7aef1906c4d8115abfaf75a71ba20f9c12f1",
-    "eventsSha256": "dcb562f93b47a2a359aa24e4ca9bd256a51d315852976c85e216f9d8510cd744",
+    "durationMs": 1552397.06785,
+    "outputSha256": "9bc10c56be11009923cb1cd48ad4944aff199e89703aed447439597182373383",
+    "eventsSha256": "a60c929edb4c83617c544f5e609186fad1e06beb0fe2d62569de1b0b2e407b15",
     "eventsArtifact": "tests/eval/results/tasks/C25c.events.jsonl"
   }
 }
