@@ -524,6 +524,8 @@ Tick each task when its "Done when" commands pass.
         Preview declares that source mutation, repeats verify the same link and target, and updates explicitly record a developer checkout in link mode.
         Removal unlinks only the owned directory entry, retaining the target and its runtime, edits and unrelated content.
         Isolated tests cover copy/link lifecycle, changed and replaced links, failed runtime preparation and interruption boundaries.
+        [C25c evidence](../tests/eval/results/tasks/C25c.json) records the 29-test Node 26 lifecycle supplement and requires final-input Node 24 full-suite capture through the existing validator.
+        The [OS execution request](C25c-operating-systems.md) supplies concrete operator commands, preservation and cleanup observations and evidence fields for missing environments.
         Real Windows and macOS runs remain unavailable, and AC-74 remains blocked pending their recorded local or manual executions.
         Linux Node 24 and Node 26 supplement those records; current-agent loading remains C26 and real-model acceptance remains C27.
   - [ ] T4.2 Run the basic tests in the current agent

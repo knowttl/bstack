@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "taskId": "C25c",
   "slice": "C25c",
-  "sourceRevision": "04816d8970af704a103627bf20d0136f861a91d9",
+  "sourceRevision": "4413302241d7ff890defb69e3742474edf0559c2",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -15,19 +15,15 @@
       "id": "AC-73-link-lifecycle",
       "kind": "automated",
       "procedure": "tests/scripts/install.test.mjs: link lifecycle previews source runtime, verifies repeats and preserves target in isolated user/project scope; link lifecycle preserves unowned directory/changed target/replaced link/replacement directory; link installation preserves an existing invalid/valid runtime; owned link removal preserves source with invalid/missing manifest without validating the target package; all-host link preflight refuses a later collision before preparing source runtime",
-      "status": "blocked",
-      "artifact": null,
-      "reason": "Final-input capture pending.",
-      "nextPrerequisite": "Run and attach final-input full-suite capture through the existing evidence validator."
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C25c.node26-lifecycle.txt"
     },
     {
       "id": "AC-73-link-recovery",
       "kind": "automated",
       "procedure": "tests/scripts/install.test.mjs: failed link runtime never activates and retry preserves failed stage content; link lifecycle resumes after link-runtime/link-activate/link-unlink while preserving target content; interrupted link activation preserves a replacement entry and target; interrupted link runtime preserves a replaced preparation stage",
-      "status": "blocked",
-      "artifact": null,
-      "reason": "Final-input capture pending.",
-      "nextPrerequisite": "Run and attach final-input full-suite capture through the existing evidence validator."
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C25c.node26-lifecycle.txt"
     },
     {
       "id": "AC-74",
@@ -41,6 +37,8 @@
   ],
   "limitations": [
     "C25c and AC-74 remain blocked until real Windows and macOS executions are recorded. Linux Node 24/26 execution does not substitute for either OS.",
+    "The 29-test Linux Node 26 lifecycle supplement ran at source revision 4413302241d7ff890defb69e3742474edf0559c2 with Node v26.11.1, npm 11.20.0 and Git 2.54.0. The final full-suite capture records its own committed input revision and primary Node 24 environment.",
+    "The separate-filesystem test injects EXDEV at the filesystem rename boundary; it is deterministic lifecycle coverage, not a claim of another OS or a real separate-volume run.",
     "Lifecycle tests use disposable isolated homes/projects, Git snapshots and locally packed fake lavish-axi runtimes with offline npm, not real runtime board interactions.",
     "The installer itself still requires its shared JavaScript helpers; target manifest validation is bypassed for owned-link removal.",
     "An existing source runtime differing from the pin is preserved and requires explicit developer preparation. Link removal never deletes source runtime or target content.",
@@ -51,6 +49,24 @@
   ],
   "status": "blocked",
   "commands": [
+    {
+      "id": "package-and-checker",
+      "executable": "npm",
+      "args": ["run", "check"],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C25c.check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "node26-lifecycle",
+      "executable": "node",
+      "args": ["--test", "--test-name-pattern=link lifecycle|link installation|owned link removal|failed link runtime|interrupted link|tagged checkout link recovery|link runtime preparation|link repeat|all-host link|copy install validates|clean .* update|noninteractive update|uninstall retains edited", "tests/scripts/install.test.mjs"],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C25c.node26-lifecycle.txt",
+      "status": "passed"
+    },
     {
       "id": "full-tests",
       "executable": "node",
