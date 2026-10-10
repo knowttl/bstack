@@ -786,7 +786,7 @@ Unknown, repeated or missing arguments return usage error before dependency call
 Updates, removal and interrupted-run completion belong to C25b, and links and OS acceptance belong to C25c.
 
 Claude uses `.claude/skills/repo-audit`, and agents uses `.agents/skills/repo-audit`, beneath the selected real home or project root.
-`all` selects both and checks every destination before staging either one.
+`all` selects both, deduplicates their canonical destinations and checks every destination before staging any copy.
 Escaping destination links are rejected through the shared path resolver.
 An occupied folder without matching external ownership is always blocked, including an empty folder or one containing files identical to source.
 The installer never adopts an existing dependency directory.
@@ -794,12 +794,15 @@ The installer never adopts an existing dependency directory.
 Preflight requires Node 24+, Git, npm and the root package-checker dependencies installed by `npm ci`.
 It validates authored package closure and matching manifest/lock dependencies with an exact lavish-axi pin.
 The source version is a clean exact `v<major>.<minor>.<patch>` tag, otherwise `development:<commit>[:dirty]` or `development:unversioned`.
+Untracked installer-created skill contents and ownership records are excluded from source dirtiness at both canonical host destinations, independently of the selected host.
+Tracked changes and unrelated untracked source content still make the source dirty.
 No tag or release is created.
 `--dry-run` returns every authored destination path and exact-byte hash, runtime installation and ownership/journal paths.
 It creates no directories, stage, dependencies or records.
-No-op repeats have no changes after verifying source version, authored hashes and the installed pinned runtime.
+No-op repeats have no changes after verifying source version, exactly the recorded authored paths and hashes, and the installed pinned runtime.
 Changed owned files or a different source/runtime block with `update-pending`.
-Unowned extra files remain untouched on a no-op repeat.
+Unowned extra content, including symlinks, remains untouched on a no-op repeat.
+Owned files must remain regular files, and source and staged authored inventories reject symlinks.
 
 Copy installation stages only authored files in a unique `.bstack-stage-*` sibling of the destination.
 Git data, node_modules, caches and scratch are excluded.
@@ -995,7 +998,7 @@ Bare require calls are recognised syntactically without resolving whether the id
 Local literal paths still receive the C5a resource checks, which retain their textual grammar and limits.
 Declared dependency versions are not installed or resolved by this check.
 Local resource paths outside the authored skill, or into excluded cache/scratch directories, fail with `package-closure` even when they exist in the checkout.
-Paths into `node_modules/<declared-runtime-package>/` are deferred to runtime installation rather than requiring dependencies before source preflight.
+During source preflight, paths into `node_modules/<declared-runtime-package>/` are deferred to runtime installation; ordinary package validation requires those resources to exist.
 The installer reuses the exported package validation and verifies the locked runtime after staging.
 The deny list does not recognise every tool, config spelling or per-language rule set, and does not infer whether a tool mention is a recommendation.
 The step check proves the completion-line format, not its meaningfulness.

@@ -501,7 +501,7 @@ Tick each task when its "Done when" commands pass.
       The `ts-shop` with-mode fake host executes the collection, review binding and local/clean standalone flows while preserving and reporting the existing failed checkout journey.
       `npm test -- --task T3a.7` includes that isolated procedure and the standalone checker controls; [C24c evidence](../tests/eval/results/tasks/C24c.json) records the full Phase 3a fake-only suite.
       Fake-host execution does not establish real-model semantic judgement or AC-23 final agent acceptance; T4.3 owns the fresh final transcript.
-      Installation and release remain pending.
+      See Phase 4 below for installation progress; release remains pending.
 - Phase 4: Installation
   - [ ] T4.1 Build the installer
     - [x] C25a Install preview, copy and ownership
