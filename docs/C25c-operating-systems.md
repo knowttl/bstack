@@ -8,6 +8,10 @@ Linux is the available execution environment.
 `uname -s` returned `Linux`.
 Local runtime probes returned Node `v24.17.0` and `v26.11.1`, with npm `11.13.0` for Node 24 and Git `2.54.0`.
 The task evidence records the final command results and artifacts after completion.
+The final-source Node 26 copy/link supplement passed all 29 selected tests at `4413302241d7ff890defb69e3742474edf0559c2`, using Node `v26.11.1`, npm `11.20.0` and Git `2.54.0`.
+Its [captured output](../tests/eval/results/tasks/C25c.node26-lifecycle.txt) includes no skipped, cancelled or todo cases.
+The [task record](../tests/eval/results/tasks/C25c.json) binds the final full-suite capture separately under Node 24.
+Development task suites also passed on both Node versions before the final additions; those development runs are not substituted for the final-input capture.
 
 Windows and macOS remain unavailable.
 `command -v powershell.exe pwsh sw_vers` found none of those commands on this host.
@@ -54,6 +58,7 @@ node --test --test-name-pattern="link lifecycle|link installation preserves|owne
 The copy journey must validate the complete installed folder, report preview without mutations, preserve edited and unrelated files through update and removal, and retain conflicts until exact replacement decisions with backups.
 The link journey must preview runtime preparation before linking, activate only after verification, recognise a no-op repeat, report explicit checkout updates in link mode, refuse occupied or replaced entries and preserve the target through interruption and removal.
 On Windows the directory-entry observations must come from the real junction branch, rather than an injected platform value.
+The separate-filesystem regression injects `EXDEV` at the filesystem boundary and does not claim another operating system or an actual separate-volume run.
 All selected tests must pass with no skipped or cancelled cases, and the task suite must exit zero.
 After completion, fixture cleanup must have removed its temporary snapshots, homes, projects, fake packages, caches, stages and links, while keeping the disposable checkout and its root dependencies.
 Do not install into actual user skill directories to gather this evidence.
