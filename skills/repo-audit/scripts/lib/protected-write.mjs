@@ -90,8 +90,8 @@ async function durableDirectory(directory, limitations) {
   }
 }
 
-async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary) {
-  const temporary = join(dirname(path), `.bstack-${randomUUID()}.tmp`)
+async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary, prefix = '.bstack') {
+  const temporary = join(dirname(path), `${prefix}-${randomUUID()}.tmp`)
   try {
     if (prepareTemporary) await prepareTemporary(temporary)
     await durableFile(temporary, bytes, mode)
@@ -111,7 +111,7 @@ async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepar
 export async function saveRecovery(path, value) {
   const limitations = []
   await durableDirectory(dirname(path), limitations)
-  await replaceFile(path, Buffer.from(JSON.stringify(value, null, 2) + '\n'), undefined, limitations)
+  await replaceFile(path, Buffer.from(JSON.stringify(value, null, 2) + '\n'), undefined, limitations, undefined, undefined, `.bstack-recovery-${basename(path)}`)
   return limitations
 }
 
