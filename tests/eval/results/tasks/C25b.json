@@ -38,7 +38,7 @@
     "Fixture teardown removes task-created disposable homes/projects, npm caches, fake runtime tarballs, stages and backups. No task-created dev stack, image or shared cache requires cleanup.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "9a5f297774a0f6c651a3624a2623d4e4e3cfca8e",
+  "sourceRevision": "a139bade6dc632377ac48cce9182ca838b3ff9ea",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -81,7 +81,7 @@
       "args": [
         "scripts/test.mjs",
         "--capture",
-        ".cache/c25b-cleanup-bound-full-suite.json"
+        ".cache/c25b-current-host-final-full-suite.json"
       ],
       "cwd": ".",
       "exitCode": 0,
@@ -161,7 +161,7 @@
         {
           "path": "install/lifecycle.mjs",
           "executable": false,
-          "sha256": "0a2cbb9438c47f1cdd9ddb182f575e50d10490b6e828e2400adfa0c771753ee7"
+          "sha256": "080e6a87c5bde77ebd6495e8abc8a2918e9c73e36b53a0bd90b5110cbe1508ab"
         },
         {
           "path": "package-lock.json",
@@ -3651,7 +3651,7 @@
         {
           "path": "tests/scripts/install.test.mjs",
           "executable": false,
-          "sha256": "01b0841256e1219f1d39e7b1f6c560f6bedff94ce6ad50274b532b6a381cf477"
+          "sha256": "892a62544a027f14f0a3e5c63b068bd7df4c6cf1b110e1441cbcec2d5ad37e0a"
         },
         {
           "path": "tests/scripts/inventory.test.mjs",
@@ -3884,7 +3884,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "09a769ea36c94814dd0dc8cfa28d44a0eecdc42544e2d3ce85c40de7f509afc8"
+      "sha256": "b04a56802a85e5b56aee1590cacd345ccdc9f975b19c28cf44509f062e2edf33"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3925,18 +3925,18 @@
     ],
     "postCaptureDocumentation": [],
     "counts": {
-      "tests": 2623,
+      "tests": 2625,
       "failed": 0,
-      "passed": 2623,
+      "passed": 2625,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2614,
+      "topLevel": 2616,
       "suites": 0
     },
-    "durationMs": 1022054.904435,
-    "outputSha256": "7fe29f8f60883419b11e8a1472fd0768fba02c55511a7499047b5a85d55c7671",
-    "eventsSha256": "604f8b1c7e603695b718d9e7bedb0ef586ba047d4355f82c23e1eb888506ff07",
+    "durationMs": 1042146.588677,
+    "outputSha256": "a2eda7ae354ef674cd3c32a4400ec619b28743322537f078ba1113d739449877",
+    "eventsSha256": "563d6efdf2b7193dd317522c4d61667f4e17538d10728ff48e9b0758f460b280",
     "eventsArtifact": "tests/eval/results/tasks/C25b.events.jsonl"
   }
 }
