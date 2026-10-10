@@ -1981,7 +1981,7 @@ for (const scope of ['user', 'project']) {
   })
 }
 
-for (const replacement of ['unowned directory', 'changed target', 'replaced link', 'replacement directory']) {
+for (const replacement of ['unowned directory', 'unowned link', 'changed target', 'replaced link', 'replacement directory']) {
   test(`link lifecycle preserves ${replacement}`, async t => {
     const f = await fixture(t)
     const args = ['--scope', 'project', '--project', f.project, '--host', 'agents', '--link']
@@ -1991,6 +1991,10 @@ for (const replacement of ['unowned directory', 'changed target', 'replaced link
     await mkdir(target)
     await writeFile(join(target, 'keep.md'), 'Keep target\n')
     if (replacement === 'unowned directory') await mkdir(destination, { recursive: true })
+    else if (replacement === 'unowned link') {
+      await mkdir(parent, { recursive: true })
+      await symlink(target, destination, process.platform === 'win32' ? 'junction' : 'dir')
+    }
     else {
       assert.equal(f.run(...args).status, 0)
       await rename(destination, join(parent, 'original-link'))
@@ -2001,7 +2005,7 @@ for (const replacement of ['unowned directory', 'changed target', 'replaced link
     for (const extra of [[], ['--uninstall'], ['--dry-run']]) {
       const result = f.run(...args, ...extra)
       assert.equal(result.status, 2, result.stdout)
-      assert.equal(result.value.problems[0].code, replacement === 'unowned directory' ? 'unowned-collision' : 'changed-link')
+      assert.equal(result.value.problems[0].code, replacement.startsWith('unowned') ? 'unowned-collision' : 'changed-link')
       assert.equal(await readFile(join(target, 'keep.md'), 'utf8'), 'Keep target\n')
       assert.deepEqual(await inventory(f.source), before)
     }
@@ -2049,6 +2053,23 @@ test('all-host link preflight refuses a later collision before preparing source 
   assert.equal(result.value.problems[0].code, 'unowned-collision')
   assert.deepEqual(await inventory(f.source), before)
   await assert.rejects(lstat(join(f.project, '.claude')), { code: 'ENOENT' })
+})
+
+test('link repeat rejects a replaced source directory while removal preserves it', async t => {
+  const f = await fixture(t)
+  const args = ['--scope', 'project', '--project', f.project, '--host', 'agents', '--link']
+  assert.equal(f.run(...args).status, 0)
+  const oldSource = join(f.directory, 'original-source')
+  await rename(f.source, oldSource)
+  await cp(oldSource, f.source, { recursive: true })
+  const before = await inventory(f.source)
+  const result = f.run(...args)
+  assert.equal(result.status, 2, result.stdout)
+  assert.equal(result.value.problems[0].code, 'changed-link')
+  assert.deepEqual(await inventory(f.source), before)
+  assert.equal(f.run(...args, '--uninstall').status, 0)
+  assert.deepEqual(await inventory(f.source), before)
+  assert.deepEqual(await inventory(oldSource), before)
 })
 
 test('interrupted link activation preserves a replacement entry and target', async t => {
