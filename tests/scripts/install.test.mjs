@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
+import { cp, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir, devNull } from 'node:os'
 import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -146,18 +146,20 @@ for (const scope of ['user', 'project']) {
   }
 }
 
-for (const location of ['checkout', 'nested', 'aliased']) {
+for (const location of ['checkout', 'nested', 'aliased', 'distinct aliases']) {
   for (const tagged of [false, true]) {
     test(`repeat installs preserve ${tagged ? 'tagged' : 'development'} source version at ${location}`, async t => {
       const f = await fixture(t)
       const project = location === 'nested' ? join(f.checkout, 'project ü &') : f.checkout
       await mkdir(project, { recursive: true })
-      if (location === 'aliased') {
+      if (location === 'aliased' || location === 'distinct aliases') {
         const parent = join(project, 'installed skills ü &')
         await mkdir(parent)
         for (const host of ['claude', 'agents']) {
+          const target = location === 'aliased' ? parent : join(parent, host)
+          await mkdir(target, { recursive: true })
           await mkdir(join(project, `.${host}`))
-          await symlink(parent, join(project, `.${host}/skills`), process.platform === 'win32' ? 'junction' : 'dir')
+          await symlink(target, join(project, `.${host}/skills`), process.platform === 'win32' ? 'junction' : 'dir')
         }
         f.git('add', '.')
         f.git('commit', '-m', 'record fixture host aliases')
@@ -182,6 +184,54 @@ for (const location of ['checkout', 'nested', 'aliased']) {
       assert.equal(dirty.value.problems[0].code, 'update-pending')
     })
   }
+}
+
+for (const scope of ['user', 'project']) {
+  test(`repeat ${scope} install preserves unrelated content including symlinks`, async t => {
+    const f = await fixture(t)
+    const selected = scope === 'user' ? f.home : f.project
+    const args = ['--scope', scope, ...(scope === 'project' ? ['--project', f.project] : []), '--host', 'all']
+    assert.equal(f.run(...args).status, 0)
+    const document = join(f.project, 'notes.md')
+    await writeFile(document, '# Project notes\n')
+    for (const host of ['claude', 'agents']) {
+      const destination = join(selected, `.${host}/skills/repo-audit`)
+      await symlink(document, join(destination, 'notes.md'), 'file')
+      await symlink(join(destination, 'absent.md'), join(destination, 'broken.md'), 'file')
+      await mkdir(join(destination, 'unrelated'))
+      await symlink(f.project, join(destination, 'unrelated/project'), process.platform === 'win32' ? 'junction' : 'dir')
+      await writeFile(join(destination, 'unrelated/data.txt'), 'User data\n')
+    }
+    for (const preview of [false, true]) {
+      const repeated = f.run(...args, ...(preview ? ['--dry-run'] : []))
+      assert.equal(repeated.status, 0, repeated.stdout + repeated.stderr)
+      assert.deepEqual(repeated.value.data.changes, [])
+      for (const host of ['claude', 'agents']) {
+        const destination = join(selected, `.${host}/skills/repo-audit`)
+        assert.equal(await readlink(join(destination, 'notes.md')), document)
+        assert.equal((await lstat(join(destination, 'broken.md'))).isSymbolicLink(), true)
+        assert.equal((await lstat(join(destination, 'unrelated/project'))).isSymbolicLink(), true)
+        assert.equal(await readFile(join(destination, 'unrelated/data.txt'), 'utf8'), 'User data\n')
+      }
+      assert.equal(await readFile(document, 'utf8'), '# Project notes\n')
+    }
+  })
+}
+
+for (const change of ['missing', 'directory', 'symlink']) {
+  test(`repeat install rejects an owned file replaced with ${change}`, async t => {
+    const f = await fixture(t)
+    const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
+    assert.equal(f.run(...args).status, 0)
+    const installed = join(f.project, '.agents/skills/repo-audit/SKILL.md')
+    await rm(installed)
+    if (change === 'directory') await mkdir(installed)
+    if (change === 'symlink') await symlink(join(f.source, 'SKILL.md'), installed, 'file')
+    for (const preview of [false, true]) {
+      const result = f.run(...args, ...(preview ? ['--dry-run'] : []))
+      assert.equal(result.status, 2, result.stdout + result.stderr)
+    }
+  })
 }
 
 test('tracked source changes remain dirty inside installation paths', async t => {
@@ -230,13 +280,17 @@ test('all-host install preserves the existing installer collision fixture before
   assert.deepEqual(await inventory(f.home), before)
 })
 
-for (const broken of ['missing-resource', 'outside-resource', 'unpinned-runtime', 'lock-mismatch']) {
+for (const broken of ['missing-resource', 'outside-resource', 'unpinned-runtime', 'lock-mismatch', 'symlink-source']) {
   test(`source preflight rejects ${broken} without destination mutations`, async t => {
     const f = await fixture(t)
     if (broken === 'missing-resource') await rm(join(f.source, 'references/vision.md'))
     if (broken === 'outside-resource') {
       await writeFile(join(f.checkout, 'outside.md'), 'Outside package\n')
       await writeFile(join(f.source, 'extra.md'), '[Outside](../../outside.md)\n')
+    }
+    if (broken === 'symlink-source') {
+      await writeFile(join(f.project, 'note.md'), '# Project note\n')
+      await symlink(join(f.project, 'note.md'), join(f.source, 'note.md'), 'file')
     }
     if (broken === 'unpinned-runtime') {
       const manifest = JSON.parse(await readFile(join(f.source, 'package.json'), 'utf8'))
@@ -250,8 +304,8 @@ for (const broken of ['missing-resource', 'outside-resource', 'unpinned-runtime'
     }
     const before = await inventory(f.home)
     const result = f.run('--scope', 'user', '--host', 'agents', '--dry-run')
-    assert.equal(result.status, 1, result.stdout)
-    assert.equal(result.value.problems.some(problem => problem.code === (broken === 'missing-resource' ? 'local-path-missing' : broken === 'outside-resource' ? 'package-closure' : 'runtime-lock')), true)
+    assert.equal(result.status, broken === 'symlink-source' ? 2 : 1, result.stdout)
+    assert.equal(result.value.problems.some(problem => problem.code === (broken === 'missing-resource' ? 'local-path-missing' : broken === 'outside-resource' ? 'package-closure' : broken === 'symlink-source' ? 'unsupported-source-entry' : 'runtime-lock')), true)
     assert.deepEqual(await inventory(f.home), before)
   })
 }

@@ -106,12 +106,21 @@ async function install(selected) {
     destinations.push({ host, parent, destination, ownership: join(parent, '.bstack-install.json'),
       journal: join(parent, '.bstack-install-journal.json') })
   }
+  const generatedPaths = destinations.flatMap(entry => [entry.destination, entry.ownership])
+  for (const host of ['claude', 'agents'].filter(host => !hosts.includes(host))) {
+    let parent
+    try { parent = await realpath(join(root, `.${host}/skills`)) } catch (error) {
+      if (['ENOENT', 'ENOTDIR'].includes(error.code)) continue
+      throw error
+    }
+    generatedPaths.push(join(parent, 'repo-audit'), join(parent, '.bstack-install.json'))
+  }
   const dirty = await child(checkout, 'git', ['status', '--porcelain', '--untracked-files=no'])
   const untracked = await child(checkout, 'git', ['ls-files', '--others', '--exclude-standard', '--', '.',
     ...['claude', 'agents'].flatMap(host => [
       `:(glob,exclude)**/.${host}/skills/repo-audit/**`,
       `:(glob,exclude)**/.${host}/skills/.bstack-install.json`]),
-    ...destinations.flatMap(entry => [entry.destination, entry.ownership]).filter(path => isInside(checkout, path))
+    ...generatedPaths.filter(path => isInside(checkout, path))
       .map(path => `:(literal,exclude)${relative(checkout, path).replaceAll('\\', '/')}`)])
   const sourceDirty = Boolean(dirty.stdout.trim() || untracked.stdout.trim())
   const version = tag.status === 'passed' && /^v\d+\.\d+\.\d+$/.test(tag.stdout.trim()) && dirty.status === 'passed' && untracked.status === 'passed' && !sourceDirty ?
@@ -126,9 +135,17 @@ async function install(selected) {
     if (await exists(destination)) {
       if (!previous || previous.destination !== destination || previous.mode !== 'copy' || previous.schemaVersion !== 1) reject('blocked', 'unowned-collision', `Occupied unowned destination: ${destination}`, 'Preserve the existing folder and select an empty installation destination.')
       if ((await lstat(destination)).isSymbolicLink()) reject('blocked', 'unsupported-lifecycle', `Destination is a link: ${destination}`, 'Link lifecycle support is pending C25c.')
-      const actual = Object.fromEntries((await authored(destination)).map(file => [file.path, file.hash]))
-      if (previous.sourceVersion !== version || canonicalJSON(previous.files) !== canonicalJSON(hashes) ||
-          Object.entries(hashes).some(([path, hash]) => actual[path] !== hash) ||
+      let unchanged = previous.sourceVersion === version && canonicalJSON(previous.files) === canonicalJSON(hashes)
+      if (unchanged) {
+        for (const [path, hash] of Object.entries(previous.files)) {
+          const installedPath = join(destination, path)
+          if (!(await exists(installedPath))?.isFile() || hashBytes(await readFile(await resolvePath(destination, path))) !== hash) {
+            unchanged = false
+            break
+          }
+        }
+      }
+      if (!unchanged ||
           previous.runtime?.path !== join(destination, 'node_modules') || !previous.runtime.created ||
           !await runtimeVersion(destination, runtime)) reject('blocked', 'update-pending', `Installation differs from this source or runtime: ${destination}`, 'Preserve installed files. Update and conflict handling are pending C25b.')
       action = 'no-op'
