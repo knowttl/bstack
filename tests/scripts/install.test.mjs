@@ -363,9 +363,12 @@ test('invalid inputs fail before prerequisite or destination work', async t => {
   assert.deepEqual(await inventory(f.home), before)
 })
 
-test('missing checker dependencies return a structured prerequisite without mutations', async t => {
+test('unavailable checker dependency returns a structured prerequisite without mutations', async t => {
   const f = await fixture(t)
   await rm(join(f.checkout, 'node_modules'))
+  // Prevent an enclosing checkout from satisfying the missing dependency.
+  await mkdir(join(f.checkout, 'node_modules/acorn'), { recursive: true })
+  await writeFile(join(f.checkout, 'node_modules/acorn/package.json'), JSON.stringify({ name: 'acorn', exports: './absent.mjs' }))
   const before = await inventory(f.home)
   const result = f.run('--scope', 'user', '--host', 'agents', '--dry-run')
   assert.equal(result.status, 2, result.stdout + result.stderr)
