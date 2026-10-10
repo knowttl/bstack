@@ -49,6 +49,14 @@ export async function legacyRuntimeDecision(entry, record, runtimeVersion) {
     throw error
   }
   if (!await runtimeVersion(entry.destination, record.runtime.version)) return null
+  const value = await runtimeFingerprint(entry, { ...record.runtime, identity }, path)
+  return { value, decision: `--adopt-runtime ${value}`, runtime: { ...record.runtime, identity } }
+}
+
+async function runtimeFingerprint(entry, runtime, directory) {
+  await verifyDestination(entry)
+  const identity = await runtimeIdentity(directory)
+  if (runtime.identity && canonicalJSON(runtime.identity) !== canonicalJSON(identity)) blocked('runtime-conflict', 'Accepted runtime directory identity changed.')
   const contents = []
   async function collect(directory, prefix = '') {
     for (const item of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
@@ -60,11 +68,21 @@ export async function legacyRuntimeDecision(entry, record, runtimeVersion) {
       else blocked('runtime-conflict', 'Legacy runtime contains an unsupported entry.')
     }
   }
-  await collect(path)
+  await collect(directory)
   await verifyDestination(entry)
-  if (canonicalJSON(identity) !== canonicalJSON(await runtimeIdentity(path))) blocked('runtime-conflict', 'Legacy runtime directory changed during verification.')
-  const value = `${entry.host}:${hashBytes(Buffer.from(canonicalJSON({ path, identity, contents })))}`
-  return { value, decision: `--adopt-runtime ${value}`, runtime: { ...record.runtime, identity } }
+  if (canonicalJSON(identity) !== canonicalJSON(await runtimeIdentity(directory))) blocked('runtime-conflict', 'Legacy runtime directory changed during verification.')
+  return `${entry.host}:${hashBytes(Buffer.from(canonicalJSON({ path: runtime.path, identity, contents })))}`
+}
+
+async function matchesAcceptedRuntime(entry, record, journal) {
+  if (!record.acceptedAdoption) return true
+  const path = record.runtime.path
+  const moved = journal?.stage && join(journal.stage, 'previous-runtime')
+  const directory = moved && await exists(moved) ? moved : path
+  if (await ownsRuntime(directory, { ...record.runtime, path: directory })) {
+    return await runtimeFingerprint(entry, record.runtime, directory) === record.acceptedAdoption.value
+  }
+  return Boolean(journal?.plan?.uninstall && !await exists(path))
 }
 
 export async function matchesReplacement(entry, decision) {
@@ -81,6 +99,7 @@ export async function matchesRuntimeAdoption(entry, decision, runtimeVersion) {
   const record = entry.recovery?.update?.previous ?? entry.recovery?.record ?? entry.previous
   if (record?.acceptedAdoption?.value !== decision || record.acceptedAdoption.binding !== entry.adoptionBinding) return false
   await verifyDestination(entry)
+  if (!await matchesAcceptedRuntime(entry, record, entry.recovery)) return false
   const path = join(entry.destination, 'node_modules')
   if (await ownsRuntime(path, record.runtime)) {
     const actual = await legacyRuntimeDecision(entry, { ...record, runtime: { ...record.runtime, identity: undefined } }, runtimeVersion)
@@ -272,6 +291,8 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
         .map(path => [path, entry.previous.sourceVersion])), ...entry.previous.fileVersions } }
     await saveRecovery(entry.journal, journal)
   }
+  entry.recovery = journal
+  if (!await matchesAcceptedRuntime(entry, journal.record, journal)) blocked('runtime-conflict', 'Accepted runtime contents changed before recovery.')
   const conflicts = []
   for (const conflict of journal.plan.conflicts) {
     if (conflict.path === 'node_modules') conflicts.push(conflict)
@@ -400,21 +421,33 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
   if (journal.plan.uninstall) {
     await removeEmpty(entry.destination, Object.keys(journal.record.files))
     try { report.retained = await retained(entry.destination) } catch (error) { if (error.code !== 'ENOENT') throw error; report.retained = [] }
-    if (!Object.keys(record.files).length && !runtime) await unlink(entry.ownership)
   }
-  await unlink(entry.journal)
-  if (journal.stage) {
-    for (const [path, hash] of Object.entries(journal.plan.desired)) {
-      if ((await state(journal.stage, path)).hash === hash) await unlink(join(journal.stage, path))
-    }
+  return report
+}
+
+export async function finishLifecycle(entry, report) {
+  await verifyDestination(entry)
+  const journal = entry.recovery
+  const record = JSON.parse(await readFile(entry.ownership, 'utf8'))
+  if (!await matchesAcceptedRuntime(entry, journal?.record ?? record, journal)) blocked('runtime-conflict', 'Accepted runtime contents changed before cleanup.')
+  if (journal?.plan?.uninstall && !Object.keys(record.files).length && !record.runtime) await unlink(entry.ownership)
+  else if (record.acceptedAdoption) {
+    delete record.acceptedAdoption
+    await saveRecovery(entry.ownership, record)
+  }
+  if (journal?.plan && journal.stage) {
     for (const [name, owned] of [['node_modules', journal.stagedRuntime], ['previous-runtime', journal.record.runtime]]) {
       const path = join(journal.stage, name)
+      if (name === 'previous-runtime' && !await matchesAcceptedRuntime(entry, journal.record, journal)) blocked('runtime-conflict', 'Accepted runtime contents changed before cleanup.')
       if (owned && await ownsRuntime(path, { ...owned, path })) await rm(path, { recursive: true, force: true })
+    }
+    for (const [path, hash] of Object.entries(journal.plan.desired)) {
+      if ((await state(journal.stage, path)).hash === hash) await unlink(join(journal.stage, path))
     }
     await removeEmpty(journal.stage, Object.keys(journal.plan.desired))
     if (await exists(journal.stage)) report.retainedStage = journal.stage
   }
-  return report
+  if (journal) await unlink(entry.journal)
 }
 
 export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVersion, selected, child) {
@@ -467,7 +500,6 @@ export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVer
   await saveRecovery(entry.ownership, journal.record)
   const report = await inspectCompletion(entry, files, runtime, runtimeVersion)
   if (report.conflicts.length) await saveRecovery(entry.ownership, { ...journal.record, fileVersions: report.fileVersions, sourceVersion: 'mixed' })
-  await unlink(entry.journal)
   return { ...report, resumed: true }
 }
 

@@ -517,7 +517,7 @@ Tick each task when its "Done when" commands pass.
         Uninstall removes unchanged ownership and the created runtime, reports retained paths and preserves edited ownership for explicit later cleanup.
         Recovery verifies actual hashes across first-copy activation, per-file update/removal and runtime rename boundaries.
         `npm test -- --task C25b` uses disposable homes/projects and locally packed fake runtimes, including runtime failure and retry.
-        [C25b evidence](../tests/eval/results/tasks/C25b.json) binds the final full suite.
+        [C25b evidence](../tests/eval/results/tasks/C25b.json) requires a fresh final-input full-suite capture and attachment after the lifecycle fixes settle.
         Link lifecycle and three-OS acceptance remain C25c work, and current-agent loading remains C26 work.
   - [ ] T4.2 Run the basic tests in the current agent
   - [ ] T4.3 Prove both complete paths and a representative extension
