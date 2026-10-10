@@ -1420,6 +1420,13 @@ test('cross-host failure refreshes earlier actual state and preserves backup det
   assert.equal(refreshed.sourceVersion, 'mixed')
   assert.equal(refreshed.backup, report.backup)
   assert.deepEqual(refreshed.conflicts, report.conflicts)
+  const currentDecisions = decisions.map(value => value.startsWith('claude:SKILL.md:') ? conflict.decision.slice('--replace '.length) : value)
+  const resolved = f.run(...f.args, ...currentDecisions)
+  assert.equal(resolved.status, 0, resolved.stdout)
+  assert.equal(resolved.value.data.installations.find(report => report.destination === claude).sourceVersion, 'v0.0.2')
+  assert.equal(await readFile(join(report.backup, 'SKILL.md'), 'utf8'), 'Approved edit\n')
+  assert.equal(await readFile(join(report.backup, `SKILL.md.${conflict.actualHash}`), 'utf8'), 'Later host edit\n')
+  assert.equal(await readFile(join(claude, 'SKILL.md'), 'utf8'), await readFile(join(f.source, 'SKILL.md'), 'utf8'))
 })
 
 test('cleanup failure reports recreated files after earlier ownership retirement', async t => {
@@ -1438,6 +1445,82 @@ test('cleanup failure reports recreated files after earlier ownership retirement
   assert.equal(report.sourceVersion, 'mixed')
   assert.equal(report.files['SKILL.md'], createHash('sha256').update('Recreated content\n').digest('hex'))
   assert.equal(await readFile(join(claude, 'keep.txt'), 'utf8'), 'Unowned content\n')
+  const conflict = report.conflicts.find(conflict => conflict.path === 'SKILL.md')
+  const resolved = f.run(...args, ...decisions, ...conflict.decision.split(' '))
+  assert.equal(resolved.status, 0, resolved.stdout)
+  const completed = resolved.value.data.installations.find(report => report.destination === claude)
+  assert.equal(completed.sourceVersion, 'uninstalled')
+  assert.equal(await readFile(join(completed.backup, `SKILL.md.${conflict.actualHash}`), 'utf8'), 'Recreated content\n')
+  await assert.rejects(lstat(join(claude, 'SKILL.md')), { code: 'ENOENT' })
+  await assert.rejects(lstat(join(f.project, '.claude/skills/.bstack-install.json')), { code: 'ENOENT' })
+  assert.equal(await readFile(join(claude, 'keep.txt'), 'utf8'), 'Unowned content\n')
+})
+
+for (const operation of ['copy', 'update']) {
+  for (const boundary of [operation === 'copy' ? 'cleanup-journal-agents' : 'cleanup-file-agents', 'cleanup-journal-claude']) {
+    test(`cleanup ${operation} executes fresh decisions after ${boundary} and resumes interrupted approval`, async t => {
+      const f = await fixture(t)
+      f.git('tag', 'v0.0.1')
+      const args = ['--scope', 'project', '--project', f.project, '--host', 'all']
+      if (operation === 'update') {
+        assert.equal(f.run(...args).status, 0)
+        await writeFile(join(f.source, 'current.md'), 'New release\n')
+        f.git('add', '.')
+        f.git('commit', '-m', 'fixture update')
+        f.git('tag', 'v0.0.2')
+      }
+      await interrupt(f, boundary)
+      assert.equal(f.run(...args).status, 86)
+      delete f.env.NODE_OPTIONS
+      const destination = join(f.project, '.claude/skills/repo-audit')
+      await writeFile(join(destination, 'SKILL.md'), 'First cleanup edit\n')
+      await writeFile(join(destination, 'keep.txt'), 'Keep unrelated\n')
+      const blocked = f.run(...args)
+      assert.equal(blocked.status, 2, blocked.stdout)
+      const decision = blocked.value.data.installations.find(report => report.destination === destination).conflicts[0].decision.split(' ')
+      await writeFile(join(destination, 'SKILL.md'), 'Second cleanup edit\n')
+      const before = await inventory(f.project)
+      const stale = f.run(...args, ...decision)
+      assert.equal(stale.status, 3, stale.stdout)
+      assert.equal(stale.value.problems[0].code, 'stale-replacement')
+      assert.deepEqual(await inventory(f.project), before)
+      const current = stale.value.data.installations.find(report => report.destination === destination).conflicts[0]
+      await interrupt(f, 'approved-file-rename')
+      assert.equal(f.run(...args, ...current.decision.split(' ')).status, 86)
+      delete f.env.NODE_OPTIONS
+      const resumed = f.run(...args)
+      assert.equal(resumed.status, 0, resumed.stdout)
+      const report = resumed.value.data.installations.find(report => report.destination === destination)
+      assert.equal(report.sourceVersion, operation === 'update' ? 'v0.0.2' : 'v0.0.1')
+      assert.equal(await readFile(join(destination, 'SKILL.md'), 'utf8'), await readFile(join(f.source, 'SKILL.md'), 'utf8'))
+      assert.equal(await readFile(join(report.backup, 'SKILL.md'), 'utf8'), 'Second cleanup edit\n')
+      assert.equal(await readFile(join(destination, 'keep.txt'), 'utf8'), 'Keep unrelated\n')
+      await assert.rejects(lstat(join(f.project, '.bstack-install-cleanup.json')), { code: 'ENOENT' })
+    })
+  }
+}
+
+test('cleanup approval preserves an unapproved deletion until its own current decision', async t => {
+  const f = await lifecycle(t)
+  await interrupt(f, 'cleanup-file-agents')
+  assert.equal(f.run(...f.args).status, 86)
+  delete f.env.NODE_OPTIONS
+  await writeFile(join(f.destination, 'SKILL.md'), 'Approved cleanup edit\n')
+  const blocked = f.run(...f.args)
+  const decision = blocked.value.data.installations[0].conflicts.find(conflict => conflict.path === 'SKILL.md').decision.split(' ')
+  await rm(join(f.destination, 'added.md'))
+  const repaired = f.run(...f.args, ...decision)
+  assert.equal(repaired.status, 2, repaired.stdout)
+  await assert.rejects(lstat(join(f.destination, 'added.md')), { code: 'ENOENT' })
+  assert.equal(await readFile(join(f.destination, 'SKILL.md'), 'utf8'), await readFile(join(f.source, 'SKILL.md'), 'utf8'))
+  const report = repaired.value.data.installations[0]
+  assert.equal(await readFile(join(report.backup, 'SKILL.md'), 'utf8'), 'Approved cleanup edit\n')
+  const current = report.conflicts.find(conflict => conflict.path === 'added.md')
+  assert.equal(current.decision, '--replace agents:added.md:absent')
+  const resolved = f.run(...f.args, ...current.decision.split(' '))
+  assert.equal(resolved.status, 0, resolved.stdout)
+  assert.equal(resolved.value.data.installations[0].sourceVersion, 'v0.0.2')
+  assert.equal(await readFile(join(f.destination, 'added.md'), 'utf8'), 'New package file\n')
 })
 
 for (const [boundary, edited, flags] of [

@@ -182,7 +182,8 @@ async function install(selected) {
       const saved = cleanup.entries.find(saved => saved.destination === destination)
       if (!saved) reject('blocked', 'journal-mismatch', 'Cleanup record does not match selected hosts.', help)
       entry.cleanup = saved
-      entry.recovery = saved.recovery
+      // Keep the frozen cleanup snapshot separate from pending explicit repairs.
+      entry.recovery = await exists(journal) ? JSON.parse(await readFile(journal, 'utf8')) : structuredClone(saved.recovery)
       entry.previous = saved.previous
       entry.action = 'cleanup'
       continue
@@ -262,6 +263,13 @@ async function install(selected) {
     }
     for (const entry of destinations) {
       if (entry.cleanup) {
+        if (canonicalJSON(entry.recovery) !== canonicalJSON(entry.cleanup.recovery)) {
+          const installation = await applyLifecycle(entry, entry.recovery.plan, entry.recovery.stage, runtimeVersion)
+          entry.cleanup.recovery = structuredClone(entry.recovery)
+          entry.cleanup.record = JSON.parse(await readFile(entry.ownership, 'utf8'))
+          entry.cleanup.report = installation
+          await saveRecovery(cleanupPath, cleanup)
+        }
         await verifyCleanup(entry, runtimeVersion)
         data.installations.push(structuredClone(entry.cleanup.report))
         continue
