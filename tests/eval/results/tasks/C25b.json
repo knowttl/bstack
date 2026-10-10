@@ -38,7 +38,7 @@
     "Fixture teardown removes task-created disposable homes/projects, npm caches, fake runtime tarballs, stages and backups. No task-created dev stack, image or shared cache requires cleanup.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "4fc332088dfaae146d7fc72608423c18103c23d8",
+  "sourceRevision": "3d664bef5ac3042a305b70acae30141e748a8505",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -81,7 +81,7 @@
       "args": [
         "scripts/test.mjs",
         "--capture",
-        ".cache/full-suite.json"
+        ".cache/c25b-recovered-full-suite.json"
       ],
       "cwd": ".",
       "exitCode": 0,
@@ -131,7 +131,7 @@
         {
           "path": "docs/command-contract.md",
           "executable": false,
-          "sha256": "b8771e2ae2b1754cf5b343f599c869de916801b68219ffdbc1520698ed3f2cac"
+          "sha256": "b335f339d7b4b316a1aa59283e278213581b9d7adeae9c4eacde8400a1077cd7"
         },
         {
           "path": "docs/design.md",
@@ -151,17 +151,17 @@
         {
           "path": "docs/implementation-plan.md",
           "executable": false,
-          "sha256": "fda5f0eb74bdbdd1ef82e88f8df54e5d752708a0057a5273e31761a7267b0ba2"
+          "sha256": "4892f4af0ebe6da36f328150786ceabc61d6379dd838c8b5caea8d7065fc2ca0"
         },
         {
           "path": "install/install.mjs",
           "executable": false,
-          "sha256": "174b3150018d8e75a4e3cb4f780d48983e1412f798dfd12018726b8825d44caf"
+          "sha256": "c425a9a302355d436fe653f477d2350e99ae327f78fdb10b8beafa301ea4245a"
         },
         {
           "path": "install/lifecycle.mjs",
           "executable": false,
-          "sha256": "1dab1c53f885607f42e377350425e2084378a3db8aca160a6dc111b352bd27cb"
+          "sha256": "aae5000a964d51e2e5e733907f86ea4824b0bdced868e5232f19800401ae6d2a"
         },
         {
           "path": "package-lock.json",
@@ -556,7 +556,7 @@
         {
           "path": "skills/repo-audit/scripts/lib/protected-write.mjs",
           "executable": false,
-          "sha256": "2ece61d886f33b252d3127804dfc1d365b785b939469b051a47dd52711022e11"
+          "sha256": "f08cb38d2bfa932a3b166f2fada11c15f4eed9043b33fca7d5f73c9ed17f93ee"
         },
         {
           "path": "skills/repo-audit/scripts/lib/repo.mjs",
@@ -1571,7 +1571,7 @@
         {
           "path": "tests/eval/results/tasks/C25b.task-tests.txt",
           "executable": false,
-          "sha256": "80c263cf2f5bc6a8e44bd00f40e4f8675c85fb58a0a7ec363f1719df4dd64d47"
+          "sha256": "e73b8863626549012e02ab0089688e2fc341a8c9891d57c79d8893cf2a413b18"
         },
         {
           "path": "tests/eval/results/tasks/C9b10a.check.txt",
@@ -3651,7 +3651,7 @@
         {
           "path": "tests/scripts/install.test.mjs",
           "executable": false,
-          "sha256": "2c00c76ec0e079f4630ec7433e58d1ce296e67c7914716ecd23babed556121cd"
+          "sha256": "3f9ee10f1853a9f10f105b56ba78ef8d2c93be9a509443e55164e2b13737f2df"
         },
         {
           "path": "tests/scripts/inventory.test.mjs",
@@ -3884,7 +3884,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "fcf392c71c748c3570762fd55775405306d66fb01643898d8cb3fe2ab829c98a"
+      "sha256": "d18079593095aaec566ca894052db6e095f97f73224b411b095107d087522b34"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -3925,18 +3925,18 @@
     ],
     "postCaptureDocumentation": [],
     "counts": {
-      "tests": 2494,
+      "tests": 2610,
       "failed": 0,
-      "passed": 2494,
+      "passed": 2610,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2485,
+      "topLevel": 2601,
       "suites": 0
     },
-    "durationMs": 257513.44048,
-    "outputSha256": "f23e6b2860c4247244286795246d8bf7c02dff0ff7ae006b4be59ee042ff78ec",
-    "eventsSha256": "3b761669271a59c285c03510c3d3286490a524b44018d5c0faf38e0ee5368776",
+    "durationMs": 934027.449945,
+    "outputSha256": "968bf7ce90fa9951341d79567a190fd498160f136c44d32bdf006897662ea00a",
+    "eventsSha256": "9f26dc5a7d119506d695ffa1a61a71ca7d252b6fa806fd3317bb330371076f1d",
     "eventsArtifact": "tests/eval/results/tasks/C25b.events.jsonl"
   }
 }
