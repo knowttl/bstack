@@ -830,6 +830,9 @@ Backups are retained outside the installed skill and never become authored owner
 Noninteractive unresolved conflicts return blocked exit 2 after applying independent safe changes and saving actual mixed ownership.
 
 `--uninstall` removes unchanged owned files and only the separately recorded runtime directory created by this installer.
+Runtime ownership includes the directory's device, inode and creation time, checked before replacement, removal and recovery.
+A replacement runtime or a legacy ownership record without directory identity is preserved and blocks runtime mutation until reviewed.
+Recovery rejects a destination whose canonical path changed, including a replacement directory link.
 It prunes empty directories without following links and reports every retained path.
 Retained owned files keep their original ownership hashes and versions for later explicit cleanup and return blocked.
 Unowned retained files alone do not block successful removal, and ownership is removed when no owned file or runtime remains.

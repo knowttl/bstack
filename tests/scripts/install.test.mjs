@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rm, symlink, writeFile } from 'node:fs/promises'
+import { cp, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rename, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir, devNull } from 'node:os'
 import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -103,7 +103,9 @@ for (const scope of ['user', 'project']) {
         assert.equal(hash, createHash('sha256').update(await readFile(join(destination, path))).digest('hex'))
         assert.equal(path.split('/').includes('node_modules'), false)
       }
-      assert.deepEqual(record.runtime, { path: join(destination, 'node_modules'), created: true, version: '0.1.78' })
+      const runtimeStat = await lstat(join(destination, 'node_modules'), { bigint: true })
+      assert.deepEqual(record.runtime, { path: join(destination, 'node_modules'), created: true, version: '0.1.78',
+        identity: { dev: String(runtimeStat.dev), ino: String(runtimeStat.ino), birthtimeNs: String(runtimeStat.birthtimeNs) } })
       assert.deepEqual((await readdir(parent)).sort(), ['.bstack-install.json', 'repo-audit'])
     }
     assert.deepEqual(await inventory(f.source), sourceBefore)
@@ -529,6 +531,7 @@ import { dirname, join } from 'node:path'
 const rename = fs.rename
 const unlink = fs.unlink
 const copyFile = fs.copyFile
+const rm = fs.rm
 const boundary = ${JSON.stringify(boundary)}
 let edited = false
 fs.copyFile = async (from, to) => {
@@ -560,6 +563,11 @@ fs.rename = async (from, to) => {
 fs.unlink = async path => {
   const result = await unlink(path)
   if (boundary === 'file-remove' && String(path).replaceAll('\\\\', '/').endsWith('/repo-audit/current.md')) process.exit(86)
+  return result
+}
+fs.rm = async (path, options) => {
+  const result = await rm(path, options)
+  if (boundary === 'runtime-remove' && String(path).replaceAll('\\\\', '/').endsWith('/repo-audit/node_modules')) process.exit(86)
   return result
 }
 syncBuiltinESMExports()
@@ -614,6 +622,7 @@ test('completion blocks runtime drift during final version verification', async 
 
 test('completion blocks first-copy edits after activation', async t => {
   const f = await fixture(t)
+  f.git('tag', 'v0.0.1')
   const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
   await interrupt(f, 'copy-edit')
   const result = f.run(...args)
@@ -622,13 +631,17 @@ test('completion blocks first-copy edits after activation', async t => {
   assert.equal(report.sourceVersion, 'mixed')
   assert.equal(report.conflicts[0].path, 'SKILL.md')
   assert.match(report.conflicts[0].diff, /-Late user edit/)
+  assert.equal(JSON.parse(await readFile(join(f.project, '.agents/skills/.bstack-install.json'), 'utf8')).fileVersions['package.json'], 'v0.0.1')
   delete f.env.NODE_OPTIONS
-  assert.equal(f.run(...args, ...report.conflicts[0].decision.split(' ')).status, 0)
+  const retried = f.run(...args, ...report.conflicts[0].decision.split(' '))
+  assert.equal(retried.status, 0)
+  assert.equal(retried.value.data.installations[0].fileVersions['package.json'], 'v0.0.1')
 })
 
 for (const boundary of ['prepared', 'activated']) {
   test(`completion blocks resumed-copy edits after ${boundary}`, async t => {
     const f = await fixture(t)
+    f.git('tag', 'v0.0.1')
     const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
     await interrupt(f, boundary)
     assert.equal(f.run(...args).status, 86)
@@ -643,7 +656,10 @@ for (const boundary of ['prepared', 'activated']) {
     assert.equal(report.sourceVersion, 'mixed')
     assert.equal(report.conflicts[0].path, 'SKILL.md')
     assert.equal(await readFile(join(destination, 'SKILL.md'), 'utf8'), 'Late user edit\n')
-    assert.equal(f.run(...args, ...report.conflicts[0].decision.split(' ')).status, 0)
+    assert.equal(JSON.parse(await readFile(join(parent, '.bstack-install.json'), 'utf8')).fileVersions['package.json'], 'v0.0.1')
+    const retried = f.run(...args, ...report.conflicts[0].decision.split(' '))
+    assert.equal(retried.status, 0)
+    assert.equal(retried.value.data.installations[0].fileVersions['package.json'], 'v0.0.1')
   })
 }
 
@@ -665,12 +681,114 @@ test('completion retains ownership for a file recreated during uninstall', async
 test('completion blocks edits during repeat-install runtime verification', async t => {
   const f = await lifecycle(t)
   assert.equal(f.run(...f.args).status, 0)
+  const legacy = JSON.parse(await readFile(f.ownership, 'utf8'))
+  delete legacy.fileVersions
+  await writeFile(f.ownership, JSON.stringify(legacy))
   await editOnVersionCheck(f, f.destination, join(f.destination, 'current.md'), 'Late user edit\n', 1)
   const result = f.run(...f.args)
   assert.equal(result.status, 2, result.stdout)
   assert.equal(result.value.data.installations[0].sourceVersion, 'mixed')
   assert.equal(result.value.data.installations[0].conflicts[0].path, 'current.md')
   assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).sourceVersion, 'mixed')
+  assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).fileVersions['package.json'], 'v0.0.2')
+  const retried = f.run(...f.args, ...result.value.data.installations[0].conflicts[0].decision.split(' '))
+  assert.equal(retried.status, 0)
+  assert.equal(retried.value.data.installations[0].fileVersions['package.json'], 'v0.0.2')
+})
+
+test('uninstall preserves a runtime recreated after interrupted removal', async t => {
+  const f = await lifecycle(t)
+  await interrupt(f, 'runtime-remove')
+  assert.equal(f.run(...f.args, '--uninstall').status, 86)
+  delete f.env.NODE_OPTIONS
+  await mkdir(join(f.destination, 'node_modules'))
+  await writeFile(join(f.destination, 'node_modules/keep.txt'), 'Replacement runtime\n')
+  const resumed = f.run(...f.args, '--uninstall')
+  assert.equal(resumed.status, 2, resumed.stdout)
+  assert.equal(resumed.value.problems[0].code, 'runtime-conflict')
+  assert.equal(resumed.value.data.installations[0].runtime.created, false)
+  assert.equal(await readFile(join(f.destination, 'node_modules/keep.txt'), 'utf8'), 'Replacement runtime\n')
+  await lstat(f.journal)
+})
+
+for (const uninstall of [false, true]) {
+  test(`${uninstall ? 'uninstall' : 'update'} preserves a replacement runtime directory`, async t => {
+    const f = await lifecycle(t)
+    await rename(join(f.destination, 'node_modules'), join(f.project, 'original-runtime'))
+    await mkdir(join(f.destination, 'node_modules'))
+    await writeFile(join(f.destination, 'node_modules/keep.txt'), 'Replacement runtime\n')
+    const result = f.run(...f.args, ...(uninstall ? ['--uninstall'] : []))
+    assert.equal(result.status, 2, result.stdout)
+    assert.equal(result.value.data.installations[0].runtime.created, false)
+    assert.equal(await readFile(join(f.destination, 'node_modules/keep.txt'), 'utf8'), 'Replacement runtime\n')
+  })
+}
+
+for (const operation of ['update', 'uninstall', 'first copy']) {
+  test(`${operation} recovery rejects a changed canonical destination`, async t => {
+    const f = operation === 'first copy' ? await fixture(t) : await lifecycle(t)
+    const args = operation === 'first copy' ? ['--scope', 'project', '--project', f.project, '--host', 'agents'] : f.args
+    await interrupt(f, operation === 'first copy' ? 'activated' : 'applying')
+    assert.equal(f.run(...args, ...(operation === 'uninstall' ? ['--uninstall'] : [])).status, 86)
+    delete f.env.NODE_OPTIONS
+    const destination = join(f.project, '.agents/skills/repo-audit')
+    const replacement = join(f.project, 'replacement')
+    await rename(destination, replacement)
+    await symlink(replacement, destination, process.platform === 'win32' ? 'junction' : 'dir')
+    const before = await inventory(replacement)
+    const result = f.run(...args, ...(operation === 'uninstall' ? ['--uninstall'] : []))
+    assert.equal(result.status, 2, result.stdout)
+    assert.equal(result.value.problems[0].code, 'changed-destination')
+    assert.deepEqual(await inventory(replacement), before)
+  })
+}
+
+test('update recovery preserves a replacement previous runtime in its stage', async t => {
+  const f = await lifecycle(t)
+  await rm(join(f.destination, 'node_modules/lavish-axi/dist/cli.mjs'))
+  await interrupt(f, 'runtime-backup')
+  assert.equal(f.run(...f.args).status, 86)
+  delete f.env.NODE_OPTIONS
+  const journal = JSON.parse(await readFile(f.journal, 'utf8'))
+  const previous = join(journal.stage, 'previous-runtime')
+  await rename(previous, join(f.project, 'original-runtime'))
+  await mkdir(previous)
+  await writeFile(join(previous, 'keep.txt'), 'Stage replacement\n')
+  const result = f.run(...f.args)
+  assert.equal(result.status, 0, result.stdout)
+  assert.equal(result.value.data.installations[0].retainedStage, journal.stage)
+  assert.equal(await readFile(join(previous, 'keep.txt'), 'utf8'), 'Stage replacement\n')
+})
+
+test('prepared copy recovery preserves a replacement staged runtime', async t => {
+  const f = await fixture(t)
+  const args = ['--scope', 'project', '--project', f.project, '--host', 'agents']
+  await interrupt(f, 'prepared')
+  assert.equal(f.run(...args).status, 86)
+  delete f.env.NODE_OPTIONS
+  const journal = JSON.parse(await readFile(join(f.project, '.agents/skills/.bstack-install-journal.json'), 'utf8'))
+  const runtime = join(journal.stage, 'node_modules')
+  const original = join(f.project, 'original-runtime')
+  await rename(runtime, original)
+  await cp(original, runtime, { recursive: true })
+  await writeFile(join(runtime, 'keep.txt'), 'Stage replacement\n')
+  const result = f.run(...args)
+  assert.equal(result.status, 2, result.stdout)
+  assert.equal(result.value.problems[0].code, 'runtime-conflict')
+  assert.equal(await readFile(join(runtime, 'keep.txt'), 'utf8'), 'Stage replacement\n')
+})
+
+test('legacy runtime ownership does not adopt a directory without identity', async t => {
+  const f = await lifecycle(t)
+  const record = JSON.parse(await readFile(f.ownership, 'utf8'))
+  delete record.runtime.identity
+  await writeFile(f.ownership, JSON.stringify(record))
+  await writeFile(join(f.destination, 'node_modules/keep.txt'), 'Legacy content\n')
+  const result = f.run(...f.args)
+  assert.equal(result.status, 2, result.stdout)
+  assert.equal(result.value.data.installations[0].runtime.created, false)
+  assert.equal(await readFile(join(f.destination, 'node_modules/keep.txt'), 'utf8'), 'Legacy content\n')
+  assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).runtime.identity, undefined)
 })
 
 for (const boundary of ['staging', 'prepared', 'copy-rename', 'activated', 'completed']) {
