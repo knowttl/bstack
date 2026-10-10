@@ -1,9 +1,9 @@
 import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rename, unlink, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
-import { resolvePath } from '../skills/repo-audit/scripts/lib/paths.mjs'
+import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
@@ -97,18 +97,28 @@ async function install(selected) {
   }
   const revision = await child(checkout, 'git', ['rev-parse', '--verify', 'HEAD'])
   const tag = await child(checkout, 'git', ['describe', '--tags', '--exact-match', 'HEAD'])
-  const dirty = await child(checkout, 'git', ['status', '--porcelain', '--untracked-files=all'])
-  const version = tag.status === 'passed' && /^v\d+\.\d+\.\d+$/.test(tag.stdout.trim()) && dirty.status === 'passed' && !dirty.stdout.trim() ?
-    tag.stdout.trim() : `development:${revision.status === 'passed' ? revision.stdout.trim() : 'unversioned'}${dirty.stdout.trim() ? ':dirty' : ''}`
-  const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
   const hosts = selected.host === 'all' ? ['claude', 'agents'] : [selected.host]
   const destinations = []
   for (const host of hosts) {
     const parent = await resolvePath(root, `.${host}/skills`)
     const destination = join(parent, 'repo-audit')
     if (destinations.some(entry => entry.destination === destination)) continue
-    const ownership = join(parent, '.bstack-install.json')
-    const journal = join(parent, '.bstack-install-journal.json')
+    destinations.push({ host, parent, destination, ownership: join(parent, '.bstack-install.json'),
+      journal: join(parent, '.bstack-install-journal.json') })
+  }
+  const dirty = await child(checkout, 'git', ['status', '--porcelain', '--untracked-files=no'])
+  const untracked = await child(checkout, 'git', ['ls-files', '--others', '--exclude-standard', '--', '.',
+    ...['claude', 'agents'].flatMap(host => [
+      `:(glob,exclude)**/.${host}/skills/repo-audit/**`,
+      `:(glob,exclude)**/.${host}/skills/.bstack-install.json`]),
+    ...destinations.flatMap(entry => [entry.destination, entry.ownership]).filter(path => isInside(checkout, path))
+      .map(path => `:(literal,exclude)${relative(checkout, path).replaceAll('\\', '/')}`)])
+  const sourceDirty = Boolean(dirty.stdout.trim() || untracked.stdout.trim())
+  const version = tag.status === 'passed' && /^v\d+\.\d+\.\d+$/.test(tag.stdout.trim()) && dirty.status === 'passed' && untracked.status === 'passed' && !sourceDirty ?
+    tag.stdout.trim() : `development:${revision.status === 'passed' ? revision.stdout.trim() : 'unversioned'}${sourceDirty ? ':dirty' : ''}`
+  const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
+  for (const entry of destinations) {
+    const { destination, ownership, journal } = entry
     if (await exists(journal)) reject('blocked', 'pending-recovery', `A pending installation journal exists: ${journal}`, 'Preserve the journal and staged files for inspection. Automated resume is pending C25b.')
     let previous
     if (await exists(ownership)) previous = JSON.parse(await readFile(ownership, 'utf8'))
@@ -123,7 +133,7 @@ async function install(selected) {
           !await runtimeVersion(destination, runtime)) reject('blocked', 'update-pending', `Installation differs from this source or runtime: ${destination}`, 'Preserve installed files. Update and conflict handling are pending C25b.')
       action = 'no-op'
     } else if (previous) reject('blocked', 'ownership-conflict', `Ownership exists without its installation: ${ownership}`, 'Preserve the ownership record for recovery inspection.')
-    destinations.push({ host, parent, destination, ownership, journal, action })
+    entry.action = action
   }
   const changes = destinations.flatMap(entry => entry.action === 'no-op' ? [] : [
     ...files.map(file => ({ action: 'copy', path: join(entry.destination, file.path), hash: file.hash })),

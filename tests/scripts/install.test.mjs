@@ -146,6 +146,57 @@ for (const scope of ['user', 'project']) {
   }
 }
 
+for (const location of ['checkout', 'nested', 'aliased']) {
+  for (const tagged of [false, true]) {
+    test(`repeat installs preserve ${tagged ? 'tagged' : 'development'} source version at ${location}`, async t => {
+      const f = await fixture(t)
+      const project = location === 'nested' ? join(f.checkout, 'project ü &') : f.checkout
+      await mkdir(project, { recursive: true })
+      if (location === 'aliased') {
+        const parent = join(project, 'installed skills ü &')
+        await mkdir(parent)
+        for (const host of ['claude', 'agents']) {
+          await mkdir(join(project, `.${host}`))
+          await symlink(parent, join(project, `.${host}/skills`), process.platform === 'win32' ? 'junction' : 'dir')
+        }
+        f.git('add', '.')
+        f.git('commit', '-m', 'record fixture host aliases')
+      }
+      if (tagged) f.git('tag', 'v0.0.1')
+      const args = ['--scope', 'project', '--project', project, '--host', 'all']
+      const installed = f.run(...args)
+      assert.equal(installed.status, 0, installed.stdout + installed.stderr)
+      const expectedVersion = tagged ? 'v0.0.1' : `development:${f.git('rev-parse', 'HEAD')}`
+      assert.equal(installed.value.data.sourceVersion, expectedVersion)
+      for (const host of ['claude', 'agents', 'all']) {
+        for (const preview of [false, true]) {
+          const repeated = f.run('--scope', 'project', '--project', project, '--host', host, ...(preview ? ['--dry-run'] : []))
+          assert.equal(repeated.status, 0, repeated.stdout + repeated.stderr)
+          assert.equal(repeated.value.data.sourceVersion, expectedVersion)
+          assert.deepEqual(repeated.value.data.changes, [])
+        }
+      }
+      await writeFile(join(project, '.agents/skills/unrelated.md'), '# User file\n')
+      const dirty = f.run(...args, '--dry-run')
+      assert.equal(dirty.status, 2, dirty.stdout + dirty.stderr)
+      assert.equal(dirty.value.problems[0].code, 'update-pending')
+    })
+  }
+}
+
+test('tracked source changes remain dirty inside installation paths', async t => {
+  const f = await fixture(t)
+  const args = ['--scope', 'project', '--project', f.checkout, '--host', 'agents']
+  assert.equal(f.run(...args).status, 0)
+  f.git('add', '.agents')
+  f.git('commit', '-m', 'record fixture installation')
+  await writeFile(join(f.checkout, '.agents/skills/repo-audit/extra.md'), '# Tracked source\n')
+  f.git('add', '.agents/skills/repo-audit/extra.md')
+  const preview = f.run('--scope', 'user', '--host', 'agents', '--dry-run')
+  assert.equal(preview.status, 0, preview.stdout + preview.stderr)
+  assert.match(preview.value.data.sourceVersion, /^development:[0-9a-f]{40}:dirty$/)
+})
+
 test('installed package validation rejects a removed runtime launcher', async t => {
   const f = await fixture(t)
   const installed = f.run('--scope', 'project', '--project', f.project, '--host', 'agents')
