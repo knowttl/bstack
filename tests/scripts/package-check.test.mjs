@@ -138,6 +138,22 @@ test('help and invalid arguments have explicit exits', () => {
   assert.match(missing.stdout, /package-unreadable:/)
 })
 
+for (const [field, dependency] of [['dependencies', 'runtime'], ['optionalDependencies', '@scope/runtime']]) {
+  test(`referenced ${field} resources must exist`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, 'package.json'), JSON.stringify({ [field]: { [dependency]: '1.0.0' } }))
+    await mkdir(join(directory, 'scripts'))
+    await writeFile(join(directory, 'scripts/launcher.mjs'), `console.log(new URL('../node_modules/${dependency}/cli.mjs', import.meta.url))\n`)
+    const missing = run('--skill', directory)
+    assert.equal(missing.status, 1, missing.stdout + missing.stderr)
+    assert.match(missing.stdout, /local-path-missing:.*cli\.mjs/)
+    await mkdir(join(directory, 'node_modules', dependency), { recursive: true })
+    await writeFile(join(directory, 'node_modules', dependency, 'cli.mjs'), '// Runtime.\n')
+    const present = run('--skill', directory)
+    assert.equal(present.status, 0, present.stdout + present.stderr)
+  })
+}
+
 test('imports accept built-ins, local files and declared runtime package subpaths', async t => {
   const directory = await sandbox(t)
   await mkdir(join(directory, 'scripts'))
