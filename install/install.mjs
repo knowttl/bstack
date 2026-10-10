@@ -7,6 +7,7 @@ import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mj
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { installLinks } from './links.mjs'
 import { planLifecycle, applyLifecycle, finishLifecycle, verifyCleanup, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision, matchesReplacement, matchesRuntimeAdoption, approveRecoveryReplacements } from './lifecycle.mjs'
 
 // Installation always selects the complete skill beside this installer.
@@ -14,7 +15,7 @@ const checkout = fileURLToPath(new URL('../', import.meta.url))
 // These directories contain runtime or scratch data rather than authored files.
 const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
 // Both human and machine output describe the same supported slice.
-const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]\nCopy installs require Node 24+, Git, npm and root development dependencies (npm ci).\nUser scope uses the current home. Project scope requires an existing --project directory.\nRepeat --replace for specific conflicts after reviewing their diff. Use the displayed --adopt-runtime decision to confirm legacy runtime ownership. Interrupted runs resume automatically.\n--link is deferred to C25c.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --uninstall --json'
+const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]\nInstalls require Node 24+, Git, npm and root development dependencies (npm ci).\nUser scope uses the current home. Project scope requires an existing --project directory.\nRepeat --replace for specific conflicts after reviewing their diff. Use the displayed --adopt-runtime decision to confirm legacy runtime ownership. Interrupted runs resume automatically.\n--link prepares the pinned runtime in the source checkout before linking. Updates require --link; removal preserves the target.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --uninstall --json'
 
 function reject(status, code, message, fix) {
   throw new CommandError(status, [{ code, message, fix }])
@@ -39,7 +40,6 @@ function options(args) {
   }
   if (!['user', 'project'].includes(values.scope) || !['claude', 'agents', 'all'].includes(values.host) ||
       (values.scope === 'project') !== Boolean(values.project)) reject('usage-error', 'invalid-target', 'Select --scope and --host, with --project only for project scope.', help)
-  if (values.link) reject('blocked', 'unsupported-lifecycle', 'Link lifecycle is deferred to C25c.', 'Use copy installation.')
   return values
 }
 
@@ -82,6 +82,44 @@ async function install(selected) {
   const root = await realpath(selected.scope === 'user' ? homedir() : resolve(selected.project))
   if (!(await lstat(root)).isDirectory()) reject('blocked', 'invalid-directory', 'Installation root must be an existing directory.', 'Select an existing home or project directory.')
   const source = join(checkout, 'skills/repo-audit')
+  const hosts = selected.host === 'all' ? ['claude', 'agents'] : [selected.host]
+  let destinations = []
+  for (const host of hosts) {
+    const parent = await resolvePath(root, `.${host}/skills`)
+    const destination = join(parent, 'repo-audit')
+    if (destinations.some(entry => entry.destination === destination)) continue
+    destinations.push({ host, parent, destination, ownership: join(parent, '.bstack-install.json'), journal: join(parent, '.bstack-install-journal.json') })
+  }
+  const linked = []
+  const linkDestinations = []
+  const cleanupPath = join(root, '.bstack-install-cleanup.json')
+  const pendingCleanup = await exists(cleanupPath) ? JSON.parse(await readFile(cleanupPath, 'utf8')) : null
+  const linkStages = [...(pendingCleanup?.runtimeStages ?? [])]
+  for (const entry of destinations) {
+    const modes = []
+    for (const path of [entry.ownership, entry.journal]) {
+      if (await exists(path)) {
+        const saved = JSON.parse(await readFile(path, 'utf8'))
+        linked.push(saved.mode ?? saved.record?.mode)
+        modes.push(saved.mode ?? saved.record?.mode)
+        if ((saved.mode ?? saved.record?.mode) === 'link') linkStages.push(...(saved.runtimeStages ?? saved.record?.runtimeStages ?? []))
+      }
+    }
+    if (modes.includes('link') || selected.uninstall && pendingCleanup?.linkDestinations?.includes(entry.destination)) linkDestinations.push(entry)
+  }
+  let linkRemoval
+  let linkPreview
+  if (selected.uninstall && linkDestinations.length) {
+    if (!linked.includes('copy') && !pendingCleanup) return installLinks({ root, source, destinations, selected, version: 'not-requested' })
+    destinations = destinations.filter(entry => !linkDestinations.includes(entry))
+    const linkSelected = { ...selected,
+      replace: selected.replace?.filter(value => linkDestinations.some(entry => value.startsWith(entry.host + ':'))),
+      'adopt-runtime': selected['adopt-runtime']?.filter(value => linkDestinations.some(entry => value.startsWith(entry.host + ':'))) }
+    linkRemoval = { root, source, destinations: linkDestinations, selected: linkSelected, version: 'not-requested', copyRemoval: true }
+    linkPreview = await installLinks({ ...linkRemoval, selected: { ...linkSelected, 'dry-run': true } })
+  } else if (selected.uninstall && selected.link && !linked.includes('copy') && !pendingCleanup) {
+    return installLinks({ root, source, destinations, selected, version: 'not-requested' })
+  }
   let checkPackage
   try { ({ checkPackage } = await import('../scripts/check-package.mjs')) } catch (error) {
     if (error.code !== 'ERR_MODULE_NOT_FOUND') throw error
@@ -102,18 +140,10 @@ async function install(selected) {
   }
   const revision = await child(checkout, 'git', ['rev-parse', '--verify', 'HEAD'])
   const tag = await child(checkout, 'git', ['describe', '--tags', '--exact-match', 'HEAD'])
-  const hosts = selected.host === 'all' ? ['claude', 'agents'] : [selected.host]
-  const destinations = []
-  for (const host of hosts) {
-    const parent = await resolvePath(root, `.${host}/skills`)
-    const destination = join(parent, 'repo-audit')
-    if (destinations.some(entry => entry.destination === destination)) continue
-    destinations.push({ host, parent, destination, sourceFiles: files, ownership: join(parent, '.bstack-install.json'),
-      journal: join(parent, '.bstack-install-journal.json') })
-  }
-  const cleanupPath = join(root, '.bstack-install-cleanup.json')
-  const generatedPaths = [cleanupPath, ...destinations.flatMap(entry => [entry.destination, entry.ownership])]
-  const generatedParents = destinations.map(entry => entry.parent)
+  for (const entry of destinations) entry.sourceFiles = files
+  const generatedPaths = [cleanupPath, ...[...destinations, ...linkDestinations].flatMap(entry => [entry.destination, entry.ownership])]
+  generatedPaths.push(...linkStages.filter(path => dirname(path) === dirname(source) && /^\.bstack-stage-/.test(path.split(/[\\/]/).at(-1))))
+  const generatedParents = [...destinations, ...linkDestinations].map(entry => entry.parent)
   for (const host of ['claude', 'agents'].filter(host => !hosts.includes(host))) {
     let parent
     try { parent = await realpath(join(root, `.${host}/skills`)) } catch (error) {
@@ -122,6 +152,12 @@ async function install(selected) {
     }
     generatedPaths.push(join(parent, 'repo-audit'), join(parent, '.bstack-install.json'))
     generatedParents.push(parent)
+    for (const path of [join(parent, '.bstack-install.json'), join(parent, '.bstack-install-journal.json')]) {
+      if (!await exists(path)) continue
+      const saved = JSON.parse(await readFile(path, 'utf8'))
+      if ((saved.mode ?? saved.record?.mode) === 'link') generatedPaths.push(...(saved.runtimeStages ?? saved.record?.runtimeStages ?? [])
+        .filter(path => dirname(path) === dirname(source) && /^\.bstack-stage-/.test(path.split(/[\\/]/).at(-1))))
+    }
   }
   for (const parent of new Set([root, ...generatedParents].filter(path => isInside(checkout, path)))) {
     let names
@@ -160,13 +196,17 @@ async function install(selected) {
       .map(path => `:(literal,exclude)${relative(checkout, path).replaceAll('\\', '/')}`),
     ...generatedParents.filter(path => isInside(checkout, path)).flatMap(path => {
       const parent = relative(checkout, path).replaceAll('\\', '/').replace(/[*?\[\]]/g, '\\$&')
-      return ['.bstack-stage-*/**', '.bstack-backup-*/**', '.bstack-install-journal.json']
+      return ['.bstack-stage-*', '.bstack-stage-*/**', '.bstack-backup-*/**', '.bstack-install-journal.json']
         .map(pattern => `:(glob,exclude)${parent ? parent + '/' : ''}${pattern}`)
     })])
   const sourceDirty = Boolean(dirty.stdout.trim() || untracked.stdout.trim())
   const version = tag.status === 'passed' && /^v\d+\.\d+\.\d+$/.test(tag.stdout.trim()) && dirty.status === 'passed' && untracked.status === 'passed' && !sourceDirty ?
     tag.stdout.trim() : `development:${revision.status === 'passed' ? revision.stdout.trim() : 'unversioned'}${sourceDirty ? ':dirty' : ''}`
   const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
+  if (!selected.uninstall && (selected.link || linked.includes('link'))) {
+    if (!selected.link) reject('blocked', 'link-mode-required', 'Updating a linked checkout requires --link.', 'Review the source checkout and rerun with --link.')
+    return installLinks({ root, source, files, hashes, version, runtime, destinations, selected, child, runtimeVersion, checkPackage, authored })
+  }
   const cleanupBinding = hashBytes(Buffer.from(canonicalJSON({ destinations: destinations.map(entry => entry.destination), uninstall: Boolean(selected.uninstall), version, hashes, runtime })))
   let cleanup
   if (await exists(cleanupPath)) {
@@ -237,8 +277,11 @@ async function install(selected) {
     entry.action = action
   }
   const data = { sourceVersion: version, mode: 'copy', preview: Boolean(selected['dry-run']), destinations, changes: [], installations: [] }
-  const report = () => ({ ...data, destinations: destinations.map(({ host, parent, destination, ownership, journal, action, plan }) =>
-    ({ host, parent, destination, ownership, journal, action, ...(plan ? { conflicts: plan.conflicts } : {}) })) })
+  const report = () => ({ ...data, mode: linkRemoval ? 'mixed' : data.mode,
+    destinations: [...destinations.map(({ host, parent, destination, ownership, journal, action, plan }) =>
+      ({ host, parent, destination, ownership, journal, action, ...(plan ? { conflicts: plan.conflicts } : {}) })), ...(linkPreview?.destinations ?? [])],
+    changes: [...data.changes, ...(linkPreview?.changes ?? [])],
+    installations: [...data.installations, ...(linkPreview?.installations ?? [])] })
   try {
     data.changes = (await Promise.all(destinations.map(async entry => entry.action === 'cleanup' || entry.action === 'no-op' ? [] : entry.action === 'resume' && entry.recovery.plan ? await previewRecovery(entry, runtimeVersion) : entry.plan ? [
       ...entry.plan.operations.map(operation => ({ action: operation.proposedHash === null ? 'remove' : 'replace', path: join(entry.destination, operation.path), hash: operation.proposedHash })),
@@ -359,7 +402,8 @@ async function install(selected) {
       data.limitations = limitations
     }
     if (!cleanup && destinations.some(entry => entry.recovery || entry.previous?.acceptedAdoption)) {
-      cleanup = { schemaVersion: 1, binding: cleanupBinding, entries: [] }
+      cleanup = { schemaVersion: 1, binding: cleanupBinding, entries: [],
+        ...(linkRemoval ? { linkDestinations: linkDestinations.map(entry => entry.destination), runtimeStages: linkStages } : {}) }
       for (const entry of destinations) {
         const saved = { destination: entry.destination, recovery: entry.recovery, previous: entry.previous,
           record: await exists(entry.ownership) ? JSON.parse(await readFile(entry.ownership, 'utf8')) : null,
@@ -373,6 +417,7 @@ async function install(selected) {
       entry.saveCleanup = () => saveRecovery(cleanupPath, cleanup)
       await finishLifecycle(entry, data.installations.find(installation => installation.destination === entry.destination), runtimeVersion)
     }
+    if (linkRemoval) linkPreview = await installLinks(linkRemoval)
     if (cleanup) await unlink(cleanupPath)
   } catch (error) {
     for (const entry of destinations) {
@@ -397,6 +442,7 @@ function printInstallations(data) {
     for (const conflict of installation.conflicts ?? []) console.log(`${conflict.diff}\nDecision: ${conflict.decision}`)
     if (installation.retained?.length) console.log(`retained: ${installation.retained.join(', ')}`)
     if (installation.backup) console.log(`backup: ${installation.backup}`)
+    if (installation.retainedTarget) console.log(`retained target: ${installation.retainedTarget}`)
   }
 }
 
@@ -406,7 +452,7 @@ try {
   else {
     const selected = options(args)
     const data = await install(selected)
-    if (!selected.json) console.log([`source: ${data.sourceVersion}`, ...data.destinations.map(entry => `${entry.action}: ${entry.destination}`),
+    if (!selected.json) console.log([`mode: ${data.mode}`, `source: ${data.sourceVersion}`, ...data.destinations.map(entry => `${entry.action}: ${entry.destination}`),
       ...data.changes.map(change => `${change.action}: ${change.path}`)].join('\n'))
     if (!selected.json) printInstallations(data)
     emitResult({ command: 'install', status: data.blocked ? 'blocked' : 'passed', data }, selected.json)

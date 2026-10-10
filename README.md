@@ -13,7 +13,9 @@ The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
 Use the [maintenance reference](skills/repo-audit/references/maintenance-contract.md) for bounded change assessment and local or standalone validation without repeating the interview or full audit.
 The copy installer supports previews, verified no-op repeats, updates, uninstall and interrupted-run resume.
-Links and real operating-system acceptance remain pending C25c.
+Link installation, explicit developer-checkout updates and owned-link removal are available.
+The owner accepted Linux-only installer lifecycle evidence for C25c and AC-74 on 2026-10-10.
+Windows and macOS execution remains unverified and is outside this acceptance scope.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
@@ -24,7 +26,7 @@ From a local clone, install the source-checker dependencies with `npm ci`, then 
 node install/install.mjs --scope project --project <project-path> --host all --dry-run
 node install/install.mjs --scope project --project <project-path> --host all --json
 node scripts/check-package.mjs --skill <project-path>/.agents/skills/repo-audit
-npm test -- --task C25b
+npm test -- --task C25c
 ```
 
 Use `--scope user --host agents` for the current home, or `--host claude` for Claude Code alone.
@@ -41,6 +43,13 @@ Use the same scope and host with `--uninstall` to remove unchanged owned files a
 Edited and unowned content survives, retained paths are reported, and retained owned files keep their ownership record and return blocked until explicitly resolved.
 Rerun the original command after an interruption to resume from verified actual hashes and its preserved journal.
 Dry run writes no files and installs no dependencies.
+Add `--link` to install a directory symlink, or a junction on Windows, to the source skill folder.
+Preview declares any pinned runtime preparation in the source checkout before link activation.
+Repeats verify the owned link and pinned runtime without reinstalling dependencies.
+Review and update the developer checkout explicitly, then rerun with `--link` to record its current source state.
+An existing source runtime that differs from the pin is preserved; prepare it explicitly in that checkout before retrying.
+Link uninstall removes only the owned link and its external records, preserving the entire target, including its runtime and edits.
+Changed or replaced links block instead of being adopted.
 The [installer contract](docs/command-contract.md#installer-copy-and-preview-c25a) describes ownership, conflict decisions and failure recovery.
 An exact clean semantic Git tag is reported as the source version, while untagged or dirty sources are explicitly labelled development.
 Installation tests use disposable release snapshots and a locally packed fake runtime, and do not establish real Windows/macOS runs or current-agent skill loading.
