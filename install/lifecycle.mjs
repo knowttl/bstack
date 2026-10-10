@@ -67,6 +67,30 @@ export async function legacyRuntimeDecision(entry, record, runtimeVersion) {
   return { value, decision: `--adopt-runtime ${value}`, runtime: { ...record.runtime, identity } }
 }
 
+export async function matchesReplacement(entry, decision) {
+  const plan = entry.plan ?? entry.recovery?.plan ?? entry.recovery?.update?.plan
+  const operation = plan?.operations.find(operation => `${entry.host}:${operation.path}:${operation.originalHash ?? 'absent'}` === decision)
+  if (!operation) return false
+  await verifyDestination(entry)
+  const actual = await state(entry.destination, operation.path)
+  return actual.hash === operation.originalHash || actual.hash === operation.proposedHash
+}
+
+export async function matchesRuntimeAdoption(entry, decision, runtimeVersion) {
+  if (entry.adoptRuntime === decision) return true
+  const record = entry.recovery?.update?.previous ?? entry.recovery?.record ?? entry.previous
+  if (record?.acceptedAdoption?.value !== decision || record.acceptedAdoption.binding !== entry.adoptionBinding) return false
+  await verifyDestination(entry)
+  const path = join(entry.destination, 'node_modules')
+  if (await ownsRuntime(path, record.runtime)) {
+    const actual = await legacyRuntimeDecision(entry, { ...record, runtime: { ...record.runtime, identity: undefined } }, runtimeVersion)
+    return actual?.value === decision
+  }
+  if (!entry.recovery?.plan?.runtimeAllowed) return false
+  return !await exists(path) || await ownsRuntime(path, entry.recovery.stagedRuntime && { ...entry.recovery.stagedRuntime, path }) &&
+    await runtimeVersion(entry.destination, entry.recovery.plan.runtime)
+}
+
 export async function previewRecovery(entry, runtimeVersion) {
   await verifyDestination(entry)
   const journal = entry.recovery
@@ -352,6 +376,7 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
     runtime?.version === journal.plan.runtime
   const record = { ...journal.record, files: journal.files, fileVersions: journal.fileVersions, runtime,
     sourceVersion: complete ? journal.plan.version : journal.plan.uninstall && !Object.keys(journal.files).length && !runtime ? 'uninstalled' : 'mixed' }
+  delete record.acceptedAdoption
   await saveRecovery(entry.ownership, record)
   const expected = [
     ...await Promise.all(Object.entries(journal.plan.desired).map(async ([path, hash]) => {

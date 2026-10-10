@@ -7,7 +7,7 @@ import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mj
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
 import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision } from './lifecycle.mjs'
+import { planLifecycle, applyLifecycle, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision, matchesReplacement, matchesRuntimeAdoption } from './lifecycle.mjs'
 
 // Installation always selects the complete skill beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
@@ -143,6 +143,7 @@ async function install(selected) {
   const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
   for (const entry of destinations) {
     const { destination, ownership, journal } = entry
+    entry.adoptionBinding = hashBytes(Buffer.from(canonicalJSON({ destination, uninstall: Boolean(selected.uninstall), version, hashes, runtime })))
     await verifyDestination(entry)
     if (await exists(journal)) {
       entry.recovery = JSON.parse(await readFile(journal, 'utf8'))
@@ -200,10 +201,10 @@ async function install(selected) {
       { action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime },
       { action: 'ownership', path: entry.ownership }, { action: 'journal', path: entry.journal }]))).flat()
     for (const decision of selected.replace ?? []) {
-      if (!destinations.some(entry => entry.plan?.operations.some(operation => `${entry.host}:${operation.path}:${operation.originalHash ?? 'absent'}` === decision))) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
+      if (!(await Promise.all(destinations.map(entry => matchesReplacement(entry, decision)))).some(Boolean)) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
     }
     for (const decision of selected['adopt-runtime'] ?? []) {
-      if (!destinations.some(entry => entry.adoptRuntime === decision)) reject('usage-error', 'stale-runtime-decision', 'Runtime decision does not match current verified legacy ownership.', 'Review the current runtime and use its displayed decision.')
+      if (!(await Promise.all(destinations.map(entry => matchesRuntimeAdoption(entry, decision, runtimeVersion)))).some(Boolean)) reject('usage-error', 'stale-runtime-decision', 'Runtime decision does not match current verified legacy ownership.', 'Review the current runtime and use its displayed decision.')
     }
     for (const entry of destinations.filter(entry => entry.adoptRuntime)) data.changes.push({ action: 'runtime-adopt', path: entry.previous.runtime.path }, { action: 'ownership', path: entry.ownership })
     if (selected['dry-run']) {
@@ -215,7 +216,8 @@ async function install(selected) {
         const previous = JSON.parse(await readFile(entry.ownership, 'utf8'))
         const actual = await legacyRuntimeDecision(entry, previous, runtimeVersion)
         if (actual?.value !== entry.adoptRuntime) reject('usage-error', 'stale-runtime-decision', 'Runtime changed before legacy ownership could be saved.', 'Review the current runtime and use its displayed decision.')
-        await saveRecovery(entry.ownership, { ...previous, runtime: actual.runtime })
+        entry.previous = { ...previous, runtime: actual.runtime, acceptedAdoption: { value: entry.adoptRuntime, binding: entry.adoptionBinding } }
+        await saveRecovery(entry.ownership, entry.previous)
       }
       if (entry.action === 'no-op') {
         if (!selected.uninstall) {
@@ -225,6 +227,11 @@ async function install(selected) {
             await saveRecovery(entry.ownership, { ...record, fileVersions: installation.fileVersions, sourceVersion: 'mixed' })
           }
           data.installations.push(installation)
+          if (entry.previous?.acceptedAdoption) {
+            const record = JSON.parse(await readFile(entry.ownership, 'utf8'))
+            delete record.acceptedAdoption
+            await saveRecovery(entry.ownership, record)
+          }
         }
         continue
       }
