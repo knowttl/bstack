@@ -571,8 +571,25 @@ const unlink = fs.unlink
 const copyFile = fs.copyFile
 const rmdir = fs.rmdir
 const writeFile = fs.writeFile
+const open = fs.open
 const boundary = ${JSON.stringify(boundary)}
 let edited = false
+fs.open = async (path, ...args) => {
+  const handle = await open(path, ...args)
+  const name = String(path)
+  const kind = boundary.split(':')[1]
+  if (boundary.startsWith('partial-writer:') && name.includes('.bstack-recovery-.bstack-install' + (kind === 'ownership' ? '' : '-' + kind) + '.json-')) {
+    const write = handle.writeFile.bind(handle)
+    handle.writeFile = async bytes => {
+      if (kind === 'cleanup') {
+        try { await fs.access(join(dirname(path), '.bstack-install-cleanup.json')) } catch { return write(bytes) }
+      }
+      await write(bytes.subarray(0, boundary.endsWith(':empty') ? 0 : Math.floor(bytes.length / 2)))
+      process.exit(86)
+    }
+  }
+  return handle
+}
 fs.writeFile = async (path, bytes, options) => {
   if (boundary === 'partial-backup' && String(path).replaceAll('\\\\', '/').includes('/.bstack-backup-')) {
     await writeFile(path, bytes.subarray(0, Math.floor(bytes.length / 2)), options)
@@ -605,6 +622,7 @@ fs.rename = async (from, to) => {
     const journal = JSON.parse(await fs.readFile(to, 'utf8'))
     if (boundary === journal.state) process.exit(86)
     if (boundary === 'agents-' + journal.state && path.includes('/.agents/')) process.exit(86)
+    if (boundary === 'agents-stage-failure' && journal.state === 'staging' && path.includes('/.agents/')) throw Object.assign(new Error('Fixture staging failure'), { code: 'EACCES' })
     if (boundary === 'earlier-host-edit' && journal.state === 'prepared' && path.includes('/.agents/')) await fs.writeFile(join(dirname(to), '../../.claude/skills/repo-audit/SKILL.md'), 'Later host edit\\n')
   }
   if (boundary === 'ownership-adopt' && path.endsWith('/.bstack-install.json') && JSON.parse(await fs.readFile(to, 'utf8')).acceptedAdoption) process.exit(86)
@@ -614,6 +632,7 @@ fs.rename = async (from, to) => {
     await fs.writeFile(join(journal.stage, 'previous-runtime/keep.txt'), 'Cleanup runtime edit\\n')
   }
   if (boundary === 'approved-file-rename' && path.endsWith('/repo-audit/SKILL.md')) process.exit(86)
+  if (boundary === 'approved-addition-rename' && path.endsWith('/repo-audit/added.md')) process.exit(86)
   if (boundary === 'copy-rename' && path.endsWith('/skills/repo-audit')) process.exit(86)
   if (boundary === 'copy-edit' && path.endsWith('/skills/repo-audit')) await fs.writeFile(join(to, 'SKILL.md'), 'Late user edit\\n')
   if (boundary === 'ownership-edit' && !edited && path.endsWith('/.bstack-install.json')) {
@@ -1086,6 +1105,80 @@ for (const operation of ['upgrade', 'uninstall']) {
     })
   }
 }
+
+for (const kind of ['ownership', 'journal', 'cleanup']) {
+  for (const length of ['empty', 'partial']) {
+    test(`incomplete recovery writer ${kind} ${length} preserves source binding`, async t => {
+      const f = await fixture(t)
+      await writeFile(join(f.checkout, '.gitignore'), 'node_modules/\n.agents/skills/repo-audit/\n.agents/skills/.bstack-install.json\n')
+      f.git('add', '.gitignore')
+      f.git('commit', '-m', 'ignore fixture installations')
+      f.git('tag', 'v0.0.1')
+      const args = ['--scope', 'project', '--project', f.checkout, '--host', 'agents']
+      assert.equal(f.run(...args).status, 0)
+      await upgradeRuntime(f)
+      await interrupt(f, `partial-writer:${kind}:${length}`)
+      assert.equal(f.run(...args).status, 86)
+      delete f.env.NODE_OPTIONS
+      const parent = kind === 'cleanup' ? f.checkout : join(f.checkout, '.agents/skills')
+      const temporary = (await readdir(parent)).find(name => name.startsWith('.bstack-recovery-') && name.endsWith('.tmp'))
+      const bytes = await readFile(join(parent, temporary))
+      assert.throws(() => JSON.parse(bytes.toString('utf8')))
+      const result = f.run(...args)
+      assert.equal(result.status, 0, result.stdout)
+      assert.equal(result.value.data.sourceVersion, 'v0.0.2')
+      await writeFile(join(parent, 'unrelated.txt'), 'Source drift\n')
+      assert.match(f.run(...args, '--dry-run').value.data.sourceVersion, /:dirty$/)
+    })
+  }
+}
+
+test('failure snapshot retains unowned collisions when a later host fails', async t => {
+  const f = await fixture(t)
+  f.git('tag', 'v0.0.1')
+  const args = ['--scope', 'project', '--project', f.project, '--host', 'all']
+  assert.equal(f.run(...args).status, 0)
+  await writeFile(join(f.source, 'added.md'), 'New source\n')
+  f.git('add', '.')
+  f.git('commit', '-m', 'fixture update')
+  f.git('tag', 'v0.0.2')
+  const destination = join(f.project, '.claude/skills/repo-audit')
+  await writeFile(join(destination, 'added.md'), 'Unowned collision\n')
+  await interrupt(f, 'agents-stage-failure')
+  const result = f.run(...args)
+  assert.equal(result.status, 2, result.stdout)
+  const report = result.value.data.installations.find(report => report.destination === destination)
+  assert.equal(report.files['added.md'], createHash('sha256').update('Unowned collision\n').digest('hex'))
+  assert.equal(report.sourceVersion, 'mixed')
+  assert.equal(report.conflicts[0].path, 'added.md')
+  const plain = command(process.execPath, [join(f.checkout, 'install/install.mjs'), ...args], f.project, f.env)
+  assert.equal(plain.status, 2, plain.stdout)
+  assert.ok(plain.stdout.includes(`file: added.md ${report.files['added.md']}`))
+  assert.ok(plain.stdout.includes('installed state: mixed'))
+  assert.ok(plain.stdout.includes(`Decision: ${report.conflicts[0].decision}`))
+})
+
+test('failure snapshot retains edited approved additions and recorded backups', async t => {
+  const f = await lifecycle(t)
+  await writeFile(join(f.destination, 'added.md'), 'Approved collision\n')
+  const decision = f.run(...f.args, '--dry-run').value.data.destinations[0].conflicts.find(conflict => conflict.path === 'added.md').decision.split(' ')
+  await interrupt(f, 'approved-addition-rename')
+  assert.equal(f.run(...f.args, ...decision).status, 86)
+  delete f.env.NODE_OPTIONS
+  await writeFile(join(f.destination, 'added.md'), 'Edited addition\n')
+  const journal = JSON.parse(await readFile(f.journal, 'utf8'))
+  const result = f.run(...f.args, ...decision)
+  assert.equal(result.status, 3, result.stdout)
+  const report = result.value.data.installations[0]
+  assert.equal(report.files['added.md'], createHash('sha256').update('Edited addition\n').digest('hex'))
+  assert.equal(report.sourceVersion, 'mixed')
+  assert.equal(report.backup, journal.backup)
+  assert.equal(await readFile(join(report.backup, 'added.md'), 'utf8'), 'Approved collision\n')
+  const plain = command(process.execPath, [join(f.checkout, 'install/install.mjs'), ...f.args, ...decision], f.project, f.env)
+  assert.equal(plain.status, 3, plain.stdout)
+  assert.ok(plain.stdout.includes(`file: added.md ${report.files['added.md']}`))
+  assert.ok(plain.stdout.includes(`backup: ${report.backup}`))
+})
 
 for (const boundary of ['staging', 'prepared', 'ownership', 'cleanup']) {
   test(`recovery writer temporary preserves tagged source binding at ${boundary}`, async t => {
