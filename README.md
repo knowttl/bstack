@@ -14,7 +14,8 @@ Protected new-project creation is available after the intent checkpoint and exac
 Use the [maintenance reference](skills/repo-audit/references/maintenance-contract.md) for bounded change assessment and local or standalone validation without repeating the interview or full audit.
 The copy installer supports previews, verified no-op repeats, updates, uninstall and interrupted-run resume.
 Link installation, explicit developer-checkout updates and owned-link removal are available.
-Real Windows and macOS execution remains pending, so C25c and AC-74 are incomplete.
+The owner accepted Linux-only installer lifecycle evidence for C25c and AC-74 on 2026-10-10.
+Windows and macOS execution remains unverified and is outside this acceptance scope.
 Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.

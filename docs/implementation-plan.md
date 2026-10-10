@@ -107,7 +107,8 @@ Repository development tools may use the root development dependencies declared 
 Tests use `node:test` and `node:assert`.
 - **Paths.** Use `node:path` and `node:url`.
 Never build a path by joining strings with `/`.
-Every script must work on Windows, macOS and Linux.
+Keep portable path handling for Windows, macOS and Linux.
+Installer support and acceptance for C25c/AC-74 are Linux-only under R27; other platform execution remains unverified.
 - **Child processes.** Use `execFile` or `spawn` with an argument array.
 Never build a shell string from project data.
 - **Writing.** No em dashes or en dashes in any file.
@@ -326,7 +327,7 @@ Every slice records its task IDs, the original user intent and approved amendmen
 | C24c | T3a.7 maintenance guidance | C24b | Maintenance-only transcript, no interview/full audit |
 | C25a | T4.1 install preview/copy/ownership | C24c | Isolated homes, source closure, no-op dry run, occupied-unowned collision and nested runtime failure |
 | C25b | T4.1 update/uninstall/interruption | C25a | Edited/unowned preservation, obsolete-owned removal, accurate mixed version, resume |
-| C25c | T4.1 links and OS executions | C25b | Owned symlink/junction only, target survives removal, recorded Windows/macOS/Linux runs |
+| C25c | T4.1 links and OS executions | C25b | Owned symlink/junction only, target survives removal, recorded Linux execution under R27 |
 | C26 | T4.2 current-agent invocation/loading | C25c | Fresh plain vs explicit sessions, observed load conditions, no router/support skill required |
 | C27 | T4.3 final full paths/repeat/extension | C26 | Fresh complete installed paths, extension via public boundary/journey, clean-checkout evidence, fresh case selection |
 | C28 | T5.1 examples/limits | C27 | Examples tied to recorded results, reproducible install/use, accurate actual test scope |
@@ -503,14 +504,14 @@ Tick each task when its "Done when" commands pass.
       Fake-host execution does not establish real-model semantic judgement or AC-23 final agent acceptance; T4.3 owns the fresh final transcript.
       See Phase 4 below for installation progress; release remains pending.
 - Phase 4: Installation
-  - [ ] T4.1 Build the installer
+  - [x] T4.1 Build the installer
     - [x] C25a Install preview, copy and ownership
       - `node install/install.mjs` supports explicit user/project scope and Claude/agents/all destinations, source closure and prerequisite checks, mutation-free preview, staged locked runtime installation, package validation and recoverable activation.
         Exact authored-file SHA-256 ownership lives outside each installed skill, and the created runtime directory is recorded separately.
         `npm test -- --task C25a` verifies isolated homes/projects, complete copy validation, no-op repeat, unowned collision preservation, source failures and nested npm installation failure with a preserved stage and journal.
         [C25a evidence](../tests/eval/results/tasks/C25a.json) binds the final full suite.
         C25b below completes updates, uninstall and interrupted-run completion, while link mode and real OS acceptance remain C25c work.
-        AC-73 lifecycle coverage and AC-74 three-OS acceptance are incomplete, and current-agent loading remains T4.2 work.
+        AC-73 lifecycle coverage and AC-74 acceptance are completed by C25b/C25c below, and current-agent loading remains T4.2 work.
     - [x] C25b Copy update, uninstall and interruption
       - Updates replace unchanged owned files and remove unchanged obsolete files, preserving edited and unowned content with concrete diffs and hash-bound replacement decisions.
         Noninteractive conflicts return blocked with actual file hashes, per-file version provenance and mixed ownership, and explicit replacements retain backups.
@@ -518,16 +519,17 @@ Tick each task when its "Done when" commands pass.
         Recovery verifies actual hashes across first-copy activation, per-file update/removal and runtime rename boundaries.
         `npm test -- --task C25b` uses disposable homes/projects and locally packed fake runtimes, including runtime failure and retry.
         [C25b evidence](../tests/eval/results/tasks/C25b.json) requires a fresh final-input full-suite capture and attachment after the lifecycle fixes settle.
-        Link lifecycle and three-OS acceptance remain C25c work, and current-agent loading remains C26 work.
-    - [ ] C25c Links and operating-system execution evidence
+        Link lifecycle and owner-amended Linux acceptance are C25c work, and current-agent loading remains C26 work.
+    - [x] C25c Links and operating-system execution evidence
       - Link installation prepares the pinned source runtime before activating a symlink or Windows junction.
         Preview declares that source mutation, repeats verify the same link and target, and updates explicitly record a developer checkout in link mode.
         Removal unlinks only the owned directory entry, retaining the target and its runtime, edits and unrelated content.
         Isolated tests cover copy/link lifecycle, changed and replaced links, failed runtime preparation and interruption boundaries.
         [C25c evidence](../tests/eval/results/tasks/C25c.json) records the 29-test Node 26 lifecycle supplement and requires final-input Node 24 full-suite capture through the existing validator.
-        The [OS execution request](C25c-operating-systems.md) supplies concrete operator commands, preservation and cleanup observations and evidence fields for missing environments.
-        Real Windows and macOS runs remain unavailable, and AC-74 remains blocked pending their recorded local or manual executions.
-        Linux Node 24 and Node 26 supplement those records; current-agent loading remains C26 and real-model acceptance remains C27.
+        The [OS execution record](C25c-operating-systems.md) documents the owner's 2026-10-10 ruling, "only linux is good", and concrete lifecycle commands and preservation observations.
+        R27 accepts Linux-only evidence for C25c/AC-74; Windows and macOS execution remains unverified and outside the support/acceptance scope, with no remaining OS gate.
+        The final Node 24 full suite includes mixed copy/link removal and retained-stage recovery repairs; the Node 26 supplement retains its historical source provenance.
+        Current-agent loading remains C26 and real-model acceptance remains C27.
   - [ ] T4.2 Run the basic tests in the current agent
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release
@@ -1725,12 +1727,12 @@ Phase evidence from the design: a clean install runs in the current agent and pr
 - Tests cover copy and link modes, first-install collisions, dry run, repeat, update, obsolete files and removal.
 - Edited files, unrelated content and link targets survive update and uninstall.
 - Runtime-install failure and interrupted installation leave recoverable state and a non-passing result.
-- The same tests pass in isolated homes in one recorded real local or manual run on each of Windows, macOS and Linux, without GitHub Actions.
-  Local Node 24 and Node 26 runs supplement these, and a Linux run does not substitute for another operating system.
+- The same tests pass in isolated homes in recorded real local Linux execution, without GitHub Actions.
+  Node 24 and Node 26 records supplement this execution under the owner's 2026-10-10 Linux-only scope amendment R27.
 - `node scripts/check-package.mjs --skill <installed-folder>` validates a clean copy installation.
 
 **Covers:** AC-73, AC-74.
-AC-74 stays blocked until all three operating-system runs are recorded, unless the owner explicitly changes the support scope.
+R27 changes AC-74 support and acceptance scope to Linux-only; Windows/macOS execution remains unverified and does not gate this slice.
 
 ### T4.2 Run the basic tests in the current agent
 
@@ -1833,7 +1835,7 @@ Phase evidence from the design: release evidence covers every acceptance case.
    Each must pass under the design's pass rule.
    Ensure each scenario also has a comparable baseline from the same scoring criteria and fixture revision.
 2. Run `node scripts/acceptance.mjs --results tests/eval/results --require-complete`.
-   Require passing evidence for all 75 design cases as amended by the commissioning decisions, including AC-24 as a clean-checkout case and AC-74 with three real operating-system runs.
+   Require passing evidence for all 75 design cases as amended by the commissioning decisions and R27, including AC-24 as a clean-checkout case and AC-74 with real Linux lifecycle execution.
    Require baseline and final comparisons for every evaluation scenario.
    Cases that already passed without the skill must still pass with it.
    Fill the coverage table with actual evidence paths.
@@ -1892,7 +1894,7 @@ Registry completeness is a structural check, while final case evidence proves ex
 | T3a.5 | AC-13, AC-15 | Context-specific terms and reviewed rule relocation | |
 | T3a.6 | AC-24, AC-58 | Different-root clean clone, missing evidence, shallow base and fresh leaf execution | |
 | T3a.7 | AC-23 | Maintenance-only transcript without interview or full audit | |
-| T4.1 | AC-73, AC-74 | Copy/link lifecycle and conflict preservation, with one recorded real run on each of the three operating systems | |
+| T4.1 | AC-73, AC-74 | Copy/link lifecycle and conflict preservation, with recorded real Linux execution under R27 | |
 | T4.2 | AC-39, AC-40, AC-42, AC-43, AC-56, AC-75 | Fresh explicit/implicit invocation and observed file-loading trace | |
 | T4.3 | AC-1, AC-3, AC-23, AC-54, AC-64, AC-69, AC-75 | Final full-path transcripts, repeated audit and independent extension | |
 | T5.2 | AC-46 | Comparable baseline/final results and all-case evidence validation | |

@@ -4,11 +4,16 @@ C25c verifies the copy and link lifecycle through `npm test -- --task C25c` in d
 These are real local test executions on the recorded operating system, not real-model or current-agent loading acceptance.
 No GitHub Actions workflow or remote execution was used.
 
+On 2026-10-10 the owner ruled "only linux is good" and accepted Linux-only lifecycle evidence for C25c/AC-74.
+This support/acceptance scope amendment is recorded as R27 in [the design](design.md#commissioning-decisions-2026-10-07).
+No Windows or macOS runs will be supplied, and no Windows/macOS acceptance gate remains.
+Their execution is unverified and outside the accepted support scope; this ruling does not turn Linux evidence into evidence for either platform.
+
 Linux is the available execution environment.
 `uname -s` returned `Linux`.
 Local runtime probes returned Node `v24.17.0` and `v26.11.1`, with npm `11.13.0` for Node 24 and Git `2.54.0`.
 The task evidence records the final command results and artifacts after completion.
-The final-source Node 26 copy/link supplement passed all 29 selected tests at `4413302241d7ff890defb69e3742474edf0559c2`, using Node `v26.11.1`, npm `11.20.0` and Git `2.54.0`.
+The historical Node 26 copy/link supplement passed all 29 selected tests at `4413302241d7ff890defb69e3742474edf0559c2`, using Node `v26.11.1`, npm `11.20.0` and Git `2.54.0`.
 Its [captured output](../tests/eval/results/tasks/C25c.node26-lifecycle.txt) includes no skipped, cancelled or todo cases.
 The [task record](../tests/eval/results/tasks/C25c.json) binds the final full-suite capture separately under Node 24.
 Development task suites also passed on both Node versions before the final additions; those development runs are not substituted for the final-input capture.
@@ -19,13 +24,11 @@ The task supplied no Windows or macOS execution endpoint or manual capture.
 No remote access was inferred or attempted, and no system runtime was installed.
 Windows launcher selection and junction branches exercised with portable code cannot substitute for actual Windows execution.
 
-To clear the remaining gate, supply one real local or manual lifecycle run on Windows and one on macOS at the final source revision.
-Each environment needs Node 24 or later, Git, npm and root dependencies installed with `npm ci`.
-Run `npm run check` and `npm test -- --task C25c` from a disposable checkout, retaining command output, exit codes, source revision, operating-system release, architecture, Node/npm/Git versions and cleanup observations.
-The suite creates isolated homes and projects and uses local fake runtimes with offline npm; it does not install into the operator's actual skill directories or use real credentials.
-On Windows, confirm the actual junction lifecycle executes through the existing npm platform adapter.
-Record any failure truthfully and retain AC-74 as blocked until all three OS records pass or the owner explicitly changes the support scope.
-Linux Node 24 and Node 26 supplement these records and do not replace either missing OS.
+The final Node 24 full-suite capture binds the settled source, including mixed copy/link all-host uninstall and retained failed-stage provenance through interrupted cleanup.
+Focused repair verification reproduced the provenance failure in both host orderings and passed all 13 recovery checks after repair.
+The task record preserves the historical Node 26 revision separately rather than claiming that supplement covers later repairs.
+The commands below describe the isolated Linux procedure and remain useful for future optional platform work.
+They are not requests for additional Windows/macOS input under R27.
 
 ## Commands for the operator
 
@@ -57,7 +60,7 @@ node --test --test-name-pattern="link lifecycle|link installation preserves|owne
 
 The copy journey must validate the complete installed folder, report preview without mutations, preserve edited and unrelated files through update and removal, and retain conflicts until exact replacement decisions with backups.
 The link journey must preview runtime preparation before linking, activate only after verification, recognise a no-op repeat, report explicit checkout updates in link mode, refuse occupied or replaced entries and preserve the target through interruption and removal.
-On Windows the directory-entry observations must come from the real junction branch, rather than an injected platform value.
+Any future Windows execution claim would need the real junction branch, rather than an injected platform value.
 The separate-filesystem regression injects `EXDEV` at the filesystem boundary and does not claim another operating system or an actual separate-volume run.
 All selected tests must pass with no skipped or cancelled cases, and the task suite must exit zero.
 After completion, fixture cleanup must have removed its temporary snapshots, homes, projects, fake packages, caches, stages and links, while keeping the disposable checkout and its root dependencies.

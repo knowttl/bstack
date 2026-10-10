@@ -63,7 +63,7 @@ The new-project path can implement the approved foundation, but it does not buil
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
-| Install and release | A Node installer for Windows, macOS and Linux, from manually approved Git tags and GitHub releases, with no package |
+| Install and release | A Node installer with Linux acceptance, from manually approved Git tags and GitHub releases, with no package |
 | Agent instructions | One root `AGENTS.md`. Equivalent repo-owned `CLAUDE.md` content, including a stub that imports `AGENTS.md`, merges into it through reviewed protected edits. Scoped instructions keep their meaning |
 | bstack's own delivery | The no-mistakes pipeline with no hosted CI, plus recorded local and clean-checkout runs |
 
@@ -99,9 +99,9 @@ The owner approved the commissioning review and its six recommendations as writt
    Optional CI guidance for target projects remains an explicitly selected integration, and hosted behaviour that bstack has not executed is reported unverified.
    AC-24 is restated as a clean-checkout execution case.
    Every other behaviour control stays, and bstack adds no workflows or release automation.
-2. **Three operating systems.** The installer keeps Windows, macOS and Linux support.
-   AC-74 passes only after one real local or manual run on each operating system, supplemented by local Node 24 and Node 26 runs.
-   A Linux run does not substitute for another operating system.
+2. **Linux installer acceptance.** On 2026-10-10 the owner amended the original three-OS requirement with "only linux is good".
+   C25c and AC-74 require real local Linux lifecycle execution, supplemented by local Node 24 and Node 26 runs.
+   Windows and macOS execution is unverified and outside the accepted support scope; Linux evidence makes no claim about either platform.
 3. **Small slices.** The build runs as the commissioning slices C0 to C29 in the implementation plan, beginning with C0 and C1, with Phase 0 first.
    T3.1's enforcement and architecture guidance is written before T2.8.
    The full first-release scope is preserved.
@@ -1220,7 +1220,8 @@ Claude Code also blocks the call if the agent tries to invoke the skill anyway.
 An akashic playbook or another agent cannot start repo-audit either.
 They use the project checks and documents that repo-audit established, which matches the product boundary.
 
-The installer is a Node script, so it runs the same way on Windows, macOS and Linux with no bash prerequisite.
+The installer is a Node script with no bash prerequisite.
+Linux is the accepted installer platform; Windows and macOS branches remain unverified.
 Define user and project installation, copies and links, updates and removal.
 Track the files the installer owns and their content hashes.
 Preview changes and repeated installs must be safe.
@@ -1289,7 +1290,7 @@ These steps give the order of work inside those phases.
 11. Build enforcement: native rule setup, custom rules where needed, the debt baseline and maintained check integration. Phase 3.
     The enforcement and architecture references are written earlier, before the existing-repo path in step 10 recommends principles.
 12. Build the maintenance contract and its validators. Phase 3a.
-13. Write the Node installer for install, update and removal from a Git tag, with owned-file hashes. Test it with one recorded real local or manual run on each of Windows, macOS and Linux, supplemented by local Node 24 and Node 26 runs. Run the basic tests in the current agent, covering on-demand loading and user-only start. Phase 4.
+13. Write the Node installer for install, update and removal from a Git tag, with owned-file hashes. Test it with recorded real local Linux execution, supplemented by local Node 24 and Node 26 runs under the 2026-10-10 owner scope amendment. Run the basic tests in the current agent, covering on-demand loading and user-only start. Phase 4.
 14. Prove both complete paths and a representative extension after enforcement and maintenance exist. Phase 4.
 15. Run worked examples, validate evidence for every acceptance case, write the limitations and release through a manually approved Git tag and GitHub release, with no release automation or npm publish. Phase 5.
 
@@ -1394,7 +1395,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 71. A failing, skipped or stale required check cannot produce a passing completion result.
 72. Helpers survive interrupted runs, and resume checks the current state before applying remaining changes.
 73. A clean installation includes every referenced resource and required runtime declaration.
-74. Install, update and removal work on Windows, macOS and Linux without losing unrelated files or user edits.
+74. Install, update and removal work on Linux without losing unrelated files or user edits, under the owner's 2026-10-10 Linux-only acceptance amendment.
 75. The current agent discovers and executes the bounded audit skill successfully.
 
 Use disposable test repos for changes, board fixtures and deliberate violations.
@@ -1489,3 +1490,4 @@ Historical entries keep their original decisions and name their current applicat
 | R24, 2026-10-07 | Ignore licensing issues in all bstack work | No licence checks, licence gaps or owner escalation. bstack itself stays MIT under D1. NOTICE records pins and adaptations only |
 | R25, 2026-10-07 | Apply the implementation review recommendations | Explicit task prerequisites and evidence, scratch-only early review, protected creation after write safeguards, recoverable writes, isolated evaluations, portable commands, installer ownership and complete CI inputs. The CI inputs are replaced by clean-checkout inputs under R26 |
 | R26, 2026-10-07 | Approve the commissioning review and its six recommendations | Recorded in "Commissioning decisions (2026-10-07)". No hosted CI or release automation for bstack, three real OS runs for AC-74, slices C0 to C29, a baseline with no failure quota, and scoped instruction preservation. The current review repair budget is owned by `.no-mistakes.yaml` |
+| R27, 2026-10-10 | "only linux is good" | Amend R26's installer support and acceptance scope for C25c/AC-74 to Linux-only lifecycle evidence. No Windows/macOS runs will be supplied; their execution remains unverified, with no remaining OS acceptance gate |
