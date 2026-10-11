@@ -1081,13 +1081,14 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 4. When a repo-owned `CLAUDE.md` exists, including a stub that only imports `AGENTS.md`, `inventory` returns a candidate finding: merge its equivalent content into `AGENTS.md`, with the Claude Code version limit from the design.
 5. Report each instruction file's scope, its directory and whether it is inside the selected repo.
    A nested instruction file with distinct scoped guidance is reported as scoped, not as a merge candidate to flatten into the root file.
-   `CLAUDE.local.md` and instruction files in ancestor directories outside the repo are reported as possible shadowing of `AGENTS.md`, never as files to modify.
+   `CLAUDE.local.md` inside the repo is reported as possible shadowing of `AGENTS.md`, never as a file to modify.
+   Instruction files outside the selected repo are neither inspected nor reported (R28).
 
 **Done when**
 
 - On `py-ledger`, `CONTRIBUTING.md` is reported as the standards source and no failure is raised for a missing `CODING_STANDARDS.md`.
 - On `ts-shop`, the `CLAUDE.md` stub produces the merge candidate.
-- Representative root, nested, local-only and outside-repo instruction files produce a merge candidate, a preserved scope, a shadowing report and an out-of-scope shadowing report respectively.
+- Representative root, nested and local-only instruction files produce a merge candidate, a preserved scope and a shadowing report respectively. Outside-repo instruction files do not appear in inventory or shadowing reports.
 
 **Covers:** AC-10, AC-11, AC-49.
 
@@ -1262,7 +1263,7 @@ T3.1 supplies the enforcement and architecture references that recommendations l
 1. Complete the existing-repo steps in `SKILL.md` in this order: `inspect`, `inventory`, research briefs, `cite-check`, evidence summary, a targeted interview only for gaps that change a recommendation, findings, user selection, `apply`, `run-checks`, and the audit record.
 2. When the repo already has an approved vision, the steps propose a reviewed change to it only when the audit found a real gap.
 3. A selected instruction merge moves equivalent repo-owned `CLAUDE.md` content into `AGENTS.md` and removes the `CLAUDE.md` only through `apply`, using the selected delete from T2.6.
-   Scoped, local and ancestor instruction files are reported as `inventory` classified them and are never modified.
+   Scoped and local repo instruction files are reported as `inventory` classified them and are never modified. Outside-repo instruction files are neither inspected nor reported (R28).
 4. Run the existing-repo and clear-goals scenarios in `with` mode.
 
 **Done when**

@@ -488,7 +488,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo with a repo-owned `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge of its equivalent content into `AGENTS.md` and the Claude Code version limit. Distinct scoped instructions keep their meaning, and local or ancestor files are reported as shadowing without modification."
+        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo with a repo-owned `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge of its equivalent content into `AGENTS.md` and the Claude Code version limit. Distinct scoped instructions keep their meaning, and local variants inside the repo are reported as shadowing without modification. Instruction files outside the repo are neither inspected nor reported."
       }
     },
     {

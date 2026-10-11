@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, symlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { build, emptyRepo, run, snapshot } from './discovery-fixture.mjs'
@@ -28,12 +28,14 @@ test('ts-shop import-only CLAUDE stub produces a version-limited merge candidate
   assert.match(candidate.versionLimit, /plugin disabled/)
 })
 
-test('inventory preserves root, nested, local and outside-repo instruction scopes without writes', async t => {
+test('inventory preserves repo instruction scopes and ignores outside instructions without writes', async t => {
   const { directory, repo } = await emptyRepo(t)
   await mkdir(join(repo, 'packages', 'web'), { recursive: true })
   await mkdir(join(repo, '.claude'))
   for (const [path, content] of [['AGENTS.md', 'Root instructions\n'], ['CLAUDE.md', '@AGENTS.md\n'], ['.claude/CLAUDE.md', '@../AGENTS.md\n'], ['packages/web/CLAUDE.md', 'Distinct web guidance\n'], ['CLAUDE.local.md', 'Local guidance\n']]) await writeFile(join(repo, path), content)
-  await writeFile(join(directory, 'CLAUDE.md'), 'Outside guidance\n')
+  for (const name of ['AGENTS.md', 'CLAUDE.md', 'CLAUDE.local.md']) await writeFile(join(directory, name), 'Outside guidance\n')
+  await mkdir(join(directory, '.claude'))
+  await writeFile(join(directory, '.claude', 'CLAUDE.md'), 'Outside host guidance\n')
   const before = await snapshot(directory)
   const result = run('inventory', repo)
   assert.equal(result.exit, 0)
@@ -43,7 +45,8 @@ test('inventory preserves root, nested, local and outside-repo instruction scope
     directory: 'packages/web', scope: 'packages/web', insideRepo: true, scoped: true, local: false
   })
   assert.ok(result.data.shadowing.some(file => file.path === 'CLAUDE.local.md' && file.insideRepo && !file.modifiable))
-  assert.ok(result.data.shadowing.some(file => file.path === join(directory, 'CLAUDE.md') && !file.insideRepo && !file.modifiable))
+  assert.deepEqual(result.data.files.filter(file => file.kind === 'instructions').map(file => file.path), ['.claude/CLAUDE.md', 'AGENTS.md', 'CLAUDE.local.md', 'CLAUDE.md', 'packages/web/CLAUDE.md'])
+  assert.deepEqual(result.data.shadowing.map(file => file.path), ['CLAUDE.local.md'])
   assert.deepEqual(await snapshot(directory), before)
 })
 
@@ -76,6 +79,18 @@ test('equivalent nested instructions consolidate within their own scope', async 
   const result = run('inventory', repo)
   assert.equal(result.exit, 0)
   assert.deepEqual(result.data.candidates.map(({ path, destination, scope }) => ({ path, destination, scope })), [{ path: 'web/.claude/CLAUDE.md', destination: 'web/AGENTS.md', scope: 'web' }])
+})
+
+test('nested consolidation ignores an AGENTS instruction linked outside the repo', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  await mkdir(join(repo, 'web', '.claude'), { recursive: true })
+  await writeFile(join(directory, 'AGENTS.md'), 'Outside guidance\n')
+  await symlink(join(directory, 'AGENTS.md'), join(repo, 'web', 'AGENTS.md'))
+  await writeFile(join(repo, 'web', '.claude', 'CLAUDE.md'), '@../AGENTS.md\n')
+  const result = run('inventory', repo)
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.files.map(file => file.path), ['web/.claude/CLAUDE.md'])
+  assert.deepEqual(result.data.candidates, [])
 })
 
 for (const [directory, name, shadowingScopes] of [
