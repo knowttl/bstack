@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "scenario": "scope-and-prerequisites",
+  "caseIds": [
+    "AC-57",
+    "AC-68"
+  ],
+  "runId": "2026-10-11T19-41-04.447Z-644a1897-1dca-42f3-9e68-35957e3766b5",
+  "sourceRevision": "3eeedb768caa43ed74e0b1427c12661171497094",
+  "status": "blocked-unscored",
+  "runSha256": "352aee2ec7a63fd47fa18afd84386ab43d87e463aebfa6f37253052c77da0a05",
+  "conversationSha256": "8593849a3a558ad377ad075920760a896eaf7a0025c8e10c407aa3e1f8ecf29a",
+  "scopeVersion": 3,
+  "rejectedPaths": [
+    "/"
+  ],
+  "triggeringOperation": {
+    "target": "/",
+    "operation": "python3 - <<'PY'\nimport os,json\nfrom pathlib import Path\np=Path(os.environ['TMPDIR'])/'pricing-audit'; raw=(p/'render.json').read_text().splitlines(); data=json.loads(raw[-1]); report=Path(data['data']['path']).read_text(); (p/'audit.md').write_text(report); print(report)\nPY",
+    "origin": "native exec (rollout-2026-10-11T12-41-08-01a12c7b-b742-7870-bdfa-97bb160cb6eb.jsonl:111)"
+  },
+  "diagnosis": "The command argument tokenizer scans the Python here-document body and emits the path-composition operator / as a standalone token. Since / exists, it rejects that token as root-directory access. The operation reads and writes TMPDIR-owned scratch; the slash is part of Path composition, not a command argument or access to the root directory.",
+  "independentReproduction": {
+    "source": "p=Path(os.environ['TMPDIR'])/'pricing-audit'",
+    "tokens": [
+      "p=Path",
+      "os.environ",
+      "TMPDIR",
+      "/",
+      "pricing-audit"
+    ],
+    "erroneousTarget": "/"
+  },
+  "isolatedHomeDeletedAt": "2026-10-11T19:43:22.350Z",
+  "disposition": "Stop after the authorized changed-input rerun. Retain the complete failed capture privately and unscored, with no waiver or unchanged rerun."
+}
