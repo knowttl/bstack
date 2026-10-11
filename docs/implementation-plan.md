@@ -112,7 +112,6 @@ Installer support and acceptance for C25c/AC-74 are Linux-only under R27; other 
 - **Child processes.** Use `execFile` or `spawn` with an argument array.
 Never build a shell string from project data.
 - **Writing.** No em dashes or en dashes in any file.
-No semicolons in prose.
 Canadian spelling.
 One term for each concept, matching the design.
 - **Constants.** Each top-level constant has a comment on the line above that gives its reason.
