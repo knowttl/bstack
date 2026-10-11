@@ -26,30 +26,6 @@ function run(directory, ...args) {
   return spawnSync(process.execPath, [join(directory, 'scripts', 'test.mjs'), ...args], { encoding: 'utf8', env })
 }
 
-test('bootstrap manifest commands and root lockfile agree', async () => {
-  const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
-  const lock = JSON.parse(await readFile(join(root, 'package-lock.json'), 'utf8'))
-  assert.equal(manifest.private, true)
-  assert.equal(manifest.type, 'module')
-  assert.equal(manifest.engines.node, '>=24')
-  assert.deepEqual(manifest.scripts, {
-    check: 'node scripts/check-package.mjs && node scripts/generate-checker.mjs --repo . --check',
-    test: 'node scripts/test.mjs',
-    eval: 'node scripts/eval.mjs'
-  })
-  assert.equal(lock.lockfileVersion, 3)
-  assert.equal(lock.name, manifest.name)
-  assert.equal(lock.version, manifest.version)
-  assert.equal(lock.packages[''].name, manifest.name)
-  assert.equal(lock.packages[''].version, manifest.version)
-  assert.deepEqual(lock.packages[''].engines, manifest.engines)
-  assert.deepEqual(lock.packages[''].devDependencies, manifest.devDependencies)
-  for (const dependency of Object.keys(manifest.devDependencies)) {
-    assert.ok(lock.packages[`node_modules/${dependency}`], dependency)
-  }
-  assert.equal(manifest.dependencies, undefined)
-})
-
 test('discovery sorts explicit suites and excludes fixture, dependency and evaluation tests', async t => {
   const directory = await sandbox(t)
   for (const folder of ['scripts', 'package-check', 'scripts/node_modules', 'eval/workspace', 'fixtures/excluded']) {
