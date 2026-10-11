@@ -1,0 +1,432 @@
+{
+  "schemaVersion": 1,
+  "repo": "[fixture]",
+  "contract": ".bstack/project.json",
+  "previousContract": null,
+  "base": {
+    "ref": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+    "kind": "commit",
+    "objectId": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "head": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "changes": [
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "AGENTS.md"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "glossary.md"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "journey.mjs"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "package.json"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "packages/core/b.ts"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "packages/core/index.ts"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "packages/core/internal/database.ts"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "packages/web/alias.ts"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "packages/web/routes.ts"
+    },
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "packages/web/ui.ts"
+    },
+    {
+      "source": "new",
+      "status": "A",
+      "path": ".bstack/bin/bstack-check.mjs"
+    },
+    {
+      "source": "new",
+      "status": "A",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "new",
+      "status": "A",
+      "path": ".bstack/schemas/check-plan.json"
+    },
+    {
+      "source": "new",
+      "status": "A",
+      "path": ".bstack/schemas/evidence.schema.json"
+    },
+    {
+      "source": "new",
+      "status": "A",
+      "path": ".bstack/schemas/impact-assessment.json"
+    },
+    {
+      "source": "new",
+      "status": "A",
+      "path": ".bstack/schemas/project.schema.json"
+    }
+  ],
+  "paths": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".bstack/schemas/check-plan.json",
+    ".bstack/schemas/evidence.schema.json",
+    ".bstack/schemas/impact-assessment.json",
+    ".bstack/schemas/project.schema.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/web/alias.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/schemas/check-plan.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/schemas/evidence.schema.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/schemas/impact-assessment.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/schemas/project.schema.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "glossary.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "journey.mjs",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "package.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/core/b.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/core/index.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/core/internal/database.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": null
+    },
+    {
+      "id": "terms",
+      "path": "glossary.md",
+      "assessment": null
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "assessment": null
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [],
+  "execution": [],
+  "fingerprint": null
+}

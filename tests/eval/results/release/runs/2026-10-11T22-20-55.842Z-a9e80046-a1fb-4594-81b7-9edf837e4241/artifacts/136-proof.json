@@ -1,0 +1,82 @@
+{
+  "checkId": "aggregate",
+  "command": {
+    "executable": "npm",
+    "args": [
+      "run",
+      "check"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ]
+  },
+  "expectedDiagnostic": "agreed checkout total is 10",
+  "status": "passed",
+  "cases": [
+    {
+      "kind": "valid",
+      "source": "[isolated-home][scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (0.813406ms)\n✔ checkout HTTP mock (25.09655ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 143.823991\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+        "stderr": "",
+        "durationMs": 2633.7619919999997,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 110.94014800000002,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "kind": "violation",
+      "source": "[isolated-home][scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (1.087261ms)\n✔ checkout HTTP mock (34.093313ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 156.56474\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":12}}\n",
+        "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: agreed checkout total is 10\n+ actual - expected\n\n  {\n    status: 201,\n+   total: 12\n-   total: 10\n  }\n\n    at file://[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/bf884ebe-b911-4647-a89b-b9e4f596d156/violation/journey.mjs:12:10\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: { status: 201, total: 12 },\n  expected: { status: 201, total: 10 },\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.17.0\n",
+        "durationMs": 2638.532534,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 95.38092700000016,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    }
+  ],
+  "path": "[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/bf884ebe-b911-4647-a89b-b9e4f596d156/proof.json",
+  "limitations": [
+    "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+  ]
+}

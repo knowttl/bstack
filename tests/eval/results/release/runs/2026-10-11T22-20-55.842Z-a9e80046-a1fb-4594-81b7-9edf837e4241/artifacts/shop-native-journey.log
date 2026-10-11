@@ -1,0 +1,29 @@
+
+> journey
+> node journey.mjs
+
+{"expectedTotal":10,"order":{"status":201,"total":12}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: agreed checkout total is 10
++ actual - expected
+
+  {
+    status: 201,
++   total: 12
+-   total: 10
+  }
+
+    at file://[fixture]/journey.mjs:12:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: { status: 201, total: 12 },
+  expected: { status: 201, total: 10 },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.17.0

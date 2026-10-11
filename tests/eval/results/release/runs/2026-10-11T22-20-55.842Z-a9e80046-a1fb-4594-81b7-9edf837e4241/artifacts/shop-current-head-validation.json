@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"findings validate","status":"passed","problems":[],"data":{"result":"ready for the stated next change","reasons":[],"fingerprint":"683fba77b64d293a29c610b50d0909a9cb6cd92f50cee83ef7f09f33eca074df"},"inputs":{"target":{"mode":"repo","root":"[fixture]"},"findings":"[isolated-home][scratch-path]"}}
