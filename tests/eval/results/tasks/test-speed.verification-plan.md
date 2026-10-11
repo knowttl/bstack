@@ -19,5 +19,6 @@ Earlier local validation at `202e1247910d678c2c3c58f1b3957ed83a1c2a72`, before s
 - `node --test tests/scripts/bootstrap.test.mjs`: 20 passed, zero failures, 9.02s.
 
 These earlier local results are historical; the [attached evidence](test-speed.json) owns the selected full-suite counts and timing.
-The optimization removes separate evidence-bookkeeping pipelines; concurrency and all original tests remain unchanged.
+The earlier optimization removed separate evidence-bookkeeping pipelines without changing concurrency.
+The [task record](test-speed.json) owns the subsequent approved test reductions and retained coverage.
 Publication requires the gate's final capture under the task evidence contract.
