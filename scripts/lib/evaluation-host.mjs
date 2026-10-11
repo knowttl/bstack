@@ -80,7 +80,10 @@ export async function readAdapter(path, scenarioId) {
       canonicalJSON(adapter.isolation.systemDiscoveryPaths) !== canonicalJSON(['/etc/codex/skills']) ||
       adapter.isolation.stagePath !== '.agents/skills/repo-audit') fail('Use the documented Codex discovery paths and staging destination.')
   if (['research-main-typescript', 'research-main-python'].includes(scenarioId)) {
-    const disableSubagents = args => args.flatMap(arg => arg === '{message}' ? ['--disable', 'multi_agent', arg] : [arg])
+    const disableSubagents = args => {
+      const index = args.findIndex(arg => ['{sessionId}', '{message}'].includes(arg))
+      return [...args.slice(0, index), '--disable', 'multi_agent', ...args.slice(index)]
+    }
     adapter.args = disableSubagents(adapter.args)
     adapter.invocation.resumeArgs = disableSubagents(adapter.invocation.resumeArgs)
   }
