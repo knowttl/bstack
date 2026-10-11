@@ -813,7 +813,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-repeat-audit",
-        "artifacts": ["tests/eval/results/full-path-C27/summary.md", "tests/eval/results/full-path-C27/repeat-manual-verdict.json", "tests/eval/results/full-path-C27/runs/2026-10-11T10-08-09.245Z-3d152924-875d-49d9-8b48-f0fd8eea4f26/manual-verdict.json"]
+        "artifacts": [
+          "tests/eval/results/release/final-repeat-audit-comparison.json",
+          "tests/eval/results/release/final-repeat-audit.md",
+          "tests/eval/results/release/runs/2026-10-11T23-08-13.735Z-5e67fd30-4e40-46ab-9f20-d507683f988d/artifacts/independent-verification.json"
+        ]
       }
     },
     {

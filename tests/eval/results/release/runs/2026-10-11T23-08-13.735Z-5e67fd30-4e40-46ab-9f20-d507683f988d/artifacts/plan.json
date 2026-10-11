@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "c5d6569edc9a12ae8bd03ec9be49fe7d9bae84c53071602b606efa81c48e5db8"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real local HTTP checkout returns status 201 and total 10.",
+      "userJourney": true
+    },
+    {
+      "id": "public-quote",
+      "sourceId": "design",
+      "pointer": "Public quote() continues to return 12.",
+      "outcome": "Public quote remains 12.",
+      "userJourney": false
+    },
+    {
+      "id": "boundaries",
+      "sourceId": "design",
+      "pointer": "The native static dependency graph must be acyclic.",
+      "outcome": "No private storage imports from web, and no static cycles.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout",
+        "public-quote",
+        "boundaries"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**"
+      ]
+    }
+  ]
+}
