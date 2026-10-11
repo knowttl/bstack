@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "standards",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "public",
+      "sourceId": "standards",
+      "pointer": "External modules use the public ledger package.",
+      "outcome": "External callers use the public ledger package",
+      "userJourney": false
+    },
+    {
+      "id": "balanced",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Posting preserves balanced entries and ledger-owned calculations through the public API",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "unittest",
+      "role": "protection",
+      "command": {
+        "executable": "python3",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "balanced"
+      ],
+      "inputScopes": [
+        "*.py",
+        "ledger/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "outcome",
+      "command": {
+        "executable": "python3",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "public"
+      ],
+      "inputScopes": [
+        "*.py",
+        "ledger/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "ruff",
+      "role": "protection",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "public"
+      ],
+      "inputScopes": [
+        "*.py",
+        "ledger/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "format",
+      "role": "protection",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "format",
+          "--check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": false,
+      "acceptanceCases": [
+        "public"
+      ],
+      "inputScopes": [
+        "*.py",
+        "ledger/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex workspace",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "CONTRIBUTING.md"
+      ],
+      "findings": "Documented: external modules use ledger; ledger owns entries and balance calculations; native Python checks preserve balanced postings. No material intent contradiction requires an interview. Inventory reports no vision, design, glossary, audit or instruction files. No documentation defines a maintained command or change-completion evidence.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "CONTRIBUTING.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        },
+        {
+          "location": "CONTRIBUTING.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        },
+        {
+          "location": "CONTRIBUTING.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "app.py",
+        "startup.py",
+        "ledger/__init__.py",
+        "ledger/book.py",
+        "ledger/_internal.py",
+        "boundaries.py"
+      ],
+      "findings": "Observed: Ledger is the public facade. Ledger owns immutable Entry values, conversion, paired posting, balances, reports and import/export. Startup calls the public package for CSV/JSON output. app imports private amount although post already converts. The AST checker scans only app and immediate ledger modules and forbids two literal imports for app; it does not enforce public-only imports for startup or future callers. Inferred: keep this cohesive domain owner intact; its 90 lines do not imply an architectural problem.",
+      "limitations": [
+        "Only one commit; measure root..root provides sizes but no change-frequency/co-change signal. No dynamic-import analysis."
+      ],
+      "files": [
+        {
+          "location": "ledger/__init__.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+          }
+        },
+        {
+          "location": "ledger/book.py:21",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/book.py:81",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/_internal.py:4",
+          "state": {
+            "kind": "sha256",
+            "value": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+          }
+        },
+        {
+          "location": "app.py:2",
+          "state": {
+            "kind": "sha256",
+            "value": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972"
+          }
+        },
+        {
+          "location": "startup.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        },
+        {
+          "location": "boundaries.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        },
+        {
+          "location": "boundaries.py:27",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "pyproject.toml",
+        "uv.lock",
+        "test_ledger.py",
+        "startup.py",
+        "boundaries.py"
+      ],
+      "findings": "Configured: Python >=3.12,<3.13, Ruff 0.14.0 and E4/E7/E9/F. No configured type checker, CI or aggregate check command. Two unittest tests call the public package; no private assertions. Captured native checks: Python 3.12.15; both tests and lint pass; boundaries exits 1 with private; advisory formatter exits 1 for boundaries.py and ledger/book.py. Separate scratch execution runs startup, imports its JSON through Ledger, checks both balances and application opening_balance. This is evidence of current finite happy-path behaviour, not durable repo protection.",
+      "limitations": [
+        "Startup/round-trip evidence is manually captured, not run-checks validated. Formatting has no adopted requirement. Fresh install and hosted CI not exercised."
+      ],
+      "files": [
+        {
+          "location": "pyproject.toml:4",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "pyproject.toml:7",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "pyproject.toml:13",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "test_ledger.py:4",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        },
+        {
+          "location": "test_ledger.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        },
+        {
+          "location": "startup.py:15",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "pyproject.toml",
+        "test_ledger.py"
+      ],
+      "findings": "Existing unittest can retain public contract checks and execute discovery through python -m unittest; Ruff already reads pyproject.toml and separates lint and format commands. Keep these native tools and existing rule selections. No evidence requires a second test framework or type checker for this scoped change.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "pyproject.toml:9",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "test_ledger.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://docs.python.org/3.12/library/unittest.html",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        },
+        {
+          "url": "https://docs.astral.sh/ruff/configuration/",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        }
+      ]
+    }
+  ]
+}
