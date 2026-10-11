@@ -84,7 +84,7 @@ These are design recommendations, rather than claims that the skill already exis
 ### Commissioning decisions (2026-10-07)
 
 This design and the implementation plan were migrated into the public bstack repo on 2026-10-07.
-Their source is `projects/bstack/plan.md` and `projects/bstack/implementation-plan.md` in the owner's private repo `knowttl/brytton`, at commit `28191a1def2c6c89b6a60d95f00056aaacfea669`.
+Their source was the owner's private planning repository at commit `28191a1def2c6c89b6a60d95f00056aaacfea669`.
 These copies are now authoritative, and readers need no access to that source.
 
 Decisions already given before commissioning:

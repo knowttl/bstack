@@ -7,7 +7,7 @@ Commissioning review applied on 2026-10-07, with the owner's approval of its six
 The design records them under "Commissioning decisions (2026-10-07)".
 This file specifies build work, with completed tasks tracked under "Progress" and evidence recorded under "Task evidence contract".
 
-This plan was migrated on 2026-10-07 from `projects/bstack/implementation-plan.md` in the owner's private repo `knowttl/brytton`, at commit `28191a1def2c6c89b6a60d95f00056aaacfea669`.
+This plan was migrated on 2026-10-07 from the owner's private planning repository at commit `28191a1def2c6c89b6a60d95f00056aaacfea669`.
 This copy is now authoritative, and readers need no access to that source.
 
 The design owns the requirements: what to build and why.
@@ -537,7 +537,7 @@ Tick each task when its "Done when" commands pass.
     - [C27 final evidence](../tests/eval/results/full-path-C27/summary.md) records both complete installed paths, preservation on repeated audit, a skill-free extension through approved public interfaces and bounded maintenance, with fresh scored transcripts and clean-checkout artifacts.
       [Task evidence](../tests/eval/results/tasks/C27.json) owns the settled-source full-suite capture and validator attachment.
 - Phase 5: Release
-  - [ ] T5.1 Write worked examples and limitations
+  - [x] T5.1 Write worked examples and limitations
   - [ ] T5.2 Final evaluation and release
 
 ## Phase 0: Package contract
