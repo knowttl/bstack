@@ -307,6 +307,8 @@ The independent extension is the approved without-only exception: its AC-64 proc
 All other selected cases must use the with-skill run of their declared final comparison.
 The validator rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
 Execution bindings include unchanged package, installer, fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
+The approved existing baseline remains eligible across the exact temporary-directory mode tightening: its enclosing home was already `0700`, so the effective isolation is unchanged.
+Every other byte of the host adapter implementation must still match; this does not permit changed execution settings or package inputs.
 Grader-only repairs do not require repeating unchanged agent turns.
 Verified version 2 scope evidence remains eligible alongside version 3: both require fixture/home isolation, and each comparison still requires matching versions.
 Version 3 fixes resource-query false positives; a version 2 scope failure is never retroactively credited.
