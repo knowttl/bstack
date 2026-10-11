@@ -23,6 +23,10 @@ Both modes ran two passing native units, kept browser evidence unavailable and s
 The with-skill run also observed the actual journey and boundary failures instead of declaring ready.
 Its [native unit capture](runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/artifacts/units.json), resource wrapper source and structured check/probe results are retained.
 The scorer accepts structured native unit evidence behind a resource wrapper and preflight output, while rejecting truncated captures, changed Node versions, unrun commands and assistant claims.
+The Python [container fallback comparison](research-main-python-comparison.json) passes all three checks against a baseline lacking the installed research resources.
+Its effective adapter disables general-purpose delegation; the [native trace](runs/2026-10-11T21-02-36.654Z-e0404627-bc0f-4181-9cc0-477bbce59e3e/main-thread-trace.jsonl) records sequential main-thread source inspection without delegation.
+The [original five-brief report](runs/2026-10-11T21-02-36.654Z-e0404627-bc0f-4181-9cc0-477bbce59e3e/artifacts/research-report.json) explicitly marks language and outside recommendations not researched under the no-web constraint.
+Both the agent and evaluator independently passed all 51 original citations; project bytes remained clean and the login copy was absent after the turn.
 
 ## Historical process-only evaluations
 
@@ -123,7 +127,7 @@ Both runs verified scope version 2 and deleted their complete isolated homes bef
 ## Corrected Python fallback comparison
 
 The [baseline](runs/2026-10-11T18-40-53.788Z-32e4e9fc-4fba-4aaa-8f14-13a050abc6bf/run.json) and [with-skill run](runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/run.json) use committed source `9cebb2e`, identical fixture and scoring inputs, and the same corrected effective adapter as TypeScript.
-The [comparison](research-main-python-comparison.json) passes: baseline 0/3, with-skill 3/3, with no lost checks.
+The [historical comparison](research-main-python-historical-comparison.json) passes: baseline 0/3, with-skill 3/3, with no lost checks.
 The actual [native session observation](runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/capability-observation.json) confirms no `spawn_agent` declaration or delegation calls.
 The [report](runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/research-report.json) contains five sequential briefs, common report fields and the author-imposed no-web limitations.
 Main-thread source review and the shipped checker preceded the result; the [independent check](runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/citation-check-independent.json) passes all 45 citations.
@@ -140,7 +144,7 @@ The combined evaluation and acceptance development suites passed 125 tests, and 
 ## Corrected TypeScript fallback comparison
 
 The [baseline](runs/2026-10-11T18-39-23.373Z-b48fdd56-9f0c-4cce-9a5f-a5671d9863fb/run.json) and [with-skill run](runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/run.json) use committed source `9cebb2e`, the same scoring criteria and fixture revision, and effective adapter hash `34b8a1f4a85eb0ec00057ef3ae58df3037478b683c078c39bc69b816ce4b2275`.
-The [comparison](research-main-typescript-comparison.json) passes: baseline 0/3, with-skill 3/3, with no lost checks.
+The [historical comparison](research-main-typescript-historical-comparison.json) passes: baseline 0/3, with-skill 3/3, with no lost checks.
 The baseline honestly stopped for missing resources within the allowed roots.
 The [native capability observation](runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/capability-observation.json) confirms no `spawn_agent` declaration and zero delegation calls in the actual with-skill session.
 The [report](runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/research-report.json) retains all five briefs and the no-web limitation.
