@@ -1,6 +1,7 @@
-// Metadata stays separate so help never imports a command implementation.
+// Both protected-write interfaces bind the same canonical plan representation.
 const planDigests = '\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set\'s planDigest.'
 
+// Metadata stays separate so help never imports a command implementation.
 export const commands = {
   'docs check': {
     module: './commands/docs-check.mjs',
