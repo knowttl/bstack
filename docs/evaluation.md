@@ -31,7 +31,7 @@ npm run eval -- --manual --scenario ambiguous-idea --mode with --stage baseline 
 ```
 
 The runner calls the existing fixture builder and prints the fixture path, request, answer script and checklist in its run record.
-For `--stage foundation`, the opening request includes `Active checkpoint: foundation.` after any explicit invocation and before the scenario request.
+For `--stage foundation` or `--stage final`, the opening request includes `Active checkpoint: <stage>.` after any explicit invocation and before the scenario request.
 The caller owns removal of the temporary fixture after the session.
 Use a fresh conversation and preserve the complete conversation, including user answers and any available file-open record, as a UTF-8 transcript.
 Deliver the scripted answers when the agent asks the corresponding questions.
@@ -58,7 +58,7 @@ Its version 1 format extends the shared child-command object with `invocation` a
 It requires `executable`, string-array `args`, `cwd: "."`, `versionArgs` and `timeoutMs` from 1 to 1800000.
 It also requires `outputLimitBytes` from 1 to 16777216, bounding each captured output stream.
 The Codex adapter allows ten-minute turns because real model revision turns exceeded two minutes during live board review.
-The final-stage adapter allows thirty-minute turns because complete scaffold verification and protected-plan preparation exceeded ten minutes during C27 execution.
+The [final-stage adapter](../tests/eval/adapters/codex-final.json) allows thirty-minute turns because complete scaffold verification and protected-plan preparation exceeded ten minutes during C27 execution.
 It captures up to 16 MiB per stream because the real JSONL board conversation exceeded the ordinary 64 KiB child-command capture.
 Ordinary child-command capture retains its 64 KiB default and truncation behaviour.
 Truncated evaluation output still blocks scoring and closes the isolated home.
@@ -103,23 +103,23 @@ Child environment overrides set `HOME`, `USERPROFILE`, `CODEX_HOME`, `XDG_CONFIG
 The fixed Codex isolation format records `.agents/skills`, `.codex/skills`, `/etc/codex/skills` and the fixture's ancestor discovery paths.
 These include the documented [Codex discovery locations](https://developers.openai.com/codex/skills/) and the legacy state-directory skill path.
 Before execution and before closing or scoring, the runner inventories these paths and requires no skill named `repo-audit` in `without` mode.
-In `with` mode it copies the current skill folder, including any built runtime resources, into the isolated home's `.agents/skills/repo-audit`.
-Only that copy may be discoverable, and its complete file snapshot must still match the staged bytes.
+Before the final checkpoint, `with` mode copies the current skill folder, including any built runtime resources, into the isolated home's `.agents/skills/repo-audit`.
+Only that staged installation may be discoverable, and its authored-file snapshot must still match the staged bytes.
 An inaccessible path or discovery through a symbolic link stays blocked for manual review.
 Before the final checkpoint this staging is an evaluation helper, not the release installer.
 At `--stage final`, with-skill adapter runs instead execute `install/install.mjs --scope user --host agents --json` with the isolated home and retain the completed result in `installer.json`.
 The installer validates the complete package and pinned runtime; discovery and subsequent authored-file snapshots exclude `node_modules`.
 Installer failure blocks the run before any agent turn.
 Final requests explicitly name the active final checkpoint.
-`final-new-project` covers the complete new-project path, while `final-existing-repo` continues its maintained `ts-shop` fixture through re-audit and a representative extension using only the resulting project guidance.
+`final-new-project` and `final-existing-repo` cover the complete new-project and existing-repo paths respectively.
+Re-audit, extension and maintenance use separate fresh conversations on the resulting maintained fixture.
 The original intent and foundation scenarios retain their narrower approval scripts and are not full-path evidence.
 Final adapter follow-ups can pass `--repo <disposable-maintained-root>` to reuse an explicit fixture rather than rebuild its original defects.
 The record retains its starting commit and working-tree state, and the caller owns preservation and cleanup.
 Use `final-independent-extension` in `without` mode for a fresh conversation with no discoverable repo-audit and only the resulting target guidance.
 Use `final-maintained-maintenance` in `with` mode for a separate installed, bounded maintenance-only conversation on that maintained fixture.
 Use `final-repeat-audit` for a fresh installed reassessment preserving the uncommitted user note.
-The final scripts record supervisor-selected fixture verdicts dated 2026-10-11: keep checkout acceptance at 10 by correcting the controlled endpoint fixture, preserve quote behaviour at 12, distinguish purchase Order from Panel order, and accept the pantry needed-state, duplicate-name and visible unsaved-state policies.
-These are scripted fixture author answers, not changes to bstack product scope.
+The [scenario registry](../tests/eval/scenarios/scenarios.json) owns the scripted fixture author answers and their supervisor-delegated provenance; these do not change bstack product scope.
 Bundled host system skills can remain available, but they cannot include repo-audit.
 
 The captain approved `authentication: "throwaway-codex-login"` for this adapter on 2026-10-08.
