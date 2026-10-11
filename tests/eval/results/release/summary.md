@@ -1,8 +1,8 @@
 # Final release evaluation
 
 Final evaluation is incomplete and does not establish release readiness.
-Evaluation is stopped at [AC-17 maintenance prerequisites](maintenance-missing-prerequisites.md): the maintenance pair scores 1/2 in both modes and lacks completed no-impact assessment and maintained-checker evidence.
-The unmaintained starting fixture needs a decision before another capture; no case is waived or ticked.
+The commissioned [maintained maintenance pair](maintenance-maintained-fixture.md) resolves the historical AC-17 setup defect: both modes pass 2/2 with substantive no-impact assessment and fresh standalone checker evidence.
+The new fixture tree invalidates earlier final selections under the release validator's global fixture binding; every other scenario pair requires refresh before final selection.
 The [targeted-question repair](existing-repo-question-repair.md) resolves the historical AC-7 and AC-12 failure in one new pinned-container run: 19/19 against the retained 13/19 baseline, with no lost checks.
 The completed [existing-vision comparison](existing-vision-delta-comparison.json) passes its candidate-delta rubric in both modes while keeping missing board approval blocked.
 The skill instruction change makes the earlier with-skill captures below historical observations that require refresh before final selection.
