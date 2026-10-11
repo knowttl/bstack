@@ -41,6 +41,7 @@ else if (args[0] === 'rm') { rmSync(state(args.at(-1)), { force: true }); consol
 else throw new Error('Unexpected Docker operation')
 
 function execute(record) {
+  if (record.command[0] === 'sh' && record.command[2]?.includes('/opt/uv-cache')) { console.log('Locked Python fixture prepared'); return }
   const result = spawnSync(record.command[0], record.command.slice(1), { cwd: record.cwd, env: record.env, stdio: 'inherit' })
   process.exit(result.status ?? 1)
 }
