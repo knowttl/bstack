@@ -11,6 +11,13 @@ Fresh container captures remain pending for the other final scenarios.
 AC-6 and AC-38 pass the [clear-goals comparison](clear-goals-comparison.json), with both baseline checks preserved.
 The [complete with-skill conversation](runs/2026-10-11T20-44-18.073Z-769b1d74-9b4b-421a-9613-1e6d5c26defd/conversation.txt) reuses approved project goals, proposes appropriate checks and never opens the bundled vision, intent-interview or domain-language references.
 Both runs completed the same two scripted answers under the pinned container image and matching fixture revision, criteria, adapter and tool versions.
+AC-34, AC-36, AC-37 and AC-48 pass the [container subagent comparison](research-subagents-comparison.json).
+Three independent workers overlap before returning their first reports, with language and outside briefs assigned in a second wave.
+The [independent verification](research-subagents-container-verification.json) retains all four native traces, the original worker-returned wrong citation and its rejection before genuine findings were accepted.
+The evaluator independently confirmed rejection of that original candidate, successful checking of all 54 genuine citations, clean project bytes and login cleanup.
+Workers only read sources and returned reports; no worker edited, executed checks or asked the user questions.
+Language and outside recommendations remain explicitly not researched under the author-imposed no-web constraint.
+AC-2 passes the refreshed [container ambiguity comparison](ambiguous-idea-comparison.json); both modes expose offline access as unresolved and stop without selecting a stack or inventing a goal.
 
 ## Historical process-only evaluations
 

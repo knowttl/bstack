@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "mode": "subagents",
+  "host": "Codex API agent with collaboration tools and exec shell",
+  "capabilities": {
+    "subagents": true,
+    "web": false
+  },
+  "briefs": [
+    {
+      "id": "outside",
+      "scope": [
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "unit.test.mjs",
+        "journey.mjs",
+        "package.json",
+        "package-lock.json"
+      ],
+      "findings": "External service behaviour, version constraints and recommendations: not researched because the checkpoint author prohibits web access and network commands. Repo source observation: packages/core/internal/database.ts:2 accepts a caller-supplied URL, invokes fetch, parses JSON and returns its price property; the function contains no explicit HTTP status check or payload validation. packages/web/ui.ts:3 forwards the checkout URL to this function. No concrete third-party provider or provider API version is identified in these selected sources. unit.test.mjs:7 substitutes global fetch with a response containing price 10; unit.test.mjs:8 uses https://price.example.invalid/price under that mock. journey.mjs:4 defines a local HTTP fixture returning price 12, binds it to 127.0.0.1, and passes its ephemeral-port URL to checkout. These are mock and local-server source arrangements, not supplied evidence of a live third-party interaction. package.json:5 declares Node >=24 and package.json:17 pins TypeScript 5.9.3 as a development dependency; package-lock.json:26 records that compiler version and registry tarball URL. Those are toolchain declarations rather than service protocol constraints.",
+      "limitations": [
+        "Not researched: external documentation and recommendations, because web access and network commands are prohibited by the checkpoint author.",
+        "No checks, local server, fetch request or live service probe was executed.",
+        "No live probe results or deterministic measurement outputs were supplied.",
+        "Runtime versions were later observed by main-thread inspect; provider behaviour remains unobserved."
+      ],
+      "files": [
+        {
+          "location": "packages/core/internal/database.ts:2",
+          "state": {
+            "kind": "sha256",
+            "value": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:3",
+          "state": {
+            "kind": "sha256",
+            "value": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+          }
+        },
+        {
+          "location": "unit.test.mjs:7",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        },
+        {
+          "location": "unit.test.mjs:8",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        },
+        {
+          "location": "journey.mjs:4",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "package.json:5",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:17",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package-lock.json:26",
+          "state": {
+            "kind": "sha256",
+            "value": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}
