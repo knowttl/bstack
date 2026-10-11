@@ -1,0 +1,29 @@
+{
+  "status": "pending exact target diff approval",
+  "planDigest": "1324d958131e416c001b64367e4c142c6dbdec8b74d190b5460582bb1b3508f3",
+  "targetWrites": false,
+  "proposedFileCount": 13,
+  "targetBaseline": "failed checkout total 12 vs10; boundary alias cycle private",
+  "proposalChecks": "passed",
+  "nativeProofs": {
+    "private": "passed",
+    "alias": "passed",
+    "reexport": "passed",
+    "cycle": "passed",
+    "integrated-private": "passed"
+  },
+  "preapprovalChecker": {
+    "local": {
+      "status": "passed",
+      "resultPath": "./5a8ebb8d-checker-result.json",
+      "sourceRevision": "7f8edc67acbafe833e01f4e5123c4c303ee4c561"
+    },
+    "clone": {
+      "status": "passed",
+      "resultPath": "./e0f5c5eb-checker-result.json",
+      "sourceRevision": "7f8edc67acbafe833e01f4e5123c4c303ee4c561"
+    }
+  },
+  "fullTargetPath": "not completed",
+  "separateTargetAssessmentApproval": "required after target capture"
+}

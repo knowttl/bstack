@@ -1,0 +1,7 @@
+{
+  "status": "blocked",
+  "reason": "Exact portable assessment still needs author review/protected adoption and separate commit in created project, then working and fresh clean-clone standalone runs.",
+  "previewResult": "./e745785c-portable-preview-checker-r3.json",
+  "previewPassed": true,
+  "completeFinalCheckpoint": false
+}

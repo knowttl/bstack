@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"evidence validate","status":"failed","problems":[{"code":"target-mismatch","message":"Reviewed identity differs from the selected target.","path":"$/target","fix":"Regenerate findings for the reviewed target, scope and selections."}],"data":{},"inputs":{}}

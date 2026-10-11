@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "stage": "foundation",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]/pantry-app",
+    "revision": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+  },
+  "nextChange": "Create the smallest local household pantry app supporting the approved Rice journey.",
+  "reviewedScope": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".gitignore",
+    "AGENTS.md",
+    "DESIGN.md",
+    "GLOSSARY.md",
+    "README.md",
+    "VISION.md",
+    "eslint.config.mjs",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/resources.mjs",
+    "src/main.ts",
+    "src/pantry.ts",
+    "src/private/storage.ts",
+    "src/ui/render.ts",
+    "tests/journey.test.mjs",
+    "tsconfig.json",
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "author",
+      "pointer": "./19a9c2d1-transcript.md",
+      "intent": "documented",
+      "summary": "Exact saved VISION revision and foundation scope selected by author on 2026-10-11."
+    },
+    {
+      "id": "brief",
+      "pointer": "[fixture]/brief.md:4",
+      "intent": "documented",
+      "summary": "TypeScript local browser and local storage; no account/server/remote service."
+    },
+    {
+      "id": "language",
+      "pointer": "./3fecface-research.json",
+      "intent": "observed",
+      "summary": "Read-only language research and cite-check passed; main thread opened official docs."
+    },
+    {
+      "id": "final-review",
+      "pointer": "./24a0c0f1-foundation-review-research.json",
+      "intent": "observed",
+      "summary": "Read-only semantic review and main-thread checked citations support the final approved foundation; no material defect found."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "No executable household journey exists in the new-idea workspace.",
+      "files": [
+        ".gitignore",
+        "AGENTS.md",
+        "DESIGN.md",
+        "GLOSSARY.md",
+        "README.md",
+        "VISION.md",
+        "index.html",
+        "src/main.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "tests/journey.test.mjs"
+      ],
+      "command": null,
+      "principle": "Household choices and honest local retention must work on the real browser.",
+      "consequence": "Without direct observation, checks could pass while Rice disappears on reload.",
+      "fix": "Create the minimal local TypeScript app and browser acceptance journey.",
+      "scope": [
+        ".gitignore",
+        "AGENTS.md",
+        "DESIGN.md",
+        "GLOSSARY.md",
+        "README.md",
+        "VISION.md",
+        "index.html",
+        "src/main.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "tests/journey.test.mjs"
+      ],
+      "verification": "Real Chrome add/needed/shopping/reload, duplicate full-name reuse, saving failure and complete-session retry.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "author",
+        "brief",
+        "language"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "The selected UI storage boundary has no native enforcement yet.",
+      "files": [
+        "eslint.config.mjs",
+        "package-lock.json",
+        "package.json",
+        "scripts/resources.mjs",
+        "tsconfig.json"
+      ],
+      "command": null,
+      "principle": "UI accesses only the public pantry contract while DOM rendering remains permitted.",
+      "consequence": "Direct storage access could bypass session save status and private imports could leak persistence representation.",
+      "fix": "Use scoped native ESLint import and property/global restrictions with strict typing and formatting.",
+      "scope": [
+        "eslint.config.mjs",
+        "package-lock.json",
+        "package.json",
+        "scripts/resources.mjs",
+        "tsconfig.json"
+      ],
+      "verification": "rule-proof valid public/rendering control; private import and direct localStorage negatives; maintained aggregate integration proof.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "author",
+        "brief",
+        "language"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "The new project has no maintained impact contract or portable checker.",
+      "files": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        ".bstack/assessment.json"
+      ],
+      "command": null,
+      "principle": "Every change needs fresh affected checks and reviewed authoritative-source impact.",
+      "consequence": "Passing unit checks or stale evidence would mask missing outcomes and unreviewed intent changes.",
+      "fix": "Register maintained scope/document/rule/check authority and carry the complete installed dependency-free checker runtime.",
+      "scope": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        ".bstack/assessment.json"
+      ],
+      "verification": "Contract/docs validation, reviewed assessment and fresh standalone execution in a different-root clean clone with isolated home/cache.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "author",
+        "brief",
+        "language"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001",
+    "F-002",
+    "F-003"
+  ],
+  "requiredOutcomes": [
+    "journey",
+    "foundation-review",
+    "native-enforcement",
+    "maintenance-contract",
+    "fresh-standalone"
+  ],
+  "execution": [
+    {
+      "id": "final-journey",
+      "outcome": "journey",
+      "status": "passed",
+      "fingerprint": "0ec22c5772bac05f68dfea0fec6d321ce7b3d6c8108681917fc416184e0c0ebb",
+      "artifact": "./9a2846e2-final-capture.json",
+      "artifactHash": "51cdabe539c5e69c4ee26e67d0913b9cabd266201dfb7e80f61bd9049664552b",
+      "method": "run-checks captured real Chrome DOM and reload on final implementation"
+    },
+    {
+      "id": "final-foundation-review",
+      "outcome": "foundation-review",
+      "status": "passed",
+      "fingerprint": "0ec22c5772bac05f68dfea0fec6d321ce7b3d6c8108681917fc416184e0c0ebb",
+      "artifact": "./24a0c0f1-foundation-review-research.json",
+      "artifactHash": "b8fc7298d1557563b97ef6fc59d59c9f1c760b8d5312d42bcfe5195d3a288d7f",
+      "method": "read-only reviewer and main-thread checked citations against approved source and captured outcomes"
+    },
+    {
+      "id": "final-native-enforcement",
+      "outcome": "native-enforcement",
+      "status": "passed",
+      "fingerprint": "0ec22c5772bac05f68dfea0fec6d321ce7b3d6c8108681917fc416184e0c0ebb",
+      "artifact": "./9813e2c2-final-rule-proof-index.json",
+      "artifactHash": "d87796f2cb4ceeeffd8b4c3c9d29f2fd74b198a97f2cd238a366cd159e21fa22",
+      "method": "rule-proof clean rendering/public-interface controls passed and both selected violations failed, including native maintained aggregate"
+    },
+    {
+      "id": "final-maintenance-contract",
+      "outcome": "maintenance-contract",
+      "status": "blocked",
+      "fingerprint": "0ec22c5772bac05f68dfea0fec6d321ce7b3d6c8108681917fc416184e0c0ebb",
+      "artifact": "./bd49448d-pending-final-maintenance.json",
+      "artifactHash": "824d361e9c90fc9247f932c2a1646d1b6983de5941437903a25d3351beb2df8c",
+      "method": "contract validates and standalone candidate preview passes; protected final record adoption is pending"
+    },
+    {
+      "id": "final-fresh-standalone",
+      "outcome": "fresh-standalone",
+      "status": "blocked",
+      "fingerprint": "0ec22c5772bac05f68dfea0fec6d321ce7b3d6c8108681917fc416184e0c0ebb",
+      "artifact": "./bd49448d-pending-final-maintenance.json",
+      "artifactHash": "824d361e9c90fc9247f932c2a1646d1b6983de5941437903a25d3351beb2df8c",
+      "method": "new clean clone of completed project cannot precede adoption of the exact reviewed portable record"
+    }
+  ],
+  "limitations": [
+    "Protected creation and final-tree native checks passed; exact portable assessment adoption and final clean-checkout invocation remain pending.",
+    "Boundary coverage excludes arbitrary reflection/computed-string access and browser-object aliases; review forbids those bypasses.",
+    "Browser observed Chrome 154.0.8037.57; it did not exercise every invalid stored-schema branch.",
+    "No hosted CI, release or delivery service is selected or verified."
+  ]
+}

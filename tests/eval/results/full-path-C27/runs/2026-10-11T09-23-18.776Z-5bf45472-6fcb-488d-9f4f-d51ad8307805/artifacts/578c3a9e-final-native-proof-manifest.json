@@ -1,0 +1,489 @@
+{
+  "assessedRevision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+  "proofs": [
+    {
+      "case": "private",
+      "status": "passed",
+      "artifact": "./13502ead-proof.json",
+      "artifactHash": "7dc4d426190a6c9466ae792cf1cc9bbad5bdc32218e080aa9945a75ec283e394",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "private",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[fixture]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+            "stderr": "",
+            "durationMs": 781.790382,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 122.102035,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"private\"]\n",
+            "stderr": "",
+            "durationMs": 735.5347300000001,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 92.60329500000012,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case": "alias",
+      "status": "passed",
+      "artifact": "./642a38e1-proof.json",
+      "artifactHash": "4335e11c6c5174455ed405373d30937dcaca8b200e2975049944e7672e195a0d",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "alias",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[fixture]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+            "stderr": "",
+            "durationMs": 767.080993,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 97.60618500000001,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"alias\"]\n",
+            "stderr": "",
+            "durationMs": 750.4547299999999,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 88.59144500000002,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case": "reexport",
+      "status": "passed",
+      "artifact": "./96b9bb37-proof.json",
+      "artifactHash": "16af004634d16bdce7c2decb0960a967a997c9fea8fc9d43df60c393a0b3b957",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "private",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[fixture]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+            "stderr": "",
+            "durationMs": 817.612549,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 92.40578500000004,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"private\"]\n",
+            "stderr": "",
+            "durationMs": 846.1683209999999,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 96.74501299999997,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case": "cycle",
+      "status": "passed",
+      "artifact": "./fe91135b-proof.json",
+      "artifactHash": "06fd8ac67a952ae664b23b529c02c8cba615d156ef38f89da4d450c2cac86c1d",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "cycle",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[fixture]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+            "stderr": "",
+            "durationMs": 775.871887,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 117.64395400000001,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"cycle\"]\n",
+            "stderr": "",
+            "durationMs": 679.83782,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 89.8915300000001,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case": "integrated-private",
+      "status": "passed",
+      "artifact": "./a37d4623-proof.json",
+      "artifactHash": "1f9fb69ee31672da6c9fbddb3b13a94f3f845ccbe6934f6fa7e6058b5f58d5a9",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "private",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[fixture]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> check\n> npm run typecheck && npm test && npm run boundaries && npm run journey\n\n\n> typecheck\n> tsc --noEmit\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.779129ms)\n\u2714 checkout HTTP mock (27.127624ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 139.850361\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+            "stderr": "",
+            "durationMs": 3037.221954,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 88.18970300000001,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> check\n> npm run typecheck && npm test && npm run boundaries && npm run journey\n\n\n> typecheck\n> tsc --noEmit\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.830949ms)\n\u2714 checkout HTTP mock (36.290816ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 160.45551\n\n> boundaries\n> node boundaries.mjs\n\n[\"private\"]\n",
+            "stderr": "",
+            "durationMs": 2690.4202229999996,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 103.32319400000006,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case": "journey-seed",
+      "status": "passed",
+      "artifact": "./8f78b5f1-proof.json",
+      "artifactHash": "0873dfbbb72135a268682bb3b71def487b9f4442dc5cddac5b6e41aed6c05a84",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "agreed checkout total is 10",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[fixture]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+            "stderr": "",
+            "durationMs": 278.487323,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 124.90439700000002,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":12}}\n",
+            "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: agreed checkout total is 10\n+ actual - expected\n\n  {\n    status: 201,\n+   total: 12\n-   total: 10\n  }\n\n    at file://[isolated-home]/cache/bstack/7945988635260e7f48131e79b73676c24ff1ca385c04145bb03d8d024efe9f97/6e06653e-bfe7-44d8-8a4f-78ac1073031e/violation/journey.mjs:12:10\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: { status: 201, total: 12 },\n  expected: { status: 201, total: 10 },\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.17.0\n",
+            "durationMs": 283.82215300000007,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 101.03448000000003,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Static imports, static re-exports, aliases and cycles; dynamic dependencies require review.",
+    "Valid controls include public web imports and permitted core-owned internal use."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "mode": "subagents",
+  "host": "Codex shared-workspace terminal and web",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "language",
+      "scope": [
+        "brief.md"
+      ],
+      "findings": "The brief selects TypeScript/browser/local storage and excludes accounts/server/remote services. Official TypeScript guidance supports DOM types and explicit .js ES-module imports without a bundler. Native ESLint static import restrictions and global-object localStorage checks support the selected UI boundary while allowing document rendering. These do not establish alias or reflection coverage: public-only static imports and human review bound supported syntax. Playwright browser navigation, DOM assertions and reload support observing the Rice journey. The main thread opened every official source after the read-only subagent report; no reported documentation is represented as execution proof. TypeScript 6.0.3 is chosen within typescript-eslint 8.71.1 peer support >=4.8.4 <6.1.0 rather than unsupported TypeScript 7.",
+      "limitations": [
+        "No existing implementation or native configs in the workspace; only brief.md exists.",
+        "Native static import and property checks do not prove arbitrary computed-string or reflection bypass rejection."
+      ],
+      "files": [
+        {
+          "location": "brief.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "2b8b3463702f5d528b76dad89a931f00fd433816623520e97abe3c7d45599823"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://www.typescriptlang.org/tsconfig/lib.html",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        },
+        {
+          "url": "https://www.typescriptlang.org/docs/handbook/modules/guides/choosing-compiler-options.html",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        },
+        {
+          "url": "https://eslint.org/docs/latest/rules/no-restricted-imports",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        },
+        {
+          "url": "https://eslint.org/docs/latest/rules/no-restricted-globals",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        },
+        {
+          "url": "https://playwright.dev/docs/test-assertions",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        },
+        {
+          "url": "https://playwright.dev/docs/api/class-page#page-reload",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        }
+      ]
+    }
+  ]
+}

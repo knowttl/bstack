@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "workspace": "[fixture]",
+  "destination": {
+    "path": "pantry-app",
+    "resolvedPath": "[fixture]/pantry-app",
+    "allowEmpty": false
+  },
+  "stack": "TypeScript/browser ES modules/local storage; native ESLint, Prettier, strict TypeScript and Playwright Chrome checks",
+  "firstJourney": "Add Rice, mark it needed, view Rice on the shopping list, reload and retain it after successful saving.",
+  "visionPath": "VISION.md",
+  "glossaryPath": "GLOSSARY.md",
+  "changeSet": "./f9d24323-creation-changes.json",
+  "changeSetDigest": "24a746e53537cf6160288cad06cf0cdcdeb3d91ccbfd57083492fa3870fcf7d7",
+  "prerequisites": [
+    {
+      "id": "node",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 180000
+    },
+    {
+      "id": "npm",
+      "executable": "npm",
+      "args": [
+        "--version"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 180000
+    },
+    {
+      "id": "chrome",
+      "executable": "google-chrome",
+      "args": [
+        "--version"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 180000
+    },
+    {
+      "id": "resources",
+      "executable": "node",
+      "args": [
+        "./7219923f-resources.mjs"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 180000
+    }
+  ],
+  "setupCommands": [
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--cache",
+        "[scratch-path]",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 180000
+    }
+  ],
+  "journeyCommand": {
+    "id": "native-and-browser",
+    "executable": "npm",
+    "args": [
+      "run",
+      "check"
+    ],
+    "versionArgs": [
+      "--version"
+    ],
+    "cwd": ".",
+    "timeoutMs": 180000
+  },
+  "planDigest": "675a652e5fd4affa4c5cf42b2d995577d73e9038631bebe6cbc483c671b3ae4a"
+}

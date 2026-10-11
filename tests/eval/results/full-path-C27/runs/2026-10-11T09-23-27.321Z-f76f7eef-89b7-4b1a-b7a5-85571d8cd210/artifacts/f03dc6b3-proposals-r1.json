@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "draftRevision": "ce748de55a929b1a5e49a0fbf4829ca665beb6c7dcf84f31127b58cc9b52cf67",
+  "project": "Pantry list",
+  "runNote": "Stress-test author-selected fixture decisions on the real board; feedback must come from the board runtime.",
+  "cards": [
+    {
+      "id": "needed-meaning",
+      "title": "Needed is independent of stock",
+      "body": "Allow Rice to be marked needed even if some Rice is already in the pantry; do not derive needed from stock or add stock levels.",
+      "tests": "\u201cThe household explicitly marks which items it needs to buy.\u201d",
+      "why": "Accepting preserves the household\u2019s buying judgement and the no-stock boundary. Resisting could make missing supplies easier to infer, but would require inventory information and change who decides."
+    },
+    {
+      "id": "duplicate-names",
+      "title": "Reuse matching names, preserve full-name variants",
+      "body": "Trim names and match them case-insensitively: adding \u201c rice \u201d reuses Rice, while \u201cBrown Rice\u201d and \u201cWhite Rice\u201d remain distinct supplies according to their full supplied names.",
+      "tests": "\u201cAccept changes that prevent accidental duplicate records without hiding meaningful differences between supplies.\u201d",
+      "why": "Accepting avoids accidental duplicates with a predictable full-name rule. Resisting permits similarly spelled entries with distinct meanings, but leaves accidental duplicates for the household to resolve."
+    },
+    {
+      "id": "storage-failure",
+      "title": "Usable session with explicit unsaved changes",
+      "body": "If local storage saving fails, keep adding and marking items usable for the current session, expose unsaved changes and never claim reload retention until saving works.",
+      "tests": "\u201cAccept changes that keep the session useful and make saving problems visible.\u201d",
+      "why": "Accepting preserves immediate usefulness while honestly distinguishing saved and unsaved work. Resisting could block edits to prevent loss on reload, but would stop a household from using its list during a storage problem."
+    }
+  ]
+}

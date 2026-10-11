@@ -1,0 +1,17 @@
+{
+  "command": [
+    "npm",
+    "ci",
+    "--cache",
+    "[scratch-path]",
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "cwd": "[isolated-home]/cache/bstack/f3cfad57b15cb91cf4803058adfa7a9da0d48d7c91128c636f8300612953ba0b/20af2c45-6bf2-49e1-9255-301711278b49",
+  "exitCode": 0,
+  "durationSeconds": 1.9468979835510254,
+  "stdout": "\nadded 98 packages in 2s\n",
+  "stderr": "npm notice\nnpm notice New major version of npm available! 11.13.0 -> 12.2.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0\nnpm notice To update run: npm install -g npm@12.2.0\nnpm notice\n",
+  "version": "11.13.0\n"
+}

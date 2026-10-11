@@ -1,0 +1,7 @@
+import json,hashlib,pathlib,subprocess
+s=pathlib.Path('[scratch-path]');r=pathlib.Path('[fixture]')
+def d(a):return hashlib.sha256(json.dumps(a,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
+def h(a):return hashlib.sha256(a).hexdigest()
+f=json.loads((s/'findings.json').read_text()); f['target']['revision']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=r,text=True).strip(); f['reviewedScope']=['.bstack/assessment.json'];f['findings'][0]['scope']=['.bstack/assessment.json'];f['findings'][0]['files']=['.bstack/assessment.json'];f['findings'][0]['fix']='Replace portable assessment with substantive reviewed no-impact evidence for the authorized refactor.';(s/'assessment-findings.json').write_text(json.dumps(f,indent=2)+'\n')
+new=(s/'assessment-reviewed.json').read_text();old=(r/'.bstack/assessment.json').read_bytes()
+p={'schemaVersion':1,'target':f['target'],'findings':str(s/'assessment-findings.json'),'findingsDigest':d(f),'selectedFindingIds':['F-101'],'reviewedScope':[{'path':'.bstack/assessment.json','resolvedPath':str(r/'.bstack/assessment.json')}],'edits':[{'id':'review-assessment','findingId':'F-101','path':'.bstack/assessment.json','originalHash':h(old),'proposedHash':h(new.encode()),'operation':'replace-file','payload':{'content':new},'proposedContent':new}]};p['planDigest']=d(p);(s/'assessment-apply.json').write_text(json.dumps(p,indent=2)+'\n')

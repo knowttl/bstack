@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "422c07b21bcde3f2da59c827f0530f8b548d2d7a"
+  },
+  "nextChange": "Authorized bounded pricing refactor naming total, preserving public pricing and checkout.",
+  "reviewedScope": [
+    "packages/web/public.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:11",
+      "intent": "documented",
+      "summary": "Quote remains 12 and quantity two returns 24 through public core."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-101",
+      "problem": "Selected internal pricing refactor names its intermediate value.",
+      "files": [
+        "packages/web/public.ts"
+      ],
+      "command": "npm run check",
+      "principle": "Preserve approved public core and quote acceptance.",
+      "consequence": "Refactor must retain default and selected quantity pricing plus checkout.",
+      "fix": "Assign price() * quantity to const total and return total.",
+      "scope": [
+        "packages/web/public.ts"
+      ],
+      "verification": "Capture native aggregate before and after, then fresh standalone checks locally and in isolated clone.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-101"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "protection",
+    "compatibility"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance only; historical audit preserved."
+  ]
+}

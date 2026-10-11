@@ -1,0 +1,29 @@
+{
+  "assessedRevision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+  "review": "Approved scope, preserved intent and final actual changes reviewed against authoritative sources and captured execution.",
+  "implementationApproval": {
+    "path": "./b80db67e-implementation-approval.txt",
+    "hash": "c92a20e8bde8fa4ba67e4e1b7402ed8e54bc0b4e7aa3b4d0b680998dc0ff44b8",
+    "planDigest": "1324d958131e416c001b64367e4c142c6dbdec8b74d190b5460582bb1b3508f3"
+  },
+  "assessmentApproval": {
+    "path": "./bbe18960-assessment-approval.txt",
+    "hash": "7a18bdf54710fae9eadd68add097a47e0d952a3ac81952bc268c3bcd503d3da8",
+    "planDigest": "d52b22dddeac55a4b57391964e2da4bc89c9cb47bb86c37979b0984b26ffaf43"
+  },
+  "sourceAssessment": {
+    "path": "./cf4c6c0f-final-local-assessment.json",
+    "hash": "cf9ef30963dfaf66a4e420cf104e8b790602be5836aa9f8c94470b685b318ed5"
+  },
+  "checks": [
+    "Default checkout uses actual local HTTP endpoint price 10 and asserts total 10 through public UI.",
+    "Quote() is verified at 12 by a real public-interface unit check, not a fetch mock.",
+    "Original endpoint-12 defect fails the unchanged total-10 assertion in the deliberate negative control.",
+    "No business pricing adjustment or discount introduced; original routes calculation retained.",
+    "Every one of 14 changed paths mapped; four registered documents substantively assessed.",
+    "Approved checker matches the complete installed asset bytes; contract and checker belong to repo.",
+    "User note preserved as an exact byte prefix; no authoritative file renamed.",
+    "Historical snapshot remains unchanged and does not claim live readiness.",
+    "No hosted CI or delivery service selected."
+  ]
+}

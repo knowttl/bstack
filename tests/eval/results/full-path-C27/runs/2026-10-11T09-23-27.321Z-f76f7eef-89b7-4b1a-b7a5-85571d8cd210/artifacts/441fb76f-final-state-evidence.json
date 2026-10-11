@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "repo": "[fixture]/pantry-app",
+  "currentHead": "50ecb41ba85783293c7fac68c7745d9c0a779bba",
+  "implementationHead": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b",
+  "base": "e9bf94b0be4619d9aacde2bc9621cc6321714b91",
+  "sourceBytesUnchangedSinceImplementation": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".gitignore",
+    "AGENTS.md",
+    "DESIGN.md",
+    "GLOSSARY.md",
+    "README.md",
+    "VISION.md",
+    "eslint.config.mjs",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/resources.mjs",
+    "src/main.ts",
+    "src/pantry.ts",
+    "src/private/storage.ts",
+    "src/ui/render.ts",
+    "tests/journey.test.mjs",
+    "tsconfig.json"
+  ],
+  "fileHashes": {
+    ".bstack/assessment.json": "8bcf9a0c1d31dc410032bf43ba5f0f796fa66e9bb174ae0423730aa930233838",
+    ".bstack/bin/bstack-check.mjs": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a",
+    ".bstack/project.json": "cc2421013cb2c2ee3bb6316d9426ca66c8fcbbbb2f5e2cb89423d87772ec3449",
+    ".gitignore": "3938af0c0820cd8a1dc61f391aade35c021df4bb5e15efc755db9ba7b72b3841",
+    "AGENTS.md": "d30ca0cd8b05f2393fcfc84c90022aa4827369c5998acb42d7b60f9b913b17eb",
+    "DESIGN.md": "c490553424d728e6f96312567d0c847466661c51b5bc8c3fa8a933ac04364f87",
+    "GLOSSARY.md": "88e425ef1ca488417ed4d7592e7544ac7ed6a132ce3907f301337c3eb7ea3562",
+    "README.md": "e35303bf7e2f18ece29d2c674ac02c400702b5b4f6e24951406f62cf6e965bba",
+    "VISION.md": "da3e7fd9dc4f92c92351dd71b65a6b2307f61b3df2bb245b8b1699097649294b",
+    "eslint.config.mjs": "95944de31f17cb41005bb35a8c014b9efbbe179081ebbef0816380ec30928767",
+    "index.html": "6e03a03bfe7b5f4318b2a225ce6903614b6c85a048149453c8a2451ac5fb3d13",
+    "package-lock.json": "80cba1d8f619b93901c3e3e7e77e2696039e6ebfd9e4aef5ed5d9038f6718498",
+    "package.json": "a49a5f4e92876791d8b14ac717ccbd60593662ad38fa7a127c3b52e2904523a2",
+    "scripts/resources.mjs": "6d769be9ca9be9615b180868ad8d700b6feb3ea4b8161242efd8a65dc1e370cc",
+    "src/main.ts": "b0588c790254f1330a3f85045c59f17e997b6aba6ded42ad1a6bfb99d133affe",
+    "src/pantry.ts": "13bfe0f50bc12949f0fea2a1d00b6e7bc2cc02bbe80c0d69320c4d278b0c7cbc",
+    "src/private/storage.ts": "1951efcf34fb9b8bcdfa272f899db262183c34b5a184509eab6505908a1418ec",
+    "src/ui/render.ts": "e621d4e105c81c1141eaf828af080527a3a06c329cda0776a443cc9a15622ff0",
+    "tests/journey.test.mjs": "5fafdce866ebda653fcbfe6c1057a2418e6c9453a928aa6a673d7cc1b782258d",
+    "tsconfig.json": "a363a25fd5a5d7a35e5c91efdc6b884b4ac58bd7bcbd0020203c8d922fe4c902"
+  },
+  "workingClean": true,
+  "cloneClean": true,
+  "freshEnvironment": {
+    "root": "[scratch-path]",
+    "repo": "[scratch-path]",
+    "home": "[scratch-path]",
+    "cache": "[scratch-path]",
+    "base": "e9bf94b0be4619d9aacde2bc9621cc6321714b91",
+    "head": "50ecb41ba85783293c7fac68c7745d9c0a779bba"
+  },
+  "isolatedEnvironmentKeys": [
+    "HOME",
+    "XDG_CACHE_HOME",
+    "npm_config_cache"
+  ],
+  "removedEnvironmentKeys": [
+    "NODE_PATH",
+    "NODE_OPTIONS"
+  ],
+  "checkerDependencyPolicy": "standalone Node/Git built-ins only; native project checks use npm-installed pinned development dependencies",
+  "workingChecker": {
+    "path": "./f8b2df85-checker-result.json",
+    "sha256": "f14161cc64694aa2248fa331d9c44b97c250033e3084afc9382e75ab92924d1c",
+    "nativeExecutions": 1
+  },
+  "freshChecker": {
+    "path": "./63e1e4c5-checker-result.json",
+    "sha256": "d6a8c2ba3a9e0a918fa6d5531c29b66914544ec1dc2ab76086d06792543226ef",
+    "nativeExecutions": 1
+  },
+  "resourceGates": {
+    "working-checker-gate.json": "ee6f6662d7d8813a39b9cbbd3809fdb979af7e1ed5b0d331fadb882bce1a1414",
+    "fresh-final-setup-gate.json": "7b77e71bb17851475771f5a632b8a8b288fb83ae5dd565d441c0c3259151a091",
+    "fresh-final-checker-gate.json": "57fd28677a952723ee1cab237b154f49c437be38563d1f7d02f25b853bc10925"
+  },
+  "browserEvidence": [
+    "[scratch-path]",
+    "[scratch-path]"
+  ],
+  "approval": "Supervisor-delegated author approval 2026-10-11; exact assessment plan 2a5dc228dfa560326ee31b52c8be27186c8f134bb673c38a7eaaa6d35f520eeb applied unchanged",
+  "limitations": [
+    "Structural validation cannot prove that explanations or document deltas agree semantically with code, or authenticate owner approval. The selected review process must assess these claims.",
+    "Local execution records are not authenticated portable attestations. Captures cover declared inputs only; transient changes restored before capture completion are not detected."
+  ],
+  "supportingArtifacts": {
+    "./24a0c0f1-foundation-review-research.json": "b8fc7298d1557563b97ef6fc59d59c9f1c760b8d5312d42bcfe5195d3a288d7f",
+    "./42ae80a6-creation-record.json": "8ce7943f412ee84966e9c65c75f6196c352849c46a0ec1b80f7d32efda0d538f",
+    "./5517b161-assessment-apply-result.json": "c0a04320b5736221f4698546ac5191ac8655adbbc8a97b5518ab770e45ed8d31",
+    "./9813e2c2-final-rule-proof-index.json": "d87796f2cb4ceeeffd8b4c3c9d29f2fd74b198a97f2cd238a366cd159e21fa22",
+    "./b2ed4455-round-r1.json": "33c2fee39dec8e1aebd4422626824775c895ffc63d049c5ff56f0da57c351733",
+    "./585f04ef-round-r2.json": "0304a1944b7f243c259c14dc5db482ec19cb2281252577d9f8263035ffb1be88",
+    "./5ee16c9d-working-checker-output.txt": "927ac11a64aa748608b3acfd53dd7b2bddfcc07f5f95ab0e6c6e3b1a9dacaf32",
+    "./71a73a62-fresh-final-setup.txt": "127f68bc64f7be91bf5e7506b803aeacbb6ad83c6c6420b5e1dc486d7eeeabd0"
+  },
+  "browserCaptureHashes": {
+    "./22bb5fcd-rice-needed.png": "298050c6e84206459006839de9d4f2cd034cdb0d1c7a4b05a5c505a515fefe9f",
+    "./03f7d097-retry-reloaded.png": "a3e7161999cef9a04b1098e18257d8b5772961dd898fe5b02961c518cc8829a5",
+    "./d47a6218-rice-reloaded.png": "ce3547714fe53064f627e69c31753b40d2df9083816b8d040aa5ff3013f69e6f",
+    "./f205b844-rice-needed.png": "c839fb147ef535d4a01c2b7ac748a4273039b442bd9d512d6d7ffb784545bf12",
+    "./d5a40520-retry-reloaded.png": "a3e7161999cef9a04b1098e18257d8b5772961dd898fe5b02961c518cc8829a5",
+    "./386b8c4f-rice-reloaded.png": "ce3547714fe53064f627e69c31753b40d2df9083816b8d040aa5ff3013f69e6f"
+  }
+}

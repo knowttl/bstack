@@ -1,0 +1,85 @@
+{
+  "assessedRevision": "c819be12fdfc25cf0903c9968eebb83b076787f9",
+  "workingTree": "",
+  "verdict": "verification blocked pending exact final assessment approval",
+  "selectedFindings": [
+    "F-001",
+    "F-002",
+    "F-003",
+    "F-004",
+    "F-005",
+    "F-006"
+  ],
+  "implementationPlan": "1324d958131e416c001b64367e4c142c6dbdec8b74d190b5460582bb1b3508f3",
+  "assessmentPlan": "d52b22dddeac55a4b57391964e2da4bc89c9cb47bb86c37979b0984b26ffaf43",
+  "acceptance": {
+    "checkoutTotal": 10,
+    "quote": 12,
+    "reseededEndpoint12": "fails unchanged total-10 assertion"
+  },
+  "userNote": "preserved exactly",
+  "historicalSnapshotHash": "08ea29cd90431ae5aaf84b4675fe2c7a5cc453b5dfdc6fd9946fba182806618e",
+  "evidence": [
+    {
+      "artifact": "./92d2c4dc-target-native-committed.json",
+      "sha256": "041a66afe192f8f637559170114b79f80833fd482e17546d5bc5540e885cd745",
+      "status": "passed"
+    },
+    {
+      "artifact": "./1066ccd7-target-proof-private.json",
+      "sha256": "e30074ca2a65a93d2b51be9461246d2bf717729d44ec70a25638a8121cbe1d4a",
+      "status": "passed"
+    },
+    {
+      "artifact": "./f406e18a-target-proof-alias.json",
+      "sha256": "0cf0482bae2128c194faeb528e49af3a839c779347d4c86365656a0a09599252",
+      "status": "passed"
+    },
+    {
+      "artifact": "./54d5446d-target-proof-reexport.json",
+      "sha256": "b135b17bb4128ebc940fd52e9944bd28fccd355184d804558f94087b10281e68",
+      "status": "passed"
+    },
+    {
+      "artifact": "./2fdd256a-target-proof-cycle.json",
+      "sha256": "d58fe554a5df9a9305f04385e17133557585f8d2c2764e0fb8c6476b87e80a11",
+      "status": "passed"
+    },
+    {
+      "artifact": "./0111cf52-target-proof-integrated-private.json",
+      "sha256": "6af916764db16401351fdb2be1539b9d6b0c7293f08258cd8a750a6f3922e137",
+      "status": "passed"
+    },
+    {
+      "artifact": "./9620e89a-target-journey-seed-proof.json",
+      "sha256": "3d676b6aff5f6050a44a3d471c4b456aa462befa4b8c941d58c2eb079fcd3605",
+      "status": "passed"
+    },
+    {
+      "artifact": "./d34e2d7e-target-contract-validation.json",
+      "sha256": "170f5c7ec3200d95c3b257c41fc3013e22f7461906a6edfd96f9cc83481adf4b",
+      "status": "passed"
+    },
+    {
+      "artifact": "./1f0d4959-target-docs-check.json",
+      "sha256": "a7fe500b92cba220283218e987a32583389b69644cf86c79a0bad87888c580ef",
+      "status": "passed"
+    },
+    {
+      "artifact": "./49df9099-target-generated-check.json",
+      "sha256": "dfdd8eeda05fe220744b319df292cf872446326875c0684767e1fe7a349abc75",
+      "status": "passed"
+    },
+    {
+      "artifact": "./1c4498ab-assessment-review-checker.json",
+      "sha256": "78c55daad6953345954d9a8bef53691cc89c09f376fe5739878d778e565d5699",
+      "status": "passed"
+    }
+  ],
+  "limits": [
+    "Final assessment is not yet created on target; target final standalone and isolated clean-clone evidence pending that protected write.",
+    "Default-quantity local HTTP checkout observed; no deployed price service or hosted CI selected.",
+    "Boundary analysis covers static imports/re-exports and path aliases; dynamic imports/runtime loading require review.",
+    "Receipt wording is a future owner decision."
+  ]
+}

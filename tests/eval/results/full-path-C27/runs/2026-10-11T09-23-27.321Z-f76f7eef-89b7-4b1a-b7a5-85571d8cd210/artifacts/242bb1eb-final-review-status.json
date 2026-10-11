@@ -1,0 +1,49 @@
+{
+  "status": "complete",
+  "checkpoint": "final",
+  "currentHead": "50ecb41ba85783293c7fac68c7745d9c0a779bba",
+  "findings": "./990059b3-final-findings.json",
+  "creationRecord": "./42ae80a6-creation-record.json",
+  "ruleProof": "./9813e2c2-final-rule-proof-index.json",
+  "assessment": "[fixture]/pantry-app/.bstack/assessment.json",
+  "workingCheckerArtifact": "./f8b2df85-checker-result.json",
+  "freshCheckerArtifact": "./63e1e4c5-checker-result.json",
+  "finalEvidence": "./441fb76f-final-state-evidence.json",
+  "validation": {
+    "schemaVersion": 1,
+    "command": "findings validate",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "result": "ready for the stated next change",
+      "reasons": [],
+      "fingerprint": "8efcfd80a263b0a84f2ebc15209036617450ac70d8433cd3783fdf752a0796ba"
+    },
+    "inputs": {
+      "target": {
+        "mode": "repo",
+        "root": "[fixture]/pantry-app"
+      },
+      "findings": "./990059b3-final-findings.json"
+    }
+  },
+  "render": {
+    "schemaVersion": 1,
+    "command": "findings render",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "result": "ready for the stated next change",
+      "reasons": [],
+      "fingerprint": "8efcfd80a263b0a84f2ebc15209036617450ac70d8433cd3783fdf752a0796ba",
+      "path": "./a3ed1a12-repo-audit.md"
+    },
+    "inputs": {
+      "target": {
+        "mode": "repo",
+        "root": "[fixture]/pantry-app"
+      },
+      "findings": "./990059b3-final-findings.json"
+    }
+  }
+}

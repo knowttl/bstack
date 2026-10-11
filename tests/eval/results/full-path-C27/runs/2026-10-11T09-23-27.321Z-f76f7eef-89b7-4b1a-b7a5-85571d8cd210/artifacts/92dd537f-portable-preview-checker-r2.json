@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"bstack check","status":"blocked","problems":[{"code":"assessment-not-committed","message":"Clean-checkout review must use the unchanged selected committed assessment.","fix":"Bind and commit the completed portable assessment before execution."}],"data":{},"inputs":{}}

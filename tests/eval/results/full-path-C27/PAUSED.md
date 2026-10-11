@@ -1,14 +1,15 @@
-# C27 owner-requested pause
+# C27 historical owner-requested pause
 
 Firstmate delivered the owner's pause instruction on 2026-10-11 at 03:12 UTC: bstack review changes must land before C27 resumes.
-This branch contains implementation and diagnostic evidence, not completed C27 acceptance.
-No final acceptance selections or full-suite task attachment have been made.
-All final procedures must run fresh after the updated main branch is incorporated.
+At that pause, the branch contained implementation and diagnostic evidence, not completed C27 acceptance.
+No final acceptance selections or full-suite task attachment had been made.
+All final procedures were required to run fresh after the updated main branch was incorporated.
+The owner authorized resumption after the review changes landed; [final C27 evidence](summary.md) records the subsequent fresh procedures separately.
 
 The implementation adds complete release installation for final adapter runs, fresh isolated maintained-fixture follow-ups, five final procedures and regression coverage.
 The installed full-path work exposed and fixed optional glossary metadata leaking into assessment document identities.
 Public help now describes the existing protected-plan digest algorithm.
-Package checks and the focused glossary regression passed; a final settled-source full suite remains pending.
+Package checks and the focused glossary regression passed; the final settled-source full suite was pending at the pause.
 
 The `history` directory retains the earlier scored shop path and repeat audit, the interrupted pantry path and the two unsuccessful opening attempts.
 Those observations are superseded and are excluded from final acceptance.
@@ -21,7 +22,7 @@ Unrelated host process inventory is omitted from the paused publication while re
 - Fresh shop completed audit, selection, preservation of the injected receipt note, protected implementation apply, committed target native verification and enforcement controls.
   It stopped before the historical audit snapshot and portable assessment protected writes.
   Passing portable previews and their clean-clone checks remain preview evidence, not completed target proof.
-- Independent extension and maintenance-only procedures have not run.
+- Independent extension and maintenance-only procedures had not run at the pause.
   The representative extension procedure now requires a production quantity-aware quote change and actual quantity-two checkout verification through the maintained public interfaces.
 
 Fixture verdict provenance is supervisor-delegated fixture authority, 2026-10-11.
