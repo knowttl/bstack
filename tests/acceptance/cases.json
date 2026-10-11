@@ -195,8 +195,13 @@
       "criterionSource": "docs/design.md#AC-17",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A contract-preserving internal fix completes with an evidenced no-impact result, without cosmetic document edits."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "maintenance",
+        "artifacts": [
+          "tests/eval/results/release/maintenance-comparison.json",
+          "tests/eval/results/release/maintenance-maintained-fixture.md"
+        ]
       }
     },
     {

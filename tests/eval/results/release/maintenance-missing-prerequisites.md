@@ -1,8 +1,11 @@
 # Unmet maintenance acceptance
 
+This historical pair identified the unmaintained starting-fixture defect.
+The commissioned [maintained fixture pair](maintenance-maintained-fixture.md) now passes both criteria in both modes; the original failure evidence remains unchanged below.
+
 AC-17 fails in the completed final maintenance pair.
 Both runs score 1/2: they avoid repeating the interview and full audit, but neither completes an evidenced no-impact maintenance procedure.
-The [comparison](maintenance-comparison.json) fails the design's improvement rule, with no gained checks.
+The [historical comparison](maintenance-before-fixture-repair-comparison.json) fails the design's improvement rule, with no gained checks.
 The missing procedure is not waived, and this evidence is not selected as passing release coverage.
 
 Both captures bind source `bf57b47`, fixture revision `c8576a3095a37da037d42c4bdf358d6372f5a91e`, the unchanged pinned container, scoring criteria and adapter, Codex CLI 0.162.1 and gpt-6.1-sol with medium reasoning.

@@ -1,0 +1,13 @@
+import { validateEvidence } from '[fixture]/.bstack/bin/bstack-check.mjs';
+import { readFile, writeFile } from 'node:fs/promises';
+const path = '[fixture]/.bstack/assessment.json';
+const a = JSON.parse(await readFile(path,'utf8'));
+const options = {repo:'[fixture]',base:a.base.ref,assessment:path,preflight:true};
+const collection = await validateEvidence(options);
+if(collection.problems.some(p => p.code !== 'stale-review')) throw new Error(JSON.stringify(collection.problems));
+a.fingerprint = collection.data.fingerprint;
+await writeFile(path,JSON.stringify(a,null,2)+'\n');
+const bound = await validateEvidence(options);
+await writeFile(process.env.TMPDIR+'/ts-shop-maintenance/assessment-preflight.json',JSON.stringify(bound,null,2)+'\n');
+if(bound.status !== 'passed') throw new Error(JSON.stringify(bound.problems));
+console.log(JSON.stringify({status:bound.status,source:a.head,base:a.base.objectId,fingerprint:a.fingerprint}));

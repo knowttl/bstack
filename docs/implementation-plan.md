@@ -1876,6 +1876,7 @@ Repeated execution artifacts with unique run IDs are legitimate history, and the
 Fill in the "Evidence" column in T5.2.
 Registry completeness is a structural check, while final case evidence proves execution.
 Comparisons predating the targeted-question skill repair are historical and require refresh against the settled package before final selection.
+The maintained maintenance fixture also changes the globally bound fixture revision; all earlier pairs require refresh, while [AC-17 now passes](../tests/eval/results/release/maintenance-maintained-fixture.md) on the commissioned starting state.
 
 | Task | Acceptance cases | Required procedure | Evidence |
 |---|---|---|---|
@@ -1896,7 +1897,7 @@ Comparisons predating the targeted-question skill repair are historical and requ
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | |
 | T3.4 | AC-58, AC-61 | Same maintained command on valid and violation disposable local copies, failure propagation and package-scope controls | |
 | T3a.2 | AC-19, AC-20 | Complete Git change inventory and invalid-base controls | |
-| T3a.3 | AC-16, AC-17, AC-19, AC-21, AC-22, AC-28 | Before/after impact, no-impact, stale input and prior-policy bypass controls | |
+| T3a.3 | AC-16, AC-17, AC-19, AC-21, AC-22, AC-28 | Before/after impact, no-impact, stale input and prior-policy bypass controls | AC-17 passes the [maintained fixture pair](../tests/eval/results/release/maintenance-maintained-fixture.md), with unchanged authorities and fresh local and clean-clone checkers; other final selections remain pending. |
 | T3a.4 | AC-18 | Stale generated sections and checked regeneration | |
 | T3a.5 | AC-13, AC-15 | Context-specific terms and reviewed rule relocation | AC-13 passes the [19/19 foundation comparison](../tests/eval/results/release/existing-repo-comparison.json); AC-15 passes the [selected relocation comparison](../tests/eval/results/release/selected-rule-relocation-comparison.json) with exact approved protected writes and native Python behavior checks. |
 | T3a.6 | AC-24, AC-58 | Different-root clean clone, missing evidence, shallow base and fresh leaf execution | |
