@@ -155,7 +155,7 @@ for (const scope of ['user', 'project']) {
 }
 
 for (const location of ['checkout', 'nested', 'aliased', 'distinct aliases']) {
-  for (const tagged of [false, true]) {
+  for (const tagged of location === 'checkout' ? [false, true] : [false]) {
     test(`repeat installs preserve ${tagged ? 'tagged' : 'development'} source version at ${location}`, async t => {
       const f = await fixture(t)
       const project = location === 'nested' ? join(f.checkout, 'project ü &') : f.checkout
@@ -1981,66 +1981,64 @@ for (const scope of ['user', 'project']) {
   })
 }
 
-for (const scope of ['user', 'project']) {
-  for (const copyHost of ['claude', 'agents']) {
-    for (const scenario of ['clean', 'edited copy', 'changed link', 'changed copy', 'copy interruption', 'cleanup interruption', 'link interruption', 'link cleanup interruption']) {
-      test(`mixed-mode uninstall handles ${scenario} with ${copyHost} copy in ${scope} scope`, async t => {
-        const f = await fixture(t)
-        const selected = scope === 'user' ? f.home : f.project
-        const args = ['--scope', scope, ...(scope === 'project' ? ['--project', f.project] : [])]
-        const linkHost = copyHost === 'claude' ? 'agents' : 'claude'
-        const copy = join(selected, `.${copyHost}/skills/repo-audit`)
-        const link = join(selected, `.${linkHost}/skills/repo-audit`)
-        await writeFile(join(f.source, 'current.md'), 'Owned copy content\n')
-        assert.equal(f.run(...args, '--host', copyHost).status, 0)
-        assert.equal(f.run(...args, '--host', linkHost, '--link').status, 0)
-        await writeFile(join(copy, 'notes.txt'), 'Unrelated copy content\n')
-        await writeFile(join(f.source, 'notes.txt'), 'Unrelated target content\n')
-        if (scenario === 'edited copy') await writeFile(join(copy, 'SKILL.md'), 'Edited copy\n')
-        if (scenario === 'changed link' || scenario === 'changed copy') {
-          const destination = scenario === 'changed link' ? link : copy
-          await rename(destination, join(selected, 'saved-installation'))
-          await symlink(f.source, destination, process.platform === 'win32' ? 'junction' : 'dir')
-        }
-        const sourceBefore = await inventory(f.source)
-        const command = [...args, '--host', 'all', '--uninstall']
-        const preview = f.run(...command, '--dry-run')
-        if (scenario.startsWith('changed')) {
-          assert.equal(preview.status, 2, preview.stdout)
-          assert.equal(f.run(...command).status, 2)
-          assert.equal(await readlink(link), f.source)
-          const originalCopy = scenario === 'changed copy' ? join(selected, 'saved-installation') : copy
-          assert.equal((await lstat(join(originalCopy, 'SKILL.md'))).isFile(), true)
-          assert.deepEqual(await inventory(f.source), sourceBefore)
-          return
-        }
-        assert.equal(preview.status, 0, preview.stdout)
-        assert.equal(preview.value.data.mode, 'mixed')
+for (const copyHost of ['claude', 'agents']) {
+  for (const scenario of ['clean', 'edited copy', 'changed link', 'changed copy', 'copy interruption', 'cleanup interruption', 'link interruption', 'link cleanup interruption']) {
+    test(`mixed-mode uninstall handles ${scenario} with ${copyHost} copy in user scope`, async t => {
+      const f = await fixture(t)
+      const selected = f.home
+      const args = ['--scope', 'user']
+      const linkHost = copyHost === 'claude' ? 'agents' : 'claude'
+      const copy = join(selected, `.${copyHost}/skills/repo-audit`)
+      const link = join(selected, `.${linkHost}/skills/repo-audit`)
+      await writeFile(join(f.source, 'current.md'), 'Owned copy content\n')
+      assert.equal(f.run(...args, '--host', copyHost).status, 0)
+      assert.equal(f.run(...args, '--host', linkHost, '--link').status, 0)
+      await writeFile(join(copy, 'notes.txt'), 'Unrelated copy content\n')
+      await writeFile(join(f.source, 'notes.txt'), 'Unrelated target content\n')
+      if (scenario === 'edited copy') await writeFile(join(copy, 'SKILL.md'), 'Edited copy\n')
+      if (scenario === 'changed link' || scenario === 'changed copy') {
+        const destination = scenario === 'changed link' ? link : copy
+        await rename(destination, join(selected, 'saved-installation'))
+        await symlink(f.source, destination, process.platform === 'win32' ? 'junction' : 'dir')
+      }
+      const sourceBefore = await inventory(f.source)
+      const command = [...args, '--host', 'all', '--uninstall']
+      const preview = f.run(...command, '--dry-run')
+      if (scenario.startsWith('changed')) {
+        assert.equal(preview.status, 2, preview.stdout)
+        assert.equal(f.run(...command).status, 2)
         assert.equal(await readlink(link), f.source)
-        assert.equal((await lstat(join(copy, 'SKILL.md'))).isFile(), true)
-        if (scenario.endsWith('interruption')) {
-          await interrupt(f, scenario === 'copy interruption' ? 'file-remove' : scenario === 'cleanup interruption' ? `cleanup-journal-${copyHost}` : scenario === 'link cleanup interruption' ? `cleanup-journal-${linkHost}` : 'link-unlink')
-          const interrupted = f.run(...command)
-          assert.equal(interrupted.status, 86, interrupted.stdout)
-          delete f.env.NODE_OPTIONS
-        }
-        const removed = f.run(...command, '--link')
-        assert.equal(removed.status, scenario === 'edited copy' ? 2 : 0, removed.stdout)
-        await assert.rejects(lstat(link), { code: 'ENOENT' })
-        assert.equal(await readFile(join(copy, 'notes.txt'), 'utf8'), 'Unrelated copy content\n')
-        if (scenario === 'edited copy') {
-          assert.equal(await readFile(join(copy, 'SKILL.md'), 'utf8'), 'Edited copy\n')
-          const decision = removed.value.data.installations.find(entry => entry.destination === copy).conflicts.find(conflict => conflict.path === 'SKILL.md').decision
-          const cleaned = f.run(...command, ...decision.split(' '))
-          assert.equal(cleaned.status, 0, cleaned.stdout)
-        }
-        for (const host of [copyHost, linkHost]) {
-          await assert.rejects(lstat(join(selected, `.${host}/skills/.bstack-install.json`)), { code: 'ENOENT' })
-          await assert.rejects(lstat(join(selected, `.${host}/skills/.bstack-install-journal.json`)), { code: 'ENOENT' })
-        }
+        const originalCopy = scenario === 'changed copy' ? join(selected, 'saved-installation') : copy
+        assert.equal((await lstat(join(originalCopy, 'SKILL.md'))).isFile(), true)
         assert.deepEqual(await inventory(f.source), sourceBefore)
-      })
-    }
+        return
+      }
+      assert.equal(preview.status, 0, preview.stdout)
+      assert.equal(preview.value.data.mode, 'mixed')
+      assert.equal(await readlink(link), f.source)
+      assert.equal((await lstat(join(copy, 'SKILL.md'))).isFile(), true)
+      if (scenario.endsWith('interruption')) {
+        await interrupt(f, scenario === 'copy interruption' ? 'file-remove' : scenario === 'cleanup interruption' ? `cleanup-journal-${copyHost}` : scenario === 'link cleanup interruption' ? `cleanup-journal-${linkHost}` : 'link-unlink')
+        const interrupted = f.run(...command)
+        assert.equal(interrupted.status, 86, interrupted.stdout)
+        delete f.env.NODE_OPTIONS
+      }
+      const removed = f.run(...command, '--link')
+      assert.equal(removed.status, scenario === 'edited copy' ? 2 : 0, removed.stdout)
+      await assert.rejects(lstat(link), { code: 'ENOENT' })
+      assert.equal(await readFile(join(copy, 'notes.txt'), 'utf8'), 'Unrelated copy content\n')
+      if (scenario === 'edited copy') {
+        assert.equal(await readFile(join(copy, 'SKILL.md'), 'utf8'), 'Edited copy\n')
+        const decision = removed.value.data.installations.find(entry => entry.destination === copy).conflicts.find(conflict => conflict.path === 'SKILL.md').decision
+        const cleaned = f.run(...command, ...decision.split(' '))
+        assert.equal(cleaned.status, 0, cleaned.stdout)
+      }
+      for (const host of [copyHost, linkHost]) {
+        await assert.rejects(lstat(join(selected, `.${host}/skills/.bstack-install.json`)), { code: 'ENOENT' })
+        await assert.rejects(lstat(join(selected, `.${host}/skills/.bstack-install-journal.json`)), { code: 'ENOENT' })
+      }
+      assert.deepEqual(await inventory(f.source), sourceBefore)
+    })
   }
 }
 

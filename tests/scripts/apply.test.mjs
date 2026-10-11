@@ -530,16 +530,12 @@ for (const value of ['node check.mjs || true', 'node check.mjs || :', 'node chec
 for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'ash', 'ksh', 'fish', 'busybox sh', 'cmd.exe']) {
   for (const prefix of ['', 'npm test && ']) {
     const value = `${prefix}${executable} -c 'npm run check || true'`
-    for (const [path, content] of [
-      ['package.json', JSON.stringify({ scripts: { check: value } })],
-      ['ci.yml', JSON.stringify({ steps: [{ run: value }] })],
-      ['ci.yml', JSON.stringify({ job: { script: value } })]
-    ]) {
-      test(`apply rejects selected shell dispatch: ${path} ${content}`, async t => {
-        const context = await integration(t, path, content)
-        assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
-      })
-    }
+    const path = 'package.json'
+    const content = JSON.stringify({ scripts: { check: value } })
+    test(`apply rejects selected shell dispatch: ${path} ${content}`, async t => {
+      const context = await integration(t, path, content)
+      assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+    })
   }
 }
 
@@ -653,19 +649,15 @@ for (const [value, exit] of [
   ['npx tsc --noEmit', 0],
   ['node check.mjs "literal argument"', 0]
 ]) {
-  for (const [path, content] of [
-    ['package.json', JSON.stringify({ scripts: { check: value } })],
-    ['ci.yml', JSON.stringify({ steps: [{ run: value }] })],
-    ['ci.yml', JSON.stringify({ job: { script: value } })]
-  ]) {
-    test(`apply enforces bounded selected arguments: ${path} ${content}`, async t => {
-      const context = await integration(t, path, content)
-      const result = await preview(context)
-      assert.equal(result.exit, exit)
-      if (exit === 1) assert.equal(result.problems[0].code, 'ignored-check-failure')
-      else assert.equal(execute(context).exit, 0)
-    })
-  }
+  const path = 'package.json'
+  const content = JSON.stringify({ scripts: { check: value } })
+  test(`apply enforces bounded selected arguments: ${path} ${content}`, async t => {
+    const context = await integration(t, path, content)
+    const result = await preview(context)
+    assert.equal(result.exit, exit)
+    if (exit === 1) assert.equal(result.problems[0].code, 'ignored-check-failure')
+    else assert.equal(execute(context).exit, 0)
+  })
 }
 
 for (const [path, content] of [

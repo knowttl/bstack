@@ -564,7 +564,8 @@ Phase evidence from the design: no missing local references or undeclared runtim
    Never discover tests inside fixture sources, installed dependencies or evaluation workspaces.
    Fail when the selected suite has no tests.
    Support `--task <id>` to select that task's registered suites.
-6. Add one meaningful bootstrap test that checks manifest commands, lockfile consistency and test-discovery exclusions.
+6. Add meaningful bootstrap tests for test-discovery exclusions, task selection and empty-suite rejection.
+   Let `npm ci` enforce manifest and lockfile consistency rather than restating package declarations in a test.
 7. Define the task evidence record from "Task evidence contract", with a versioned schema under `tests/eval/`.
 8. Done in commissioning slice C0: the design and implementation plan are in `docs/`, with corrected relative links and recorded provenance.
    Preserve the original personal-repo copies as migration references until the owner chooses their retirement.
