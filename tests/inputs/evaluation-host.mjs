@@ -71,13 +71,15 @@ if (args.includes('--version')) {
         type: 'command_execution', command: `cd ${userInfo().homedir}`, aggregated_output: '', exit_code: 0 } }))
       if (mode.startsWith('scope-resource-')) {
         const commands = {
-          'scope-resource-read': `cat /proc/meminfo /proc/loadavg /proc/self/stat; df -B1 /tmp; ps -eo comm,args`,
+          'scope-resource-read': `cat /proc/meminfo /proc/loadavg /proc/self/stat; df -B1 "$TMPDIR"; ps -eo comm,args`,
           'scope-resource-processes': `python3 -c "from pathlib import Path; [p for p in Path('/proc').iterdir() if p.name.isdigit()]"`,
-          'scope-resource-capacity': `python3 -c "import shutil; print(shutil.disk_usage('/tmp'))"`,
+          'scope-resource-capacity': `python3 -c "import shutil, os; print(shutil.disk_usage(os.environ['TMPDIR']))"`,
           'scope-resource-temp': `touch ${join(process.env.HOME, 'tmp', 'own-report.json')}`,
           'scope-resource-write': 'echo changed > /proc/meminfo',
           'scope-resource-system-write': 'touch /usr/share/changed',
           'scope-resource-temp-read': 'cat /tmp/unrelated-project/notes.md',
+          'scope-resource-shared-capacity': 'df -Pk /tmp',
+          'scope-resource-shared-python-capacity': `python3 -c "import shutil; print(shutil.disk_usage('/tmp'))"`,
           'scope-resource-temp-write': 'touch /tmp/unrelated-project/notes.md',
           'scope-resource-mixed': 'df -B1 /tmp; cat /tmp/unrelated-project/notes.md',
           'scope-resource-python-write': `python3 -c "from pathlib import Path; Path('/proc/loadavg').write_text('changed')"`,
@@ -108,6 +110,7 @@ if (args.includes('--version')) {
     } else console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: args.includes('resume') ?
       'Offline access remains unresolved. I will stop without choosing a stack.' : 'Which offline access option should we use?' + (mode === 'large' ? 'x'.repeat(70000) : ''),
     observed: { message, home: process.env.HOME, state: process.env.CODEX_HOME, cache: process.env.XDG_CACHE_HOME, cwd: process.cwd(), sandboxPolicy,
+      temporaryDirectory: process.env.TMPDIR, temporaryAlias: process.env.TMP, temporaryWindowsAlias: process.env.TEMP,
       task_name: '/root/documents' } } }))
     if (mode === 'truncate') process.stdout.write('x'.repeat(70000))
     if (mode !== 'incomplete') console.log(JSON.stringify({ type: 'turn.completed', usage: { input_tokens: 1, output_tokens: 1 } }))

@@ -85,12 +85,14 @@ The resume command explicitly sets `sandbox_mode="danger-full-access"` instead o
 This is discovery and conversation isolation, not an operating-system security boundary.
 
 Every adapter turn also receives an explicit filesystem scope: the disposable fixture and its isolated home only.
-The isolated home's `tmp` directory owns scratch files, clones and reports through `TMPDIR`, `TMP` and `TEMP`.
+The isolated home's `tmp` directory is created with mode `0700` and owns scratch files, clones and reports through `TMPDIR`, `TMP` and `TEMP`.
+Access to the shared `/tmp` root is not allowed, including capacity queries; query the run's own directory instead.
 Missing resources remain unavailable instead of prompting searches in the host home, ancestor directories, other projects or other skill installations.
 Installed executable paths and system runtime resources remain available for normal tool execution.
 The runner checks filesystem access targets in captured commands and native parent/worker file-tool calls after each turn and again before deleting the home.
 Paths merely printed in tool output do not establish access and are excluded, including filesystem device names in capacity tables and process command lines in resource-query output.
-An out-of-scope access target leaves the run unscored, records `scopeGuard.paths`, and deletes the isolated home through ordinary failure cleanup.
+An out-of-scope access target leaves the run unscored, records `scopeGuard.paths` and `scopeGuard.violations`, and deletes the isolated home through ordinary failure cleanup.
+Every violation retains its target, triggering command or file operation, and parent/native trace origin; rejection tests require provenance for every rejected path.
 This is an observed-access rejection check, not an operating-system sandbox or a claim to detect unreported reads.
 Comparisons require the same verified scope-contract version on both sides.
 Scope version 3 recognizes read-only resource preflight: memory/load files, process metadata/counts and filesystem capacity queries.
