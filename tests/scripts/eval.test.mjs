@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename } from 'node:fs/promises'
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -367,8 +367,77 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.equal(observed.state, first.isolation.state)
   assert.equal(observed.cache, join(first.isolation.home, 'cache'))
   assert.equal(observed.cwd, first.fixture.path)
-  assert.equal(observed.message, first.scenario.request)
+  assert.ok(observed.message.endsWith('\n\n' + first.scenario.request))
+  assert.ok(observed.message.includes(`work only inside ${first.fixture.path} and ${first.isolation.home}`))
   assert.ok((await readFile(join(directory, first.id, first.conversation), 'utf8')).includes(first.request))
+})
+
+for (const mode of ['scope-outside', 'scope-host-home', 'scope-output', 'scope-relative',
+  'scope-normalized-escape', 'scope-prefix', 'scope-tool-sibling', 'scope-native-read', 'scope-native-output', 'scope-runtime-skill', 'scope-resume']) {
+  test(`evaluation rejects ${mode} observations without scoring and deletes the isolated home`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const started = hostStart(t, directory, path)
+    const result = mode === 'scope-resume' ? run(directory, 'turn', '--run', started.record.id, '--answer', '1') : started.result
+    const record = result.data.data
+    assert.equal(result.status, 2, result.stdout)
+    assert.equal(record.hostFailure, true)
+    assert.equal(record.scopeGuard.verified, false)
+    assert.ok(record.scopeGuard.paths.length > 0)
+    assert.match(record.reason, /Evaluation scope violated/)
+    assert.equal(record.transcript, null)
+    assert.equal(record.answers, null)
+    assert.equal(record.isolation.verified, false)
+    assert.ok(record.isolation.cleanedAt)
+    await assert.rejects(readFile(join(started.record.isolation.home, '.codex/fake-session.json')), { code: 'ENOENT' })
+    const files = await inputs(directory, record)
+    assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath,
+      '--transcript', join(directory, record.id, record.conversation)).status, 2)
+  })
+}
+
+test('evaluation accepts in-scope reports, runtime executables and non-filesystem URLs and routes', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'scope-valid')
+  const { record } = hostStart(t, directory, path)
+  assert.equal(record.hostFailure, undefined)
+  assert.deepEqual(record.scopeGuard, { version: 1, verified: true, paths: [] })
+  const resumed = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
+  const observed = JSON.parse(resumed.turns[1].result.stdout.trim().split('\n').at(-2)).item.observed
+  assert.ok(observed.message.includes(`work only inside ${record.fixture.path} and ${record.isolation.home}`))
+  assert.ok(observed.message.endsWith('\n\n' + record.scenario.answers[0]))
+  assert.equal(resumed.scopeGuard.verified, true)
+})
+
+test('evaluation scope accepts a maintained repository whose root contains spaces', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'scope-valid')
+  const first = hostStart(t, directory, path, 'without', 'clear-goals').record
+  const repo = join(directory, 'maintained repo')
+  await rename(first.fixture.path, repo)
+  const result = run(directory, '--scenario', 'clear-goals', '--mode', 'without', '--stage', 'final', '--adapter', path, '--repo', repo)
+  const record = result.data.data
+  t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+  assert.equal(record.hostFailure, undefined, result.stdout)
+  assert.equal(record.scopeGuard.verified, true)
+  assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
+})
+
+test('closing rejects out-of-scope worker observations arriving after the parent turn', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const { record } = hostStart(t, directory, path)
+  const sessions = join(record.isolation.state, 'sessions')
+  await mkdir(sessions)
+  await writeFile(join(sessions, 'late-worker.jsonl'), JSON.stringify({ type: 'response_item',
+    payload: { type: 'custom_tool_call', name: 'exec', input: 'cat /tmp/outside-project/SKILL.md' } }) + '\n')
+  const closed = run(directory, 'close', '--run', record.id).data.data
+  assert.equal(closed.scopeGuard.verified, false)
+  assert.equal(closed.isolation.verified, false)
+  assert.ok(closed.isolation.cleanedAt)
+  const files = await inputs(directory, record)
+  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath,
+    '--transcript', join(directory, record.id, record.conversation)).status, 2)
 })
 
 for (const separator of ['\n', '\r', '\t']) {
@@ -448,7 +517,7 @@ test('foundation execution delivers the active checkpoint to the host', async t 
   t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
   t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
   const observed = JSON.parse(record.turns[0].result.stdout.split('\n')[1]).item.observed
-  assert.equal(observed.message, '$repo-audit\nActive checkpoint: foundation.\n' + record.scenario.request)
+  assert.ok(observed.message.endsWith('$repo-audit\nActive checkpoint: foundation.\n' + record.scenario.request))
 })
 
 test('final with-skill execution installs the complete package in the isolated home before the host turn', async t => {

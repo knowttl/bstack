@@ -1,5 +1,5 @@
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { userInfo } from 'node:os'
 import { execFileSync } from 'node:child_process'
@@ -41,11 +41,37 @@ if (args.includes('--version')) {
       console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution', command: 'ls -la',
         aggregated_output: `total 8\ndrwx------ 2 ${username} ${group} 4096 Oct 8 12:00 .\n-rw-r--r-- 1 ${username} ${group} 123 Oct 8 12:00 brief.md\nOwner: ${username}; group: ${group}\n${username}\n${group}\n` } }))
     }
+    if (mode.startsWith('scope-') && (mode !== 'scope-resume' || args.includes('resume'))) {
+      const outside = join(dirname(process.env.HOME), 'outside-project', 'SKILL.md')
+      const paths = {
+        'scope-host-home': userInfo().homedir,
+        'scope-relative': '../outside-project/SKILL.md',
+        'scope-normalized-escape': process.env.HOME + '/../outside-project/SKILL.md',
+        'scope-prefix': process.env.HOME + '-other/SKILL.md',
+        'scope-tool-sibling': process.execPath + '/../private-config',
+        'scope-native-read': join(process.env.HOME, 'tmp', 'report.json'),
+        'scope-native-output': join(process.env.HOME, 'tmp', 'report.json'),
+        'scope-runtime-skill': '/usr/share/skills/repo-audit/SKILL.md',
+        'scope-valid': join(process.env.HOME, 'tmp', 'report.json')
+      }
+      console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution',
+        command: mode === 'scope-output' ? 'find .' : `cat ${paths[mode] ?? outside}`,
+        aggregated_output: mode === 'scope-output' ? JSON.stringify({ target: outside }) : mode === 'scope-valid' ?
+          `${process.execPath}\n${process.cwd()}/brief.md\n/api/items\nhttp://localhost:3000/home/profile\n... 2 more lines\n` : '' } }))
+      if (mode.startsWith('scope-native-')) {
+        const directory = join(process.env.CODEX_HOME, 'sessions')
+        await mkdir(directory, { recursive: true })
+        const payload = mode === 'scope-native-read' ? { type: 'custom_tool_call', name: 'exec', input: `cat ${outside}` } :
+          { type: 'custom_tool_call_output', output: JSON.stringify({ output: outside }) }
+        await writeFile(join(directory, 'worker.jsonl'), JSON.stringify({ type: 'response_item', payload }) + '\n')
+      }
+    }
     if (mode === 'maintenance') {
       for (const event of await maintenanceSession()) console.log(JSON.stringify(event))
     } else console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: args.includes('resume') ?
       'Offline access remains unresolved. I will stop without choosing a stack.' : 'Which offline access option should we use?' + (mode === 'large' ? 'x'.repeat(70000) : ''),
-    observed: { message, home: process.env.HOME, state: process.env.CODEX_HOME, cache: process.env.XDG_CACHE_HOME, cwd: process.cwd(), sandboxPolicy } } }))
+    observed: { message, home: process.env.HOME, state: process.env.CODEX_HOME, cache: process.env.XDG_CACHE_HOME, cwd: process.cwd(), sandboxPolicy,
+      task_name: '/root/documents' } } }))
     if (mode === 'truncate') process.stdout.write('x'.repeat(70000))
     if (mode !== 'incomplete') console.log(JSON.stringify({ type: 'turn.completed', usage: { input_tokens: 1, output_tokens: 1 } }))
   }
