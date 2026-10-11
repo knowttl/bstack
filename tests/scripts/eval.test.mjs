@@ -479,6 +479,26 @@ test('final with-skill execution installs the complete package in the isolated h
   await assert.rejects(readFile(join(record.isolation.stagedPath, 'SKILL.md')), { code: 'ENOENT' })
 })
 
+test('final follow-up uses the explicit maintained repository in a fresh skill-free conversation', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const first = hostStart(t, directory, path, 'without', 'clear-goals').record
+  const result = run(directory, '--scenario', 'clear-goals', '--mode', 'without', '--stage', 'final', '--adapter', path, '--repo', first.fixture.path)
+  const record = result.data.data
+  assert.equal(record.hostFailure, undefined, result.stdout)
+  t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+  assert.equal(record.fixture.path, first.fixture.path)
+  assert.equal(record.fixture.reused, true)
+  assert.notEqual(record.isolation.home, first.isolation.home)
+  assert.notEqual(record.sessionId, first.sessionId)
+  assert.deepEqual(record.isolation.discovered, [])
+  assert.equal(record.installer, undefined)
+  const observed = JSON.parse(record.turns[0].result.stdout.trim().split('\n')[1]).item.observed
+  assert.equal(observed.cwd, first.fixture.path)
+  assert.equal(run(directory, '--scenario', 'clear-goals', '--mode', 'without', '--stage', 'baseline', '--adapter', path, '--repo', first.fixture.path).status, 3)
+  assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
+})
+
 test('scripted replies resume the exact host conversation, preserve user turns and require ordered answers', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
