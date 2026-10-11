@@ -512,7 +512,8 @@ Instruction entries also contain `directory`, `scope`, `insideRepo`, `scoped` an
 `.claude/CLAUDE.md` governs its parent scope, not the `.claude` folder alone.
 Other instruction names inside `.claude` keep that folder as their scope.
 Paths and directories inside the repo are repo-relative, using forward slashes, and the root scope is `.`.
-Instruction sources in ancestor directories, including ancestor `.claude/CLAUDE.md`, use absolute paths and have `insideRepo: false`.
+Instruction discovery is limited to files inside the selected repo, with `insideRepo: true`.
+Ancestor-directory and user-profile instruction files are neither inspected nor reported.
 Missing repo-owned source kinds appear in `absent`, without failure or an invented fallback document.
 Discovered sources require content review to establish authority.
 
@@ -521,7 +522,7 @@ Candidates carry `path`, `destination`, `scope`, `requiresEquivalentContent`, a 
 They require equivalent-content review, a fresh official documentation and runtime check, author approval and protected edits before removal.
 Distinct nested guidance stays scoped and produces no root consolidation candidate.
 An exact-byte equivalent nested file or a lone import of the same scope's existing `AGENTS.md` yields only a candidate targeting that scope's `AGENTS.md`.
-Local variants and ancestor instructions are possible shadowing reports with `modifiable: false`, never consolidation candidates.
+Local variants inside the repo are possible shadowing reports with `modifiable: false`, never consolidation candidates.
 
 ## Research citation check
 
@@ -685,7 +686,8 @@ Scaffold paths use canonical forward slashes and cannot contain .git components 
 
 Dry run builds the scaffold only in external scratch and returns its path, destination, complete diff and declared commands.
 Plain output also prints the complete diff.
-After approval, omit --dry-run with the unchanged plan.
+Follow the skill's [Step 5](../skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for scratch verification, repair and review before obtaining approval of the final plan.
+After that approval, omit --dry-run with the unchanged plan.
 The directory and Git journal is creation.json in destination-keyed scratch, with directory intentions saved before mkdir and Git intention saved before git init.
 The T2.6 engine owns the file journal, atomic writes, actual-hash recovery and user-edit conflicts.
 Git is initialised only at the reviewed destination and global configuration is never changed.

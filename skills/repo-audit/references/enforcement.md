@@ -40,6 +40,7 @@ Avoid arbitrary file, function or rule-count limits without a project-specific r
 | Write each rule once | Generated settings match the authoritative source | Deterministic regeneration and comparison | A stale generated value fails |
 | Validate external input | Reject invalid input at the actual public boundary | Behaviour tests and applicable schema or type checks | Invalid input is rejected and valid input succeeds |
 | Keep behaviour stable during cleanup | Existing supported journeys remain compatible | Relevant integration or end-to-end checks | The same supported journeys pass before and after the change |
+| Tests protect agreed behaviour | Tests call the public interface and take expected results from an approved source | Human review against the acceptance source | A test asserting private implementation, or an expectation copied from implementation output, is identified in review |
 | Keep dependencies purposeful | New abstractions serve a current use and a clear responsibility | Human design review against vision and technical design | Review identifies the requirement, responsibility and simpler alternative |
 
 Do not disguise a human design judgement as a deterministic violation.
@@ -140,7 +141,7 @@ Keep review standards actionable and scoped, with a reason, example and exceptio
 
 Tool configurations own formatting values and executable constraints.
 Standards link to those checks rather than copying settings.
-Agent instructions point to the relevant documents and commands while preserving distinct scopes.
+Agent instructions point to the project's rules, evidence requirements and maintained check commands while preserving distinct scopes.
 If a selected edit moves a review rule, replace its old text with a link to the new authority.
 Design documents may explain the structural decision without maintaining a second copy of the standard.
 Read relevant existing decisions before proposing a conflicting rule.
