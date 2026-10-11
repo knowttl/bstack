@@ -359,7 +359,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
-        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/conversation.txt", "tests/eval/results/release/runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/artifacts/units.json"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-52-14.471Z-6a5b5c5a-d2cf-4b9e-8787-3194f2f3935e/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-52-14.471Z-6a5b5c5a-d2cf-4b9e-8787-3194f2f3935e/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -399,7 +403,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
-        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/conversation.txt"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-52-14.471Z-6a5b5c5a-d2cf-4b9e-8787-3194f2f3935e/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-52-14.471Z-6a5b5c5a-d2cf-4b9e-8787-3194f2f3935e/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -411,7 +419,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
-        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/conversation.txt"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-52-14.471Z-6a5b5c5a-d2cf-4b9e-8787-3194f2f3935e/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-52-14.471Z-6a5b5c5a-d2cf-4b9e-8787-3194f2f3935e/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -699,7 +711,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "scope-and-prerequisites",
-        "artifacts": ["tests/eval/results/release/scope-and-prerequisites-comparison.json", "tests/eval/results/release/runs/2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f/artifacts/independent-verification.json", "tests/eval/results/release/runs/2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f/conversation.txt"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-52-11.496Z-7b2b53d5-fe50-4bee-b37b-8f19f87755b4/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-52-11.496Z-7b2b53d5-fe50-4bee-b37b-8f19f87755b4/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -839,7 +855,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "scope-and-prerequisites",
-        "artifacts": ["tests/eval/results/release/scope-and-prerequisites-comparison.json", "tests/eval/results/release/runs/2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f/artifacts/independent-verification.json", "tests/eval/results/release/runs/2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f/conversation.txt"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-52-11.496Z-7b2b53d5-fe50-4bee-b37b-8f19f87755b4/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-52-11.496Z-7b2b53d5-fe50-4bee-b37b-8f19f87755b4/artifacts/independent-verification.json"
+        ]
       }
     },
     {
