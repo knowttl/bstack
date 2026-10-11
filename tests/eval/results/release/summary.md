@@ -1,8 +1,9 @@
 # Final release evaluation
 
 Final evaluation is incomplete and does not establish release readiness.
-Evaluation stopped at [unmet AC-7 and AC-12](existing-repo-failed-cases.md): the final TypeScript foundation run lists conflicts without asking the required targeted questions.
-Its comparison improves from 13/19 to 17/19 with no lost checks, but neither failed case is waived or selected as passing release evidence.
+The [targeted-question repair](existing-repo-question-repair.md) resolves the historical AC-7 and AC-12 failure in one new pinned-container run: 19/19 against the retained 13/19 baseline, with no lost checks.
+The completed [existing-vision comparison](existing-vision-delta-comparison.json) passes its candidate-delta rubric in both modes while keeping missing board approval blocked.
+The skill instruction change makes the earlier with-skill captures below historical observations that require refresh before final selection.
 The complete acceptance validator, all-case coverage and scenario comparisons are not yet complete.
 AC-57 and AC-68 now pass the [final container comparison](scope-and-prerequisites-comparison.json), retaining both checks that already passed in the approved baseline.
 The [with-skill conversation](runs/2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc/conversation.txt) asks the unresolved scope question, selects no write path, records the exact missing parent and leaves dependent work blocked.
