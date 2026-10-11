@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "contentHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "total",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Checkout total is 10",
+      "userJourney": true
+    },
+    {
+      "id": "boundary",
+      "sourceId": "instructions",
+      "pointer": "Use the approved design and public core interface.",
+      "outcome": "Web uses public core and never touches storage",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "check",
+      "role": "protection",
+      "command": {
+        "executable": "bash",
+        "args": [
+          "[isolated-home][scratch-path]",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "[isolated-home][scratch-path]",
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "test",
+      "role": "protection",
+      "command": {
+        "executable": "bash",
+        "args": [
+          "[isolated-home][scratch-path]",
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "[isolated-home][scratch-path]",
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "total"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "protection",
+      "command": {
+        "executable": "bash",
+        "args": [
+          "[isolated-home][scratch-path]",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "[isolated-home][scratch-path]",
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "outcome",
+      "command": {
+        "executable": "bash",
+        "args": [
+          "[isolated-home][scratch-path]",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "[isolated-home][scratch-path]",
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "total"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    }
+  ]
+}

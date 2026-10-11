@@ -41,8 +41,8 @@
   "stage": "final",
   "mode": "without",
   "request": "Active checkpoint: final.\nAudit the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the audit finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
-  "status": "blocked",
-  "reason": "Host turn captured. Review the question, send its scripted answer with eval turn, then score the transcript.",
+  "status": "passed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
   "isolation": {
     "home": "[isolated-home]",
     "state": "[isolated-home]/.codex",
@@ -65,9 +65,21 @@
     "checkedAt": "2026-10-11T21:24:23.896Z",
     "cleanedAt": "2026-10-11T21:24:23.921Z"
   },
-  "transcript": null,
-  "answers": null,
-  "caseResults": [],
+  "transcript": "1f64d839-a436-4d32-afb3-998dde0b4311/transcript.txt",
+  "answers": "1f64d839-a436-4d32-afb3-998dde0b4311/answers.json",
+  "caseResults": [
+    {
+      "id": "delta",
+      "caseId": "AC-55",
+      "question": "Against docs/evaluation.md's existing-vision delta rubric, did it propose and review a minimal evidenced delta preserving the approved baseline and keep unavailable board approval blocked?",
+      "passed": true,
+      "startLine": 10,
+      "endLine": 26,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "1f64d839-a436-4d32-afb3-998dde0b4311/transcript.txt"
+    }
+  ],
   "adapter": {
     "schemaVersion": 1,
     "executable": "codex",
@@ -321,5 +333,6 @@
     "verified": true,
     "paths": []
   },
-  "conversationHash": "ca36f8190622866f0e77a0b982ba20a57d9676690755a4415c7e62a19ea0e5c6"
+  "conversationHash": "ca36f8190622866f0e77a0b982ba20a57d9676690755a4415c7e62a19ea0e5c6",
+  "scoredAt": "2026-10-11T21:31:27.000Z"
 }

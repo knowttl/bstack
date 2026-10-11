@@ -1,11 +1,14 @@
 # Unmet final acceptance cases
 
+This is historical failure evidence, superseded by the [question repair](existing-repo-question-repair.md) and its 19/19 final run.
+The failed run and original score remain unchanged.
+
 AC-7 and AC-12 failed in the completed final `existing-repo` with-skill run.
 Evaluation stopped without waiving either case, repeating the unchanged agent input or marking the release complete.
 
 The [with-skill run](runs/2026-10-11T21-16-16.926Z-20e6769c-4955-4fcf-ac1c-c8a2a8cc0ad7/run.json) records source `65cffc4dca2cb1503d5e2b414f06b8bc2642dfbb`, the pinned container, Codex CLI 0.162.1 and gpt-6.1-sol with medium reasoning.
 Both runs use fixture revision `c8576a3095a37da037d42c4bdf358d6372f5a91e`, matching criteria and adapter, and complete both scripted answers.
-The [comparison](existing-repo-comparison.json) passes the design's improvement rule: baseline 13/19, with-skill 17/19, four gained checks and none lost.
+The [historical comparison](existing-repo-before-question-repair-comparison.json) passes the design's improvement rule: baseline 13/19, with-skill 17/19, four gained checks and none lost.
 That improvement does not establish passing evidence for every acceptance case.
 All-case release readiness remains blocked.
 

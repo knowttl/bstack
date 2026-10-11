@@ -43,8 +43,10 @@
       "criterionSource": "docs/design.md#AC-4",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An existing repo presents findings before changing source, configs or instructions."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -53,8 +55,10 @@
       "criterionSource": "docs/design.md#AC-5",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An existing-project invocation starts with repo discovery and audit before any goal interview."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -75,8 +79,10 @@
       "criterionSource": "docs/design.md#AC-7",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Missing or contradictory intent produces targeted questions after the evidence review, with the affected recommendation identified."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -85,8 +91,10 @@
       "criterionSource": "docs/design.md#AC-8",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Existing-project recommendations cite their supporting principle and evidence, and retain approved documents unless the user chooses an update."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -105,8 +113,10 @@
       "criterionSource": "docs/design.md#AC-10",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An existing repo with a glossary and standards uses those sources before asking questions, including relevant context documents."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -127,8 +137,10 @@
       "criterionSource": "docs/design.md#AC-12",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Conflicting definitions produce an evidenced question, while proposed glossary entries remain drafts until confirmed or selected."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -137,8 +149,10 @@
       "criterionSource": "docs/design.md#AC-13",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Equivalent words in different domain contexts do not trigger a false duplicate-term failure."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -147,8 +161,10 @@
       "criterionSource": "docs/design.md#AC-14",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A rule already in DESIGN.md or CONTRIBUTING.md stays authoritative, and mechanical rules use native checks instead of duplicate prose."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -259,8 +275,10 @@
       "criterionSource": "docs/design.md#AC-25",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Verification requirements express user outcomes and evidence without automatically dispatching a TDD skill or prescribing a universal sequence."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -279,8 +297,10 @@
       "criterionSource": "docs/design.md#AC-27",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A fixture with passing unit tests but a failing agreed user journey cannot produce a ready verdict."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -321,8 +341,10 @@
       "criterionSource": "docs/design.md#AC-31",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A fixture whose mock disagrees with the real endpoint cannot produce a ready verdict."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -415,8 +437,10 @@
       "criterionSource": "docs/design.md#AC-39",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Where the agent records the files it opened, every opened file matches a \"load when\" condition that applied."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -425,8 +449,10 @@
       "criterionSource": "docs/design.md#AC-40",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: The agent runs bundled scripts without reading their source, and passes board assets to the launcher without reading them."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -457,8 +483,10 @@
       "criterionSource": "docs/design.md#AC-43",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: In the current agent, the explicit command starts repo-audit."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -519,8 +547,10 @@
       "criterionSource": "docs/design.md#AC-49",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo with a repo-owned `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge of its equivalent content into `AGENTS.md` and the Claude Code version limit. Distinct scoped instructions keep their meaning, and local variants inside the repo are reported as shadowing without modification. Instruction files outside the repo are neither inspected nor reported."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -529,8 +559,10 @@
       "criterionSource": "docs/design.md#AC-50",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A mixed-responsibility file and a cluster of tightly coupled small files both produce evidenced architecture candidates."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -561,8 +593,10 @@
       "criterionSource": "docs/design.md#AC-53",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Proposed parallel changes identify shared write paths and shared contract changes before implementation."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -583,8 +617,10 @@
       "criterionSource": "docs/design.md#AC-55",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: The agent proposes a reviewed delta to an existing vision instead of replacing it silently."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-vision-delta",
+        "artifacts": ["tests/eval/results/release/existing-vision-delta-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -671,8 +707,10 @@
       "criterionSource": "docs/design.md#AC-63",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repeated existing pattern that conflicts with an approved principle remains an audit finding instead of becoming a permanent standard."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {
@@ -693,8 +731,10 @@
       "criterionSource": "docs/design.md#AC-65",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A foundation recommendation explains what must remain true without prescribing a general implementation sequence."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo",
+        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
       }
     },
     {

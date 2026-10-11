@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API workspace",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "VISION.md:3-7 is approved and preserves one-reader save/find/mark-read and first-version exclusions. DESIGN.md:10-13 adds approved personal backup export and explicitly identifies missing acceptance/resistance criteria without approving implementation or stack change. glossary.md:3-5 includes read articles in the queue and defines article fields. Accessible commits cdef266 then 4e5e6b9 establish decision order; only DESIGN.md changed in the latter.",
+      "limitations": [
+        "Main-thread research: only three short files; delegation would be wasteful. No implementation, executable native checks, manifests, CI, or remote PR evidence available in the target."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        },
+        {
+          "location": "VISION.md:5",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        },
+        {
+          "location": "VISION.md:6",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        },
+        {
+          "location": "DESIGN.md:10",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        },
+        {
+          "location": "DESIGN.md:11",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        },
+        {
+          "location": "DESIGN.md:12",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        },
+        {
+          "location": "DESIGN.md:13",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}
