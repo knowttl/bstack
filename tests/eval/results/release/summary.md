@@ -15,7 +15,7 @@ The [pinned image setup](container-setup.json) includes real browser, offline Py
 The parser's `/` hits are retained as advisory evidence; Docker's inspected two-mount configuration enforces host isolation.
 Fresh container captures remain pending for the other final scenarios.
 AC-6 and AC-38 pass the [clear-goals comparison](clear-goals-comparison.json), with both baseline checks preserved.
-The [complete with-skill conversation](runs/2026-10-11T20-44-18.073Z-769b1d74-9b4b-421a-9613-1e6d5c26defd/conversation.txt) reuses approved project goals, proposes appropriate checks and never opens the bundled vision, intent-interview or domain-language references.
+The [complete with-skill conversation](runs/2026-10-11T21-47-33.222Z-f53b4528-a439-4e62-818d-910c15edc66b/conversation.txt) reuses approved project goals, proposes appropriate checks and never opens the bundled vision, intent-interview or domain-language references.
 Both runs completed the same two scripted answers under the pinned container image and matching fixture revision, criteria, adapter and tool versions.
 AC-34, AC-36, AC-37 and AC-48 pass the [container subagent comparison](research-subagents-comparison.json).
 Three independent workers overlap before returning their first reports, with language and outside briefs assigned in a second wave.
@@ -30,12 +30,12 @@ The with-skill run also observed the actual journey and boundary failures instea
 Its [native unit capture](runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/artifacts/units.json), resource wrapper source and structured check/probe results are retained.
 The scorer accepts structured native unit evidence behind a resource wrapper and preflight output, while rejecting truncated captures, changed Node versions, unrun commands and assistant claims.
 The Python [container fallback comparison](research-main-python-comparison.json) passes all three checks against a baseline lacking the installed research resources.
-Its effective adapter disables general-purpose delegation; the [native trace](runs/2026-10-11T21-02-36.654Z-e0404627-bc0f-4181-9cc0-477bbce59e3e/main-thread-trace.jsonl) records sequential main-thread source inspection without delegation.
-The [original five-brief report](runs/2026-10-11T21-02-36.654Z-e0404627-bc0f-4181-9cc0-477bbce59e3e/artifacts/research-report.json) explicitly marks language and outside recommendations not researched under the no-web constraint.
-Both the agent and evaluator independently passed all 51 original citations; project bytes remained clean and the login copy was absent after the turn.
+Its effective adapter disables general-purpose delegation; the [native trace](runs/2026-10-11T21-53-22.949Z-567a3c83-460a-43f7-a82e-d77b63b37d8d/main-thread-trace.jsonl) records sequential main-thread source inspection without delegation.
+The [original five-brief report](runs/2026-10-11T21-53-22.949Z-567a3c83-460a-43f7-a82e-d77b63b37d8d/artifacts/research-report.json) explicitly marks language and outside recommendations not researched under the no-web constraint.
+Both the agent and evaluator independently passed all 42 original citations; project bytes remained clean and the login copy was absent after the turn.
 The TypeScript [container fallback comparison](research-main-typescript-comparison.json) also passes all three checks.
-Its [native main-thread trace](runs/2026-10-11T21-05-38.869Z-74301d5b-83cc-4b39-8bb2-04e2389077f8/main-thread-trace.jsonl) and [five-brief report](runs/2026-10-11T21-05-38.869Z-74301d5b-83cc-4b39-8bb2-04e2389077f8/artifacts/research-report.json) retain the sequential research and explicit no-web limitations.
-The agent and evaluator independently passed its 51 original citations, with clean project bytes and login cleanup verified.
+Its [native main-thread trace](runs/2026-10-11T21-53-25.944Z-2e1e59c5-9c82-4419-acb7-a63d64edfe39/main-thread-trace.jsonl) and [five-brief report](runs/2026-10-11T21-53-25.944Z-2e1e59c5-9c82-4419-acb7-a63d64edfe39/artifacts/research-report.json) retain the sequential research and explicit no-web limitations.
+The agent and evaluator independently passed its 48 original citations, with clean project bytes and login cleanup verified.
 AC-56 passes the [container runtime-independence comparison](runtime-independence-comparison.json).
 Actual availability checks found no router, akashic or no-mistakes; the bounded audit completed with only the installed package and native tools, leaving project bytes unchanged and readiness unverified where product checks were absent.
 AC-42 passes the [implicit-invocation comparison](implicit-invocation-comparison.json), retaining the baseline's passing behavior.

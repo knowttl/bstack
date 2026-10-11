@@ -17,3 +17,11 @@ The assistant describes the decision boundary as a quotation; this paraphrase is
 Both records verify login-copy removal after every turn, inspected container cleanup and deletion of their isolated homes after scoring.
 The earlier comparisons remain separately retained as historical evidence before the question repair.
 Other stale with-skill captures and incomplete scenarios still require final evidence.
+
+The TypeScript and Python main-thread discovery scenarios also pass their final [TypeScript](research-main-typescript-comparison.json) and [Python](research-main-python-comparison.json) comparisons, each 3/3 against retained 0/3 baselines.
+Their last declared checkpoint is discovery, so the runner stages the package without claiming final installer execution for these scenarios.
+Both effective adapters disable general-purpose delegation, and retained native traces record actual sequential main-thread research.
+The original five-brief reports identify capabilities and explicitly mark language and outside recommendations not researched under the author-imposed no-web constraint.
+Independent shipped citation checks pass all 48 TypeScript and 42 Python file citations.
+Original source inspection, no product checks, clean project bytes and login/home/container cleanup remain explicit.
+These fresh captures establish the fallback criterion; the separate subagent and negative-citation scenario still requires refresh.
