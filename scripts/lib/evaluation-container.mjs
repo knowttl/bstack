@@ -39,7 +39,9 @@ export async function containerTurn(record, args, env) {
     completed(await docker(['create', ...options, imageData.Id, record.adapter.executable, ...args]), 'creation')
     const actual = JSON.parse(completed(await docker(['inspect', name]), 'inspection'))[0]
     const observed = actual.Mounts.map(({ Type, Source, Destination, RW }) => ({ Type, Source, Destination, RW }))
-    if (canonicalJSON(observed) !== canonicalJSON(mounts) || actual.Image !== imageData.Id || actual.Config.User !== user ||
+    // Docker orders mounts by destination independently of their argv order.
+    const byDestination = (left, right) => left.Destination.localeCompare(right.Destination)
+    if (canonicalJSON(observed.sort(byDestination)) !== canonicalJSON([...mounts].sort(byDestination)) || actual.Image !== imageData.Id || actual.Config.User !== user ||
         actual.HostConfig.Privileged || actual.HostConfig.NetworkMode !== 'bridge' ||
         Object.keys(actual.HostConfig.PortBindings ?? {}).length || actual.HostConfig.VolumesFrom?.length ||
         actual.HostConfig.CapAdd?.length || canonicalJSON(actual.HostConfig.CapDrop) !== canonicalJSON(['ALL']) ||

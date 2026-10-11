@@ -27,7 +27,7 @@ else if (args[0] === 'create' || args[0] === 'run') {
       mounts.push({ Type: parts.type, Source: parts.source, Destination: parts.target, RW: true })
     }
   }
-  const record = { Image: id, Config: { User: user }, Mounts: mounts, HostConfig: { Privileged: false, NetworkMode: 'bridge', PortBindings: {},
+  const record = { Image: id, Config: { User: user }, Mounts: mounts.sort((left, right) => left.Destination.localeCompare(right.Destination)), HostConfig: { Privileged: false, NetworkMode: 'bridge', PortBindings: {},
     CapAdd: [], CapDrop: ['ALL'], SecurityOpt: ['no-new-privileges'] }, command: args.slice(index + 1), cwd, env }
   if (args[0] === 'create') { writeFileSync(state(name), JSON.stringify(record)); console.log(name) }
   else execute(record)
