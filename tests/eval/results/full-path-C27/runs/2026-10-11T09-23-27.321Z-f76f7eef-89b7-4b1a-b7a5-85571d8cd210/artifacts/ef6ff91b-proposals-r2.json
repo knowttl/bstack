@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "draftRevision": "48e6346ec0fb1e7f684fd7495cd3a0673e866be5e579768ae16702d3de348003",
+  "project": "Pantry list",
+  "runNote": "Resumed review: prior returned decisions remain in review.json; test recovery without changing household ownership or the Rice journey.",
+  "cards": [
+    {
+      "id": "storage-recovery",
+      "title": "Retry saving the complete current session locally",
+      "body": "Offer a local retry after a save failure. When saving becomes available, save the entire current session, including Rice and its needed choice; clear the unsaved indicator only after success. Do not recover by sending household data to a remote service.",
+      "tests": "\u201cWhen saving fails, keep the current session usable and visibly identify unsaved changes.\u201d\n\u201cOnly successful saving establishes reload retention; an unsaved session must never be presented as retained.\u201d",
+      "why": "Accepting lets the household recover work without another edit and keeps retention honest and local. Resisting a separate retry control keeps the interface smaller and could rely on a later edit to trigger saving, but leaves recovery unclear for a household that has finished its list."
+    }
+  ]
+}

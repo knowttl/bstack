@@ -1,0 +1,1 @@
+{"schemaVersion": 1, "id": "foundation", "writePaths": ["package.json", "AGENTS.md", "DESIGN.md", ".bstack/**", "docs/repo-audit.md"], "contracts": [{"id": "checkout-public-core", "files": ["DESIGN.md", "packages/core/index.ts", "packages/web/ui.ts", "journey.mjs"]}]}

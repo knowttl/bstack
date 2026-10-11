@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "runId": "f6cc2ba3-5737-4a62-b418-8acb0cc80035",
+  "draftRevision": "ce748de55a929b1a5e49a0fbf4829ca665beb6c7dcf84f31127b58cc9b52cf67",
+  "complete": true,
+  "verdicts": [
+    {
+      "id": "needed-meaning",
+      "verdict": "In vision",
+      "notes": "Supervisor-delegated fixture verdict, 2026-10-11: accept. Needed is an independent household buying decision, without stock tracking."
+    },
+    {
+      "id": "duplicate-names",
+      "verdict": "In vision",
+      "notes": "Supervisor-delegated fixture verdict, 2026-10-11: accept. Trim and case-fold full names to reuse an existing item; distinguish Brown rice and White rice by their full supplied names."
+    },
+    {
+      "id": "storage-failure",
+      "verdict": "In vision",
+      "notes": "Supervisor-delegated fixture verdict, 2026-10-11: accept. Keep the session usable and visibly unsaved when saving fails; only successful saving establishes reload retention."
+    }
+  ]
+}

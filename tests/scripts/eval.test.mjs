@@ -451,6 +451,56 @@ test('foundation execution delivers the active checkpoint to the host', async t 
   assert.equal(observed.message, '$repo-audit\nActive checkpoint: foundation.\n' + record.scenario.request)
 })
 
+test('final with-skill execution installs the complete package in the isolated home before the host turn', async t => {
+  const directory = await temporary(t)
+  const { path, adapter } = await adapterFile(directory)
+  adapter.timeoutMs = 1800000
+  await writeFile(path, JSON.stringify(adapter))
+  const result = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'with', '--stage', 'final', '--adapter', path)
+  const record = result.data.data
+  assert.ok(record, result.stdout)
+  t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+  t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+  assert.equal(record.hostFailure, undefined, result.stdout)
+  assert.equal(record.installer.status, 'passed')
+  const installed = JSON.parse(record.installer.stdout)
+  assert.equal(installed.status, 'passed')
+  assert.equal(installed.data.mode, 'copy')
+  assert.equal(installed.data.installations[0].destination, record.isolation.stagedPath)
+  assert.equal(installed.data.installations[0].runtime.verified, true)
+  assert.ok(Object.keys(installed.data.installations[0].files).includes('scripts/bstack-check.mjs'))
+  const runtime = JSON.parse(await readFile(join(record.isolation.stagedPath, 'node_modules/lavish-axi/package.json'), 'utf8'))
+  assert.equal(runtime.version, installed.data.installations[0].runtime.version)
+  assert.equal(record.isolation.verified, true)
+  assert.equal(record.turns[0].message, '$repo-audit\nActive checkpoint: final.\n' + record.scenario.request)
+  const artifact = JSON.parse(await readFile(join(directory, record.id, 'installer.json'), 'utf8'))
+  assert.equal(artifact.status, 'passed')
+  assert.ok(!JSON.stringify(artifact).includes(record.isolation.home))
+  const closed = run(directory, 'close', '--run', record.id)
+  assert.equal(closed.data.data.isolation.verified, true)
+  await assert.rejects(readFile(join(record.isolation.stagedPath, 'SKILL.md')), { code: 'ENOENT' })
+})
+
+test('final follow-up uses the explicit maintained repository in a fresh skill-free conversation', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const first = hostStart(t, directory, path, 'without', 'clear-goals').record
+  const result = run(directory, '--scenario', 'clear-goals', '--mode', 'without', '--stage', 'final', '--adapter', path, '--repo', first.fixture.path)
+  const record = result.data.data
+  assert.equal(record.hostFailure, undefined, result.stdout)
+  t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+  assert.equal(record.fixture.path, first.fixture.path)
+  assert.equal(record.fixture.reused, true)
+  assert.notEqual(record.isolation.home, first.isolation.home)
+  assert.notEqual(record.sessionId, first.sessionId)
+  assert.deepEqual(record.isolation.discovered, [])
+  assert.equal(record.installer, undefined)
+  const observed = JSON.parse(record.turns[0].result.stdout.trim().split('\n')[1]).item.observed
+  assert.equal(observed.cwd, first.fixture.path)
+  assert.equal(run(directory, '--scenario', 'clear-goals', '--mode', 'without', '--stage', 'baseline', '--adapter', path, '--repo', first.fixture.path).status, 3)
+  assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
+})
+
 test('scripted replies resume the exact host conversation, preserve user turns and require ordered answers', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
@@ -601,7 +651,7 @@ for (const [name, mutate] of [
   ['shell string', adapter => { adapter.args = 'codex exec' }],
   ['unknown field', adapter => { adapter.shell = true }],
   ['unsupported conversation', adapter => { adapter.invocation.protocol = 'stdin' }],
-  ['unbounded timeout', adapter => { adapter.timeoutMs = 600001 }],
+  ['unbounded timeout', adapter => { adapter.timeoutMs = 1800001 }],
   ['unbounded capture', adapter => { adapter.outputLimitBytes = 16777217 }],
   ['empty capture', adapter => { adapter.outputLimitBytes = 0 }],
   ['missing message placeholder', adapter => { adapter.args = ['exec'] }],

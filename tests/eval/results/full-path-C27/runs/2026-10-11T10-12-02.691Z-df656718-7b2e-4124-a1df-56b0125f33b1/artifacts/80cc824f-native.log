@@ -1,0 +1,35 @@
+
+> check
+> npm run typecheck && npm test && npm run boundaries && npm run journey
+
+
+> typecheck
+> tsc --noEmit
+
+
+> test
+> node --test unit.test.mjs
+
+{"availableMemoryGB": 19.18, "freeDiskGB": 29.86, "load": 9.5869140625, "hostNodeSuitesIncludingProposed": 1}
+✔ public price defaults to one (0.860911ms)
+✔ public price for selected quantity two (0.160113ms)
+✔ checkout HTTP mock (24.649293ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 134.292245
+
+> boundaries
+> node boundaries.mjs
+
+[]
+
+> journey
+> node journey.mjs
+
+{"expectedTotal":10,"order":{"status":201,"total":10}}
+{"quantity":2,"quote":24,"expectedTotal":20,"order":{"status":201,"total":20},"requests":[{"method":"GET","path":"/price"},{"method":"GET","path":"/price"}]}

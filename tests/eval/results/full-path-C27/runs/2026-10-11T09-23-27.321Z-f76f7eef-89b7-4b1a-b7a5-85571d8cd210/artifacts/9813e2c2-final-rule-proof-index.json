@@ -1,0 +1,42 @@
+[
+  {
+    "name": "private",
+    "artifact": "./236e195a-proof.json",
+    "artifactHash": "98ba8ed3112d77024805fe07eb54b64aaad188e8be9b71f056a5d7f14dd2c12f",
+    "validExit": 0,
+    "violationExit": 1,
+    "expect": "UI_PRIVATE_STORAGE"
+  },
+  {
+    "name": "direct",
+    "artifact": "./74e330dd-proof.json",
+    "artifactHash": "ddd9f8b42207d55c85636e7786b149d90fc5e16c3196fc74353d26bb3ac70d86",
+    "validExit": 0,
+    "violationExit": 1,
+    "expect": "UI_DIRECT_STORAGE"
+  },
+  {
+    "name": "member",
+    "artifact": "./edea1f00-proof.json",
+    "artifactHash": "6a711188a40307d85722a247b18d3090e761597b367494094f72b344d71b265f",
+    "validExit": 0,
+    "violationExit": 1,
+    "expect": "UI_DIRECT_STORAGE"
+  },
+  {
+    "name": "integrated-private",
+    "artifact": "./707487e1-proof.json",
+    "artifactHash": "9a4d668177f147a8341ef6b9e1fafe675aeb8f2ea00dc54db966259c7d4ba80d",
+    "validExit": 0,
+    "violationExit": 1,
+    "expect": "UI_PRIVATE_STORAGE"
+  },
+  {
+    "name": "integrated-direct",
+    "artifact": "./29a6006a-proof.json",
+    "artifactHash": "3d121de088b789e94026cec28038746f4b18d9f67cd7622d1ac41646008a29cb",
+    "validExit": 0,
+    "violationExit": 1,
+    "expect": "UI_DIRECT_STORAGE"
+  }
+]

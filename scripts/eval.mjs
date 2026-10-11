@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { platform, release } from 'node:os'
@@ -12,7 +12,7 @@ import { readAdapter, isolate, hostTurn, closeHost, redactEvidence } from './lib
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
 // Adapter runs capture host turns, while unsupported hosts retain the manual interface.
-const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> --answer <one-based-script-index> [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]'
+const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--repo <maintained-fixture>] [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> --answer <one-based-script-index> [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]\n--repo reuses an explicit disposable maintained fixture for a final adapter follow-up; the caller owns its preservation and cleanup.'
 
 async function child(executable, args, targetRoot = root) {
   const result = await runCommand({ root: targetRoot }, { executable, args, cwd: '.', versionArgs: ['--version'], timeoutMs: 120000 })
@@ -36,11 +36,21 @@ async function start(opts, results) {
   }
   if (opts.mode === 'with' && definition.invocation === 'explicit' && !opts.invocation?.trim()) fail('An ordinary with-skill run requires --invocation for the current host.', 'usage-error')
   if (opts.invocation && (opts.mode === 'without' || definition.invocation === 'implicit')) fail('Baseline and implicit runs use the outcome request without --invocation.', 'usage-error')
+  if (opts.repo && (!adapter || opts.stage !== 'final')) fail('--repo requires a final-stage adapter follow-up.', 'usage-error')
   const git = await child('git', ['rev-parse', 'HEAD'])
   const revision = git.stdout.trim()
   const fixtureRevision = (await child('git', ['rev-parse', 'HEAD:tests/fixtures'])).stdout.trim()
-  const built = await child('node', ['tests/fixtures/build.mjs', definition.fixture])
-  const fixture = JSON.parse(built.stdout.trim())
+  let fixture
+  if (opts.repo) {
+    const path = await realpath(resolve(opts.repo))
+    if ((await child('git', ['rev-parse', '--show-toplevel'], path)).stdout.trim() !== path) fail('--repo must name the disposable maintained repository root.')
+    fixture = { name: definition.fixture, path, kind: 'repo', reused: true,
+      head: (await child('git', ['rev-parse', 'HEAD'], path)).stdout.trim(),
+      workingTree: (await child('git', ['status', '--porcelain=v1'], path)).stdout }
+  } else {
+    const built = await child('node', ['tests/fixtures/build.mjs', definition.fixture])
+    fixture = JSON.parse(built.stdout.trim())
+  }
   const id = `${new Date().toISOString().replaceAll(':', '-')}-${randomUUID()}`
   const directory = join(results, id)
   await mkdir(directory, { recursive: true })
@@ -48,7 +58,7 @@ async function start(opts, results) {
     agent: opts.agent, model: opts.model, os: `${platform()} ${release()}`, tools: { node: process.version, git: git.toolVersion.stdout.trim() },
     fixture: { ...fixture, revision: fixtureRevision }, scenario: definition, criteriaHash: hashBytes(canonicalJSON(definition.checks)),
     stage: opts.stage, mode: opts.mode, request: (opts.invocation ? `${opts.invocation}\n` : '') +
-      (opts.stage === 'foundation' ? 'Active checkpoint: foundation.\n' : '') + definition.request,
+      (['foundation', 'final'].includes(opts.stage) ? `Active checkpoint: ${opts.stage}.\n` : '') + definition.request,
     status: 'blocked', reason: 'Awaiting explicit manual answers and transcript. Host isolation is not verified by C7a.',
     isolation: { verified: false }, transcript: null, answers: null, caseResults: [] }
   if (definition.fixture.startsWith('ts-')) {
@@ -70,6 +80,7 @@ async function start(opts, results) {
       record.hostFailure = true
       if (record.isolation.home) await closeHost(record, directory).catch(() => { record.isolation.verified = false })
     }
+    if (record.installer) await writeFile(join(directory, 'installer.json'), redactEvidence(JSON.stringify(record.installer, null, 2) + '\n', record))
   }
   await saveRecord(record, directory, 'wx')
   return record
@@ -194,7 +205,7 @@ try {
   else if (!args.length) fail('Select a manual scenario, score or compare. ' + help)
   else {
     const command = args[0].startsWith('--') ? 'start' : args.shift()
-    const allowed = { start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter'], turn: ['run', 'answer'], close: ['run'], score: ['run', 'answers', 'transcript'], compare: ['without', 'with'] }
+    const allowed = { start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], score: ['run', 'answers', 'transcript'], compare: ['without', 'with'] }
     if (!Object.hasOwn(allowed, command)) fail(`Unknown command: ${command}`, 'usage-error')
     const opts = options(args, [...allowed[command], 'results'], command === 'start' ? ['manual'] : [])
     const results = resolve(opts.results ?? defaultResults)

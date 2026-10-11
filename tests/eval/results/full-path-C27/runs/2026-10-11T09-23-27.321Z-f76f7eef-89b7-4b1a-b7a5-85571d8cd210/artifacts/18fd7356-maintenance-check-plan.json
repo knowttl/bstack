@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "feature",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "c490553424d728e6f96312567d0c847466661c51b5bc8c3fa8a933ac04364f87"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "ui-boundary",
+      "sourceId": "design",
+      "pointer": "UI storage isolation protects honest retention: UI uses the public pantry interface, never private storage imports or direct localStorage access.",
+      "outcome": "UI public interface and DOM rendering pass; private storage imports and direct localStorage fail.",
+      "userJourney": false
+    },
+    {
+      "id": "rice",
+      "sourceId": "design",
+      "pointer": "Add Rice, mark it needed, view Rice on the shopping list, reload and retain it after successful saving.",
+      "outcome": "Real browser Rice journey retains needed item on reload after successful saving.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ],
+        "timeoutMs": 180000
+      },
+      "required": true,
+      "acceptanceCases": [
+        "ui-boundary",
+        "rice"
+      ],
+      "inputScopes": [
+        "src/**",
+        "tests/**",
+        "scripts/**",
+        "index.html",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "eslint.config.mjs",
+        "*.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        ".gitignore"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "cwd": "[isolated-home]/cache/bstack/f3cfad57b15cb91cf4803058adfa7a9da0d48d7c91128c636f8300612953ba0b/20af2c45-6bf2-49e1-9255-301711278b49",
+  "exitCode": 0,
+  "durationSeconds": 6.924896478652954,
+  "stdout": "\n> pantry-app@0.1.0 check\n> node scripts/resources.mjs && npm run format && npm run lint && npm run typecheck && npm run journey\n\n{\"availableMemoryGB\":18.518032384,\"freeDiskGB\":31.481380864,\"load\":2.14,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 format\n> prettier --check src tests scripts index.html package.json tsconfig.json eslint.config.mjs DESIGN.md GLOSSARY.md README.md AGENTS.md .bstack/project.json\n\nChecking formatting...\nAll matched files use Prettier code style!\n\n> pantry-app@0.1.0 lint\n> eslint src\n\n\n> pantry-app@0.1.0 typecheck\n> tsc --noEmit\n\n\n> pantry-app@0.1.0 journey\n> node scripts/resources.mjs && npm run build && node --test tests/journey.test.mjs\n\n{\"availableMemoryGB\":18.352816128,\"freeDiskGB\":31.470084096,\"load\":2.14,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 build\n> tsc\n\nOBSERVED Rice add -> needed -> shopping -> reload retained\nOBSERVED duplicate reuse, full-name variants, unmark, failed save, failed retry, complete-session successful retry and reload\n{\"browser\":\"154.0.8037.57\",\"evidence\":\"[scratch-path]\",\"observed\":\"real DOM and reload\",\"errors\":[]}\n✔ approved household browser outcomes (1275.796889ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1716.952749\n",
+  "stderr": "",
+  "version": "11.13.0\n"
+}

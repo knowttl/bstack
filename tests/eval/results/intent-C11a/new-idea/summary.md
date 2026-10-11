@@ -2,7 +2,7 @@
 
 Source revision: `abe5adabf2307346f66183959576586780b8165b`.
 Host: Linux 6.8.0-142-generic, Node v24.17.0, Codex CLI 0.160.1 and chrome-devtools-axi 0.1.34.
-The adapter and validator now allow 600000 ms, as firstmate authorised because live model revision turns exceed two minutes.
+The adapter and validator now allow 600000 ms, as supervisor authorised because live model revision turns exceed two minutes.
 All 56 evaluation interface tests passed after that change.
 Installed skill command defaults were not changed.
 
@@ -27,7 +27,7 @@ Its reason is `Host turn unavailable or incomplete (0). Follow the manual proced
 The captured conversation is incomplete and has not been scored as passing adapter evidence.
 The saved approval and glossary prove observed outputs, but they do not manufacture a complete adapter transcript or verified final acceptance selection.
 The evaluation contract requires truncated host results to remain blocked.
-Firstmate must decide the next step for complete evaluation capture before T1.7 is marked complete and T2.1 begins.
+Supervisor must decide the next step for complete evaluation capture before T1.7 is marked complete and T2.1 begins.
 
 The isolated home was confirmed absent.
 Both the task browser bridge and private Lavish server returned stopped, and private server state was removed.

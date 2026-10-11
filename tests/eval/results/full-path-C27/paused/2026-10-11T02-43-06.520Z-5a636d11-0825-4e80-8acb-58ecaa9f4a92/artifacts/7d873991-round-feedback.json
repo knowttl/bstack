@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "runId": "402da99a-8489-4d05-94c3-d50441cea84a",
+  "draftRevision": "59d4d3721fe1d43a2777f920c695385b73dc67a8c9339110d30cd0ee4fc8934f",
+  "complete": true,
+  "verdicts": [
+    {
+      "id": "needed-meaning",
+      "verdict": "In vision",
+      "notes": "Supervisor-selected fixture verdicts, 2026-10-11: accept needed-meaning. Needed records the household intention to buy independently of stock. No quantities or stock levels."
+    },
+    {
+      "id": "duplicate-names",
+      "verdict": "In vision",
+      "notes": "Supervisor-selected fixture verdicts, 2026-10-11: accept duplicate-names. Trim names and reuse existing items on case-insensitive full-name matches. Brown Rice and White Rice remain distinct supplied names."
+    },
+    {
+      "id": "storage-failure",
+      "verdict": "In vision",
+      "notes": "Supervisor-selected fixture verdicts, 2026-10-11: accept storage-failure. Keep the current session usable with visible unsaved changes. Never promise retention after reload until local saving succeeds."
+    }
+  ]
+}

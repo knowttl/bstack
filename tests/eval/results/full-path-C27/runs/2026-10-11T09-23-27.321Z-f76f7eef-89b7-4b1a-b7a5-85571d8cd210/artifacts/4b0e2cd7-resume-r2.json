@@ -1,0 +1,12 @@
+{
+  "revision": "48e6346ec0fb1e7f684fd7495cd3a0673e866be5e579768ae16702d3de348003",
+  "draft": "./5d02ccc1-draft.md",
+  "previousReview": "./d8253b8f-review.json",
+  "board": "./bb4d8dd0-board.html",
+  "runId": "893d899a-d86b-41fe-8014-e3f1eece7858",
+  "url": "http://127.0.0.1:4387/session/bb4d8dd0933d6811",
+  "listenerExecutable": "[host-home]/.nvm/versions/node/v24.17.0/bin/node",
+  "listenerScript": "[isolated-home]/.agents/skills/repo-audit/node_modules/lavish-axi/dist/cli.mjs",
+  "listenerSession": 5146,
+  "approval": "pending; resumed browser feedback pending"
+}

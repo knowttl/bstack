@@ -1,0 +1,107 @@
+{
+  "verdict": "complete full existing-repo path; ready for the stated next change",
+  "assessedRevision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+  "implementationCommit": "c819be12fdfc25cf0903c9968eebb83b076787f9",
+  "comparisonBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "findingsFingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+  "selectedFindingIds": [
+    "F-001",
+    "F-002",
+    "F-003",
+    "F-004",
+    "F-005",
+    "F-006"
+  ],
+  "changedPaths": [
+    ".bstack/assessment.json",
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "docs/repo-audit.md",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/web/alias.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts"
+  ],
+  "unmappedPaths": [],
+  "workingTree": "clean",
+  "clone": {
+    "root": "[scratch-path]",
+    "home": "[scratch-path]",
+    "cache": "[scratch-path]",
+    "npmCache": "[scratch-path]",
+    "revision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+    "workingTree": "",
+    "setupExit": 0,
+    "checkerExit": 0
+  },
+  "checkerEvidence": [
+    {
+      "capture": "./5f8d73fe-final-checker-working.json",
+      "captureHash": "f9cdc42ad6a9d748d3477bbf85eb99835f32bb86ae63f369d0d21d1f2a39a198",
+      "resultArtifact": "./024cc4a3-checker-result.json",
+      "resultHash": "4adb080457ccb691f990865c2916cdc8cfc85990883b96704ec6b14435682cab",
+      "sourceRevision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+      "comparison": {
+        "source": "c819be12fdfc25cf0903c9968eebb83b076787f9",
+        "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+        "mergeBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+      },
+      "leafCount": 1,
+      "leafStatus": "passed"
+    },
+    {
+      "capture": "./df43a9aa-final-checker-clone.json",
+      "captureHash": "49fe0773100ed96356e1c0b2d5453e612027886dd00c362a57dad7cd2a3b2897",
+      "resultArtifact": "./653eba83-checker-result.json",
+      "resultHash": "f8b38838adac4e47cc3c81f959c32f039370fe95d2ee1f44b06ddb9413527dee",
+      "sourceRevision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+      "comparison": {
+        "source": "c819be12fdfc25cf0903c9968eebb83b076787f9",
+        "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+        "mergeBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+      },
+      "leafCount": 1,
+      "leafStatus": "passed"
+    }
+  ],
+  "acceptance": {
+    "actualPublicUiHttpCheckout": {
+      "status": 201,
+      "total": 10
+    },
+    "publicQuote": 12,
+    "reseededEndpoint12": "rejected by unchanged assertion 10"
+  },
+  "preservation": {
+    "userNote": "exact bytes retained",
+    "historicalSnapshotHash": "08ea29cd90431ae5aaf84b4675fe2c7a5cc453b5dfdc6fd9946fba182806618e",
+    "authoritativeNames": "retained",
+    "standaloneCheckerInstalledAssetHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+  },
+  "hostSuitePreflights": {
+    "everyRecordedGatePassed": true,
+    "minimumMemoryGb": 17.966649344,
+    "minimumFreeDiskGb": 30.376337408,
+    "maximumLoad": 5.68994140625,
+    "maximumSuitesIncludingProposed": 1
+  },
+  "currentHeadFindings": "./fcfeb033-final-findings.json",
+  "assessedReport": "./10bc1c38-final-assessed-report.md",
+  "limits": [
+    "Ready for the stated next change based on the assessed committed state, not for unrequested product journeys.",
+    "Only default-quantity local HTTP checkout and existing public quote behavior were exercised; no deployed price service observed.",
+    "Native boundary analysis covers static imports/re-exports, aliases and cycles; dynamic imports/runtime loading require review. Restriction to the named public core entry is also a review requirement.",
+    "Receipt wording remains a future owner decision; dependent receipt changes need that decision.",
+    "No hosted CI or delivery service selected or verified.",
+    "History has one original fixture commit; measurements and declared overlap remain advisory, not semantic coupling or conflict proof.",
+    "Current findings bind artifact hashes and final target fingerprint; findings validation checks record structure/freshness, while actual child executions and semantic review are separate evidence.",
+    "Historical snapshot is unchanged; final assessed findings and results stay in scratch."
+  ],
+  "furtherProtectedWrites": "none; any new write requires exact review"
+}

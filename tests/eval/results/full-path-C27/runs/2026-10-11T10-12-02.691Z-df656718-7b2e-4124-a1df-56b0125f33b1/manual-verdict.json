@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T10-12-02.691Z-df656718-7b2e-4124-a1df-56b0125f33b1",
+  "reviewer": "C27 current-agent manual review",
+  "checks": [
+    { "id": "extension", "passed": true, "startLine": 1, "endLine": 45 }
+  ]
+}

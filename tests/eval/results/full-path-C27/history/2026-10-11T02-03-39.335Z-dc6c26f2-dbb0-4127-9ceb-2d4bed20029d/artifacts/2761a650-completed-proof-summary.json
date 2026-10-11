@@ -1,0 +1,50 @@
+[
+  {
+    "check": "boundaries",
+    "violation": "private",
+    "status": "passed",
+    "artifact": "./fd528232-proof.json",
+    "artifactHash": "b8aaf95a018d6246d8fa2d1f7a2c1e18468f04f0f02eb7517093ee96216f74e4",
+    "problems": []
+  },
+  {
+    "check": "aggregate",
+    "violation": "private",
+    "status": "passed",
+    "artifact": "./7af47b46-proof.json",
+    "artifactHash": "2d2e4d9e69bde9e3c405224270db333913e45f40ee32fed025cf1b47caa14a08",
+    "problems": []
+  },
+  {
+    "check": "boundaries",
+    "violation": "alias",
+    "status": "passed",
+    "artifact": "./86cbd6be-proof.json",
+    "artifactHash": "9b3a9722929772435c44bd767c913ab92624207884bf31385893b0fea108a126",
+    "problems": []
+  },
+  {
+    "check": "aggregate",
+    "violation": "alias",
+    "status": "passed",
+    "artifact": "./8e1fe490-proof.json",
+    "artifactHash": "a02fdb8a8543bc7d3ce0c8b85e66f1dabcfa57d971a2513a1204ae2c7a0cd4d3",
+    "problems": []
+  },
+  {
+    "check": "boundaries",
+    "violation": "cycle",
+    "status": "passed",
+    "artifact": "./87b896af-proof.json",
+    "artifactHash": "f315ca7f3c18546c82a99ceedd304848097901566af686ceae4dc569c8a0dc27",
+    "problems": []
+  },
+  {
+    "check": "aggregate",
+    "violation": "cycle",
+    "status": "passed",
+    "artifact": "./c3861b55-proof.json",
+    "artifactHash": "16a3b216e5ccb1622ef9fe692cdbafe743b5c8a47ac4284eab6510aceec401dc",
+    "problems": []
+  }
+]

@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"findings validate","status":"passed","problems":[],"data":{"result":"ready for the stated next change","reasons":[],"fingerprint":"71ae4380b03661be2589b1b4e4c4885e55ccbbcc567f29873ff8ed95e832e486"},"inputs":{"target":{"mode":"repo","root":"[fixture]"},"findings":"./4b453d12-findings-completed-current-head.json"}}

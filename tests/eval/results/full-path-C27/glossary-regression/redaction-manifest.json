@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "note": "Internal workspace paths are replaced with neutral artifact placeholders. Original fingerprints remain historical observations; published hashes bind the redacted bytes.",
+  "files": [
+    {
+      "artifact": "C27-glossary-collection-after.json",
+      "originalSha256": "b0cdddc66388c61dec579771cb754d8a9dac109194393c2247335a80a587a326",
+      "publishedSha256": "fc5cec01e9e46620473d8f8f95aed1b19aeb96c1305673d4640193ee779f5b9a"
+    },
+    {
+      "artifact": "C27-glossary-collection-before.json",
+      "originalSha256": "69e2b5a355eef6105ccd06369a58540fed353888f28d9a183be93620b94edd80",
+      "publishedSha256": "6d7242e38eac2669f6b375c0a78670622a7581d8964715884f73606660cd0c24"
+    },
+    {
+      "artifact": "C27-glossary-validation-after.json",
+      "originalSha256": "38824292e0fa66d240138a1cfb7ce48e243a9f1d6214f472ffbc07fa58b8f8a3",
+      "publishedSha256": "d051008e941bb3df7e2b473683538d4e8cc6b52a1de14eb1374c337e7202a2e1"
+    }
+  ]
+}
