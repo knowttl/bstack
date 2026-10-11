@@ -8,7 +8,7 @@
     {
       "id": "AC-73-copy-controls",
       "kind": "automated",
-      "procedure": "tests/scripts/install.test.mjs: copy install validates the complete package and exact ownership in isolated user scope; copy install validates the complete package and exact ownership in isolated project scope; dry run lists every authored copy and runtime action without changing homes, project or source; all-host install preserves the existing installer collision fixture before any staging; nested npm failure retains a recoverable stage and journal without activating or claiming ownership",
+      "procedure": "tests/scripts/install-copy.test.mjs: copy install validates the complete package and exact ownership in isolated user scope; tests/scripts/install-copy.test.mjs: copy install validates the complete package and exact ownership in isolated project scope; tests/scripts/install-copy.test.mjs: dry run lists every authored copy and runtime action without changing homes, project or source; tests/scripts/install-copy.test.mjs: all-host install preserves the existing installer collision fixture before any staging; tests/scripts/install-copy.test.mjs: nested npm failure retains a recoverable stage and journal without activating or claiming ownership",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/C25a.full-tests.txt"
     },
