@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T22-27-46.145Z-6c0b6ea4-5b79-4af5-bc01-882034bcb401",
+  "files": [
+    "brief.md"
+  ],
+  "briefUnchanged": true,
+  "briefSha256": "4906b755de04d645627f82d8c2e32a7c3a63ff91d564fd841b7def2b4662c004",
+  "loginAbsent": true,
+  "unresolvedDecision": "Whether inspectors must record and review observations without network access",
+  "recommendationBlocked": true,
+  "scriptedAnswersCompleted": true
+}
