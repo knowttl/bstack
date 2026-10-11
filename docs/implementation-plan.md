@@ -530,7 +530,10 @@ Tick each task when its "Done when" commands pass.
         R27 accepts Linux-only evidence for C25c/AC-74; Windows and macOS execution remains unverified and outside the support/acceptance scope, with no remaining OS gate.
         The final Node 24 full suite includes mixed copy/link removal and retained-stage recovery repairs; the Node 26 supplement retains its historical source provenance.
         Current-agent loading remains C26 and real-model acceptance remains C27.
-  - [ ] T4.2 Run the basic tests in the current agent
+  - [x] T4.2 Run the basic tests in the current agent
+    - [C26 current-host observations](../tests/eval/results/invocation-C26/summary.md#fresh-paired-validation-on-current-bytes) retain the fresh plain and explicit installed sessions on current corrected skill bytes, plus historical attempts and telemetry limitations.
+      [Task evidence](../tests/eval/results/tasks/C26.json) owns the final settled-source full-suite capture and validator attachment on the published inputs, as specified in the checkpoint.
+      C27 retains final full-path acceptance.
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release
   - [ ] T5.1 Write worked examples and limitations

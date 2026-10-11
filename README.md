@@ -96,7 +96,8 @@ Local validation installs both the root development lock and the nested skill ru
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 The no-mistakes gate installs both locks, runs tests and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
-For an existing repo, explicitly invoke `repo-audit` with the target, assessed area and stated next change.
+For an existing repo, use `$repo-audit` in Codex, `/repo-audit` in Claude Code, or `/skill:repo-audit` in Pi, with the target, assessed area and stated next change.
+A plain request such as "audit this repo" does not start the skill.
 Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation, vision review and final verification requirements.
 See the [T2.8 foundation checkpoint](tests/eval/results/foundation-C17/summary.md) for actual outcomes and blocked interactions.
 

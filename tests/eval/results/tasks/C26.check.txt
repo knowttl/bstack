@@ -1,0 +1,7 @@
+
+> bstack@0.0.0 check
+> node scripts/check-package.mjs && node scripts/generate-checker.mjs --repo . --check
+
+check-package: passed
+checker generate: passed
+

@@ -1,0 +1,25 @@
+{
+  "platform": "linux",
+  "node": "v24.17.0",
+  "skillHash": "804f050af4a100e000e29069512044be1c89a8b0f6651b86369c3630f7645ef8",
+  "message": "$repo-audit\nAudit this repo and recommend principles and checks appropriate to its approved goals. Present recommendations only. Keep all scratch and generated audit data under [scratch]; make no project changes. Do not write outside [worktree]/.c26-live.",
+  "supportTools": "router, akashic, no-mistakes unavailable",
+  "host": {
+    "status": "passed",
+    "stdout": "codex-cli 0.162.1\n",
+    "stderr": "",
+    "durationMs": 10.077692999999272,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "cancelled": false,
+    "outputTruncated": false,
+    "error": null
+  },
+  "status": "passed",
+  "exitCode": 0,
+  "truncated": false,
+  "stderr": "Reading additional input from stdin...\n",
+  "authoredUnchanged": true,
+  "credentialCleanup": "login removed in finally; disposable tree removed on completion"
+}
