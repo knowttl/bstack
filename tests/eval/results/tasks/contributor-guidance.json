@@ -9,7 +9,7 @@
     "Instruction wording and source pointers were reviewed against the authoritative plan, design, README and test helpers. Automated tests do not prove future agent interpretation of natural-language instructions.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "7a3cc0ea2ceccd5c23bf7445ec460a85de2cae9c",
+  "sourceRevision": "a81c72aa36fdc795447363d7e695024176b148b0",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -4099,9 +4099,9 @@
       "topLevel": 2679,
       "suites": 0
     },
-    "durationMs": 1363995.527297,
-    "outputSha256": "faba6751e142669b28ca3a0d9a0ec9ab6d7a66c6cb2fb77d038470a8676eb454",
-    "eventsSha256": "f83a9829aa7e1ffbaa3828335e8081ea55267e2a275cebe412edceb3453e444c",
+    "durationMs": 1451724.920021,
+    "outputSha256": "3e68deb1957c70ec8388542ebac5cf3385c2ea0623ba251539e99f350e936b9b",
+    "eventsSha256": "48ff8cf119cda30b29f8c07cad940fa67321d5199bd02f755905b8dc862ef9dd",
     "eventsArtifact": "tests/eval/results/tasks/contributor-guidance.events.jsonl"
   }
 }
