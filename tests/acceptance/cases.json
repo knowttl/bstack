@@ -19,8 +19,10 @@
       "criterionSource": "docs/design.md#AC-2",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An ambiguous idea exposes the unresolved decision instead of inventing a stack or product goal."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "ambiguous-idea",
+        "artifacts": ["tests/eval/results/release/ambiguous-idea-comparison.json", "tests/eval/results/release/runs/2026-10-11T19-13-13.457Z-969ea384-1083-490c-8719-9cf5fc339a73/conversation.txt"]
       }
     },
     {

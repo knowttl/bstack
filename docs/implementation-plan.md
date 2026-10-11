@@ -1880,16 +1880,16 @@ Registry completeness is a structural check, while final case evidence proves ex
 |---|---|---|---|
 | T0.5 | AC-41, AC-44, AC-45, AC-47 | Seeded package failures, valid package and installed-package closure | |
 | T1.6 | AC-3 | Board launch, verdict-to-draft update and resumed review | |
-| T1.7 | AC-2, AC-9, AC-12 | Intent-stage transcripts, blocked decision and confirmed term review | |
+| T1.7 | AC-2, AC-9, AC-12 | Intent-stage transcripts, blocked decision and confirmed term review | AC-2 passes the [final ambiguity comparison](../tests/eval/results/release/ambiguous-idea-comparison.json); AC-9 and AC-12 final selection remains pending. |
 | T2.1 | AC-34, AC-35, AC-36, AC-37, AC-48 | Discovery-only briefs in both modes, wrong citations and no-web run | AC-35 passes in the [TypeScript](../tests/eval/results/release/research-main-typescript-comparison.json) and [Python](../tests/eval/results/release/research-main-python-comparison.json) final fallback comparisons, with actual native capability evidence; remaining discovery evidence is tracked in the [release summary](../tests/eval/results/release/summary.md). |
 | T2.2 | AC-4, AC-68 | Read-only inspection and unavailable prerequisites | |
 | T2.3 | AC-10, AC-11, AC-49 | Authoritative source discovery, equivalent names and instruction merge candidate | |
 | T2.4 | AC-50, AC-51, AC-53 | History-backed signals, false-positive controls and shared-write plans | |
 | T2.5 | AC-8, AC-63, AC-65 | Findings schema tests and principle-conflict report review | |
 | T2.6 | AC-54, AC-57, AC-69, AC-70, AC-72 | Invalid plans, dirty work, interrupted writes, resume and repeat | |
-| T2.7 | AC-26, AC-27, AC-29, AC-30, AC-31, AC-32, AC-33, AC-71 | Bug reproduction, pre-refactor protection, user flows and probe pairs | |
+| T2.7 | AC-26, AC-27, AC-29, AC-30, AC-31, AC-32, AC-33, AC-71 | Bug reproduction, pre-refactor protection, user flows and probe pairs | AC-29, AC-32 and AC-33 pass the [final verification comparison](../tests/eval/results/release/verification-limitations-comparison.json), with [preserved original grading and append-only correction](../tests/eval/results/release/verification-limitations-grading.md); other final selections remain pending. |
 | T2.8 | AC-5, AC-6, AC-7, AC-38, AC-55, AC-62 | Audit-before-interview and project-specific findings in both stacks | |
-| T2.9 | AC-1, AC-2, AC-9, AC-12 | Approved creation, unresolved decision and destination-collision controls | |
+| T2.9 | AC-1, AC-2, AC-9, AC-12 | Approved creation, unresolved decision and destination-collision controls | AC-2 passes the [final ambiguity comparison](../tests/eval/results/release/ambiguous-idea-comparison.json); other final selections remain pending. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | |

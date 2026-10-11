@@ -8,7 +8,11 @@ The approved grading correction is applied.
 The approved correction judges command and file-tool access targets, excluding tool output.
 Its changed-input with-skill rerun hit a third rejection for `/tmp`.
 The approved next correction explicitly makes the owned temporary directory private, removes shared-temp query exceptions and records every rejection's target and operation provenance.
-The next changed-input with-skill rerun is pending, with no waiver for the affected cases.
+That authorized changed-input with-skill rerun was rejected for `/tmp` again.
+Its [recorded target and operation](scope-and-prerequisites-range-rejection.json) identify the guard bug: two dots inside the Git range `HEAD^..HEAD` were treated as a relative path and resolved to the fixture's parent.
+Evaluation is stopped; the capture remains unscored, with no waiver for the affected cases.
+The concurrent clear-goals with-skill opening was closed after this stop, before scripted follow-ups or scoring.
+Its isolated home was deleted; it is partial diagnostic evidence and is not a final passing selection.
 
 - AC-29: the baseline's initial immutable score incorrectly credited the passing-units condition despite no unit execution; the [grading explanation](verification-limitations-grading.md) and [proposed correction](verification-limitations-baseline-correction-proposal.json) preserve the captured turn and identify the original scoring hash.
   The approved append-only correction preserves the original answers and transcript and yields a [passing comparison](verification-limitations-comparison.json), without another agent run.
