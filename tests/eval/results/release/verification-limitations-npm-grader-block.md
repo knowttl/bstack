@@ -1,5 +1,9 @@
 # Actual unit execution rejected by scorer
 
+Resolved by the bounded package-script grader repair: the retained pair now scores 3/3 in both modes and its [comparison passes](verification-limitations-precondition-comparison.json), without agent recapture.
+The original rejection artifacts below remain historical diagnostics.
+The subsequent native-environment skill instruction changes the package binding, so this successful comparison still requires a package-current with-skill selection before final release validation.
+
 The explicitly commissioned unit precondition is now established in both retained captures, but the scorer rejects both AC-29 passing scores.
 This is a grading limitation, not missing actual unit execution.
 No score was fabricated and no real-agent turn was repeated.
