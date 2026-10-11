@@ -111,6 +111,10 @@ Installer failure blocks the run before any agent turn.
 Final requests explicitly name the active final checkpoint.
 `final-new-project` covers the complete new-project path, while `final-existing-repo` continues its maintained `ts-shop` fixture through re-audit and a representative extension using only the resulting project guidance.
 The original intent and foundation scenarios retain their narrower approval scripts and are not full-path evidence.
+Final adapter follow-ups can pass `--repo <disposable-maintained-root>` to reuse an explicit fixture rather than rebuild its original defects.
+The record retains its starting commit and working-tree state, and the caller owns preservation and cleanup.
+Use `final-independent-extension` in `without` mode for a fresh conversation with no discoverable repo-audit and only the resulting target guidance.
+Use `final-maintained-maintenance` in `with` mode for a separate installed, bounded maintenance-only conversation on that maintained fixture.
 Bundled host system skills can remain available, but they cannot include repo-audit.
 
 The captain approved `authentication: "throwaway-codex-login"` for this adapter on 2026-10-08.
