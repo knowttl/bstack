@@ -2,19 +2,22 @@
   "schemaVersion": 1,
   "taskId": "test-speed",
   "slice": "test-speed",
-  "intent": "Remove or consolidate the approved low-value tests from review items 13-18 while preserving distinct behaviour and acceptance coverage.",
+  "intent": "Remove or consolidate the approved low-value tests from review items 13-18, then split installer tests by lifecycle area to run in parallel while preserving every remaining test, assertion, name and acceptance binding.",
   "amendments": [
     "The container-axis merge remains CLI-based. The installer test-file split is outside this change.",
     "Retain the host-policy YAML parse and semantic assertion from item 15: a duplicate allow_implicit_invocation key passes package-check but the existing skeleton test rejects it with DUPLICATE_KEY.",
     "Unchanged main baseline: 2689 executed tests passed in 1399.234266514 seconds, with no failures, cancellations, skips or todos.",
     "Settled-source comparison: 2416 executed tests passed in 1267.070137902 seconds, with no failures, cancellations, skips or todos. This removes 273 executions and saves 132.164128612 seconds in the observed full-suite pair.",
-    "Captured identity comparison confirmed only the planned redundant cases were removed, alongside two skeleton-test renames. AC-58 and AC-74 families, separate scope controls and all item 19 keeps remain."
+    "Captured identity comparison confirmed only the planned redundant cases were removed, alongside two skeleton-test renames. AC-58 and AC-74 families, separate scope controls and all item 19 keeps remain.",
+    "Installer split baseline on unchanged main c808959: 2416 executed tests passed in 1330.368131257 seconds; install.test.mjs took 1318.175440919 seconds. No failures, cancellations, skips or todos.",
+    "Installer split comparison on committed source d9ddf64: the same 2416 executed tests passed in 470.324722357 seconds, a 64.6% wall-time reduction. The longest remaining file was install-legacy.test.mjs at 351.729340162 seconds, followed by evidence-validate.test.mjs at 347.590794275 seconds. No failures, cancellations, skips or todos. The roughly four-minute estimate was not reached on this host run.",
+    "The split preserves all 227 installer executions. All 84 top-level test blocks and all eight setup function bodies are byte-identical to the baseline; only setup exports and imports changed. Full-suite identities match after normalizing installer suite paths. All 40 exact AC-73 test bindings resolve to passing tests in registered replacement suites, and the public acceptance command successfully re-executed the moved project copy-install test."
   ],
   "cases": [],
   "limitations": [
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "4ed858c8e08b5e977e71d4bbd03fa19c28d6530f",
+  "sourceRevision": "d9ddf6487f9d3d3bfe3db8e4a015beecc9bf39c9",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -40,7 +43,7 @@
     }
   ],
   "validation": {
-    "baseRevision": "988f2e39ac81d0da0fceb753c829e9af4db052e4",
+    "baseRevision": "c8089598b0b5422e5ddac1316f20163a65879a4a",
     "inputs": {
       "files": [
         {
@@ -1666,7 +1669,7 @@
         {
           "path": "tests/eval/results/tasks/C25a.json",
           "executable": false,
-          "sha256": "ff0fbf9ddebd10750c60d10c4b16abe4e9a8bdf02a216a2b75bd539c89b79fa4"
+          "sha256": "624fed0c7db0cd4566070e8721a9f3fbf98029f6a967c6d59eaf115b24c46035"
         },
         {
           "path": "tests/eval/results/tasks/C25b.check.txt",
@@ -1686,7 +1689,7 @@
         {
           "path": "tests/eval/results/tasks/C25b.json",
           "executable": false,
-          "sha256": "0b40f8cef4b07c925aa97f1e7d8419cf0f6d5c0a6e2521c8f82d93ad1f2154cf"
+          "sha256": "512d2fefd96f7fdb12b90f2fd078f0db15c8d4fbfbd302aa91c739c3b7f7de30"
         },
         {
           "path": "tests/eval/results/tasks/C25b.task-tests.txt",
@@ -1711,7 +1714,7 @@
         {
           "path": "tests/eval/results/tasks/C25c.json",
           "executable": false,
-          "sha256": "1332da9ecac23969d7635dc2f17695f1960852d16e9cbb34d51dc3de5d1b0242"
+          "sha256": "2fec5ffc6ab456f67569ce541c34071672e776d0973f49dfac3c72c8b6a888d1"
         },
         {
           "path": "tests/eval/results/tasks/C25c.node26-lifecycle.txt",
@@ -3834,9 +3837,59 @@
           "sha256": "12333e2e7e5426b8048f60a1caedf1ce9cb64aae30815e65a89ec6ce2e06799a"
         },
         {
-          "path": "tests/scripts/install.test.mjs",
+          "path": "tests/scripts/install-cleanup-decisions.test.mjs",
           "executable": false,
-          "sha256": "21e7598431ff1f465207f76103c6e9848fb5de3dabb32650ba32adde5f013d8e"
+          "sha256": "11a7c2633751e38ba0e8faaf8bba51a5c5bddba67222d775e387c6cbfc62153a"
+        },
+        {
+          "path": "tests/scripts/install-cleanup-replay.test.mjs",
+          "executable": false,
+          "sha256": "f8e1d6882771887b16c47ece41da6c7df0fb839c5882b5db8a12ba8b83a99a67"
+        },
+        {
+          "path": "tests/scripts/install-completion.test.mjs",
+          "executable": false,
+          "sha256": "445aba2c95366d904cac1d3c53702d93c27f5b60acb5d25602cccdb628ddf419"
+        },
+        {
+          "path": "tests/scripts/install-copy.test.mjs",
+          "executable": false,
+          "sha256": "83a31fbf6290daa4cbead8166a32335fb551f5bc5e87213f49befae7336cfbeb"
+        },
+        {
+          "path": "tests/scripts/install-fixture.mjs",
+          "executable": false,
+          "sha256": "156eb832dfb22cad3258efdaeabc63b074b2062b350a5c6320ce80e5979eb534"
+        },
+        {
+          "path": "tests/scripts/install-legacy.test.mjs",
+          "executable": false,
+          "sha256": "60f961fa0459ff2a4c7a89db35d141c5ba00a9eb2c7c8bc193a9ef043ba35535"
+        },
+        {
+          "path": "tests/scripts/install-links.test.mjs",
+          "executable": false,
+          "sha256": "92c177ea127eb4aa32428a595664ff00152808f8ff4ae6681923c518d699ebef"
+        },
+        {
+          "path": "tests/scripts/install-mixed-uninstall.test.mjs",
+          "executable": false,
+          "sha256": "ce11866aaf78c18aa66adb6e2812def3dc9dde524f0366e214b7ad7b43e696d7"
+        },
+        {
+          "path": "tests/scripts/install-runtime-recovery.test.mjs",
+          "executable": false,
+          "sha256": "81a7af5e2fac7097217d3aef9612bf962bc6aa1b772144a93c1fcc8542c5728b"
+        },
+        {
+          "path": "tests/scripts/install-source-recovery.test.mjs",
+          "executable": false,
+          "sha256": "d3d4273bdc505b8a1865e084a5bb564c9323c8de1fe53960740341c34b8f2705"
+        },
+        {
+          "path": "tests/scripts/install-update.test.mjs",
+          "executable": false,
+          "sha256": "c4071b1cbbf54d9a4303fd9345643ee155a022a398dcf230e646deb4277d2fc4"
         },
         {
           "path": "tests/scripts/inventory.test.mjs",
@@ -3926,7 +3979,7 @@
         {
           "path": "tests/tasks.json",
           "executable": false,
-          "sha256": "e43c5b5d752a81d28db65a650583f3ebcde3d256b96d868fd5083bc1cfbcd641"
+          "sha256": "a0a4fd6a9dc3db0ae05b396a8dac6028233b649e0051a703957512ecc41de9d7"
         },
         {
           "path": "upstream/fetch.mjs",
@@ -4069,7 +4122,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "7102aa9e82394d6c3ff1409630ee135a00e08e74bc492351c1bbe15f03ada13e"
+      "sha256": "9387184ba824cb75f73c21dfecbec76e5c124a31048ff7390208eafb84b238f3"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -4090,7 +4143,16 @@
       "tests/scripts/findings.test.mjs",
       "tests/scripts/fixtures.test.mjs",
       "tests/scripts/inspect.test.mjs",
-      "tests/scripts/install.test.mjs",
+      "tests/scripts/install-cleanup-decisions.test.mjs",
+      "tests/scripts/install-cleanup-replay.test.mjs",
+      "tests/scripts/install-completion.test.mjs",
+      "tests/scripts/install-copy.test.mjs",
+      "tests/scripts/install-legacy.test.mjs",
+      "tests/scripts/install-links.test.mjs",
+      "tests/scripts/install-mixed-uninstall.test.mjs",
+      "tests/scripts/install-runtime-recovery.test.mjs",
+      "tests/scripts/install-source-recovery.test.mjs",
+      "tests/scripts/install-update.test.mjs",
       "tests/scripts/inventory.test.mjs",
       "tests/scripts/maintained-checks.test.mjs",
       "tests/scripts/measure.test.mjs",
@@ -4119,9 +4181,9 @@
       "topLevel": 2407,
       "suites": 0
     },
-    "durationMs": 1318017.401671,
-    "outputSha256": "9d56681fa2703fd79509874e1a5842f7ebb11ff348ee2e34fdd6d35a8aacffcb",
-    "eventsSha256": "f4c340ab43e59a133bbc330da14e867cae150b19cbf3ea335283a38ba9ab893e",
+    "durationMs": 470324.722357,
+    "outputSha256": "290a17f731b499e8d8a211030c40f77a082122b365fcbcb7a699c6d490425bbb",
+    "eventsSha256": "42d93c17c012e241c1398655609a9338244e76f1ad8b2856a00bd27329d636e6",
     "eventsArtifact": "tests/eval/results/tasks/test-speed.events.jsonl"
   }
 }
