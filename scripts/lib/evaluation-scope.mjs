@@ -1,6 +1,6 @@
 import { access, readdir, readFile, realpath } from 'node:fs/promises'
 import { constants } from 'node:fs'
-import { delimiter, isAbsolute, join, parse, resolve, sep } from 'node:path'
+import { delimiter, isAbsolute, join, resolve, sep } from 'node:path'
 import { parse as parseJavaScript } from 'acorn'
 import { fail } from './evaluation.mjs'
 
@@ -90,20 +90,38 @@ function toolAccess(value, name = '', cwd) {
 
 // Detect explicit write destinations independently of the read/runtime allowlist.
 // This is an observation guard, not an operating-system sandbox.
-function writePaths(command) {
+function writePaths(command, cwd) {
   const paths = []
   for (const expression of [
-    /(?:^|[^<])>>?\s*['"]?(\/[^\s"'`<>;,(){}\[\]\\]+)/g,
-    /\b(?:touch|mkdir|rm|rmdir|chmod|chown|truncate|tee)\s+(?:-[^\s]+\s+)*['"]?(\/[^\s"'`<>;,(){}\[\]\\]+)/g,
-    /\b(?:writeFile|writeFileSync|appendFile|appendFileSync)\s*\(\s*['"](\/[^'"]+)['"]/g,
-    /\bopen\s*\(\s*['"](\/[^'"]+)['"]\s*,\s*['"][wax+]/g,
-    /\bPath\s*\(\s*['"](\/[^'"]+)['"]\s*\)\.(?:write_text|write_bytes|mkdir|unlink|rmdir|chmod)\s*\(/g
-  ]) for (const match of command.matchAll(expression)) paths.push(resolve(match[1]))
+    /(?:^|[^<])>>?\s*['"]?((?:\/|\.\.?\/)[^\s"'`<>;,(){}\[\]\\]+)/g,
+    /\b(?:touch|mkdir|rm|rmdir|chmod|chown|truncate|tee)\s+(?:-[^\s]+\s+)*['"]?((?:\/|\.\.?\/)[^\s"'`<>;,(){}\[\]\\]+)/g,
+    /\b(?:writeFile|writeFileSync|appendFile|appendFileSync)\s*\(\s*['"]((?:\/|\.\.?\/)[^'"]+)['"]/g,
+    /\bopen\s*\(\s*['"]((?:\/|\.\.?\/)[^'"]+)['"]\s*,\s*['"][wax+]/g,
+    /\bPath\s*\(\s*['"]((?:\/|\.\.?\/)[^'"]+)['"]\s*\)\.(?:write_text|write_bytes|mkdir|unlink|rmdir|chmod)\s*\(/g
+  ]) for (const match of command.matchAll(expression)) paths.push(resolve(cwd, match[1]))
   for (const match of command.matchAll(/\b(?:cp|mv|install)\s+([^;\n]+)/g)) {
-    const destination = match[1].trim().match(/['"]?(\/[^\s"'`<>;,(){}\[\]\\]+)['"]?\s*$/)
-    if (destination) paths.push(resolve(destination[1]))
+    const destination = match[1].trim().match(/['"]?((?:\/|\.\.?\/)[^\s"'`<>;,(){}\[\]\\]+)['"]?\s*$/)
+    if (destination) paths.push(resolve(cwd, destination[1]))
   }
   return paths
+}
+
+// Keep argument boundaries: the dots in a Git range are not a path token.
+function argumentsIn(command) {
+  return [...command.matchAll(/"((?:\\.|[^"\\])*)"|'([^']*)'|([^\s"'`<>;,(){}\[\]\\]+)/g)]
+    .flatMap(match => {
+      const value = (match[1] ?? match[2] ?? match[3]).replace(/\\(["'\\ ])/g, '$1')
+      return /\s/.test(value) ? [value, ...argumentsIn(value)] : [value]
+    })
+}
+
+async function exists(path) {
+  try { await access(path); return true }
+  catch (error) {
+    if (['ENOENT', 'ENOTDIR'].includes(error.code)) return false
+    if (error.code === 'EACCES') return true
+    throw error
+  }
 }
 
 // Native tool inputs can be JavaScript that calls shell or file tools.
@@ -134,8 +152,6 @@ export async function checkScope(record, result) {
   const runtime = ['/bin', '/sbin', '/usr/bin', '/usr/sbin', '/usr/lib', '/usr/lib64',
     '/usr/share', '/lib', '/lib64', '/nix/store', '/dev/null', '/dev/urandom',
     '/proc/meminfo', '/proc/loadavg', '/proc/self', '/proc/sys/kernel', '/etc/os-release']
-  const filesystem = parse(roots[0]).root
-  const topLevel = new Set(await readdir(filesystem))
   const within = (path, root) => path === root || path.startsWith(root + sep)
   const writable = path => roots.some(root => within(path, root)) || path === '/dev/null'
   const allowed = path => roots.some(root => within(path, root)) || tools.has(path) ||
@@ -153,7 +169,7 @@ export async function checkScope(record, result) {
     }
     if (!command) {
       const path = resolve(cwd ?? record.fixture.path, value)
-      if (!(write ? writable(path) : allowed(path))) reject(path)
+      if (write ? !writable(path) : !allowed(path) && await exists(path)) reject(path)
       continue
     }
     // URLs and domain routes are not filesystem observations.
@@ -162,20 +178,13 @@ export async function checkScope(record, result) {
       content = content.replace(new RegExp(`${RegExp.escape(root)}(?=$|[\\/\\s"'\x60<>;,(){}\\[\\]])(?:/[^\\s"'\x60<>;,(){}\\[\\]\\\\]+)?`, 'g'),
         path => allowed(resolve(path)) ? '[in-scope]' : path)
     }
-    for (const path of writePaths(content)) if (!writable(path)) reject(path)
-    for (const match of content.matchAll(/(?<![\w./\\])(?:[A-Za-z]:[\\/]|\/)[^\s"'`<>;,(){}\[\]\\]+/g)) {
-      const candidate = match[0].replace(/[.:]+$/, '')
-      const path = resolve(candidate)
+    const directory = cwd ?? record.fixture.path
+    for (const path of writePaths(content, directory)) if (!writable(path)) reject(path)
+    for (const candidate of argumentsIn(content)) {
+      const path = resolve(directory, candidate)
       const processQuery = path === '/proc' && /\.iterdir\(|\b(?:listdir|readdir|readdirSync)\(|\bls\s+/.test(value) ||
         /^\/proc\/\d+\/(?:comm|cmdline|stat|status)$/.test(path)
-      if ((process.platform === 'win32' || topLevel.has(path.slice(filesystem.length).split(sep)[0])) &&
-          !allowed(path) && !processQuery) reject(path)
-    }
-    // A here-document is program source, rather than shell path arguments.
-    const shell = content.split(/<<-?\s*['"]?\w+['"]?/)[0]
-    for (const match of shell.matchAll(/(?<![\w.])\.\.(?!\.)(?:\/[^\s"'`<>;,(){}\[\]\\]*)?/g)) {
-      const path = resolve(cwd ?? record.fixture.path, match[0])
-      if (!allowed(path)) reject(path)
+      if (!allowed(path) && !processQuery && await exists(path)) reject(path)
     }
   }
   record.scopeGuard = { version: scopeVersion, verified: violations.size === 0,
