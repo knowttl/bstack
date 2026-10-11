@@ -1,0 +1,11 @@
+{
+  "agent": "codex-cli 0.162.1",
+  "adapterHash": "34b8a1f4a85eb0ec00057ef3ae58df3037478b683c078c39bc69b816ce4b2275",
+  "nativeSessions": [
+    {
+      "sha256": "2851eb1c37874c1d686d57d41cc96f97eb41985eb3e86bbf374aea4d1f6cf3ec",
+      "spawnAgentDeclared": false,
+      "delegationCalls": 0
+    }
+  ]
+}

@@ -1881,7 +1881,7 @@ Registry completeness is a structural check, while final case evidence proves ex
 | T0.5 | AC-41, AC-44, AC-45, AC-47 | Seeded package failures, valid package and installed-package closure | |
 | T1.6 | AC-3 | Board launch, verdict-to-draft update and resumed review | |
 | T1.7 | AC-2, AC-9, AC-12 | Intent-stage transcripts, blocked decision and confirmed term review | |
-| T2.1 | AC-34, AC-35, AC-36, AC-37, AC-48 | Discovery-only briefs in both modes, wrong citations and no-web run | Partial discovery comparison: [release summary](../tests/eval/results/release/summary.md). AC-35 capability prerequisite verified by the [corrected probe](../tests/eval/results/release/fallback-capability-probe-agents-disabled.json); final fallback comparisons remain outstanding. |
+| T2.1 | AC-34, AC-35, AC-36, AC-37, AC-48 | Discovery-only briefs in both modes, wrong citations and no-web run | AC-35 passes in the [TypeScript](../tests/eval/results/release/research-main-typescript-comparison.json) and [Python](../tests/eval/results/release/research-main-python-comparison.json) final fallback comparisons, with actual native capability evidence; remaining discovery evidence is tracked in the [release summary](../tests/eval/results/release/summary.md). |
 | T2.2 | AC-4, AC-68 | Read-only inspection and unavailable prerequisites | |
 | T2.3 | AC-10, AC-11, AC-49 | Authoritative source discovery, equivalent names and instruction merge candidate | |
 | T2.4 | AC-50, AC-51, AC-53 | History-backed signals, false-positive controls and shared-write plans | |
