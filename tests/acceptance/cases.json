@@ -368,7 +368,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "research-main-typescript",
-        "artifacts": ["tests/eval/results/release/research-main-typescript-comparison.json", "tests/eval/results/release/research-main-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/capability-observation.json", "tests/eval/results/release/runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/capability-observation.json"]
+        "artifacts": ["tests/eval/results/release/research-main-typescript-comparison.json", "tests/eval/results/release/research-main-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-05-38.869Z-74301d5b-83cc-4b39-8bb2-04e2389077f8/main-thread-trace.jsonl", "tests/eval/results/release/runs/2026-10-11T21-02-36.654Z-e0404627-bc0f-4181-9cc0-477bbce59e3e/main-thread-trace.jsonl"]
       }
     },
     {
@@ -587,8 +587,10 @@
       "criterionSource": "docs/design.md#AC-56",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: repo-audit works without a router, akashic or no-mistakes installed."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "runtime-independence",
+        "artifacts": ["tests/eval/results/release/runtime-independence-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-06-59.229Z-d4d617bf-ef18-4e90-bdbc-d3333bbadd10/conversation.txt"]
       }
     },
     {
