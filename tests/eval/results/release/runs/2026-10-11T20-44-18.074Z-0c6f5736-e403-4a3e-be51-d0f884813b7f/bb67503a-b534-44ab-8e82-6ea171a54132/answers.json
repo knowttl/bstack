@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T20-44-18.074Z-0c6f5736-e403-4a3e-be51-d0f884813b7f",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "reuse",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 34
+    },
+    {
+      "id": "conditional-load",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 34
+    }
+  ]
+}
