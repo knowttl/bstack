@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "native-guidance",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "native",
+      "sourceId": "native-guidance",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Use native Python checks and preserve balanced postings.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "unittest",
+      "role": "protection",
+      "command": {
+        "executable": "uv",
+        "args": [
+          "run",
+          "--offline",
+          "--no-sync",
+          "python",
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "ruff",
+      "role": "protection",
+      "command": {
+        "executable": "uv",
+        "args": [
+          "run",
+          "--offline",
+          "--no-sync",
+          "ruff",
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "protection",
+      "command": {
+        "executable": "uv",
+        "args": [
+          "run",
+          "--offline",
+          "--no-sync",
+          "python",
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    }
+  ]
+}

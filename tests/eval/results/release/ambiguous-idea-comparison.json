@@ -1,14 +1,1 @@
-{
-  "schemaVersion": 1,
-  "command": "eval compare",
-  "status": "passed",
-  "problems": [],
-  "data": {
-    "status": "passed",
-    "without": "2026-10-11T20-53-30.281Z-48a196f8-34b1-46f4-803b-eb8197d829a1",
-    "with": "2026-10-11T20-55-12.888Z-50ccc94b-9401-4e0f-a1eb-b6c3ecbefc15",
-    "lost": [],
-    "gained": []
-  },
-  "inputs": {}
-}
+{"schemaVersion":1,"command":"eval compare","status":"passed","problems":[],"data":{"status":"passed","without":"2026-10-11T20-53-30.281Z-48a196f8-34b1-46f4-803b-eb8197d829a1","with":"2026-10-11T21-50-32.828Z-bff688d4-8b26-45a4-90b8-33437a367795","lost":[],"gained":[]},"inputs":{}}

@@ -1898,7 +1898,7 @@ Comparisons predating the targeted-question skill repair are historical and requ
 | T3a.2 | AC-19, AC-20 | Complete Git change inventory and invalid-base controls | |
 | T3a.3 | AC-16, AC-17, AC-19, AC-21, AC-22, AC-28 | Before/after impact, no-impact, stale input and prior-policy bypass controls | |
 | T3a.4 | AC-18 | Stale generated sections and checked regeneration | |
-| T3a.5 | AC-13, AC-15 | Context-specific terms and reviewed rule relocation | AC-13 passes the [19/19 foundation comparison](../tests/eval/results/release/existing-repo-comparison.json); AC-15 remains pending. |
+| T3a.5 | AC-13, AC-15 | Context-specific terms and reviewed rule relocation | AC-13 passes the [19/19 foundation comparison](../tests/eval/results/release/existing-repo-comparison.json); AC-15 passes the [selected relocation comparison](../tests/eval/results/release/selected-rule-relocation-comparison.json) with exact approved protected writes and native Python behavior checks. |
 | T3a.6 | AC-24, AC-58 | Different-root clean clone, missing evidence, shallow base and fresh leaf execution | |
 | T3a.7 | AC-23 | Maintenance-only transcript without interview or full audit | |
 | T4.1 | AC-73, AC-74 | Copy/link lifecycle and conflict preservation, with recorded real Linux execution under R27 | |
