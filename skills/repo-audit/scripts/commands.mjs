@@ -1,3 +1,6 @@
+// Both protected-write interfaces bind the same canonical plan representation.
+const planDigests = '\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set\'s planDigest.'
+
 // Metadata stays separate so help never imports a command implementation.
 export const commands = {
   'docs check': {
@@ -38,7 +41,7 @@ export const commands = {
   'project create': {
     module: './commands/project.mjs',
     options: ['plan', 'dry-run'],
-    help: 'Create or resume the approved minimal project.\nUsage: repo-audit.mjs project create --workspace <existing-directory> --plan <file> [--dry-run] [--json]\nPlan follows schemas/project-create.json and references a reviewed change set. Dry run builds only in scratch. Repeat the unchanged plan to recover directory, file and Git creation. Failed setup or journey keeps the project unverified.'
+    help: 'Create or resume the approved minimal project.\nUsage: repo-audit.mjs project create --workspace <existing-directory> --plan <file> [--dry-run] [--json]\nPlan follows schemas/project-create.json and references a reviewed change set. Dry run builds only in scratch. Repeat the unchanged plan to recover directory, file and Git creation. Failed setup or journey keeps the project unverified.' + planDigests
   },
   'probe record': {
     module: './commands/probe.mjs',
@@ -58,7 +61,7 @@ export const commands = {
   apply: {
     module: './commands/apply.mjs',
     options: ['plan', 'dry-run'],
-    help: 'Apply or resume a reviewed change set with recoverable originals.\nUsage: repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Repeating a plan resumes its digest-bound run.'
+    help: 'Apply or resume a reviewed change set with recoverable originals.\nUsage: repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Repeating a plan resumes its digest-bound run.' + planDigests
   },
   'state show': {
     module: './commands/state.mjs',

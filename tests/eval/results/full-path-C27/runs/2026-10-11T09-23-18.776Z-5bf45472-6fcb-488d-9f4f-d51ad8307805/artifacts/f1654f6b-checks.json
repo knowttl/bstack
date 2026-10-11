@@ -1,0 +1,441 @@
+{
+  "schemaVersion": 1,
+  "runId": "52c301bd-66d0-4fda-a2cc-6ebddd8d246f",
+  "phase": "after",
+  "status": "passed",
+  "planDigest": "f3cd723887e1de89598f370e006166241123716496adc22ae91be0e8a88180ee",
+  "originalState": {
+    "fingerprint": "827bb9fbd0c7caa9545262975c5b7eb3f3fcc53a5885674756cd4bd2fe3d2df4",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+      "files": [
+        {
+          "path": ".bstack/bin/bstack-check.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+        },
+        {
+          "path": ".bstack/project.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "20648becc00d353f812b2b9196f912fadfe0f2d531b582cd7bdcb517516ad81f"
+        },
+        {
+          "path": "AGENTS.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "659f50a571546c2f99145956746d74f4967b35085791d84a1dc03b189a5614fc"
+        },
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "3c84e7a5dd2d0a7454b08817641d5adf806a705f64a3861f5f036f09db6f71f3"
+        },
+        {
+          "path": "boundaries.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+        },
+        {
+          "path": "docs/repo-audit.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "08ea29cd90431ae5aaf84b4675fe2c7a5cc453b5dfdc6fd9946fba182806618e"
+        },
+        {
+          "path": "glossary.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5"
+        },
+        {
+          "path": "journey.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605"
+        },
+        {
+          "path": "package-lock.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+        },
+        {
+          "path": "package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0f0f74d494ef41a0b0104ce393316742ef9aa6e9f9bf5ffbf53c06c07f7f0b9a"
+        },
+        {
+          "path": "packages/core/a.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb"
+        },
+        {
+          "path": "packages/core/b.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e643c78cec79bba9faa93c39fb78e056f39ed1fd7ce6095d642c5bd6fbd3bd4d"
+        },
+        {
+          "path": "packages/core/index.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82"
+        },
+        {
+          "path": "packages/core/internal/database.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+        },
+        {
+          "path": "packages/core/package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+        },
+        {
+          "path": "packages/web/alias.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c0770fe9f064e5731cc884e570f625766dc965766bf11646bdb3aed012cfcd90"
+        },
+        {
+          "path": "packages/web/package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326"
+        },
+        {
+          "path": "packages/web/public.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+        },
+        {
+          "path": "packages/web/routes.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8"
+        },
+        {
+          "path": "packages/web/ui.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "d2f7ebf1d59d4059fa75ac71348de81d7aebda282e642305f4b3c43aeea1bf2c"
+        },
+        {
+          "path": "tsconfig.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+        },
+        {
+          "path": "unit.test.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+        }
+      ],
+      "inputs": {
+        "planDigest": "f3cd723887e1de89598f370e006166241123716496adc22ae91be0e8a88180ee",
+        "planContentHash": "e2c8ad85ab26255c0317db064f1c51dbb0227d34b3fcf33f1b0f2115fdaef096"
+      }
+    }
+  },
+  "finalState": {
+    "fingerprint": "827bb9fbd0c7caa9545262975c5b7eb3f3fcc53a5885674756cd4bd2fe3d2df4",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+      "files": [
+        {
+          "path": ".bstack/bin/bstack-check.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+        },
+        {
+          "path": ".bstack/project.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "20648becc00d353f812b2b9196f912fadfe0f2d531b582cd7bdcb517516ad81f"
+        },
+        {
+          "path": "AGENTS.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "659f50a571546c2f99145956746d74f4967b35085791d84a1dc03b189a5614fc"
+        },
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "3c84e7a5dd2d0a7454b08817641d5adf806a705f64a3861f5f036f09db6f71f3"
+        },
+        {
+          "path": "boundaries.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+        },
+        {
+          "path": "docs/repo-audit.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "08ea29cd90431ae5aaf84b4675fe2c7a5cc453b5dfdc6fd9946fba182806618e"
+        },
+        {
+          "path": "glossary.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5"
+        },
+        {
+          "path": "journey.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605"
+        },
+        {
+          "path": "package-lock.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+        },
+        {
+          "path": "package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0f0f74d494ef41a0b0104ce393316742ef9aa6e9f9bf5ffbf53c06c07f7f0b9a"
+        },
+        {
+          "path": "packages/core/a.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb"
+        },
+        {
+          "path": "packages/core/b.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e643c78cec79bba9faa93c39fb78e056f39ed1fd7ce6095d642c5bd6fbd3bd4d"
+        },
+        {
+          "path": "packages/core/index.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82"
+        },
+        {
+          "path": "packages/core/internal/database.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+        },
+        {
+          "path": "packages/core/package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+        },
+        {
+          "path": "packages/web/alias.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c0770fe9f064e5731cc884e570f625766dc965766bf11646bdb3aed012cfcd90"
+        },
+        {
+          "path": "packages/web/package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326"
+        },
+        {
+          "path": "packages/web/public.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+        },
+        {
+          "path": "packages/web/routes.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8"
+        },
+        {
+          "path": "packages/web/ui.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "d2f7ebf1d59d4059fa75ac71348de81d7aebda282e642305f4b3c43aeea1bf2c"
+        },
+        {
+          "path": "tsconfig.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+        },
+        {
+          "path": "unit.test.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+        }
+      ],
+      "inputs": {
+        "planDigest": "f3cd723887e1de89598f370e006166241123716496adc22ae91be0e8a88180ee",
+        "planContentHash": "e2c8ad85ab26255c0317db064f1c51dbb0227d34b3fcf33f1b0f2115fdaef096"
+      }
+    }
+  },
+  "startedAt": "2026-10-11T09:57:36.369Z",
+  "completedAt": "2026-10-11T09:57:39.064Z",
+  "priorRun": null,
+  "executionOrder": [
+    "52c301bd-66d0-4fda-a2cc-6ebddd8d246f"
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "outcome",
+      "required": true,
+      "acceptanceCases": [
+        "total",
+        "boundary",
+        "quote"
+      ],
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "passed",
+      "satisfied": true,
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> check\n> npm run typecheck && npm test && npm run boundaries && npm run journey\n\n\n> typecheck\n> tsc --noEmit\n\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (0.799969ms)\n✔ checkout HTTP mock (24.816663ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.840586\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+        "stderr": "",
+        "durationMs": 2559.0132519999997,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 92.48495500000001,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 1
+    }
+  ],
+  "coverage": [
+    {
+      "id": "total",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Checkout with endpoint price 10 returns total 10.",
+      "userJourney": true,
+      "status": "passed",
+      "checkIds": [
+        "native"
+      ],
+      "reason": null
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "Public imports and core-owned internal use pass; web private imports, aliases, re-exports and cycles fail.",
+      "userJourney": false,
+      "status": "passed",
+      "checkIds": [
+        "native"
+      ],
+      "reason": null
+    },
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "Quote remains 12.",
+      "outcome": "Public quote() returns 12 while the controlled HTTP checkout returns total 10.",
+      "userJourney": false,
+      "status": "passed",
+      "checkIds": [
+        "native"
+      ],
+      "reason": null
+    }
+  ],
+  "journeyCoverage": "User journey evidence captured.",
+  "limitations": [
+    "Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Outside dependencies require separate live probe record and compare evidence."
+  ]
+}

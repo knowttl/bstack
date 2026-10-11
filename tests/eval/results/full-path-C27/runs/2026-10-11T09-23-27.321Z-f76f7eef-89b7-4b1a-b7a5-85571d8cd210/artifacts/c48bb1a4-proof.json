@@ -1,0 +1,83 @@
+{
+  "checkId": "native",
+  "command": {
+    "executable": "npm",
+    "args": [
+      "run",
+      "check"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 180000
+  },
+  "expectedDiagnostic": "UI_DIRECT_STORAGE",
+  "status": "passed",
+  "cases": [
+    {
+      "kind": "valid",
+      "source": "[scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> pantry-app@0.1.0 check\n> node scripts/resources.mjs && npm run format && npm run lint && npm run typecheck && npm run journey\n\n{\"availableMemoryGB\":18.459312128,\"freeDiskGB\":31.022137344,\"load\":2.31,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 format\n> prettier --check src tests scripts index.html package.json tsconfig.json eslint.config.mjs DESIGN.md GLOSSARY.md README.md AGENTS.md .bstack/project.json\n\nChecking formatting...\nAll matched files use Prettier code style!\n\n> pantry-app@0.1.0 lint\n> eslint src\n\n\n> pantry-app@0.1.0 typecheck\n> tsc --noEmit\n\n\n> pantry-app@0.1.0 journey\n> node scripts/resources.mjs && npm run build && node --test tests/journey.test.mjs\n\n{\"availableMemoryGB\":18.36484608,\"freeDiskGB\":31.010947072,\"load\":2.45,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 build\n> tsc\n\nOBSERVED Rice add -> needed -> shopping -> reload retained\nOBSERVED duplicate reuse, full-name variants, unmark, failed save, failed retry, complete-session successful retry and reload\n{\"browser\":\"154.0.8037.57\",\"evidence\":\"[scratch-path]\",\"observed\":\"real DOM and reload\",\"errors\":[]}\n✔ approved household browser outcomes (1262.265779ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1659.421321\n",
+        "stderr": "",
+        "durationMs": 6744.171868000001,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 90.88664099999983,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "kind": "violation",
+      "source": "[scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> pantry-app@0.1.0 check\n> node scripts/resources.mjs && npm run format && npm run lint && npm run typecheck && npm run journey\n\n{\"availableMemoryGB\":18.3396352,\"freeDiskGB\":31.010770944,\"load\":2.25,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 format\n> prettier --check src tests scripts index.html package.json tsconfig.json eslint.config.mjs DESIGN.md GLOSSARY.md README.md AGENTS.md .bstack/project.json\n\nChecking formatting...\nAll matched files use Prettier code style!\n\n> pantry-app@0.1.0 lint\n> eslint src\n\n\n[isolated-home]/cache/bstack/ca40daa564b3a9b440810b5d4e4ea1dedc09415f19af8f7c912d68e6c7f03503/f6ada120-679b-44f6-9ee2-a20442decea9/violation/src/ui/render.ts\n  53:1  error  Unexpected use of 'localStorage'. UI_DIRECT_STORAGE: use the public pantry interface  no-restricted-globals\n\n✖ 1 problem (1 error, 0 warnings)\n\n",
+        "stderr": "",
+        "durationMs": 1908.600896,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 94.90216699999837,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    }
+  ],
+  "path": "./c48bb1a4-proof.json",
+  "limitations": [
+    "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "command": "findings render",
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "result": "verification blocked",
+    "reasons": [
+      "Missing required outcome: native-boundary-proof.",
+      "Missing required outcome: maintained-enforcement.",
+      "Missing required outcome: foundation-review.",
+      "Missing required outcome: maintenance-contract.",
+      "Missing required outcome: standalone-clean-clone.",
+      "Outcome starting-checks is failed.",
+      "Outcome journey is failed.",
+      "Unresolved finding: F-001.",
+      "Unresolved finding: F-002.",
+      "Unresolved finding: F-003.",
+      "Unresolved finding: F-004.",
+      "Unresolved finding: F-005.",
+      "Unresolved finding: F-006."
+    ],
+    "fingerprint": "b3ae60ebe00a276e3ae533153f0eaebde06b82a5ef6cb0aad861673e323ad350",
+    "path": "./046ac9b4-repo-audit.md"
+  },
+  "inputs": {
+    "target": {
+      "mode": "repo",
+      "root": "[fixture]"
+    },
+    "findings": "./6482f78d-selected-findings.json"
+  }
+}

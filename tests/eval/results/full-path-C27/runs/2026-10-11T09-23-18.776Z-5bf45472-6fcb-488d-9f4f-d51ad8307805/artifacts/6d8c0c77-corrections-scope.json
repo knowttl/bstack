@@ -1,0 +1,1 @@
+{"schemaVersion": 1, "id": "corrections", "writePaths": ["packages/core/**", "packages/web/**", "journey.mjs", "unit.test.mjs"], "contracts": [{"id": "checkout-public-core", "files": ["DESIGN.md", "packages/core/index.ts", "packages/web/ui.ts", "journey.mjs"]}]}

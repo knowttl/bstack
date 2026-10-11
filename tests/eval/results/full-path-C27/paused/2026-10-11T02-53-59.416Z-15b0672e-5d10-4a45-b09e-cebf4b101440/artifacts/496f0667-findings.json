@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "nextChange": "Re-audit after a user edit, then a representative extension through approved public core interface and maintained checks.",
+  "reviewedScope": [
+    ".bstack/assessment.json",
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "docs/repo-audit.md",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/a.ts",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/core/internal/orders.ts",
+    "packages/web/alias.ts",
+    "packages/web/public.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts",
+    "unit.test.mjs"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "UI never touches storage; agreed checkout total is 10 at line 4."
+    },
+    {
+      "id": "interface",
+      "pointer": "AGENTS.md:1",
+      "intent": "documented",
+      "summary": "Use approved design and public core interface."
+    },
+    {
+      "id": "implementation",
+      "pointer": "packages/web/ui.ts:1",
+      "intent": "observed",
+      "summary": "Private/alias storage edges, in-memory order storage in web routes, and core cycle exist."
+    },
+    {
+      "id": "checks",
+      "pointer": "package.json:12",
+      "intent": "observed",
+      "summary": "Types and mocked tests pass; native boundary and live journey captures fail."
+    },
+    {
+      "id": "terms",
+      "pointer": "glossary.md:3",
+      "intent": "documented",
+      "summary": "Order has two incompatible definitions."
+    },
+    {
+      "id": "next",
+      "pointer": "user request: final checkpoint",
+      "intent": "inferred",
+      "summary": "A subsequent extension needs portable authoritative guidance and maintained checks. Specific extension is not yet defined."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Web directly imports private storage, resolves an alias into it, and stores orders in routes.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/core/index.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "UI never touches storage; use public core interface.",
+      "consequence": "Extensions can bypass the approved boundary.",
+      "fix": "Expose servicePrice and order creation via the existing core index; move order storage into core; make web adapters use that interface. Retain public.ts as the representative example and document it in DESIGN.md.",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/core/internal/orders.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/web/public.ts",
+        "DESIGN.md"
+      ],
+      "verification": "Native boundaries and types pass; valid public/sibling imports pass; deliberate private and alias violations fail; checkout remains 10.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "interface",
+        "implementation"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Core a and b call each other recursively.",
+      "files": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Proposed: core dependency graph must remain acyclic, enforced by the existing native check.",
+      "consequence": "Calling either helper never terminates and boundary checks fail.",
+      "fix": "Retain both exports and filenames; make b a terminating leaf (proposed result 12), with a delegating to b. Record this rule and its scope in DESIGN.md.",
+      "scope": [
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "DESIGN.md",
+        "unit.test.mjs"
+      ],
+      "verification": "Native cycle proof fails only on seeded cycle; helper calls terminate with selected result.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "implementation",
+        "checks"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Real journey price server supplies 12, conflicting with checkout acceptance total 10.",
+      "files": [
+        "journey.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "command": "npm run journey",
+      "principle": "The agreed checkout total is 10.",
+      "consequence": "Mocked unit success masks the failed user journey.",
+      "fix": "Set the journey test server price to 10; preserve its expected total 10 and production quote 12. Add representative public-interface checkout coverage. Do not hardcode a 10 result in production.",
+      "scope": [
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "verification": "Captured failing before reproduction and passing after real local HTTP journey using unchanged expected total.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "checks"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Order names both a customer purchase and UI panel sequence.",
+      "files": [
+        "glossary.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Use one unambiguous canonical term per concept.",
+      "consequence": "Extension authors cannot identify the intended domain meaning.",
+      "fix": "Keep Order for customer purchase; rename the UI sequencing concept to Panel order in existing glossary.md.",
+      "scope": [
+        "glossary.md"
+      ],
+      "verification": "Owner selects the terminology; final docs checker and impact assessment cite unchanged purchase meaning.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "terms"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "Maintained check excludes boundaries and journey; no portable maintenance contract/checker or assessed audit record exists.",
+      "files": [
+        "package.json",
+        "AGENTS.md"
+      ],
+      "command": null,
+      "principle": "Maintain the approved interface and journey with repo-owned enforcement and explicit change assessment.",
+      "consequence": "Future work can pass check while violating design; clean-clone review cannot reproduce maintenance evidence.",
+      "fix": "Extend existing npm run check with fail-fast types, boundaries, units and journey; retain separate scripts. Add selected .bstack contract, installed standalone checker and portable assessment; point AGENTS.md to existing design/glossary/example and commands; create docs/repo-audit.md only after final assessment. Preserve CLAUDE.md import stub.",
+      "scope": [
+        "package.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/assessment.json",
+        "docs/repo-audit.md"
+      ],
+      "verification": "Maintained-command valid/violation proof; native final checks; contract/docs/evidence validation; committed portable assessment; fresh checker in working tree and different-root clean clone with isolated home/cache. Every changed/unmapped path assessed.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "interface",
+        "checks",
+        "next"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey",
+    "boundary-proof",
+    "maintained-enforcement",
+    "portable-maintenance",
+    "clean-clone-checker"
+  ],
+  "execution": [
+    {
+      "id": "original-native-checks",
+      "outcome": "starting-checks",
+      "status": "failed",
+      "fingerprint": "b4e67d8d627961c51235ad9c60c29062df411111333d147ddb9e941725aaa722",
+      "artifact": "./072aaf20-checks.json",
+      "artifactHash": "c306f9b1fe47aad491ed50038e46c2fee408d2e37bad39e3d8164fde1f55d85a",
+      "method": "run-checks --phase before; types and units pass, boundaries and real HTTP journey fail"
+    }
+  ],
+  "limitations": [
+    "Selection and exact-byte approval are pending; no project writes have occurred.",
+    "Starting boundaries and real journey fail; repo is not ready.",
+    "Only one historical commit exists; co-change signals are not useful architecture evidence.",
+    "No external production dependency is observed; journey uses a real local HTTP server. No deployed service behavior is claimed.",
+    "Native checker currently covers static import/export resolution and cycles; dynamic imports are a stated limit.",
+    "Relevant research briefs ran sequentially in main thread because this fixture is small; no external tooling recommendation or instruction consolidation is proposed.",
+    "Final path proof, portable assessment and clean-clone checker remain pending approved writes."
+  ]
+}

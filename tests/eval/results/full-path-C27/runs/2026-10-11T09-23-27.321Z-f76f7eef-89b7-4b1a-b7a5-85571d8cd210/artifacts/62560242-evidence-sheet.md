@@ -1,0 +1,1 @@
+Every purpose, scope and boundary commitment traces to brief.md and confirmed author intent. Household-control, clear-name and honest-retention reasoning traces to the author-selected needed-meaning, duplicate-names and storage-failure decisions. No project history is claimed. Exact revision approval remains pending.

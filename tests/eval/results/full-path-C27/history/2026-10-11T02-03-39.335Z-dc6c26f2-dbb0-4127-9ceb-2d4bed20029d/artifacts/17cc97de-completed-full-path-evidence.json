@@ -1,0 +1,44 @@
+{
+  "verdict": "complete existing-repo full path; ready for the stated next change",
+  "head": "0654cd7fd3929db0ee7216eb64e75f5f63e3aee1",
+  "implementationHead": "c7fce613b004d87dc442f5fc6f6b6f1ad04d1cc1",
+  "comparisonBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "findingsFingerprint": "71ae4380b03661be2589b1b4e4c4885e55ccbbcc567f29873ff8ed95e832e486",
+  "checklist": {
+    "7-audit-starting-state": "complete; original failures retained",
+    "8-material-gaps": "complete; owner verdicts resolved pricing, glossary and scope",
+    "9-evidenced-findings": "complete; selected F-001 through F-006",
+    "10-protected-selected-writes": "complete; exact approved plans and recoverable journals retained",
+    "11-final-verification": "complete; fresh current-head native checks, six rule controls, maintained aggregate, complete standalone working and isolated clean-clone invocations, final scratch findings"
+  },
+  "authoritiesPreserved": [
+    "DESIGN.md",
+    "glossary.md",
+    "AGENTS.md",
+    "CLAUDE.md"
+  ],
+  "publicInterfaceExample": "packages/web/public.ts",
+  "historicalAuditUnchanged": {
+    "path": "docs/repo-audit.md",
+    "sha256": "3fb672af0878fe905bd17ba429302eef3176f0d0def2b316775795e3f481aa51"
+  },
+  "artifacts": {
+    "currentHeadReport": "./3203defd-completed-current-head-report.md",
+    "findings": "./4b453d12-findings-completed-current-head.json",
+    "findingsValidation": "./c777821f-completed-findings-validation.json",
+    "checkerEvidence": "./3ca92286-completed-checker-evidence.json",
+    "ruleControls": "./2761a650-completed-proof-summary.json",
+    "nativeChecks": "./846a24c8-completed-native-checks.json",
+    "portableAssessment": "./cd062775-assessment.json",
+    "originalFailedJourney": "./b53fc8e8-starting-checks-refreshed.json",
+    "unchangedPlanBeforeOutcomeControl": "./91efe800-runtime-reproduction-before.json",
+    "unchangedPlanAfterOutcomeControl": "./93d9756c-runtime-reproduction-after.json"
+  },
+  "limits": [
+    "Native dependency analysis covers static top-level imports/exports; dynamic dependencies require selected analyzer work.",
+    "Real observed journey uses a controlled local HTTP endpoint; no deployed-service claim.",
+    "Receipt wording remains a future owner decision; user note preserved exactly.",
+    "No hosted CI or delivery service selected.",
+    "Single original commit provides no useful change-frequency/co-change signal; recorded measurement is advisory."
+  ]
+}

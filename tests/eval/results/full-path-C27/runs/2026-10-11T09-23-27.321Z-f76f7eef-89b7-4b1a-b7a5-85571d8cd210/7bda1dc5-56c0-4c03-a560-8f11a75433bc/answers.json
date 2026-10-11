@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T09-23-27.321Z-f76f7eef-89b7-4b1a-b7a5-85571d8cd210",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "intent-vision",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 414
+    },
+    {
+      "id": "board",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 414
+    },
+    {
+      "id": "installed",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 414
+    }
+  ]
+}

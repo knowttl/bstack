@@ -99,7 +99,7 @@ Recorded runs on Linux do not prove support on Windows or macOS.
 For an existing repo, use `$repo-audit` in Codex, `/repo-audit` in Claude Code, or `/skill:repo-audit` in Pi, with the target, assessed area and stated next change.
 A plain request such as "audit this repo" does not start the skill.
 Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation, vision review and final verification requirements.
-See the [T2.8 foundation checkpoint](tests/eval/results/foundation-C17/summary.md) for actual outcomes and blocked interactions.
+See the [C27 final-path evidence](tests/eval/results/full-path-C27/summary.md) for completed installed paths, repeated audit, independent extension, bounded maintenance and observed limitations.
 
 Collect repeatable size and change-history signals, or compare two declared change plans:
 

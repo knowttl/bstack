@@ -1,0 +1,8 @@
+{
+  "root": "[scratch-path]",
+  "repo": "[scratch-path]",
+  "home": "[scratch-path]",
+  "cache": "[scratch-path]",
+  "base": "e9bf94b0be4619d9aacde2bc9621cc6321714b91",
+  "head": "50ecb41ba85783293c7fac68c7745d9c0a779bba"
+}

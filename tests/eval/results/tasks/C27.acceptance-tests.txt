@@ -1,0 +1,31 @@
+✔ registry validates all 75 owned cases without scoring procedures (86.979756ms)
+✔ registry blocks missing acceptance ID (66.127701ms)
+✔ registry blocks duplicate acceptance ID (51.912231ms)
+✔ registry blocks unknown owner task (52.926792ms)
+✔ registry blocks wrong existing owner task (64.138701ms)
+✔ registry blocks missing shared owner (56.119896ms)
+✔ registry blocks extra shared owner (59.051169ms)
+✔ registry blocks duplicate owner (50.197022ms)
+✔ registry blocks invalid procedure status (57.152675ms)
+✔ registry blocks empty planned procedure (56.741295ms)
+✔ registry blocks invalid criterion source (55.313616ms)
+✔ registry blocks unknown registry field (50.756801ms)
+✔ registry blocks missing completed evidence (53.55145ms)
+✔ registry blocks unregistered completed test (53.915585ms)
+✔ completed agent procedure blocks ambiguous-idea for AC-1 (55.260446ms)
+✔ completed agent procedure accepts ambiguous-idea for AC-2 (55.548055ms)
+✔ completed agent procedure accepts new-idea for AC-9 (57.592968ms)
+✔ completed manual procedure blocks ambiguous-idea for AC-1 (59.189249ms)
+✔ completed manual procedure accepts ambiguous-idea for AC-2 (63.02355ms)
+✔ completed manual procedure accepts new-idea for AC-9 (61.93427ms)
+✔ duplicate final selections are blocked independently of run history (56.361039ms)
+✔ completed procedure definitions execute valid skeleton passes from another working directory without scoring it (701.493641ms)
+✔ completed procedure definitions execute unlisted-reference fails with reference-unlisted without scoring it (424.651484ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2428.370162

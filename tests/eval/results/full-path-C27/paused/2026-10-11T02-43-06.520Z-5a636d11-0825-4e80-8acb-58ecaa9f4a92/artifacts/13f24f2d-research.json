@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "mode": "subagents",
+  "host": "Codex workspace tools",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "language",
+      "scope": [
+        "brief.md"
+      ],
+      "findings": "brief.md:4 selects TypeScript and local storage. Strict TypeScript checks and UI-scoped ESLint native import/global/property restrictions support the local journey. Storage access and writes may throw; keep session state and expose unsaved changes. DOM rendering APIs can remain permitted. A compile-only bundle avoids a runtime server.",
+      "limitations": [
+        "No existing implementation, tool configs, history or native results; dependency pins need registry resolution. Static import checks do not prove arbitrary dynamic indirection. Browser observations remain required."
+      ],
+      "files": [
+        {
+          "location": "brief.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "2b8b3463702f5d528b76dad89a931f00fd433816623520e97abe3c7d45599823"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://www.typescriptlang.org/tsconfig/strict.html",
+          "readDate": "2026-10-10",
+          "verification": "verified"
+        },
+        {
+          "url": "https://typescript-eslint.io/getting-started/",
+          "readDate": "2026-10-10",
+          "verification": "verified"
+        },
+        {
+          "url": "https://typescript-eslint.io/users/dependency-versions/",
+          "readDate": "2026-10-10",
+          "verification": "verified"
+        },
+        {
+          "url": "https://eslint.org/docs/latest/rules/no-restricted-imports",
+          "readDate": "2026-10-10",
+          "verification": "verified"
+        },
+        {
+          "url": "https://eslint.org/docs/latest/rules/no-restricted-globals",
+          "readDate": "2026-10-10",
+          "verification": "verified"
+        },
+        {
+          "url": "https://eslint.org/docs/latest/rules/no-restricted-properties",
+          "readDate": "2026-10-10",
+          "verification": "verified"
+        },
+        {
+          "url": "https://html.spec.whatwg.org/multipage/webstorage.html",
+          "readDate": "2026-10-10",
+          "verification": "verified"
+        }
+      ]
+    }
+  ]
+}

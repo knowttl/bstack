@@ -1,0 +1,26 @@
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 42rem;
+  margin: 3rem auto;
+  padding: 0 1rem;
+  color: #21382a;
+  background: #f6f8f3;
+}
+button,
+input {
+  font: inherit;
+  padding: 0.5rem;
+}
+button {
+  margin: 0.3rem;
+  cursor: pointer;
+}
+li {
+  margin: 0.8rem 0;
+}
+[role="alert"] {
+  color: #8a2525;
+}
+[role="status"] {
+  font-weight: 600;
+}

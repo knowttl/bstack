@@ -1,0 +1,13 @@
+{
+  "acceptanceId": "AC-69",
+  "verdict": "passed preservation and authority reuse; portable readiness remains blocked",
+  "fixtureHead": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+  "observedDiff": "Exactly one added export-note sentence in DESIGN.md; no other edits, staging, commits or duplicate guidance.",
+  "notes": [
+    "User note: receipt wording remains a future owner decision.",
+    "User note: export remains outside this change."
+  ],
+  "nativeOutcome": "Types, units, boundaries, cycles and real HTTP checkout 201/10 passed; quote remains 12.",
+  "readinessLimit": "The committed portable assessment rejects the uncommitted source edit. This repeat-audit verdict does not claim a clean-checkout pass for the dirty note.",
+  "nextFixturePreparationAuthority": "Supervisor-delegated fixture verdict, 2026-10-11: the fixture author commits only the export note after the preservation audit is scored, establishing the clean comparison base for the independent extension."
+}

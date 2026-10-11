@@ -376,8 +376,8 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.4 Build `measure` and `overlap`
     - C12 implements revision-bound byte sizes, change and co-change commits, rename lineage, reported lock/generated/declared-formatting exclusions and shared declared write and contract paths.
       Measurement follows merged ancestry with no fixed Git-output capture limit and excludes historical gitlink events.
-      The firstmate-approved scope measures only endpoint files, following detected lineage back through renames to addition.
-      The firstmate accepts merged deletion and unrelated path reuse as an attribution limitation: old-lifetime commits and co-change pairs can support the replacement's advisory signals, never violations, without changing the definition of a change.
+      The supervisor-approved scope measures only endpoint files, following detected lineage back through renames to addition.
+      The supervisor accepts merged deletion and unrelated path reuse as an attribution limitation: old-lifetime commits and co-change pairs can support the replacement's advisory signals, never violations, without changing the definition of a change.
       Generated-directory exclusions now derive from the shared discovery policy.
       Rename evidence respects the same path exclusions as frequency and co-change signals, while formatting-only exclusions retain rename evidence.
       The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records earlier local checks and named fixture controls.
@@ -533,7 +533,9 @@ Tick each task when its "Done when" commands pass.
     - [C26 current-host observations](../tests/eval/results/invocation-C26/summary.md#fresh-paired-validation-on-current-bytes) retain the fresh plain and explicit installed sessions on current corrected skill bytes, plus historical attempts and telemetry limitations.
       [Task evidence](../tests/eval/results/tasks/C26.json) owns the final settled-source full-suite capture and validator attachment on the published inputs, as specified in the checkpoint.
       C27 retains final full-path acceptance.
-  - [ ] T4.3 Prove both complete paths and a representative extension
+  - [x] T4.3 Prove both complete paths and a representative extension
+    - [C27 final evidence](../tests/eval/results/full-path-C27/summary.md) records both complete installed paths, preservation on repeated audit, a skill-free extension through approved public interfaces and bounded maintenance, with fresh scored transcripts and clean-checkout artifacts.
+      [Task evidence](../tests/eval/results/tasks/C27.json) owns the settled-source full-suite capture and validator attachment.
 - Phase 5: Release
   - [ ] T5.1 Write worked examples and limitations
   - [ ] T5.2 Final evaluation and release

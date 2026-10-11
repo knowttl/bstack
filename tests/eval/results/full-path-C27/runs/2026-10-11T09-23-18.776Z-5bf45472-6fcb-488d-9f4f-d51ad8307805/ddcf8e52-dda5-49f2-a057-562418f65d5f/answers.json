@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T09-23-18.776Z-5bf45472-6fcb-488d-9f4f-d51ad8307805",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "protected-path",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 280
+    },
+    {
+      "id": "installed",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 280
+    }
+  ]
+}

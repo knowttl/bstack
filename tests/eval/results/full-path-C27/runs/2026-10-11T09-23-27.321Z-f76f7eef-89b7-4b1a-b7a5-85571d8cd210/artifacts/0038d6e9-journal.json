@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "runId": "24a746e53537cf6160288cad06cf0cdcdeb3d91ccbfd57083492fa3870fcf7d7",
+  "target": {
+    "mode": "workspace",
+    "root": "[fixture]/pantry-app",
+    "revision": null
+  },
+  "planDigest": "24a746e53537cf6160288cad06cf0cdcdeb3d91ccbfd57083492fa3870fcf7d7",
+  "edits": [
+    {
+      "id": "create-000",
+      "path": ".bstack/bin/bstack-check.mjs",
+      "resolvedPath": "[fixture]/pantry-app/.bstack/bin/bstack-check.mjs",
+      "originalHash": null,
+      "proposedHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-042",
+      "path": ".bstack/project.json",
+      "resolvedPath": "[fixture]/pantry-app/.bstack/project.json",
+      "originalHash": null,
+      "proposedHash": "cc2421013cb2c2ee3bb6316d9426ca66c8fcbbbb2f5e2cb89423d87772ec3449",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-060",
+      "path": ".gitignore",
+      "resolvedPath": "[fixture]/pantry-app/.gitignore",
+      "originalHash": null,
+      "proposedHash": "3938af0c0820cd8a1dc61f391aade35c021df4bb5e15efc755db9ba7b72b3841",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-061",
+      "path": "AGENTS.md",
+      "resolvedPath": "[fixture]/pantry-app/AGENTS.md",
+      "originalHash": null,
+      "proposedHash": "d30ca0cd8b05f2393fcfc84c90022aa4827369c5998acb42d7b60f9b913b17eb",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-062",
+      "path": "DESIGN.md",
+      "resolvedPath": "[fixture]/pantry-app/DESIGN.md",
+      "originalHash": null,
+      "proposedHash": "c490553424d728e6f96312567d0c847466661c51b5bc8c3fa8a933ac04364f87",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-063",
+      "path": "GLOSSARY.md",
+      "resolvedPath": "[fixture]/pantry-app/GLOSSARY.md",
+      "originalHash": null,
+      "proposedHash": "88e425ef1ca488417ed4d7592e7544ac7ed6a132ce3907f301337c3eb7ea3562",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-064",
+      "path": "README.md",
+      "resolvedPath": "[fixture]/pantry-app/README.md",
+      "originalHash": null,
+      "proposedHash": "e35303bf7e2f18ece29d2c674ac02c400702b5b4f6e24951406f62cf6e965bba",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-065",
+      "path": "VISION.md",
+      "resolvedPath": "[fixture]/pantry-app/VISION.md",
+      "originalHash": null,
+      "proposedHash": "da3e7fd9dc4f92c92351dd71b65a6b2307f61b3df2bb245b8b1699097649294b",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-066",
+      "path": "eslint.config.mjs",
+      "resolvedPath": "[fixture]/pantry-app/eslint.config.mjs",
+      "originalHash": null,
+      "proposedHash": "95944de31f17cb41005bb35a8c014b9efbbe179081ebbef0816380ec30928767",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-067",
+      "path": "index.html",
+      "resolvedPath": "[fixture]/pantry-app/index.html",
+      "originalHash": null,
+      "proposedHash": "6e03a03bfe7b5f4318b2a225ce6903614b6c85a048149453c8a2451ac5fb3d13",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-068",
+      "path": "package-lock.json",
+      "resolvedPath": "[fixture]/pantry-app/package-lock.json",
+      "originalHash": null,
+      "proposedHash": "80cba1d8f619b93901c3e3e7e77e2696039e6ebfd9e4aef5ed5d9038f6718498",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-069",
+      "path": "package.json",
+      "resolvedPath": "[fixture]/pantry-app/package.json",
+      "originalHash": null,
+      "proposedHash": "a49a5f4e92876791d8b14ac717ccbd60593662ad38fa7a127c3b52e2904523a2",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-070",
+      "path": "scripts/resources.mjs",
+      "resolvedPath": "[fixture]/pantry-app/scripts/resources.mjs",
+      "originalHash": null,
+      "proposedHash": "6d769be9ca9be9615b180868ad8d700b6feb3ea4b8161242efd8a65dc1e370cc",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-071",
+      "path": "src/main.ts",
+      "resolvedPath": "[fixture]/pantry-app/src/main.ts",
+      "originalHash": null,
+      "proposedHash": "b0588c790254f1330a3f85045c59f17e997b6aba6ded42ad1a6bfb99d133affe",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-072",
+      "path": "src/pantry.ts",
+      "resolvedPath": "[fixture]/pantry-app/src/pantry.ts",
+      "originalHash": null,
+      "proposedHash": "13bfe0f50bc12949f0fea2a1d00b6e7bc2cc02bbe80c0d69320c4d278b0c7cbc",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-073",
+      "path": "src/private/storage.ts",
+      "resolvedPath": "[fixture]/pantry-app/src/private/storage.ts",
+      "originalHash": null,
+      "proposedHash": "1951efcf34fb9b8bcdfa272f899db262183c34b5a184509eab6505908a1418ec",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-074",
+      "path": "src/ui/render.ts",
+      "resolvedPath": "[fixture]/pantry-app/src/ui/render.ts",
+      "originalHash": null,
+      "proposedHash": "e621d4e105c81c1141eaf828af080527a3a06c329cda0776a443cc9a15622ff0",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-075",
+      "path": "tests/journey.test.mjs",
+      "resolvedPath": "[fixture]/pantry-app/tests/journey.test.mjs",
+      "originalHash": null,
+      "proposedHash": "5fafdce866ebda653fcbfe6c1057a2418e6c9453a928aa6a673d7cc1b782258d",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "create-076",
+      "path": "tsconfig.json",
+      "resolvedPath": "[fixture]/pantry-app/tsconfig.json",
+      "originalHash": null,
+      "proposedHash": "a363a25fd5a5d7a35e5c91efdc6b884b4ac58bd7bcbd0020203c8d922fe4c902",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "journey",
+    "foundation-review",
+    "native-enforcement",
+    "maintenance-contract",
+    "fresh-standalone"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "findingIds": [
+    "F-001",
+    "F-002",
+    "F-003"
+  ],
+  "destination": "[fixture]/pantry-app",
+  "stack": "TypeScript/browser/local-storage",
+  "visionRevision": "da3e7fd9dc4f92c92351dd71b65a6b2307f61b3df2bb245b8b1699097649294b",
+  "author": "Explicit selection in author message, 2026-10-11",
+  "exactCreationApproval": "pending"
+}

@@ -1,0 +1,14 @@
+{"time": 1791714097.710013, "availableMemoryBytes": 19932798976, "freeDiskBytes": 29720879104, "load": 2.447265625, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714098.8826623, "availableMemoryBytes": 19794718720, "freeDiskBytes": 29720862720, "load": 2.447265625, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714124.5632417, "availableMemoryBytes": 20018974720, "freeDiskBytes": 29713281024, "load": 1.83251953125, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714125.7527661, "availableMemoryBytes": 20024406016, "freeDiskBytes": 29713231872, "load": 1.83251953125, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714127.513177, "availableMemoryBytes": 20058374144, "freeDiskBytes": 29713268736, "load": 2.48681640625, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714128.6102552, "availableMemoryBytes": 19891232768, "freeDiskBytes": 29713264640, "load": 2.48681640625, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714195.0124044, "availableMemoryBytes": 19609063424, "freeDiskBytes": 29712146432, "load": 2.013671875, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714196.1210124, "availableMemoryBytes": 19557146624, "freeDiskBytes": 29712142336, "load": 2.01220703125, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714197.8691492, "availableMemoryBytes": 19588644864, "freeDiskBytes": 29712130048, "load": 2.01220703125, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714199.0186667, "availableMemoryBytes": 19584954368, "freeDiskBytes": 29712134144, "load": 2.01220703125, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714217.9664795, "availableMemoryBytes": 19462385664, "freeDiskBytes": 29711433728, "load": 2.02099609375, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714219.1294491, "availableMemoryBytes": 19336794112, "freeDiskBytes": 29711433728, "load": 2.02099609375, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[fixture]", "passed": true}
+{"time": 1791714235.5115466, "availableMemoryBytes": 19250987008, "freeDiskBytes": 29678096384, "load": 1.93017578125, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[scratch-path]", "passed": true}
+{"time": 1791714236.6543052, "availableMemoryBytes": 19137847296, "freeDiskBytes": 29684965376, "load": 2.01611328125, "existingNodeSuites": 0, "includingProposed": 1, "cwd": "[scratch-path]", "passed": true}

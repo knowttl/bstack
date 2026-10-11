@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": null,
+  "base": {
+    "ref": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+    "kind": "commit",
+    "objectId": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "head": "c819be12fdfc25cf0903c9968eebb83b076787f9",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/bin/bstack-check.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "AGENTS.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "docs/repo-audit.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "glossary.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "journey.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "package.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/core/b.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/core/index.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/alias.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/routes.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/ui.ts"
+    }
+  ],
+  "paths": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "docs/repo-audit.md",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/web/alias.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "scopeIds": [
+        "maintained-repo",
+        "historical-audit"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance",
+        "audit-snapshot"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "glossary.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "journey.mjs",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "package.json",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "packages/core/b.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "packages/core/index.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": null
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": null
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": null
+    },
+    {
+      "id": "audit-snapshot",
+      "path": "docs/repo-audit.md",
+      "assessment": null
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [],
+  "execution": [],
+  "fingerprint": null
+}

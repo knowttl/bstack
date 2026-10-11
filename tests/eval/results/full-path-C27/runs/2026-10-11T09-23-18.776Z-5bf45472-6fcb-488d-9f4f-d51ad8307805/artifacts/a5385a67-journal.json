@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "runId": "d52b22dddeac55a4b57391964e2da4bc89c9cb47bb86c37979b0984b26ffaf43",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "c819be12fdfc25cf0903c9968eebb83b076787f9"
+  },
+  "planDigest": "d52b22dddeac55a4b57391964e2da4bc89c9cb47bb86c37979b0984b26ffaf43",
+  "edits": [
+    {
+      "id": "portable-assessment",
+      "path": ".bstack/assessment.json",
+      "resolvedPath": "[fixture]/.bstack/assessment.json",
+      "originalHash": null,
+      "proposedHash": "35be755e0cea5ea062d1cfcc58f6268dc142e512118823e9dfb3843a4921974b",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "starting-checks",
+    "journey",
+    "native-boundary-proof",
+    "maintained-enforcement",
+    "foundation-review",
+    "maintenance-contract",
+    "standalone-clean-clone"
+  ]
+}

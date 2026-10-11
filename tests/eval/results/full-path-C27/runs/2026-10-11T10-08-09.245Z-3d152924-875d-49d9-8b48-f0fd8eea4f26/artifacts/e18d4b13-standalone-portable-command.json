@@ -1,0 +1,1 @@
+{"command": ["node", ".bstack/bin/bstack-check.mjs", "--repo", "[fixture]", "--base", "b6c59b7810f5155fd514c9db60e98b7dffce0cc0", "--assessment", "[fixture]/.bstack/assessment.json", "--json"], "exitCode": 2, "time": 1791713389.332296}

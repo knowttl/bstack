@@ -1,0 +1,83 @@
+{
+  "checkId": "lint",
+  "command": {
+    "executable": "npm",
+    "args": [
+      "run",
+      "lint"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 180000
+  },
+  "expectedDiagnostic": "UI_DIRECT_STORAGE",
+  "status": "passed",
+  "cases": [
+    {
+      "kind": "valid",
+      "source": "[scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> pantry-app@0.1.0 lint\n> eslint src\n\n",
+        "stderr": "",
+        "durationMs": 1213.855367,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 99.79517499999997,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "kind": "violation",
+      "source": "[scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> pantry-app@0.1.0 lint\n> eslint src\n\n\n[isolated-home]/cache/bstack/8dd05bc7e2a0b4688caa371d0359c41d67bc2bdca79ffa338017022c754cbc57/6a22b0b3-07a1-4f61-a4fa-51447501814b/violation/src/ui/render.ts\n  53:1  error  'localStorage' is restricted from being used. UI_DIRECT_STORAGE: use the public pantry interface  no-restricted-properties\n\n✖ 1 problem (1 error, 0 warnings)\n\n",
+        "stderr": "",
+        "durationMs": 1197.061772,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 96.20080400000006,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    }
+  ],
+  "path": "./edea1f00-proof.json",
+  "limitations": [
+    "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+  ]
+}

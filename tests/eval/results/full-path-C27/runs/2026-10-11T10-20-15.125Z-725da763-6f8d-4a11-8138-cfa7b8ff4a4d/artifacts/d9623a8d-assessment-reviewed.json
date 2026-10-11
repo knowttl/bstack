@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "422c07b21bcde3f2da59c827f0530f8b548d2d7a",
+    "kind": "commit",
+    "objectId": "422c07b21bcde3f2da59c827f0530f8b548d2d7a"
+  },
+  "head": "f3d805cf86fa9dd19558c190dacd37386603ebee",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/public.ts"
+    }
+  ],
+  "paths": [
+    "packages/web/public.ts"
+  ],
+  "mappings": [
+    {
+      "path": "packages/web/public.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "selected-quantity"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "No public behavior changes; quote names its intermediate numeric total before returning it.",
+        "changedPaths": [
+          "packages/web/public.ts"
+        ],
+        "reason": "The only product diff names total in quote: price() is still called once and multiplied by the same quantity, with the same default one and return value. Public core import and dependency direction are identical. Original and final native checks cover quote 12/24 and checkout status 201 totals 10/20 through real loopback HTTP; checkout, storage and order creation are untouched. Both user notes, all acceptance and the contract remain byte-identical. No discount or new pricing rule is introduced. Dynamic loading and production services remain outside the documented checks.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "Quote remains 12.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "A selected quantity of two produces quote 24.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "The UI never touches storage.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: receipt wording remains a future owner decision.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: export remains outside this change.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "No public behavior changes; quote names its intermediate numeric total before returning it.",
+        "changedPaths": [
+          "packages/web/public.ts"
+        ],
+        "reason": "Naming a local numeric total in quote does not create or rename a domain concept: Order remains a customer purchase and Panel order remains the UI sequence. Checkout/order storage and panels are untouched; multiplication and default quantity are unchanged. Both original and final approved quote and HTTP checkout cases pass.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          },
+          {
+            "path": "glossary.md",
+            "pointer": "Panel order: the sequence in which UI panels appear.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "No public behavior changes; quote names its intermediate numeric total before returning it.",
+        "changedPaths": [
+          "packages/web/public.ts"
+        ],
+        "reason": "The public quote still imports price through ../core/index.ts and uses the identical multiplication and default quantity. Existing AGENTS.md pointers, npm run check, document registrations, rule coverage and standalone maintenance procedure remain applicable without edits. The reviewed contract already maps packages/web/public.ts to every maintained rule. Original and final aggregate executions preserve the approved pricing and checkout outcomes.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Use the approved [design](DESIGN.md) and public core interface.",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Run `npm run check` for maintained native verification; see DESIGN.md for acceptance cases, completion evidence and review limits.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion",
+    "selected-quantity"
+  ],
+  "execution": [],
+  "fingerprint": "afc0370d7a02da5d280d9017148a04a401f5394d4b2db763bdc20de95230afb3"
+}

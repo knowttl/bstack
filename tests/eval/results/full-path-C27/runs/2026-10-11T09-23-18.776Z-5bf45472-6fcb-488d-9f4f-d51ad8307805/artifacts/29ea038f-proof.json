@@ -1,0 +1,82 @@
+{
+  "checkId": "journey",
+  "command": {
+    "executable": "npm",
+    "args": [
+      "run",
+      "journey"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ]
+  },
+  "expectedDiagnostic": "agreed checkout total is 10",
+  "status": "passed",
+  "cases": [
+    {
+      "kind": "valid",
+      "source": "[fixture]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+        "stderr": "",
+        "durationMs": 258.654756,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 94.61402699999996,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "kind": "violation",
+      "source": "[scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":12}}\n",
+        "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: agreed checkout total is 10\n+ actual - expected\n\n  {\n    status: 201,\n+   total: 12\n-   total: 10\n  }\n\n    at file://[isolated-home]/cache/bstack/7945988635260e7f48131e79b73676c24ff1ca385c04145bb03d8d024efe9f97/e1c0f82d-6a85-4072-932e-9b28451baeb7/violation/journey.mjs:12:10\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: { status: 201, total: 12 },\n  expected: { status: 201, total: 10 },\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.17.0\n",
+        "durationMs": 292.821471,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 121.220236,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    }
+  ],
+  "path": "./29ea038f-proof.json",
+  "limitations": [
+    "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+  ]
+}
