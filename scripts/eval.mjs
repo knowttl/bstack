@@ -2,7 +2,7 @@ import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { platform, release } from 'node:os'
-import { root, text, object, array, options, scenario, readJSON, fail } from './lib/evaluation.mjs'
+import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution } from './lib/evaluation.mjs'
 import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
@@ -159,7 +159,7 @@ async function score(opts, results) {
   const directory = join(results, record.id)
   if (record.adapter) {
     if (record.hostFailure || !record.turns?.length || record.turns.some(turn => !turn.sessionId)) fail('Adapter scoring requires completed host turns. Use the manual procedure for unsupported conversations.')
-    if (!record.scopeGuard?.verified) fail('Adapter scoring requires verified evaluation filesystem scope.')
+    if (!verifiedExecution(record)) fail('Adapter scoring requires verified evaluation filesystem scope.')
     if (transcript !== await readFile(join(results, record.id, record.conversation), 'utf8')) fail('Score the captured adapter conversation without replacing its transcript.')
     if (record.isolation.cleanedAt) {
       if (!record.isolation.verified || record.conversationHash !== hashBytes(transcript)) fail('Closed host evidence has unverified isolation or a changed conversation.')
@@ -195,8 +195,9 @@ async function compare(opts, results) {
   for (const record of [before, after]) validateScore(record, { runId: record.id, checks: record.caseResults },
     await readFile(join(results, record.id, record.transcript), 'utf8'))
   if (before.adapterHash !== after.adapterHash) fail('Comparison requires the same host adapter and execution settings.')
-  if (before.adapter && (!before.scopeGuard?.verified || !after.scopeGuard?.verified ||
+  if (before.adapter && (!verifiedExecution(before) || !verifiedExecution(after) ||
       before.scopeGuard.version !== after.scopeGuard.version)) fail('Comparison requires the same verified filesystem scope contract.')
+  if (before.execution && after.execution && ['imageId', 'recipeHash', 'toolchain'].some(key => canonicalJSON(before.execution[key]) !== canonicalJSON(after.execution[key]))) fail('Comparison requires the same container image, recipe and toolchain.')
   if (before.mode !== 'without' || after.mode !== 'with' || ['agent', 'model', 'criteriaHash', 'stage'].some(key => before[key] !== after[key]) ||
       before.scenario.id !== after.scenario.id || ['name', 'revision'].some(key => before.fixture[key] !== after.fixture[key]) ||
       ['fixture', 'request', 'answers', 'invocation'].some(key => canonicalJSON(before.scenario[key]) !== canonicalJSON(after.scenario[key]))) fail('Comparison requires the same scenario, fixture revision, agent, model, stage and criteria, with identical fixture names, requests, scripted answers and invocation modes.')

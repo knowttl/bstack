@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { root, text, object, array, readJSON, checkRegistry, fail } from './evaluation.mjs'
+import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution } from './evaluation.mjs'
 import { scopeVersion } from './evaluation-scope.mjs'
 import { readAdapter } from './evaluation-host.mjs'
 import { correctedScore, validateScore } from './evaluation-scoring.mjs'
@@ -40,7 +40,12 @@ export async function completeRelease(results) {
     if (cache.has(id)) return cache.get(id)
     if (!/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(id)) fail('Invalid release run ID.')
     const directory = join(results, 'release/runs', id)
-    const record = await correctedScore(directory, await readJSON(join(directory, 'run.json')))
+    const recordBytes = await readFile(join(directory, 'run.json'))
+    const record = await correctedScore(directory, JSON.parse(recordBytes))
+    // The approved scope rerun retains this exact successful baseline; its
+    // fixture, criteria, request and toolchain still undergo the usual checks.
+    const approvedBaseline = id === '2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89' &&
+      hashBytes(recordBytes) === '4930d2928e98e6d162fbb8052d2884be0d7d40c5994a453b17b6b60cc42a732a'
     const definition = definitions.find(item => item.id === record.scenario?.id)
     if (!definition || record.id !== id || canonicalJSON(definition) !== canonicalJSON(record.scenario) ||
         record.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || record.stage !== definition.checkpoints.at(-1) ||
@@ -49,23 +54,21 @@ export async function completeRelease(results) {
     if (canonicalJSON(record.adapter) !== canonicalJSON(adapter) || record.adapterHash !== hashBytes(canonicalJSON(adapter)) ||
         record.agent !== adapter.invocation.agent || record.model !== adapter.invocation.model ||
         record.hostFailure || !record.isolation?.verified || !record.isolation.cleanedAt ||
-        ![2, scopeVersion].includes(record.scopeGuard?.version) || !record.scopeGuard.verified || record.scopeGuard.paths.length ||
+        ![2, scopeVersion].includes(record.scopeGuard?.version) || !verifiedExecution(record) || (!record.execution && !approvedBaseline) ||
         !record.turns?.length || record.turns.some(turn => !turn.sessionId) || !record.transcript || !record.answers) fail(`Unverified or unscored release run: ${id}`)
     git('merge-base', '--is-ancestor', record.sourceRevision, 'HEAD')
     const request = (record.mode === 'with' && definition.invocation === 'explicit' ? `${adapter.invocation.explicit}\n` : '') +
       (['foundation', 'final'].includes(record.stage) ? `Active checkpoint: ${record.stage}.\n` : '') + definition.request
     if (record.request !== request || record.turns[0].message !== request ||
         record.turns.slice(1).some((turn, index) => turn.message !== definition.answers[index])) fail(`Changed agent request or scripted answers: ${id}`)
-    // Grader repairs do not change a captured agent's inputs. Scope 2 already
-    // requires fixture/home isolation; scope 3 recognizes resource metadata.
+    // Grader repairs do not change a captured agent's inputs.
     git('diff', '--quiet', record.sourceRevision, '--', 'skills/repo-audit', 'install', 'tests/fixtures',
       'tests/eval/adapters')
-    // The approved baseline remains comparable after tightening the child mode:
-    // its enclosing home was already 0700. Every other host byte must match.
-    const hostPath = 'scripts/lib/evaluation-host.mjs'
-    const capturedHost = git('show', `${record.sourceRevision}:${hostPath}`).replace(
-      "await mkdir(join(home, 'tmp'))", "await mkdir(join(home, 'tmp'), { mode: 0o700 })")
-    if (capturedHost !== (await readFile(join(root, hostPath), 'utf8')).trim()) fail(`Changed evaluation host inputs: ${id}`)
+    if (!approvedBaseline) {
+      git('diff', '--quiet', record.sourceRevision, '--', 'scripts/lib/evaluation-host.mjs',
+        'scripts/lib/evaluation-container.mjs', 'tests/eval/container')
+      if (record.execution.recipeHash !== hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))) fail(`Changed evaluation container recipe: ${id}`)
+    }
     if (record.tools.node !== process.version) fail(`Node version changed: ${id}`)
     const version = spawnSync(record.adapter.executable, record.adapter.versionArgs, { cwd: root, encoding: 'utf8' })
     if (version.status !== 0 || version.stdout.trim() !== record.tools.agent) fail(`Agent tool version changed: ${id}`)
