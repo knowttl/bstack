@@ -1472,7 +1472,7 @@ function mapInventory(inventory, contracts) {
       ruleIds: [...new Set(scopes.flatMap((scope) => scope.ruleIds))]
     };
   });
-  const candidateDocuments = contracts.flatMap((contract) => contract.documents).filter((document, i, all) => all.findIndex((item) => item.id === document.id && item.path === document.path) === i && mappings.some((mapping) => mapping.documentIds.includes(document.id) || mapping.path === document.path));
+  const candidateDocuments = contracts.flatMap((contract) => contract.documents).map(({ id, path }) => ({ id, path })).filter((document, i, all) => all.findIndex((item) => item.id === document.id && item.path === document.path) === i && mappings.some((mapping) => mapping.documentIds.includes(document.id) || mapping.path === document.path));
   return { mappings, candidateDocuments, unmappedPaths: mappings.filter((mapping) => !mapping.documentIds.length).map((mapping) => mapping.path) };
 }
 
@@ -2793,4 +2793,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"2ab1ea6092aecc018c2e7ed6fceaf96acad3228bf33deec2ba9f4a970580b09c"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"47468b103d962bd98c6778e28579970ff72e166dad085c84ae0775c6c1532a22"}
