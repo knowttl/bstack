@@ -67,13 +67,15 @@ Unknown fields and shell command strings are rejected.
 `invocation` names the agent, model, explicit command, `codex-exec-jsonl` protocol and string-array `resumeArgs`.
 `{message}` and `{sessionId}` are replaced only when they occupy whole arguments.
 Both command forms require JSONL, the declared model, ignored user config and a separate process.
-For `research-main-typescript` and `research-main-python`, the runner adds Codex's supported `--disable multi_agent` switch to both opening and resume arguments, before their positional arguments.
+For `research-main-typescript` and `research-main-python`, the runner adds `-c agents.enabled=false` and disables `multi_agent`, `multi_agent_v2` and `multi_agent_v2_dynamic_tools` in both opening and resume arguments, before their positional arguments.
 The effective adapter, including this restriction, is retained and hashed in each run; a restricted fallback cannot compare against an unrestricted baseline.
 Other scenarios retain the supplied adapter's capability settings.
 Before scoring fallback evidence, a capture-only probe must confirm that the actual native session no longer declares `spawn_agent`.
 Sequential execution requested only through the prompt does not establish AC-35.
 The [capture-only probe](../tests/eval/results/release/fallback-capability-probe.json) on Codex CLI 0.162.1 retained the switch in both argument forms, but the actual session still declared `spawn_agent` and reported that it was available.
-AC-35 therefore remains blocked; the switch alone is not accepted as proof of capability removal on this host.
+The [corrected capture-only probe](../tests/eval/results/release/fallback-capability-probe-agents-disabled.json) additionally disabled the V2 features and set `agents.enabled=false`: the native declaration omitted `spawn_agent` and the assistant independently reported it unavailable, with zero tool calls.
+The [configuration schema](https://learn.chatgpt.com/docs/config-schema.json) defines `agents.enabled` as the multi-agent tool control and notes that an enabled V2 setting takes precedence.
+The capability prerequisite is resolved; AC-35 still needs passing final fallback runs under this effective adapter.
 The opening command creates a new resumable thread, and later turns must retain that exact thread ID.
 The installed CLI's `codex exec --help` and `codex exec resume --help` define its supported options.
 The host interface follows the official [non-interactive execution documentation](https://developers.openai.com/codex/noninteractive/).

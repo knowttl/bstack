@@ -12,7 +12,9 @@ if (args.includes('--version')) {
 } else {
   const mode = args[0]
   const message = args.at(-1)
-  const subagentsDisabled = args.some((arg, index) => arg === '--disable' && args[index + 1] === 'multi_agent')
+  const subagentsDisabled = ['multi_agent', 'multi_agent_v2', 'multi_agent_v2_dynamic_tools']
+    .every(feature => args.some((arg, index) => arg === '--disable' && args[index + 1] === feature)) &&
+    args.some((arg, index) => arg === '-c' && args[index + 1] === 'agents.enabled=false')
   if (mode === 'require-no-subagents' && !subagentsDisabled) throw new Error('Subagents remain available')
   if (mode === 'require-subagents' && subagentsDisabled) throw new Error('Unexpected subagent restriction')
   const sandboxPolicy = args.includes('--sandbox') ? args[args.indexOf('--sandbox') + 1] :

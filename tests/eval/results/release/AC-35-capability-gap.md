@@ -1,6 +1,6 @@
 # AC-35 capability gap
 
-AC-35 remains blocked: the design requires the five briefs to run with subagents unavailable, but the current fallback procedures only request sequential execution.
+The capability prerequisite is resolved by the corrected probe below; passing final fallback runs remain outstanding.
 No acceptance credit or release readiness is claimed.
 
 ## Observed evidence
@@ -43,3 +43,17 @@ The probe made zero tool calls and was not scored as acceptance evidence.
 The throwaway login copy and entire isolated home were deleted.
 No affected baseline or final run was repeated after this failed capability probe.
 AC-35 remains blocked pending an effective supported capability restriction.
+
+## Effective capability restriction
+
+Read-only research checked the installed CLI's help and feature list and the official [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) and [schema](https://learn.chatgpt.com/docs/config-schema.json).
+The fetched schema SHA-256 was `7933a70506e753a6e98c16800d2a76770b2af2b7295491f8f0b8e713e952027e`.
+Its `AgentsToml.enabled` field controls multi-agent tools, defaults to true, and yields precedence to an enabled `features.multi_agent_v2`.
+The `ToolsToml` section has no general tool denylist; profiles layer configuration rather than independently removing tools.
+The installed CLI recognizes all three multi-agent feature flags.
+
+The [second capture-only probe](fallback-capability-probe-agents-disabled.json) added `-c agents.enabled=false` and disabled both V2 features alongside the original switch.
+The native declaration omitted `spawn_agent`; the independently captured assistant response reported it unavailable.
+The effective adapter hash was `34b8a1f4a85eb0ec00057ef3ae58df3037478b683c078c39bc69b816ce4b2275`.
+The probe made zero tool calls, verified filesystem scope and deleted both the throwaway login and complete isolated home.
+This resolves the capability prerequisite after two probes total; it does not score AC-35 or replace the required affected baseline and final runs.
