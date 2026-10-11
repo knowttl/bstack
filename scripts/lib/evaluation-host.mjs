@@ -89,6 +89,8 @@ async function files(directory) {
   }
   const result = []
   for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
+    // Runtime dependencies are validated by the installer, not skill discovery.
+    if (entry.name === 'node_modules') continue
     const path = join(directory, entry.name)
     if (entry.isSymbolicLink()) fail(`Cannot verify discovery through a symbolic link: ${path}. Use the manual procedure.`)
     if (entry.isDirectory()) result.push(...await files(path))
@@ -100,6 +102,14 @@ async function files(directory) {
 async function snapshot(directory) {
   return hashBytes(canonicalJSON(await Promise.all((await files(directory)).map(async path =>
     [path.slice(directory.length), hashBytes(await readFile(path))]))))
+}
+
+function isolatedEnvironment(isolation) {
+  const inherited = Object.fromEntries(['PATH', 'SystemRoot', 'WINDIR', 'TEMP', 'TMP', 'TMPDIR', 'LANG', 'LC_ALL', 'TERM']
+    .filter(name => process.env[name] !== undefined).map(name => [name, process.env[name]]))
+  const home = isolation.home
+  return { ...inherited, HOME: home, USERPROFILE: home, CODEX_HOME: isolation.state,
+    XDG_CONFIG_HOME: join(home, 'config'), XDG_CACHE_HOME: join(home, 'cache'), LOCALAPPDATA: join(home, 'cache') }
 }
 
 export async function isolate(record) {
@@ -122,7 +132,13 @@ export async function isolate(record) {
     stagedPath, skillHash: null, verified: false, method: 'Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.' }
   await verifyIsolation(isolation, 'without')
   if (mode === 'with') {
-    await cp(join(root, 'skills', 'repo-audit'), stagedPath, { recursive: true, dereference: true })
+    if (record.stage === 'final') {
+      const result = await runCommand({ root }, { executable: process.execPath,
+        args: ['install/install.mjs', '--scope', 'user', '--host', 'agents', '--json'], cwd: '.',
+        versionArgs: ['--version'], timeoutMs: 120000 }, { env: isolatedEnvironment(isolation), outputLimitBytes: 16777216 })
+      record.installer = result
+      if (result.status !== 'passed' || result.outputTruncated) fail('Final evaluation requires a completed release installer run.')
+    } else await cp(join(root, 'skills', 'repo-audit'), stagedPath, { recursive: true, dereference: true })
     isolation.skillHash = await snapshot(stagedPath)
   }
   await verifyIsolation(isolation, mode)
@@ -149,9 +165,7 @@ export async function verifyIsolation(isolation, mode) {
 export async function hostTurn(record, message) {
   if (record.isolation.cleanedAt) fail('This conversation is closed. Create a fresh run.')
   await verifyIsolation(record.isolation, record.mode)
-  const home = record.isolation.home
-  const env = { ...process.env, HOME: home, USERPROFILE: home, CODEX_HOME: record.isolation.state,
-    XDG_CONFIG_HOME: join(home, 'config'), XDG_CACHE_HOME: join(home, 'cache'), LOCALAPPDATA: join(home, 'cache') }
+  const env = isolatedEnvironment(record.isolation)
   const template = record.sessionId ? record.adapter.invocation.resumeArgs : record.adapter.args
   const args = template.map(arg => arg === '{message}' ? message : arg === '{sessionId}' ? record.sessionId : arg)
   let result
