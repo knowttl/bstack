@@ -104,12 +104,19 @@ Before execution and before closing or scoring, the runner inventories these pat
 In `with` mode it copies the current skill folder, including any built runtime resources, into the isolated home's `.agents/skills/repo-audit`.
 Only that copy may be discoverable, and its complete file snapshot must still match the staged bytes.
 An inaccessible path or discovery through a symbolic link stays blocked for manual review.
-This staging is an evaluation helper, not the release installer.
+Before the final checkpoint this staging is an evaluation helper, not the release installer.
+At `--stage final`, with-skill adapter runs instead execute `install/install.mjs --scope user --host agents --json` with the isolated home and retain the completed result in `installer.json`.
+The installer validates the complete package and pinned runtime; discovery and subsequent authored-file snapshots exclude `node_modules`.
+Installer failure blocks the run before any agent turn.
+Final requests explicitly name the active final checkpoint.
+`final-new-project` covers the complete new-project path, while `final-existing-repo` continues its maintained `ts-shop` fixture through re-audit and a representative extension using only the resulting project guidance.
+The original intent and foundation scenarios retain their narrower approval scripts and are not full-path evidence.
 Bundled host system skills can remain available, but they cannot include repo-audit.
 
 The captain approved `authentication: "throwaway-codex-login"` for this adapter on 2026-10-08.
 Immediately before a host turn, the runner copies only the existing login file from the invoking user's `CODEX_HOME`, or its default home location, into the empty run state and sets the file mode to 0600.
 It copies no configuration, skills or previous sessions.
+Installer and host children inherit only runtime environment essentials, with fresh home/config/cache locations; provider credentials and unrelated parent environment are not forwarded.
 The login copy is removed after every turn, including failure and timeout.
 Only `authenticatedVia: "throwaway copy"` is recorded, never credential contents.
 The fake-host tests use `authentication: "none"` or a dummy login created by the test.

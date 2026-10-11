@@ -48,7 +48,7 @@ async function start(opts, results) {
     agent: opts.agent, model: opts.model, os: `${platform()} ${release()}`, tools: { node: process.version, git: git.toolVersion.stdout.trim() },
     fixture: { ...fixture, revision: fixtureRevision }, scenario: definition, criteriaHash: hashBytes(canonicalJSON(definition.checks)),
     stage: opts.stage, mode: opts.mode, request: (opts.invocation ? `${opts.invocation}\n` : '') +
-      (opts.stage === 'foundation' ? 'Active checkpoint: foundation.\n' : '') + definition.request,
+      (['foundation', 'final'].includes(opts.stage) ? `Active checkpoint: ${opts.stage}.\n` : '') + definition.request,
     status: 'blocked', reason: 'Awaiting explicit manual answers and transcript. Host isolation is not verified by C7a.',
     isolation: { verified: false }, transcript: null, answers: null, caseResults: [] }
   if (definition.fixture.startsWith('ts-')) {
@@ -70,6 +70,7 @@ async function start(opts, results) {
       record.hostFailure = true
       if (record.isolation.home) await closeHost(record, directory).catch(() => { record.isolation.verified = false })
     }
+    if (record.installer) await writeFile(join(directory, 'installer.json'), redactEvidence(JSON.stringify(record.installer, null, 2) + '\n', record))
   }
   await saveRecord(record, directory, 'wx')
   return record
