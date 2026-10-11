@@ -18,6 +18,11 @@ The evaluator independently confirmed rejection of that original candidate, succ
 Workers only read sources and returned reports; no worker edited, executed checks or asked the user questions.
 Language and outside recommendations remain explicitly not researched under the author-imposed no-web constraint.
 AC-2 passes the refreshed [container ambiguity comparison](ambiguous-idea-comparison.json); both modes expose offline access as unresolved and stop without selecting a stack or inventing a goal.
+AC-29, AC-32 and AC-33 pass the refreshed [container verification comparison](verification-limitations-comparison.json), preserving all three checks that already passed in the new baseline.
+Both modes ran two passing native units, kept browser evidence unavailable and service readiness unverified after a bounded connection-refused result, and left the costly POST unexecuted pending approval.
+The with-skill run also observed the actual journey and boundary failures instead of declaring ready.
+Its [native unit capture](runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/artifacts/units.json), resource wrapper source and structured check/probe results are retained.
+The scorer accepts structured native unit evidence behind a resource wrapper and preflight output, while rejecting truncated captures, changed Node versions, unrun commands and assistant claims.
 
 ## Historical process-only evaluations
 
@@ -39,7 +44,7 @@ The concurrent clear-goals with-skill opening was closed after this stop, before
 Its isolated home was deleted; it is partial diagnostic evidence and is not a final passing selection.
 
 - AC-29: the baseline's initial immutable score incorrectly credited the passing-units condition despite no unit execution; the [grading explanation](verification-limitations-grading.md) and [proposed correction](verification-limitations-baseline-correction-proposal.json) preserve the captured turn and identify the original scoring hash.
-  The approved append-only correction preserves the original answers and transcript and yields a [passing comparison](verification-limitations-comparison.json), without another agent run.
+  The approved append-only correction preserves the original answers and transcript and yields a [historical passing comparison](verification-limitations-historical-comparison.json), without another agent run.
   The with-skill run honestly passes all three verification-limitations checks, including two actual unit passes with browser evidence still unverified.
 - AC-57 and AC-68: the [scope failure observation](scope-and-prerequisites-scope-failure.json) records rejected `/proc` and `/tmp` paths in the with-skill resource preflight.
   The run remains unscored; its complete contaminated transcript is retained privately, and its isolated home was deleted.
@@ -107,7 +112,7 @@ The changed scope contract requires a fresh baseline and with-skill pair; the ea
 ## Earlier discovery comparison with scope version 2
 
 The [baseline](runs/2026-10-11T18-01-42.264Z-05b66d0f-e8fc-4b29-bb92-15b001a98ed1/run.json) and [with-skill run](runs/2026-10-11T18-02-24.710Z-3b5c141a-c401-4ef9-8b97-677251ce5f4f/run.json) used source revision `459b168`, identical criteria, fixture revision, Node, Codex, model and adapter.
-The [comparison](research-subagents-comparison.json) passed: baseline 0/4, with-skill 4/4, no lost checks.
+The [historical comparison](research-subagents-historical-comparison.json) passed: baseline 0/4, with-skill 4/4, no lost checks.
 The baseline reported the absent required research resources and stopped without searching outside the permitted roots.
 The with-skill run returned all five briefs through actual workers, with overlapping architecture, checks and language execution shown in the retained native traces.
 Main-thread source review and an independent rerun of the shipped citation checker passed all 54 file citations.

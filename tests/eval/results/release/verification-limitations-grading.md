@@ -12,5 +12,5 @@ Its interface journey separately failed with total 12 against the unchanged expe
 The health GET failed with curl exit 7 and HTTP 000, and the billing POST was not performed.
 All three scored checks pass in the with-skill run.
 
-The [comparison](verification-limitations-comparison.json) passes with the corrected baseline at two of three checks and the with-skill run at three of three.
+The [historical comparison](verification-limitations-historical-comparison.json) passes with the corrected baseline at two of three checks and the with-skill run at three of three.
 The scorer regression tests reject credit for units that were not executed, failed, or were merely claimed by the assistant.
