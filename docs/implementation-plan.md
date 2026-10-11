@@ -1901,6 +1901,6 @@ Registry completeness is a structural check, while final case evidence proves ex
 | T3a.6 | AC-24, AC-58 | Different-root clean clone, missing evidence, shallow base and fresh leaf execution | |
 | T3a.7 | AC-23 | Maintenance-only transcript without interview or full audit | |
 | T4.1 | AC-73, AC-74 | Copy/link lifecycle and conflict preservation, with recorded real Linux execution under R27 | |
-| T4.2 | AC-39, AC-40, AC-42, AC-43, AC-56, AC-75 | Fresh explicit/implicit invocation and observed file-loading trace | AC-56 passes the [container runtime-independence comparison](../tests/eval/results/release/runtime-independence-comparison.json); other final selections remain pending. |
+| T4.2 | AC-39, AC-40, AC-42, AC-43, AC-56, AC-75 | Fresh explicit/implicit invocation and observed file-loading trace | AC-56 passes the [container runtime-independence comparison](../tests/eval/results/release/runtime-independence-comparison.json), and AC-42 passes the [implicit-invocation comparison](../tests/eval/results/release/implicit-invocation-comparison.json); other final selections remain pending. |
 | T4.3 | AC-1, AC-3, AC-23, AC-54, AC-64, AC-69, AC-75 | Final full-path transcripts, repeated audit and independent extension | |
 | T5.2 | AC-46 | Comparable baseline/final results and all-case evidence validation | |
