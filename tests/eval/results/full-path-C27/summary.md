@@ -96,5 +96,7 @@ The focused T4.3 suites passed 856 tests during implementation, and the final ev
 The [captured evaluation output](../tasks/C27.eval-tests.txt), [package check](../tasks/C27.check.txt), [registry validation](../tasks/C27.registry.json) and [seven explicit final selections](selections.json) retain the corresponding evidence.
 The [task record](../tasks/C27.json) owns the final committed-input full-suite capture and validator attachment.
 Script tests exercise release installation, fresh maintained-fixture conversations, timeout bounds, login cleanup and the glossary-metadata regression through public interfaces.
+The first full capture exposed seven acceptance-test assertions that assumed every registry procedure remained planned.
+The corrected tests validate the real registry without scoring procedures and use explicitly planned disposable registries for isolated mutation cases; the [focused acceptance suite](../tasks/C27.acceptance-tests.txt) passed before recapturing the full suite.
 All selected run homes were deleted after scoring, the task browser and remaining task review server were stopped, and task fixtures, clean clones, dependencies and build caches were removed after preservation of evidence.
 No task images were built.

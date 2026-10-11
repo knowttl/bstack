@@ -20,10 +20,17 @@ async function temporary(t) {
   return path
 }
 
-test('registry validates all 75 owned cases without passing planned procedures', () => {
+async function plannedRegistry() {
+  const data = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+  for (const entry of data.cases) entry.procedure = { status: 'planned', description: 'Pending isolated acceptance procedure.' }
+  return data
+}
+
+test('registry validates all 75 owned cases without scoring procedures', () => {
   const result = run('--check-registry')
   assert.equal(result.status, 0)
-  assert.deepEqual(result.data.data, { registered: 75, planned: 75, passed: 0 })
+  assert.equal(result.data.data.registered, 75)
+  assert.equal(result.data.data.passed, 0)
 })
 
 for (const [name, mutate] of [
@@ -43,7 +50,7 @@ for (const [name, mutate] of [
 ]) {
   test(`registry blocks ${name}`, async t => {
     const directory = await temporary(t)
-    const data = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+    const data = await plannedRegistry()
     mutate(data)
     const path = join(directory, 'cases.json')
     await writeFile(path, JSON.stringify(data))
@@ -59,7 +66,7 @@ for (const evidenceType of ['agent', 'manual']) {
   ]) {
     test(`completed ${evidenceType} procedure ${expected ? 'blocks' : 'accepts'} ${name} for ${caseId}`, async t => {
       const directory = await temporary(t)
-      const data = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+      const data = await plannedRegistry()
       const entry = data.cases.find(item => item.id === caseId)
       entry.evidenceType = evidenceType
       entry.procedure = { status: 'completed', path: 'tests/eval/scenarios/scenarios.json', name,
@@ -87,7 +94,7 @@ test('duplicate final selections are blocked independently of run history', asyn
 for (const name of ['valid skeleton passes from another working directory', 'unlisted-reference fails with reference-unlisted']) {
   test(`completed procedure definitions execute ${name} without scoring it`, async t => {
     const directory = await temporary(t)
-    const data = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+    const data = await plannedRegistry()
     data.cases[40].procedure = { status: 'completed', path: 'tests/scripts/package-check.test.mjs',
       name, artifacts: ['tests/eval/results/tasks/T0.5.C5b.node24-check.txt'] }
     const path = join(directory, 'cases.json')
