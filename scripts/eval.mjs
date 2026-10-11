@@ -62,7 +62,7 @@ async function start(opts, results) {
       (['foundation', 'final'].includes(opts.stage) ? `Active checkpoint: ${opts.stage}.\n` : '') + definition.request,
     status: 'blocked', reason: 'Awaiting explicit manual answers and transcript. Host isolation is not verified by C7a.',
     isolation: { verified: false }, transcript: null, answers: null, caseResults: [] }
-  if (definition.fixture.startsWith('ts-')) {
+  if (definition.fixture.startsWith('ts-') || definition.fixture === 'maintained-ts-shop') {
     record.tools.npm = (await child('npm', ['--version'], fixture.path)).stdout.trim()
     record.tools.typescript = (await child('node', [join('node_modules', 'typescript', 'bin', 'tsc'), '--version'], fixture.path)).stdout.trim()
   }

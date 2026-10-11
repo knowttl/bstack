@@ -15,10 +15,11 @@ try {
     process.exitCode = 3
   } else {
     for (const name of args[0] === '--all' ? Object.keys(fixtures) : args) {
-      const fixture = fixtures[name]
+      const fixture = { ...fixtures[fixtures[name].base], ...fixtures[name] }
       const path = await mkdtemp(join(tmpdir(), `bstack-${name}-`))
-      const source = fixture.source ?? name
+      const source = fixture.source ?? fixture.base ?? name
       for (const file of fixture.files) await cp(join(sources, source, file), join(path, file), { recursive: true })
+      if (fixture.overlay) await cp(join(sources, name, fixture.overlay), path, { recursive: true })
       for (const [file, content] of Object.entries(fixture.seed ?? {})) await writeFile(join(path, file), content)
       if (fixture.kind === 'repo') {
         const env = { ...process.env, GIT_CONFIG_GLOBAL: devNull, GIT_CONFIG_NOSYSTEM: '1',

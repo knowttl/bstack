@@ -72,7 +72,7 @@ test('all fixtures run sanity checks and leave source bytes unchanged', async t 
   assert.deepEqual(await bytes(sources), before)
 })
 
-for (const name of ['dirty-work', 'refactor', 'contract-removal', 'shallow-history', 'installer-collision']) {
+for (const name of ['dirty-work', 'refactor', 'contract-removal', 'shallow-history', 'installer-collision', 'maintained-ts-shop']) {
   test(`${name} reproduces its declared state with deterministic history`, t => {
     const [first] = build(t, name)
     const [second] = build(t, name)
