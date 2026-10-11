@@ -1,0 +1,358 @@
+[
+  {
+    "schemaVersion": 1,
+    "command": "rule-proof",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "checkId": "aggregate",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "private",
+      "status": "passed",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[isolated-home][scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.783883ms)\n\u2714 checkout HTTP mock (28.758927ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 138.901247\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+            "stderr": "",
+            "durationMs": 2526.552853,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 88.56230399999998,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[isolated-home][scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.812304ms)\n\u2714 checkout HTTP mock (25.039182ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 138.209135\n\n> boundaries\n> node boundaries.mjs\n\n[\"private\"]\n",
+            "stderr": "",
+            "durationMs": 2302.3903800000003,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 86.55824100000018,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ],
+      "path": "[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/8667e5e9-e5fa-4064-8efd-555163130d5e/proof.json",
+      "limitations": [
+        "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+      ]
+    },
+    "inputs": {}
+  },
+  {
+    "schemaVersion": 1,
+    "command": "rule-proof",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "checkId": "aggregate",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "alias",
+      "status": "passed",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[isolated-home][scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.962486ms)\n\u2714 checkout HTTP mock (30.270171ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 159.536081\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+            "stderr": "",
+            "durationMs": 2729.56198,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 88.355152,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[isolated-home][scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.787216ms)\n\u2714 checkout HTTP mock (24.987675ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 133.500266\n\n> boundaries\n> node boundaries.mjs\n\n[\"alias\"]\n",
+            "stderr": "",
+            "durationMs": 2327.4665950000003,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 104.98150200000009,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ],
+      "path": "[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/14f293f1-adb4-48ab-9a31-9dc6154dca0d/proof.json",
+      "limitations": [
+        "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+      ]
+    },
+    "inputs": {}
+  },
+  {
+    "schemaVersion": 1,
+    "command": "rule-proof",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "checkId": "aggregate",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "cycle",
+      "status": "passed",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[isolated-home][scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.77248ms)\n\u2714 checkout HTTP mock (24.461511ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 131.251036\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+            "stderr": "",
+            "durationMs": 2424.599289,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 92.46797900000001,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[isolated-home][scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.78657ms)\n\u2714 checkout HTTP mock (28.685395ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 146.268125\n\n> boundaries\n> node boundaries.mjs\n\n[\"cycle\"]\n",
+            "stderr": "",
+            "durationMs": 2344.690222,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 86.30385800000022,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ],
+      "path": "[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/ddfd4790-6685-40d3-8d0b-ec541f56ccf8/proof.json",
+      "limitations": [
+        "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+      ]
+    },
+    "inputs": {}
+  },
+  {
+    "schemaVersion": 1,
+    "command": "rule-proof",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "checkId": "aggregate",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "agreed checkout total is 10",
+      "status": "passed",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[isolated-home][scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.813406ms)\n\u2714 checkout HTTP mock (25.09655ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 143.823991\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+            "stderr": "",
+            "durationMs": 2633.7619919999997,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 110.94014800000002,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[isolated-home][scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (1.087261ms)\n\u2714 checkout HTTP mock (34.093313ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 156.56474\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":12}}\n",
+            "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: agreed checkout total is 10\n+ actual - expected\n\n  {\n    status: 201,\n+   total: 12\n-   total: 10\n  }\n\n    at file://[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/bf884ebe-b911-4647-a89b-b9e4f596d156/violation/journey.mjs:12:10\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: { status: 201, total: 12 },\n  expected: { status: 201, total: 10 },\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.17.0\n",
+            "durationMs": 2638.532534,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 95.38092700000016,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ],
+      "path": "[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/bf884ebe-b911-4647-a89b-b9e4f596d156/proof.json",
+      "limitations": [
+        "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+      ]
+    },
+    "inputs": {}
+  }
+]

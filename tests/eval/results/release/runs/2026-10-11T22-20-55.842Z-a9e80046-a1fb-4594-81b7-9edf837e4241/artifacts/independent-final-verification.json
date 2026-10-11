@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "source": "df0289b0424e4920a94ae80a38aa1141a1a11cda",
+  "submittedRevision": "86960291f55562154efc46f9a9af061884a1c29b",
+  "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "selectedEdits": [
+    {
+      "path": "journey.mjs",
+      "sha256": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605"
+    },
+    {
+      "path": "packages/core/index.ts",
+      "sha256": "909654a4a75e0cd62ada6e0c6028e356b348688d47f811d29973eb56da7f5649"
+    },
+    {
+      "path": "packages/core/internal/database.ts",
+      "sha256": "dacf980aa2f4fbbee6f03e7cf729547fd457daf92a887b20938f418f6db2707a"
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "sha256": "035b1920e4bd9aa3034795a7c0a84486cf1724a47b4c9b36a3c44c8047e3c9bf"
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "sha256": "67f0008b8decc9b639b9b7b900edc7013020cf83c72de6112a900c8e05a65509"
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "sha256": "3ff2f84ad0cba61a880fa6d172832c637f2b548bbf0f348e701fdebe16e59aa1"
+    },
+    {
+      "path": "packages/core/b.ts",
+      "sha256": "e643c78cec79bba9faa93c39fb78e056f39ed1fd7ce6095d642c5bd6fbd3bd4d"
+    },
+    {
+      "path": "glossary.md",
+      "sha256": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5"
+    },
+    {
+      "path": "package.json",
+      "sha256": "b1bf5e6cdd5cbaede5e72fdbab26f77d555eb81eb43a40881a5fad0d74cb1151"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "e455f5fee064be1a49da504453da0292905504ba6400f612456e5d37f8b34cf9"
+    },
+    {
+      "path": "DESIGN.md",
+      "sha256": "9e084f6d55cfec4e6d98f72d33db76bf1757baa82b9974e4fd7b5eb90f7bd026"
+    },
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "sha256": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+    },
+    {
+      "path": ".bstack/schemas/check-plan.json",
+      "sha256": "fbd60b49c341bb20a78dbc2235c27af303fa12f4fb8cb3d48d47b9c6817a2f52"
+    },
+    {
+      "path": ".bstack/schemas/evidence.schema.json",
+      "sha256": "072959c322b776427f4f578a4894529e0a285b1245726cf1723eedc9baf7b810"
+    },
+    {
+      "path": ".bstack/schemas/impact-assessment.json",
+      "sha256": "4a7435b67367c9c67769edcebfa3a19b2cab5283f854f26ab5ce16613e359aef"
+    },
+    {
+      "path": ".bstack/schemas/project.schema.json",
+      "sha256": "82111199bcb0fadb59c0fefda913cf3629b3214161f6aa8b42ea32d18afc8b77"
+    },
+    {
+      "path": ".bstack/project.json",
+      "sha256": "86b03b66383e9a0ce32adc514399470e2b0adb63b8c13a6ade3e82d0bcc5eca9"
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "sha256": "6ca8bc8c44188e9500ec8361cc5e5f5a84741cb13e264936db2cb576af046df2"
+    },
+    {
+      "path": ".bstack/assessment.json",
+      "sha256": "b1db25670e907cc077ed9b03167c08b712da74208f05561a41c0596ddc4619ed"
+    }
+  ],
+  "preservedOriginalUnitSha256": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e",
+  "userNotePreserved": true,
+  "unchangedCheckoutAssertion": "assert.deepEqual(order, { status: 201, total: 10 }, 'agreed checkout total is 10')",
+  "originalJourneyExit": 1,
+  "finalJourneyExit": 0,
+  "automaticPairStatus": "blocked",
+  "automaticPairLimit": "Design-source additions invalidated automatic pairing; preserved actual before and after probes use the same public UI, controlled HTTP endpoint and unchanged acceptance.",
+  "cleanWorkingCheckout": true,
+  "cleanDifferentRootClone": true,
+  "snapshotUnchanged": true,
+  "loginAbsent": true,
+  "checkers": [
+    {
+      "artifact": "artifacts/shop-final-working-checker.json",
+      "status": "passed",
+      "phase": "result-validation",
+      "sourceRevision": "86960291f55562154efc46f9a9af061884a1c29b",
+      "reviewedSource": "df0289b0424e4920a94ae80a38aa1141a1a11cda",
+      "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "startedAt": "2026-10-11T22:47:05.683Z",
+      "completedAt": "2026-10-11T22:47:08.385Z",
+      "exitCode": 0,
+      "nativeOutput": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (1.020689ms)\n✔ checkout HTTP mock (33.653084ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 146.717534\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n"
+    },
+    {
+      "artifact": "artifacts/shop-final-clean-checker.json",
+      "status": "passed",
+      "phase": "result-validation",
+      "sourceRevision": "86960291f55562154efc46f9a9af061884a1c29b",
+      "reviewedSource": "df0289b0424e4920a94ae80a38aa1141a1a11cda",
+      "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "startedAt": "2026-10-11T22:47:45.032Z",
+      "completedAt": "2026-10-11T22:47:47.983Z",
+      "exitCode": 0,
+      "nativeOutput": "\n> check\n> tsc --noEmit && npm run test && npm run boundaries && npm run journey\n\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (0.926811ms)\n✔ checkout HTTP mock (28.873621ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 143.931007\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n"
+    }
+  ],
+  "proofs": [
+    {
+      "artifact": "artifacts/shop-final-proof-boundary-private.json",
+      "validExit": 0,
+      "violationExit": 1,
+      "diagnostic": "private"
+    },
+    {
+      "artifact": "artifacts/shop-final-proof-boundary-alias.json",
+      "validExit": 0,
+      "violationExit": 1,
+      "diagnostic": "alias"
+    },
+    {
+      "artifact": "artifacts/shop-final-proof-boundary-cycle.json",
+      "validExit": 0,
+      "violationExit": 1,
+      "diagnostic": "cycle"
+    },
+    {
+      "artifact": "artifacts/shop-final-proof-aggregate-private.json",
+      "validExit": 0,
+      "violationExit": 1,
+      "diagnostic": "private"
+    },
+    {
+      "artifact": "artifacts/shop-final-proof-aggregate-alias.json",
+      "validExit": 0,
+      "violationExit": 1,
+      "diagnostic": "alias"
+    },
+    {
+      "artifact": "artifacts/shop-final-proof-aggregate-cycle.json",
+      "validExit": 0,
+      "violationExit": 1,
+      "diagnostic": "cycle"
+    },
+    {
+      "artifact": "artifacts/shop-final-proof-aggregate-journey.json",
+      "validExit": 0,
+      "violationExit": 1,
+      "diagnostic": "agreed checkout total is 10"
+    }
+  ],
+  "exportedFilesVerified": 159
+}

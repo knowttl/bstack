@@ -185,8 +185,14 @@
       "criterionSource": "docs/design.md#AC-16",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A behaviour change identifies relevant glossary, design and standards sources before implementation and after the final diff."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "final-existing-repo",
+        "artifacts": [
+          "tests/eval/results/release/final-existing-repo-comparison.json",
+          "tests/eval/results/release/final-existing-repo.md",
+          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+        ]
       }
     },
     {
@@ -316,8 +322,14 @@
       "criterionSource": "docs/design.md#AC-28",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An implementation cannot silently replace an agreed acceptance case with one that fits the code."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "final-existing-repo",
+        "artifacts": [
+          "tests/eval/results/release/final-existing-repo-comparison.json",
+          "tests/eval/results/release/final-existing-repo.md",
+          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+        ]
       }
     },
     {
@@ -338,8 +350,14 @@
       "criterionSource": "docs/design.md#AC-30",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A fix that depends on an outside endpoint or service records a live probe before the change and the same probe after it."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "final-existing-repo",
+        "artifacts": [
+          "tests/eval/results/release/final-existing-repo-comparison.json",
+          "tests/eval/results/release/final-existing-repo.md",
+          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+        ]
       }
     },
     {
@@ -615,7 +633,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-existing-repo",
-        "artifacts": ["tests/eval/results/full-path-C27/summary.md", "tests/eval/results/full-path-C27/runs/2026-10-11T09-23-18.776Z-5bf45472-6fcb-488d-9f4f-d51ad8307805/manual-verdict.json"]
+        "artifacts": [
+          "tests/eval/results/release/final-existing-repo-comparison.json",
+          "tests/eval/results/release/final-existing-repo.md",
+          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+        ]
       }
     },
     {
@@ -692,8 +714,14 @@
       "criterionSource": "docs/design.md#AC-61",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo with several packages gets correctly scoped rules and checks."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "final-existing-repo",
+        "artifacts": [
+          "tests/eval/results/release/final-existing-repo-comparison.json",
+          "tests/eval/results/release/final-existing-repo.md",
+          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+        ]
       }
     },
     {

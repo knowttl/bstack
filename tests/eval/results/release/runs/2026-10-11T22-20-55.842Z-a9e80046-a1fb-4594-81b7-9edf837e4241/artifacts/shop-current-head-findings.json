@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "86960291f55562154efc46f9a9af061884a1c29b"
+  },
+  "nextChange": "Finish the existing-repo final checkpoint, then support a user edit/re-audit and representative extension from maintained guidance.",
+  "reviewedScope": [
+    ".bstack/assessment.json",
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".bstack/schemas/check-plan.json",
+    ".bstack/schemas/evidence.schema.json",
+    ".bstack/schemas/impact-assessment.json",
+    ".bstack/schemas/project.schema.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "boundaries.mjs",
+    "docs/repo-audit.md",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/a.ts",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/web/alias.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "UI never touches storage; checkout total10 at line4."
+    },
+    {
+      "id": "instructions",
+      "pointer": "AGENTS.md:1",
+      "intent": "documented",
+      "summary": "Use approved design and public core interface."
+    },
+    {
+      "id": "checks",
+      "pointer": "package.json:12",
+      "intent": "observed",
+      "summary": "Starting aggregate ran types only; selected fail-fast aggregate now runs types, tests, boundaries and actual local HTTP journey."
+    },
+    {
+      "id": "journey",
+      "pointer": "journey.mjs:6",
+      "intent": "observed",
+      "summary": "Starting-state local HTTP fixture supplied12 and checkout returned12 against expected10; selected endpoint correction now supplies10 while preserving assertion10. Fresh native journey passes."
+    },
+    {
+      "id": "graph",
+      "pointer": "boundaries.mjs:19",
+      "intent": "observed",
+      "summary": "Starting native graph failed alias/cycle/private. Selected correction now passes, with separate native and aggregate valid/violation controls for each diagnostic."
+    },
+    {
+      "id": "terms",
+      "pointer": "glossary.md:3",
+      "intent": "documented",
+      "summary": "Order defined twice: purchase and UI panel sequence."
+    },
+    {
+      "id": "public",
+      "pointer": "packages/web/public.ts:1",
+      "intent": "observed",
+      "summary": "Existing public core index import example; current quote12 is observed unit expectation, not approved checkout acceptance."
+    },
+    {
+      "id": "proposal",
+      "pointer": "DESIGN.md:3",
+      "intent": "inferred",
+      "summary": "Keeping pricing and order storage behind core is a proposed responsibility allocation derived from no-UI-storage constraint."
+    },
+    {
+      "id": "selection",
+      "pointer": "DESIGN.md:6",
+      "intent": "documented",
+      "summary": "User note is preserved exactly; supervisor selected endpoint10/quote12, Panel order, public core, cycle enforcement, maintained foundation, historical snapshot semantics. Approval retained in scratch shop-selection.txt."
+    },
+    {
+      "id": "portable-final",
+      "pointer": ".bstack/assessment.json:1",
+      "intent": "observed",
+      "summary": "Unchanged committed portable assessment covers 18 implementation paths, three authoritative documents and four maintained rules, with no unmapped paths. Final standalone checker executes native once freshly per checkout and passes locally and in the isolated different-root clean clone."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Real HTTP checkout returns12, violating agreed total10.",
+      "files": [
+        "journey.mjs"
+      ],
+      "command": "npm run journey",
+      "principle": "Honor the approved checkout total10.",
+      "consequence": "Unit mock success conceals the failing actual fetch journey.",
+      "fix": "Correct the controlled journey endpoint fixture to supply10, keep expected10 and public quote12, and invent no business discount.",
+      "scope": [
+        "journey.mjs"
+      ],
+      "verification": "Original failing reproduction, unchanged real HTTP journey passes with total10; surrounding public quote remains covered.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "journey",
+        "selection"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "UI imports storage directly and through alias; routes owns mutable order storage.",
+      "files": [
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "DESIGN.md"
+      ],
+      "command": "npm run boundaries",
+      "principle": "UI never touches storage; consumers use public core interface.",
+      "consequence": "Storage details leak into UI and obstruct a representative extension through public guidance.",
+      "fix": "Route UI and alias consumers through core index; place order persistence behind core. Add a representative approved public-interface example in DESIGN.md, preserving current exported web functions.",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "DESIGN.md"
+      ],
+      "verification": "Capture original-state public compatibility; clean public imports pass, separate private and alias seeds fail native rule-proof; sibling core internal use remains permitted.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "instructions",
+        "public",
+        "proposal"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Core a and b form a recursive cycle flagged by the native checker.",
+      "files": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Proposed adoption of the existing checker's acyclic graph rule.",
+      "consequence": "Calling either function recurses without terminating; aggregate check currently misses it.",
+      "fix": "Select acyclic enforcement and remove this unused cycle while preserving exported function names, with reviewed terminating behavior.",
+      "scope": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "verification": "Native clean boundary check and independent cycle violation proof; owner review of new terminating behavior.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "graph"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Order has incompatible definitions.",
+      "files": [
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "One resolved meaning per canonical domain term.",
+      "consequence": "Future extension cannot rely unambiguously on repo language.",
+      "fix": "Retain Order for purchases; rename the presentation concept to Panel order in existing glossary.md.",
+      "scope": [
+        "glossary.md"
+      ],
+      "verification": "Owner chooses terms, then reviewed exact glossary diff and contract coverage.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "terms",
+        "selection"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "Maintained check currently runs types only and omits the failing native boundary and HTTP journey checks.",
+      "files": [
+        "package.json",
+        "boundaries.mjs"
+      ],
+      "command": "npm run check",
+      "principle": "Proposed final-input journey evidence and maintained authoritative-source impact review.",
+      "consequence": "Green types/unit checks do not prevent agreed journey failures or guide later maintenance.",
+      "fix": "Extend the existing check command with fail-fast types, tests, boundaries and real HTTP journey; prove native boundary rules independently and through that aggregate.",
+      "scope": [
+        "package.json",
+        "boundaries.mjs"
+      ],
+      "verification": "Native valid/private/alias/cycle controls and maintained aggregate controls; final native capture on applied inputs.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "checks",
+        "instructions"
+      ]
+    },
+    {
+      "id": "F-006",
+      "problem": "No maintained source-impact contract, complete standalone assessment checker or portable review record exists.",
+      "files": [
+        "DESIGN.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/assessment.json",
+        "docs/repo-audit.md",
+        ".bstack/schemas/check-plan.json",
+        ".bstack/schemas/evidence.schema.json",
+        ".bstack/schemas/impact-assessment.json",
+        ".bstack/schemas/project.schema.json"
+      ],
+      "command": "npm run check",
+      "principle": "Proposed final-input journey evidence and maintained authoritative-source impact review.",
+      "consequence": "Green types/unit checks do not prevent agreed journey failures or guide later maintenance.",
+      "fix": "Create selected first-contract foundation, install the complete dependency-free checker unchanged with maintenance schemas, add public-interface and maintenance guidance; retain a historical versioned audit snapshot and current-head readiness in scratch. Collect and review final portable assessment after implementation, then prove the unchanged record in an isolated different-root clone.",
+      "scope": [
+        "DESIGN.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/assessment.json",
+        "docs/repo-audit.md",
+        ".bstack/schemas/check-plan.json",
+        ".bstack/schemas/evidence.schema.json",
+        ".bstack/schemas/impact-assessment.json",
+        ".bstack/schemas/project.schema.json"
+      ],
+      "verification": "Contract/docs validation, complete assessed final change coverage, first-foundation protected record, fresh standalone checker locally and in a different-root clean clone with isolated home/cache and explicit base.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "checks",
+        "instructions",
+        "selection"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001",
+    "F-002",
+    "F-003",
+    "F-004",
+    "F-005",
+    "F-006"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey",
+    "native-boundary-proof",
+    "maintained-enforcement-proof",
+    "maintenance-contract",
+    "standalone-clean-clone"
+  ],
+  "execution": [
+    {
+      "id": "final-starting-checks",
+      "outcome": "starting-checks",
+      "status": "passed",
+      "fingerprint": "683fba77b64d293a29c610b50d0909a9cb6cd92f50cee83ef7f09f33eca074df",
+      "artifact": "[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/3174da4c-ccfc-4892-b879-fbe73b3be3d8/checker-result.json",
+      "artifactHash": "b987acab96fb21004b912e8ace5dacabbec51c255a134700a73bbbbed3bd39e9",
+      "method": "Fresh complete standalone checker; native aggregate exit0, actual public checkout localHTTPtotal10 and quote12, current assessed-state result-validation passed."
+    },
+    {
+      "id": "final-journey",
+      "outcome": "journey",
+      "status": "passed",
+      "fingerprint": "683fba77b64d293a29c610b50d0909a9cb6cd92f50cee83ef7f09f33eca074df",
+      "artifact": "[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/3174da4c-ccfc-4892-b879-fbe73b3be3d8/checker-result.json",
+      "artifactHash": "b987acab96fb21004b912e8ace5dacabbec51c255a134700a73bbbbed3bd39e9",
+      "method": "Fresh complete standalone checker; native aggregate exit0, actual public checkout localHTTPtotal10 and quote12, current assessed-state result-validation passed."
+    },
+    {
+      "id": "final-maintenance-contract",
+      "outcome": "maintenance-contract",
+      "status": "passed",
+      "fingerprint": "683fba77b64d293a29c610b50d0909a9cb6cd92f50cee83ef7f09f33eca074df",
+      "artifact": "[isolated-home]/cache/bstack/b3f6793488b9eeb2faa73c3d1a4f8485582f6926121327928e8c0ecde2890b32/3174da4c-ccfc-4892-b879-fbe73b3be3d8/checker-result.json",
+      "artifactHash": "b987acab96fb21004b912e8ace5dacabbec51c255a134700a73bbbbed3bd39e9",
+      "method": "Fresh complete standalone checker; native aggregate exit0, actual public checkout localHTTPtotal10 and quote12, current assessed-state result-validation passed."
+    },
+    {
+      "id": "final-standalone-clean-clone",
+      "outcome": "standalone-clean-clone",
+      "status": "passed",
+      "fingerprint": "683fba77b64d293a29c610b50d0909a9cb6cd92f50cee83ef7f09f33eca074df",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "d005d8c3523dd77d5c695721cd4e5f37650d9b9d7f8492ddb3c872b3793df7de",
+      "method": "Fresh full standalone checker in different-root clean clone of final target HEAD with isolated HOME/cache/TMPDIR, locked native dependencies, identical committed assessment and explicitbase; native leaf executed freshly and result-validation passed."
+    },
+    {
+      "id": "final-native-boundary-proof",
+      "outcome": "native-boundary-proof",
+      "status": "passed",
+      "fingerprint": "683fba77b64d293a29c610b50d0909a9cb6cd92f50cee83ef7f09f33eca074df",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "719de708903d09b35f3c560968feb9e51a91f83a170584bcc1bcadd18ca16246",
+      "method": "Independent rule-proof valid/public/sibling-core controls exit0, each seeded diagnostic exitsnonzero as expected. Seven controls captured after approved apply; exact declared native input bytes verified unchanged at final HEAD. Attached actual captures, not a check-plan fingerprint substitute."
+    },
+    {
+      "id": "final-maintained-enforcement-proof",
+      "outcome": "maintained-enforcement-proof",
+      "status": "passed",
+      "fingerprint": "683fba77b64d293a29c610b50d0909a9cb6cd92f50cee83ef7f09f33eca074df",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "c0594688f5fcec1906c0b45c3c753b707f9f1a272596c8bebb6a732c51db2c9b",
+      "method": "Independent rule-proof valid/public/sibling-core controls exit0, each seeded diagnostic exitsnonzero as expected. Seven controls captured after approved apply; exact declared native input bytes verified unchanged at final HEAD. Attached actual captures, not a check-plan fingerprint substitute."
+    }
+  ],
+  "limitations": [
+    "Native boundary checker resolves top-level static imports/exports, aliases and cycles; dynamic imports and arbitrary transitive facade leaks remain review limits.",
+    "Native HTTP evidence uses the actual controlled loopback endpoint through public checkout; it does not establish a deployed external service outcome.",
+    "No hosted CI or delivery service is selected or claimed.",
+    "One starting commit offers no co-change trend.",
+    "The original native journey failed with fixture12 and expected10; selected correction changed the controlled fixture to10 and retained assertion10 and quote12. Actual original and final outputs are retained; automatic prior-run pairing was rejected after authoritative source-byte additions, so no automatically paired proof is claimed.",
+    "Historical docs/repo-audit.md remains its observed revision snapshot. Final readiness and results are maintained only in scratch.",
+    "Portable review intentionally excludes its own assessment from the 18-path implementation inventory; its exact approved bytes and unchanged committed state were verified separately in both checkouts.",
+    "Scripts establish structural coverage and fresh execution; main-thread review checks substantive claims against the approved sources and actual diff, and scripts do not authenticate author approval."
+  ]
+}

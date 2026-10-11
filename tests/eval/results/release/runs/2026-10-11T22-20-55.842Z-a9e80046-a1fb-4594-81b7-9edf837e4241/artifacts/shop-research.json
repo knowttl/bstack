@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "DESIGN.md:3 prohibits UI storage access; DESIGN.md:4 requires checkout total 10. AGENTS.md points at approved design and public core interface. CLAUDE.md imports AGENTS.md. glossary.md:3 and :4 conflict over Order. No README, separate vision, standards, decisions, CI or prior audit found. Existing design remains baseline; absence of a separate vision does not imply changed intent.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "DESIGN.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7"
+          }
+        },
+        {
+          "location": "glossary.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/web/public.ts"
+      ],
+      "findings": "Core exports price only; UI and routes import private storage, aliasQuote resolves storage alias. Routes owns order totals and mutable order list. a and b recurse cyclically. public.ts demonstrates the existing public index import. Proposed responsibility clarification requires selection, not inferred approval.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/public.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "package.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "findings": "Native check typechecks only. Separate boundary checker resolves static imports/exports through TypeScript and rejects private, alias, cycle violations. Native HTTP journey keeps upstream price12 and expects total10; unit HTTP mock returns10. Actual checks: types/unit exit0; journey/boundaries exit1.",
+      "limitations": [
+        "Boundary checker visits top-level static imports/exports only; dynamic imports and transitive public facade leaks are not established protections.",
+        "Main-thread research selected because this fixture has only a few small files; no delegated proof claimed."
+      ],
+      "files": [
+        {
+          "location": "package.json:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "tsconfig.json:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "boundaries.mjs:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "journey.mjs:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "unit.test.mjs:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "tsconfig.json",
+        "package.json"
+      ],
+      "findings": "Retain TypeScript 5.9.3, Node>=24, NodeNext and existing compiler-backed boundary analysis. No new external language practice is recommended.",
+      "limitations": [
+        "Outside language practices not researched: recommendation relies on the existing native toolchain and repository-specific constraints only."
+      ],
+      "files": [
+        {
+          "location": "tsconfig.json:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "package.json:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "journey.mjs",
+        "packages/core/internal/database.ts"
+      ],
+      "findings": "The price adapter calls fetch. Native journey starts a local HTTP server and observes the real fetch path; it is a loopback fixture, not evidence of a deployed third-party service.",
+      "limitations": [
+        "No real external service is configured; outside live service compatibility unavailable."
+      ],
+      "files": [
+        {
+          "location": "journey.mjs:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/internal/database.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}
