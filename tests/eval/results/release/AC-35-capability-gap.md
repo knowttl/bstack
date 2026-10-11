@@ -28,3 +28,18 @@ Use a supported, verified host capability restriction for the fallback procedure
 Then rerun each affected baseline and final once with those changed inputs.
 Do not waive AC-35 or relabel a prompt instruction as a tool restriction.
 The all-case registry, remaining scenarios, final capture and publication remain incomplete.
+
+## Supported-switch probe
+
+The subsequent ruling selected Codex's supported `--disable multi_agent` switch for both opening and resumed fallback turns.
+The runner now applies that switch only to the two fallback scenarios and binds the effective arguments into their adapter hashes.
+Three host-boundary controls passed: both fallback scenarios retain the restriction on opening and resume, while the ordinary scenario remains unrestricted.
+
+The [capture-only probe](fallback-capability-probe.json) used source revision `05f246ae5a014f5cecfa29651adf5c3dd1cd9ab9` and Codex CLI 0.162.1.
+Its effective adapter hash is `c46e51580636d0cde64a73bc0cf98d7cbd062e1321e51eca29ad8bd6ba621801`, including the switch in both argument forms.
+The actual native session still declared `spawn_agent`.
+As a second observation, the captured assistant response explicitly reported that the tool was available.
+The probe made zero tool calls and was not scored as acceptance evidence.
+The throwaway login copy and entire isolated home were deleted.
+No affected baseline or final run was repeated after this failed capability probe.
+AC-35 remains blocked pending an effective supported capability restriction.
