@@ -136,6 +136,9 @@ for (const [name, event, expected] of [
   ['unrun command', { type: 'item.started', item: { type: 'command_execution', command: 'node --test unit.test.mjs' } }, 2],
   ['failed suite', { type: 'item.completed', item: { type: 'command_execution', command: 'node --test unit.test.mjs', aggregated_output: '# pass 1\n# fail 1\n', exit_code: 1 } }, 2],
   ['captured passing suite', { type: 'item.completed', item: { type: 'command_execution', command: 'node --test unit.test.mjs', aggregated_output: '# pass 2\n# fail 0\n', exit_code: 0 } }, 0],
+  ['captured npm unit script', { type: 'item.completed', item: { type: 'command_execution', command: 'npm run test', aggregated_output: '> test\n> node --test unit.test.mjs\nℹ pass 2\nℹ fail 0\n', exit_code: 0 } }, 0],
+  ['discussed npm units without execution', { type: 'item.completed', item: { type: 'agent_message', text: 'npm run test passed: 2 passed, 0 failed, exit 0.' } }, 2],
+  ['npm unit script with nonzero exit', { type: 'item.completed', item: { type: 'command_execution', command: 'npm run test', aggregated_output: 'ℹ pass 2\nℹ fail 0\n', exit_code: 1 } }, 2],
   ['wrapped passing units with a preflight and failed journey', { type: 'item.completed', item: {
     type: 'command_execution', command: 'python3 gate.py run-checks', exit_code: 1,
     aggregated_output: '{"source":"host","permitted":true}\n' + JSON.stringify({ command: 'run-checks', status: 'failed',
