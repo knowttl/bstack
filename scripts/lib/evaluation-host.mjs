@@ -9,6 +9,7 @@ import { resolvePath } from '../../skills/repo-audit/scripts/lib/paths.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 import { scopeMessage, checkScope } from './evaluation-scope.mjs'
+import { containerTurn } from './evaluation-container.mjs'
 
 export function redactEvidence(content, record) {
   const username = userInfo().username
@@ -188,7 +189,7 @@ export async function hostTurn(record, message) {
       await chmod(login, 0o600)
       record.authenticatedVia = 'throwaway copy'
     }
-    result = await runCommand({ root: record.fixture.path }, { ...record.adapter, args }, { env, outputLimitBytes: record.adapter.outputLimitBytes })
+    result = await containerTurn(record, args, env)
   } finally {
     // The login copy exists only during a host turn, including its timeout cleanup.
     if (record.adapter.isolation.authentication === 'throwaway-codex-login') await rm(login, { force: true })

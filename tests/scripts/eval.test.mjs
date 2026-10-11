@@ -1,8 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat, symlink } from 'node:fs/promises'
 import { homedir, tmpdir, userInfo } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
@@ -12,8 +12,12 @@ import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 function run(directory, ...args) {
-  const result = spawnSync(process.execPath, [join(root, 'scripts', 'eval.mjs'), ...args, '--results', directory, '--json'], { encoding: 'utf8' })
+  const result = spawnSync(process.execPath, [join(root, 'scripts', 'eval.mjs'), ...args, '--results', directory, '--json'], { encoding: 'utf8', env: testEnvironment(directory) })
   return { ...result, data: JSON.parse(result.stdout) }
+}
+
+function testEnvironment(directory) {
+  return { ...process.env, PATH: `${join(directory, 'bin')}${delimiter}${process.env.PATH}`, TEST_DOCKER_STATE: directory }
 }
 
 async function temporary(t) {
@@ -270,6 +274,8 @@ test('automatic host execution requires an adapter', async t => {
 })
 
 async function adapterFile(directory, mode = 'success') {
+  await mkdir(join(directory, 'bin'), { recursive: true })
+  try { await symlink(join(root, 'tests/inputs/docker.mjs'), join(directory, 'bin/docker')) } catch (error) { if (error.code !== 'EEXIST') throw error }
   const adapter = JSON.parse(await readFile(join(root, 'tests/eval/adapters/codex.json'), 'utf8'))
   adapter.executable = 'node'
   adapter.isolation.authentication = 'none'
@@ -309,7 +315,11 @@ for (const [scenario, mode] of [['research-main-typescript', 'require-no-subagen
     // Empty-answer discovery scenarios cannot resume through the scripted CLI;
     // exercise their effective resume template at the same host boundary.
     const { hostTurn, closeHost } = await import('../../scripts/lib/evaluation-host.mjs')
-    await hostTurn(record, 'Continue the capability control without changing its policy.')
+    const previousPath = process.env.PATH
+    process.env.PATH = testEnvironment(directory).PATH
+    process.env.TEST_DOCKER_STATE = directory
+    try { await hostTurn(record, 'Continue the capability control without changing its policy.') }
+    finally { process.env.PATH = previousPath; delete process.env.TEST_DOCKER_STATE }
     assert.equal(record.turns.length, 2)
     assert.equal(record.turns[1].sessionId, record.turns[0].sessionId)
     await closeHost(record, join(directory, record.id))
@@ -430,6 +440,14 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.equal(first.isolation.verified, true)
   assert.deepEqual(first.isolation.discovered, [])
   assert.equal(first.tools.agent, 'fake-codex 1')
+  assert.equal(first.execution.method, 'docker')
+  assert.deepEqual(first.execution.turns[0].mounts, [first.fixture.path, first.isolation.home].map(path =>
+    ({ Type: 'bind', Source: path, Destination: path, RW: true })))
+  assert.equal(first.execution.turns[0].network, 'bridge')
+  assert.equal(first.execution.turns[0].privileged, false)
+  assert.deepEqual(first.execution.turns[0].publishedPorts, [])
+  assert.equal(first.execution.turns[0].verified, true)
+  assert.ok(first.execution.turns[0].removedAt)
   assert.notEqual(first.id, second.id)
   assert.notEqual(first.fixture.path, second.fixture.path)
   assert.notEqual(first.isolation.home, second.isolation.home)
@@ -448,20 +466,55 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.ok((await readFile(join(directory, first.id, first.conversation), 'utf8')).includes(first.request))
 })
 
+test('an unexpected container mount blocks agent execution and removes the container', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'container-extra-mount')
+  const { record } = hostStart(t, directory, path)
+  assert.equal(record.hostFailure, true)
+  assert.match(record.reason, /container configuration/)
+  assert.equal(record.turns.length, 0)
+  assert.equal(record.execution.turns[0].verified, false)
+  assert.ok(record.execution.turns[0].removedAt)
+  assert.ok(record.isolation.cleanedAt)
+  assert.equal((await readdir(directory)).filter(name => name.endsWith('.docker.json')).length, 0)
+})
+
+for (const [name, change] of [
+  ['additional mount', turn => turn.mounts.push({ Type: 'bind', Source: '/unapproved', Destination: '/unapproved', RW: true })],
+  ['published port', turn => turn.publishedPorts.push('8080:8080')],
+  ['host networking', turn => { turn.network = 'host' }],
+  ['missing cleanup', turn => { delete turn.removedAt }],
+  ['different toolchain', turn => { turn.toolchain.agent = 'changed-agent' }]
+]) {
+  test(`container scoring rejects ${name} evidence`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory)
+    const { record } = hostStart(t, directory, path)
+    change(record.execution.turns[0])
+    await writeFile(join(directory, record.id, 'run.json'), JSON.stringify(record))
+    const files = await inputs(directory, record)
+    const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath,
+      '--transcript', join(directory, record.id, record.conversation))
+    assert.equal(scored.status, 2)
+    assert.match(scored.stdout, /verified evaluation filesystem scope/)
+  })
+}
+
 for (const mode of ['scope-outside', 'scope-host-home', 'scope-cd-host-home', 'scope-relative',
   'scope-normalized-escape', 'scope-prefix', 'scope-native-read', 'scope-native-file-read', 'scope-native-file-write',
   'scope-native-relative', 'scope-other-skill', 'scope-resume', 'scope-resource-write',
   'scope-resource-system-write', 'scope-resource-temp-read', 'scope-resource-temp-write',
   'scope-resource-mixed', 'scope-resource-python-write', 'scope-resource-shared-capacity', 'scope-resource-shared-python-capacity',
   'scope-resource-relative-write']) {
-  test(`evaluation rejects ${mode} observations without scoring and deletes the isolated home`, async t => {
+  test(`evaluation retains advisory ${mode} observations without rejecting the turn`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory, mode)
     const started = hostStart(t, directory, path)
     const result = mode === 'scope-resume' ? run(directory, 'turn', '--run', started.record.id, '--answer', '1') : started.result
     const record = result.data.data
     assert.equal(result.status, 2, result.stdout)
-    assert.equal(record.hostFailure, true)
+    assert.equal(record.hostFailure, undefined)
+    assert.equal(record.scopeGuard.advisory, true)
     assert.equal(record.scopeGuard.verified, false)
     assert.ok(record.scopeGuard.paths.length > 0)
     assert.deepEqual([...new Set(record.scopeGuard.violations.map(item => item.target))].sort(), record.scopeGuard.paths)
@@ -469,15 +522,12 @@ for (const mode of ['scope-outside', 'scope-host-home', 'scope-cd-host-home', 's
       assert.ok(observation.operation.trim())
       assert.match(observation.origin, /^(?:parent command|native .+ \(.+:\d+\))$/)
     }
-    assert.match(record.reason, /Evaluation scope violated/)
     assert.equal(record.transcript, null)
     assert.equal(record.answers, null)
-    assert.equal(record.isolation.verified, false)
-    assert.ok(record.isolation.cleanedAt)
+    assert.equal(record.isolation.verified, true)
+    const closed = run(directory, 'close', '--run', record.id).data.data
+    assert.ok(closed.isolation.cleanedAt)
     await assert.rejects(readFile(join(started.record.isolation.home, '.codex/fake-session.json')), { code: 'ENOENT' })
-    const files = await inputs(directory, record)
-    assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath,
-      '--transcript', join(directory, record.id, record.conversation)).status, 2)
   })
 }
 
@@ -488,7 +538,7 @@ for (const mode of ['scope-resource-read', 'scope-resource-processes', 'scope-re
     const { path } = await adapterFile(directory, mode)
     const { record } = hostStart(t, directory, path)
     assert.equal(record.hostFailure, undefined, record.reason)
-    assert.deepEqual(record.scopeGuard, { version: 3, verified: true, paths: [] })
+    assert.deepEqual(record.scopeGuard, { version: 3, advisory: true, verified: true, paths: [] })
     assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
   })
 }
@@ -509,7 +559,7 @@ test('evaluation accepts in-scope reports, runtime executables and non-filesyste
   const { path } = await adapterFile(directory, 'scope-valid')
   const { record } = hostStart(t, directory, path)
   assert.equal(record.hostFailure, undefined)
-  assert.deepEqual(record.scopeGuard, { version: 3, verified: true, paths: [] })
+  assert.deepEqual(record.scopeGuard, { version: 3, advisory: true, verified: true, paths: [] })
   const resumed = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
   const observed = JSON.parse(resumed.turns[1].result.stdout.trim().split('\n').at(-2)).item.observed
   assert.ok(observed.message.includes(`work only inside ${record.fixture.path} and ${record.isolation.home}`))
@@ -531,7 +581,7 @@ test('evaluation scope accepts a maintained repository whose root contains space
   assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
 })
 
-test('closing rejects out-of-scope worker observations arriving after the parent turn', async t => {
+test('closing retains advisory worker observations arriving after the parent turn', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
   const { record } = hostStart(t, directory, path)
@@ -543,11 +593,11 @@ test('closing rejects out-of-scope worker observations arriving after the parent
     payload: { type: 'custom_tool_call', name: 'exec', input: `cat '${outside}'` } }) + '\n')
   const closed = run(directory, 'close', '--run', record.id).data.data
   assert.equal(closed.scopeGuard.verified, false)
-  assert.equal(closed.isolation.verified, false)
+  assert.equal(closed.isolation.verified, true)
   assert.ok(closed.isolation.cleanedAt)
   const files = await inputs(directory, record)
   assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath,
-    '--transcript', join(directory, record.id, record.conversation)).status, 2)
+    '--transcript', join(directory, record.id, record.conversation)).status, 0)
 })
 
 for (const separator of ['\n', '\r', '\t']) {
@@ -712,7 +762,7 @@ test('manual adapter preparation is rejected before creating a run', async t => 
   const rejected = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'without', '--stage', 'baseline', '--adapter', path, '--manual')
   assert.equal(rejected.status, 3)
   assert.match(rejected.stdout, /Omit --manual/)
-  assert.deepEqual(await readdir(directory), ['adapter.json'])
+  assert.deepEqual(await readdir(directory), ['adapter.json', 'bin', 'outside-project'])
 })
 
 for (const mode of ['fail', 'malformed', 'incomplete', 'contaminate', 'truncate', 'hang']) {
@@ -875,7 +925,7 @@ test('throwaway authentication copies only a dummy login with private permission
   adapter.isolation.authentication = 'throwaway-codex-login'
   await writeFile(path, JSON.stringify(adapter))
   const execution = spawnSync(process.execPath, [join(root, 'scripts/eval.mjs'), '--scenario', 'ambiguous-idea', '--mode', 'without',
-    '--stage', 'baseline', '--adapter', path, '--results', directory, '--json'], { encoding: 'utf8', env: { ...process.env, CODEX_HOME: source } })
+    '--stage', 'baseline', '--adapter', path, '--results', directory, '--json'], { encoding: 'utf8', env: { ...testEnvironment(directory), CODEX_HOME: source } })
   const record = JSON.parse(execution.stdout).data
   assert.equal(record.turns[0].result.status, 'passed', execution.stdout)
   t.after(() => rm(record.fixture.path, { recursive: true, force: true }))

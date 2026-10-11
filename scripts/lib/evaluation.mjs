@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { validateData, validateIds } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { CommandError } from '../../skills/repo-audit/scripts/lib/result.mjs'
+import { canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 
 // Repository-owned formats are resolved independently of the invoking directory.
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -19,6 +20,19 @@ export function fail(message, status = 'blocked') {
   throw new CommandError(status, [{ code: 'invalid-evidence', message, fix: 'Use the format and prerequisites in docs/evaluation.md.' }])
 }
 export async function readJSON(path) { return JSON.parse(await readFile(path, 'utf8')) }
+
+export function verifiedExecution(record) {
+  const execution = record.execution
+  if (!execution) return record.scopeGuard?.verified === true
+  const mounts = [record.fixture.path, record.isolation.home].map(path => ({ Type: 'bind', Source: path, Destination: path, RW: true }))
+  return execution.method === 'docker' && /^sha256:[a-f0-9]{64}$/.test(execution.imageId) &&
+    /^[a-f0-9]{64}$/.test(execution.recipeHash) && execution.turns?.length === record.turns?.length && execution.turns.length > 0 &&
+    execution.turns.every(turn => turn.verified && turn.removedAt && turn.imageId === execution.imageId &&
+      /^\d+:\d+$/.test(turn.user) && turn.network === 'bridge' && turn.privileged === false &&
+      canonicalJSON(turn.publishedPorts) === '[]' && canonicalJSON(turn.mounts) === canonicalJSON(mounts) &&
+      canonicalJSON(turn.toolchain) === canonicalJSON(execution.toolchain) &&
+      ['node', 'git', 'npm', 'agent'].every(key => typeof turn.toolchain?.[key] === 'string' && (!record.tools[key] || record.tools[key] === turn.toolchain[key])))
+}
 
 export function options(args, values, flags = []) {
   const result = {}

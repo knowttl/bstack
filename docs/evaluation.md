@@ -82,7 +82,14 @@ The host interface follows the official [non-interactive execution documentation
 The recorded Linux host cannot start Codex's workspace sandbox because `bwrap` cannot configure its loopback interface.
 The adapter therefore selects `danger-full-access` for both opening and resumed turns in the disposable fixture, while separately isolating host state and verifying skill discovery.
 The resume command explicitly sets `sandbox_mode="danger-full-access"` instead of relying on the opening command's `--sandbox` option to carry over.
-This is discovery and conversation isolation, not an operating-system security boundary.
+Every evaluation agent turn now runs in a disposable Docker container, providing a separate filesystem from the operator's host.
+Build its pinned toolchain with `docker build --tag bstack-eval-toolchain:node24-codex0.162.1 --file tests/eval/container/Dockerfile tests/eval/container`.
+The recipe pins the Node base image digest, Node 24.17.0, npm 11.13.0, Git 2.54.0 and Codex CLI 0.162.1.
+Each `bstack-eval-*` container mounts only the disposable fixture and isolated home, both read-write at their original paths; it has no Docker socket, other host mounts, added capabilities, privileged mode, host networking or published ports.
+The default bridge permits outbound model API traffic without exposing the host network namespace.
+The runner inspects the created container before starting the agent and binds its immutable image ID, recipe hash, mounts and execution settings into `execution` in the run record.
+It removes the exact named container after each turn, including client timeout or failure, and requires at least 20 GiB free disk before starting.
+The existing throwaway-login procedure copies only the login file into the isolated home for the turn and deletes it in failure cleanup as well as success.
 
 Every adapter turn also receives an explicit filesystem scope: the disposable fixture and its isolated home only.
 The isolated home's `tmp` directory is created with mode `0700` and owns scratch files, clones and reports through `TMPDIR`, `TMP` and `TEMP`.
@@ -93,12 +100,12 @@ The runner checks filesystem access targets in captured commands and native pare
 Paths merely printed in tool output do not establish access and are excluded, including filesystem device names in capacity tables and process command lines in resource-query output.
 Complete command arguments are resolved against their working directory and checked as read targets only when they exist; revision ranges, refs, flags and other nonexistent tokens are not filesystem paths.
 Explicit write destinations are checked even before they exist.
-An out-of-scope access target leaves the run unscored, records `scopeGuard.paths` and `scopeGuard.violations`, and deletes the isolated home through ordinary failure cleanup.
-Every violation retains its target, triggering command or file operation, and parent/native trace origin; rejection tests require provenance for every rejected path.
-This is an observed-access rejection check, not an operating-system sandbox or a claim to detect unreported reads.
+The transcript parser records advisory hits in `scopeGuard.paths` and `scopeGuard.violations`, with the target, triggering operation and parent/native trace origin.
+Command text cannot reliably distinguish file access from program operators or revision syntax, so parser hits never reject a run on their own.
+Docker's verified mounts enforce host filesystem isolation; the advisory parser does not claim to detect actual reads.
 Comparisons require the same verified scope-contract version on both sides.
 Scope version 3 recognizes read-only resource preflight: memory/load files, process metadata/counts and filesystem capacity queries.
-The guard permits the run's own isolated temporary directory, but rejects other projects, the host home and explicit write destinations outside the fixture or isolated home.
+The advisory guard recognizes the run's isolated temporary directory and reports apparent targets outside the fixture or isolated home.
 System runtime access does not authorize writing those runtime files; `/dev/null` remains an ordinary output sink.
 Contaminated transcripts may contain unrelated host inventories and must stay private.
 
@@ -307,11 +314,11 @@ The independent extension is the approved without-only exception: its AC-64 proc
 All other selected cases must use the with-skill run of their declared final comparison.
 The validator rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
 Execution bindings include unchanged package, installer, fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
-The approved existing baseline remains eligible across the exact temporary-directory mode tightening: its enclosing home was already `0700`, so the effective isolation is unchanged.
-Every other byte of the host adapter implementation must still match; this does not permit changed execution settings or package inputs.
+The approved scope rerun retains the exact successful `scope-and-prerequisites` baseline `2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89`, bound by its complete record hash.
+Its fixture, scoring criteria, request and tool versions must still match the container run.
+All other final runs require verified container execution and unchanged host runner, container runner and image recipe inputs.
 Grader-only repairs do not require repeating unchanged agent turns.
-Verified version 2 scope evidence remains eligible alongside version 3: both require fixture/home isolation, and each comparison still requires matching versions.
-Version 3 fixes resource-query false positives; a version 2 scope failure is never retroactively credited.
+Historical process-only runs remain diagnostic history; no failed scope run is retroactively credited.
 Every with-skill run must pass every check, and each pair must satisfy the design's improvement and regression rule.
 Automated procedures execute their exact named tests against the current inputs, including the clean-checkout procedure and real Linux lifecycle execution.
 Only complete passing evidence can produce the 75-case release result.
