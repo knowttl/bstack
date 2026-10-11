@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "c78743d55308eb341fd4897dc362ef0d83b8f5a4f459ac634c02f4bb9afebd90"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The controlled checkout HTTP fixture supplies 10 and checkout must return status 201 and total 10.",
+      "outcome": "Public UI checkout against actual controlled HTTP endpoint returns status 201 and total 10.",
+      "userJourney": true
+    },
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "The public quote remains 12;",
+      "outcome": "Public quote returns 12 and both core helpers terminate.",
+      "userJourney": false
+    },
+    {
+      "id": "boundaries",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "Strict types and native static boundary and cycle analysis pass.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "inputScopes": [
+        "packages/**",
+        "*.mjs",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs"
+      ],
+      "role": "outcome",
+      "required": true,
+      "acceptanceCases": [
+        "checkout",
+        "quote",
+        "boundaries"
+      ]
+    }
+  ]
+}

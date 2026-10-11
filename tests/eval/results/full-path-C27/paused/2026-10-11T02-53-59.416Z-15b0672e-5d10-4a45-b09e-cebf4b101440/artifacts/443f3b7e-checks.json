@@ -1,0 +1,402 @@
+{
+  "schemaVersion": 1,
+  "runId": "a9f67a98-71c8-41bb-bc61-3146f6710efb",
+  "phase": "before",
+  "status": "passed",
+  "planDigest": "4f73af032cda0dace680ff61dc117a304d0a17bb20bc915d4fd3c2355f17556e",
+  "originalState": {
+    "fingerprint": "ac99e65024a88d0f6d505fdd473b1ab751442e1ffa5b75b3d5c8a657d28d50f9",
+    "state": {
+      "root": "[scratch-path]",
+      "baseCommit": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+        },
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7"
+        },
+        {
+          "path": "boundaries.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+        },
+        {
+          "path": "journey.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+        },
+        {
+          "path": "package-lock.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+        },
+        {
+          "path": "package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+        },
+        {
+          "path": "packages",
+          "present": true,
+          "mode": 16893,
+          "linkTarget": null,
+          "contentHash": null
+        },
+        {
+          "path": "tsconfig.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+        },
+        {
+          "path": "unit.test.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+        }
+      ],
+      "inputs": {
+        "planDigest": "4f73af032cda0dace680ff61dc117a304d0a17bb20bc915d4fd3c2355f17556e",
+        "planContentHash": "18679d659b5cb5da45af36f0682659d01fad5c38683935b8c8ccbddbf4cc84dc"
+      }
+    }
+  },
+  "finalState": {
+    "fingerprint": "ac99e65024a88d0f6d505fdd473b1ab751442e1ffa5b75b3d5c8a657d28d50f9",
+    "state": {
+      "root": "[scratch-path]",
+      "baseCommit": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+        },
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7"
+        },
+        {
+          "path": "boundaries.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+        },
+        {
+          "path": "journey.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+        },
+        {
+          "path": "package-lock.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+        },
+        {
+          "path": "package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+        },
+        {
+          "path": "packages",
+          "present": true,
+          "mode": 16893,
+          "linkTarget": null,
+          "contentHash": null
+        },
+        {
+          "path": "tsconfig.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+        },
+        {
+          "path": "unit.test.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+        }
+      ],
+      "inputs": {
+        "planDigest": "4f73af032cda0dace680ff61dc117a304d0a17bb20bc915d4fd3c2355f17556e",
+        "planContentHash": "18679d659b5cb5da45af36f0682659d01fad5c38683935b8c8ccbddbf4cc84dc"
+      }
+    }
+  },
+  "startedAt": "2026-10-11T03:05:12.324Z",
+  "completedAt": "2026-10-11T03:05:15.318Z",
+  "priorRun": null,
+  "executionOrder": [
+    "a9f67a98-71c8-41bb-bc61-3146f6710efb"
+  ],
+  "checks": [
+    {
+      "id": "types",
+      "role": "protection",
+      "required": true,
+      "acceptanceCases": [
+        "types"
+      ],
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "passed",
+      "satisfied": true,
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> check\n> tsc --noEmit\n\n",
+        "stderr": "",
+        "durationMs": 1321.424739,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 99.567864,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 1
+    },
+    {
+      "id": "units",
+      "role": "protection",
+      "required": true,
+      "acceptanceCases": [
+        "checkout"
+      ],
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "passed",
+      "satisfied": true,
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> test\n> node --test unit.test.mjs\n\n✔ public price (0.841706ms)\n✔ checkout HTTP mock (25.140604ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.67494\n",
+        "stderr": "",
+        "durationMs": 300.0796320000002,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 99.92211999999995,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 2
+    },
+    {
+      "id": "boundaries",
+      "role": "reproduction",
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "failed",
+      "satisfied": true,
+      "reason": "Command did not pass.",
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"alias\",\"cycle\",\"private\"]\n",
+        "stderr": "",
+        "durationMs": 700.8650309999998,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 87.90390200000002,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 3
+    },
+    {
+      "id": "journey",
+      "role": "reproduction",
+      "required": true,
+      "acceptanceCases": [
+        "checkout"
+      ],
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "failed",
+      "satisfied": true,
+      "reason": "Command did not pass.",
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":12}}\n",
+        "stderr": "node:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: agreed checkout total is 10\n+ actual - expected\n\n  {\n    status: 201,\n+   total: 12\n-   total: 10\n  }\n\n    at file://[scratch-path]\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: { status: 201, total: 12 },\n  expected: { status: 201, total: 10 },\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.17.0\n",
+        "durationMs": 249.82003199999963,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 96.78657800000019,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 4
+    }
+  ],
+  "coverage": [
+    {
+      "id": "types",
+      "sourceId": "instructions",
+      "pointer": "Use the approved design and public core interface.",
+      "outcome": "Approved public core interface type-checks",
+      "userJourney": false,
+      "status": "passed",
+      "checkIds": [
+        "types"
+      ],
+      "reason": null
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "UI avoids storage and native boundary analysis reports no violations",
+      "userJourney": false,
+      "status": "failed",
+      "checkIds": [
+        "boundaries"
+      ],
+      "reason": null
+    },
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real HTTP checkout yields status 201 and total 10",
+      "userJourney": true,
+      "status": "failed",
+      "checkIds": [
+        "units",
+        "journey"
+      ],
+      "reason": null
+    }
+  ],
+  "journeyCoverage": "No user journey is verified by this result.",
+  "limitations": [
+    "Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Outside dependencies require separate live probe record and compare evidence."
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "stage": "foundation",
+  "target": {
+    "mode": "workspace",
+    "root": "[fixture]/pantry-app",
+    "revision": null
+  },
+  "nextChange": "Create the selected minimal local household pantry and prove Rice journey, boundary enforcement and portable maintenance.",
+  "reviewedScope": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".gitignore",
+    ".prettierignore",
+    "AGENTS.md",
+    "DESIGN.md",
+    "GLOSSARY.md",
+    "README.md",
+    "VISION.md",
+    "eslint.config.mjs",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/resource-guard.mjs",
+    "src/main.ts",
+    "src/pantry.ts",
+    "src/private/storage.ts",
+    "src/ui/render.ts",
+    "style.css",
+    "tests/browser.test.mjs",
+    "tests/pantry.test.mjs",
+    "tsconfig.json"
+  ],
+  "sources": [
+    {
+      "id": "author",
+      "pointer": "./77bf172e-approval.md",
+      "intent": "documented",
+      "summary": "Owner confirmed local household outcomes and selected exact vision, destination, scaffold, UI enforcement and maintenance."
+    },
+    {
+      "id": "brief",
+      "pointer": "[fixture]/brief.md:4",
+      "intent": "documented",
+      "summary": "TypeScript browser and local storage, no account/server/remote service."
+    },
+    {
+      "id": "research",
+      "pointer": "./13f24f2d-research.json",
+      "intent": "observed",
+      "summary": "Citation-checked official tool/storage research; native scoped restrictions support selected boundary."
+    },
+    {
+      "id": "scratch-browser",
+      "pointer": "[scratch-path]",
+      "intent": "observed",
+      "summary": "Scratch real Chrome Rice journey, full-name duplicate preservation, storage failure and recovery passed; created target still unverified."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Approved intent and terms need durable authoritative sources without duplicated root guidance.",
+      "files": [
+        "VISION.md",
+        "GLOSSARY.md",
+        "AGENTS.md",
+        "DESIGN.md",
+        "README.md"
+      ],
+      "command": null,
+      "principle": "Use exact approved vision, confirmed glossary, bounded design and pointer-only root guidance.",
+      "consequence": "Unclear authority would let later changes drift from the agreed local household scope.",
+      "fix": "Use exact approved vision, confirmed glossary, bounded design and pointer-only root guidance.",
+      "scope": [
+        "VISION.md",
+        "GLOSSARY.md",
+        "AGENTS.md",
+        "DESIGN.md",
+        "README.md"
+      ],
+      "verification": "Review literal sources, exact approved vision hash, documentation links and maintenance registration.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "author",
+        "brief",
+        "research",
+        "scratch-browser"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "There is no working first Rice journey at the absent selected destination.",
+      "files": [
+        "index.html",
+        "src/main.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "style.css",
+        "tests/browser.test.mjs",
+        "tests/pantry.test.mjs",
+        "tsconfig.json"
+      ],
+      "command": null,
+      "principle": "Create a plain DOM browser app, public pantry interface and private validated storage owner.",
+      "consequence": "The household cannot record needed Rice and retain it on reload.",
+      "fix": "Create a plain DOM browser app, public pantry interface and private validated storage owner.",
+      "scope": [
+        "index.html",
+        "src/main.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "style.css",
+        "tests/browser.test.mjs",
+        "tests/pantry.test.mjs",
+        "tsconfig.json"
+      ],
+      "verification": "Native public behaviour and observed actual Chrome journey including reload, duplicate-state preservation and saving failure.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "author",
+        "brief",
+        "research",
+        "scratch-browser"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "The selected UI boundary and native quality checks are absent.",
+      "files": [
+        "eslint.config.mjs",
+        "package.json",
+        "package-lock.json",
+        ".gitignore",
+        ".prettierignore",
+        "scripts/resource-guard.mjs"
+      ],
+      "command": null,
+      "principle": "Integrate native ESLint private import/storage restrictions, strict types, formatting, public/browser tests and resource limits in npm run check.",
+      "consequence": "UI bypasses could obscure unsaved state or couple rendering to private persistence.",
+      "fix": "Integrate native ESLint private import/storage restrictions, strict types, formatting, public/browser tests and resource limits in npm run check.",
+      "scope": [
+        "eslint.config.mjs",
+        "package.json",
+        "package-lock.json",
+        ".gitignore",
+        ".prettierignore",
+        "scripts/resource-guard.mjs"
+      ],
+      "verification": "Independent rule-proof private import and direct storage violations, valid rendering, then integrated npm run check proof; resource guard before suites.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "author",
+        "brief",
+        "research",
+        "scratch-browser"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Future edits have no maintained change coverage or standalone review checker.",
+      "files": [
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs"
+      ],
+      "command": null,
+      "principle": "Install the unchanged dependency-free checker and selected document/rule/scope/acceptance contract.",
+      "consequence": "A later green unit check alone could omit source impact or real journey coverage.",
+      "fix": "Install the unchanged dependency-free checker and selected document/rule/scope/acceptance contract.",
+      "scope": [
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs"
+      ],
+      "verification": "Validate contract/docs, substantive assessment, captured native evidence and portable checker in a different-root clean clone with isolated home/cache.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "author",
+        "brief",
+        "research",
+        "scratch-browser"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001",
+    "F-002",
+    "F-003",
+    "F-004"
+  ],
+  "requiredOutcomes": [
+    "journey",
+    "foundation-review",
+    "native-checks",
+    "rule-proof",
+    "maintenance",
+    "fresh-checker"
+  ],
+  "execution": [],
+  "limitations": [
+    "Scratch browser passes are preview evidence, not verification of a created target.",
+    "Initial supported browser is installed Chrome on Linux; other browser compatibility is unverified.",
+    "Native syntactic boundary checks do not prove all reflective/computed runtime indirection.",
+    "No hosted CI, release or delivery service selected.",
+    "Standalone findings validate/render require an existing directory; planned-destination validation is blocked until protected creation. Creation dry-run validates the planned change set without creating the destination."
+  ]
+}

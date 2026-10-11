@@ -1,0 +1,650 @@
+{
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "base": {
+      "ref": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "kind": "commit",
+      "objectId": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+    },
+    "head": "c7fce613b004d87dc442f5fc6f6b6f1ad04d1cc1",
+    "changes": [
+      {
+        "source": "committed",
+        "status": "A",
+        "path": ".bstack/approvals.md"
+      },
+      {
+        "source": "committed",
+        "status": "A",
+        "path": ".bstack/bin/bstack-check.mjs"
+      },
+      {
+        "source": "committed",
+        "status": "A",
+        "path": ".bstack/project.json"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "AGENTS.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "DESIGN.md"
+      },
+      {
+        "source": "committed",
+        "status": "A",
+        "path": "docs/repo-audit.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "glossary.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "journey.mjs"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "package.json"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/core/a.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/core/index.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/web/alias.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/web/routes.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/web/ui.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "unit.test.mjs"
+      }
+    ],
+    "paths": [
+      ".bstack/approvals.md",
+      ".bstack/bin/bstack-check.mjs",
+      ".bstack/project.json",
+      "AGENTS.md",
+      "DESIGN.md",
+      "docs/repo-audit.md",
+      "glossary.md",
+      "journey.mjs",
+      "package.json",
+      "packages/core/a.ts",
+      "packages/core/index.ts",
+      "packages/web/alias.ts",
+      "packages/web/routes.ts",
+      "packages/web/ui.ts",
+      "unit.test.mjs"
+    ],
+    "mappings": [
+      {
+        "path": ".bstack/approvals.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "vocabulary",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": ".bstack/bin/bstack-check.mjs",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "vocabulary",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": ".bstack/project.json",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "vocabulary",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "AGENTS.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "vocabulary",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "DESIGN.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "vocabulary",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "docs/repo-audit.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "vocabulary",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "glossary.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "vocabulary",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "journey.mjs",
+        "scopeIds": [
+          "implementation"
+        ],
+        "documentIds": [
+          "design",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "package.json",
+        "scopeIds": [
+          "implementation"
+        ],
+        "documentIds": [
+          "design",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "packages/core/a.ts",
+        "scopeIds": [
+          "implementation"
+        ],
+        "documentIds": [
+          "design",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "packages/core/index.ts",
+        "scopeIds": [
+          "implementation"
+        ],
+        "documentIds": [
+          "design",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "packages/web/alias.ts",
+        "scopeIds": [
+          "implementation"
+        ],
+        "documentIds": [
+          "design",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "packages/web/routes.ts",
+        "scopeIds": [
+          "implementation"
+        ],
+        "documentIds": [
+          "design",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "packages/web/ui.ts",
+        "scopeIds": [
+          "implementation"
+        ],
+        "documentIds": [
+          "design",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      },
+      {
+        "path": "unit.test.mjs",
+        "scopeIds": [
+          "implementation"
+        ],
+        "documentIds": [
+          "design",
+          "guidance"
+        ],
+        "ruleIds": [
+          "storage",
+          "cycle",
+          "checkout",
+          "quote",
+          "maintenance"
+        ]
+      }
+    ],
+    "candidateDocuments": [
+      {
+        "id": "design",
+        "path": "DESIGN.md"
+      },
+      {
+        "id": "vocabulary",
+        "path": "glossary.md"
+      },
+      {
+        "id": "guidance",
+        "path": "AGENTS.md"
+      }
+    ],
+    "unmappedPaths": [],
+    "policies": [
+      {
+        "contract": {
+          "schemaVersion": 1,
+          "documents": [
+            {
+              "id": "design",
+              "path": "DESIGN.md"
+            },
+            {
+              "id": "vocabulary",
+              "path": "glossary.md"
+            },
+            {
+              "id": "guidance",
+              "path": "AGENTS.md"
+            }
+          ],
+          "scopes": [
+            {
+              "id": "implementation",
+              "paths": [
+                "packages/**",
+                "*.mjs",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json"
+              ],
+              "documentIds": [
+                "design",
+                "guidance"
+              ],
+              "ruleIds": [
+                "storage",
+                "cycle",
+                "checkout",
+                "quote",
+                "maintenance"
+              ]
+            },
+            {
+              "id": "foundation",
+              "paths": [
+                ".bstack/**",
+                "AGENTS.md",
+                "CLAUDE.md",
+                "DESIGN.md",
+                "glossary.md",
+                "docs/**",
+                ".gitignore"
+              ],
+              "documentIds": [
+                "design",
+                "vocabulary",
+                "guidance"
+              ],
+              "ruleIds": [
+                "storage",
+                "cycle",
+                "checkout",
+                "quote",
+                "maintenance"
+              ]
+            }
+          ],
+          "rules": [
+            {
+              "id": "storage",
+              "path": "DESIGN.md",
+              "pointer": "The UI never touches storage.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "cycle",
+              "path": "DESIGN.md",
+              "pointer": "Core dependencies remain acyclic;",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "checkout",
+              "path": "DESIGN.md",
+              "pointer": "The agreed checkout total is 10.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "quote",
+              "path": "DESIGN.md",
+              "pointer": "The public quote remains 12;",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "maintenance",
+              "path": "DESIGN.md",
+              "pointer": ".bstack/project.json registers authoritative documents, scoped rules and native checks;",
+              "checkIds": [
+                "native"
+              ]
+            }
+          ],
+          "checks": [
+            {
+              "id": "native",
+              "command": {
+                "executable": "npm",
+                "args": [
+                  "run",
+                  "check"
+                ],
+                "cwd": ".",
+                "versionArgs": [
+                  "--version"
+                ]
+              },
+              "inputScopes": [
+                "packages/**",
+                "*.mjs",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json",
+                "AGENTS.md",
+                "DESIGN.md",
+                "glossary.md",
+                ".bstack/project.json",
+                ".bstack/bin/bstack-check.mjs"
+              ]
+            }
+          ],
+          "generators": [],
+          "acceptanceSources": [
+            {
+              "id": "checkout",
+              "path": "DESIGN.md",
+              "pointer": "The agreed checkout total is 10."
+            },
+            {
+              "id": "storage",
+              "path": "DESIGN.md",
+              "pointer": "The UI never touches storage."
+            },
+            {
+              "id": "quote",
+              "path": "DESIGN.md",
+              "pointer": "The public quote remains 12;"
+            }
+          ]
+        },
+        "path": ".bstack/project.json"
+      }
+    ],
+    "previousContract": null,
+    "requiredCheckIds": [
+      "native"
+    ],
+    "requiredChecks": [
+      {
+        "id": "native",
+        "command": {
+          "executable": "npm",
+          "args": [
+            "run",
+            "check"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ]
+        },
+        "inputScopes": [
+          "packages/**",
+          "*.mjs",
+          "package.json",
+          "package-lock.json",
+          "tsconfig.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "glossary.md",
+          ".bstack/project.json",
+          ".bstack/bin/bstack-check.mjs"
+        ]
+      }
+    ],
+    "fingerprint": "3a56ab1866211f53e760a50e6c4ed8ee95b0954addcfc6f0b95c27495f4a3c78",
+    "limitations": [
+      "Structural validation cannot prove that explanations or document deltas agree semantically with code, or authenticate owner approval. The selected review process must assess these claims.",
+      "Local execution records are not authenticated portable attestations. Captures cover declared inputs only; transient changes restored before capture completion are not detected."
+    ],
+    "coverageLimits": [
+      {
+        "path": "DESIGN.md",
+        "reason": "HTML, entities and custom anchors require renderer review."
+      }
+    ],
+    "phase": "result-validation",
+    "startedAt": "2026-10-11T02:32:27.726Z",
+    "completedAt": "2026-10-11T02:32:30.511Z",
+    "sourceRevision": "0654cd7fd3929db0ee7216eb64e75f5f63e3aee1",
+    "comparison": {
+      "source": "c7fce613b004d87dc442f5fc6f6b6f1ad04d1cc1",
+      "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "mergeBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+    },
+    "checks": [
+      {
+        "check": {
+          "id": "native",
+          "command": {
+            "executable": "npm",
+            "args": [
+              "run",
+              "check"
+            ],
+            "cwd": ".",
+            "versionArgs": [
+              "--version"
+            ]
+          },
+          "inputScopes": [
+            "packages/**",
+            "*.mjs",
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "AGENTS.md",
+            "DESIGN.md",
+            "glossary.md",
+            ".bstack/project.json",
+            ".bstack/bin/bstack-check.mjs"
+          ]
+        },
+        "execution": {
+          "status": "passed",
+          "stdout": "\n> check\n> tsc --noEmit && npm run boundaries && npm test && npm run journey\n\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (0.865955ms)\n✔ checkout HTTP mock (28.185758ms)\n✔ core helpers terminate with the public price (0.2125ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 143.963345\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+          "stderr": "",
+          "durationMs": 2507.325592,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "11.13.0\n",
+            "stderr": "",
+            "durationMs": 101.830287,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      }
+    ],
+    "previous": null,
+    "path": "./f2dd143e-checker-result.json"
+  }
+}
