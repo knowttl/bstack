@@ -5,7 +5,8 @@ The complete acceptance validator, all-case coverage and scenario comparisons ar
 The [AC-35 capability gap](AC-35-capability-gap.md) has an effective supported restriction verified by a capture-only probe and the fresh TypeScript fallback run.
 Both corrected fallback comparisons pass under that effective adapter, resolving AC-35.
 The approved grading correction is applied.
-Evaluation is blocked on a repeated resource-output scope rejection, with no waiver for the affected cases.
+The repeated resource-output scope rejection has an approved correction: judge command and file-tool access targets, excluding tool output.
+Its changed-input with-skill rerun is still required, with no waiver for the affected cases.
 
 - AC-29: the baseline's initial immutable score incorrectly credited the passing-units condition despite no unit execution; the [grading explanation](verification-limitations-grading.md) and [proposed correction](verification-limitations-baseline-correction-proposal.json) preserve the captured turn and identify the original scoring hash.
   The approved append-only correction preserves the original answers and transcript and yields a [passing comparison](verification-limitations-comparison.json), without another agent run.
