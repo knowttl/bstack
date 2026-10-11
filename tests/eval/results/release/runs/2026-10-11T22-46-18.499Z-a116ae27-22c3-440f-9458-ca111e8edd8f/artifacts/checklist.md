@@ -1,0 +1,5 @@
+- [x] Step 7: Audit starting state (inventory, checked source citations, clean HEAD, one native test passed; inaccessible history recorded).
+- [ ] Step 8: Resolve material gaps (targeted scope question pending; dependent recommendations blocked).
+- [ ] Step 9: Present evidenced findings (decision and history findings prepared; readiness verification incomplete).
+- [ ] Step 10: Review/apply (not authorized; read-only, no selected changes or write paths).
+- [ ] Step 11: Verify readiness (scope decision and exact-history evidence unavailable; no readiness claim).
