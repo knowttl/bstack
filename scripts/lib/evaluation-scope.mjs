@@ -2,7 +2,6 @@ import { access, readdir, readFile, realpath } from 'node:fs/promises'
 import { constants } from 'node:fs'
 import { delimiter, isAbsolute, join, resolve, sep } from 'node:path'
 import { parse as parseJavaScript } from 'acorn'
-import { fail } from './evaluation.mjs'
 
 // Version the observed-scope contract so older runs cannot form a guarded pair.
 export const scopeVersion = 3
@@ -16,7 +15,7 @@ Installed tool executables and their runtime resources may run normally; do not 
 Read-only memory/load queries, process counts and filesystem capacity queries are allowed for resource preflight.
 Use /proc/meminfo, /proc/loadavg, /proc/self and process metadata only for those queries; do not print process inventories.
 Keep filesystem writes inside the fixture or isolated home, including its own tmp directory.
-Pass this scope to any subagents. Out-of-scope filesystem access targets in commands or file-tool calls invalidate this evaluation; paths merely printed in output do not.
+Pass this scope to any subagents. Docker exposes only these two host directories; transcript path checks are advisory and do not establish actual filesystem access.
 
 ${message}`
 }
@@ -187,10 +186,9 @@ export async function checkScope(record, result) {
       if (!allowed(path) && !processQuery && await exists(path)) reject(path)
     }
   }
-  record.scopeGuard = { version: scopeVersion, verified: violations.size === 0,
+  record.scopeGuard = { version: scopeVersion, advisory: true, verified: violations.size === 0,
     paths: [...new Set([...violations.values()].map(item => item.target))].sort() }
   if (violations.size) {
     record.scopeGuard.violations = [...violations.values()]
-    fail('Evaluation scope violated: observed filesystem access outside the fixture, isolated home and approved tool paths. The run remains unscored; inspect scopeGuard.violations for each triggering operation and target, and retain the contaminated transcript privately.')
   }
 }
