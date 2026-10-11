@@ -19,6 +19,7 @@ review:
     - path: "**"
       instructions: |
         Review focus for this build: does the change work as its plan task specifies, and is it well designed? Raise functional bugs, broken or missing flows, wrong results, crashes, hangs, data loss, regressions, unhandled errors that break a flow, missing tests for the slice's behaviour, and style, simplification and design-principle issues. Security hardening and threat-model concerns are deferred until the full app is built: do not raise them unless they cause a functional bug.
+        Tests must exercise behaviour through the public command, installer or evaluation interface and take expected results from the design, plan or acceptance case. Flag tests that import private helpers to assert internals or that only restate current implementation output.
         Repair each reported invariant across all sibling cases and shared call sites in the same round.
         Enumerate the relevant boundary and failure cases, fix their shared cause, and verify through the public interface.
         Before focused repair verification, install dependencies with npm ci --ignore-scripts and
