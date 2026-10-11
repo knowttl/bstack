@@ -327,6 +327,8 @@ The approved scope rerun retains the exact successful `scope-and-prerequisites` 
 Its fixture, scoring criteria, request and tool versions must still match the container run.
 All other final runs require verified container execution and unchanged host runner, container runner and image recipe inputs.
 Grader-only repairs do not require repeating unchanged agent turns.
+Package and installer changes invalidate with-skill captures; verified without-skill baselines remain comparable because those inputs were absent from their isolated execution.
+Every final capture must complete all ordered scripted answers.
 Historical process-only runs remain diagnostic history; no failed scope run is retroactively credited.
 Every with-skill run must pass every check, and each pair must satisfy the design's improvement and regression rule.
 Automated procedures execute their exact named tests against the current inputs, including the clean-checkout procedure and real Linux lifecycle execution.
