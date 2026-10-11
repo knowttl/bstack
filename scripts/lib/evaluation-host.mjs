@@ -82,7 +82,8 @@ export async function readAdapter(path, scenarioId) {
   if (['research-main-typescript', 'research-main-python'].includes(scenarioId)) {
     const disableSubagents = args => {
       const index = args.findIndex(arg => ['{sessionId}', '{message}'].includes(arg))
-      return [...args.slice(0, index), '--disable', 'multi_agent', ...args.slice(index)]
+      return [...args.slice(0, index), '--disable', 'multi_agent', '--disable', 'multi_agent_v2',
+        '--disable', 'multi_agent_v2_dynamic_tools', '-c', 'agents.enabled=false', ...args.slice(index)]
     }
     adapter.args = disableSubagents(adapter.args)
     adapter.invocation.resumeArgs = disableSubagents(adapter.invocation.resumeArgs)
