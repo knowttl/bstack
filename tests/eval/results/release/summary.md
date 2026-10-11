@@ -8,6 +8,9 @@ The [with-skill conversation](runs/2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9
 The [pinned image setup](container-setup.json) includes real browser, offline Python and host-wide process-count probes.
 The parser's `/` hits are retained as advisory evidence; Docker's inspected two-mount configuration enforces host isolation.
 Fresh container captures remain pending for the other final scenarios.
+AC-6 and AC-38 pass the [clear-goals comparison](clear-goals-comparison.json), with both baseline checks preserved.
+The [complete with-skill conversation](runs/2026-10-11T20-44-18.073Z-769b1d74-9b4b-421a-9613-1e6d5c26defd/conversation.txt) reuses approved project goals, proposes appropriate checks and never opens the bundled vision, intent-interview or domain-language references.
+Both runs completed the same two scripted answers under the pinned container image and matching fixture revision, criteria, adapter and tool versions.
 
 ## Historical process-only evaluations
 
