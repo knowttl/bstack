@@ -51,17 +51,20 @@ if (args.includes('--version')) {
         'scope-tool-sibling': process.execPath + '/../private-config',
         'scope-native-read': join(process.env.HOME, 'tmp', 'report.json'),
         'scope-native-output': join(process.env.HOME, 'tmp', 'report.json'),
+        'scope-native-relative': join(process.env.HOME, 'tmp', 'report.json'),
         'scope-runtime-skill': '/usr/share/skills/repo-audit/SKILL.md',
         'scope-valid': join(process.env.HOME, 'tmp', 'report.json')
       }
       console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution',
         command: mode === 'scope-output' ? 'find .' : `cat ${paths[mode] ?? outside}`,
         aggregated_output: mode === 'scope-output' ? JSON.stringify({ target: outside }) : mode === 'scope-valid' ?
-          `${process.execPath}\n${process.cwd()}/brief.md\n/api/items\nhttp://localhost:3000/home/profile\n... 2 more lines\n` : '' } }))
+          `${process.execPath}\n${process.cwd()}/brief.md\n/api/items\nhttp://localhost:3000/home/profile\n... 2 more lines\nimport { price } from '../core/index.ts'\nrange <base>..<head>\n` : '' } }))
       if (mode.startsWith('scope-native-')) {
         const directory = join(process.env.CODEX_HOME, 'sessions')
         await mkdir(directory, { recursive: true })
-        const payload = mode === 'scope-native-read' ? { type: 'custom_tool_call', name: 'exec', input: `cat ${outside}` } :
+        const payload = mode === 'scope-native-relative' ? { type: 'custom_tool_call', name: 'exec',
+          input: 'await tools.exec_command({cmd: "cat ../outside-project/SKILL.md"})' } :
+          mode === 'scope-native-read' ? { type: 'custom_tool_call', name: 'exec', input: `cat ${outside}` } :
           { type: 'custom_tool_call_output', output: JSON.stringify({ output: outside }) }
         await writeFile(join(directory, 'worker.jsonl'), JSON.stringify({ type: 'response_item', payload }) + '\n')
       }

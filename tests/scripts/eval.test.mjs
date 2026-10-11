@@ -373,7 +373,8 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
 })
 
 for (const mode of ['scope-outside', 'scope-host-home', 'scope-output', 'scope-relative',
-  'scope-normalized-escape', 'scope-prefix', 'scope-tool-sibling', 'scope-native-read', 'scope-native-output', 'scope-runtime-skill', 'scope-resume']) {
+  'scope-normalized-escape', 'scope-prefix', 'scope-tool-sibling', 'scope-native-read', 'scope-native-output',
+  'scope-native-relative', 'scope-runtime-skill', 'scope-resume']) {
   test(`evaluation rejects ${mode} observations without scoring and deletes the isolated home`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory, mode)
@@ -401,7 +402,7 @@ test('evaluation accepts in-scope reports, runtime executables and non-filesyste
   const { path } = await adapterFile(directory, 'scope-valid')
   const { record } = hostStart(t, directory, path)
   assert.equal(record.hostFailure, undefined)
-  assert.deepEqual(record.scopeGuard, { version: 1, verified: true, paths: [] })
+  assert.deepEqual(record.scopeGuard, { version: 2, verified: true, paths: [] })
   const resumed = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
   const observed = JSON.parse(resumed.turns[1].result.stdout.trim().split('\n').at(-2)).item.observed
   assert.ok(observed.message.includes(`work only inside ${record.fixture.path} and ${record.isolation.home}`))
