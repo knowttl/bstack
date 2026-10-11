@@ -1,0 +1,358 @@
+{
+  "private": {
+    "schemaVersion": 1,
+    "command": "rule-proof",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "checkId": "boundaries",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "private",
+      "status": "passed",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+            "stderr": "",
+            "durationMs": 738.651456,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 93.736314,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"private\"]\n",
+            "stderr": "",
+            "durationMs": 720.405483,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 97.44082200000003,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ],
+      "path": "./eef8eedc-proof.json",
+      "limitations": [
+        "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+      ]
+    },
+    "inputs": {}
+  },
+  "alias": {
+    "schemaVersion": 1,
+    "command": "rule-proof",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "checkId": "boundaries",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "alias",
+      "status": "passed",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+            "stderr": "",
+            "durationMs": 747.3008399999999,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 107.53485,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"alias\"]\n",
+            "stderr": "",
+            "durationMs": 703.4820119999999,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 88.87311399999999,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ],
+      "path": "./7e851ff5-proof.json",
+      "limitations": [
+        "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+      ]
+    },
+    "inputs": {}
+  },
+  "bridge": {
+    "schemaVersion": 1,
+    "command": "rule-proof",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "checkId": "boundaries",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "private",
+      "status": "passed",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+            "stderr": "",
+            "durationMs": 761.895102,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 95.81358999999998,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"private\"]\n",
+            "stderr": "",
+            "durationMs": 721.84492,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 102.68247399999996,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ],
+      "path": "./b1eb54d7-proof.json",
+      "limitations": [
+        "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+      ]
+    },
+    "inputs": {}
+  },
+  "cycle": {
+    "schemaVersion": 1,
+    "command": "rule-proof",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "checkId": "boundaries",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "expectedDiagnostic": "cycle",
+      "status": "passed",
+      "cases": [
+        {
+          "kind": "valid",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "passed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+            "stderr": "",
+            "durationMs": 703.801889,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 96.90983600000001,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        },
+        {
+          "kind": "violation",
+          "source": "[scratch-path]",
+          "status": "passed",
+          "reason": null,
+          "execution": {
+            "status": "failed",
+            "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"cycle\"]\n",
+            "stderr": "",
+            "durationMs": 688.9614260000001,
+            "exitCode": 1,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null,
+            "toolVersion": {
+              "status": "passed",
+              "stdout": "11.13.0\n",
+              "stderr": "",
+              "durationMs": 89.02842099999998,
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "cancelled": false,
+              "outputTruncated": false,
+              "error": null
+            }
+          }
+        }
+      ],
+      "path": "./18286126-proof.json",
+      "limitations": [
+        "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+      ]
+    },
+    "inputs": {}
+  }
+}

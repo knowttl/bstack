@@ -1,0 +1,8 @@
+{
+  "checks": 14,
+  "minimumMemoryAvailableBytes": 18543980544,
+  "minimumDiskAvailableBytes": 17535512576,
+  "maximumLoad": 2.38525390625,
+  "maximumConcurrentSuitesIncludingProposed": 1,
+  "serviceExclusions": "Observed terminal server and Chrome DevTools MCP service are not test suites."
+}

@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"evidence validate","status":"failed","problems":[{"code":"unknown-field","message":"Unknown input field: glossary","path":"$/documents/1/glossary","fix":"Supply data matching the documented input schema."}],"data":{},"inputs":{}}

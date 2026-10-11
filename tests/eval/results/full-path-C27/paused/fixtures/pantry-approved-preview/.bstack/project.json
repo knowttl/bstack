@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "documents": [
+    {
+      "id": "vision",
+      "path": "VISION.md"
+    },
+    {
+      "id": "glossary",
+      "path": "GLOSSARY.md"
+    },
+    {
+      "id": "design",
+      "path": "DESIGN.md"
+    },
+    {
+      "id": "readme",
+      "path": "README.md"
+    },
+    {
+      "id": "agents",
+      "path": "AGENTS.md"
+    }
+  ],
+  "scopes": [
+    {
+      "id": "product",
+      "paths": [
+        "src/**",
+        "tests/**",
+        "scripts/**",
+        "*.json",
+        "*.mjs",
+        "*.html",
+        "*.css",
+        "*.md",
+        ".gitignore",
+        ".prettierignore",
+        ".bstack/project.json",
+        ".bstack/bin/**"
+      ],
+      "documentIds": ["vision", "glossary", "design", "readme", "agents"],
+      "ruleIds": ["local-journey", "ui-boundary", "maintenance"]
+    }
+  ],
+  "rules": [
+    {
+      "id": "local-journey",
+      "path": "VISION.md",
+      "pointer": "The first useful journey is to add Rice, mark it needed, view Rice on the shopping list, and reload with that decision retained.",
+      "checkIds": ["native"]
+    },
+    {
+      "id": "ui-boundary",
+      "path": "DESIGN.md",
+      "pointer": "UI code never accesses localStorage directly, including bare, property and destructuring forms.",
+      "checkIds": ["native"]
+    },
+    {
+      "id": "maintenance",
+      "path": "DESIGN.md",
+      "pointer": "Run the standalone checker in this checkout and a different-root clean clone with isolated home and cache.",
+      "checkIds": ["native"]
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "command": {
+        "executable": "npm",
+        "args": ["run", "check"],
+        "cwd": ".",
+        "versionArgs": ["--version"],
+        "timeoutMs": 120000
+      },
+      "inputScopes": ["product"]
+    }
+  ],
+  "generators": [],
+  "acceptanceSources": [
+    {
+      "id": "rice",
+      "path": "VISION.md",
+      "pointer": "The first useful journey is to add Rice, mark it needed, view Rice on the shopping list, and reload with that decision retained."
+    },
+    {
+      "id": "duplicates",
+      "path": "VISION.md",
+      "pointer": "Re-adding an equivalent full name preserves the existing needed mark; only an explicit needed-state change alters that shopping decision."
+    },
+    {
+      "id": "storage-failure",
+      "path": "VISION.md",
+      "pointer": "When local storage saving fails, the current session remains usable and unsaved changes are visible."
+    },
+    {
+      "id": "boundary",
+      "path": "DESIGN.md",
+      "pointer": "Browser rendering APIs such as document.createElement and window.requestAnimationFrame are permitted."
+    }
+  ]
+}

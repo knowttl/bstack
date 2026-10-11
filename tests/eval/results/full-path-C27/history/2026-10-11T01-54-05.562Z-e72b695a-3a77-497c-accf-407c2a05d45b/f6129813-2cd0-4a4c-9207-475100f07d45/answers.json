@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T01-54-05.562Z-e72b695a-3a77-497c-accf-407c2a05d45b",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "protected-path",
+      "passed": false,
+      "startLine": 69,
+      "endLine": 69
+    },
+    {
+      "id": "repeat",
+      "passed": false,
+      "startLine": 69,
+      "endLine": 69
+    },
+    {
+      "id": "extension",
+      "passed": false,
+      "startLine": 69,
+      "endLine": 69
+    },
+    {
+      "id": "installed",
+      "passed": false,
+      "startLine": 69,
+      "endLine": 69
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "sourceHead": "0654cd7fd3929db0ee7216eb64e75f5f63e3aee1",
+  "assessmentImplementationHead": "c7fce613b004d87dc442f5fc6f6b6f1ad04d1cc1",
+  "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "working": {
+    "status": "passed",
+    "artifact": "./5969b4df-checker-result.json",
+    "artifactHash": "67a361c06f7a3586c289f28f5a17a466f57af35a7b04a91e1e1ea79c9e2c9cad",
+    "sourceRevision": "0654cd7fd3929db0ee7216eb64e75f5f63e3aee1",
+    "comparison": {
+      "source": "c7fce613b004d87dc442f5fc6f6b6f1ad04d1cc1",
+      "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "mergeBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+    },
+    "leafResults": [
+      [
+        "native",
+        "passed",
+        0
+      ]
+    ]
+  },
+  "isolated": {
+    "status": "passed",
+    "artifact": "./44377ba7-checker-result.json",
+    "artifactHash": "d23ded9945ac18293dea75298e35edb8fa8ffa278a862725f968e624410c414f",
+    "sourceRevision": "0654cd7fd3929db0ee7216eb64e75f5f63e3aee1",
+    "comparison": {
+      "source": "c7fce613b004d87dc442f5fc6f6b6f1ad04d1cc1",
+      "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "mergeBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+    },
+    "leafResults": [
+      [
+        "native",
+        "passed",
+        0
+      ]
+    ]
+  },
+  "isolation": {
+    "root": "[scratch-path]",
+    "clone": "[scratch-path]",
+    "home": "[scratch-path]",
+    "cache": "[scratch-path]",
+    "commands": [
+      {
+        "name": "clone",
+        "command": [
+          "git",
+          "clone",
+          "--quiet",
+          "--no-hardlinks",
+          "[fixture]",
+          "[scratch-path]"
+        ],
+        "cwd": null,
+        "exitCode": 0,
+        "stdout": "./614558d8-completed-isolated-clone.stdout",
+        "stderr": "./77d34693-completed-isolated-clone.stderr"
+      },
+      {
+        "name": "setup",
+        "command": [
+          "npm",
+          "ci",
+          "--ignore-scripts"
+        ],
+        "cwd": "[scratch-path]",
+        "exitCode": 0,
+        "stdout": "./58a6def3-completed-isolated-setup.stdout",
+        "stderr": "./92eaf6df-completed-isolated-setup.stderr"
+      },
+      {
+        "name": "checker",
+        "command": [
+          "node",
+          ".bstack/bin/bstack-check.mjs",
+          "--repo",
+          "[scratch-path]",
+          "--base",
+          "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+          "--assessment",
+          "[scratch-path]",
+          "--json"
+        ],
+        "cwd": "[scratch-path]",
+        "exitCode": 0,
+        "stdout": "./cc47c79c-completed-isolated-checker.stdout",
+        "stderr": "./5f664b38-completed-isolated-checker.stderr"
+      }
+    ],
+    "versions": {
+      "node": "v24.17.0",
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    },
+    "status": ""
+  },
+  "assessmentHash": "257724cb95cc29d319e150c8ed3c3b563833befd77f7ef2886e8194ce2d6387b",
+  "historicalSnapshotHash": "3fb672af0878fe905bd17ba429302eef3176f0d0def2b316775795e3f481aa51",
+  "workingTreeStatus": "clean",
+  "preservedUserNote": "User note: receipt wording remains a future owner decision."
+}

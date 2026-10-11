@@ -1,0 +1,7 @@
+{
+  "head": "0654cd7fd3929db0ee7216eb64e75f5f63e3aee1",
+  "status": "passed",
+  "diff": "diff --git a/DESIGN.md b/DESIGN.md\nindex f4686ce..ff7da0f 100644\n--- a/DESIGN.md\n+++ b/DESIGN.md\n@@ -4,6 +4,7 @@ The UI never touches storage.\n The agreed checkout total is 10.\n \n User note: receipt wording remains a future owner decision.\n+User note: export remains outside this change.\n \n ## Public interface and checks\n \n",
+  "userNotesPreservedExactly": true,
+  "additionalProjectChanges": false
+}

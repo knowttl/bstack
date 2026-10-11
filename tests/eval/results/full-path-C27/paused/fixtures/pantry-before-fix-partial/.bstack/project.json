@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "documents": [
+    {
+      "id": "vision",
+      "path": "VISION.md"
+    },
+    {
+      "id": "glossary",
+      "path": "GLOSSARY.md",
+      "glossary": {
+        "context": "household pantry",
+        "format": "Markdown bullet definitions"
+      }
+    },
+    {
+      "id": "design",
+      "path": "DESIGN.md"
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md"
+    },
+    {
+      "id": "readme",
+      "path": "README.md"
+    }
+  ],
+  "scopes": [
+    {
+      "id": "foundation",
+      "paths": [
+        "src/**",
+        "tests/**",
+        "scripts/**",
+        "index.html",
+        "style.css",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "eslint.config.mjs",
+        ".prettierrc.json",
+        ".prettierignore",
+        ".gitignore",
+        "VISION.md",
+        "GLOSSARY.md",
+        "DESIGN.md",
+        "AGENTS.md",
+        "README.md",
+        ".bstack/project.json",
+        ".bstack/bin/**"
+      ],
+      "documentIds": ["vision", "glossary", "design", "guidance", "readme"],
+      "ruleIds": [
+        "R-LOCAL",
+        "R-JOURNEY",
+        "R-NAMES",
+        "R-BOUNDARY",
+        "R-SAVING",
+        "R-CHECK"
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "R-LOCAL",
+      "path": "VISION.md",
+      "pointer": "Version one runs locally in a browser without an account, server or remote service.",
+      "checkIds": ["native-check"]
+    },
+    {
+      "id": "R-JOURNEY",
+      "path": "VISION.md",
+      "pointer": "The household can add Rice, mark it needed, view it on the shopping list, reload and retain it when local saving succeeds.",
+      "checkIds": ["native-check"]
+    },
+    {
+      "id": "R-NAMES",
+      "path": "GLOSSARY.md",
+      "pointer": "Item: one named pantry supply.",
+      "checkIds": ["native-check"]
+    },
+    {
+      "id": "R-BOUNDARY",
+      "path": "DESIGN.md",
+      "pointer": "UI uses the public pantry interface; storage details stay in the adapter and composition root.",
+      "checkIds": ["native-check"]
+    },
+    {
+      "id": "R-SAVING",
+      "path": "VISION.md",
+      "pointer": "The session remains editable while storage is unavailable, and unsaved status clears only after successful saving.",
+      "checkIds": ["native-check"]
+    },
+    {
+      "id": "R-CHECK",
+      "path": "README.md",
+      "pointer": "`npm run check` runs formatting, lint, strict types, build, public behaviour tests and the actual Chrome journey.",
+      "checkIds": ["native-check"]
+    }
+  ],
+  "checks": [
+    {
+      "id": "native-check",
+      "command": {
+        "executable": "npm",
+        "args": ["run", "check"],
+        "cwd": ".",
+        "versionArgs": ["--version"],
+        "timeoutMs": 120000
+      },
+      "inputScopes": [
+        "src/**",
+        "tests/**",
+        "scripts/**",
+        "index.html",
+        "style.css",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "eslint.config.mjs",
+        ".prettierrc.json",
+        ".prettierignore",
+        ".gitignore",
+        "VISION.md",
+        "GLOSSARY.md",
+        "DESIGN.md",
+        "AGENTS.md",
+        "README.md",
+        ".bstack/project.json",
+        ".bstack/bin/**"
+      ]
+    }
+  ],
+  "generators": [],
+  "acceptanceSources": [
+    {
+      "id": "rice-journey",
+      "path": "VISION.md",
+      "pointer": "The household can add Rice, mark it needed, view it on the shopping list, reload and retain it when local saving succeeds."
+    },
+    {
+      "id": "save-recovery",
+      "path": "VISION.md",
+      "pointer": "The household can explicitly retry saving the current session, including its needed choices."
+    }
+  ]
+}

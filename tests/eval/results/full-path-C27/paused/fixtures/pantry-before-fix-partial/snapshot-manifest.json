@@ -1,0 +1,126 @@
+{
+  "status": "paused",
+  "note": "Diagnostic source snapshot; no final acceptance claim. Dependencies, build caches and Git internals omitted; text redacted.",
+  "files": [
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "originalSha256": "96f1b08a8a3a24fcc1cb18662383a5e502271a81ce79f72ece9f3ce79fb7cbdd",
+      "publishedSha256": "96f1b08a8a3a24fcc1cb18662383a5e502271a81ce79f72ece9f3ce79fb7cbdd"
+    },
+    {
+      "path": ".bstack/project.json",
+      "originalSha256": "b429a9135cf6d666ad745575cfbaf57c8318b191ee7404af9cdff4f51fe9fa96",
+      "publishedSha256": "b429a9135cf6d666ad745575cfbaf57c8318b191ee7404af9cdff4f51fe9fa96"
+    },
+    {
+      "path": ".gitignore",
+      "originalSha256": "95caf03bc7fcb205ee5c446c51523d1eebb5a30cc3abfd5d4594db85ce47f245",
+      "publishedSha256": "95caf03bc7fcb205ee5c446c51523d1eebb5a30cc3abfd5d4594db85ce47f245"
+    },
+    {
+      "path": ".prettierignore",
+      "originalSha256": "54ff72866977b8e712e74f3514bf8b9adfdbb417b935448bbd4e11714885e2a2",
+      "publishedSha256": "54ff72866977b8e712e74f3514bf8b9adfdbb417b935448bbd4e11714885e2a2"
+    },
+    {
+      "path": ".prettierrc.json",
+      "originalSha256": "2387c0f174fe2d0de15b0b6826699cb6529a05b8d3bb5daddeb4271d7d5c7fc9",
+      "publishedSha256": "2387c0f174fe2d0de15b0b6826699cb6529a05b8d3bb5daddeb4271d7d5c7fc9"
+    },
+    {
+      "path": "AGENTS.md",
+      "originalSha256": "e4aa11748ad4f53a3ec471141025e4c7326cd248af42027aec07ef3d5f9d1512",
+      "publishedSha256": "e4aa11748ad4f53a3ec471141025e4c7326cd248af42027aec07ef3d5f9d1512"
+    },
+    {
+      "path": "DESIGN.md",
+      "originalSha256": "02a94dfbf4d11964797b7bf1151416796958169649d229b2d01933f095c62d44",
+      "publishedSha256": "02a94dfbf4d11964797b7bf1151416796958169649d229b2d01933f095c62d44"
+    },
+    {
+      "path": "GLOSSARY.md",
+      "originalSha256": "bd30775309408f7600c7be61996e2f4790490c30e1801897be4a2adf63be8c34",
+      "publishedSha256": "bd30775309408f7600c7be61996e2f4790490c30e1801897be4a2adf63be8c34"
+    },
+    {
+      "path": "README.md",
+      "originalSha256": "ce3cdc603085086d68d9486eace605478ccc58fc097dde524b7bbefd3934ca00",
+      "publishedSha256": "ce3cdc603085086d68d9486eace605478ccc58fc097dde524b7bbefd3934ca00"
+    },
+    {
+      "path": "VISION.md",
+      "originalSha256": "692e5319a865e11ba7d8c8a6fa50917d889ec581b004ccbc7024dcb8f954dbe1",
+      "publishedSha256": "692e5319a865e11ba7d8c8a6fa50917d889ec581b004ccbc7024dcb8f954dbe1"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "originalSha256": "7fcc0e8c94f00f9b45955e1d047817ebde76fabd36c02bde77ba59712302dc99",
+      "publishedSha256": "7fcc0e8c94f00f9b45955e1d047817ebde76fabd36c02bde77ba59712302dc99"
+    },
+    {
+      "path": "index.html",
+      "originalSha256": "77b1cfbc0ef0b3c86e3040fb4ad216f207130226a6a0877329d40b4d9c04ae0a",
+      "publishedSha256": "77b1cfbc0ef0b3c86e3040fb4ad216f207130226a6a0877329d40b4d9c04ae0a"
+    },
+    {
+      "path": "package-lock.json",
+      "originalSha256": "8eae7375fbd42022d77fa144ec1ffa6097d4b73bfaedefe2c3fb9d765c90890f",
+      "publishedSha256": "8eae7375fbd42022d77fa144ec1ffa6097d4b73bfaedefe2c3fb9d765c90890f"
+    },
+    {
+      "path": "package.json",
+      "originalSha256": "267d08857ac0d53ed270489cedf97f1726d310ddb874ae2810d781441765bdae",
+      "publishedSha256": "267d08857ac0d53ed270489cedf97f1726d310ddb874ae2810d781441765bdae"
+    },
+    {
+      "path": "scripts/journey.mjs",
+      "originalSha256": "a6751893b0ca033277717f4ef8e3d873043b2635088675223a40ffaabe6dfd42",
+      "publishedSha256": "a6751893b0ca033277717f4ef8e3d873043b2635088675223a40ffaabe6dfd42"
+    },
+    {
+      "path": "scripts/preview.mjs",
+      "originalSha256": "71be3aad2ca571f6352d3805cd2e6e7c106ff0c01065c06e2b6f71f76c77e30f",
+      "publishedSha256": "71be3aad2ca571f6352d3805cd2e6e7c106ff0c01065c06e2b6f71f76c77e30f"
+    },
+    {
+      "path": "src/main.ts",
+      "originalSha256": "50a8de8ba866033a0079adfb6f2ff9ac453a8686673b3a0f9d3ab732c4cd9829",
+      "publishedSha256": "50a8de8ba866033a0079adfb6f2ff9ac453a8686673b3a0f9d3ab732c4cd9829"
+    },
+    {
+      "path": "src/pantry.ts",
+      "originalSha256": "8ac3ef9db7e823bb79435e8826b97444f70b9f389d4a419f8078d26ff8b08af2",
+      "publishedSha256": "8ac3ef9db7e823bb79435e8826b97444f70b9f389d4a419f8078d26ff8b08af2"
+    },
+    {
+      "path": "src/storage.ts",
+      "originalSha256": "d8c3f72ee1c66245bed21360fc4241a1f03752ce8143532e4eee3a1abbec7702",
+      "publishedSha256": "d8c3f72ee1c66245bed21360fc4241a1f03752ce8143532e4eee3a1abbec7702"
+    },
+    {
+      "path": "src/ui.ts",
+      "originalSha256": "ab3b38b5a0c642c7c79b2bf7a8b39e81da3d9c914113e44e8b92bf43db76a346",
+      "publishedSha256": "ab3b38b5a0c642c7c79b2bf7a8b39e81da3d9c914113e44e8b92bf43db76a346"
+    },
+    {
+      "path": "style.css",
+      "originalSha256": "ca1de7173a1b5ae6f90f6b58688530154ef7b009138c756da0cfe9609c128f98",
+      "publishedSha256": "ca1de7173a1b5ae6f90f6b58688530154ef7b009138c756da0cfe9609c128f98"
+    },
+    {
+      "path": "tests/pantry.test.mjs",
+      "originalSha256": "f0d5188d8a2c77decd24b885319d7e658525b3a9672fb05059407adbfdf25ffc",
+      "publishedSha256": "f0d5188d8a2c77decd24b885319d7e658525b3a9672fb05059407adbfdf25ffc"
+    },
+    {
+      "path": "tests/storage.test.mjs",
+      "originalSha256": "e85f65b42c1dd73ba74c265121025676b6da4d634c2dfe71f15588d35d7df7a3",
+      "publishedSha256": "e85f65b42c1dd73ba74c265121025676b6da4d634c2dfe71f15588d35d7df7a3"
+    },
+    {
+      "path": "tsconfig.json",
+      "originalSha256": "d956652eb3579b3015b1f1a8379ec5c4b6f22168433366e6d3ab21eda2eb019e",
+      "publishedSha256": "d956652eb3579b3015b1f1a8379ec5c4b6f22168433366e6d3ab21eda2eb019e"
+    }
+  ]
+}
