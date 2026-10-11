@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "apply",
+    "--repo",
+    "[fixture]",
+    "--plan",
+    "[isolated-home][scratch-path]",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "{\"schemaVersion\":1,\"command\":\"apply\",\"status\":\"passed\",\"problems\":[],\"data\":{\"runId\":\"42527944fe1d2d84048f3746bd21644b7987c611a3e86fd651a90c28bf06c22d\",\"planDigest\":\"42527944fe1d2d84048f3746bd21644b7987c611a3e86fd651a90c28bf06c22d\",\"edits\":[{\"id\":\"assessment-unbound\",\"path\":\".bstack/assessment.json\",\"resolvedPath\":\"[fixture]/.bstack/assessment.json\",\"originalHash\":\"b1db25670e907cc077ed9b03167c08b712da74208f05561a41c0596ddc4619ed\",\"proposedHash\":\"88d01e5eec9741d25b237e9a0645f456a36ef6e5c3cfd65be24bb1a87a156044\",\"backup\":\"original-0\",\"completed\":true,\"temporary\":null,\"actualHash\":\"88d01e5eec9741d25b237e9a0645f456a36ef6e5c3cfd65be24bb1a87a156044\",\"state\":\"applied\"}],\"affectedChecks\":[\"starting-checks\",\"journey\"],\"pending\":[],\"applied\":[\".bstack/assessment.json\"],\"conflicting\":[],\"journal\":\"[isolated-home]/cache/bstack/a09a3c6ef035bb5bb68f60b46987f6a7c48283dd9a0b5478cdbe2f2df9dc42bc/42527944fe1d2d84048f3746bd21644b7987c611a3e86fd651a90c28bf06c22d/journal.json\",\"outcome\":\"applied\",\"limitations\":[\"Replacement is atomic per file where supported, never across the whole change set.\"]},\"inputs\":{\"target\":{\"mode\":\"repo\",\"root\":\"[fixture]\"},\"plan\":\"[isolated-home][scratch-path]\"}}\n",
+  "stderr": ""
+}

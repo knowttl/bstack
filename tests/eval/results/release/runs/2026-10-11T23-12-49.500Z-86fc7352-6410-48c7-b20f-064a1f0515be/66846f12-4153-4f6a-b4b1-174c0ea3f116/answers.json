@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T23-12-49.500Z-86fc7352-6410-48c7-b20f-064a1f0515be",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "bounded",
+      "passed": false,
+      "startLine": 6,
+      "endLine": 11
+    },
+    {
+      "id": "protected-refactor",
+      "passed": false,
+      "startLine": 6,
+      "endLine": 11
+    }
+  ]
+}
