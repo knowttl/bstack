@@ -22,7 +22,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "ambiguous-idea",
-        "artifacts": ["tests/eval/results/release/ambiguous-idea-comparison.json", "tests/eval/results/release/runs/2026-10-11T19-13-13.457Z-969ea384-1083-490c-8719-9cf5fc339a73/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/ambiguous-idea-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-55-12.888Z-50ccc94b-9401-4e0f-a1eb-b6c3ecbefc15/conversation.txt"]
       }
     },
     {
@@ -353,8 +353,10 @@
       "criterionSource": "docs/design.md#AC-34",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: With subagents available, existing-repo discovery runs in subagents and the main thread receives only cited reports."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "research-subagents",
+        "artifacts": ["tests/eval/results/release/research-subagents-comparison.json", "tests/eval/results/release/research-subagents-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50/conversation.txt"]
       }
     },
     {
@@ -375,8 +377,10 @@
       "criterionSource": "docs/design.md#AC-36",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A subagent report with a wrong file citation fails the main thread's check before it becomes a finding."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "research-subagents",
+        "artifacts": ["tests/eval/results/release/research-subagents-comparison.json", "tests/eval/results/release/research-subagents-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50/conversation.txt"]
       }
     },
     {
@@ -385,8 +389,10 @@
       "criterionSource": "docs/design.md#AC-37",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: No subagent edits a file, runs a check with side effects or asks the user a question."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "research-subagents",
+        "artifacts": ["tests/eval/results/release/research-subagents-comparison.json", "tests/eval/results/release/research-subagents-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50/conversation.txt"]
       }
     },
     {
@@ -497,8 +503,10 @@
       "criterionSource": "docs/design.md#AC-48",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Each language-specific recommendation cites its source and read date, and a run with no web access marks them not researched."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "research-subagents",
+        "artifacts": ["tests/eval/results/release/research-subagents-comparison.json", "tests/eval/results/release/research-subagents-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50/conversation.txt"]
       }
     },
     {
