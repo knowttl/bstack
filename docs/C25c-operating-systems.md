@@ -49,13 +49,13 @@ npm test -- --task C25c
 For a separately captured copy journey, run the existing fixture-backed public-command tests:
 
 ```sh
-node --test --test-name-pattern="copy install validates the complete package|clean .* update removes obsolete ownership|noninteractive update reports actual mixed versions|uninstall retains edited ownership" tests/scripts/install.test.mjs
+node --test --test-name-pattern="copy install validates the complete package|clean .* update removes obsolete ownership|noninteractive update reports actual mixed versions|uninstall retains edited ownership" tests/scripts/install-copy.test.mjs tests/scripts/install-update.test.mjs
 ```
 
 For a separately captured link journey, run:
 
 ```sh
-node --test --test-name-pattern="link lifecycle|link installation preserves|owned link removal|failed link runtime|interrupted link|tagged checkout link recovery|link runtime preparation" tests/scripts/install.test.mjs
+node --test --test-name-pattern="link lifecycle|link installation preserves|owned link removal|failed link runtime|interrupted link|tagged checkout link recovery|link runtime preparation" tests/scripts/install-links.test.mjs
 ```
 
 The copy journey must validate the complete installed folder, report preview without mutations, preserve edited and unrelated files through update and removal, and retain conflicts until exact replacement decisions with backups.
