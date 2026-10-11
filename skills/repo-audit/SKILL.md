@@ -182,9 +182,10 @@ Done when: Every relevant evidence source is inventoried or listed as unavailabl
 
 ### Step 8: Resolve material gaps
 
-Summarise the evidence and clarify only missing facts or contradictions that would change a recommendation.
-For each question, name the affected recommendation and why the available sources do not settle it.
-Use a targeted decision round, resolving parents first and waiting for answers.
+Summarise the evidence and ask the owner about missing facts, conflicting intent or policy, and competing term meanings only when they would change a recommendation.
+Each targeted question must cite the conflicting or insufficient sources, name the affected recommendation, offer the plausible readings and recommend one with its trade-off.
+Resolve parent decisions first, group only independent questions into a small round and wait for answers before dependent recommendations.
+Recording an unresolved decision or drafting definitions for later approval does not replace asking the question.
 When the repo already answers the questions, proceed directly to recommendations without asking the user to repeat or reconfirm approved goals.
 Load interview, domain-language or vision guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
