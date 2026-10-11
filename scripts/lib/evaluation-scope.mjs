@@ -5,7 +5,7 @@ import { parse as parseJavaScript } from 'acorn'
 import { fail } from './evaluation.mjs'
 
 // Version the observed-scope contract so older runs cannot form a guarded pair.
-export const scopeVersion = 2
+export const scopeVersion = 3
 
 export function scopeMessage(record, message) {
   return `Evaluation filesystem scope: work only inside ${record.fixture.path} and ${record.isolation.home}.
@@ -13,6 +13,9 @@ Use the isolated home's tmp directory for scratch, clones, reports and servers; 
 Do not search or read the host home, ancestor directories, other projects or other skill installations.
 If requested resources are absent from these two roots, report them unavailable and stop dependent work.
 Installed tool executables and their runtime resources may run normally; do not use their locations to discover project guidance.
+Read-only memory/load queries, process counts and filesystem capacity queries are allowed for resource preflight.
+Use /proc/meminfo, /proc/loadavg, /proc/self and process metadata only for those queries; do not print process inventories.
+Keep filesystem writes inside the fixture or isolated home, including its own tmp directory.
 Pass this scope to any subagents. Out-of-scope paths observed in commands or their output invalidate this evaluation.
 
 ${message}`
@@ -63,15 +66,35 @@ async function sessionTools(directory) {
   return values
 }
 
-function strings(value, command = false, cwd) {
+function strings(value, command = false, cwd, resourceOutput = false) {
   if (typeof value === 'string') {
-    try { return strings(JSON.parse(value), command, cwd) } catch { return [{ value, command, cwd }] }
+    try { return strings(JSON.parse(value), command, cwd, resourceOutput) } catch { return [{ value, command, cwd, resourceOutput }] }
   }
   if (value !== null && typeof value === 'object') return Object.entries(value)
     .filter(([key, item]) => !(typeof item === 'string' && /^\/root(?:\/|$)/.test(item) &&
       ['task_name', 'agent_name', 'target', 'author', 'recipient'].includes(key)))
-    .flatMap(([key, item]) => strings(item, ['command', 'cmd'].includes(key), value.workdir ?? value.cwd ?? cwd))
+    .flatMap(([key, item]) => strings(item, ['command', 'cmd'].includes(key), value.workdir ?? value.cwd ?? cwd,
+      resourceOutput || (['aggregated_output', 'stdout', 'output'].includes(key) &&
+        /\b(?:df|statfs|disk_usage)\b|\bstat\s+-[^\s]*f/.test(value.command ?? value.cmd ?? ''))))
   return []
+}
+
+// Detect explicit write destinations independently of the read/runtime allowlist.
+// This is an observation guard, not an operating-system sandbox.
+function writePaths(command) {
+  const paths = []
+  for (const expression of [
+    /(?:^|[^<])>>?\s*['"]?(\/[^\s"'`<>;,(){}\[\]\\]+)/g,
+    /\b(?:touch|mkdir|rm|rmdir|chmod|chown|truncate|tee)\s+(?:-[^\s]+\s+)*['"]?(\/[^\s"'`<>;,(){}\[\]\\]+)/g,
+    /\b(?:writeFile|writeFileSync|appendFile|appendFileSync)\s*\(\s*['"](\/[^'"]+)['"]/g,
+    /\bopen\s*\(\s*['"](\/[^'"]+)['"]\s*,\s*['"][wax+]/g,
+    /\bPath\s*\(\s*['"](\/[^'"]+)['"]\s*\)\.(?:write_text|write_bytes|mkdir|unlink|rmdir|chmod)\s*\(/g
+  ]) for (const match of command.matchAll(expression)) paths.push(resolve(match[1]))
+  for (const match of command.matchAll(/\b(?:cp|mv|install)\s+([^;\n]+)/g)) {
+    const destination = match[1].trim().match(/['"]?(\/[^\s"'`<>;,(){}\[\]\\]+)['"]?\s*$/)
+    if (destination) paths.push(resolve(destination[1]))
+  }
+  return paths
 }
 
 // Native tool inputs can be JavaScript that calls the shell tool. Only concrete
@@ -107,22 +130,32 @@ export async function checkScope(record, result) {
   const filesystem = parse(roots[0]).root
   const topLevel = new Set(await readdir(filesystem))
   const within = (path, root) => path === root || path.startsWith(root + sep)
+  const writable = path => roots.some(root => within(path, root)) || path === '/dev/null'
   const allowed = path => roots.some(root => within(path, root)) || tools.has(path) ||
     (!/(?:^|[\\/])(?:repo-audit|SKILL\.md)(?:[\\/]|$)/.test(path) && runtime.some(root => within(path, root)))
   const values = [...strings(result.stdout.trim().split('\n').filter(Boolean).map(line => JSON.parse(line))),
     ...strings(result.stderr), ...await sessionTools(join(record.isolation.state, 'sessions'))]
   const violations = new Set()
-  for (const { value, command, cwd } of values) {
+  for (const { value, command, cwd, resourceOutput } of values) {
     // URLs and domain routes are not filesystem observations.
     let content = value.replace(/\b[a-z][a-z\d+.-]*:\/\/[^\s"'<>]+/gi, '').replaceAll('\\ ', ' ')
+    // Capacity queries observe filesystem metadata, never another project's files.
+    content = content.replace(/\bdf\s+(?:-[^\s]+\s+)*['"]?(\/tmp|\/)['"]?(?=$|[\s;"'])/g, '[resource-query]')
+      .replace(/\bstat\s+-[^\s]*f\s+['"]?(\/tmp|\/)['"]?(?=$|[\s;"'])/g, '[resource-query]')
+      .replace(/\b(?:statfs|disk_usage)\s*\(\s*['"](?:\/tmp|\/)['"]\s*\)/g, '[resource-query]')
     for (const root of roots) {
       content = content.replace(new RegExp(`${RegExp.escape(root)}(?=$|[\\/\\s"'\x60<>;,(){}\\[\\]])(?:/[^\\s"'\x60<>;,(){}\\[\\]\\\\]+)?`, 'g'),
         path => allowed(resolve(path)) ? '[in-scope]' : path)
     }
+    if (command) for (const path of writePaths(content)) if (!writable(path)) violations.add(path)
     for (const match of content.matchAll(/(?<![\w./\\])(?:[A-Za-z]:[\\/]|\/)[^\s"'`<>;,(){}\[\]\\]+/g)) {
       const candidate = match[0].replace(/[.:]+$/, '')
       const path = resolve(candidate)
-      if ((process.platform === 'win32' || topLevel.has(path.slice(filesystem.length).split(sep)[0])) && !allowed(path)) violations.add(path)
+      const processQuery = path === '/proc' && /\.iterdir\(|\b(?:listdir|readdir|readdirSync)\(|\bls\s+/.test(value) ||
+        /^\/proc\/\d+\/(?:comm|cmdline|stat|status)$/.test(path)
+      const capacityOutput = resourceOutput && ['/tmp', '/'].includes(path)
+      if ((process.platform === 'win32' || topLevel.has(path.slice(filesystem.length).split(sep)[0])) &&
+          !allowed(path) && !processQuery && !capacityOutput) violations.add(path)
     }
     if (!command) continue
     // A here-document is program source, rather than shell path arguments.

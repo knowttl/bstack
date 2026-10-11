@@ -61,9 +61,25 @@ if (args.includes('--version')) {
         'scope-valid': join(process.env.HOME, 'tmp', 'report.json')
       }
       console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution',
-        command: mode === 'scope-output' ? 'find .' : `cat ${paths[mode] ?? outside}`,
+        command: mode === 'scope-output' ? 'find .' : `cat ${paths[mode] ?? (mode.startsWith('scope-resource-') ? join(process.env.HOME, 'tmp', 'report.json') : outside)}`,
         aggregated_output: mode === 'scope-output' ? JSON.stringify({ target: outside }) : mode === 'scope-valid' ?
           `${process.execPath}\n${process.cwd()}/brief.md\n/api/items\nhttp://localhost:3000/home/profile\n... 2 more lines\nimport { price } from '../core/index.ts'\nrange <base>..<head>\n` : '' } }))
+      if (mode.startsWith('scope-resource-')) {
+        const commands = {
+          'scope-resource-read': `cat /proc/meminfo /proc/loadavg /proc/self/stat; df -B1 /tmp; ps -eo comm,args`,
+          'scope-resource-processes': `python3 -c "from pathlib import Path; [p for p in Path('/proc').iterdir() if p.name.isdigit()]"`,
+          'scope-resource-capacity': `python3 -c "import shutil; print(shutil.disk_usage('/tmp'))"`,
+          'scope-resource-temp': `touch ${join(process.env.HOME, 'tmp', 'own-report.json')}`,
+          'scope-resource-write': 'echo changed > /proc/meminfo',
+          'scope-resource-system-write': 'touch /usr/share/changed',
+          'scope-resource-temp-read': 'cat /tmp/unrelated-project/notes.md',
+          'scope-resource-temp-write': 'touch /tmp/unrelated-project/notes.md',
+          'scope-resource-mixed': 'df -B1 /tmp; cat /tmp/unrelated-project/notes.md',
+          'scope-resource-python-write': `python3 -c "from pathlib import Path; Path('/proc/loadavg').write_text('changed')"`
+        }
+        console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution',
+          command: commands[mode], aggregated_output: mode === 'scope-resource-read' ? 'Filesystem 1B-blocks Available Mounted on\nvolume 100000 90000 /tmp\n' : '', exit_code: 0 } }))
+      }
       if (mode.startsWith('scope-native-')) {
         const directory = join(process.env.CODEX_HOME, 'sessions')
         await mkdir(directory, { recursive: true })
