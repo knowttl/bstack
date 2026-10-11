@@ -32,6 +32,8 @@ Its [native main-thread trace](runs/2026-10-11T21-05-38.869Z-74301d5b-83cc-4b39-
 The agent and evaluator independently passed its 51 original citations, with clean project bytes and login cleanup verified.
 AC-56 passes the [container runtime-independence comparison](runtime-independence-comparison.json).
 Actual availability checks found no router, akashic or no-mistakes; the bounded audit completed with only the installed package and native tools, leaving project bytes unchanged and readiness unverified where product checks were absent.
+AC-42 passes the [implicit-invocation comparison](implicit-invocation-comparison.json), retaining the baseline's passing behavior.
+The plain audit request and scripted refusal of explicit invocation leave repo-audit unstarted in both modes; the captured command traces show no audit-helper execution or application of its procedure.
 
 ## Historical process-only evaluations
 
