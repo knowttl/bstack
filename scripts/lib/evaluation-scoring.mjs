@@ -18,7 +18,9 @@ export function validateScore(record, answers, transcript) {
       const events = transcript.split(/\r?\n/).flatMap(line => { try { return [JSON.parse(line)] } catch { return [] } })
       const unitOutput = (output, exitCode) => exitCode === 0 &&
         /(?:ℹ|#) pass [1-9]\d*/.test(output) && /(?:ℹ|#) fail 0(?:\s|$)/.test(output)
-      const passing = (command, output, exitCode) => /(?:^|[\s"'/])node(?:js)?\s+--test(?:\s|$)/.test(command) && unitOutput(output, exitCode)
+      const passing = (command, output, exitCode) =>
+        /(?:^|[\s"'/])(?:node(?:js)?\s+--test|(?:npm|pnpm|yarn|bun)\s+(?:run\s+[^\s;|&"']+|test))(?:\s|$)/.test(command) &&
+        unitOutput(output, exitCode)
       const observed = events.some(event => {
         const item = event.item
         if (event.type !== 'item.completed' || item?.type !== 'command_execution') return false
