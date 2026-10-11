@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T21-13-28.005Z-974829c3-65c2-4b9f-a46f-647d7b44f7cb",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "audit-first",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 26
+    },
+    {
+      "id": "review-first",
+      "passed": true,
+      "startLine": 25,
+      "endLine": 47
+    },
+    {
+      "id": "journey",
+      "passed": true,
+      "startLine": 18,
+      "endLine": 26
+    },
+    {
+      "id": "probe",
+      "passed": true,
+      "startLine": 18,
+      "endLine": 26
+    },
+    {
+      "id": "targeted-question",
+      "passed": false,
+      "startLine": 26,
+      "endLine": 47
+    },
+    {
+      "id": "principles-evidence",
+      "passed": true,
+      "startLine": 26,
+      "endLine": 37
+    },
+    {
+      "id": "existing-language",
+      "passed": true,
+      "startLine": 10,
+      "endLine": 26
+    },
+    {
+      "id": "draft-definitions",
+      "passed": false,
+      "startLine": 26,
+      "endLine": 47
+    },
+    {
+      "id": "context-meanings",
+      "passed": true,
+      "startLine": 26,
+      "endLine": 37
+    },
+    {
+      "id": "authority",
+      "passed": true,
+      "startLine": 22,
+      "endLine": 37
+    },
+    {
+      "id": "outcome-verification",
+      "passed": true,
+      "startLine": 26,
+      "endLine": 37
+    },
+    {
+      "id": "conditional-files",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 47
+    },
+    {
+      "id": "opaque-helpers",
+      "passed": false,
+      "startLine": 6,
+      "endLine": 47
+    },
+    {
+      "id": "explicit-start",
+      "passed": false,
+      "startLine": 6,
+      "endLine": 47
+    },
+    {
+      "id": "instruction-merge",
+      "passed": false,
+      "startLine": 26,
+      "endLine": 47
+    },
+    {
+      "id": "architecture-candidates",
+      "passed": false,
+      "startLine": 26,
+      "endLine": 47
+    },
+    {
+      "id": "parallel-conflicts",
+      "passed": true,
+      "startLine": 26,
+      "endLine": 37
+    },
+    {
+      "id": "principle-over-pattern",
+      "passed": true,
+      "startLine": 26,
+      "endLine": 37
+    },
+    {
+      "id": "foundation-invariants",
+      "passed": true,
+      "startLine": 26,
+      "endLine": 37
+    }
+  ]
+}

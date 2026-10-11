@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "pricing",
+  "writePaths": [
+    "packages/core/internal/database.ts",
+    "packages/core/index.ts",
+    "unit.test.mjs",
+    "journey.mjs",
+    "package.json"
+  ],
+  "contracts": [
+    {
+      "id": "checkout-price",
+      "files": [
+        "DESIGN.md",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts"
+      ]
+    },
+    {
+      "id": "checkout-result",
+      "files": [
+        "packages/web/routes.ts",
+        "journey.mjs"
+      ]
+    }
+  ]
+}
