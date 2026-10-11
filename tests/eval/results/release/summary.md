@@ -4,14 +4,19 @@ Evaluation is in progress and does not establish release readiness.
 The complete acceptance validator, all-case coverage and scenario comparisons are not yet complete.
 The [AC-35 capability gap](AC-35-capability-gap.md) has an effective supported restriction verified by a capture-only probe and the fresh TypeScript fallback run.
 Both corrected fallback comparisons pass under that effective adapter, resolving AC-35.
-Evaluation is paused for two evidence decisions, with no release selection or waiver for the affected cases.
+The approved grading correction is applied.
+Evaluation is blocked on a repeated resource-output scope rejection, with no waiver for the affected cases.
 
 - AC-29: the baseline's initial immutable score incorrectly credited the passing-units condition despite no unit execution; the [grading explanation](verification-limitations-grading.md) and [proposed correction](verification-limitations-baseline-correction-proposal.json) preserve the captured turn and identify the original scoring hash.
-  The public scorer forbids rescoring and an unchanged real-agent rerun is prohibited.
+  The approved append-only correction preserves the original answers and transcript and yields a [passing comparison](verification-limitations-comparison.json), without another agent run.
   The with-skill run honestly passes all three verification-limitations checks, including two actual unit passes with browser evidence still unverified.
 - AC-57 and AC-68: the [scope failure observation](scope-and-prerequisites-scope-failure.json) records rejected `/proc` and `/tmp` paths in the with-skill resource preflight.
   The run remains unscored; its complete contaminated transcript is retained privately, and its isolated home was deleted.
-  The baseline passed both checks, but no valid final comparison exists.
+  The original baseline passed both checks, but no valid final comparison exists yet.
+  Scope guard version 3 permits the required read-only resource queries and the run's own temporary directory while continuing to reject unrelated paths and writes outside the fixture and isolated home.
+  The fresh version 3 baseline passed both checks.
+  The fresh with-skill run was rejected for the filesystem device name emitted by a disk-capacity query; the [observation](scope-and-prerequisites-resource-output-failure.json) records the command, evidence hashes and cleanup.
+  That failed capture remains unscored and cannot be selected for release.
 
 ## Independent-extension scope
 

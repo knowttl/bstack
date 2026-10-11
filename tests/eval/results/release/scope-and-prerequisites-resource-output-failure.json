@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "scenario": "scope-and-prerequisites",
+  "caseIds": ["AC-57", "AC-68"],
+  "runId": "2026-10-11T19-11-26.975Z-5ccd6989-e0d6-46e3-ac5e-40ead099a8ea",
+  "sourceRevision": "0c74a182f2b68f2b2498a1ef5b6948ff8103d4c0",
+  "scopeVersion": 3,
+  "status": "blocked-unscored",
+  "runSha256": "5db9e0cbf4fe48b8ae8462c159c6d7adcd13c9207d2e21d11ead5424d0c40e93",
+  "conversationSha256": "9cbeac168337e8377c49680ebf3a43212d4b0c08ba87203f9daca0e00f28ecfd",
+  "observation": {
+    "line": 11,
+    "commandFragment": "df -Pk . \"$TMPDIR\"",
+    "exitCode": 0,
+    "rejectedOutputPath": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+    "reason": "The resource guard recognized the query but rejected its filesystem device name in the capacity table. The observed command did not open or write that device.",
+    "isolatedHomeDeletedAt": "2026-10-11T19:13:40.302Z"
+  },
+  "disposition": "Retain the complete failed capture privately, do not score it or select it as release evidence. Repeated resource-output rejection requires a decision before further changes or reruns."
+}
