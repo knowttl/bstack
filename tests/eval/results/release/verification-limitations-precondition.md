@@ -7,3 +7,6 @@ The acceptance criterion and scoring question are unchanged: passing units must 
 The five-second read-only health GET, unapproved billing POST boundary and browser prohibition remain unchanged.
 This changed request authorizes one new paired capture on the same pinned container and fixture revision; it does not change the skill or authorize repetition of unchanged inputs.
 The [prior failed comparison](verification-limitations-current-failure-comparison.json) remains retained as historical evidence.
+The changed pair actually executes two passing native units in each mode and retains the unavailable browser, failed bounded health GET and unapproved billing boundary.
+The package-script grader repair accepts its original captured execution, producing [3/3 in both modes](verification-limitations-precondition-comparison.json) with no lost baseline checks and no agent recapture.
+This resolves the missing-unit condition and grader limitation; the later native-environment skill change separately makes the older installed-package capture historical for final release selection.
