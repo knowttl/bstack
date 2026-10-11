@@ -373,7 +373,8 @@ Equivalent names such as `CONTRIBUTING.md` and `architecture.md` are recognised.
 Read the discovered files to establish which source is authoritative.
 Root `CLAUDE.md`, including import-only stubs, yields a consolidation candidate requiring content review and author approval.
 See the [existing-repo apply procedure](skills/repo-audit/SKILL.md#step-10-review-and-apply-selected-findings) for which instruction candidates this path can apply.
-Local and ancestor instructions outside the repo are possible shadowing sources and are never proposed for modification.
+Local instruction variants inside the repo are possible shadowing sources and are never proposed for modification.
+Instruction files outside the repo, including ancestor directories and user profiles, are neither inspected nor reported.
 Claude Code versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled may read only `CLAUDE.md`.
 Recheck current host loading behaviour before proposing removal.
 Both commands are read-only and do not run native project checks.

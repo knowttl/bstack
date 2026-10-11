@@ -108,7 +108,7 @@ The owner approved the commissioning review and its six recommendations as writt
 4. **Baseline evaluation.** The baseline needs at least three realistic comparable scenarios and retains the cases it already passes.
    The earlier quota of three observed failures is removed, as "Testing" under "How repo-audit itself is written" now states.
 5. **Scoped instructions.** The audit preserves the meaning of scoped instructions and consolidates equivalent repo-owned `CLAUDE.md` content only through reviewed protected edits.
-   It reports ancestor and local shadowing without modifying files outside the selected repo.
+   It reports local shadowing inside the selected repo and ignores instruction files outside it.
 6. **Automatic review repair budget.** The current budget and build review focus are owned by `.no-mistakes.yaml`; see [the delivery gate](implementation-plan.md#delivery-gate).
 
 ## Project-specific foundation
@@ -804,7 +804,8 @@ The move and the removal happen only through reviewed protected edits.
 Instruction files can govern different scopes, so consolidation preserves their meaning:
 
 - A nested instruction file with distinct scoped guidance keeps that scope. The audit does not flatten it into the root file.
-- A local variant such as `CLAUDE.local.md`, and any instruction file in an ancestor directory outside the selected repo, is reported as possible shadowing of `AGENTS.md`. The audit does not modify it.
+- A local variant such as `CLAUDE.local.md` inside the selected repo is reported as possible shadowing of `AGENTS.md`. The audit does not modify it.
+- Instruction discovery and reporting are limited to files inside the selected repo. Ancestor-directory and user-profile instruction files are outside the audit's scope and are not inspected or reported.
 - Before proposing a removal, the agent rechecks the current host's loading behaviour in its official documentation and, where available, its runtime.
 
 Caution: some Claude Code sessions read `CLAUDE.md` only.
@@ -1359,7 +1360,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 46. Each evaluation scenario records the agent's result without the skill and with it, and the skill improves every scenario that the model did not already pass.
 47. The skill folder contains no per-language rule set, lint preset or tool list.
 48. Each language-specific recommendation cites its source and read date, and a run with no web access marks them not researched.
-49. A repo with a repo-owned `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge of its equivalent content into `AGENTS.md` and the Claude Code version limit. Distinct scoped instructions keep their meaning, and local or ancestor files are reported as shadowing without modification.
+49. A repo with a repo-owned `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge of its equivalent content into `AGENTS.md` and the Claude Code version limit. Distinct scoped instructions keep their meaning, and local variants inside the repo are reported as shadowing without modification. Instruction files outside the repo are neither inspected nor reported.
 50. A mixed-responsibility file and a cluster of tightly coupled small files both produce evidenced architecture candidates.
 51. A large cohesive module or thin startup file does not fail merely because of its size or import count.
 52. Chosen boundary rules detect private imports, alias bypasses and forbidden cycles in each fixture stack, using the tool the research step selected.
@@ -1480,3 +1481,4 @@ Historical entries keep their original decisions and name their current applicat
 | R25, 2026-10-07 | Apply the implementation review recommendations | Explicit task prerequisites and evidence, scratch-only early review, protected creation after write safeguards, recoverable writes, isolated evaluations, portable commands, installer ownership and complete CI inputs. The CI inputs are replaced by clean-checkout inputs under R26 |
 | R26, 2026-10-07 | Approve the commissioning review and its six recommendations | Recorded in "Commissioning decisions (2026-10-07)". No hosted CI or release automation for bstack, three real OS runs for AC-74, slices C0 to C29, a baseline with no failure quota, and scoped instruction preservation. The current review repair budget is owned by `.no-mistakes.yaml` |
 | R27, 2026-10-10 | "only linux is good" | Amend R26's installer support and acceptance scope for C25c/AC-74 to Linux-only lifecycle evidence. No Windows/macOS runs will be supplied; their execution remains unverified, with no remaining OS acceptance gate |
+| R28, 2026-10-10 | Ignore user-profile and other outside-repo instruction files; surface a universal test-first mandate as a proposed principle change | Limit instruction discovery and reporting to the selected repo, amending R26's ancestor-shadowing behaviour and AC-49. Confirm R11 permits proposing a change to a universal sequence mandate, retaining it unless selected |
