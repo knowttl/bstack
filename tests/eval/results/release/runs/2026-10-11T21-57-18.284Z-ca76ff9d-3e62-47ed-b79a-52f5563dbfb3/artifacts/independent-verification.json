@@ -1,0 +1,40 @@
+{
+  "sourceRevision": "bf57b47163b16252a3df3cc9f66fc6d17ed872b8",
+  "fixtureRevision": "c8576a3095a37da037d42c4bdf358d6372f5a91e",
+  "mode": "without",
+  "contractPresent": false,
+  "standaloneCheckerPresent": false,
+  "portableAssessmentPresent": false,
+  "workingTree": " M packages/core/index.ts\n M packages/core/internal/database.ts\n?? packages/core/internal/pricing.ts\n",
+  "trackedDiff": "diff --git a/packages/core/index.ts b/packages/core/index.ts\nindex 6e0da96..f1c0ab2 100644\n--- a/packages/core/index.ts\n+++ b/packages/core/index.ts\n@@ -1 +1 @@\n-export { price } from './internal/database.ts'\n+export { price } from './internal/pricing.ts'\ndiff --git a/packages/core/internal/database.ts b/packages/core/internal/database.ts\nindex 6f99a44..5e8e3d9 100644\n--- a/packages/core/internal/database.ts\n+++ b/packages/core/internal/database.ts\n@@ -1,4 +1,4 @@\n-export function price() { return 12 }\n+export { price } from './pricing.ts'\n export async function servicePrice(url: string) {\n   return (await (await fetch(url)).json()).price\n }\n",
+  "changedPaths": [
+    "packages/core/internal/pricing.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts"
+  ],
+  "currentFiles": {
+    "packages/core/internal/pricing.ts": "export function price() { return 12 }\n",
+    "packages/core/index.ts": "export { price } from './internal/pricing.ts'\n",
+    "packages/core/internal/database.ts": "export { price } from './pricing.ts'\nexport async function servicePrice(url: string) {\n  return (await (await fetch(url)).json()).price\n}\n"
+  },
+  "authoritativeDocuments": {
+    "AGENTS.md": {
+      "unchanged": true,
+      "hash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+    },
+    "CLAUDE.md": {
+      "unchanged": true,
+      "hash": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+    },
+    "DESIGN.md": {
+      "unchanged": true,
+      "hash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+    },
+    "glossary.md": {
+      "unchanged": true,
+      "hash": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d"
+    }
+  },
+  "authenticationCopyAbsent": true,
+  "limitation": "The fixture does not provision the maintained contract or checker. No completed change-specific document-impact assessment or standalone maintenance validation is evidenced."
+}
