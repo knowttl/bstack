@@ -4,6 +4,14 @@ Evaluation is in progress and does not establish release readiness.
 The complete acceptance validator, all-case coverage and scenario comparisons are not yet complete.
 The [AC-35 capability gap](AC-35-capability-gap.md) has an effective supported restriction verified by a capture-only probe and the fresh TypeScript fallback run.
 Both corrected fallback comparisons pass under that effective adapter, resolving AC-35.
+Evaluation is paused for two evidence decisions, with no release selection or waiver for the affected cases.
+
+- AC-29: the baseline's initial immutable score incorrectly credited the passing-units condition despite no unit execution; the [grading explanation](verification-limitations-grading.md) and [proposed correction](verification-limitations-baseline-correction-proposal.json) preserve the captured turn and identify the original scoring hash.
+  The public scorer forbids rescoring and an unchanged real-agent rerun is prohibited.
+  The with-skill run honestly passes all three verification-limitations checks, including two actual unit passes with browser evidence still unverified.
+- AC-57 and AC-68: the [scope failure observation](scope-and-prerequisites-scope-failure.json) records rejected `/proc` and `/tmp` paths in the with-skill resource preflight.
+  The run remains unscored; its complete contaminated transcript is retained privately, and its isolated home was deleted.
+  The baseline passed both checks, but no valid final comparison exists.
 
 ## Independent-extension scope
 
