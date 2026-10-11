@@ -12,6 +12,9 @@ if (args.includes('--version')) {
 } else {
   const mode = args[0]
   const message = args.at(-1)
+  const subagentsDisabled = args.some((arg, index) => arg === '--disable' && args[index + 1] === 'multi_agent')
+  if (mode === 'require-no-subagents' && !subagentsDisabled) throw new Error('Subagents remain available')
+  if (mode === 'require-subagents' && subagentsDisabled) throw new Error('Unexpected subagent restriction')
   const sandboxPolicy = args.includes('--sandbox') ? args[args.indexOf('--sandbox') + 1] :
     args.find(arg => arg.startsWith('sandbox_mode='))?.split('=')[1].replaceAll('"', '') ?? 'read-only'
   const state = join(process.env.CODEX_HOME, 'fake-session.json')

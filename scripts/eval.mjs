@@ -26,7 +26,7 @@ async function start(opts, results) {
   if (!['without', 'with'].includes(opts.mode)) fail('Mode must be without or with.', 'usage-error')
   const definition = await scenario(opts.scenario)
   if (!definition.checkpoints.includes(opts.stage)) fail(`Unknown checkpoint: ${opts.stage}`, 'usage-error')
-  const adapter = opts.adapter ? await readAdapter(resolve(opts.adapter)) : null
+  const adapter = opts.adapter ? await readAdapter(resolve(opts.adapter), definition.id) : null
   if (!opts.manual && !adapter) fail('Automatic execution requires --adapter. Use --manual for unsupported hosts.')
   if (adapter) {
     if (opts.agent || opts.model || opts.invocation) fail('The adapter owns agent, model and invocation. Omit these options.', 'usage-error')

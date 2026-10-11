@@ -3,6 +3,7 @@ import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { root, text, object, array, readJSON, checkRegistry, fail } from './evaluation.mjs'
 import { scopeVersion } from './evaluation-scope.mjs'
+import { readAdapter } from './evaluation-host.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 
@@ -33,7 +34,6 @@ export async function completeRelease(results) {
   if (incomplete.length) fail(`Incomplete acceptance procedures: ${incomplete.join(', ')}`)
   const revision = git('rev-parse', 'HEAD')
   const fixtureRevision = git('rev-parse', 'HEAD:tests/fixtures')
-  const adapter = await readJSON(join(root, 'tests/eval/adapters/codex-final.json'))
   const cache = new Map()
   async function run(id) {
     if (cache.has(id)) return cache.get(id)
@@ -44,6 +44,7 @@ export async function completeRelease(results) {
     if (!definition || record.id !== id || canonicalJSON(definition) !== canonicalJSON(record.scenario) ||
         record.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || record.stage !== definition.checkpoints.at(-1) ||
         record.fixture?.revision !== fixtureRevision) fail(`Stale scenario, stage, scoring criteria or fixture: ${id}`)
+    const adapter = await readAdapter(join(root, 'tests/eval/adapters/codex-final.json'), definition.id)
     if (canonicalJSON(record.adapter) !== canonicalJSON(adapter) || record.adapterHash !== hashBytes(canonicalJSON(adapter)) ||
         record.agent !== adapter.invocation.agent || record.model !== adapter.invocation.model ||
         record.hostFailure || !record.isolation?.verified || !record.isolation.cleanedAt ||
