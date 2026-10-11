@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "scenario": "scope-and-prerequisites",
+  "caseIds": ["AC-57", "AC-68"],
+  "runId": "2026-10-11T19-20-54.999Z-9070cee1-296b-4982-b11e-ede7cbc4a036",
+  "sourceRevision": "740413d5095ce598d2990b3a596bcf71d6a912db",
+  "scopeVersion": 3,
+  "status": "blocked-unscored",
+  "runSha256": "80dca0ae775e8174ce3d7c8b5f40bbc76f0b56d920cbc92f3110f7820b507599",
+  "conversationSha256": "c4620f506048b2c06b872b4e1ddf5d6b741922f6a18dcb17b8f0c1d98eb9ae6d",
+  "rejectedPaths": ["/tmp"],
+  "observation": "The captured parent command trace uses the fixture, isolated skill and TMPDIR-owned scratch, plus permitted resource queries. It shows no command targeting the general temporary-directory root. The guard result does not retain the matching native input or target provenance, so the remaining rejection cannot be explained from the retained record.",
+  "finalResponseLine": 31,
+  "finalResponseObservation": "The agent asks contract preservation versus change, leaves implementation and write selection blocked, reports HEAD^ inaccessible without substituting another base, and reports the public test passing after resource preflight with no project files changed.",
+  "isolatedHomeDeletedAt": "2026-10-11T19:22:12.867Z",
+  "disposition": "Keep the complete failed capture private and unscored. Stop after the third rejection; do not select the final response as a passing case or repeat the unchanged agent run."
+}

@@ -5,8 +5,8 @@ The complete acceptance validator, all-case coverage and scenario comparisons ar
 The [AC-35 capability gap](AC-35-capability-gap.md) has an effective supported restriction verified by a capture-only probe and the fresh TypeScript fallback run.
 Both corrected fallback comparisons pass under that effective adapter, resolving AC-35.
 The approved grading correction is applied.
-The repeated resource-output scope rejection has an approved correction: judge command and file-tool access targets, excluding tool output.
-Its changed-input with-skill rerun is still required, with no waiver for the affected cases.
+The approved correction judges command and file-tool access targets, excluding tool output.
+Its changed-input with-skill rerun hit a third rejection for `/tmp`; evaluation is stopped pending a decision, with no waiver for the affected cases.
 
 - AC-29: the baseline's initial immutable score incorrectly credited the passing-units condition despite no unit execution; the [grading explanation](verification-limitations-grading.md) and [proposed correction](verification-limitations-baseline-correction-proposal.json) preserve the captured turn and identify the original scoring hash.
   The approved append-only correction preserves the original answers and transcript and yields a [passing comparison](verification-limitations-comparison.json), without another agent run.
@@ -18,6 +18,9 @@ Its changed-input with-skill rerun is still required, with no waiver for the aff
   The fresh version 3 baseline passed both checks.
   The fresh with-skill run was rejected for the filesystem device name emitted by a disk-capacity query; the [observation](scope-and-prerequisites-resource-output-failure.json) records the command, evidence hashes and cleanup.
   That failed capture remains unscored and cannot be selected for release.
+  The [third rejection](scope-and-prerequisites-third-rejection.json) follows the access-target-only correction and 149 passing regression tests.
+  The parent trace shows no access to the general temporary-directory root, and the guard did not retain the matching native target provenance.
+  The run remains unscored despite its final scope and history answers; another unchanged agent run is prohibited.
 
 ## Independent-extension scope
 
