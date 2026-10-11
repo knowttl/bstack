@@ -198,6 +198,7 @@ Removed source paths retain concrete lexical validation but do not require their
 Those paths remain in the inventory and affected documents remain candidates; `contract validate` still requires every source pointer to exist.
 `data.mappings` records matching scope, document and rule IDs for each path.
 `data.candidateDocuments` is the union of scoped documents and changed document paths themselves.
+Each candidate contains only `id` and `path`; optional contract metadata such as `glossary` remains in the contract and is not copied into assessment document identities.
 Paths with no document relationship remain in `data.unmappedPaths`, including paths in scopes that name only rules.
 
 The command writes one `assessment.json` skeleton to [scratch](#scratch) and returns its absolute path in `data.path`.
