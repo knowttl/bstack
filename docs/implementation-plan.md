@@ -1881,7 +1881,7 @@ Registry completeness is a structural check, while final case evidence proves ex
 | T0.5 | AC-41, AC-44, AC-45, AC-47 | Seeded package failures, valid package and installed-package closure | |
 | T1.6 | AC-3 | Board launch, verdict-to-draft update and resumed review | |
 | T1.7 | AC-2, AC-9, AC-12 | Intent-stage transcripts, blocked decision and confirmed term review | AC-2 passes the [final ambiguity comparison](../tests/eval/results/release/ambiguous-idea-comparison.json); AC-9 and AC-12 final selection remains pending. |
-| T2.1 | AC-34, AC-35, AC-36, AC-37, AC-48 | Discovery-only briefs in both modes, wrong citations and no-web run | AC-34, AC-36, AC-37 and AC-48 pass the [container subagent comparison](../tests/eval/results/release/research-subagents-comparison.json), including [independent original-candidate rejection and worker trace review](../tests/eval/results/release/research-subagents-container-verification.json); AC-35 refreshed container comparisons remain pending. |
+| T2.1 | AC-34, AC-35, AC-36, AC-37, AC-48 | Discovery-only briefs in both modes, wrong citations and no-web run | AC-34, AC-36, AC-37 and AC-48 pass the [container subagent comparison](../tests/eval/results/release/research-subagents-comparison.json), including [independent original-candidate rejection and worker trace review](../tests/eval/results/release/research-subagents-container-verification.json); AC-35 passes both [TypeScript](../tests/eval/results/release/research-main-typescript-comparison.json) and [Python](../tests/eval/results/release/research-main-python-comparison.json) container fallback comparisons with native main-thread traces. |
 | T2.2 | AC-4, AC-68 | Read-only inspection and unavailable prerequisites | AC-68 passes the [container scope/history comparison](../tests/eval/results/release/scope-and-prerequisites-comparison.json), with [independent exact-base verification](../tests/eval/results/release/scope-and-prerequisites-container-verification.json); AC-4 final selection remains pending. |
 | T2.3 | AC-10, AC-11, AC-49 | Authoritative source discovery, equivalent names and instruction merge candidate | |
 | T2.4 | AC-50, AC-51, AC-53 | History-backed signals, false-positive controls and shared-write plans | |
@@ -1901,6 +1901,6 @@ Registry completeness is a structural check, while final case evidence proves ex
 | T3a.6 | AC-24, AC-58 | Different-root clean clone, missing evidence, shallow base and fresh leaf execution | |
 | T3a.7 | AC-23 | Maintenance-only transcript without interview or full audit | |
 | T4.1 | AC-73, AC-74 | Copy/link lifecycle and conflict preservation, with recorded real Linux execution under R27 | |
-| T4.2 | AC-39, AC-40, AC-42, AC-43, AC-56, AC-75 | Fresh explicit/implicit invocation and observed file-loading trace | |
+| T4.2 | AC-39, AC-40, AC-42, AC-43, AC-56, AC-75 | Fresh explicit/implicit invocation and observed file-loading trace | AC-56 passes the [container runtime-independence comparison](../tests/eval/results/release/runtime-independence-comparison.json); other final selections remain pending. |
 | T4.3 | AC-1, AC-3, AC-23, AC-54, AC-64, AC-69, AC-75 | Final full-path transcripts, repeated audit and independent extension | |
 | T5.2 | AC-46 | Comparable baseline/final results and all-case evidence validation | |
