@@ -532,7 +532,7 @@ Tick each task when its "Done when" commands pass.
         Current-agent loading remains C26 and real-model acceptance remains C27.
   - [ ] T4.2 Run the basic tests in the current agent
     - [C26 current-host observations](../tests/eval/results/invocation-C26/summary.md#fresh-paired-validation-on-current-bytes) retain the fresh plain and explicit installed sessions on current corrected skill bytes, plus historical attempts and telemetry limitations.
-      [Task evidence](../tests/eval/results/tasks/C26.json) remains blocked until the outer Test phase refreshes task-specific selections and attaches full-suite evidence on the published inputs, as specified in the checkpoint.
+      [Task evidence](../tests/eval/results/tasks/C26.json) owns the final settled-source full-suite capture and validator attachment on the published inputs, as specified in the checkpoint.
       C27 retains final full-path acceptance.
   - [ ] T4.3 Prove both complete paths and a representative extension
 - Phase 5: Release
