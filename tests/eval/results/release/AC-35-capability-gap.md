@@ -1,7 +1,7 @@
 # AC-35 capability gap
 
-The capability prerequisite is resolved by the corrected probe below; passing final fallback runs remain outstanding.
-No acceptance credit or release readiness is claimed.
+The capability prerequisite and both corrected final fallback comparisons now pass; see the [release summary](summary.md).
+This resolves AC-35 without claiming overall release readiness.
 
 ## Observed evidence
 

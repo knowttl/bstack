@@ -2,8 +2,8 @@
 
 Evaluation is in progress and does not establish release readiness.
 The complete acceptance validator, all-case coverage and scenario comparisons are not yet complete.
-Evaluation stopped at the [AC-35 capability gap](AC-35-capability-gap.md): fallback sessions still expose subagent tools, despite the scenario's claim that they are disabled.
-No fallback score can establish AC-35 until actual capability restriction and fresh comparable runs are verified.
+The [AC-35 capability gap](AC-35-capability-gap.md) has an effective supported restriction verified by a capture-only probe and the fresh TypeScript fallback run.
+Both corrected fallback comparisons pass under that effective adapter, resolving AC-35.
 
 ## Independent-extension scope
 
@@ -57,7 +57,7 @@ The runner now checks both parent conversation output and native parent/worker t
 Temporary files belong to the isolated home through all three temporary-directory environment variables.
 The changed scope contract requires a fresh baseline and with-skill pair; the earlier passing with-skill run is historical evidence only.
 
-## Final discovery comparison with scope version 2
+## Earlier discovery comparison with scope version 2
 
 The [baseline](runs/2026-10-11T18-01-42.264Z-05b66d0f-e8fc-4b29-bb92-15b001a98ed1/run.json) and [with-skill run](runs/2026-10-11T18-02-24.710Z-3b5c141a-c401-4ef9-8b97-677251ce5f4f/run.json) used source revision `459b168`, identical criteria, fixture revision, Node, Codex, model and adapter.
 The [comparison](research-subagents-comparison.json) passed: baseline 0/4, with-skill 4/4, no lost checks.
@@ -67,6 +67,15 @@ Main-thread source review and an independent rerun of the shipped citation check
 The fixture's Git status remained empty.
 Language and outside research remained not researched under the author-imposed no-web constraint.
 Both runs verified scope version 2 and deleted their complete isolated homes before scoring.
+
+## Corrected Python fallback comparison
+
+The [baseline](runs/2026-10-11T18-40-53.788Z-32e4e9fc-4fba-4aaa-8f14-13a050abc6bf/run.json) and [with-skill run](runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/run.json) use committed source `9cebb2e`, identical fixture and scoring inputs, and the same corrected effective adapter as TypeScript.
+The [comparison](research-main-python-comparison.json) passes: baseline 0/3, with-skill 3/3, with no lost checks.
+The actual [native session observation](runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/capability-observation.json) confirms no `spawn_agent` declaration or delegation calls.
+The [report](runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/research-report.json) contains five sequential briefs, common report fields and the author-imposed no-web limitations.
+Main-thread source review and the shipped checker preceded the result; the [independent check](runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/citation-check-independent.json) passes all 45 citations.
+Both complete isolated homes were deleted before scoring.
 Native excerpts omit encrypted messages, system and developer instructions, world state, reasoning and configuration.
 Scoring was performed by the release evaluator, rather than an independent human study.
 
@@ -75,3 +84,13 @@ The failed attempt remains unscored and is excluded from final selections.
 Version 2 resolves relative paths only in concrete shell commands, while continuing to reject observed absolute paths in command output and native worker traces.
 The regression suite reproduced the rejection before the fix and passed all 15 scope controls afterward.
 The combined evaluation and acceptance development suites passed 125 tests, and `npm run check` passed.
+
+## Corrected TypeScript fallback comparison
+
+The [baseline](runs/2026-10-11T18-39-23.373Z-b48fdd56-9f0c-4cce-9a5f-a5671d9863fb/run.json) and [with-skill run](runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/run.json) use committed source `9cebb2e`, the same scoring criteria and fixture revision, and effective adapter hash `34b8a1f4a85eb0ec00057ef3ae58df3037478b683c078c39bc69b816ce4b2275`.
+The [comparison](research-main-typescript-comparison.json) passes: baseline 0/3, with-skill 3/3, with no lost checks.
+The baseline honestly stopped for missing resources within the allowed roots.
+The [native capability observation](runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/capability-observation.json) confirms no `spawn_agent` declaration and zero delegation calls in the actual with-skill session.
+The [report](runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/research-report.json) retains all five briefs and the no-web limitation.
+The agent opened the cited files and ran the shipped checker before presenting its findings; an [independent checker run](runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/citation-check-independent.json) passes all 64 citations.
+Both runs verified scope version 2 and deleted their complete isolated homes before scoring.

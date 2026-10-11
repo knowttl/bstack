@@ -353,8 +353,10 @@
       "criterionSource": "docs/design.md#AC-35",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Without subagents, the same briefs run in the main thread, produce the same report format and name the mode."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "research-main-typescript",
+        "artifacts": ["tests/eval/results/release/research-main-typescript-comparison.json", "tests/eval/results/release/research-main-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/capability-observation.json", "tests/eval/results/release/runs/2026-10-11T18-42-43.288Z-5bdf3777-6de5-493a-8bc6-64e8ce6971db/capability-observation.json"]
       }
     },
     {
