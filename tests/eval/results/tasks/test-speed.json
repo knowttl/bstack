@@ -17,7 +17,7 @@
   "limitations": [
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "d9ddf6487f9d3d3bfe3db8e4a015beecc9bf39c9",
+  "sourceRevision": "b4ea52d49134ca6dd53b729181fbe932206e63ec",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -84,7 +84,7 @@
         {
           "path": "docs/C25c-operating-systems.md",
           "executable": false,
-          "sha256": "25fe7c9d8d281da9601a4b7884d50f64d29c10a05df164b091141ce305f558bd"
+          "sha256": "9b3ff2ab6b88a1f33127230053cbb8b81610fba5f08f19df3e1a338da53bc731"
         },
         {
           "path": "docs/command-contract.md",
@@ -4122,7 +4122,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "9387184ba824cb75f73c21dfecbec76e5c124a31048ff7390208eafb84b238f3"
+      "sha256": "eb5432f4fcc1aebcc9056b5ed2689b006f91f8c9559fc21b121776065e1f031e"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -4181,9 +4181,9 @@
       "topLevel": 2407,
       "suites": 0
     },
-    "durationMs": 470324.722357,
-    "outputSha256": "290a17f731b499e8d8a211030c40f77a082122b365fcbcb7a699c6d490425bbb",
-    "eventsSha256": "42d93c17c012e241c1398655609a9338244e76f1ad8b2856a00bd27329d636e6",
+    "durationMs": 404966.040749,
+    "outputSha256": "ebfee82180274b5d2046e4f5409f885846753f23e174efd7259d480741961623",
+    "eventsSha256": "adf7ed43331a8def5978a36b1c865b52bcb81178147aa13fe117605310fa6c86",
     "eventsArtifact": "tests/eval/results/tasks/test-speed.events.jsonl"
   }
 }
