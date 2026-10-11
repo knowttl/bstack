@@ -1,0 +1,3 @@
+cash,10.00,0,
+equity,0,10.00,
+Startup JSON, public import/export, both balances and app opening balance passed
