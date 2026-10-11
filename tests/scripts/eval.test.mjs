@@ -274,9 +274,11 @@ async function adapterFile(directory, mode = 'success') {
   adapter.executable = 'node'
   adapter.isolation.authentication = 'none'
   const fake = join(root, 'tests/inputs/evaluation-host.mjs')
-  adapter.args = [fake, mode, ...adapter.args]
+  await mkdir(join(directory, 'outside-project'), { recursive: true })
+  await writeFile(join(directory, 'outside-project', 'SKILL.md'), 'Outside project guidance\n')
+  adapter.args = [fake, mode, '--scope-fixture', directory, ...adapter.args]
   adapter.versionArgs = [fake, '--version']
-  adapter.invocation.resumeArgs = [fake, mode, ...adapter.invocation.resumeArgs]
+  adapter.invocation.resumeArgs = [fake, mode, '--scope-fixture', directory, ...adapter.invocation.resumeArgs]
   const path = join(directory, 'adapter.json')
   await writeFile(path, JSON.stringify(adapter))
   return { adapter, path }
@@ -288,6 +290,7 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   if (record) {
     t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
     if (record.isolation.home) t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+    if (record.isolation.home) t.after(() => rm(record.isolation.home + '-other', { recursive: true, force: true }))
   }
   return { result, record }
 }
@@ -446,10 +449,11 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
 })
 
 for (const mode of ['scope-outside', 'scope-host-home', 'scope-cd-host-home', 'scope-relative',
-  'scope-normalized-escape', 'scope-prefix', 'scope-tool-sibling', 'scope-native-read', 'scope-native-file-read', 'scope-native-file-write',
-  'scope-native-relative', 'scope-runtime-skill', 'scope-resume', 'scope-resource-write',
+  'scope-normalized-escape', 'scope-prefix', 'scope-native-read', 'scope-native-file-read', 'scope-native-file-write',
+  'scope-native-relative', 'scope-other-skill', 'scope-resume', 'scope-resource-write',
   'scope-resource-system-write', 'scope-resource-temp-read', 'scope-resource-temp-write',
-  'scope-resource-mixed', 'scope-resource-python-write', 'scope-resource-shared-capacity', 'scope-resource-shared-python-capacity']) {
+  'scope-resource-mixed', 'scope-resource-python-write', 'scope-resource-shared-capacity', 'scope-resource-shared-python-capacity',
+  'scope-resource-relative-write']) {
   test(`evaluation rejects ${mode} observations without scoring and deletes the isolated home`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory, mode)
@@ -489,6 +493,17 @@ for (const mode of ['scope-resource-read', 'scope-resource-processes', 'scope-re
   })
 }
 
+for (const mode of ['scope-range-measure', 'scope-range-log', 'scope-range-diff', 'scope-tool-sibling']) {
+  test(`evaluation ignores revision syntax and nonexistent read targets: ${mode}`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const { record } = hostStart(t, directory, path)
+    assert.equal(record.hostFailure, undefined, record.reason)
+    assert.equal(record.scopeGuard.verified, true)
+    assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
+  })
+}
+
 test('evaluation accepts in-scope reports, runtime executables and non-filesystem URLs and routes', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory, 'scope-valid')
@@ -522,8 +537,10 @@ test('closing rejects out-of-scope worker observations arriving after the parent
   const { record } = hostStart(t, directory, path)
   const sessions = join(record.isolation.state, 'sessions')
   await mkdir(sessions)
+  const outside = join(directory, 'late-private.txt')
+  await writeFile(outside, 'Outside project guidance\n')
   await writeFile(join(sessions, 'late-worker.jsonl'), JSON.stringify({ type: 'response_item',
-    payload: { type: 'custom_tool_call', name: 'exec', input: 'cat /tmp/outside-project/SKILL.md' } }) + '\n')
+    payload: { type: 'custom_tool_call', name: 'exec', input: `cat '${outside}'` } }) + '\n')
   const closed = run(directory, 'close', '--run', record.id).data.data
   assert.equal(closed.scopeGuard.verified, false)
   assert.equal(closed.isolation.verified, false)

@@ -91,6 +91,8 @@ Missing resources remain unavailable instead of prompting searches in the host h
 Installed executable paths and system runtime resources remain available for normal tool execution.
 The runner checks filesystem access targets in captured commands and native parent/worker file-tool calls after each turn and again before deleting the home.
 Paths merely printed in tool output do not establish access and are excluded, including filesystem device names in capacity tables and process command lines in resource-query output.
+Complete command arguments are resolved against their working directory and checked as read targets only when they exist; revision ranges, refs, flags and other nonexistent tokens are not filesystem paths.
+Explicit write destinations are checked even before they exist.
 An out-of-scope access target leaves the run unscored, records `scopeGuard.paths` and `scopeGuard.violations`, and deletes the isolated home through ordinary failure cleanup.
 Every violation retains its target, triggering command or file operation, and parent/native trace origin; rejection tests require provenance for every rejected path.
 This is an observed-access rejection check, not an operating-system sandbox or a claim to detect unreported reads.
