@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "mode",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 39
+    },
+    {
+      "id": "citations",
+      "passed": true,
+      "startLine": 27,
+      "endLine": 39
+    },
+    {
+      "id": "no-web",
+      "passed": true,
+      "startLine": 33,
+      "endLine": 39
+    },
+    {
+      "id": "read-only",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 39
+    }
+  ]
+}
