@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T20-56-56.028Z-f28dd56a-136b-4f6c-ba34-5d55014db145",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "unavailable-flow",
+      "passed": true,
+      "startLine": 24,
+      "endLine": 25
+    },
+    {
+      "id": "probe-approval",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 25
+    },
+    {
+      "id": "unrunnable-probe",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 25
+    }
+  ]
+}

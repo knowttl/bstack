@@ -16,17 +16,30 @@ export function validateScore(record, answers, transcript) {
     if (answer.startLine < 1 || answer.endLine < answer.startLine || answer.endLine > lines) fail(`Invalid transcript location for ${answer.id}`)
     if (answer.passed && record.scenario.checks.some(check => check.id === answer.id && check.caseId === 'AC-29')) {
       const events = transcript.split(/\r?\n/).flatMap(line => { try { return [JSON.parse(line)] } catch { return [] } })
-      const passing = (command, output, exitCode) => /(?:^|[\s"'/])node(?:js)?\s+--test(?:\s|$)/.test(command) && exitCode === 0 &&
+      const unitOutput = (output, exitCode) => exitCode === 0 &&
         /(?:ℹ|#) pass [1-9]\d*/.test(output) && /(?:ℹ|#) fail 0(?:\s|$)/.test(output)
+      const passing = (command, output, exitCode) => /(?:^|[\s"'/])node(?:js)?\s+--test(?:\s|$)/.test(command) && unitOutput(output, exitCode)
       const observed = events.some(event => {
         const item = event.item
         if (event.type !== 'item.completed' || item?.type !== 'command_execution') return false
         if (passing(item.command, item.aggregated_output ?? '', item.exit_code)) return true
-        let captured
-        try { captured = JSON.parse(item.aggregated_output) } catch { return false }
-        return captured.command === 'run-checks' && captured.data?.checks?.some(check =>
-          passing([check.command.executable, ...check.command.args].join(' '),
-            check.execution?.stdout ?? '', check.execution?.exitCode))
+        // A resource wrapper can print its preflight before the helper result.
+        const outputs = [item.aggregated_output, ...(item.aggregated_output ?? '').split(/\r?\n/)]
+        return outputs.some(output => {
+          let captured
+          try { captured = JSON.parse(output) } catch { return false }
+          return captured.command === 'run-checks' && captured.data?.checks?.some(check => {
+            const execution = check.execution
+            if (passing([check.command.executable, ...check.command.args].join(' '),
+              execution?.stdout ?? '', execution?.exitCode)) return true
+            // Maintained commands may wrap Node to enforce host prerequisites.
+            // Require successful, complete native execution and its Node version.
+            return check.status === 'passed' && check.satisfied === true && execution?.status === 'passed' &&
+              !execution.timedOut && !execution.cancelled && !execution.outputTruncated &&
+              execution.toolVersion?.status === 'passed' && execution.toolVersion.stdout.trim() === record.tools.node &&
+              unitOutput(execution.stdout, execution.exitCode)
+          })
+        })
       })
       if (!observed) fail('AC-29 requires captured passing unit execution; an assistant claim or an unrun suite cannot receive credit.')
     }
