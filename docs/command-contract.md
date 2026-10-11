@@ -872,7 +872,8 @@ Filesystem directory-flush limitations come from the shared recovery writer, and
 JSON uses the existing result envelope and exit codes 0 passed, 1 failed, 2 blocked and 3 usage error.
 Plain output adds the same source version, destinations and planned changes.
 `npm test -- --task C25b` runs local/fake dependency snapshots in disposable roots, including update/removal conflicts, mixed versions, hash-bound decisions, runtime failure, interruption boundaries and C25a collision controls.
-Real Windows/macOS execution and current-agent loading remain unverified.
+Real Windows/macOS execution remains unverified.
+See the [C26 checkpoint](../tests/eval/results/invocation-C26/summary.md) for current-agent invocation and loading observations.
 
 ### Developer checkout links (C25c)
 
