@@ -61,8 +61,8 @@
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures.",
     "Earlier captures and invocation pairs remain historical. The final validator attachment owns the settled published-input revision and full-suite result."
   ],
-  "sourceRevision": "2b2f0feb883837a92d2fe4a81d0d3289fe24a068",
-  "status": "blocked",
+  "sourceRevision": "d6422296dcb30d167736fd20629a8a7afcced7af",
+  "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -109,62 +109,6 @@
       "status": "passed"
     },
     {
-      "id": "implicit-host",
-      "executable": "codex",
-      "args": [
-        "--no-daemon",
-        "exec",
-        "--disable",
-        "multi_agent",
-        "--json",
-        "--ignore-user-config",
-        "--ignore-rules",
-        "--skip-git-repo-check",
-        "--model",
-        "gpt-6.1-sol",
-        "--sandbox",
-        "danger-full-access",
-        "-c",
-        "model_reasoning_effort=\"medium\"",
-        "audit this repo"
-      ],
-      "cwd": "[fixture]",
-      "exitCode": 0,
-      "outputArtifact": "tests/eval/results/invocation-C26/implicit-fresh/conversation.txt",
-      "resultPaths": [
-        "tests/eval/results/invocation-C26/implicit-fresh/host.json"
-      ],
-      "status": "passed"
-    },
-    {
-      "id": "explicit-host",
-      "executable": "codex",
-      "args": [
-        "--no-daemon",
-        "exec",
-        "--disable",
-        "multi_agent",
-        "--json",
-        "--ignore-user-config",
-        "--ignore-rules",
-        "--skip-git-repo-check",
-        "--model",
-        "gpt-6.1-sol",
-        "--sandbox",
-        "danger-full-access",
-        "-c",
-        "model_reasoning_effort=\"medium\"",
-        "$repo-audit\nAudit this repo and recommend principles and checks appropriate to its approved goals. Present recommendations only. Keep all scratch and generated audit data under [scratch]; make no project changes. Do not write outside [worktree]/.c26-live."
-      ],
-      "cwd": "[fixture]",
-      "exitCode": 0,
-      "outputArtifact": "tests/eval/results/invocation-C26/explicit-fresh/conversation.txt",
-      "resultPaths": [
-        "tests/eval/results/invocation-C26/explicit-fresh/host.json"
-      ],
-      "status": "passed"
-    },
-    {
       "id": "check",
       "executable": "npm",
       "args": [
@@ -199,9 +143,7 @@
       "cwd": ".",
       "exitCode": 0,
       "outputArtifact": "tests/eval/results/tasks/C26.full-tests.txt",
-      "status": "blocked",
-      "reason": "Published invocation evidence was redacted after this historical full-suite capture.",
-      "nextPrerequisite": "The outer validation phase must capture final inputs and reattach task evidence through scripts/task-evidence.mjs."
+      "status": "passed"
     }
   ],
   "validation": {
@@ -236,7 +178,7 @@
         {
           "path": "README.md",
           "executable": false,
-          "sha256": "94f92a385d807fc06a46fd75e690ab09422926965f1a69a8f604690833820251"
+          "sha256": "6921296ca47bea02c475fcf26ee6ca4a8f1e3d6b8c53e5ff08c81cb13b50bd8c"
         },
         {
           "path": "docs/C24c-maintenance-transcript.md",
@@ -251,27 +193,22 @@
         {
           "path": "docs/command-contract.md",
           "executable": false,
-          "sha256": "a5620d6365f950f363dadd84ab143ef81ac831421ea3b54b25e6f4b7ca6b17b4"
+          "sha256": "06325283a0046f5529162b0f8c1368ce1d08bcc67930228b4ceeafab07a6593a"
         },
         {
           "path": "docs/design.md",
           "executable": false,
-          "sha256": "4d7e8c7d9bca1e44eb6b0616b24bc47c9eedae0876c68d8a4158731f7c04989d"
+          "sha256": "d55e1776282ec372f5f1e78d54ab3462a1567550c4d542de77076a66bdac2104"
         },
         {
           "path": "docs/evaluation.md",
           "executable": false,
-          "sha256": "890e5961a023df77710bcf5e2780f2e5cd8a53d7af40ebfb9f0a43533b3a3eeb"
+          "sha256": "f2f1098f3d1ddb5c80e6cab3c2ef526b637a628e4c40328a0d01b4e69929560f"
         },
         {
           "path": "docs/fixtures.md",
           "executable": false,
           "sha256": "4d15f4e7f576053e2944a7074dd9ab1c90c9394de5489b6827eecef5a4bbc4f9"
-        },
-        {
-          "path": "docs/implementation-plan.md",
-          "executable": false,
-          "sha256": "687acb3a14917a5a32dfdaf21bfc8774fe27940e871b5c3a50c04f8fc179a267"
         },
         {
           "path": "install/install.mjs",
@@ -356,7 +293,7 @@
         {
           "path": "skills/repo-audit/SKILL.md",
           "executable": false,
-          "sha256": "da8985e4d1d824acf962542d083666159e127b7bfb1edb048987dc0c69175703"
+          "sha256": "804f050af4a100e000e29069512044be1c89a8b0f6651b86369c3630f7645ef8"
         },
         {
           "path": "skills/repo-audit/agents/openai.yaml",
@@ -1109,6 +1046,11 @@
           "sha256": "c22f3102f85aadb7d97407e81d33799f33506a362bf9696555c83cd81ba904ca"
         },
         {
+          "path": "tests/eval/results/invocation-C26/conditional-loading.md",
+          "executable": false,
+          "sha256": "ae45e9f5e2c42de3777218e211e489cd291696ccc26332a0bd1f4c763d4301fb"
+        },
+        {
           "path": "tests/eval/results/invocation-C26/explicit-before-guard/conversation.txt",
           "executable": false,
           "sha256": "e1d75e62b0e8a03af231aa20453c3b2d0c399b2dc33de2e7533af3735ee4c378"
@@ -1127,6 +1069,21 @@
           "path": "tests/eval/results/invocation-C26/explicit-before-guard/support-tools.json",
           "executable": false,
           "sha256": "2e1dc4d35e6c267fc3b62a514d6b4d94ced876dbee04941a344d88bc0ff52700"
+        },
+        {
+          "path": "tests/eval/results/invocation-C26/explicit-fresh/conversation.txt",
+          "executable": false,
+          "sha256": "b684549b0ee4266542ff89b8f0a5496f0031b9c004feb265f58298eeb7d51880"
+        },
+        {
+          "path": "tests/eval/results/invocation-C26/explicit-fresh/host.json",
+          "executable": false,
+          "sha256": "87557136be6bd65767907430bbb00ed6313fb1a1c64b0c7f576aabd0e9acf46f"
+        },
+        {
+          "path": "tests/eval/results/invocation-C26/explicit-fresh/installer.json",
+          "executable": false,
+          "sha256": "755b003d6064b3540b1a3a90f18863ac3cb3cfbf41d4983d8a6ba79f332ffc3d"
         },
         {
           "path": "tests/eval/results/invocation-C26/explicit/conversation.txt",
@@ -1162,6 +1119,21 @@
           "path": "tests/eval/results/invocation-C26/implicit-before-guard/observations.json",
           "executable": false,
           "sha256": "e98eb9602828665ade356763b68ae0caa465c8962ce1e33475bd7fb79a386439"
+        },
+        {
+          "path": "tests/eval/results/invocation-C26/implicit-fresh/conversation.txt",
+          "executable": false,
+          "sha256": "a5e3f250365e28490b78b4300f863178a31bb32bd9af081e85bd15f942a3ae59"
+        },
+        {
+          "path": "tests/eval/results/invocation-C26/implicit-fresh/host.json",
+          "executable": false,
+          "sha256": "bede6003479e7c4d168c059bc8f1fa2a0b759b2dd76900646fac8f4d0887b7ed"
+        },
+        {
+          "path": "tests/eval/results/invocation-C26/implicit-fresh/installer.json",
+          "executable": false,
+          "sha256": "72f8eb49f5ebfc07d9f90080ba067073108f08ac71dd82cd55f9de2b0ed352f3"
         },
         {
           "path": "tests/eval/results/invocation-C26/implicit-guard-check/conversation.txt",
@@ -1216,7 +1188,7 @@
         {
           "path": "tests/eval/results/invocation-C26/summary.md",
           "executable": false,
-          "sha256": "701893ed28a7aab6395fcbc304392659bbc194b0443af24961e33e295f801b0e"
+          "sha256": "b73342e97347f83a2a7bd253295a9a08ee80e4d1468c6ffbd880e15558f3a2fd"
         },
         {
           "path": "tests/eval/results/phase1-check/ambiguous-idea.txt",
@@ -4169,7 +4141,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "fdf5aaa55f537a2f81e4e9681fc10ec4d9b5f73e495842c1e6b2f6b255429f4e"
+      "sha256": "763a50a3eb5d6657823d886b946de3974eb5ca576da45373b2aa3474a555b133"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -4208,7 +4180,21 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "docs/implementation-plan.md",
+        "before": {
+          "path": "docs/implementation-plan.md",
+          "executable": false,
+          "sha256": "e7f3582c54d0ed692966d4dfb457e75c4e4af20a8c2ca9efd0fac8e1e1a16fae"
+        },
+        "after": {
+          "path": "docs/implementation-plan.md",
+          "executable": false,
+          "sha256": "ca6e0102d4bff89638fffaabd1541f631113578524b4f186bc824b914c482304"
+        }
+      }
+    ],
     "counts": {
       "tests": 2688,
       "failed": 0,
@@ -4219,9 +4205,9 @@
       "topLevel": 2679,
       "suites": 0
     },
-    "durationMs": 1528804.769909,
-    "outputSha256": "67420ef9fdc4df595deac4bc71ff9b36e7750ff12d06886b9ae650c3d81b9bbe",
-    "eventsSha256": "9003078e1dd3ecd9c9997931e50f9e58d9bd46f446882405dfae492b4bde58a3",
+    "durationMs": 1380010.606361,
+    "outputSha256": "68ea37958513d777dd5e24243f22d50017d8e7dd986e000b60e9a640835432e6",
+    "eventsSha256": "aa784232511ed1d9d29afdce9d24297420728f3a7142c8cb2f8f247c2d78b6ef",
     "eventsArtifact": "tests/eval/results/tasks/C26.events.jsonl"
   }
 }
