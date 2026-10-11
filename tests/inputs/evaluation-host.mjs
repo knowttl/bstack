@@ -39,6 +39,10 @@ if (args.includes('--version')) {
   if (mode === 'malformed') console.log('not JSONL')
   else {
     console.log(JSON.stringify({ type: 'thread.started', thread_id: mode === 'wrong-session' && args.includes('resume') ? randomUUID() : sessionId }))
+    if (mode === 'host-preflight') {
+      const output = execFileSync(process.execPath, [process.env.BSTACK_EVAL_PREFLIGHT], { encoding: 'utf8' })
+      console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution', command: 'node "$BSTACK_EVAL_PREFLIGHT"', aggregated_output: output, exit_code: 0 } }))
+    }
     if (mode === 'reviewer' || mode === 'reviewer-quoted') console.log(JSON.stringify({ type: 'item.completed', item: {
       type: 'agent_message', text: mode === 'reviewer' ? 'Reviewer: Alice Chen' : 'Reviewer: Alice "Ali" Chen' } }))
     if (mode === 'listing') {

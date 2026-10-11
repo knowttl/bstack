@@ -66,8 +66,16 @@ export async function completeRelease(results) {
       'tests/eval/adapters')
     if (!approvedBaseline) {
       git('diff', '--quiet', record.sourceRevision, '--', 'scripts/lib/evaluation-host.mjs',
-        'scripts/lib/evaluation-container.mjs', 'tests/eval/container')
+        'scripts/lib/evaluation-container.mjs', 'scripts/lib/evaluation-resources.mjs', 'tests/eval/container')
       if (record.execution.recipeHash !== hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))) fail(`Changed evaluation container recipe: ${id}`)
+      if (record.fixture.name.startsWith('py-') && (record.fixtureRuntime?.imageId !== record.execution.imageId ||
+          record.fixtureRuntime.python !== '3.12.15' || record.fixtureRuntime.result?.status !== 'passed' || record.fixtureRuntime.result.outputTruncated)) fail(`Unprepared locked Python fixture: ${id}`)
+      if (record.resourcePreflight?.source !== 'host aggregate' ||
+          record.resourcePreflight.clientHash !== hashBytes(await readFile(join(root, 'tests/eval/container/preflight.mjs'))) ||
+          !record.resourcePreflight.checks?.length || !record.resourcePreflight.checks[0].permitted ||
+          record.resourcePreflight.checks.some(check => check.source !== 'host' ||
+            !Number.isFinite(Date.parse(check.checkedAt)) || !['availableMemoryBytes', 'freeDiskBytes', 'load1m', 'existingNodeSuites'].every(key => Number.isFinite(check[key])) ||
+            check.proposedNodeSuites !== 1 || check.permitted !== (check.availableMemoryBytes >= 8_000_000_000 && check.freeDiskBytes >= 20_000_000_000 && check.load1m < 36 && check.existingNodeSuites + 1 <= 2))) fail(`Missing or invalid host resource preflight: ${id}`)
     }
     if (record.tools.node !== process.version) fail(`Node version changed: ${id}`)
     const version = spawnSync(record.adapter.executable, record.adapter.versionArgs, { cwd: root, encoding: 'utf8' })

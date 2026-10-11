@@ -276,6 +276,7 @@ test('automatic host execution requires an adapter', async t => {
 async function adapterFile(directory, mode = 'success') {
   await mkdir(join(directory, 'bin'), { recursive: true })
   try { await symlink(join(root, 'tests/inputs/docker.mjs'), join(directory, 'bin/docker')) } catch (error) { if (error.code !== 'EEXIST') throw error }
+  try { await symlink(join(root, 'tests/inputs/processes.mjs'), join(directory, 'bin/ps')) } catch (error) { if (error.code !== 'EEXIST') throw error }
   const adapter = JSON.parse(await readFile(join(root, 'tests/eval/adapters/codex.json'), 'utf8'))
   adapter.executable = 'node'
   adapter.isolation.authentication = 'none'
@@ -477,6 +478,23 @@ test('an unexpected container mount blocks agent execution and removes the conta
   assert.ok(record.execution.turns[0].removedAt)
   assert.ok(record.isolation.cleanedAt)
   assert.equal((await readdir(directory)).filter(name => name.endsWith('.docker.json')).length, 0)
+})
+
+test('evaluation captures fresh aggregate host resource preflight without process inventories', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'host-preflight')
+  const { record } = hostStart(t, directory, path)
+  assert.equal(record.hostFailure, undefined, record.reason)
+  assert.equal(record.resourcePreflight.source, 'host aggregate')
+  assert.equal(record.resourcePreflight.checks.length, 2)
+  const event = record.turns[0].result.stdout.split('\n').filter(Boolean).map(line => JSON.parse(line))
+    .find(event => event.item?.command === 'node "$BSTACK_EVAL_PREFLIGHT"')
+  const observed = JSON.parse(event.item.aggregated_output)
+  assert.equal(observed.source, 'host')
+  assert.equal(observed.permitted, true)
+  assert.ok(observed.existingNodeSuites >= 1)
+  assert.deepEqual(observed, record.resourcePreflight.checks[1])
+  await assert.rejects(stat(join(record.isolation.home, '.evaluation/preflight.sock')), { code: 'ENOENT' })
 })
 
 for (const [name, change] of [

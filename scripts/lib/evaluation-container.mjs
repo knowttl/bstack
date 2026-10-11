@@ -21,7 +21,7 @@ function completed(result, operation) {
 // when the attached client times out or fails.
 export async function containerTurn(record, args, env) {
   const disk = await statfs(root)
-  if (disk.bavail * disk.bsize < 20 * 1024 ** 3) fail('Evaluation containers require at least 20 GiB free disk.')
+  if (disk.bavail * disk.bsize < 20_000_000_000) fail('Evaluation containers require at least 20 GB free disk.')
   const imageData = JSON.parse(completed(await docker(['image', 'inspect', image]), 'image inspection'))[0]
   const recipeHash = hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))
   if (!/^sha256:[a-f0-9]{64}$/.test(imageData.Id)) fail('Evaluation image has no immutable image ID.')
@@ -47,6 +47,12 @@ export async function containerTurn(record, args, env) {
         actual.HostConfig.CapAdd?.length || canonicalJSON(actual.HostConfig.CapDrop) !== canonicalJSON(['ALL']) ||
         !actual.HostConfig.SecurityOpt.includes('no-new-privileges')) fail('Evaluation container configuration does not match the isolated execution contract.')
     turn.verified = true
+    if (record.fixture.name.startsWith('py-') && !record.fixtureRuntime) {
+      const prepared = await docker(['run', '--rm', ...options.slice(2), '--name', `${name}-prepare`, imageData.Id,
+        'sh', '-c', 'mkdir -p "$XDG_CACHE_HOME" && cp -R /opt/uv-cache "$XDG_CACHE_HOME/uv" && uv sync --locked --offline --python 3.12.15'])
+      completed(prepared, 'locked Python fixture preparation')
+      record.fixtureRuntime = { imageId: imageData.Id, python: '3.12.15', result: prepared }
+    }
     // Query the same image, with the same two mounts and environment, rather
     // than reporting the host CLI version as the agent version.
     const query = 'const {execFileSync}=require("node:child_process");const [executable,...args]=JSON.parse(process.argv[1]);' +
@@ -68,6 +74,8 @@ export async function containerTurn(record, args, env) {
     // a client timeout. No resource is selected by a shared name or inventory.
     const versionRemoval = await docker(['rm', '--force', `${name}-version`])
     if (versionRemoval.status !== 'passed' && !/No such container/.test(versionRemoval.stderr)) completed(versionRemoval, 'version cleanup')
+    const preparationRemoval = await docker(['rm', '--force', `${name}-prepare`])
+    if (preparationRemoval.status !== 'passed' && !/No such container/.test(preparationRemoval.stderr)) completed(preparationRemoval, 'fixture preparation cleanup')
     turn.removedAt = new Date().toISOString()
   }
 }
