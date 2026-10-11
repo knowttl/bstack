@@ -441,8 +441,8 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.ok((await readFile(join(directory, first.id, first.conversation), 'utf8')).includes(first.request))
 })
 
-for (const mode of ['scope-outside', 'scope-host-home', 'scope-output', 'scope-relative',
-  'scope-normalized-escape', 'scope-prefix', 'scope-tool-sibling', 'scope-native-read', 'scope-native-output',
+for (const mode of ['scope-outside', 'scope-host-home', 'scope-cd-host-home', 'scope-relative',
+  'scope-normalized-escape', 'scope-prefix', 'scope-tool-sibling', 'scope-native-read', 'scope-native-file-read', 'scope-native-file-write',
   'scope-native-relative', 'scope-runtime-skill', 'scope-resume', 'scope-resource-write',
   'scope-resource-system-write', 'scope-resource-temp-read', 'scope-resource-temp-write',
   'scope-resource-mixed', 'scope-resource-python-write']) {
@@ -468,7 +468,8 @@ for (const mode of ['scope-outside', 'scope-host-home', 'scope-output', 'scope-r
   })
 }
 
-for (const mode of ['scope-resource-read', 'scope-resource-processes', 'scope-resource-capacity', 'scope-resource-temp']) {
+for (const mode of ['scope-resource-read', 'scope-resource-processes', 'scope-resource-capacity', 'scope-resource-temp',
+  'scope-resource-df-output', 'scope-resource-free-output', 'scope-resource-ps-output', 'scope-output', 'scope-native-output']) {
   test(`evaluation accepts read-only resource queries and owned scratch: ${mode}`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory, mode)
