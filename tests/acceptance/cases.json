@@ -585,8 +585,10 @@
       "criterionSource": "docs/design.md#AC-57",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Ambiguous audit scope cannot select a write path without a resolved scope."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "scope-and-prerequisites",
+        "artifacts": ["tests/eval/results/release/scope-and-prerequisites-comparison.json", "tests/eval/results/release/scope-and-prerequisites-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc/conversation.txt"]
       }
     },
     {
@@ -697,8 +699,10 @@
       "criterionSource": "docs/design.md#AC-68",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Missing tools or inaccessible history produce a specific limitation rather than a false passing verdict."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "scope-and-prerequisites",
+        "artifacts": ["tests/eval/results/release/scope-and-prerequisites-comparison.json", "tests/eval/results/release/scope-and-prerequisites-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc/conversation.txt"]
       }
     },
     {

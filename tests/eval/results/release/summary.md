@@ -2,8 +2,17 @@
 
 Evaluation is in progress and does not establish release readiness.
 The complete acceptance validator, all-case coverage and scenario comparisons are not yet complete.
+AC-57 and AC-68 now pass the [final container comparison](scope-and-prerequisites-comparison.json), retaining both checks that already passed in the approved baseline.
+The [with-skill conversation](runs/2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc/conversation.txt) asks the unresolved scope question, selects no write path, records the exact missing parent and leaves dependent work blocked.
+[Independent verification](scope-and-prerequisites-container-verification.json) confirms clean project bytes, a real shallow checkout, failed exact-parent resolution, matched baseline inputs, fourteen permitted fresh host preflights and container/login cleanup.
+The [pinned image setup](container-setup.json) includes real browser, offline Python and host-wide process-count probes.
+The parser's `/` hits are retained as advisory evidence; Docker's inspected two-mount configuration enforces host isolation.
+Fresh container captures remain pending for the other final scenarios.
+
+## Historical process-only evaluations
+
 The [AC-35 capability gap](AC-35-capability-gap.md) has an effective supported restriction verified by a capture-only probe and the fresh TypeScript fallback run.
-Both corrected fallback comparisons pass under that effective adapter, resolving AC-35.
+Both corrected fallback comparisons passed under that effective adapter; refreshed container evidence remains pending.
 The approved grading correction is applied.
 The approved correction judges command and file-tool access targets, excluding tool output.
 Its changed-input with-skill rerun hit a third rejection for `/tmp`.
@@ -15,7 +24,7 @@ The approved next guard correction checks complete existing arguments and explic
 Its authorized changed-input with-skill rerun hit a further [program-operator rejection](scope-and-prerequisites-program-operator-rejection.json).
 The tokenizer treated the `/` in Python `Path` composition inside a here-document as an existing root-directory argument.
 The exact native operation, trace origin and failed-capture hashes are retained; this capture remains private and unscored.
-Evaluation is stopped pending a decision, without another unchanged run or acceptance waiver.
+Those failures led to the approved container boundary and advisory parser, without rescoring a failed run or waiving acceptance.
 The concurrent clear-goals with-skill opening was closed after this stop, before scripted follow-ups or scoring.
 Its isolated home was deleted; it is partial diagnostic evidence and is not a final passing selection.
 
@@ -24,8 +33,8 @@ Its isolated home was deleted; it is partial diagnostic evidence and is not a fi
   The with-skill run honestly passes all three verification-limitations checks, including two actual unit passes with browser evidence still unverified.
 - AC-57 and AC-68: the [scope failure observation](scope-and-prerequisites-scope-failure.json) records rejected `/proc` and `/tmp` paths in the with-skill resource preflight.
   The run remains unscored; its complete contaminated transcript is retained privately, and its isolated home was deleted.
-  The original baseline passed both checks, but no valid final comparison exists yet.
-  Scope guard version 3 permits the required read-only resource queries and the run's own temporary directory while continuing to reject unrelated paths and writes outside the fixture and isolated home.
+  The original baseline passed both checks, but initially had no valid final comparison.
+  The earlier scope guard version 3 attempted to permit read-only resource queries while rejecting unrelated targets.
   The fresh version 3 baseline passed both checks.
   The fresh with-skill run was rejected for the filesystem device name emitted by a disk-capacity query; the [observation](scope-and-prerequisites-resource-output-failure.json) records the command, evidence hashes and cleanup.
   That failed capture remains unscored and cannot be selected for release.
@@ -35,7 +44,7 @@ Its isolated home was deleted; it is partial diagnostic evidence and is not a fi
 
 ## Independent-extension scope
 
-The `final-independent-extension` procedure remains without-only under the supervisor decision on 2026-10-11.
+The `final-independent-extension` procedure remains without-only under the approved procedure decision on 2026-10-11.
 Its approved AC-64 scoring question requires no discoverable repo-audit skill and use of only the maintained target's resulting guidance.
 A with-skill installation would contradict that procedure, rather than provide its comparison.
 See [design AC-64](../../../../docs/design.md#acceptance-cases), [T4.3](../../../../docs/implementation-plan.md#t43-prove-both-complete-paths-and-a-representative-extension), the [scenario registry](../../scenarios/scenarios.json) and [evaluation isolation contract](../../../../docs/evaluation.md#isolation-and-authentication).
@@ -46,7 +55,7 @@ Fresh final-input evidence remains required; this decision does not waive AC-64.
 The fresh [run](runs/2026-10-11T17-23-14.874Z-e2ba03c8-364c-4860-95e4-38f27b7a8ccc/run.json) evaluated committed revision `f1dc798` using the thirty-minute adapter at the scenario's last defined checkpoint, `discovery`.
 Codex CLI 0.162.1 with gpt-6.1-sol and medium reasoning completed the opening turn in approximately 161 seconds on Linux with Node v24.17.0.
 The four manually scored checks passed: AC-34, AC-36, AC-48 and AC-37.
-This is current-worker scoring, not an independent human study.
+The release evaluator scored these checks from retained execution evidence.
 
 The [parent trace](runs/2026-10-11T17-23-14.874Z-e2ba03c8-364c-4860-95e4-38f27b7a8ccc/delegation-trace-1.jsonl) records five actual spawn calls and overlapping architecture, checks and language workers.
 The five child traces retain actual tool-call inputs and assistant results, independently establishing read-only source inspection without project edits or check execution by workers.
