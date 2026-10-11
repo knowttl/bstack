@@ -10,6 +10,9 @@ Exit codes are 0 for success, 1 for a failed build or sanity check, 2 for a miss
 The [fixture registry](../tests/fixtures/fixtures.json) declares the files to copy and, for repo fixtures, an ordered history of paths, messages and dates.
 Each named fixture keeps its `sanity.mjs` and any `FIXTURE.md` outside the built workspace.
 Variants reuse source files through `source`, inject independent `seed` files before history, and share native sanity procedures.
+`base` inherits a registry entry's files and settings; an `overlay` directory supplies only the changed or generated files before history is committed.
+`maintained-ts-shop` inherits `ts-shop`, then overlays the completed existing-project setup, including its generated contract and current standalone checker.
+Its native protections pass before the maintenance scenario selects the initial commit as its explicit comparison base.
 History steps may write or remove files before committing.
 `dirty` and `remove` apply after the final commit, and `shallow` builds a real depth-one clone.
 Repo construction uses a fixed main branch, SHA-1 objects, empty templates, fixture-local identity, disabled signing and unchanged file bytes.
