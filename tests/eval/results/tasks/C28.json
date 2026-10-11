@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C28",
+  "slice": "C28",
+  "sourceRevision": "b6125980ccf6350bef5316c801a0a8ead26322a2",
+  "intent": "Write worked examples, reproducible installation and use instructions, and accurate limitations for T5.1 using recorded fixture evidence.",
+  "amendments": [
+    "Worked examples cover the six user-facing scenario fixtures; negative controls and installer fixtures remain command-test infrastructure.",
+    "Use C27 final records for new-idea and ts-shop, and honestly limited earlier checkpoints for the other four; no fresh real-agent runs.",
+    "AC-74 is Linux-only under R27; final evaluation and release remain separate work."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "linux 6.8.0-142-generic x64",
+    "node": "v24.17.0",
+    "tools": { "npm": "11.13.0", "git": "git version 2.54.0" }
+  },
+  "commands": [
+    {
+      "id": "package-check",
+      "executable": "npm",
+      "args": ["run", "check"],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/C28.check.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "T5.1-example-review",
+      "kind": "manual",
+      "procedure": "Compare six examples to recorded requests, findings, selections, verdicts and execution artifacts; exercise documented fixture setup and installation.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/C28.example-review.md"
+    }
+  ],
+  "limitations": [
+    "Documentation reuses recorded observations and does not claim new real-agent evaluation.",
+    "Only new-idea and ts-shop have C27 completed installed final-path evidence; four other examples retain earlier checkpoint limits.",
+    "Actual agent evidence uses Codex and gpt-6.1-sol on Linux with Node v24.17.0, with agent-supplied scoring and fixture verdicts.",
+    "Installer acceptance is Linux-only; Windows, macOS, other hosts/models and hosted CI behaviour are unverified.",
+    "Final all-case evaluation and release approval are outside this documentation slice."
+  ]
+}
