@@ -22,7 +22,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "ambiguous-idea",
-        "artifacts": ["tests/eval/results/release/ambiguous-idea-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-50-32.828Z-bff688d4-8b26-45a4-90b8-33437a367795/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/ambiguous-idea-comparison.json", "tests/eval/results/release/runs/2026-10-11T22-27-46.161Z-16155841-a407-44b5-a602-3ac02fbd6412/conversation.txt"]
       }
     },
     {
