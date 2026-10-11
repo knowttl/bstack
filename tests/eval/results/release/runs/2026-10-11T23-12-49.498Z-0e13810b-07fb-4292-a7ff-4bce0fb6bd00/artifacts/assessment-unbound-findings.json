@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "cd0867a247ef1ea23eddc3a4d8c860a7613c91a9"
+  },
+  "nextChange": "Authorized final portable assessment for the subtotal refactor.",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:21",
+      "intent": "documented",
+      "summary": "Public quote12, checkout10 and existing quantity calculation retained."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-008",
+      "problem": "Current portable assessment describes the previous maintenance rather than this refactor.",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": null,
+      "principle": "Preserve public pricing and checkout compatibility.",
+      "consequence": "An unnamed intermediate makes the existing calculation less explicit.",
+      "fix": "Replace the selected record with reviewed final change coverage, retaining first-contract foundation.",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "Evidence validation and fresh local and clean-clone standalone checks.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-008"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance, no full audit or hosted delivery."
+  ]
+}

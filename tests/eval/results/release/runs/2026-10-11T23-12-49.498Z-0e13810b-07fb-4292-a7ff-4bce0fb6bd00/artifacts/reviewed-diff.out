@@ -1,0 +1,14 @@
+diff --git a/packages/core/internal/database.ts b/packages/core/internal/database.ts
+index 7f7fc53..6acdec5 100644
+--- a/packages/core/internal/database.ts
++++ b/packages/core/internal/database.ts
+@@ -5,7 +5,8 @@ export async function servicePrice(url: string) {
+ 
+ const orders: number[] = []
+ export function postOrder(quantity: number, unitPrice = price()) {
+-  const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)
++  const subtotal = unitPrice * quantity
++  const total = subtotal * (quantity > 5 ? 0.9 : 1)
+   orders.push(total)
+   return { status: 201, total }
+ }

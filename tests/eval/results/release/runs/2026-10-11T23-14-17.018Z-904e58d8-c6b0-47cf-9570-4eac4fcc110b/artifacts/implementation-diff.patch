@@ -1,0 +1,74 @@
+diff --git a/DESIGN.md b/DESIGN.md
+index 91ee9cb..ec274fb 100644
+--- a/DESIGN.md
++++ b/DESIGN.md
+@@ -21,6 +21,8 @@ export async function checkout(url: string, quantity = 1) {
+ 
+ The controlled HTTP endpoint in journey.mjs supplies price 10; checkout must return { status: 201, total: 10 } for the default quantity. Public quote() continues to return 12. The existing quantity calculation is retained; no new business discount is introduced. Receipt wording is outside this correction.
+ 
++The approved public quote example is packages/web/public.ts: quote(quantity = 1) imports price from packages/core/index.ts and returns price() * quantity. quote(2) returns 24. Consumers select quantity through checkout(url, quantity = 1); journey.mjs checks checkout(url, 2) against its actual local HTTP endpoint and expects { status: 201, total: 20 }. The default quote and checkout expectations above remain required. The owner-authorized additive acceptance cases are recorded in docs/quantity-approval.md.
++
+ ## Checks and completion evidence
+ 
+ Install the locked development dependencies with npm ci using Node 24 or later. Run npm run check: TypeScript, unit tests, native boundaries and the real local HTTP journey must all pass. package.json owns the commands; boundaries.mjs owns static import/export resolution and cycle detection. The boundary check does not cover dynamic imports or every transitive facade leak; review new dependency syntax against the public-interface rule.
+diff --git a/docs/quantity-approval.md b/docs/quantity-approval.md
+new file mode 100644
+index 0000000..e465243
+--- /dev/null
++++ b/docs/quantity-approval.md
+@@ -0,0 +1,7 @@
++# Selected quantity authorization
++
++Owner request, 2026-10-11:
++
++> Using only this maintained ts-shop repo's own resulting guidance and checks, extend its approved public quote example to support a selected quantity while defaulting to one, and add a quantity-two checkout journey through the public checkout interface. Locate and name the approved example first. Preserve the original quantity-one quote of 12, quantity-one checkout total of 10 and both user notes in DESIGN.md exactly. Verify quantity-two quote 24 and checkout total 20 through the actual local HTTP endpoint.
++
++This authorizes additive quantity-two acceptance cases. The quantity-one expectations and both user notes remain unchanged; receipt wording and export remain deferred. The approved quote example is packages/web/public.ts, using the public packages/core/index.ts interface. Checkout uses packages/web/ui.ts.
+diff --git a/journey.mjs b/journey.mjs
+index 1610f0d..f976db3 100644
+--- a/journey.mjs
++++ b/journey.mjs
+@@ -1,6 +1,7 @@
+ import assert from 'node:assert/strict'
+ import { createServer } from 'node:http'
+ import { checkout } from './packages/web/ui.ts'
++import { quote } from './packages/web/public.ts'
+ const server = createServer((request, response) => {
+   response.setHeader('content-type', 'application/json')
+   response.end(JSON.stringify({ price: 10 }))
+@@ -10,6 +11,13 @@ try {
+   const order = await checkout(`http://127.0.0.1:${server.address().port}/price`)
+   console.log(JSON.stringify({ expectedTotal: 10, order }))
+   assert.deepEqual(order, { status: 201, total: 10 }, 'agreed checkout total is 10')
++  assert.equal(quote(), 12, 'default public quote is 12')
++  const quantity = 2
++  const selectedQuote = quote(quantity)
++  const selectedOrder = await checkout(`http://127.0.0.1:${server.address().port}/price`, quantity)
++  console.log(JSON.stringify({ quantity, quote: selectedQuote, expectedQuote: 24, expectedTotal: 20, order: selectedOrder }))
++  assert.equal(selectedQuote, 24, 'quantity-two public quote is 24')
++  assert.deepEqual(selectedOrder, { status: 201, total: 20 }, 'quantity-two checkout total is 20')
+ } finally {
+   await new Promise(resolve => server.close(resolve))
+ }
+diff --git a/packages/web/public.ts b/packages/web/public.ts
+index 674750e..005589f 100644
+--- a/packages/web/public.ts
++++ b/packages/web/public.ts
+@@ -1,2 +1,2 @@
+ import { price } from '../core/index.ts'
+-export function quote() { return price() }
++export function quote(quantity = 1) { return price() * quantity }
+diff --git a/unit.test.mjs b/unit.test.mjs
+index c079eb4..0e1fccc 100644
+--- a/unit.test.mjs
++++ b/unit.test.mjs
+@@ -3,7 +3,9 @@ import assert from 'node:assert/strict'
+ import { quote } from './packages/web/public.ts'
+ import { checkout } from './packages/web/ui.ts'
+ test('public price', () => assert.equal(quote(), 12))
++test('public quote for selected quantity', () => assert.equal(quote(2), 24))
+ test('checkout HTTP mock', async t => {
+   t.mock.method(globalThis, 'fetch', async () => new Response(JSON.stringify({ price: 10 })))
+   assert.deepEqual(await checkout('https://price.example.invalid/price'), { status: 201, total: 10 })
++  assert.deepEqual(await checkout('https://price.example.invalid/price', 2), { status: 201, total: 20 })
+ })
