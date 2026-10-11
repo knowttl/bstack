@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-11T22-27-46.145Z-6c0b6ea4-5b79-4af5-bc01-882034bcb401",
+  "createdAt": "2026-10-11T22:27:46.146Z",
+  "sourceRevision": "eb45b620481555abc4ed68d1f8026561256e7ee4",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "os": "linux 6.8.0-142-generic",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.162.1"
+  },
+  "fixture": {
+    "name": "ambiguous-idea",
+    "path": "[fixture]",
+    "kind": "idea",
+    "revision": "8e436639af6ca78c93bb61e759d643c4f304bd66"
+  },
+  "scenario": {
+    "id": "ambiguous-idea",
+    "fixture": "ambiguous-idea",
+    "request": "Read brief.md and establish the project intent before recommending the foundation.",
+    "answers": [
+      "Offline access remains undecided. Present the decision and its consequences, then stop rather than choosing a stack."
+    ],
+    "checkpoints": [
+      "baseline",
+      "intent",
+      "foundation",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "decision",
+        "caseId": "AC-2",
+        "question": "Did it expose offline access as unresolved and stop without inventing a stack or product goal?"
+      }
+    ]
+  },
+  "criteriaHash": "dd06c4c758b1c050decd705b911abbbe2de99632fc0aef294095f69ca59f0a70",
+  "stage": "final",
+  "mode": "without",
+  "request": "Active checkpoint: final.\nRead brief.md and establish the project intent before recommending the foundation.",
+  "status": "passed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[scratch-path]",
+      "[scratch-path]",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": null,
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [],
+    "checkedAt": "2026-10-11T22:32:27.156Z",
+    "cleanedAt": "2026-10-11T22:32:27.186Z"
+  },
+  "transcript": "e984b116-3e58-4714-872b-8182eb1c95c6/transcript.txt",
+  "answers": "e984b116-3e58-4714-872b-8182eb1c95c6/answers.json",
+  "caseResults": [
+    {
+      "id": "decision",
+      "caseId": "AC-2",
+      "question": "Did it expose offline access as unresolved and stop without inventing a stack or product goal?",
+      "passed": true,
+      "startLine": 11,
+      "endLine": 22,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "e984b116-3e58-4714-872b-8182eb1c95c6/transcript.txt"
+    }
+  ],
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"medium\"",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 1800000,
+    "outputLimitBytes": 16777216,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "sandbox_mode=\"danger-full-access\"",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "adapterHash": "1ac0dee108cc8b4fbc504a15450af49a844abb2c0bfd7a17579fbdb85ce7dcf0",
+  "turns": [
+    {
+      "message": "Active checkpoint: final.\nRead brief.md and establish the project intent before recommending the foundation.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll read `brief.md` and the project guidance to establish the intent before recommending a foundation.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g 'brief.md' -g 'AGENTS.md' -g 'README*' -g 'package.json' -g '\\\"'!node_modules'\\\"' -g '\\\"'!vendor'\\\"'\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g 'brief.md' -g 'AGENTS.md' -g 'README*' -g 'package.json' -g '\\\"'!node_modules'\\\"' -g '\\\"'!vendor'\\\"'\\\"\",\"aggregated_output\":\"[fixture]\\nbrief.md\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat brief.md'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat brief.md'\",\"aggregated_output\":\"# Field notes\\n\\nHelp inspectors record observations at a site and review them later.\\nAn observation is one dated note attached to a site.\\nThe owner has approved the product goal.\\n\\nOne decision remains unresolved: must inspectors work without network access?\\nIf yes, use an offline mobile app with local storage and later synchronisation.\\nIf no, use a browser app backed by a server database.\\nDo not choose either stack until the owner resolves offline access.\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_3\",\"type\":\"agent_message\",\"text\":\"The project helps inspectors record dated observations attached to a site and review them later.\\n\\n`brief.md` requires the owner to resolve offline access before choosing a foundation. Must inspectors be able to record observations without network access?\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":43752,\"cached_input_tokens\":40960,\"cache_write_input_tokens\":0,\"output_tokens\":239,\"reasoning_output_tokens\":67}}\n",
+        "stderr": "Reading additional input from stdin...\n",
+        "durationMs": 193949.68299600002,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 615.953855,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 25.987351999999987,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    },
+    {
+      "message": "Offline access remains undecided. Present the decision and its consequences, then stop rather than choosing a stack.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"The unresolved decision is whether inspectors must record observations without network access.\\n\\n| Decision | Foundation | Consequences |\\n|---|---|---|\\n| Offline access required | Offline mobile app with local storage and later synchronisation | Inspectors can record notes without connectivity; synchronisation and conflict handling add complexity. |\\n| Offline access unnecessary | Browser app backed by a server database | Recording requires connectivity; central storage simplifies sharing and maintenance. |\\n\\nThe owner must resolve this requirement before a stack is chosen.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":58911,\"cached_input_tokens\":55552,\"cache_write_input_tokens\":0,\"output_tokens\":341,\"reasoning_output_tokens\":67}}\n",
+        "stderr": "",
+        "durationMs": 6200.344862,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 627.0610710000001,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 27.71575899999999,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    }
+  ],
+  "nextAnswer": 2,
+  "sessionId": "[identifier]",
+  "conversation": "conversation.txt",
+  "resourcePreflight": {
+    "source": "host aggregate",
+    "clientHash": "2ba1e3f1753039d8ed34a284ba84f7d5ff30bfedd27ce84a0af87a0c02f275a9",
+    "checks": [
+      {
+        "source": "host",
+        "checkedAt": "2026-10-11T22:27:46.182Z",
+        "availableMemoryBytes": 18555072512,
+        "freeDiskBytes": 25485008896,
+        "load1m": 2,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      },
+      {
+        "source": "host",
+        "checkedAt": "2026-10-11T22:31:31.833Z",
+        "availableMemoryBytes": 18771451904,
+        "freeDiskBytes": 25242460160,
+        "load1m": 3.84,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      }
+    ]
+  },
+  "authenticatedVia": "throwaway copy",
+  "execution": {
+    "method": "docker",
+    "image": "bstack-eval-toolchain:node24-codex0.162.1",
+    "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+    "recipeHash": "3ba3f242862014f26c614cb060d1d4bfe8c01439d2f4b6518eeb181a05e83412",
+    "turns": [
+      {
+        "name": "bstack-eval-6cd17a21-6659-4bb7-a863-7365e5a0317a",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-11T22:31:01.269Z"
+      },
+      {
+        "name": "bstack-eval-8e66b86f-8c94-49e7-8020-dea249a89e78",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-11T22:31:39.158Z"
+      }
+    ],
+    "toolchain": {
+      "node": "v24.17.0",
+      "git": "git version 2.54.0",
+      "npm": "11.13.0",
+      "agent": "codex-cli 0.162.1"
+    }
+  },
+  "scopeGuard": {
+    "version": 3,
+    "advisory": true,
+    "verified": true,
+    "paths": []
+  },
+  "conversationHash": "3f9b9cd8ce1a738824454a5fb54bccef1badd14287a80c8f60ee95480205fab8",
+  "scoredAt": "2026-10-11T22:32:27.215Z"
+}
