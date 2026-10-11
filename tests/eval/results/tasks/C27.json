@@ -147,7 +147,7 @@
       "status": "passed"
     }
   ],
-  "sourceRevision": "1a96a1ec67ec1408028ac3734dc5053243d3cb39",
+  "sourceRevision": "ac9fdd37c2f2fef7b9f4ee487b3223f14e0268ab",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -201,19 +201,9 @@
           "sha256": "9b3ff2ab6b88a1f33127230053cbb8b81610fba5f08f19df3e1a338da53bc731"
         },
         {
-          "path": "docs/command-contract.md",
-          "executable": false,
-          "sha256": "e1608483331065d6c939cf36beca5c6aca156302250e6c6c7f5653ce7688a111"
-        },
-        {
           "path": "docs/design.md",
           "executable": false,
           "sha256": "8737c00a2ba0309ecfcbbba5d87a3264f9ec5d0fb454d2236b352026d39a9c8d"
-        },
-        {
-          "path": "docs/evaluation.md",
-          "executable": false,
-          "sha256": "94c87c3dad15387005509c60a9a4e69184232549d29c8c969112cc948d69bd6b"
         },
         {
           "path": "docs/fixtures.md",
@@ -8161,7 +8151,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "dbfb545ae5ea9cb028a0fb9697dc4b233b61b59158508b8138492603ba53723d"
+      "sha256": "aaaec0ad166107027fe33052c48463b92473ef6456bfb973e2a0e5687c9475c6"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -8209,7 +8199,34 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "docs/command-contract.md",
+        "before": {
+          "path": "docs/command-contract.md",
+          "executable": false,
+          "sha256": "e1608483331065d6c939cf36beca5c6aca156302250e6c6c7f5653ce7688a111"
+        },
+        "after": {
+          "path": "docs/command-contract.md",
+          "executable": false,
+          "sha256": "421dd84fb81906c1d1c1f7c0452c8ea4c22f0c00e406e6929ce99b0e46753caf"
+        }
+      },
+      {
+        "path": "docs/evaluation.md",
+        "before": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "94c87c3dad15387005509c60a9a4e69184232549d29c8c969112cc948d69bd6b"
+        },
+        "after": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "c3fa4e0645799da6651d416171a47d78e3dc356ee71c9e6bd23967fbcd7f2922"
+        }
+      }
+    ],
     "counts": {
       "tests": 2419,
       "failed": 0,
@@ -8220,9 +8237,9 @@
       "topLevel": 2410,
       "suites": 0
     },
-    "durationMs": 393454.425096,
-    "outputSha256": "265c902262759248c903f1eca3de6df23bde0d361a4cfc279b232871c385ffea",
-    "eventsSha256": "4a59fbf45c9d61a89273560484f6ce5723e00f34af9c740f31388f34b92f948c",
+    "durationMs": 397325.196976,
+    "outputSha256": "5478dd3a1aa3e8b223ed6529c967939617e50706e4f7709fbf5edaf5d9c85f59",
+    "eventsSha256": "e72151961391c99f60695f19293cce1fd94dae5f29159a04d5e58cc0a33ec74a",
     "eventsArtifact": "tests/eval/results/tasks/C27.events.jsonl"
   }
 }
