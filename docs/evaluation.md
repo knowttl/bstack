@@ -75,6 +75,16 @@ The adapter therefore selects `danger-full-access` for both opening and resumed 
 The resume command explicitly sets `sandbox_mode="danger-full-access"` instead of relying on the opening command's `--sandbox` option to carry over.
 This is discovery and conversation isolation, not an operating-system security boundary.
 
+Every adapter turn also receives an explicit filesystem scope: the disposable fixture and its isolated home only.
+The isolated home's `tmp` directory owns scratch files, clones and reports through `TMPDIR`, `TMP` and `TEMP`.
+Missing resources remain unavailable instead of prompting searches in the host home, ancestor directories, other projects or other skill installations.
+Installed executable paths and system runtime resources remain available for normal tool execution.
+The runner checks observed filesystem paths in captured output and native parent/worker tool traces after each turn and again before deleting the home.
+An out-of-scope observation leaves the run unscored, records `scopeGuard.paths`, and deletes the isolated home through ordinary failure cleanup.
+This is an observed-path rejection check, not an operating-system sandbox or a claim to detect unreported reads.
+Comparisons require the same verified scope-contract version on both sides.
+Contaminated transcripts may contain unrelated host inventories and must stay private.
+
 ```sh
 npm run eval -- --scenario ambiguous-idea --mode without --stage baseline --adapter tests/eval/adapters/codex.json
 npm run eval -- --scenario ambiguous-idea --mode with --stage baseline --adapter tests/eval/adapters/codex.json
