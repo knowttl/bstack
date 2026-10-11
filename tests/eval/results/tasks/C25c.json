@@ -10,14 +10,14 @@
     {
       "id": "AC-73-link-lifecycle",
       "kind": "automated",
-      "procedure": "tests/scripts/install.test.mjs: link lifecycle previews source runtime, verifies repeats and preserves target in isolated user/project scope; link lifecycle preserves unowned directory/changed target/replaced link/replacement directory; link installation preserves an existing invalid/valid runtime; owned link removal preserves source with invalid/missing manifest without validating the target package; all-host link preflight refuses a later collision before preparing source runtime",
+      "procedure": "tests/scripts/install-links.test.mjs: link lifecycle previews source runtime, verifies repeats and preserves target in isolated user scope; tests/scripts/install-links.test.mjs: link lifecycle previews source runtime, verifies repeats and preserves target in isolated project scope; tests/scripts/install-links.test.mjs: link lifecycle preserves unowned directory; tests/scripts/install-links.test.mjs: link lifecycle preserves changed target; tests/scripts/install-links.test.mjs: link lifecycle preserves replaced link; tests/scripts/install-links.test.mjs: link lifecycle preserves replacement directory; tests/scripts/install-links.test.mjs: link installation preserves an existing invalid runtime; tests/scripts/install-links.test.mjs: link installation preserves an existing valid runtime; tests/scripts/install-links.test.mjs: owned link removal preserves source with invalid manifest without validating the target package; tests/scripts/install-links.test.mjs: owned link removal preserves source with missing manifest without validating the target package; tests/scripts/install-links.test.mjs: all-host link preflight refuses a later collision before preparing source runtime",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/C25c.node26-lifecycle.txt"
     },
     {
       "id": "AC-73-link-recovery",
       "kind": "automated",
-      "procedure": "tests/scripts/install.test.mjs: failed link runtime never activates and retry preserves failed stage content; link lifecycle resumes after link-runtime/link-activate/link-unlink while preserving target content; interrupted link activation preserves a replacement entry and target; interrupted link runtime preserves a replaced preparation stage",
+      "procedure": "tests/scripts/install-links.test.mjs: interrupted link activation preserves a replacement entry and target; tests/scripts/install-links.test.mjs: failed link runtime never activates and retry preserves failed stage content; tests/scripts/install-links.test.mjs: interrupted link runtime preserves a replaced preparation stage; tests/scripts/install-links.test.mjs: link lifecycle resumes after link-runtime while preserving target content; tests/scripts/install-links.test.mjs: link lifecycle resumes after link-activate while preserving target content; tests/scripts/install-links.test.mjs: link lifecycle resumes after link-unlink while preserving target content",
       "status": "passed",
       "artifact": "tests/eval/results/tasks/C25c.node26-lifecycle.txt"
     },
