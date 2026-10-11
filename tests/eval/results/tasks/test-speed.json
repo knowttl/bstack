@@ -14,7 +14,7 @@
   "limitations": [
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "8aaab09cf16ef73c13f2dad9229385ff2940ef78",
+  "sourceRevision": "4ed858c8e08b5e977e71d4bbd03fa19c28d6530f",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -106,7 +106,7 @@
         {
           "path": "docs/implementation-plan.md",
           "executable": false,
-          "sha256": "c82ede83eea0bd72b2058dd53c992cb71fb19ec6d87e06609b9243fa6ad2cf69"
+          "sha256": "8a040605ada627ef607a5fa0d53ef19829318594fa8da45e677d9915b2da4c44"
         },
         {
           "path": "install/install.mjs",
@@ -2921,7 +2921,7 @@
         {
           "path": "tests/eval/results/tasks/test-speed.verification-plan.md",
           "executable": false,
-          "sha256": "a11d9cfa9eb0ead173603a1159a4801b6c954ab728e2422afb76d650ae4d3729"
+          "sha256": "44803c3b15eafa46a1da277a42d3f626c9a2911277b97ab8f31d865519ff9f9f"
         },
         {
           "path": "tests/eval/scenarios/scenarios.json",
@@ -4069,7 +4069,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "47c21ec1bbc544050dc16b578bc8ebb16adccafcb3a29b6bcacddcfa081c756e"
+      "sha256": "7102aa9e82394d6c3ff1409630ee135a00e08e74bc492351c1bbe15f03ada13e"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -4119,9 +4119,9 @@
       "topLevel": 2407,
       "suites": 0
     },
-    "durationMs": 1267070.137902,
-    "outputSha256": "d0441a09c5f2737e24a8c10a1ff0b895ec891759b9023d6415a578028e6cad07",
-    "eventsSha256": "f22503fc71a96342a40fef68d2ecf58a626b49a358e8ccfd388dc8ab483fe0d5",
+    "durationMs": 1318017.401671,
+    "outputSha256": "9d56681fa2703fd79509874e1a5842f7ebb11ff348ee2e34fdd6d35a8aacffcb",
+    "eventsSha256": "f4c340ab43e59a133bbc330da14e867cae150b19cbf3ea335283a38ba9ab893e",
     "eventsArtifact": "tests/eval/results/tasks/test-speed.events.jsonl"
   }
 }
