@@ -394,7 +394,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "research-main-typescript",
-        "artifacts": ["tests/eval/results/release/research-main-typescript-comparison.json", "tests/eval/results/release/research-main-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-05-38.869Z-74301d5b-83cc-4b39-8bb2-04e2389077f8/main-thread-trace.jsonl", "tests/eval/results/release/runs/2026-10-11T21-02-36.654Z-e0404627-bc0f-4181-9cc0-477bbce59e3e/main-thread-trace.jsonl"]
+        "artifacts": ["tests/eval/results/release/research-main-typescript-comparison.json", "tests/eval/results/release/research-main-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-53-25.944Z-2e1e59c5-9c82-4419-acb7-a63d64edfe39/main-thread-trace.jsonl", "tests/eval/results/release/runs/2026-10-11T21-53-22.949Z-567a3c83-460a-43f7-a82e-d77b63b37d8d/main-thread-trace.jsonl"]
       }
     },
     {
