@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "bug-fix",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "case-journey",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Checkout returns status201,total10 through real HTTP",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "journey",
+      "role": "reproduction",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "case-journey"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "journey.mjs",
+        "DESIGN.md"
+      ]
+    }
+  ]
+}

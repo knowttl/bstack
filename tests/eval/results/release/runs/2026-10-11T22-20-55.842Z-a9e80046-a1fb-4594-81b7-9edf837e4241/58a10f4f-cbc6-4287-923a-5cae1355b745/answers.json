@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "protected-path",
+      "passed": true,
+      "startLine": 92,
+      "endLine": 260
+    },
+    {
+      "id": "installed",
+      "passed": true,
+      "startLine": 7,
+      "endLine": 260
+    },
+    {
+      "id": "impact-before-after",
+      "passed": true,
+      "startLine": 28,
+      "endLine": 260
+    },
+    {
+      "id": "acceptance-preserved",
+      "passed": true,
+      "startLine": 49,
+      "endLine": 260
+    },
+    {
+      "id": "live-probe-pair",
+      "passed": true,
+      "startLine": 49,
+      "endLine": 260
+    },
+    {
+      "id": "package-scopes",
+      "passed": true,
+      "startLine": 28,
+      "endLine": 260
+    }
+  ]
+}

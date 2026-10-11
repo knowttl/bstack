@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "9e084f6d55cfec4e6d98f72d33db76bf1757baa82b9974e4fd7b5eb90f7bd026"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real loopback HTTP through public checkout returns status201,total10",
+      "userJourney": true
+    },
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "Public quote() continues to return 12.",
+      "outcome": "Public quote12 retained",
+      "userJourney": false
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "Public core consumes storage; native static boundaries and cycles pass",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout",
+        "quote",
+        "boundary"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**"
+      ]
+    }
+  ]
+}

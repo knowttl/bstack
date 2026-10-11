@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "planDigest": "a9ba98875e13da33985697e47aee8c9a8e2ddfa1d5fdfe9045110ea60df4b3bc",
+  "edits": [
+    {
+      "path": "docs/repo-audit.md",
+      "originalMatches": true,
+      "proposedMatches": true,
+      "proposedSha256": "6ca8bc8c44188e9500ec8361cc5e5f5a84741cb13e264936db2cb576af046df2"
+    },
+    {
+      "path": ".bstack/assessment.json",
+      "originalMatches": true,
+      "proposedMatches": true,
+      "proposedSha256": "b1db25670e907cc077ed9b03167c08b712da74208f05561a41c0596ddc4619ed"
+    }
+  ],
+  "citations": [
+    {
+      "path": "DESIGN.md",
+      "version": "base",
+      "matched": true,
+      "pointerSha256": "6809ef7cecb0b7456f417b28f8addfb01610202a68c6b58f87492b75cf07c49f"
+    },
+    {
+      "path": "DESIGN.md",
+      "version": "current",
+      "matched": true,
+      "pointerSha256": "93e50290905aa6cf2bcf1ff75fdd9fbafc1f66c828ba0947626fc42296fa529f"
+    },
+    {
+      "path": "glossary.md",
+      "version": "base",
+      "matched": true,
+      "pointerSha256": "3087ff500ae8dad819ebf450e6f224d32ecccd8b46a15ff122b4857a2a57bed9"
+    },
+    {
+      "path": "glossary.md",
+      "version": "current",
+      "matched": true,
+      "pointerSha256": "9fed833ac205f0bd14afc0c3faa458693d446a2f944829d814f96e0a4f7c070f"
+    },
+    {
+      "path": "AGENTS.md",
+      "version": "base",
+      "matched": true,
+      "pointerSha256": "91a363004ef24d7c6d71767fd9a3617feafab9da5e9d8e234a3861df10f27476"
+    },
+    {
+      "path": "AGENTS.md",
+      "version": "current",
+      "matched": true,
+      "pointerSha256": "db6404f46c87114d8ba1d85ccd57e6e8d6be208f4ae13b6d6f0b213197ebcc58"
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "version": "current",
+      "matched": true,
+      "pointerSha256": "c31aa3be1dfb1d5e68ce7d78030033bf311d578cc97e8c6f2cc8fd6f1fc961a1"
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "version": "current",
+      "matched": true,
+      "pointerSha256": "c31aa3be1dfb1d5e68ce7d78030033bf311d578cc97e8c6f2cc8fd6f1fc961a1"
+    }
+  ],
+  "checks": [
+    {
+      "name": "shop-evidence-apply-preview.json",
+      "status": "passed",
+      "sha256": "6b9f65717f0e010f2824b56c421ab5747ba729e9739a598d235d68678421a555"
+    },
+    {
+      "name": "shop-portable-reviewed.json",
+      "status": "passed",
+      "sha256": "bc74d74458465d9024922df9d74935dd101d78e27a582ddc637e398678238ff2",
+      "source": "df0289b0424e4920a94ae80a38aa1141a1a11cda"
+    },
+    {
+      "name": "shop-portable-clean-preview-checker.json",
+      "status": "passed",
+      "sha256": "ffa6e1a0b2ad93ef18fadce5084a6f4d83c7f204c62394cf5c56d8ae07fe4408",
+      "source": "6fcf8875895d49bf29ce83fc45f1ca35d12fc6d4",
+      "phase": "result-validation"
+    }
+  ],
+  "source": "df0289b0424e4920a94ae80a38aa1141a1a11cda",
+  "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "reviewedPaths": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".bstack/schemas/check-plan.json",
+    ".bstack/schemas/evidence.schema.json",
+    ".bstack/schemas/impact-assessment.json",
+    ".bstack/schemas/project.schema.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "docs/repo-audit.md",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/web/alias.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts"
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "path": "DESIGN.md",
+      "result": "updated",
+      "changedPaths": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        ".bstack/schemas/check-plan.json",
+        ".bstack/schemas/evidence.schema.json",
+        ".bstack/schemas/impact-assessment.json",
+        ".bstack/schemas/project.schema.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "docs/repo-audit.md",
+        "glossary.md",
+        "journey.mjs",
+        "package.json",
+        "packages/core/b.ts",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/alias.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ],
+      "reason": "Approved storage prohibition and total10 are preserved. The endpoint is corrected to10 without changing assertion10; quote12 and quantity formula remain. Core now owns order storage and exports servicePrice/postOrder; cycle is removed. Added completion and portable-impact guidance records the selected native checks and historical snapshot policy. The uncommitted receipt note is preserved exactly and receipt wording remains deferred."
+    },
+    {
+      "path": "glossary.md",
+      "result": "updated",
+      "changedPaths": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        ".bstack/schemas/check-plan.json",
+        ".bstack/schemas/evidence.schema.json",
+        ".bstack/schemas/impact-assessment.json",
+        ".bstack/schemas/project.schema.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "docs/repo-audit.md",
+        "glossary.md",
+        "journey.mjs",
+        "package.json",
+        "packages/core/b.ts",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/alias.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ],
+      "reason": "Purchase remains Order. The selected presentation meaning is renamed Panel order, eliminating two incompatible Order definitions. Code paths and public exports do not gain a new business meaning."
+    },
+    {
+      "path": "AGENTS.md",
+      "result": "updated",
+      "changedPaths": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        ".bstack/schemas/check-plan.json",
+        ".bstack/schemas/evidence.schema.json",
+        ".bstack/schemas/impact-assessment.json",
+        ".bstack/schemas/project.schema.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "docs/repo-audit.md",
+        "glossary.md",
+        "journey.mjs",
+        "package.json",
+        "packages/core/b.ts",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/alias.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ],
+      "reason": "Existing approved design/public-interface instruction becomes maintained pointers to DESIGN.md and glossary.md, native aggregate command and contract. Distinct CLAUDE.md import stub is retained; no instruction-loading migration or hosted delivery is implied."
+    }
+  ],
+  "foundationFinding": "F-006",
+  "provenance": "Scripted fixture-author approval of the combined two-file portable-assessment exact diff after independent payload, citation, foundation and preview-checker review. Combined plan supersedes snapshot-only question; initial selected historical record is created unchanged, then preserved."
+}

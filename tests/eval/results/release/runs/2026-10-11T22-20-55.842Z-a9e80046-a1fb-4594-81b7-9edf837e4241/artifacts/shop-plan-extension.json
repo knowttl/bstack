@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "representative-extension",
+  "writePaths": [
+    "packages/web/public.ts"
+  ],
+  "contracts": [
+    {
+      "id": "public-core",
+      "files": [
+        "packages/core/index.ts"
+      ]
+    }
+  ]
+}

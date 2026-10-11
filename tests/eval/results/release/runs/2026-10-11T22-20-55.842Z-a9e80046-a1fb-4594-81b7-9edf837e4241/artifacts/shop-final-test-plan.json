@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "9e084f6d55cfec4e6d98f72d33db76bf1757baa82b9974e4fd7b5eb90f7bd026"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "case-test",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Native test check is preserved and passes",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "test",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "case-test"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "unit.test.mjs",
+        "DESIGN.md"
+      ]
+    }
+  ]
+}
