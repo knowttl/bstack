@@ -22,7 +22,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "ambiguous-idea",
-        "artifacts": ["tests/eval/results/release/ambiguous-idea-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-55-12.888Z-50ccc94b-9401-4e0f-a1eb-b6c3ecbefc15/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/ambiguous-idea-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-50-32.828Z-bff688d4-8b26-45a4-90b8-33437a367795/conversation.txt"]
       }
     },
     {
@@ -70,7 +70,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "clear-goals",
-        "artifacts": ["tests/eval/results/release/clear-goals-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-44-18.073Z-769b1d74-9b4b-421a-9613-1e6d5c26defd/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/clear-goals-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-47-33.222Z-f53b4528-a439-4e62-818d-910c15edc66b/conversation.txt"]
       }
     },
     {
@@ -173,8 +173,10 @@
       "criterionSource": "docs/design.md#AC-15",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A selected move into CODING_STANDARDS.md replaces the old rule with a link and preserves behaviour."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "selected-rule-relocation",
+        "artifacts": ["tests/eval/results/release/selected-rule-relocation-comparison.json", "tests/eval/results/release/selected-rule-relocation.md"]
       }
     },
     {
@@ -428,7 +430,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "clear-goals",
-        "artifacts": ["tests/eval/results/release/clear-goals-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-44-18.073Z-769b1d74-9b4b-421a-9613-1e6d5c26defd/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/clear-goals-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-47-33.222Z-f53b4528-a439-4e62-818d-910c15edc66b/conversation.txt"]
       }
     },
     {

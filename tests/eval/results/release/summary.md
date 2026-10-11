@@ -5,6 +5,9 @@ The [targeted-question repair](existing-repo-question-repair.md) resolves the hi
 The completed [existing-vision comparison](existing-vision-delta-comparison.json) passes its candidate-delta rubric in both modes while keeping missing board approval blocked.
 The skill instruction change makes the earlier with-skill captures below historical observations that require refresh before final selection.
 The complete acceptance validator, all-case coverage and scenario comparisons are not yet complete.
+AC-15 passes the new [selected relocation comparison](selected-rule-relocation-comparison.json), retaining the baseline's passing result.
+The [execution report](selected-rule-relocation.md) links the exact approved preview, protected apply, original and final sources, native behavior checks and independent one-authority verification.
+The [settled-package refresh](settled-package-refresh.md) retains current passing AC-2, AC-6 and AC-38 captures against their existing baselines.
 AC-57 and AC-68 now pass the [final container comparison](scope-and-prerequisites-comparison.json), retaining both checks that already passed in the approved baseline.
 The [with-skill conversation](runs/2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc/conversation.txt) asks the unresolved scope question, selects no write path, records the exact missing parent and leaves dependent work blocked.
 [Independent verification](scope-and-prerequisites-container-verification.json) confirms clean project bytes, a real shallow checkout, failed exact-parent resolution, matched baseline inputs, fourteen permitted fresh host preflights and container/login cleanup.
