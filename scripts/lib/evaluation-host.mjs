@@ -129,7 +129,7 @@ export async function isolate(record) {
   await chmod(home, 0o700)
   await mkdir(join(home, adapter.isolation.stateDirectory), { mode: 0o700 })
   await mkdir(join(home, 'cache'))
-  await mkdir(join(home, 'tmp'))
+  await mkdir(join(home, 'tmp'), { mode: 0o700 })
   const discoveryPaths = adapter.isolation.discoveryPaths.map(path => join(home, path))
   // Non-Git idea fixtures may cause host discovery to walk to the filesystem root.
   let parent = await realpath(fixture.path)
