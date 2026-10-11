@@ -38,7 +38,7 @@ Deliver the scripted answers when the agent asks the corresponding questions.
 Do not treat a one-shot prompt as delivery of later answers.
 Ordinary with-skill requests require the host's explicit command through `--invocation`.
 Without-skill and implicit-invocation requests reject that option.
-The implicit request is exactly `audit this repo`.
+Implicit requests use the [scenario registry](../tests/eval/scenarios/scenarios.json)'s outcome request without a skill invocation.
 Manual runs without an adapter do not stage the skill or verify discovery paths.
 They retain unverified isolation even after human scoring.
 `--manual` and `--adapter` cannot be combined; adapter starts capture the opening turn automatically.
