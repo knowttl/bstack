@@ -51,10 +51,10 @@ AC-74 remains Linux-only under R27; these sessions make no Windows or macOS clai
 | `explicit-fresh/host.json` | `87557136be6bd65767907430bbb00ed6313fb1a1c64b0c7f576aabd0e9acf46f` |
 | `explicit-fresh/installer.json` | `755b003d6064b3540b1a3a90f18863ac3cb3cfbf41d4983d8a6ba79f332ffc3d` |
 
-The second successful full-suite capture in `.cache/full-suite.json` tested corrected source revision `29c6e5bfbcddea02b8cd34b29eba2afc2d375b02`.
-It predates publication of this fresh pair, which changes tracked evidence inputs outside the validator's post-capture documentation allowance.
-Final attachment must therefore use a full-suite capture on the published inputs, after committing documentation and refreshing the C26 task-specific artifact selections.
-The outer Test phase owns that capture and the last `node scripts/task-evidence.mjs .cache/full-suite.json C26` attachment; T4.2 remains unchecked until its final bindings validate.
+The earlier successful full-suite capture tested corrected source revision `29c6e5bfbcddea02b8cd34b29eba2afc2d375b02` before publication of this fresh pair.
+The [C26 task record](../tasks/C26.json) owns the final settled-source revision, full-suite counts and published-input binding accepted by the unchanged validator.
+Firstmate authorized preserving all pipeline repairs, one settled-source Node 24 full-suite capture outside the pipeline and validator attachment LAST, followed by one Review-bearing publication with Test, Document and CI skipped.
+Any new Review finding stops that publication for firstmate's decision rather than invalidating the settled proof through automatic fixes.
 
 ## Historical entry-guard checkpoint
 
