@@ -85,11 +85,20 @@ The resume command explicitly sets `sandbox_mode="danger-full-access"` instead o
 Every evaluation agent turn now runs in a disposable Docker container, providing a separate filesystem from the operator's host.
 Build its pinned toolchain with `docker build --tag bstack-eval-toolchain:node24-codex0.162.1 --file tests/eval/container/Dockerfile tests/eval/container`.
 The recipe pins the Node base image digest, Node 24.17.0, npm 11.13.0, Git 2.54.0 and Codex CLI 0.162.1.
+It includes uv 0.12.22 from a pinned image digest, lavish-axi 0.1.78, chrome-devtools-axi 0.1.34, chrome-devtools-mcp 1.10.1 and Chromium for the Python and browser procedures.
+Python fixtures use image-installed CPython 3.12.15 and their locked Ruff 0.14.0 dependency, cached during the image build.
+Before their opening turn, the runner recreates the ignored virtual environment with `uv sync --locked --offline --python 3.12.15` inside the same two mounts and records that result.
+This replaces interpreter links created by host fixture setup with image-local runtime links, without changing project files or downloading dependencies during the agent turn.
+Git is also linked into the login shell's ordinary executable path.
 Each `bstack-eval-*` container mounts only the disposable fixture and isolated home, both read-write at their original paths; it has no Docker socket, other host mounts, added capabilities, privileged mode, host networking or published ports.
 The default bridge permits outbound model API traffic without exposing the host network namespace.
 The runner inspects the created container before starting the agent and binds its immutable image ID, recipe hash, mounts and execution settings into `execution` in the run record.
-It removes the exact named container after each turn, including client timeout or failure, and requires at least 20 GiB free disk before starting.
+It removes the exact named container after each turn, including client timeout or failure, and requires at least 20 GB free disk before starting.
 The existing throwaway-login procedure copies only the login file into the isolated home for the turn and deletes it in failure cleanup as well as success.
+Before every Node suite, the agent runs `node "$BSTACK_EVAL_PREFLIGHT"` and requires a zero exit with `source: "host"` and `permitted: true`.
+The runner supplies that repository-owned client in the isolated home and serves fresh aggregate host memory, disk, load and Node-suite counts over a pathname socket in the same mounted home.
+This exposes no host filesystem or process inventory, accepts no commands or paths, records each returned preflight in the run and closes the socket after the turn.
+Container-local process counts cannot replace this host-wide check.
 
 Every adapter turn also receives an explicit filesystem scope: the disposable fixture and its isolated home only.
 The isolated home's `tmp` directory is created with mode `0700` and owns scratch files, clones and reports through `TMPDIR`, `TMP` and `TEMP`.

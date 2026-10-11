@@ -10,6 +10,7 @@ import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fi
 import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 import { scopeMessage, checkScope } from './evaluation-scope.mjs'
 import { containerTurn } from './evaluation-container.mjs'
+import { openHostPreflight } from './evaluation-resources.mjs'
 
 export function redactEvidence(content, record) {
   const username = userInfo().username
@@ -182,8 +183,10 @@ export async function hostTurn(record, message) {
   const template = record.sessionId ? record.adapter.invocation.resumeArgs : record.adapter.args
   const args = template.map(arg => arg === '{message}' ? scopeMessage(record, message) : arg === '{sessionId}' ? record.sessionId : arg)
   let result
+  let closePreflight
   const login = join(record.isolation.state, 'auth.json')
   try {
+    closePreflight = await openHostPreflight(record, env)
     if (record.adapter.isolation.authentication === 'throwaway-codex-login') {
       await copyFile(join(process.env.CODEX_HOME ?? join(homedir(), '.codex'), 'auth.json'), login, constants.COPYFILE_EXCL)
       await chmod(login, 0o600)
@@ -191,8 +194,11 @@ export async function hostTurn(record, message) {
     }
     result = await containerTurn(record, args, env)
   } finally {
-    // The login copy exists only during a host turn, including its timeout cleanup.
-    if (record.adapter.isolation.authentication === 'throwaway-codex-login') await rm(login, { force: true })
+    try { await closePreflight?.() }
+    finally {
+      // The login copy exists only during a host turn, including its timeout cleanup.
+      if (record.adapter.isolation.authentication === 'throwaway-codex-login') await rm(login, { force: true })
+    }
   }
   record.tools.agent = result.toolVersion.stdout.trim()
   const turn = { message, result, sessionId: null }
