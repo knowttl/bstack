@@ -300,7 +300,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
-        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/verification-limitations-grading.md", "tests/eval/results/release/runs/2026-10-11T18-46-23.409Z-5edb3b65-07d9-41ec-8f24-8bfdfe1a473d/score-correction.json", "tests/eval/results/release/runs/2026-10-11T18-46-25.460Z-a48fe06c-ceb3-4596-b4f8-ab47a991014b/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/conversation.txt", "tests/eval/results/release/runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/artifacts/units.json"]
       }
     },
     {
@@ -332,7 +332,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
-        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/runs/2026-10-11T18-46-25.460Z-a48fe06c-ceb3-4596-b4f8-ab47a991014b/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/conversation.txt"]
       }
     },
     {
@@ -344,7 +344,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
-        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/runs/2026-10-11T18-46-25.460Z-a48fe06c-ceb3-4596-b4f8-ab47a991014b/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/verification-limitations-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-57-42.359Z-e8df5445-572c-4a9d-b9f6-4a2319df0c44/conversation.txt"]
       }
     },
     {

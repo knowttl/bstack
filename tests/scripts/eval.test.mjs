@@ -135,7 +135,26 @@ for (const [name, event, expected] of [
   ['assistant claim without execution', { type: 'item.completed', item: { type: 'agent_message', text: 'Both units passed.' } }, 2],
   ['unrun command', { type: 'item.started', item: { type: 'command_execution', command: 'node --test unit.test.mjs' } }, 2],
   ['failed suite', { type: 'item.completed', item: { type: 'command_execution', command: 'node --test unit.test.mjs', aggregated_output: '# pass 1\n# fail 1\n', exit_code: 1 } }, 2],
-  ['captured passing suite', { type: 'item.completed', item: { type: 'command_execution', command: 'node --test unit.test.mjs', aggregated_output: '# pass 2\n# fail 0\n', exit_code: 0 } }, 0]
+  ['captured passing suite', { type: 'item.completed', item: { type: 'command_execution', command: 'node --test unit.test.mjs', aggregated_output: '# pass 2\n# fail 0\n', exit_code: 0 } }, 0],
+  ['wrapped passing units with a preflight and failed journey', { type: 'item.completed', item: {
+    type: 'command_execution', command: 'python3 gate.py run-checks', exit_code: 1,
+    aggregated_output: '{"source":"host","permitted":true}\n' + JSON.stringify({ command: 'run-checks', status: 'failed',
+      data: { checks: [{ command: { executable: 'python3', args: ['leaf.py', 'units'] }, status: 'passed', satisfied: true,
+        execution: { status: 'passed', exitCode: 0, stdout: '# pass 2\n# fail 0\n',
+          toolVersion: { status: 'passed', stdout: process.version + '\n' } } }] } }) + '\nexit=1\n'
+  } }, 0],
+  ['wrapped units with a different native version', { type: 'item.completed', item: {
+    type: 'command_execution', command: 'python3 gate.py run-checks', exit_code: 0,
+    aggregated_output: JSON.stringify({ command: 'run-checks', data: { checks: [{ command: { executable: 'python3', args: ['leaf.py', 'units'] },
+      status: 'passed', satisfied: true, execution: { status: 'passed', exitCode: 0, stdout: '# pass 2\n# fail 0\n',
+        toolVersion: { status: 'passed', stdout: 'v0.0.0\n' } } }] } })
+  } }, 2],
+  ['wrapped truncated units', { type: 'item.completed', item: {
+    type: 'command_execution', command: 'python3 gate.py run-checks', exit_code: 0,
+    aggregated_output: JSON.stringify({ command: 'run-checks', data: { checks: [{ command: { executable: 'python3', args: ['leaf.py', 'units'] },
+      status: 'passed', satisfied: true, execution: { status: 'passed', exitCode: 0, stdout: '# pass 2\n# fail 0\n', outputTruncated: true,
+        toolVersion: { status: 'passed', stdout: process.version + '\n' } } }] } })
+  } }, 2]
 ]) {
   test(`AC-29 scoring requires actual passing unit evidence: ${name}`, async t => {
     const directory = await temporary(t)

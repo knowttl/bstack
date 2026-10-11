@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 1,
+  "runId": "2086fef4-4b41-46a2-86dc-68e37b76f4f1",
+  "name": "checkout-health",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]"
+  },
+  "spec": {
+    "schemaVersion": 1,
+    "endpoint": "http://127.0.0.1:1/health",
+    "environment": [],
+    "sideEffects": false,
+    "assumption": "The dependent service is reachable and its health endpoint returns a successful HTTP response.",
+    "inputScopes": [
+      "DESIGN.md",
+      "packages/**"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 5000
+  },
+  "command": {
+    "executable": "curl",
+    "args": [
+      "--noproxy",
+      "*",
+      "--request",
+      "GET",
+      "--fail",
+      "--show-error",
+      "--silent",
+      "--connect-timeout",
+      "5",
+      "--max-time",
+      "5",
+      "http://127.0.0.1:1/health"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 5000
+  },
+  "environment": {},
+  "specPath": "[isolated-home][scratch-path]",
+  "phase": "after",
+  "callDigest": "6b3d6f6bedf7d2d4f31d342a05dba76b58132bbd08592d6927a3abcfc7b2bf3b",
+  "approval": null,
+  "startedAt": "2026-10-11T20:59:07.238Z",
+  "completedAt": "2026-10-11T20:59:07.260Z",
+  "originalState": {
+    "fingerprint": "9f2283e50883cc8498ec26a1d5f425e02ac036e3158f253b234517caa1907013",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "files": [
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+        },
+        {
+          "path": "packages/core/a.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb"
+        },
+        {
+          "path": "packages/core/b.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8"
+        },
+        {
+          "path": "packages/core/index.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4"
+        },
+        {
+          "path": "packages/core/internal/database.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+        },
+        {
+          "path": "packages/core/package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+        },
+        {
+          "path": "packages/web/alias.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c"
+        },
+        {
+          "path": "packages/web/package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326"
+        },
+        {
+          "path": "packages/web/public.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+        },
+        {
+          "path": "packages/web/routes.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769"
+        },
+        {
+          "path": "packages/web/ui.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+        }
+      ],
+      "inputs": {
+        "spec": {
+          "schemaVersion": 1,
+          "endpoint": "http://127.0.0.1:1/health",
+          "environment": [],
+          "sideEffects": false,
+          "assumption": "The dependent service is reachable and its health endpoint returns a successful HTTP response.",
+          "inputScopes": [
+            "DESIGN.md",
+            "packages/**"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ],
+          "timeoutMs": 5000
+        },
+        "callDigest": "6b3d6f6bedf7d2d4f31d342a05dba76b58132bbd08592d6927a3abcfc7b2bf3b",
+        "specContentHash": "38de4d5345de933c6300c0fc8e48025f0decec46429866b97b0efef0bfcaa4cf"
+      }
+    }
+  },
+  "finalState": {
+    "fingerprint": "9f2283e50883cc8498ec26a1d5f425e02ac036e3158f253b234517caa1907013",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "files": [
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+        },
+        {
+          "path": "packages/core/a.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb"
+        },
+        {
+          "path": "packages/core/b.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8"
+        },
+        {
+          "path": "packages/core/index.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4"
+        },
+        {
+          "path": "packages/core/internal/database.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+        },
+        {
+          "path": "packages/core/package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+        },
+        {
+          "path": "packages/web/alias.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c"
+        },
+        {
+          "path": "packages/web/package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326"
+        },
+        {
+          "path": "packages/web/public.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+        },
+        {
+          "path": "packages/web/routes.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769"
+        },
+        {
+          "path": "packages/web/ui.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+        }
+      ],
+      "inputs": {
+        "spec": {
+          "schemaVersion": 1,
+          "endpoint": "http://127.0.0.1:1/health",
+          "environment": [],
+          "sideEffects": false,
+          "assumption": "The dependent service is reachable and its health endpoint returns a successful HTTP response.",
+          "inputScopes": [
+            "DESIGN.md",
+            "packages/**"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ],
+          "timeoutMs": 5000
+        },
+        "callDigest": "6b3d6f6bedf7d2d4f31d342a05dba76b58132bbd08592d6927a3abcfc7b2bf3b",
+        "specContentHash": "38de4d5345de933c6300c0fc8e48025f0decec46429866b97b0efef0bfcaa4cf"
+      }
+    }
+  },
+  "execution": {
+    "status": "blocked",
+    "stdout": "",
+    "stderr": "",
+    "durationMs": 5.203768999999994,
+    "exitCode": -2,
+    "signal": null,
+    "timedOut": false,
+    "cancelled": false,
+    "outputTruncated": false,
+    "error": "spawn curl ENOENT",
+    "toolVersion": {
+      "status": "blocked",
+      "stdout": "",
+      "stderr": "",
+      "durationMs": 5.203768999999994,
+      "exitCode": -2,
+      "signal": null,
+      "timedOut": false,
+      "cancelled": false,
+      "outputTruncated": false,
+      "error": "spawn curl ENOENT"
+    }
+  },
+  "status": "unverified",
+  "reason": "spawn curl ENOENT"
+}
