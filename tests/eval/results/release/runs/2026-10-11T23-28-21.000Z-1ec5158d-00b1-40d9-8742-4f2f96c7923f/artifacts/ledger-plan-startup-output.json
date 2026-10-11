@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "startup-output",
+  "writePaths": [
+    "startup.py",
+    "test_ledger.py"
+  ],
+  "contracts": [
+    {
+      "id": "ledger-public",
+      "files": [
+        "ledger/__init__.py",
+        "ledger/book.py"
+      ]
+    }
+  ]
+}

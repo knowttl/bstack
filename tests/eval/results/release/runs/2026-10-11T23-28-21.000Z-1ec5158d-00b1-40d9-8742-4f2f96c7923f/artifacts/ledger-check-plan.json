@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "standards",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "public",
+      "sourceId": "standards",
+      "pointer": "External modules use the public ledger package.",
+      "outcome": "External callers use the public ledger package.",
+      "userJourney": true
+    },
+    {
+      "id": "balanced",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Ledger owns entries and balance calculations and preserves balanced postings. Supplemental observed opening/startup journey remains compatible.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "unit",
+      "role": "outcome",
+      "command": {
+        "executable": "python3",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "balanced"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "*.py",
+        "ledger/**"
+      ]
+    },
+    {
+      "id": "boundary",
+      "role": "outcome",
+      "command": {
+        "executable": "python3",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "public"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "*.py",
+        "ledger/**"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "outcome",
+      "command": {
+        "executable": "python3",
+        "args": [
+          "-B",
+          "[isolated-home][scratch-path]"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "balanced"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "*.py",
+        "ledger/**"
+      ]
+    }
+  ]
+}
