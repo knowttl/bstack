@@ -1,0 +1,124 @@
+{
+  "status": "passed",
+  "base": "9afd7f21a55330013440eaef073a0c6e10e9eb80",
+  "implementation": "1a78db5d105341f91a41701a101302df2af16cef",
+  "head": "422c07b21bcde3f2da59c827f0530f8b548d2d7a",
+  "approvedExample": "packages/web/public.ts",
+  "interface": "quote(quantity = 1)",
+  "checkoutInterface": "checkout(url, quantity = 1)",
+  "preservedUserNotes": [
+    "User note: receipt wording remains a future owner decision.",
+    "User note: export remains outside this change."
+  ],
+  "checks": [
+    "types",
+    "units",
+    "public-core boundaries",
+    "acyclic dependencies",
+    "real loopback HTTP journey",
+    "standalone current and previous policy locally and in clean clone"
+  ],
+  "cleanRoot": "[scratch-path]",
+  "isolatedHome": "[scratch-path]",
+  "isolatedCache": "[scratch-path]",
+  "cleanWorktrees": true,
+  "review": "Every implementation path and authoritative affected document reviewed in .bstack/assessment.json. Assessment itself reviewed as portable source-bound metadata in the separate commit. docs/repo-audit.md remains a historical snapshot, unchanged. Markdown inline code, links and quoted authorization reviewed as source; automatic checker renderer limits retained. No pricing policy or private imports added. Actual HTTP evidence is local fixture only; invalid quantity behavior and dynamic loading remain outside selected acceptance/check coverage.",
+  "resourceAndJourneyEvidence": [
+    {
+      "location": "local",
+      "record": "{\"availableMemoryGB\": 20.13, \"freeDiskGB\": 30.12, \"load\": 5.13134765625, \"hostNodeSuitesIncludingProposed\": 1}"
+    },
+    {
+      "location": "local",
+      "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+    },
+    {
+      "location": "local",
+      "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+    },
+    {
+      "location": "local",
+      "record": "{\"availableMemoryGB\": 20.13, \"freeDiskGB\": 30.12, \"load\": 5.13134765625, \"hostNodeSuitesIncludingProposed\": 1}"
+    },
+    {
+      "location": "local",
+      "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+    },
+    {
+      "location": "local",
+      "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+    },
+    {
+      "location": "local",
+      "record": "{\"availableMemoryGB\": 20.13, \"freeDiskGB\": 30.12, \"load\": 5.13134765625, \"hostNodeSuitesIncludingProposed\": 1}"
+    },
+    {
+      "location": "local",
+      "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+    },
+    {
+      "location": "local",
+      "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+    },
+    {
+      "location": "local",
+      "record": "{\"availableMemoryGB\": 20.13, \"freeDiskGB\": 30.12, \"load\": 5.13134765625, \"hostNodeSuitesIncludingProposed\": 1}"
+    },
+    {
+      "location": "local",
+      "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+    },
+    {
+      "location": "local",
+      "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"availableMemoryGB\": 20.11, \"freeDiskGB\": 30.08, \"load\": 4.60888671875, \"hostNodeSuitesIncludingProposed\": 1}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"availableMemoryGB\": 20.11, \"freeDiskGB\": 30.08, \"load\": 4.60888671875, \"hostNodeSuitesIncludingProposed\": 1}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"availableMemoryGB\": 20.11, \"freeDiskGB\": 30.08, \"load\": 4.60888671875, \"hostNodeSuitesIncludingProposed\": 1}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"availableMemoryGB\": 20.11, \"freeDiskGB\": 30.08, \"load\": 4.60888671875, \"hostNodeSuitesIncludingProposed\": 1}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+    },
+    {
+      "location": "clean",
+      "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+    }
+  ]
+}

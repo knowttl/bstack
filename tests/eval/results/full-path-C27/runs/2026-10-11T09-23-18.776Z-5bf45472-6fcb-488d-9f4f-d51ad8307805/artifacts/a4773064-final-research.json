@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API workspace",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        "CLAUDE.md"
+      ],
+      "findings": "Approved DESIGN.md retains UI/storage separation and checkout total 10, documents public quote 12, final-input evidence, owned maintenance and historical snapshot policy. glossary.md separates Order from Panel order; CLAUDE.md import stub is retained.",
+      "limitations": [
+        "No wider approved product intent documented; no naming migration selected."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "659f50a571546c2f99145956746d74f4967b35085791d84a1dc03b189a5614fc"
+          }
+        },
+        {
+          "location": "DESIGN.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "3c84e7a5dd2d0a7454b08817641d5adf806a705f64a3861f5f036f09db6f71f3"
+          }
+        },
+        {
+          "location": "glossary.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/public.ts",
+        "packages/web/alias.ts",
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "findings": "Web consumers now use core/index.ts. Core exports price and servicePrice; b returns price and a delegates to b, with no cycle. Native valid controls preserve public web imports and permitted core-owned internals. No business discount introduced.",
+      "limitations": [
+        "No observed usage of the cycle."
+      ],
+      "files": [
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82"
+          }
+        },
+        {
+          "location": "packages/core/internal/database.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "d2f7ebf1d59d4059fa75ac71348de81d7aebda282e642305f4b3c43aeea1bf2c"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8"
+          }
+        },
+        {
+          "location": "packages/web/public.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "c0770fe9f064e5731cc884e570f625766dc965766bf11646bdb3aed012cfcd90"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e643c78cec79bba9faa93c39fb78e056f39ed1fd7ce6095d642c5bd6fbd3bd4d"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "package.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "findings": "Maintained check executes types, two units, boundaries and real local HTTP journey. All final captures pass; deliberate private, alias, re-export and cycle violations and endpoint-12 defect fail as expected. Standalone checker passed freshly on current committed working checkout and isolated different-root clean clone.",
+      "limitations": [
+        "Starting executions captured separately. Native boundary walker handles static top-level imports/re-exports, not dynamic imports."
+      ],
+      "files": [
+        {
+          "location": "package.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "0f0f74d494ef41a0b0104ce393316742ef9aa6e9f9bf5ffbf53c06c07f7f0b9a"
+          }
+        },
+        {
+          "location": "tsconfig.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "boundaries.mjs:1",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        },
+        {
+          "location": "journey.mjs:1",
+          "state": {
+            "kind": "sha256",
+            "value": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605"
+          }
+        },
+        {
+          "location": "unit.test.mjs:1",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

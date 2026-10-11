@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "runId": "2a5dc228dfa560326ee31b52c8be27186c8f134bb673c38a7eaaa6d35f520eeb",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]/pantry-app",
+    "revision": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+  },
+  "planDigest": "2a5dc228dfa560326ee31b52c8be27186c8f134bb673c38a7eaaa6d35f520eeb",
+  "edits": [
+    {
+      "id": "portable-assessment",
+      "path": ".bstack/assessment.json",
+      "resolvedPath": "[fixture]/pantry-app/.bstack/assessment.json",
+      "originalHash": null,
+      "proposedHash": "8bcf9a0c1d31dc410032bf43ba5f0f796fa66e9bb174ae0423730aa930233838",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "journey",
+    "foundation-review",
+    "native-enforcement",
+    "maintenance-contract",
+    "fresh-standalone"
+  ]
+}

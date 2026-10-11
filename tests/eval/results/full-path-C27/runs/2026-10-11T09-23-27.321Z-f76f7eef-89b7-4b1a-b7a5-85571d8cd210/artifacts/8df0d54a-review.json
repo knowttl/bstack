@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "runId": "893d899a-d86b-41fe-8014-e3f1eece7858",
+  "draftRevision": "da3e7fd9dc4f92c92351dd71b65a6b2307f61b3df2bb245b8b1699097649294b",
+  "complete": true,
+  "verdicts": [
+    {
+      "id": "storage-recovery",
+      "verdict": "In vision",
+      "notes": "Supervisor-delegated fixture verdict, 2026-10-11: accept the resumed local-retry proposal. Retry saves the complete current session and clears the unsaved indicator only after success. Retain the prior three verdicts. Collect the resumed board's actual returned feedback, revise and present the exact saved vision for approval before creation."
+    }
+  ],
+  "previousBoard": "./bb4d8dd0-board.html",
+  "previousDraft": "./87ff9710-draft.md",
+  "reviewedDraftRevision": "48e6346ec0fb1e7f684fd7495cd3a0673e866be5e579768ae16702d3de348003"
+}

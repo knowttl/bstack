@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "mode": "subagents",
+  "host": "Codex shared-workspace read-only review",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "architecture",
+      "scope": [
+        "VISION.md",
+        "GLOSSARY.md",
+        "DESIGN.md",
+        "src/pantry.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "src/ui/render.ts",
+        "eslint.config.mjs",
+        "tests/journey.test.mjs",
+        ".bstack/project.json"
+      ],
+      "findings": "No material defect found. The reviewed source and maintenance claims preserve local household ownership, explicit needed choices, trimmed case-insensitive full-name reuse and distinct variants. Pantry saves the entire current session; failure leaves it usable and unsaved, and retry uses the same operation. Private storage writes browser localStorage. Rendering exposes save status and derives shopping rows from needed choices through the public interface. Native UI restrictions permit DOM rendering. The reviewed final capture at the implementation HEAD reports real Chrome Rice retention and the surrounding approved cases with no page errors; the reviewer did not independently run a suite. Assessment behavior descriptions agree with inspected source and captured results. Main thread opened every cited location.",
+      "limitations": [
+        "Review does not authenticate author approvals or prove fresh-clone completion.",
+        "Corrupt storage checks invalid JSON, not every schema branch.",
+        "Boundary coverage excludes arbitrary reflection, computed strings and browser-object aliases."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:25",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "GLOSSARY.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "DESIGN.md:31",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "src/pantry.ts:25",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "src/pantry.ts:39",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "src/private/storage.ts:32",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "src/ui/render.ts:12",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "src/ui/render.ts:32",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "eslint.config.mjs:5",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": "tests/journey.test.mjs:45",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        },
+        {
+          "location": ".bstack/project.json:65",
+          "state": {
+            "kind": "revision",
+            "value": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

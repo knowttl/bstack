@@ -1,0 +1,10 @@
+{
+  "root": "[scratch-path]",
+  "home": "[scratch-path]",
+  "cache": "[scratch-path]",
+  "npmCache": "[scratch-path]",
+  "revision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+  "workingTree": "",
+  "setupExit": 0,
+  "checkerExit": 0
+}

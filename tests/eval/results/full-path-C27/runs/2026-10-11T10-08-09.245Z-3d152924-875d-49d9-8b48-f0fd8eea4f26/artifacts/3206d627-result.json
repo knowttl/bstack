@@ -1,0 +1,167 @@
+{
+  "checkpoint": "final",
+  "revision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+  "comparisonBase": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+  "workingTree": "M DESIGN.md",
+  "selectedChanges": [],
+  "recommendation": "No project edits required for the export scope note.",
+  "preservedNotes": [
+    "User note: receipt wording remains a future owner decision.",
+    "User note: export remains outside this change."
+  ],
+  "reviewedPaths": [
+    "DESIGN.md",
+    "glossary.md",
+    "AGENTS.md",
+    ".bstack/project.json",
+    ".bstack/assessment.json"
+  ],
+  "checks": {
+    "docs-check": {
+      "status": "passed",
+      "problems": []
+    },
+    "collect": {
+      "status": "passed",
+      "problems": []
+    },
+    "native": {
+      "status": "passed",
+      "problems": []
+    },
+    "evidence-initial": {
+      "status": "blocked",
+      "problems": [
+        {
+          "code": "inventory-mismatch",
+          "message": "Assessment base does not match the complete live comparison.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "stale-review",
+          "message": "Substantive review inputs changed or have not been bound to the current fingerprint.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        }
+      ]
+    },
+    "docs-generated": {
+      "status": "passed",
+      "problems": []
+    },
+    "contract": {
+      "status": "passed",
+      "problems": []
+    },
+    "evidence-final": {
+      "status": "blocked",
+      "problems": [
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "stale-review",
+          "message": "Substantive review inputs changed or have not been bound to the current fingerprint.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        }
+      ]
+    },
+    "standalone-portable": {
+      "status": "blocked",
+      "problems": [
+        {
+          "code": "portable-source-mismatch",
+          "message": "Portable review must name the committed source; only its selected assessment may differ from HEAD.",
+          "fix": "Commit source changes and recollect portable review against the agreed base."
+        }
+      ]
+    },
+    "evidence-bound": {
+      "status": "blocked",
+      "problems": [
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        },
+        {
+          "code": "acceptance-decision-required",
+          "message": "Acceptance source DESIGN.md needs old case, approved new case, affected work and a separate approval citation.",
+          "fix": "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks."
+        }
+      ]
+    }
+  },
+  "nativeCoverage": [
+    "TypeScript types",
+    "quote 12",
+    "mocked checkout 201/10",
+    "static public-core/storage boundaries",
+    "acyclic imports and re-exports",
+    "real loopback HTTP checkout 201/10"
+  ],
+  "readiness": "Native checks passed; portable final readiness blocked.",
+  "limits": [
+    "Existing portable assessment names committed inputs and cannot cover the user edit without a later owner-controlled commit and recollection. No user work committed, erased or staged.",
+    "Installed evidence validator requires acceptance decision records for a changed acceptance-source file despite unchanged cases. No new approval was fabricated.",
+    "Different-root clean-checkout evidence for this uncommitted note is unavailable; a committed clone would omit it.",
+    "Dynamic imports and runtime loading are outside static boundary coverage; no production service or hosted CI was observed."
+  ],
+  "evidenceHashes": {
+    "docs-check.log": "a7fe500b92cba220283218e987a32583389b69644cf86c79a0bad87888c580ef",
+    "collect.log": "804d238bdb2cac5ab4922a2437d3662d8ea46c83065d844d785407f7fb1e69dc",
+    "native.log": "fee62895c6aa5ee74b53df48fb0a681c2700597ba6063d7aeb63b6a27891ce43",
+    "evidence-initial.log": "734d7b6149fa4a10dfbe9b322d1b208ce9f1d70796dc5c8a8c3efbee66815b68",
+    "docs-generated.log": "dfdd8eeda05fe220744b319df292cf872446326875c0684767e1fe7a349abc75",
+    "contract.log": "170f5c7ec3200d95c3b257c41fc3013e22f7461906a6edfd96f9cc83481adf4b",
+    "evidence-final.log": "fac623edbd2730b166361885c871808d3a00a06b0513e5c7bac3c964035d7378",
+    "standalone-portable.log": "a6423039da50db30356f6e986a6939da09f5d0b133cb1d07188aab5aef6becc2",
+    "evidence-bound.log": "2cfb7ef111d0cf68cfdb73e19129d377bd1c664f2cf3a27c62a636f02d233bc9"
+  }
+}

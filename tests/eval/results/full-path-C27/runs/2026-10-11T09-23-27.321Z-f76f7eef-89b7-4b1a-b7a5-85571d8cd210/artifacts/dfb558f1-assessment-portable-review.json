@@ -1,0 +1,911 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": null,
+  "base": {
+    "ref": "e9bf94b0be4619d9aacde2bc9621cc6321714b91",
+    "kind": "commit",
+    "objectId": "e9bf94b0be4619d9aacde2bc9621cc6321714b91"
+  },
+  "head": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/bin/bstack-check.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".gitignore"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "AGENTS.md"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "GLOSSARY.md"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "README.md"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "VISION.md"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "eslint.config.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "index.html"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "package-lock.json"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "package.json"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "scripts/resources.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "src/main.ts"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "src/pantry.ts"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "src/private/storage.ts"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "src/ui/render.ts"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "tests/journey.test.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "tsconfig.json"
+    }
+  ],
+  "paths": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".gitignore",
+    "AGENTS.md",
+    "DESIGN.md",
+    "GLOSSARY.md",
+    "README.md",
+    "VISION.md",
+    "eslint.config.mjs",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/resources.mjs",
+    "src/main.ts",
+    "src/pantry.ts",
+    "src/private/storage.ts",
+    "src/ui/render.ts",
+    "tests/journey.test.mjs",
+    "tsconfig.json"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": ".gitignore",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "GLOSSARY.md",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "README.md",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "VISION.md",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "eslint.config.mjs",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "index.html",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "package-lock.json",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "package.json",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "scripts/resources.mjs",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "src/main.ts",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "src/pantry.ts",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "src/private/storage.ts",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "src/ui/render.ts",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "tests/journey.test.mjs",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    },
+    {
+      "path": "tsconfig.json",
+      "scopeIds": [
+        "product"
+      ],
+      "documentIds": [
+        "vision",
+        "glossary",
+        "design",
+        "readme",
+        "guidance"
+      ],
+      "ruleIds": [
+        "household-outcomes",
+        "ui-storage-boundary",
+        "native-quality"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "vision",
+      "path": "VISION.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "The approved local household vision is added with an executable Rice journey, full-name reuse and honest local retry.",
+        "changedPaths": [
+          ".bstack/bin/bstack-check.mjs",
+          ".bstack/project.json",
+          ".gitignore",
+          "AGENTS.md",
+          "DESIGN.md",
+          "GLOSSARY.md",
+          "README.md",
+          "VISION.md",
+          "eslint.config.mjs",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "scripts/resources.mjs",
+          "src/main.ts",
+          "src/pantry.ts",
+          "src/private/storage.ts",
+          "src/ui/render.ts",
+          "tests/journey.test.mjs",
+          "tsconfig.json"
+        ],
+        "reason": "src/pantry.ts owns explicit needed choices and session save status, private storage saves locally, UI exposes unsaved changes and retry, and browser observations confirm Rice survives successful saving and reload. No accounts, stock tracking or remote services were added. The approved vision bytes are unchanged.",
+        "citations": [
+          {
+            "path": "VISION.md",
+            "pointer": "Version one serves a household locally in a browser, without an account, server or remote service.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "",
+          "after": "# Pantry list vision\n\n## Purpose and responsibility\nThis project helps a household remember its named pantry supplies and decide what to buy.\nIt owns a simple pantry record and a shopping list derived from the household's needed choices.\nVersion one serves a household locally in a browser, without an account, server or remote service.\nThese commitments come from the author's approved brief and intent interview, not project history.\n\n## Household control\nAn item represents one named pantry supply.\nThe household explicitly marks which items it needs to buy, independently of whether it already has any stock.\nThe shopping list contains those needed items.\nAccept changes that make those choices easy to record and understand.\nResist changes that substitute inferred inventory decisions for the household's choice.\nQuantities and stock levels are outside version one's responsibility.\n\n## Clear names\nNames let the household recognize and distinguish its supplies.\nTrim surrounding whitespace and compare full names case-insensitively to reuse an existing item rather than create an accidental duplicate.\nPreserve meaningful variants through their full supplied names, such as Brown rice and White rice.\nAccept changes that prevent accidental duplicate records without hiding meaningful differences between supplies.\nResist changes that force a product catalogue or complex classification before a household can add an item.\n\n## Honest retention\nThe household can add Rice, mark it needed, view it on the shopping list, reload and retain it after successful saving.\nLocal persistence must communicate whether changes are saved.\nWhen saving fails, keep the current session usable and visibly identify unsaved changes.\nOnly successful saving establishes reload retention; an unsaved session must never be presented as retained.\nOffer a local retry that saves the complete current session, including every current item and needed choice.\nClear the unsaved indicator only after saving succeeds, without sending household data to a remote service.\nAccept changes that keep the session useful and make saving problems visible.\nResist changes that promise retention when saving has failed.\n\n## Boundaries and contribution tests\nVersion one uses TypeScript and local storage in a local browser.\nAccounts, remote synchronization, servers, quantities and stock levels are non-goals.\nA change aligns when it strengthens the household's ability to record named supplies, choose what to buy and understand whether its choices will survive reload.\nResist a change when it expands those responsibilities or weakens explicit household control or honest persistence without a new author decision.\n"
+        }
+      }
+    },
+    {
+      "id": "glossary",
+      "path": "GLOSSARY.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "Confirmed item, needed, shopping-list, duplicate, variant and unsaved meanings are added and used by the implementation.",
+        "changedPaths": [
+          ".bstack/bin/bstack-check.mjs",
+          ".bstack/project.json",
+          ".gitignore",
+          "AGENTS.md",
+          "DESIGN.md",
+          "GLOSSARY.md",
+          "README.md",
+          "VISION.md",
+          "eslint.config.mjs",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "scripts/resources.mjs",
+          "src/main.ts",
+          "src/pantry.ts",
+          "src/private/storage.ts",
+          "src/ui/render.ts",
+          "tests/journey.test.mjs",
+          "tsconfig.json"
+        ],
+        "reason": "The domain trims and case-folds full supplied names, reuses Rice without merging Brown rice and White rice, and filters only explicit needed choices into the shopping list. Save failure remains a separate unsaved session status rather than a stock concept. Real browser controls exercised those distinctions.",
+        "citations": [
+          {
+            "path": "GLOSSARY.md",
+            "pointer": "- Needed: explicitly marked by the household as needing to buy, independent of stock.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "",
+          "after": "# Pantry vocabulary\n\n- Item: one named pantry supply.\n- Needed: explicitly marked by the household as needing to buy, independent of stock.\n- Shopping list: the items marked needed.\n- Duplicate name: names equal after trimming and case-insensitive comparison; reuse the existing item.\n- Variant: a supply distinguished by its full supplied name.\n- Unsaved changes: session changes whose saving failed; reload retention is not assured.\n"
+        }
+      }
+    },
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "The selected public pantry/storage/UI responsibilities, native boundary and first acceptance journey are added.",
+        "changedPaths": [
+          ".bstack/bin/bstack-check.mjs",
+          ".bstack/project.json",
+          ".gitignore",
+          "AGENTS.md",
+          "DESIGN.md",
+          "GLOSSARY.md",
+          "README.md",
+          "VISION.md",
+          "eslint.config.mjs",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "scripts/resources.mjs",
+          "src/main.ts",
+          "src/pantry.ts",
+          "src/private/storage.ts",
+          "src/ui/render.ts",
+          "tests/journey.test.mjs",
+          "tsconfig.json"
+        ],
+        "reason": "main.ts wires owners; pantry.ts owns identity and save/retry status; private/storage.ts validates local JSON; render.ts uses only the public pantry interface and DOM APIs. Native valid/violation controls prove scoped enforcement, and the browser journey observes the approved acceptance cases. The no-backend boundary and explicit reflection review limit remain visible.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "UI storage isolation protects honest retention: UI uses the public pantry interface, never private storage imports or direct localStorage access.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "",
+          "after": "# Pantry design\n\n## Responsibilities and data flow\n\nStartup in `src/main.ts` assembles the public pantry interface, private browser storage and rendering.\n`src/pantry.ts` owns item identity, needed choices, session state and save/retry status.\n`src/private/storage.ts` owns the local key, JSON validation and the browser storage API.\n`src/ui/render.ts` renders snapshots and calls the public pantry interface; rendering can use browser DOM APIs.\nThe direction is startup to owners, UI to the public pantry contract, and storage to its public types.\nNo aliases, private re-exports or dynamic dependencies are supported.\nChanging the save representation stays in storage; changing labels stays in UI while public contracts hold.\nA bundler or UI framework is unnecessary for this small ES-module app; TypeScript emits browser modules with explicit `.js` imports.\n\n## Acceptance\n\nAdd Rice, mark it needed, view Rice on the shopping list, reload and retain it after successful saving.\nNeeded is independent of stock; there are no quantities or stock levels.\nTrimmed case-insensitive full names reuse the existing item; Brown rice and White rice remain distinct.\nFailed saving keeps the session usable, visibly unsaved, with no claim of reload retention.\nRetry saves the complete current session and clears the unsaved indicator only after success.\nUnmarking removes an item from the shopping list without removing it from the pantry.\nEmpty names are rejected; invalid saved data is reported rather than trusted, and a new usable session can be saved.\n`tests/journey.test.mjs` observes these cases on real Chrome, including DOM output and reload; screenshots go to unique temporary directories.\nIts failure injection affects only the disposable browser session.\n\n## Selected rules and exceptions\n\nUI storage isolation protects honest retention: UI uses the public pantry interface, never private storage imports or direct localStorage access.\n`eslint.config.mjs` is the authoritative executable boundary configuration, scoped to `src/ui/**/*.ts`; native rules leave DOM rendering available.\nStatic public-only imports, private-import restrictions and localStorage/global-object property restrictions cover the supported syntax.\nArbitrary computed strings, reflection and aliases of browser objects are outside deterministic coverage and require review; do not introduce those bypasses.\nThere are no selected boundary exceptions; an exception requires an owner decision, narrow scope, reason and removal condition.\nThe strict compiler protects snapshot and persistence contracts; Prettier owns formatting and ESLint owns lint settings.\nThe browser journey protects household behavior and honest retention; no unit-only result establishes readiness.\nHuman review checks that proposed responsibilities serve the vision and that browser assertions derive from this acceptance section.\nNo speculative service layers, product backend, accounts, hosted CI or remote persistence are introduced.\n\n## Completion and maintenance\n\nA change is complete when affected acceptance cases pass on final inputs and its impact on registered authoritative documents has been reviewed.\nRoot guidance points to the sources; it does not duplicate their rules.\n`.bstack/project.json` registers document, rule, command and scope authority; `.bstack/bin/bstack-check.mjs` and its packaged dependencies are the installed dependency-free maintenance runtime.\nFor routine changes, collect against an explicit ancestor, assess every candidate and unmapped path, review literal source citations and bind current inputs; keep a portable `.bstack/assessment.json` in a separate commit after implementation.\nRun the maintained aggregate with Node and Git in the working checkout and a clean different-root clone with isolated home and cache; each invocation runs fresh required leaf checks.\nThe first contract is authorized by selected foundation finding F-003; do not weaken previous contract coverage silently.\nNo hosted CI or delivery service is selected; local author review owns semantic approval.\n"
+        }
+      }
+    },
+    {
+      "id": "readme",
+      "path": "README.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "Setup, browser requirements, maintained native command and portable maintenance invocation are added.",
+        "changedPaths": [
+          ".bstack/bin/bstack-check.mjs",
+          ".bstack/project.json",
+          ".gitignore",
+          "AGENTS.md",
+          "DESIGN.md",
+          "GLOSSARY.md",
+          "README.md",
+          "VISION.md",
+          "eslint.config.mjs",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "scripts/resources.mjs",
+          "src/main.ts",
+          "src/pantry.ts",
+          "src/private/storage.ts",
+          "src/ui/render.ts",
+          "tests/journey.test.mjs",
+          "tsconfig.json"
+        ],
+        "reason": "Pinned lockfile installation succeeded with scratch cache; npm run check performed format/lint/typing and the real Chrome journey. The ephemeral loopback test transport serves static files and is not a product backend. The unchanged shipped checker is available locally and fresh different-root execution remains a separately required result.",
+        "citations": [
+          {
+            "path": "README.md",
+            "pointer": "Run `npm run check` for formatting, lint, strict typing and the real-browser journey.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "",
+          "after": "# Pantry list\n\nA local household list of named supplies and items needed to buy.\nSee [VISION.md](VISION.md), [GLOSSARY.md](GLOSSARY.md) and [DESIGN.md](DESIGN.md) for approved intent and acceptance.\n\n## Setup and use\n\nUse Node 24+, npm and installed Google Chrome (`google-chrome`).\nRun `npm ci`, then `npm run build`.\nServe this directory using a local static-file preview and open `index.html`; the app has no backend or account.\nLocal storage belongs to this browser origin; changing origins does not transfer household data.\nWhen saving fails, the current session remains usable but unsaved changes can be lost on reload; retry before reloading.\n\n## Checks\n\nRun `npm run check` for formatting, lint, strict typing and the real-browser journey.\n`npm run journey` builds and observes the acceptance cases in a disposable Chrome session with an ephemeral loopback static-file test transport.\nThat test transport is not a product server.\nScreenshots and execution captures live in unique scratch directories outside the project.\nResource gating requires 8 GB available memory, 20 GB free disk, load below 36 and at most two host-wide suites including the proposed run; it prints counts, not process inventories.\n\n## Maintenance\n\nThe maintained command is `npm run maintain -- --repo . --base <ancestor-commit> --assessment .bstack/assessment.json --json`.\nThe standalone checker and its packaged modules need Node and Git, without an installed skill or agent session; native leaf checks also need `npm ci` and Chrome.\nFollow the completion contract in DESIGN.md and the authoritative registry in `.bstack/project.json`.\nCommit implementation, collect portable evidence against the explicit base, review every candidate and commit the assessment separately.\nRun the unchanged assessment in a different-root clean clone with isolated home and cache.\n"
+        }
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "Root guidance points to approved authorities and maintained commands without copying their rules.",
+        "changedPaths": [
+          ".bstack/bin/bstack-check.mjs",
+          ".bstack/project.json",
+          ".gitignore",
+          "AGENTS.md",
+          "DESIGN.md",
+          "GLOSSARY.md",
+          "README.md",
+          "VISION.md",
+          "eslint.config.mjs",
+          "index.html",
+          "package-lock.json",
+          "package.json",
+          "scripts/resources.mjs",
+          "src/main.ts",
+          "src/pantry.ts",
+          "src/private/storage.ts",
+          "src/ui/render.ts",
+          "tests/journey.test.mjs",
+          "tsconfig.json"
+        ],
+        "reason": "AGENTS.md links the created vision, glossary, design, README and contract and names the actual check and maintenance commands. It preserves owner decision handling and user work; it introduces no mandatory development sequence or hosted delivery workflow.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Preserve acceptance sources and user work; owner decisions resolve scope changes and rule exceptions.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "",
+          "after": "# Project guidance\n\nRead [VISION.md](VISION.md) for contribution boundaries, [GLOSSARY.md](GLOSSARY.md) for terms and [DESIGN.md](DESIGN.md) for architecture, acceptance, exceptions and completion evidence.\nUse `npm run check` for native checks and `npm run maintain -- --repo . --base <ancestor-commit> --assessment .bstack/assessment.json --json` for reviewed maintenance evidence.\nSee [README.md](README.md) for setup and browser requirements and [.bstack/project.json](.bstack/project.json) for the maintained registry.\nPreserve acceptance sources and user work; owner decisions resolve scope changes and rule exceptions.\n"
+        }
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [
+    {
+      "id": "foundation-rice-acceptance",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "[absent]",
+      "newCase": "Add Rice, mark it needed, view Rice on the shopping list, reload and retain it after successful saving.",
+      "affectedWork": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        ".gitignore",
+        "AGENTS.md",
+        "DESIGN.md",
+        "GLOSSARY.md",
+        "README.md",
+        "VISION.md",
+        "eslint.config.mjs",
+        "index.html",
+        "package-lock.json",
+        "package.json",
+        "scripts/resources.mjs",
+        "src/main.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "tests/journey.test.mjs",
+        "tsconfig.json"
+      ],
+      "approval": {
+        "path": "VISION.md",
+        "pointer": "The household can add Rice, mark it needed, view it on the shopping list, reload and retain it after successful saving.",
+        "version": "current"
+      }
+    }
+  ],
+  "coverage": [
+    "household-outcomes",
+    "ui-storage-boundary",
+    "native-quality"
+  ],
+  "execution": [],
+  "fingerprint": "32c1f976ec02f0937484da9e2ddf35721ecc0c0672112f9d2f1687f0b6660f8d",
+  "foundation": {
+    "findingId": "F-003",
+    "record": {
+      "schemaVersion": 1,
+      "stage": "foundation",
+      "target": {
+        "mode": "repo",
+        "root": "[fixture]/pantry-app",
+        "revision": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b"
+      },
+      "nextChange": "Create the smallest local household pantry app supporting the approved Rice journey.",
+      "reviewedScope": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        ".gitignore",
+        "AGENTS.md",
+        "DESIGN.md",
+        "GLOSSARY.md",
+        "README.md",
+        "VISION.md",
+        "eslint.config.mjs",
+        "index.html",
+        "package-lock.json",
+        "package.json",
+        "scripts/resources.mjs",
+        "src/main.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "tests/journey.test.mjs",
+        "tsconfig.json"
+      ],
+      "sources": [
+        {
+          "id": "author",
+          "pointer": "./19a9c2d1-transcript.md",
+          "intent": "documented",
+          "summary": "Exact saved VISION revision and foundation scope selected by author on 2026-10-11."
+        },
+        {
+          "id": "brief",
+          "pointer": "[fixture]/brief.md:4",
+          "intent": "documented",
+          "summary": "TypeScript local browser and local storage; no account/server/remote service."
+        },
+        {
+          "id": "language",
+          "pointer": "./3fecface-research.json",
+          "intent": "observed",
+          "summary": "Read-only language research and cite-check passed; main thread opened official docs."
+        }
+      ],
+      "findings": [
+        {
+          "id": "F-001",
+          "problem": "No executable household journey exists in the new-idea workspace.",
+          "files": [
+            ".gitignore",
+            "AGENTS.md",
+            "DESIGN.md",
+            "GLOSSARY.md",
+            "README.md",
+            "VISION.md",
+            "index.html",
+            "src/main.ts",
+            "src/pantry.ts",
+            "src/private/storage.ts",
+            "src/ui/render.ts",
+            "tests/journey.test.mjs"
+          ],
+          "command": null,
+          "principle": "Household choices and honest local retention must work on the real browser.",
+          "consequence": "Without direct observation, checks could pass while Rice disappears on reload.",
+          "fix": "Create the minimal local TypeScript app and browser acceptance journey.",
+          "scope": [
+            ".gitignore",
+            "AGENTS.md",
+            "DESIGN.md",
+            "GLOSSARY.md",
+            "README.md",
+            "VISION.md",
+            "index.html",
+            "src/main.ts",
+            "src/pantry.ts",
+            "src/private/storage.ts",
+            "src/ui/render.ts",
+            "tests/journey.test.mjs"
+          ],
+          "verification": "Real Chrome add/needed/shopping/reload, duplicate full-name reuse, saving failure and complete-session retry.",
+          "blocksNextChange": true,
+          "category": "missing-protection",
+          "status": "selected",
+          "newPrinciple": true,
+          "resolved": false,
+          "sourceIds": [
+            "author",
+            "brief",
+            "language"
+          ]
+        },
+        {
+          "id": "F-002",
+          "problem": "The selected UI storage boundary has no native enforcement yet.",
+          "files": [
+            "eslint.config.mjs",
+            "package-lock.json",
+            "package.json",
+            "scripts/resources.mjs",
+            "tsconfig.json"
+          ],
+          "command": null,
+          "principle": "UI accesses only the public pantry contract while DOM rendering remains permitted.",
+          "consequence": "Direct storage access could bypass session save status and private imports could leak persistence representation.",
+          "fix": "Use scoped native ESLint import and property/global restrictions with strict typing and formatting.",
+          "scope": [
+            "eslint.config.mjs",
+            "package-lock.json",
+            "package.json",
+            "scripts/resources.mjs",
+            "tsconfig.json"
+          ],
+          "verification": "rule-proof valid public/rendering control; private import and direct localStorage negatives; maintained aggregate integration proof.",
+          "blocksNextChange": true,
+          "category": "missing-protection",
+          "status": "selected",
+          "newPrinciple": true,
+          "resolved": false,
+          "sourceIds": [
+            "author",
+            "brief",
+            "language"
+          ]
+        },
+        {
+          "id": "F-003",
+          "problem": "The new project has no maintained impact contract or portable checker.",
+          "files": [
+            ".bstack/bin/bstack-check.mjs",
+            ".bstack/project.json"
+          ],
+          "command": null,
+          "principle": "Every change needs fresh affected checks and reviewed authoritative-source impact.",
+          "consequence": "Passing unit checks or stale evidence would mask missing outcomes and unreviewed intent changes.",
+          "fix": "Register maintained scope/document/rule/check authority and carry the complete installed dependency-free checker runtime.",
+          "scope": [
+            ".bstack/bin/bstack-check.mjs",
+            ".bstack/project.json"
+          ],
+          "verification": "Contract/docs validation, reviewed assessment and fresh standalone execution in a different-root clean clone with isolated home/cache.",
+          "blocksNextChange": true,
+          "category": "missing-protection",
+          "status": "selected",
+          "newPrinciple": true,
+          "resolved": false,
+          "sourceIds": [
+            "author",
+            "brief",
+            "language"
+          ]
+        }
+      ],
+      "selectedFindingIds": [
+        "F-001",
+        "F-002",
+        "F-003"
+      ],
+      "requiredOutcomes": [
+        "journey",
+        "foundation-review",
+        "native-enforcement",
+        "maintenance-contract",
+        "fresh-standalone"
+      ],
+      "execution": [],
+      "limitations": [
+        "Scratch payload aggregate passed real Chrome Rice retention, duplicates, save failure and complete-session retry; final protected dry-run scaffold and post-creation evidence pending.",
+        "Native UI boundary covers supported static imports and literal storage accesses; arbitrary computed reflection requires review.",
+        "No hosted integration is selected or claimed."
+      ]
+    }
+  }
+}

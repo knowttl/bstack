@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "stage": "foundation",
+  "target": {
+    "mode": "workspace",
+    "root": "[fixture]/pantry-app",
+    "revision": null
+  },
+  "nextChange": "Create the smallest local household pantry app supporting the approved Rice journey.",
+  "reviewedScope": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".gitignore",
+    "AGENTS.md",
+    "DESIGN.md",
+    "GLOSSARY.md",
+    "README.md",
+    "VISION.md",
+    "eslint.config.mjs",
+    "index.html",
+    "package-lock.json",
+    "package.json",
+    "scripts/resources.mjs",
+    "src/main.ts",
+    "src/pantry.ts",
+    "src/private/storage.ts",
+    "src/ui/render.ts",
+    "tests/journey.test.mjs",
+    "tsconfig.json"
+  ],
+  "sources": [
+    {
+      "id": "author",
+      "pointer": "./19a9c2d1-transcript.md",
+      "intent": "documented",
+      "summary": "Exact saved VISION revision and foundation scope selected by author on 2026-10-11."
+    },
+    {
+      "id": "brief",
+      "pointer": "[fixture]/brief.md:4",
+      "intent": "documented",
+      "summary": "TypeScript local browser and local storage; no account/server/remote service."
+    },
+    {
+      "id": "language",
+      "pointer": "./3fecface-research.json",
+      "intent": "observed",
+      "summary": "Read-only language research and cite-check passed; main thread opened official docs."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "No executable household journey exists in the new-idea workspace.",
+      "files": [
+        ".gitignore",
+        "AGENTS.md",
+        "DESIGN.md",
+        "GLOSSARY.md",
+        "README.md",
+        "VISION.md",
+        "index.html",
+        "src/main.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "tests/journey.test.mjs"
+      ],
+      "command": null,
+      "principle": "Household choices and honest local retention must work on the real browser.",
+      "consequence": "Without direct observation, checks could pass while Rice disappears on reload.",
+      "fix": "Create the minimal local TypeScript app and browser acceptance journey.",
+      "scope": [
+        ".gitignore",
+        "AGENTS.md",
+        "DESIGN.md",
+        "GLOSSARY.md",
+        "README.md",
+        "VISION.md",
+        "index.html",
+        "src/main.ts",
+        "src/pantry.ts",
+        "src/private/storage.ts",
+        "src/ui/render.ts",
+        "tests/journey.test.mjs"
+      ],
+      "verification": "Real Chrome add/needed/shopping/reload, duplicate full-name reuse, saving failure and complete-session retry.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "author",
+        "brief",
+        "language"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "The selected UI storage boundary has no native enforcement yet.",
+      "files": [
+        "eslint.config.mjs",
+        "package-lock.json",
+        "package.json",
+        "scripts/resources.mjs",
+        "tsconfig.json"
+      ],
+      "command": null,
+      "principle": "UI accesses only the public pantry contract while DOM rendering remains permitted.",
+      "consequence": "Direct storage access could bypass session save status and private imports could leak persistence representation.",
+      "fix": "Use scoped native ESLint import and property/global restrictions with strict typing and formatting.",
+      "scope": [
+        "eslint.config.mjs",
+        "package-lock.json",
+        "package.json",
+        "scripts/resources.mjs",
+        "tsconfig.json"
+      ],
+      "verification": "rule-proof valid public/rendering control; private import and direct localStorage negatives; maintained aggregate integration proof.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "author",
+        "brief",
+        "language"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "The new project has no maintained impact contract or portable checker.",
+      "files": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json"
+      ],
+      "command": null,
+      "principle": "Every change needs fresh affected checks and reviewed authoritative-source impact.",
+      "consequence": "Passing unit checks or stale evidence would mask missing outcomes and unreviewed intent changes.",
+      "fix": "Register maintained scope/document/rule/check authority and carry the complete installed dependency-free checker runtime.",
+      "scope": [
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json"
+      ],
+      "verification": "Contract/docs validation, reviewed assessment and fresh standalone execution in a different-root clean clone with isolated home/cache.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "author",
+        "brief",
+        "language"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001",
+    "F-002",
+    "F-003"
+  ],
+  "requiredOutcomes": [
+    "journey",
+    "foundation-review",
+    "native-enforcement",
+    "maintenance-contract",
+    "fresh-standalone"
+  ],
+  "execution": [],
+  "limitations": [
+    "Scratch payload aggregate passed real Chrome Rice retention, duplicates, save failure and complete-session retry; final protected dry-run scaffold and post-creation evidence pending.",
+    "Native UI boundary covers supported static imports and literal storage accesses; arbitrary computed reflection requires review.",
+    "No hosted integration is selected or claimed."
+  ]
+}

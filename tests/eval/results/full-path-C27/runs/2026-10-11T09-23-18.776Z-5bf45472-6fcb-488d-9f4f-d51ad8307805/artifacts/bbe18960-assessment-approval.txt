@@ -1,0 +1,2 @@
+Supervisor-delegated fixture verdict, 2026-10-11: approve the exact portable-assessment protected-write diff just reviewed. Apply unchanged, commit the assessment separately and run fresh working-checkout and isolated different-root clean-clone checker verification. Keep the historical snapshot unchanged; retain final current-head findings and actual results in scratch. Stop for exact review of any further protected write.
+Approved plan: d52b22dddeac55a4b57391964e2da4bc89c9cb47bb86c37979b0984b26ffaf43
