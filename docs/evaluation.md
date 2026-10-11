@@ -267,6 +267,20 @@ All C7a manual runs therefore remain blocked as final acceptance evidence.
 This command validates the supplied selections, not coverage of an entire release.
 T5.2 owns complete release evidence, including automated cases and with-skill baseline comparison.
 
+```sh
+node scripts/acceptance.mjs --results tests/eval/results --require-complete
+```
+
+Complete validation reads `release/manifest.json` beneath the results directory.
+Its version 1 format contains `cases` with one `{caseId, runId}` selection per agent or manual case except AC-46, and `comparisons` with one `{scenario, without, with}` pair per scenario.
+AC-46 is established by all scenario comparisons together.
+The independent extension is the approved without-only exception: its AC-64 procedure requires that repo-audit be undiscoverable.
+All other selected cases must use the with-skill run of their declared final comparison.
+The validator rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
+Every with-skill run must pass every check, and each pair must satisfy the design's improvement and regression rule.
+Automated procedures execute their exact named tests against the current inputs, including the clean-checkout procedure and real Linux lifecycle execution.
+Only complete passing evidence can produce the 75-case release result.
+
 The commands reuse the shared schema, joining-ID, fingerprint, child-command and result libraries.
 Their options parser has no target argument because evaluation creates targets through the fixture builder.
 `--json` emits the version 1 result envelope.
