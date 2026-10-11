@@ -88,14 +88,14 @@ Every adapter turn also receives an explicit filesystem scope: the disposable fi
 The isolated home's `tmp` directory owns scratch files, clones and reports through `TMPDIR`, `TMP` and `TEMP`.
 Missing resources remain unavailable instead of prompting searches in the host home, ancestor directories, other projects or other skill installations.
 Installed executable paths and system runtime resources remain available for normal tool execution.
-The runner checks observed filesystem paths in captured output and native parent/worker tool traces after each turn and again before deleting the home.
-An out-of-scope observation leaves the run unscored, records `scopeGuard.paths`, and deletes the isolated home through ordinary failure cleanup.
-This is an observed-path rejection check, not an operating-system sandbox or a claim to detect unreported reads.
+The runner checks filesystem access targets in captured commands and native parent/worker file-tool calls after each turn and again before deleting the home.
+Paths merely printed in tool output do not establish access and are excluded, including filesystem device names in capacity tables and process command lines in resource-query output.
+An out-of-scope access target leaves the run unscored, records `scopeGuard.paths`, and deletes the isolated home through ordinary failure cleanup.
+This is an observed-access rejection check, not an operating-system sandbox or a claim to detect unreported reads.
 Comparisons require the same verified scope-contract version on both sides.
 Scope version 3 recognizes read-only resource preflight: memory/load files, process metadata/counts and filesystem capacity queries.
 The guard permits the run's own isolated temporary directory, but rejects other projects, the host home and explicit write destinations outside the fixture or isolated home.
 System runtime access does not authorize writing those runtime files; `/dev/null` remains an ordinary output sink.
-This observes captured commands and output rather than providing an operating-system sandbox.
 Contaminated transcripts may contain unrelated host inventories and must stay private.
 
 ```sh

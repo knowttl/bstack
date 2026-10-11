@@ -57,6 +57,9 @@ if (args.includes('--version')) {
         'scope-native-read': join(process.env.HOME, 'tmp', 'report.json'),
         'scope-native-output': join(process.env.HOME, 'tmp', 'report.json'),
         'scope-native-relative': join(process.env.HOME, 'tmp', 'report.json'),
+        'scope-native-file-read': join(process.env.HOME, 'tmp', 'report.json'),
+        'scope-native-file-write': join(process.env.HOME, 'tmp', 'report.json'),
+        'scope-cd-host-home': join(process.env.HOME, 'tmp', 'report.json'),
         'scope-runtime-skill': '/usr/share/skills/repo-audit/SKILL.md',
         'scope-valid': join(process.env.HOME, 'tmp', 'report.json')
       }
@@ -64,6 +67,8 @@ if (args.includes('--version')) {
         command: mode === 'scope-output' ? 'find .' : `cat ${paths[mode] ?? (mode.startsWith('scope-resource-') ? join(process.env.HOME, 'tmp', 'report.json') : outside)}`,
         aggregated_output: mode === 'scope-output' ? JSON.stringify({ target: outside }) : mode === 'scope-valid' ?
           `${process.execPath}\n${process.cwd()}/brief.md\n/api/items\nhttp://localhost:3000/home/profile\n... 2 more lines\nimport { price } from '../core/index.ts'\nrange <base>..<head>\n` : '' } }))
+      if (mode === 'scope-cd-host-home') console.log(JSON.stringify({ type: 'item.completed', item: {
+        type: 'command_execution', command: `cd ${userInfo().homedir}`, aggregated_output: '', exit_code: 0 } }))
       if (mode.startsWith('scope-resource-')) {
         const commands = {
           'scope-resource-read': `cat /proc/meminfo /proc/loadavg /proc/self/stat; df -B1 /tmp; ps -eo comm,args`,
@@ -75,10 +80,16 @@ if (args.includes('--version')) {
           'scope-resource-temp-read': 'cat /tmp/unrelated-project/notes.md',
           'scope-resource-temp-write': 'touch /tmp/unrelated-project/notes.md',
           'scope-resource-mixed': 'df -B1 /tmp; cat /tmp/unrelated-project/notes.md',
-          'scope-resource-python-write': `python3 -c "from pathlib import Path; Path('/proc/loadavg').write_text('changed')"`
+          'scope-resource-python-write': `python3 -c "from pathlib import Path; Path('/proc/loadavg').write_text('changed')"`,
+          'scope-resource-df-output': 'df -Pk . "$TMPDIR"',
+          'scope-resource-free-output': 'free -b',
+          'scope-resource-ps-output': 'ps -eo comm,args'
         }
         console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution',
-          command: commands[mode], aggregated_output: mode === 'scope-resource-read' ? 'Filesystem 1B-blocks Available Mounted on\nvolume 100000 90000 /tmp\n' : '', exit_code: 0 } }))
+          command: commands[mode], aggregated_output: mode === 'scope-resource-read' ? 'Filesystem 1B-blocks Available Mounted on\nvolume 100000 90000 /tmp\n' :
+            mode === 'scope-resource-df-output' ? '/dev/mapper/system-volume 100000 90000 /\n' :
+            mode === 'scope-resource-free-output' ? 'memory source /proc/meminfo\n' :
+            mode === 'scope-resource-ps-output' ? `node ${outside}\n` : '', exit_code: 0 } }))
       }
       if (mode.startsWith('scope-native-')) {
         const directory = join(process.env.CODEX_HOME, 'sessions')
@@ -86,6 +97,8 @@ if (args.includes('--version')) {
         const payload = mode === 'scope-native-relative' ? { type: 'custom_tool_call', name: 'exec',
           input: 'await tools.exec_command({cmd: "cat ../outside-project/SKILL.md"})' } :
           mode === 'scope-native-read' ? { type: 'custom_tool_call', name: 'exec', input: `cat ${outside}` } :
+          mode === 'scope-native-file-read' ? { type: 'function_call', name: 'read_file', arguments: JSON.stringify({ path: outside }) } :
+          mode === 'scope-native-file-write' ? { type: 'function_call', name: 'write_file', arguments: JSON.stringify({ path: '/usr/share/outside-write', content: 'changed' }) } :
           { type: 'custom_tool_call_output', output: JSON.stringify({ output: outside }) }
         await writeFile(join(directory, 'worker.jsonl'), JSON.stringify({ type: 'response_item', payload }) + '\n')
       }

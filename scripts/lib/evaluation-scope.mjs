@@ -16,7 +16,7 @@ Installed tool executables and their runtime resources may run normally; do not 
 Read-only memory/load queries, process counts and filesystem capacity queries are allowed for resource preflight.
 Use /proc/meminfo, /proc/loadavg, /proc/self and process metadata only for those queries; do not print process inventories.
 Keep filesystem writes inside the fixture or isolated home, including its own tmp directory.
-Pass this scope to any subagents. Out-of-scope paths observed in commands or their output invalidate this evaluation.
+Pass this scope to any subagents. Out-of-scope filesystem access targets in commands or file-tool calls invalidate this evaluation; paths merely printed in output do not.
 
 ${message}`
 }
@@ -52,13 +52,9 @@ async function sessionTools(directory) {
         if (!line) continue
         const event = JSON.parse(line)
         const payload = event.payload
-        if (event.type === 'response_item' && ['custom_tool_call', 'custom_tool_call_output',
-          'function_call', 'function_call_output'].includes(payload?.type)) {
+        if (event.type === 'response_item' && ['custom_tool_call', 'function_call'].includes(payload?.type)) {
           const input = payload.input ?? payload.arguments
-          if (input) {
-            values.push(...strings(input))
-            values.push(...commands(input))
-          } else values.push(...strings(payload.output ?? ''))
+          if (input) values.push(...toolAccess(input, payload.name))
         }
       }
     }
@@ -66,16 +62,28 @@ async function sessionTools(directory) {
   return values
 }
 
-function strings(value, command = false, cwd, resourceOutput = false) {
+function toolAccess(value, name = '', cwd) {
   if (typeof value === 'string') {
-    try { return strings(JSON.parse(value), command, cwd, resourceOutput) } catch { return [{ value, command, cwd, resourceOutput }] }
+    try { return toolAccess(JSON.parse(value), name, cwd) } catch {}
+    if (/apply_patch$/.test(name)) return [...value.matchAll(/^\*\*\* (?:Add File|Update File|Delete File|Move to): (.+)$/gm)]
+      .map(match => ({ value: match[1], write: true, cwd }))
+    if (/(?:^|[._])exec$/.test(name)) {
+      try {
+        const found = commands(parseJavaScript(value, { ecmaVersion: 'latest', sourceType: 'module' }))
+        return !found.length && name === 'exec' && /^\s*(?:cat|cd|ls|find|rg|touch|mkdir|rm|cp|mv)\s/.test(value)
+          ? [{ value, command: true, cwd }] : found
+      }
+      catch { return [{ value, command: true, cwd }] }
+    }
+    return []
   }
-  if (value !== null && typeof value === 'object') return Object.entries(value)
-    .filter(([key, item]) => !(typeof item === 'string' && /^\/root(?:\/|$)/.test(item) &&
-      ['task_name', 'agent_name', 'target', 'author', 'recipient'].includes(key)))
-    .flatMap(([key, item]) => strings(item, ['command', 'cmd'].includes(key), value.workdir ?? value.cwd ?? cwd,
-      resourceOutput || (['aggregated_output', 'stdout', 'output'].includes(key) &&
-        /\b(?:df|statfs|disk_usage)\b|\bstat\s+-[^\s]*f/.test(value.command ?? value.cmd ?? ''))))
+  if (value !== null && typeof value === 'object') return Object.entries(value).flatMap(([key, item]) => {
+    const directory = value.workdir ?? value.cwd ?? cwd
+    if (typeof item === 'string' && ['command', 'cmd'].includes(key)) return [{ value: item, command: true, cwd: directory }]
+    if (typeof item === 'string' && ['path', 'file_path', 'filePath', 'filename', 'target_file', 'workdir', 'cwd', 'directory'].includes(key))
+      return [{ value: item, write: /write|edit|patch/.test(name), cwd: directory }]
+    return item !== null && typeof item === 'object' ? toolAccess(item, name, directory) : []
+  })
   return []
 }
 
@@ -97,19 +105,17 @@ function writePaths(command) {
   return paths
 }
 
-// Native tool inputs can be JavaScript that calls the shell tool. Only concrete
-// shell commands have a working directory; relative paths in source output do not.
-function commands(input) {
+// Native tool inputs can be JavaScript that calls shell or file tools.
+function commands(program) {
   const found = []
-  let program
-  try { program = parseJavaScript(input, { ecmaVersion: 'latest', sourceType: 'module' }) }
-  catch { return [] }
   function visit(node) {
     if (!node || typeof node !== 'object') return
+    if (node.type === 'CallExpression' && node.callee.property?.name === 'apply_patch' && typeof node.arguments[0]?.value === 'string')
+      found.push(...toolAccess(node.arguments[0].value, 'apply_patch'))
     if (node.type === 'ObjectExpression') {
       const fields = Object.fromEntries(node.properties.filter(property => property.type === 'Property')
         .map(property => [property.key.name ?? property.key.value, property.value.value]))
-      if (typeof fields.cmd === 'string') found.push({ value: fields.cmd, command: true, cwd: fields.workdir ?? fields.cwd })
+      found.push(...toolAccess(fields))
     }
     for (const value of Object.values(node)) {
       if (Array.isArray(value)) value.forEach(visit)
@@ -133,10 +139,17 @@ export async function checkScope(record, result) {
   const writable = path => roots.some(root => within(path, root)) || path === '/dev/null'
   const allowed = path => roots.some(root => within(path, root)) || tools.has(path) ||
     (!/(?:^|[\\/])(?:repo-audit|SKILL\.md)(?:[\\/]|$)/.test(path) && runtime.some(root => within(path, root)))
-  const values = [...strings(result.stdout.trim().split('\n').filter(Boolean).map(line => JSON.parse(line))),
-    ...strings(result.stderr), ...await sessionTools(join(record.isolation.state, 'sessions'))]
+  const events = result.stdout.trim().split('\n').filter(Boolean).map(line => JSON.parse(line))
+  const values = [...events.filter(event => event.item?.type === 'command_execution')
+    .flatMap(event => toolAccess({ command: event.item.command, cwd: event.item.cwd })),
+    ...await sessionTools(join(record.isolation.state, 'sessions'))]
   const violations = new Set()
-  for (const { value, command, cwd, resourceOutput } of values) {
+  for (const { value, command, cwd, write } of values) {
+    if (!command) {
+      const path = resolve(cwd ?? record.fixture.path, value)
+      if (!(write ? writable(path) : allowed(path))) violations.add(path)
+      continue
+    }
     // URLs and domain routes are not filesystem observations.
     let content = value.replace(/\b[a-z][a-z\d+.-]*:\/\/[^\s"'<>]+/gi, '').replaceAll('\\ ', ' ')
     // Capacity queries observe filesystem metadata, never another project's files.
@@ -153,11 +166,9 @@ export async function checkScope(record, result) {
       const path = resolve(candidate)
       const processQuery = path === '/proc' && /\.iterdir\(|\b(?:listdir|readdir|readdirSync)\(|\bls\s+/.test(value) ||
         /^\/proc\/\d+\/(?:comm|cmdline|stat|status)$/.test(path)
-      const capacityOutput = resourceOutput && ['/tmp', '/'].includes(path)
       if ((process.platform === 'win32' || topLevel.has(path.slice(filesystem.length).split(sep)[0])) &&
-          !allowed(path) && !processQuery && !capacityOutput) violations.add(path)
+          !allowed(path) && !processQuery) violations.add(path)
     }
-    if (!command) continue
     // A here-document is program source, rather than shell path arguments.
     const shell = content.split(/<<-?\s*['"]?\w+['"]?/)[0]
     for (const match of shell.matchAll(/(?<![\w.])\.\.(?!\.)(?:\/[^\s"'`<>;,(){}\[\]\\]*)?/g)) {
