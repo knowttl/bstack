@@ -15,4 +15,8 @@ AC-42 passes the [implicit-invocation comparison](implicit-invocation-comparison
 The plain `audit this repo` request and its scripted reply leave the bounded repo-audit procedure unstarted.
 Independent command review confirms neither the procedure's SKILL.md nor its public helper was opened or invoked; the with-skill run's nested Lavish reference is recorded separately and does not start repo-audit.
 All three authoritative documents remain byte-identical to HEAD, both working trees are clean and both isolated homes are deleted after scoring.
+AC-57 and AC-68 pass the [scope and prerequisites comparison](scope-and-prerequisites-comparison.json), 2/2 in both modes.
+Both captures inspect the actual shallow history, report the missing parent object, ask whether the request changes the public pricing contract, and leave the unresolved write scope untouched.
+The with-skill run also executes the passing current public unit test.
+Independent verification preserves every tracked file byte, the clean working tree and the exact missing-parent failure.
 Other current-fixture final comparisons remain pending.

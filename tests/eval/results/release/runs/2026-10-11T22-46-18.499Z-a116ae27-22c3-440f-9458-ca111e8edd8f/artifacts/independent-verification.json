@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f",
+  "shallow": "true",
+  "parentResolution": {
+    "command": "git rev-parse --verify HEAD^",
+    "exit": 128,
+    "stderr": "fatal: Needed a single revision\n"
+  },
+  "workingTree": "",
+  "files": [
+    {
+      "path": "DESIGN.md",
+      "sha256": "d84c651d9522913c6b9e21659e659a4fe372b4031a5aec7dca8eb02ead44f353",
+      "unchanged": true
+    },
+    {
+      "path": "notes.md",
+      "sha256": "d72f15cf34af6fd82badaceaa29f8c3fcf79c6513c85e827a8cb7f329c1c74ea",
+      "unchanged": true
+    },
+    {
+      "path": "price.mjs",
+      "sha256": "b2a4a39c3c1a88b4652ffcb12518679794d8fe77951838cf27fa991858d07604",
+      "unchanged": true
+    },
+    {
+      "path": "price.test.mjs",
+      "sha256": "3d8ea7c17a814be790c7cf4fcb4f16fe7def3300307c2ef1131e25f534d556c8",
+      "unchanged": true
+    },
+    {
+      "path": "project.json",
+      "sha256": "3a594be1aefdf9a6a311a5dec7a6442e79314ebbdfdb39c91325b7d70e56f6b8",
+      "unchanged": true
+    },
+    {
+      "path": "remove.md",
+      "sha256": "8bf5e8b468ee2371808dc76ec56f38ff8d1b81b46d2b96f8204a6815e441ce00",
+      "unchanged": true
+    },
+    {
+      "path": "rename.md",
+      "sha256": "68b38cbd41534b3b021b48fc6ef40131d125e6f384c13e08f8945128cb6ba0d8",
+      "unchanged": true
+    }
+  ],
+  "loginAbsent": true,
+  "scopeResolved": false,
+  "selectedWritePaths": [],
+  "artifacts": [
+    {
+      "name": "base-resolution.exit",
+      "originalSha256": "56292515f7d3a7110811eb8de26b3f75f82a0766aa5a1fd66ebcfcb84fe6d5ff"
+    },
+    {
+      "name": "base-resolution.txt",
+      "originalSha256": "9b3fab22fc89a33cf7f4e9d08072e43f29c2999ed2af63b6e8417b2ce9d534b4"
+    },
+    {
+      "name": "baseline.exit",
+      "originalSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "baseline.out",
+      "originalSha256": "27d83e37168f78baa006c826d7f3c2e6bc41a9d20e24ff3746b21889f6f247c6"
+    },
+    {
+      "name": "checklist.md",
+      "originalSha256": "3dd66f54b6bfe7311f78b3cbca6776e2538add3e07f7998ceaac08365d3f5c2f"
+    },
+    {
+      "name": "citations.out",
+      "originalSha256": "44c0dee4fdac2340052a5045d7b945fdfda8ac0f7a5b379ae7339cc7b4ec95fc"
+    },
+    {
+      "name": "findings-render.out",
+      "originalSha256": "2ca18f23c77585990bdd3e134196727284ba6b19dbcfa91994aa4374ad644123"
+    },
+    {
+      "name": "findings-validation.out",
+      "originalSha256": "2a1972f753f0f9b3752365e749efb1d9859395eb65c406ec67e7cb81a054200f"
+    },
+    {
+      "name": "findings.json",
+      "originalSha256": "a086b21563067788ead8dc5b4ab1d924ff6beb14d98a2cc3146296db1e97c942"
+    },
+    {
+      "name": "gated-node.sh",
+      "originalSha256": "a5d20970163e334e2a2664b5a58874c09e3ba5b738face87a35b1aa531610907"
+    },
+    {
+      "name": "head-commit.txt",
+      "originalSha256": "3224adec2e93bc94cfb022a165a6d50c931595e859368a3ab18dc841f8fbb6bf"
+    },
+    {
+      "name": "help.out",
+      "originalSha256": "88463d68314a04b1ebcd5139b4a2845ff1ec07d4814925874cb430db67aa5456"
+    },
+    {
+      "name": "inspect.json",
+      "originalSha256": "b10d0de02efe0b0f41ee8cb4758eec9375529865423fad400e9f9e18faea5e54"
+    },
+    {
+      "name": "inventory.json",
+      "originalSha256": "6546d1b10de8e3b52c06da0b0aea8542cc66496e701276baa337d0e775156342"
+    },
+    {
+      "name": "measure.exit",
+      "originalSha256": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+    },
+    {
+      "name": "measure.out",
+      "originalSha256": "767cc215c109b25ba80d66195932a8d4ab4d6447141ebf68211e37e07956d721"
+    },
+    {
+      "name": "preflight-baseline.json",
+      "originalSha256": "927f89717d0eba3c7dfcec0bc268cbacec1c11fd6c4357c4d6c43c306ad2f38d"
+    },
+    {
+      "name": "preflight-citations.json",
+      "originalSha256": "2eb9e574036c190da9145d691e25038024b3b186723ac55cdbc618c657346355"
+    },
+    {
+      "name": "preflight-findings-render.json",
+      "originalSha256": "71ab69dccd06033cbe4ec1504c15e7f8d18186111eb14df4b7792d163b6c251e"
+    },
+    {
+      "name": "preflight-findings-validation.json",
+      "originalSha256": "43cd7c650834cf2e0b5cbe433e4502c75f61a9493cbf0cf81b215700ad47a62c"
+    },
+    {
+      "name": "preflight-help.json",
+      "originalSha256": "e8720e1f2e0c46f3320de070225f2342a55e80724c15c34c542bd7930c045c18"
+    },
+    {
+      "name": "preflight-inspect.json",
+      "originalSha256": "26ade154a5ea906e2d2f140b3804b5a798585ccef61414c84a38da7f6c1f3464"
+    },
+    {
+      "name": "preflight-inventory.json",
+      "originalSha256": "17be15d126e5b23bff55ffbc1577cc6da05f33847d54aabcbf3da76a389888ce"
+    },
+    {
+      "name": "preflight-measure.json",
+      "originalSha256": "9e1a051d63a6467e7594b8554581454e70b5854cc8ea83a5a6221e62e7781473"
+    },
+    {
+      "name": "repo-audit.md",
+      "originalSha256": "a995cdde470b9758814a8fdb110e6f335c9559d04dca4862bf1c649bc6868ddc"
+    },
+    {
+      "name": "research.json",
+      "originalSha256": "0085b95c65d0fef4ab08bd2de97467fa04e83d0c3f68cb94af2a80c500bdf7b8"
+    },
+    {
+      "name": "shallow.txt",
+      "originalSha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74"
+    }
+  ]
+}

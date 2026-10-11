@@ -481,7 +481,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "implicit-invocation",
-        "artifacts": ["tests/eval/results/release/implicit-invocation-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-09-46.986Z-2faa6ae4-70b7-4ac7-83f3-51b2962105ef/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/implicit-invocation-comparison.json", "tests/eval/results/release/runs/2026-10-11T22-34-43.922Z-95558e7b-ca11-42eb-8095-f70ee20e31bf/conversation.txt"]
       }
     },
     {
@@ -651,7 +651,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "scope-and-prerequisites",
-        "artifacts": ["tests/eval/results/release/scope-and-prerequisites-comparison.json", "tests/eval/results/release/scope-and-prerequisites-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/scope-and-prerequisites-comparison.json", "tests/eval/results/release/runs/2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f/artifacts/independent-verification.json", "tests/eval/results/release/runs/2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f/conversation.txt"]
       }
     },
     {
@@ -773,7 +773,7 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "scope-and-prerequisites",
-        "artifacts": ["tests/eval/results/release/scope-and-prerequisites-comparison.json", "tests/eval/results/release/scope-and-prerequisites-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc/conversation.txt"]
+        "artifacts": ["tests/eval/results/release/scope-and-prerequisites-comparison.json", "tests/eval/results/release/runs/2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f/artifacts/independent-verification.json", "tests/eval/results/release/runs/2026-10-11T22-46-18.499Z-a116ae27-22c3-440f-9458-ca111e8edd8f/conversation.txt"]
       }
     },
     {
