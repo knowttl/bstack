@@ -20,13 +20,22 @@ Use the procedure for bounded planning and selected protected writes, keeping bl
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
 
-From a local clone, install the source-checker dependencies with `npm ci`, then preview or copy the complete skill into an existing project:
+Clone the source and install its dependencies using Node 24 or later, Git and npm:
+
+```sh
+git clone https://github.com/knowttl/bstack.git
+cd bstack
+npm ci --ignore-scripts
+npm ci --omit=dev --prefix skills/repo-audit
+```
+
+From this checkout, preview and then copy the complete skill into an existing project.
+Replace `<project-path>` with the target directory; quote paths containing spaces:
 
 ```sh
 node install/install.mjs --scope project --project <project-path> --host all --dry-run
 node install/install.mjs --scope project --project <project-path> --host all --json
 node scripts/check-package.mjs --skill <project-path>/.agents/skills/repo-audit
-npm test -- --task C25c
 ```
 
 Use `--scope user --host agents` for the current home, or `--host claude` for Claude Code alone.
@@ -53,6 +62,50 @@ Changed or replaced links block instead of being adopted.
 The [installer contract](docs/command-contract.md#installer-copy-and-preview-c25a) describes ownership, conflict decisions and failure recovery.
 An exact clean semantic Git tag is reported as the source version, while untagged or dirty sources are explicitly labelled development.
 Installation tests use disposable release snapshots and a locally packed fake runtime, and do not establish real Windows/macOS runs or current-agent skill loading.
+
+To start an audit, open a fresh agent conversation in the target project and explicitly invoke the skill with the area to assess and the next change:
+
+```text
+$repo-audit
+Audit this repo's checkout boundary before adding quantity support.
+Use the existing design and acceptance cases; present findings for selection before editing.
+```
+
+That is the Codex invocation; use `/repo-audit` in Claude Code or `/skill:repo-audit` in Pi.
+A plain request such as "audit this repo" does not start the skill.
+For a new idea, install into its existing workspace and invoke the skill with the idea and first useful journey instead.
+Answer unresolved intent questions, review the interactive vision board when needed, select findings, and approve the exact proposed changes before apply or creation.
+The skill keeps proposals in scratch and reports blocked verification explicitly.
+It does not select a delivery service for you.
+See the [worked examples](docs/examples/README.md) for requests, findings, selections, results and reproduction steps.
+
+The examples cover the six user-facing scenario fixtures: `new-idea`, `ambiguous-idea`, `clear-goals`, `existing-vision-delta`, `ts-shop` and `py-ledger`.
+Rule-proof valid/violation controls, dirty-work and maintenance edge cases (`refactor`, `contract-removal`, `shallow-history`), and installer-collision fixtures are test infrastructure, not separate user skill runs.
+They remain covered by command tests rather than worked examples.
+Only `new-idea` and `ts-shop` have the completed installed final-path evidence from C27; the other four examples retain earlier checkpoint results and their limits.
+
+Scripts check structure, references, selected paths, input freshness and captured command outcomes.
+They cannot prove that an interview captured the user's goal, that a citation supports a claim, that prose or an impact explanation is true, or that an owner actually approved a design.
+Measurements cannot prove semantic independence or predict every merge conflict, and passing native checks prove only their defined constraints.
+Review and observed user journeys remain necessary; see the [design's machine-check limits](docs/design.md#what-machines-can-check).
+
+The [recorded instruction-loading limit](docs/design.md#reusable-guidance-for-future-changes) matters before consolidating repo-owned guidance into `AGENTS.md`.
+Claude Code reads it only when no `CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or above it.
+Versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled can read only `CLAUDE.md`.
+Removing that file can therefore hide project instructions in those sessions.
+Recheck the host's official documentation and observed loading behaviour before approving removal; bstack neither inspects nor changes instruction files outside the selected repo.
+
+The examples' actual agent evidence uses one agent family and model: Codex with gpt-6.1-sol, not a host or model matrix.
+The four earlier checkpoints ran on Linux 6.8.0-142-generic with Node v24.17.0 and codex-cli 0.160.1; the foundation audits used low reasoning.
+C27's two installed full paths and its fresh repeat-audit, independent-extension and maintenance conversations ran on the same Linux kernel and Node version, using codex-cli 0.162.1 with medium reasoning.
+The [C27 record](tests/eval/results/full-path-C27/summary.md#host-provenance-and-evidence-limits) names exact source revisions, native tool versions, isolated installations, manual scoring and browser/local HTTP observations.
+Scoring came from the implementation agent, not an independent human study; fixture answers and approvals were scripted or delegated fixture verdicts.
+No new real-agent run is claimed by this documentation change.
+Separate script and installer records include local Node 24 and Node 26 runs, not real-agent runs on both versions.
+Installer support and AC-74 acceptance are Linux-only under the owner's 2026-10-10 ruling R27; Windows and macOS execution is unverified.
+Hosted CI behaviour, adapter execution and forge enforcement are unverified.
+This repository has no hosted CI workflow; local clean-checkout results do not establish hosted execution.
+Final all-case evaluation and release approval remain separate work.
 
 Use Node 24 or later:
 
