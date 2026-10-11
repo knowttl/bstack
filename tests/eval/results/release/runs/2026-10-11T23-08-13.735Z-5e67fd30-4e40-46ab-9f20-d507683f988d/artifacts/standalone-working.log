@@ -1,0 +1,3 @@
+{"source":"host","checkedAt":"2026-10-11T23:09:25.283Z","availableMemoryBytes":18093228032,"freeDiskBytes":25205460992,"load1m":2.34,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}
+{"availableMemoryBytes": 18093776896, "freeDiskBytes": 25205456896, "load1": 2.34}
+{"schemaVersion":1,"command":"bstack check","status":"blocked","problems":[{"code":"portable-source-mismatch","message":"Portable review must name the committed source; only its selected assessment may differ from HEAD.","fix":"Commit source changes and recollect portable review against the agreed base."}],"data":{},"inputs":{}}
