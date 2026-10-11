@@ -8,7 +8,7 @@ The [baseline profile](test-speed.profile.md) owns the file-concurrency measurem
 Follow the [task evidence contract](../../../../docs/implementation-plan.md#task-evidence-contract) for final capture and attachment, using task ID `test-speed`.
 Record actual final test counts and suite times in the PR body, along with install and check results and timing.
 The [gate configuration](../../../../.no-mistakes.yaml) owns review focus, repair prerequisites and automatic round budgets.
-Verify the PR targets knowttl/bstack main, is ready and mergeable; the supervising firstmate merges it.
+Verify the PR targets knowttl/bstack main, is ready and mergeable; the supervisor merges it.
 
 Earlier local validation at `202e1247910d678c2c3c58f1b3957ed83a1c2a72`, before subsequent review fixes:
 

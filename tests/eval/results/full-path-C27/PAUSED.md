@@ -1,6 +1,6 @@
 # C27 historical owner-requested pause
 
-Firstmate delivered the owner's pause instruction on 2026-10-11 at 03:12 UTC: bstack review changes must land before C27 resumes.
+Supervisor delivered the owner's pause instruction on 2026-10-11 at 03:12 UTC: bstack review changes must land before C27 resumes.
 At that pause, the branch contained implementation and diagnostic evidence, not completed C27 acceptance.
 No final acceptance selections or full-suite task attachment had been made.
 All final procedures were required to run fresh after the updated main branch was incorporated.
@@ -11,7 +11,8 @@ The installed full-path work exposed and fixed optional glossary metadata leakin
 Public help now describes the existing protected-plan digest algorithm.
 Package checks and the focused glossary regression passed; the final settled-source full suite was pending at the pause.
 
-The `history` directory retains the earlier scored shop path and repeat audit, the interrupted pantry path and the two unsuccessful opening attempts.
+The `history` directory retains the earlier scored shop path and unsuccessful opening attempts.
+Two superseded captures containing operator instructions and internal workspace metadata were omitted during the final public-evidence hygiene review.
 Those observations are superseded and are excluded from final acceptance.
 The `paused` directory retains both fresh corrected-package runs, their completed installer captures, all completed host turns and linked diagnostic artifacts.
 Both fresh runs are closed and unscored.

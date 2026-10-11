@@ -18,3 +18,6 @@ node --test --test-name-pattern 'glossary metadata does not prevent a complete d
 It passed one test with no failure, skip or cancellation on Node 24.17.0 and Linux.
 The test adds glossary metadata to an existing contract document, collects the diff, completes the assessment, binds review, captures native checks and requires final validation to pass while the contract metadata survives.
 The fresh final paths separately verify the corrected installed package end to end.
+
+The [redaction manifest](redaction-manifest.json) binds the original and published bytes of the three captures whose internal workspace paths were replaced with neutral artifact placeholders.
+Their original fingerprints remain historical observations; the redacted copies are not replayable local paths.
