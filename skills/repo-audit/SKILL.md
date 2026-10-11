@@ -272,7 +272,7 @@ Validate important user flows directly against approved acceptance cases.
 Use meaningful interface tests for relevant behaviour, edges and failures, and independent review under the project's risk policy.
 Supply the reviewer with original requirements, cases, actual changes and execution evidence.
 Choose the execution method within project constraints, without dispatching a TDD workflow or imposing a universal sequence.
-Before running native checks, detect and prefer the project's prepared environment and tools, such as `.venv/bin/python` and `.venv/bin/ruff` or the lockfile's tool manager, over system defaults; report the interpreter and tool versions actually used.
+Before running native checks, detect and prefer the project's prepared environment and tools, such as a project-local virtual environment or the lockfile's tool manager, over system defaults; report the interpreter and tool versions actually used.
 
 For a Git repo, capture an approved plan through `run-checks --repo <target> --plan <file> --json`.
 Use `schemas/check-plan.json` as the plan format, linking acceptance cases to approved source bytes and declaring relevant input scopes.
