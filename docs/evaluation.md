@@ -75,7 +75,7 @@ Sequential execution requested only through the prompt does not establish AC-35.
 The [capture-only probe](../tests/eval/results/release/fallback-capability-probe.json) on Codex CLI 0.162.1 retained the switch in both argument forms, but the actual session still declared `spawn_agent` and reported that it was available.
 The [corrected capture-only probe](../tests/eval/results/release/fallback-capability-probe-agents-disabled.json) additionally disabled the V2 features and set `agents.enabled=false`: the native declaration omitted `spawn_agent` and the assistant independently reported it unavailable, with zero tool calls.
 The [configuration schema](https://learn.chatgpt.com/docs/config-schema.json) defines `agents.enabled` as the multi-agent tool control and notes that an enabled V2 setting takes precedence.
-The capability prerequisite is resolved; AC-35 still needs passing final fallback runs under this effective adapter.
+The capability prerequisite and both [corrected final fallback comparisons](../tests/eval/results/release/summary.md) pass under this effective adapter.
 The opening command creates a new resumable thread, and later turns must retain that exact thread ID.
 The installed CLI's `codex exec --help` and `codex exec resume --help` define its supported options.
 The host interface follows the official [non-interactive execution documentation](https://developers.openai.com/codex/noninteractive/).
