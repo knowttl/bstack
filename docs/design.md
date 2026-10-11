@@ -203,25 +203,14 @@ The sections below specify the evidence and outputs that repo-audit must provide
 Files the agent does not read cost no context.
 Anthropic's [skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) describe this loading model, which the guide calls progressive disclosure.
 
-At startup the host loads only each skill's name and description.
-It loads the `SKILL.md` body when the user invokes the skill.
-It loads a bundled file only when the agent reads that file.
-So `SKILL.md` controls what loads, and it must name the one file for each step.
+Native skill discovery and invocation are distinct from command-driven repository inspection, which can read `SKILL.md` without invoking the skill.
+The [C26 observations](../tests/eval/results/invocation-C26/summary.md) record that distinction and the limits of the host's loading telemetry.
+The skill's entry guard governs whether to follow the procedure after such a read.
+`SKILL.md` must name the one file needed for each step.
 
 `SKILL.md` contains a "load when" table.
 Each row pairs a condition with the one file to open.
-The build fixes the final file names, and the names below show the pattern.
-
-| When | Open |
-|---|---|
-| A new idea with no repo | `references/intent-interview.md` |
-| An unresolved decision would change a recommendation | `references/grilling.md` |
-| Project terms are unclear or conflict | `references/domain-language.md` |
-| No `VISION.md`, or the audit found a vision gap | `references/vision.md` |
-| Recommending principles and their checks | `references/enforcement.md` |
-| Recommending module boundaries | `references/architecture.md` |
-| Delegating research | `references/research-briefs.md` |
-| Recording change evidence | `references/maintenance-contract.md` |
+The [skill's load-when table](../skills/repo-audit/SKILL.md#load-when) owns the resource names and conditions, including schema reads and content searches.
 
 Rules for loading:
 
