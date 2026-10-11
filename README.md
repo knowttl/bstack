@@ -155,7 +155,8 @@ node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <idea-w
 ```
 
 The [creation contract](docs/command-contract.md#protected-project-creation) documents the versioned plan, selected destination, scratch scaffold and exact diff.
-The owner selects the stack, scaffold and first journey after approving the scratch vision, then approves the exact dry-run files and declared commands.
+The owner selects the stack, scaffold and first journey after approving the scratch vision.
+Follow [Step 5](skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for scratch verification and repair before presenting the exact files, declared commands and captured results or verification limits for approval.
 Creation journals directories and files through the existing protected-write engine before initialising Git only at the reviewed destination.
 Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.

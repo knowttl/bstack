@@ -1295,7 +1295,7 @@ T3.1 supplies the enforcement and architecture references that recommendations l
 2. Add `project create --workspace <path> --plan <file> --dry-run` and its versioned input schema.
    The plan contains the approved destination, selected findings, complete generated file payloads and declared setup commands.
    Resolve the existing parent and require an absent destination, or an explicitly selected empty directory.
-3. Build the proposed scaffold in scratch and show its exact file diff before the approved creation call.
+3. Build the proposed scaffold in scratch, then follow [Step 5](../skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for verification, repair and review before the approved creation call.
    Validate links, payloads and required prerequisites before creating any destination files.
 4. `project create --workspace <path> --plan <file>` uses the protected-write engine from T2.6.
    Journal directory creation and files, then run `git init` only at the reviewed destination.

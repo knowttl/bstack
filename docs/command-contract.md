@@ -686,7 +686,8 @@ Scaffold paths use canonical forward slashes and cannot contain .git components 
 
 Dry run builds the scaffold only in external scratch and returns its path, destination, complete diff and declared commands.
 Plain output also prints the complete diff.
-After approval, omit --dry-run with the unchanged plan.
+Follow the skill's [Step 5](../skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for scratch verification, repair and review before obtaining approval of the final plan.
+After that approval, omit --dry-run with the unchanged plan.
 The directory and Git journal is creation.json in destination-keyed scratch, with directory intentions saved before mkdir and Git intention saved before git init.
 The T2.6 engine owns the file journal, atomic writes, actual-hash recovery and user-edit conflicts.
 Git is initialised only at the reviewed destination and global configuration is never changed.
