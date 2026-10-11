@@ -376,8 +376,8 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.4 Build `measure` and `overlap`
     - C12 implements revision-bound byte sizes, change and co-change commits, rename lineage, reported lock/generated/declared-formatting exclusions and shared declared write and contract paths.
       Measurement follows merged ancestry with no fixed Git-output capture limit and excludes historical gitlink events.
-      The firstmate-approved scope measures only endpoint files, following detected lineage back through renames to addition.
-      The firstmate accepts merged deletion and unrelated path reuse as an attribution limitation: old-lifetime commits and co-change pairs can support the replacement's advisory signals, never violations, without changing the definition of a change.
+      The supervisor-approved scope measures only endpoint files, following detected lineage back through renames to addition.
+      The supervisor accepts merged deletion and unrelated path reuse as an attribution limitation: old-lifetime commits and co-change pairs can support the replacement's advisory signals, never violations, without changing the definition of a change.
       Generated-directory exclusions now derive from the shared discovery policy.
       Rename evidence respects the same path exclusions as frequency and co-change signals, while formatting-only exclusions retain rename evidence.
       The [command contract](command-contract.md#measure-and-overlap) owns schemas and glob semantics, and [T2.4 evidence](../tests/eval/results/tasks/T2.4.json) records earlier local checks and named fixture controls.
