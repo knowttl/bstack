@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "endpoint": "http://127.0.0.1:1/health",
+  "environment": [],
+  "sideEffects": false,
+  "assumption": "The dependent service responds successfully to a read-only GET /health.",
+  "inputScopes": [
+    "DESIGN.md",
+    "packages/web/ui.ts",
+    "packages/core/internal/database.ts"
+  ],
+  "cwd": ".",
+  "versionArgs": [
+    "--version"
+  ],
+  "timeoutMs": 5000
+}
