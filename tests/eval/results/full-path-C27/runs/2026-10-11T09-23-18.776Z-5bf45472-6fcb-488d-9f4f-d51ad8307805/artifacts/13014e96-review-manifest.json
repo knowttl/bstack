@@ -1,0 +1,85 @@
+{
+  "planDigest": "1324d958131e416c001b64367e4c142c6dbdec8b74d190b5460582bb1b3508f3",
+  "files": [
+    {
+      "path": "journey.mjs",
+      "originalHash": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6",
+      "proposedHash": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605",
+      "bytes": 658
+    },
+    {
+      "path": "packages/core/index.ts",
+      "originalHash": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4",
+      "proposedHash": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82",
+      "bytes": 61
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "originalHash": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769",
+      "proposedHash": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8",
+      "bytes": 255
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "originalHash": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c",
+      "proposedHash": "d2f7ebf1d59d4059fa75ac71348de81d7aebda282e642305f4b3c43aeea1bf2c",
+      "bytes": 204
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "originalHash": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c",
+      "proposedHash": "c0770fe9f064e5731cc884e570f625766dc965766bf11646bdb3aed012cfcd90",
+      "bytes": 89
+    },
+    {
+      "path": "packages/core/b.ts",
+      "originalHash": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8",
+      "proposedHash": "e643c78cec79bba9faa93c39fb78e056f39ed1fd7ce6095d642c5bd6fbd3bd4d",
+      "bytes": 94
+    },
+    {
+      "path": "glossary.md",
+      "originalHash": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d",
+      "proposedHash": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5",
+      "bytes": 93
+    },
+    {
+      "path": "package.json",
+      "originalHash": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d",
+      "proposedHash": "0f0f74d494ef41a0b0104ce393316742ef9aa6e9f9bf5ffbf53c06c07f7f0b9a",
+      "bytes": 452
+    },
+    {
+      "path": "DESIGN.md",
+      "originalHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7",
+      "proposedHash": "3c84e7a5dd2d0a7454b08817641d5adf806a705f64a3861f5f036f09db6f71f3",
+      "bytes": 3132
+    },
+    {
+      "path": "AGENTS.md",
+      "originalHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4",
+      "proposedHash": "659f50a571546c2f99145956746d74f4967b35085791d84a1dc03b189a5614fc",
+      "bytes": 604
+    },
+    {
+      "path": ".bstack/project.json",
+      "originalHash": null,
+      "proposedHash": "20648becc00d353f812b2b9196f912fadfe0f2d531b582cd7bdcb517516ad81f",
+      "bytes": 2648
+    },
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "originalHash": null,
+      "proposedHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a",
+      "bytes": 134390
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "originalHash": null,
+      "proposedHash": "08ea29cd90431ae5aaf84b4675fe2c7a5cc453b5dfdc6fd9946fba182806618e",
+      "bytes": 10765
+    }
+  ],
+  "assessment": "Separate protected exact-byte approval after target implementation commit and capture.",
+  "historicalSnapshot": "Observed original revision and working note; no current readiness claim."
+}

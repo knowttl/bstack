@@ -1,0 +1,40 @@
+Bounded final maintenance passed.
+
+Base: 422c07b21bcde3f2da59c827f0530f8b548d2d7a
+Reviewed implementation source: f3d805cf86fa9dd19558c190dacd37386603ebee
+Final assessment commit: 16c673ee7c65a3b2f4bc792e136e6d0eceef940b
+Assessment: ./f3c982dc-assessment.json
+Assessment SHA-256: 60174c8d149f3767d3a39f247f96e57f42dff484604ed794676a74b7e8e602f9
+Review fingerprint: afc0370d7a02da5d280d9017148a04a401f5394d4b2db763bdc20de95230afb3
+
+Quote 12/24, checkout status 201 totals 10/20 via real loopback HTTP; both user notes and all authoritative sources, contract and checker byte-identical to base.
+All three candidate documents reviewed with literal citations and substantive no-impact explanations. Only product path packages/web/public.ts changes; separately committed assessment records this review and is excluded from its own portable product scope by the checker. No unmapped paths or pending decisions. Assessment introduces no acceptance or policy changes.
+
+Commands:
+node repo-audit.mjs run-checks --repo [fixture] --plan ./bbc4827d-check-plan.json --phase before --json
+node repo-audit.mjs run-checks --repo [fixture] --plan ./bbc4827d-check-plan.json --phase after --prior-run e58063af-cf9e-4ce7-b97f-afc01db46bc1 --json
+node .bstack/bin/bstack-check.mjs --repo <root> --base 422c07b21bcde3f2da59c827f0530f8b548d2d7a --assessment <root>/.bstack/assessment.json --json
+
+Exact command captures and artifacts:
+before: ./94c0c383-before.json
+artifact: ./0a51b8d5-checks.json
+after: ./1d2265f3-after.json
+artifact: ./d8eeb650-checks.json
+final-checks: ./3a71a047-final-checks.json
+artifact: ./e4275036-checks.json
+docs-check: ./a5e8438a-docs-check.json
+artifact: None
+docs-generate: ./8062d65b-docs-generate.json
+artifact: None
+validate-final: ./debe316f-validate-final.json
+artifact: None
+local-checker: ./3a0b608d-local-checker.json
+artifact: ./31f6048d-checker-result.json
+clean-checker: ./c9229389-clean-checker.json
+artifact: ./5b777cd1-checker-result.json
+
+Guard ran immediately before every unit suite and journey; {"path": "./80787d94-resources.jsonl", "checks": 14, "minimumAvailableGiB": 17.823509216308594, "minimumFreeDiskGiB": 27.639881134033203, "maximumLoad": 2.48681640625, "maximumSuitesIncludingProposed": 1}
+
+Isolated clean environment: {"root": "[scratch-path]", "HOME": "[scratch-path]", "XDG_CACHE_HOME": "[scratch-path]", "npm_config_cache": "[scratch-path]", "TMPDIR": "[scratch-path]"}
+
+Limits: Bounded maintenance review; no full audit or hosted enforcement claimed.; Static boundary rules do not cover dynamic imports; HTTP acceptance uses the local endpoint, not production.; Portable assessment contains no saved executions; both complete standalone invocations ran the required leaf freshly.

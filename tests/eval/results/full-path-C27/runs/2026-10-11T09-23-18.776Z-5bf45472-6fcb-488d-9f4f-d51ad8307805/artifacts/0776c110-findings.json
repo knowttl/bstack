@@ -1,0 +1,282 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "nextChange": "Maintain approved checkout and public core boundary, then re-audit a user edit and implement a representative extension using only repo guidance and checks.",
+  "reviewedScope": [
+    "DESIGN.md",
+    "journey.mjs",
+    "packages/core/a.ts",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/core/package.json",
+    "packages/web/alias.ts",
+    "packages/web/package.json",
+    "packages/web/public.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts",
+    "unit.test.mjs",
+    "AGENTS.md",
+    "package.json",
+    ".bstack/project.json",
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/assessment.json",
+    "docs/repo-audit.md",
+    "glossary.md"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3-4",
+      "intent": "documented",
+      "summary": "UI never touches storage; agreed checkout total is 10."
+    },
+    {
+      "id": "instructions",
+      "pointer": "AGENTS.md:1",
+      "intent": "documented",
+      "summary": "Use approved design and public core interface."
+    },
+    {
+      "id": "native",
+      "pointer": "package.json:12-16; boundaries.mjs:19-30",
+      "intent": "observed",
+      "summary": "Maintained check is type-only; separate native boundary command detects private imports, aliases and cycles."
+    },
+    {
+      "id": "journey",
+      "pointer": "journey.mjs:6-12; unit.test.mjs:5-8; packages/web/ui.ts:1-4",
+      "intent": "observed",
+      "summary": "Local HTTP journey returns 12 instead of 10; mocked checkout passes when fetch returns 10."
+    },
+    {
+      "id": "cycle",
+      "pointer": "packages/core/a.ts:1-2; packages/core/b.ts:1-2",
+      "intent": "observed",
+      "summary": "Unused mutually recursive exported functions form a native cycle violation."
+    },
+    {
+      "id": "terms",
+      "pointer": "glossary.md:3-4",
+      "intent": "documented",
+      "summary": "Order names both customer purchase and UI panel sequence."
+    },
+    {
+      "id": "future",
+      "pointer": "user request: final checkpoint and later extension",
+      "intent": "documented",
+      "summary": "Require maintained contract, portable assessed evidence, standalone checker, native proof, and different-root isolated clean clone."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Real local HTTP checkout returns 12; approved acceptance requires 10. Pricing adjustment is undocumented.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/core/internal/database.ts",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "command": "npm run journey",
+      "principle": "Preserve DESIGN.md agreed checkout total 10.",
+      "consequence": "Passing mocked units can conceal a broken agreed journey.",
+      "fix": "Choose a pricing rule before implementation. Recommend checkout unit price 10 owned by core, while quote() stays 12; retain existing quantity/discount behavior. Preserve journey server response 12 and expected total 10.",
+      "scope": [
+        "DESIGN.md",
+        "journey.mjs",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/core/package.json",
+        "packages/web/alias.ts",
+        "packages/web/package.json",
+        "packages/web/public.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts",
+        "unit.test.mjs"
+      ],
+      "verification": "Captured failing reproduction before, passing unchanged journey after, public-interface checks for quote and agreed checkout pricing.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "journey"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Web imports storage internals directly and through @storage alias.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/core/index.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "UI never touches storage; use approved public core interface.",
+      "consequence": "Web bypasses the package boundary and exposes storage details to future extensions.",
+      "fix": "Expose needed service/pricing capability through packages/core/index.ts and update web imports to that public interface. Keep packages/web/public.ts as representative example and document it in DESIGN.md.",
+      "scope": [
+        "DESIGN.md",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/core/package.json",
+        "packages/web/alias.ts",
+        "packages/web/package.json",
+        "packages/web/public.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ],
+      "verification": "Native valid public-import control plus direct private, alias and re-export violation proofs; sibling core internal use remains allowed.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "instructions",
+        "native"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Core a and b recurse through each other and fail existing native cycle rule.",
+      "files": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Existing native checker rejects cycles (not yet documented as approved design).",
+      "consequence": "Native boundaries cannot pass; calling either exported function does not terminate.",
+      "fix": "Select cycle correction: retain file names and a()/b() exports, make b() return public core price and a() delegate to b(). This assigns a previously unspecified result and needs selection. Alternatively retain as explicit unresolved debt.",
+      "scope": [
+        "DESIGN.md",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "unit.test.mjs"
+      ],
+      "verification": "Native valid dependency direction and seeded cycle proof, TypeScript check; selected public behavior check.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "cycle",
+        "native"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Aggregate check omits journey/boundaries; no maintained acceptance/impact contract or standalone checker exists.",
+      "files": [
+        "package.json",
+        "AGENTS.md",
+        "DESIGN.md"
+      ],
+      "command": null,
+      "principle": "Checks must establish approved journeys on final inputs and maintain the selected repo guidance.",
+      "consequence": "Later edits can pass types while violating checkout intent; audit evidence cannot be independently rechecked.",
+      "fix": "Extend npm run check with fail-fast native types, units, boundaries and journey. Add a short DESIGN.md completion/review section and AGENTS.md pointers. Install selected .bstack/project.json and complete dependency-free checker from the installed package through protected apply; retain final assessed record and portable assessment.",
+      "scope": [
+        "AGENTS.md",
+        "DESIGN.md",
+        "package.json",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/assessment.json",
+        "docs/repo-audit.md"
+      ],
+      "verification": "Native and integrated valid/violation proof; contract/docs/evidence validation; fresh standalone checker locally and in different-root clean clone with isolated home/cache. No CI added.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "native",
+        "future"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "Glossary assigns Order two different meanings.",
+      "files": [
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "One canonical name per resolved domain concept.",
+      "consequence": "A later representative extension cannot confidently interpret Order.",
+      "fix": "Recommend Order = customer purchase and Panel order = sequence in which UI panels appear, using the existing glossary.md. No code naming migration.",
+      "scope": [
+        "glossary.md"
+      ],
+      "verification": "Owner confirms distinction; reviewed exact glossary delta and maintained document assessment.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "terms"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey",
+    "native-boundary-proof",
+    "maintained-enforcement",
+    "foundation-review",
+    "maintenance-contract",
+    "standalone-clean-clone"
+  ],
+  "execution": [
+    {
+      "id": "baseline-starting-checks",
+      "outcome": "starting-checks",
+      "status": "failed",
+      "fingerprint": "f234e49edba74e5ac7d41890aff312347e486da1de4e0389d576950d0eee22f8",
+      "artifact": "./319100aa-checks.json",
+      "artifactHash": "136b139e6aed459e266b416270c956cde62bb1630fcb6f46771c383db753694b",
+      "method": "run-checks"
+    },
+    {
+      "id": "baseline-journey",
+      "outcome": "journey",
+      "status": "failed",
+      "fingerprint": "f234e49edba74e5ac7d41890aff312347e486da1de4e0389d576950d0eee22f8",
+      "artifact": "./319100aa-checks.json",
+      "artifactHash": "136b139e6aed459e266b416270c956cde62bb1630fcb6f46771c383db753694b",
+      "method": "run-checks"
+    }
+  ],
+  "limitations": [
+    "Baseline native journey and boundaries fail; readiness is blocked.",
+    "Pricing adjustment, cycle behavior and canonical vocabulary require owner selection.",
+    "Only one initial commit exists; measured co-change is not useful evidence of historical coupling.",
+    "Declared correction and foundation plans share the checkout contract despite disjoint write paths.",
+    "No external production service is configured; journey observes a local loopback server, not a deployed price service.",
+    "Static boundary checker does not cover dynamic imports or runtime dependency loading.",
+    "No CI selected or hosted enforcement observed.",
+    "CLAUDE.md import stub retained; no instruction consolidation proposed.",
+    "Research ran in main thread because the small fixture made delegation wasteful.",
+    "Full final checkpoint remains incomplete until approvals, protected apply and all final evidence pass."
+  ]
+}

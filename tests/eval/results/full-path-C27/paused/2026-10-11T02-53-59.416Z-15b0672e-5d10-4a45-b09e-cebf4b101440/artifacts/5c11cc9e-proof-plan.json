@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7"
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "contentHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "types",
+      "sourceId": "instructions",
+      "pointer": "Use the approved design and public core interface.",
+      "outcome": "Approved public core interface type-checks",
+      "userJourney": false
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "UI avoids storage and native boundary analysis reports no violations",
+      "userJourney": false
+    },
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real HTTP checkout yields status 201 and total 10",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "boundaries",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "maintained",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary",
+        "checkout",
+        "types"
+      ],
+      "inputScopes": [
+        "packages",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    }
+  ]
+}

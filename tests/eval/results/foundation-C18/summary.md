@@ -32,7 +32,7 @@ The full native check failed in its storage-write failure test.
 Playwright `check()` requires the resulting checkbox to remain checked, but the application correctly rolls the failed save back to unchecked.
 Replacing it with `click()` passed all four browser tests in a separate scratch copy.
 That diagnosis is proposal evidence only: the correction was not approved or injected into the evaluated project.
-Firstmate directed preservation of the project and its unverified native first-journey check rather than adding a sixth scripted answer.
+Supervisor directed preservation of the project and its unverified native first-journey check rather than adding a sixth scripted answer.
 No passing full native check is claimed.
 The exact proposed correction and results appear at conversation lines 239-260.
 Maintained enforcement and portable maintenance remain pending.

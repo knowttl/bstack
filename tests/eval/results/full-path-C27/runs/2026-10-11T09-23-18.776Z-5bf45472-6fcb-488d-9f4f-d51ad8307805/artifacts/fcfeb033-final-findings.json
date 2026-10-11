@@ -1,0 +1,388 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "d75c5868a5c4d78e75bc70d157245a8cde4fd485"
+  },
+  "nextChange": "Maintain approved checkout and public core boundary, then re-audit a user edit and implement a representative extension using only repo guidance and checks.",
+  "reviewedScope": [
+    "DESIGN.md",
+    "journey.mjs",
+    "packages/core/a.ts",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/core/package.json",
+    "packages/web/alias.ts",
+    "packages/web/package.json",
+    "packages/web/public.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts",
+    "unit.test.mjs",
+    "AGENTS.md",
+    "package.json",
+    ".bstack/project.json",
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/assessment.json",
+    "docs/repo-audit.md",
+    "glossary.md"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3-4",
+      "intent": "documented",
+      "summary": "UI never touches storage; agreed checkout total is 10."
+    },
+    {
+      "id": "instructions",
+      "pointer": "AGENTS.md:1",
+      "intent": "documented",
+      "summary": "Use approved design and public core interface."
+    },
+    {
+      "id": "native",
+      "pointer": "package.json:13-18; boundaries.mjs:19-30",
+      "intent": "observed",
+      "summary": "Maintained check now runs types, units, boundary analysis and real local HTTP journey; fresh final executions pass."
+    },
+    {
+      "id": "journey",
+      "pointer": "journey.mjs:6-12; unit.test.mjs:5-8; packages/web/ui.ts:1-4",
+      "intent": "observed",
+      "summary": "Controlled endpoint supplies 10; real public UI checkout returns total 10. Quote stays 12. Reseeded endpoint 12 still fails the unchanged assertion."
+    },
+    {
+      "id": "cycle",
+      "pointer": "packages/core/a.ts:1-2; packages/core/b.ts:1-2",
+      "intent": "observed",
+      "summary": "a delegates to b; b returns price through permitted core-owned storage use. Native cycle check passes."
+    },
+    {
+      "id": "terms",
+      "pointer": "glossary.md:3-4",
+      "intent": "documented",
+      "summary": "Order names a purchase; Panel order names the sequence of UI panels."
+    },
+    {
+      "id": "future",
+      "pointer": "user request: final checkpoint and later extension",
+      "intent": "documented",
+      "summary": "Require maintained contract, portable assessed evidence, standalone checker, native proof, and different-root isolated clean clone."
+    },
+    {
+      "id": "verdict",
+      "pointer": "supervisor user verdict, 2026-10-11; DESIGN.md:6",
+      "intent": "documented",
+      "summary": "Endpoint fixture supplies 10; quote remains 12; public core imports, no cycles, aggregate/native proofs, Order/Panel order, contract/checker/assessment, historical audit and isolated clone selected. Receipt wording is a future owner decision."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Controlled HTTP endpoint fixture supplies 12 instead of the agreed 10.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/core/internal/database.ts",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "command": "npm run journey",
+      "principle": "Preserve DESIGN.md agreed checkout total 10.",
+      "consequence": "Passing mocked units can conceal a broken agreed journey.",
+      "fix": "Correct journey endpoint fixture to supply 10; retain assertion 10 and current quote behavior 12. No business discount introduced.",
+      "scope": [
+        "journey.mjs"
+      ],
+      "verification": "Fresh failing original-state capture, then passing corrected local HTTP journey against unchanged assertion 10.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "journey",
+        "verdict"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Web imports storage internals directly and through @storage alias.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/core/index.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "UI never touches storage; use approved public core interface.",
+      "consequence": "Web bypasses the package boundary and exposes storage details to future extensions.",
+      "fix": "Expose needed service/pricing capability through packages/core/index.ts and update web imports to that public interface. Keep packages/web/public.ts as representative example and document it in DESIGN.md.",
+      "scope": [
+        "DESIGN.md",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/core/package.json",
+        "packages/web/alias.ts",
+        "packages/web/package.json",
+        "packages/web/public.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ],
+      "verification": "Native valid public-import control plus direct private, alias and re-export violation proofs; sibling core internal use remains allowed.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "instructions",
+        "native",
+        "verdict"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Core a and b recurse through each other and fail existing native cycle rule.",
+      "files": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Existing native checker rejects cycles (not yet documented as approved design).",
+      "consequence": "Native boundaries cannot pass; calling either exported function does not terminate.",
+      "fix": "Retain a.ts/b.ts and their exports; a() delegates to b(), and b() returns price() instead of recursing to a().",
+      "scope": [
+        "DESIGN.md",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "unit.test.mjs"
+      ],
+      "verification": "Native valid dependency direction and seeded cycle proof, TypeScript check; selected public behavior check.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "cycle",
+        "native",
+        "verdict"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Aggregate check omits journey/boundaries; no maintained acceptance/impact contract or standalone checker exists.",
+      "files": [
+        "package.json",
+        "AGENTS.md",
+        "DESIGN.md"
+      ],
+      "command": null,
+      "principle": "Checks must establish approved journeys on final inputs and maintain the selected repo guidance.",
+      "consequence": "Later edits can pass types while violating checkout intent; audit evidence cannot be independently rechecked.",
+      "fix": "Extend the existing check command with fail-fast type, unit, native boundary and journey checks. Document evidence, review, exception policy, coverage limits and the representative public-interface example in DESIGN.md; AGENTS.md points to maintained guidance.",
+      "scope": [
+        "package.json",
+        "AGENTS.md",
+        "DESIGN.md"
+      ],
+      "verification": "Native and integrated valid/violation proof; contract/docs/evidence validation; fresh standalone checker locally and in different-root clean clone with isolated home/cache. No CI added.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "native",
+        "future",
+        "verdict"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "Glossary assigns Order two different meanings.",
+      "files": [
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "One canonical name per resolved domain concept.",
+      "consequence": "A later representative extension cannot confidently interpret Order.",
+      "fix": "Recommend Order = customer purchase and Panel order = sequence in which UI panels appear, using the existing glossary.md. No code naming migration.",
+      "scope": [
+        "glossary.md"
+      ],
+      "verification": "Owner confirms distinction; reviewed exact glossary delta and maintained document assessment.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "terms",
+        "verdict"
+      ]
+    },
+    {
+      "id": "F-006",
+      "problem": "No maintained contract, standalone checker or portable final assessment exists.",
+      "files": [
+        "AGENTS.md",
+        "DESIGN.md",
+        "package.json"
+      ],
+      "command": null,
+      "principle": "Selected maintenance must assess every changed path and execute approved native checks freshly without the skill.",
+      "consequence": "Future edits cannot be independently checked against the approved repo guidance.",
+      "fix": "Install the complete dependency-free checker and project contract; retain a separately reviewed historical audit snapshot and portable assessment. Validate current final findings in scratch and invoke the checker locally and in a different-root clean clone with isolated home/cache.",
+      "scope": [
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/assessment.json",
+        "docs/repo-audit.md",
+        "AGENTS.md",
+        "DESIGN.md"
+      ],
+      "verification": "Contract/docs/evidence validation and fresh standalone checker executions against the same committed implementation, assessment and explicit base; historical snapshot is not rewritten after each invocation.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "future",
+        "verdict"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001",
+    "F-002",
+    "F-003",
+    "F-004",
+    "F-005",
+    "F-006"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey",
+    "native-boundary-proof",
+    "maintained-enforcement",
+    "foundation-review",
+    "maintenance-contract",
+    "standalone-clean-clone",
+    "standalone-working-checkout",
+    "quote",
+    "seeded-journey-rejection"
+  ],
+  "execution": [
+    {
+      "id": "final-starting-checks",
+      "outcome": "starting-checks",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./f1654f6b-checks.json",
+      "artifactHash": "621fcefb987cb064e87413b65fc2294068ea27c3757b8ccab8bcbe64efd706c1",
+      "method": "run-checks"
+    },
+    {
+      "id": "final-journey",
+      "outcome": "journey",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./f1654f6b-checks.json",
+      "artifactHash": "621fcefb987cb064e87413b65fc2294068ea27c3757b8ccab8bcbe64efd706c1",
+      "method": "run-checks"
+    },
+    {
+      "id": "final-native-boundary-proof",
+      "outcome": "native-boundary-proof",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./578c3a9e-final-native-proof-manifest.json",
+      "artifactHash": "fdd8601fa995f6ba82ed0003889c8322e1283664d619ba7ab4172e6235bdfe96",
+      "method": "manifest of captured rule-proof results"
+    },
+    {
+      "id": "final-maintained-enforcement",
+      "outcome": "maintained-enforcement",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./a37d4623-proof.json",
+      "artifactHash": "1f9fb69ee31672da6c9fbddb3b13a94f3f845ccbe6934f6fa7e6058b5f58d5a9",
+      "method": "rule-proof"
+    },
+    {
+      "id": "final-foundation-review",
+      "outcome": "foundation-review",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./65a2d0f1-final-foundation-review.json",
+      "artifactHash": "7547a534382c5d218d8220e44e17c3570c3831606674d4aabf0efdadf7510ef8",
+      "method": "owner-approved exact plans and main-thread semantic review"
+    },
+    {
+      "id": "final-maintenance-contract",
+      "outcome": "maintenance-contract",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./e3314109-final-local-assessment-validation.json",
+      "artifactHash": "0441aa1b0a47fd7d48a7ad60821674e9801f5bbca7c5f354ba53611f10289644",
+      "method": "evidence validate with fresh final run-checks capture"
+    },
+    {
+      "id": "final-standalone-clean-clone",
+      "outcome": "standalone-clean-clone",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./653eba83-checker-result.json",
+      "artifactHash": "f8b38838adac4e47cc3c81f959c32f039370fe95d2ee1f44b06ddb9413527dee",
+      "method": "fresh complete standalone checker in isolated different-root clean clone"
+    },
+    {
+      "id": "final-standalone-working-checkout",
+      "outcome": "standalone-working-checkout",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./024cc4a3-checker-result.json",
+      "artifactHash": "4adb080457ccb691f990865c2916cdc8cfc85990883b96704ec6b14435682cab",
+      "method": "fresh complete standalone checker in committed working checkout"
+    },
+    {
+      "id": "final-quote",
+      "outcome": "quote",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./f1654f6b-checks.json",
+      "artifactHash": "621fcefb987cb064e87413b65fc2294068ea27c3757b8ccab8bcbe64efd706c1",
+      "method": "run-checks"
+    },
+    {
+      "id": "final-seeded-journey-rejection",
+      "outcome": "seeded-journey-rejection",
+      "status": "passed",
+      "fingerprint": "25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1",
+      "artifact": "./8f78b5f1-proof.json",
+      "artifactHash": "0873dfbbb72135a268682bb3b71def487b9f4442dc5cddac5b6e41aed6c05a84",
+      "method": "rule-proof against unchanged assertion 10 and reseeded endpoint 12"
+    }
+  ],
+  "limitations": [
+    "Ready for the stated next change based on the assessed committed state, not for unrequested product journeys.",
+    "Only default-quantity local HTTP checkout and existing public quote behavior were exercised; no deployed price service observed.",
+    "Native boundary analysis covers static imports/re-exports, aliases and cycles; dynamic imports/runtime loading require review. Restriction to the named public core entry is also a review requirement.",
+    "Receipt wording remains a future owner decision; dependent receipt changes need that decision.",
+    "No hosted CI or delivery service selected or verified.",
+    "History has one original fixture commit; measurements and declared overlap remain advisory, not semantic coupling or conflict proof.",
+    "Current findings bind artifact hashes and final target fingerprint; findings validation checks record structure/freshness, while actual child executions and semantic review are separate evidence.",
+    "Historical snapshot is unchanged; final assessed findings and results stay in scratch."
+  ]
+}

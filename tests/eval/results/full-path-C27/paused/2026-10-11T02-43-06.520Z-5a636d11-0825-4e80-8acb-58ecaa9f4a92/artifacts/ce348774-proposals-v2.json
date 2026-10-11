@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "draftRevision": "e7bf80973a1768554ccfa40d663edc71f645fade70214a13c407b94da8b4a21e",
+  "project": "Pantry list",
+  "runNote": "Resumed review after round 1; prior decisions retained at ./47b4bb47-review.json. Local ownership and Rice journey retained.",
+  "cards": [
+    {
+      "id": "duplicate-needed-state",
+      "title": "Re-adding an equivalent name preserves shopping intent",
+      "body": "When Rice is already marked needed, adding \u201c rice \u201d reuses Rice and preserves its needed mark. Only an explicit change to the needed mark changes the household\u2019s shopping decision.",
+      "tests": "\u201cNames are trimmed, and a case-insensitive match on the full supplied name reuses the existing item.\u201d\n\u201cThe household controls that mark as a shopping decision; it is not inferred from stock.\u201d",
+      "why": "Accepting protects the existing shopping decision when a duplicate is added accidentally. Resisting could treat adding a pantry supply as replenishment and clear its needed mark, saving an explicit action, but would make adding silently reinterpret shopping intent."
+    }
+  ]
+}

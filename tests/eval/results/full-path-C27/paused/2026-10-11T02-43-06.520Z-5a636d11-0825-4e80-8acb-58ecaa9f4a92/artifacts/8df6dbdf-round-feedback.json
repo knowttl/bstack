@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "runId": "82ad591f-8853-4f8e-8a9e-f1d095c248a0",
+  "draftRevision": "e7bf80973a1768554ccfa40d663edc71f645fade70214a13c407b94da8b4a21e",
+  "complete": true,
+  "verdicts": [
+    {
+      "id": "duplicate-needed-state",
+      "verdict": "In vision",
+      "notes": "Supervisor-delegated fixture verdict, 2026-10-11: preserve the existing needed mark when an equivalent full name is re-added. Adding a duplicate must not silently change shopping intent."
+    }
+  ]
+}

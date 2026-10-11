@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "3c84e7a5dd2d0a7454b08817641d5adf806a705f64a3861f5f036f09db6f71f3"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "total",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Checkout with endpoint price 10 returns total 10.",
+      "userJourney": true
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "Public imports and core-owned internal use pass; web private imports, aliases, re-exports and cycles fail.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "journey",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "total"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        "docs/repo-audit.md"
+      ]
+    }
+  ]
+}

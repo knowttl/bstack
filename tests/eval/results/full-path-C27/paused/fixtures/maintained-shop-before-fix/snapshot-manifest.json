@@ -1,0 +1,136 @@
+{
+  "status": "paused",
+  "note": "Diagnostic source snapshot; no final acceptance claim. Dependencies, build caches and Git internals omitted; text redacted.",
+  "files": [
+    {
+      "path": ".bstack/approvals.md",
+      "originalSha256": "d962222f64a980667e5b7f09d585fad20a179a58cacc4663f8fc2ae7fb3b2fe1",
+      "publishedSha256": "d962222f64a980667e5b7f09d585fad20a179a58cacc4663f8fc2ae7fb3b2fe1"
+    },
+    {
+      "path": ".bstack/assessment.json",
+      "originalSha256": "257724cb95cc29d319e150c8ed3c3b563833befd77f7ef2886e8194ce2d6387b",
+      "publishedSha256": "624f504ca3424b67d2b77c89465c27fccfaddab7ef7a52f58a11b6737ebe7ad7"
+    },
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "originalSha256": "96f1b08a8a3a24fcc1cb18662383a5e502271a81ce79f72ece9f3ce79fb7cbdd",
+      "publishedSha256": "96f1b08a8a3a24fcc1cb18662383a5e502271a81ce79f72ece9f3ce79fb7cbdd"
+    },
+    {
+      "path": ".bstack/project.json",
+      "originalSha256": "7c0545a89cb212c8c78e68210950ba3ea768069da3868913432d2c10c49fee3f",
+      "publishedSha256": "7c0545a89cb212c8c78e68210950ba3ea768069da3868913432d2c10c49fee3f"
+    },
+    {
+      "path": ".gitignore",
+      "originalSha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97",
+      "publishedSha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97"
+    },
+    {
+      "path": "AGENTS.md",
+      "originalSha256": "50de049ec9adf2c6afe594ac9b1f46f2ef33b3b1a117909d3aa973621c8ed82a",
+      "publishedSha256": "50de049ec9adf2c6afe594ac9b1f46f2ef33b3b1a117909d3aa973621c8ed82a"
+    },
+    {
+      "path": "CLAUDE.md",
+      "originalSha256": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
+      "publishedSha256": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+    },
+    {
+      "path": "DESIGN.md",
+      "originalSha256": "c78743d55308eb341fd4897dc362ef0d83b8f5a4f459ac634c02f4bb9afebd90",
+      "publishedSha256": "c78743d55308eb341fd4897dc362ef0d83b8f5a4f459ac634c02f4bb9afebd90"
+    },
+    {
+      "path": "boundaries.mjs",
+      "originalSha256": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449",
+      "publishedSha256": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "originalSha256": "3fb672af0878fe905bd17ba429302eef3176f0d0def2b316775795e3f481aa51",
+      "publishedSha256": "15e9d024699e92092821cb9a70da2c4f5c38f1dea343eeae64a322777edae3df"
+    },
+    {
+      "path": "glossary.md",
+      "originalSha256": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5",
+      "publishedSha256": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5"
+    },
+    {
+      "path": "journey.mjs",
+      "originalSha256": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605",
+      "publishedSha256": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605"
+    },
+    {
+      "path": "package-lock.json",
+      "originalSha256": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b",
+      "publishedSha256": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+    },
+    {
+      "path": "package.json",
+      "originalSha256": "26b3a9de07dcb50b83585dfed6f5c1f1d493648c71aeb398e7a9d770297feb26",
+      "publishedSha256": "26b3a9de07dcb50b83585dfed6f5c1f1d493648c71aeb398e7a9d770297feb26"
+    },
+    {
+      "path": "packages/core/a.ts",
+      "originalSha256": "3b62a1473c13eaedcdff0b4a819c85c82827b1c3185088df1e6ab259e1be2c9f",
+      "publishedSha256": "3b62a1473c13eaedcdff0b4a819c85c82827b1c3185088df1e6ab259e1be2c9f"
+    },
+    {
+      "path": "packages/core/b.ts",
+      "originalSha256": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8",
+      "publishedSha256": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8"
+    },
+    {
+      "path": "packages/core/index.ts",
+      "originalSha256": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82",
+      "publishedSha256": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82"
+    },
+    {
+      "path": "packages/core/internal/database.ts",
+      "originalSha256": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424",
+      "publishedSha256": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+    },
+    {
+      "path": "packages/core/package.json",
+      "originalSha256": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf",
+      "publishedSha256": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "originalSha256": "c0770fe9f064e5731cc884e570f625766dc965766bf11646bdb3aed012cfcd90",
+      "publishedSha256": "c0770fe9f064e5731cc884e570f625766dc965766bf11646bdb3aed012cfcd90"
+    },
+    {
+      "path": "packages/web/package.json",
+      "originalSha256": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326",
+      "publishedSha256": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326"
+    },
+    {
+      "path": "packages/web/public.ts",
+      "originalSha256": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230",
+      "publishedSha256": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "originalSha256": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8",
+      "publishedSha256": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8"
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "originalSha256": "d2f7ebf1d59d4059fa75ac71348de81d7aebda282e642305f4b3c43aeea1bf2c",
+      "publishedSha256": "d2f7ebf1d59d4059fa75ac71348de81d7aebda282e642305f4b3c43aeea1bf2c"
+    },
+    {
+      "path": "tsconfig.json",
+      "originalSha256": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49",
+      "publishedSha256": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+    },
+    {
+      "path": "unit.test.mjs",
+      "originalSha256": "af6b0fa03c5c82fb84cfe8e54d22121ece6ea9ccb46fc73c2f227b7c6641ddf2",
+      "publishedSha256": "af6b0fa03c5c82fb84cfe8e54d22121ece6ea9ccb46fc73c2f227b7c6641ddf2"
+    }
+  ]
+}

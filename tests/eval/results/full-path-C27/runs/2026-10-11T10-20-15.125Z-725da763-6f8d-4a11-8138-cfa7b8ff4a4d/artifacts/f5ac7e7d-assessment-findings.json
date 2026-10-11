@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "f3d805cf86fa9dd19558c190dacd37386603ebee"
+  },
+  "nextChange": "Authorized bounded pricing refactor naming total, preserving public pricing and checkout.",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:11",
+      "intent": "documented",
+      "summary": "Quote remains 12 and quantity two returns 24 through public core."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-101",
+      "problem": "Selected internal pricing refactor names its intermediate value.",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": "npm run check",
+      "principle": "Preserve approved public core and quote acceptance.",
+      "consequence": "Refactor must retain default and selected quantity pricing plus checkout.",
+      "fix": "Replace portable assessment with substantive reviewed no-impact evidence for the authorized refactor.",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "Capture native aggregate before and after, then fresh standalone checks locally and in isolated clone.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-101"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "protection",
+    "compatibility"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance only; historical audit preserved."
+  ]
+}

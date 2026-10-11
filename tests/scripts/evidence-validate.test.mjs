@@ -108,6 +108,19 @@ test('internal fix passes with a specific no-impact reason and no cosmetic docum
   assert.deepEqual(first.data.paths, ['src/change.mjs'])
 })
 
+test('glossary metadata does not prevent a complete document assessment', async t => {
+  const f = await fixture(t)
+  f.contract.documents[0].glossary = { context: 'pricing', format: 'markdown-bold' }
+  await f.save()
+  await f.collect()
+  await f.complete()
+  await f.bind()
+  await f.capture()
+  assert.equal(f.validate().exit, 0)
+  assert.deepEqual(JSON.parse(await readFile(join(f.repo, '.bstack/project.json'))).documents[0].glossary,
+    { context: 'pricing', format: 'markdown-bold' })
+})
+
 test('missing substantive document assessment is blocked', async t => {
   const f = await fixture(t)
   blocked(f.validate(), 'missing-assessment')

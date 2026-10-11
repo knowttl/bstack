@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "runId": "f8b2db60-09be-496b-9138-127bf147d46b",
+  "phase": "after",
+  "status": "passed",
+  "planDigest": "fa5ba54344a8804da66db1de1a660bc3da1719e81e94149090cdb024e640f361",
+  "originalState": {
+    "fingerprint": "f6c0e90a39c6fe20728abdd5037f1623d4f94d1bc243a0dcd489be569ca52f9c",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "b53097d6461c09870b054da766b0926affb92987",
+      "files": [
+        {
+          "path": ".bstack/bin/bstack-check.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+        },
+        {
+          "path": ".bstack/project.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "794728af5b84ec147eacb1de5604c87a93e086ac9e37ddbfa3f415b2d355953a"
+        },
+        {
+          "path": "AGENTS.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "2620118ac1585868ae8f69bd2dec7f7827718780375942047ba6e2dde064e74a"
+        },
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "52e4e55663b470c8d21eb54a18a475c200dc1178da9af6af44d1141c4d24b1e9"
+        },
+        {
+          "path": "boundaries.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e4f494f851ab46e3cc6f9b3f9d46ade28c61c5e8d50f41072d777fccff100973"
+        },
+        {
+          "path": "docs/repo-audit.md",
+          "present": false,
+          "mode": null,
+          "linkTarget": null,
+          "contentHash": null
+        },
+        {
+          "path": "glossary.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6fb4832aecbb5ec72ce28322a10bbc536562ebb997eabae3bc8f74688fbd68bb"
+        },
+        {
+          "path": "journey.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605"
+        },
+        {
+          "path": "package-lock.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+        },
+        {
+          "path": "package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "26b3a9de07dcb50b83585dfed6f5c1f1d493648c71aeb398e7a9d770297feb26"
+        },
+        {
+          "path": "packages",
+          "present": true,
+          "mode": 16893,
+          "linkTarget": null,
+          "contentHash": null
+        },
+        {
+          "path": "tsconfig.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+        },
+        {
+          "path": "unit.test.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "96e38db48e246348e2b22d43656202101fb82055126d0b11ec89db15d2986c47"
+        }
+      ],
+      "inputs": {
+        "planDigest": "fa5ba54344a8804da66db1de1a660bc3da1719e81e94149090cdb024e640f361",
+        "planContentHash": "2bc7b7e9feead6725d4e4f29b2a8be37baf2c516432c57da2ce7d75e2c659638"
+      }
+    }
+  },
+  "finalState": {
+    "fingerprint": "f6c0e90a39c6fe20728abdd5037f1623d4f94d1bc243a0dcd489be569ca52f9c",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "b53097d6461c09870b054da766b0926affb92987",
+      "files": [
+        {
+          "path": ".bstack/bin/bstack-check.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+        },
+        {
+          "path": ".bstack/project.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "794728af5b84ec147eacb1de5604c87a93e086ac9e37ddbfa3f415b2d355953a"
+        },
+        {
+          "path": "AGENTS.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "2620118ac1585868ae8f69bd2dec7f7827718780375942047ba6e2dde064e74a"
+        },
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "52e4e55663b470c8d21eb54a18a475c200dc1178da9af6af44d1141c4d24b1e9"
+        },
+        {
+          "path": "boundaries.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e4f494f851ab46e3cc6f9b3f9d46ade28c61c5e8d50f41072d777fccff100973"
+        },
+        {
+          "path": "docs/repo-audit.md",
+          "present": false,
+          "mode": null,
+          "linkTarget": null,
+          "contentHash": null
+        },
+        {
+          "path": "glossary.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6fb4832aecbb5ec72ce28322a10bbc536562ebb997eabae3bc8f74688fbd68bb"
+        },
+        {
+          "path": "journey.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605"
+        },
+        {
+          "path": "package-lock.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+        },
+        {
+          "path": "package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "26b3a9de07dcb50b83585dfed6f5c1f1d493648c71aeb398e7a9d770297feb26"
+        },
+        {
+          "path": "packages",
+          "present": true,
+          "mode": 16893,
+          "linkTarget": null,
+          "contentHash": null
+        },
+        {
+          "path": "tsconfig.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+        },
+        {
+          "path": "unit.test.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "96e38db48e246348e2b22d43656202101fb82055126d0b11ec89db15d2986c47"
+        }
+      ],
+      "inputs": {
+        "planDigest": "fa5ba54344a8804da66db1de1a660bc3da1719e81e94149090cdb024e640f361",
+        "planContentHash": "2bc7b7e9feead6725d4e4f29b2a8be37baf2c516432c57da2ce7d75e2c659638"
+      }
+    }
+  },
+  "startedAt": "2026-10-11T03:08:38.389Z",
+  "completedAt": "2026-10-11T03:08:41.190Z",
+  "priorRun": null,
+  "executionOrder": [
+    "f8b2db60-09be-496b-9138-127bf147d46b"
+  ],
+  "checks": [
+    {
+      "id": "maintained",
+      "role": "outcome",
+      "required": true,
+      "acceptanceCases": [
+        "types",
+        "boundary",
+        "checkout"
+      ],
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "passed",
+      "satisfied": true,
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> check\n> tsc --noEmit && npm run boundaries && npm test && npm run journey\n\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (0.868894ms)\n✔ checkout HTTP mock (27.303613ms)\n✔ public core order interface preserves totals (0.18879ms)\n✔ core helpers terminate with current quote price (0.160709ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.096092\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+        "stderr": "",
+        "durationMs": 2664.5062,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 101.724584,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 1
+    }
+  ],
+  "coverage": [
+    {
+      "id": "types",
+      "sourceId": "instructions",
+      "pointer": "Use the approved [design](DESIGN.md) and public core interface.",
+      "outcome": "Approved public core interface type-checks",
+      "userJourney": false,
+      "status": "passed",
+      "checkIds": [
+        "maintained"
+      ],
+      "reason": null
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "UI avoids storage and native boundary analysis reports no violations",
+      "userJourney": false,
+      "status": "passed",
+      "checkIds": [
+        "maintained"
+      ],
+      "reason": null
+    },
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real HTTP checkout yields status 201 and total 10",
+      "userJourney": true,
+      "status": "passed",
+      "checkIds": [
+        "maintained"
+      ],
+      "reason": null
+    }
+  ],
+  "journeyCoverage": "User journey evidence captured.",
+  "limitations": [
+    "Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Outside dependencies require separate live probe record and compare evidence."
+  ]
+}

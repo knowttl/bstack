@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"findings validate","status":"passed","problems":[],"data":{"result":"ready for the stated next change","reasons":[],"fingerprint":"8efcfd80a263b0a84f2ebc15209036617450ac70d8433cd3783fdf752a0796ba"},"inputs":{"target":{"mode":"repo","root":"[fixture]/pantry-app"},"findings":"./990059b3-final-findings.json"}}

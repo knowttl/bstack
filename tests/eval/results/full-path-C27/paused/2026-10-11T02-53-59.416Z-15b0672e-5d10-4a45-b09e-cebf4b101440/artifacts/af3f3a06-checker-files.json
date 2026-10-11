@@ -1,0 +1,20 @@
+[
+  ".bstack/bin/bstack-check.mjs",
+  ".bstack/schemas/baseline.schema.json",
+  ".bstack/schemas/change-set.schema.json",
+  ".bstack/schemas/check-plan.json",
+  ".bstack/schemas/contract-test.json",
+  ".bstack/schemas/evidence.schema.json",
+  ".bstack/schemas/findings.schema.json",
+  ".bstack/schemas/impact-assessment.json",
+  ".bstack/schemas/measure-exclusions.json",
+  ".bstack/schemas/overlap-plan.json",
+  ".bstack/schemas/probe-record.json",
+  ".bstack/schemas/probe-spec.json",
+  ".bstack/schemas/project-create.json",
+  ".bstack/schemas/project.schema.json",
+  ".bstack/schemas/research-report.json",
+  ".bstack/schemas/resume-state.schema.json",
+  ".bstack/schemas/vision-proposals.json",
+  ".bstack/schemas/vision-verdicts.json"
+]

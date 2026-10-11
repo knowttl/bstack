@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "workspace": "[fixture]",
+  "destination": {
+    "path": "pantry-app",
+    "resolvedPath": "[fixture]/pantry-app",
+    "allowEmpty": false
+  },
+  "stack": "TypeScript browser classic bundle, plain DOM, local storage, no runtime dependencies or application server.",
+  "firstJourney": "Add Rice, mark it needed, view Rice on shopping list, reload and retain it after successful saving.",
+  "visionPath": "VISION.md",
+  "glossaryPath": "GLOSSARY.md",
+  "changeSet": "./ade7948a-changes.json",
+  "changeSetDigest": "4377e2a3190143f81f697b74c766913958774922e960dc0602e65ffab2e42696",
+  "prerequisites": [
+    {
+      "id": "node",
+      "executable": "node",
+      "args": [
+        "--version"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 120000
+    },
+    {
+      "id": "git",
+      "executable": "git",
+      "args": [
+        "--version"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 120000
+    },
+    {
+      "id": "chrome",
+      "executable": "google-chrome",
+      "args": [
+        "--version"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 120000
+    }
+  ],
+  "setupCommands": [
+    {
+      "id": "install",
+      "executable": "npm",
+      "args": [
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 120000
+    },
+    {
+      "id": "native",
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "versionArgs": [
+        "--version"
+      ],
+      "cwd": ".",
+      "timeoutMs": 120000
+    }
+  ],
+  "journeyCommand": {
+    "id": "journey",
+    "executable": "npm",
+    "args": [
+      "run",
+      "journey"
+    ],
+    "versionArgs": [
+      "--version"
+    ],
+    "cwd": ".",
+    "timeoutMs": 120000
+  },
+  "planDigest": "344d1f1dc13d5c64164544789482a900ee9d8bf407c422b33e92995c9c9be762"
+}

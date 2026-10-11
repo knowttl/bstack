@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "planDigest": "675a652e5fd4affa4c5cf42b2d995577d73e9038631bebe6cbc483c671b3ae4a",
+  "destination": "[fixture]/pantry-app",
+  "directories": [
+    "",
+    ".bstack",
+    "scripts",
+    "src",
+    "tests",
+    ".bstack/bin",
+    "src/private",
+    "src/ui"
+  ],
+  "gitStarted": true,
+  "gitComplete": true,
+  "commandsStarted": true,
+  "commands": [
+    {
+      "id": "install",
+      "status": "passed",
+      "stdout": "\nadded 98 packages in 1s\n",
+      "stderr": "",
+      "durationMs": 1430.0974720000002,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "cancelled": false,
+      "outputTruncated": false,
+      "error": null,
+      "toolVersion": {
+        "status": "passed",
+        "stdout": "11.13.0\n",
+        "stderr": "",
+        "durationMs": 99.07110699999998,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null
+      }
+    },
+    {
+      "id": "native-and-browser",
+      "status": "passed",
+      "stdout": "\n> pantry-app@0.1.0 check\n> node scripts/resources.mjs && npm run format && npm run lint && npm run typecheck && npm run journey\n\n{\"availableMemoryGB\":19.740073984,\"freeDiskGB\":30.87282176,\"load\":2.69,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 format\n> prettier --check src tests scripts index.html package.json tsconfig.json eslint.config.mjs DESIGN.md GLOSSARY.md README.md AGENTS.md .bstack/project.json\n\nChecking formatting...\nAll matched files use Prettier code style!\n\n> pantry-app@0.1.0 lint\n> eslint src\n\n\n> pantry-app@0.1.0 typecheck\n> tsc --noEmit\n\n\n> pantry-app@0.1.0 journey\n> node scripts/resources.mjs && npm run build && node --test tests/journey.test.mjs\n\n{\"availableMemoryGB\":19.62440704,\"freeDiskGB\":30.861930496,\"load\":2.69,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 build\n> tsc\n\nOBSERVED Rice add -> needed -> shopping -> reload retained\nOBSERVED duplicate reuse, full-name variants, unmark, failed save, failed retry, complete-session successful retry and reload\n{\"browser\":\"154.0.8037.57\",\"evidence\":\"[scratch-path]\",\"observed\":\"real DOM and reload\",\"errors\":[]}\n✔ approved household browser outcomes (1302.483884ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1711.629253\n",
+      "stderr": "",
+      "durationMs": 6626.3179660000005,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "cancelled": false,
+      "outputTruncated": false,
+      "error": null,
+      "toolVersion": {
+        "status": "passed",
+        "stdout": "11.13.0\n",
+        "stderr": "",
+        "durationMs": 90.96795100000008,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null
+      }
+    }
+  ],
+  "gitVersion": "git version 2.54.0"
+}

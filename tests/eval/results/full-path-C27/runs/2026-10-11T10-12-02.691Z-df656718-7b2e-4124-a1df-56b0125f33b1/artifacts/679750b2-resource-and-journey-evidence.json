@@ -1,0 +1,98 @@
+[
+  {
+    "location": "local",
+    "record": "{\"availableMemoryGB\": 20.13, \"freeDiskGB\": 30.12, \"load\": 5.13134765625, \"hostNodeSuitesIncludingProposed\": 1}"
+  },
+  {
+    "location": "local",
+    "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+  },
+  {
+    "location": "local",
+    "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+  },
+  {
+    "location": "local",
+    "record": "{\"availableMemoryGB\": 20.13, \"freeDiskGB\": 30.12, \"load\": 5.13134765625, \"hostNodeSuitesIncludingProposed\": 1}"
+  },
+  {
+    "location": "local",
+    "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+  },
+  {
+    "location": "local",
+    "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+  },
+  {
+    "location": "local",
+    "record": "{\"availableMemoryGB\": 20.13, \"freeDiskGB\": 30.12, \"load\": 5.13134765625, \"hostNodeSuitesIncludingProposed\": 1}"
+  },
+  {
+    "location": "local",
+    "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+  },
+  {
+    "location": "local",
+    "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+  },
+  {
+    "location": "local",
+    "record": "{\"availableMemoryGB\": 20.13, \"freeDiskGB\": 30.12, \"load\": 5.13134765625, \"hostNodeSuitesIncludingProposed\": 1}"
+  },
+  {
+    "location": "local",
+    "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+  },
+  {
+    "location": "local",
+    "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"availableMemoryGB\": 20.11, \"freeDiskGB\": 30.08, \"load\": 4.60888671875, \"hostNodeSuitesIncludingProposed\": 1}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"availableMemoryGB\": 20.11, \"freeDiskGB\": 30.08, \"load\": 4.60888671875, \"hostNodeSuitesIncludingProposed\": 1}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"availableMemoryGB\": 20.11, \"freeDiskGB\": 30.08, \"load\": 4.60888671875, \"hostNodeSuitesIncludingProposed\": 1}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"availableMemoryGB\": 20.11, \"freeDiskGB\": 30.08, \"load\": 4.60888671875, \"hostNodeSuitesIncludingProposed\": 1}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}"
+  },
+  {
+    "location": "clean",
+    "record": "{\"quantity\":2,\"quote\":24,\"expectedTotal\":20,\"order\":{\"status\":201,\"total\":20},\"requests\":[{\"method\":\"GET\",\"path\":\"/price\"},{\"method\":\"GET\",\"path\":\"/price\"}]}"
+  }
+]

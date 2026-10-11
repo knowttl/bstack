@@ -1,0 +1,5 @@
+- [x] Step 7: Audit the starting state
+- [x] Step 8: Resolve material gaps — explicit supervisor selections retained
+- [x] Step 9: Present evidenced findings — validated, rendered, selected
+- [x] Step 10: Review and apply selected findings — two exact-approved protected plans
+- [x] Step 11: Verify and report readiness — current-head findings, 14 paths assessed, fresh native controls and working/isolated-clone checker results

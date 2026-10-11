@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "refactor",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "ea3fff6831b8e7abab6a4e84f92095229730b286bb491fa1e5d9a3ecd76b3c2f"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Default checkout returns status 201 total 10; quantity two returns total 20 through real local HTTP.",
+      "userJourney": true
+    },
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "Quote remains 12.",
+      "outcome": "Default public quote returns 12.",
+      "userJourney": true
+    },
+    {
+      "id": "selected-quantity",
+      "sourceId": "design",
+      "pointer": "A selected quantity of two produces quote 24.",
+      "outcome": "Public quote for quantity two returns 24.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout",
+        "quote",
+        "selected-quantity"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        "docs/repo-audit.md",
+        "docs/quantity-change.md"
+      ]
+    },
+    {
+      "id": "native-compatibility",
+      "role": "compatibility",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout",
+        "quote",
+        "selected-quantity"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        "docs/repo-audit.md",
+        "docs/quantity-change.md"
+      ]
+    }
+  ]
+}

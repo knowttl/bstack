@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "repo": "[fixture]",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+    "kind": "commit",
+    "objectId": "d75c5868a5c4d78e75bc70d157245a8cde4fd485"
+  },
+  "head": "d75c5868a5c4d78e75bc70d157245a8cde4fd485",
+  "changes": [
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "DESIGN.md"
+    }
+  ],
+  "paths": [
+    "DESIGN.md"
+  ],
+  "mappings": [
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "DESIGN.md adds an explicit export exclusion; no runtime behavior changes.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "reason": "The added export exclusion introduces no interface or acceptance change: web still uses the public core interface, quote is 12 and default HTTP checkout is 201/10. Export has no implementation in the diff, and receipt wording remains deferred.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: export remains outside this change.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "DESIGN.md adds an explicit export exclusion; no runtime behavior changes.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "reason": "The export exclusion does not rename or redefine a customer purchase or panel sequence. The sole changed path is DESIGN.md; glossary definitions remain applicable.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "DESIGN.md adds an explicit export exclusion; no runtime behavior changes.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "reason": "The new export exclusion does not change command paths, document locations or evidence requirements; npm run check and the registered contract still cover the unchanged implementation and changed design.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Run `npm run check` for maintained native verification; see DESIGN.md for acceptance cases, completion evidence and review limits.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion"
+  ],
+  "execution": [
+    {
+      "runId": "2ffd14b0-c9b9-41f6-be4a-bbdfbb7e7d92",
+      "plan": "./7907683d-check-plan.json"
+    }
+  ],
+  "fingerprint": "65b3eedb037cb7ae48da9fa942255e42cf40d8838f814beb002fef9a46c04e51"
+}

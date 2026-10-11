@@ -53,8 +53,8 @@ AC-74 remains Linux-only under R27; these sessions make no Windows or macOS clai
 
 The earlier successful full-suite capture tested corrected source revision `29c6e5bfbcddea02b8cd34b29eba2afc2d375b02` before publication of this fresh pair.
 The [C26 task record](../tasks/C26.json) owns the final settled-source revision, full-suite counts and published-input binding accepted by the unchanged validator.
-Firstmate authorized preserving all pipeline repairs, one settled-source Node 24 full-suite capture outside the pipeline and validator attachment LAST, followed by one Review-bearing publication with Test, Document and CI skipped.
-Any new Review finding stops that publication for firstmate's decision rather than invalidating the settled proof through automatic fixes.
+Supervisor authorized preserving all pipeline repairs, one settled-source Node 24 full-suite capture outside the pipeline and validator attachment LAST, followed by one Review-bearing publication with Test, Document and CI skipped.
+Any new Review finding stops that publication for supervisor's decision rather than invalidating the settled proof through automatic fixes.
 
 ## Historical entry-guard checkpoint
 

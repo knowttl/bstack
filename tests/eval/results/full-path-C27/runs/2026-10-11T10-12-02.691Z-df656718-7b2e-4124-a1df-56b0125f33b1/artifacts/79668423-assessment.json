@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "9afd7f21a55330013440eaef073a0c6e10e9eb80",
+    "kind": "commit",
+    "objectId": "9afd7f21a55330013440eaef073a0c6e10e9eb80"
+  },
+  "head": "1a78db5d105341f91a41701a101302df2af16cef",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "docs/quantity-change.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "journey.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/public.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "unit.test.mjs"
+    }
+  ],
+  "paths": [
+    ".bstack/project.json",
+    "DESIGN.md",
+    "docs/quantity-change.md",
+    "journey.mjs",
+    "packages/web/public.ts",
+    "unit.test.mjs"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "selected-quantity"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "selected-quantity"
+      ]
+    },
+    {
+      "path": "docs/quantity-change.md",
+      "scopeIds": [
+        "maintained-repo",
+        "quantity-authorization"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance",
+        "quantity-authorization"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "selected-quantity"
+      ]
+    },
+    {
+      "path": "journey.mjs",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "selected-quantity"
+      ]
+    },
+    {
+      "path": "packages/web/public.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "selected-quantity"
+      ]
+    },
+    {
+      "path": "unit.test.mjs",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "selected-quantity"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "Selected quote quantity defaults to one; quantity two quotes 24 and checks out for 20 over real local HTTP.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "DESIGN.md",
+          "docs/quantity-change.md",
+          "journey.mjs",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "reason": "Additive acceptance approved by this user; default quote 12, agreed checkout total 10 and both user notes preserved exactly. Reviewed every changed path: packages/web/public.ts multiplies the public core price by the selected quantity with default one; unit.test.mjs protects default and selected quotes plus mocked checkout; journey.mjs uses public quote/checkout and observes two real HTTP GETs, totals 10 and 20; DESIGN.md adds only authorized quantity acceptance; docs/quantity-change.md records the user authorization; .bstack/project.json adds quantity coverage and approval-source registration, retaining all previous constraints and inputs. No private storage access or dependency cycle added. Existing checkout and storage responsibilities remain unchanged; Order is a purchase, no Panel order behavior is added. Invalid quantities and production-service behavior are outside the requested acceptance cases.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "Quote remains 12.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote()`. Quote remains 12. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+          "after": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)`. Quote remains 12. A selected quantity of two produces quote 24. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. The public `checkout(url, quantity = 1)` with quantity two must return `{ status: 201, total: 20 }` through that same real local HTTP endpoint. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount."
+        }
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "Selected quote quantity defaults to one; quantity two quotes 24 and checks out for 20 over real local HTTP.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "DESIGN.md",
+          "docs/quantity-change.md",
+          "journey.mjs",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "reason": "No impact: existing Order and Panel order definitions fully cover this change. Reviewed every changed path: packages/web/public.ts multiplies the public core price by the selected quantity with default one; unit.test.mjs protects default and selected quotes plus mocked checkout; journey.mjs uses public quote/checkout and observes two real HTTP GETs, totals 10 and 20; DESIGN.md adds only authorized quantity acceptance; docs/quantity-change.md records the user authorization; .bstack/project.json adds quantity coverage and approval-source registration, retaining all previous constraints and inputs. No private storage access or dependency cycle added. Existing checkout and storage responsibilities remain unchanged; Order is a purchase, no Panel order behavior is added. Invalid quantities and production-service behavior are outside the requested acceptance cases.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "Selected quote quantity defaults to one; quantity two quotes 24 and checks out for 20 over real local HTTP.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "DESIGN.md",
+          "docs/quantity-change.md",
+          "journey.mjs",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "reason": "No impact: existing maintenance guidance applies without instruction changes. Reviewed every changed path: packages/web/public.ts multiplies the public core price by the selected quantity with default one; unit.test.mjs protects default and selected quotes plus mocked checkout; journey.mjs uses public quote/checkout and observes two real HTTP GETs, totals 10 and 20; DESIGN.md adds only authorized quantity acceptance; docs/quantity-change.md records the user authorization; .bstack/project.json adds quantity coverage and approval-source registration, retaining all previous constraints and inputs. No private storage access or dependency cycle added. Existing checkout and storage responsibilities remain unchanged; Order is a purchase, no Panel order behavior is added. Invalid quantities and production-service behavior are outside the requested acceptance cases.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Use the approved [design](DESIGN.md) and public core interface.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "quantity-authorization",
+      "path": "docs/quantity-change.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "Selected quote quantity defaults to one; quantity two quotes 24 and checks out for 20 over real local HTTP.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "DESIGN.md",
+          "docs/quantity-change.md",
+          "journey.mjs",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "reason": "New separate approval record quotes this request and names the approved public interfaces. Reviewed every changed path: packages/web/public.ts multiplies the public core price by the selected quantity with default one; unit.test.mjs protects default and selected quotes plus mocked checkout; journey.mjs uses public quote/checkout and observes two real HTTP GETs, totals 10 and 20; DESIGN.md adds only authorized quantity acceptance; docs/quantity-change.md records the user authorization; .bstack/project.json adds quantity coverage and approval-source registration, retaining all previous constraints and inputs. No private storage access or dependency cycle added. Existing checkout and storage responsibilities remain unchanged; Order is a purchase, no Panel order behavior is added. Invalid quantities and production-service behavior are outside the requested acceptance cases.",
+        "citations": [
+          {
+            "path": "docs/quantity-change.md",
+            "pointer": "# Selected quantity extension authorization",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "",
+          "after": "# Selected quantity extension authorization\n\nThe user requested: “extend its approved public quote example to support a selected quantity while defaulting to one, and add a quantity-two checkout journey through the public checkout interface.”\n\nThe user required: “Preserve the original quantity-one quote of 12, quantity-one checkout total of 10 and both user notes in DESIGN.md exactly. Verify quantity-two quote 24 and checkout total 20 through the actual local HTTP endpoint.”\n\nThis authorizes the additive quantity-two acceptance cases in DESIGN.md. The approved example is packages/web/public.ts, using packages/core/index.ts. The existing public checkout in packages/web/ui.ts already accepts quantity with default one. No storage interface or pricing policy change is required. Order continues to mean a customer purchase under glossary.md; no Panel order change is involved.\n"
+        }
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [
+    {
+      "id": "authorized-selected-quantity",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "Quote remains 12.",
+      "newCase": "A selected quantity of two produces quote 24.",
+      "affectedWork": [
+        ".bstack/project.json",
+        "DESIGN.md",
+        "docs/quantity-change.md",
+        "journey.mjs",
+        "packages/web/public.ts",
+        "unit.test.mjs"
+      ],
+      "approval": {
+        "path": "docs/quantity-change.md",
+        "pointer": "This authorizes the additive quantity-two acceptance cases in DESIGN.md.",
+        "version": "current"
+      }
+    }
+  ],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion",
+    "selected-quantity"
+  ],
+  "execution": [],
+  "fingerprint": "925874bc100f3c17cf6ccb658900c506ebcab2eb7a754242130ffb9c7aa57298"
+}

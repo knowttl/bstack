@@ -106,7 +106,7 @@ export function mapInventory(inventory, contracts) {
     return { path, scopeIds: [...new Set(scopes.map(scope => scope.id))],
       documentIds: [...new Set(scopes.flatMap(scope => scope.documentIds))], ruleIds: [...new Set(scopes.flatMap(scope => scope.ruleIds))] }
   })
-  const candidateDocuments = contracts.flatMap(contract => contract.documents).filter((document, i, all) =>
+  const candidateDocuments = contracts.flatMap(contract => contract.documents).map(({ id, path }) => ({ id, path })).filter((document, i, all) =>
     all.findIndex(item => item.id === document.id && item.path === document.path) === i &&
     mappings.some(mapping => mapping.documentIds.includes(document.id) || mapping.path === document.path))
   return { mappings, candidateDocuments, unmappedPaths: mappings.filter(mapping => !mapping.documentIds.length).map(mapping => mapping.path) }

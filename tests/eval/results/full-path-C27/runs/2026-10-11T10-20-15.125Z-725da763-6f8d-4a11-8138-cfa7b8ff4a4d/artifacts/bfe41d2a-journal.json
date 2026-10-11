@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "runId": "154f99b118c96b2c39bf299216ca664e06a7db4b4d6e27ff36e67f64917bb268",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "f3d805cf86fa9dd19558c190dacd37386603ebee"
+  },
+  "planDigest": "154f99b118c96b2c39bf299216ca664e06a7db4b4d6e27ff36e67f64917bb268",
+  "edits": [
+    {
+      "id": "review-assessment",
+      "path": ".bstack/assessment.json",
+      "resolvedPath": "./f3c982dc-assessment.json",
+      "originalHash": "12c9e4393b9f16bdedc10b38246e7c41465ac636776025214b9576888006d9e9",
+      "proposedHash": "affca983e533dc895885a9c0da04deeed35c7c1840f4cecde02b5ad6c411ea89",
+      "backup": "original-0",
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "starting-checks",
+    "protection",
+    "compatibility"
+  ]
+}

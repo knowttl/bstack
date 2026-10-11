@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "runId": "01f83617effe7af7d8bbd26d783487972f744397d00ad72c0fcb29910d71762f",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "planDigest": "01f83617effe7af7d8bbd26d783487972f744397d00ad72c0fcb29910d71762f",
+  "edits": [
+    {
+      "id": "edit-1",
+      "path": ".bstack/bin/bstack-check.mjs",
+      "resolvedPath": "[fixture]/.bstack/bin/bstack-check.mjs",
+      "originalHash": null,
+      "proposedHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-2",
+      "path": ".bstack/project.json",
+      "resolvedPath": "[fixture]/.bstack/project.json",
+      "originalHash": null,
+      "proposedHash": "794728af5b84ec147eacb1de5604c87a93e086ac9e37ddbfa3f415b2d355953a",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-3",
+      "path": "AGENTS.md",
+      "resolvedPath": "[fixture]/AGENTS.md",
+      "originalHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4",
+      "proposedHash": "2620118ac1585868ae8f69bd2dec7f7827718780375942047ba6e2dde064e74a",
+      "backup": "original-2",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-4",
+      "path": "DESIGN.md",
+      "resolvedPath": "[fixture]/DESIGN.md",
+      "originalHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7",
+      "proposedHash": "52e4e55663b470c8d21eb54a18a475c200dc1178da9af6af44d1141c4d24b1e9",
+      "backup": "original-3",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-5",
+      "path": "boundaries.mjs",
+      "resolvedPath": "[fixture]/boundaries.mjs",
+      "originalHash": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449",
+      "proposedHash": "e4f494f851ab46e3cc6f9b3f9d46ade28c61c5e8d50f41072d777fccff100973",
+      "backup": "original-4",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-6",
+      "path": "glossary.md",
+      "resolvedPath": "[fixture]/glossary.md",
+      "originalHash": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d",
+      "proposedHash": "6fb4832aecbb5ec72ce28322a10bbc536562ebb997eabae3bc8f74688fbd68bb",
+      "backup": "original-5",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-7",
+      "path": "journey.mjs",
+      "resolvedPath": "[fixture]/journey.mjs",
+      "originalHash": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6",
+      "proposedHash": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605",
+      "backup": "original-6",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-8",
+      "path": "package.json",
+      "resolvedPath": "[fixture]/package.json",
+      "originalHash": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d",
+      "proposedHash": "26b3a9de07dcb50b83585dfed6f5c1f1d493648c71aeb398e7a9d770297feb26",
+      "backup": "original-7",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-9",
+      "path": "packages/core/b.ts",
+      "resolvedPath": "[fixture]/packages/core/b.ts",
+      "originalHash": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8",
+      "proposedHash": "e643c78cec79bba9faa93c39fb78e056f39ed1fd7ce6095d642c5bd6fbd3bd4d",
+      "backup": "original-8",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-10",
+      "path": "packages/core/index.ts",
+      "resolvedPath": "[fixture]/packages/core/index.ts",
+      "originalHash": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4",
+      "proposedHash": "0ac7cd64c0220533668d5f51d01d3ed7dc52b97aa4939cdb1b776f748208c63b",
+      "backup": "original-9",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-11",
+      "path": "packages/core/internal/orders.ts",
+      "resolvedPath": "[fixture]/packages/core/internal/orders.ts",
+      "originalHash": null,
+      "proposedHash": "c67b326d767d2b279f01a9a600ebb9bbf41be0d882df28e4d2c1a148bbb4befc",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-12",
+      "path": "packages/web/alias.ts",
+      "resolvedPath": "[fixture]/packages/web/alias.ts",
+      "originalHash": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c",
+      "proposedHash": "3ff2f84ad0cba61a880fa6d172832c637f2b548bbf0f348e701fdebe16e59aa1",
+      "backup": "original-11",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-13",
+      "path": "packages/web/public.ts",
+      "resolvedPath": "[fixture]/packages/web/public.ts",
+      "originalHash": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230",
+      "proposedHash": "e4d9a841e4c02ab8f52cdeb1c63d110c645454958c4fac23e325377850d83b0e",
+      "backup": "original-12",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-14",
+      "path": "packages/web/routes.ts",
+      "resolvedPath": "[fixture]/packages/web/routes.ts",
+      "originalHash": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769",
+      "proposedHash": "67f0008b8decc9b639b9b7b900edc7013020cf83c72de6112a900c8e05a65509",
+      "backup": "original-13",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-15",
+      "path": "packages/web/ui.ts",
+      "resolvedPath": "[fixture]/packages/web/ui.ts",
+      "originalHash": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c",
+      "proposedHash": "035b1920e4bd9aa3034795a7c0a84486cf1724a47b4c9b36a3c44c8047e3c9bf",
+      "backup": "original-14",
+      "completed": true,
+      "temporary": null
+    },
+    {
+      "id": "edit-16",
+      "path": "unit.test.mjs",
+      "resolvedPath": "[fixture]/unit.test.mjs",
+      "originalHash": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e",
+      "proposedHash": "96e38db48e246348e2b22d43656202101fb82055126d0b11ec89db15d2986c47",
+      "backup": "original-15",
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "starting-checks",
+    "journey",
+    "boundary-proof",
+    "maintained-enforcement",
+    "portable-maintenance",
+    "clean-clone-checker"
+  ]
+}

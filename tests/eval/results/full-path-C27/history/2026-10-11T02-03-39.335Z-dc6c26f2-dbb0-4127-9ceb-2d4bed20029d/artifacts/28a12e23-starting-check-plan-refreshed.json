@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "bug-fix",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7"
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "contentHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Checkout returns status 201 and total 10 using real local HTTP",
+      "userJourney": true
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "UI uses public core interface and cannot import storage",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "types",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "*.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "units",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "*.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "reproduction",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "*.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "*.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    }
+  ]
+}
