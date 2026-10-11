@@ -27,6 +27,11 @@ The Python [container fallback comparison](research-main-python-comparison.json)
 Its effective adapter disables general-purpose delegation; the [native trace](runs/2026-10-11T21-02-36.654Z-e0404627-bc0f-4181-9cc0-477bbce59e3e/main-thread-trace.jsonl) records sequential main-thread source inspection without delegation.
 The [original five-brief report](runs/2026-10-11T21-02-36.654Z-e0404627-bc0f-4181-9cc0-477bbce59e3e/artifacts/research-report.json) explicitly marks language and outside recommendations not researched under the no-web constraint.
 Both the agent and evaluator independently passed all 51 original citations; project bytes remained clean and the login copy was absent after the turn.
+The TypeScript [container fallback comparison](research-main-typescript-comparison.json) also passes all three checks.
+Its [native main-thread trace](runs/2026-10-11T21-05-38.869Z-74301d5b-83cc-4b39-8bb2-04e2389077f8/main-thread-trace.jsonl) and [five-brief report](runs/2026-10-11T21-05-38.869Z-74301d5b-83cc-4b39-8bb2-04e2389077f8/artifacts/research-report.json) retain the sequential research and explicit no-web limitations.
+The agent and evaluator independently passed its 51 original citations, with clean project bytes and login cleanup verified.
+AC-56 passes the [container runtime-independence comparison](runtime-independence-comparison.json).
+Actual availability checks found no router, akashic or no-mistakes; the bounded audit completed with only the installed package and native tools, leaving project bytes unchanged and readiness unverified where product checks were absent.
 
 ## Historical process-only evaluations
 
