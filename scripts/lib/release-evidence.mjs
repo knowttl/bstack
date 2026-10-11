@@ -59,11 +59,12 @@ export async function completeRelease(results) {
     git('merge-base', '--is-ancestor', record.sourceRevision, 'HEAD')
     const request = (record.mode === 'with' && definition.invocation === 'explicit' ? `${adapter.invocation.explicit}\n` : '') +
       (['foundation', 'final'].includes(record.stage) ? `Active checkpoint: ${record.stage}.\n` : '') + definition.request
-    if (record.request !== request || record.turns[0].message !== request ||
+    if (record.request !== request || record.turns.length !== definition.answers.length + 1 || record.turns[0].message !== request ||
         record.turns.slice(1).some((turn, index) => turn.message !== definition.answers[index])) fail(`Changed agent request or scripted answers: ${id}`)
     // Grader repairs do not change a captured agent's inputs.
-    git('diff', '--quiet', record.sourceRevision, '--', 'skills/repo-audit', 'install', 'tests/fixtures',
-      'tests/eval/adapters')
+    git('diff', '--quiet', record.sourceRevision, '--', 'tests/fixtures', 'tests/eval/adapters')
+    // The verified without mode never stages the package or runs its installer.
+    if (record.mode === 'with') git('diff', '--quiet', record.sourceRevision, '--', 'skills/repo-audit', 'install')
     if (!approvedBaseline) {
       git('diff', '--quiet', record.sourceRevision, '--', 'scripts/lib/evaluation-host.mjs',
         'scripts/lib/evaluation-container.mjs', 'scripts/lib/evaluation-resources.mjs', 'tests/eval/container')
