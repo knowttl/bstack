@@ -2,6 +2,28 @@
   "schemaVersion": 1,
   "scenarios": [
     {
+      "id": "final-independent-extension",
+      "fixture": "ts-shop",
+      "request": "Using only this maintained ts-shop repo's own resulting guidance and checks, add a quantity-two checkout journey through its approved public interface and representative example. Locate and name the approved example first. Preserve the original quantity-one total-10 acceptance and both user notes in DESIGN.md exactly. Exercise the actual local HTTP endpoint through the public checkout interface, and run all maintained constraints and the fresh standalone checker in a different-root clean clone with isolated home/cache. Assess documentation impact against the approved sources and explicit comparison base. No audit skill, bundled references, goal interview, full audit, hosted CI or delivery service. Report concrete interface, journey, constraint and clean-checkout artifacts. Before every Node test suite verify at least 8 GB available memory and free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "implicit",
+      "checks": [
+        { "id": "extension", "caseId": "AC-64", "question": "In a fresh conversation with no repo-audit skill discoverable, did the extension locate ts-shop's approved example, use intended public interfaces, preserve original acceptance and user notes, pass the quantity-two real-endpoint journey and maintained constraints, and record fresh clean-checkout checker evidence using only resulting target guidance?" }
+      ]
+    },
+    {
+      "id": "final-maintained-maintenance",
+      "fixture": "ts-shop",
+      "request": "Perform bounded maintenance on this previously maintained ts-shop fixture, using references/maintenance-contract.md and its existing approved project sources and checks. Select HEAD as the explicit comparison base before a small internal pricing refactor that names an intermediate value while preserving public pricing and checkout behaviour. Protect the original behaviour before the refactor. Preserve both user notes and existing authoritative documents without cosmetic edits. Collect and review final change evidence, record a substantive no-impact explanation, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Do not repeat the goal interview or full repo audit, invoke inspect/inventory/research, change acceptance or start a delivery service. Report exact assessment, base/source, command captures and fresh clean-checkout checker artifact paths. Before every Node test suite verify at least 8 GB available memory and free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        { "id": "bounded", "caseId": "AC-23", "question": "Did a fresh installed maintenance-only conversation complete an internal refactor and substantive impact assessment with local and fresh clean-checkout checker evidence, without the interview or full audit and while preserving approved sources, user notes and journeys?" }
+      ]
+    },
+    {
       "id": "final-new-project",
       "fixture": "new-idea",
       "request": "Read brief.md and complete the new-project path at the final checkpoint: intent, resolved terms, interactive vision review including a resumed round, exact revision approval, evidenced foundation findings, selection, protected creation, native enforcement and maintenance evidence. Use only the complete installed package. Keep drafts and captures in scratch. Stop at each real author approval or browser feedback boundary. The first journey is add Rice, mark it needed, view Rice on the shopping list, reload and retain it. Require observed browser behaviour as well as native checks. Complete the selected maintenance contract and dependency-free standalone checker, then run it in a fresh different-root clean clone with isolated home and cache. No hosted CI, release or delivery service. Report paths of the final findings, creation record, rule-proof, assessment and fresh checker artifacts. Never claim a partial checkpoint proves the complete path.",
