@@ -16,11 +16,11 @@ Read only affected sources and implementation, widening that scope when the evid
 ## Collect the final scope
 
 Use Node 24 or later and Git.
-Run the installed helper from its actual skill location; examples below use this checkout's location.
+Run these commands from the installed skill, passing the target explicitly.
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs contract validate --repo <target> --contract .bstack/project.json --json
-node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base <ancestor-commit> --json
+node scripts/repo-audit.mjs contract validate --repo <target> --contract .bstack/project.json --json
+node scripts/repo-audit.mjs evidence collect --repo <target> --base <ancestor-commit> --json
 ```
 
 Collect early to identify affected sources, then recollect after implementation so the assessment covers the final committed, staged, unstaged and new paths, including both sides of renames and deleted paths.
@@ -75,9 +75,9 @@ Passing checks cannot resolve a pending decision or authenticate approval.
 ## Validate locally
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs docs check --repo <target> --json
-node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --check --json
-node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <assessment.json> --json
+node scripts/repo-audit.mjs docs check --repo <target> --json
+node scripts/repo-audit.mjs docs generate --repo <target> --check --json
+node scripts/repo-audit.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <assessment.json> --json
 ```
 
 Use the same selected `--contract` throughout.

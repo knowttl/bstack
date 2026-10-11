@@ -155,7 +155,8 @@ node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <idea-w
 ```
 
 The [creation contract](docs/command-contract.md#protected-project-creation) documents the versioned plan, selected destination, scratch scaffold and exact diff.
-The owner selects the stack, scaffold and first journey after approving the scratch vision, then approves the exact dry-run files and declared commands.
+The owner selects the stack, scaffold and first journey after approving the scratch vision.
+Follow [Step 5](skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for scratch verification and repair before presenting the exact files, declared commands and captured results or verification limits for approval.
 Creation journals directories and files through the existing protected-write engine before initialising Git only at the reviewed destination.
 Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
@@ -373,7 +374,8 @@ Equivalent names such as `CONTRIBUTING.md` and `architecture.md` are recognised.
 Read the discovered files to establish which source is authoritative.
 Root `CLAUDE.md`, including import-only stubs, yields a consolidation candidate requiring content review and author approval.
 See the [existing-repo apply procedure](skills/repo-audit/SKILL.md#step-10-review-and-apply-selected-findings) for which instruction candidates this path can apply.
-Local and ancestor instructions outside the repo are possible shadowing sources and are never proposed for modification.
+Local instruction variants inside the repo are possible shadowing sources and are never proposed for modification.
+Instruction files outside the repo, including ancestor directories and user profiles, are neither inspected nor reported.
 Claude Code versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled may read only `CLAUDE.md`.
 Recheck current host loading behaviour before proposing removal.
 Both commands are read-only and do not run native project checks.

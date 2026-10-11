@@ -1,4 +1,4 @@
-import { readFile, stat } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import { basename, dirname, join, relative, sep } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { repoFiles } from '../lib/discovery.mjs'
@@ -33,8 +33,9 @@ export async function run(options) {
   const files = []
   const candidates = []
   const shadowing = []
-  async function add(path, insideRepo) {
-    const absolute = insideRepo ? join(target.root, path) : path
+  const paths = new Set(await repoFiles(target.root))
+  async function add(path) {
+    const absolute = join(target.root, path)
     const kind = kindFor(path)
     if (!kind) return
     const bytes = await readFile(absolute)
@@ -42,18 +43,18 @@ export async function run(options) {
     if (kind === 'instructions') {
       const directory = dirname(absolute)
       const scopeDirectory = basename(path) === 'CLAUDE.md' && basename(directory) === '.claude' ? dirname(directory) : directory
-      const scope = insideRepo ? relative(target.root, scopeDirectory).split(sep).join('/') || '.' : scopeDirectory
-      Object.assign(file, { directory: insideRepo ? dirname(path) : directory, scope, insideRepo,
-        scoped: insideRepo && scope !== '.', local: basename(path) === 'CLAUDE.local.md' })
-      if (!insideRepo || file.local) shadowing.push({ path, scope, insideRepo, modifiable: false, reason: 'Possible shadowing of AGENTS.md. Preserve this instruction source.' })
+      const scope = relative(target.root, scopeDirectory).split(sep).join('/') || '.'
+      Object.assign(file, { directory: dirname(path), scope, insideRepo: true,
+        scoped: scope !== '.', local: basename(path) === 'CLAUDE.local.md' })
+      if (file.local) shadowing.push({ path, scope, insideRepo: true, modifiable: false, reason: 'Possible shadowing of AGENTS.md. Preserve this instruction source.' })
       else if (basename(path) === 'CLAUDE.md') {
         const destination = relative(target.root, join(scopeDirectory, 'AGENTS.md')).split(sep).join('/')
         let equivalent = false
         try {
-          const agents = await readFile(join(scopeDirectory, 'AGENTS.md'))
+          const agents = paths.has(destination) ? await readFile(join(scopeDirectory, 'AGENTS.md')) : null
           const content = bytes.toString('utf8').trim()
           const importPath = relative(directory, join(scopeDirectory, 'AGENTS.md')).split(sep).join('/')
-          equivalent = bytes.equals(agents) || content === `@${importPath}` || content === `@./${importPath}`
+          equivalent = agents !== null && (bytes.equals(agents) || content === `@${importPath}` || content === `@./${importPath}`)
         } catch (error) {
           if (error.code !== 'ENOENT') throw error
         }
@@ -64,18 +65,7 @@ export async function run(options) {
     }
     files.push(file)
   }
-  for (const path of await repoFiles(target.root)) await add(path, true)
-  for (let directory = dirname(target.root); ; directory = dirname(directory)) {
-    for (const path of ['AGENTS.md', 'CLAUDE.md', 'CLAUDE.local.md', join('.claude', 'CLAUDE.md')]) {
-      const absolute = join(directory, path)
-      try {
-        if ((await stat(absolute)).isFile()) await add(absolute, false)
-      } catch (error) {
-        if (error.code !== 'ENOENT' && error.code !== 'ENOTDIR') throw error
-      }
-    }
-    if (dirname(directory) === directory) break
-  }
-  const absent = ['instructions', ...Object.keys(documentNames)].filter(kind => !files.some(file => file.kind === kind && file.insideRepo !== false))
+  for (const path of paths) await add(path)
+  const absent = ['instructions', ...Object.keys(documentNames)].filter(kind => !files.some(file => file.kind === kind))
   return { data: { root: target.root, files, absent, candidates, shadowing }, inputs: { repo: target.root } }
 }
