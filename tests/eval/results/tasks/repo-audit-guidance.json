@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "taskId": "repo-audit-guidance",
+  "slice": "repo-audit-guidance",
+  "sourceRevision": "75e9ede4f020de5277d777c4907d3826f24cf5ec",
+  "intent": "Apply review recommendations 6-12 and 20: assess test shape in every audit, preserve evidence requirements in target guidance, recommend proportionate public-contract tests from approved acceptance sources, propose changing universal test-first mandates only with selection, verify scratch scaffolds before review, fix installed maintenance command paths, remove shipped build-status prose, and inspect and report instruction files only inside the audited repo.",
+  "amendments": [
+    "R28 records the owner's repo-only instruction scope and confirmed R11 reading. AC-49, the command contract and implementation plan follow that scope."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "Linux",
+    "node": "v24.17.0",
+    "tools": {}
+  },
+  "commands": [],
+  "cases": [
+    {
+      "id": "AC-49",
+      "kind": "automated",
+      "procedure": "inventory preserves repo instruction scopes and ignores outside instructions without writes; ts-shop import-only CLAUDE stub produces a version-limited merge candidate; a local-only instruction is a shadowing report without a merge candidate; equivalent nested instructions consolidate within their own scope; containing-scope controls preserve .claude instruction scopes.",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/repo-audit-guidance.full-tests.txt"
+    }
+  ],
+  "limitations": [
+    "The public inventory regression failed before the implementation change because all four seeded ancestor instruction variants appeared in output; the revised command excludes them while preserving repo-local scopes and file bytes.",
+    "AC-49 evidence here covers the deterministic inventory behaviour, not a fresh complete agent audit or approval interaction.",
+    "Recommendations 6-12 change agent instructions. Package validation establishes structural validity, not model interpretation; fresh installed full-path and extension evaluation remains T4.3 work.",
+    "Historical T2.3 evidence retains the behaviour and test names from its recorded revision; R28 and this record supersede its outside-repo shadowing expectation.",
+    "Recorded execution covers Linux and Node 24 only. No release, tag, publication or hosted CI workflow was performed."
+  ]
+}

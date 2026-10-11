@@ -20,16 +20,7 @@ Unrelated product work, automatic routing, general development playbooks and del
 Return findings and evidence to the project's chosen workflow instead of starting another skill, opening a pull request or selecting a delivery service.
 Security hardening of created skills and licensing review are outside scope.
 
-This is a procedure under construction.
-The intent and vision steps, research briefs and citation check, their references and board build, launch and verdict commands are available.
-Steps 7 and 11 describe the available read-only audit and findings commands.
-The apply command previews reviewed plans with `--plan <file> --dry-run`, then writes or resumes them without `--dry-run`, preserving originals and a journal in scratch.
-Check-plan execution capture is available through the shared verification rules below.
-The enforcement and architecture references are available for recommendations.
-The existing-repo audit and selected apply path are available.
-Protected new-project creation is available through Step 5.
 Routine maintenance uses the maintenance-contract reference directly, without repeating either audit checklist or the goal interview.
-The shared-library contract-test command is available but does not implement an audit or approve writes.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented board approval for unavailable tooling.
 
@@ -109,10 +100,8 @@ Distinguish automated rules from judgement rules.
 Include setup, formatting, lint, applicable type checks and tests.
 CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
 Avoid speculative frameworks, service layers, integrations and empty document templates.
-The enforcement and architecture references are available for recommendations.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
 Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
-Native rule-proof, debt baseline checks and maintained local enforcement integration through apply are available.
 Declare selected command paths with each apply edit's `checkIntegration` according to the [enforcement reference](references/enforcement.md#integrate-the-maintained-command).
 
 Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
@@ -124,7 +113,10 @@ Prepare a create-only change set following schemas/change-set.schema.json, inclu
 Use the resolved planned destination as the change set and findings target, with mode workspace and revision null.
 Prepare schemas/project-create.json in scratch, binding the creation plan to the change set digest and approved destination, stack, first journey, setup commands and prerequisites.
 Select an absent destination under an existing parent, or explicitly select an empty directory with allowEmpty true.
-Run project create --workspace <idea-workspace> --plan <file> --dry-run --json to build the scaffold in scratch and present the complete exact diff and declared commands.
+Run project create --workspace <idea-workspace> --plan <file> --dry-run --json to build the scaffold in scratch.
+Before presenting the complete exact diff and declared commands, run the declared setup and journey commands in the returned scratch scaffold, with approval for any that download or write outside scratch, and repair failures in the proposed bytes.
+After repairs, refresh the payloads, hashes and plan digests and repeat the dry run and checks on those final bytes.
+Present the captured results with the diff; an unrun or failing journey keeps the proposal unverified.
 Only after approval of those exact bytes and commands, run the unchanged plan without --dry-run.
 Creation uses the same protected-write engine as apply and journals directory creation, files, Git initialisation and command results outside the project.
 Repeat the unchanged creation plan to resume interrupted directory, file or Git creation.
@@ -132,7 +124,7 @@ Preserve unrelated files and user edits, inspecting retained journals before res
 Make the first user journey work end to end where practical, without expanding into unrelated product work.
 Never adopt an existing nonempty directory or change global Git config.
 
-Done when: Only selected, reviewed changes have been applied with recoverable originals and current hash preconditions, otherwise writes remain blocked.
+Done when: The proposal includes captured scratch setup and journey results or explicit verification limits, and only selected, reviewed changes have been applied with recoverable originals and current hash preconditions, otherwise writes remain blocked.
 
 ### Step 6: Verify the outcome
 
@@ -164,7 +156,7 @@ Resolve the selected repo and read its instructions and indexes.
 First run `node scripts/repo-audit.mjs inspect --repo <target> --json`, then `node scripts/repo-audit.mjs inventory --repo <target> --json`.
 Keep both outputs in scratch before researching discovered documents and implementation.
 Inventory the existing README, vision, requirements, goals, design, architecture, decisions, principles, vocabulary, standards, prior audits, debt and planned changes using their actual names and layout.
-Inspect relevant manifests, native configs, CI, entry points, module responsibilities, interfaces, data flow, code and tests.
+Inspect relevant manifests, native configs, CI, entry points, module responsibilities, interfaces, data flow, code and tests, noting which important user journeys have direct executable checks and which tests assert private implementation rather than a public contract.
 Record the revision and working-tree state and preserve uncommitted user work.
 Identify approved principles and their existing enforcement.
 Run safe native checks when prerequisites permit, recording commands and results directly.
@@ -172,7 +164,7 @@ Get approval before checks that affect external systems or shared data.
 Record unavailable checks and inaccessible history as limitations, rather than inventing evidence.
 Use the shared research rules below for read-heavy work.
 Read the discovered sources before treating them as authoritative.
-Preserve distinct nested guidance and local or outside-repo instructions.
+Inspect instruction files only inside the selected repo, preserving distinct nested guidance and local variants.
 Instruction consolidation candidates require content review, a current host loading check and author approval before protected edits.
 Load the research briefs, run the relevant briefs, open each cited source and run `cite-check --repo <target> --report <file> --json` before relying on the report.
 Summarise documented intent, observed behaviour and inferred intent with checked citations and actual starting-check results before any question.
@@ -208,7 +200,11 @@ Done when: Every material gap is resolved or explicitly blocks its dependent rec
 
 Judge the foundation against its approved principles and respect its stack and conventions unless evidence supports a specific change.
 Separate observed debt, missing protections, unresolved design decisions and proposed new principles.
+An important journey protected only by unit or mocked tests is a missing protection.
 For each material finding record an ID, observed problem, evidence files or failing command, principle, consequence, proposed fix, scope, verification method and whether it blocks the stated next change or can wait.
+For a test recommendation, name the acceptance source and the journey or public boundary it protects, and propose the fewest checks that would fail if that outcome broke.
+Do not propose tests that assert private implementation or copy expected values from current behaviour without an approved source.
+Report an instruction that mandates one development sequence for every change, such as writing a failing test before all work, as a proposed principle change citing the verification requirements, and keep it unless the user selects the change.
 Keep proposed principles separate for review instead of treating them as existing requirements.
 Avoid speculative findings, cosmetic rewrites and universal architecture prescriptions.
 Use native baselines where available, keeping known failures visible and preventing new failures from entering through a refreshed baseline.
@@ -216,7 +212,6 @@ Exceptions need a reason, scope and removal condition.
 Create findings following `schemas/findings.schema.json` in scratch.
 Run `findings validate --repo <target> --findings <file> --json`, then `findings render --repo <target> --findings <file> --json` before review.
 Missing execution evidence can leave the preview verification blocked without preventing review of its proposals.
-The enforcement and architecture references are available for recommendations.
 Use the enforcement reference's rule-proof and debt baseline commands for selected rules and accepted temporary debt.
 Use selected apply edits to extend the existing maintained check command, preserving failures and package scope as described in the enforcement reference.
 
@@ -226,13 +221,14 @@ Done when: Every recommendation has a project-specific reason, evidence, princip
 
 Use the shared review and write rules, preserving existing runtime behaviour and uncommitted user work.
 Reuse authoritative documents and native configs instead of duplicating vision, vocabulary, design or standards.
-AGENTS.md holds pointers and check commands, not full copies of those sources.
+AGENTS.md holds pointers to the project's rules, evidence requirements and maintained check commands, not full copies of those sources.
+When no project source states what evidence completes a change, propose one short section in the existing design or contribution guide naming where acceptance cases and the journey check live, that a change is complete when its affected journeys pass on the final inputs, and that passing unit tests alone do not establish it.
 Apply only selected findings.
 Retain the user's selection and exact reviewed scope in scratch, then update the findings selections and prepare a change set following `schemas/change-set.schema.json`.
 Include original and proposed exact-byte hashes, resolved scope, findings digest and plan digest.
 Run `apply --repo <target> --plan <file> --dry-run` and present its complete diff before applying the unchanged approved plan without `--dry-run`.
 A selected root instruction merge retains equivalent repo-owned CLAUDE.md content in AGENTS.md and removes CLAUDE.md with a selected `delete` edit in that same plan.
-Report scoped, local and ancestor instructions as inventory classified them and never modify them in this path.
+Report scoped and local repo instructions as inventory classified them and never modify them in this path.
 Retain the current host loading check and compatibility limits with the instruction proposal.
 Use `state show --repo <target> --run <run-id> --json` to inspect actual states after interruption, then resume the unchanged plan and rerun affected checks.
 
@@ -256,7 +252,6 @@ Render returns a scratch path and distinguishes documented, observed and inferre
 Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
 Capture approved checks through the shared verification rules below.
-Selected maintained enforcement through apply is available from T3.4.
 
 Done when: Every required check is fresh and passed, every changed path is mapped or listed as unmapped, and the readiness verdict names all unresolved findings and verification limits instead of masking them with passing unit tests.
 
@@ -332,7 +327,8 @@ User changes block remaining writes, and replacement is atomic per file where su
 
 Preserve distinct scoped instructions.
 Propose consolidating equivalent repo-owned CLAUDE.md content, including an import stub, into the corresponding AGENTS.md only through reviewed protected edits.
-Report local variants and ancestor instructions outside the repo as possible shadowing, without modifying them.
+Report local variants inside the repo as possible shadowing, without modifying them.
+Do not inspect or report instruction files outside the selected repo, including ancestor directories and user profiles.
 Before proposing removal, check the current host's official loading documentation and available runtime, and state compatibility limits for sessions that read only CLAUDE.md.
 Do not flatten distinct nested guidance into root instructions.
 
