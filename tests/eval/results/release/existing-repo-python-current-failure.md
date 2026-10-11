@@ -1,5 +1,8 @@
 # Python native environment not exercised
 
+Resolved by the single [with-skill native-environment repair](native-environment-repair.md), which passes 4/4 against this retained baseline without changing the evaluation request or rubric.
+The failed captures below remain historical diagnostics.
+
 The [current-fixture Python comparison](existing-repo-python-current-failure-comparison.json) fails the design pass rule: both modes score 3/4, with AC-60 unfulfilled.
 Both audits fit balanced postings and public ledger ownership, reuse CONTRIBUTING.md as the standards authority, and preserve the cohesive ledger owner and thin startup wiring.
 Neither executes the prepared Python 3.12 and Ruff tools; both instead use Python 3.11 supplemental checks and report supported-runtime readiness unverified.

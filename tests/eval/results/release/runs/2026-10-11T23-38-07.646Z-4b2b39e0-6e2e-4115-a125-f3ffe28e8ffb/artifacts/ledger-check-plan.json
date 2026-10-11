@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "standards",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+    },
+    {
+      "id": "journey",
+      "path": "startup.py",
+      "contentHash": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "public",
+      "sourceId": "standards",
+      "pointer": "External modules use the public ledger package.",
+      "outcome": "External modules use the public ledger package",
+      "userJourney": true
+    },
+    {
+      "id": "balanced",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Posting preserves equal debit/credit and ledger-owned balances; rejected postings leave prior balances intact",
+      "userJourney": true
+    },
+    {
+      "id": "native",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Record existing native checks and preserve failures; formatter is diagnostic, not an approved formatting policy",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "unit",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "balanced"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "ledger/**",
+        "test_ledger.py"
+      ]
+    },
+    {
+      "id": "lint",
+      "role": "outcome",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "ledger/**",
+        "test_ledger.py"
+      ]
+    },
+    {
+      "id": "format",
+      "role": "outcome",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "format",
+          "--check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "ledger/**",
+        "test_ledger.py"
+      ]
+    },
+    {
+      "id": "boundary",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "public"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "ledger/**",
+        "test_ledger.py"
+      ]
+    }
+  ]
+}
