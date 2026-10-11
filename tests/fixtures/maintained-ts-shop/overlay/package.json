@@ -1,0 +1,21 @@
+{
+  "name": "ts-shop",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "check": "npm run typecheck && npm test && npm run boundaries && npm run journey",
+    "test": "node --test unit.test.mjs",
+    "journey": "node journey.mjs",
+    "boundaries": "node boundaries.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

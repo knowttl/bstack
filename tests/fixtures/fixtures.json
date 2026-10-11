@@ -84,6 +84,17 @@
       }
     ]
   },
+  "maintained-ts-shop": {
+    "base": "ts-shop",
+    "overlay": "overlay",
+    "history": [
+      {
+        "paths": ["."],
+        "message": "feat: establish maintained shop with passing original protection",
+        "date": "2026-01-06T12:00:00Z"
+      }
+    ]
+  },
   "py-ledger": {
     "kind": "repo",
     "files": [

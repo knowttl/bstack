@@ -259,8 +259,8 @@
     },
     {
       "id": "maintenance",
-      "fixture": "ts-shop",
-      "request": "Perform bounded maintenance for an internal pricing refactor on ts-shop using references/maintenance-contract.md and the existing approved sources. Collect and assess the final diff, validate locally and with the standalone checker, and report existing failed journeys separately. Do not repeat the goal interview or full audit, change approved acceptance, or claim the seeded checkout defects are fixed.",
+    "fixture": "maintained-ts-shop",
+    "request": "Perform bounded maintenance on this maintained ts-shop using references/maintenance-contract.md and the existing approved sources, .bstack/project.json and .bstack/bin/bstack-check.mjs. Select HEAD as the explicit comparison base before editing. Capture passing original public pricing and checkout protection, then refactor packages/web/routes.ts to name the intermediate undiscounted total without changing public pricing or checkout behaviour. Collect and review the final diff, record a substantive evidenced no-impact assessment without cosmetic document edits, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Report exact assessment, base/source, command captures and fresh checker artifact paths, separating any failed or unverified checks. Do not repeat the goal interview or full audit, change approved acceptance or start a delivery service. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
         "The public pricing behaviour is unchanged. Use the existing acceptance sources and comparison base."
       ],
