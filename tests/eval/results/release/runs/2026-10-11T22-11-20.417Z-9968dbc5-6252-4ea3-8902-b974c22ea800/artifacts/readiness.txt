@@ -1,0 +1,47 @@
+Bounded maintenance readiness: passed for the selected refactor.
+
+Assessment: [fixture]/.bstack/assessment.json
+Assessment SHA-256: 610c191c49f9a37203f315d99a3bc08ae3adb2cf010b4c6f7322fab0ccb3e044
+Review fingerprint: fd0266ec9831aa6b428d11ee079d3c8e4f393cca87f004a22044dd68e78c4d1e
+Explicit base selected before edits: 37864dacc088867c4aeeb0cd18275aa98b0c0a0b
+Reviewed implementation source: f96d5447776bd2487be2aa420e4caa14117d4e84
+Submitted revision (separate assessment commit): 62958d5bc9d8ce784e04879301fda065c544049c
+Both checker comparisons use source/base above; merge base equals explicit base.
+Clean clone: [isolated-home][scratch-path]
+Both trees are clean and assessment bytes match.
+
+Change: routes.ts names unitPrice * quantity as undiscountedTotal and multiplies that result by the same quantity > 5 ? 0.9 : 1 factor. Numeric operation order, imports, default price, recording and returned status/total are preserved. Existing discount is unchanged.
+Reviewed final diff: [isolated-home][scratch-path]
+Semantic review: [isolated-home][scratch-path]
+DESIGN.md, glossary.md and AGENTS.md each receive substantive no-impact assessments with literal authoritative and before/current implementation citations. Contract already maps the path and all five affected rules; no contract or authority edits are needed. No unmapped paths or pending decisions. The assessment envelope itself is intentionally excluded by the portable inventory and its complete final bytes were reviewed. Historical docs/repo-audit.md remains unchanged.
+
+Passing captures:
+- Original protection: run-checks --repo [fixture] --plan [isolated-home][scratch-path] --phase before --json
+  runId 25eb21e0-7bd1-41fe-ab85-d2a79dff6ca0; artifact [isolated-home][scratch-path]; response [isolated-home][scratch-path]
+- Compatibility on committed implementation: run-checks --repo [fixture] --plan [isolated-home][scratch-path] --phase after --prior-run 25eb21e0-7bd1-41fe-ab85-d2a79dff6ca0 --json
+  runId affc40bb-ef64-4494-b549-b8bda50c6b8b; artifact [isolated-home][scratch-path]; response [isolated-home][scratch-path]
+- contract validate --repo [fixture] --contract .bstack/project.json --json: [isolated-home][scratch-path]
+- evidence collect --repo [fixture] --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --portable .bstack/assessment.json --json: [isolated-home][scratch-path]
+- docs check --repo [fixture] --json: [isolated-home][scratch-path]
+- docs generate --repo [fixture] --check --json: [isolated-home][scratch-path]
+- evidence validate --repo [fixture] --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json: [isolated-home][scratch-path]
+Installed command prefix for the captures above: node [isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs
+- Local standalone: node .bstack/bin/bstack-check.mjs --repo . --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json
+  response [isolated-home][scratch-path]
+  fresh artifact [isolated-home][scratch-path]
+- Clean standalone: node [isolated-home][scratch-path] --repo [isolated-home][scratch-path] --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment [isolated-home][scratch-path] --json
+  response [isolated-home][scratch-path]
+  fresh artifact [isolated-home][scratch-path]
+  HOME=[isolated-home][scratch-path]; XDG_CACHE_HOME=[isolated-home][scratch-path]; npm_config_cache=[isolated-home][scratch-path]
+  git clone --no-local . [isolated-home][scratch-path] [isolated-home][scratch-path]
+  npm ci --prefix [isolated-home][scratch-path] [isolated-home][scratch-path]
+
+Every required native execution returned exit 0. Standalone checkers each freshly executed the one distinct required leaf npm run check. Captures include stdout, stderr, exit codes, versions, timestamps and input hashes. Node v24.17.0 and npm 11.13.0 were used. Original and final coverage proves public quote 12, mocked checkout status 201/total 10, real loopback HTTP checkout status 201/total 10, TypeScript validity and static boundaries/acyclicity.
+
+Before every aggregate suite an npm PATH shim invoked node "$BSTACK_EVAL_PREFLIGHT", aborted on failure and logged the fresh host result. It forwarded the exact declared npm command to the installed executable, without project changes. Preflight log: [isolated-home][scratch-path]
+All seven native invocations: source host, permitted true, minimum available memory >18 GB, minimum free disk >25 GB, maximum load 2.51, zero existing suites and one proposed suite. No other lane was killed and no process inventory was printed.
+
+Failed preparation checks (resolved): [isolated-home][scratch-path]
+No failing required native or standalone check remains.
+
+Limits: main-thread semantic review, no independent reviewer or hosted merge enforcement claimed. HTTP observation is the approved real loopback journey; no production endpoint was probed. Static dependencies only; dynamic/runtime loading remains outside the native boundary check. No new acceptance cases or discount-edge tests were added; exact calculation equivalence supports unchanged non-default quantities. Local captures are not authenticated portable attestations; fresh clean standalone execution supplies independent checkout execution evidence. Markdown inline-code coverage limits were manually reviewed in unchanged sources. Receipt wording remains a future owner decision.

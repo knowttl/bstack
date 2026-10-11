@@ -1,0 +1,95 @@
+{
+  "status": "passed",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "source": "3c2933e2b49b8e826bd43ae9d2ad3d0281ec7171",
+  "finalHead": "c29dc1ef24c4a22f823c5c848b67ac43b761fa3c",
+  "assessment": "[fixture]/.bstack/assessment.json",
+  "assessmentFingerprint": "25de6bbd75654267afa322eb4d84fd4c3c781ce6c4465efafa56662eec615cd3",
+  "assessmentResult": {
+    "DESIGN.md": "no-impact",
+    "glossary.md": "no-impact",
+    "AGENTS.md": "no-impact"
+  },
+  "reviewedChangedPaths": [
+    "packages/web/routes.ts",
+    ".bstack/assessment.json"
+  ],
+  "reviewedDocuments": [
+    "DESIGN.md",
+    "glossary.md",
+    "AGENTS.md"
+  ],
+  "contractReview": "Unchanged .bstack/project.json already covers the modified route and all five rules, native checks and both acceptance sources. No cosmetic document edits. Historical audit retained. Assessment metadata reviewed separately from the source inventory by portable checker policy.",
+  "diff": "[isolated-home][scratch-path]",
+  "diffReview": "Complete final diff reviewed: route intermediate extraction preserves multiplication order, default core price, bulk factor, orders.push(total), response and public interface; assessment addition matches source/base and cites unchanged authorities and actual old/new code. No unknown or unmapped implementation paths.",
+  "resourcePreflights": "[isolated-home][scratch-path]",
+  "perInvocationGuard": "[isolated-home][scratch-path]",
+  "preflightCount": 44,
+  "environment": {
+    "localHome": "[isolated-home][scratch-path]",
+    "localCache": "[isolated-home][scratch-path]",
+    "cloneHome": "[isolated-home][scratch-path]",
+    "cloneCache": "[isolated-home][scratch-path]",
+    "PATHPrefix": "[isolated-home][scratch-path]"
+  },
+  "commands": [
+    {
+      "cwd": "[fixture]",
+      "command": "npm run check",
+      "exitCode": 0,
+      "capture": "[isolated-home][scratch-path]",
+      "phase": "original"
+    },
+    {
+      "cwd": "[fixture]",
+      "command": "node [isolated-home][scratch-path] [fixture]",
+      "exitCode": 0,
+      "capture": "[isolated-home][scratch-path]",
+      "phase": "original"
+    },
+    {
+      "cwd": "[fixture]",
+      "command": "npm run check",
+      "exitCode": 0,
+      "capture": "[isolated-home][scratch-path]",
+      "phase": "final"
+    },
+    {
+      "cwd": "[fixture]",
+      "command": "node [isolated-home][scratch-path] [fixture]",
+      "exitCode": 0,
+      "capture": "[isolated-home][scratch-path]",
+      "phase": "final"
+    },
+    {
+      "cwd": "[fixture]",
+      "command": "node .bstack/bin/bstack-check.mjs --repo . --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json",
+      "exitCode": 0,
+      "capture": "[isolated-home][scratch-path]",
+      "stderr": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]"
+    },
+    {
+      "cwd": "[isolated-home][scratch-path]",
+      "command": "npm ci",
+      "exitCode": 0,
+      "capture": "[isolated-home][scratch-path]"
+    },
+    {
+      "cwd": "[isolated-home][scratch-path]",
+      "command": "node .bstack/bin/bstack-check.mjs --repo . --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json",
+      "exitCode": 0,
+      "capture": "[isolated-home][scratch-path]",
+      "stderr": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]"
+    }
+  ],
+  "failedChecks": [],
+  "unverifiedChecks": [],
+  "limitations": [
+    "Maintenance reference unavailable; user directed continuation using existing acceptance sources and comparison base.",
+    "Static boundary verification excludes dynamic loading.",
+    "HTTP journey exercises loopback, not production.",
+    "Numeric cases are representative; preserved operation order establishes arithmetic equivalence."
+  ]
+}
