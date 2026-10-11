@@ -245,6 +245,28 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   return { result, record }
 }
 
+for (const [scenario, mode] of [['research-main-typescript', 'require-no-subagents'],
+  ['research-main-python', 'require-no-subagents'], ['ambiguous-idea', 'require-subagents']]) {
+  test(`evaluation preserves the ${scenario} subagent policy on opening and resume`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const stage = scenario.startsWith('research-') ? 'discovery' : 'baseline'
+    const started = run(directory, '--scenario', scenario, '--mode', 'without', '--stage', stage, '--adapter', path)
+    const record = started.data.data
+    t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+    t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
+    assert.equal(record.hostFailure, undefined, started.stdout)
+    // Empty-answer discovery scenarios cannot resume through the scripted CLI;
+    // exercise their effective resume template at the same host boundary.
+    const { hostTurn, closeHost } = await import('../../scripts/lib/evaluation-host.mjs')
+    await hostTurn(record, 'Continue the capability control without changing its policy.')
+    assert.equal(record.turns.length, 2)
+    assert.equal(record.turns[1].sessionId, record.turns[0].sessionId)
+    await closeHost(record, join(directory, record.id))
+    assert.equal(record.isolation.verified, true)
+  })
+}
+
 test('fake-only ts-shop maintenance in with mode validates review and fresh standalone checks without an interview or full audit', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory, 'maintenance')
