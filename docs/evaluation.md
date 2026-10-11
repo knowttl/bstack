@@ -115,6 +115,9 @@ Final adapter follow-ups can pass `--repo <disposable-maintained-root>` to reuse
 The record retains its starting commit and working-tree state, and the caller owns preservation and cleanup.
 Use `final-independent-extension` in `without` mode for a fresh conversation with no discoverable repo-audit and only the resulting target guidance.
 Use `final-maintained-maintenance` in `with` mode for a separate installed, bounded maintenance-only conversation on that maintained fixture.
+Use `final-repeat-audit` for a fresh installed reassessment preserving the uncommitted user note.
+The final scripts record supervisor-selected fixture verdicts dated 2026-10-11: keep checkout acceptance at 10 by correcting the controlled endpoint fixture, preserve quote behaviour at 12, distinguish purchase Order from Panel order, and accept the pantry needed-state, duplicate-name and visible unsaved-state policies.
+These are scripted fixture author answers, not changes to bstack product scope.
 Bundled host system skills can remain available, but they cannot include repo-audit.
 
 The captain approved `authentication: "throwaway-codex-login"` for this adapter on 2026-10-08.
