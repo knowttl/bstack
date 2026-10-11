@@ -1,0 +1,13 @@
+{
+  "runId": "2026-10-11T18-20-19.464Z-17f454ad-7436-4893-8d90-9bd4c0876f03",
+  "adapterHash": "1ac0dee108cc8b4fbc504a15450af49a844abb2c0bfd7a17579fbdb85ce7dcf0",
+  "agent": "codex-cli 0.162.1",
+  "sourceRevision": "4a7474abdb8479257a63a380c8205bd0d2d841de",
+  "nativeSessions": [
+    {
+      "sha256": "2ea4e882871c959d1e217ef4e7d1ea9034759833fe280c3cd1829c74e7dfa77f",
+      "spawnAgentDeclared": true,
+      "fixtureStatus": ""
+    }
+  ]
+}
