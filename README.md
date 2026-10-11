@@ -103,7 +103,7 @@ Scoring came from the implementation agent, not an independent human study; fixt
 No new real-agent run is claimed by this documentation change.
 Separate script and installer records include local Node 24 and Node 26 runs, not real-agent runs on both versions.
 Installer support and AC-74 acceptance are Linux-only under the owner's 2026-10-10 ruling R27; Windows and macOS execution is unverified.
-Hosted CI behaviour, adapter execution and forge enforcement are unverified.
+Hosted CI behaviour, CI adapter execution and forge enforcement are unverified.
 This repository has no hosted CI workflow; local clean-checkout results do not establish hosted execution.
 Final all-case evaluation and release approval remain separate work.
 
@@ -149,8 +149,6 @@ Local validation installs both the root development lock and the nested skill ru
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 The no-mistakes gate installs both locks, runs tests and runs the distinct package check through `commands.lint`.
 Recorded runs on Linux do not prove support on Windows or macOS.
-For an existing repo, use `$repo-audit` in Codex, `/repo-audit` in Claude Code, or `/skill:repo-audit` in Pi, with the target, assessed area and stated next change.
-A plain request such as "audit this repo" does not start the skill.
 Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation, vision review and final verification requirements.
 See the [C27 final-path evidence](tests/eval/results/full-path-C27/summary.md) for completed installed paths, repeated audit, independent extension, bounded maintenance and observed limitations.
 
