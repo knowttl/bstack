@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "posting-policy",
+  "writePaths": [
+    "ledger/_internal.py",
+    "ledger/book.py",
+    "test_ledger.py"
+  ],
+  "contracts": [
+    {
+      "id": "ledger-public",
+      "files": [
+        "ledger/__init__.py",
+        "ledger/book.py"
+      ]
+    }
+  ]
+}

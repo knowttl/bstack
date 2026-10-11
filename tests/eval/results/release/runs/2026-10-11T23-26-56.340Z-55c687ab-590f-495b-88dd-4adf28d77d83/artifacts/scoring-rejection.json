@@ -1,0 +1,6 @@
+{
+  "status": "blocked",
+  "problems": [{"code": "invalid-evidence", "message": "AC-29 requires captured passing unit execution; an assistant claim or an unrun suite cannot receive credit.", "fix": "Use the format and prerequisites in docs/evaluation.md."}],
+  "actualNativeSuite": {"conversationLine": 13, "command": "npm run test", "exitCode": 0, "passed": 2, "failed": 0},
+  "acceptedScore": false
+}
