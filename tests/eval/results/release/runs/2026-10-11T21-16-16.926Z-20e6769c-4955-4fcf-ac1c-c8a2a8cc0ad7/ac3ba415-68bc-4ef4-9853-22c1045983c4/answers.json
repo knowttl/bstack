@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T21-16-16.926Z-20e6769c-4955-4fcf-ac1c-c8a2a8cc0ad7",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "audit-first",
+      "passed": true,
+      "startLine": 7,
+      "endLine": 22
+    },
+    {
+      "id": "review-first",
+      "passed": true,
+      "startLine": 44,
+      "endLine": 71
+    },
+    {
+      "id": "journey",
+      "passed": true,
+      "startLine": 36,
+      "endLine": 47
+    },
+    {
+      "id": "probe",
+      "passed": true,
+      "startLine": 36,
+      "endLine": 47
+    },
+    {
+      "id": "targeted-question",
+      "passed": false,
+      "startLine": 7,
+      "endLine": 71
+    },
+    {
+      "id": "principles-evidence",
+      "passed": true,
+      "startLine": 39,
+      "endLine": 61
+    },
+    {
+      "id": "existing-language",
+      "passed": true,
+      "startLine": 15,
+      "endLine": 22
+    },
+    {
+      "id": "draft-definitions",
+      "passed": false,
+      "startLine": 7,
+      "endLine": 71
+    },
+    {
+      "id": "context-meanings",
+      "passed": true,
+      "startLine": 39,
+      "endLine": 61
+    },
+    {
+      "id": "authority",
+      "passed": true,
+      "startLine": 39,
+      "endLine": 61
+    },
+    {
+      "id": "outcome-verification",
+      "passed": true,
+      "startLine": 39,
+      "endLine": 61
+    },
+    {
+      "id": "conditional-files",
+      "passed": true,
+      "startLine": 9,
+      "endLine": 46
+    },
+    {
+      "id": "opaque-helpers",
+      "passed": true,
+      "startLine": 9,
+      "endLine": 46
+    },
+    {
+      "id": "explicit-start",
+      "passed": true,
+      "startLine": 7,
+      "endLine": 9
+    },
+    {
+      "id": "instruction-merge",
+      "passed": true,
+      "startLine": 15,
+      "endLine": 19
+    },
+    {
+      "id": "architecture-candidates",
+      "passed": true,
+      "startLine": 28,
+      "endLine": 46
+    },
+    {
+      "id": "parallel-conflicts",
+      "passed": true,
+      "startLine": 34,
+      "endLine": 61
+    },
+    {
+      "id": "principle-over-pattern",
+      "passed": true,
+      "startLine": 39,
+      "endLine": 61
+    },
+    {
+      "id": "foundation-invariants",
+      "passed": true,
+      "startLine": 39,
+      "endLine": 61
+    }
+  ]
+}
