@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process'
 import { root, text, object, array, readJSON, checkRegistry, fail } from './evaluation.mjs'
 import { scopeVersion } from './evaluation-scope.mjs'
 import { readAdapter } from './evaluation-host.mjs'
+import { correctedScore, validateScore } from './evaluation-scoring.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 
@@ -39,7 +40,7 @@ export async function completeRelease(results) {
     if (cache.has(id)) return cache.get(id)
     if (!/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(id)) fail('Invalid release run ID.')
     const directory = join(results, 'release/runs', id)
-    const record = await readJSON(join(directory, 'run.json'))
+    const record = await correctedScore(directory, await readJSON(join(directory, 'run.json')))
     const definition = definitions.find(item => item.id === record.scenario?.id)
     if (!definition || record.id !== id || canonicalJSON(definition) !== canonicalJSON(record.scenario) ||
         record.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || record.stage !== definition.checkpoints.at(-1) ||
@@ -48,17 +49,25 @@ export async function completeRelease(results) {
     if (canonicalJSON(record.adapter) !== canonicalJSON(adapter) || record.adapterHash !== hashBytes(canonicalJSON(adapter)) ||
         record.agent !== adapter.invocation.agent || record.model !== adapter.invocation.model ||
         record.hostFailure || !record.isolation?.verified || !record.isolation.cleanedAt ||
-        record.scopeGuard?.version !== scopeVersion || !record.scopeGuard.verified || record.scopeGuard.paths.length ||
+        ![2, scopeVersion].includes(record.scopeGuard?.version) || !record.scopeGuard.verified || record.scopeGuard.paths.length ||
         !record.turns?.length || record.turns.some(turn => !turn.sessionId) || !record.transcript || !record.answers) fail(`Unverified or unscored release run: ${id}`)
     git('merge-base', '--is-ancestor', record.sourceRevision, 'HEAD')
+    const request = (record.mode === 'with' && definition.invocation === 'explicit' ? `${adapter.invocation.explicit}\n` : '') +
+      (['foundation', 'final'].includes(record.stage) ? `Active checkpoint: ${record.stage}.\n` : '') + definition.request
+    if (record.request !== request || record.turns[0].message !== request ||
+        record.turns.slice(1).some((turn, index) => turn.message !== definition.answers[index])) fail(`Changed agent request or scripted answers: ${id}`)
+    // Grader repairs do not change a captured agent's inputs. Scope 2 already
+    // requires fixture/home isolation; scope 3 recognizes resource metadata.
     git('diff', '--quiet', record.sourceRevision, '--', 'skills/repo-audit', 'install', 'tests/fixtures',
-      'scripts/eval.mjs', 'scripts/lib/evaluation-host.mjs', 'scripts/lib/evaluation-scope.mjs', 'tests/eval/adapters')
+      'scripts/lib/evaluation-host.mjs', 'tests/eval/adapters')
     if (record.tools.node !== process.version) fail(`Node version changed: ${id}`)
     const version = spawnSync(record.adapter.executable, record.adapter.versionArgs, { cwd: root, encoding: 'utf8' })
     if (version.status !== 0 || version.stdout.trim() !== record.tools.agent) fail(`Agent tool version changed: ${id}`)
     const transcript = await readFile(resolve(directory, record.transcript), 'utf8')
     const conversation = await readFile(join(directory, record.conversation), 'utf8')
-    const answers = await readJSON(resolve(directory, record.answers))
+    const answers = record.scoreCorrection ? { runId: record.id, reviewer: record.scoreCorrection.corrector,
+      checks: record.scoreCorrection.checks } : await readJSON(resolve(directory, record.answers))
+    validateScore(record, answers, transcript)
     if (!transcript.trim() || transcript !== conversation || record.conversationHash !== hashBytes(transcript) ||
         answers.runId !== id || !answers.reviewer?.trim() || answers.checks.length !== definition.checks.length || record.caseResults.length !== definition.checks.length) fail(`Invalid retained scoring artifacts: ${id}`)
     const lines = transcript.trimEnd().split(/\r?\n/).length

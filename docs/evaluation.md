@@ -44,7 +44,7 @@ They retain unverified isolation even after human scoring.
 `--manual` and `--adapter` cannot be combined; adapter starts capture the opening turn automatically.
 
 Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
-`--results <directory>` chooses another result directory on start, turn, close, score, compare or selection validation.
+`--results <directory>` chooses another result directory on start, turn, close, score, correct, compare or selection validation.
 Starting a manual run creates a fresh fixture and unique record, with UTC timestamps, source revision, agent, model, OS, tool versions, fixture revision, checkpoint, criteria hash and case results.
 TypeScript fixtures also record npm and fixture-local TypeScript versions.
 The fixture revision is the committed `tests/fixtures` Git tree, so skill-only commits do not prevent comparison.
@@ -92,6 +92,10 @@ The runner checks observed filesystem paths in captured output and native parent
 An out-of-scope observation leaves the run unscored, records `scopeGuard.paths`, and deletes the isolated home through ordinary failure cleanup.
 This is an observed-path rejection check, not an operating-system sandbox or a claim to detect unreported reads.
 Comparisons require the same verified scope-contract version on both sides.
+Scope version 3 recognizes read-only resource preflight: memory/load files, process metadata/counts and filesystem capacity queries.
+The guard permits the run's own isolated temporary directory, but rejects other projects, the host home and explicit write destinations outside the fixture or isolated home.
+System runtime access does not authorize writing those runtime files; `/dev/null` remains an ordinary output sink.
+This observes captured commands and output rather than providing an operating-system sandbox.
 Contaminated transcripts may contain unrelated host inventories and must stay private.
 
 ```sh
@@ -206,6 +210,18 @@ For adapter runs, scoring also replaces the retained conversation with the redac
 All yes answers produce a passing score, and any no answer produces a failing score.
 A scored run cannot be rescored.
 Create a new run to retain earlier checkpoints and scoring history.
+An identified grading error can instead receive one append-only correction without repeating an unchanged agent run:
+
+```sh
+npm run eval -- correct --run <id> --correction correction.json
+```
+
+The input contains `corrector`, `reason`, `evidence` with transcript `startLine` and `endLine`, and the complete corrected `checks` array.
+The command creates `score-correction.json` with hashes of the original answers and transcript, preserving the original run and scoring files byte for byte.
+It refuses overwrite, unchanged assessments, invalid evidence lines or stale original bindings.
+Comparisons and acceptance use the validated correction; the original remains historical evidence.
+AC-29 credit additionally requires captured successful Node unit execution with a positive pass count and zero failures, either directly or in a captured `run-checks` result.
+An assistant assertion, unrun command or failed suite cannot establish that prerequisite.
 Pass and fail describe the human score, with any isolation limitation retained in the record.
 Adapter scoring requires completed host turns and the exact captured conversation, and retains the isolation proof taken before deletion.
 
@@ -286,6 +302,10 @@ AC-46 is established by all scenario comparisons together.
 The independent extension is the approved without-only exception: its AC-64 procedure requires that repo-audit be undiscoverable.
 All other selected cases must use the with-skill run of their declared final comparison.
 The validator rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
+Execution bindings include unchanged package, installer, fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
+Grader-only repairs do not require repeating unchanged agent turns.
+Verified version 2 scope evidence remains eligible alongside version 3: both require fixture/home isolation, and each comparison still requires matching versions.
+Version 3 fixes resource-query false positives; a version 2 scope failure is never retroactively credited.
 Every with-skill run must pass every check, and each pair must satisfy the design's improvement and regression rule.
 Automated procedures execute their exact named tests against the current inputs, including the clean-checkout procedure and real Linux lifecycle execution.
 Only complete passing evidence can produce the 75-case release result.

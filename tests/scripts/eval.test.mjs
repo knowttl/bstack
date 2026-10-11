@@ -127,6 +127,53 @@ test('empty and unavailable transcripts leave a run blocked', async t => {
   assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, 2)
 })
 
+for (const [name, event, expected] of [
+  ['assistant claim without execution', { type: 'item.completed', item: { type: 'agent_message', text: 'Both units passed.' } }, 2],
+  ['unrun command', { type: 'item.started', item: { type: 'command_execution', command: 'node --test unit.test.mjs' } }, 2],
+  ['failed suite', { type: 'item.completed', item: { type: 'command_execution', command: 'node --test unit.test.mjs', aggregated_output: '# pass 1\n# fail 1\n', exit_code: 1 } }, 2],
+  ['captured passing suite', { type: 'item.completed', item: { type: 'command_execution', command: 'node --test unit.test.mjs', aggregated_output: '# pass 2\n# fail 0\n', exit_code: 0 } }, 0]
+]) {
+  test(`AC-29 scoring requires actual passing unit evidence: ${name}`, async t => {
+    const directory = await temporary(t)
+    const started = run(directory, '--manual', '--scenario', 'verification-limitations', '--mode', 'without',
+      '--stage', 'final', '--agent', 'test-host', '--model', 'test-model').data.data
+    t.after(() => rm(started.fixture.path, { recursive: true, force: true }))
+    const answers = join(directory, 'answers.json')
+    const transcript = join(directory, 'transcript.txt')
+    await writeFile(answers, JSON.stringify({ schemaVersion: 1, runId: started.id, reviewer: 'Fixture reviewer',
+      checks: started.scenario.checks.map(check => ({ id: check.id, passed: true, startLine: 1, endLine: 1 })) }))
+    await writeFile(transcript, JSON.stringify(event) + '\n')
+    const scored = run(directory, 'score', '--run', started.id, '--answers', answers, '--transcript', transcript)
+    assert.equal(scored.status, expected, scored.stdout)
+  })
+}
+
+test('append-only correction changes comparison without modifying the original score and refuses overwrite or stale evidence', async t => {
+  const directory = await temporary(t)
+  const before = start(t, directory)
+  const after = start(t, directory, 'with', '--invocation', '$repo-audit')
+  for (const record of [before, after]) {
+    const files = await inputs(directory, record)
+    assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, 0)
+  }
+  const original = await readFile(join(directory, before.id, 'run.json'), 'utf8')
+  const record = JSON.parse(original)
+  const originalAnswers = await readFile(join(directory, before.id, record.answers), 'utf8')
+  const originalTranscript = await readFile(join(directory, before.id, record.transcript), 'utf8')
+  const correction = join(directory, 'correction.json')
+  await writeFile(correction, JSON.stringify({ corrector: 'Fixture corrector', reason: 'The initial score incorrectly credited the unresolved decision.',
+    evidence: { startLine: 1, endLine: 2 }, checks: [{ id: 'decision', passed: false, startLine: 1, endLine: 2 }] }))
+  const corrected = run(directory, 'correct', '--run', before.id, '--correction', correction)
+  assert.equal(corrected.data.data.caseResults[0].passed, false, corrected.stdout)
+  assert.equal(await readFile(join(directory, before.id, 'run.json'), 'utf8'), original)
+  assert.equal(await readFile(join(directory, before.id, record.answers), 'utf8'), originalAnswers)
+  assert.equal(await readFile(join(directory, before.id, record.transcript), 'utf8'), originalTranscript)
+  assert.deepEqual(run(directory, 'compare', '--without', before.id, '--with', after.id).data.data.gained, ['decision'])
+  assert.equal(run(directory, 'correct', '--run', before.id, '--correction', correction).status, 2)
+  await writeFile(join(directory, before.id, record.transcript), originalTranscript + 'Changed evidence.\n')
+  assert.equal(run(directory, 'compare', '--without', before.id, '--with', after.id).status, 2)
+})
+
 test('comparison blocks different models and unscored runs', async t => {
   const directory = await temporary(t)
   const baseline = start(t, directory)
@@ -396,7 +443,9 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
 
 for (const mode of ['scope-outside', 'scope-host-home', 'scope-output', 'scope-relative',
   'scope-normalized-escape', 'scope-prefix', 'scope-tool-sibling', 'scope-native-read', 'scope-native-output',
-  'scope-native-relative', 'scope-runtime-skill', 'scope-resume']) {
+  'scope-native-relative', 'scope-runtime-skill', 'scope-resume', 'scope-resource-write',
+  'scope-resource-system-write', 'scope-resource-temp-read', 'scope-resource-temp-write',
+  'scope-resource-mixed', 'scope-resource-python-write']) {
   test(`evaluation rejects ${mode} observations without scoring and deletes the isolated home`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory, mode)
@@ -419,12 +468,23 @@ for (const mode of ['scope-outside', 'scope-host-home', 'scope-output', 'scope-r
   })
 }
 
+for (const mode of ['scope-resource-read', 'scope-resource-processes', 'scope-resource-capacity', 'scope-resource-temp']) {
+  test(`evaluation accepts read-only resource queries and owned scratch: ${mode}`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const { record } = hostStart(t, directory, path)
+    assert.equal(record.hostFailure, undefined, record.reason)
+    assert.deepEqual(record.scopeGuard, { version: 3, verified: true, paths: [] })
+    assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
+  })
+}
+
 test('evaluation accepts in-scope reports, runtime executables and non-filesystem URLs and routes', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory, 'scope-valid')
   const { record } = hostStart(t, directory, path)
   assert.equal(record.hostFailure, undefined)
-  assert.deepEqual(record.scopeGuard, { version: 2, verified: true, paths: [] })
+  assert.deepEqual(record.scopeGuard, { version: 3, verified: true, paths: [] })
   const resumed = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
   const observed = JSON.parse(resumed.turns[1].result.stdout.trim().split('\n').at(-2)).item.observed
   assert.ok(observed.message.includes(`work only inside ${record.fixture.path} and ${record.isolation.home}`))
