@@ -11,4 +11,8 @@ The [baseline conversation](runs/2026-10-11T22-27-46.145Z-6c0b6ea4-5b79-4af5-bc0
 Both independently verified workspaces contain only the unchanged original brief; neither selects a stack or invents a product goal.
 Full ordered conversations, scored ranges and independent byte checks are retained in each run, with per-turn login/container cleanup and final isolated-home deletion verified.
 The [fixture regression](fixture-regression.json) passes all 14 tests, including all registered native sanity checks, inherited metadata and deterministic maintained-shop history.
+AC-42 passes the [implicit-invocation comparison](implicit-invocation-comparison.json), 1/1 in both modes.
+The plain `audit this repo` request and its scripted reply leave the bounded repo-audit procedure unstarted.
+Independent command review confirms neither the procedure's SKILL.md nor its public helper was opened or invoked; the with-skill run's nested Lavish reference is recorded separately and does not start repo-audit.
+All three authoritative documents remain byte-identical to HEAD, both working trees are clean and both isolated homes are deleted after scoring.
 Other current-fixture final comparisons remain pending.
