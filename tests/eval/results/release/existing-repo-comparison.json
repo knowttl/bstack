@@ -1,14 +1,1 @@
-{
-  "schemaVersion": 1,
-  "command": "eval compare",
-  "status": "passed",
-  "problems": [],
-  "data": {
-    "status": "passed",
-    "without": "2026-10-11T21-13-28.005Z-974829c3-65c2-4b9f-a46f-647d7b44f7cb",
-    "with": "2026-10-11T21-16-16.926Z-20e6769c-4955-4fcf-ac1c-c8a2a8cc0ad7",
-    "lost": [],
-    "gained": ["opaque-helpers", "explicit-start", "instruction-merge", "architecture-candidates"]
-  },
-  "inputs": {}
-}
+{"schemaVersion":1,"command":"eval compare","status":"passed","problems":[],"data":{"status":"passed","without":"2026-10-11T21-13-28.005Z-974829c3-65c2-4b9f-a46f-647d7b44f7cb","with":"2026-10-11T21-31-14.000Z-57b01fe4-9437-43f9-84c8-fb60f42ed3cf","lost":[],"gained":["targeted-question","draft-definitions","opaque-helpers","explicit-start","instruction-merge","architecture-candidates"]},"inputs":{}}
