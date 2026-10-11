@@ -1,0 +1,387 @@
+{
+  "schemaVersion": 1,
+  "runId": "4dbd9b95-ac58-465d-8c74-86ea520f9b2b",
+  "phase": "after",
+  "status": "passed",
+  "planDigest": "ff941dd008b46180b4e5936a5ad1f3c24b5233afce02d1386497ef2d19d403db",
+  "originalState": {
+    "fingerprint": "644784dba0b8c2e7cc46038b9a326bcd32a92f5c0f97f006aa15e7f7cd0e1999",
+    "state": {
+      "root": "[fixture]/pantry-app",
+      "baseCommit": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b",
+      "files": [
+        {
+          "path": ".bstack/bin/bstack-check.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+        },
+        {
+          "path": ".bstack/project.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "cc2421013cb2c2ee3bb6316d9426ca66c8fcbbbb2f5e2cb89423d87772ec3449"
+        },
+        {
+          "path": ".gitignore",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "3938af0c0820cd8a1dc61f391aade35c021df4bb5e15efc755db9ba7b72b3841"
+        },
+        {
+          "path": "AGENTS.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "d30ca0cd8b05f2393fcfc84c90022aa4827369c5998acb42d7b60f9b913b17eb"
+        },
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c490553424d728e6f96312567d0c847466661c51b5bc8c3fa8a933ac04364f87"
+        },
+        {
+          "path": "GLOSSARY.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "88e425ef1ca488417ed4d7592e7544ac7ed6a132ce3907f301337c3eb7ea3562"
+        },
+        {
+          "path": "README.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e35303bf7e2f18ece29d2c674ac02c400702b5b4f6e24951406f62cf6e965bba"
+        },
+        {
+          "path": "VISION.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "da3e7fd9dc4f92c92351dd71b65a6b2307f61b3df2bb245b8b1699097649294b"
+        },
+        {
+          "path": "eslint.config.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "95944de31f17cb41005bb35a8c014b9efbbe179081ebbef0816380ec30928767"
+        },
+        {
+          "path": "index.html",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6e03a03bfe7b5f4318b2a225ce6903614b6c85a048149453c8a2451ac5fb3d13"
+        },
+        {
+          "path": "package-lock.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "80cba1d8f619b93901c3e3e7e77e2696039e6ebfd9e4aef5ed5d9038f6718498"
+        },
+        {
+          "path": "package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a49a5f4e92876791d8b14ac717ccbd60593662ad38fa7a127c3b52e2904523a2"
+        },
+        {
+          "path": "scripts/resources.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6d769be9ca9be9615b180868ad8d700b6feb3ea4b8161242efd8a65dc1e370cc"
+        },
+        {
+          "path": "src/main.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "b0588c790254f1330a3f85045c59f17e997b6aba6ded42ad1a6bfb99d133affe"
+        },
+        {
+          "path": "src/pantry.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "13bfe0f50bc12949f0fea2a1d00b6e7bc2cc02bbe80c0d69320c4d278b0c7cbc"
+        },
+        {
+          "path": "src/private/storage.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "1951efcf34fb9b8bcdfa272f899db262183c34b5a184509eab6505908a1418ec"
+        },
+        {
+          "path": "src/ui/render.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e621d4e105c81c1141eaf828af080527a3a06c329cda0776a443cc9a15622ff0"
+        },
+        {
+          "path": "tests/journey.test.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "5fafdce866ebda653fcbfe6c1057a2418e6c9453a928aa6a673d7cc1b782258d"
+        },
+        {
+          "path": "tsconfig.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a363a25fd5a5d7a35e5c91efdc6b884b4ac58bd7bcbd0020203c8d922fe4c902"
+        }
+      ],
+      "inputs": {
+        "planDigest": "ff941dd008b46180b4e5936a5ad1f3c24b5233afce02d1386497ef2d19d403db",
+        "planContentHash": "1d70bcecb22d21c5fe50e153be42939d1137ce1d186548beed4e222e619628f5"
+      }
+    }
+  },
+  "finalState": {
+    "fingerprint": "644784dba0b8c2e7cc46038b9a326bcd32a92f5c0f97f006aa15e7f7cd0e1999",
+    "state": {
+      "root": "[fixture]/pantry-app",
+      "baseCommit": "6d077f7d2a232f7f302e6261b7d6b48bc98d0a5b",
+      "files": [
+        {
+          "path": ".bstack/bin/bstack-check.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+        },
+        {
+          "path": ".bstack/project.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "cc2421013cb2c2ee3bb6316d9426ca66c8fcbbbb2f5e2cb89423d87772ec3449"
+        },
+        {
+          "path": ".gitignore",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "3938af0c0820cd8a1dc61f391aade35c021df4bb5e15efc755db9ba7b72b3841"
+        },
+        {
+          "path": "AGENTS.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "d30ca0cd8b05f2393fcfc84c90022aa4827369c5998acb42d7b60f9b913b17eb"
+        },
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c490553424d728e6f96312567d0c847466661c51b5bc8c3fa8a933ac04364f87"
+        },
+        {
+          "path": "GLOSSARY.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "88e425ef1ca488417ed4d7592e7544ac7ed6a132ce3907f301337c3eb7ea3562"
+        },
+        {
+          "path": "README.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e35303bf7e2f18ece29d2c674ac02c400702b5b4f6e24951406f62cf6e965bba"
+        },
+        {
+          "path": "VISION.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "da3e7fd9dc4f92c92351dd71b65a6b2307f61b3df2bb245b8b1699097649294b"
+        },
+        {
+          "path": "eslint.config.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "95944de31f17cb41005bb35a8c014b9efbbe179081ebbef0816380ec30928767"
+        },
+        {
+          "path": "index.html",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6e03a03bfe7b5f4318b2a225ce6903614b6c85a048149453c8a2451ac5fb3d13"
+        },
+        {
+          "path": "package-lock.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "80cba1d8f619b93901c3e3e7e77e2696039e6ebfd9e4aef5ed5d9038f6718498"
+        },
+        {
+          "path": "package.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a49a5f4e92876791d8b14ac717ccbd60593662ad38fa7a127c3b52e2904523a2"
+        },
+        {
+          "path": "scripts/resources.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6d769be9ca9be9615b180868ad8d700b6feb3ea4b8161242efd8a65dc1e370cc"
+        },
+        {
+          "path": "src/main.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "b0588c790254f1330a3f85045c59f17e997b6aba6ded42ad1a6bfb99d133affe"
+        },
+        {
+          "path": "src/pantry.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "13bfe0f50bc12949f0fea2a1d00b6e7bc2cc02bbe80c0d69320c4d278b0c7cbc"
+        },
+        {
+          "path": "src/private/storage.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "1951efcf34fb9b8bcdfa272f899db262183c34b5a184509eab6505908a1418ec"
+        },
+        {
+          "path": "src/ui/render.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "e621d4e105c81c1141eaf828af080527a3a06c329cda0776a443cc9a15622ff0"
+        },
+        {
+          "path": "tests/journey.test.mjs",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "5fafdce866ebda653fcbfe6c1057a2418e6c9453a928aa6a673d7cc1b782258d"
+        },
+        {
+          "path": "tsconfig.json",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "a363a25fd5a5d7a35e5c91efdc6b884b4ac58bd7bcbd0020203c8d922fe4c902"
+        }
+      ],
+      "inputs": {
+        "planDigest": "ff941dd008b46180b4e5936a5ad1f3c24b5233afce02d1386497ef2d19d403db",
+        "planContentHash": "1d70bcecb22d21c5fe50e153be42939d1137ce1d186548beed4e222e619628f5"
+      }
+    }
+  },
+  "startedAt": "2026-10-11T09:46:37.636Z",
+  "completedAt": "2026-10-11T09:46:44.410Z",
+  "priorRun": null,
+  "executionOrder": [
+    "4dbd9b95-ac58-465d-8c74-86ea520f9b2b"
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "outcome",
+      "required": true,
+      "acceptanceCases": [
+        "ui-boundary",
+        "rice"
+      ],
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ],
+        "timeoutMs": 180000
+      },
+      "active": true,
+      "status": "passed",
+      "satisfied": true,
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> pantry-app@0.1.0 check\n> node scripts/resources.mjs && npm run format && npm run lint && npm run typecheck && npm run journey\n\n{\"availableMemoryGB\":18.951696384,\"freeDiskGB\":30.73202176,\"load\":3.16,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 format\n> prettier --check src tests scripts index.html package.json tsconfig.json eslint.config.mjs DESIGN.md GLOSSARY.md README.md AGENTS.md .bstack/project.json\n\nChecking formatting...\nAll matched files use Prettier code style!\n\n> pantry-app@0.1.0 lint\n> eslint src\n\n\n> pantry-app@0.1.0 typecheck\n> tsc --noEmit\n\n\n> pantry-app@0.1.0 journey\n> node scripts/resources.mjs && npm run build && node --test tests/journey.test.mjs\n\n{\"availableMemoryGB\":18.652987392,\"freeDiskGB\":30.73191936,\"load\":3.15,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 build\n> tsc\n\nOBSERVED Rice add -> needed -> shopping -> reload retained\nOBSERVED duplicate reuse, full-name variants, unmark, failed save, failed retry, complete-session successful retry and reload\n{\"browser\":\"154.0.8037.57\",\"evidence\":\"[scratch-path]\",\"observed\":\"real DOM and reload\",\"errors\":[]}\n✔ approved household browser outcomes (1249.837318ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1647.973754\n",
+        "stderr": "",
+        "durationMs": 6636.771586,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 95.018486,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 1
+    }
+  ],
+  "coverage": [
+    {
+      "id": "ui-boundary",
+      "sourceId": "design",
+      "pointer": "UI storage isolation protects honest retention: UI uses the public pantry interface, never private storage imports or direct localStorage access.",
+      "outcome": "UI public interface and DOM rendering pass; private storage imports and direct localStorage fail.",
+      "userJourney": false,
+      "status": "passed",
+      "checkIds": [
+        "native"
+      ],
+      "reason": null
+    },
+    {
+      "id": "rice",
+      "sourceId": "design",
+      "pointer": "Add Rice, mark it needed, view Rice on the shopping list, reload and retain it after successful saving.",
+      "outcome": "Real browser Rice journey retains needed item on reload after successful saving.",
+      "userJourney": true,
+      "status": "passed",
+      "checkIds": [
+        "native"
+      ],
+      "reason": null
+    }
+  ],
+  "journeyCoverage": "User journey evidence captured.",
+  "limitations": [
+    "Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Outside dependencies require separate live probe record and compare evidence."
+  ]
+}

@@ -533,7 +533,9 @@ Tick each task when its "Done when" commands pass.
     - [C26 current-host observations](../tests/eval/results/invocation-C26/summary.md#fresh-paired-validation-on-current-bytes) retain the fresh plain and explicit installed sessions on current corrected skill bytes, plus historical attempts and telemetry limitations.
       [Task evidence](../tests/eval/results/tasks/C26.json) owns the final settled-source full-suite capture and validator attachment on the published inputs, as specified in the checkpoint.
       C27 retains final full-path acceptance.
-  - [ ] T4.3 Prove both complete paths and a representative extension
+  - [x] T4.3 Prove both complete paths and a representative extension
+    - [C27 final evidence](../tests/eval/results/full-path-C27/summary.md) records both complete installed paths, preservation on repeated audit, a skill-free extension through approved public interfaces and bounded maintenance, with fresh scored transcripts and clean-checkout artifacts.
+      [Task evidence](../tests/eval/results/tasks/C27.json) owns the settled-source full-suite capture and validator attachment.
 - Phase 5: Release
   - [ ] T5.1 Write worked examples and limitations
   - [ ] T5.2 Final evaluation and release

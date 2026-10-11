@@ -1,0 +1,83 @@
+{
+  "status": "passed",
+  "base": "422c07b21bcde3f2da59c827f0530f8b548d2d7a",
+  "source": "f3d805cf86fa9dd19558c190dacd37386603ebee",
+  "finalHead": "16c673ee7c65a3b2f4bc792e136e6d0eceef940b",
+  "assessment": {
+    "path": "./f3c982dc-assessment.json",
+    "sha256": "60174c8d149f3767d3a39f247f96e57f42dff484604ed794676a74b7e8e602f9",
+    "fingerprint": "afc0370d7a02da5d280d9017148a04a401f5394d4b2db763bdc20de95230afb3"
+  },
+  "preserved": "Quote 12/24, checkout status 201 totals 10/20 via real loopback HTTP; both user notes and all authoritative sources, contract and checker byte-identical to base.",
+  "assessmentReview": "All three candidate documents reviewed with literal citations and substantive no-impact explanations. Only product path packages/web/public.ts changes; separately committed assessment records this review and is excluded from its own portable product scope by the checker. No unmapped paths or pending decisions. Assessment introduces no acceptance or policy changes.",
+  "captures": {
+    "before": {
+      "commandCapture": "./94c0c383-before.json",
+      "status": "passed",
+      "artifact": "./0a51b8d5-checks.json",
+      "sha256": "94ba1d03da06365836e269101a3fb71ad171cbc2b3527a83f6263e196da481e9"
+    },
+    "after": {
+      "commandCapture": "./1d2265f3-after.json",
+      "status": "passed",
+      "artifact": "./d8eeb650-checks.json",
+      "sha256": "60efebfed37bb2a24353ac3bfd823a57c5bf6a0c3deb5b98f9e80ca4455d3b25"
+    },
+    "final-checks": {
+      "commandCapture": "./3a71a047-final-checks.json",
+      "status": "passed",
+      "artifact": "./e4275036-checks.json",
+      "sha256": "97d6746202eae18fdb138b1430d77e9590ff78f638ac97e2f5ac77042bc00163"
+    },
+    "docs-check": {
+      "commandCapture": "./a5e8438a-docs-check.json",
+      "status": "passed",
+      "artifact": null,
+      "sha256": "bc2a01c8234c022f7e414fdfa5f2d1a8bb2069adb3d2a924362dc7642eb85dbd"
+    },
+    "docs-generate": {
+      "commandCapture": "./8062d65b-docs-generate.json",
+      "status": "passed",
+      "artifact": null,
+      "sha256": "dfdd8eeda05fe220744b319df292cf872446326875c0684767e1fe7a349abc75"
+    },
+    "validate-final": {
+      "commandCapture": "./debe316f-validate-final.json",
+      "status": "passed",
+      "artifact": null,
+      "sha256": "5630dd9e0dcab01602f61344799c5900ed528d0dec24c0a23413f5a1aec187e6"
+    },
+    "local-checker": {
+      "commandCapture": "./3a0b608d-local-checker.json",
+      "status": "passed",
+      "artifact": "./31f6048d-checker-result.json",
+      "sha256": "e8f258cba2f9a02b34647836a2017e2196c446d74b280c9ca6a581998e1fe46e"
+    },
+    "clean-checker": {
+      "commandCapture": "./c9229389-clean-checker.json",
+      "status": "passed",
+      "artifact": "./5b777cd1-checker-result.json",
+      "sha256": "c1eb96e9f24e080dbe444cdddc924e785493c3544f319abbb40d570f50887c96"
+    }
+  },
+  "resources": {
+    "path": "./80787d94-resources.jsonl",
+    "checks": 14,
+    "minimumAvailableGiB": 17.823509216308594,
+    "minimumFreeDiskGiB": 27.639881134033203,
+    "maximumLoad": 2.48681640625,
+    "maximumSuitesIncludingProposed": 1
+  },
+  "cleanEnvironment": {
+    "root": "[scratch-path]",
+    "HOME": "[scratch-path]",
+    "XDG_CACHE_HOME": "[scratch-path]",
+    "npm_config_cache": "[scratch-path]",
+    "TMPDIR": "[scratch-path]"
+  },
+  "limits": [
+    "Bounded maintenance review; no full audit or hosted enforcement claimed.",
+    "Static boundary rules do not cover dynamic imports; HTTP acceptance uses the local endpoint, not production.",
+    "Portable assessment contains no saved executions; both complete standalone invocations ran the required leaf freshly."
+  ]
+}

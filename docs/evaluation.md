@@ -1,6 +1,7 @@
 # Evaluation contract
 
 See [build progress](implementation-plan.md#progress) for T2.9 completion and the [C18 foundation checkpoint](../tests/eval/results/foundation-C18/summary.md) for its observed outcomes and limitations.
+The [C27 final-path evidence](../tests/eval/results/full-path-C27/summary.md) records fresh completed installed paths, repeated audit, independent extension and bounded maintenance, with explicit final acceptance selections and current-agent manual verdicts.
 
 C7a implements the T1.2 acceptance registry and manual evaluation interface.
 C7b adds the current-host Codex adapter, verified discovery isolation, captured conversation turns and baseline runs.
@@ -21,7 +22,7 @@ It preserves the seeded checkout failure and reports that limitation independent
 Run `npm test -- --task T3a.7` for that procedure and the standalone checker controls.
 Fake-host transcripts establish deterministic command and isolation behaviour only; they remain unscored and do not establish real-model compliance with AC-23.
 The [C24c captured transcript](C24c-maintenance-transcript.md) records the completed fake-only maintenance and standalone flow, including the existing failed checkout journey.
-Phase 3a's full fake-only suite precedes installation; T4.3 still owns fresh real-agent final maintenance acceptance.
+Phase 3a's full fake-only suite precedes installation; the C27 final-path record owns fresh real-agent final maintenance acceptance.
 An approved scenario stays in the evaluation even when its baseline passes.
 
 ```sh

@@ -1,0 +1,51 @@
+{
+  "planDigest": "675a652e5fd4affa4c5cf42b2d995577d73e9038631bebe6cbc483c671b3ae4a",
+  "changeSetDigest": "24a746e53537cf6160288cad06cf0cdcdeb3d91ccbfd57083492fa3870fcf7d7",
+  "destination": "[fixture]/pantry-app",
+  "files": 19,
+  "exactPayloadHashesVerified": true,
+  "visionUnchanged": true,
+  "installedStandaloneCheckerUnchanged": true,
+  "setupCapture": "./832ea6d3-scratch-setup.json",
+  "nativeAndBrowserCapture": "./21a52414-scratch-journey.json",
+  "browserScreenshots": "[scratch-path]",
+  "ruleProofs": [
+    {
+      "name": "private",
+      "artifact": "./b4d8ee2c-proof.json",
+      "capture": "./48739e7a-rule-proof-private-r2.json",
+      "artifactHash": "f00bfebbfcc462de12ab1563ebd47979b2e93e76d4c553f8843b3c227994bb90"
+    },
+    {
+      "name": "direct",
+      "artifact": "./f5385a63-proof.json",
+      "capture": "./ff53de7d-rule-proof-direct-r2.json",
+      "artifactHash": "a67de8f0c6ac62338f7852d0979b476e6932adf3c3cb6322efabe28656bd8438"
+    },
+    {
+      "name": "member",
+      "artifact": "./1f7224c6-proof.json",
+      "capture": "./394b5ecf-rule-proof-member-r2.json",
+      "artifactHash": "835c78b603289a246381caf163d8526506af5ba7dd8c47cc469b6169d733738b"
+    },
+    {
+      "name": "integrated-private",
+      "artifact": "./53900bf9-proof.json",
+      "capture": "./350a5712-rule-proof-integrated-private-r2.json",
+      "artifactHash": "30b9c0c4608989f41440f2e5965fe362bbffbdb35aea4f19cd0b0d03c96f8b05"
+    },
+    {
+      "name": "integrated-direct",
+      "artifact": "./c48bb1a4-proof.json",
+      "capture": "./712d33c3-rule-proof-integrated-direct-r2.json",
+      "artifactHash": "45cbe8d5b53a7cd69492d83bd322684bf321a343683e38e43871e6f39c18b3a2"
+    }
+  ],
+  "limitations": [
+    "Creation approval pending; project destination still absent.",
+    "Foundation findings fingerprint and final outcome evidence must be refreshed after creation.",
+    "Standalone maintenance assessment and different-root fresh checker have not yet run.",
+    "Static UI rules do not prove arbitrary reflection/computed-string access; review disallows introducing unsupported bypasses.",
+    "Document checker reports inline-code renderer coverage limits; referenced files and commands were manually checked."
+  ]
+}

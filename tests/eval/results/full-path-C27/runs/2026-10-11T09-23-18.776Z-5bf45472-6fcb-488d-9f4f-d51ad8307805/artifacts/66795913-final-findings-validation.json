@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"findings validate","status":"passed","problems":[],"data":{"result":"ready for the stated next change","reasons":[],"fingerprint":"25642ec9134e8aa262bc337e580a3a8f898921739c8eba315417a55296f377d1"},"inputs":{"target":{"mode":"repo","root":"[fixture]"},"findings":"./fcfeb033-final-findings.json"}}

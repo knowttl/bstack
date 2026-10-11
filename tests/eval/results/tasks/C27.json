@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C27",
+  "slice": "C27",
+  "intent": "Prove both complete installed paths, preserved guidance on repeat audit, a representative extension through intended interfaces and journeys, and maintenance without the interview or full audit, using fresh scored final-stage evidence.",
+  "amendments": ["R27: AC-74 is Linux-only; no Windows or macOS execution claim is added."],
+  "status": "passed",
+  "cases": [
+    { "id": "AC-1", "kind": "agent", "procedure": "Fresh final installed new-project path, intent interview and approved exact saved vision; scored transcript lines 1-414.", "status": "passed", "artifact": "tests/eval/results/full-path-C27/summary.md" },
+    { "id": "AC-3", "kind": "agent", "procedure": "Actual initial and resumed board verdicts, revised vision and explicit author approval in the complete new-project procedure.", "status": "passed", "artifact": "tests/eval/results/full-path-C27/summary.md" },
+    { "id": "AC-23", "kind": "agent", "procedure": "Fresh installed maintenance-only refactor, substantive no-impact review and local plus clean-clone standalone execution; transcript lines 1-50.", "status": "passed", "artifact": "tests/eval/results/full-path-C27/summary.md" },
+    { "id": "AC-54", "kind": "agent", "procedure": "Complete final installed existing-repo path, selected protected writes, preserved receipt note and actual HTTP journey; transcript lines 1-280.", "status": "passed", "artifact": "tests/eval/results/full-path-C27/summary.md" },
+    { "id": "AC-64", "kind": "agent", "procedure": "Fresh skill-free extension locates approved public example, preserves notes and defaults, verifies quantity-two quote and checkout through actual local HTTP, and passes maintained constraints plus fresh clean checker; transcript lines 1-45.", "status": "passed", "artifact": "tests/eval/results/full-path-C27/summary.md" },
+    { "id": "AC-69", "kind": "agent", "procedure": "Fresh installed repeat audit preserves exact uncommitted export note, guidance and contract without duplication; dirty-source portable readiness remains explicitly blocked; transcript lines 1-59.", "status": "passed", "artifact": "tests/eval/results/full-path-C27/repeat-manual-verdict.json" },
+    { "id": "AC-75", "kind": "agent", "procedure": "Both complete paths execute the complete release-installed package in the current Codex host with captured completed turns and verified isolation.", "status": "passed", "artifact": "tests/eval/results/full-path-C27/summary.md" }
+  ],
+  "commands": [
+    { "id": "check", "executable": "npm", "args": ["run", "check"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.check.txt", "status": "passed" },
+    { "id": "registry", "executable": "node", "args": ["scripts/acceptance.mjs", "--check-registry", "--json"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.registry.json", "status": "passed" },
+    { "id": "selections", "executable": "node", "args": ["scripts/acceptance.mjs", "--selections", "tests/eval/results/full-path-C27/selections.json", "--results", "tests/eval/results/full-path-C27/runs", "--json"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.selections.json", "status": "passed" },
+    { "id": "focused-evaluation", "executable": "node", "args": ["--test", "tests/scripts/eval.test.mjs"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.eval-tests.txt", "status": "passed" }
+  ],
+  "limitations": [
+    "Manual semantic scoring was performed by the current Codex worker, not an independent human evaluator or host/model matrix.",
+    "The repeated audit passes preservation and native checks while portable readiness remains blocked by an uncommitted authoritative design note; the fixture author committed only that note before the independent extension.",
+    "The representative extension has no audit skill discoverable and uses only maintained target guidance; local endpoint and browser fixture evidence does not claim live-service or hosted CI execution.",
+    "Historical paused checkpoints and timed-out attempts are excluded from final selections. Each final run records its actual committed package revision.",
+    "AC-74 is Linux-only under R27. No release, tag, npm publication or hosted workflow was performed.",
+    "Public artifact manifests bind original and redacted hashes; transcript hashes bind retained redacted bytes. Private home paths and identities are omitted."
+  ]
+}

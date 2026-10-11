@@ -1,0 +1,83 @@
+{
+  "checkId": "native",
+  "command": {
+    "executable": "npm",
+    "args": [
+      "run",
+      "check"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 180000
+  },
+  "expectedDiagnostic": "UI_PRIVATE_STORAGE",
+  "status": "passed",
+  "cases": [
+    {
+      "kind": "valid",
+      "source": "[scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> pantry-app@0.1.0 check\n> node scripts/resources.mjs && npm run format && npm run lint && npm run typecheck && npm run journey\n\n{\"availableMemoryGB\":18.380099584,\"freeDiskGB\":31.037636608,\"load\":2.28,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 format\n> prettier --check src tests scripts index.html package.json tsconfig.json eslint.config.mjs DESIGN.md GLOSSARY.md README.md AGENTS.md .bstack/project.json\n\nChecking formatting...\nAll matched files use Prettier code style!\n\n> pantry-app@0.1.0 lint\n> eslint src\n\n\n> pantry-app@0.1.0 typecheck\n> tsc --noEmit\n\n\n> pantry-app@0.1.0 journey\n> node scripts/resources.mjs && npm run build && node --test tests/journey.test.mjs\n\n{\"availableMemoryGB\":18.347982848,\"freeDiskGB\":31.026692096,\"load\":2.34,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 build\n> tsc\n\nOBSERVED Rice add -> needed -> shopping -> reload retained\nOBSERVED duplicate reuse, full-name variants, unmark, failed save, failed retry, complete-session successful retry and reload\n{\"browser\":\"154.0.8037.57\",\"evidence\":\"[scratch-path]\",\"observed\":\"real DOM and reload\",\"errors\":[]}\n✔ approved household browser outcomes (1332.46504ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1777.01616\n",
+        "stderr": "",
+        "durationMs": 6781.868709,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 85.80620199999998,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "kind": "violation",
+      "source": "[scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> pantry-app@0.1.0 check\n> node scripts/resources.mjs && npm run format && npm run lint && npm run typecheck && npm run journey\n\n{\"availableMemoryGB\":18.405933056,\"freeDiskGB\":31.02486528,\"load\":2.31,\"suitesIncludingProposed\":2}\n\n> pantry-app@0.1.0 format\n> prettier --check src tests scripts index.html package.json tsconfig.json eslint.config.mjs DESIGN.md GLOSSARY.md README.md AGENTS.md .bstack/project.json\n\nChecking formatting...\nAll matched files use Prettier code style!\n\n> pantry-app@0.1.0 lint\n> eslint src\n\n\n[isolated-home]/cache/bstack/ca40daa564b3a9b440810b5d4e4ea1dedc09415f19af8f7c912d68e6c7f03503/71bb06a4-4da9-4388-9736-acc75eb4da65/violation/src/ui/render.ts\n  53:1  error  '../private/storage.js' import is restricted from being used by a pattern. UI_PRIVATE_STORAGE: use the public pantry interface  no-restricted-imports\n  53:1  error  UI_PUBLIC_ONLY: UI imports only the public pantry interface                                                                     no-restricted-syntax\n\n✖ 2 problems (2 errors, 0 warnings)\n\n",
+        "stderr": "",
+        "durationMs": 2140.2554960000016,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 96.62244400000054,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    }
+  ],
+  "path": "./53900bf9-proof.json",
+  "limitations": [
+    "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+  ]
+}
