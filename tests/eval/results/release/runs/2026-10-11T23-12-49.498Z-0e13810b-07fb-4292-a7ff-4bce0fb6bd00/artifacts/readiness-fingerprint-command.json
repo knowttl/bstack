@@ -1,0 +1,17 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "findings",
+    "validate",
+    "--repo",
+    "[fixture]",
+    "--findings",
+    "[isolated-home][scratch-path]",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "{\"schemaVersion\":1,\"command\":\"findings validate\",\"status\":\"passed\",\"problems\":[],\"data\":{\"result\":\"verification blocked\",\"reasons\":[\"Missing required outcome: starting-checks.\",\"Missing required outcome: journey.\",\"Missing required outcome: maintenance-contract.\",\"Missing required outcome: standalone-clean-clone.\"],\"fingerprint\":\"91b69ac809ae4dbc45aa41a07e910a09005d5c675bbfb50a1d9ce85ad270e7d9\"},\"inputs\":{\"target\":{\"mode\":\"repo\",\"root\":\"[fixture]\"},\"findings\":\"[isolated-home][scratch-path]\"}}\n",
+  "stderr": ""
+}

@@ -269,7 +269,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-maintained-maintenance",
-        "artifacts": ["tests/eval/results/full-path-C27/summary.md", "tests/eval/results/full-path-C27/runs/2026-10-11T10-20-15.125Z-725da763-6f8d-4a11-8138-cfa7b8ff4a4d/manual-verdict.json"]
+        "artifacts": [
+          "tests/eval/results/release/final-followups.md",
+          "tests/eval/results/release/runs/2026-10-11T23-12-49.498Z-0e13810b-07fb-4292-a7ff-4bce0fb6bd00/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-12-49.498Z-0e13810b-07fb-4292-a7ff-4bce0fb6bd00/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -300,8 +304,14 @@
       "criterionSource": "docs/design.md#AC-26",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A bug fix begins with the reported reproduction, and a refactor protects affected existing behaviour before structural changes."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "final-maintained-maintenance",
+        "artifacts": [
+          "tests/eval/results/release/final-followups.md",
+          "tests/eval/results/release/runs/2026-10-11T23-12-49.498Z-0e13810b-07fb-4292-a7ff-4bce0fb6bd00/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-12-49.498Z-0e13810b-07fb-4292-a7ff-4bce0fb6bd00/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -757,7 +767,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-independent-extension",
-        "artifacts": ["tests/eval/results/full-path-C27/summary.md", "tests/eval/results/full-path-C27/runs/2026-10-11T10-12-02.691Z-df656718-7b2e-4124-a1df-56b0125f33b1/manual-verdict.json"]
+        "artifacts": [
+          "tests/eval/results/release/final-followups.md",
+          "tests/eval/results/release/runs/2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b/artifacts/independent-verification.json"
+        ]
       }
     },
     {

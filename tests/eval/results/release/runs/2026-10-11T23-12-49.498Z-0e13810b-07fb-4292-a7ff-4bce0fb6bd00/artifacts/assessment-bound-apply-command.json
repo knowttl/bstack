@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "apply",
+    "--repo",
+    "[fixture]",
+    "--plan",
+    "[isolated-home][scratch-path]",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "{\"schemaVersion\":1,\"command\":\"apply\",\"status\":\"passed\",\"problems\":[],\"data\":{\"runId\":\"16d808a5cc216905599712c7ad235dec4cf59d9f1bc03ec4af9c329f3b9c97bf\",\"planDigest\":\"16d808a5cc216905599712c7ad235dec4cf59d9f1bc03ec4af9c329f3b9c97bf\",\"edits\":[{\"id\":\"assessment-bound\",\"path\":\".bstack/assessment.json\",\"resolvedPath\":\"[fixture]/.bstack/assessment.json\",\"originalHash\":\"88d01e5eec9741d25b237e9a0645f456a36ef6e5c3cfd65be24bb1a87a156044\",\"proposedHash\":\"f0cee94ae492b7e00131da7fbae2cdc7054923cd61b779642b8d0545b980851e\",\"backup\":\"original-0\",\"completed\":true,\"temporary\":null,\"actualHash\":\"f0cee94ae492b7e00131da7fbae2cdc7054923cd61b779642b8d0545b980851e\",\"state\":\"applied\"}],\"affectedChecks\":[\"starting-checks\",\"journey\"],\"pending\":[],\"applied\":[\".bstack/assessment.json\"],\"conflicting\":[],\"journal\":\"[isolated-home]/cache/bstack/a09a3c6ef035bb5bb68f60b46987f6a7c48283dd9a0b5478cdbe2f2df9dc42bc/16d808a5cc216905599712c7ad235dec4cf59d9f1bc03ec4af9c329f3b9c97bf/journal.json\",\"outcome\":\"applied\",\"limitations\":[\"Replacement is atomic per file where supported, never across the whole change set.\"]},\"inputs\":{\"target\":{\"mode\":\"repo\",\"root\":\"[fixture]\"},\"plan\":\"[isolated-home][scratch-path]\"}}\n",
+  "stderr": ""
+}

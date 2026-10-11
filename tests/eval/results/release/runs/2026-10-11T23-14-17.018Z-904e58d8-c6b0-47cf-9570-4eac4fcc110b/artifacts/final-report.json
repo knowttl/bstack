@@ -1,0 +1,108 @@
+{
+  "interface": {
+    "example": "packages/web/public.ts",
+    "signature": "quote(quantity = 1)",
+    "publicDependency": "packages/core/index.ts",
+    "checkout": "packages/web/ui.ts: checkout(url, quantity = 1)"
+  },
+  "journey": {
+    "artifact": "journey.mjs",
+    "endpoint": "actual local HTTP server on 127.0.0.1 ephemeral port, /price supplies 10",
+    "default": {
+      "quote": 12,
+      "checkout": {
+        "status": 201,
+        "total": 10
+      }
+    },
+    "quantityTwo": {
+      "quote": 24,
+      "checkout": {
+        "status": 201,
+        "total": 20
+      }
+    }
+  },
+  "constraints": {
+    "typescript": "passed",
+    "unitTests": "3 passed",
+    "storageBoundary": "passed",
+    "staticCycles": "none",
+    "preflights": {
+      "baseline": {
+        "source": "host",
+        "checkedAt": "2026-10-11T23:14:40.542Z",
+        "availableMemoryBytes": 17183850496,
+        "freeDiskBytes": 23999787008,
+        "load1m": 6.78,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      },
+      "final-native": {
+        "source": "host",
+        "checkedAt": "2026-10-11T23:15:03.923Z",
+        "availableMemoryBytes": 17954902016,
+        "freeDiskBytes": 25124802560,
+        "load1m": 9.93,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      },
+      "local-checker": {
+        "source": "host",
+        "checkedAt": "2026-10-11T23:16:10.571Z",
+        "availableMemoryBytes": 18349195264,
+        "freeDiskBytes": 25116291072,
+        "load1m": 5.26,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      },
+      "clean-checker": {
+        "source": "host",
+        "checkedAt": "2026-10-11T23:16:24.932Z",
+        "availableMemoryBytes": 18352631808,
+        "freeDiskBytes": 25079562240,
+        "load1m": 4.45,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      }
+    }
+  },
+  "documentation": {
+    "assessment": ".bstack/assessment.json",
+    "base": {
+      "ref": "156e8342bc33bb6ce7c7713c4df1735eeb13aa05",
+      "kind": "commit",
+      "objectId": "156e8342bc33bb6ce7c7713c4df1735eeb13aa05"
+    },
+    "implementation": "0133ed1a903f3b2d85bc35a4c63edeac0ee79ab1",
+    "currentCommit": "1e14a3da07e88c83ca4749358bffe2ba0069f265",
+    "impacts": {
+      "DESIGN.md": "updated",
+      "glossary.md": "no-impact",
+      "AGENTS.md": "no-impact"
+    },
+    "unmappedPaths": [],
+    "foundation": "entire existing selected finding/protected record retained exactly",
+    "userNotes": "both preserved exactly",
+    "acceptanceAuthorization": "docs/quantity-approval.md",
+    "historicalSnapshot": "docs/repo-audit.md unchanged"
+  },
+  "local": {
+    "status": "passed",
+    "artifact": "[isolated-home][scratch-path]"
+  },
+  "cleanCheckout": {
+    "status": "passed",
+    "root": "[isolated-home][scratch-path]",
+    "home": "[isolated-home][scratch-path]",
+    "cache": "[isolated-home][scratch-path]",
+    "artifact": "[isolated-home][scratch-path]",
+    "assessmentIdentical": true,
+    "gitStatus": ""
+  },
+  "workingTree": ""
+}

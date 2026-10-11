@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T23-12-49.500Z-86fc7352-6410-48c7-b20f-064a1f0515be",
+  "head": "156e8342bc33bb6ce7c7713c4df1735eeb13aa05",
+  "workingTree": "",
+  "loginAbsent": true,
+  "outcome": "Requested maintenance reference absent without installed package; no refactor, assessment or native verification performed.",
+  "completedChecks": 0,
+  "totalChecks": 2
+}

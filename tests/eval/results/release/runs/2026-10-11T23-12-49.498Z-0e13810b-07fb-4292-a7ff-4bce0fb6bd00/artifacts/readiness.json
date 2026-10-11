@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "b7c2848f8c52eb3c3c275d507b354c4f367236e1"
+  },
+  "nextChange": "Authorized bounded pricing refactor: name subtotal while preserving public behavior.",
+  "reviewedScope": [
+    "packages/core/internal/database.ts",
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:21",
+      "intent": "documented",
+      "summary": "Public quote12, checkout10 and existing quantity calculation retained."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-007",
+      "problem": "Pricing combines multiplication and quantity factor in one expression.",
+      "files": [
+        "packages/core/internal/database.ts"
+      ],
+      "command": null,
+      "principle": "Preserve public pricing and checkout compatibility.",
+      "consequence": "An unnamed intermediate makes the existing calculation less explicit.",
+      "fix": "Name unitPrice * quantity as subtotal, then apply the unchanged factor.",
+      "scope": [
+        "packages/core/internal/database.ts"
+      ],
+      "verification": "Passing native public pricing and real HTTP checkout protection before and compatibility after.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-007"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey",
+    "maintenance-contract",
+    "standalone-clean-clone"
+  ],
+  "execution": [
+    {
+      "id": "starting-checks",
+      "outcome": "starting-checks",
+      "status": "passed",
+      "fingerprint": "91b69ac809ae4dbc45aa41a07e910a09005d5c675bbfb50a1d9ce85ad270e7d9",
+      "artifact": "[isolated-home]/cache/bstack/a09a3c6ef035bb5bb68f60b46987f6a7c48283dd9a0b5478cdbe2f2df9dc42bc/9c19cf61-75f8-4a6a-989c-955d57a2909c/checker-result.json",
+      "artifactHash": "ca61ab380ead603437b2ff44e25716d0aafd3c63b74cc3fdd4f0d804ec00d780",
+      "method": "Reviewed exact final diff and preserved source bytes; captured fresh command exits, native outcomes and checker revalidation."
+    },
+    {
+      "id": "journey",
+      "outcome": "journey",
+      "status": "passed",
+      "fingerprint": "91b69ac809ae4dbc45aa41a07e910a09005d5c675bbfb50a1d9ce85ad270e7d9",
+      "artifact": "[isolated-home]/cache/bstack/a09a3c6ef035bb5bb68f60b46987f6a7c48283dd9a0b5478cdbe2f2df9dc42bc/9c19cf61-75f8-4a6a-989c-955d57a2909c/checker-result.json",
+      "artifactHash": "ca61ab380ead603437b2ff44e25716d0aafd3c63b74cc3fdd4f0d804ec00d780",
+      "method": "Reviewed exact final diff and preserved source bytes; captured fresh command exits, native outcomes and checker revalidation."
+    },
+    {
+      "id": "maintenance-contract",
+      "outcome": "maintenance-contract",
+      "status": "passed",
+      "fingerprint": "91b69ac809ae4dbc45aa41a07e910a09005d5c675bbfb50a1d9ce85ad270e7d9",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "3c2e1ac9898a1bf9e4828b5db8553f6bf462640a3744a1939b70b265a62d0654",
+      "method": "Reviewed exact final diff and preserved source bytes; captured fresh command exits, native outcomes and checker revalidation."
+    },
+    {
+      "id": "standalone-clean-clone",
+      "outcome": "standalone-clean-clone",
+      "status": "passed",
+      "fingerprint": "91b69ac809ae4dbc45aa41a07e910a09005d5c675bbfb50a1d9ce85ad270e7d9",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "a528dc4d7397c3455d7645f1f472bc5c40ef6993b40af02f6c4499b8574728bf",
+      "method": "Reviewed exact final diff and preserved source bytes; captured fresh command exits, native outcomes and checker revalidation."
+    }
+  ],
+  "limitations": [
+    "Static dependency analysis has the existing documented dynamic-import/transitive-facade limits; no dependency syntax changes.",
+    "Receipt wording remains a future owner decision; export remains outside this change.",
+    "Local and clean-clone verification only; no hosted delivery service selected."
+  ]
+}
