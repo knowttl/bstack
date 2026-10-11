@@ -671,7 +671,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "runtime-independence",
-        "artifacts": ["tests/eval/results/release/runtime-independence-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-06-59.229Z-d4d617bf-ef18-4e90-bdbc-d3333bbadd10/conversation.txt"]
+        "artifacts": [
+          "tests/eval/results/release/runtime-independence-current.md",
+          "tests/eval/results/release/runs/2026-10-11T23-19-36.315Z-ae04c3e4-2748-4569-b7a1-667187de3b18/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-19-36.315Z-ae04c3e4-2748-4569-b7a1-667187de3b18/artifacts/independent-verification.json"
+        ]
       }
     },
     {
