@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc",
+  "sourceRevision": "ea49e87e4f5257c2341a811b5c357de6bbed9852",
+  "fixtureRevision": "c8576a3095a37da037d42c4bdf358d6372f5a91e",
+  "independentObservations": {
+    "baselineFixtureRevisionMatches": true,
+    "baselineToolsMatch": true,
+    "baselineScoringCriteriaMatch": true,
+    "shallow": true,
+    "exactParentResolutionExitCode": 128,
+    "gitStatusIncludingAllUntrackedClean": true,
+    "loginCopyAbsentAfterTurn": true,
+    "hostPreflightChecks": 14,
+    "allHostPreflightsPermitted": true,
+    "advisoryPaths": ["/"],
+    "containerRemoved": true,
+    "isolatedHomeMode": "0700"
+  },
+  "transcriptEvidence": {
+    "scopeQuestionAndDependentWork": { "startLine": 15, "endLine": 34 },
+    "exactHistoricalComparisonUnavailable": { "startLine": 15, "endLine": 22 },
+    "passingNativeStartingCheck": { "startLine": 22, "endLine": 22 },
+    "renderedBlockedReportAndUnchangedTree": { "startLine": 31, "endLine": 33 }
+  }
+}
