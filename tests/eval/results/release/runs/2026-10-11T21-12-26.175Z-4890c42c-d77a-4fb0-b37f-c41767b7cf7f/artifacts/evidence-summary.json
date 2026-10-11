@@ -1,0 +1,186 @@
+{
+  "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+  "projectEdits": [],
+  "checklist": {
+    "step7": "complete: inventoried sources, native commands and public journey captured",
+    "step8": "complete: standards settle scope; exception/serialization details limited to observed behaviour",
+    "step9": "complete: four evidenced recommendations, citations checked, findings validated and rendered",
+    "step10": "not applicable: recommendations only, no selections",
+    "step11": "no readiness claim: boundary failure and unselected protections remain"
+  },
+  "nativeChecks": [
+    {
+      "command": {
+        "executable": "python3",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "status": "passed",
+      "execution": {
+        "status": "passed",
+        "stdout": "",
+        "stderr": "test_balanced_posting (test_ledger.LedgerTest.test_balanced_posting) ... ok\ntest_negative_posting_rejected (test_ledger.LedgerTest.test_negative_posting_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n",
+        "durationMs": 289.42820199999994,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "Python 3.12.15\n",
+          "stderr": "",
+          "durationMs": 6.686194999999998,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "command": {
+        "executable": "python3",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "status": "failed",
+      "execution": {
+        "status": "failed",
+        "stdout": "[\"private\"]\n",
+        "stderr": "",
+        "durationMs": 258.526592,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "Python 3.12.15\n",
+          "stderr": "",
+          "durationMs": 3.611751999999967,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "status": "passed",
+      "execution": {
+        "status": "passed",
+        "stdout": "All checks passed!\n",
+        "stderr": "",
+        "durationMs": 15.782169000000067,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "ruff 0.14.0\n",
+          "stderr": "",
+          "durationMs": 6.055717999999956,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "format",
+          "--check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "status": "failed",
+      "execution": {
+        "status": "failed",
+        "stdout": "Would reformat: boundaries.py\nWould reformat: ledger/book.py\n2 files would be reformatted, 5 files already formatted\n",
+        "stderr": "",
+        "durationMs": 17.187442999999917,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "ruff 0.14.0\n",
+          "stderr": "",
+          "durationMs": 5.369876999999974,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    }
+  ],
+  "journey": {
+    "method": "Separate direct subprocess execution, not findings-bound or run-checks validated",
+    "command": "PYTHONPATH=[fixture] .venv/bin/python -B <scratch>/journey.py <scratch>/startup.json",
+    "exitCode": 0,
+    "version": "Python 3.12.15",
+    "outputArtifact": "[isolated-home][scratch-path]",
+    "outputHash": "1cc77526d44e6c1f5ee6ab8122fb1ccf6f8344dde5464794f0c2e5b7a23039ce",
+    "scriptHash": "62a9f0952466f742f6d8e73bbe69366cf558be0a5b950ef79ea735c89c233939"
+  },
+  "history": "measure HEAD..HEAD; only one commit; no frequency claims",
+  "overlap": "Proposed caller correction and protection changes have no shared write paths, but share public ledger contract; no independence or conflict claim",
+  "limitations": [
+    "Findings schema valid; readiness remains verification blocked. Captured native and manual journey evidence are separate from findings-fingerprint validated outcome evidence.",
+    "Formatting is advisory: no existing standard adopts it.",
+    "Fresh locked setup, deliberate rule-proof controls and hosted CI were not run."
+  ]
+}

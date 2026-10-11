@@ -34,6 +34,11 @@ AC-56 passes the [container runtime-independence comparison](runtime-independenc
 Actual availability checks found no router, akashic or no-mistakes; the bounded audit completed with only the installed package and native tools, leaving project bytes unchanged and readiness unverified where product checks were absent.
 AC-42 passes the [implicit-invocation comparison](implicit-invocation-comparison.json), retaining the baseline's passing behavior.
 The plain audit request and scripted refusal of explicit invocation leave repo-audit unstarted in both modes; the captured command traces show no audit-helper execution or application of its procedure.
+AC-11, AC-51, AC-60 and AC-62 pass the [Python foundation comparison](existing-repo-python-comparison.json), retaining all four baseline checks.
+Both runs use the public ledger API and native Python checks, preserve CONTRIBUTING.md as the standards authority and avoid size-only findings against the cohesive ledger and startup wiring.
+The [with-skill execution evidence](runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/artifacts/evidence-summary.json) records passing units, Ruff lint and the actual startup CSV/JSON balance-preserving round trip.
+The existing private-import failure and optional formatting findings remain visible; no project files changed.
+The evaluator independently checked all nineteen file citations in the original research report, confirmed clean project bytes and verified login cleanup.
 
 ## Historical process-only evaluations
 

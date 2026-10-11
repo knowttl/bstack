@@ -115,8 +115,10 @@
       "criterionSource": "docs/design.md#AC-11",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo without those filenames can use equivalent documents and does not fail merely because the files are absent."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo-python",
+        "artifacts": ["tests/eval/results/release/existing-repo-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/conversation.txt", "tests/eval/results/release/runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/artifacts/evidence-summary.json"]
       }
     },
     {
@@ -537,8 +539,10 @@
       "criterionSource": "docs/design.md#AC-51",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A large cohesive module or thin startup file does not fail merely because of its size or import count."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo-python",
+        "artifacts": ["tests/eval/results/release/existing-repo-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/conversation.txt", "tests/eval/results/release/runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/artifacts/evidence-summary.json"]
       }
     },
     {
@@ -633,8 +637,10 @@
       "criterionSource": "docs/design.md#AC-60",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A second language stack uses its native tools rather than inheriting JavaScript lint assumptions."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo-python",
+        "artifacts": ["tests/eval/results/release/existing-repo-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/conversation.txt", "tests/eval/results/release/runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/artifacts/evidence-summary.json"]
       }
     },
     {
@@ -653,8 +659,10 @@
       "criterionSource": "docs/design.md#AC-62",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Two projects with different goals or boundaries receive appropriately different rule recommendations, rather than the same generic preset."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "existing-repo-python",
+        "artifacts": ["tests/eval/results/release/existing-repo-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/conversation.txt", "tests/eval/results/release/runs/2026-10-11T21-12-26.175Z-4890c42c-d77a-4fb0-b37f-c41767b7cf7f/artifacts/evidence-summary.json"]
       }
     },
     {
