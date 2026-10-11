@@ -48,13 +48,14 @@ async function sessionTools(directory) {
     const path = join(directory, entry.name)
     if (entry.isDirectory()) values.push(...await sessionTools(path))
     else if (entry.isFile() && entry.name.endsWith('.jsonl')) {
-      for (const line of (await readFile(path, 'utf8')).trim().split('\n')) {
+      for (const [index, line] of (await readFile(path, 'utf8')).trim().split('\n').entries()) {
         if (!line) continue
         const event = JSON.parse(line)
         const payload = event.payload
         if (event.type === 'response_item' && ['custom_tool_call', 'function_call'].includes(payload?.type)) {
           const input = payload.input ?? payload.arguments
-          if (input) values.push(...toolAccess(input, payload.name))
+          if (input) values.push(...toolAccess(input, payload.name).map(value => ({ ...value,
+            origin: `native ${payload.name} (${entry.name}:${index + 1})` })))
         }
       }
     }
@@ -141,41 +142,46 @@ export async function checkScope(record, result) {
     (!/(?:^|[\\/])(?:repo-audit|SKILL\.md)(?:[\\/]|$)/.test(path) && runtime.some(root => within(path, root)))
   const events = result.stdout.trim().split('\n').filter(Boolean).map(line => JSON.parse(line))
   const values = [...events.filter(event => event.item?.type === 'command_execution')
-    .flatMap(event => toolAccess({ command: event.item.command, cwd: event.item.cwd })),
+    .flatMap(event => toolAccess({ command: event.item.command, cwd: event.item.cwd })
+      .map(value => ({ ...value, origin: 'parent command' }))),
     ...await sessionTools(join(record.isolation.state, 'sessions'))]
-  const violations = new Set()
-  for (const { value, command, cwd, write } of values) {
+  const violations = new Map()
+  for (const { value, command, cwd, write, origin } of values) {
+    const reject = target => {
+      const observation = { target, operation: value, origin }
+      violations.set(JSON.stringify(observation), observation)
+    }
     if (!command) {
       const path = resolve(cwd ?? record.fixture.path, value)
-      if (!(write ? writable(path) : allowed(path))) violations.add(path)
+      if (!(write ? writable(path) : allowed(path))) reject(path)
       continue
     }
     // URLs and domain routes are not filesystem observations.
     let content = value.replace(/\b[a-z][a-z\d+.-]*:\/\/[^\s"'<>]+/gi, '').replaceAll('\\ ', ' ')
-    // Capacity queries observe filesystem metadata, never another project's files.
-    content = content.replace(/\bdf\s+(?:-[^\s]+\s+)*['"]?(\/tmp|\/)['"]?(?=$|[\s;"'])/g, '[resource-query]')
-      .replace(/\bstat\s+-[^\s]*f\s+['"]?(\/tmp|\/)['"]?(?=$|[\s;"'])/g, '[resource-query]')
-      .replace(/\b(?:statfs|disk_usage)\s*\(\s*['"](?:\/tmp|\/)['"]\s*\)/g, '[resource-query]')
     for (const root of roots) {
       content = content.replace(new RegExp(`${RegExp.escape(root)}(?=$|[\\/\\s"'\x60<>;,(){}\\[\\]])(?:/[^\\s"'\x60<>;,(){}\\[\\]\\\\]+)?`, 'g'),
         path => allowed(resolve(path)) ? '[in-scope]' : path)
     }
-    if (command) for (const path of writePaths(content)) if (!writable(path)) violations.add(path)
+    for (const path of writePaths(content)) if (!writable(path)) reject(path)
     for (const match of content.matchAll(/(?<![\w./\\])(?:[A-Za-z]:[\\/]|\/)[^\s"'`<>;,(){}\[\]\\]+/g)) {
       const candidate = match[0].replace(/[.:]+$/, '')
       const path = resolve(candidate)
       const processQuery = path === '/proc' && /\.iterdir\(|\b(?:listdir|readdir|readdirSync)\(|\bls\s+/.test(value) ||
         /^\/proc\/\d+\/(?:comm|cmdline|stat|status)$/.test(path)
       if ((process.platform === 'win32' || topLevel.has(path.slice(filesystem.length).split(sep)[0])) &&
-          !allowed(path) && !processQuery) violations.add(path)
+          !allowed(path) && !processQuery) reject(path)
     }
     // A here-document is program source, rather than shell path arguments.
     const shell = content.split(/<<-?\s*['"]?\w+['"]?/)[0]
     for (const match of shell.matchAll(/(?<![\w.])\.\.(?!\.)(?:\/[^\s"'`<>;,(){}\[\]\\]*)?/g)) {
       const path = resolve(cwd ?? record.fixture.path, match[0])
-      if (!allowed(path)) violations.add(path)
+      if (!allowed(path)) reject(path)
     }
   }
-  record.scopeGuard = { version: scopeVersion, verified: violations.size === 0, paths: [...violations].sort() }
-  if (violations.size) fail('Evaluation scope violated: observed filesystem paths outside the fixture, isolated home and approved tool paths. The run remains unscored; inspect scopeGuard.paths and retain the contaminated transcript privately.')
+  record.scopeGuard = { version: scopeVersion, verified: violations.size === 0,
+    paths: [...new Set([...violations.values()].map(item => item.target))].sort() }
+  if (violations.size) {
+    record.scopeGuard.violations = [...violations.values()]
+    fail('Evaluation scope violated: observed filesystem access outside the fixture, isolated home and approved tool paths. The run remains unscored; inspect scopeGuard.violations for each triggering operation and target, and retain the contaminated transcript privately.')
+  }
 }

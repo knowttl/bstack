@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat } from 'node:fs/promises'
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -435,6 +435,10 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.equal(observed.home, first.isolation.home)
   assert.equal(observed.state, first.isolation.state)
   assert.equal(observed.cache, join(first.isolation.home, 'cache'))
+  assert.equal(observed.temporaryDirectory, join(first.isolation.home, 'tmp'))
+  assert.equal(observed.temporaryAlias, observed.temporaryDirectory)
+  assert.equal(observed.temporaryWindowsAlias, observed.temporaryDirectory)
+  if (process.platform !== 'win32') assert.equal((await stat(observed.temporaryDirectory)).mode & 0o777, 0o700)
   assert.equal(observed.cwd, first.fixture.path)
   assert.ok(observed.message.endsWith('\n\n' + first.scenario.request))
   assert.ok(observed.message.includes(`work only inside ${first.fixture.path} and ${first.isolation.home}`))
@@ -445,7 +449,7 @@ for (const mode of ['scope-outside', 'scope-host-home', 'scope-cd-host-home', 's
   'scope-normalized-escape', 'scope-prefix', 'scope-tool-sibling', 'scope-native-read', 'scope-native-file-read', 'scope-native-file-write',
   'scope-native-relative', 'scope-runtime-skill', 'scope-resume', 'scope-resource-write',
   'scope-resource-system-write', 'scope-resource-temp-read', 'scope-resource-temp-write',
-  'scope-resource-mixed', 'scope-resource-python-write']) {
+  'scope-resource-mixed', 'scope-resource-python-write', 'scope-resource-shared-capacity', 'scope-resource-shared-python-capacity']) {
   test(`evaluation rejects ${mode} observations without scoring and deletes the isolated home`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory, mode)
@@ -456,6 +460,11 @@ for (const mode of ['scope-outside', 'scope-host-home', 'scope-cd-host-home', 's
     assert.equal(record.hostFailure, true)
     assert.equal(record.scopeGuard.verified, false)
     assert.ok(record.scopeGuard.paths.length > 0)
+    assert.deepEqual([...new Set(record.scopeGuard.violations.map(item => item.target))].sort(), record.scopeGuard.paths)
+    for (const observation of record.scopeGuard.violations) {
+      assert.ok(observation.operation.trim())
+      assert.match(observation.origin, /^(?:parent command|native .+ \(.+:\d+\))$/)
+    }
     assert.match(record.reason, /Evaluation scope violated/)
     assert.equal(record.transcript, null)
     assert.equal(record.answers, null)
