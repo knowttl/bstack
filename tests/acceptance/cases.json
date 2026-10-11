@@ -63,8 +63,10 @@
       "criterionSource": "docs/design.md#AC-6",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A repo with clear goals and principles reaches recommendations without making the user repeat those facts."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "clear-goals",
+        "artifacts": ["tests/eval/results/release/clear-goals-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-44-18.073Z-769b1d74-9b4b-421a-9613-1e6d5c26defd/conversation.txt"]
       }
     },
     {
@@ -393,8 +395,10 @@
       "criterionSource": "docs/design.md#AC-38",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: An audit of a repo with an approved vision and no open decisions never opens the VISION, interview or domain-language references."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "clear-goals",
+        "artifacts": ["tests/eval/results/release/clear-goals-comparison.json", "tests/eval/results/release/runs/2026-10-11T20-44-18.073Z-769b1d74-9b4b-421a-9613-1e6d5c26defd/conversation.txt"]
       }
     },
     {

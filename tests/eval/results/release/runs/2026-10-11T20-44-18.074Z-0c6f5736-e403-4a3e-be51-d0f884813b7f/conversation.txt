@@ -1,0 +1,38 @@
+User: Active checkpoint: final.
+Audit this repo and recommend principles and checks appropriate to its approved goals.
+Host JSONL:
+{"type":"thread.started","thread_id":"[identifier]"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’ll read the repo’s goals and project guidance, then audit the implementation and checks against that scope."}}
+{"type":"item.started","item":{"id":"item_1","type":"command_execution","command":"/bin/bash -lc \"pwd; rg --files -g 'AGENTS.md' -g '*goal*' -g '*GOAL*' -g 'README*' -g 'package.json' -g '*checkpoint*' -g '*approval*' -g '*principle*' -g '*audit*' -g '\"'!node_modules'\"' -g '\"'!.git'\"'\"","aggregated_output":"","exit_code":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_1","type":"command_execution","command":"/bin/bash -lc \"pwd; rg --files -g 'AGENTS.md' -g '*goal*' -g '*GOAL*' -g 'README*' -g 'package.json' -g '*checkpoint*' -g '*approval*' -g '*principle*' -g '*audit*' -g '\"'!node_modules'\"' -g '\"'!.git'\"'\"","aggregated_output":"[fixture]\n","exit_code":1,"status":"failed"}}
+{"type":"item.started","item":{"id":"item_2","type":"command_execution","command":"/bin/bash -lc \"ls -la; rg --files --hidden -g '\"'!.git'\"'\"","aggregated_output":"","exit_code":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_2","type":"command_execution","command":"/bin/bash -lc \"ls -la; rg --files --hidden -g '\"'!.git'\"'\"","aggregated_output":"total 24\ndrwx------ 3 node node 4096 Oct 11 20:44 .\ndrwxrwxrwt 1 root root 4096 Oct 11 20:44 ..\ndrwxrwxr-x 5 node node 4096 Oct 11 20:44 .git\n-rw-rw-r-- 1 node node  356 Oct 11 20:44 DESIGN.md\n-rw-rw-r-- 1 node node  322 Oct 11 20:44 VISION.md\n-rw-rw-r-- 1 node node  217 Oct 11 20:44 glossary.md\nDESIGN.md\nVISION.md\nglossary.md\n","exit_code":0,"status":"completed"}}
+{"type":"item.started","item":{"id":"item_3","type":"command_execution","command":"/bin/bash -lc 'cat VISION.md DESIGN.md glossary.md; git status --short; git log -5 --oneline'","aggregated_output":"","exit_code":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_3","type":"command_execution","command":"/bin/bash -lc 'cat VISION.md DESIGN.md glossary.md; git status --short; git log -5 --oneline'","aggregated_output":"# Reading queue\n\nStatus: approved by the owner.\nHelp one reader save articles and mark them read.\nSuccess means a saved article can be found in the queue and marked read without losing its title or address.\nAccounts, sharing and recommendations are outside the first version.\nThere are no open product or stack decisions.\n# Design\n\nThe approved stack is a local Node application with a JSON file for persistence.\nThe queue owns article state and exposes save, list and mark-read operations.\nPresentation uses the queue's public operations and never writes storage directly.\nPreserve article titles and addresses when marking an article read.\nThere are no open design decisions.\n# Glossary\n\n- Article: a saved title and address with a read status.\n- Queue: the reader's saved articles, including read articles.\n- Mark read: change an article's read status while preserving its title and address.\n81feef4 docs: record design and vocabulary\n8f70d11 docs: approve project vision\n","exit_code":0,"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_4","type":"agent_message","text":"The repo has an approved, consistent scope, but contains only documentation. There is no implementation or test suite, so the final checkpoint cannot yet establish that the product meets its success criteria.\n\n[VISION.md]([fixture]/VISION.md) fixes the goal: one reader can save articles, find them in a queue, and mark them read without losing their title or address. [DESIGN.md]([fixture]/DESIGN.md) fixes the local Node/JSON stack and queue boundary. [glossary.md]([fixture]/glossary.md) confirms that read articles remain in the queue. No product or stack decisions need reopening.\n\nRecommended principles:\n\n- Keep the first version focused on save, list, and mark-read. Accounts, sharing, and recommendations are explicitly outside scope.\n- Make the queue own article state and persistence; presentation should call its public operations.\n- Preserve titles and addresses exactly when changing read status.\n- Keep persistence simple, while preventing failed writes from destroying saved data.\n\nChecks appropriate to the final checkpoint:\n\n- **Core flow:** save an article, find it in the queue, mark it read, and verify its title and address remain unchanged.\n- **Persistence:** restart the application and verify saved articles and read status survive.\n- **State isolation:** marking one article read leaves other articles unchanged; marking it read again is harmless.\n- **Queue semantics:** read articles remain available in the queue.\n- **Architecture:** confirm presentation never writes storage directly.\n- **Storage failure:** verify malformed JSON or a failed write produces a clear error without silently replacing existing data.\n\nThese checks should use an isolated temporary JSON file. Before every Node suite, run the required preflight and proceed only when it exits zero with `source: host` and `permitted: true`. No Node suite was run during this documentation audit."}}
+{"type":"turn.completed","usage":{"input_tokens":59100,"cached_input_tokens":55680,"cache_write_input_tokens":0,"output_tokens":674,"reasoning_output_tokens":56}}
+
+Host stderr:
+Reading additional input from stdin...
+
+
+User: The existing approved documents remain authoritative. Do not reopen settled decisions.
+Host JSONL:
+{"type":"thread.started","thread_id":"[identifier]"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"Understood. I’ll treat the approved vision, design, and glossary as authoritative, keep work within the two permitted roots, and apply the required preflight before every Node suite."}}
+{"type":"turn.completed","usage":{"input_tokens":75016,"cached_input_tokens":70656,"cache_write_input_tokens":0,"output_tokens":714,"reasoning_output_tokens":56}}
+
+Host stderr:
+
+
+User: Present recommendations only.
+Host JSONL:
+{"type":"thread.started","thread_id":"[identifier]"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"Recommended principles:\n\n- Keep the approved scope: one reader, save articles, list the queue, and mark articles read.\n- Use the approved local Node application with JSON persistence.\n- Route presentation through the queue’s public operations.\n- Preserve titles and addresses when marking articles read, and retain read articles in the queue.\n\nRecommended final checks:\n\n- Save → list → mark read preserves the article’s title and address.\n- Restarting preserves articles and read status.\n- Marking one article read leaves other articles unchanged.\n- Repeating mark-read is harmless.\n- Presentation never writes storage directly.\n- Storage errors are reported without overwriting existing data.\n- Each Node suite uses isolated temporary storage and runs only after a fresh preflight exits zero with `source: host` and `permitted: true`."}}
+{"type":"turn.completed","usage":{"input_tokens":91238,"cached_input_tokens":86400,"cache_write_input_tokens":0,"output_tokens":877,"reasoning_output_tokens":56}}
+
+Host stderr:
+
