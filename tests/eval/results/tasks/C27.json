@@ -18,7 +18,8 @@
     { "id": "check", "executable": "npm", "args": ["run", "check"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.check.txt", "status": "passed" },
     { "id": "registry", "executable": "node", "args": ["scripts/acceptance.mjs", "--check-registry", "--json"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.registry.json", "status": "passed" },
     { "id": "selections", "executable": "node", "args": ["scripts/acceptance.mjs", "--selections", "tests/eval/results/full-path-C27/selections.json", "--results", "tests/eval/results/full-path-C27/runs", "--json"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.selections.json", "status": "passed" },
-    { "id": "focused-evaluation", "executable": "node", "args": ["--test", "tests/scripts/eval.test.mjs"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.eval-tests.txt", "status": "passed" }
+    { "id": "focused-evaluation", "executable": "node", "args": ["--test", "tests/scripts/eval.test.mjs"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.eval-tests.txt", "status": "passed" },
+    { "id": "focused-acceptance", "executable": "node", "args": ["--test", "tests/scripts/acceptance.test.mjs"], "cwd": ".", "exitCode": 0, "outputArtifact": "tests/eval/results/tasks/C27.acceptance-tests.txt", "status": "passed" }
   ],
   "limitations": [
     "Manual semantic scoring was performed by the current Codex worker, not an independent human evaluator or host/model matrix.",
