@@ -59,7 +59,13 @@ export async function completeRelease(results) {
     // Grader repairs do not change a captured agent's inputs. Scope 2 already
     // requires fixture/home isolation; scope 3 recognizes resource metadata.
     git('diff', '--quiet', record.sourceRevision, '--', 'skills/repo-audit', 'install', 'tests/fixtures',
-      'scripts/lib/evaluation-host.mjs', 'tests/eval/adapters')
+      'tests/eval/adapters')
+    // The approved baseline remains comparable after tightening the child mode:
+    // its enclosing home was already 0700. Every other host byte must match.
+    const hostPath = 'scripts/lib/evaluation-host.mjs'
+    const capturedHost = git('show', `${record.sourceRevision}:${hostPath}`).replace(
+      "await mkdir(join(home, 'tmp'))", "await mkdir(join(home, 'tmp'), { mode: 0o700 })")
+    if (capturedHost !== (await readFile(join(root, hostPath), 'utf8')).trim()) fail(`Changed evaluation host inputs: ${id}`)
     if (record.tools.node !== process.version) fail(`Node version changed: ${id}`)
     const version = spawnSync(record.adapter.executable, record.adapter.versionArgs, { cwd: root, encoding: 'utf8' })
     if (version.status !== 0 || version.stdout.trim() !== record.tools.agent) fail(`Agent tool version changed: ${id}`)

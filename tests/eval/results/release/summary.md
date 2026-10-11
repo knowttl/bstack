@@ -12,7 +12,10 @@ That authorized changed-input with-skill rerun was rejected for `/tmp` again.
 Its [recorded target and operation](scope-and-prerequisites-range-rejection.json) identify the guard bug: two dots inside the Git range `HEAD^..HEAD` were treated as a relative path and resolved to the fixture's parent.
 That capture remains unscored, with no waiver for the affected cases.
 The approved next guard correction checks complete existing arguments and explicit write destinations, so Git ranges cannot become relative-path fragments.
-Its changed-input with-skill rerun remains pending.
+Its authorized changed-input with-skill rerun hit a further [program-operator rejection](scope-and-prerequisites-program-operator-rejection.json).
+The tokenizer treated the `/` in Python `Path` composition inside a here-document as an existing root-directory argument.
+The exact native operation, trace origin and failed-capture hashes are retained; this capture remains private and unscored.
+Evaluation is stopped pending a decision, without another unchanged run or acceptance waiver.
 The concurrent clear-goals with-skill opening was closed after this stop, before scripted follow-ups or scoring.
 Its isolated home was deleted; it is partial diagnostic evidence and is not a final passing selection.
 
