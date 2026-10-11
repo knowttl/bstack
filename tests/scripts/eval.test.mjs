@@ -453,7 +453,9 @@ test('foundation execution delivers the active checkpoint to the host', async t 
 
 test('final with-skill execution installs the complete package in the isolated home before the host turn', async t => {
   const directory = await temporary(t)
-  const { path } = await adapterFile(directory)
+  const { path, adapter } = await adapterFile(directory)
+  adapter.timeoutMs = 1800000
+  await writeFile(path, JSON.stringify(adapter))
   const result = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'with', '--stage', 'final', '--adapter', path)
   const record = result.data.data
   assert.ok(record, result.stdout)
@@ -649,7 +651,7 @@ for (const [name, mutate] of [
   ['shell string', adapter => { adapter.args = 'codex exec' }],
   ['unknown field', adapter => { adapter.shell = true }],
   ['unsupported conversation', adapter => { adapter.invocation.protocol = 'stdin' }],
-  ['unbounded timeout', adapter => { adapter.timeoutMs = 600001 }],
+  ['unbounded timeout', adapter => { adapter.timeoutMs = 1800001 }],
   ['unbounded capture', adapter => { adapter.outputLimitBytes = 16777217 }],
   ['empty capture', adapter => { adapter.outputLimitBytes = 0 }],
   ['missing message placeholder', adapter => { adapter.args = ['exec'] }],

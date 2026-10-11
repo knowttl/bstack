@@ -54,9 +54,10 @@ Manual records initially have status `blocked` and no answers, transcript or cas
 
 [codex.json](../tests/eval/adapters/codex.json) is the current-host adapter.
 Its version 1 format extends the shared child-command object with `invocation` and `isolation`.
-It requires `executable`, string-array `args`, `cwd: "."`, `versionArgs` and `timeoutMs` from 1 to 600000.
+It requires `executable`, string-array `args`, `cwd: "."`, `versionArgs` and `timeoutMs` from 1 to 1800000.
 It also requires `outputLimitBytes` from 1 to 16777216, bounding each captured output stream.
 The Codex adapter allows ten-minute turns because real model revision turns exceeded two minutes during live board review.
+The final-stage adapter allows thirty-minute turns because complete scaffold verification and protected-plan preparation exceeded ten minutes during C27 execution.
 It captures up to 16 MiB per stream because the real JSONL board conversation exceeded the ordinary 64 KiB child-command capture.
 Ordinary child-command capture retains its 64 KiB default and truncation behaviour.
 Truncated evaluation output still blocks scoring and closes the isolated home.
