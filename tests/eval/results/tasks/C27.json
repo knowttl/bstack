@@ -147,7 +147,7 @@
       "status": "passed"
     }
   ],
-  "sourceRevision": "a4992c0aa85c92415468a2598c77d07f8d9c3bed",
+  "sourceRevision": "d3ac2d9128a469c88d403daf8ff2620b571e2014",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -186,11 +186,6 @@
           "sha256": "c6c3eb43d29f65a17bc030c8592cbbfe0edc753e497f145ac6b9b31f7886d0fe"
         },
         {
-          "path": "README.md",
-          "executable": false,
-          "sha256": "78be70062c0ce1d22e0d4129a3f44cca48089a88c6b2ea6a1abe54dd348f27bf"
-        },
-        {
           "path": "docs/C24c-maintenance-transcript.md",
           "executable": false,
           "sha256": "d4def0cfd5666846cb526605f187d74859a663855a2faa802c801b4c4777421a"
@@ -209,11 +204,6 @@
           "path": "docs/design.md",
           "executable": false,
           "sha256": "8737c00a2ba0309ecfcbbba5d87a3264f9ec5d0fb454d2236b352026d39a9c8d"
-        },
-        {
-          "path": "docs/evaluation.md",
-          "executable": false,
-          "sha256": "c3fa4e0645799da6651d416171a47d78e3dc356ee71c9e6bd23967fbcd7f2922"
         },
         {
           "path": "docs/fixtures.md",
@@ -8036,7 +8026,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "ebe62036eb949db6e0b82ebb48238517ccc80d096c2409f5ec05dafa6b4007bf"
+      "sha256": "1dc4da50c42ffc96eb43f84d75cc45c371e2c96a792bb99da627171dd151a80d"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -8084,7 +8074,34 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "README.md",
+        "before": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "78be70062c0ce1d22e0d4129a3f44cca48089a88c6b2ea6a1abe54dd348f27bf"
+        },
+        "after": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "7dc6298fef5859fe4da7092416830c062d4ab1d625ee8c041e4b3437bedbe9b1"
+        }
+      },
+      {
+        "path": "docs/evaluation.md",
+        "before": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "c3fa4e0645799da6651d416171a47d78e3dc356ee71c9e6bd23967fbcd7f2922"
+        },
+        "after": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "f9ae8dc74beddc421aecc270369cb3dd06c8fdf1aa4ae85654c215ace4a768e5"
+        }
+      }
+    ],
     "counts": {
       "tests": 2419,
       "failed": 0,
@@ -8095,9 +8112,9 @@
       "topLevel": 2410,
       "suites": 0
     },
-    "durationMs": 387215.419307,
-    "outputSha256": "a3bc1d78b38833ac14de56dbc4feff007f1312c935f7607a98c60bdf8065e2a5",
-    "eventsSha256": "27c1f143cfa4b46b965e6fdc3710c0d91426514d6005fa378ec62b7c55e03726",
+    "durationMs": 421492.84066,
+    "outputSha256": "110bd7f0577f4fa5d37a565974b95ef3acbab0387d64b03f87d49890728ddd3a",
+    "eventsSha256": "7c99ed6cf0761f7c7537117f99238b4a4b493f7f1c7944576a3ee21923d09101",
     "eventsArtifact": "tests/eval/results/tasks/C27.events.jsonl"
   }
 }
