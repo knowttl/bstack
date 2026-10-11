@@ -443,8 +443,10 @@
       "criterionSource": "docs/design.md#AC-42",
       "evidenceType": "agent",
       "procedure": {
-        "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: In the current agent, a request such as \"audit this repo\" without the explicit command does not start repo-audit."
+        "status": "completed",
+        "path": "tests/eval/scenarios/scenarios.json",
+        "name": "implicit-invocation",
+        "artifacts": ["tests/eval/results/release/implicit-invocation-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-09-46.986Z-2faa6ae4-70b7-4ac7-83f3-51b2962105ef/conversation.txt"]
       }
     },
     {
