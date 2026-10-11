@@ -29,9 +29,9 @@ The raw conversation and closed run record remain in temporary scratch for super
 Host paths, user names and session identifiers are omitted here.
 Next prerequisite: restore a usable browser session and rerun the real new-idea scenario through the shipped board UI, revision and explicit approval.
 
-## Retry after firstmate's browser workaround
+## Retry after supervisor's browser workaround
 
-Firstmate supplied the verified start, pages and selectpage sequence.
+Supervisor supplied the verified start, pages and selectpage sequence.
 The task-specific browser selected tab 1 successfully.
 A fresh real isolated new-idea run tested `fa7d795100217a523f9c8df8074aca58607131e5` with the unchanged adapter and scenario.
 Its opening turn completed in 34960 ms with child exit code 0.
@@ -56,11 +56,11 @@ The private Lavish server then returned `status: stopped` for port 4489.
 The isolated-home absence was confirmed.
 The closed raw run and conversation remain in temporary scratch for supervisor inspection.
 No credentials, original host paths, user names or session IDs appear in this artifact.
-Next prerequisite: a fresh supervised run with board interaction delivered before the adapter timeout, or firstmate direction for that bound.
+Next prerequisite: a fresh supervised run with board interaction delivered before the adapter timeout, or supervisor direction for that bound.
 
 ## Final authorised retry with live observation
 
-Firstmate authorised one further attempt with the unchanged timeout and directed escalation if it also timed out.
+Supervisor authorised one further attempt with the unchanged timeout and directed escalation if it also timed out.
 This attempt tested `8a93e78` on the same Linux, Node and Codex versions, using the unchanged scenario and adapter.
 The browser started with tab 1 selected before the run.
 The opening turn completed in 52342 ms and asked how missing items are identified.
@@ -92,13 +92,13 @@ No additional retry or timeout change is authorised.
 Send & End was clicked in the shipped UI after timeout, and the task browser bridge and private Lavish server both returned stopped.
 Private server state was removed.
 The isolated home was confirmed absent, and the fixture still contained only brief.md with bytes matching its source.
-Raw closed run and conversation artifacts remain in temporary scratch for firstmate inspection, with no login copy retained.
-T1.7 completion is dropped from this slice's implementation scope pending firstmate's captain escalation.
+Raw closed run and conversation artifacts remain in temporary scratch for supervisor inspection, with no login copy retained.
+T1.7 completion is dropped from this slice's implementation scope pending supervisor's captain escalation.
 T2.1 remains unstarted because its plan dependency is incomplete.
 
 ## Authorised ten-minute follow-up
 
-Firstmate subsequently authorised a test-harness-only timeout increase to 600000 ms and restored T1.7 completion to this slice's scope.
+Supervisor subsequently authorised a test-harness-only timeout increase to 600000 ms and restored T1.7 completion to this slice's scope.
 The [follow-up summary](new-idea/summary.md) records successful real verdict ingestion, saved revision, glossary and explicit exact-revision approval.
 That run completed without timeout, but the adapter correctly remains blocked because shared child output capture truncated its conversation.
-The previous no-retry and dropped-scope instructions above describe the earlier attempt and are superseded by firstmate's instruction 004.
+The previous no-retry and dropped-scope instructions above describe the earlier attempt and are superseded by supervisor's instruction 004.

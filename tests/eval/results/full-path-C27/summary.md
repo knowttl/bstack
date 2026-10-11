@@ -100,3 +100,10 @@ The first full capture exposed seven acceptance-test assertions that assumed eve
 The corrected tests validate the real registry without scoring procedures and use explicitly planned disposable registries for isolated mutation cases; the [focused acceptance suite](../tasks/C27.acceptance-tests.txt) passed before recapturing the full suite.
 All selected run homes were deleted after scoring, the task browser and remaining task review server were stopped, and task fixtures, clean clones, dependencies and build caches were removed after preservation of evidence.
 No task images were built.
+
+## Public evidence hygiene
+
+The final hygiene review removed two unselected historical attempts that captured operator instructions and internal workspace metadata.
+Retained historical documentation uses neutral supervisor wording, and the glossary regression captures use neutral artifact placeholders with separate original and published hash bindings.
+Two independent whole-tree scans found no internal operator markers or dispatch paths in public tracked text.
+The five selected final conversations and their artifact manifests remain unchanged, and all seven acceptance selections still validate.

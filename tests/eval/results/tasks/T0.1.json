@@ -8,7 +8,7 @@
     "C0 approved the commissioning decisions in docs/design.md revision 26 and docs/implementation-plan.md.",
     "Preserve .no-mistakes.yaml byte-identical and add no hosted workflow or release automation.",
     "Review F1: check runs real bootstrap validation until T0.5 replaces it, and eval reports blocked with exit 2 until T1.2.",
-    "Firstmate ruling 001: create only the short AGENTS.md required by T0.1 step 9."
+    "Supervisor ruling 001: create only the short AGENTS.md required by T0.1 step 9."
   ],
   "status": "passed",
   "environment": {
