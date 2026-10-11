@@ -22,7 +22,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "ambiguous-idea",
-        "artifacts": ["tests/eval/results/release/ambiguous-idea-comparison.json", "tests/eval/results/release/runs/2026-10-11T22-27-46.161Z-16155841-a407-44b5-a602-3ac02fbd6412/conversation.txt"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-44-17.196Z-2e3af74d-504f-4f8a-ab7d-86ca625f0244/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-44-17.196Z-2e3af74d-504f-4f8a-ab7d-86ca625f0244/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -680,9 +684,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "runtime-independence",
         "artifacts": [
-          "tests/eval/results/release/runtime-independence-current.md",
-          "tests/eval/results/release/runs/2026-10-11T23-19-36.315Z-ae04c3e4-2748-4569-b7a1-667187de3b18/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-11T23-19-36.315Z-ae04c3e4-2748-4569-b7a1-667187de3b18/artifacts/independent-verification.json"
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-44-17.312Z-30c27023-b1a0-45e7-8356-e0e348f0a517/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-44-17.312Z-30c27023-b1a0-45e7-8356-e0e348f0a517/artifacts/independent-verification.json"
         ]
       }
     },
