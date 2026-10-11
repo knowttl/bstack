@@ -2,6 +2,8 @@
 
 Evaluation is in progress and does not establish release readiness.
 The complete acceptance validator, all-case coverage and scenario comparisons are not yet complete.
+Evaluation stopped at the [AC-35 capability gap](AC-35-capability-gap.md): fallback sessions still expose subagent tools, despite the scenario's claim that they are disabled.
+No fallback score can establish AC-35 until actual capability restriction and fresh comparable runs are verified.
 
 ## Independent-extension scope
 
@@ -54,3 +56,22 @@ The supervisor approved a shared fixture/home instruction guard and rejection of
 The runner now checks both parent conversation output and native parent/worker tool traces, including late observations at close.
 Temporary files belong to the isolated home through all three temporary-directory environment variables.
 The changed scope contract requires a fresh baseline and with-skill pair; the earlier passing with-skill run is historical evidence only.
+
+## Final discovery comparison with scope version 2
+
+The [baseline](runs/2026-10-11T18-01-42.264Z-05b66d0f-e8fc-4b29-bb92-15b001a98ed1/run.json) and [with-skill run](runs/2026-10-11T18-02-24.710Z-3b5c141a-c401-4ef9-8b97-677251ce5f4f/run.json) used source revision `459b168`, identical criteria, fixture revision, Node, Codex, model and adapter.
+The [comparison](research-subagents-comparison.json) passed: baseline 0/4, with-skill 4/4, no lost checks.
+The baseline reported the absent required research resources and stopped without searching outside the permitted roots.
+The with-skill run returned all five briefs through actual workers, with overlapping architecture, checks and language execution shown in the retained native traces.
+Main-thread source review and an independent rerun of the shipped citation checker passed all 54 file citations.
+The fixture's Git status remained empty.
+Language and outside research remained not researched under the author-imposed no-web constraint.
+Both runs verified scope version 2 and deleted their complete isolated homes before scoring.
+Native excerpts omit encrypted messages, system and developer instructions, world state, reasoning and configuration.
+Scoring was performed by the release evaluator, rather than an independent human study.
+
+Scope version 1 rejected a legitimate with-skill run because it resolved source imports and the help example `<base>..<head>` as filesystem operations.
+The failed attempt remains unscored and is excluded from final selections.
+Version 2 resolves relative paths only in concrete shell commands, while continuing to reject observed absolute paths in command output and native worker traces.
+The regression suite reproduced the rejection before the fix and passed all 15 scope controls afterward.
+The combined evaluation and acceptance development suites passed 125 tests, and `npm run check` passed.
