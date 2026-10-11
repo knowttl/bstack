@@ -8,6 +8,7 @@ import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { resolvePath } from '../../skills/repo-audit/scripts/lib/paths.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
+import { scopeMessage, checkScope } from './evaluation-scope.mjs'
 
 export function redactEvidence(content, record) {
   const username = userInfo().username
@@ -109,7 +110,8 @@ function isolatedEnvironment(isolation) {
     .filter(name => process.env[name] !== undefined).map(name => [name, process.env[name]]))
   const home = isolation.home
   return { ...inherited, HOME: home, USERPROFILE: home, CODEX_HOME: isolation.state,
-    XDG_CONFIG_HOME: join(home, 'config'), XDG_CACHE_HOME: join(home, 'cache'), LOCALAPPDATA: join(home, 'cache') }
+    XDG_CONFIG_HOME: join(home, 'config'), XDG_CACHE_HOME: join(home, 'cache'), LOCALAPPDATA: join(home, 'cache'),
+    TMPDIR: join(home, 'tmp'), TMP: join(home, 'tmp'), TEMP: join(home, 'tmp') }
 }
 
 export async function isolate(record) {
@@ -118,6 +120,7 @@ export async function isolate(record) {
   await chmod(home, 0o700)
   await mkdir(join(home, adapter.isolation.stateDirectory), { mode: 0o700 })
   await mkdir(join(home, 'cache'))
+  await mkdir(join(home, 'tmp'))
   const discoveryPaths = adapter.isolation.discoveryPaths.map(path => join(home, path))
   // Non-Git idea fixtures may cause host discovery to walk to the filesystem root.
   let parent = await realpath(fixture.path)
@@ -167,7 +170,7 @@ export async function hostTurn(record, message) {
   await verifyIsolation(record.isolation, record.mode)
   const env = isolatedEnvironment(record.isolation)
   const template = record.sessionId ? record.adapter.invocation.resumeArgs : record.adapter.args
-  const args = template.map(arg => arg === '{message}' ? message : arg === '{sessionId}' ? record.sessionId : arg)
+  const args = template.map(arg => arg === '{message}' ? scopeMessage(record, message) : arg === '{sessionId}' ? record.sessionId : arg)
   let result
   const login = join(record.isolation.state, 'auth.json')
   try {
@@ -190,6 +193,7 @@ export async function hostTurn(record, message) {
   if (sessions.length !== 1 || typeof sessions[0] !== 'string' || !sessions[0] ||
       (record.sessionId && sessions[0] !== record.sessionId) || !events.some(event => event.type === 'turn.completed') ||
       events.some(event => ['turn.failed', 'error'].includes(event.type))) fail('Host did not complete a turn in the expected conversation. Follow the manual procedure.')
+  await checkScope(record, result)
   await verifyIsolation(record.isolation, record.mode)
   record.sessionId = sessions[0]
   turn.sessionId = record.sessionId
@@ -198,6 +202,9 @@ export async function hostTurn(record, message) {
 export async function closeHost(record, directory) {
   if (record.isolation.cleanedAt) return
   try {
+    record.isolation.verified = false
+    await checkScope(record, { stdout: record.turns.map(turn => turn.result.stdout).join('\n'),
+      stderr: record.turns.map(turn => turn.result.stderr).join('\n') })
     await verifyIsolation(record.isolation, record.mode)
     if (!record.hostFailure && record.turns.length && record.turns.every(turn => turn.sessionId)) {
       record.conversationHash = hashBytes(await readFile(join(directory, record.conversation)))

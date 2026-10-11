@@ -157,6 +157,7 @@ async function score(opts, results) {
   const directory = join(results, record.id)
   if (record.adapter) {
     if (record.hostFailure || !record.turns?.length || record.turns.some(turn => !turn.sessionId)) fail('Adapter scoring requires completed host turns. Use the manual procedure for unsupported conversations.')
+    if (!record.scopeGuard?.verified) fail('Adapter scoring requires verified evaluation filesystem scope.')
     if (transcript !== await readFile(join(results, record.id, record.conversation), 'utf8')) fail('Score the captured adapter conversation without replacing its transcript.')
     if (record.isolation.cleanedAt) {
       if (!record.isolation.verified || record.conversationHash !== hashBytes(transcript)) fail('Closed host evidence has unverified isolation or a changed conversation.')
@@ -190,6 +191,8 @@ async function compare(opts, results) {
   const after = await load(results, opts.with)
   if (!before.transcript || !after.transcript) fail('Both runs need explicit scoring before comparison.')
   if (before.adapterHash !== after.adapterHash) fail('Comparison requires the same host adapter and execution settings.')
+  if (before.adapter && (!before.scopeGuard?.verified || !after.scopeGuard?.verified ||
+      before.scopeGuard.version !== after.scopeGuard.version)) fail('Comparison requires the same verified filesystem scope contract.')
   if (before.mode !== 'without' || after.mode !== 'with' || ['agent', 'model', 'criteriaHash', 'stage'].some(key => before[key] !== after[key]) ||
       before.scenario.id !== after.scenario.id || ['name', 'revision'].some(key => before.fixture[key] !== after.fixture[key]) ||
       ['fixture', 'request', 'answers', 'invocation'].some(key => canonicalJSON(before.scenario[key]) !== canonicalJSON(after.scenario[key]))) fail('Comparison requires the same scenario, fixture revision, agent, model, stage and criteria, with identical fixture names, requests, scripted answers and invocation modes.')
