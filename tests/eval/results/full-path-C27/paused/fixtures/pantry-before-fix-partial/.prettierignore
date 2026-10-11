@@ -1,0 +1,6 @@
+VISION.md
+.bstack/bin/bstack-check.mjs
+package-lock.json
+node_modules/
+dist/
+.bstack/assessment.json

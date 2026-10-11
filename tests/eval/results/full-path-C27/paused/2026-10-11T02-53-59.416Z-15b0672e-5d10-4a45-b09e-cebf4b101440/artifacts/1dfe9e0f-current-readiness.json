@@ -1,0 +1,48 @@
+{
+  "status": "verification blocked",
+  "assessedRevision": "b53097d6461c09870b054da766b0926affb92987",
+  "implementationApply": "./b88d0c74-journal.json",
+  "nativeChecks": "./fe43fab5-checks.json",
+  "originalBeforeCapture": "./6e1327ab-checks.json",
+  "originalReplayBefore": "./443f3b7e-checks.json",
+  "originalReplayAfter": "./e241fc2a-checks.json",
+  "ruleProofs": {
+    "final-proof-boundaries-alias.json": {
+      "status": "passed",
+      "artifact": "./7e851ff5-proof.json"
+    },
+    "final-proof-maintained-private.json": {
+      "status": "passed",
+      "artifact": "./6ddd5066-proof.json"
+    },
+    "final-proof-boundaries-bridge.json": {
+      "status": "passed",
+      "artifact": "./b1eb54d7-proof.json"
+    },
+    "final-proof-boundaries-private.json": {
+      "status": "passed",
+      "artifact": "./eef8eedc-proof.json"
+    },
+    "final-proof-boundaries-cycle.json": {
+      "status": "passed",
+      "artifact": "./18286126-proof.json"
+    }
+  },
+  "previewOnly": {
+    "sourceRoot": "[scratch-path]",
+    "cleanRoot": "[scratch-path]",
+    "result": "passed",
+    "artifact": "./c2be9000-checker-result.json",
+    "fullTargetPathProof": false
+  },
+  "pending": [
+    "Exact historical snapshot approval and protected apply",
+    "Target portable assessment exact review and protected apply",
+    "Target final local maintenance validation and fresh standalone checker",
+    "Target different-root clean clone with isolated home/cache and fresh checker",
+    "Final current-head findings and readiness validation in scratch"
+  ],
+  "userNote": "User note: receipt wording remains a future owner decision.",
+  "preserved": true,
+  "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+}

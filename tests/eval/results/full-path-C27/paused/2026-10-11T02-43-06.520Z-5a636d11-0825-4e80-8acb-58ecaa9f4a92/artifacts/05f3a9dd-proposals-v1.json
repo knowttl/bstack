@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "draftRevision": "59d4d3721fe1d43a2777f920c695385b73dc67a8c9339110d30cd0ee4fc8934f",
+  "project": "Pantry list",
+  "runNote": "Stress-test the supervisor-selected fixture verdicts dated 2026-10-11 on the real board; selected answers are not a substitute for returned board feedback.",
+  "cards": [
+    {
+      "id": "needed-meaning",
+      "title": "Needed is independent of stock",
+      "body": "Keep the needed mark as an independent household shopping decision, even when a supply is already present; never infer it from quantities or stock levels.",
+      "tests": "\u201cThe household controls that mark as a shopping decision.\u201d",
+      "why": "Accepting supports restocking preferences and the explicit exclusion of stock accounting. Resisting could make the shopping list closer to the brief\u2019s phrase \u201cwhat is missing\u201d, but would need a separate definition of absence and risks introducing stock semantics."
+    },
+    {
+      "id": "duplicate-names",
+      "title": "Reuse equivalent names; preserve fully named variants",
+      "body": "Trim supplied names and compare them case-insensitively. Adding \u201c rice \u201d after \u201cRice\u201d reuses the existing item without changing its needed mark. \u201cBrown rice\u201d and \u201cWhite rice\u201d remain distinct because their full supplied names differ.",
+      "tests": "\u201cNames should let the household recognise its supplies without accidental duplication.\u201d",
+      "why": "Accepting prevents accidental duplicate shopping entries while allowing explicitly named variants. Resisting preserves every spelling as a separate entry and avoids implicit identity matching, but puts duplicate cleanup on the household."
+    },
+    {
+      "id": "storage-failure",
+      "title": "Continue the session with visible unsaved changes",
+      "body": "If local storage saving fails, keep the session usable and expose unsaved changes. Never claim reload retention until saving succeeds.",
+      "tests": "\u201cA storage problem must not make the current session unusable or imply that unsaved changes will survive a reload.\u201d",
+      "why": "Accepting lets the household continue useful work with an honest persistence limit. Resisting and blocking edits would avoid accumulating unsaved work, but would make a storage failure prevent the household from using the current session."
+    }
+  ]
+}
