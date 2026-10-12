@@ -261,7 +261,8 @@ It leaves the run unscored; pass the printed answers path and captured transcrip
 A reserved judge directory prevents an accidental repeat call.
 An interrupted invocation requires review before any retry.
 Comparison checks receive a companion transcript from the same package source, mode and batch.
-Selection prefers the same repeat index, then the first passing run in run-ID order.
+Selection prefers the same explicitly recorded repeat index, then the first passing run in run-ID order when indexes differ or are unavailable.
+Batch inventories establish membership only; registration order does not establish repeat indexes.
 The input and companion hashes bind the selected transcript and run identity.
 Missing companions leave comparison checks pending and return blocked before reserving a provider call or writing answers.
 Supply companion evidence, then judge the same unscored run.
