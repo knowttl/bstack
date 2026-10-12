@@ -359,6 +359,16 @@ Adapter scoring requires completed host turns and the exact captured conversatio
 npm run eval -- compare --without <baseline-id> --with <with-skill-id>
 ```
 
+Each scenario declares `covers`: skill heading anchors such as `SKILL.md#write-rules`, file paths relative to `skills/repo-audit/`, or directory prefixes ending in `/`.
+Installer keys begin with `install/` and are relative to the repository root.
+Run `npm run eval -- affected --base <commit>` to list changed paths, changed keys and affected scenario IDs; add `--json` for the result envelope.
+The command includes committed and uncommitted tracked changes and untracked files that Git does not ignore.
+SKILL.md hunks map to their enclosing `##` or `###` headings in both the base and current version, preserving coverage for removed or renamed headings.
+A key covered by no scenario selects every scenario, including new files and text outside the mapped headings.
+The deterministic map-completeness test requires coverage for every such heading and every file under `references/`, `schemas/`, `scripts/commands/` and `install/`, and rejects nonexistent coverage keys.
+With-skill release evidence remains fresh only when its scenario is unaffected by changes under `skills/repo-audit/` or `install/` since its source revision.
+Other execution and scoring bindings still apply.
+
 Comparison requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.
 Adapter comparisons also require the same adapter hash, preserving execution settings across modes.
 They require verified container execution, subject to the [approved archived baseline exception](#registry-and-final-selections).
@@ -403,7 +413,7 @@ Batch evidence uses every run in its saved batch and appends aggregate check rat
 The legacy `acceptance --selections` and `acceptance --require-complete` commands remain for archived evidence compatibility until the release gate replaces them.
 They do not consume the new batch ledger or determine a batch's result.
 Legacy validation rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
-Execution bindings include unchanged package, installer, fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
+Execution bindings include unchanged scenario-covered skill and installer inputs, per-scenario fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
 The approved scope rerun retains the exact successful `scope-and-prerequisites` baseline `2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89`, bound by its complete record hash.
 Both `eval compare` and complete release validation accept only these exact archived record bytes without a container execution record; historical `scopeGuard` fields do not establish verified execution.
 Its fixture, scoring criteria, request and tool versions must still match the container run.
