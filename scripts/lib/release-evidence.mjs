@@ -32,8 +32,10 @@ async function compatibleEvidence(ledger, definitions, results) {
     if (!definition || !definition.checks.some(check => check.id === row.check && check.caseId === row.caseId)) continue
     if (!runners.has(row.candidate)) {
       const diff = spawnSync('git', ['diff', '--quiet', '--no-ext-diff', '--no-textconv', row.candidate, '--',
-        'scripts/eval.mjs', 'scripts/lib/evaluation*.mjs', 'tests/eval/container',
-        'package.json', 'package-lock.json', 'skills/repo-audit/scripts/lib'], { cwd: root })
+        'scripts/eval.mjs', 'scripts/lib/evaluation.mjs', 'scripts/lib/evaluation-host.mjs',
+        'scripts/lib/evaluation-container.mjs', 'scripts/lib/evaluation-scope.mjs', 'tests/eval/container/Dockerfile',
+        'package.json', 'package-lock.json', ...['run', 'paths', 'result', 'schema', 'fingerprint']
+          .map(name => `skills/repo-audit/scripts/lib/${name}.mjs`)], { cwd: root })
       if (diff.status !== 0 && diff.status !== 1) fail(`Cannot verify evaluation runner inputs: ${row.candidate}`)
       runners.set(row.candidate, diff.status === 0)
     }
@@ -129,23 +131,26 @@ export async function releaseGate(opts, results) {
   const gatingSet = []
   const carryover = []
   const impact = new Map()
+  async function carryoverReason(definition, source) {
+    const ancestor = spawnSync('git', ['merge-base', '--is-ancestor', source, opts.candidate], { cwd: root })
+    if (ancestor.status !== 0) fail(`Carryover candidate is not an ancestor: ${source}`)
+    const snapshot = spawnSync('git', ['show', `${source}:tests/eval/scenarios/scenarios.json`], { cwd: root, encoding: 'utf8' })
+    if (snapshot.status !== 0) fail('Cannot verify the carried scenario definition.')
+    const prior = JSON.parse(snapshot.stdout).scenarios.find(item => item.id === definition.id)
+    const inputs = ['fixture', 'request', 'answers', 'checkpoints', 'invocation', 'mode', 'checks']
+    if (!prior || inputs.some(name => canonicalJSON(prior[name] ?? null) !== canonicalJSON(definition[name] ?? null))) {
+      return 'Changed scenario inputs require a fresh measurement.'
+    }
+    if (!impact.has(source)) impact.set(source, await affectedScenarios(root, source, definitions, true))
+    return impact.get(source).scenarios.includes(definition.id) ? 'Changed covered inputs require a fresh measurement.' : null
+  }
   for (const definition of smoke) {
     const history = ledger.filter(row => row.tier === 'smoke' && row.mode === 'with' && row.scenario === definition.id)
     const source = history.findLast(row => row.candidate === opts.candidate)?.candidate ?? history.at(-1)?.candidate
     if (source && source !== opts.candidate) {
-      const ancestor = spawnSync('git', ['merge-base', '--is-ancestor', source, opts.candidate], { cwd: root })
-      if (ancestor.status !== 0) fail(`Carryover candidate is not an ancestor: ${source}`)
-      const snapshot = spawnSync('git', ['show', `${source}:tests/eval/scenarios/scenarios.json`], { cwd: root, encoding: 'utf8' })
-      if (snapshot.status !== 0) fail('Cannot verify the carried scenario definition.')
-      const prior = JSON.parse(snapshot.stdout).scenarios.find(item => item.id === definition.id)
-      const inputs = ['fixture', 'request', 'answers', 'checkpoints', 'invocation', 'mode', 'checks']
-      if (!prior || inputs.some(name => canonicalJSON(prior[name] ?? null) !== canonicalJSON(definition[name] ?? null))) {
-        pending.push({ scenario: definition.id, reason: 'Changed scenario inputs require a fresh measurement.' })
-        continue
-      }
-      if (!impact.has(source)) impact.set(source, await affectedScenarios(root, source, definitions, true))
-      if (impact.get(source).scenarios.includes(definition.id)) {
-        pending.push({ scenario: definition.id, reason: 'Changed covered inputs require a fresh measurement.' })
+      const reason = await carryoverReason(definition, source)
+      if (reason) {
+        pending.push({ scenario: definition.id, reason })
         continue
       }
       carryover.push({ scenario: definition.id, candidate: source })
@@ -191,11 +196,19 @@ export async function releaseGate(opts, results) {
         .map(row => ({ passes: row.passes, runIds: row.runIds }))
         .filter((row, index, all) => all.findIndex(other => canonicalJSON([...other.runIds].sort()) === canonicalJSON([...row.runIds].sort())) === index).slice(-2)
       total.recent = recent
-      if (batches.at(-1).passes >= 4 && recent.reduce((sum, row) => sum + row.passes, 0) >= recent.length * 4) gatingSet.push(key(first))
+      if (batches.at(-1).passes >= 4 && (!previous || recent.reduce((sum, row) => sum + row.passes, 0) >= recent.length * 4)) gatingSet.push(key(first))
     }
   }
-  const full = ledger.filter(row => row.candidate === opts.candidate && row.tier === 'full' &&
-    row.mode === (definitions.find(item => item.id === row.scenario)?.mode ?? 'with'))
+  const full = []
+  for (const definition of definitions) {
+    const history = ledger.filter(row => row.tier === 'full' && row.scenario === definition.id && row.mode === (definition.mode ?? 'with'))
+    const source = history.findLast(row => row.candidate === opts.candidate)?.candidate ?? history.at(-1)?.candidate
+    if (source && source !== opts.candidate) {
+      if (await carryoverReason(definition, source)) continue
+      carryover.push({ scenario: definition.id, candidate: source, tier: 'full' })
+    }
+    full.push(...history.filter(row => row.candidate === source))
+  }
   for (const row of full.filter(row => row.passes < row.runs)) {
     knownIssues.push({ scenario: row.scenario, check: row.check, caseId: row.caseId, passes: row.passes, runs: row.runs, reason: 'non-blocking full tier' })
   }
