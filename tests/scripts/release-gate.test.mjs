@@ -244,12 +244,18 @@ test('gating history includes compatible ledger measurements between releases', 
   assert.ok(!result.data.data.gatingSet.includes('ambiguous-idea/decision'))
 })
 
-for (const [name, path, expected] of [
+for (const [name, path, expected, fullPasses, retained] of [
   ['unaffected ancestor measurements', 'note.txt', 0],
   ['changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2],
   ['changed scenario requests need measurement', 'tests/eval/scenarios/scenarios.json', 2],
   ['changed fixture bytes need measurement', 'tests/fixtures/build.mjs', 2],
-  ['changed scope prefix needs measurement', 'scripts/lib/evaluation-scope.mjs', 2]
+  ['changed scope prefix needs measurement', 'scripts/lib/evaluation-scope.mjs', 2],
+  ['grader-only repair retains captures', 'scripts/lib/evaluation-scoring.mjs', 0],
+  ['judge-only repair retains captures', 'scripts/lib/evaluation-judge.mjs', 0],
+  ['assertion-only repair retains captures', 'tests/eval/container/assertions.mjs', 0],
+  ['full-tier passing ancestor measurements', 'note.txt', 0, 5, true],
+  ['full-tier failed ancestor measurements', 'note.txt', 0, 2, true],
+  ['full-tier changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2, 5, false]
 ]) {
   test(`release gate carryover: ${name}`, async t => {
     const { repo } = await emptyRepo(t)
@@ -268,18 +274,36 @@ for (const [name, path, expected] of [
       await writeFile(join(repo, path), JSON.stringify(data))
     } else if (path.endsWith('evaluation-scope.mjs')) {
       await writeFile(join(repo, path), (await readFile(join(repo, path), 'utf8')).replace('Evaluation filesystem scope:', 'Changed filesystem scope:'))
+    } else if (path.endsWith('.mjs') && path !== 'tests/fixtures/build.mjs') {
+      await writeFile(join(repo, path), (await readFile(join(repo, path), 'utf8')) + '\n')
     } else await writeFile(join(repo, path), 'Changed candidate input.\n')
     git(repo, 'add', path)
     git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Candidate')
     const f = await fixture(t, repo)
     f.report.candidate = git(repo, 'rev-parse', 'HEAD').trim()
     for (const row of f.rows) row.candidate = ancestor
+    if (fullPasses !== undefined) {
+      const definition = f.definitions.find(item => item.id === 'final-independent-extension')
+      const fixtureRevision = await fixtureHash(definition.fixture)
+      f.rows.push(...definition.checks.map(check => ({ ...f.rows[0], scenario: definition.id, mode: definition.mode,
+        check: check.id, caseId: check.caseId, tier: 'full', passes: fullPasses,
+        criteriaHash: createHash('sha256').update(canonical(definition.checks)).digest('hex'),
+        fixtureHash: fixtureRevision,
+        runIds: Array.from({ length: 5 }, (_, index) => `extension-${index}`) })))
+    }
     const result = await f.run()
     assert.equal(result.status, expected, result.stdout)
     if (expected === 0) {
-      assert.equal(result.data.data.carryover.length, 10)
+      assert.equal(result.data.data.carryover.filter(row => row.tier !== 'full').length, 10)
       assert.ok(result.data.data.carryover.every(row => row.candidate === ancestor))
     } else assert.equal(new Set(result.data.data.pending.map(row => row.scenario)).size, 10)
+    if (fullPasses !== undefined) {
+      assert.equal(result.data.data.carryover.some(row => row.tier === 'full' && row.scenario === 'final-independent-extension'), retained)
+      assert.equal(result.data.data.knownIssues.some(row => row.caseId === 'AC-64' && row.runs === 0), !retained)
+      if (retained && fullPasses < 5) {
+        assert.ok(result.data.data.knownIssues.some(row => row.scenario === 'final-independent-extension' && row.passes === fullPasses && row.runs === 5))
+      }
+    }
     if (path.endsWith('evaluation-scope.mjs')) {
       const obsolete = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
       for (const row of f.rows.filter(row => row.mode === 'with')) {
@@ -301,6 +325,37 @@ for (const [name, path, expected] of [
       assert.ok(fresh.data.data.gatingSet.includes('ambiguous-idea/decision'))
       assert.ok(!fresh.data.data.knownIssues.some(row => row.reason === 'non-blocking full tier'))
     }
+  })
+}
+
+for (const [passes, seeded] of [[3, false], [4, true], [5, true]]) {
+  test(`first release seeds ${passes} of five independently of unreleased history`, async t => {
+    const f = await fixture(t)
+    f.measure(passes, 0)
+    const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
+    current.date = '2026-10-12T01:00:00Z'
+    f.rows.push({ ...current, candidate: git(root, 'rev-parse', 'HEAD^'), passes: 3, date: '2026-10-12T00:00:00Z',
+      runIds: current.runIds.map(id => `${id}-unreleased`) })
+    const result = await f.run()
+    assert.equal(result.status, 0, result.stdout)
+    assert.equal(result.data.data.gatingSet.includes('ambiguous-idea/decision'), seeded)
+  })
+}
+
+for (const passes of [4, 5]) {
+  test(`first-release seed at ${passes} of five blocks a subsequent confirmed regression`, async t => {
+    const f = await fixture(t)
+    f.measure(passes, 0)
+    const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
+    f.rows.push({ ...current, candidate: git(root, 'rev-parse', 'HEAD^'), passes: 3,
+      runIds: current.runIds.map(id => `${id}-unreleased`) })
+    const first = await f.run()
+    assert.equal(first.status, 0, first.stdout)
+    current.runIds = current.runIds.map(id => `${id}-next`)
+    f.measure(2, 0, 3)
+    const next = await f.run('0.1.2')
+    assert.equal(next.status, 1, next.stdout)
+    assert.ok(next.data.data.blocking.some(row => row.scenario === 'ambiguous-idea' && row.class === 'regression'))
   })
 }
 
@@ -366,7 +421,7 @@ test('initial measurement precedes its earlier-finalized confirmation', async t 
   f.rows.unshift(confirmation)
   const result = await f.run()
   assert.equal(result.status, 0, result.stdout)
-  assert.ok(!result.data.data.gatingSet.includes('ambiguous-idea/decision'))
+  assert.ok(result.data.data.gatingSet.includes('ambiguous-idea/decision'))
 })
 
 test('latest comparable baseline follows capture date', async t => {
