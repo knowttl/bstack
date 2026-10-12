@@ -107,6 +107,7 @@ Access to the shared `/tmp` root is not allowed, including capacity queries; que
 Missing resources remain unavailable instead of prompting searches in the host home, ancestor directories, other projects or other skill installations.
 Installed executable paths and system runtime resources remain available for normal tool execution.
 Docker's verified mounts enforce host filesystem isolation.
+The runner does not parse transcript commands or native file-tool calls for scope violations, and new runs do not record `scopeGuard` observations.
 Contaminated transcripts may contain unrelated host inventories and must stay private.
 
 ```sh
@@ -242,6 +243,8 @@ npm run eval -- compare --without <baseline-id> --with <with-skill-id>
 
 Comparison requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.
 Adapter comparisons also require the same adapter hash, preserving execution settings across modes.
+They require verified container execution, subject to the [approved archived baseline exception](#registry-and-final-selections).
+When both runs have container execution records, their image ID, recipe hash and toolchain must match.
 The scenario fixture, built fixture name, outcome request, ordered scripted answers and invocation mode must also match.
 No previously passing check may fail with the skill.
 At least one more check must pass with the skill, unless every check already passed in the baseline and still passes.
@@ -315,6 +318,7 @@ All other selected cases must use the with-skill run of their declared final com
 The validator rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
 Execution bindings include unchanged package, installer, fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
 The approved scope rerun retains the exact successful `scope-and-prerequisites` baseline `2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89`, bound by its complete record hash.
+Both `eval compare` and complete release validation accept only these exact archived record bytes without a container execution record; historical `scopeGuard` fields do not establish verified execution.
 Its fixture, scoring criteria, request and tool versions must still match the container run.
 All other final runs require verified container execution and unchanged host runner, container runner and image recipe inputs.
 Grader-only repairs do not require repeating unchanged agent turns.
