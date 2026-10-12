@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T03-36-00.350Z-94570d73-976c-45ae-8912-fdc64ee9ae45",
+  "artifacts": [
+    {
+      "path": "artifacts/scratch/cite-check.json",
+      "originalSha256": "b63eb268a6c7830c9ef6ef3a8a79e3e62e733177ad8a6f8e667ef80091e782a3",
+      "publishedSha256": "c7cfc807da44b4865b119e88c512cc12ae28234801332c77637c49694ed91ddb"
+    },
+    {
+      "path": "artifacts/scratch/research-report.json",
+      "originalSha256": "e80e1cee11540dc43320fe95bbc83f6b71a88def8438ebbcc7410f4c1815fb55",
+      "publishedSha256": "e80e1cee11540dc43320fe95bbc83f6b71a88def8438ebbcc7410f4c1815fb55"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-audit-inspect.json",
+      "originalSha256": "54528a883228a6de30f21348909e42d8323cd8897a163ced6b31b97c5ecace77",
+      "publishedSha256": "b06413e747453dc65dd8481c62ae8ada9e047975c64abf5100e862f32166cb0e"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-audit-inventory.json",
+      "originalSha256": "11d748ba844a2201ee446968325f954e475ea62b4e6f92a9cfab491d55af4e42",
+      "publishedSha256": "92d74fbcd961fa60963392febb710d201b07ccd42b0f1e4bc44b92d7462a2fc2"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-audit-preflight-cite-check.json",
+      "originalSha256": "4eaa43a2d234a62af9af39dfcdc4c1cafef4199b693fe5929749f4fb7b7a659d",
+      "publishedSha256": "4eaa43a2d234a62af9af39dfcdc4c1cafef4199b693fe5929749f4fb7b7a659d"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-audit-preflight-help.json",
+      "originalSha256": "1db79239c5e5a9be0e8ab1ebbdf7b3203f1ab0d890bea5277efdadc2284ccf78",
+      "publishedSha256": "1db79239c5e5a9be0e8ab1ebbdf7b3203f1ab0d890bea5277efdadc2284ccf78"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-audit-preflight-inspect.json",
+      "originalSha256": "02abfe0a7271d91acaee0811692bc91afde328e1f25b5a4b4e1f4446fe316381",
+      "publishedSha256": "02abfe0a7271d91acaee0811692bc91afde328e1f25b5a4b4e1f4446fe316381"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-audit-preflight-inventory.json",
+      "originalSha256": "29f32ad55324fdcba0e1b36013aafb1964e8f51b9b3db5d922899f31e8a5785f",
+      "publishedSha256": "29f32ad55324fdcba0e1b36013aafb1964e8f51b9b3db5d922899f31e8a5785f"
+    },
+    {
+      "path": "artifacts/referenced/tmp/uv-1b305c25b4c4352f.lock",
+      "originalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "publishedSha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    }
+  ]
+}

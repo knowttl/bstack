@@ -1,0 +1,79 @@
+{
+  "approvalScope": "Exact 15-file plan, including historical snapshot and complete unchanged standalone checker; scoped local implementation commit includes the preserved owner note in DESIGN.md. Portable assessment creation and its separate local commit need subsequent exact-byte approval after the implementation commit is known. No CI, delivery service or machine/global configuration change.",
+  "planDigest": "1c760cc9ec0e38009eb3af64b9cd2c0cfaab3976d6cf82db81c54f1de58ec2f9",
+  "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "preflight": "Before every Node suite, execute node \"$BSTACK_EVAL_PREFLIGHT\" and require source host/permitted true, memory >=8 GB, disk >=20 GB, load <36, host-wide proposed total <=2. A scratch PATH guard provides fresh checks for nested Node commands.",
+  "commands": [
+    {
+      "executable": "node",
+      "args": [
+        "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+        "apply",
+        "--repo",
+        "[fixture]",
+        "--plan",
+        "[isolated-home][scratch-path]",
+        "--json"
+      ]
+    },
+    {
+      "executable": "node",
+      "args": [
+        "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+        "run-checks",
+        "--repo",
+        "[fixture]",
+        "--plan",
+        "[isolated-home][scratch-path]",
+        "--prior-run",
+        "8f08ee2a-6124-4931-a7ab-2aa4d5a709a7",
+        "--json"
+      ]
+    },
+    {
+      "executable": "npm",
+      "args": [
+        "run",
+        "check"
+      ],
+      "cwd": "[fixture]"
+    },
+    {
+      "executable": "git",
+      "args": [
+        "add",
+        "--",
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "boundaries.mjs",
+        "docs/repo-audit.md",
+        "glossary.md",
+        "journey.mjs",
+        "package.json",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/core/index.ts",
+        "packages/web/alias.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ],
+      "cwd": "[fixture]"
+    },
+    {
+      "executable": "git",
+      "args": [
+        "-c",
+        "user.name=Repo audit",
+        "-c",
+        "user.email=repo-audit@example.invalid",
+        "commit",
+        "-m",
+        "Selected shop corrections and maintained foundation"
+      ],
+      "cwd": "[fixture]"
+    }
+  ],
+  "additionalVerification": "Run contract/docs validation, native and aggregate rule-proof controls, approved native leaf check capture and final evidence collect/validate before final claims. Refresh findings in scratch. Compare against the explicit base above. Regenerate and present the portable assessment for its own exact approval, protected-write it, commit only that record, then run the complete bundled checker freshly in the working checkout and a newly created different-root clean clone with isolated home/cache and npm ci. Do not rewrite the historical snapshot."
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "corrections",
+  "writePaths": [
+    "packages/core/**",
+    "packages/web/**",
+    "unit.test.mjs"
+  ],
+  "contracts": [
+    {
+      "id": "public-core",
+      "files": [
+        "packages/core/index.ts",
+        "packages/web/**"
+      ]
+    },
+    {
+      "id": "checkout-10",
+      "files": [
+        "DESIGN.md",
+        "journey.mjs",
+        "packages/core/**",
+        "packages/web/**"
+      ]
+    }
+  ]
+}
