@@ -2,7 +2,7 @@ import { mkdir, readFile, realpath, statfs, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { freemem, platform, release } from 'node:os'
-import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution } from './lib/evaluation.mjs'
+import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution, isApprovedBaseline } from './lib/evaluation.mjs'
 import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
@@ -109,7 +109,7 @@ async function captureTurn(record, message, directory) {
 }
 
 async function turn(opts, results) {
-  const record = await load(results, opts.run)
+  const { record } = await load(results, opts.run)
   if (!record.adapter || !record.sessionId || record.transcript || record.isolation.cleanedAt) fail('Host turns require an open, unscored adapter conversation. A failed opening needs a fresh run.')
   if (!/^[1-9]\d*$/.test(opts.answer ?? '') || Number(opts.answer) !== record.nextAnswer ||
       !record.scenario.answers[record.nextAnswer - 1]) fail('Supply the next one-based scripted answer index after reviewing the corresponding host question.')
@@ -128,7 +128,7 @@ async function turn(opts, results) {
 }
 
 async function close(opts, results) {
-  const record = await load(results, opts.run)
+  const { record } = await load(results, opts.run)
   if (!record.adapter) fail('Only adapter conversations have an isolated host to close.')
   try { await closeHost(record, join(results, record.id)) }
   catch (error) { record.reason = error.message }
@@ -138,7 +138,8 @@ async function close(opts, results) {
 
 async function load(results, id) {
   if (!/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(id ?? '')) fail('Supply a run ID printed by eval.', 'usage-error')
-  return await readJSON(join(results, id, 'run.json'))
+  const bytes = await readFile(join(results, id, 'run.json'))
+  return { record: JSON.parse(bytes), bytes }
 }
 
 async function saveRecord(record, directory, flag) {
@@ -150,7 +151,7 @@ async function saveRecord(record, directory, flag) {
 }
 
 async function score(opts, results) {
-  const record = await load(results, opts.run)
+  const { record } = await load(results, opts.run)
   if (!opts.answers || !opts.transcript) fail('Missing answers or transcript. The run remains blocked.')
   if (record.transcript) fail('This run is already scored. Create a fresh run to keep checkpoint history.')
   const answers = await readJSON(resolve(opts.answers))
@@ -199,14 +200,16 @@ async function score(opts, results) {
 }
 
 async function compare(opts, results) {
-  const before = await correctedScore(join(results, opts.without), await load(results, opts.without))
-  const after = await correctedScore(join(results, opts.with), await load(results, opts.with))
+  const baseline = await load(results, opts.without)
+  const withSkill = await load(results, opts.with)
+  const before = await correctedScore(join(results, opts.without), baseline.record)
+  const after = await correctedScore(join(results, opts.with), withSkill.record)
   if (!before.transcript || !after.transcript) fail('Both runs need explicit scoring before comparison.')
   for (const record of [before, after]) validateScore(record, { runId: record.id, checks: record.caseResults },
     await readFile(join(results, record.id, record.transcript), 'utf8'))
   if (before.adapterHash !== after.adapterHash) fail('Comparison requires the same host adapter and execution settings.')
-  if (before.adapter && (!verifiedExecution(before) || !verifiedExecution(after) ||
-      before.scopeGuard.version !== after.scopeGuard.version)) fail('Comparison requires the same verified filesystem scope contract.')
+  if (before.adapter && [baseline, withSkill].some(({ record, bytes }) =>
+    !(record.execution ? verifiedExecution(record) : isApprovedBaseline(record, bytes)))) fail('Comparison requires the same verified filesystem scope contract.')
   if (before.execution && after.execution && ['imageId', 'recipeHash', 'toolchain'].some(key => canonicalJSON(before.execution[key]) !== canonicalJSON(after.execution[key]))) fail('Comparison requires the same container image, recipe and toolchain.')
   if (before.mode !== 'without' || after.mode !== 'with' || ['agent', 'model', 'criteriaHash', 'stage'].some(key => before[key] !== after[key]) ||
       before.scenario.id !== after.scenario.id || ['name', 'revision'].some(key => before.fixture[key] !== after.fixture[key]) ||
@@ -218,7 +221,7 @@ async function compare(opts, results) {
 }
 
 async function correct(opts, results) {
-  const record = await load(results, opts.run)
+  const { record } = await load(results, opts.run)
   if (!record.transcript || !record.answers) fail('Only a scored run can receive an append-only correction.')
   if (!opts.correction) fail('Supply --correction with a corrector, reason, evidence lines and complete checks.', 'usage-error')
   const correction = await readJSON(resolve(opts.correction))

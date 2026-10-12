@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat, symlink } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat, symlink, cp } from 'node:fs/promises'
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -200,6 +200,26 @@ test('append-only correction changes comparison without modifying the original s
   assert.equal(run(directory, 'compare', '--without', before.id, '--with', after.id).status, 2)
 })
 
+for (const [name, mode, change, expected] of [
+  ['accepts approved baseline bytes', 'without', bytes => bytes, 0],
+  ['blocks changed approved baseline bytes', 'without', bytes => bytes + '\n', 2],
+  ['blocks unverified with-skill evidence', 'with', bytes => JSON.stringify({ ...JSON.parse(bytes), execution: undefined }), 2]
+]) {
+  test(`archived baseline comparison ${name}`, async t => {
+    const directory = await temporary(t)
+    const ids = { without: '2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89',
+      with: '2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc' }
+    for (const id of Object.values(ids)) {
+      await cp(join(root, 'tests/eval/results/release/runs', id), join(directory, id), { recursive: true })
+    }
+    const path = join(directory, ids[mode], 'run.json')
+    await writeFile(path, change(await readFile(path, 'utf8')))
+    const comparison = run(directory, 'compare', '--without', ids.without, '--with', ids.with)
+    assert.equal(comparison.status, expected, comparison.stdout)
+    assert.equal(comparison.data.status, expected === 0 ? 'passed' : 'blocked')
+  })
+}
+
 test('comparison blocks different models and unscored runs', async t => {
   const directory = await temporary(t)
   const baseline = start(t, directory)
@@ -302,11 +322,9 @@ async function adapterFile(directory, mode = 'success') {
   adapter.executable = 'node'
   adapter.isolation.authentication = 'none'
   const fake = join(root, 'tests/inputs/evaluation-host.mjs')
-  await mkdir(join(directory, 'outside-project'), { recursive: true })
-  await writeFile(join(directory, 'outside-project', 'SKILL.md'), 'Outside project guidance\n')
-  adapter.args = [fake, mode, '--scope-fixture', directory, ...adapter.args]
+  adapter.args = [fake, mode, ...adapter.args]
   adapter.versionArgs = [fake, '--version']
-  adapter.invocation.resumeArgs = [fake, mode, '--scope-fixture', directory, ...adapter.invocation.resumeArgs]
+  adapter.invocation.resumeArgs = [fake, mode, ...adapter.invocation.resumeArgs]
   const path = join(directory, 'adapter.json')
   await writeFile(path, JSON.stringify(adapter))
   return { adapter, path }
@@ -318,7 +336,6 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   if (record) {
     t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
     if (record.isolation.home) t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
-    if (record.isolation.home) t.after(() => rm(record.isolation.home + '-other', { recursive: true, force: true }))
   }
   return { result, record }
 }
@@ -556,76 +573,20 @@ for (const [name, change] of [
   })
 }
 
-for (const mode of ['scope-outside', 'scope-host-home', 'scope-cd-host-home', 'scope-relative',
-  'scope-normalized-escape', 'scope-prefix', 'scope-native-read', 'scope-native-file-read', 'scope-native-file-write',
-  'scope-native-relative', 'scope-other-skill', 'scope-resume', 'scope-resource-write',
-  'scope-resource-system-write', 'scope-resource-temp-read', 'scope-resource-temp-write',
-  'scope-resource-mixed', 'scope-resource-python-write', 'scope-resource-shared-capacity', 'scope-resource-shared-python-capacity',
-  'scope-resource-relative-write']) {
-  test(`evaluation retains advisory ${mode} observations without rejecting the turn`, async t => {
-    const directory = await temporary(t)
-    const { path } = await adapterFile(directory, mode)
-    const started = hostStart(t, directory, path)
-    const result = mode === 'scope-resume' ? run(directory, 'turn', '--run', started.record.id, '--answer', '1') : started.result
-    const record = result.data.data
-    assert.equal(result.status, 2, result.stdout)
-    assert.equal(record.hostFailure, undefined)
-    assert.equal(record.scopeGuard.advisory, true)
-    assert.equal(record.scopeGuard.verified, false)
-    assert.ok(record.scopeGuard.paths.length > 0)
-    assert.deepEqual([...new Set(record.scopeGuard.violations.map(item => item.target))].sort(), record.scopeGuard.paths)
-    for (const observation of record.scopeGuard.violations) {
-      assert.ok(observation.operation.trim())
-      assert.match(observation.origin, /^(?:parent command|native .+ \(.+:\d+\))$/)
-    }
-    assert.equal(record.transcript, null)
-    assert.equal(record.answers, null)
-    assert.equal(record.isolation.verified, true)
-    const closed = run(directory, 'close', '--run', record.id).data.data
-    assert.ok(closed.isolation.cleanedAt)
-    await assert.rejects(readFile(join(started.record.isolation.home, '.codex/fake-session.json')), { code: 'ENOENT' })
-  })
-}
-
-for (const mode of ['scope-resource-read', 'scope-resource-processes', 'scope-resource-capacity', 'scope-resource-temp',
-  'scope-resource-df-output', 'scope-resource-free-output', 'scope-resource-ps-output', 'scope-output', 'scope-native-output']) {
-  test(`evaluation accepts read-only resource queries and owned scratch: ${mode}`, async t => {
-    const directory = await temporary(t)
-    const { path } = await adapterFile(directory, mode)
-    const { record } = hostStart(t, directory, path)
-    assert.equal(record.hostFailure, undefined, record.reason)
-    assert.deepEqual(record.scopeGuard, { version: 3, advisory: true, verified: true, paths: [] })
-    assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
-  })
-}
-
-for (const mode of ['scope-range-measure', 'scope-range-log', 'scope-range-diff', 'scope-tool-sibling']) {
-  test(`evaluation ignores revision syntax and nonexistent read targets: ${mode}`, async t => {
-    const directory = await temporary(t)
-    const { path } = await adapterFile(directory, mode)
-    const { record } = hostStart(t, directory, path)
-    assert.equal(record.hostFailure, undefined, record.reason)
-    assert.equal(record.scopeGuard.verified, true)
-    assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
-  })
-}
-
-test('evaluation accepts in-scope reports, runtime executables and non-filesystem URLs and routes', async t => {
+test('evaluation supplies filesystem scope on initial and resumed turns', async t => {
   const directory = await temporary(t)
-  const { path } = await adapterFile(directory, 'scope-valid')
+  const { path } = await adapterFile(directory)
   const { record } = hostStart(t, directory, path)
   assert.equal(record.hostFailure, undefined)
-  assert.deepEqual(record.scopeGuard, { version: 3, advisory: true, verified: true, paths: [] })
   const resumed = run(directory, 'turn', '--run', record.id, '--answer', '1').data.data
   const observed = JSON.parse(resumed.turns[1].result.stdout.trim().split('\n').at(-2)).item.observed
   assert.ok(observed.message.includes(`work only inside ${record.fixture.path} and ${record.isolation.home}`))
   assert.ok(observed.message.endsWith('\n\n' + record.scenario.answers[0]))
-  assert.equal(resumed.scopeGuard.verified, true)
 })
 
 test('evaluation scope accepts a maintained repository whose root contains spaces', async t => {
   const directory = await temporary(t)
-  const { path } = await adapterFile(directory, 'scope-valid')
+  const { path } = await adapterFile(directory)
   const first = hostStart(t, directory, path, 'without', 'clear-goals').record
   const repo = join(directory, 'maintained repo')
   await rename(first.fixture.path, repo)
@@ -633,27 +594,7 @@ test('evaluation scope accepts a maintained repository whose root contains space
   const record = result.data.data
   t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
   assert.equal(record.hostFailure, undefined, result.stdout)
-  assert.equal(record.scopeGuard.verified, true)
   assert.equal(run(directory, 'close', '--run', record.id).data.data.isolation.verified, true)
-})
-
-test('closing retains advisory worker observations arriving after the parent turn', async t => {
-  const directory = await temporary(t)
-  const { path } = await adapterFile(directory)
-  const { record } = hostStart(t, directory, path)
-  const sessions = join(record.isolation.state, 'sessions')
-  await mkdir(sessions)
-  const outside = join(directory, 'late-private.txt')
-  await writeFile(outside, 'Outside project guidance\n')
-  await writeFile(join(sessions, 'late-worker.jsonl'), JSON.stringify({ type: 'response_item',
-    payload: { type: 'custom_tool_call', name: 'exec', input: `cat '${outside}'` } }) + '\n')
-  const closed = run(directory, 'close', '--run', record.id).data.data
-  assert.equal(closed.scopeGuard.verified, false)
-  assert.equal(closed.isolation.verified, true)
-  assert.ok(closed.isolation.cleanedAt)
-  const files = await inputs(directory, record)
-  assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath,
-    '--transcript', join(directory, record.id, record.conversation)).status, 0)
 })
 
 for (const separator of ['\n', '\r', '\t']) {
@@ -818,7 +759,7 @@ test('manual adapter preparation is rejected before creating a run', async t => 
   const rejected = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'without', '--stage', 'baseline', '--adapter', path, '--manual')
   assert.equal(rejected.status, 3)
   assert.match(rejected.stdout, /Omit --manual/)
-  assert.deepEqual(await readdir(directory), ['adapter.json', 'bin', 'outside-project'])
+  assert.deepEqual(await readdir(directory), ['adapter.json', 'bin'])
 })
 
 for (const mode of ['fail', 'malformed', 'incomplete', 'contaminate', 'truncate', 'hang']) {
