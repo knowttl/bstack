@@ -311,6 +311,7 @@ If so, obtain stronger outcome evidence, keeping unavailable flows unverified.
 
 Plan, validate, then execute.
 Only apply makes project edits, including AGENTS.md, after the user approves each change.
+Records outside the approved edit plan, including historical snapshots, assessments and portable records, must be proposed with their exact content and written only after their own exact approval; approval to complete verification or maintenance does not approve those additional edits.
 Do not bypass missing apply tooling with direct writes.
 Use the installed scripts/repo-audit.mjs entry point, run documented commands and read their output rather than script source.
 Resolve resources relative to the installed skill and pass the target explicitly.
