@@ -14,6 +14,8 @@ const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
 const lintFiles = /^(?:\.eslintrc(?:\.(?:json|ya?ml|[cm]?js))?|eslint\.config\.[cm]?js|\.prettierrc(?:\.(?:json|ya?ml|[cm]?js))?|prettier\.config\.[cm]?js|\.?ruff\.toml|\.pylintrc|mypy\.ini|\.flake8|biome\.jsonc?)$/i
 // This deliberately short list is a syntactic control, not a tool catalogue.
 const lintTools = /\b(?:eslint|prettier|ruff|pylint|mypy|flake8|biome)\b|\beslint-config-[\w-]+\b/gi
+// Detect direct implementation routing without banning bounded audit instructions.
+const implementationRouting = /\b(?:follow|use|run|load|invoke|start|select)\s+(?:(?:the|a|an|bstack(?:['’]s)?)\s+)*(?:(?:general|development|implementation|tdd)\s+)+(?:playbook|workflow|dispatcher)\b/i
 
 function scriptProblems(file, text, dependencies, add) {
   const comments = []
@@ -139,6 +141,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     const reference = file.startsWith('references/')
     if (reference && !listed.has(file)) add('reference-unlisted', file, 'Reference is absent from the Load when table.', 'List this file in a table row under Load when.')
     if (text === null) continue
+    if (implementationRouting.test(text)) add('implementation-routing', file, 'Package resource directs work into an implementation playbook.', 'Remove general development routing and keep instructions within the bounded audit.')
     const tools = [...new Set([...text.matchAll(lintTools)].map(match => match[0].toLowerCase()))]
     if (tools.length) add('language-policy', file, `Bundled language tool or preset names: ${tools.join(', ')}`, 'Remove bundled tool names and select tools through project research.')
     if (/\.(?:mjs|cjs|js)$/.test(file)) scriptProblems(file, text, dependencies, add)
