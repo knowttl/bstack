@@ -504,9 +504,6 @@ Exit 0 means passed, 1 means hard breaks or regressions, and 2 means incomplete 
 Known issues belong in release notes with their measured rates and in `next-release` issues; publishing those issues is a separate authorized release action.
 Every final capture must complete all ordered scripted answers.
 Historical process-only runs remain diagnostic history; no failed scope run is retroactively credited.
-Legacy complete validation requires every with-skill run to pass every check, and each pair to satisfy the design's improvement and regression rule.
-Automated procedures execute their exact named tests against the current inputs, including the clean-checkout procedure and real Linux lifecycle execution.
-Only complete passing legacy evidence can produce its 75-case result.
 
 The commands reuse the shared schema, joining-ID, fingerprint, child-command and result libraries.
 Their options parser has no target argument because evaluation creates targets through the fixture builder.
