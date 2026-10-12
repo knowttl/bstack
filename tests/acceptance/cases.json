@@ -74,9 +74,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "clear-goals",
         "artifacts": [
-          "tests/eval/results/release/package-current-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T00-18-47.498Z-fe6cc908-216b-45da-8619-c866d1adb964/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T00-18-47.498Z-fe6cc908-216b-45da-8619-c866d1adb964/artifacts/independent-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/artifacts/independent-verification.json"
         ]
       }
     },
@@ -496,9 +496,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "clear-goals",
         "artifacts": [
-          "tests/eval/results/release/package-current-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T00-18-47.498Z-fe6cc908-216b-45da-8619-c866d1adb964/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T00-18-47.498Z-fe6cc908-216b-45da-8619-c866d1adb964/artifacts/independent-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/artifacts/independent-verification.json"
         ]
       }
     },

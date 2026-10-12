@@ -23,6 +23,17 @@ Other scenario refreshes and the final all-case validator remain outstanding.
 The [full existing-project comparison](final-existing-repo-record-approval-comparison.json) passes from baseline 0/6 to installed 6/6 with the three original scripted replies and separate exact assessment approval.
 The [full-path report](existing-project-record-approval-final.md) links its complete conversation, protected-plan reviews, fresh working and isolated-clone checker results, eight native controls and independent final-byte verification.
 
+The [clear-goals comparison](clear-goals-record-approval-comparison.json) passes 2/2 in both modes after one installed refresh against the settled package.
+The [complete installed conversation](runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/conversation.txt), lines 7–81, reaches recommendations using the approved goals, design and terminology without asking the owner to repeat them.
+Its actual opened-file commands load research and enforcement references, with no vision, interview or domain-language procedure reference opened.
+Reading the target's approved VISION.md supplies existing authority, rather than starting a vision procedure.
+The [independent verification](runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/artifacts/independent-verification.json) confirms three unchanged tracked files.
+Twelve native artifacts are retained by the export manifest, and the isolated login home is cleaned.
+Product readiness remains unverified because no application or native checks exist.
+
+The separate [maintenance refresh](maintenance-record-approval-current-blocker.md) preserves passing original/final native protection and clean-clone checks, but writes its assessment without separate exact approval.
+It remains unscored and does not establish release acceptance.
+
 The [Python main-thread research comparison](research-main-python-record-approval-comparison.json) passes from baseline 0/3 to installed 3/3 after one installed refresh against the settled package.
 The [complete installed conversation](runs/2026-10-12T03-36-00.350Z-94570d73-976c-45ae-8912-fdc64ee9ae45/conversation.txt), lines 6–35, performs the same five briefs sequentially with common report format, main-thread/no-web capabilities and explicitly unresearched language/outside recommendations.
 The actual shipped citation checker exits zero at line 34, reporting 47 checked citations and zero problems before the final report is used.

@@ -1,0 +1,104 @@
+{
+  "readiness": "passed for the requested bounded maintenance",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "reviewedImplementation": "ffcf64aa195c339af4632f0c7d92b315b95ed4db",
+  "submittedSource": "40e6d4fb0b306b51771c67b1a9933dba193c5618",
+  "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "assessment": {
+    "path": "[fixture]/.bstack/assessment.json",
+    "sha256": "3d77725986d6ad51f8634600090dc875a819f7b0baa946ea1824612aee694890",
+    "fingerprint": "30eaf032ee25cae389269a9ceb82f734937fe9f3eeeb7a5c55ad8847b387b247",
+    "results": {
+      "DESIGN.md": "no-impact",
+      "glossary.md": "no-impact",
+      "AGENTS.md": "no-impact"
+    }
+  },
+  "finalDiff": "[isolated-home][scratch-path]",
+  "review": "[isolated-home][scratch-path]",
+  "captures": {
+    "before": {
+      "capture": "[isolated-home][scratch-path]",
+      "sha256": "70ff534d45d4fef307bda09b869ea2f7bc5858e914adfb0ab54f08b7b214825a",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]"
+    },
+    "after-final": {
+      "capture": "[isolated-home][scratch-path]",
+      "sha256": "047ac7f991c89b571ca5c125af0826e4dfb4edbe743cfd8b6695e4106cefce3b",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]"
+    },
+    "contract": {
+      "capture": "[isolated-home][scratch-path]",
+      "sha256": "72f435cb4655a6c12538d731223e50d0984b790c7a617d160f14a7f894f19d53",
+      "status": "passed",
+      "artifact": null
+    },
+    "docs-check": {
+      "capture": "[isolated-home][scratch-path]",
+      "sha256": "d3f9e54d139062f9a22d68f1e689beba4d7ae216b30d400b5fee62358cc7557f",
+      "status": "passed",
+      "artifact": null
+    },
+    "docs-generate": {
+      "capture": "[isolated-home][scratch-path]",
+      "sha256": "1a9d80da4e6e66ab898e6a8ebd01806f33c41fad0cf84bfc1e28e1653d9e318c",
+      "status": "passed",
+      "artifact": null
+    },
+    "evidence-final": {
+      "capture": "[isolated-home][scratch-path]",
+      "sha256": "6045c431234f73ca3aa6eb67337bb1a1504cc1df64b40b2122f6a295b0efcaf7",
+      "status": "passed",
+      "artifact": null
+    },
+    "local-checker": {
+      "capture": "[isolated-home][scratch-path]",
+      "sha256": "32284c7357bf71cafe183eb7351d4b8859bcc93943a84a0615bddc65d31ceccd",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]"
+    },
+    "clone-checker": {
+      "capture": "[isolated-home][scratch-path]",
+      "sha256": "b31dd57ec982d2d7d2e498d3aca0a08d9d9f80b3969d6e0da53c02ff17325602",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]"
+    }
+  },
+  "tools": {
+    "node": "v24.17.0",
+    "npm": "11.13.0",
+    "typescript": "5.9.3"
+  },
+  "cleanClone": {
+    "path": "[isolated-home][scratch-path]",
+    "home": "[isolated-home][scratch-path]",
+    "cache": "[isolated-home][scratch-path]",
+    "npmCache": "[isolated-home][scratch-path]",
+    "tmp": "[isolated-home][scratch-path]",
+    "installCapture": "[isolated-home][scratch-path]",
+    "clean": true
+  },
+  "finalRequiredFailures": [],
+  "resolvedValidationAttempts": [
+    "Initial refactor check plans were rejected for missing compatibility/protection phase checks; repaired before original-state execution.",
+    "Initial protected apply previews were rejected for missing starting-checks outcome and payload.content; repaired before writes.",
+    "Portable assessment validation outside the repo was blocked for portable-source-mismatch; applied through protected create, then bound review fingerprint through protected replace-file.",
+    "Unbound review initially returned stale-review; final bound validation passed."
+  ],
+  "limits": [
+    "Journey covers controlled loopback HTTP; deployed pricing service is unverified.",
+    "Static boundary check does not cover dynamic imports or runtime loading.",
+    "Review was bounded main-thread review, not a full audit or independent human approval.",
+    "No hosted CI or delivery enforcement was requested or verified."
+  ],
+  "preflights": [
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]"
+  ],
+  "resourceGate": "Host aggregate preflight source host, permitted true required; at least 8 GB memory, 20 GB disk, load below 36, at most 2 host-wide Node suites including proposed run. Ephemeral npm shim also checks each aggregate invocation."
+}
