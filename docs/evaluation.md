@@ -359,7 +359,10 @@ Adapter scoring requires completed host turns and the exact captured conversatio
 npm run eval -- compare --without <baseline-id> --with <with-skill-id>
 ```
 
+### Impact selection and comparison
+
 Each scenario declares `covers`: skill heading anchors such as `SKILL.md#write-rules`, file paths relative to `skills/repo-audit/`, or directory prefixes ending in `/`.
+The map is declared rather than inferred from file-open traces because SKILL.md is loaded whole and those traces cannot show which section influenced behaviour.
 Installer keys begin with `install/` and are relative to the repository root.
 Run `npm run eval -- affected --base <commit>` to list changed paths, changed keys and affected scenario IDs; add `--json` for the result envelope.
 The command includes committed and uncommitted tracked changes and untracked files that Git does not ignore.
@@ -419,7 +422,7 @@ Both `eval compare` and complete release validation accept only these exact arch
 Its fixture, scoring criteria, request and tool versions must still match the container run.
 All other final runs require verified container execution and unchanged host runner, container runner and image recipe inputs.
 Grader-only repairs do not require repeating unchanged agent turns.
-Package and installer changes invalidate with-skill captures; verified without-skill baselines remain comparable because those inputs were absent from their isolated execution.
+Skill and installer freshness follows [impact selection](#impact-selection-and-comparison); verified without-skill baselines remain comparable because those inputs were absent from their isolated execution.
 Every final capture must complete all ordered scripted answers.
 Historical process-only runs remain diagnostic history; no failed scope run is retroactively credited.
 Legacy complete validation requires every with-skill run to pass every check, and each pair to satisfy the design's improvement and regression rule.
