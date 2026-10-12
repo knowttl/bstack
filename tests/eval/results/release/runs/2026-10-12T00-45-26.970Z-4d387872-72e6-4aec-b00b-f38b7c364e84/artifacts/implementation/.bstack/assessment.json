@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "kind": "commit",
+    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "head": "8cd23e14fa6577640abbad78e82f4c6f0e36067f",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "AGENTS.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/public.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "unit.test.mjs"
+    }
+  ],
+  "paths": [
+    ".bstack/project.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "packages/web/public.ts",
+    "unit.test.mjs"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "packages/web/public.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "unit.test.mjs",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "The approved public quote example defaults quantity to one and returns the public core price times quantity: quote() = 12 and quote(2) = 24. The original quote assertion, checkout implementation and real HTTP journey, total 10 and user note remain unchanged.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "reason": "Names the approved example and selected quantity acceptance before implementation. The original default outcome, HTTP checkout expectation, storage separation and user note are retained. Only quantities one and two are acceptance cases; no pricing discount or receipt decision is introduced.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "`packages/web/public.ts` is the approved representative public-interface quote example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)` for a selected quantity. Quote remains 12. The approved outcomes are `quote() = 12` and `quote(2) = 24`, multiplying the public core price by the selected quantity. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` preserves the original quantity-one quote assertion, protects quantity two and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote()`. Quote remains 12. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+          "after": "`packages/web/public.ts` is the approved representative public-interface quote example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)` for a selected quantity. Quote remains 12. The approved outcomes are `quote() = 12` and `quote(2) = 24`, multiplying the public core price by the selected quantity. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` preserves the original quantity-one quote assertion, protects quantity two and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount."
+        }
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "The approved public quote example defaults quantity to one and returns the public core price times quantity: quote() = 12 and quote(2) = 24. The original quote assertion, checkout implementation and real HTTP journey, total 10 and user note remain unchanged.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "reason": "Quantity is an argument to quote; neither Order (customer purchase) nor Panel order (UI sequence) changes. All changed paths were reviewed against these distinct responsibilities.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "`packages/web/public.ts` is the approved representative public-interface quote example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)` for a selected quantity. Quote remains 12. The approved outcomes are `quote() = 12` and `quote(2) = 24`, multiplying the public core price by the selected quantity. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` preserves the original quantity-one quote assertion, protects quantity two and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "The approved public quote example defaults quantity to one and returns the public core price times quantity: quote() = 12 and quote(2) = 24. The original quote assertion, checkout implementation and real HTTP journey, total 10 and user note remain unchanged.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "reason": "Records the existing user authorization and locates the public example while retaining native verification, explicit-base maintenance and historical snapshot instructions. The maintained contract now cites both quote outcomes; checker implementation is unchanged.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Approved quantity extension: extend the quote example in `packages/web/public.ts` through `packages/core/index.ts` to accept a selected quantity defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one assertion, checkout total 10, original checkout journey and user note exactly. This scope was explicitly approved by the user's final checkpoint request.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "`packages/web/public.ts` is the approved representative public-interface quote example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)` for a selected quantity. Quote remains 12. The approved outcomes are `quote() = 12` and `quote(2) = 24`, multiplying the public core price by the selected quantity. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` preserves the original quantity-one quote assertion, protects quantity two and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "",
+          "after": "Approved quantity extension: extend the quote example in `packages/web/public.ts` through `packages/core/index.ts` to accept a selected quantity defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one assertion, checkout total 10, original checkout journey and user note exactly. This scope was explicitly approved by the user's final checkpoint request."
+        }
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [
+    {
+      "id": "approved-quote-quantity",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote()`. Quote remains 12. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+      "newCase": "`packages/web/public.ts` is the approved representative public-interface quote example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)` for a selected quantity. Quote remains 12. The approved outcomes are `quote() = 12` and `quote(2) = 24`, multiplying the public core price by the selected quantity. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` preserves the original quantity-one quote assertion, protects quantity two and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+      "affectedWork": [
+        "packages/web/public.ts",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "AGENTS.md",
+        ".bstack/project.json"
+      ],
+      "approval": {
+        "path": "AGENTS.md",
+        "pointer": "Approved quantity extension: extend the quote example in `packages/web/public.ts` through `packages/core/index.ts` to accept a selected quantity defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one assertion, checkout total 10, original checkout journey and user note exactly. This scope was explicitly approved by the user's final checkpoint request.",
+        "version": "current"
+      }
+    }
+  ],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion"
+  ],
+  "execution": [],
+  "fingerprint": "ef35e0182eddccbe4e08be42ef155faf0d26434b38e9b564781a9244f5b4d34d"
+}

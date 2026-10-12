@@ -1,0 +1,153 @@
+# Proposed repo audit record
+
+Result: verification blocked
+
+Stage: audit
+Target: [fixture]
+Revision: b6c59b7810f5155fd514c9db60e98b7dffce0cc0
+Stated next change: After approved corrections and maintained foundation, re-audit a user edit and implement a representative extension using repo guidance and checks.
+Reviewed scope: .bstack/assessment.json, .bstack/bin/bstack-check.mjs, .bstack/bin/commands.mjs, .bstack/bin/commands/apply.mjs, .bstack/bin/commands/baseline.mjs, .bstack/bin/commands/cite-check.mjs, .bstack/bin/commands/contract-test.mjs, .bstack/bin/commands/contract.mjs, .bstack/bin/commands/docs-check.mjs, .bstack/bin/commands/docs-generate.mjs, .bstack/bin/commands/evidence-validate.mjs, .bstack/bin/commands/evidence.mjs, .bstack/bin/commands/findings.mjs, .bstack/bin/commands/inspect.mjs, .bstack/bin/commands/inventory.mjs, .bstack/bin/commands/measure.mjs, .bstack/bin/commands/overlap.mjs, .bstack/bin/commands/probe.mjs, .bstack/bin/commands/project.mjs, .bstack/bin/commands/rule-proof.mjs, .bstack/bin/commands/run-checks.mjs, .bstack/bin/commands/state.mjs, .bstack/bin/commands/vision-board-build.mjs, .bstack/bin/commands/vision-board-launch.mjs, .bstack/bin/commands/vision-board-verdicts.mjs, .bstack/bin/lib/args.mjs, .bstack/bin/lib/check-integration.mjs, .bstack/bin/lib/discovery.mjs, .bstack/bin/lib/document-references.mjs, .bstack/bin/lib/evidence-policy.mjs, .bstack/bin/lib/fingerprint.mjs, .bstack/bin/lib/glob.mjs, .bstack/bin/lib/json.mjs, .bstack/bin/lib/paths.mjs, .bstack/bin/lib/proposed-edit.mjs, .bstack/bin/lib/protected-write.mjs, .bstack/bin/lib/repo.mjs, .bstack/bin/lib/result.mjs, .bstack/bin/lib/run.mjs, .bstack/bin/lib/schema.mjs, .bstack/bin/lib/scratch.mjs, .bstack/bin/lib/vision-board.mjs, .bstack/bin/repo-audit.mjs, .bstack/project.json, .bstack/schemas/baseline.schema.json, .bstack/schemas/change-set.schema.json, .bstack/schemas/check-plan.json, .bstack/schemas/contract-test.json, .bstack/schemas/evidence.schema.json, .bstack/schemas/findings.schema.json, .bstack/schemas/impact-assessment.json, .bstack/schemas/measure-exclusions.json, .bstack/schemas/overlap-plan.json, .bstack/schemas/probe-record.json, .bstack/schemas/probe-spec.json, .bstack/schemas/project-create.json, .bstack/schemas/project.schema.json, .bstack/schemas/research-report.json, .bstack/schemas/resume-state.schema.json, .bstack/schemas/vision-proposals.json, .bstack/schemas/vision-verdicts.json, AGENTS.md, DESIGN.md, boundaries.mjs, docs/repo-audit.md, glossary.md, journey.mjs, package.json, packages/core/a.ts, packages/core/b.ts, packages/core/index.ts, packages/web/alias.ts, packages/web/routes.ts, packages/web/ui.ts
+Current fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6
+
+## Readiness evidence
+
+- Missing required outcome: standalone-clean-clone.
+- Unresolved finding: F-006.
+- starting-checks: passed. Method: run-checks captured actual target commands and declared inputs; primary review verified acceptance coverage.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/2c1eabae-bd3c-4520-8a96-c3a1df06eaed/checks.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- journey: passed. Method: run-checks captured actual target commands and declared inputs; primary review verified acceptance coverage.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/8701ca05-635e-4169-8c9b-e94130d9220d/checks.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- maintained-enforcement: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/d299d50e-8ff2-4b22-8e4d-9e48f7547027/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-aggregate-cycle: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/65c1a237-7c2b-43eb-9808-de54b14731e5/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-aggregate-dynamic: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/c0cf1503-1147-4609-b2ef-9718d2ca208c/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-aggregate-import-type: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/69325e83-83e8-4b3e-9b91-39464355cee8/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-aggregate-nonpublic: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/5554acb3-8d8e-4990-9ae4-cb7d8b215e65/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-aggregate-private: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e2a28860-65ee-446c-b376-4c97e0d40d49/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-aggregate-reexport: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e98e7c1a-08cb-44c7-bac1-1c6286da5f4e/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-aggregate-unknown-dynamic: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/8ecf6b39-3f80-4a41-88a7-0bb2b0e361a1/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- boundary-proof: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/1c3195d5-0089-490e-addc-b0e119d5a2f6/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-native-cycle: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/850e52e7-798a-4ad6-8df0-d379487c024a/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-native-dynamic: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/437755fd-e2e5-45fc-b997-5bdca3349573/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-native-import-type: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e11ebefa-ae79-4bc8-80e4-d558c5b7bb91/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-native-nonpublic: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/1a750aca-bb23-449c-a836-b9abc1665dcb/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-native-private: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/9d20ddcf-7529-4334-af81-37df562e3522/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-native-reexport: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/d40e79f8-baad-41cd-acb0-0bac5691cbe6/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- final-proof-native-unknown-dynamic: passed. Method: rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target.. Artifact: [isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/db306f23-97b0-4707-a797-38bf34c0f8a3/proof.json. Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- foundation-review: passed. Method: Primary semantic review of owner-approved exact bytes and captured actual execution.. Artifact: [isolated-home][scratch-path] Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+- maintenance-contract: passed. Method: Native contract validate captured on applied target.. Artifact: [isolated-home][scratch-path] Fingerprint: 7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6.
+
+## Documented intent
+
+- design: UI never touches storage; agreed checkout total is 10. (DESIGN.md:3-4)
+- instructions: Use approved design and public core interface. (AGENTS.md:1)
+- vocabulary: Order has two conflicting meanings. (glossary.md:3-4)
+- selection: Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy. ([isolated-home][scratch-path]
+- user-note: User note: receipt wording remains a future owner decision. (DESIGN.md:6)
+
+## Observed behaviour
+
+- runtime: Private and aliased imports and a cycle are present. (packages/web/ui.ts:1; packages/web/routes.ts:1; packages/web/alias.ts:1; packages/core/a.ts:1; packages/core/b.ts:1)
+- checks: Types and units pass; real loopback checkout returns 12; boundaries reports alias, cycle, private. (package.json:12; journey.mjs:6-12; unit.test.mjs:5)
+- initial-capture: At b6c59b7 plus preserved user note, types and unit checks passed; actual checkout returned 12, and boundaries failed alias/cycle/private. ([isolated-home][scratch-path]
+- current-capture: Approved implementation applied via protected writes; maintained aggregate passes, quote is 12 and real controlled HTTP checkout returns total 10. ([isolated-home][scratch-path]
+
+## Inferred intent
+
+
+## Observed debt
+
+### F-001: Checkout violates agreed total 10.
+
+Status: selected. Resolved: true. Blocks next change: true.
+Files: journey.mjs. Command: npm run journey.
+Principle: Keep agreed checkout outcome.
+Consequence: Customers receive total 12 in the important journey.
+Fix: Correct controlled journey endpoint fixture to supply 10, preserving assertion at 10 and public quote 12; no business discount.
+Scope: journey.mjs
+Verification: Before failing reproduction, after passing same real HTTP journey; preserve public quote compatibility.
+Sources: design, checks, selection
+
+### F-002: Web imports storage directly and through alias; core has recursive dependency cycle.
+
+Status: selected. Resolved: true. Blocks next change: true.
+Files: packages/web/ui.ts, packages/web/routes.ts, packages/web/alias.ts, packages/core/index.ts, packages/core/a.ts, packages/core/b.ts. Command: npm run boundaries.
+Principle (proposed new principle): Use public core interface; propose acyclic dependencies as maintained rule.
+Consequence: Storage details leak into web; a/b recurse indefinitely.
+Fix: Export servicePrice from existing core index; route ui/routes/alias through public core; break b-to-a recursion with b using core-owned price.
+Scope: packages/web/ui.ts, packages/web/routes.ts, packages/web/alias.ts, packages/core/index.ts, packages/core/a.ts, packages/core/b.ts
+Verification: Native boundary valid/violation proofs for private, alias, re-export, cycle and permitted core internal use.
+Sources: design, instructions, runtime
+
+
+## Missing protections
+
+### F-003: Maintained check runs only types and misses both observed failures.
+
+Status: selected. Resolved: true. Blocks next change: true.
+Files: package.json, boundaries.mjs. Command: npm run check.
+Principle (proposed new principle): One fail-fast maintained command protects approved outcomes.
+Consequence: A successful default check can hide broken checkout and architecture.
+Fix: Extend existing check with boundaries, public unit tests and real HTTP journey. Native TypeScript resolution covers imports, re-exports, import types and literal dynamic imports; web may use only core index. Fail unresolved and nonliteral dynamic dependencies.
+Scope: package.json, boundaries.mjs
+Verification: Prove maintained aggregate on allowed fixtures and individually seeded violations.
+Sources: design, instructions, checks
+
+### F-005: No maintained change evidence contract, standalone checker or completion guidance exists.
+
+Status: selected. Resolved: true. Blocks next change: true.
+Files: DESIGN.md, AGENTS.md, .bstack/project.json, .bstack/bin/bstack-check.mjs, .bstack/bin/commands.mjs, .bstack/bin/commands/apply.mjs, .bstack/bin/commands/baseline.mjs, .bstack/bin/commands/cite-check.mjs, .bstack/bin/commands/contract-test.mjs, .bstack/bin/commands/contract.mjs, .bstack/bin/commands/docs-check.mjs, .bstack/bin/commands/docs-generate.mjs, .bstack/bin/commands/evidence-validate.mjs, .bstack/bin/commands/evidence.mjs, .bstack/bin/commands/findings.mjs, .bstack/bin/commands/inspect.mjs, .bstack/bin/commands/inventory.mjs, .bstack/bin/commands/measure.mjs, .bstack/bin/commands/overlap.mjs, .bstack/bin/commands/probe.mjs, .bstack/bin/commands/project.mjs, .bstack/bin/commands/rule-proof.mjs, .bstack/bin/commands/run-checks.mjs, .bstack/bin/commands/state.mjs, .bstack/bin/commands/vision-board-build.mjs, .bstack/bin/commands/vision-board-launch.mjs, .bstack/bin/commands/vision-board-verdicts.mjs, .bstack/bin/lib/args.mjs, .bstack/bin/lib/check-integration.mjs, .bstack/bin/lib/discovery.mjs, .bstack/bin/lib/document-references.mjs, .bstack/bin/lib/evidence-policy.mjs, .bstack/bin/lib/fingerprint.mjs, .bstack/bin/lib/glob.mjs, .bstack/bin/lib/json.mjs, .bstack/bin/lib/paths.mjs, .bstack/bin/lib/proposed-edit.mjs, .bstack/bin/lib/protected-write.mjs, .bstack/bin/lib/repo.mjs, .bstack/bin/lib/result.mjs, .bstack/bin/lib/run.mjs, .bstack/bin/lib/schema.mjs, .bstack/bin/lib/scratch.mjs, .bstack/bin/lib/vision-board.mjs, .bstack/bin/repo-audit.mjs, .bstack/schemas/baseline.schema.json, .bstack/schemas/change-set.schema.json, .bstack/schemas/check-plan.json, .bstack/schemas/contract-test.json, .bstack/schemas/evidence.schema.json, .bstack/schemas/findings.schema.json, .bstack/schemas/impact-assessment.json, .bstack/schemas/measure-exclusions.json, .bstack/schemas/overlap-plan.json, .bstack/schemas/probe-record.json, .bstack/schemas/probe-spec.json, .bstack/schemas/project-create.json, .bstack/schemas/project.schema.json, .bstack/schemas/research-report.json, .bstack/schemas/resume-state.schema.json, .bstack/schemas/vision-proposals.json, .bstack/schemas/vision-verdicts.json. Command: none.
+Principle (proposed new principle): Changes complete when affected approved journeys pass on final inputs; unit success alone is insufficient.
+Consequence: Later user edits and extensions have no portable impact and acceptance gate.
+Fix: Maintain completion/impact guidance in DESIGN.md, pointers in AGENTS.md, selected first contract and complete standalone runtime/schemas. Preserve exact user note and CLAUDE.md.
+Scope: DESIGN.md, AGENTS.md, .bstack/project.json, .bstack/bin/bstack-check.mjs, .bstack/bin/commands.mjs, .bstack/bin/commands/apply.mjs, .bstack/bin/commands/baseline.mjs, .bstack/bin/commands/cite-check.mjs, .bstack/bin/commands/contract-test.mjs, .bstack/bin/commands/contract.mjs, .bstack/bin/commands/docs-check.mjs, .bstack/bin/commands/docs-generate.mjs, .bstack/bin/commands/evidence-validate.mjs, .bstack/bin/commands/evidence.mjs, .bstack/bin/commands/findings.mjs, .bstack/bin/commands/inspect.mjs, .bstack/bin/commands/inventory.mjs, .bstack/bin/commands/measure.mjs, .bstack/bin/commands/overlap.mjs, .bstack/bin/commands/probe.mjs, .bstack/bin/commands/project.mjs, .bstack/bin/commands/rule-proof.mjs, .bstack/bin/commands/run-checks.mjs, .bstack/bin/commands/state.mjs, .bstack/bin/commands/vision-board-build.mjs, .bstack/bin/commands/vision-board-launch.mjs, .bstack/bin/commands/vision-board-verdicts.mjs, .bstack/bin/lib/args.mjs, .bstack/bin/lib/check-integration.mjs, .bstack/bin/lib/discovery.mjs, .bstack/bin/lib/document-references.mjs, .bstack/bin/lib/evidence-policy.mjs, .bstack/bin/lib/fingerprint.mjs, .bstack/bin/lib/glob.mjs, .bstack/bin/lib/json.mjs, .bstack/bin/lib/paths.mjs, .bstack/bin/lib/proposed-edit.mjs, .bstack/bin/lib/protected-write.mjs, .bstack/bin/lib/repo.mjs, .bstack/bin/lib/result.mjs, .bstack/bin/lib/run.mjs, .bstack/bin/lib/schema.mjs, .bstack/bin/lib/scratch.mjs, .bstack/bin/lib/vision-board.mjs, .bstack/bin/repo-audit.mjs, .bstack/schemas/baseline.schema.json, .bstack/schemas/change-set.schema.json, .bstack/schemas/check-plan.json, .bstack/schemas/contract-test.json, .bstack/schemas/evidence.schema.json, .bstack/schemas/findings.schema.json, .bstack/schemas/impact-assessment.json, .bstack/schemas/measure-exclusions.json, .bstack/schemas/overlap-plan.json, .bstack/schemas/probe-record.json, .bstack/schemas/probe-spec.json, .bstack/schemas/project-create.json, .bstack/schemas/project.schema.json, .bstack/schemas/research-report.json, .bstack/schemas/resume-state.schema.json, .bstack/schemas/vision-proposals.json, .bstack/schemas/vision-verdicts.json
+Verification: Contract/docs validation; final impact assessment covering changed and unmapped paths; fresh standalone check in checkout and different-root clean clone with isolated home/cache, same explicit base.
+Sources: design, instructions, checks
+
+### F-006: No portable assessment or historical assessed snapshot exists.
+
+Status: selected. Resolved: false. Blocks next change: true.
+Files: .bstack/assessment.json, docs/repo-audit.md. Command: none.
+Principle (proposed new principle): Portable review binds actual final inputs and fresh outcomes; historical audit is not current readiness authority.
+Consequence: Later edits and extensions lack a portable impact record.
+Fix: After protected implementation and verification, separately review/apply historical audit, commit implementation, collect/review/bind portable assessment and commit it separately. Keep current-head findings in scratch and freshly run standalone checker in checkout and isolated clone.
+Scope: .bstack/assessment.json, docs/repo-audit.md
+Verification: Final evidence validation and fresh standalone leaf checks in working checkout and different-root clean clone with isolated home/cache.
+Sources: selection, design, checks
+
+
+## Design decisions
+
+### F-004: Order denotes purchase and panel sequence.
+
+Status: selected. Resolved: true. Blocks next change: true.
+Files: glossary.md. Command: none.
+Principle: Use unambiguous approved project vocabulary.
+Consequence: Extensions cannot infer which concept Order names.
+Fix: Keep Order for customer purchases; rename UI panel sequencing to Panel order in glossary.md.
+Scope: glossary.md
+Verification: Reviewed definitions and maintenance impact coverage.
+Sources: vocabulary
+
+
+## Proposed new principles
+
+- F-002: Use public core interface; propose acyclic dependencies as maintained rule. (selected)
+- F-003: One fail-fast maintained command protects approved outcomes. (selected)
+- F-005: Changes complete when affected approved journeys pass on final inputs; unit success alone is insufficient. (selected)
+- F-006: Portable review binds actual final inputs and fresh outcomes; historical audit is not current readiness authority. (selected)
+
+## Selected findings
+
+- F-001
+- F-002
+- F-003
+- F-004
+- F-005
+- F-006
+
+## Limitations
+
+- Historical snapshot after approved implementation at b6c59b7810f5155fd514c9db60e98b7dffce0cc0 with selected working-tree edits; final portable assessment and standalone checkout/isolated-clone verification still pending.
+- Receipt wording remains a future owner decision; exact user note preserved. No hosted CI selected.
+- One-commit starting history provides sizes but no change frequency or co-change history.
+- Native controls cover static imports, aliases, re-exports, nonpublic core targets, import types, literal and unknown dynamic imports, and cycles; require calls are rejected. Dynamic runtime behaviour outside these controls remains a coverage limit.
+- Line-style glossary is explicitly reviewed; automated glossary-format validation is limited.
+- Tool results establish declared coverage and execution; primary review assessed semantics against the approved design and supervisor verdicts.

@@ -1,0 +1,82 @@
+{
+  "checkId": "native",
+  "command": {
+    "executable": "npm",
+    "args": [
+      "run",
+      "boundaries"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ]
+  },
+  "expectedDiagnostic": "cycle",
+  "status": "passed",
+  "cases": [
+    {
+      "kind": "valid",
+      "source": "[isolated-home][scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+        "stderr": "",
+        "durationMs": 861.758364,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 107.25664899999998,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "kind": "violation",
+      "source": "[isolated-home][scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[\"cycle\"]\n",
+        "stderr": "",
+        "durationMs": 790.9172820000001,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 93.53003899999999,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    }
+  ],
+  "path": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/23561ade-b7e1-4f73-82f2-6b8112b5d082/proof.json",
+  "limitations": [
+    "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+  ]
+}
