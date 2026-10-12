@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Unmet maintenance acceptance
 
 This historical pair identified the unmaintained starting-fixture defect.
@@ -31,9 +33,9 @@ Compatible behavior and unchanged documents alone do not complete the requested 
 
 ## Independent evidence and decision boundary
 
-The evaluator independently confirms the missing contract, standalone checker and portable assessment in [with-skill verification](runs/2026-10-11T21-57-18.779Z-11eb5ed8-5838-4547-aaad-331be48f3569/artifacts/independent-verification.json).
+The evaluator independently confirms the missing contract, standalone checker and portable assessment in with-skill verification (removed file: runs/2026-10-11T21-57-18.779Z-11eb5ed8-5838-4547-aaad-331be48f3569/artifacts/independent-verification.json).
 It retains the unchanged project, all four original native logs and their resource preflights.
-[Baseline verification](runs/2026-10-11T21-57-18.284Z-ca76ff9d-3e62-47ed-b79a-52f5563dbfb3/artifacts/independent-verification.json) retains the actual diff, all three changed implementation files and unchanged authoritative document hashes.
+Baseline verification (removed file: runs/2026-10-11T21-57-18.284Z-ca76ff9d-3e62-47ed-b79a-52f5563dbfb3/artifacts/independent-verification.json) retains the actual diff, all three changed implementation files and unchanged authoritative document hashes.
 The checked-in ts-shop fixture independently confirms that no maintained contract or checker is provisioned.
 Both scored records verify login-copy removal, container cleanup and deletion of the isolated homes.
 

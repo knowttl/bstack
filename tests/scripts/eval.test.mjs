@@ -347,14 +347,24 @@ for (const [mode, expected] of [['success', true], ['fixture-byte-changed', fals
   })
 }
 
-for (const [mode, expected] of [['allowed-reference', true], ['forbidden-reference', false], ['large-forbidden-reference', false],
+for (const [mode, expected] of [['allowed-reference', true], ['allowed-fixture-file', true], ['allowed-extensionless-file', true], ['allowed-git-status', true],
+  ['forbidden-reference', false], ['large-forbidden-reference', false],
   ['forbidden-nl', false], ['forbidden-directory', false], ['forbidden-glob', false], ['forbidden-failed-command', false], ['success', false]]) {
   test(`machine notOpened requires an access trace and rejects forbidden references: ${mode}`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory, mode)
-    const { record } = hostStart(t, directory, path, 'without', 'clear-goals')
+    const { record: opening } = hostStart(t, directory, path, 'without', 'clear-goals')
+    assert.equal(opening.machineResults, undefined)
+    const firstReply = run(directory, 'turn', '--run', opening.id, '--answer', '1').data.data
+    assert.equal(firstReply.machineResults, undefined)
+    const record = run(directory, 'turn', '--run', opening.id, '--answer', '2').data.data
     assert.equal(record.hostFailure, undefined, record.reason)
     assert.equal(record.machineResults.find(check => check.id === 'conditional-load').passed, expected)
+    const events = (await readFile(join(directory, 'docker-events.jsonl'), 'utf8')).trim().split('\n').map(line => JSON.parse(line))
+    assert.equal(events.filter(event => event.operation === 'snapshot').length, 1)
+    const evaluations = events.filter(event => event.operation === 'evaluate')
+    assert.equal(evaluations.length, 1)
+    assert.equal(evaluations[0].container, events.filter(event => event.operation === 'host').at(-1).container)
     const answersPath = join(directory, 'answers.json')
     await writeFile(answersPath, JSON.stringify({ schemaVersion: 1, runId: record.id, reviewer: 'Fixture reviewer',
       checks: [{ id: 'reuse', passed: true, startLine: 1, endLine: 1 }] }))
@@ -401,7 +411,7 @@ for (const [name, machine, expected, installer = { status: 'passed' }] of [
         findings: 'Keep the note.', limitations: [], web: [], files: [{ location: 'first.md:1',
           state: { kind: 'sha256', value: createHash('sha256').update('User note: retain exactly.\n').digest('hex') } }] }] }))
     const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
-    const input = { action: 'evaluate', final: true, checks: [{ id: 'control', machine }],
+    const input = { action: 'evaluate', checks: [{ id: 'control', machine }],
       installer, skill: join(root, 'skills/repo-audit/scripts/repo-audit.mjs'),
       events: [{ type: 'item.completed', item: { type: 'file_read', path: '/home/test/.agents/skills/repo-audit/SKILL.md' } },
         { type: 'item.completed', item: { type: 'command_execution',

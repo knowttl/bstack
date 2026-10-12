@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Current installed audit: two release cases remain failed
 
 The current installed `existing-repo` run completed all three turns and both unchanged scripted answers.
@@ -18,7 +20,7 @@ The final review table at line 187 likewise presents the private-import and recu
 The same criterion is applied to the baseline: detecting imports and a cycle alone does not pass the two-candidate rubric.
 
 The [actual final findings](runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/artifacts/scratch/findings.json), [research briefs](runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/artifacts/scratch/research.json) and [rendered report](runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/artifacts/scratch/repo-audit.md) were exported before scoring cleaned the isolated home.
-The [independent check](runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/artifacts/independent-verification.json) confirms all 21 tracked fixture files remain unchanged and the throwaway login is absent.
+The independent check (removed file: runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/artifacts/independent-verification.json) confirms all 21 tracked fixture files remain unchanged and the throwaway login is absent.
 The [export manifest](runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/artifacts/export-manifest.json) binds 33 actual native artifacts by published hash.
 
 Release acceptance, remaining captures, the final full suite and publication remain incomplete.

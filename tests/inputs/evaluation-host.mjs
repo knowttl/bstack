@@ -40,10 +40,13 @@ if (args.includes('--version')) {
     console.log(JSON.stringify({ type: 'thread.started', thread_id: mode === 'wrong-session' && args.includes('resume') ? randomUUID() : sessionId }))
     if (mode === 'fixture-byte-changed') await writeFile('price.mjs', 'export function quote(quantity) { return quantity * 13 }\n')
     if (mode === 'fixture-status-changed') await writeFile('untracked-note.md', 'Unexpected new file.\n')
-    if (['forbidden-reference', 'allowed-reference', 'large-forbidden-reference', 'forbidden-nl', 'forbidden-directory', 'forbidden-glob', 'forbidden-failed-command'].includes(mode)) {
+    if (['forbidden-reference', 'allowed-reference', 'allowed-fixture-file', 'allowed-extensionless-file', 'allowed-git-status', 'large-forbidden-reference', 'forbidden-nl', 'forbidden-directory', 'forbidden-glob', 'forbidden-failed-command'].includes(mode)) {
       const reference = mode === 'allowed-reference' ? 'architecture.md' : 'vision.md'
       const references = join(process.env.HOME, '.agents/skills/repo-audit/references')
       const commands = {
+        'allowed-fixture-file': `cat ${join(process.cwd(), 'VISION.md')}`,
+        'allowed-extensionless-file': `cat ${join(process.cwd(), 'README')}`,
+        'allowed-git-status': 'git status -- .',
         'forbidden-nl': `bash -lc "nl -ba ${join(references, reference)} | sed -n '1,200p'"`,
         'forbidden-directory': `rg -n Interview ${references}`,
         'forbidden-glob': `awk '{print}' ${references}/*.md`,

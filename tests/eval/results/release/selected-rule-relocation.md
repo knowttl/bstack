@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Selected rule relocation
 
 The final [comparison](selected-rule-relocation-comparison.json) passes 1/1 in both modes, retaining the already passing baseline result for AC-15.
@@ -11,9 +13,9 @@ After the scripted approval, lines 95 through 102 record protected apply of the 
 The existing private-import boundary failure is reported separately, leaving aggregate verification failed without claiming unrelated debt was repaired.
 The original preview, selected plan, apply result and before/after checks remain in the run's artifacts.
 
-[Independent verification](runs/2026-10-11T21-43-54.730Z-679e9402-47c3-47a3-a35c-ffa2b4f575d5/artifacts/independent-verification.json) checks exact replacement, one authority and unchanged unrelated tracked bytes.
+Independent verification (removed file: runs/2026-10-11T21-43-54.730Z-679e9402-47c3-47a3-a35c-ffa2b4f575d5/artifacts/independent-verification.json) checks exact replacement, one authority and unchanged unrelated tracked bytes.
 All seven original research citation hashes match the original committed sources.
 The deliberately changed CONTRIBUTING.md makes its pre-apply working-file hash stale; that historical research is not claimed as a current post-apply binding.
-The [baseline verification](runs/2026-10-11T21-43-54.741Z-75a13145-45ac-480a-a2d9-5a41d26e1de9/artifacts/independent-verification.json) retains both final documents and the exact tracked diff.
+The baseline verification (removed file: runs/2026-10-11T21-43-54.741Z-75a13145-45ac-480a-a2d9-5a41d26e1de9/artifacts/independent-verification.json) retains both final documents and the exact tracked diff.
 Both records retain native unit and Ruff passes, existing boundary failure, inspected container execution and login/home/container cleanup.
 No broader release readiness is claimed.

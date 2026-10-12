@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Repeated maintenance approval failure
 
 One fresh installed capture and one fresh baseline were started after the authorized reference correction and added exact-record approval replies.
@@ -24,7 +26,7 @@ The new exact-assessment approval reply remains unused.
 Final validation reports stale execution because the earlier check capture predates the implementation commit; the attempted fresh recapture fails its load preflight.
 Fresh final local and clean-clone standalone checker results remain pending.
 These partial native outcomes do not establish final completion.
-The [independent verification](runs/2026-10-12T04-07-52.088Z-fa4f07ef-1bf8-4650-9963-5f543c431b69/artifacts/independent-verification.json) cross-checks the actual create plan, captured successful apply, absence of approval replies, target assessment bytes, preserved tracked authorities and native export hashes.
+The independent verification (removed file: runs/2026-10-12T04-07-52.088Z-fa4f07ef-1bf8-4650-9963-5f543c431b69/artifacts/independent-verification.json) cross-checks the actual create plan, captured successful apply, absence of approval replies, target assessment bytes, preserved tracked authorities and native export hashes.
 
 ## Stop and preservation
 

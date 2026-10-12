@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Maintenance assessment approval: final installed capture
 
 The installed maintenance scenario passed both rubric checks at source `ccee840` using fixture revision `8e436639af6ca78c93bb61e759d643c4f304bd66`.
@@ -17,7 +19,7 @@ The comparison base remains `37864dacc088867c4aeeb0cd18275aa98b0c0a0b`.
 
 Fresh standalone checker execution passed in the working checkout and a different-root clean clone with isolated home and cache.
 Both executions ran types, two original unit tests, boundaries and the HTTP checkout journey, preserving quote `12` and checkout total `10`.
-The [independent verification](runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/artifacts/independent-verification.json) checks all 25 tracked files against the clone, all unchanged files against the original base, all 14 literal document citations, exact approved assessment bytes and passing host resource preflights.
+The independent verification (removed file: runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/artifacts/independent-verification.json) checks all 25 tracked files against the clone, all unchanged files against the original base, all 14 literal document citations, exact approved assessment bytes and passing host resource preflights.
 Both Git working trees were clean and the throwaway login was absent before scoring cleaned the isolated home.
 The [artifact manifest](runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/artifacts/export-manifest.json) retains 68 actual native artifacts with original and published hashes.
 Earlier blocked scratch previews remain explicitly superseded, rather than being presented as final checker success.
