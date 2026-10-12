@@ -15,3 +15,9 @@ The pinned model, adapter and toolchain remain unchanged.
 Both changed author protocols require fresh baseline and installed captures, once per changed input; other installed captures require refresh for the changed package while comparable baselines remain reusable.
 The earlier failed maintenance run remains unscored and retained as evidence of the conflict.
 Any repeated write before exact approval blocks acceptance and must be reported with the transcript lines.
+
+Package validation and generated-checker freshness pass.
+The focused evaluation, package and skill suites passed 198 of 199 tests initially; the remaining fake-host maintenance test assumed the real scenario still selected the original `ts-shop` fixture.
+That deterministic test now builds and explicitly supplies the original failing-journey fixture through the existing final follow-up interface, preserving its negative readiness control independently of the real maintained scenario.
+Its targeted rerun passes with the original failed checkout still visible.
+The real scenario fixtures and the fake host's behavior are unchanged.

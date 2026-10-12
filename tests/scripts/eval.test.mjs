@@ -4,7 +4,7 @@ import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat, 
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { spawnSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
 
@@ -353,12 +353,16 @@ for (const [scenario, mode] of [['research-main-typescript', 'require-no-subagen
 test('fake-only ts-shop maintenance in with mode validates review and fresh standalone checks without an interview or full audit', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory, 'maintenance')
-  const result = run(directory, '--scenario', 'maintenance', '--mode', 'with', '--stage', 'maintenance', '--adapter', path)
+  // The deterministic host retains the original failing-journey control, independent of the real scenario's maintained starting state.
+  const fixture = JSON.parse(execFileSync(process.execPath, [join(root, 'tests/fixtures/build.mjs'), 'ts-shop'], { encoding: 'utf8' }))
+  t.after(() => rm(fixture.path, { recursive: true, force: true }))
+  const result = run(directory, '--scenario', 'maintenance', '--mode', 'with', '--stage', 'final', '--adapter', path, '--repo', fixture.path)
   assert.equal(result.status, 2, result.stdout)
   const record = result.data.data
   t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
   t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
-  assert.equal(record.fixture.name, 'ts-shop')
+  assert.equal(record.fixture.path, fixture.path)
+  assert.equal(record.fixture.reused, true)
   assert.equal(record.isolation.verified, true)
   const transcript = await readFile(join(directory, record.id, 'conversation.txt'), 'utf8')
   assert.match(transcript, /Fake-only bounded maintenance complete/)
