@@ -42,3 +42,7 @@ The commissioning ruling at 2026-10-12T01:19:50Z requires waiting for the host p
 Eight finished capture fixtures were removed after verifying each exact standalone Git root and expected captured commit.
 The pinned image and historical maintained target remain because remaining scenarios need them; no unrelated image or temporary directory was removed.
 The next resource check is deferred until at least 2026-10-12T01:37:06Z, rather than repeatedly probing a busy host.
+
+The commissioning instruction at 2026-10-12T02:11:15Z directed an immediate foreground preflight and continuation if it passed.
+That check at 2026-10-12T02:11:29.877Z passed with load 11.61, 24,829,104,128 free disk bytes, 24,414,560,256 available memory bytes and zero existing Node suites.
+The interrupted installed captures resumed as fresh isolated conversations under that recovery instruction; package bytes, scenarios, criteria, fixtures, tooling and resource thresholds remain unchanged.
