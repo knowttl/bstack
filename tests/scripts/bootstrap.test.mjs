@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -70,9 +70,11 @@ async function evidenceSandbox(t, source = "import test from 'node:test'\ntest('
   await cp(join(root, 'scripts'), join(directory, 'scripts'), { recursive: true })
   await cp(join(root, 'node_modules', 'acorn'), join(directory, 'node_modules', 'acorn'), { recursive: true })
   await cp(join(root, 'skills', 'repo-audit', 'scripts', 'lib'), join(directory, 'skills', 'repo-audit', 'scripts', 'lib'), { recursive: true })
+  // Copied repository scripts still need the checkout's declared development dependencies.
+  await symlink(join(root, 'node_modules'), join(directory, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir')
   await mkdir(join(directory, 'tests', 'scripts'), { recursive: true })
   await writeFile(join(directory, 'tests', 'scripts', 'selected.test.mjs'), source)
-  await writeFile(join(directory, '.gitignore'), '.cache/\n')
+  await writeFile(join(directory, '.gitignore'), '.cache/\nnode_modules\n')
   for (const args of [['init', '-q'], ['add', '.'], ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'initial'],
     ['update-ref', 'refs/remotes/origin/main', 'HEAD']]) {
     const result = spawnSync('git', args, { cwd: directory, encoding: 'utf8' })
