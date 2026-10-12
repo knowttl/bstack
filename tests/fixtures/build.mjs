@@ -1,4 +1,4 @@
-import { cp, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
+import { appendFile, cp, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { devNull, tmpdir } from 'node:os'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -40,6 +40,7 @@ try {
           git('commit', '-m', step.message)
         }
         for (const [file, content] of Object.entries(fixture.dirty ?? {})) await writeFile(join(path, file), content)
+        for (const [file, content] of Object.entries(fixture.dirtyAppend ?? {})) await appendFile(join(path, file), content)
         for (const file of fixture.remove ?? []) await rm(join(path, file))
         if (fixture.stage) git('add', '--', ...fixture.stage)
         if (fixture.shallow) {

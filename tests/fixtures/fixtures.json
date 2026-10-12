@@ -87,6 +87,9 @@
   "maintained-ts-shop": {
     "base": "ts-shop",
     "overlay": "overlay",
+    "dirtyAppend": {
+      "DESIGN.md": "\nUser note: export remains outside this change.\n"
+    },
     "history": [
       {
         "paths": ["."],
