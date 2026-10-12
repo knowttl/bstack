@@ -1,0 +1,29 @@
+{
+  "status": "ready",
+  "head": "c1300389bdfb125e73403605284d35f3ea004a45",
+  "implementation": "d9c221614b4c821944e4ffd35115a05cda797994",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "results": {
+    "local": {
+      "artifact": "[isolated-home][scratch-path]",
+      "previousArtifact": "[isolated-home][scratch-path]",
+      "status": "passed",
+      "fingerprint": "edadc72f44b1cf886ee65e4d8ab5358522186b4b35b035df00e1ed0a6848c85f"
+    },
+    "clean": {
+      "artifact": "[isolated-home][scratch-path]",
+      "previousArtifact": "[isolated-home][scratch-path]",
+      "status": "passed",
+      "fingerprint": "edadc72f44b1cf886ee65e4d8ab5358522186b4b35b035df00e1ed0a6848c85f"
+    }
+  },
+  "cleanRoot": "[isolated-home][scratch-path]",
+  "workingTrees": "clean",
+  "assessmentSha256": "903bb91d08e210eb6c58579ec524c86b97a5d96b02cfe8568435a3d6789b1ba6",
+  "preservation": "exact original quote assertion, journey, checkout total 10 and user note preserved",
+  "limits": [
+    "Loopback HTTP journey; no production service exercised.",
+    "Static boundaries exclude dynamic loading.",
+    "Structural checker cannot authenticate approval or prove semantic review."
+  ]
+}

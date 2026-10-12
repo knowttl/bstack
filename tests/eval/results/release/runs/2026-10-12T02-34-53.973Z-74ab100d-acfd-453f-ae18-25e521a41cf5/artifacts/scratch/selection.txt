@@ -1,0 +1,1 @@
+User selected F-007 scope and acceptance in final-checkpoint request: quote() = 12, quote(2) = 24; default one; maintain contract, native checks, real original checkout, explicit base and portable assessment; preserve user note exactly. Implementation scope: DESIGN.md, packages/web/public.ts, unit.test.mjs, .bstack/project.json

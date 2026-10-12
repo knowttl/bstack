@@ -39,3 +39,23 @@ The failed comparison above remains historical evidence and is not converted int
 The recovered existing-project opening completed its audit and remains open at its selection boundary; its 21 tracked files are independently unchanged.
 It has not received its first author answer or a user-note edit yet.
 That capture is retained for continuation after the commissioning decision, with no active container or shell job.
+
+## Amended author-protocol result
+
+The [fresh comparison](representative-extension-author-protocol-comparison.json) passes with baseline 1/1 and installed 1/1, with no lost baseline check.
+Both captures use source 3c765d6, the same final checkpoint, three ordered owner replies, scoring question, maintained fixture revision, model, toolchain and unchanged skill package.
+Each changed-input conversation ran once.
+The [baseline conversation](runs/2026-10-12T02-34-54.239Z-811c978f-d746-419c-8232-584e0c390cae/conversation.txt), lines 6–131, and [installed conversation](runs/2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5/conversation.txt), lines 7–115, retain all four turns and their scores.
+
+The installed conversation locates the approved example before implementation, uses the public core interface, retains the quantity-one assertion and adds quantity-two protection.
+Its review reply corrects the assessment from a scratch-only source to actual implementation commit 642126c70e02b34be91fccb785f6ccd3c8379d68.
+The exact-record approval precedes protected creation of only `.bstack/assessment.json` and its separate commit 72739613be576cf48e245226989dc1d3cb3b42cf.
+The retained [working checker](runs/2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5/artifacts/current-review/final-working-checker.json) and [final clone checker](runs/2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5/artifacts/current-review/final-clone-checker.json) both pass result-validation at that final head, including previous-policy coverage and fresh types, three units, boundaries and real HTTP checkout total 10.
+Conversation lines 108–114 retain protected apply, exact proposed-byte verification, separate commit, fresh different-root clone creation and isolated home/cache execution.
+
+The [installed independent verification](runs/2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5/artifacts/independent-verification.json) checks 62 retained artifact hashes, implementation-state hashes, all 25 current tracked files, the exact original unit file after removing only the added quantity-two assertion, unchanged journey/checker/history and the user note.
+The first clone byte-comparison helper selected an earlier proposal clone rather than the final verification clone.
+That assertion was not treated as passing; the login home was subsequently cleaned by scoring, so final clone verification relies on its actual retained checker and native transcript rather than an independent post-run clone byte comparison.
+The [baseline independent verification](runs/2026-10-12T02-34-54.239Z-811c978f-d746-419c-8232-584e0c390cae/artifacts/independent-verification.json) also confirms matching final tracked bytes in its actual final clean clone.
+Both isolated login homes are cleaned.
+No criterion, fixture, package or acceptance requirement was weakened.
