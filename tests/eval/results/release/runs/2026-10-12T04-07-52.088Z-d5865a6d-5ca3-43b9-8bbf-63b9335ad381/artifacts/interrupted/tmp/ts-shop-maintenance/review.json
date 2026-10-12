@@ -1,0 +1,32 @@
+{
+  "base": {
+    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "kind": "commit",
+    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "source": "4c6f814f63bc3b56018bc9816c7e80934a02388c",
+  "finalHead": "663b3104a534d6659e91515085dbda0f31f0fb62",
+  "reviewedPaths": [
+    "packages/web/routes.ts",
+    ".bstack/assessment.json"
+  ],
+  "reviewedDocuments": [
+    "DESIGN.md",
+    "glossary.md",
+    "AGENTS.md"
+  ],
+  "contractReview": "Unchanged .bstack/project.json maps routes.ts to maintained-repo, all three authoritative documents and all five native rules. Existing command and input scopes cover the refactor. No policy migration required.",
+  "assessmentReview": "All three document assessments are substantive no-impact findings with before/current route citations. No acceptance, responsibilities, terminology or interfaces change. The assessment path is the separately committed portable review artifact, excluded from its source inventory by the standalone checker; it introduces no runtime or policy behavior.",
+  "diffReview": "Only a named local numeric intermediate and the portable assessment are added. Left-associative multiplication and quantity threshold remain identical; default price call, public import, order mutation and response unchanged. No cosmetic document edits.",
+  "limitations": [
+    "Static boundaries do not cover dynamic loading.",
+    "Existing journey verifies controlled loopback HTTP, not a deployment.",
+    "Structural assessment validation cannot prove semantic reasoning."
+  ],
+  "initialVerification": "original-native exit 0; quote 12, mocked and HTTP checkout status 201 total 10",
+  "pending": [
+    "final-native",
+    "local-checker",
+    "clone-checker"
+  ]
+}

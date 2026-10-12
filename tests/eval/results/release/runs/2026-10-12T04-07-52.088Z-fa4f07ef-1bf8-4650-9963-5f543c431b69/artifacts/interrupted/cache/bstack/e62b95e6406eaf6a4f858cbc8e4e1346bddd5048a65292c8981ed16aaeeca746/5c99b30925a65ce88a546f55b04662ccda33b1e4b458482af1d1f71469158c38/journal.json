@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "runId": "5c99b30925a65ce88a546f55b04662ccda33b1e4b458482af1d1f71469158c38",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "61c5b92cdd3a221fc00836697915e54767a96511"
+  },
+  "planDigest": "5c99b30925a65ce88a546f55b04662ccda33b1e4b458482af1d1f71469158c38",
+  "edits": [
+    {
+      "id": "assessment",
+      "path": ".bstack/assessment.json",
+      "resolvedPath": "[fixture]/.bstack/assessment.json",
+      "originalHash": null,
+      "proposedHash": "e60a8b08a78dd870a344eb8896b3c0333119dcb5f79dae75667ef988c61a75ab",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "Preserve quote 12 and real HTTP checkout total 10",
+    "starting-checks"
+  ]
+}
