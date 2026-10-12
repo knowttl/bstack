@@ -11,6 +11,8 @@ Follow [Write rules](../SKILL.md#write-rules) for project edits, including chang
 - Collect the final scope
 - Assess every candidate
 - Validate locally
+- Preview a standalone assessment
+- Apply the approved assessment
 - Validate a standalone checkout
 - Supply the selected delivery gate
 
@@ -94,13 +96,27 @@ Outside dependencies also require the matching live `probe record` before/after 
 Unavailable, stale, skipped or failed required evidence cannot pass.
 Local scratch captures cover declared inputs and are not portable attestations.
 
-## Validate a standalone checkout
+## Preview a standalone assessment
 
 For portable review, commit implementation first, then collect with `--portable .bstack/assessment.json` and the explicit base.
 Complete and review the returned skeleton in scratch, obtaining and binding the fingerprint through `evidence validate` in a scratch preview checkout when it requires the selected portable path.
-Follow [Write rules](../SKILL.md#write-rules) before applying the exact bound assessment to the selected project path, then commit the approved assessment separately.
 Portable records use `repo: "."` and retain the reviewed implementation commit in `head`; only the selected assessment may change afterwards.
 Pass one explicit record rather than guessing the newest evidence.
+Prepare its protected change set and run `apply --repo <target> --plan <assessment-plan.json> --dry-run --json`.
+Present the complete bound assessment, exact preview and returned `planDigest`, following [Write rules](../SKILL.md#write-rules).
+End this turn: stop and wait for the owner.
+
+## Apply the approved assessment
+
+After the owner approves the exact preview and its fingerprint, apply that unchanged assessment plan with `--approved-fingerprint <approved-planDigest>` from the owner's approval reply, then commit the assessment separately.
+Do not supply that flag from your own review or an earlier maintenance request.
+Changed record bytes, execution references or plan inputs require a new preview and owner approval before writing again.
+
+```sh
+node scripts/repo-audit.mjs apply --repo <target> --plan <assessment-plan.json> --approved-fingerprint <approved-planDigest> --json
+```
+
+## Validate a standalone checkout
 
 ```sh
 node .bstack/bin/bstack-check.mjs --repo <target> --base <ancestor-commit> --assessment <target>/.bstack/assessment.json --json

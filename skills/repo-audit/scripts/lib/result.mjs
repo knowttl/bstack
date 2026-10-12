@@ -29,7 +29,8 @@ export function emitResult({ command, status, problems = [], data = {}, inputs =
     ] : []),
     ...(data.diff ? [data.diff] : []),
     ...(data.coverageLimits ?? []).map(limit => `coverage limit: ${limit.path}: ${limit.reason}`),
-    ...problems.map(problem => `${problem.code}: ${problem.message} Fix: ${problem.fix}`)
+    ...problems.map(problem => `${problem.code}: ${problem.message} Fix: ${problem.fix}`),
+    ...(data.approvalRequired ? [data.approvalRequired] : [])
   ].join('\n'))
   process.exitCode = exitCodes[status]
 }

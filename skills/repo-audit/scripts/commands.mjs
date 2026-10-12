@@ -60,8 +60,8 @@ export const commands = {
   },
   apply: {
     module: './commands/apply.mjs',
-    options: ['plan', 'dry-run'],
-    help: 'Apply or resume a reviewed change set with recoverable originals.\nUsage: repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Repeating a plan resumes its digest-bound run.' + planDigests
+    options: ['plan', 'dry-run', 'approved-fingerprint'],
+    help: 'Apply or resume a reviewed change set with recoverable originals.\nUsage: repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner\'s approval reply for the exact preview, never from the agent\'s own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.' + planDigests
   },
   'state show': {
     module: './commands/state.mjs',
