@@ -330,8 +330,40 @@ async function adapterFile(directory, mode = 'success') {
   return { adapter, path }
 }
 
-function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-idea') {
-  const result = run(directory, '--scenario', scenario, '--mode', mode, '--stage', 'baseline', '--adapter', path)
+for (const [mode, expected] of [['success', true], ['fixture-byte-changed', false], ['fixture-status-changed', false]]) {
+  test(`machine fixtureUnchanged scores exact tracked bytes: ${mode}`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const { record } = hostStart(t, directory, path, 'without', 'scope-and-prerequisites', 'final')
+    assert.equal(record.hostFailure, undefined, record.reason)
+    assert.equal(record.machineResults.find(check => check.id === 'fixture-unchanged').passed, expected)
+    const answersPath = join(directory, 'answers.json')
+    await writeFile(answersPath, JSON.stringify({ schemaVersion: 1, runId: record.id, reviewer: 'Fixture reviewer',
+      checks: record.scenario.checks.map(check => ({ id: check.id, passed: true, startLine: 1, endLine: 1 })) }))
+    const scored = run(directory, 'score', '--run', record.id, '--answers', answersPath,
+      '--transcript', join(directory, record.id, record.conversation))
+    assert.equal(scored.status, expected ? 0 : 1, scored.stdout)
+    assert.equal(scored.data.data.caseResults.find(check => check.id === 'fixture-unchanged').scoring, 'machine')
+  })
+}
+
+for (const [mode, expected] of [['allowed-reference', true], ['forbidden-reference', false], ['large-forbidden-reference', false], ['success', false]]) {
+  test(`machine notOpened requires an access trace and rejects forbidden references: ${mode}`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const { record } = hostStart(t, directory, path, 'without', 'clear-goals')
+    assert.equal(record.hostFailure, undefined, record.reason)
+    assert.equal(record.machineResults.find(check => check.id === 'conditional-load').passed, expected)
+    const answersPath = join(directory, 'answers.json')
+    await writeFile(answersPath, JSON.stringify({ schemaVersion: 1, runId: record.id, reviewer: 'Fixture reviewer',
+      checks: [{ id: 'reuse', passed: true, startLine: 1, endLine: 1 }] }))
+    assert.equal(run(directory, 'score', '--run', record.id, '--answers', answersPath,
+      '--transcript', join(directory, record.id, record.conversation)).status, expected ? 0 : 1)
+  })
+}
+
+function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-idea', stage = 'baseline') {
+  const result = run(directory, '--scenario', scenario, '--mode', mode, '--stage', stage, '--adapter', path)
   const record = result.data.data
   if (record) {
     t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
@@ -339,6 +371,63 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   }
   return { result, record }
 }
+
+for (const [name, machine, expected, installer = { status: 'passed' }] of [
+  ['successful installer', { type: 'installerPassed' }, true],
+  ['failed installer', { type: 'installerPassed' }, false, { status: 'failed' }],
+  ['incomplete installer', { type: 'installerPassed' }, false, { status: 'passed', outputTruncated: true }],
+  ['equal files', { type: 'filesEqual', paths: ['first.md', 'same.md'] }, true],
+  ['different files', { type: 'filesEqual', paths: ['first.md', 'different.md'] }, false],
+  ['preserved text', { type: 'contains', path: 'first.md', text: 'User note: retain exactly.' }, true],
+  ['missing text', { type: 'contains', path: 'first.md', text: 'User note: changed.' }, false],
+  ['successful native command', { type: 'command', executable: process.execPath, args: ['-e', 'process.exit(0)'] }, true],
+  ['failed native command', { type: 'command', executable: process.execPath, args: ['-e', 'process.exit(7)'] }, false],
+  ['valid saved citations', { type: 'citeCheck', report: 'report.json' }, true],
+  ['missing saved report', { type: 'citeCheck', report: 'missing-report.json' }, false],
+  ['opened file tool path', { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] }, true],
+  ['unopened required path', { type: 'opened', patterns: ['**/references/vision.md'] }, false],
+  ['failed file read', { type: 'opened', patterns: ['**/references/architecture.md'] }, false],
+  ['nested shell forbidden read', { type: 'notOpened', patterns: ['**/references/intent-interview.md'] }, false]
+]) {
+  test(`container machine assertion checks ${name}`, async t => {
+    const directory = await temporary(t)
+    execFileSync('git', ['init', '--initial-branch=main'], { cwd: directory, stdio: 'ignore' })
+    await writeFile(join(directory, 'first.md'), 'User note: retain exactly.\n')
+    await writeFile(join(directory, 'same.md'), 'User note: retain exactly.\n')
+    await writeFile(join(directory, 'different.md'), 'User note: changed.\n')
+    await writeFile(join(directory, 'report.json'), JSON.stringify({ schemaVersion: 1, mode: 'main-thread', host: 'test',
+      capabilities: { subagents: false, web: false }, briefs: [{ id: 'documents', scope: ['first.md'],
+        findings: 'Keep the note.', limitations: [], web: [], files: [{ location: 'first.md:1',
+          state: { kind: 'sha256', value: createHash('sha256').update('User note: retain exactly.\n').digest('hex') } }] }] }))
+    const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
+    const input = { action: 'evaluate', final: true, checks: [{ id: 'control', machine }],
+      installer, skill: join(root, 'skills/repo-audit/scripts/repo-audit.mjs'),
+      events: [{ type: 'item.completed', item: { type: 'file_read', path: '/home/test/.agents/skills/repo-audit/SKILL.md' } },
+        { type: 'item.completed', item: { type: 'command_execution',
+          command: 'sh -c \'cat /home/test/.agents/skills/repo-audit/references/intent-interview.md\'', exit_code: 0 } },
+        { type: 'item.completed', item: { type: 'command_execution',
+          command: 'cat /home/test/.agents/skills/repo-audit/references/architecture.md', exit_code: 1 } }] }
+    const inputPath = join(directory, 'assertions.json')
+    await writeFile(inputPath, JSON.stringify(input))
+    const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath],
+      { cwd: directory, encoding: 'utf8' })
+    assert.equal(result.status, 0, result.stderr)
+    assert.equal(JSON.parse(result.stdout)[0].passed, expected, result.stdout)
+  })
+}
+
+test('scenario fixture hashes bind selected source bytes and overlays without binding unrelated fixtures', async t => {
+  const directory = await temporary(t)
+  const { fixtureHash } = await import('../../scripts/lib/evaluation.mjs')
+  await cp(join(root, 'tests/fixtures'), directory, { recursive: true })
+  const idea = await fixtureHash('ambiguous-idea', directory)
+  const maintained = await fixtureHash('maintained-ts-shop', directory)
+  await writeFile(join(directory, 'maintained-ts-shop/overlay/DESIGN.md'), 'Changed overlay byte.\n')
+  assert.equal(await fixtureHash('ambiguous-idea', directory), idea)
+  assert.notEqual(await fixtureHash('maintained-ts-shop', directory), maintained)
+  await writeFile(join(directory, 'ambiguous-idea/brief.md'), 'Changed request fixture byte.\n')
+  assert.notEqual(await fixtureHash('ambiguous-idea', directory), idea)
+})
 
 for (const [scenario, mode] of [['research-main-typescript', 'require-no-subagents'],
   ['research-main-python', 'require-no-subagents'], ['ambiguous-idea', 'require-subagents']]) {

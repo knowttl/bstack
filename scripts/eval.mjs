@@ -2,7 +2,7 @@ import { mkdir, readFile, realpath, statfs, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { freemem, platform, release } from 'node:os'
-import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution, isApprovedBaseline } from './lib/evaluation.mjs'
+import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution, isApprovedBaseline, fixtureHash } from './lib/evaluation.mjs'
 import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
@@ -50,7 +50,7 @@ async function start(opts, results) {
   }
   const git = await child('git', ['rev-parse', 'HEAD'])
   const revision = git.stdout.trim()
-  const fixtureRevision = (await child('git', ['rev-parse', 'HEAD:tests/fixtures'])).stdout.trim()
+  const fixtureRevision = await fixtureHash(definition.fixture)
   let fixture
   if (opts.repo) {
     const path = await realpath(resolve(opts.repo))
@@ -160,6 +160,12 @@ async function score(opts, results) {
   })) }), answers)
   validateIds(answers.checks, '$/checks')
   if (answers.reviewer.trim().length < 3 || /^\d+$/.test(answers.reviewer.trim())) fail('Reviewer identities must contain at least three characters and cannot be purely numeric.')
+  for (const check of record.scenario.checks.filter(check => check.machine)) {
+    const result = record.machineResults?.find(result => result.id === check.id)
+    if (!record.adapter || !result || typeof result.passed !== 'boolean') fail(`Missing captured machine assertion: ${check.id}. Use an adapter run.`)
+    answers.checks = answers.checks.filter(answer => answer.id !== check.id)
+    answers.checks.push({ id: check.id, passed: result.passed, startLine: 1, endLine: 1 })
+  }
   if (answers.runId !== record.id || answers.checks.length !== record.scenario.checks.length ||
       record.scenario.checks.some(check => !answers.checks.some(answer => answer.id === check.id))) fail('Answers must name this run, a reviewer and every checklist ID exactly once.')
   const transcript = await readFile(resolve(opts.transcript), 'utf8')
@@ -185,7 +191,7 @@ async function score(opts, results) {
   record.answers = join(attempt, 'answers.json')
   const redaction = { ...record, caseResults: [{ reviewer: answers.reviewer }] }
   record.caseResults = record.scenario.checks.map(check => ({ ...check, ...answers.checks.find(answer => answer.id === check.id),
-    scoring: 'human', reviewer: '[redacted: user name]', transcript: record.transcript }))
+    scoring: check.machine ? 'machine' : 'human', reviewer: '[redacted: user name]', transcript: record.transcript }))
   const evidence = redactEvidence(transcript, redaction)
   await writeFile(join(directory, record.transcript), evidence, { flag: 'wx' })
   await writeFile(join(directory, record.answers), redactEvidence(JSON.stringify({ ...answers, reviewer: '[redacted: user name]' }, null, 2) + '\n', redaction), { flag: 'wx' })
