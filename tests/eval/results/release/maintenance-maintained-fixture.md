@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Maintenance on the generated maintained fixture
 
 AC-17 and the bounded AC-23 criterion pass in both modes: 2/2 against 2/2, with no lost checks in the [comparison](maintenance-comparison.json).
@@ -26,7 +28,7 @@ The missing installed reference remains explicit; after the scripted reply, the 
 The [original report](runs/2026-10-11T22-11-20.518Z-d8d27bd2-2d69-4ade-9a5c-1de1efb5f995/artifacts/final-report.json) binds source `3c2933e2b49b8e826bd43ae9d2ad3d0281ec7171`, assessment commit `c29dc1ef24c4a22f823c5c848b67ac43b761fa3c`, arithmetic protection, captures and limitations.
 The baseline already passes every criterion, so the design requires preservation rather than a gained criterion.
 
-The evaluator checked [sixteen with-skill citations](runs/2026-10-11T22-11-20.417Z-9968dbc5-6252-4ea3-8902-b974c22ea800/artifacts/independent-verification.json) and [nine baseline citations](runs/2026-10-11T22-11-20.518Z-d8d27bd2-2d69-4ade-9a5c-1de1efb5f995/artifacts/independent-verification.json) against actual base and current bytes.
+The evaluator checked sixteen with-skill citations (removed file: runs/2026-10-11T22-11-20.417Z-9968dbc5-6252-4ea3-8902-b974c22ea800/artifacts/independent-verification.json) and nine baseline citations (removed file: runs/2026-10-11T22-11-20.518Z-d8d27bd2-2d69-4ade-9a5c-1de1efb5f995/artifacts/independent-verification.json) against actual base and current bytes.
 Both records confirm byte-identical authorities, historical snapshot, contract and checker against the base and clone.
 Only the route and separately committed assessment change; both working trees are clean and clone heads equal submitted heads.
 Local and clean-clone checker results reach result-validation success with fresh native aggregate execution against the same source and explicit base.

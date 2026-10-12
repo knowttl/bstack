@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // External Docker boundary for CLI tests; real release captures use Docker.
-import { readFileSync, writeFileSync, rmSync } from 'node:fs'
+import { appendFileSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
@@ -37,12 +37,28 @@ else if (args[0] === 'create' || args[0] === 'run') {
   else execute(record)
 } else if (args[0] === 'inspect') {
   const record = JSON.parse(readFileSync(state(args[1]), 'utf8'))
-  if (record.command.includes('container-extra-mount')) record.Mounts.push({ Type: 'bind', Source: '/unapproved', Destination: '/unapproved', RW: true })
-  if (record.command.includes('container-wrong-cpus')) record.HostConfig.NanoCpus = 1_000_000_000
-  if (record.command.includes('container-wrong-memory')) record.HostConfig.Memory = 0
+  const adapter = JSON.parse(readFileSync(join(directory, 'adapter.json'), 'utf8'))
+  if (adapter.args.includes('container-extra-mount')) record.Mounts.push({ Type: 'bind', Source: '/unapproved', Destination: '/unapproved', RW: true })
+  if (adapter.args.includes('container-wrong-cpus')) record.HostConfig.NanoCpus = 1_000_000_000
+  if (adapter.args.includes('container-wrong-memory')) record.HostConfig.Memory = 0
   console.log(JSON.stringify([record]))
 }
-else if (args[0] === 'start') execute(JSON.parse(readFileSync(state(args.at(-1)), 'utf8')))
+else if (args[0] === 'start') {
+  const record = JSON.parse(readFileSync(state(args[1]), 'utf8'))
+  record.running = true
+  writeFileSync(state(args[1]), JSON.stringify(record))
+  console.log(args[1])
+} else if (args[0] === 'exec') {
+  const name = args[1]
+  const record = JSON.parse(readFileSync(state(name), 'utf8'))
+  if (!record.running) throw new Error('Container is not running')
+  record.command = args.slice(2)
+  let operation = 'other'
+  if (record.command.includes('--input-type=module')) operation = JSON.parse(readFileSync(record.command.at(-1), 'utf8')).action
+  else if (record.command.some(arg => arg.endsWith('/evaluation-host.mjs'))) operation = 'host'
+  appendFileSync(join(directory, 'docker-events.jsonl'), JSON.stringify({ operation, container: name }) + '\n')
+  execute(record)
+}
 else if (args[0] === 'rm') { rmSync(state(args.at(-1)), { force: true }); console.log(args.at(-1)) }
 else throw new Error('Unexpected Docker operation')
 

@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Complete installed existing-project path
 
 The [final comparison](final-existing-repo-record-approval-comparison.json) passes from baseline 0/6 to installed 6/6, with no lost baseline check.
@@ -23,7 +25,7 @@ The first contract retains explicitly selected foundation finding F-006; no prev
 The final clone uses a different root and isolated home/cache with fresh dependency installation.
 The [final findings validation](runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/scratch/final-findings-validate.json) reports ready for the stated next change with no unresolved reason.
 
-The [independent verification](runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json) confirms matching bytes for all 23 final tracked files in the actual final clone, clean working trees, both exact protected plans applied, absent per-turn login, unchanged core pricing/public quote/original units and the original total-10 assertion.
+The independent verification (removed file: runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json) confirms matching bytes for all 23 final tracked files in the actual final clone, clean working trees, both exact protected plans applied, absent per-turn login, unchanged core pricing/public quote/original units and the original total-10 assertion.
 Eight fresh controls each accept the valid fixture with exit zero and reject its seeded violation with exit one: private, alias, re-export, alternate-entry and cycle boundaries, aggregate private/cycle violations and the original checkout defect.
 It also verifies 531 retained artifact hashes against the [export manifest](runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/export-manifest.json).
 Source/assessment binding and all four fresh leaf results match in both final checker records.

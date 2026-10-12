@@ -181,7 +181,6 @@ export async function hostTurn(record, message) {
   const env = isolatedEnvironment(record.isolation)
   const template = record.sessionId ? record.adapter.invocation.resumeArgs : record.adapter.args
   const args = template.map(arg => arg === '{message}' ? scopeMessage(record, message) : arg === '{sessionId}' ? record.sessionId : arg)
-  let result
   const login = join(record.isolation.state, 'auth.json')
   try {
     if (record.adapter.isolation.authentication === 'throwaway-codex-login') {
@@ -189,23 +188,26 @@ export async function hostTurn(record, message) {
       await chmod(login, 0o600)
       record.authenticatedVia = 'throwaway copy'
     }
-    result = await containerTurn(record, args, env)
+    await containerTurn(record, args, env, async result => {
+      record.tools.agent = result.toolVersion.stdout.trim()
+      const turn = { message, result, sessionId: null }
+      record.turns.push(turn)
+      if (result.status !== 'passed' || result.outputTruncated) fail(`Host turn unavailable or incomplete (${result.error ?? result.exitCode}). Follow the manual procedure.`, 'blocked')
+      let events
+      try { events = result.stdout.trim().split(/\r?\n/).map(line => JSON.parse(line)) }
+      catch { fail('Host did not complete a turn in the expected conversation. Follow the manual procedure.') }
+      const sessions = events.filter(event => event.type === 'thread.started').map(event => event.thread_id)
+      if (sessions.length !== 1 || typeof sessions[0] !== 'string' || !sessions[0] ||
+          (record.sessionId && sessions[0] !== record.sessionId) || !events.some(event => event.type === 'turn.completed') ||
+          events.some(event => ['turn.failed', 'error'].includes(event.type))) fail('Host did not complete a turn in the expected conversation. Follow the manual procedure.')
+      await verifyIsolation(record.isolation, record.mode)
+      record.sessionId = sessions[0]
+      turn.sessionId = record.sessionId
+    })
   } finally {
     // The login copy exists only during a host turn, including its timeout cleanup.
     if (record.adapter.isolation.authentication === 'throwaway-codex-login') await rm(login, { force: true })
   }
-  record.tools.agent = result.toolVersion.stdout.trim()
-  const turn = { message, result, sessionId: null }
-  record.turns.push(turn)
-  if (result.status !== 'passed' || result.outputTruncated) fail(`Host turn unavailable or incomplete (${result.error ?? result.exitCode}). Follow the manual procedure.`, 'blocked')
-  const events = result.stdout.trim().split(/\r?\n/).map(line => JSON.parse(line))
-  const sessions = events.filter(event => event.type === 'thread.started').map(event => event.thread_id)
-  if (sessions.length !== 1 || typeof sessions[0] !== 'string' || !sessions[0] ||
-      (record.sessionId && sessions[0] !== record.sessionId) || !events.some(event => event.type === 'turn.completed') ||
-      events.some(event => ['turn.failed', 'error'].includes(event.type))) fail('Host did not complete a turn in the expected conversation. Follow the manual procedure.')
-  await verifyIsolation(record.isolation, record.mode)
-  record.sessionId = sessions[0]
-  turn.sessionId = record.sessionId
 }
 
 export async function closeHost(record, directory) {
