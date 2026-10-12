@@ -40,7 +40,7 @@
       "status": "passed"
     }
   ],
-  "sourceRevision": "a1417594d47be51b4e4fc83a79bbe919d7d747a4",
+  "sourceRevision": "67ed093828e99d62b08a0b654f6a2a80826fbf90",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
     "node": "v24.17.0",
@@ -79,11 +79,6 @@
           "sha256": "c6c3eb43d29f65a17bc030c8592cbbfe0edc753e497f145ac6b9b31f7886d0fe"
         },
         {
-          "path": "README.md",
-          "executable": false,
-          "sha256": "b772560c5b978d3d83a1d12a3d965a7cbdfde4cc284badfff0da723555e22cb8"
-        },
-        {
           "path": "docs/C24c-maintenance-transcript.md",
           "executable": false,
           "sha256": "d4def0cfd5666846cb526605f187d74859a663855a2faa802c801b4c4777421a"
@@ -102,11 +97,6 @@
           "path": "docs/design.md",
           "executable": false,
           "sha256": "92441484116e6cf17844fd1d5606ea4f45943050c9548d7e191d9ec6aeedbac2"
-        },
-        {
-          "path": "docs/evaluation.md",
-          "executable": false,
-          "sha256": "1267c5b828ace940669314133b929feecd899e2dc4f944a9eee455046fe3669b"
         },
         {
           "path": "docs/examples/README.md",
@@ -25484,7 +25474,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "4d2d1ec82b5d86a7f40b2fc9604909dfd9f5062911c0c4a9940bcdcc7dcabfa0"
+      "sha256": "8557bfcf445bb8b524b4f176241b86223e4f960231d5d88d1cc1a29658e1a01e"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -25535,7 +25525,34 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "README.md",
+        "before": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "b772560c5b978d3d83a1d12a3d965a7cbdfde4cc284badfff0da723555e22cb8"
+        },
+        "after": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "2aa192449453a559ecc25da78a2516194d59f69499660381fc8252aa696ea1fa"
+        }
+      },
+      {
+        "path": "docs/evaluation.md",
+        "before": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "1267c5b828ace940669314133b929feecd899e2dc4f944a9eee455046fe3669b"
+        },
+        "after": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "28ba1e0ee507f5b52f13ec531bd90d2aa8097561c40717d3583e729624785a90"
+        }
+      }
+    ],
     "counts": {
       "tests": 2768,
       "failed": 0,
@@ -25546,9 +25563,9 @@
       "topLevel": 2710,
       "suites": 0
     },
-    "durationMs": 610520.213172,
-    "outputSha256": "65995720beb3f3f05c2b15607322d4e6a989ddb52b124e7fc2c8c3ea26b3d19e",
-    "eventsSha256": "8e4f73625723c952f41a093a4acc3fe1f719d726387b9c545d49068a6239cae6",
+    "durationMs": 679741.38172,
+    "outputSha256": "a18fe4239c114de16295374627b57f7f0b1a93d6c71c6c226842f540a7899545",
+    "eventsSha256": "79936346aa8fef21c0150e3347a757db0b2b3ed41b51f05240806f659a00a363",
     "eventsArtifact": "tests/eval/results/tasks/evalr-pr10.events.jsonl"
   }
 }
