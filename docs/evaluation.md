@@ -34,7 +34,8 @@ The runner calls the existing fixture builder and prints the fixture path, reque
 For `--stage foundation` or `--stage final`, the opening request includes `Active checkpoint: <stage>.` after any explicit invocation and before the scenario request.
 The caller owns removal of the temporary fixture after the session.
 Use a fresh conversation and preserve the complete conversation, including user answers and any available file-open record, as a UTF-8 transcript.
-Deliver the scripted answers when the agent asks the corresponding questions.
+Deliver scripted answer i after turn i completes, in order, even when the agent did not ask the expected question.
+Preserve every delivered answer in the transcript and end the conversation after the final answer's turn completes.
 Do not treat a one-shot prompt as delivery of later answers.
 Ordinary with-skill requests require the host's explicit command through `--invocation`.
 Without-skill and implicit-invocation requests reject that option.
@@ -156,6 +157,7 @@ Failed host turns stop that run and close its isolated home; other batch jobs co
 Every attempt remains in the batch, including failed captures and failed checks.
 The batch ID, all run IDs and errors are saved beneath the results directory in `batches/<id>.json`.
 This private operational inventory also retains each run's fixture path in `fixtures`, so callers can preserve outputs and remove the disposable repositories after conversations close.
+The runner persists each run and fixture location before starting its isolated conversation, serializing concurrent inventory updates so interruption leaves a readable inventory.
 Do not publish the private inventory; public run evidence and ledger entries redact fixture locations.
 Machine check counts appear immediately in the command result, alongside pending semantic counts.
 The command remains blocked until every run has valid explicit scoring and verified cleanup.
