@@ -374,6 +374,33 @@ test('batch delivers two scenarios three times, closes every container and appen
       '--transcript', join(directory, record.id, record.conversation))
     assert.equal(scored.status, record.id === failedId ? 1 : 0, scored.stdout)
   }
+  const recordPath = join(directory, records[0].id, 'run.json')
+  const original = await readFile(recordPath, 'utf8')
+  for (const [name, mutate] of [
+    ['scenario request', record => { record.scenario.request += ' changed' }],
+    ['scripted answers', record => { record.scenario.answers.push('changed') }],
+    ['invocation mode', record => { record.scenario.invocation = 'implicit' }],
+    ['opening request', record => { record.request += ' changed' }],
+    ['staged skill', record => { record.isolation.skillHash = 'b'.repeat(64) }],
+    ['image', record => { record.execution.imageId = `sha256:${'b'.repeat(64)}` }],
+    ['recipe', record => { record.execution.recipeHash = 'b'.repeat(64) }],
+    ['toolchain', record => { record.execution.toolchain.node = 'v26.0.0' }],
+    ['adapter', record => { record.adapter.invocation.model = 'changed' }],
+    ['fixture', record => { record.fixture.revision = 'b'.repeat(64) }],
+    ['criteria', record => { record.criteriaHash = 'b'.repeat(64) }]
+  ]) {
+    await t.test(`batch rejects changed ${name}`, async () => {
+      const changed = JSON.parse(original)
+      mutate(changed)
+      await writeFile(recordPath, JSON.stringify(changed))
+      try {
+        const rejected = run(directory, 'batch', '--batch', batch.batch)
+        assert.equal(rejected.status, 2, rejected.stdout)
+        assert.match(rejected.stdout, /Batch runs no longer match/)
+        await assert.rejects(readFile(join(directory, 'ledger.jsonl')), { code: 'ENOENT' })
+      } finally { await writeFile(recordPath, original) }
+    })
+  }
   const finalized = run(directory, 'batch', '--batch', batch.batch)
   assert.equal(finalized.status, 0, finalized.stdout)
   assert.equal(finalized.data.data.appended, 4)
@@ -396,6 +423,43 @@ test('batch delivers two scenarios three times, closes every container and appen
   }
   assert.equal(run(directory, 'batch', '--batch', batch.batch).data.data.appended, 0)
   assert.equal(await readFile(join(directory, 'ledger.jsonl'), 'utf8'), ledger)
+})
+
+test('batch blocks uncommitted candidate bytes before opening a host', async t => {
+  const directory = await temporary(t)
+  const checkout = join(directory, 'checkout')
+  for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas', 'skills/repo-audit/SKILL.md',
+    'tests/fixtures', 'tests/eval/scenarios', 'tests/eval/container', 'tests/acceptance', 'node_modules/acorn']) {
+    await cp(join(root, path), join(checkout, path), { recursive: true })
+  }
+  execFileSync('git', ['init', '--initial-branch=main'], { cwd: checkout, stdio: 'ignore' })
+  execFileSync('git', ['add', 'skills/repo-audit'], { cwd: checkout, stdio: 'ignore' })
+  execFileSync('git', ['-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid',
+    '-c', 'commit.gpgsign=false', 'commit', '-m', 'Committed candidate'], { cwd: checkout, stdio: 'ignore' })
+  const { path } = await adapterFile(directory)
+  const args = ['--import', join(root, 'tests/inputs/evaluation-capacity.mjs'), join(checkout, 'scripts/eval.mjs'),
+    'batch', '--tier', 'smoke', '--scenario', 'ambiguous-idea', '--stage', 'baseline', '--mode', 'with',
+    '--adapter', path, '--repeat', '1', '--concurrency', '1', '--results', directory, '--json']
+  const clean = spawnSync(process.execPath, args, { encoding: 'utf8', env: testEnvironment(directory) })
+  const captured = JSON.parse(clean.stdout).data
+  assert.equal(captured.runIds.length, 1, clean.stdout)
+  const cleanRecord = JSON.parse(await readFile(join(directory, captured.runIds[0], 'run.json'), 'utf8'))
+  t.after(() => rm(cleanRecord.fixture.path, { recursive: true, force: true }))
+  assert.equal(cleanRecord.hostFailure, undefined, clean.stdout)
+  assert.equal(cleanRecord.turns.length, cleanRecord.scenario.answers.length + 1)
+  const skill = join(checkout, 'skills/repo-audit/SKILL.md')
+  await writeFile(skill, `${await readFile(skill, 'utf8')}\nChanged candidate bytes.\n`)
+  const rejected = spawnSync(process.execPath, args, { encoding: 'utf8', env: testEnvironment(directory) })
+  const blocked = JSON.parse(rejected.stdout).data
+  assert.equal(blocked.runIds.length, 1, rejected.stdout)
+  const record = JSON.parse(await readFile(join(directory, blocked.runIds[0], 'run.json'), 'utf8'))
+  t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+  assert.equal(record.sourceRevision, cleanRecord.sourceRevision)
+  assert.match(record.reason, /Staged skill does not match the committed batch candidate/)
+  assert.equal(record.hostFailure, true)
+  assert.deepEqual(record.turns, [])
+  assert.ok(record.isolation.cleanedAt)
+  await assert.rejects(readFile(join(directory, 'ledger.jsonl')), { code: 'ENOENT' })
 })
 
 test('batch closes failed replies, counts every attempt and leaves the ledger unpublished', async t => {

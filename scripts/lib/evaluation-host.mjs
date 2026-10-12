@@ -1,6 +1,6 @@
 import { chmod, copyFile, cp, mkdir, mkdtemp, readdir, readFile, realpath, rm } from 'node:fs/promises'
 import { constants } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, sep } from 'node:path'
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { root, text, object, array, readJSON, fail } from './evaluation.mjs'
@@ -115,6 +115,22 @@ async function snapshot(directory) {
     [path.slice(directory.length), hashBytes(await readFile(path))]))))
 }
 
+export function candidateSkillHash(revision) {
+  const prefix = 'skills/repo-audit'
+  const paths = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', revision, '--', prefix], { cwd: root, encoding: 'utf8' })
+    .split('\0').filter(path => path && !path.split('/').includes('node_modules'))
+  paths.sort((left, right) => {
+    const a = left.split('/'), b = right.split('/')
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+      const order = a[i].localeCompare(b[i])
+      if (order) return order
+    }
+    return a.length - b.length
+  })
+  return hashBytes(canonicalJSON(paths.map(path => [path.slice(prefix.length).replaceAll('/', sep),
+    hashBytes(execFileSync('git', ['show', `${revision}:${path}`], { cwd: root, maxBuffer: 16777216 }))])))
+}
+
 function isolatedEnvironment(isolation) {
   const inherited = Object.fromEntries(['PATH', 'SystemRoot', 'WINDIR', 'TEMP', 'TMP', 'TMPDIR', 'LANG', 'LC_ALL', 'TERM']
     .filter(name => process.env[name] !== undefined).map(name => [name, process.env[name]]))
@@ -124,7 +140,7 @@ function isolatedEnvironment(isolation) {
     TMPDIR: join(home, 'tmp'), TMP: join(home, 'tmp'), TEMP: join(home, 'tmp') }
 }
 
-export async function isolate(record) {
+export async function isolate(record, expectedSkillHash) {
   const { adapter, fixture, mode } = record
   const home = await realpath(await mkdtemp(join(tmpdir(), 'bstack-agent-')))
   await chmod(home, 0o700)
@@ -153,6 +169,7 @@ export async function isolate(record) {
       if (result.status !== 'passed' || result.outputTruncated) fail('Final evaluation requires a completed release installer run.')
     } else await cp(join(root, 'skills', 'repo-audit'), stagedPath, { recursive: true, dereference: true })
     isolation.skillHash = await snapshot(stagedPath)
+    if (expectedSkillHash && isolation.skillHash !== expectedSkillHash) fail('Staged skill does not match the committed batch candidate.')
   }
   await verifyIsolation(isolation, mode)
 }
