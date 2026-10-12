@@ -1,0 +1,6 @@
+{
+  "path": ".bstack/bin/bstack-check.mjs",
+  "sha256": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a",
+  "bytes": 134390,
+  "source": "installed scripts/bstack-check.mjs; complete generated bundle copied unchanged"
+}

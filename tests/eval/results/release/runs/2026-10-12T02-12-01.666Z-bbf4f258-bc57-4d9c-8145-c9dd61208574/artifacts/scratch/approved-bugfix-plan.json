@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "bug-fix",
+  "acceptanceSources": [
+    {
+      "id": "approved-public-cases",
+      "path": "unit.test.mjs",
+      "contentHash": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "approved-public-cases",
+      "pointer": "{ status: 201, total: 10 }",
+      "outcome": "Owner-approved total 10 (DESIGN.md:4 and supervisor verdict) is returned by the real HTTP checkout journey; unit mock alone is insufficient.",
+      "userJourney": true
+    },
+    {
+      "id": "quote",
+      "sourceId": "approved-public-cases",
+      "pointer": "assert.equal(quote(), 12)",
+      "outcome": "Owner-approved public quote stays 12.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "journey",
+      "role": "reproduction",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**",
+        "docs/repo-audit.md"
+      ]
+    },
+    {
+      "id": "unit",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "quote"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "journey.mjs"
+      ]
+    }
+  ]
+}
