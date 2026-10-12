@@ -402,6 +402,69 @@
       ]
     },
     {
+      "id": "selected-apply-verify",
+      "tier": "full",
+      "covers": [
+        "SKILL.md#scope",
+        "SKILL.md#load-when",
+        "SKILL.md#review-before-apply",
+        "SKILL.md#write-rules",
+        "SKILL.md#verification-rules",
+        "SKILL.md#step-10-review-and-apply-selected-findings",
+        "SKILL.md#step-11-verify-and-report-readiness",
+        "references/architecture.md",
+        "references/enforcement.md",
+        "references/maintenance-contract.md",
+        "scripts/bstack-check.mjs",
+        "schemas/",
+        "scripts/commands/",
+        "install/",
+        "agents/openai.yaml",
+        "package.json",
+        "package-lock.json"
+      ],
+      "fixture": "selected-ts-shop",
+      "request": "Continue the selected existing-repo apply-and-verify phase from selected-findings.md and approved-plan.md. The audit, findings selection and bounded plan approval are complete; do not repeat the interview or full audit. Read the relevant authoritative sources, preserve the uncommitted DESIGN.md user note exactly, reproduce the original checkout total-10 failure against the actual controlled local endpoint, and prepare the selected corrections and package-scoped native enforcement using protected writes. Preserve the original total-10 assertion and quote behaviour at 12. Present the complete exact dry-run diff, fingerprint and verification commands, then stop for approval. After exact approval, apply that unchanged plan, rerun the same live probe, prove the selected native rules with independent valid/violation controls, run the maintained aggregate and reassess relevant document impact against the final diff. Keep evidence and current readiness in scratch. Full-path installation, portable assessment and clean-clone maintenance are separate scenarios; do not expand this task to them.",
+      "answers": [
+        "I approve the exact protected apply dry-run diff, fingerprint and verification commands just presented for F-001 through F-004. Apply that unchanged plan, preserve the uncommitted user note and original total-10 assertion, rerun the same real local endpoint journey, capture independent native boundary controls and maintained package-scoped checks, reassess document impact and report actual readiness in scratch. This approval covers no further protected write."
+      ],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "impact-before-after",
+          "caseId": "AC-16",
+          "question": "Did the selected correction identify relevant glossary, design and standards sources before implementation and reassess them against the final diff with evidenced impact or no-impact reasons?"
+        },
+        {
+          "id": "acceptance-preserved",
+          "caseId": "AC-28",
+          "question": "Did the original total-10 checkout acceptance remain unchanged while the controlled endpoint defect was corrected, with quote behaviour retained at 12?"
+        },
+        {
+          "id": "live-probe-pair",
+          "caseId": "AC-30",
+          "question": "Did the actual local endpoint checkout probe fail before correction and the same public-interface probe pass afterwards?"
+        },
+        {
+          "id": "protected-path",
+          "caseId": "AC-54",
+          "question": "Did selected protected writes use the exact approved diff and fingerprint, preserve unrelated user work and complete actual user-visible verification?"
+        },
+        {
+          "id": "package-scopes",
+          "caseId": "AC-61",
+          "question": "Did independent valid/violation native boundary controls and the maintained aggregate respect separate core and web ownership and cover their selected public interfaces?"
+        },
+        {
+          "id": "checkout-journey",
+          "caseId": "AC-54",
+          "question": "Does the original total-10 checkout journey pass through its real interface?",
+          "machine": { "type": "command", "executable": "npm", "args": ["run", "journey"] }
+        }
+      ]
+    },
+    {
       "id": "new-idea",
       "tier": "full",
       "covers": [
