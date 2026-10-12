@@ -27,7 +27,9 @@
       "id": "final-maintained-maintenance",
       "fixture": "ts-shop",
       "request": "Perform bounded maintenance on this previously maintained ts-shop fixture, using references/maintenance-contract.md and its existing approved project sources and checks. Select HEAD as the explicit comparison base before a small internal pricing refactor that names an intermediate value while preserving public pricing and checkout behaviour. Protect the original behaviour before the refactor. Preserve both user notes and existing authoritative documents without cosmetic edits. Collect and review final change evidence, record a substantive no-impact explanation, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Do not repeat the goal interview or full repo audit, invoke inspect/inventory/research, change acceptance or start a delivery service. Report exact assessment, base/source, command captures and fresh clean-checkout checker artifact paths. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
-      "answers": [],
+      "answers": [
+        "I approve the complete exact bound no-impact assessment content and protected write plan you just presented for this internal refactor. Apply that unchanged record through the protected write procedure and commit the assessment separately. Then run the standalone checker freshly in the working checkout and a different-root clean clone with isolated home and cache, preserving existing policy coverage, approved sources, both user notes and original pricing and checkout outcomes. Keep subsequent evidence in scratch and stop before any further protected write requiring separate approval."
+      ],
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
@@ -262,7 +264,8 @@
     "fixture": "maintained-ts-shop",
     "request": "Perform bounded maintenance on this maintained ts-shop using references/maintenance-contract.md and the existing approved sources, .bstack/project.json and .bstack/bin/bstack-check.mjs. Select HEAD as the explicit comparison base before editing. Capture passing original public pricing and checkout protection, then refactor packages/web/routes.ts to name the intermediate undiscounted total without changing public pricing or checkout behaviour. Collect and review the final diff, record a substantive evidenced no-impact assessment without cosmetic document edits, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Report exact assessment, base/source, command captures and fresh checker artifact paths, separating any failed or unverified checks. Do not repeat the goal interview or full audit, change approved acceptance or start a delivery service. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
-        "The public pricing behaviour is unchanged. Use the existing acceptance sources and comparison base."
+        "The public pricing behaviour is unchanged. Use the existing acceptance sources and comparison base.",
+        "I approve the complete exact bound no-impact assessment content and protected write plan you just presented for this internal refactor. Apply that unchanged record through the protected write procedure and commit the assessment separately. Then run the standalone checker freshly in the working checkout and a different-root clean clone with isolated home and cache, preserving existing policy coverage, approved sources and original pricing and checkout outcomes. Keep subsequent evidence in scratch and stop before any further protected write requiring separate approval."
       ],
       "checkpoints": [
         "maintenance",

@@ -4,6 +4,7 @@ Record change evidence against the project's maintained contract.
 Routine maintenance uses the approved project sources and the current diff; it does not repeat the goal interview or the full repo audit.
 Resolve the target, authorised change, explicit comparison base, contract path and selected review or delivery process first.
 Read only affected sources and implementation, widening that scope when the evidence exposes a dependency or unresolved decision.
+Follow [Write rules](../SKILL.md#write-rules) for project edits, including change evidence records.
 
 ## Contents
 
@@ -96,7 +97,8 @@ Local scratch captures cover declared inputs and are not portable attestations.
 ## Validate a standalone checkout
 
 For portable review, commit implementation first, then collect with `--portable .bstack/assessment.json` and the explicit base.
-Copy the returned skeleton to that selected path, complete and review it, obtain and bind the fingerprint through `evidence validate`, and commit the assessment separately.
+Complete and review the returned skeleton in scratch, obtaining and binding the fingerprint through `evidence validate` in a scratch preview checkout when it requires the selected portable path.
+Follow [Write rules](../SKILL.md#write-rules) before applying the exact bound assessment to the selected project path, then commit the approved assessment separately.
 Portable records use `repo: "."` and retain the reviewed implementation commit in `head`; only the selected assessment may change afterwards.
 Pass one explicit record rather than guessing the newest evidence.
 
