@@ -10,6 +10,8 @@ The maintainer approved the release-evaluation redesign and selected `gpt-6-luna
    Verify the long paths and selected apply cannot enter the smoke tier, the bulk adapter is rejected before smoke resources start, and full-tier bulk opening and resumed turns complete with isolated cleanup.
 4. Run `npm run check` and the full `npm test` on committed inputs.
    Attach captured full-suite evidence with task ID `evalr-pr09`.
+5. Keep release-history tests independent of the worker checkout's parent commit.
+   Build a disposable compatible runner history and verify the gating-rate, first-release and capture-date cases through the public release command.
 
 ## Deferred follow-ups
 
