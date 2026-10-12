@@ -436,6 +436,8 @@ test('helper execution is distinct from opening bundled source and assets', asyn
     ['direct helper execution', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/project --json`, exit_code: 0 }, 'notOpened', true],
     ['helper asset argument', { type: 'command_execution', command: `node ${script} vision-board build --draft ${asset} --workspace /tmp/project --json`, exit_code: 0 }, 'notOpened', true],
     ['quoted shell helper execution', { type: 'command_execution', command: `bash -lc 'node "${script}" inspect --repo /tmp/project --json'`, exit_code: 0 }, 'notOpened', true],
+    ['compound shell helper output read', { type: 'command_execution', command: `bash -lc 'node ${script} inventory --repo /tmp/project > result.json; cat result.json'`, exit_code: 0 }, 'notOpened', true],
+    ['compound shell helper source read', { type: 'command_execution', command: `bash -lc 'node ${script} inventory --repo /tmp/project; cat ${script}'`, exit_code: 0 }, 'notOpened', false],
     ['failed helper execution', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/missing --json`, exit_code: 2 }, 'notOpened', true],
     ['helper followed by source read', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/project --json && cat ${script}`, exit_code: 0 }, 'notOpened', false],
     ['failed source read command', { type: 'command_execution', command: `cat ${script} && test -f missing`, exit_code: 1 }, 'notOpened', false],
@@ -457,10 +459,66 @@ test('helper execution is distinct from opening bundled source and assets', asyn
   }
 })
 
+test('quoted compound shell access is scored in both directions', async t => {
+  const directory = await temporary(t)
+  const path = '/home/test/.agents/skills/repo-audit/SKILL.md'
+  const spacedPath = '/home/test owner/.agents/skills/repo-audit/SKILL.md'
+  const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
+  for (const [name, command, exitCode, opened] of [
+    ['single-quoted payload', `bash -lc 'pwd; cat ${path}'`, 0, true],
+    ['double-quoted payload', `bash -lc "pwd; cat '${spacedPath}'"`, 0, true],
+    ['nested shells', `bash -lc 'sh -c "pwd; cat ${path}"'`, 0, true],
+    ['pipeline', `sh -c 'pwd; cat ${path} | head -n 1'`, 0, true],
+    ['failed compound command', `bash -lc 'pwd; cat ${path} && test -f missing'`, 1, false],
+    ['escaped space', 'cat /home/test\\ owner/.agents/skills/repo-audit/SKILL.md', 0, true]
+  ]) {
+    await t.test(name, async () => {
+      const inputPath = join(directory, 'assertions.json')
+      await writeFile(inputPath, JSON.stringify({ action: 'evaluate', checks: [
+        { id: 'opened', machine: { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] } },
+        { id: 'notOpened', machine: { type: 'notOpened', patterns: ['**/repo-audit/SKILL.md'] } }
+      ], events: [{ type: 'item.completed', item: { type: 'command_execution', command, exit_code: exitCode } }] }))
+      const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
+      assert.equal(result.status, 0, result.stderr)
+      assert.deepEqual(JSON.parse(result.stdout), [{ id: 'opened', passed: opened }, { id: 'notOpened', passed: false }])
+    })
+  }
+})
+
+test('file-tool access requires success for opened and retains attempts for notOpened', async t => {
+  const directory = await temporary(t)
+  const path = '/home/test/.agents/skills/repo-audit/SKILL.md'
+  const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
+  for (const [name, item, opened] of [
+    ['successful file_read', { type: 'file_read', path, status: 'completed' }, true],
+    ['failed file_read', { type: 'file_read', path, status: 'failed' }, false],
+    ['successful tool_call', { type: 'tool_call', name: 'open_file', arguments: { path }, status: 'completed' }, true],
+    ['failed tool_call', { type: 'tool_call', name: 'open_file', arguments: { path }, status: 'failed' }, false],
+    ['successful mcp_tool_call', { type: 'mcp_tool_call', tool: 'read_file', input: { file_path: path }, status: 'completed' }, true],
+    ['failed mcp_tool_call', { type: 'mcp_tool_call', tool: 'read_file', input: { file_path: path }, status: 'failed', error: { message: 'unavailable' } }, false],
+    ['error despite completed status', { type: 'file_read', path, status: 'completed', error: { message: 'unavailable' } }, false],
+    ['error-marked result', { type: 'mcp_tool_call', tool: 'read_file', arguments: JSON.stringify({ file_path: path }), result: { isError: true } }, false],
+    ['error-marked output', { type: 'tool_call', name: 'read_file', input: JSON.stringify({ path }), output: { isError: true } }, false],
+    ['result error', { type: 'tool_call', name: 'read_file', arguments: { path }, result: { error: { message: 'unavailable' } } }, false],
+    ['failed result status', { type: 'mcp_tool_call', tool: 'read_file', arguments: { path }, result: { status: 'failed' } }, false]
+  ]) {
+    await t.test(name, async () => {
+      const inputPath = join(directory, 'assertions.json')
+      await writeFile(inputPath, JSON.stringify({ action: 'evaluate', checks: [
+        { id: 'opened', machine: { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] } },
+        { id: 'notOpened', machine: { type: 'notOpened', patterns: ['**/repo-audit/SKILL.md'] } }
+      ], events: [{ type: 'item.completed', item }] }))
+      const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
+      assert.equal(result.status, 0, result.stderr)
+      assert.deepEqual(JSON.parse(result.stdout), [{ id: 'opened', passed: opened }, { id: 'notOpened', passed: false }])
+    })
+  }
+})
+
 test('scenario fixture hashes bind selected source bytes and overlays without binding unrelated fixtures', async t => {
   const directory = await temporary(t)
   for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
-    'tests/fixtures', 'tests/eval/scenarios', 'tests/acceptance']) {
+    'tests/fixtures', 'tests/eval/scenarios', 'tests/acceptance', 'node_modules/acorn']) {
     await cp(join(root, path), join(directory, path), { recursive: true })
   }
   execFileSync('git', ['init', '--initial-branch=main'], { cwd: directory, stdio: 'ignore' })
@@ -478,6 +536,19 @@ test('scenario fixture hashes bind selected source bytes and overlays without bi
   }
   const idea = revision('ambiguous-idea')
   const maintained = revision('maintenance')
+  const delta = revision('existing-vision-delta')
+  const scenariosPath = join(directory, 'tests/eval/scenarios/scenarios.json')
+  const scenarios = JSON.parse(await readFile(scenariosPath, 'utf8'))
+  scenarios.scenarios.find(scenario => scenario.id === 'existing-repo').fixture = 'ts-rule-proof'
+  await writeFile(scenariosPath, JSON.stringify(scenarios))
+  const imported = revision('existing-repo')
+  const sourceSanity = join(directory, 'tests/fixtures/ts-shop/sanity.mjs')
+  await writeFile(sourceSanity, `${await readFile(sourceSanity, 'utf8')}\n`)
+  assert.equal(revision('maintenance'), maintained)
+  assert.notEqual(revision('existing-repo'), imported)
+  const unusedSanity = join(directory, 'tests/fixtures/clear-goals/sanity.mjs')
+  await writeFile(unusedSanity, `${await readFile(unusedSanity, 'utf8')}\n`)
+  assert.equal(revision('existing-vision-delta'), delta)
   const overlay = join(directory, 'tests/fixtures/maintained-ts-shop/overlay/DESIGN.md')
   await writeFile(overlay, `${await readFile(overlay, 'utf8')}\n`)
   assert.equal(revision('ambiguous-idea'), idea)

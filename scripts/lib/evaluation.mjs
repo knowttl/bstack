@@ -2,6 +2,7 @@ import { readFile, readdir, stat } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { parse } from 'acorn'
 import { validateData, validateIds } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { CommandError } from '../../skills/repo-audit/scripts/lib/result.mjs'
 import { canonicalJSON, hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
@@ -49,7 +50,11 @@ export async function fixtureHash(name) {
   for (const file of fixture.files) await collect(join(directory, source, file), `${source}/${file}`)
   if (fixture.overlay) await collect(join(directory, name, fixture.overlay), `${name}/${fixture.overlay}`)
   await collect(join(directory, name, 'sanity.mjs'), `${name}/sanity.mjs`)
-  if (source !== name) await collect(join(directory, source, 'sanity.mjs'), `${source}/sanity.mjs`)
+  if (source !== name && parse(await readFile(join(directory, name, 'sanity.mjs'), 'utf8'),
+    { ecmaVersion: 'latest', sourceType: 'module' }).body.some(node => node.type === 'ImportDeclaration' &&
+      resolve(directory, name, node.source.value) === join(directory, source, 'sanity.mjs'))) {
+    await collect(join(directory, source, 'sanity.mjs'), `${source}/sanity.mjs`)
+  }
   await collect(join(directory, 'build.mjs'), 'build.mjs')
   return hashBytes(canonicalJSON({ fixture, inputs }))
 }

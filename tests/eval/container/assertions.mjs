@@ -38,15 +38,42 @@ function overlaps(left, right) {
     (wildcard(left[0]) && wildcard(right[0]))) && overlaps(left.slice(1), right.slice(1))
 }
 
+function* shellCommands(source) {
+  let command = [], word = '', quote = null, started = false
+  function finishWord() {
+    if (started) command.push(word)
+    word = ''
+    started = false
+  }
+  for (let index = 0; index < source.length; index++) {
+    const character = source[index]
+    if (character === '\\' && quote !== "'" && index + 1 < source.length &&
+        (!quote || /["\\$`\n]/.test(source[index + 1]))) {
+      word += source[++index]
+      started = true
+    } else if (quote) {
+      if (character === quote) quote = null
+      else word += character
+    } else if (character === '"' || character === "'") {
+      quote = character
+      started = true
+    } else if (/[;&|\n]/.test(character)) {
+      finishWord()
+      if (command.length) yield command
+      command = []
+    } else if (/\s/.test(character)) finishWord()
+    else { word += character; started = true }
+  }
+  finishWord()
+  if (command.length) yield command
+}
+
 function opened(machine) {
   const paths = []
   let observed = false
-  function tokens(source) {
-    return [...source.matchAll(/"([^"]+)"|'([^']+)'|([^\s]+)/g)].map(match => match[1] ?? match[2] ?? match[3])
-  }
-  function helperExecution(source) {
-    const [executable, script] = tokens(source).map(token => token.replaceAll('\\', '/'))
-    return !/\$\(|`|</.test(source) && /(?:^|\/)node(?:\.exe)?$/.test(executable ?? '') && /(?:^|\/)scripts\/repo-audit\.mjs$/.test(script ?? '')
+  function helperExecution(command) {
+    const [executable, script] = command.map(token => token.replaceAll('\\', '/'))
+    return !/\$\(|`|</.test(command.join(' ')) && /(?:^|\/)node(?:\.exe)?$/.test(executable ?? '') && /(?:^|\/)scripts\/repo-audit\.mjs$/.test(script ?? '')
   }
   for (const event of input.events) {
     if (event.type !== 'item.completed') continue
@@ -55,11 +82,17 @@ function opened(machine) {
       observed = true
       if (machine.type === 'opened' && item.exit_code !== 0) continue
       function commands(source) {
-        for (const command of source.split(/(?:&&|\|\||[;|\n])/)) {
+        for (const command of shellCommands(source)) {
+          if (/(?:^|\/)(?:bash|sh|zsh)$/.test(command[0])) {
+            const option = command.findIndex(token => /^-[a-z]*c[a-z]*$/.test(token))
+            if (option !== -1 && command[option + 1] !== undefined) {
+              commands(command[option + 1])
+              continue
+            }
+          }
           if (helperExecution(command)) continue
-          if (machine.type === 'opened' && !/(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)(?:\s|$)/.test(command)) continue
-          for (const token of tokens(command)) {
-            if (helperExecution(token)) continue
+          if (machine.type === 'opened' && !/(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)(?:\s|$)/.test(command.join(' '))) continue
+          for (const token of command) {
             paths.push(token)
             if (/\s/.test(token) && (machine.type === 'notOpened' || /(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)\s/.test(token))) commands(token)
           }
@@ -71,6 +104,8 @@ function opened(machine) {
       if (typeof args === 'string') { try { args = JSON.parse(args) } catch { continue } }
       if (item.type === 'file_read' || /read_file|open_file/.test(item.name ?? item.tool ?? '')) {
         observed = true
+        if (machine.type === 'opened' && [item, item.result, item.output].some(result =>
+          result?.error || result?.isError || (result?.status && !['completed', 'success', 'succeeded', 'passed'].includes(result.status)))) continue
         if (typeof (item.path ?? args.path ?? args.file_path) === 'string') paths.push(item.path ?? args.path ?? args.file_path)
       }
     }
