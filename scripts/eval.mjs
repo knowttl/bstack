@@ -205,8 +205,7 @@ async function compare(opts, results) {
   for (const record of [before, after]) validateScore(record, { runId: record.id, checks: record.caseResults },
     await readFile(join(results, record.id, record.transcript), 'utf8'))
   if (before.adapterHash !== after.adapterHash) fail('Comparison requires the same host adapter and execution settings.')
-  if (before.adapter && (!verifiedExecution(before) || !verifiedExecution(after) ||
-      before.scopeGuard.version !== after.scopeGuard.version)) fail('Comparison requires the same verified filesystem scope contract.')
+  if (before.adapter && (!verifiedExecution(before) || !verifiedExecution(after))) fail('Comparison requires the same verified filesystem scope contract.')
   if (before.execution && after.execution && ['imageId', 'recipeHash', 'toolchain'].some(key => canonicalJSON(before.execution[key]) !== canonicalJSON(after.execution[key]))) fail('Comparison requires the same container image, recipe and toolchain.')
   if (before.mode !== 'without' || after.mode !== 'with' || ['agent', 'model', 'criteriaHash', 'stage'].some(key => before[key] !== after[key]) ||
       before.scenario.id !== after.scenario.id || ['name', 'revision'].some(key => before.fixture[key] !== after.fixture[key]) ||

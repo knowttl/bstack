@@ -23,7 +23,7 @@ export async function readJSON(path) { return JSON.parse(await readFile(path, 'u
 
 export function verifiedExecution(record) {
   const execution = record.execution
-  if (!execution) return record.scopeGuard?.verified === true
+  if (!execution) return false
   const mounts = [record.fixture.path, record.isolation.home].map(path => ({ Type: 'bind', Source: path, Destination: path, RW: true }))
   return execution.method === 'docker' && /^sha256:[a-f0-9]{64}$/.test(execution.imageId) &&
     /^[a-f0-9]{64}$/.test(execution.recipeHash) && execution.turns?.length === record.turns?.length && execution.turns.length > 0 &&
