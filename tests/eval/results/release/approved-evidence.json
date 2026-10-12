@@ -4,6 +4,9 @@
   "release": "v0.1.0",
   "scope": "Owner-approved release of retained evidence with explicit v0.1.1 known issues.",
   "completeAcceptanceClaimed": false,
+  "fullReleaseValidationRerun": false,
+  "publicationGateRun": false,
+  "validationWaiver": "Owner decision 2026-10-12: stop all further test and evaluation runs and publish the committed evidence directly, preserving incomplete qualification as v0.1.1 known issues.",
   "passedCurrentAgentCases": 38,
   "totalDesignCases": 75,
   "selectedComparisons": [

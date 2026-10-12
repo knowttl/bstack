@@ -1,6 +1,7 @@
 # Approved v0.1.0 evidence inventory
 
 The owner approved release of the retained evidence on 2026-10-12, with all incomplete qualification recorded for v0.1.1.
+Full release validation was not re-run; the owner waived further tests, evaluation and the publication gate and approved direct publication of this evidence.
 This inventory records 38 passing current agent or independent-extension cases and 37 known issues; it does not claim complete 75-case acceptance.
 Named automated procedure executions are retained as diagnostic evidence without converting incomplete final qualification into a passing case.
 
