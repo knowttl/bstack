@@ -200,7 +200,8 @@ test('gating set requires eighty percent over the latest ten runs', async t => {
   f.measure(3, 0)
   assert.equal((await f.run('0.1.1')).status, 0)
   const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
-  f.rows.push({ ...current, candidate: 'c'.repeat(40), runIds: current.runIds.map(id => `${id}-history`) })
+  const ancestor = git(root, 'rev-parse', 'HEAD^')
+  f.rows.push({ ...current, candidate: ancestor, runIds: current.runIds.map(id => `${id}-history`) })
   f.measure(4, 0)
   for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === candidate)) {
     row.runIds = row.runIds.map(id => `${id}-next`)
@@ -209,7 +210,7 @@ test('gating set requires eighty percent over the latest ten runs', async t => {
   const second = await f.run('0.1.2')
   assert.equal(second.status, 0, second.stdout)
   assert.ok(!second.data.data.gatingSet.includes('ambiguous-idea/decision'))
-  f.rows.push({ ...current, candidate: 'd'.repeat(40), runIds: current.runIds.map(id => `${id}-history`) })
+  f.rows.push({ ...current, candidate: ancestor, runIds: current.runIds.map(id => `${id}-history`) })
   f.measure(4, 0)
   for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === candidate)) {
     row.runIds = row.runIds.map(id => `${id}-next`)
@@ -236,7 +237,7 @@ test('gating history includes compatible ledger measurements between releases', 
   const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
   f.measure(4, 0)
   current.runIds = current.runIds.map(id => `${id}-current`)
-  f.rows.splice(f.rows.indexOf(current), 0, { ...current, candidate: 'c'.repeat(40), passes: 3,
+  f.rows.splice(f.rows.indexOf(current), 0, { ...current, candidate: git(root, 'rev-parse', 'HEAD^'), passes: 3,
     runIds: current.runIds.map(id => `${id}-intermediate`) })
   const result = await f.run('0.1.2')
   assert.equal(result.status, 0, result.stdout)
@@ -247,7 +248,8 @@ for (const [name, path, expected] of [
   ['unaffected ancestor measurements', 'note.txt', 0],
   ['changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2],
   ['changed scenario requests need measurement', 'tests/eval/scenarios/scenarios.json', 2],
-  ['changed fixture bytes need measurement', 'tests/fixtures/build.mjs', 2]
+  ['changed fixture bytes need measurement', 'tests/fixtures/build.mjs', 2],
+  ['changed scope prefix needs measurement', 'scripts/lib/evaluation-scope.mjs', 2]
 ]) {
   test(`release gate carryover: ${name}`, async t => {
     const { repo } = await emptyRepo(t)
@@ -264,6 +266,8 @@ for (const [name, path, expected] of [
       const data = JSON.parse(await readFile(join(repo, path), 'utf8'))
       for (const item of data.scenarios) item.request += '\nChanged candidate input.'
       await writeFile(join(repo, path), JSON.stringify(data))
+    } else if (path.endsWith('evaluation-scope.mjs')) {
+      await writeFile(join(repo, path), (await readFile(join(repo, path), 'utf8')).replace('Evaluation filesystem scope:', 'Changed filesystem scope:'))
     } else await writeFile(join(repo, path), 'Changed candidate input.\n')
     git(repo, 'add', path)
     git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Candidate')
@@ -276,6 +280,44 @@ for (const [name, path, expected] of [
       assert.equal(result.data.data.carryover.length, 10)
       assert.ok(result.data.data.carryover.every(row => row.candidate === ancestor))
     } else assert.equal(new Set(result.data.data.pending.map(row => row.scenario)).size, 10)
+    if (path.endsWith('evaluation-scope.mjs')) {
+      const obsolete = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
+      for (const row of f.rows.filter(row => row.mode === 'with')) {
+        row.candidate = f.report.candidate
+        row.runIds = row.runIds.map(id => `${id}-fresh`)
+      }
+      const missingBaseline = await f.run()
+      assert.equal(missingBaseline.status, 2, missingBaseline.stdout)
+      assert.ok(missingBaseline.data.data.pending.every(row => row.reason === 'Missing comparable five-run baseline.'))
+      for (const row of f.rows.filter(row => row.mode === 'without')) {
+        row.candidate = f.report.candidate
+        row.runIds = row.runIds.map(id => `${id}-fresh`)
+      }
+      f.measure(4, 0)
+      f.rows.push({ ...obsolete, candidate: ancestor, passes: 3, runIds: obsolete.runIds.map(id => `${id}-old-history`) },
+        { ...obsolete, candidate: ancestor, tier: 'full', passes: 0, runIds: obsolete.runIds.map(id => `${id}-old-full`) })
+      const fresh = await f.run()
+      assert.equal(fresh.status, 0, fresh.stdout)
+      assert.ok(fresh.data.data.gatingSet.includes('ambiguous-idea/decision'))
+      assert.ok(!fresh.data.data.knownIssues.some(row => row.reason === 'non-blocking full tier'))
+    }
+  })
+}
+
+for (const [name, changes] of [
+  ['removed scenario', { scenario: 'removed-scenario' }],
+  ['renamed scenario', { scenario: 'previous-scenario-name' }],
+  ['removed check', { check: 'removed-check' }],
+  ['renamed check', { check: 'previous-check-name' }],
+  ['remapped case', { caseId: 'previous-case-id' }]
+]) {
+  test(`release gate ignores superseded history for a ${name}`, async t => {
+    const f = await fixture(t)
+    const old = f.rows.filter(row => row.scenario === 'ambiguous-idea')
+    f.rows.push(...old.flatMap(row => ['smoke', 'full'].map(tier => ({ ...row, ...changes, tier }))))
+    const result = await f.run()
+    assert.equal(result.status, 0, result.stdout)
+    assert.equal(result.data.data.checks.find(row => row.scenario === 'ambiguous-idea').runs, 5)
   })
 }
 
@@ -307,9 +349,10 @@ test('reliability history uses capture dates when an older batch is finalized la
   f.measure(4, 0)
   const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
   current.date = '2026-10-12T03:00:00Z'
-  f.rows.push({ ...current, candidate: 'c'.repeat(40), date: '2026-10-12T02:00:00Z',
+  const ancestor = git(root, 'rev-parse', 'HEAD^')
+  f.rows.push({ ...current, candidate: ancestor, date: '2026-10-12T02:00:00Z',
     runIds: current.runIds.map(id => `${id}-recent`) })
-  f.rows.push({ ...current, candidate: 'b'.repeat(40), passes: 3, date: '2026-10-12T01:00:00Z',
+  f.rows.push({ ...current, candidate: ancestor, passes: 3, date: '2026-10-12T01:00:00Z',
     runIds: current.runIds.map(id => `${id}-older`) })
   const result = await f.run()
   assert.equal(result.status, 0, result.stdout)
