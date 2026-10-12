@@ -193,6 +193,53 @@ test('human scoring preserves the cited companion run for calibration', async t 
   assert.equal(saved.checks[0].companionRunId, companion.id)
 })
 
+for (const [artifact, fields, batchInventory] of [
+  ['run.json', {}, false],
+  ['score-correction.json', { transcript: 'conversation.txt' }, false],
+  ['answers.json', { transcript: 'conversation.txt', answers: 'answers.json' }, false],
+  ['batch.json', { sourceRevision: 'other-source' }, true]
+]) {
+  for (const [state, bytes] of [['empty', ''], ['truncated', '{"schemaVersion":1,']]) {
+    for (const passing of [true, false]) {
+      test(`judge comparison skips ${state} historical ${artifact} with ${passing ? 'a passing fallback' : 'no passing fallback'}`, async t => {
+        const directory = await temporary(t)
+        const capture = join(directory, 'capture')
+        await mkdir(capture)
+        const config = await judgeConfig(directory, 'capture', capture)
+        const record = await comparisonRun(directory, 1, { batchId: batchInventory ? undefined : 'fixture-batch' })
+        const broken = await comparisonRun(directory, 2, { scenario: { id: 'existing-repo', checks: [] }, ...fields })
+        const companion = await comparisonRun(directory, 3, { scenario: { id: 'existing-repo', checks: [] },
+          batchId: batchInventory ? undefined : 'fixture-batch', repeatIndex: 0, status: passing ? 'passed' : 'failed' })
+        const artifactPath = batchInventory ? join(directory, 'batches', '0-incomplete.json') : join(directory, broken.id, artifact)
+        if (batchInventory) {
+          await mkdir(join(directory, 'batches'))
+          await writeFile(join(directory, 'batches/valid.json'), JSON.stringify({ id: 'fixture-batch', runIds: [record.id, companion.id] }))
+        }
+        if (artifact === 'answers.json') await writeFile(join(directory, broken.id, 'score-correction.json'), JSON.stringify({
+          schemaVersion: 1, runId: broken.id, correctedAt: '2026-10-12T00:00:00.000Z', corrector: 'Fixture corrector',
+          reason: 'Interrupted historical score.', originalAnswers: 'answers.json', originalAnswersSha256: 'unused',
+          conversationSha256: 'unused', evidence: { startLine: 1, endLine: 2 },
+          checks: [{ id: 'project-fit', passed: true, startLine: 1, endLine: 2 }] }))
+        await writeFile(artifactPath, bytes)
+        const before = await readFile(join(directory, record.id, 'run.json'), 'utf8')
+        const result = command('eval.mjs', ['judge', '--run', record.id, '--judge', config,
+          '--transcript', join(directory, record.id, record.conversation), '--results', directory])
+        assert.equal(result.status, passing ? 0 : 2, result.stdout)
+        assert.equal(await readFile(artifactPath, 'utf8'), bytes)
+        assert.equal(await readFile(join(directory, record.id, 'run.json'), 'utf8'), before)
+        if (passing) {
+          const input = JSON.parse(await readFile(join(capture, `${record.id}.json`)))
+          assert.equal(input.companions[0].runId, companion.id)
+        } else {
+          assert.deepEqual(result.body.data.pending, [{ checkId: 'project-fit', scenario: 'existing-repo' }])
+          assert.deepEqual(await readdir(capture), [])
+          await assert.rejects(readFile(join(directory, record.id, 'judge/answers.json')), { code: 'ENOENT' })
+        }
+      })
+    }
+  }
+}
+
 async function manual(t, directory) {
   const result = command('eval.mjs', ['--manual', '--scenario', 'ambiguous-idea', '--mode', 'without',
     '--stage', 'baseline', '--agent', 'fixture-host', '--model', 'fixture-subject', '--results', directory])
