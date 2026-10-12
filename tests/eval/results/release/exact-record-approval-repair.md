@@ -19,3 +19,8 @@ Before the ordered reply could execute, the host preflight at 2026-10-12T01:03:2
 The harness recorded hostFailure and removed the isolated home; no second model turn or new implementation ran.
 This is incomplete execution evidence, not an acceptance pass or a scored behavioral failure.
 The retained [run record](runs/2026-10-12T00-59-31.307Z-ec6a8985-f4cd-441c-a587-ac46d65b2956/run.json) contains the denied resource measurement and cleanup timestamp.
+The commissioning ruling at 2026-10-12T01:12:54Z approved one fresh opening as recovery of this preflight-refused next-turn start, which never reached the model.
+The original opening remains retained; the recovery changes no criterion or resource threshold and is not a behavioral retry.
+An independent host preflight at 2026-10-12T01:13:19.193Z passed with load 14.73, 13,384,921,088 available memory bytes, 23,298,990,080 free disk bytes and one existing Node suite.
+The existing-project capture is retained while this one recovery runs.
+A second refused start after resource recovery must be reported as blocked with its actual load readings.
