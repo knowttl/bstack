@@ -13,8 +13,9 @@ Variants reuse source files through `source`, inject independent `seed` files be
 `base` inherits a registry entry's files and settings; an `overlay` directory supplies only the changed or generated files before history is committed.
 `maintained-ts-shop` inherits `ts-shop`, then overlays the completed existing-project setup, including its generated contract and current standalone checker.
 Its native protections pass before the maintenance scenario selects the initial commit as its explicit comparison base.
+It preserves the committed receipt note and appends an uncommitted export note to `DESIGN.md` after history is built.
 History steps may write or remove files before committing.
-`dirty` and `remove` apply after the final commit, and `shallow` builds a real depth-one clone.
+`dirty` writes files, `dirtyAppend` appends to files and `remove` deletes files after the final commit; `shallow` builds a real depth-one clone.
 Repo construction uses a fixed main branch, SHA-1 objects, empty templates, fixture-local identity, disabled signing and unchanged file bytes.
 It ignores global and system Git configuration while building, and never writes to either.
 Fixed author and committer dates make equivalent builds produce the same Git history.

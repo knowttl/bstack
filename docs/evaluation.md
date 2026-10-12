@@ -98,7 +98,7 @@ The default bridge permits outbound model API traffic without exposing the host 
 The runner inspects the created container before starting the agent and binds its immutable image ID, recipe hash, mounts and execution settings into `execution` in the run record.
 It removes the exact named container after each turn, including client timeout or failure.
 Fixture preparation and version queries execute in the subject container under its `--cpus 2 --memory 4g` limits.
-Before creating an adapter run's fixture or containers, the runner checks once for at least 20 GB free disk at the repository root and 24 GiB available memory, the budget for six concurrent containers.
+Before creating a standalone adapter run's fixture or containers, the runner checks once for at least 20 GB free disk at the repository root and 24 GiB available memory, the budget for six concurrent containers.
 The check uses Linux `MemAvailable` or `os.freemem()` on other platforms; it verifies capacity without reserving resources or coordinating concurrent starts.
 Insufficient capacity blocks startup; start the run again when capacity is available.
 Resumed turns do not repeat the host capacity check.
@@ -148,7 +148,7 @@ This explicit smoke set precedes scenario-owned tier metadata and the release ga
 `--mode` and `--adapter` are required; `--repeat` defaults to 5 and must be a positive integer.
 Each scenario's `fixture` declares its starting state; an optional `mode` constraint overrides the requested mode for that scenario.
 `--concurrency` defaults to 6 and must be between 1 and 6, matching the container resource budget.
-The runner checks free disk and available memory once before creating batch resources, requiring 20 GB disk and 4 GiB memory per concurrency slot.
+The runner checks free disk and available memory once before creating batch resources, requiring 20 GB free disk in total and 4 GiB available memory per concurrency slot.
 `--stage` defaults to each scenario's last checkpoint, including discovery for research scenarios, and an explicit checkpoint must be supported by every selected scenario.
 The batch records one candidate commit and rejects aggregation across changed candidate, fixture, criteria, adapter, model or checkpoint inputs.
 
@@ -197,7 +197,7 @@ Installer failure blocks the run before any agent turn.
 Final requests explicitly name the active final checkpoint.
 `final-new-project` and `final-existing-repo` cover the complete new-project and existing-repo paths respectively.
 Re-audit, extension and maintenance use separate fresh conversations on the resulting maintained fixture.
-Their declared `maintained-ts-shop` fixture builds the existing maintained overlay afresh per run, with approved guidance, passing native checks, the receipt note and an uncommitted export note.
+Their declared `maintained-ts-shop` starting state follows the [fixture construction contract](fixtures.md), built afresh per run.
 The original intent and foundation scenarios retain their narrower approval scripts and are not full-path evidence.
 Final adapter follow-ups can pass `--repo <disposable-maintained-root>` to reuse an explicit fixture rather than rebuild its original defects.
 The record retains its starting commit and working-tree state, and the caller owns preservation and cleanup.
