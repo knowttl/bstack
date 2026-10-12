@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659",
+  "head": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+  "workingTree": "",
+  "allTrackedFilesUnchanged": true,
+  "loginAbsent": true,
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "d7edc7e4b5887be249b21a3907550206bbe141b43287c893a091cc80368e098a",
+      "unchanged": true
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+      "unchanged": true
+    },
+    {
+      "path": "app.py",
+      "sha256": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972",
+      "unchanged": true
+    },
+    {
+      "path": "boundaries.py",
+      "sha256": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/__init__.py",
+      "sha256": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/_internal.py",
+      "sha256": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/book.py",
+      "sha256": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157",
+      "unchanged": true
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af",
+      "unchanged": true
+    },
+    {
+      "path": "startup.py",
+      "sha256": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7",
+      "unchanged": true
+    },
+    {
+      "path": "test_ledger.py",
+      "sha256": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f",
+      "unchanged": true
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3",
+      "unchanged": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/check-results.json",
+      "originalSha256": "ccb6b38ee3f8d9b78ec973c002c2fce9d4cd872c367a4dee3c32d31204303fc2",
+      "publishedSha256": "2c4611715aa48c00359dc77266169cd0f484c5b0df3a63feb8479e57f250400c"
+    },
+    {
+      "path": "artifacts/checks.json",
+      "originalSha256": "7dbdb062e128d12ccb804fb89c6424abac507349a55bc0006318f0977c0524ec",
+      "publishedSha256": "c3199d1236db38b4110f5047dbad00017e760f0e729424556854badaa0451125"
+    },
+    {
+      "path": "artifacts/findings.json",
+      "originalSha256": "0fa734cb8f330cd5de09629d6af05a64b8f433687fec5e33e3c52c259899c411",
+      "publishedSha256": "9a664732b5a2587562ba310dc1456c8555ee63113d4cf8f5a622ea749e3907ce"
+    },
+    {
+      "path": "artifacts/inspect.json",
+      "originalSha256": "3d2a37404c055e6ef46c8ccd70ab3f2ef66effe25d07bed2cb6fbeda7719a69a",
+      "publishedSha256": "b06413e747453dc65dd8481c62ae8ada9e047975c64abf5100e862f32166cb0e"
+    },
+    {
+      "path": "artifacts/inventory.json",
+      "originalSha256": "f6146e6b4a6c6120280fe2a0ff66eadc7b26f2aac5dba7b3d2137b5b2a93aae5",
+      "publishedSha256": "92d74fbcd961fa60963392febb710d201b07ccd42b0f1e4bc44b92d7462a2fc2"
+    },
+    {
+      "path": "artifacts/journey.json",
+      "originalSha256": "188247db016ec23f1d5b7389d61d47ebbde096b3e5cdd296a9f93aa8201dea40",
+      "publishedSha256": "0caf718b2dd3e4e968cfcb42602ca1a98a9d6efca2fe34323cadbcd855eabb04"
+    },
+    {
+      "path": "artifacts/measure.json",
+      "originalSha256": "1122f07edb76fe91e8a2d63975b91dc949eb65f921369fb70f8bc407ff89a672",
+      "publishedSha256": "ddac4e6f553d992b8ee4b4fee7c72b08e7e9e4960c20ea1c9d593234128620cb"
+    },
+    {
+      "path": "artifacts/render.json",
+      "originalSha256": "154e7602647926621185e760dba233c6461985a543d6211f0b7d7cf33a905624",
+      "publishedSha256": "51d882b6908c7da8ce89b2b1903d67b664bc413397a0d307d2f0b6c0557c9829"
+    },
+    {
+      "path": "artifacts/research.json",
+      "originalSha256": "560208770cdb4b30d5fc8d4494c889ff17069b206342d1aa928570b694a312c2",
+      "publishedSha256": "ade0ee3316dbf1267a44e885a4045444f00ed163974e431e57b48cfaa87d921f"
+    },
+    {
+      "path": "artifacts/startup-output.json",
+      "originalSha256": "26f7d4f69592a56aa841d333225b379654897940d4c32e2d83601c945eea8155",
+      "publishedSha256": "5d7c46b94f602788799d7aa3ea2cfb864b81bb791678aa3816589d2fdfa1c88f"
+    },
+    {
+      "path": "artifacts/validation.json",
+      "originalSha256": "45debfff793d6eca3c9191b2c1b5200dba18b4474af21dd9afbb0486bd4d5d60",
+      "publishedSha256": "9e3c340b5a09e8f56f6d44423cb1aa6673ce41eca6fb9a540a63659044fe5494"
+    }
+  ]
+}

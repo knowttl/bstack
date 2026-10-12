@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "standards",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "public",
+      "sourceId": "standards",
+      "pointer": "External modules use the public ledger package.",
+      "outcome": "External consumers use the public ledger package.",
+      "userJourney": false
+    },
+    {
+      "id": "native",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Existing configured native Python checks pass.",
+      "userJourney": false
+    },
+    {
+      "id": "balanced",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Posting through the public Ledger produces equal debit and credit balances and preserves balance.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "unittest",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "balanced"
+      ],
+      "inputScopes": [
+        "*.py",
+        "ledger/**",
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock"
+      ]
+    },
+    {
+      "id": "ruff",
+      "role": "outcome",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "*.py",
+        "ledger/**",
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "public"
+      ],
+      "inputScopes": [
+        "*.py",
+        "ledger/**",
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock"
+      ]
+    }
+  ]
+}
