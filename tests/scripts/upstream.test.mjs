@@ -6,6 +6,7 @@ import { dirname, join, posix, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import { emptyRepo, git } from './discovery-fixture.mjs'
 
 // Test the command in a disposable checkout, including paths with spaces and Unicode.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -107,6 +108,47 @@ test('committed upstream copies exactly match the offline hash manifest', async 
   assert.equal(tracked.status, 0, tracked.stderr)
   const copies = tracked.stdout.split('\0').filter(path => path && !['upstream/fetch.mjs', 'upstream/sources.json'].includes(path))
   assert.deepEqual(copies.sort(), expected.sort(), 'every committed upstream copy must have exactly one manifest entry')
+})
+
+function runOfflineInventory(repo) {
+  // A fresh test invocation must not inherit the parent runner's context.
+  const { NODE_TEST_CONTEXT, ...env } = process.env
+  return spawnSync(process.execPath, ['--test', '--test-name-pattern=committed upstream copies',
+    join('tests', 'scripts', 'upstream.test.mjs')], { cwd: repo, encoding: 'utf8', env })
+}
+
+async function offlineSandbox(t) {
+  const { repo } = await emptyRepo(t)
+  await cp(join(root, 'upstream'), join(repo, 'upstream'), { recursive: true })
+  await mkdir(join(repo, 'tests', 'scripts'), { recursive: true })
+  for (const file of ['upstream.test.mjs', 'discovery-fixture.mjs']) {
+    await cp(join(root, 'tests', 'scripts', file), join(repo, 'tests', 'scripts', file))
+  }
+  git(repo, 'add', 'upstream')
+  const baseline = runOfflineInventory(repo)
+  assert.equal(baseline.status, 0, baseline.stdout + baseline.stderr)
+  return repo
+}
+
+test('offline inventory rejects a modified byte in a pinned copy', async t => {
+  const repo = await offlineSandbox(t)
+  const [source] = JSON.parse(await readFile(join(repo, 'upstream', 'sources.json'), 'utf8'))
+  const path = join(repo, 'upstream', source.name, source.files[0])
+  const bytes = await readFile(path)
+  bytes[0] ^= 1
+  await writeFile(path, bytes)
+  const result = runOfflineInventory(repo)
+  assert.equal(result.status, 1, result.stdout + result.stderr)
+  assert.match(result.stdout + result.stderr, /pinned bytes changed/)
+})
+
+test('offline inventory rejects an unlisted tracked upstream copy', async t => {
+  const repo = await offlineSandbox(t)
+  await writeFile(join(repo, 'upstream', 'extra.md'), 'unlisted copy\n')
+  git(repo, 'add', join('upstream', 'extra.md'))
+  const result = runOfflineInventory(repo)
+  assert.equal(result.status, 1, result.stdout + result.stderr)
+  assert.match(result.stdout + result.stderr, /every committed upstream copy must have exactly one manifest entry/)
 })
 
 test('check refuses a hash that differs from the pinned bytes without rewriting it', async t => {
