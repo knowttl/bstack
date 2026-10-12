@@ -1,7 +1,8 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { root, text, object, array, readJSON, scenario, fail } from './evaluation.mjs'
+import { root, text, object, array, readJSON, scenario, fail, fixtureHash, verifiedExecution } from './evaluation.mjs'
+import { redactEvidence } from './evaluation-host.mjs'
 import { affectedScenarios } from './evaluation-impact.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { canonicalJSON, hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
@@ -17,7 +18,49 @@ const hash = { type: 'string', pattern: '^[0-9a-f]{64}$' }
 const count = { type: 'integer' }
 
 function key(row) { return `${row.scenario}/${row.check}` }
-function identity(row) { return canonicalJSON([row.model, row.adapterHash, row.fixtureHash, row.criteriaHash]) }
+function identity(row) { return canonicalJSON([row.model, row.adapterHash, row.fixtureHash, row.criteriaHash, row.binding]) }
+
+async function compatibleEvidence(ledger, definitions, results) {
+  const directory = results === join(root, 'tests/eval/results') ? join(results, 'runs') : results
+  const records = new Map()
+  const fixtures = new Map()
+  const compatible = []
+  const recipeHash = hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))
+  for (const row of ledger) {
+    const definition = definitions.find(item => item.id === row.scenario)
+    if (!definition) fail(`Unknown ledger scenario: ${row.scenario}`)
+    if (!definition.checks.some(check => check.id === row.check && check.caseId === row.caseId)) fail(`Invalid ledger check: ${key(row)}`)
+    if (!fixtures.has(definition.fixture)) fixtures.set(definition.fixture, await fixtureHash(definition.fixture))
+    const bindings = []
+    let matches = true
+    for (const id of row.runIds) {
+      if (!/^[a-zA-Z0-9_.-]+$/.test(id) || id === '.' || id === '..') fail('Invalid contributing run ID.')
+      if (!records.has(id)) records.set(id, await readJSON(join(directory, id, 'run.json')))
+      const run = records.get(id)
+      if (run.id !== id || run.sourceRevision !== row.candidate || run.scenario?.id !== row.scenario ||
+          run.mode !== row.mode || run.model !== row.model || run.adapterHash !== row.adapterHash ||
+          run.fixture?.revision !== row.fixtureHash || run.criteriaHash !== row.criteriaHash ||
+          !Number.isFinite(Date.parse(run.createdAt)) || !run.transcript || run.hostFailure ||
+          !run.isolation?.verified || !run.isolation.cleanedAt || !verifiedExecution(run) ||
+          run.agent !== run.adapter?.invocation?.agent || run.model !== run.adapter?.invocation?.model) fail(`Invalid contributing run: ${id}`)
+      const current = JSON.parse(redactEvidence(JSON.stringify(definition), run))
+      const stage = definition.checkpoints.at(-1)
+      const request = (row.mode === 'with' && definition.invocation === 'explicit' ? `${run.adapter.invocation.explicit}\n` : '') +
+        (['foundation', 'final'].includes(stage) ? `Active checkpoint: ${stage}.\n` : '') + current.request
+      const inputs = ['fixture', 'request', 'answers', 'checkpoints', 'invocation', 'mode', 'checks']
+      if (run.fixture.name !== definition.fixture || row.fixtureHash !== fixtures.get(definition.fixture) || run.execution.recipeHash !== recipeHash ||
+          row.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || run.stage !== stage || run.request !== request ||
+          inputs.some(name => canonicalJSON(run.scenario[name] ?? null) !== canonicalJSON(current[name] ?? null)) ||
+          canonicalJSON(run.turns.map(turn => turn.message)) !== canonicalJSON([request, ...current.answers])) matches = false
+      bindings.push(canonicalJSON([run.stage, run.scenario.request, run.scenario.answers, run.scenario.invocation,
+        run.agent, run.adapter, run.os, run.tools, run.execution.imageId, run.execution.recipeHash, run.execution.toolchain]))
+    }
+    if (new Set(bindings).size !== 1) fail(`Incompatible contributing runs: ${key(row)}`)
+    if (matches) compatible.push({ ...row, binding: bindings[0] })
+  }
+  return compatible.sort((a, b) => Date.parse(a.date) - Date.parse(b.date) ||
+    canonicalJSON([...a.runIds].sort()).localeCompare(canonicalJSON([...b.runIds].sort())))
+}
 
 async function previousRelease(directory, version) {
   let names
@@ -57,14 +100,15 @@ export async function releaseGate(opts, results) {
   const smoke = definitions.filter(item => item.tier === 'smoke')
   if (report.agentProcesses.length !== smoke.length || new Set(report.agentProcesses.map(row => row.scenario)).size !== smoke.length ||
       report.agentProcesses.some(row => !smoke.some(item => item.id === row.scenario) || row.failures < 0 || row.infrastructureFailures < 0 || row.failures + row.infrastructureFailures > row.runs)) fail('Record five agent process outcomes per smoke scenario, separating infrastructure failures.')
-  const ledger = (await readFile(join(results, 'ledger.jsonl'), 'utf8')).split(/\r?\n/).filter(Boolean).map(line => JSON.parse(line))
-  for (const row of ledger) {
+  const entries = (await readFile(join(results, 'ledger.jsonl'), 'utf8')).split(/\r?\n/).filter(Boolean).map(line => JSON.parse(line))
+  for (const row of entries) {
     validateData(object({ date: text, candidate: commit, tier: { enum: ['smoke', 'full'] }, model: text,
       adapterHash: hash, fixtureHash: hash, criteriaHash: hash, scenario: text, mode: { enum: ['without', 'with'] },
       check: text, caseId: text, passes: count, runs: count, runIds: array(text) }), row)
     if (!Number.isFinite(Date.parse(row.date)) || row.passes < 0 || row.runs < 1 || row.passes > row.runs || row.runIds.length !== row.runs ||
         new Set(row.runIds).size !== row.runs) fail('Invalid ledger counts, date or contributing run IDs.')
   }
+  const ledger = await compatibleEvidence(entries, definitions, results)
   const directory = join(results, 'release')
   const previous = await previousRelease(directory, opts.release)
   const blocking = report.checks.filter(row => !row.passed).map(row => ({ class: 'hard-break', check: row.id }))
@@ -134,10 +178,9 @@ export async function releaseGate(opts, results) {
         if (previous?.gatingSet.includes(key(first))) blocking.push({ ...issue, class: 'regression' })
         else knownIssues.push(issue)
       }
-      const old = previous?.checks.find(row => key(row) === key(first) && row.identity === identity(first))
       // Each smoke batch has five runs, so the last two batches give an exact ten-run history.
-      const recent = [...(old?.recent ?? []), ...history.filter(row => row.check === check.id && row.runs === 5 && identity(row) === identity(first))
-        .map(row => ({ passes: row.passes, runIds: row.runIds }))]
+      const recent = history.filter(row => row.check === check.id && row.runs === 5 && identity(row) === identity(first))
+        .map(row => ({ passes: row.passes, runIds: row.runIds }))
         .filter((row, index, all) => all.findIndex(other => canonicalJSON([...other.runIds].sort()) === canonicalJSON([...row.runIds].sort())) === index).slice(-2)
       total.recent = recent
       if (batches.at(-1).passes >= 4 && recent.reduce((sum, row) => sum + row.passes, 0) >= recent.length * 4) gatingSet.push(key(first))
