@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T03-19-11.652Z-bfae3639-b85f-4ea0-9111-3e66e90a4423",
+  "artifacts": [
+    {
+      "path": "artifacts/referenced/tmp/final-health-exit.log",
+      "originalSha256": "f3283fb575188ac83f4ef14b2b89c376a74f9037d137bdb4c1c8b126dc0e57a8",
+      "publishedSha256": "f3283fb575188ac83f4ef14b2b89c376a74f9037d137bdb4c1c8b126dc0e57a8"
+    },
+    {
+      "path": "artifacts/referenced/tmp/final-health-output.log",
+      "originalSha256": "c3847c49ae25faedd7a40ee677d3cbcbb583deea237ef1afd92f0fb308dc7b0e",
+      "publishedSha256": "c3847c49ae25faedd7a40ee677d3cbcbb583deea237ef1afd92f0fb308dc7b0e"
+    },
+    {
+      "path": "artifacts/referenced/tmp/final-unit-exit.log",
+      "originalSha256": "c7ce903015594f4cd127a314b1acacbb21215f9e08562c1af9646d12da7f35ba",
+      "publishedSha256": "c7ce903015594f4cd127a314b1acacbb21215f9e08562c1af9646d12da7f35ba"
+    },
+    {
+      "path": "artifacts/referenced/tmp/final-unit-output.log",
+      "originalSha256": "0a30ba89d41787524f7407631bb898c175e4198c7e3323cd4f9010ebc517fb77",
+      "publishedSha256": "0a30ba89d41787524f7407631bb898c175e4198c7e3323cd4f9010ebc517fb77"
+    }
+  ]
+}
