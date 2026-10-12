@@ -708,7 +708,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-vision-delta",
-        "artifacts": ["tests/eval/results/release/existing-vision-delta-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T00-25-52.070Z-7ab1794f-12af-412e-b7f3-670502acd871/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T00-25-52.070Z-7ab1794f-12af-412e-b7f3-670502acd871/artifacts/independent-verification.json"
+        ]
       }
     },
     {
