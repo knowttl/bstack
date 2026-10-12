@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "nextChange": "Extend the approved public quote example to selected quantity with quote() = 12 and quote(2) = 24.",
+  "reviewedScope": [
+    "DESIGN.md",
+    "packages/web/public.ts",
+    "unit.test.mjs",
+    ".bstack/project.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Approved public example uses the core index; quote is 12 and default checkout total is 10."
+    },
+    {
+      "id": "request",
+      "pointer": "User request in current session",
+      "intent": "documented",
+      "summary": "Selected quantity defaults to one, with approved quantity-two total 24; original quote assertion, checkout journey and user note preserved."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The approved public quote example takes no selected quantity and has no quantity-two protection.",
+      "files": [
+        "DESIGN.md",
+        "packages/web/public.ts",
+        "unit.test.mjs",
+        ".bstack/project.json"
+      ],
+      "command": null,
+      "principle": "Use the approved public core interface and acceptance cases.",
+      "consequence": "A selected quantity of two cannot produce the approved quote total 24.",
+      "fix": "Name the approved example in design, accept quantity = 1, multiply the public price, add a quantity-two assertion, and register the new acceptance source.",
+      "scope": [
+        "DESIGN.md",
+        "packages/web/public.ts",
+        "unit.test.mjs",
+        ".bstack/project.json"
+      ],
+      "verification": "npm run check and complete standalone checker locally and in a fresh different-root clone with isolated home/cache, against the explicit starting base.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "request"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "quote() = 12",
+    "quote(2) = 24",
+    "original checkout HTTP journey returns status 201 and total 10",
+    "native checks and portable standalone verification",
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Exact-byte implementation approval and separate portable assessment approval are pending under the invoked skill write rules."
+  ]
+}

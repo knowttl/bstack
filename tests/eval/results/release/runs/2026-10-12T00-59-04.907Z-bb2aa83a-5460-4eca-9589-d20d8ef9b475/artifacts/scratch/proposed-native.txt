@@ -1,0 +1,28 @@
+
+> check
+> tsc --noEmit && npm run boundaries && npm test && npm run journey
+
+
+> boundaries
+> node boundaries.mjs
+
+[]
+
+> test
+> node --test unit.test.mjs
+
+✔ public price (1.1945ms)
+✔ checkout HTTP mock (40.496816ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 200.182854
+
+> journey
+> node journey.mjs
+
+{"expectedTotal":10,"order":{"status":201,"total":10}}
