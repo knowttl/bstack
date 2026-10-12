@@ -95,7 +95,8 @@ The default bridge permits outbound model API traffic without exposing the host 
 The runner inspects the created container before starting the agent and binds its immutable image ID, recipe hash, mounts and execution settings into `execution` in the run record.
 It removes the exact named container after each turn, including client timeout or failure.
 Every container, including fixture preparation and version queries, has `--cpus 2 --memory 4g` limits.
-Before creating an adapter run, the runner checks once for at least 20 GB free disk and 24 GiB available memory, reserving capacity for six concurrent containers.
+Before creating an adapter run's fixture or containers, the runner checks once for at least 20 GB free disk at the repository root and 24 GiB available memory, the budget for six concurrent containers.
+The check uses Linux `MemAvailable` or `os.freemem()` on other platforms; it verifies capacity without reserving resources or coordinating concurrent starts.
 Insufficient capacity blocks startup; start the run again when capacity is available.
 Resumed turns do not repeat the host capacity check.
 The existing throwaway-login procedure copies only the login file into the isolated home for the turn and deletes it in failure cleanup as well as success.
@@ -113,7 +114,7 @@ The transcript parser records advisory hits in `scopeGuard.paths` and `scopeGuar
 Command text cannot reliably distinguish file access from program operators or revision syntax, so parser hits never reject a run on their own.
 Docker's verified mounts enforce host filesystem isolation; the advisory parser does not claim to detect actual reads.
 Comparisons require the same verified scope-contract version on both sides.
-Scope version 3 recognizes read-only resource preflight: memory/load files, process metadata/counts and filesystem capacity queries.
+Scope version 3 recognizes read-only resource queries: memory/load files, process metadata/counts and filesystem capacity queries.
 The advisory guard recognizes the run's isolated temporary directory and reports apparent targets outside the fixture or isolated home.
 System runtime access does not authorize writing those runtime files; `/dev/null` remains an ordinary output sink.
 Contaminated transcripts may contain unrelated host inventories and must stay private.
