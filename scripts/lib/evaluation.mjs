@@ -92,11 +92,11 @@ export function options(args, values, flags = []) {
 export async function scenario(id) {
   const scenarios = await readJSON(join(root, 'tests', 'eval', 'scenarios', 'scenarios.json'))
   const schema = object({ schemaVersion: { const: 1 }, scenarios: array({ ...object({
-    id: text, fixture: text, request: text, answers: array(text), checkpoints: array(text),
+    id: text, fixture: text, covers: { ...array(text), minItems: 1 }, request: text, answers: array(text), checkpoints: array(text),
     mode: { enum: ['without', 'with'] },
     invocation: { enum: ['explicit', 'implicit'] }, checks: array({ ...object({ id: text, caseId: text, question: text,
       machine: { type: 'object' } }), required: ['id', 'caseId', 'question'] })
-  }), required: ['id', 'fixture', 'request', 'answers', 'checkpoints', 'invocation', 'checks'] }) })
+  }), required: ['id', 'fixture', 'covers', 'request', 'answers', 'checkpoints', 'invocation', 'checks'] }) })
   validateData(schema, scenarios)
   validateIds(scenarios.scenarios, '$/scenarios')
   const fixtures = await readJSON(join(root, 'tests', 'fixtures', 'fixtures.json'))
