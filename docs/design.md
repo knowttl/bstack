@@ -1168,8 +1168,8 @@ The full tier includes every scenario, runs weekly and before candidates, and re
 Only hard breaks and regressions block; other failures are published as known issues with measured rates.
 Hard breaks are failing deterministic tests, package checks, registry checks or installation; changed read-only fixture bytes or writes before scripted approval; failed isolation; failed explicit invocation (AC-43) or implicit invocation starting the skill (AC-42); and at least two non-infrastructure agent process failures in five runs.
 A regression is a smoke check in the last release's gating set that fails the threshold after confirmation or the per-check margin.
-The next gating set contains checks at 4 or 5 of 5 in the latest smoke batch and at least 80% across their latest ten measured runs.
-The first ledger release has no regressions and seeds its gating set from its own results.
+Later gating sets contain checks at 4 or 5 of 5 in the latest smoke batch and at least 80% across their latest ten compatible measured runs, or the available history until ten exist.
+The first ledger release has no regressions and seeds its gating set from its own checks at 4 or 5 of 5, without applying historical reliability.
 Gate output lives in `tests/eval/results/release/<version>.json`; registry procedures do not assert release status.
 Missing smoke evidence or confirmation leaves qualification blocked rather than proving a failure.
 
