@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "tier": "full",
+  "executable": "codex",
+  "args": ["--no-daemon", "exec", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6-luna", "--sandbox", "danger-full-access", "-c", "model_reasoning_effort=\"high\"", "{message}"],
+  "cwd": ".",
+  "versionArgs": ["--version"],
+  "timeoutMs": 1800000,
+  "outputLimitBytes": 16777216,
+  "invocation": {
+    "agent": "codex",
+    "model": "gpt-6-luna",
+    "explicit": "$repo-audit",
+    "protocol": "codex-exec-jsonl",
+    "resumeArgs": ["--no-daemon", "exec", "resume", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6-luna", "-c", "model_reasoning_effort=\"high\"", "-c", "sandbox_mode=\"danger-full-access\"", "{sessionId}", "{message}"]
+  },
+  "isolation": {
+    "stateDirectory": ".codex",
+    "discoveryPaths": [".agents/skills", ".codex/skills"],
+    "systemDiscoveryPaths": ["/etc/codex/skills"],
+    "stagePath": ".agents/skills/repo-audit",
+    "authentication": "throwaway-codex-login"
+  }
+}

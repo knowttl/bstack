@@ -11,6 +11,9 @@ The [fixture registry](../tests/fixtures/fixtures.json) declares the files to co
 Each named fixture keeps its `sanity.mjs` and any `FIXTURE.md` outside the built workspace.
 Variants reuse source files through `source`, inject independent `seed` files before history, and share native sanity procedures.
 `base` inherits a registry entry's files and settings; an `overlay` directory supplies only the changed or generated files before history is committed.
+`selected-ts-shop` inherits `ts-shop` and overlays the selected findings and approved bounded apply plan, retaining the original failing live journey and boundary defects.
+It appends an uncommitted receipt note to `DESIGN.md` for preservation during selected apply and verification.
+The exact generated protected-write diff still requires the scenario's scripted approval.
 `maintained-ts-shop` inherits `ts-shop`, then overlays the completed existing-project setup, including its generated contract and current standalone checker.
 Its native protections pass before the maintenance scenario selects the initial commit as its explicit comparison base.
 It preserves the committed receipt note and appends an uncommitted export note to `DESIGN.md` after history is built.
