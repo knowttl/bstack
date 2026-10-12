@@ -1,0 +1,5 @@
+- [x] Step 7: Audit the starting state
+- [ ] Step 8: Resolve material gaps (pricing and vocabulary pending)
+- [x] Step 9: Present evidenced findings (validated and rendered; missing final evidence visible)
+- [ ] Step 10: Review and apply selected findings
+- [ ] Step 11: Verify and report readiness

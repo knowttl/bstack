@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574",
+  "status": "passed",
+  "planDigest": "4ad8b01b85a8870964f37e6ca6e3108768fea74c2c48b4a480aed78d5798fbd3",
+  "sourceRevision": "7a59dbda8ae832ffb953b469905786835d3b3160",
+  "fingerprint": "db74daa4bd9fbe516bdd2bd703ac07a43594e9405e0fb12b01ab5c5c65adfe9e",
+  "exactContentSha256": "6d208b10ae898ce3d6986bacf02fc05ed7958872d8e92c7a3bb353954b498e8e",
+  "onlyWrite": ".bstack/assessment.json",
+  "actualRecordStillAbsent": true,
+  "workingTreeClean": true,
+  "nativePreviews": [
+    "actual-clean-clone-checker.json"
+  ],
+  "authority": "Ordered scripted fixture-author reply 3 approves this separately reviewed exact portable record and its separate commit."
+}

@@ -1,0 +1,1030 @@
+{
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "base": {
+      "ref": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "kind": "commit",
+      "objectId": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+    },
+    "head": "7a59dbda8ae832ffb953b469905786835d3b3160",
+    "changes": [
+      {
+        "source": "committed",
+        "status": "A",
+        "path": ".bstack/bin/bstack-check.mjs"
+      },
+      {
+        "source": "committed",
+        "status": "A",
+        "path": ".bstack/project.json"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "AGENTS.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "DESIGN.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "boundaries.mjs"
+      },
+      {
+        "source": "committed",
+        "status": "A",
+        "path": "docs/repo-audit.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "glossary.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "journey.mjs"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "package.json"
+      },
+      {
+        "source": "committed",
+        "status": "D",
+        "path": "packages/core/a.ts"
+      },
+      {
+        "source": "committed",
+        "status": "D",
+        "path": "packages/core/b.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/core/index.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/web/alias.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/web/routes.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/web/ui.ts"
+      }
+    ],
+    "paths": [
+      ".bstack/bin/bstack-check.mjs",
+      ".bstack/project.json",
+      "AGENTS.md",
+      "DESIGN.md",
+      "boundaries.mjs",
+      "docs/repo-audit.md",
+      "glossary.md",
+      "journey.mjs",
+      "package.json",
+      "packages/core/a.ts",
+      "packages/core/b.ts",
+      "packages/core/index.ts",
+      "packages/web/alias.ts",
+      "packages/web/routes.ts",
+      "packages/web/ui.ts"
+    ],
+    "mappings": [
+      {
+        "path": ".bstack/bin/bstack-check.mjs",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": ".bstack/project.json",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "AGENTS.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "DESIGN.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "boundaries.mjs",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "docs/repo-audit.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "glossary.md",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "journey.mjs",
+        "scopeIds": [
+          "product"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "package.json",
+        "scopeIds": [
+          "foundation"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "packages/core/a.ts",
+        "scopeIds": [
+          "product"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "packages/core/b.ts",
+        "scopeIds": [
+          "product"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "packages/core/index.ts",
+        "scopeIds": [
+          "product"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "packages/web/alias.ts",
+        "scopeIds": [
+          "product"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "packages/web/routes.ts",
+        "scopeIds": [
+          "product"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      },
+      {
+        "path": "packages/web/ui.ts",
+        "scopeIds": [
+          "product"
+        ],
+        "documentIds": [
+          "design",
+          "glossary",
+          "agents"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout",
+          "quote",
+          "cycles",
+          "completion"
+        ]
+      }
+    ],
+    "candidateDocuments": [
+      {
+        "id": "design",
+        "path": "DESIGN.md"
+      },
+      {
+        "id": "glossary",
+        "path": "glossary.md"
+      },
+      {
+        "id": "agents",
+        "path": "AGENTS.md"
+      }
+    ],
+    "unmappedPaths": [],
+    "policies": [
+      {
+        "contract": {
+          "schemaVersion": 1,
+          "documents": [
+            {
+              "id": "design",
+              "path": "DESIGN.md"
+            },
+            {
+              "id": "glossary",
+              "path": "glossary.md"
+            },
+            {
+              "id": "agents",
+              "path": "AGENTS.md"
+            }
+          ],
+          "scopes": [
+            {
+              "id": "product",
+              "paths": [
+                "packages/**",
+                "journey.mjs",
+                "unit.test.mjs"
+              ],
+              "documentIds": [
+                "design",
+                "glossary",
+                "agents"
+              ],
+              "ruleIds": [
+                "public-core",
+                "checkout",
+                "quote",
+                "cycles",
+                "completion"
+              ]
+            },
+            {
+              "id": "foundation",
+              "paths": [
+                "DESIGN.md",
+                "glossary.md",
+                "AGENTS.md",
+                "CLAUDE.md",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json",
+                "boundaries.mjs",
+                ".bstack/project.json",
+                ".bstack/bin/**",
+                "docs/repo-audit.md",
+                ".gitignore"
+              ],
+              "documentIds": [
+                "design",
+                "glossary",
+                "agents"
+              ],
+              "ruleIds": [
+                "public-core",
+                "checkout",
+                "quote",
+                "cycles",
+                "completion"
+              ]
+            }
+          ],
+          "rules": [
+            {
+              "id": "public-core",
+              "path": "DESIGN.md",
+              "pointer": "The UI never touches storage.",
+              "checkIds": [
+                "typecheck",
+                "boundaries"
+              ]
+            },
+            {
+              "id": "checkout",
+              "path": "DESIGN.md",
+              "pointer": "The agreed checkout total is 10.",
+              "checkIds": [
+                "journey"
+              ]
+            },
+            {
+              "id": "quote",
+              "path": "DESIGN.md",
+              "pointer": "The public quote remains 12",
+              "checkIds": [
+                "unit"
+              ]
+            },
+            {
+              "id": "cycles",
+              "path": "DESIGN.md",
+              "pointer": "Static imports and re-exports must be acyclic.",
+              "checkIds": [
+                "boundaries"
+              ]
+            },
+            {
+              "id": "completion",
+              "path": "DESIGN.md",
+              "pointer": "A change is complete only when its affected acceptance cases and journeys pass on the final inputs",
+              "checkIds": [
+                "typecheck",
+                "boundaries",
+                "unit",
+                "journey"
+              ]
+            }
+          ],
+          "checks": [
+            {
+              "id": "typecheck",
+              "command": {
+                "executable": "npm",
+                "args": [
+                  "run",
+                  "typecheck"
+                ],
+                "cwd": ".",
+                "versionArgs": [
+                  "--version"
+                ]
+              },
+              "inputScopes": [
+                "packages/**",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json",
+                "boundaries.mjs",
+                "journey.mjs",
+                "unit.test.mjs",
+                "DESIGN.md",
+                "glossary.md",
+                "AGENTS.md",
+                "CLAUDE.md",
+                ".bstack/project.json",
+                ".bstack/bin/**",
+                "docs/repo-audit.md"
+              ]
+            },
+            {
+              "id": "boundaries",
+              "command": {
+                "executable": "npm",
+                "args": [
+                  "run",
+                  "boundaries"
+                ],
+                "cwd": ".",
+                "versionArgs": [
+                  "--version"
+                ]
+              },
+              "inputScopes": [
+                "packages/**",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json",
+                "boundaries.mjs",
+                "journey.mjs",
+                "unit.test.mjs",
+                "DESIGN.md",
+                "glossary.md",
+                "AGENTS.md",
+                "CLAUDE.md",
+                ".bstack/project.json",
+                ".bstack/bin/**",
+                "docs/repo-audit.md"
+              ]
+            },
+            {
+              "id": "unit",
+              "command": {
+                "executable": "npm",
+                "args": [
+                  "test"
+                ],
+                "cwd": ".",
+                "versionArgs": [
+                  "--version"
+                ]
+              },
+              "inputScopes": [
+                "packages/**",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json",
+                "boundaries.mjs",
+                "journey.mjs",
+                "unit.test.mjs",
+                "DESIGN.md",
+                "glossary.md",
+                "AGENTS.md",
+                "CLAUDE.md",
+                ".bstack/project.json",
+                ".bstack/bin/**",
+                "docs/repo-audit.md"
+              ]
+            },
+            {
+              "id": "journey",
+              "command": {
+                "executable": "npm",
+                "args": [
+                  "run",
+                  "journey"
+                ],
+                "cwd": ".",
+                "versionArgs": [
+                  "--version"
+                ]
+              },
+              "inputScopes": [
+                "packages/**",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json",
+                "boundaries.mjs",
+                "journey.mjs",
+                "unit.test.mjs",
+                "DESIGN.md",
+                "glossary.md",
+                "AGENTS.md",
+                "CLAUDE.md",
+                ".bstack/project.json",
+                ".bstack/bin/**",
+                "docs/repo-audit.md"
+              ]
+            }
+          ],
+          "generators": [],
+          "acceptanceSources": [
+            {
+              "id": "checkout",
+              "path": "DESIGN.md",
+              "pointer": "The agreed checkout total is 10."
+            },
+            {
+              "id": "quote",
+              "path": "DESIGN.md",
+              "pointer": "The public quote remains 12"
+            },
+            {
+              "id": "boundary",
+              "path": "DESIGN.md",
+              "pointer": "The UI never touches storage."
+            }
+          ]
+        },
+        "path": ".bstack/project.json"
+      }
+    ],
+    "previousContract": null,
+    "requiredCheckIds": [
+      "typecheck",
+      "boundaries",
+      "unit",
+      "journey"
+    ],
+    "requiredChecks": [
+      {
+        "id": "typecheck",
+        "command": {
+          "executable": "npm",
+          "args": [
+            "run",
+            "typecheck"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ]
+        },
+        "inputScopes": [
+          "packages/**",
+          "package.json",
+          "package-lock.json",
+          "tsconfig.json",
+          "boundaries.mjs",
+          "journey.mjs",
+          "unit.test.mjs",
+          "DESIGN.md",
+          "glossary.md",
+          "AGENTS.md",
+          "CLAUDE.md",
+          ".bstack/project.json",
+          ".bstack/bin/**",
+          "docs/repo-audit.md"
+        ]
+      },
+      {
+        "id": "boundaries",
+        "command": {
+          "executable": "npm",
+          "args": [
+            "run",
+            "boundaries"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ]
+        },
+        "inputScopes": [
+          "packages/**",
+          "package.json",
+          "package-lock.json",
+          "tsconfig.json",
+          "boundaries.mjs",
+          "journey.mjs",
+          "unit.test.mjs",
+          "DESIGN.md",
+          "glossary.md",
+          "AGENTS.md",
+          "CLAUDE.md",
+          ".bstack/project.json",
+          ".bstack/bin/**",
+          "docs/repo-audit.md"
+        ]
+      },
+      {
+        "id": "unit",
+        "command": {
+          "executable": "npm",
+          "args": [
+            "test"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ]
+        },
+        "inputScopes": [
+          "packages/**",
+          "package.json",
+          "package-lock.json",
+          "tsconfig.json",
+          "boundaries.mjs",
+          "journey.mjs",
+          "unit.test.mjs",
+          "DESIGN.md",
+          "glossary.md",
+          "AGENTS.md",
+          "CLAUDE.md",
+          ".bstack/project.json",
+          ".bstack/bin/**",
+          "docs/repo-audit.md"
+        ]
+      },
+      {
+        "id": "journey",
+        "command": {
+          "executable": "npm",
+          "args": [
+            "run",
+            "journey"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ]
+        },
+        "inputScopes": [
+          "packages/**",
+          "package.json",
+          "package-lock.json",
+          "tsconfig.json",
+          "boundaries.mjs",
+          "journey.mjs",
+          "unit.test.mjs",
+          "DESIGN.md",
+          "glossary.md",
+          "AGENTS.md",
+          "CLAUDE.md",
+          ".bstack/project.json",
+          ".bstack/bin/**",
+          "docs/repo-audit.md"
+        ]
+      }
+    ],
+    "fingerprint": "db74daa4bd9fbe516bdd2bd703ac07a43594e9405e0fb12b01ab5c5c65adfe9e",
+    "limitations": [
+      "Structural validation cannot prove that explanations or document deltas agree semantically with code, or authenticate owner approval. The selected review process must assess these claims.",
+      "Local execution records are not authenticated portable attestations. Captures cover declared inputs only; transient changes restored before capture completion are not detected."
+    ],
+    "coverageLimits": [
+      {
+        "path": "DESIGN.md",
+        "reason": "Inline code and escaped Markdown require renderer review."
+      },
+      {
+        "path": "AGENTS.md",
+        "reason": "Inline code and escaped Markdown require renderer review."
+      }
+    ],
+    "phase": "result-validation",
+    "startedAt": "2026-10-12T03:27:48.784Z",
+    "completedAt": "2026-10-12T03:27:54.060Z",
+    "sourceRevision": "85df9d314e9797e7f9c7924a22f820ad31f36ed2",
+    "comparison": {
+      "source": "7a59dbda8ae832ffb953b469905786835d3b3160",
+      "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "mergeBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+    },
+    "checks": [
+      {
+        "check": {
+          "id": "typecheck",
+          "command": {
+            "executable": "npm",
+            "args": [
+              "run",
+              "typecheck"
+            ],
+            "cwd": ".",
+            "versionArgs": [
+              "--version"
+            ]
+          },
+          "inputScopes": [
+            "packages/**",
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "boundaries.mjs",
+            "journey.mjs",
+            "unit.test.mjs",
+            "DESIGN.md",
+            "glossary.md",
+            "AGENTS.md",
+            "CLAUDE.md",
+            ".bstack/project.json",
+            ".bstack/bin/**",
+            "docs/repo-audit.md"
+          ]
+        },
+        "execution": {
+          "status": "passed",
+          "stdout": "\n> typecheck\n> tsc --noEmit\n\n",
+          "stderr": "",
+          "durationMs": 1914.3777680000003,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "11.13.0\n",
+            "stderr": "",
+            "durationMs": 215.425946,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      {
+        "check": {
+          "id": "boundaries",
+          "command": {
+            "executable": "npm",
+            "args": [
+              "run",
+              "boundaries"
+            ],
+            "cwd": ".",
+            "versionArgs": [
+              "--version"
+            ]
+          },
+          "inputScopes": [
+            "packages/**",
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "boundaries.mjs",
+            "journey.mjs",
+            "unit.test.mjs",
+            "DESIGN.md",
+            "glossary.md",
+            "AGENTS.md",
+            "CLAUDE.md",
+            ".bstack/project.json",
+            ".bstack/bin/**",
+            "docs/repo-audit.md"
+          ]
+        },
+        "execution": {
+          "status": "passed",
+          "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n",
+          "stderr": "",
+          "durationMs": 1114.227249,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "11.13.0\n",
+            "stderr": "",
+            "durationMs": 241.93938200000002,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      {
+        "check": {
+          "id": "unit",
+          "command": {
+            "executable": "npm",
+            "args": [
+              "test"
+            ],
+            "cwd": ".",
+            "versionArgs": [
+              "--version"
+            ]
+          },
+          "inputScopes": [
+            "packages/**",
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "boundaries.mjs",
+            "journey.mjs",
+            "unit.test.mjs",
+            "DESIGN.md",
+            "glossary.md",
+            "AGENTS.md",
+            "CLAUDE.md",
+            ".bstack/project.json",
+            ".bstack/bin/**",
+            "docs/repo-audit.md"
+          ]
+        },
+        "execution": {
+          "status": "passed",
+          "stdout": "\n> test\n> node --test unit.test.mjs\n\n✔ public price (1.018529ms)\n✔ checkout HTTP mock (33.526045ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 170.474239\n",
+          "stderr": "",
+          "durationMs": 569.7753010000006,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "11.13.0\n",
+            "stderr": "",
+            "durationMs": 214.12533600000006,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      {
+        "check": {
+          "id": "journey",
+          "command": {
+            "executable": "npm",
+            "args": [
+              "run",
+              "journey"
+            ],
+            "cwd": ".",
+            "versionArgs": [
+              "--version"
+            ]
+          },
+          "inputScopes": [
+            "packages/**",
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "boundaries.mjs",
+            "journey.mjs",
+            "unit.test.mjs",
+            "DESIGN.md",
+            "glossary.md",
+            "AGENTS.md",
+            "CLAUDE.md",
+            ".bstack/project.json",
+            ".bstack/bin/**",
+            "docs/repo-audit.md"
+          ]
+        },
+        "execution": {
+          "status": "passed",
+          "stdout": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+          "stderr": "",
+          "durationMs": 560.0452989999994,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "11.13.0\n",
+            "stderr": "",
+            "durationMs": 224.456185,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      }
+    ],
+    "previous": null,
+    "path": "[isolated-home][scratch-path]"
+  }
+}

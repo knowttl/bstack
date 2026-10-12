@@ -20,6 +20,16 @@ The isolated login home is cleaned after scoring.
 
 Other scenario refreshes and the final all-case validator remain outstanding.
 
+The [full existing-project comparison](final-existing-repo-record-approval-comparison.json) passes from baseline 0/6 to installed 6/6 with the three original scripted replies and separate exact assessment approval.
+The [full-path report](existing-project-record-approval-final.md) links its complete conversation, protected-plan reviews, fresh working and isolated-clone checker results, eight native controls and independent final-byte verification.
+
+The [Python main-thread research comparison](research-main-python-record-approval-comparison.json) passes from baseline 0/3 to installed 3/3 after one installed refresh against the settled package.
+The [complete installed conversation](runs/2026-10-12T03-36-00.350Z-94570d73-976c-45ae-8912-fdc64ee9ae45/conversation.txt), lines 6–35, performs the same five briefs sequentially with common report format, main-thread/no-web capabilities and explicitly unresearched language/outside recommendations.
+The actual shipped citation checker exits zero at line 34, reporting 47 checked citations and zero problems before the final report is used.
+The [independent verification](runs/2026-10-12T03-36-00.350Z-94570d73-976c-45ae-8912-fdc64ee9ae45/artifacts/independent-verification.json) checks every source hash and line bound, every cited source opened, all five ordered briefs, no web citations and eleven unchanged tracked files.
+The report observes system Python 3.11.2, without executing the prepared Python 3.12 native environment or native checks under the discovery constraint; it does not establish an unavailable prepared runtime.
+The [export manifest](runs/2026-10-12T03-36-00.350Z-94570d73-976c-45ae-8912-fdc64ee9ae45/artifacts/export-manifest.json) retains nine native artifacts, and the isolated login home is cleaned.
+
 The [TypeScript main-thread research comparison](research-main-typescript-record-approval-comparison.json) passes from baseline 0/3 to installed 3/3 after one installed refresh against the settled package.
 The [complete installed conversation](runs/2026-10-12T03-30-20.912Z-e0df9c3f-8a1f-4ff5-ba1c-8fa0d4492cea/conversation.txt), lines 6–44, performs the five briefs sequentially with the common format and actual main-thread/no-web capabilities.
 Language and outside briefs retain repository evidence and explicit author-prohibited web limitations without importing an unsupported language rule set.

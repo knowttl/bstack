@@ -200,9 +200,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-existing-repo",
         "artifacts": [
-          "tests/eval/results/release/final-existing-repo-comparison.json",
-          "tests/eval/results/release/final-existing-repo.md",
-          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
         ]
       }
     },
@@ -348,9 +348,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-existing-repo",
         "artifacts": [
-          "tests/eval/results/release/final-existing-repo-comparison.json",
-          "tests/eval/results/release/final-existing-repo.md",
-          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
         ]
       }
     },
@@ -380,9 +380,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-existing-repo",
         "artifacts": [
-          "tests/eval/results/release/final-existing-repo-comparison.json",
-          "tests/eval/results/release/final-existing-repo.md",
-          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
         ]
       }
     },
@@ -692,9 +692,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-existing-repo",
         "artifacts": [
-          "tests/eval/results/release/final-existing-repo-comparison.json",
-          "tests/eval/results/release/final-existing-repo.md",
-          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
         ]
       }
     },
@@ -792,9 +792,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-existing-repo",
         "artifacts": [
-          "tests/eval/results/release/final-existing-repo-comparison.json",
-          "tests/eval/results/release/final-existing-repo.md",
-          "tests/eval/results/release/runs/2026-10-11T22-20-55.842Z-a9e80046-a1fb-4594-81b7-9edf837e4241/artifacts/independent-final-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
         ]
       }
     },
@@ -964,8 +964,12 @@
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-new-project",
-        "artifacts": ["tests/eval/results/full-path-C27/summary.md", "tests/eval/results/full-path-C27/runs/2026-10-11T09-23-27.321Z-f76f7eef-89b7-4b1a-b7a5-85571d8cd210/manual-verdict.json", "tests/eval/results/full-path-C27/runs/2026-10-11T09-23-18.776Z-5bf45472-6fcb-488d-9f4f-d51ad8307805/manual-verdict.json"]
+        "name": "final-existing-repo",
+        "artifacts": [
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
+        ]
       }
     }
   ]

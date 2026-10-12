@@ -1,0 +1,5 @@
+- [x] Step 7: Audit starting state and native failures, preserve owner note
+- [x] Step 8: Resolve material gaps from supervisor verdict
+- [x] Step 9: Present validated evidenced findings and selections
+- [x] Step 10: Apply exact approved initial plan and separately approved assessment with protected writes
+- [x] Step 11: Fresh native controls, maintained enforcement, before/after real HTTP checkout, reviewed maintenance and clean working/isolated-clone checker results; current-head readiness in scratch
