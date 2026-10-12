@@ -427,6 +427,36 @@ for (const [name, machine, expected, installer = { status: 'passed' }] of [
   })
 }
 
+test('helper execution is distinct from opening bundled source and assets', async t => {
+  const directory = await temporary(t)
+  const script = '/home/test/.agents/skills/repo-audit/scripts/repo-audit.mjs'
+  const asset = '/home/test/.agents/skills/repo-audit/assets/vision/review-template.html'
+  const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
+  for (const [name, item, type, expected] of [
+    ['direct helper execution', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/project --json`, exit_code: 0 }, 'notOpened', true],
+    ['helper asset argument', { type: 'command_execution', command: `node ${script} vision-board build --draft ${asset} --workspace /tmp/project --json`, exit_code: 0 }, 'notOpened', true],
+    ['quoted shell helper execution', { type: 'command_execution', command: `bash -lc 'node "${script}" inspect --repo /tmp/project --json'`, exit_code: 0 }, 'notOpened', true],
+    ['failed helper execution', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/missing --json`, exit_code: 2 }, 'notOpened', true],
+    ['helper followed by source read', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/project --json && cat ${script}`, exit_code: 0 }, 'notOpened', false],
+    ['failed source read command', { type: 'command_execution', command: `cat ${script} && test -f missing`, exit_code: 1 }, 'notOpened', false],
+    ['asset source read', { type: 'command_execution', command: `cat ${asset}`, exit_code: 0 }, 'notOpened', false],
+    ['inline Node source read', { type: 'command_execution', command: `node -e "require('node:fs').readFileSync('${script}', 'utf8')"`, exit_code: 0 }, 'notOpened', false],
+    ['source read in command substitution', { type: 'command_execution', command: `node ${script} inspect --repo "$(cat ${asset})"`, exit_code: 0 }, 'notOpened', false],
+    ['file-tool source read', { type: 'file_read', path: script }, 'notOpened', false],
+    ['helper arguments cannot satisfy opened', { type: 'command_execution', command: `node ${script} vision-board build --draft ${asset} --workspace cat --json`, exit_code: 0 }, 'opened', false]
+  ]) {
+    await t.test(name, async () => {
+      const inputPath = join(directory, 'assertions.json')
+      await writeFile(inputPath, JSON.stringify({ action: 'evaluate',
+        checks: [{ id: 'source', machine: { type, patterns: ['**/repo-audit/scripts/**', '**/repo-audit/assets/**'] } }],
+        events: [{ type: 'item.completed', item }] }))
+      const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
+      assert.equal(result.status, 0, result.stderr)
+      assert.equal(JSON.parse(result.stdout)[0].passed, expected, result.stdout)
+    })
+  }
+})
+
 test('scenario fixture hashes bind selected source bytes and overlays without binding unrelated fixtures', async t => {
   const directory = await temporary(t)
   for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
