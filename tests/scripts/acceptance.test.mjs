@@ -26,11 +26,13 @@ async function plannedRegistry() {
   return data
 }
 
-test('registry validates all 75 owned cases without scoring procedures', () => {
+test('registry validates all 75 owned cases without scoring procedures', async () => {
   const result = run('--check-registry')
   assert.equal(result.status, 0)
   assert.equal(result.data.data.registered, 75)
   assert.equal(result.data.data.passed, 0)
+  const registry = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+  assert.equal(registry.cases.filter(item => item.evidenceType === 'automated' && item.procedure.status === 'planned').length, 0)
 })
 
 for (const [name, mutate] of [

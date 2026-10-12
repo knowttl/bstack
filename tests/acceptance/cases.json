@@ -283,8 +283,12 @@
       "criterionSource": "docs/design.md#AC-18",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/docs-generate.test.mjs",
+        "name": "stale sections pass after scratch proposals are reviewed and protected apply writes them",
+        "artifacts": [
+          "tests/scripts/docs-generate.test.mjs"
+        ]
       }
     },
     {
@@ -296,8 +300,12 @@
       "criterionSource": "docs/design.md#AC-19",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/evidence-validate.test.mjs",
+        "name": "missing substantive document assessment is blocked",
+        "artifacts": [
+          "tests/scripts/evidence-validate.test.mjs"
+        ]
       }
     },
     {
@@ -308,8 +316,12 @@
       "criterionSource": "docs/design.md#AC-20",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/evidence-collect.test.mjs",
+        "name": "collects committed, staged, unstaged, new, renamed and deleted paths together",
+        "artifacts": [
+          "tests/scripts/evidence-collect.test.mjs"
+        ]
       }
     },
     {
@@ -320,8 +332,12 @@
       "criterionSource": "docs/design.md#AC-21",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/evidence-validate.test.mjs",
+        "name": "editing code invalidates completed review",
+        "artifacts": [
+          "tests/scripts/evidence-validate.test.mjs"
+        ]
       }
     },
     {
@@ -332,8 +348,12 @@
       "criterionSource": "docs/design.md#AC-22",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/evidence-validate.test.mjs",
+        "name": "a contract cannot remove its own document coverage or required check",
+        "artifacts": [
+          "tests/scripts/evidence-validate.test.mjs"
+        ]
       }
     },
     {
@@ -362,8 +382,12 @@
       "criterionSource": "docs/design.md#AC-24",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/checker-execution.test.mjs",
+        "name": "different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review",
+        "artifacts": [
+          "tests/scripts/checker-execution.test.mjs"
+        ]
       }
     },
     {
@@ -621,8 +645,12 @@
       "criterionSource": "docs/design.md#AC-41",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/package-check.test.mjs",
+        "name": "unlisted-reference fails with reference-unlisted",
+        "artifacts": [
+          "tests/scripts/package-check.test.mjs"
+        ]
       }
     },
     {
@@ -667,8 +695,12 @@
       "criterionSource": "docs/design.md#AC-44",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/package-check.test.mjs",
+        "name": "host-metadata fails with host-metadata",
+        "artifacts": [
+          "tests/scripts/package-check.test.mjs"
+        ]
       }
     },
     {
@@ -679,8 +711,12 @@
       "criterionSource": "docs/design.md#AC-45",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/package-check.test.mjs",
+        "name": "unexplained-constant fails with constant-comment",
+        "artifacts": [
+          "tests/scripts/package-check.test.mjs"
+        ]
       }
     },
     {
@@ -704,8 +740,12 @@
       "criterionSource": "docs/design.md#AC-47",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/package-check.test.mjs",
+        "name": "language-policy fails with language-policy",
+        "artifacts": [
+          "tests/scripts/package-check.test.mjs"
+        ]
       }
     },
     {
@@ -774,8 +814,12 @@
       "criterionSource": "docs/design.md#AC-52",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/rule-proof.test.mjs",
+        "name": "ts native public imports and permitted direction pass while private, alias and cycles fail",
+        "artifacts": [
+          "tests/scripts/rule-proof.test.mjs"
+        ]
       }
     },
     {
@@ -863,8 +907,12 @@
       "criterionSource": "docs/design.md#AC-58",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/checker-execution.test.mjs",
+        "name": "portable initial foundation survives cloning while revision and selection remain required",
+        "artifacts": [
+          "tests/scripts/checker-execution.test.mjs"
+        ]
       }
     },
     {
@@ -875,8 +923,12 @@
       "criterionSource": "docs/design.md#AC-59",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/package-check.test.mjs",
+        "name": "package resources reject implementation playbook routing",
+        "artifacts": [
+          "tests/scripts/package-check.test.mjs"
+        ]
       }
     },
     {
@@ -984,8 +1036,12 @@
       "criterionSource": "docs/design.md#AC-66",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/rule-proof.test.mjs",
+        "name": "py native public imports and permitted direction pass while private, alias and cycles fail",
+        "artifacts": [
+          "tests/scripts/rule-proof.test.mjs"
+        ]
       }
     },
     {
@@ -996,8 +1052,12 @@
       "criterionSource": "docs/design.md#AC-67",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/baseline.test.mjs",
+        "name": "new debt fails refresh without a finding without altering the baseline",
+        "artifacts": [
+          "tests/scripts/baseline.test.mjs"
+        ]
       }
     },
     {
@@ -1038,8 +1098,12 @@
       "criterionSource": "docs/design.md#AC-70",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/apply.test.mjs",
+        "name": "apply refuses a missing plan and malformed plans",
+        "artifacts": [
+          "tests/scripts/apply.test.mjs"
+        ]
       }
     },
     {
@@ -1050,8 +1114,12 @@
       "criterionSource": "docs/design.md#AC-71",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/run-checks.test.mjs",
+        "name": "failed required check cannot pass and does not verify the user flow",
+        "artifacts": [
+          "tests/scripts/run-checks.test.mjs"
+        ]
       }
     },
     {
@@ -1062,8 +1130,12 @@
       "criterionSource": "docs/design.md#AC-72",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/apply.test.mjs",
+        "name": "replace interruption after-replacement resumes from actual hashes and keeps backups",
+        "artifacts": [
+          "tests/scripts/apply.test.mjs"
+        ]
       }
     },
     {
@@ -1074,8 +1146,12 @@
       "criterionSource": "docs/design.md#AC-73",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/install-copy.test.mjs",
+        "name": "copy install validates the complete package and exact ownership in isolated user scope",
+        "artifacts": [
+          "tests/scripts/install-copy.test.mjs"
+        ]
       }
     },
     {
@@ -1086,8 +1162,12 @@
       "criterionSource": "docs/design.md#AC-74",
       "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
+        "status": "completed",
+        "path": "tests/scripts/install-update.test.mjs",
+        "name": "clean user update removes obsolete ownership and clean uninstall removes only installer content",
+        "artifacts": [
+          "tests/scripts/install-update.test.mjs"
+        ]
       }
     },
     {
