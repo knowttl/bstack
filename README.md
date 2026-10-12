@@ -343,7 +343,7 @@ The [intent checkpoint](docs/evaluation.md#intent-checkpoint-c10b) records two r
 These runs do not establish complete audit execution or protected repo creation.
 Close the conversation immediately when it finishes to delete its isolated home before reviewing the captured transcript.
 The Codex adapter copies only the invoking user's existing login into throwaway state with private permissions, removes the copy after each turn, and deletes the whole home on close or a failed host turn.
-See the [scoring contract](docs/evaluation.md#explicit-manual-scoring) for reviewer answers, transcript citations and captured machine verdicts.
+See the [scoring contract](docs/evaluation.md#judge-and-human-scoring) for judge and human answers, transcript citations and captured machine verdicts.
 Tests are discovered only under `tests/scripts/` and `tests/package-check/`.
 Task suites are registered in `tests/tasks.json`.
 For portable full-suite evidence, use `npm test -- --capture .cache/full-suite.json`, then `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>`.

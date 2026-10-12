@@ -20,7 +20,7 @@ export function redactEvidence(content, record) {
     [homedir(), '[host-home]'],
     [record?.sessionId, '[identifier]'],
     ...[...content.matchAll(/(?:thread_id|sessionId)\\?":\s*\\?"([^"\\]+)/g)].map(match => [match[1], '[identifier]']),
-    ...(record?.caseResults ?? []).map(check => [check.reviewer.trim(), '[redacted: user name]']),
+    ...(record?.caseResults ?? []).filter(check => !check.reviewer.startsWith('judge:')).map(check => [check.reviewer.trim(), '[redacted: user name]']),
     [username, '[redacted: user name]'],
     [group, '[redacted: user name]']
   ].filter(([value, placeholder]) => value && (placeholder === '[redacted: user name]' ? value !== placeholder : !/^[\[<]/.test(value)))
