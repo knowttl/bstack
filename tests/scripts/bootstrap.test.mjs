@@ -68,6 +68,7 @@ test('an empty selected suite fails', async t => {
 async function evidenceSandbox(t, source = "import test from 'node:test'\ntest('recorded behaviour', () => {})\n") {
   const directory = await sandbox(t)
   await cp(join(root, 'scripts'), join(directory, 'scripts'), { recursive: true })
+  await cp(join(root, 'node_modules', 'acorn'), join(directory, 'node_modules', 'acorn'), { recursive: true })
   await cp(join(root, 'skills', 'repo-audit', 'scripts', 'lib'), join(directory, 'skills', 'repo-audit', 'scripts', 'lib'), { recursive: true })
   await mkdir(join(directory, 'tests', 'scripts'), { recursive: true })
   await writeFile(join(directory, 'tests', 'scripts', 'selected.test.mjs'), source)
