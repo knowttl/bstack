@@ -129,6 +129,7 @@ for (const [name, mutate] of [
   ['invalid count', f => { f.rows[0].passes = 6 }],
   ['fractional count', f => { f.rows[0].passes = 0.5 }],
   ['duplicate run', f => { f.rows[0].runIds[0] = f.rows[0].runIds[1] }],
+  ['baseline and with-skill overlap', f => { f.rows.find(row => row.mode === 'without').runIds = [...f.rows.find(row => row.mode === 'with').runIds] }],
   ['overlapping confirmation', f => { f.measure(2, 0); f.rows.push({ ...f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with') }) }],
   ['inconsistent scenario runs', f => { f.rows.find(row => row.scenario === 'existing-repo' && row.mode === 'with').runIds[0] = 'other-run' }]
 ]) {
@@ -172,6 +173,19 @@ test('release gate measures the approved ten smoke scenarios', async t => {
     'ambiguous-idea', 'clear-goals', 'existing-repo', 'existing-repo-python', 'implicit-invocation',
     'maintenance', 'research-main-typescript', 'scope-and-prerequisites', 'selected-rule-relocation', 'verification-limitations'
   ])
+})
+
+test('gating history includes compatible ledger measurements between releases', async t => {
+  const f = await fixture(t)
+  assert.equal((await f.run('0.1.1')).status, 0)
+  const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
+  f.measure(4, 0)
+  current.runIds = current.runIds.map(id => `${id}-current`)
+  f.rows.splice(f.rows.indexOf(current), 0, { ...current, candidate: 'c'.repeat(40), passes: 3,
+    runIds: current.runIds.map(id => `${id}-intermediate`) })
+  const result = await f.run('0.1.2')
+  assert.equal(result.status, 0, result.stdout)
+  assert.ok(!result.data.data.gatingSet.includes('ambiguous-idea/decision'))
 })
 
 for (const [name, path, expected] of [
