@@ -170,6 +170,35 @@ for (const [key, scenarios] of [
   })
 }
 
+for (const key of [
+  'scripts/commands/contract.mjs',
+  'scripts/commands/evidence.mjs',
+  'scripts/commands/evidence-validate.mjs',
+  'scripts/commands/docs-check.mjs',
+  'scripts/commands/docs-generate.mjs',
+  'scripts/commands/run-checks.mjs',
+  'scripts/commands/apply.mjs',
+  'scripts/commands/findings.mjs',
+  'schemas/project.schema.json',
+  'schemas/evidence.schema.json',
+  'schemas/impact-assessment.json',
+  'schemas/check-plan.json',
+  'schemas/findings.schema.json',
+  'schemas/change-set.schema.json',
+  'schemas/resume-state.schema.json'
+]) {
+  test(`required maintenance input selects all five maintenance flows: ${key}`, async t => {
+    const repo = await checkout(t)
+    const path = join(repo, 'skills/repo-audit', key)
+    await writeFile(path, (await readFile(path, 'utf8')) + '\n')
+    const result = affected(repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.keys, [key])
+    assert.deepEqual(result.data.unmapped, [])
+    assert.ok(maintenance.every(id => result.data.scenarios.includes(id)), JSON.stringify(result.data.scenarios))
+  })
+}
+
 test('an unchanged checkout selects no scenarios and an inaccessible base is blocked', async t => {
   const repo = await checkout(t)
   const result = affected(repo)
