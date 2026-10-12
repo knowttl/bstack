@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "taskId": "evalr-pr10",
+  "slice": "evalr-pr10",
+  "intent": "Keep release ledger and gate output plus redacted blocking or sampled transcripts in Git, and archive raw evaluation runs locally instead of committing every run.",
+  "amendments": ["The maintainer approved the release-evaluation redesign evidence storage policy."],
+  "status": "passed",
+  "cases": [
+    {
+      "id": "evidence-storage",
+      "kind": "automated",
+      "procedure": "tests/scripts/eval.test.mjs: raw batch archives stay local while Git exposes ledger and gate files",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/evalr-pr10.full-tests.txt"
+    }
+  ],
+  "commands": [],
+  "limitations": [
+    "Real smoke baselines, candidate batches and confirmation runs are deferred.",
+    "Real full-tier bulk runs, compatible baselines and release-model anchors are deferred.",
+    "Real judge calibration, blocking-verdict audit and sampled conversation audit are deferred.",
+    "Real release archive creation and retention verification are deferred until captures are available.",
+    "The storage test uses real fake-host batch artifacts and a synthetic gate file; release-gate tests independently validate gate contents.",
+    "Existing tracked historical evidence remains in Git for acceptance references and calibration."
+  ]
+}
