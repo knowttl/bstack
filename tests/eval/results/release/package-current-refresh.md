@@ -63,5 +63,13 @@ Fifty-eight scratch artifacts retain original and published hashes.
 The current portable assessment correctly remains blocked by the new source bytes; the fresh isolated clean-clone checker verifies the prior committed baseline, so its success does not establish current-tree portable readiness.
 The evidenced no-op neither duplicates rules nor reopens intent, erases the note or commits user work.
 
+The [maintained-project maintenance comparison](final-maintained-maintenance-comparison.json) passes 2/2 with the package against the retained 0/2 baseline.
+The [installed conversation](runs/2026-10-12T00-09-05.843Z-9edc9bf5-e921-4091-afdc-b33eedaaa4ee/conversation.txt), lines 7–54, captures original public protection before naming an intermediate subtotal, then repeats the native checks and substantive no-impact assessment with fresh local and isolated clean-clone checkers.
+Independent checks verify six literal citations, unchanged approved authorities, both notes, original acceptance/tests, historical snapshot, contract/checker and the complete prior foundation record.
+The only implementation path is packages/core/internal/database.ts; multiplication order, quantity factor, exports, storage effects and returned order shape are preserved.
+The explicit base is the baseline's identical fixture-author commit `156e8342bc33bb6ce7c7713c4df1735eeb13aa05`, the implementation is `753df024db225bde16ea88cf5112d5aaa1dfb8b8`, and the separately committed assessment is `d6ef3546b8ffc9d956dc1d9572b2be0f09ac4200`.
+Eighty-two artifacts retain original and published hashes, including before/final-after captures and two fresh checker results.
+Corrected preparation and validation failures remain visible; the final required checks pass, and no interview, full audit or delivery service is started.
+
 All current captures retain complete ordered conversations and exact scores; login, owned-container and final isolated-home cleanup are recorded by the harness.
 Other scenario refreshes remain pending.
