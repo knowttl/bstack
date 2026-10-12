@@ -13,6 +13,8 @@ export function validateScore(record, answers, transcript) {
       record.scenario.checks.some(check => !answers.checks.some(answer => answer.id === check.id))) fail('Answers must name this run and every checklist ID exactly once.')
   const lines = transcript.trimEnd().split(/\r?\n/).length
   for (const answer of answers.checks) {
+    const check = record.scenario.checks.find(check => check.id === answer.id)
+    if (check.machine && record.machineResults?.find(result => result.id === check.id)?.passed !== answer.passed) fail(`Machine assertion cannot be overridden: ${check.id}`)
     if (answer.startLine < 1 || answer.endLine < answer.startLine || answer.endLine > lines) fail(`Invalid transcript location for ${answer.id}`)
     if (answer.passed && record.scenario.checks.some(check => check.id === answer.id && check.caseId === 'AC-29')) {
       const events = transcript.split(/\r?\n/).flatMap(line => { try { return [JSON.parse(line)] } catch { return [] } })
@@ -71,7 +73,7 @@ export async function correctedScore(directory, record, correction) {
       correction.evidence.endLine > lines || canonicalJSON(original.checks) === canonicalJSON(correction.checks)) fail('Correction needs valid evidence lines and a changed assessment.')
   validateScore(record, correction, transcript)
   const caseResults = record.scenario.checks.map(check => ({ ...check,
-    ...correction.checks.find(answer => answer.id === check.id), scoring: 'human',
+    ...correction.checks.find(answer => answer.id === check.id), scoring: check.machine ? 'machine' : 'human',
     reviewer: correction.corrector, transcript: record.transcript }))
   return { ...record, caseResults, status: caseResults.every(check => check.passed) ? 'passed' : 'failed', scoreCorrection: correction }
 }

@@ -1,4 +1,4 @@
-import { readFile, stat } from 'node:fs/promises'
+import { readFile, readdir, stat } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
@@ -20,6 +20,36 @@ export function fail(message, status = 'blocked') {
   throw new CommandError(status, [{ code: 'invalid-evidence', message, fix: 'Use the format and prerequisites in docs/evaluation.md.' }])
 }
 export async function readJSON(path) { return JSON.parse(await readFile(path, 'utf8')) }
+
+function validateMachine(machine) {
+  const text = { type: 'string', minLength: 1 }
+  const fields = {
+    fixtureUnchanged: {}, installerPassed: {},
+    opened: { patterns: { type: 'array', minItems: 1, items: text } },
+    notOpened: { patterns: { type: 'array', minItems: 1, items: text } },
+    command: { executable: text, args: { type: 'array', items: { type: 'string' } } },
+    citeCheck: { report: text }, filesEqual: { paths: { type: 'array', minItems: 2, items: text } },
+    contains: { path: text, text }
+  }
+  const properties = { type: { enum: Object.keys(fields) }, ...fields[machine.type] }
+  validateData({ type: 'object', additionalProperties: false, required: Object.keys(properties), properties }, machine)
+}
+
+export async function fixtureHash(name, directory = join(root, 'tests', 'fixtures')) {
+  const fixtures = await readJSON(join(directory, 'fixtures.json'))
+  const fixture = { ...fixtures[fixtures[name].base], ...fixtures[name] }
+  const inputs = []
+  async function collect(path, key) {
+    if ((await stat(path)).isDirectory()) {
+      for (const entry of (await readdir(path)).sort()) await collect(join(path, entry), `${key}/${entry}`)
+    } else inputs.push([key, hashBytes(await readFile(path))])
+  }
+  const source = fixture.source ?? fixture.base ?? name
+  for (const file of fixture.files) await collect(join(directory, source, file), `${source}/${file}`)
+  if (fixture.overlay) await collect(join(directory, name, fixture.overlay), `${name}/${fixture.overlay}`)
+  await collect(join(directory, 'build.mjs'), 'build.mjs')
+  return hashBytes(canonicalJSON({ fixture, inputs }))
+}
 
 export function isApprovedBaseline(record, recordBytes) {
   return record.id === '2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89' &&
@@ -55,7 +85,8 @@ export async function scenario(id) {
   const scenarios = await readJSON(join(root, 'tests', 'eval', 'scenarios', 'scenarios.json'))
   const schema = object({ schemaVersion: { const: 1 }, scenarios: array(object({
     id: text, fixture: text, request: text, answers: array(text), checkpoints: array(text),
-    invocation: { enum: ['explicit', 'implicit'] }, checks: array(object({ id: text, caseId: text, question: text }))
+    invocation: { enum: ['explicit', 'implicit'] }, checks: array({ ...object({ id: text, caseId: text, question: text,
+      machine: { type: 'object' } }), required: ['id', 'caseId', 'question'] })
   })) })
   validateData(schema, scenarios)
   validateIds(scenarios.scenarios, '$/scenarios')
@@ -64,7 +95,10 @@ export async function scenario(id) {
   for (const item of scenarios.scenarios) {
     validateIds(item.checks, '$/checks')
     if (!Object.hasOwn(fixtures, item.fixture) || !item.checks.length || !item.checkpoints.length || new Set(item.checkpoints).size !== item.checkpoints.length) fail(`Invalid scenario: ${item.id}`)
-    for (const check of item.checks) if (!registry.cases.some(entry => entry.id === check.caseId)) fail(`Unknown acceptance ID: ${check.caseId}`)
+    for (const check of item.checks) {
+      if (!registry.cases.some(entry => entry.id === check.caseId)) fail(`Unknown acceptance ID: ${check.caseId}`)
+      if (check.machine) validateMachine(check.machine)
+    }
   }
   const selected = scenarios.scenarios.find(item => item.id === id)
   if (!selected) fail(`Unknown scenario: ${id}`, 'usage-error')

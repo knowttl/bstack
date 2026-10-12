@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile, rm, cp } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { root, fail } from './evaluation.mjs'
@@ -64,8 +64,38 @@ export async function containerTurn(record, args, env) {
     if (Object.entries(toolchain).some(([key, value]) => record.tools[key] && record.tools[key] !== value)) fail('Evaluation container tool versions differ from the recorded toolchain.')
     turn.toolchain = toolchain
     record.execution.toolchain = toolchain
+    const checks = record.scenario.checks.filter(check => check.machine)
+    const program = checks.length ? await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8') : null
+    async function assertions(input) {
+      const path = join(record.isolation.home, 'tmp', `${name}-assertions.json`)
+      const grader = join(record.isolation.home, 'tmp', `${name}-grader`)
+      // Captured traces can exceed OS argument limits, so use the existing home mount.
+      try {
+        // Baselines also receive citation grading, after the subject has finished.
+        if (input.final && checks.some(check => check.machine.type === 'citeCheck')) {
+          for (const directory of ['scripts', 'schemas']) await cp(join(root, 'skills/repo-audit', directory),
+            join(grader, directory), { recursive: true })
+          input.skill = join(grader, 'scripts/repo-audit.mjs')
+        }
+        await writeFile(path, JSON.stringify({ kind: record.fixture.kind, ...input }), { mode: 0o600 })
+        const result = await docker(['run', '--rm', ...options.slice(2), '--name', `${name}-assertions`, imageData.Id,
+          'node', '--input-type=module', '-e', program, path])
+        return JSON.parse(completed(result, 'machine assertions'))
+      } finally {
+        await rm(path, { force: true })
+        await rm(grader, { recursive: true, force: true })
+      }
+    }
+    if (checks.length && !record.fixtureSnapshot) record.fixtureSnapshot = await assertions({ action: 'snapshot' })
     const result = await docker(['start', '--attach', name], record.adapter.timeoutMs, record.adapter.outputLimitBytes)
     result.toolVersion = { ...version, stdout: `${toolchain.agent}\n` }
+    if (checks.length && result.status === 'passed' && !result.outputTruncated) {
+      const events = [...record.turns.map(turn => turn.result.stdout), result.stdout]
+        .flatMap(stdout => stdout.trim().split(/\r?\n/).map(line => JSON.parse(line)))
+      record.machineResults = await assertions({ action: 'evaluate', checks, before: record.fixtureSnapshot,
+        events, installer: record.installer, final: record.turns.length === record.scenario.answers.length,
+        skill: join(record.isolation.stagedPath, 'scripts/repo-audit.mjs') })
+    }
     return result
   } finally {
     const removal = await docker(['rm', '--force', name])
@@ -76,6 +106,8 @@ export async function containerTurn(record, args, env) {
     if (versionRemoval.status !== 'passed' && !/No such container/.test(versionRemoval.stderr)) completed(versionRemoval, 'version cleanup')
     const preparationRemoval = await docker(['rm', '--force', `${name}-prepare`])
     if (preparationRemoval.status !== 'passed' && !/No such container/.test(preparationRemoval.stderr)) completed(preparationRemoval, 'fixture preparation cleanup')
+    const assertionRemoval = await docker(['rm', '--force', `${name}-assertions`])
+    if (assertionRemoval.status !== 'passed' && !/No such container/.test(assertionRemoval.stderr)) completed(assertionRemoval, 'assertion cleanup')
     turn.removedAt = new Date().toISOString()
   }
 }
