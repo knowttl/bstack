@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T00-05-31.637Z-626c3b95-29a8-40ca-ae6a-75e2761e507d",
+  "head": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+  "workingTree": "",
+  "allTrackedFilesUnchanged": true,
+  "loginAbsent": true,
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "d7edc7e4b5887be249b21a3907550206bbe141b43287c893a091cc80368e098a",
+      "unchanged": true
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+      "unchanged": true
+    },
+    {
+      "path": "app.py",
+      "sha256": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972",
+      "unchanged": true
+    },
+    {
+      "path": "boundaries.py",
+      "sha256": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/__init__.py",
+      "sha256": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/_internal.py",
+      "sha256": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/book.py",
+      "sha256": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157",
+      "unchanged": true
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af",
+      "unchanged": true
+    },
+    {
+      "path": "startup.py",
+      "sha256": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7",
+      "unchanged": true
+    },
+    {
+      "path": "test_ledger.py",
+      "sha256": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f",
+      "unchanged": true
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3",
+      "unchanged": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/cite-check.json",
+      "originalSha256": "bdb15f330cd11fae0e9c0d8a9751661301173f816f9f381068f00622038a2796",
+      "publishedSha256": "ea1ba9f303d59f924c3170117f387555a0801766233afc448b9efbbfc6ed64e3"
+    },
+    {
+      "path": "artifacts/inspect.json",
+      "originalSha256": "d4ea110c868907db955a5ebae83fba6e3cd4cf9d6a18c730dcd1432e1cad5330",
+      "publishedSha256": "b06413e747453dc65dd8481c62ae8ada9e047975c64abf5100e862f32166cb0e"
+    },
+    {
+      "path": "artifacts/inventory.json",
+      "originalSha256": "b503c39f1c67e5f30a27938dc7ba30bc7674b8c1a68cd2a1167e5ad57f942a39",
+      "publishedSha256": "92d74fbcd961fa60963392febb710d201b07ccd42b0f1e4bc44b92d7462a2fc2"
+    },
+    {
+      "path": "artifacts/research-report.json",
+      "originalSha256": "34e6d7e21dc735457513bf47817aaa88c0f38f484ad00558386133c7805bfd30",
+      "publishedSha256": "34e6d7e21dc735457513bf47817aaa88c0f38f484ad00558386133c7805bfd30"
+    }
+  ],
+  "citationsVerified": 53,
+  "everyCitedSourceOpened": true,
+  "fiveSequentialBriefs": true,
+  "webResearchUnavailable": true,
+  "noWebCitations": true
+}

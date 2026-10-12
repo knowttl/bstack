@@ -1,1 +1,18 @@
-{"schemaVersion":1,"command":"eval compare","status":"passed","problems":[],"data":{"status":"passed","without":"2026-10-11T20-58-37.160Z-519717f0-f146-47b9-b79d-813220cff306","with":"2026-10-11T21-53-22.949Z-567a3c83-460a-43f7-a82e-d77b63b37d8d","lost":[],"gained":["mode","citations","no-web"]},"inputs":{}}
+{
+  "schemaVersion": 1,
+  "command": "eval compare",
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "status": "passed",
+    "without": "2026-10-12T00-05-31.655Z-a2ad260b-af0a-428a-8e0a-d5fdfcce6348",
+    "with": "2026-10-12T00-05-31.637Z-626c3b95-29a8-40ca-ae6a-75e2761e507d",
+    "lost": [],
+    "gained": [
+      "mode",
+      "citations",
+      "no-web"
+    ]
+  },
+  "inputs": {}
+}
