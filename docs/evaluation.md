@@ -41,7 +41,7 @@ Ordinary with-skill requests require the host's explicit command through `--invo
 Without-skill and implicit-invocation requests reject that option.
 Implicit requests use the [scenario registry](../tests/eval/scenarios/scenarios.json)'s outcome request without a skill invocation.
 Manual runs without an adapter do not stage the skill or verify discovery paths.
-They retain unverified isolation even after human scoring.
+They retain unverified isolation even after scoring.
 `--manual` and `--adapter` cannot be combined; adapter starts capture the opening turn automatically.
 
 Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
@@ -87,7 +87,7 @@ The adapter therefore selects `danger-full-access` for both opening and resumed 
 The resume command explicitly sets `sandbox_mode="danger-full-access"` instead of relying on the opening command's `--sandbox` option to carry over.
 Every evaluation agent turn now runs in a disposable Docker container, providing a separate filesystem from the operator's host.
 Build its pinned toolchain with `docker build --tag bstack-eval-toolchain:node24-codex0.162.1 --file tests/eval/container/Dockerfile tests/eval/container`.
-The recipe pins the Node base image digest, Node 24.17.0, npm 11.13.0, Git 2.54.0 and Codex CLI 0.162.1.
+The recipe pins the Node base image digest, Node 24.17.0, npm 11.13.0, Git 2.54.0, Codex CLI 0.162.1 and Claude Code 2.1.296.
 It includes uv 0.12.22 from a pinned image digest, lavish-axi 0.1.78, chrome-devtools-axi 0.1.34, chrome-devtools-mcp 1.10.1 and Chromium for the Python and browser procedures.
 Python fixtures use image-installed CPython 3.12.15 and their locked Ruff 0.14.0 dependency, cached during the image build.
 Before their opening turn, the runner recreates the ignored virtual environment with `uv sync --locked --offline --python 3.12.15` inside the same two mounts and records that result.
@@ -163,7 +163,7 @@ Machine check counts appear immediately in the command result, alongside pending
 The command remains blocked until every run has valid explicit scoring and verified cleanup.
 Use `eval score` with each run's captured `conversation.txt` and semantic answers, then run `eval batch --batch <id>` with the same `--results` directory to finalize without new captures.
 Machine answers continue to come from captured assertions, regardless of supplied reviewer answers.
-Judge grading is a later step; this command never invents semantic grades.
+Use the [judge command](#judge-command) to prepare semantic answers; batch capture and finalization never invent semantic grades.
 Failed captures leave the ledger unpublished and require a fresh batch.
 
 Finalization appends one JSONL line per candidate, tier, scenario, mode and check to `tests/eval/results/ledger.jsonl` by default, or `<results>/ledger.jsonl` for an explicit results directory.
@@ -226,32 +226,84 @@ For a host without the supported conversation or isolation interface, use the ma
 Keep unavailable interaction or isolation checks blocked with their specific reason and next prerequisite.
 Do not substitute a one-shot prompt for later user answers or promote an unverified manual run into final acceptance evidence.
 
-## Explicit manual scoring
+## Judge and human scoring
 
-### Existing-vision delta rubric
+Judges and human reviewers use the [same rubric](../tests/eval/judge/rubric.md) and the checklist captured in each run.
+The rubric includes existing-vision delta, cross-stack findings, loading evidence and unit-execution requirements.
 
-The T2.8 `existing-vision-delta` scenario retains an approved reading-queue vision and a newer approved personal-backup decision in design and history.
-Score the candidate delta only when every item below is observed in the captured conversation.
+### Judge command
 
-- Discovery and cited evidence establish the missing accept/resist distinction before opening vision guidance.
-- The proposal retains the existing purpose, save/find/mark-read commitments, local ownership and exclusions for accounts, sharing and recommendations.
-- Exact candidate line edits add only personal backup of title, address and read status, with concrete accept/resist criteria.
-- Review tests personal backup against sharing and ties any revision to the scripted author's reasoning.
-- No project vision is replaced or applied without selection and approval of the exact revision.
-- A missing browser, terminal feedback or board approval remains explicitly blocked, with scratch retained and no manufactured verdict.
+```sh
+npm run eval -- judge --run <id> --json
+npm run eval -- judge --run <id> --judge judge.json --results <directory> --json
+```
 
-This rubric scores an evidenced, reviewed candidate delta.
-It does not turn scripted review of a candidate into a completed interactive board approval.
-Full board interaction and the final release checkpoint remain separate evidence.
-Compare `existing-repo` and `existing-repo-python` findings for actual differences in goals, ownership and native checks, rather than counting vocabulary changes.
-The `clear-goals` loading score uses observed command/file-open events, never a search of the skill's source as proof of interpretation.
+The default [judge configuration](../tests/eval/judge/claude.json) uses `claude-sonnet-5-5` at medium effort through Claude CLI print mode in the disposable evaluation container.
+Rebuild the [pinned toolchain image](../tests/eval/container/Dockerfile) before using it.
+The model and command arguments are configurable with `--judge <file>`.
+The configuration requires `schemaVersion`, `model`, `host`, `executable`, `args`, `versionArgs`, `timeoutMs` and `outputLimitBytes`.
+`host` is `claude-container`, or `process` for a command that implements the plain JSON judge protocol, including test fakes.
+`args` contains `{model}`, replaced with the configured model.
+The command receives a JSON prompt on stdin and returns a JSON answers object; Claude print mode wraps that object in its successful JSON result envelope.
+The prompt contains the rubric, historical conversation checklist, run ID, judge identity, numbered primary transcript and selected companion transcripts with their check IDs, scenario IDs, run IDs and transcript hashes, excluding human scores and subject model metadata.
+The judge cannot override captured machine assertions.
+
+The Claude container receives only a fresh working directory and private home, with 2 CPUs, 4 GiB memory, no extra capabilities or published ports, and the same container policy as subject evaluations.
+The runner copies only `.credentials.json` from `CLAUDE_CONFIG_DIR`, defaulting to the local `.claude` directory, into the throwaway home.
+It deletes the login copy and removes the container after success or failure.
+Tools, skills, custom settings, MCP discovery and session persistence are disabled for the judge.
+No provider diagnostics are published.
+
+Close adapter runs before judging.
+Manual runs additionally require `--transcript <file>` and retain unverified isolation.
+The command writes `<run>/judge/answers.json` and `evidence.json`, recording the model, configuration, rubric, input and transcript hashes, tool version and container identity.
+It leaves the run unscored; pass the printed answers path and captured transcript to `eval score`.
+A reserved judge directory prevents an accidental repeat call.
+An interrupted invocation requires review before any retry.
+Comparison checks receive a companion transcript from the same package source, mode and batch.
+Selection prefers the same explicitly recorded repeat index, then the first passing run in run-ID order when indexes differ or are unavailable.
+Batch inventories establish membership only; registration order does not establish repeat indexes.
+Ordinary companion lookup skips missing or incomplete historical run records and batch inventories, candidates with empty or truncated `score-correction.json` files, and candidates without an available nonempty transcript.
+Selection uses the remaining eligible evidence, or leaves the comparison pending when none qualifies.
+The input and companion hashes bind the selected transcript and run identity.
+Missing companions leave comparison checks pending and return blocked before reserving a provider call or writing answers.
+Supply companion evidence, then judge the same unscored run.
+
+### Calibration and audit
+
+The maintainer deferred real model calls for this change.
+The real 124-run calibration is a follow-up and must reach at least 95% check-verdict agreement on Sonnet 5.5 medium before judge verdicts count as release evidence.
+Fake-model tests establish command behaviour only and do not establish judge accuracy or real Claude authentication and execution.
+Until calibration passes, release scoring remains human-reviewed.
+
+```sh
+node scripts/eval-calibrate.mjs --plan --json
+node scripts/eval-calibrate.mjs --output .cache/judge-calibration --json
+```
+
+`--plan` validates the retained corpus without invoking any provider.
+Execution requires a fresh `--output` directory and makes one judge call for each retained run with available checks, using the original checklist and validated append-only corrections.
+`--runs <directory>` changes the corpus location; exactly 124 human-scored runs are required.
+`--judge <file>` changes the judge configuration.
+The saved plan binds every transcript, rubric, checklist, human score and configuration by hash.
+For comparisons, calibration uses the optional `companionRunId` cited on the retained human answer, otherwise the first retained companion scenario run with the same source revision and mode.
+A cited run that is absent or belongs to another scenario leaves the check pending rather than selecting a replacement.
+Pending comparison checks block both planning and adoption, even when all available verdicts agree.
+The current retained corpus has seven Python comparison checks without matching source-and-mode companions or explicit citations; these remain pending until human comparison evidence is supplied.
+The output retains each answers file and a report with verdict agreement and all disagreements, including human and judge citations.
+Citation equality is not part of verdict agreement.
+Provider or invalid-output failures stop the session, leave a blocked report and trigger no retry.
+Agreement below 95% fails; report the disagreements and stop rather than tuning the rubric to fit.
+Human reviewers inspect every blocking verdict and one randomly sampled run per smoke scenario per release after adoption.
+
+### Answers and score publication
 
 Create a scoring answers file using the checklist IDs printed by the run.
 Every conversation judgement needs a Boolean verdict and a one-based inclusive line range in the transcript, whether it passed or failed.
 The reviewer is responsible for the judgement and for identifying unavailable observations as a failed check with the limitation in the transcript.
 Reviewer identities must contain at least three characters and cannot be purely numeric.
-The score command records conversation judgements as `human` and deterministic assertions as `machine` in `caseResults`.
-Release evidence also accepts `judge` scoring for conversation judgements.
+The score command records conversation judgements as `judge` when the reviewer is `judge:<model>`, otherwise `human`, and deterministic assertions as `machine` in `caseResults`.
+Judge identities retain the model name; human reviewer identities remain anonymous in published evidence.
 An optional `machine` object names a deterministic assertion: `fixtureUnchanged`, `opened`, `notOpened`, `installerPassed`, `command`, `citeCheck`, `filesEqual` or `contains`.
 Opened-path assertions take `patterns` with Node path glob syntax over captured command and file-tool events; a missing access trace cannot pass.
 `opened` requires every pattern to match a successful recognised reader command or file-tool read.
@@ -283,7 +335,7 @@ npm run eval -- score --run <id> --answers answers.json --transcript transcript.
 
 Missing files, empty transcripts, missing conversation judgement IDs or captured machine results, duplicate check IDs, non-Boolean verdicts, wrong run IDs and out-of-range citations leave the run blocked.
 The runner never waits for missing manual evidence.
-Successful scoring publishes redacted answers and transcript copies in a unique scoring artifact folder and records the anonymous reviewer placeholder and transcript location for every check.
+Successful scoring publishes redacted answers and transcript copies in a unique scoring artifact folder and records the reviewer identity and transcript location for every check.
 For adapter runs, scoring also replaces the retained conversation with the redacted scoring transcript and updates its conversation hash.
 Every conversation judgement and captured machine assertion must pass for the run to pass.
 A scored run cannot be rescored.
