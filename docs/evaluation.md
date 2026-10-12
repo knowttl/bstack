@@ -172,6 +172,11 @@ All repetitions contribute; there is no run selection manifest for batches.
 Finalizing unchanged scores again appends nothing.
 Published grades cannot be overwritten by re-finalizing changed scores; preserve the ledger and capture a fresh batch.
 Ledger writers use an exclusive lock; a competing finalization returns blocked and can be rerun after the writer finishes.
+On SIGINT, SIGTERM or SIGHUP, the owning writer finishes any active ledger I/O, releases its lock and exits with the signal's conventional exit code.
+After an uncatchable termination such as SIGKILL or a crash, confirm that the interrupted writer has exited and stop other finalizers before recovery.
+Inspect the ledger for complete JSONL records; preserve an incomplete or damaged ledger for review rather than modifying published records.
+If the ledger is intact, remove only the orphaned empty `ledger.jsonl.lock` directory with `rmdir`, then retry finalization; unchanged published records are not appended again.
+Never remove a lock while its writer is still running.
 Batch publication records rates, including failing checks, and does not establish a release verdict.
 Unsupported hosts retain the `--manual` interface.
 

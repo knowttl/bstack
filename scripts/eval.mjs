@@ -277,12 +277,17 @@ async function finishBatch(batch, results) {
   }
   // Serialize ledger writers without making a second command wait or retry.
   const lock = `${ledger}.lock`
-  try { await mkdir(lock) }
-  catch (error) {
-    if (error.code === 'EEXIST') fail('Another batch is appending the ledger. Finalize again after it finishes.')
-    throw error
-  }
+  let owned = false
+  let interrupted = 0
+  const handlers = Object.entries({ SIGINT: 130, SIGTERM: 143, SIGHUP: 129 })
+    .map(([signal, code]) => [signal, () => { interrupted = code }])
+  for (const [signal, handler] of handlers) process.on(signal, handler)
   try {
+    try { await mkdir(lock); owned = true }
+    catch (error) {
+      if (error.code === 'EEXIST') fail('Another batch is appending the ledger. Finalize again after it finishes.')
+      throw error
+    }
     let existing = []
     try { existing = (await readFile(ledger, 'utf8')).trim().split('\n').filter(Boolean).map(line => JSON.parse(line)) }
     catch (error) { if (error.code !== 'ENOENT') throw error }
@@ -292,9 +297,16 @@ async function finishBatch(batch, results) {
       if (saved && canonicalJSON(saved) !== canonicalJSON(entry)) fail('Published batch grades changed. Preserve the ledger and capture a fresh batch.')
       return !saved
     })
+    if (interrupted) fail('Ledger finalization interrupted.')
     if (lines.length) await appendFile(ledger, lines.map(entry => JSON.stringify(entry) + '\n').join(''))
     return { status: 'passed', batch: batch.id, ledger, runIds: batch.runIds, appended: lines.length, checks: entries }
-  } finally { await rm(lock, { recursive: true }) }
+  } finally {
+    try { if (owned) await rm(lock, { recursive: true }) }
+    finally {
+      for (const [signal, handler] of handlers) process.removeListener(signal, handler)
+      if (interrupted) process.exit(interrupted)
+    }
+  }
 }
 
 async function load(results, id) {

@@ -4,7 +4,8 @@ import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat, 
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { execFileSync, spawnSync } from 'node:child_process'
+import { execFileSync, spawn, spawnSync } from 'node:child_process'
+import { once } from 'node:events'
 import { createHash } from 'node:crypto'
 import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
 
@@ -415,9 +416,32 @@ test('batch delivers two scenarios three times, closes every container and appen
       } finally { await writeFile(recordPath, original) }
     })
   }
+  for (const [signal, phase, exitCode] of [
+    ['SIGINT', 'acquire', 130], ['SIGTERM', 'acquire', 143], ['SIGHUP', 'acquire', 129], ['SIGINT', 'append', 130]
+  ]) {
+    await t.test(`ledger interruption releases its owned lock: ${signal} during ${phase}`, { skip: process.platform === 'win32', timeout: 20000 }, async t => {
+      const child = spawn(process.execPath, ['--import', join(root, 'tests/inputs/evaluation-ledger-interruption.mjs'),
+        join(root, 'scripts/eval.mjs'), 'batch', '--batch', batch.batch, '--results', directory, '--json'],
+      { env: { ...testEnvironment(directory), TEST_LEDGER_SIGNAL: signal, TEST_LEDGER_PHASE: phase }, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] })
+      const exited = once(child, 'exit')
+      t.after(() => { if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL') })
+      child.stdout.resume()
+      child.stderr.resume()
+      const [message] = await once(child, 'message')
+      assert.equal(message, 'lock-held')
+      const lock = join(directory, 'ledger.jsonl.lock')
+      const competing = run(directory, 'batch', '--batch', batch.batch)
+      assert.equal(competing.status, 2, competing.stdout)
+      assert.match(competing.stdout, /Another batch is appending/)
+      assert.equal((await stat(lock)).isDirectory(), true)
+      child.send('interrupt')
+      assert.deepEqual(await exited, [exitCode, null])
+      await assert.rejects(stat(lock), { code: 'ENOENT' })
+    })
+  }
   const finalized = run(directory, 'batch', '--batch', batch.batch)
   assert.equal(finalized.status, 0, finalized.stdout)
-  assert.equal(finalized.data.data.appended, 4)
+  assert.equal(finalized.data.data.appended, process.platform === 'win32' ? 4 : 0)
   const ledger = await readFile(join(directory, 'ledger.jsonl'), 'utf8')
   const lines = ledger.trim().split('\n').map(line => JSON.parse(line))
   assert.deepEqual(lines.map(line => [line.scenario, line.check, line.caseId, line.passes, line.runs]), [
