@@ -332,7 +332,10 @@ async function adapterFile(directory, mode = 'success') {
 
 test('batch delivers two scenarios three times, closes every container and appends all graded check rates once', async t => {
   const directory = await temporary(t)
-  const { path } = await adapterFile(directory, 'allowed-fixture-file')
+  const { path, adapter } = await adapterFile(directory, 'allowed-fixture-file')
+  adapter.args.splice(2, 0, 'require-fixture-inventory')
+  adapter.invocation.resumeArgs.splice(2, 0, 'require-fixture-inventory')
+  await writeFile(path, JSON.stringify(adapter))
   const captured = run(directory, 'batch', '--tier', 'smoke', '--scenario', 'ambiguous-idea,clear-goals',
     '--stage', 'baseline', '--mode', 'without', '--adapter', path, '--repeat', '3', '--concurrency', '2')
   assert.equal(captured.status, 2, captured.stdout)
@@ -443,6 +446,34 @@ test('batch delivers two scenarios three times, closes every container and appen
   assert.ok(published.stdout.includes('pending: none'))
   assert.ok(published.stdout.includes(`ledger: ${join(directory, 'ledger.jsonl')}`))
   assert.equal(await readFile(join(directory, 'ledger.jsonl'), 'utf8'), ledger)
+})
+
+test('interrupted batch retains the private fixture inventory after its first run closes', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory)
+  const interrupted = spawnSync(process.execPath, ['--import', join(root, 'tests/inputs/evaluation-capacity.mjs'),
+    '--import', join(root, 'tests/inputs/evaluation-interruption.mjs'), join(root, 'scripts/eval.mjs'),
+    'batch', '--tier', 'smoke', '--scenario', 'ambiguous-idea', '--stage', 'baseline', '--mode', 'without',
+    '--adapter', path, '--repeat', '3', '--concurrency', '1', '--results', directory, '--json'],
+  { encoding: 'utf8', env: testEnvironment(directory) })
+  const events = (await readFile(join(directory, 'docker-events.jsonl'), 'utf8')).trim().split('\n').map(line => JSON.parse(line))
+  t.after(() => Promise.all(events.filter(event => event.operation === 'create').map(event => rm(event.fixture, { recursive: true, force: true }))))
+  assert.equal(interrupted.status, 0, interrupted.stderr)
+  assert.equal(interrupted.stdout, '')
+  const inventories = (await readdir(join(directory, 'batches'))).filter(path => path.endsWith('.json'))
+  assert.equal(inventories.length, 1)
+  const inventory = JSON.parse(await readFile(join(directory, 'batches', inventories[0]), 'utf8'))
+  assert.equal(inventory.repeat, 3)
+  assert.equal(inventory.runIds.length, 1)
+  assert.equal(inventory.fixtures.length, 1)
+  const fixture = inventory.fixtures[0]
+  assert.equal(fixture.runId, inventory.runIds[0])
+  assert.equal((await stat(fixture.path)).isDirectory(), true)
+  const closed = JSON.parse(await readFile(join(directory, fixture.runId, 'run.json'), 'utf8'))
+  assert.ok(closed.isolation.cleanedAt)
+  assert.equal(closed.fixture.path, '[fixture]')
+  assert.equal(closed.nextAnswer, closed.scenario.answers.length + 1)
+  await assert.rejects(readFile(join(directory, 'ledger.jsonl')), { code: 'ENOENT' })
 })
 
 test('batch builds fresh maintained starting fixtures and enforces the independent extension mode', async t => {

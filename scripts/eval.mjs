@@ -1,4 +1,4 @@
-import { appendFile, mkdir, readFile, realpath, rm, statfs, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, readFile, realpath, rename, rm, statfs, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { freemem, platform, release } from 'node:os'
@@ -104,6 +104,10 @@ async function start(opts, results, frozen = null) {
     record.nextAnswer = 1
     record.sessionId = null
     record.conversation = 'conversation.txt'
+    if (frozen) {
+      await saveRecord(record, directory, 'wx')
+      await frozen.register(record)
+    }
     try {
       await isolate(record, frozen?.skillHash)
       await captureTurn(record, record.request, directory)
@@ -114,7 +118,7 @@ async function start(opts, results, frozen = null) {
     }
     if (record.installer) await writeFile(join(directory, 'installer.json'), redactEvidence(JSON.stringify(record.installer, null, 2) + '\n', record))
   }
-  await saveRecord(record, directory, 'wx')
+  await saveRecord(record, directory, frozen ? undefined : 'wx')
   return record
 }
 
@@ -203,24 +207,40 @@ async function batch(opts, results) {
     })), tier: opts.tier, mode: opts.mode,
     stage: opts.stage ?? null, repeat: Number(opts.repeat), concurrency, scenarios: selected, runIds: [], fixtures: [], errors: [] }
   await mkdir(join(results, 'batches'), { recursive: true, mode: 0o700 })
-  await writeFile(join(results, 'batches', `${record.id}.json`), JSON.stringify(record, null, 2) + '\n', { flag: 'wx', mode: 0o600 })
+  const inventory = join(results, 'batches', `${record.id}.json`)
+  await writeFile(inventory, JSON.stringify(record, null, 2) + '\n', { flag: 'wx', mode: 0o600 })
+  let saved = Promise.resolve()
+  function persist() {
+    const bytes = JSON.stringify(record, null, 2) + '\n'
+    saved = saved.then(async () => {
+      await writeFile(`${inventory}.tmp`, bytes, { mode: 0o600 })
+      await rename(`${inventory}.tmp`, inventory)
+    })
+    return saved
+  }
+  async function register(run) {
+    record.runIds.push(run.id)
+    record.fixtures.push({ runId: run.id, scenario: run.scenario.id, path: run.fixture.path })
+    await persist()
+  }
   const jobs = selected.flatMap(id => Array.from({ length: record.repeat }, () => id))
   await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, async () => {
     while (jobs.length) {
       const id = jobs.shift()
       try {
-        let run = await start({ scenario: id, mode: frozen[id].mode, stage: frozen[id].stage, adapter: opts.adapter }, results, frozen[id])
-        record.runIds.push(run.id)
-        record.fixtures.push({ runId: run.id, scenario: id, path: run.fixture.path })
+        let run = await start({ scenario: id, mode: frozen[id].mode, stage: frozen[id].stage, adapter: opts.adapter }, results, { ...frozen[id], register })
         try {
           while (!run.hostFailure && run.nextAnswer <= run.scenario.answers.length) {
             run = await turn({ run: run.id, answer: String(run.nextAnswer) }, results)
           }
         } finally { await close({ run: run.id }, results) }
-      } catch (error) { record.errors.push({ scenario: id, reason: error.message }) }
+      } catch (error) {
+        record.errors.push({ scenario: id, reason: error.message })
+        await persist()
+      }
     }
   }))
-  await writeFile(join(results, 'batches', `${record.id}.json`), JSON.stringify(record, null, 2) + '\n')
+  await saved
   return await finishBatch(record, results)
 }
 

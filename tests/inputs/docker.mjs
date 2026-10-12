@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // External Docker boundary for CLI tests; real release captures use Docker.
-import { appendFileSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
+import { appendFileSync, readFileSync, readdirSync, writeFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
@@ -64,6 +64,16 @@ else if (args[0] === 'start') {
   execute(record)
 }
 else if (args[0] === 'rm') {
+  const adapter = JSON.parse(readFileSync(join(directory, 'adapter.json'), 'utf8'))
+  if (adapter.args.includes('require-fixture-inventory')) {
+    const record = JSON.parse(readFileSync(state(args.at(-1)), 'utf8'))
+    const batches = join(directory, 'batches')
+    const inventories = readdirSync(batches).filter(path => path.endsWith('.json'))
+      .map(path => JSON.parse(readFileSync(join(batches, path), 'utf8')))
+    if (!inventories.some(batch => batch.fixtures.some(fixture => fixture.path === record.cwd && batch.runIds.includes(fixture.runId)))) {
+      throw new Error('Fixture inventory was not persisted before container removal')
+    }
+  }
   rmSync(state(args.at(-1)), { force: true })
   appendFileSync(join(directory, 'docker-events.jsonl'), JSON.stringify({ operation: 'remove', container: args.at(-1) }) + '\n')
   console.log(args.at(-1))
