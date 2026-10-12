@@ -1,0 +1,1 @@
+{"exitCode": 0, "stdout": "{\"source\":\"host\",\"checkedAt\":\"2026-10-12T04:30:07.908Z\",\"availableMemoryBytes\":24593805312,\"freeDiskBytes\":27051331584,\"load1m\":3.61,\"existingNodeSuites\":0,\"proposedNodeSuites\":1,\"permitted\":true}\n", "stderr": ""}

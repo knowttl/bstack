@@ -1,0 +1,11 @@
+{
+  "command": [
+    "git",
+    "rev-parse",
+    "HEAD"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "3f22861a65a6f698c117ec9ae9cb7a2fbec2fe71\n",
+  "stderr": ""
+}

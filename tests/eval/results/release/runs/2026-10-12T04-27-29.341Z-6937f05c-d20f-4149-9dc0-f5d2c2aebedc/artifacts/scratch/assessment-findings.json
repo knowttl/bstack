@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "cf1abf3d6cff050680a161867ab1dee661322ece"
+  },
+  "nextChange": "Name the intermediate undiscounted total without changing pricing or checkout behaviour",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Quote remains 12; default HTTP checkout returns status 201 and total 10; imports use public core."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The selected refactor needs a portable substantive review record.",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": null,
+      "principle": "Preserve public interfaces and agreed outcomes.",
+      "consequence": "Clean-checkout verification cannot run without the reviewed committed record.",
+      "fix": "Create this exact no-impact assessment bound to the reviewed source and base.",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "Local evidence validation and final complete standalone checker locally and in an isolated clean clone.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "quote",
+    "checkout"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance, not a full audit; no receipt wording decision."
+  ]
+}

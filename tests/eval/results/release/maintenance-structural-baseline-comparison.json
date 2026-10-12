@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"eval","status":"blocked","problems":[{"code":"invalid-evidence","message":"Comparison requires the same scenario, fixture revision, agent, model, stage and criteria, with identical fixture names, requests, scripted answers and invocation modes.","fix":"Use the format and prerequisites in docs/evaluation.md."}],"data":{},"inputs":{}}
