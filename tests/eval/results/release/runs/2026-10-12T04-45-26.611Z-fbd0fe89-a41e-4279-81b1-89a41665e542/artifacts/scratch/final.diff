@@ -1,0 +1,196 @@
+diff --git a/.bstack/assessment.json b/.bstack/assessment.json
+new file mode 100644
+index 0000000..cb1b04f
+--- /dev/null
++++ b/.bstack/assessment.json
+@@ -0,0 +1,176 @@
++{
++  "schemaVersion": 1,
++  "repo": ".",
++  "contract": ".bstack/project.json",
++  "previousContract": ".bstack/project.json",
++  "base": {
++    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
++    "kind": "commit",
++    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
++  },
++  "head": "925a1879bf665e187936a00412b9a360857a5127",
++  "changes": [
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/web/routes.ts"
++    }
++  ],
++  "paths": [
++    "packages/web/routes.ts"
++  ],
++  "mappings": [
++    {
++      "path": "packages/web/routes.ts",
++      "scopeIds": [
++        "maintained-repo"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "guidance"
++      ],
++      "ruleIds": [
++        "public-core",
++        "checkout-total",
++        "quote",
++        "acyclic",
++        "completion"
++      ]
++    }
++  ],
++  "unmappedPaths": [],
++  "documents": [
++    {
++      "id": "design",
++      "path": "DESIGN.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "No public behavior changes: the existing first multiplication is assigned to undiscountedTotal before the same conditional multiplier.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "postOrder keeps the same signature, default public-core price import, numeric multiplication order, quantity > 5 threshold, 0.9 multiplier, stored total and status 201 response. Extracting the first multiplication changes only a local name. Baseline npm run check passed quote 12, mocked checkout 10, static boundaries and the loopback HTTP checkout 10; final native and standalone executions must pass on these same acceptance inputs. Static boundaries exclude dynamic loading and the HTTP journey is local, as already documented.",
++        "citations": [
++          {
++            "path": "DESIGN.md",
++            "pointer": "The agreed checkout total is 10.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          },
++          {
++            "path": "unit.test.mjs",
++            "pointer": "test('public price', () => assert.equal(quote(), 12))",
++            "version": "current"
++          },
++          {
++            "path": "journey.mjs",
++            "pointer": "assert.deepEqual(order, { status: 201, total: 10 }, 'agreed checkout total is 10')",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    },
++    {
++      "id": "language",
++      "path": "glossary.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "No public behavior changes: the existing first multiplication is assigned to undiscountedTotal before the same conditional multiplier.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The intermediate undiscountedTotal names arithmetic inside a customer purchase; it introduces no domain concept, exported name or UI panel sequence. Order and Panel order retain their approved distinct meanings.",
++        "citations": [
++          {
++            "path": "glossary.md",
++            "pointer": "Order: a customer purchase.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          },
++          {
++            "path": "unit.test.mjs",
++            "pointer": "test('public price', () => assert.equal(quote(), 12))",
++            "version": "current"
++          },
++          {
++            "path": "journey.mjs",
++            "pointer": "assert.deepEqual(order, { status: 201, total: 10 }, 'agreed checkout total is 10')",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    },
++    {
++      "id": "guidance",
++      "path": "AGENTS.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "No public behavior changes: the existing first multiplication is assigned to undiscountedTotal before the same conditional multiplier.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "Only routes.ts implementation changes. Public core use and all acceptance checks remain intact. Existing project.json already maps this path to all five rules and all three authoritative documents; no contract edit is warranted. Implementation is committed before this separately committed portable assessment; final diff and fresh local and isolated clean-clone checker results will be recorded in scratch. Historical repo-audit.md remains a snapshot and receipt wording remains outside the change.",
++        "citations": [
++          {
++            "path": "AGENTS.md",
++            "pointer": "Run `npm run check` for maintained native verification; see DESIGN.md for acceptance cases, completion evidence and review limits.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          },
++          {
++            "path": "unit.test.mjs",
++            "pointer": "test('public price', () => assert.equal(quote(), 12))",
++            "version": "current"
++          },
++          {
++            "path": "journey.mjs",
++            "pointer": "assert.deepEqual(order, { status: 201, total: 10 }, 'agreed checkout total is 10')",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    }
++  ],
++  "unmappedAssessments": [],
++  "decisions": [],
++  "coverage": [
++    "public-core",
++    "checkout-total",
++    "quote",
++    "acyclic",
++    "completion"
++  ],
++  "execution": [],
++  "fingerprint": "9b91764438fbdc094e7c81883df941ca6396e6622a1a8fd5ec414f4301976881"
++}
+diff --git a/packages/web/routes.ts b/packages/web/routes.ts
+index d58183c..3fee8c9 100644
+--- a/packages/web/routes.ts
++++ b/packages/web/routes.ts
+@@ -1,7 +1,8 @@
+ import { price } from '../core/index.ts'
+ const orders: number[] = []
+ export function postOrder(quantity: number, unitPrice = price()) {
+-  const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)
++  const undiscountedTotal = unitPrice * quantity
++  const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)
+   orders.push(total)
+   return { status: 201, total }
+ }

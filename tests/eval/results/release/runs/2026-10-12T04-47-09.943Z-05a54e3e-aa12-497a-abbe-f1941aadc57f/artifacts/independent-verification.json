@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f",
+  "files": [
+    {
+      "path": "brief.md",
+      "sha256": "4906b755de04d645627f82d8c2e32a7c3a63ff91d564fd841b7def2b4662c004",
+      "unchanged": true
+    }
+  ],
+  "noProjectWrites": true,
+  "loginAbsent": true
+}
