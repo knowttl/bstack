@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "command": "findings render",
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "result": "verification blocked",
+    "reasons": [
+      "Missing required outcome: starting-checks.",
+      "Unresolved finding: F-002."
+    ],
+    "fingerprint": "9b6572d0dd9d42b298301afa1b59edf621a8ed9d326610ccb4bd1b5c5dec057c",
+    "path": "[isolated-home][scratch-path]"
+  },
+  "inputs": {
+    "target": {
+      "mode": "repo",
+      "root": "[fixture]"
+    },
+    "findings": "[isolated-home][scratch-path]"
+  }
+}
