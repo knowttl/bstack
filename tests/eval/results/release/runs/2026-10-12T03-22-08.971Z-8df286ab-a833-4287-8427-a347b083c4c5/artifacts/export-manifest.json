@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5",
+  "artifacts": [
+    {
+      "path": "artifacts/scratch/captured-startup.json",
+      "originalSha256": "26f7d4f69592a56aa841d333225b379654897940d4c32e2d83601c945eea8155",
+      "publishedSha256": "5d7c46b94f602788799d7aa3ea2cfb864b81bb791678aa3816589d2fdfa1c88f"
+    },
+    {
+      "path": "artifacts/scratch/check-plan.json",
+      "originalSha256": "7b75f241e201dac2c4d76611b2c42a9b6c940210031fc2dccc336d3352f3ebdb",
+      "publishedSha256": "7b75f241e201dac2c4d76611b2c42a9b6c940210031fc2dccc336d3352f3ebdb"
+    },
+    {
+      "path": "artifacts/scratch/checklist.md",
+      "originalSha256": "50c4fe1e9ca6b0c55a4bcd6525d1263f488233d54cdbe7613ef79ad6d46d352e",
+      "publishedSha256": "50c4fe1e9ca6b0c55a4bcd6525d1263f488233d54cdbe7613ef79ad6d46d352e"
+    },
+    {
+      "path": "artifacts/scratch/checks.json",
+      "originalSha256": "e61570b3d4f422cebba96a851a564cb19e1e4c08bf74d75f6aff642469048e35",
+      "publishedSha256": "5d87afab52f949fe328516c628a0e82662eb1442822453dc627b267a622a02b3"
+    },
+    {
+      "path": "artifacts/scratch/citations.json",
+      "originalSha256": "e611361757f197d2828d4875260a4a1b4525b067faf1df57759ac8ee8fd607fc",
+      "publishedSha256": "abd29ee3297a0ed09d19952f96c3ceefefb308ca7d21b7ad2845fd042135c561"
+    },
+    {
+      "path": "artifacts/scratch/findings.json",
+      "originalSha256": "06d693467ef60265cbcf87803ac5551c194f771aab7d7847f4e2d920fac46110",
+      "publishedSha256": "5bf8edd0ae5e469f486cf5897d0a52ab47d126253da509217d851f20173be6c2"
+    },
+    {
+      "path": "artifacts/scratch/inspect.json",
+      "originalSha256": "6a45d9fe0cae745f18d390c0df294434d4e0b0b802471835314e21001b010f9b",
+      "publishedSha256": "b06413e747453dc65dd8481c62ae8ada9e047975c64abf5100e862f32166cb0e"
+    },
+    {
+      "path": "artifacts/scratch/inventory.json",
+      "originalSha256": "4ee61b85f398e35861fac5d21930647b99bb53fe74829879970d14f480a617e9",
+      "publishedSha256": "92d74fbcd961fa60963392febb710d201b07ccd42b0f1e4bc44b92d7462a2fc2"
+    },
+    {
+      "path": "artifacts/scratch/measure.json",
+      "originalSha256": "3b734d1a8f92b5ac209891d60dc7bb348f84df5804465c3294b0485ad821761e",
+      "publishedSha256": "0f98194c4f5f7698dafdafefad4d8f4f09f3c9b4ea6ad465df6c6ab8d08c0850"
+    },
+    {
+      "path": "artifacts/scratch/native-checks.json",
+      "originalSha256": "4894145ddffe95613bc3f43cd88512d061383a89934550628293f91bac1e3793",
+      "publishedSha256": "b71837f15c0bdd6e8513c42c9f5308950a86e92d29b9f1963bfad062edb1cca3"
+    },
+    {
+      "path": "artifacts/scratch/recommendations.md",
+      "originalSha256": "fa441ca07f3205d5978897746db0cc0ea8c3220020aefcfb65f65ece71dde5f9",
+      "publishedSha256": "a8370459f504af7fc9abc5f0e23e0fc15e1e1388339baca682147bf4811ae6d5"
+    },
+    {
+      "path": "artifacts/scratch/render.json",
+      "originalSha256": "3b8a51565843f50cbde8adf8c4a0710f534637087dca474225200811bdc638d8",
+      "publishedSha256": "bdf1b6199f79dda15cc8f54c39ed91b3d4d87d6e59d3b62cf8d3fe061faeed53"
+    },
+    {
+      "path": "artifacts/scratch/research.json",
+      "originalSha256": "8c134143d1043ff64bcddca94f19c4452be2debf5bdcd3bf3dc7d61f0a992069",
+      "publishedSha256": "8c134143d1043ff64bcddca94f19c4452be2debf5bdcd3bf3dc7d61f0a992069"
+    },
+    {
+      "path": "artifacts/scratch/startup.json",
+      "originalSha256": "26f7d4f69592a56aa841d333225b379654897940d4c32e2d83601c945eea8155",
+      "publishedSha256": "5d7c46b94f602788799d7aa3ea2cfb864b81bb791678aa3816589d2fdfa1c88f"
+    },
+    {
+      "path": "artifacts/scratch/validation.json",
+      "originalSha256": "6dcb8748689ed9ff76374ad7d4a8a09b34837f75e911530290bc8e92160d9a35",
+      "publishedSha256": "8888699d4d6ffd2a0fe41c6b6005dcc237bec6ca8cc2cd68eb0f50e32325a41a"
+    },
+    {
+      "path": "artifacts/referenced/cache/bstack/cf86cb958b5d19d7d3c886c1c7e22a04ec49eb0c1bc7de0ee8bf753839d3c1b9/a1a13232-137d-40ec-9704-78a60b853ee4/checks.json",
+      "originalSha256": "f8e2f591d1bcc769257a7c4796f4539ab7ab690c3eace9f8a6ebbe55b42390d3",
+      "publishedSha256": "243c39c8e5f6de1007831cfbf7403d17017bd2596c09c7d59f6f90f6d2d68269"
+    },
+    {
+      "path": "artifacts/scratch/cache/bstack/cf86cb958b5d19d7d3c886c1c7e22a04ec49eb0c1bc7de0ee8bf753839d3c1b9/991aaa0f-38e1-46f4-acfa-a0fb6bcc25f7/repo-audit.md",
+      "originalSha256": "fa441ca07f3205d5978897746db0cc0ea8c3220020aefcfb65f65ece71dde5f9",
+      "publishedSha256": "a8370459f504af7fc9abc5f0e23e0fc15e1e1388339baca682147bf4811ae6d5"
+    }
+  ]
+}
