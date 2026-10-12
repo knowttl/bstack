@@ -479,6 +479,8 @@ Baseline checks at 3 of 5 or better require only the threshold.
 Hard breaks and regressions block the release.
 A regression is a check in the last passed release's gating set that now fails either threshold after confirmation or margin.
 Other check failures become known issues with their pass counts and sample sizes, and full-tier failures are non-blocking.
+Full-tier known issues and case measurements use the scenario's evaluated mode: with skill, except the deliberately skill-free independent extension.
+Ordinary without-skill baselines are comparison controls and do not become skill known issues.
 The full tier runs weekly and on demand before candidates; it may use three runs for long paths.
 Agent or manual cases without a current measurement receive a deferred known-issue entry with zero runs, rather than an invented rate.
 Automated acceptance procedures remain covered by the deterministic suite and registry checks.
