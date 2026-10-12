@@ -33,7 +33,11 @@ else if (args[0] === 'create' || args[0] === 'run') {
     NanoCpus: Number(cpus) * 1_000_000_000, Memory: memory === '4g' ? 4 * 1024 ** 3 : 0,
     CapAdd: [], CapDrop: ['ALL'], SecurityOpt: ['no-new-privileges'] }, command: args.slice(index + 1), cwd, env }
   if (cpus !== '2' || memory !== '4g') throw new Error('Missing evaluation container resource budget')
-  if (args[0] === 'create') { writeFileSync(state(name), JSON.stringify(record)); console.log(name) }
+  if (args[0] === 'create') {
+    writeFileSync(state(name), JSON.stringify(record))
+    appendFileSync(join(directory, 'docker-events.jsonl'), JSON.stringify({ operation: 'create', container: name, fixture: cwd }) + '\n')
+    console.log(name)
+  }
   else execute(record)
 } else if (args[0] === 'inspect') {
   const record = JSON.parse(readFileSync(state(args[1]), 'utf8'))
@@ -59,7 +63,11 @@ else if (args[0] === 'start') {
   appendFileSync(join(directory, 'docker-events.jsonl'), JSON.stringify({ operation, container: name }) + '\n')
   execute(record)
 }
-else if (args[0] === 'rm') { rmSync(state(args.at(-1)), { force: true }); console.log(args.at(-1)) }
+else if (args[0] === 'rm') {
+  rmSync(state(args.at(-1)), { force: true })
+  appendFileSync(join(directory, 'docker-events.jsonl'), JSON.stringify({ operation: 'remove', container: args.at(-1) }) + '\n')
+  console.log(args.at(-1))
+}
 else throw new Error('Unexpected Docker operation')
 
 function execute(record) {
