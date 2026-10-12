@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T00-22-39.472Z-dffc85b3-f7ae-4ed9-b98c-03e8184473ce",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "delta",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 24
+    }
+  ]
+}

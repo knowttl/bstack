@@ -79,5 +79,13 @@ Both fixtures retain all three tracked documents unchanged; ten with-skill scrat
 The installed run's corrected scratch scope validation remains visible, and absent implementation leaves product readiness blocked.
 An accidentally started foundation-stage baseline was closed after its opening turn and retained as unselected history; only the subsequent final-stage pair is release evidence.
 
+The [existing-vision delta comparison](existing-vision-delta-comparison.json) passes 1/1 in both modes under the candidate-delta rubric in docs/evaluation.md.
+The [baseline conversation](runs/2026-10-12T00-22-39.472Z-dffc85b3-f7ae-4ed9-b98c-03e8184473ce/conversation.txt), lines 6–24, and [installed conversation](runs/2026-10-12T00-25-52.070Z-7ab1794f-12af-412e-b7f3-670502acd871/conversation.txt), lines 19–77, establish the newer approved backup decision from design and accessible history, then present exact candidate edits preserving the existing product commitments and exclusions.
+The installed run discovers that material gap before opening vision guidance and reviews the concrete backup-versus-sharing fault line, incorporating the scripted author's reasoning without project writes.
+Board build and launch succeed, but no browser feedback or exact-revision approval is received; those steps remain explicitly blocked and are not credited as completed board interaction.
+Independent checks confirm the candidate preserves every approved baseline line and both fixture trees remain byte-identical.
+Twenty-three installed artifacts retain original and published hashes, including the complete board scratch, candidate, proposals, transcript and blocked audit record.
+Absent product implementation leaves runtime readiness unverified.
+
 All current captures retain complete ordered conversations and exact scores; login, owned-container and final isolated-home cleanup are recorded by the harness.
 Other scenario refreshes remain pending.
