@@ -15,6 +15,7 @@ document:
     If attachment rejects changed inputs, base or environment, run the configured full test command again
     on the final inputs and attach that result within this run. Behavioural changes always need fresh validation.
 review:
+  ignore_patterns: ["upstream/**"]
   path_instructions:
     - path: "**"
       instructions: |

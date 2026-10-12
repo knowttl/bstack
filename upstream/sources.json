@@ -20,7 +20,25 @@
       "skills/engineering/retro/SKILL.md",
       "skills/productivity/writing-for-agents/SKILL.md",
       "skills/productivity/writing-for-agents/SKILL-MECHANICS.md"
-    ]
+    ],
+    "sha256": {
+      "skills/productivity/grill-me/SKILL.md": "caaf8b8de1684f96e26b28f3c29189db5c89cce4b73e1c93d86164f66ef88637",
+      "skills/productivity/grilling/SKILL.md": "10ff989e7498b23b5acb49d5048f11dcd906757d2f79c5cdf8a00001381296f2",
+      "skills/engineering/grill-with-docs/SKILL.md": "7de372c13488f1ee96cc11cd8907b56b6809cc93eef776eeddd37de6b6cbe3fe",
+      "skills/engineering/domain-modeling/SKILL.md": "7b925d7b1e341a2eeae33ad68a8a8c0ab889a38ddd22a7598e4c240e5a7556a3",
+      "skills/engineering/domain-modeling/GLOSSARY-FORMAT.md": "21dcc40cdec8e151a829b98ab1517c1867bc444e3665134a98c6983411996801",
+      "skills/engineering/domain-modeling/ADR-FORMAT.md": "944c92aa790e8fbdc9199640b170979abb8a34ba8d0fe18c2a01a63bce140ca0",
+      "skills/engineering/setup-matt-pocock-skills/domain.md": "593a7042218689f1d24df89df14eaf0a20e19e0d0a7d479a01947ac78f0784b9",
+      "skills/engineering/codebase-design/SKILL.md": "2c20617f87ec8af6a434859f381b2f061a69b530444e74eb39e78bb016a6d1e2",
+      "skills/engineering/codebase-design/DEEPENING.md": "f3dd099ce99289bd213914d8ee3e2429b78309c3957ca4583f7659551b1d53c1",
+      "skills/engineering/codebase-design/DESIGN-IT-TWICE.md": "52b52e75655a27aea59c6966b410bac82448968ad46ef1ebb9f07c274e3ae010",
+      "skills/engineering/improve-codebase-architecture/SKILL.md": "552240a5ab5cec6b67c15dd1ad6e9f6962b1bca6ce870059a8c2713760c20392",
+      "skills/engineering/improve-codebase-architecture/HTML-REPORT.md": "581e8bb5a521e46bbda8ca7e19b15948bed882187108092ebb90c62513b77528",
+      "skills/engineering/code-review/SKILL.md": "47f4e52c21694def9c7c11cbfbf891ca35eac7a93e395797515be3c8a409ae50",
+      "skills/engineering/retro/SKILL.md": "33fbc28568e3146f20fd908b12998bc0ab30aa4f4c87288199a40793efa94696",
+      "skills/productivity/writing-for-agents/SKILL.md": "551adca942227b44192edba88acd4e8db911f0121ce58ad16944ccf6a896a74a",
+      "skills/productivity/writing-for-agents/SKILL-MECHANICS.md": "c768e6307c7c10728c401c213f2c4ba71c542127eeb7ad2956aabd15a0fa0059"
+    }
   },
   {
     "name": "vision",
@@ -30,7 +48,12 @@
       "skills/vision/SKILL.md",
       "skills/vision/assets/review-template.html",
       "skills/vision/assets/review.css"
-    ]
+    ],
+    "sha256": {
+      "skills/vision/SKILL.md": "033fa3b3236518d9ac3cce21a48463fa91eb4436247f83de27ca05165af397f0",
+      "skills/vision/assets/review-template.html": "4dea7bcbf1620bfc625d5dba40b03bb25a7f4d3d1f891a2bbd974bd3a0a5c35d",
+      "skills/vision/assets/review.css": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
+    }
   },
   {
     "name": "pstack",
@@ -43,12 +66,25 @@
       "pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md",
       "pstack/skills/principle-encode-lessons-in-structure/SKILL.md",
       "pstack/skills/principle-build-the-lever/SKILL.md"
-    ]
+    ],
+    "sha256": {
+      "pstack/skills/architect/references/design-red-flags.md": "d0e639e4cc588ec865f930d3a4111faad60987ae36925917e319d7ceca7c69ce",
+      "pstack/skills/principle-model-the-domain/SKILL.md": "bbadbb9a723fac3f76e782ae45665eb94058ec10993e4bae36d4dc6b0e4eac07",
+      "pstack/skills/principle-minimize-reader-load/SKILL.md": "42551c5dc74cd578163c148da552db3ff67d29b78600ef216bfd311fb828fe69",
+      "pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb",
+      "pstack/skills/principle-encode-lessons-in-structure/SKILL.md": "77044c83a9ac6df78fc643887ea5f1f11f082adaf14b717c060cdaed03cce863",
+      "pstack/skills/principle-build-the-lever/SKILL.md": "458b269eab8e95a1573276955312f7d2a13ae8599879a9efc748248f6bc34b56"
+    }
   },
   {
     "name": "kun",
     "repoUrl": "https://github.com/kunchenguid/kun",
     "commit": "1b2a9c7dd4b2b33eb7161399d7893c39048213be",
-    "files": ["ENTRY.md"]
+    "files": [
+      "ENTRY.md"
+    ],
+    "sha256": {
+      "ENTRY.md": "1da92b15ea0969669b08a95307a7eaf037500816460d12b7db17dbdac3eaca5b"
+    }
   }
 ]
