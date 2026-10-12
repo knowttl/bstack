@@ -1,0 +1,154 @@
+<!doctype html><html lang="en" data-theme="luxury"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Shop audit — finding selection</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css"><script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script><style>body{margin:0;background:#171212;color:#f4ede6}main{max-width:1100px;margin:auto;padding:32px}p,td,th,pre{overflow-wrap:anywhere}pre{white-space:pre-wrap}article{min-width:0}table{width:100%}td,th{vertical-align:top}details{margin-top:24px}</style></head><body><main><p class="text-primary uppercase tracking-widest">Existing checkout · final checkpoint</p><h1 class="text-4xl font-bold mt-3 mb-6">Select corrections before exact diff review</h1><div class="alert alert-error"><span>Verification blocked. The real checkout returns12 instead of10. No project files changed; no full-path completion is claimed.</span></div><p class="my-5">Assessed clean revision b6c59b7810f5155fd514c9db60e98b7dffce0cc0. DESIGN.md is the existing authority: UI never touches storage, checkout total10. AGENTS.md requires the public core interface. All native runs used prepared TypeScript5.9.3, Node24.17.0 and npm11.13.0 with a fresh permitted host preflight before every suite.</p><div class="overflow-x-auto"><table class="table table-zebra"><thead><tr><th>Native command</th><th>Result</th><th>Coverage</th></tr></thead><tbody><tr><th>npm run check</th><td>Passed</td><td>TypeScript type check only</td></tr><tr><th>npm test</th><td>Passed</td><td>2 unit tests; checkout uses mocked fetch</td></tr><tr><th>npm run journey</th><td>Failed</td><td>Actual total12; agreed total10</td></tr><tr><th>npm run boundaries</th><td>Failed</td><td>alias, cycle, private</td></tr></tbody></table></div><p class="mt-5">Select finding IDs in chat. I recommend F-001–F-007, subject to pricing and vocabulary decisions. Selection authorizes preparing the exact protected diff; applying it requires a separate exact approval. Portable assessment and final audit report will each receive their own exact review.</p><article class="card card-border bg-base-200 mt-5" id="F-001"><div class="card-body"><h2 class="card-title">F-001 · Real HTTP checkout returns12 instead of the agreed10; passing mock hides this.</h2><p><strong>Consequence:</strong> The first real journey fails; unit success cannot establish readiness.</p><p><strong>Proposed fix:</strong> Pending pricing decision: recommend canonical public core price10 for quote and checkout, retain quantity/discount arithmetic and existing journey assertion10. Define HTTP pricing policy before implementation.</p><p><strong>Scope:</strong> packages/core/internal/database.ts, packages/core/index.ts, packages/web/ui.ts, unit.test.mjs, DESIGN.md</p><p><strong>Verification:</strong> Retain captured failing reproduction and run unchanged real HTTP journey after correction; cover approved public quote and checkout cases.</p><p><strong>Evidence:</strong> DESIGN.md:3-4; packages/core/internal/database.ts:1; journey.mjs:12; unit.test.mjs:6</p><p><strong>Principle:</strong> Preserve agreed checkout total10 (existing authority)</p></div></article><article class="card card-border bg-base-200 mt-5" id="F-002"><div class="card-body"><h2 class="card-title">F-002 · UI imports storage directly and through a TS alias.</h2><p><strong>Consequence:</strong> UI bypasses the approved responsibility boundary.</p><p><strong>Proposed fix:</strong> Route all web storage access through packages/core/index.ts; maintain that authoritative public interface and show a runnable public import example in DESIGN.md.</p><p><strong>Scope:</strong> packages/core/index.ts, packages/web/ui.ts, packages/web/routes.ts, packages/web/alias.ts, DESIGN.md</p><p><strong>Verification:</strong> Native TS-resolved graph passes public control including permitted core-internal use; deliberately seeded direct, alias and re-export violations fail with specific diagnostics; real checkout passes.</p><p><strong>Evidence:</strong> DESIGN.md:3-4; AGENTS.md:1; packages/web/ui.ts:1; packages/web/routes.ts:1; packages/web/alias.ts:1</p><p><strong>Principle:</strong> UI never touches storage; public core interface (existing authority)</p></div></article><article class="card card-border bg-base-200 mt-5" id="F-003"><div class="card-body"><h2 class="card-title">F-003 · Core a/b imports form a cycle and both functions recurse indefinitely.</h2><p><strong>Consequence:</strong> Native boundary check fails; calling either function does not terminate.</p><p><strong>Proposed fix:</strong> Recommend deleting these two unused, non-exported fixture modules; preserve exported core interface. Alternatively select a terminating implementation with its intended result specified.</p><p><strong>Scope:</strong> packages/core/a.ts, packages/core/b.ts, DESIGN.md</p><p><strong>Verification:</strong> Prove clean control and new seeded cycle through native boundary tool; type, public interface and journey checks pass.</p><p><strong>Evidence:</strong> packages/core/a.ts:1-2; packages/core/b.ts:1-2; boundaries.mjs:32; package.json:12-16; boundaries.mjs:10-12</p><p><strong>Principle:</strong> Proposed: retain native acyclic dependency check (proposed)</p></div></article><article class="card card-border bg-base-200 mt-5" id="F-004"><div class="card-body"><h2 class="card-title">F-004 · Order has two competing meanings.</h2><p><strong>Consequence:</strong> A representative extension has ambiguous language guidance.</p><p><strong>Proposed fix:</strong> Pending owner decision: recommend Order for customer purchase and Panel order for UI sequence; retain glossary.md filename.</p><p><strong>Scope:</strong> glossary.md</p><p><strong>Verification:</strong> Review exact definitions against owner selection; docs/contract link checks. No automatic code naming migration.</p><p><strong>Evidence:</strong> glossary.md:3-4</p><p><strong>Principle:</strong> One canonical name per concept within this small context (existing authority)</p></div></article><article class="card card-border bg-base-200 mt-5" id="F-005"><div class="card-body"><h2 class="card-title">F-005 · npm run check omits existing journey, unit and boundary checks; boundary syntax coverage has gaps.</h2><p><strong>Consequence:</strong> A green maintained check accepts known violations and the broken journey.</p><p><strong>Proposed fix:</strong> Extend existing check using fail-fast types, units, boundaries and journey. Extend TypeScript AST traversal for literal dynamic imports and import-equals; reject unanalysable imports explicitly or document a selected narrow limit. Retain aliases for bypass proof. No CI, formatter or lint framework addition.</p><p><strong>Scope:</strong> package.json, boundaries.mjs, DESIGN.md</p><p><strong>Verification:</strong> Separate rule-proof controls and seeds for private, alias, re-export, cycle and supported dynamic/import-equals syntax; maintained npm run check independently passes valid sibling/core-internal case and rejects each seeded violation.</p><p><strong>Evidence:</strong> DESIGN.md:3-4; package.json:12-16; boundaries.mjs:10-12</p><p><strong>Principle:</strong> Maintained checks must protect approved boundaries and journey (proposed)</p></div></article><article class="card card-border bg-base-200 mt-5" id="F-006"><div class="card-body"><h2 class="card-title">F-006 · No maintained change-evidence foundation or repo-owned standalone checker is present.</h2><p><strong>Consequence:</strong> Future edits can bypass documentation impact review or rely on stale success.</p><p><strong>Proposed fix:</strong> Add a short completion and maintenance policy to DESIGN.md, pointers in AGENTS.md, selected .bstack/project.json mappings and installed dependency-free .bstack/bin/bstack-check.mjs via protected writes. Require explicit base, source citations, affected paths including unmapped paths, selected exact assessment review and fresh native results. Keep CLAUDE.md import stub.</p><p><strong>Scope:</strong> DESIGN.md, AGENTS.md, .bstack/project.json, .bstack/bin/bstack-check.mjs, .bstack/assessment.json</p><p><strong>Verification:</strong> Validate contract/docs/evidence; capture final affected checks and exact assessed record approval; commit implementation then separately approved portable assessment; freshly run standalone checker in working tree and different-root clean clone with isolated home/cache.</p><p><strong>Evidence:</strong> DESIGN.md:1-4; AGENTS.md:1; user request: final checkpoint and subsequent edit/extension</p><p><strong>Principle:</strong> Proposed: complete affected journeys and assess source impact on final inputs (proposed)</p></div></article><article class="card card-border bg-base-200 mt-5" id="F-007"><div class="card-body"><h2 class="card-title">F-007 · No final assessed-state audit record exists.</h2><p><strong>Consequence:</strong> A partial audit could be mistaken for full-path readiness.</p><p><strong>Proposed fix:</strong> After selected corrections, refresh findings fingerprint and final outcomes, render docs/repo-audit.md and present its exact bytes as a separate protected edit for approval. Do not claim readiness before all required fresh evidence and clean clone proof.</p><p><strong>Scope:</strong> docs/repo-audit.md</p><p><strong>Verification:</strong> Findings validate and render on final state; refresh after report write; map every changed path and retain failed/unresolved outcomes.</p><p><strong>Evidence:</strong> DESIGN.md:1-4; AGENTS.md:1; user request: final checkpoint and subsequent edit/extension</p><p><strong>Principle:</strong> Proposed: report current evidence and verification limits separately from design (proposed)</p></div></article><details><summary>Evidence and limitations</summary><p class="mt-4">21 file citations passed byte/location checking; main-thread research was proportionate to this small fixture. One initial commit yields advisory co-change only. Declared correction/foundation plans have disjoint paths but share the design/public contract. No CI, formatter, lint framework, external service, or previous contract/checker exists. CLAUDE.md remains an import stub. Unknown or failing journeys cannot count as ready.</p><p>TypeScript aliases do not rewrite runtime imports: <a class="link" href="https://www.typescriptlang.org/tsconfig/paths.html">official TypeScript documentation</a>. Package exports do not prevent relative-file access: <a class="link" href="https://nodejs.org/api/packages.html#package-entry-points">official Node documentation</a>. Runtime boundary proof is still required.</p><p>Starting capture: 63961c47-bbb3-4140-a052-ea701c1d8932. Captured checks remain separate from findings-fingerprint evidence; no manually attached artifact is claimed as validator-authenticated execution.</p></details><details><summary>Installed renderer’s audit preview</summary><pre># Proposed repo audit record
+
+Result: verification blocked
+
+Stage: audit
+Target: [fixture]
+Revision: b6c59b7810f5155fd514c9db60e98b7dffce0cc0
+Stated next change: After final foundation, accept a user edit, re-audit and implement a representative extension using repo guidance/checks only.
+Reviewed scope: AGENTS.md, DESIGN.md, glossary.md, unit.test.mjs, journey.mjs, boundaries.mjs, package.json, docs/repo-audit.md, packages/core/index.ts, packages/core/b.ts, packages/core/a.ts, packages/core/package.json, packages/core/internal/database.ts, packages/web/routes.ts, packages/web/package.json, packages/web/alias.ts, packages/web/ui.ts, packages/web/public.ts, .bstack/project.json, .bstack/bin/bstack-check.mjs, .bstack/assessment.json
+Current fingerprint: 6c108dd2083c5b39dd4a9c42ade8932a53b58f9130381179bcdb401e6f99efa3
+
+## Readiness evidence
+
+- Missing required outcome: starting-checks.
+- Missing required outcome: journey.
+- Missing required outcome: native-boundary-proof.
+- Missing required outcome: maintained-enforcement.
+- Missing required outcome: public-interface-example.
+- Missing required outcome: foundation-review.
+- Missing required outcome: maintenance-contract.
+- Missing required outcome: final-assessment.
+- Missing required outcome: standalone-clean-clone.
+- Unresolved finding: F-001.
+- Unresolved finding: F-002.
+- Unresolved finding: F-003.
+- Unresolved finding: F-004.
+- Unresolved finding: F-005.
+- Unresolved finding: F-006.
+- Unresolved finding: F-007.
+
+## Documented intent
+
+- design: UI never touches storage; checkout total is 10. (DESIGN.md:3-4)
+- instructions: Use approved design and public core interface. (AGENTS.md:1)
+- terms: Order has conflicting meanings. (glossary.md:3-4)
+- next: Maintain standalone guidance and evidence, run clean clone checker; preserve total10 and authoritative file names. (user request: final checkpoint and subsequent edit/extension)
+
+## Observed behaviour
+
+- pricing: Raw and public price12; real HTTP checkout returns12 and fails while mock total10 passes. (packages/core/internal/database.ts:1; journey.mjs:12; unit.test.mjs:6)
+- imports: Direct and alias private storage imports. (packages/web/ui.ts:1; packages/web/routes.ts:1; packages/web/alias.ts:1)
+- cycle: Mutually recursive unused a/b files; native boundary tool fails with cycle. (packages/core/a.ts:1-2; packages/core/b.ts:1-2; boundaries.mjs:32)
+- checks: Maintained check is types only; boundary tool skips dynamic/import-equals forms. (package.json:12-16; boundaries.mjs:10-12)
+- maintenance: No maintained evidence completion policy, maintenance contract or standalone checker exists. (DESIGN.md:1-4; AGENTS.md:1)
+
+## Inferred intent
+
+
+## Observed debt
+
+### F-001: Real HTTP checkout returns12 instead of the agreed10; passing mock hides this.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: packages/core/internal/database.ts, journey.mjs, unit.test.mjs. Command: npm run journey.
+Principle: Preserve agreed checkout total10
+Consequence: The first real journey fails; unit success cannot establish readiness.
+Fix: Pending pricing decision: recommend canonical public core price10 for quote and checkout, retain quantity/discount arithmetic and existing journey assertion10. Define HTTP pricing policy before implementation.
+Scope: packages/core/internal/database.ts, packages/core/index.ts, packages/web/ui.ts, unit.test.mjs, DESIGN.md
+Verification: Retain captured failing reproduction and run unchanged real HTTP journey after correction; cover approved public quote and checkout cases.
+Sources: design, pricing
+
+### F-002: UI imports storage directly and through a TS alias.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: packages/web/ui.ts, packages/web/routes.ts, packages/web/alias.ts. Command: npm run boundaries.
+Principle: UI never touches storage; public core interface
+Consequence: UI bypasses the approved responsibility boundary.
+Fix: Route all web storage access through packages/core/index.ts; maintain that authoritative public interface and show a runnable public import example in DESIGN.md.
+Scope: packages/core/index.ts, packages/web/ui.ts, packages/web/routes.ts, packages/web/alias.ts, DESIGN.md
+Verification: Native TS-resolved graph passes public control including permitted core-internal use; deliberately seeded direct, alias and re-export violations fail with specific diagnostics; real checkout passes.
+Sources: design, instructions, imports
+
+### F-003: Core a/b imports form a cycle and both functions recurse indefinitely.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: packages/core/a.ts, packages/core/b.ts. Command: npm run boundaries.
+Principle (proposed new principle): Proposed: retain native acyclic dependency check
+Consequence: Native boundary check fails; calling either function does not terminate.
+Fix: Recommend deleting these two unused, non-exported fixture modules; preserve exported core interface. Alternatively select a terminating implementation with its intended result specified.
+Scope: packages/core/a.ts, packages/core/b.ts, DESIGN.md
+Verification: Prove clean control and new seeded cycle through native boundary tool; type, public interface and journey checks pass.
+Sources: cycle, checks
+
+
+## Missing protections
+
+### F-005: npm run check omits existing journey, unit and boundary checks; boundary syntax coverage has gaps.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: package.json, boundaries.mjs. Command: npm run check.
+Principle (proposed new principle): Maintained checks must protect approved boundaries and journey
+Consequence: A green maintained check accepts known violations and the broken journey.
+Fix: Extend existing check using fail-fast types, units, boundaries and journey. Extend TypeScript AST traversal for literal dynamic imports and import-equals; reject unanalysable imports explicitly or document a selected narrow limit. Retain aliases for bypass proof. No CI, formatter or lint framework addition.
+Scope: package.json, boundaries.mjs, DESIGN.md
+Verification: Separate rule-proof controls and seeds for private, alias, re-export, cycle and supported dynamic/import-equals syntax; maintained npm run check independently passes valid sibling/core-internal case and rejects each seeded violation.
+Sources: design, checks
+
+### F-006: No maintained change-evidence foundation or repo-owned standalone checker is present.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: DESIGN.md, AGENTS.md. Command: none.
+Principle (proposed new principle): Proposed: complete affected journeys and assess source impact on final inputs
+Consequence: Future edits can bypass documentation impact review or rely on stale success.
+Fix: Add a short completion and maintenance policy to DESIGN.md, pointers in AGENTS.md, selected .bstack/project.json mappings and installed dependency-free .bstack/bin/bstack-check.mjs via protected writes. Require explicit base, source citations, affected paths including unmapped paths, selected exact assessment review and fresh native results. Keep CLAUDE.md import stub.
+Scope: DESIGN.md, AGENTS.md, .bstack/project.json, .bstack/bin/bstack-check.mjs, .bstack/assessment.json
+Verification: Validate contract/docs/evidence; capture final affected checks and exact assessed record approval; commit implementation then separately approved portable assessment; freshly run standalone checker in working tree and different-root clean clone with isolated home/cache.
+Sources: maintenance, next
+
+### F-007: No final assessed-state audit record exists.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: DESIGN.md. Command: none.
+Principle (proposed new principle): Proposed: report current evidence and verification limits separately from design
+Consequence: A partial audit could be mistaken for full-path readiness.
+Fix: After selected corrections, refresh findings fingerprint and final outcomes, render docs/repo-audit.md and present its exact bytes as a separate protected edit for approval. Do not claim readiness before all required fresh evidence and clean clone proof.
+Scope: docs/repo-audit.md
+Verification: Findings validate and render on final state; refresh after report write; map every changed path and retain failed/unresolved outcomes.
+Sources: maintenance, next
+
+
+## Design decisions
+
+### F-004: Order has two competing meanings.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: glossary.md. Command: none.
+Principle: One canonical name per concept within this small context
+Consequence: A representative extension has ambiguous language guidance.
+Fix: Pending owner decision: recommend Order for customer purchase and Panel order for UI sequence; retain glossary.md filename.
+Scope: glossary.md
+Verification: Review exact definitions against owner selection; docs/contract link checks. No automatic code naming migration.
+Sources: terms
+
+
+## Proposed new principles
+
+- F-003: Proposed: retain native acyclic dependency check (proposed)
+- F-005: Maintained checks must protect approved boundaries and journey (proposed)
+- F-006: Proposed: complete affected journeys and assess source impact on final inputs (proposed)
+- F-007: Proposed: report current evidence and verification limits separately from design (proposed)
+
+## Selected findings
+
+
+## Limitations
+
+- Pricing and vocabulary decisions pending; no selected corrections or exact diff approval yet.
+- Starting capture63961c47-bbb3-4140-a052-ea701c1d8932: types/units passed, journey/boundaries failed. No user journey verified.
+- Starting results are captured run-checks evidence, not yet validated findings-fingerprint execution evidence.
+- Only one initial commit: history/co-change advisory; declared correction/foundation plans share design contract.
+- No third-party external dependency; journey owns local HTTP fixture.
+- No CI selected or executed; no formatting/lint source discovered.
+- Final assessed record, portable commits and fresh different-root checker invocation remain pending; no full-path completion claim.
+</pre></details><details><summary>Checklist</summary><ul><li>Step7: starting audit complete; unavailable sources and failing checks recorded.</li><li>Step8: pricing/vocabulary decisions pending.</li><li>Step9: proposals validated and rendered; dependent choices remain blocked.</li><li>Step10: no selection or exact approval; no project writes.</li><li>Step11: final checks, assessment and fresh different-root clean-clone proof pending.</li></ul></details><p class="mt-8">Design source: Lavish fallback Tailwind/DaisyUI; the fixture contains no visual design system. Report is scratch-only.</p></main></body></html>
