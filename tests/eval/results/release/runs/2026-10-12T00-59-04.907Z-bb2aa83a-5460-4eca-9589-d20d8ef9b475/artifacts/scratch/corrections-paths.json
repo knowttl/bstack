@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "corrections",
+  "writePaths": [
+    "packages/**",
+    "journey.mjs",
+    "unit.test.mjs",
+    "glossary.md"
+  ],
+  "contracts": [
+    {
+      "id": "design",
+      "files": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "id": "public-core",
+      "files": [
+        "packages/core/index.ts"
+      ]
+    }
+  ]
+}

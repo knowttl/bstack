@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T01-13-36.754Z-ae81285f-7652-4377-a073-90fb2c20e25b",
+  "reviewer": "Release evaluator",
+  "planDigest": "3d2d2f9b61daa5f0b8cf96f4c7541f3f071734073c35bbd8da0d97dde08dfc76",
+  "payloadHashesVerified": true,
+  "paths": ["DESIGN.md", "packages/web/public.ts", "unit.test.mjs", ".bstack/project.json"],
+  "originalCheckoutJourneyOutsidePlan": true,
+  "projectUnchangedAtReview": true,
+  "originalNativeChecksPassed": true,
+  "proposedNativeChecksBlockedByHostLoad": 42.15,
+  "nextReply": "Existing ordered scripted author answer; no additional verdict invented"
+}
