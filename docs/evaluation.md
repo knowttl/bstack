@@ -495,8 +495,10 @@ Later gating sets require 4 or 5 of 5 in the latest smoke batch and at least 80%
 Reusing the same run IDs does not add observations to that history.
 Unaffected scenarios may carry results from an ancestor candidate after the impact map verifies unchanged covered skill and installer inputs; the output records that source candidate.
 Changed covered inputs require fresh measurements.
+Only measurements with unchanged covered skill inputs contribute to with-skill reliability history.
 
-The output is `release/<version>.json`, schema version 2, with `candidate`, `verdict`, `blocking`, `knownIssues`, `confirmation`, `pending`, `checks`, `gatingSet`, `carryover` and `ledger`.
+The output is `release/<version>.json`, schema version 2, with `candidate`, `verdict`, `blocking`, `knownIssues`, `confirmation`, `pending`, `checks`, `full`, `gatingSet`, `carryover` and `ledger`.
+The `full` array records every selected full-tier measurement, including passing and carried results, with its source candidate, counts and contributing run IDs.
 The ledger path is relative to the results directory.
 Exit 0 means passed, 1 means hard breaks or regressions, and 2 means incomplete qualification or invalid evidence.
 Known issues belong in release notes with their measured rates and in `next-release` issues; publishing those issues is a separate authorized release action.

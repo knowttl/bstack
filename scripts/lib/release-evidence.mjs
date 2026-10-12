@@ -20,11 +20,12 @@ const count = { type: 'integer' }
 function key(row) { return `${row.scenario}/${row.check}` }
 function identity(row) { return canonicalJSON([row.model, row.adapterHash, row.fixtureHash, row.criteriaHash, row.binding]) }
 
-async function compatibleEvidence(ledger, definitions, results) {
+async function compatibleEvidence(ledger, definitions, results, candidate) {
   const directory = results === join(root, 'tests/eval/results') ? join(results, 'runs') : results
   const records = new Map()
   const fixtures = new Map()
   const runners = new Map()
+  const impact = new Map()
   const compatible = []
   const recipeHash = hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))
   for (const row of ledger) {
@@ -40,6 +41,10 @@ async function compatibleEvidence(ledger, definitions, results) {
       runners.set(row.candidate, diff.status === 0)
     }
     if (!runners.get(row.candidate)) continue
+    if (row.mode === 'with' && row.candidate !== candidate) {
+      if (!impact.has(row.candidate)) impact.set(row.candidate, await affectedScenarios(root, row.candidate, definitions, true))
+      if (impact.get(row.candidate).scenarios.includes(definition.id)) continue
+    }
     if (!fixtures.has(definition.fixture)) fixtures.set(definition.fixture, await fixtureHash(definition.fixture))
     const bindings = []
     let matches = true
@@ -123,7 +128,7 @@ export async function releaseGate(opts, results) {
     if (!Number.isFinite(Date.parse(row.date)) || row.passes < 0 || row.runs < 1 || row.passes > row.runs || row.runIds.length !== row.runs ||
         new Set(row.runIds).size !== row.runs) fail('Invalid ledger counts, date or contributing run IDs.')
   }
-  const ledger = await compatibleEvidence(entries, definitions, results)
+  const ledger = await compatibleEvidence(entries, definitions, results, opts.candidate)
   const directory = join(results, 'release')
   const previous = await previousRelease(directory, opts.release, opts.candidate)
   const blocking = report.checks.filter(row => !row.passed).map(row => ({ class: 'hard-break', check: row.id }))
@@ -226,7 +231,7 @@ export async function releaseGate(opts, results) {
   const output = { schemaVersion: 2, version: opts.release, candidate: opts.candidate,
     verdict: blocking.length ? 'failed' : pending.length || confirmation.size ? 'blocked' : 'passed',
     previous: previous?.version ?? null, blocking, knownIssues, pending, confirmation: [...confirmation],
-    gatingSet, checks, carryover, hardBreakReportHash: hashBytes(canonicalJSON(report)), ledger: 'ledger.jsonl' }
+    gatingSet, checks, full, carryover, hardBreakReportHash: hashBytes(canonicalJSON(report)), ledger: 'ledger.jsonl' }
   await mkdir(directory, { recursive: true })
   await writeFile(join(directory, `${opts.release}.json`), JSON.stringify(output, null, 2) + '\n')
   return output

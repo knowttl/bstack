@@ -208,6 +208,24 @@ test('full-tier baseline failures do not become skill known issues', async t => 
   assert.ok(!result.data.data.knownIssues.some(row => row.scenario === baseline.scenario && row.check === baseline.check))
 })
 
+test('passing full-tier checks retain measured counts and run identities in the release artifact', async t => {
+  const f = await fixture(t)
+  const definition = f.definitions.find(item => item.id === 'final-independent-extension')
+  const fixtureRevision = await fixtureHash(definition.fixture)
+  const runIds = Array.from({ length: 5 }, (_, index) => `extension-${index}`)
+  f.rows.push(...definition.checks.map(check => ({ ...f.rows[0], scenario: definition.id, mode: 'without',
+    tier: 'full', check: check.id, caseId: 'AC-64', passes: 5, runs: 5, runIds,
+    fixtureHash: fixtureRevision, criteriaHash: createHash('sha256').update(canonical(definition.checks)).digest('hex') })))
+  const result = await f.run()
+  assert.equal(result.status, 0, result.stdout)
+  const saved = JSON.parse(await readFile(join(f.directory, 'release', '0.1.1.json'), 'utf8'))
+  assert.deepEqual(saved.full.map(row => ({ check: row.check, caseId: row.caseId, scenario: row.scenario,
+    candidate: row.candidate, passes: row.passes, runs: row.runs, runIds: row.runIds })),
+    definition.checks.map(check => ({ check: check.id, caseId: 'AC-64', scenario: 'final-independent-extension',
+      candidate, passes: 5, runs: 5, runIds })))
+  assert.ok(!saved.knownIssues.some(row => row.caseId === 'AC-64'))
+})
+
 test('gating set requires eighty percent over the latest ten runs', async t => {
   const f = await fixture(t)
   f.measure(3, 0)
@@ -305,6 +323,11 @@ for (const [name, path, expected, fullPasses, retained] of [
     if (fullPasses !== undefined) {
       assert.equal(result.data.data.carryover.some(row => row.tier === 'full' && row.scenario === 'final-independent-extension'), retained)
       assert.equal(result.data.data.knownIssues.some(row => row.caseId === 'AC-64' && row.runs === 0), !retained)
+      assert.deepEqual(result.data.data.full.map(row => ({ check: row.check, candidate: row.candidate,
+        passes: row.passes, runs: row.runs, runIds: row.runIds })), retained ?
+        f.definitions.find(item => item.id === 'final-independent-extension').checks.map(check => ({
+          check: check.id, candidate: ancestor, passes: fullPasses, runs: 5,
+          runIds: Array.from({ length: 5 }, (_, index) => `extension-${index}`) })) : [])
       if (retained && fullPasses < 5) {
         assert.ok(result.data.data.knownIssues.some(row => row.scenario === 'final-independent-extension' && row.passes === fullPasses && row.runs === 5))
       }
@@ -330,6 +353,58 @@ for (const [name, path, expected, fullPasses, retained] of [
       assert.ok(fresh.data.data.gatingSet.includes('ambiguous-idea/decision'))
       assert.ok(!fresh.data.data.knownIssues.some(row => row.reason === 'non-blocking full tier'))
     }
+  })
+}
+
+for (const [name, path, gated, regressionStatus] of [
+  ['covered skill changes exclude older measurements', 'skills/repo-audit/references/intent-interview.md', true, 1],
+  ['unrelated changes retain older measurements', 'next-note.txt', false, 0]
+]) {
+  test(`release reliability compatibility: ${name}`, async t => {
+    const repo = await releaseRepo(t)
+    const f = await fixture(t, repo)
+    f.report.candidate = git(repo, 'rev-parse', 'HEAD')
+    for (const row of f.rows) row.candidate = f.report.candidate
+    const first = await f.run()
+    assert.equal(first.status, 0, first.stdout)
+    await writeFile(join(repo, 'note.txt'), 'Unreleased candidate.\n')
+    git(repo, 'add', 'note.txt')
+    git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Unreleased measurement')
+    const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
+    const older = { ...current, candidate: git(repo, 'rev-parse', 'HEAD'), passes: 3,
+      date: '2026-10-12T01:00:00Z', runIds: current.runIds.map(id => `${id}-unreleased`) }
+    await writeFile(join(repo, path), 'Changed candidate guidance.\n')
+    git(repo, 'add', path)
+    git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Fresh candidate')
+    f.report.candidate = git(repo, 'rev-parse', 'HEAD')
+    for (const row of f.rows.filter(row => row.mode === 'with')) {
+      row.candidate = f.report.candidate
+      row.date = '2026-10-12T02:00:00Z'
+      row.runIds = row.runIds.map(id => `${id}-fresh`)
+    }
+    f.rows.push(older)
+    f.measure(4, 0)
+    const measured = await f.run('0.1.2')
+    assert.equal(measured.status, 0, measured.stdout)
+    assert.equal(measured.data.data.gatingSet.includes('ambiguous-idea/decision'), gated)
+    assert.deepEqual(measured.data.data.checks.find(row => row.scenario === 'ambiguous-idea').recent.map(row => row.passes), gated ? [4] : [3, 4])
+    const prior = { ...current, runIds: [...current.runIds] }
+    await writeFile(join(repo, 'later-note.txt'), 'Later candidate.\n')
+    git(repo, 'add', 'later-note.txt')
+    git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Regression candidate')
+    const source = f.report.candidate
+    f.report.candidate = git(repo, 'rev-parse', 'HEAD')
+    for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === source)) {
+      row.candidate = f.report.candidate
+      row.date = '2026-10-12T03:00:00Z'
+      row.runIds = row.runIds.map(id => `${id}-next`)
+    }
+    f.rows.push(prior)
+    f.measure(2, 0, 3)
+    f.rows.at(-1).date = '2026-10-12T04:00:00Z'
+    const next = await f.run('0.1.3')
+    assert.equal(next.status, regressionStatus, next.stdout)
+    assert.equal(next.data.data.blocking.some(row => row.scenario === 'ambiguous-idea' && row.class === 'regression'), gated)
   })
 }
 
