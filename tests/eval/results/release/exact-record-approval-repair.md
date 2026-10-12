@@ -12,3 +12,10 @@ The approved evaluation response is one fresh installed existing-project capture
 The prior timed-out turn remains incomplete evidence and is not counted as a pass or a fail.
 If the existing-project timeout recurs, the ruling permits one scenario-specific per-turn budget increase with its reason recorded before another changed-input capture.
 Any remaining AC-54 or AC-75 failure requires a decision with transcript lines, without a waiver.
+
+The [representative-extension installed opening](runs/2026-10-12T00-59-31.307Z-ec6a8985-f4cd-441c-a587-ac46d65b2956/conversation.txt) located the approved public example and prepared a four-file protected diff without changing the project.
+Its original types, two units, boundaries and real total-10 checkout passed.
+Before the ordered reply could execute, the host preflight at 2026-10-12T01:03:28.867Z measured load 39.69 and refused the proposed turn under the required limit of 36.
+The harness recorded hostFailure and removed the isolated home; no second model turn or new implementation ran.
+This is incomplete execution evidence, not an acceptance pass or a scored behavioral failure.
+The retained [run record](runs/2026-10-12T00-59-31.307Z-ec6a8985-f4cd-441c-a587-ac46d65b2956/run.json) contains the denied resource measurement and cleanup timestamp.
