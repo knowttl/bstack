@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "standards",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "balanced",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Native opening posting and exported rows remain balanced through public Ledger.",
+      "userJourney": true
+    },
+    {
+      "id": "public",
+      "sourceId": "standards",
+      "pointer": "External modules use the public ledger package.",
+      "outcome": "External modules import through public ledger.",
+      "userJourney": false
+    },
+    {
+      "id": "native",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Existing configured native Python checks pass.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "unit",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "balanced"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "test_ledger.py",
+        "ledger/**"
+      ]
+    },
+    {
+      "id": "lint",
+      "role": "outcome",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "test_ledger.py",
+        "ledger/**"
+      ]
+    },
+    {
+      "id": "format",
+      "role": "outcome",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "format",
+          "--check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": false,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "test_ledger.py",
+        "ledger/**"
+      ]
+    },
+    {
+      "id": "boundary",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "public"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "test_ledger.py",
+        "ledger/**"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "-c",
+          "import subprocess, sys, json, os\nfrom pathlib import Path\nfrom decimal import Decimal\nfrom app import opening_balance\nfrom ledger import Ledger\nassert opening_balance() == Decimal(\"10\")\nout = Path(os.environ[\"TMPDIR\"]) / \"ledger-audit\" / \"captured-startup.json\"\np = subprocess.run([sys.executable, \"startup.py\", str(out)], capture_output=True, text=True, check=True)\nrows = json.loads(out.read_text())\nassert {r[0] for r in rows} == {\"cash\", \"equity\"}\nassert sum((Decimal(r[1])-Decimal(r[2]) for r in rows), Decimal(0)) == 0\nbook = Ledger(); book.import_rows(rows)\nassert book.balance(\"cash\") == Decimal(\"10\") and book.balance(\"equity\") == Decimal(\"-10\") and book.balanced()\nprint(p.stdout, end=\"\"); print(\"public startup/export/import journey passed\")"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "balanced"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "pyproject.toml",
+        "uv.lock",
+        "app.py",
+        "startup.py",
+        "boundaries.py",
+        "test_ledger.py",
+        "ledger/**"
+      ]
+    }
+  ]
+}

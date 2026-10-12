@@ -20,6 +20,15 @@ The isolated login home is cleaned after scoring.
 
 Other scenario refreshes and the final all-case validator remain outstanding.
 
+The [Python comparison](existing-repo-python-record-approval-comparison.json) passes from baseline 3/4 to installed 4/4 after one installed refresh against the settled package.
+The [complete installed conversation](runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/conversation.txt), lines 7–59, uses the prepared Python 3.12 environment, pinned Ruff and unittest, inspects responsibilities and uses CONTRIBUTING.md as the existing authority.
+Recommendations protect public Ledger ownership and balanced posting without imposing TypeScript structure or findings based solely on file/import count.
+Both units, Ruff lint and the real startup/export/import probe pass; private-boundary enforcement fails and optional formatting reports two files.
+Readiness stays blocked rather than hiding those failures.
+At line 14 the agent acknowledges running its initial non-suite inspect after a denied resource preflight; subsequent Node commands are explicitly gated, and no Node test suite runs in this Python-only audit.
+The [independent verification](runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/artifacts/independent-verification.json) confirms eleven unchanged tracked files, while the [export manifest](runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/artifacts/export-manifest.json) retains seventeen native artifacts by original and published hashes.
+The isolated login home is cleaned.
+
 The [verification limitations comparison](verification-limitations-record-approval-comparison.json) passes 3/3 in both modes after one installed refresh against the settled package.
 The [complete installed conversation](runs/2026-10-12T03-19-11.652Z-bfae3639-b85f-4ea0-9111-3e66e90a4423/conversation.txt), lines 15–26, retains actual npm unit output with two passed, zero failed and exit zero.
 Browser flow verification remains explicitly unavailable despite those passing units, and the proposed costly shared-data POST is not executed without approval.

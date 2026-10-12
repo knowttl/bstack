@@ -136,9 +136,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo-python",
         "artifacts": [
-          "tests/eval/results/release/native-environment-repair.md",
-          "tests/eval/results/release/runs/2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb/artifacts/independent-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/artifacts/independent-verification.json"
         ]
       }
     },
@@ -654,9 +654,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo-python",
         "artifacts": [
-          "tests/eval/results/release/native-environment-repair.md",
-          "tests/eval/results/release/runs/2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb/artifacts/independent-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/artifacts/independent-verification.json"
         ]
       }
     },
@@ -776,9 +776,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo-python",
         "artifacts": [
-          "tests/eval/results/release/native-environment-repair.md",
-          "tests/eval/results/release/runs/2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb/artifacts/independent-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/artifacts/independent-verification.json"
         ]
       }
     },
@@ -808,9 +808,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo-python",
         "artifacts": [
-          "tests/eval/results/release/native-environment-repair.md",
-          "tests/eval/results/release/runs/2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb/artifacts/independent-verification.json"
+          "tests/eval/results/release/record-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/artifacts/independent-verification.json"
         ]
       }
     },
