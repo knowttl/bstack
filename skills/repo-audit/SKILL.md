@@ -98,6 +98,7 @@ Give each principle a reason, source, scope, enforcement method and exception po
 Prefer native checks and one source of truth over duplicated prose or a second verification engine.
 Distinguish automated rules from judgement rules.
 Include setup, formatting, lint, applicable type checks and tests.
+Use the enforcement reference's [test necessity and cost guidance](references/enforcement.md#test-necessity-and-cost) when proposing testing rules for AGENTS.md and any selected review configuration.
 CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
 Avoid speculative frameworks, service layers, integrations and empty document templates.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
@@ -157,6 +158,7 @@ First run `node scripts/repo-audit.mjs inspect --repo <target> --json`, then `no
 Keep both outputs in scratch before researching discovered documents and implementation.
 Inventory the existing README, vision, requirements, goals, design, architecture, decisions, principles, vocabulary, standards, prior audits, debt and planned changes using their actual names and layout.
 Inspect relevant manifests, native configs, CI, entry points, module responsibilities, interfaces, data flow, code and tests, noting which important user journeys have direct executable checks and which tests assert private implementation rather than a public contract.
+Review existing tests for all six [test necessity and cost patterns](references/enforcement.md#test-necessity-and-cost), recording evidenced instances as findings rather than automatically deleting tests.
 Record the revision and working-tree state and preserve uncommitted user work.
 Identify approved principles and their existing enforcement.
 Run safe native checks when prerequisites permit, recording commands and results directly.
@@ -223,6 +225,7 @@ Done when: Every recommendation has a project-specific reason, evidence, princip
 Use the shared review and write rules, preserving existing runtime behaviour and uncommitted user work.
 Reuse authoritative documents and native configs instead of duplicating vision, vocabulary, design or standards.
 AGENTS.md holds pointers to the project's rules, evidence requirements and maintained check commands, not full copies of those sources.
+For selected testing-guidance changes, include the enforcement reference's six concise prevention rules in AGENTS.md and all six review criteria in any review instructions being configured, retaining links to the project's authoritative testing policy.
 When no project source states what evidence completes a change, propose one short section in the existing design or contribution guide naming where acceptance cases and the journey check live, that a change is complete when its affected journeys pass on the final inputs, and that passing unit tests alone do not establish it.
 Apply only selected findings.
 Retain the user's selection and exact reviewed scope in scratch, then update the findings selections and prepare a change set following `schemas/change-set.schema.json`.
