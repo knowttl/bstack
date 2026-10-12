@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "nextChange": "Name undiscountedTotal preserving public pricing and checkout",
+  "reviewedScope": [
+    "packages/web/routes.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Quote remains 12; agreed checkout total is 10; UI uses public core; native checks protect boundaries and live HTTP journey."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Requested clarity improvement: multiplication before the quantity discount is unnamed.",
+      "files": [
+        "packages/web/routes.ts"
+      ],
+      "command": null,
+      "principle": "Preserve approved public interface and outcomes",
+      "consequence": "Naming the intermediate makes the calculation easier to read without changing arithmetic.",
+      "fix": "Extract unitPrice * quantity into const undiscountedTotal.",
+      "scope": [
+        "packages/web/routes.ts"
+      ],
+      "verification": "Captured original npm run check; final compatibility and standalone checker in clean clone.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "Quote remains 12 and live HTTP checkout remains status 201 total 10",
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance review; no full audit or new pricing rule."
+  ]
+}

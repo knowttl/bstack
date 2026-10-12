@@ -1,0 +1,3 @@
+[main 40e6d4f] Record reviewed no-impact maintenance assessment
+ 1 file changed, 206 insertions(+)
+ create mode 100644 .bstack/assessment.json

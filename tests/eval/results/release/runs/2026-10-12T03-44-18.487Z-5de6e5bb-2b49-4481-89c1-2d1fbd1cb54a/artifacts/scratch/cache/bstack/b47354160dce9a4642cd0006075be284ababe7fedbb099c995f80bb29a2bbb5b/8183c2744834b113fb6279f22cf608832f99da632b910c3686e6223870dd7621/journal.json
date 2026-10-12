@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "runId": "8183c2744834b113fb6279f22cf608832f99da632b910c3686e6223870dd7621",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "ffcf64aa195c339af4632f0c7d92b315b95ed4db"
+  },
+  "planDigest": "8183c2744834b113fb6279f22cf608832f99da632b910c3686e6223870dd7621",
+  "edits": [
+    {
+      "id": "bind-reviewed-inputs",
+      "path": ".bstack/assessment.json",
+      "resolvedPath": "[fixture]/.bstack/assessment.json",
+      "originalHash": "384aaf2f9b763e73e9ac76e8f63d4d00db54fbc265aebdcecd566a59c01631ba",
+      "proposedHash": "3d77725986d6ad51f8634600090dc875a819f7b0baa946ea1824612aee694890",
+      "backup": "original-0",
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "Quote remains 12 and live HTTP checkout remains status 201 total 10",
+    "starting-checks"
+  ]
+}
