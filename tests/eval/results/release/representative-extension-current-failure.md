@@ -19,4 +19,8 @@ The package correctly stops at missing authority instead of inventing an approve
 Recommended commissioning decision: use the already-existing maintained-ts-shop fixture for this scenario and supply a concrete approved public-interface extension outcome, preserving original quote and checkout behavior and the AC-64 scoring criterion.
 Changing only this scenario's fixture selection and request would require fresh baseline and installed captures for this pair; it would preserve the global fixture revision and unrelated completed comparisons.
 The alternative is a separately approved maintained setup for the current fixture, which must also supply its missing examples, contract and journey before a new pair can be captured.
-No fixture, request, scoring criterion or package instruction has been changed pending that decision.
+The commissioning decision on 2026-10-12 approved the existing maintained-ts-shop starting state and one concrete extension outcome: quote defaults to one unit at 12 and supports two units at 24 through the public core interface.
+The scenario now selects that existing overlay and names this outcome, preserving the original checkout journey, total 10, quote assertion and user note.
+Its scoring criterion, ordered answer and final checkpoint remain unchanged, as does the global fixture revision.
+Only this changed pair requires fresh captures; the failed pair remains visible as the reason for the decision.
+The separate final-independent-extension scenario remains without-only because its criterion expressly requires no discoverable audit skill; this representative-extension scenario still requires both modes.
