@@ -1,0 +1,1 @@
+Owner selected F-001 relocation only. The generated diff is not approved. Do not apply until explicit approval.

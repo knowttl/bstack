@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde"
+  },
+  "nextChange": "Move only the selected public-ledger ownership rule into CODING_STANDARDS.md and link its original location; preserve all other guidance and Python behaviour.",
+  "reviewedScope": [
+    "CONTRIBUTING.md",
+    "CODING_STANDARDS.md"
+  ],
+  "sources": [
+    {
+      "id": "S-1",
+      "pointer": "CODING_STANDARDS.md:5",
+      "intent": "documented",
+      "summary": "External modules use the public ledger package. The ledger owns entries and all balance calculations."
+    },
+    {
+      "id": "S-2",
+      "pointer": "CONTRIBUTING.md:4",
+      "intent": "documented",
+      "summary": "Use native Python checks and preserve balanced postings."
+    },
+    {
+      "id": "S-3",
+      "pointer": "app.py:2",
+      "intent": "observed",
+      "summary": "Existing private import is outside the selected documentation relocation."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The owner selected relocation of the existing ownership rule; the approved move is now applied.",
+      "files": [
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md"
+      ],
+      "command": null,
+      "principle": "Keep one authoritative occurrence of the existing rule.",
+      "consequence": "Copying rather than relocating would create duplicate rule authorities.",
+      "fix": "Move both sentences verbatim into CODING_STANDARDS.md and replace the original occurrence with a link.",
+      "scope": [
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md"
+      ],
+      "verification": "Protected exact-byte preview, native Python structural verification, unittest, Ruff and existing boundaries check; preserve existing failures.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "S-1",
+        "S-2"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "relocation",
+    "journey"
+  ],
+  "execution": [
+    {
+      "id": "ad3c2689-8da2-4426-89b2-cef527f5792c-starting-checks",
+      "outcome": "starting-checks",
+      "status": "failed",
+      "fingerprint": "b0e490aadec5d9a745c7ef9af616cc44e90c6f64904b8edc06512264e470ef92",
+      "artifact": "[isolated-home]/cache/bstack/47201b61b78c3116ed8ca48f1657b641f72a5da5f484c9cf05548b85eb7f4c30/ad3c2689-8da2-4426-89b2-cef527f5792c/checks.json",
+      "artifactHash": "d9d10cb95ea5a576f4e22ef9e6e686f9f0fcaaa5553ea3b84ca72962958b8dfa",
+      "method": "Native run-checks capture on applied state"
+    },
+    {
+      "id": "ad3c2689-8da2-4426-89b2-cef527f5792c-relocation",
+      "outcome": "relocation",
+      "status": "passed",
+      "fingerprint": "b0e490aadec5d9a745c7ef9af616cc44e90c6f64904b8edc06512264e470ef92",
+      "artifact": "[isolated-home]/cache/bstack/47201b61b78c3116ed8ca48f1657b641f72a5da5f484c9cf05548b85eb7f4c30/ad3c2689-8da2-4426-89b2-cef527f5792c/checks.json",
+      "artifactHash": "d9d10cb95ea5a576f4e22ef9e6e686f9f0fcaaa5553ea3b84ca72962958b8dfa",
+      "method": "Native run-checks capture on applied state"
+    },
+    {
+      "id": "d2dc6b02-6661-4b29-ae4d-6791443705a7-journey",
+      "outcome": "journey",
+      "status": "passed",
+      "fingerprint": "b0e490aadec5d9a745c7ef9af616cc44e90c6f64904b8edc06512264e470ef92",
+      "artifact": "[isolated-home]/cache/bstack/47201b61b78c3116ed8ca48f1657b641f72a5da5f484c9cf05548b85eb7f4c30/d2dc6b02-6661-4b29-ae4d-6791443705a7/checks.json",
+      "artifactHash": "1566bca9607ede04738f9576fd8badebf46bcfdd90f0e9c3c3353a16caa4703d",
+      "method": "Native run-checks capture on applied state"
+    }
+  ],
+  "limitations": [
+    "The unchanged boundaries.py check fails on the existing app.py private import; overall audit readiness remains verification blocked.",
+    "Only the two approved Markdown files were changed. No project audit record or enforcement change was authorized."
+  ]
+}

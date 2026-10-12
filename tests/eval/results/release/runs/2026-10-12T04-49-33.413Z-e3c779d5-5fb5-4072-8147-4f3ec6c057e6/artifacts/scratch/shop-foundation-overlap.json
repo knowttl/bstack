@@ -1,0 +1,1 @@
+{"schemaVersion": 1, "id": "foundation", "writePaths": ["AGENTS.md", "DESIGN.md", "glossary.md", "package.json", "boundaries.mjs", "scripts/**", "docs/**"], "contracts": [{"id": "public-core", "files": ["packages/core/index.ts"]}]}
