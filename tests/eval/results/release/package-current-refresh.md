@@ -71,5 +71,13 @@ The explicit base is the baseline's identical fixture-author commit `156e8342bc3
 Eighty-two artifacts retain original and published hashes, including before/final-after captures and two fresh checker results.
 Corrected preparation and validation failures remain visible; the final required checks pass, and no interview, full audit or delivery service is started.
 
+The [clear-goals final comparison](clear-goals-comparison.json) passes 2/2 in both modes.
+The [baseline conversation](runs/2026-10-12T00-16-39.505Z-c5f6296f-448a-409f-a281-b6747c9e2bfd/conversation.txt), lines 6–34, and [installed conversation](runs/2026-10-12T00-18-47.498Z-fe6cc908-216b-45da-8619-c866d1adb964/conversation.txt), lines 7–71, reuse the explicitly approved project vision, design and vocabulary without asking the owner to repeat settled goals.
+Both final-stage captures complete the two ordered scripted replies and recommend checks tied to the approved save/list/mark-read journey, persistence and storage ownership.
+Independent command review confirms the installed run never opens the vision procedure, intent-interview or domain-language reference; opening the project's own approved VISION.md supplies existing authority rather than restarting that procedure.
+Both fixtures retain all three tracked documents unchanged; ten with-skill scratch artifacts preserve original and published hashes.
+The installed run's corrected scratch scope validation remains visible, and absent implementation leaves product readiness blocked.
+An accidentally started foundation-stage baseline was closed after its opening turn and retained as unselected history; only the subsequent final-stage pair is release evidence.
+
 All current captures retain complete ordered conversations and exact scores; login, owned-container and final isolated-home cleanup are recorded by the harness.
 Other scenario refreshes remain pending.
