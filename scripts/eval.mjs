@@ -1,4 +1,4 @@
-import { mkdir, readFile, realpath, statfs, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, readFile, realpath, rm, statfs, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { freemem, platform, release } from 'node:os'
@@ -12,6 +12,8 @@ import { scoreChecks, validateScore, correctedScore } from './lib/evaluation-sco
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
+// Batch capture and grading are separate until the judge is available.
+const batchHelp = 'eval batch --tier smoke|full --mode without|with --adapter <file> [--repeat 5] [--concurrency 6] [--scenario <id,id>] [--stage <checkpoint>] [--results <directory>] [--json]\neval batch --batch <id> [--results <directory>] [--json]\nConcurrency: 1 to 6. Stage defaults to each scenario\'s last checkpoint. Captures all scripted replies and closes every host. Score pending runs with eval score, then finalize with --batch to append aggregate ledger lines.\nExamples:\n  npm run eval -- batch --tier smoke --mode without --adapter tests/eval/adapters/codex.json\n  npm run eval -- batch --tier full --scenario ambiguous-idea,clear-goals --stage baseline --mode without --adapter tests/eval/adapters/codex.json --repeat 3 --concurrency 2\n  npm run eval -- batch --batch <id>'
 // Adapter runs capture host turns, while unsupported hosts retain the manual interface.
 const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--repo <maintained-fixture>] [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> --answer <one-based-script-index> [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval correct --run <id> --correction <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]\n--repo reuses an explicit disposable maintained fixture for a final adapter follow-up; the caller owns its preservation and cleanup.'
 
@@ -21,7 +23,17 @@ async function child(executable, args, targetRoot = root) {
   return result
 }
 
-async function start(opts, results) {
+async function capacity(concurrency = 6) {
+  const disk = await statfs(root)
+  const memory = platform() === 'linux'
+    ? Number(/MemAvailable:\s+(\d+) kB/.exec(await readFile('/proc/meminfo', 'utf8'))?.[1]) * 1024
+    : freemem()
+  if (!(disk.bavail * disk.bsize >= 20_000_000_000 && memory >= concurrency * 4 * 1024 ** 3)) {
+    fail(`Evaluation startup requires at least 20 GB free disk and ${concurrency * 4} GiB available memory. Start again when capacity is available.`)
+  }
+}
+
+async function start(opts, results, capacityChecked = false) {
   if (opts.manual && opts.adapter) fail('Adapter runs capture the opening turn automatically. Omit --manual, or omit --adapter and supply --agent and --model for a manual run.', 'usage-error')
   for (const name of ['scenario', 'mode', 'stage', ...(opts.adapter ? [] : ['agent', 'model'])]) if (!opts[name]?.trim()) fail(`Missing --${name}`, 'usage-error')
   if (!['without', 'with'].includes(opts.mode)) fail('Mode must be without or with.', 'usage-error')
@@ -38,16 +50,8 @@ async function start(opts, results) {
   if (opts.mode === 'with' && definition.invocation === 'explicit' && !opts.invocation?.trim()) fail('An ordinary with-skill run requires --invocation for the current host.', 'usage-error')
   if (opts.invocation && (opts.mode === 'without' || definition.invocation === 'implicit')) fail('Baseline and implicit runs use the outcome request without --invocation.', 'usage-error')
   if (opts.repo && (!adapter || opts.stage !== 'final')) fail('--repo requires a final-stage adapter follow-up.', 'usage-error')
-  // Reserve the six-container budget once, before creating any run resources.
-  if (adapter) {
-    const disk = await statfs(root)
-    const memory = platform() === 'linux'
-      ? Number(/MemAvailable:\s+(\d+) kB/.exec(await readFile('/proc/meminfo', 'utf8'))?.[1]) * 1024
-      : freemem()
-    if (!(disk.bavail * disk.bsize >= 20_000_000_000 && memory >= 24 * 1024 ** 3)) {
-      fail('Evaluation startup requires at least 20 GB free disk and 24 GiB available memory. Start again when capacity is available.')
-    }
-  }
+  // A batch checks its resource budget once before creating any run resources.
+  if (adapter && !capacityChecked) await capacity()
   const git = await child('git', ['rev-parse', 'HEAD'])
   const revision = git.stdout.trim()
   const fixtureRevision = await fixtureHash(definition.fixture)
@@ -101,7 +105,7 @@ async function captureTurn(record, message, directory) {
   // Retain even failed host output as evidence rather than manufacturing a score.
   try {
     await hostTurn(record, message)
-    record.reason = 'Host turn captured. Review the question, send its scripted answer with eval turn, then score the transcript.'
+    record.reason = 'Host turn captured. Deliver the next scripted answer with eval turn, then score the transcript.'
   } finally {
     const transcript = record.turns.map(turn => `User: ${turn.message}\nHost JSONL:\n${turn.result.stdout}\nHost stderr:\n${turn.result.stderr}\n`).join('\n')
     await writeFile(join(directory, record.conversation), redactEvidence(transcript, record))
@@ -112,7 +116,7 @@ async function turn(opts, results) {
   const { record } = await load(results, opts.run)
   if (!record.adapter || !record.sessionId || record.transcript || record.isolation.cleanedAt) fail('Host turns require an open, unscored adapter conversation. A failed opening needs a fresh run.')
   if (!/^[1-9]\d*$/.test(opts.answer ?? '') || Number(opts.answer) !== record.nextAnswer ||
-      !record.scenario.answers[record.nextAnswer - 1]) fail('Supply the next one-based scripted answer index after reviewing the corresponding host question.')
+      !record.scenario.answers[record.nextAnswer - 1]) fail('Supply the next one-based scripted answer index.')
   const message = record.scenario.answers[record.nextAnswer - 1]
   try {
     await captureTurn(record, message, join(results, record.id))
@@ -134,6 +138,108 @@ async function close(opts, results) {
   catch (error) { record.reason = error.message }
   await saveRecord(record, join(results, record.id))
   return record
+}
+
+async function batch(opts, results) {
+  if (opts.batch) {
+    if (Object.keys(opts).some(key => !['batch', 'results', 'json'].includes(key))) fail('Finalize with --batch and --results only.', 'usage-error')
+    if (!/^[0-9a-f-]{36}$/.test(opts.batch)) fail('Supply the batch ID printed by eval batch.', 'usage-error')
+    return await finishBatch(await readJSON(join(results, 'batches', `${opts.batch}.json`)), results)
+  }
+  for (const name of ['tier', 'mode', 'adapter']) if (!opts[name]?.trim()) fail(`Missing --${name}`, 'usage-error')
+  if (!['smoke', 'full'].includes(opts.tier)) fail('Tier must be smoke or full.', 'usage-error')
+  if (!['without', 'with'].includes(opts.mode)) fail('Mode must be without or with.', 'usage-error')
+  for (const name of ['repeat', 'concurrency']) {
+    opts[name] ??= name === 'repeat' ? '5' : '6'
+    if (!/^[1-9]\d*$/.test(opts[name]) || !Number.isSafeInteger(Number(opts[name]))) fail(`--${name} must be a positive integer.`, 'usage-error')
+  }
+  const concurrency = Number(opts.concurrency)
+  if (concurrency > 6) fail('--concurrency must be between 1 and 6 to fit the container budget.', 'usage-error')
+  // The approved smoke set precedes scenario-owned tier metadata.
+  const smoke = ['existing-repo', 'existing-repo-python', 'clear-goals', 'ambiguous-idea', 'implicit-invocation',
+    'verification-limitations', 'scope-and-prerequisites', 'research-main-typescript', 'maintenance', 'selected-rule-relocation']
+  const registry = await readJSON(join(root, 'tests/eval/scenarios/scenarios.json'))
+  const selected = opts.scenario ? opts.scenario.split(',') : opts.tier === 'smoke' ? smoke : registry.scenarios.map(item => item.id)
+  if (new Set(selected).size !== selected.length) fail('Scenario subsets must contain unique comma-separated IDs.', 'usage-error')
+  for (const id of selected) {
+    const definition = await scenario(id)
+    if (opts.tier === 'smoke' && !smoke.includes(id)) fail(`Scenario ${id} is outside the smoke tier. Use --tier full.`, 'usage-error')
+    if (opts.stage !== undefined && !definition.checkpoints.includes(opts.stage)) fail(`Unknown checkpoint for ${id}: ${opts.stage}`, 'usage-error')
+    await readAdapter(resolve(opts.adapter), id)
+  }
+  await capacity(concurrency)
+  const record = { schemaVersion: 1, id: randomUUID(), date: new Date().toISOString(),
+    candidate: (await child('git', ['rev-parse', 'HEAD'])).stdout.trim(), tier: opts.tier, mode: opts.mode,
+    stage: opts.stage ?? null, repeat: Number(opts.repeat), concurrency, scenarios: selected, runIds: [], errors: [] }
+  await mkdir(join(results, 'batches'), { recursive: true })
+  await writeFile(join(results, 'batches', `${record.id}.json`), JSON.stringify(record, null, 2) + '\n', { flag: 'wx' })
+  const jobs = selected.flatMap(id => Array.from({ length: record.repeat }, () => id))
+  await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, async () => {
+    while (jobs.length) {
+      const id = jobs.shift()
+      try {
+        const definition = await scenario(id)
+        let run = await start({ scenario: id, mode: opts.mode, stage: opts.stage ?? definition.checkpoints.at(-1), adapter: opts.adapter }, results, true)
+        record.runIds.push(run.id)
+        try {
+          while (!run.hostFailure && run.nextAnswer <= run.scenario.answers.length) {
+            run = await turn({ run: run.id, answer: String(run.nextAnswer) }, results)
+          }
+        } finally { await close({ run: run.id }, results) }
+      } catch (error) { record.errors.push({ scenario: id, reason: error.message }) }
+    }
+  }))
+  await writeFile(join(results, 'batches', `${record.id}.json`), JSON.stringify(record, null, 2) + '\n')
+  return await finishBatch(record, results)
+}
+
+async function finishBatch(batch, results) {
+  const runs = await Promise.all(batch.runIds.map(async id => {
+    const { record } = await load(results, id)
+    return await correctedScore(join(results, id), record)
+  }))
+  const pending = runs.filter(run => !run.transcript || run.hostFailure || !run.isolation.cleanedAt || !run.isolation.verified || !verifiedExecution(run)).map(run => run.id)
+  const entries = []
+  for (const id of batch.scenarios) {
+    const group = runs.filter(run => run.scenario.id === id)
+    if (!group.length) continue
+    const first = group[0]
+    if (group.some(run => run.sourceRevision !== batch.candidate || run.mode !== batch.mode || run.stage !== (batch.stage ?? first.scenario.checkpoints.at(-1)) ||
+        ['adapterHash', 'criteriaHash', 'model'].some(key => run[key] !== first[key]) || run.fixture.revision !== first.fixture.revision)) fail('Batch runs no longer match their candidate and execution inputs.')
+    for (const check of first.scenario.checks) {
+      const verdicts = group.map(run => run.caseResults.find(item => item.id === check.id) ?? run.machineResults?.find(item => item.id === check.id))
+      entries.push({ date: batch.date, candidate: batch.candidate, tier: batch.tier, model: first.model,
+        adapterHash: first.adapterHash, fixtureHash: first.fixture.revision, criteriaHash: first.criteriaHash,
+        scenario: id, mode: batch.mode, check: check.id, caseId: check.caseId,
+        passes: verdicts.filter(item => item?.passed === true).length, runs: group.length,
+        pending: verdicts.filter(item => typeof item?.passed !== 'boolean').length, runIds: group.map(run => run.id).sort() })
+    }
+  }
+  const ledger = join(results === defaultResults ? resolve(defaultResults, '..') : results, 'ledger.jsonl')
+  if (pending.length || batch.errors.length || runs.length !== batch.scenarios.length * batch.repeat || entries.some(entry => entry.pending)) {
+    return { status: 'blocked', batch: batch.id, ledger, runIds: batch.runIds, pending, errors: batch.errors, checks: entries,
+      reason: 'Score every completed conversation with eval score, then finalize with eval batch --batch <id> using the same --results directory. Failed captures require a fresh batch.' }
+  }
+  // Serialize ledger writers without making a second command wait or retry.
+  const lock = `${ledger}.lock`
+  try { await mkdir(lock) }
+  catch (error) {
+    if (error.code === 'EEXIST') fail('Another batch is appending the ledger. Finalize again after it finishes.')
+    throw error
+  }
+  try {
+    let existing = []
+    try { existing = (await readFile(ledger, 'utf8')).trim().split('\n').filter(Boolean).map(line => JSON.parse(line)) }
+    catch (error) { if (error.code !== 'ENOENT') throw error }
+    const lines = entries.map(({ pending, ...entry }) => entry).filter(entry => {
+      const saved = existing.find(saved => saved.check === entry.check && saved.scenario === entry.scenario &&
+        canonicalJSON(saved.runIds) === canonicalJSON(entry.runIds))
+      if (saved && canonicalJSON(saved) !== canonicalJSON(entry)) fail('Published batch grades changed. Preserve the ledger and capture a fresh batch.')
+      return !saved
+    })
+    if (lines.length) await appendFile(ledger, lines.map(entry => JSON.stringify(entry) + '\n').join(''))
+    return { status: 'passed', batch: batch.id, ledger, runIds: batch.runIds, appended: lines.length, checks: entries }
+  } finally { await rm(lock, { recursive: true }) }
 }
 
 async function load(results, id) {
@@ -244,15 +350,15 @@ async function correct(opts, results) {
 
 try {
   const args = process.argv.slice(2)
-  if (args.includes('--help')) console.log(help)
-  else if (!args.length) fail('Select a manual scenario, score or compare. ' + help)
+  if (args.includes('--help')) console.log(args[0] === 'batch' ? batchHelp : batchHelp + '\n' + help)
+  else if (!args.length) fail('Select a batch, manual scenario, score or compare. ' + batchHelp + '\n' + help)
   else {
     const command = args[0].startsWith('--') ? 'start' : args.shift()
-    const allowed = { start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], score: ['run', 'answers', 'transcript'], correct: ['run', 'correction'], compare: ['without', 'with'] }
+    const allowed = { batch: ['batch', 'tier', 'repeat', 'concurrency', 'scenario', 'mode', 'stage', 'adapter'], start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], score: ['run', 'answers', 'transcript'], correct: ['run', 'correction'], compare: ['without', 'with'] }
     if (!Object.hasOwn(allowed, command)) fail(`Unknown command: ${command}`, 'usage-error')
     const opts = options(args, [...allowed[command], 'results'], command === 'start' ? ['manual'] : [])
     const results = resolve(opts.results ?? defaultResults)
-    const data = await ({ start, turn, close, score, correct, compare })[command](opts, results)
+    const data = await ({ batch, start, turn, close, score, correct, compare })[command](opts, results)
     if (!opts.json && command === 'start') console.log(JSON.stringify(data, null, 2))
     emitResult({ command: `eval ${command}`, status: data.status, data }, opts.json)
   }
