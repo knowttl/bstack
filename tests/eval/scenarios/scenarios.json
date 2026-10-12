@@ -3,7 +3,7 @@
   "scenarios": [
     {
       "id": "final-repeat-audit",
-      "fixture": "ts-shop",
+      "fixture": "maintained-ts-shop",
       "request": "Re-audit this previously maintained ts-shop fixture using the installed package. The user has added the uncommitted sentence User note: export remains outside this change. to DESIGN.md. Preserve that sentence and the earlier receipt wording note exactly. Reuse the approved authorities and resulting checks, without duplicate rules, glossary, vision or guidance and without reopening settled intent. Run the relevant native journeys and constraints. Present actual changes for selection if necessary; otherwise report an evidenced no-op. Do not erase or commit user work to make the tree clean. Before each Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [],
       "checkpoints": ["final"],
@@ -51,7 +51,8 @@
     },
     {
       "id": "final-independent-extension",
-      "fixture": "ts-shop",
+      "fixture": "maintained-ts-shop",
+      "mode": "without",
       "request": "Using only this maintained ts-shop repo's own resulting guidance and checks, extend its approved public quote example to support a selected quantity while defaulting to one, and add a quantity-two checkout journey through the public checkout interface. Locate and name the approved example first. Preserve the original quantity-one quote of 12, quantity-one checkout total of 10 and both user notes in DESIGN.md exactly. Verify quantity-two quote 24 and checkout total 20 through the actual local HTTP endpoint. Run all maintained constraints and the fresh standalone checker in a different-root clean clone with isolated home/cache. Assess documentation impact against the approved sources and explicit comparison base. No audit skill, bundled references, goal interview, full audit, hosted CI or delivery service. Report concrete interface, journey, constraint and clean-checkout artifacts. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [],
       "checkpoints": ["final"],
@@ -99,7 +100,7 @@
     },
     {
       "id": "final-maintained-maintenance",
-      "fixture": "ts-shop",
+      "fixture": "maintained-ts-shop",
       "request": "Perform bounded maintenance on this previously maintained ts-shop fixture, using references/maintenance-contract.md and its existing approved project sources and checks. Select HEAD as the explicit comparison base before a small internal pricing refactor that names an intermediate value while preserving public pricing and checkout behaviour. Protect the original behaviour before the refactor. Preserve both user notes and existing authoritative documents without cosmetic edits. Collect and review final change evidence, record a substantive no-impact explanation, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Do not repeat the goal interview or full repo audit, invoke inspect/inventory/research, change acceptance or start a delivery service. Report exact assessment, base/source, command captures and fresh clean-checkout checker artifact paths. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
         "I approve the complete exact bound no-impact assessment content and protected write plan you just presented for this internal refactor. Apply that unchanged record through the protected write procedure and commit the assessment separately. Then run the standalone checker freshly in the working checkout and a different-root clean clone with isolated home and cache, preserving existing policy coverage, approved sources, both user notes and original pricing and checkout outcomes. Keep subsequent evidence in scratch and stop before any further protected write requiring separate approval."
