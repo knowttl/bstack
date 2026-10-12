@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-12T05:45:14.880Z",
+  "ownerDecisionDate": "2026-10-12",
+  "openEvaluationConversations": 0,
+  "removedImage": "bstack-eval-toolchain:node24-codex0.162.1",
+  "removedImageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+  "remainingEvaluationContainers": 0,
+  "remainingEvaluationImages": 0,
+  "remainingIsolatedHomes": 0,
+  "verification": "All retained run records were checked for open isolated conversations; Docker evaluation container and image inventories and isolated-home directory inventory were empty after removal."
+}

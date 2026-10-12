@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "nextChange": "Review foundation recommendations for the existing checkout before selecting changes.",
+  "reviewedScope": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "DESIGN.md",
+    "glossary.md",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "boundaries.mjs",
+    "journey.mjs",
+    "unit.test.mjs",
+    "packages/core/a.ts",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/core/package.json",
+    "packages/web/alias.ts",
+    "packages/web/package.json",
+    "packages/web/public.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3-4",
+      "intent": "documented",
+      "summary": "UI never touches storage; checkout total 10."
+    },
+    {
+      "id": "instructions",
+      "pointer": "AGENTS.md:1; CLAUDE.md:1",
+      "intent": "documented",
+      "summary": "Approved design and public core required; Claude stub imports canonical instructions."
+    },
+    {
+      "id": "code",
+      "pointer": "packages/web/ui.ts:1-4; packages/web/routes.ts:1-6; packages/core/internal/database.ts:1-4; packages/core/a.ts:1-2; packages/core/b.ts:1-2",
+      "intent": "observed",
+      "summary": "Private storage imports, mixed route responsibilities and cyclic core functions."
+    },
+    {
+      "id": "checks",
+      "pointer": "package.json:12-15; boundaries.mjs:11-30; journey.mjs:10-12; unit.test.mjs:5-8",
+      "intent": "observed",
+      "summary": "Fresh check captures in scratch: types and 2 units pass; journey and boundaries exit 1."
+    },
+    {
+      "id": "vocabulary",
+      "pointer": "glossary.md:3-4",
+      "intent": "documented",
+      "summary": "Order has two conflicting meanings."
+    },
+    {
+      "id": "ownership",
+      "pointer": "packages/web/routes.ts:3-6; packages/core/index.ts:1",
+      "intent": "inferred",
+      "summary": "Pricing and order persistence belong behind a public core capability, with route limited to transport mapping. This is a proposed ownership boundary, not approved design text."
+    },
+    {
+      "id": "host-docs",
+      "pointer": "https://code.claude.com/docs/en/memory (read 2026-10-12); inventory.json",
+      "intent": "observed",
+      "summary": "Official instruction-loading limits verified; no Claude executable available to prove runtime loading. Stub removal blocked."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Existing loopback checkout returns total 12; approved acceptance is 10.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/core/internal/database.ts",
+        "journey.mjs"
+      ],
+      "command": "npm run journey",
+      "principle": "DESIGN.md:4 is authoritative; do not change acceptance to match implementation. No exception to the approved case.",
+      "consequence": "Checkout is currently incorrect despite green unit tests.",
+      "fix": "Restore quantity-one checkout through core-owned pricing. Keep DESIGN.md and journey.mjs expected total 10 unchanged. Broader service-price and quantity policy remains blocked pending owner decision.",
+      "scope": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/core/internal/database.ts",
+        "journey.mjs"
+      ],
+      "verification": "Existing npm run journey must pass with service response 12 and result {status:201,total:10}; retain original reproduction. For later implementation capture a bug-fix before plan; these audit captures are not refactor before/after proof.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "code"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "UI, route and alias import private core storage.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/core/index.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "AGENTS.md:1 and DESIGN.md:3 require public core and no UI storage. Automated import resolution plus review; no private import exception.",
+      "consequence": "Storage representation changes force web changes and bypass intended package exports.",
+      "fix": "Expose a useful checkout capability through existing packages/core/index.ts; migrate web consumers, keeping storage private. Do not merely re-export storage representation or add forwarding layers.",
+      "scope": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/core/index.ts"
+      ],
+      "verification": "Reuse npm run boundaries; prove clean public import and independent private import, alias bypass and cycle failures in disposable fixtures; document dynamic-import/require coverage limits.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "instructions",
+        "code",
+        "checks"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Route owns pricing, bulk discount, mutable order persistence and response mapping.",
+      "files": [
+        "packages/web/routes.ts",
+        "packages/core/index.ts"
+      ],
+      "command": null,
+      "principle": "Proposed responsibility rule: core owns pricing/order creation; web maps transport. Human review and public checkout compatibility. Exceptions require named scope/reason/removal condition.",
+      "consequence": "Pricing and persistence changes both edit the route; shared mutable array is an implicit owner.",
+      "fix": "Move pricing and order recording behind one core checkout interface; keep HTTP-shaped response mapping in the route. Candidate checkout.ts and private orders.ts only if selected. Preserve current public shape and investigate broader pricing before altering it.",
+      "scope": [
+        "packages/web/routes.ts",
+        "packages/core/index.ts"
+      ],
+      "verification": "Capture approved checkout before/after, then check public outcome and boundary rule. Persistence semantics and bulk outcomes need authoritative acceptance before extra tests.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "code",
+        "ownership"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Core a and b mutually recurse with no terminating branch, independently of checkout.",
+      "files": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Proposed core dependency rule: forbid unintended cycles; native boundary check and responsibility review. Exceptions require a documented legitimate dependency and removal condition.",
+      "consequence": "Calling either function cannot produce a finite result; coupled core files block a clean graph check. No evidence that they affect checkout execution.",
+      "fix": "Determine intended capability before consolidating into one cohesive owner, redirecting dependencies, or selecting removal of unused code. No invented return value.",
+      "scope": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "verification": "Native cycle check must become clean; if retained, test its approved public capability. Current functions have no acceptance source, so semantic repair stays blocked.",
+      "blocksNextChange": false,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "code",
+        "checks"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "Core database module mixes static price policy and external HTTP price fetching; entry exports storage function directly.",
+      "files": [
+        "packages/core/internal/database.ts",
+        "packages/core/index.ts"
+      ],
+      "command": null,
+      "principle": "Proposed information-hiding rule: core pricing owns business decisions and a private adapter owns fetch. Review public interface and acceptance; exceptions need narrow reason and expiry.",
+      "consequence": "Service shape and price-policy knowledge are bound to a storage-named module and exposed to callers.",
+      "fix": "Keep current package entry; place policy in a cohesive core owner and isolate external fetch only where it hides actual complexity. No new framework, deployment or service. Public quote()=12 is observed, not approved checkout policy.",
+      "scope": [
+        "packages/core/internal/database.ts",
+        "packages/core/index.ts"
+      ],
+      "verification": "Protect existing approved checkout through real loopback HTTP and public core entry; approve quote/service failure semantics before new expectations. A live external endpoint is unavailable.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "code",
+        "ownership"
+      ]
+    },
+    {
+      "id": "F-006",
+      "problem": "Maintained check only typechecks; existing journey and boundaries fail outside that command. Mocked checkout hides real transport-path failure.",
+      "files": [
+        "package.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "command": "npm run check; npm run test; npm run journey; npm run boundaries",
+      "principle": "Proposed completion rule: affected approved journeys and architectural checks pass on final bytes; units alone are insufficient. Native checks enforce, review maps outcomes. No masking exceptions.",
+      "consequence": "npm run check can be green while the product violates both approved commitments.",
+      "fix": "After selecting repairs, extend existing check with fail-fast type, unit, boundary and journey commands; preserve all known failures. Reuse current journey instead of adding duplicate expected-value tests. Do not add CI without selection.",
+      "scope": [
+        "package.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "verification": "Prove integrated command on clean and seeded boundary violations using rule-proof, then run final native checks. No rule-proof claimed from failing current fixture.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "checks",
+        "design"
+      ]
+    },
+    {
+      "id": "F-007",
+      "problem": "Order denotes both a purchase and panel sequence.",
+      "files": [
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "One meaning per project term or explicit context; terminology is a draft until confirmed. Human review; contextual uses may be retained by explicit decision.",
+      "consequence": "Ambiguous terminology can misdirect interface ownership and naming changes.",
+      "fix": "Draft only: Order = customer purchase; Panel sequence = UI panel ordering. Keep existing glossary untouched. Asked owner; naming migration requires separate selected scope.",
+      "scope": [
+        "glossary.md"
+      ],
+      "verification": "Owner confirmation of meanings followed by exact glossary diff review; no code rename bundled.",
+      "blocksNextChange": false,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "vocabulary"
+      ]
+    },
+    {
+      "id": "F-008",
+      "problem": "CLAUDE.md is an import-only AGENTS stub; it contains no additional instruction to consolidate.",
+      "files": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "command": null,
+      "principle": "Canonical AGENTS contains equivalent instructions; compatibility verified before removing host bridge. Human loading review; keep stub when required.",
+      "consequence": "Removing it without host evidence could prevent approved instructions from loading.",
+      "fix": "Equivalent-content consolidation candidate: preserve AGENTS.md bytes and delete only the stub if host loading is proved and selected. BLOCKED: no Claude runtime. Inventory limits: pre-2.1.277; some Bedrock/no-telemetry pre-2.1.281; disabled built-in AGENTS plugin.",
+      "scope": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "verification": "Confirm target runtime/version, supported session and loaded memory with official host procedure before selected deletion. No ancestor/profile files read.",
+      "blocksNextChange": false,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "instructions",
+        "host-docs"
+      ]
+    },
+    {
+      "id": "F-009",
+      "problem": "No project document states what evidence completes a checkout change.",
+      "files": [
+        "DESIGN.md",
+        "AGENTS.md"
+      ],
+      "command": null,
+      "principle": "Proposed evidence standard: original acceptance plus affected journey checks on final inputs. Human review; unavailable required evidence means unverified, no blanket unit-only exception.",
+      "consequence": "Future changes may rely on green units while agreed outcomes fail.",
+      "fix": "Draft append-only design section naming DESIGN.md acceptance and journey.mjs check, plus affected final-input check requirement; AGENTS gets pointers if selected. Preserve both existing design commitments verbatim; no new VISION or standards template.",
+      "scope": [
+        "DESIGN.md",
+        "AGENTS.md"
+      ],
+      "verification": "Review exact proposed bytes against approved design and checks; verify affected native checks on final inputs. Document edits remain unselected.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "instructions",
+        "checks"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey",
+    "foundation-review"
+  ],
+  "execution": [],
+  "limitations": [
+    "No changes selected or applied; repo clean at initial revision. All recommendations unresolved; dependent work blocked.",
+    "Native captures use phase after as a baseline audit with no edits; not structural compatibility proof.",
+    "Type/unit captures link a supporting case to public-core, but passing those commands does NOT establish that boundary; only native boundary analysis is relevant and it fails. Automated coverage metadata is not semantic proof.",
+    "Findings execution remains empty: captured run-checks fingerprints are not findings fingerprints. No manually attached artifact claimed validated. Readiness stays blocked.",
+    "History has only initial b6c59b7 commit; co-change pairs reflect initial creation, not recurring coupling or conflicts.",
+    "No live external pricing endpoint or approved error, invalid quantity or bulk-discount acceptance; no outside behaviour verified.",
+    "No formatter/linter/CI configured; do not impose a universal toolchain. No missing VISION treated as a product-goal gap.",
+    "Boundary checker covers top-level import/export resolution, not dynamic imports/require.",
+    "Terminology, cycle purpose and general pricing decisions pending; Claude stub removal blocked by missing runtime."
+  ]
+}

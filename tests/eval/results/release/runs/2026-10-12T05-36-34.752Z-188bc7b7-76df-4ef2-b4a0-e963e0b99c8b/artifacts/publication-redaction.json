@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "reason": "An irrelevant opaque web-result thumbnail identifier was removed for public repository hygiene; the actual official documentation URL and unscored conversation remain retained.",
+  "changes": [
+    {
+      "path": "run.json",
+      "originalSha256": "a9a632060f369b95734bb600fdd25d8834bab5a09d7d83c96c892aae8a124d74",
+      "publishedSha256": "3708b7ab40eb8efd4509659a14be4b509517f4499b66d859176732cb7b0cae18",
+      "redactedOpaqueThumbnailIdentifiers": 1
+    },
+    {
+      "path": "conversation.txt",
+      "originalSha256": "9632d6ca073dce4bda3047c16f99e7b1f91b45a8b6948c5e6654cd9d2bfc816e",
+      "publishedSha256": "d3c03175324bc412808e2875d5c60f43788f37c259c91fbcdf306e0e4472cb37",
+      "redactedOpaqueThumbnailIdentifiers": 1
+    }
+  ]
+}

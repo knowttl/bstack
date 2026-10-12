@@ -1,0 +1,644 @@
+{
+  "schemaVersion": 1,
+  "taskId": "C29",
+  "slice": "C29",
+  "sourceRevision": "34cc59096ac47d5ee953268a1d776f69a5dffd5f",
+  "intent": "Ship the owner-approved retained release evidence honestly, preserving incomplete qualification as v0.1.1 known issues.",
+  "amendments": [
+    "Owner decision 2026-10-12: stop further evaluation and repairs, revert the unverified guidance repair, release retained evidence with explicit known issues, and publish through the local gate."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "linux 6.8.0-142-generic x64",
+    "node": "v24.17.0",
+    "tools": {
+      "npm": "11.13.0",
+      "git": "git version 2.54.0"
+    }
+  },
+  "commands": [
+    {
+      "id": "complete-acceptance",
+      "executable": "node",
+      "args": [
+        "scripts/acceptance.mjs",
+        "--results",
+        "tests/eval/results",
+        "--require-complete"
+      ],
+      "cwd": ".",
+      "exitCode": null,
+      "outputArtifact": null,
+      "status": "blocked",
+      "reason": "Complete qualification was not achieved; the owner approved a partial release and stopped further evaluation.",
+      "nextPrerequisite": "Complete the known v0.1.1 procedures and all scenario comparisons."
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-1",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "New-project final interview, board verdict and resumed-review evidence are incomplete.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-2",
+      "kind": "agent",
+      "procedure": "ambiguous-idea",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f/conversation.txt"
+    },
+    {
+      "id": "AC-3",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "New-project final interview, board verdict and resumed-review evidence are incomplete.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-4",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-5",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-6",
+      "kind": "agent",
+      "procedure": "clear-goals",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/conversation.txt"
+    },
+    {
+      "id": "AC-7",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-8",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-9",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "New-project final interview, board verdict and resumed-review evidence are incomplete.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-10",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-11",
+      "kind": "agent",
+      "procedure": "existing-repo-python",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt"
+    },
+    {
+      "id": "AC-12",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-13",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-14",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-15",
+      "kind": "agent",
+      "procedure": "selected-rule-relocation",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/conversation.txt"
+    },
+    {
+      "id": "AC-16",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-17",
+      "kind": "agent",
+      "procedure": "maintenance",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/conversation.txt"
+    },
+    {
+      "id": "AC-18",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-18.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-19",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-19.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-20",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-20.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-21",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-21.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-22",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-22.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-23",
+      "kind": "agent",
+      "procedure": "maintenance",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/conversation.txt"
+    },
+    {
+      "id": "AC-24",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-24.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-25",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-26",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Current maintained bug/refactor follow-up evidence is incomplete.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-27",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-28",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-29",
+      "kind": "agent",
+      "procedure": "verification-limitations",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt"
+    },
+    {
+      "id": "AC-30",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-31",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-32",
+      "kind": "agent",
+      "procedure": "verification-limitations",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt"
+    },
+    {
+      "id": "AC-33",
+      "kind": "agent",
+      "procedure": "verification-limitations",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt"
+    },
+    {
+      "id": "AC-34",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "A comparable final subagent discovery capture on the released package and fixture is not complete.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-35",
+      "kind": "agent",
+      "procedure": "research-main-typescript",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt"
+    },
+    {
+      "id": "AC-36",
+      "kind": "agent",
+      "procedure": "research-main-typescript",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt"
+    },
+    {
+      "id": "AC-37",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "A comparable final subagent discovery capture on the released package and fixture is not complete.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-38",
+      "kind": "agent",
+      "procedure": "clear-goals",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/conversation.txt"
+    },
+    {
+      "id": "AC-39",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-40",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-41",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-41-nested.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-42",
+      "kind": "agent",
+      "procedure": "implicit-invocation",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/conversation.txt"
+    },
+    {
+      "id": "AC-43",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-44",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-44.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-45",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-45-unfinished.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-46",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Twelve of twenty required baseline/installed scenario pairs are selected; complete all-scenario qualification is pending.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-47",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-47.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-48",
+      "kind": "agent",
+      "procedure": "research-main-typescript",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt"
+    },
+    {
+      "id": "AC-49",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Instruction-stub consolidation and the harness version limit were inconsistent: an earlier audit scored 19/19; the released-package final audit scored 17/19 and failed this case.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-50",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Mixed-responsibility and coupled-core recommendations were inconsistent: an earlier audit scored 19/19; the released-package final audit scored 17/19 and failed this case.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-51",
+      "kind": "agent",
+      "procedure": "existing-repo-python",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt"
+    },
+    {
+      "id": "AC-52",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-52.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-53",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-54",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-55",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Existing-vision delta evidence has not been refreshed for the released package.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-56",
+      "kind": "agent",
+      "procedure": "runtime-independence",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e/conversation.txt"
+    },
+    {
+      "id": "AC-57",
+      "kind": "agent",
+      "procedure": "scope-and-prerequisites",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/conversation.txt"
+    },
+    {
+      "id": "AC-58",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-58.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-59",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-60",
+      "kind": "agent",
+      "procedure": "existing-repo-python",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt"
+    },
+    {
+      "id": "AC-61",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-62",
+      "kind": "agent",
+      "procedure": "existing-repo-python",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt"
+    },
+    {
+      "id": "AC-63",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-64",
+      "kind": "agent",
+      "procedure": "final-independent-extension",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b/conversation.txt"
+    },
+    {
+      "id": "AC-65",
+      "kind": "agent",
+      "procedure": "existing-repo",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt"
+    },
+    {
+      "id": "AC-66",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-67",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-67.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-68",
+      "kind": "agent",
+      "procedure": "scope-and-prerequisites",
+      "status": "passed",
+      "artifact": "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/conversation.txt"
+    },
+    {
+      "id": "AC-69",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Repeat-audit evidence has not been refreshed for the released package.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-70",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-70.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-71",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-71.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-72",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-72.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-73",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-73.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-74",
+      "kind": "automated",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": "tests/eval/results/release/automated/AC-74.json",
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    },
+    {
+      "id": "AC-75",
+      "kind": "agent",
+      "procedure": "Complete final acceptance qualification",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion.",
+      "nextPrerequisite": "Complete and review this procedure for v0.1.1."
+    }
+  ],
+  "limitations": [
+    "Passed status describes the revised owner-approved evidence delivery scope, not full T5.2 qualification.",
+    "Only 38 of 75 design cases have selected passing current agent or independent-extension evidence; 37 remain explicit known issues.",
+    "Only twelve of twenty required scenario comparisons are selected; no complete acceptance claim is made.",
+    "The tag, GitHub release and eventual landed commit are recorded after publication by the release owner."
+  ]
+}

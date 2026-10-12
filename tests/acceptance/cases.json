@@ -3,19 +3,23 @@
   "cases": [
     {
       "id": "AC-1",
-      "ownerTask": ["T2.9","T4.3"],
+      "ownerTask": [
+        "T2.9",
+        "T4.3"
+      ],
       "criterionSource": "docs/design.md#AC-1",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-new-project",
-        "artifacts": ["tests/eval/results/full-path-C27/summary.md", "tests/eval/results/full-path-C27/runs/2026-10-11T09-23-27.321Z-f76f7eef-89b7-4b1a-b7a5-85571d8cd210/manual-verdict.json"]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: New-project final interview, board verdict and resumed-review evidence are incomplete. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-2",
-      "ownerTask": ["T1.7","T2.9"],
+      "ownerTask": [
+        "T1.7",
+        "T2.9"
+      ],
       "criterionSource": "docs/design.md#AC-2",
       "evidenceType": "agent",
       "procedure": {
@@ -23,51 +27,63 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "ambiguous-idea",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f/run.json"
         ]
       }
     },
     {
       "id": "AC-3",
-      "ownerTask": ["T1.6","T4.3"],
+      "ownerTask": [
+        "T1.6",
+        "T4.3"
+      ],
       "criterionSource": "docs/design.md#AC-3",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-new-project",
-        "artifacts": ["tests/eval/results/full-path-C27/summary.md", "tests/eval/results/full-path-C27/runs/2026-10-11T09-23-27.321Z-f76f7eef-89b7-4b1a-b7a5-85571d8cd210/manual-verdict.json"]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: New-project final interview, board verdict and resumed-review evidence are incomplete. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-4",
-      "ownerTask": ["T2.2"],
+      "ownerTask": [
+        "T2.2"
+      ],
       "criterionSource": "docs/design.md#AC-4",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-5",
-      "ownerTask": ["T2.8"],
+      "ownerTask": [
+        "T2.8"
+      ],
       "criterionSource": "docs/design.md#AC-5",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-6",
-      "ownerTask": ["T2.8"],
+      "ownerTask": [
+        "T2.8"
+      ],
       "criterionSource": "docs/design.md#AC-6",
       "evidenceType": "agent",
       "procedure": {
@@ -75,61 +91,80 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "clear-goals",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/run.json"
         ]
       }
     },
     {
       "id": "AC-7",
-      "ownerTask": ["T2.8"],
+      "ownerTask": [
+        "T2.8"
+      ],
       "criterionSource": "docs/design.md#AC-7",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-8",
-      "ownerTask": ["T2.5"],
+      "ownerTask": [
+        "T2.5"
+      ],
       "criterionSource": "docs/design.md#AC-8",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-9",
-      "ownerTask": ["T1.7","T2.9"],
+      "ownerTask": [
+        "T1.7",
+        "T2.9"
+      ],
       "criterionSource": "docs/design.md#AC-9",
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: A new-project interview resolves useful domain terms without adding implementation details to the glossary."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: New-project final interview, board verdict and resumed-review evidence are incomplete. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-10",
-      "ownerTask": ["T2.3"],
+      "ownerTask": [
+        "T2.3"
+      ],
       "criterionSource": "docs/design.md#AC-10",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-11",
-      "ownerTask": ["T2.3"],
+      "ownerTask": [
+        "T2.3"
+      ],
       "criterionSource": "docs/design.md#AC-11",
       "evidenceType": "agent",
       "procedure": {
@@ -137,51 +172,68 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo-python",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json"
         ]
       }
     },
     {
       "id": "AC-12",
-      "ownerTask": ["T1.7","T2.9"],
+      "ownerTask": [
+        "T1.7",
+        "T2.9"
+      ],
       "criterionSource": "docs/design.md#AC-12",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-13",
-      "ownerTask": ["T3a.5"],
+      "ownerTask": [
+        "T3a.5"
+      ],
       "criterionSource": "docs/design.md#AC-13",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-14",
-      "ownerTask": ["T3.1"],
+      "ownerTask": [
+        "T3.1"
+      ],
       "criterionSource": "docs/design.md#AC-14",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-15",
-      "ownerTask": ["T3a.5"],
+      "ownerTask": [
+        "T3a.5"
+      ],
       "criterionSource": "docs/design.md#AC-15",
       "evidenceType": "agent",
       "procedure": {
@@ -189,31 +241,28 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "selected-rule-relocation",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/run.json"
         ]
       }
     },
     {
       "id": "AC-16",
-      "ownerTask": ["T3a.3"],
+      "ownerTask": [
+        "T3a.3"
+      ],
       "criterionSource": "docs/design.md#AC-16",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-existing-repo",
-        "artifacts": [
-          "tests/eval/results/release/record-approval-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
-        ]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-17",
-      "ownerTask": ["T3a.3"],
+      "ownerTask": [
+        "T3a.3"
+      ],
       "criterionSource": "docs/design.md#AC-17",
       "evidenceType": "agent",
       "procedure": {
@@ -221,65 +270,78 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "maintenance",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/run.json"
         ]
       }
     },
     {
       "id": "AC-18",
-      "ownerTask": ["T3a.4"],
+      "ownerTask": [
+        "T3a.4"
+      ],
       "criterionSource": "docs/design.md#AC-18",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Generated command or schema documentation fails when stale and passes after regeneration from its source."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-19",
-      "ownerTask": ["T3a.2","T3a.3"],
+      "ownerTask": [
+        "T3a.2",
+        "T3a.3"
+      ],
       "criterionSource": "docs/design.md#AC-19",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Missing document assessments, unknown changed paths and unavailable comparison bases cannot produce a passing maintenance result."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-20",
-      "ownerTask": ["T3a.2"],
+      "ownerTask": [
+        "T3a.2"
+      ],
       "criterionSource": "docs/design.md#AC-20",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The supported local comparison covers staged, unstaged, new, renamed and deleted files."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-21",
-      "ownerTask": ["T3a.3"],
+      "ownerTask": [
+        "T3a.3"
+      ],
       "criterionSource": "docs/design.md#AC-21",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Editing code or rules after assessment invalidates affected results, and integration reruns required checks."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-22",
-      "ownerTask": ["T3a.3"],
+      "ownerTask": [
+        "T3a.3"
+      ],
       "criterionSource": "docs/design.md#AC-22",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: A contract change cannot silently remove its own assessment or bypass the previous coverage policy."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-23",
-      "ownerTask": ["T3a.7","T4.3"],
+      "ownerTask": [
+        "T3a.7",
+        "T4.3"
+      ],
       "criterionSource": "docs/design.md#AC-23",
       "evidenceType": "agent",
       "procedure": {
@@ -287,81 +349,86 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "maintenance",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/run.json"
         ]
       }
     },
     {
       "id": "AC-24",
-      "ownerTask": ["T3a.6"],
+      "ownerTask": [
+        "T3a.6"
+      ],
       "criterionSource": "docs/design.md#AC-24",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: A clean checkout, cloned into a different root with an isolated home and cache, runs the maintenance checker without a globally installed skill or prior agent session."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-25",
-      "ownerTask": ["T3.1"],
+      "ownerTask": [
+        "T3.1"
+      ],
       "criterionSource": "docs/design.md#AC-25",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
-      }
-    },
-    {
-      "id": "AC-26",
-      "ownerTask": ["T2.7"],
-      "criterionSource": "docs/design.md#AC-26",
-      "evidenceType": "agent",
-      "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-maintained-maintenance",
         "artifacts": [
-          "tests/eval/results/release/package-current-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T00-09-05.843Z-9edc9bf5-e921-4091-afdc-b33eedaaa4ee/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T00-09-05.843Z-9edc9bf5-e921-4091-afdc-b33eedaaa4ee/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
         ]
       }
     },
     {
+      "id": "AC-26",
+      "ownerTask": [
+        "T2.7"
+      ],
+      "criterionSource": "docs/design.md#AC-26",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Current maintained bug/refactor follow-up evidence is incomplete. See tests/eval/results/release/approved-evidence.md."
+      }
+    },
+    {
       "id": "AC-27",
-      "ownerTask": ["T2.7"],
+      "ownerTask": [
+        "T2.7"
+      ],
       "criterionSource": "docs/design.md#AC-27",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
-      }
-    },
-    {
-      "id": "AC-28",
-      "ownerTask": ["T3a.3"],
-      "criterionSource": "docs/design.md#AC-28",
-      "evidenceType": "agent",
-      "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-existing-repo",
         "artifacts": [
-          "tests/eval/results/release/record-approval-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
         ]
       }
     },
     {
+      "id": "AC-28",
+      "ownerTask": [
+        "T3a.3"
+      ],
+      "criterionSource": "docs/design.md#AC-28",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
+      }
+    },
+    {
       "id": "AC-29",
-      "ownerTask": ["T2.7"],
+      "ownerTask": [
+        "T2.7"
+      ],
       "criterionSource": "docs/design.md#AC-29",
       "evidenceType": "agent",
       "procedure": {
@@ -369,43 +436,45 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/run.json"
         ]
       }
     },
     {
       "id": "AC-30",
-      "ownerTask": ["T2.7"],
+      "ownerTask": [
+        "T2.7"
+      ],
       "criterionSource": "docs/design.md#AC-30",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-existing-repo",
-        "artifacts": [
-          "tests/eval/results/release/record-approval-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
-        ]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-31",
-      "ownerTask": ["T2.7"],
+      "ownerTask": [
+        "T2.7"
+      ],
       "criterionSource": "docs/design.md#AC-31",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-32",
-      "ownerTask": ["T2.7"],
+      "ownerTask": [
+        "T2.7"
+      ],
       "criterionSource": "docs/design.md#AC-32",
       "evidenceType": "agent",
       "procedure": {
@@ -413,15 +482,16 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/run.json"
         ]
       }
     },
     {
       "id": "AC-33",
-      "ownerTask": ["T2.7"],
+      "ownerTask": [
+        "T2.7"
+      ],
       "criterionSource": "docs/design.md#AC-33",
       "evidenceType": "agent",
       "procedure": {
@@ -429,27 +499,28 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "verification-limitations",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/run.json"
         ]
       }
     },
     {
       "id": "AC-34",
-      "ownerTask": ["T2.1"],
+      "ownerTask": [
+        "T2.1"
+      ],
       "criterionSource": "docs/design.md#AC-34",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "research-subagents",
-        "artifacts": ["tests/eval/results/release/research-subagents-comparison.json", "tests/eval/results/release/research-subagents-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50/conversation.txt"]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: A comparable final subagent discovery capture on the released package and fixture is not complete. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-35",
-      "ownerTask": ["T2.1"],
+      "ownerTask": [
+        "T2.1"
+      ],
       "criterionSource": "docs/design.md#AC-35",
       "evidenceType": "agent",
       "procedure": {
@@ -457,15 +528,16 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "research-main-typescript",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/run.json"
         ]
       }
     },
     {
       "id": "AC-36",
-      "ownerTask": ["T2.1"],
+      "ownerTask": [
+        "T2.1"
+      ],
       "criterionSource": "docs/design.md#AC-36",
       "evidenceType": "agent",
       "procedure": {
@@ -473,27 +545,28 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "research-main-typescript",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/run.json"
         ]
       }
     },
     {
       "id": "AC-37",
-      "ownerTask": ["T2.1"],
+      "ownerTask": [
+        "T2.1"
+      ],
       "criterionSource": "docs/design.md#AC-37",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "research-subagents",
-        "artifacts": ["tests/eval/results/release/research-subagents-comparison.json", "tests/eval/results/release/research-subagents-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50/conversation.txt"]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: A comparable final subagent discovery capture on the released package and fixture is not complete. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-38",
-      "ownerTask": ["T2.8"],
+      "ownerTask": [
+        "T2.8"
+      ],
       "criterionSource": "docs/design.md#AC-38",
       "evidenceType": "agent",
       "procedure": {
@@ -501,49 +574,62 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "clear-goals",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/run.json"
         ]
       }
     },
     {
       "id": "AC-39",
-      "ownerTask": ["T4.2"],
+      "ownerTask": [
+        "T4.2"
+      ],
       "criterionSource": "docs/design.md#AC-39",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-40",
-      "ownerTask": ["T4.2"],
+      "ownerTask": [
+        "T4.2"
+      ],
       "criterionSource": "docs/design.md#AC-40",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-41",
-      "ownerTask": ["T0.5"],
+      "ownerTask": [
+        "T0.5"
+      ],
       "criterionSource": "docs/design.md#AC-41",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The package check fails on a seeded unlisted reference, a seeded nested reference and a seeded oversized `SKILL.md`."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-42",
-      "ownerTask": ["T4.2"],
+      "ownerTask": [
+        "T4.2"
+      ],
       "criterionSource": "docs/design.md#AC-42",
       "evidenceType": "agent",
       "procedure": {
@@ -551,67 +637,82 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "implicit-invocation",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/run.json"
         ]
       }
     },
     {
       "id": "AC-43",
-      "ownerTask": ["T4.2"],
+      "ownerTask": [
+        "T4.2"
+      ],
       "criterionSource": "docs/design.md#AC-43",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-44",
-      "ownerTask": ["T0.5"],
+      "ownerTask": [
+        "T0.5"
+      ],
       "criterionSource": "docs/design.md#AC-44",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The package check fails when the frontmatter setting or `agents/openai.yaml` is missing."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-45",
-      "ownerTask": ["T0.5"],
+      "ownerTask": [
+        "T0.5"
+      ],
       "criterionSource": "docs/design.md#AC-45",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The package check fails on a seeded unexplained constant and a seeded step with no completion criterion."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-46",
-      "ownerTask": ["T5.2"],
+      "ownerTask": [
+        "T5.2"
+      ],
       "criterionSource": "docs/design.md#AC-46",
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, run the acceptance request in a fresh isolated agent session against disposable fixtures. Retain the full conversation and have an identified reviewer score transcript locations. Verify: Each evaluation scenario records the agent's result without the skill and with it, and the skill improves every scenario that the model did not already pass."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Twelve of twenty required baseline/installed scenario pairs are selected; complete all-scenario qualification is pending. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-47",
-      "ownerTask": ["T0.5","T3.1"],
+      "ownerTask": [
+        "T0.5",
+        "T3.1"
+      ],
       "criterionSource": "docs/design.md#AC-47",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: The skill folder contains no per-language rule set, lint preset or tool list."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-48",
-      "ownerTask": ["T2.1"],
+      "ownerTask": [
+        "T2.1"
+      ],
       "criterionSource": "docs/design.md#AC-48",
       "evidenceType": "agent",
       "procedure": {
@@ -619,35 +720,40 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "research-main-typescript",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/run.json"
         ]
       }
     },
     {
       "id": "AC-49",
-      "ownerTask": ["T2.3"],
+      "ownerTask": [
+        "T2.3"
+      ],
       "criterionSource": "docs/design.md#AC-49",
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "Current installed final run fails the instruction-merge rubric: no equivalent-content merge proposal or Claude Code version limit. Retained evidence: tests/eval/results/release/existing-repo-structural-blocker.md. Requires an honest passing current-package result before completion."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Instruction-stub consolidation and the harness version limit were inconsistent: an earlier audit scored 19/19; the released-package final audit scored 17/19 and failed this case. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-50",
-      "ownerTask": ["T2.4"],
+      "ownerTask": [
+        "T2.4"
+      ],
       "criterionSource": "docs/design.md#AC-50",
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "Current installed final run fails the two-candidate architecture rubric: boundary and cycle findings do not develop the observed mixed route responsibilities into the required architecture recommendation. Retained evidence: tests/eval/results/release/existing-repo-structural-blocker.md. Requires an honest passing current-package result before completion."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Mixed-responsibility and coupled-core recommendations were inconsistent: an earlier audit scored 19/19; the released-package final audit scored 17/19 and failed this case. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-51",
-      "ownerTask": ["T2.4"],
+      "ownerTask": [
+        "T2.4"
+      ],
       "criterionSource": "docs/design.md#AC-51",
       "evidenceType": "agent",
       "procedure": {
@@ -655,69 +761,70 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo-python",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json"
         ]
       }
     },
     {
       "id": "AC-52",
-      "ownerTask": ["T3.2"],
+      "ownerTask": [
+        "T3.2"
+      ],
       "criterionSource": "docs/design.md#AC-52",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Chosen boundary rules detect private imports, alias bypasses and forbidden cycles in each fixture stack, using the tool the research step selected."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-53",
-      "ownerTask": ["T2.4"],
+      "ownerTask": [
+        "T2.4"
+      ],
       "criterionSource": "docs/design.md#AC-53",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-54",
-      "ownerTask": ["T2.6","T4.3"],
+      "ownerTask": [
+        "T2.6",
+        "T4.3"
+      ],
       "criterionSource": "docs/design.md#AC-54",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-existing-repo",
-        "artifacts": [
-          "tests/eval/results/release/record-approval-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
-        ]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-55",
-      "ownerTask": ["T2.8"],
+      "ownerTask": [
+        "T2.8"
+      ],
       "criterionSource": "docs/design.md#AC-55",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "existing-vision-delta",
-        "artifacts": [
-          "tests/eval/results/release/package-current-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T00-25-52.070Z-7ab1794f-12af-412e-b7f3-670502acd871/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T00-25-52.070Z-7ab1794f-12af-412e-b7f3-670502acd871/artifacts/independent-verification.json"
-        ]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Existing-vision delta evidence has not been refreshed for the released package. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-56",
-      "ownerTask": ["T4.2"],
+      "ownerTask": [
+        "T4.2"
+      ],
       "criterionSource": "docs/design.md#AC-56",
       "evidenceType": "agent",
       "procedure": {
@@ -725,15 +832,16 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "runtime-independence",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e/run.json"
         ]
       }
     },
     {
       "id": "AC-57",
-      "ownerTask": ["T2.6"],
+      "ownerTask": [
+        "T2.6"
+      ],
       "criterionSource": "docs/design.md#AC-57",
       "evidenceType": "agent",
       "procedure": {
@@ -741,35 +849,41 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "scope-and-prerequisites",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/run.json"
         ]
       }
     },
     {
       "id": "AC-58",
-      "ownerTask": ["T3.4","T3a.6"],
+      "ownerTask": [
+        "T3.4",
+        "T3a.6"
+      ],
       "criterionSource": "docs/design.md#AC-58",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Project checks and maintenance validation run without an agent session."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-59",
-      "ownerTask": ["T3.1"],
+      "ownerTask": [
+        "T3.1"
+      ],
       "criterionSource": "docs/design.md#AC-59",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: No package resource redirects ordinary development work into a bstack implementation playbook."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-60",
-      "ownerTask": ["T3.2"],
+      "ownerTask": [
+        "T3.2"
+      ],
       "criterionSource": "docs/design.md#AC-60",
       "evidenceType": "agent",
       "procedure": {
@@ -777,31 +891,28 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo-python",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json"
         ]
       }
     },
     {
       "id": "AC-61",
-      "ownerTask": ["T3.4"],
+      "ownerTask": [
+        "T3.4"
+      ],
       "criterionSource": "docs/design.md#AC-61",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-existing-repo",
-        "artifacts": [
-          "tests/eval/results/release/record-approval-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
-        ]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-62",
-      "ownerTask": ["T2.8"],
+      "ownerTask": [
+        "T2.8"
+      ],
       "criterionSource": "docs/design.md#AC-62",
       "evidenceType": "agent",
       "procedure": {
@@ -809,27 +920,33 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo-python",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json"
         ]
       }
     },
     {
       "id": "AC-63",
-      "ownerTask": ["T2.5"],
+      "ownerTask": [
+        "T2.5"
+      ],
       "criterionSource": "docs/design.md#AC-63",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-64",
-      "ownerTask": ["T4.3"],
+      "ownerTask": [
+        "T4.3"
+      ],
       "criterionSource": "docs/design.md#AC-64",
       "evidenceType": "agent",
       "procedure": {
@@ -837,47 +954,57 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-independent-extension",
         "artifacts": [
-          "tests/eval/results/release/final-followups.md",
           "tests/eval/results/release/runs/2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b/run.json"
         ]
       }
     },
     {
       "id": "AC-65",
-      "ownerTask": ["T2.5"],
+      "ownerTask": [
+        "T2.5"
+      ],
       "criterionSource": "docs/design.md#AC-65",
       "evidenceType": "agent",
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "artifacts": [
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+        ]
       }
     },
     {
       "id": "AC-66",
-      "ownerTask": ["T3.2"],
+      "ownerTask": [
+        "T3.2"
+      ],
       "criterionSource": "docs/design.md#AC-66",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Each added automated principle rejects a deliberate violation and accepts a valid case."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-67",
-      "ownerTask": ["T3.3"],
+      "ownerTask": [
+        "T3.3"
+      ],
       "criterionSource": "docs/design.md#AC-67",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Existing failures and temporary exceptions remain visible, and new failures cannot enter through a refreshed baseline."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-68",
-      "ownerTask": ["T2.2"],
+      "ownerTask": [
+        "T2.2"
+      ],
       "criterionSource": "docs/design.md#AC-68",
       "evidenceType": "agent",
       "procedure": {
@@ -885,92 +1012,95 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "scope-and-prerequisites",
         "artifacts": [
-          "tests/eval/results/release/structural-approval-refresh.md",
           "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/artifacts/independent-verification.json"
+          "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/run.json"
         ]
       }
     },
     {
       "id": "AC-69",
-      "ownerTask": ["T2.6","T4.3"],
+      "ownerTask": [
+        "T2.6",
+        "T4.3"
+      ],
       "criterionSource": "docs/design.md#AC-69",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-repeat-audit",
-        "artifacts": [
-          "tests/eval/results/release/package-current-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T00-07-10.631Z-a38a5576-9f0f-4918-a8fd-f2f1d026e697/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T00-07-10.631Z-a38a5576-9f0f-4918-a8fd-f2f1d026e697/artifacts/independent-verification.json"
-        ]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Repeat-audit evidence has not been refreshed for the released package. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-70",
-      "ownerTask": ["T2.6"],
+      "ownerTask": [
+        "T2.6"
+      ],
       "criterionSource": "docs/design.md#AC-70",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Malformed helper inputs, wrong target paths and changed file hashes stop the scripted write before any project edit."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-71",
-      "ownerTask": ["T2.7"],
+      "ownerTask": [
+        "T2.7"
+      ],
       "criterionSource": "docs/design.md#AC-71",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: A failing, skipped or stale required check cannot produce a passing completion result."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-72",
-      "ownerTask": ["T2.6"],
+      "ownerTask": [
+        "T2.6"
+      ],
       "criterionSource": "docs/design.md#AC-72",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Helpers survive interrupted runs, and resume checks the current state before applying remaining changes."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-73",
-      "ownerTask": ["T4.1"],
+      "ownerTask": [
+        "T4.1"
+      ],
       "criterionSource": "docs/design.md#AC-73",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: A clean installation includes every referenced resource and required runtime declaration."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-74",
-      "ownerTask": ["T4.1"],
+      "ownerTask": [
+        "T4.1"
+      ],
       "criterionSource": "docs/design.md#AC-74",
       "evidenceType": "automated",
       "procedure": {
         "status": "planned",
-        "description": "At the owner task checkpoint, execute valid and deliberately invalid inputs through the public command and retain the named test and output artifacts. Verify: Install, update and removal work on Linux without losing unrelated files or user edits. R27 accepts Linux-only installer evidence; Windows and macOS remain unverified and outside the acceptance scope."
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation. See tests/eval/results/release/approved-evidence.md."
       }
     },
     {
       "id": "AC-75",
-      "ownerTask": ["T4.2","T4.3"],
+      "ownerTask": [
+        "T4.2",
+        "T4.3"
+      ],
       "criterionSource": "docs/design.md#AC-75",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-existing-repo",
-        "artifacts": [
-          "tests/eval/results/release/record-approval-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574/artifacts/independent-verification.json"
-        ]
+        "status": "planned",
+        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
       }
     }
   ]
