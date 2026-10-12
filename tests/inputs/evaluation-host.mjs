@@ -38,6 +38,14 @@ if (args.includes('--version')) {
   if (mode === 'malformed') console.log('not JSONL')
   else {
     console.log(JSON.stringify({ type: 'thread.started', thread_id: mode === 'wrong-session' && args.includes('resume') ? randomUUID() : sessionId }))
+    if (mode === 'fixture-byte-changed') await writeFile('price.mjs', 'export function quote(quantity) { return quantity * 13 }\n')
+    if (mode === 'fixture-status-changed') await writeFile('untracked-note.md', 'Unexpected new file.\n')
+    if (['forbidden-reference', 'allowed-reference', 'large-forbidden-reference'].includes(mode)) {
+      const reference = mode === 'allowed-reference' ? 'architecture.md' : 'vision.md'
+      console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution',
+        command: `cat ${join(process.env.HOME, '.agents/skills/repo-audit/references', reference)}`,
+        aggregated_output: mode === 'large-forbidden-reference' ? 'x'.repeat(200000) : '', exit_code: 0 } }))
+    }
     if (mode === 'reviewer' || mode === 'reviewer-quoted') console.log(JSON.stringify({ type: 'item.completed', item: {
       type: 'agent_message', text: mode === 'reviewer' ? 'Reviewer: Alice Chen' : 'Reviewer: Alice "Ali" Chen' } }))
     if (mode === 'listing') {

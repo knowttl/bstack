@@ -47,7 +47,8 @@ Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
 `--results <directory>` chooses another result directory on start, turn, close, score, correct, compare or selection validation.
 Starting a manual run creates a fresh fixture and unique record, with UTC timestamps, source revision, agent, model, OS, tool versions, fixture revision, checkpoint, criteria hash and case results.
 TypeScript fixtures also record npm and fixture-local TypeScript versions.
-The fixture revision is the committed `tests/fixtures` Git tree, so skill-only commits do not prevent comparison.
+The fixture revision is a SHA-256 of the scenario's effective builder definition, selected source files, overlay and builder script.
+Unrelated fixture changes do not invalidate the run.
 Run a committed checkout when recording evidence.
 Manual records initially have status `blocked` and no answers, transcript or case results.
 
@@ -199,7 +200,17 @@ Create a scoring answers file using the checklist IDs printed by the run.
 Every check needs a Boolean verdict and a one-based inclusive line range in the transcript, whether it passed or failed.
 The reviewer is responsible for the judgement and for identifying unavailable observations as a failed check with the limitation in the transcript.
 Reviewer identities must contain at least three characters and cannot be purely numeric.
-All current scenario checks are human scored.
+Checks use human, machine or judge scoring.
+An optional `machine` object names a deterministic assertion: `fixtureUnchanged`, `opened`, `notOpened`, `installerPassed`, `command`, `citeCheck`, `filesEqual` or `contains`.
+Opened-path assertions take `patterns` with Node path glob syntax over captured command and file-tool events; a missing access trace cannot pass.
+Commands take `executable` and `args`; citation checks take `report`, with `$HOME/` resolved inside the isolated home.
+File comparisons take `paths`; content checks take `path` and `text`.
+The runner captures fixture bytes and Git status before the conversation and evaluates assertions with the same container image, mounts and limits before cleanup.
+Native commands and citation reruns execute after the last scripted answer.
+The citation grader is staged in private scratch only after the subject finishes and removed after grading, including for without-skill baselines.
+Reviewer answers may omit machine check IDs, and supplied machine verdicts are replaced by captured results.
+Manual hosts cannot supply machine evidence.
+Mixed checks keep their conversation judgement separate from deterministic outcomes.
 Fixture sanity remains deterministic in the existing builder and does not substitute for agent observations.
 
 ```json
