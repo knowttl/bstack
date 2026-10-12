@@ -330,6 +330,114 @@ async function adapterFile(directory, mode = 'success') {
   return { adapter, path }
 }
 
+test('batch delivers two scenarios three times, closes every container and appends all graded check rates once', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'allowed-fixture-file')
+  const captured = run(directory, 'batch', '--tier', 'smoke', '--scenario', 'ambiguous-idea,clear-goals',
+    '--stage', 'baseline', '--mode', 'without', '--adapter', path, '--repeat', '3', '--concurrency', '2')
+  assert.equal(captured.status, 2, captured.stdout)
+  const batch = captured.data.data
+  assert.equal(batch.runIds.length, 6)
+  assert.equal(batch.pending.length, 6)
+  assert.deepEqual(batch.errors, [])
+  assert.deepEqual(batch.checks.filter(check => check.scenario === 'clear-goals').map(check =>
+    [check.check, check.passes, check.runs, check.pending]), [
+    ['reuse', 0, 3, 3], ['conditional-load', 3, 3, 0], ['fixture-unchanged', 3, 3, 0]
+  ])
+  await assert.rejects(readFile(join(directory, 'ledger.jsonl')), { code: 'ENOENT' })
+  const records = await Promise.all(batch.runIds.map(async id => JSON.parse(await readFile(join(directory, id, 'run.json'), 'utf8'))))
+  const events = (await readFile(join(directory, 'docker-events.jsonl'), 'utf8')).trim().split('\n').map(line => JSON.parse(line))
+  t.after(() => Promise.all(events.filter(event => event.operation === 'create').map(event => rm(event.fixture, { recursive: true, force: true }))))
+  const active = new Set()
+  for (const event of events) {
+    if (event.operation === 'create') active.add(event.container)
+    if (event.operation === 'remove') active.delete(event.container)
+    assert.ok(active.size <= 2, 'Batch exceeded its concurrency budget')
+  }
+  assert.equal(active.size, 0)
+  for (const record of records) {
+    assert.deepEqual(record.turns.map(turn => turn.message), [record.request, ...record.scenario.answers])
+    assert.equal(record.nextAnswer, record.scenario.answers.length + 1)
+    assert.equal(record.isolation.verified, true)
+    assert.ok(record.isolation.cleanedAt)
+    assert.ok(record.execution.turns.every(turn => turn.verified && turn.removedAt))
+  }
+  assert.equal((await readdir(directory)).filter(name => name.endsWith('.docker.json')).length, 0)
+  // One of the three ambiguous runs fails its semantic check; every captured run counts.
+  const failedId = records.find(record => record.scenario.id === 'ambiguous-idea').id
+  for (const record of records) {
+    const answers = join(directory, `${record.id}.answers.json`)
+    await writeFile(answers, JSON.stringify({ schemaVersion: 1, runId: record.id, reviewer: 'Fixture reviewer',
+      checks: record.scenario.checks.filter(check => !check.machine).map(check =>
+        ({ id: check.id, passed: record.id !== failedId, startLine: 1, endLine: 1 })) }))
+    const scored = run(directory, 'score', '--run', record.id, '--answers', answers,
+      '--transcript', join(directory, record.id, record.conversation))
+    assert.equal(scored.status, record.id === failedId ? 1 : 0, scored.stdout)
+  }
+  const finalized = run(directory, 'batch', '--batch', batch.batch)
+  assert.equal(finalized.status, 0, finalized.stdout)
+  assert.equal(finalized.data.data.appended, 4)
+  const ledger = await readFile(join(directory, 'ledger.jsonl'), 'utf8')
+  const lines = ledger.trim().split('\n').map(line => JSON.parse(line))
+  assert.deepEqual(lines.map(line => [line.scenario, line.check, line.caseId, line.passes, line.runs]), [
+    ['ambiguous-idea', 'decision', 'AC-2', 2, 3], ['clear-goals', 'reuse', 'AC-6', 3, 3],
+    ['clear-goals', 'conditional-load', 'AC-38', 3, 3], ['clear-goals', 'fixture-unchanged', 'AC-4', 3, 3]
+  ])
+  for (const line of lines) {
+    const expected = records.filter(record => record.scenario.id === line.scenario)
+    assert.deepEqual(line.runIds, expected.map(record => record.id).sort())
+    assert.equal(line.candidate, execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim())
+    assert.equal(line.tier, 'smoke')
+    assert.equal(line.mode, 'without')
+    assert.equal(line.model, 'gpt-6.1-sol')
+    assert.equal(line.adapterHash, expected[0].adapterHash)
+    assert.equal(line.fixtureHash, expected[0].fixture.revision)
+    assert.equal(line.criteriaHash, expected[0].criteriaHash)
+  }
+  assert.equal(run(directory, 'batch', '--batch', batch.batch).data.data.appended, 0)
+  assert.equal(await readFile(join(directory, 'ledger.jsonl'), 'utf8'), ledger)
+})
+
+test('batch closes failed replies, counts every attempt and leaves the ledger unpublished', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'wrong-session')
+  const result = run(directory, 'batch', '--tier', 'full', '--scenario', 'ambiguous-idea',
+    '--mode', 'without', '--adapter', path, '--repeat', '2', '--concurrency', '2')
+  assert.equal(result.status, 2, result.stdout)
+  assert.equal(result.data.data.runIds.length, 2)
+  assert.equal(result.data.data.pending.length, 2)
+  const events = (await readFile(join(directory, 'docker-events.jsonl'), 'utf8')).trim().split('\n').map(line => JSON.parse(line))
+  t.after(() => Promise.all(events.filter(event => event.operation === 'create').map(event => rm(event.fixture, { recursive: true, force: true }))))
+  for (const id of result.data.data.runIds) {
+    const record = JSON.parse(await readFile(join(directory, id, 'run.json'), 'utf8'))
+    assert.equal(record.hostFailure, true)
+    assert.equal(record.stage, 'final')
+    assert.ok(record.isolation.cleanedAt)
+    assert.equal(record.turns.length, 2)
+    assert.ok(record.execution.turns.every(turn => turn.removedAt))
+  }
+  assert.equal((await readdir(directory)).filter(name => name.endsWith('.docker.json')).length, 0)
+  await assert.rejects(readFile(join(directory, 'ledger.jsonl')), { code: 'ENOENT' })
+})
+
+for (const args of [
+  ['--repeat', '0'], ['--repeat', '1.5'], ['--concurrency', '0'], ['--concurrency', '7'],
+  ['--tier', 'other'], ['--scenario', 'new-idea'], ['--scenario', 'ambiguous-idea,ambiguous-idea'],
+  ['--scenario', 'unknown'], ['--stage', 'missing'], ['--unexpected', 'value']
+]) {
+  test(`batch rejects invalid options before creating resources: ${args.join(' ')}`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory)
+    // Replace supplied defaults instead of exercising the duplicate-option parser.
+    const defaults = ['--tier', 'smoke', '--mode', 'without', '--adapter', path]
+    const base = defaults.filter((value, index) => !args.includes(index % 2 === 0 ? value : defaults[index - 1]))
+    const result = run(directory, 'batch', ...base, ...args)
+    assert.equal(result.status, 3, result.stdout)
+    assert.equal((await readdir(directory)).includes('batches'), false)
+    assert.equal((await readdir(directory)).some(name => name.endsWith('.docker.json')), false)
+  })
+}
+
 for (const [mode, expected] of [['success', true], ['fixture-byte-changed', false], ['fixture-status-changed', false]]) {
   test(`machine fixtureUnchanged scores exact tracked bytes: ${mode}`, async t => {
     const directory = await temporary(t)

@@ -123,15 +123,52 @@ npm run eval -- score --run <id> --answers answers.json --transcript tests/eval/
 Starting captures only the opening request.
 The runner captures user messages, JSONL events and stderr in `conversation.txt`, including available command and file-open observations, subject to [evidence publication redaction](#evidence-publication).
 Each turn also retains its child execution result and tool version in `run.json`.
-Review the host's question and deliver the corresponding next scripted answer with `eval turn --answer`, using its one-based index.
-This reviewer-driven delivery uses `codex exec resume` instead of guessing which prose question an answer addresses.
-Do not send an answer merely because a turn completed.
-If a question cannot be answered from the approved script, close the run, record the limitation and score the unmet outcome honestly.
+Deliver the next scripted answer with `eval turn --answer`, using its one-based index, or let `eval batch` deliver every answer automatically.
+Delivery uses `codex exec resume` and follows the script order after each completed turn.
+An answer delivered without the expected question remains visible in the transcript and must be scored honestly.
 The opening prompt never includes later scripted answers.
 Every command returns after its bounded child execution, including final-turn machine assertions, and remains blocked until explicit scoring.
 At most one opening and one turn per scripted answer may succeed.
 A failed, incomplete, malformed, truncated or wrong-session host result stays blocked and closes the isolated home.
 Neither deterministic fake-host tests nor an unscored transcript claim an agent acceptance pass.
+
+### Automatic batches and ledger
+
+```sh
+npm run eval -- batch --tier smoke --mode without --adapter tests/eval/adapters/codex.json --repeat 5 --concurrency 6
+npm run eval -- batch --tier full --scenario ambiguous-idea,clear-goals --mode without --stage baseline --adapter tests/eval/adapters/codex.json --repeat 3 --concurrency 2
+npm run eval -- batch --batch <id>
+```
+
+`--tier smoke` selects existing-repo, existing-repo-python, clear-goals, ambiguous-idea, implicit-invocation, verification-limitations, scope-and-prerequisites, research-main-typescript, maintenance and selected-rule-relocation.
+`--tier full` selects every registered scenario.
+An optional comma-separated `--scenario` subset must stay within the selected tier.
+This explicit smoke set precedes scenario-owned tier metadata and the release gate.
+`--mode` and `--adapter` are required; `--repeat` defaults to 5 and must be a positive integer.
+`--concurrency` defaults to 6 and must be between 1 and 6, matching the container resource budget.
+The runner checks free disk and available memory once before creating batch resources, requiring 20 GB disk and 4 GiB memory per concurrency slot.
+`--stage` defaults to each scenario's last checkpoint, including discovery for research scenarios, and an explicit checkpoint must be supported by every selected scenario.
+The batch records one candidate commit and rejects aggregation across changed candidate, fixture, criteria, adapter, model or checkpoint inputs.
+
+Each run starts with only its opening request, delivers scripted answer i after turn i completes, and closes after the last reply.
+Failed host turns stop that run and close its isolated home; other batch jobs continue.
+Every attempt remains in the batch, including failed captures and failed checks.
+The batch ID, all run IDs and errors are saved beneath the results directory in `batches/<id>.json`.
+Machine check counts appear immediately in the command result, alongside pending semantic counts.
+The command remains blocked until every run has valid explicit scoring and verified cleanup.
+Use `eval score` with each run's captured `conversation.txt` and semantic answers, then run `eval batch --batch <id>` with the same `--results` directory to finalize without new captures.
+Machine answers continue to come from captured assertions, regardless of supplied reviewer answers.
+Judge grading is a later step; this command never invents semantic grades.
+Failed captures leave the ledger unpublished and require a fresh batch.
+
+Finalization appends one JSONL line per candidate, tier, scenario, mode and check to `tests/eval/results/ledger.jsonl` by default, or `<results>/ledger.jsonl` for an explicit results directory.
+Each line records `date`, `candidate`, `tier`, `model`, `adapterHash`, `fixtureHash`, `criteriaHash`, `scenario`, `mode`, `check`, `caseId`, `passes`, `runs` and every contributing `runIds` value.
+All repetitions contribute; there is no run selection manifest for batches.
+Finalizing unchanged scores again appends nothing.
+Published grades cannot be overwritten by re-finalizing changed scores; preserve the ledger and capture a fresh batch.
+Ledger writers use an exclusive lock; a competing finalization returns blocked and can be rerun after the writer finishes.
+Batch publication records rates, including failing checks, and does not establish a release verdict.
+Unsupported hosts retain the `--manual` interface.
 
 ### Isolation and authentication
 
@@ -298,41 +335,10 @@ Registry validation proves registration and definitions, and reports zero passed
 It never scores planned or completed definitions as acceptance evidence.
 `--registry <file>` validates an alternate registry with the same repository authorities.
 
-Final evidence explicitly selects a run for each case, checkpoint and source revision.
-Never select by directory order, newest timestamp or number of repeated artifacts.
-
-```json
-{
-  "schemaVersion": 1,
-  "selections": [{
-    "caseId": "AC-2",
-    "stage": "final",
-    "revision": "<full-source-commit>",
-    "runId": "<printed-run-id>"
-  }]
-}
-```
-
-```sh
-node scripts/acceptance.mjs --selections selections.json
-```
-
-Duplicate selections for the same case, checkpoint and revision are rejected even when they name the same run.
-Every selected run must match that identity, have passing results for all checks of that case, retain its scoring artifacts and have verified host isolation.
-All C7a manual runs therefore remain blocked as final acceptance evidence.
-This command validates the supplied selections, not coverage of an entire release.
-T5.2 owns complete release evidence, including automated cases and with-skill baseline comparison.
-
-```sh
-node scripts/acceptance.mjs --results tests/eval/results --require-complete
-```
-
-Complete validation reads `release/manifest.json` beneath the results directory.
-Its version 1 format contains `cases` with one `{caseId, runId}` selection per agent or manual case except AC-46, and `comparisons` with one `{scenario, without, with}` pair per scenario.
-AC-46 is established by all scenario comparisons together.
-The independent extension is the approved without-only exception: its AC-64 procedure requires that repo-audit be undiscoverable.
-All other selected cases must use the with-skill run of their declared final comparison.
-The validator rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
+Batch evidence uses every run in its saved batch and appends aggregate check rates to the ledger.
+The legacy `acceptance --selections` and `acceptance --require-complete` commands remain for archived evidence compatibility until the release gate replaces them.
+They do not consume the new batch ledger or determine a batch's result.
+Legacy validation rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
 Execution bindings include unchanged package, installer, fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
 The approved scope rerun retains the exact successful `scope-and-prerequisites` baseline `2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89`, bound by its complete record hash.
 Both `eval compare` and complete release validation accept only these exact archived record bytes without a container execution record; historical `scopeGuard` fields do not establish verified execution.
@@ -342,9 +348,9 @@ Grader-only repairs do not require repeating unchanged agent turns.
 Package and installer changes invalidate with-skill captures; verified without-skill baselines remain comparable because those inputs were absent from their isolated execution.
 Every final capture must complete all ordered scripted answers.
 Historical process-only runs remain diagnostic history; no failed scope run is retroactively credited.
-Every with-skill run must pass every check, and each pair must satisfy the design's improvement and regression rule.
+Legacy complete validation requires every with-skill run to pass every check, and each pair to satisfy the design's improvement and regression rule.
 Automated procedures execute their exact named tests against the current inputs, including the clean-checkout procedure and real Linux lifecycle execution.
-Only complete passing evidence can produce the 75-case release result.
+Only complete passing legacy evidence can produce its 75-case result.
 
 The commands reuse the shared schema, joining-ID, fingerprint, child-command and result libraries.
 Their options parser has no target argument because evaluation creates targets through the fixture builder.
