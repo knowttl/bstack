@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "kind": "commit",
+    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "head": "3a3ff53805d1707891869a2df4e861e291b423c6",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/public.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "unit.test.mjs"
+    }
+  ],
+  "paths": [
+    ".bstack/project.json",
+    "DESIGN.md",
+    "packages/web/public.ts",
+    "unit.test.mjs"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "quote-quantity"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "quote-quantity"
+      ]
+    },
+    {
+      "path": "packages/web/public.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "quote-quantity"
+      ]
+    },
+    {
+      "path": "unit.test.mjs",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "quote-quantity"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": null
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": null
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": null
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [],
+  "execution": [],
+  "fingerprint": null
+}
