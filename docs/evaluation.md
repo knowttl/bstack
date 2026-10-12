@@ -147,9 +147,11 @@ An optional comma-separated `--scenario` subset must stay within the selected ti
 Each scenario owns its `tier` value, `smoke` or `full`; the full batch tier includes both values.
 The long `final-existing-repo`, `final-new-project` and `representative-extension` paths stay in the full tier only.
 The full tier also includes `selected-apply-verify`, the bounded apply half of the existing-repo path; `existing-repo` already covers its audit half.
-The smoke gate uses the release model, currently `codex-final.json` with `gpt-6.1-sol` at medium reasoning effort.
-`codex-bulk.json` uses `gpt-6-luna` at high effort for cheaper full-tier repetitions, with one separate release-model anchor run per scenario.
-Adapter files configure the model and effort for both opening and resumed turns; record the actual release model in the release notes.
+The smoke gate uses the release-model [final adapter](../tests/eval/adapters/codex-final.json).
+The [bulk adapter](../tests/eval/adapters/codex-bulk.json) configures cheaper full-tier repetitions.
+These adapter files own the model and effort for both opening and resumed turns; record the actual release model in the release notes.
+For each bulk scenario, separately capture one release-model anchor with `--tier full --scenario <id> --adapter tests/eval/adapters/codex-final.json --repeat 1`, using the same mode and checkpoint.
+The runner does not create anchors automatically, and a single anchor does not replace the repeated smoke measurements.
 An adapter declaring `"tier": "full"` is rejected by smoke batches before any host starts.
 Bulk and release-model runs require their own matching baselines and remain separate ledger series through model and adapter hashes.
 `--mode` and `--adapter` are required; `--repeat` defaults to 5 and must be a positive integer.
@@ -203,7 +205,7 @@ The installer validates the complete package and pinned runtime; discovery and s
 Installer failure blocks the run before any agent turn.
 Final requests explicitly name the active final checkpoint.
 `final-new-project` and `final-existing-repo` cover the complete new-project and existing-repo paths respectively.
-`selected-apply-verify` starts from `selected-ts-shop`, which overlays selected findings and an approved bounded plan onto the original defects and preserves an uncommitted user note.
+`selected-apply-verify` starts from `selected-ts-shop`; the [fixture construction contract](fixtures.md) owns its seeded state.
 Its single scripted answer approves the exact generated protected-write diff; plan approval alone never approves those bytes.
 It covers AC-16, AC-28, AC-30, AC-54 and AC-61 without repeating the audit or claiming full-path evidence.
 Re-audit, extension and maintenance use separate fresh conversations on the resulting maintained fixture.

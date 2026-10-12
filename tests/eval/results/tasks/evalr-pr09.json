@@ -62,7 +62,7 @@
     "Fixture sanity and fake hosts establish harness behaviour only; they do not establish agent acceptance or measured savings.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "79f441a8f80a0e436f4f72e634a6989b446c305b",
+  "sourceRevision": "f7b6bf499a6e0889e87f66b2d08bd15fd2b6a13a",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -137,11 +137,6 @@
           "sha256": "c6c3eb43d29f65a17bc030c8592cbbfe0edc753e497f145ac6b9b31f7886d0fe"
         },
         {
-          "path": "README.md",
-          "executable": false,
-          "sha256": "1e5169390dd4ac0d75ba9d50e4d216c88341165d907dba4c19fc19b8793feeaf"
-        },
-        {
           "path": "docs/C24c-maintenance-transcript.md",
           "executable": false,
           "sha256": "d4def0cfd5666846cb526605f187d74859a663855a2faa802c801b4c4777421a"
@@ -160,11 +155,6 @@
           "path": "docs/design.md",
           "executable": false,
           "sha256": "92441484116e6cf17844fd1d5606ea4f45943050c9548d7e191d9ec6aeedbac2"
-        },
-        {
-          "path": "docs/evaluation.md",
-          "executable": false,
-          "sha256": "c75da25aa0331acea540deda4b85282509d23d9b22836f9b591b88373d8b51fb"
         },
         {
           "path": "docs/examples/README.md",
@@ -200,11 +190,6 @@
           "path": "docs/examples/ts-shop.md",
           "executable": false,
           "sha256": "7aec23a577ba28dff72bf8ff8731e1cd7a9bbdd31232a64026bbe79af26fbb9a"
-        },
-        {
-          "path": "docs/fixtures.md",
-          "executable": false,
-          "sha256": "0c39046f5410cb59bf4750e2369796703b54d2156ab96a4bf4f9be3feeb28ee6"
         },
         {
           "path": "docs/implementation-plan.md",
@@ -25522,7 +25507,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "ade82e7728068149043f1d64623543717045d4dc9011d293564d18fc246336ad"
+      "sha256": "cf42450eab54c198bf0fcb184563c96adc588ac1e897c88aa0d4b798b7ee9e54"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -25573,7 +25558,47 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "README.md",
+        "before": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "1e5169390dd4ac0d75ba9d50e4d216c88341165d907dba4c19fc19b8793feeaf"
+        },
+        "after": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "b772560c5b978d3d83a1d12a3d965a7cbdfde4cc284badfff0da723555e22cb8"
+        }
+      },
+      {
+        "path": "docs/evaluation.md",
+        "before": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "c75da25aa0331acea540deda4b85282509d23d9b22836f9b591b88373d8b51fb"
+        },
+        "after": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "f302d7bdeb41b41343906ba9c1bbc873f9f96dfab01de806337f2899d558f668"
+        }
+      },
+      {
+        "path": "docs/fixtures.md",
+        "before": {
+          "path": "docs/fixtures.md",
+          "executable": false,
+          "sha256": "0c39046f5410cb59bf4750e2369796703b54d2156ab96a4bf4f9be3feeb28ee6"
+        },
+        "after": {
+          "path": "docs/fixtures.md",
+          "executable": false,
+          "sha256": "1fb5719483e11f8fa8498b961deeee6166644751ddd8d042464e544eb89aa766"
+        }
+      }
+    ],
     "counts": {
       "tests": 2767,
       "failed": 0,
@@ -25584,9 +25609,9 @@
       "topLevel": 2710,
       "suites": 0
     },
-    "durationMs": 679920.702602,
-    "outputSha256": "3e5f8f1cf53d557c3ad3275f313ba1151f25c3f431b6d7e97fbaf50d855c66d2",
-    "eventsSha256": "42b9fd25eb7fdfc1c17c63c9617f33cc1c60689ba39a633dbfb0d178ba05fcea",
+    "durationMs": 576862.360901,
+    "outputSha256": "94f2786426b5cc4843a79bda21efd2305612f1c3d67584a27c84b285e3a0b52e",
+    "eventsSha256": "8cc15dda16137bbb5e1b638d0e0abcbd961d2cd5485dda5e3443a66351433569",
     "eventsArtifact": "tests/eval/results/tasks/evalr-pr09.events.jsonl"
   }
 }
