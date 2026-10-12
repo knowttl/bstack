@@ -25,7 +25,7 @@
     "The hard-break report is a candidate-bound input supplied from recorded validation and evaluation outcomes; the gate does not independently rerun or authenticate those procedures.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "25229214c4dec69cb2c6648c1a33b2fa080f82c9",
+  "sourceRevision": "1cd4b4350cb37dfd833c00929f86b3b531d5652a",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -121,12 +121,12 @@
         {
           "path": "docs/design.md",
           "executable": false,
-          "sha256": "4f576fc239a901c189bd3a5354cb1752b1bb6c685337dd28a7c555bb5084168f"
+          "sha256": "92441484116e6cf17844fd1d5606ea4f45943050c9548d7e191d9ec6aeedbac2"
         },
         {
           "path": "docs/evaluation.md",
           "executable": false,
-          "sha256": "653114645fdad6173f17bb2a0739fbddccc912e5358a4c525d15495a637790f1"
+          "sha256": "face7d6f36f83b254f3e1967a9f97ac67ea12b3e61872eeaf391cc7e2083b56b"
         },
         {
           "path": "docs/examples/README.md",
@@ -171,7 +171,7 @@
         {
           "path": "docs/implementation-plan.md",
           "executable": false,
-          "sha256": "871a01716251caad90546fee8824316a57bb2e0a01240b2e6f2c9a6fe916f250"
+          "sha256": "51ad7415c0e79aa0807bdfd1a6734271776203cb755e69b6d707bcaf04736373"
         },
         {
           "path": "docs/releases/v0.1.0.md",
@@ -276,7 +276,7 @@
         {
           "path": "scripts/lib/release-evidence.mjs",
           "executable": false,
-          "sha256": "17ab38341843cffc9c542ce8c64ff0aa8a4fc62142b8642de6e4802b2030dd50"
+          "sha256": "558bcd282afed4efc680aa0332f4bebdce5f8140ad984106946acefd82dbda72"
         },
         {
           "path": "scripts/lib/test-evidence.mjs",
@@ -5046,7 +5046,7 @@
         {
           "path": "tests/eval/results/release/approved-evidence.md",
           "executable": false,
-          "sha256": "063e6784a73a9a9947cccd5f2dce33e2aacd8df8aa82714850c877d5a3e8e103"
+          "sha256": "7dca06b6cd52c718df6016f05791be94a23400720e255fb2b06ddd84ce35ee8f"
         },
         {
           "path": "tests/eval/results/release/clear-goals-before-question-repair-comparison.json",
@@ -25256,7 +25256,7 @@
         {
           "path": "tests/scripts/release-gate.test.mjs",
           "executable": false,
-          "sha256": "5548caf66ec0a14701e82ba8fbd67a6289021d6079c2502fa930bfc5e8fb6c7e"
+          "sha256": "d89209dd2b555a5f00588a44d9f4b65eccb196a0145944d7c9766d5f6efc46f5"
         },
         {
           "path": "tests/scripts/rule-proof.test.mjs",
@@ -25444,7 +25444,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "bfe0af7bcf9daed6fe795fd77bc7d83def03eb9791a2d6885b7580439563d45a"
+      "sha256": "1984f9c331704c2a3b1b0f01266efeb4355a7648477cd9d5d8e631b5f28e5f0e"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -25497,18 +25497,18 @@
     ],
     "postCaptureDocumentation": [],
     "counts": {
-      "tests": 2721,
+      "tests": 2760,
       "failed": 0,
-      "passed": 2721,
+      "passed": 2760,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2664,
+      "topLevel": 2703,
       "suites": 0
     },
-    "durationMs": 492987.52818,
-    "outputSha256": "4be7e64264b5d1077fab498574597cc4f1e114cadf677e1393547eda6d6e78b0",
-    "eventsSha256": "c74bc8134ed196a79815084c670449fe49424d2c49bded96ec55dfd60042f6f0",
+    "durationMs": 604107.231728,
+    "outputSha256": "9093d6d46325e03c31216e04f450520ce1245210a05f5ce561967c4358c93d32",
+    "eventsSha256": "42919b033382fb9aab783f3559636f6f49ecc51dcf911731f3fe0d4989a1c659",
     "eventsArtifact": "tests/eval/results/tasks/evalr-pr08.events.jsonl"
   }
 }
