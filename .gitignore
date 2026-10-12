@@ -3,3 +3,7 @@ node_modules/
 scratch/
 .DS_Store
 Thumbs.db
+
+# Raw evaluation captures and private batch inventories stay in local archives.
+/tests/eval/results/runs/
+/tests/eval/results/release/runs/
