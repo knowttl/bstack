@@ -1,6 +1,6 @@
 # Architecture
 
-Use this reference when recommending module boundaries.
+Use this reference when recommending design principles or module boundaries.
 Start with the reported area, stated next change, approved design and relevant history.
 Expand only where evidence leads.
 For a new project, review expected changes against proposed boundaries instead of inventing history.
@@ -18,6 +18,8 @@ No single architecture style is required.
 
 | Principle | Practical rule | Source |
 |---|---|---|
+| DRY (Don't Repeat Yourself) | Give each piece of knowledge or logic one authoritative source; avoid independently maintained copies of rules, logic or documentation | [The Pragmatic Programmer, tip 15](https://pragprog.com/tips/) |
+| KISS (Keep It Simple) | Choose the simplest design that meets the requirement; avoid speculative abstractions, layers and configurability | [Google code review guidance on complexity](https://google.github.io/eng-practices/review/reviewer/looking-for.html#complexity) |
 | Single responsibility and cohesion | Keep code together when it changes for the same business reason and separate unrelated reasons | [Single responsibility](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html) |
 | Information hiding | Hide a changeable design decision behind an interface so callers do not depend on its representation | [Module decomposition](https://www.cs.lafayette.edu/~gexia/cs301/resources/parnas.html) |
 | Locality of change | Keep capability code and tests together where this reduces coordination across unrelated areas | [Vertical slices](https://www.jimmybogard.com/vertical-slice-architecture/) |
@@ -37,6 +39,8 @@ These adaptations follow the pinned design and module guidance attributed in the
 - Unrelated business responsibilities, or startup, UI, domain rules and persistence combined without clear internal boundaries.
 - Imports of private implementation, leaked representations and cycles across intended module boundaries.
 - Shared mutable state and multiple writers of canonical data.
+- The same business rule, algorithm or documented policy maintained independently in several places, with a concrete change that would require coordinated updates.
+- Abstractions, forwarding layers and configuration options without a current requirement, compared with a simpler design that still meets the approved requirements.
 - Frequently changed files and pairs that repeatedly change together.
 - Central registries, broad utilities, shared type collections and wiring files that unrelated work repeatedly edits.
 - Tests requiring unrelated modules or asserting implementation details rather than a public contract.
@@ -57,6 +61,8 @@ History may omit abandoned rebases and conflict resolutions.
 
 Size, import counts and change frequency indicate where to investigate.
 They do not prove a bad boundary.
+Similar-looking code is not necessarily duplicated knowledge: independently changing concepts should not be coupled merely to remove similar syntax.
+Generated copies derived from one authority are not independently maintained duplication; verify their freshness instead.
 A large cohesive domain owner may be sound.
 A thin startup file may legitimately import many modules for wiring.
 A stable domain contract may have many callers.
