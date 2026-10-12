@@ -37,20 +37,24 @@ try {
         const answer = human.checks.find(answer => answer.id === check.id)
         return !answer || ['passed', 'startLine', 'endLine'].some(key => check[key] !== answer[key])
       })) fail('Retained human answers do not match the run verdicts.')
-      const prepared = await judgeInput(record, transcript)
-      corpus.push({ record, transcript, prepared, binding: { runId: record.id,
-        runHash: hashBytes(bytes), humanHash: hashBytes(canonicalJSON(human)),
-        inputHash: prepared.inputHash, transcriptHash: prepared.transcriptHash, criteriaHash: prepared.criteriaHash } })
+      corpus.push({ record, transcript, human, binding: { runId: record.id,
+        runHash: hashBytes(bytes), humanHash: hashBytes(canonicalJSON(human)) } })
     }
     if (corpus.length !== expectedRuns) fail(`Calibration requires all ${expectedRuns} retained human-scored runs; found ${corpus.length}.`)
+    for (const run of corpus) {
+      run.prepared = await judgeInput(run.record, run.transcript, { corpus, human: run.human })
+      const { inputHash, transcriptHash, criteriaHash, companions, companionsHash } = run.prepared
+      Object.assign(run.binding, { inputHash, transcriptHash, criteriaHash, companions, companionsHash })
+    }
     const plan = { schemaVersion: 1, model: config.model, configHash: hashBytes(canonicalJSON(config)),
-      rubricHash: corpus[0].prepared.rubricHash, expectedCalls: corpus.length,
+      rubricHash: corpus[0].prepared.rubricHash, expectedCalls: corpus.filter(run => run.prepared.input.checks.length).length,
       checks: corpus.reduce((sum, run) => sum + run.prepared.input.checks.length, 0),
       inputBytes: corpus.reduce((sum, run) => sum + Buffer.byteLength(JSON.stringify(run.prepared.input)), 0),
+      pending: corpus.flatMap(run => run.prepared.pending.map(check => ({ runId: run.record.id, ...check }))),
       corpus: corpus.map(run => run.binding) }
     if (opts.plan) {
       if (!opts.json) console.log(`model: ${plan.model}\ncalls: ${plan.expectedCalls}\nchecks: ${plan.checks}\ninput bytes: ${plan.inputBytes}`)
-      emitResult({ command: 'eval calibrate', status: 'passed', data: plan }, opts.json)
+      emitResult({ command: 'eval calibrate', status: plan.pending.length ? 'blocked' : 'passed', data: plan }, opts.json)
     }
     else {
       const output = resolve(opts.output)
@@ -59,7 +63,7 @@ try {
       const report = { schemaVersion: 1, model: config.model, configHash: plan.configHash, rubricHash: plan.rubricHash,
         planHash: hashBytes(canonicalJSON(plan)), startedAt: new Date().toISOString(),
         expectedRuns, completedRuns: 0, total: 0, agreed: 0, agreement: 0, minimumAgreement,
-        status: 'blocked', disagreements: [], runs: [] }
+        status: 'blocked', pending: plan.pending, disagreements: [], runs: [] }
       try {
         for (const run of corpus) {
           const { record, transcript, prepared } = run
@@ -80,7 +84,7 @@ try {
         report.reason = 'Calibration interrupted by invalid judge output or provider failure. Review saved answers and the private provider session; do not retry or tune the rubric.'
       }
       report.agreement = report.total ? report.agreed / report.total : 0
-      if (report.completedRuns === expectedRuns) report.status = report.agreement >= minimumAgreement ? 'passed' : 'failed'
+      if (report.completedRuns === expectedRuns && !report.pending.length) report.status = report.agreement >= minimumAgreement ? 'passed' : 'failed'
       report.finishedAt = new Date().toISOString()
       await writeFile(join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n', { flag: 'wx', mode: 0o600 })
       if (!opts.json) console.log(`report: ${join(output, 'report.json')}\nagreement: ${report.agreed}/${report.total}\ndisagreements: ${report.disagreements.length}`)
