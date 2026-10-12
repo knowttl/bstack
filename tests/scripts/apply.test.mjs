@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { parse } from 'yaml'
 import { emptyRepo, run, snapshot, git } from './discovery-fixture.mjs'
+import { maintenanceRepo } from './maintenance-fixture.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const hash = value => value === null ? null : createHash('sha256').update(value).digest('hex')
@@ -61,6 +62,89 @@ async function integration(t, path, content, original = path === 'package.json' 
   }
   return setup(t, 'replace-file', original, { content: proposed }, proposed, path, selected)
 }
+
+async function assessmentPlan(t, operation = 'create') {
+  const fixture = await maintenanceRepo(t)
+  const collected = run('evidence collect', fixture.repo, process.env, ['--base', 'empty'])
+  assert.equal(collected.exit, 0, JSON.stringify(collected))
+  const content = await readFile(collected.data.path, 'utf8')
+  return operation === 'delete' ? setup(t, 'delete', content, {}, null, 'review.json') :
+    setup(t, 'create', null, { content }, content, 'review.json')
+}
+
+test('assessment preview ends with the exact approval instruction without writing the project', async t => {
+  const context = await assessmentPlan(t)
+  const before = await snapshot(context.repo)
+  const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+  assert.equal(preview.exit, 0, JSON.stringify(preview))
+  assert.equal(preview.data.planDigest, context.plan.planDigest)
+  assert.equal(preview.data.approvalRequired, `Approval required: show this preview to the owner and end your turn; do not run assessment apply until the owner approves this exact fingerprint: ${context.plan.planDigest}.`)
+  const text = spawnSync(process.execPath, [join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'apply',
+    '--repo', context.repo, '--plan', context.file, '--dry-run'], { encoding: 'utf8', env: context.env })
+  assert.equal(text.status, 0, text.stdout + text.stderr)
+  assert.ok(text.stdout.trimEnd().endsWith(preview.data.approvalRequired))
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const [name, flags, code] of [
+  ['missing', [], 'assessment-approval-required'],
+  ['wrong', ['--approved-fingerprint', '0'.repeat(64)], 'assessment-approval-mismatch']
+]) {
+  test(`assessment apply rejects a ${name} approved fingerprint before any project edit`, async t => {
+    const context = await assessmentPlan(t)
+    await secondEdit(context)
+    const before = await snapshot(context.repo)
+    const applied = execute(context, undefined, 'apply', ['--plan', context.file, ...flags])
+    assert.equal(applied.exit, 2, JSON.stringify(applied))
+    assert.equal(applied.problems[0].code, code)
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+test('assessment apply accepts the exact approved preview and requires it again on resume', async t => {
+  const context = await assessmentPlan(t)
+  const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+  assert.equal(preview.exit, 0, JSON.stringify(preview))
+  const approved = ['--plan', context.file, '--approved-fingerprint', preview.data.planDigest]
+  assert.equal(execute(context, undefined, 'apply', approved).exit, 0)
+  assert.equal(await readFile(join(context.repo, 'review.json'), 'utf8'), context.plan.edits[0].proposedContent)
+  const before = await snapshot(context.repo)
+  assert.equal(execute(context).problems[0].code, 'assessment-approval-required')
+  assert.deepEqual(await snapshot(context.repo), before)
+  assert.equal(execute(context, undefined, 'apply', approved).exit, 0)
+})
+
+test('changed assessment bytes invalidate the previously approved preview fingerprint', async t => {
+  const context = await assessmentPlan(t)
+  const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+  assert.equal(preview.exit, 0, JSON.stringify(preview))
+  const record = JSON.parse(context.plan.edits[0].proposedContent)
+  record.fingerprint = '1'.repeat(64)
+  const content = JSON.stringify(record)
+  Object.assign(context.plan.edits[0], { proposedContent: content, proposedHash: hash(content), payload: { content } })
+  await save(context)
+  const before = await snapshot(context.repo)
+  const applied = execute(context, undefined, 'apply', ['--plan', context.file, '--approved-fingerprint', preview.data.planDigest])
+  assert.equal(applied.problems[0].code, 'assessment-approval-mismatch')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+test('deleting an assessment at a custom path requires the exact approved fingerprint', async t => {
+  const context = await assessmentPlan(t, 'delete')
+  const before = await snapshot(context.repo)
+  assert.equal(execute(context).problems[0].code, 'assessment-approval-required')
+  assert.deepEqual(await snapshot(context.repo), before)
+  const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+  assert.equal(execute(context, undefined, 'apply', ['--plan', context.file, '--approved-fingerprint', preview.data.planDigest]).exit, 0)
+  assert.deepEqual(await readdir(context.repo), ['.git'])
+})
+
+test('the conventional assessment path requires approval even for an incomplete record', async t => {
+  const context = await setup(t, 'create', null, { content: '{}' }, '{}', '.bstack/assessment.json')
+  const before = await snapshot(context.repo)
+  assert.equal(execute(context).problems[0].code, 'assessment-approval-required')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
 
 async function ruleMove(t, destination = '# Standards\n', destinationPath = 'CONTRIBUTING.md', rule = '## One source\n\nKeep one authoritative source for each rule.\n') {
   const link = `[One source](${destinationPath}#one-source)\n`
