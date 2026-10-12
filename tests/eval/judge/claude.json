@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "model": "claude-sonnet-5-5",
+  "host": "claude-container",
+  "executable": "claude",
+  "args": ["--print", "--model", "{model}", "--effort", "medium", "--output-format", "json", "--tools", "", "--safe-mode", "--strict-mcp-config", "--mcp-config", "{}", "--setting-sources", "", "--disable-slash-commands", "--no-session-persistence"],
+  "versionArgs": ["--version"],
+  "timeoutMs": 600000,
+  "outputLimitBytes": 1048576
+}
