@@ -143,12 +143,14 @@ export async function releaseGate(opts, results) {
       if (batches.at(-1).passes >= 4 && recent.reduce((sum, row) => sum + row.passes, 0) >= recent.length * 4) gatingSet.push(key(first))
     }
   }
-  for (const row of ledger.filter(row => row.candidate === opts.candidate && row.tier === 'full' && row.passes < row.runs)) {
+  const full = ledger.filter(row => row.candidate === opts.candidate && row.tier === 'full' &&
+    row.mode === (definitions.find(item => item.id === row.scenario)?.mode ?? 'with'))
+  for (const row of full.filter(row => row.passes < row.runs)) {
     knownIssues.push({ scenario: row.scenario, check: row.check, caseId: row.caseId, passes: row.passes, runs: row.runs, reason: 'non-blocking full tier' })
   }
   const registry = await readJSON(join(root, 'tests/acceptance/cases.json'))
   for (const item of registry.cases.filter(item => item.evidenceType !== 'automated' && item.id !== 'AC-46')) {
-    if (!checks.some(row => row.caseId === item.id) && !ledger.some(row => row.candidate === opts.candidate && row.tier === 'full' && row.caseId === item.id)) {
+    if (!checks.some(row => row.caseId === item.id) && !full.some(row => row.caseId === item.id)) {
       knownIssues.push({ caseId: item.id, passes: 0, runs: 0, reason: 'not measured; full-tier evaluation deferred' })
     }
   }

@@ -149,6 +149,15 @@ test('full tier failures remain known issues', async t => {
   assert.ok(result.data.data.knownIssues.some(row => row.scenario === 'new-idea' && row.passes === 0 && row.runs === 5))
 })
 
+test('full-tier baseline failures do not become skill known issues', async t => {
+  const f = await fixture(t)
+  const baseline = { ...f.rows[0], tier: 'full', mode: 'without', passes: 0 }
+  f.rows.push(baseline, { ...baseline, mode: 'with', passes: 5, runIds: baseline.runIds.map(id => `${id}-with`) })
+  const result = await f.run()
+  assert.equal(result.status, 0, result.stdout)
+  assert.ok(!result.data.data.knownIssues.some(row => row.scenario === baseline.scenario && row.check === baseline.check))
+})
+
 test('gating set requires eighty percent over the latest ten runs', async t => {
   const f = await fixture(t)
   f.measure(3, 0)
