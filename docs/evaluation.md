@@ -260,6 +260,11 @@ The command writes `<run>/judge/answers.json` and `evidence.json`, recording the
 It leaves the run unscored; pass the printed answers path and captured transcript to `eval score`.
 A reserved judge directory prevents an accidental repeat call.
 An interrupted invocation requires review before any retry.
+Comparison checks receive a companion transcript from the same package source, mode and batch.
+Selection prefers the same repeat index, then the first passing run in run-ID order.
+The input and companion hashes bind the selected transcript and run identity.
+Missing companions leave comparison checks pending and return blocked before reserving a provider call or writing answers.
+Supply companion evidence, then judge the same unscored run.
 
 ### Calibration and audit
 
@@ -274,10 +279,14 @@ node scripts/eval-calibrate.mjs --output .cache/judge-calibration --json
 ```
 
 `--plan` validates the retained corpus without invoking any provider.
-Execution requires a fresh `--output` directory and makes one judge call for each of the 124 retained human-scored runs, using the original checklist and validated append-only corrections.
+Execution requires a fresh `--output` directory and makes one judge call for each retained run with available checks, using the original checklist and validated append-only corrections.
 `--runs <directory>` changes the corpus location; exactly 124 human-scored runs are required.
 `--judge <file>` changes the judge configuration.
 The saved plan binds every transcript, rubric, checklist, human score and configuration by hash.
+For comparisons, calibration uses the optional `companionRunId` cited on the retained human answer, otherwise the first retained companion scenario run with the same source revision and mode.
+A cited run that is absent or belongs to another scenario leaves the check pending rather than selecting a replacement.
+Pending comparison checks block both planning and adoption, even when all available verdicts agree.
+The current retained corpus has seven Python comparison checks without matching source-and-mode companions or explicit citations; these remain pending until human comparison evidence is supplied.
 The output retains each answers file and a report with verdict agreement and all disagreements, including human and judge citations.
 Citation equality is not part of verdict agreement.
 Provider or invalid-output failures stop the session, leave a blocked report and trigger no retry.
