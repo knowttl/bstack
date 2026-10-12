@@ -85,4 +85,4 @@ The table links those current procedures separately from the historical agent ev
 | AC-75 | v0.1.1 known issue | The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. |
 
 Historical rejected comparisons and incomplete transcripts remain preserved, but are not selected release comparisons.
-The separate strict release validator still requires all 75 passing cases and all twenty scenario comparisons; it has not been weakened for this partial release.
+Subsequent releases use the [repeated-run release gate](../../../../docs/evaluation.md#release-gate); this inventory remains the historical v0.1.0 record.
