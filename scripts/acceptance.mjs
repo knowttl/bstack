@@ -3,11 +3,11 @@ import { join, resolve } from 'node:path'
 import { root, text, object, array, options, readJSON, checkRegistry, fail } from './lib/evaluation.mjs'
 import { validateData } from '../skills/repo-audit/scripts/lib/schema.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { completeRelease } from './lib/release-evidence.mjs'
+import { releaseGate } from './lib/release-evidence.mjs'
 import { correctedScore, validateScore } from './lib/evaluation-scoring.mjs'
 
 // Final selections are explicit inputs, independent of run history ordering.
-const help = 'acceptance --check-registry [--registry <file>] [--json]\nacceptance --selections <file> [--results <directory>] [--json]\nacceptance --results <directory> --require-complete [--json]'
+const help = 'acceptance --check-registry [--registry <file>] [--json]\nacceptance --selections <file> [--results <directory>] [--json]\nacceptance --release <version> --candidate <commit> --checks <file> [--results <directory>] [--json]\nRelease reads ledger.jsonl and candidate-bound hard-break checks, writes release/<version>.json, and reports any scenarios needing five confirmation runs. It never starts model sessions.'
 
 async function selections(path, results) {
   const input = await readJSON(path)
@@ -40,13 +40,15 @@ try {
   const args = process.argv.slice(2)
   if (args.includes('--help')) console.log(help)
   else {
-    const opts = options(args, ['registry', 'selections', 'results'], ['check-registry', 'require-complete'])
-    if ([opts['check-registry'], opts.selections, opts['require-complete']].filter(Boolean).length !== 1 ||
-        (opts.registry && !opts['check-registry']) || (opts.results && opts['check-registry'])) fail(help, 'usage-error')
-    const data = opts['require-complete'] ? await completeRelease(resolve(opts.results ?? join(root, 'tests/eval/results')))
+    if (args.includes('--require-complete')) fail('--require-complete was removed. Use --release <version> --candidate <commit> --checks <file>.', 'usage-error')
+    const opts = options(args, ['registry', 'selections', 'results', 'release', 'candidate', 'checks'], ['check-registry'])
+    if ([opts['check-registry'], opts.selections, opts.release].filter(Boolean).length !== 1 ||
+        (opts.registry && !opts['check-registry']) || (opts.results && opts['check-registry']) ||
+        (!opts.release && (opts.candidate || opts.checks)) || (opts.release && (!opts.candidate || !opts.checks))) fail(help, 'usage-error')
+    const data = opts.release ? await releaseGate(opts, resolve(opts.results ?? join(root, 'tests/eval/results')))
       : opts['check-registry'] ? await checkRegistry(resolve(opts.registry ?? join(root, 'tests', 'acceptance', 'cases.json')))
       : await selections(resolve(opts.selections), resolve(opts.results ?? join(root, 'tests', 'eval', 'results', 'runs')))
-    emitResult({ command: 'acceptance', status: 'passed', data }, true)
+    emitResult({ command: 'acceptance', status: data.verdict ?? 'passed', data }, true)
   }
 } catch (error) {
   emitResult({ command: 'acceptance', status: error.status === 'usage-error' ? error.status : 'blocked',
