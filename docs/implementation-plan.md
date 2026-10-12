@@ -1830,6 +1830,8 @@ Phase evidence from the design: release evidence covers every acceptance case.
 **Depends on:** T5.1.
 
 The owner's 2026-10-12 release decision approves v0.1.0 from retained evidence with explicit v0.1.1 known issues.
+The owner's later decision on that date waived further tests, evaluation and the publication gate for this release and authorized direct publication of the evidence PR.
+Full release validation was not re-run.
 The full qualification below remains incomplete and this task stays unticked.
 See [release notes](releases/v0.1.0.md) and the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md).
 

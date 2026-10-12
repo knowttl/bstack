@@ -5,7 +5,8 @@
   "sourceRevision": "34cc59096ac47d5ee953268a1d776f69a5dffd5f",
   "intent": "Ship the owner-approved retained release evidence honestly, preserving incomplete qualification as v0.1.1 known issues.",
   "amendments": [
-    "Owner decision 2026-10-12: stop further evaluation and repairs, revert the unverified guidance repair, release retained evidence with explicit known issues, and publish through the local gate."
+    "Owner decision 2026-10-12: stop further evaluation and repairs, revert the unverified guidance repair, release retained evidence with explicit known issues, and publish through the local gate.",
+    "Later owner decision 2026-10-12: stop capacity waiting and all further tests and evaluation, waive the publication gate, and publish the retained evidence directly."
   ],
   "status": "passed",
   "environment": {
@@ -636,6 +637,7 @@
     }
   ],
   "limitations": [
+    "Full release validation was not re-run; the owner waived further tests and the publication gate for this release.",
     "Passed status describes the revised owner-approved evidence delivery scope, not full T5.2 qualification.",
     "Only 38 of 75 design cases have selected passing current agent or independent-extension evidence; 37 remain explicit known issues.",
     "Only twelve of twenty required scenario comparisons are selected; no complete acceptance claim is made.",
