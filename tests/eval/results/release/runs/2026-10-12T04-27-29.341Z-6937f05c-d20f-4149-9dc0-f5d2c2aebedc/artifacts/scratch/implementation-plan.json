@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "findings": "[isolated-home][scratch-path]",
+  "findingsDigest": "af795cd43fc50b7cb06895e83b157e491c0e2adc649374ac3ca182f061237925",
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "reviewedScope": [
+    {
+      "path": "packages/web/routes.ts",
+      "resolvedPath": "[fixture]/packages/web/routes.ts"
+    }
+  ],
+  "edits": [
+    {
+      "id": "name-total",
+      "findingId": "F-001",
+      "path": "packages/web/routes.ts",
+      "originalHash": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8",
+      "proposedHash": "b40d18a4283d3564af49cbf89b1b344b6084be1ce048df5c0fc31000113f7eca",
+      "operation": "replace-file",
+      "payload": {
+        "content": "import { price } from '../core/index.ts'\nconst orders: number[] = []\nexport function postOrder(quantity: number, unitPrice = price()) {\n  const undiscountedTotal = unitPrice * quantity\n  const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)\n  orders.push(total)\n  return { status: 201, total }\n}\n"
+      },
+      "proposedContent": "import { price } from '../core/index.ts'\nconst orders: number[] = []\nexport function postOrder(quantity: number, unitPrice = price()) {\n  const undiscountedTotal = unitPrice * quantity\n  const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)\n  orders.push(total)\n  return { status: 201, total }\n}\n"
+    }
+  ],
+  "planDigest": "ff0b1a0a6fabdb4f457f5e49bf5baa4da066fe3816a632f80cff42fe8f36e103"
+}

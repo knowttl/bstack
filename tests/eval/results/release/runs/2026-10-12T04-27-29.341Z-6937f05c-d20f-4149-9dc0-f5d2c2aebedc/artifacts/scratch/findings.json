@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "nextChange": "Name the intermediate undiscounted total without changing pricing or checkout behaviour",
+  "reviewedScope": [
+    "packages/web/routes.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Quote remains 12; default HTTP checkout returns status 201 and total 10; imports use public core."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The intermediate unit price times quantity is unnamed.",
+      "files": [
+        "packages/web/routes.ts"
+      ],
+      "command": null,
+      "principle": "Preserve public interfaces and agreed outcomes.",
+      "consequence": "The calculation is less explicit.",
+      "fix": "Name the intermediate undiscountedTotal and preserve the existing multiplier.",
+      "scope": [
+        "packages/web/routes.ts"
+      ],
+      "verification": "Captured npm run check protection before and compatibility after.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "quote",
+    "checkout"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance, not a full audit; no receipt wording decision."
+  ]
+}
