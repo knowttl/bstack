@@ -64,11 +64,6 @@
           "sha256": "c6c3eb43d29f65a17bc030c8592cbbfe0edc753e497f145ac6b9b31f7886d0fe"
         },
         {
-          "path": "README.md",
-          "executable": false,
-          "sha256": "f97e34e95536d892fbddd73396aa6eef6221bfa264e2b561c22ce31c887302c0"
-        },
-        {
           "path": "docs/C24c-maintenance-transcript.md",
           "executable": false,
           "sha256": "d4def0cfd5666846cb526605f187d74859a663855a2faa802c801b4c4777421a"
@@ -25809,7 +25804,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "10c995047454aff1d681db562c9b78a0399737638bfe8465734933be101a2d2f"
+      "sha256": "a47e879e303749042b7df4b99d8b40bb115560a6ac4259b8aae06420dcc3d889"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -25857,7 +25852,21 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "README.md",
+        "before": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "f97e34e95536d892fbddd73396aa6eef6221bfa264e2b561c22ce31c887302c0"
+        },
+        "after": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "712d32fdf9c1a0b7086645505ffb1da2f5e72ad64d357c7081b4ec9f1a5448a2"
+        }
+      }
+    ],
     "counts": {
       "tests": 2496,
       "failed": 0,
