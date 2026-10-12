@@ -203,6 +203,8 @@ Judge the foundation against its approved principles and respect its stack and c
 Separate observed debt, missing protections, unresolved design decisions and proposed new principles.
 An important journey protected only by unit or mocked tests is a missing protection.
 For each material finding record an ID, observed problem, evidence files or failing command, principle, consequence, proposed fix, scope, verification method and whether it blocks the stated next change or can wait.
+For every repo-owned instruction import stub or near-duplicate, present an equivalent-content consolidation finding into the corresponding canonical AGENTS.md, preserving distinct scopes; include the inventory's host version limit that makes the stub necessary and check current official loading documentation and available runtime before proposing removal.
+Present each coupled-core architecture candidate and every mixed-responsibility candidate observed in research, such as a route owning pricing and persistence, as separate evidenced findings with the responsibilities, proposed owner or interface and verification; do not reduce either category to an import violation or cycle alone.
 For a test recommendation, name the acceptance source and the journey or public boundary it protects, and propose the fewest checks that would fail if that outcome broke.
 Do not propose tests that assert private implementation or copy expected values from current behaviour without an approved source.
 Report an instruction that mandates one development sequence for every change, such as writing a failing test before all work, as a proposed principle change citing the verification requirements, and keep it unless the user selects the change.
@@ -329,10 +331,8 @@ Repeat the unchanged plan to resume, and use `state show --run <returned-run-id>
 User changes block remaining writes, and replacement is atomic per file where supported, never across the whole set.
 
 Preserve distinct scoped instructions.
-Propose consolidating equivalent repo-owned CLAUDE.md content, including an import stub, into the corresponding AGENTS.md only through reviewed protected edits.
 Report local variants inside the repo as possible shadowing, without modifying them.
 Do not inspect or report instruction files outside the selected repo, including ancestor directories and user profiles.
-Before proposing removal, check the current host's official loading documentation and available runtime, and state compatibility limits for sessions that read only CLAUDE.md.
 Do not flatten distinct nested guidance into root instructions.
 
 ## Research rules
