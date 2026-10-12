@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "runId": "39af00a3-08ff-4073-afdc-ebcacb39ddbd",
+  "name": "checkout-health",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]"
+  },
+  "spec": {
+    "schemaVersion": 1,
+    "endpoint": "http://127.0.0.1:1/health",
+    "environment": [],
+    "sideEffects": false,
+    "assumption": "The local health endpoint is reachable and returns a successful HTTP response; failure leaves service health unverified.",
+    "inputScopes": [
+      "DESIGN.md",
+      "packages/web/ui.ts",
+      "packages/core/internal/database.ts"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 5000
+  },
+  "command": {
+    "executable": "curl",
+    "args": [
+      "--noproxy",
+      "*",
+      "--fail",
+      "--silent",
+      "--show-error",
+      "--connect-timeout",
+      "5",
+      "--max-time",
+      "5",
+      "http://127.0.0.1:1/health"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 5000
+  },
+  "environment": {},
+  "specPath": "[isolated-home][scratch-path]",
+  "phase": "after",
+  "callDigest": "ac7d9b394de226d8c995b49ed766e28335abd5a0506506ec0311654ac331f0d2",
+  "approval": null,
+  "startedAt": "2026-10-12T04:57:27.464Z",
+  "completedAt": "2026-10-12T04:57:27.485Z",
+  "originalState": {
+    "fingerprint": "de17928460442bd57e889e05c1b14033b1dbbe470feab17db4b9a76e4432fd54",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "files": [
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+        },
+        {
+          "path": "packages/core/internal/database.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+        },
+        {
+          "path": "packages/web/ui.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+        }
+      ],
+      "inputs": {
+        "spec": {
+          "schemaVersion": 1,
+          "endpoint": "http://127.0.0.1:1/health",
+          "environment": [],
+          "sideEffects": false,
+          "assumption": "The local health endpoint is reachable and returns a successful HTTP response; failure leaves service health unverified.",
+          "inputScopes": [
+            "DESIGN.md",
+            "packages/web/ui.ts",
+            "packages/core/internal/database.ts"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ],
+          "timeoutMs": 5000
+        },
+        "callDigest": "ac7d9b394de226d8c995b49ed766e28335abd5a0506506ec0311654ac331f0d2",
+        "specContentHash": "7b86ce47a75e613c018a794d38e7dc0ca7cf00b3800910048ae1863b4f8f5ed9"
+      }
+    }
+  },
+  "finalState": {
+    "fingerprint": "de17928460442bd57e889e05c1b14033b1dbbe470feab17db4b9a76e4432fd54",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "files": [
+        {
+          "path": "DESIGN.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+        },
+        {
+          "path": "packages/core/internal/database.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+        },
+        {
+          "path": "packages/web/ui.ts",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+        }
+      ],
+      "inputs": {
+        "spec": {
+          "schemaVersion": 1,
+          "endpoint": "http://127.0.0.1:1/health",
+          "environment": [],
+          "sideEffects": false,
+          "assumption": "The local health endpoint is reachable and returns a successful HTTP response; failure leaves service health unverified.",
+          "inputScopes": [
+            "DESIGN.md",
+            "packages/web/ui.ts",
+            "packages/core/internal/database.ts"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ],
+          "timeoutMs": 5000
+        },
+        "callDigest": "ac7d9b394de226d8c995b49ed766e28335abd5a0506506ec0311654ac331f0d2",
+        "specContentHash": "7b86ce47a75e613c018a794d38e7dc0ca7cf00b3800910048ae1863b4f8f5ed9"
+      }
+    }
+  },
+  "execution": {
+    "status": "blocked",
+    "stdout": "",
+    "stderr": "",
+    "durationMs": 5.920610000000011,
+    "exitCode": -2,
+    "signal": null,
+    "timedOut": false,
+    "cancelled": false,
+    "outputTruncated": false,
+    "error": "spawn curl ENOENT",
+    "toolVersion": {
+      "status": "blocked",
+      "stdout": "",
+      "stderr": "",
+      "durationMs": 5.920610000000011,
+      "exitCode": -2,
+      "signal": null,
+      "timedOut": false,
+      "cancelled": false,
+      "outputTruncated": false,
+      "error": "spawn curl ENOENT"
+    }
+  },
+  "status": "unverified",
+  "reason": "spawn curl ENOENT"
+}

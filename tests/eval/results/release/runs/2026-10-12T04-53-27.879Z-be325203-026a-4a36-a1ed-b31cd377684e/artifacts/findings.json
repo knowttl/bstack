@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+  },
+  "nextChange": "Read-only final audit and recommendations; no implementation change requested.",
+  "reviewedScope": [
+    "VISION.md",
+    "DESIGN.md",
+    "glossary.md"
+  ],
+  "sources": [
+    {
+      "id": "vision",
+      "pointer": "VISION.md:3",
+      "intent": "documented",
+      "summary": "Owner-approved single reader queue with save/find/mark-read success; accounts, sharing and recommendations excluded."
+    },
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "Local Node application, JSON persistence, queue state ownership and public presentation boundary."
+    },
+    {
+      "id": "terms",
+      "pointer": "glossary.md:3",
+      "intent": "documented",
+      "summary": "Read articles remain in the queue; mark-read preserves title/address."
+    },
+    {
+      "id": "inventory",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Installed inventory found only design, vision and glossary; inspect reports no manifests and a clean tree."
+    },
+    {
+      "id": "listing",
+      "pointer": "git ls-files",
+      "intent": "observed",
+      "summary": "Exactly three tracked documents; no implementation or checks."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The approved save/list/mark-read journey has no implementation or executable protection. This is a documented starting state, not an observed regression.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Deliver the approved queue journey through queue-owned operations; preserve article title and address and retain read articles.",
+      "consequence": "There is no runnable product and no evidence that the approved success outcome works or survives persistence.",
+      "fix": "Implement the smallest local Node journey with JSON persistence through the queue boundary. Add one public integration journey: save title/address, list the saved article, mark read, list again and reopen storage to confirm the same title/address and read status remain. Keep presentation behind the public operations.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "Run the public journey with disposable JSON storage; assert outcomes from VISION.md:5, DESIGN.md:3-6 and glossary.md:4-5, including persistence across reopening. Review presentation for direct storage writes. Do not assert private helper structure.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "terms",
+        "inventory",
+        "listing"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "DESIGN.md defines behaviour and boundaries but does not state what execution evidence completes a change. No maintained check command exists.",
+      "files": [
+        "DESIGN.md"
+      ],
+      "command": null,
+      "principle": "Proposed review policy: completion requires affected public journeys to pass on final inputs with expectations traced to approved sources.",
+      "consequence": "Future work could be called complete based on unit tests while the save/find/mark-read outcome remains unverified.",
+      "fix": "Propose a short completion-evidence section in DESIGN.md linking the approved acceptance sources and the eventual public journey check. Document one repo-owned native check command once it exists; passing unit tests alone does not establish the journey.",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "verification": "Review the section against VISION.md:5 and the existing queue boundary; run the documented command on final inputs and retain exit/output with public journey coverage.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "inventory"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Product readiness is verification blocked: no application or native journey/check command exists; no run-checks plan can execute product behaviour.",
+    "All findings are proposals; no changes selected, no project edits or audit record applied.",
+    "Main-thread research chosen because only three short files make delegation wasteful; subagents and web available but unused.",
+    "Language and external-service research not undertaken: no native configs or service boundary to assess; no language-specific tooling recommendations made.",
+    "Measure ran over the two available commits; signals are advisory and documentation-only.",
+    "Overlap not run: no two declared change plans exist.",
+    "Router, akashic and no-mistakes were verified unavailable; no delivery service or other skill used.",
+    "Reviewed scope covers the existing documents only; future implementation paths require a separate exact reviewed scope before any edits."
+  ]
+}

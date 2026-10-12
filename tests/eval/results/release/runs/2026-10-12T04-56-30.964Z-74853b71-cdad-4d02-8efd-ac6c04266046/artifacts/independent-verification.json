@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046",
+  "head": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "workingTree": "",
+  "allTrackedFilesUnchanged": true,
+  "loginAbsent": true,
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97",
+      "unchanged": true
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4",
+      "unchanged": true
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
+      "unchanged": true
+    },
+    {
+      "path": "DESIGN.md",
+      "sha256": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279",
+      "unchanged": true
+    },
+    {
+      "path": "boundaries.mjs",
+      "sha256": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449",
+      "unchanged": true
+    },
+    {
+      "path": "glossary.md",
+      "sha256": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d",
+      "unchanged": true
+    },
+    {
+      "path": "journey.mjs",
+      "sha256": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6",
+      "unchanged": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b",
+      "unchanged": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d",
+      "unchanged": true
+    },
+    {
+      "path": "packages/core/a.ts",
+      "sha256": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb",
+      "unchanged": true
+    },
+    {
+      "path": "packages/core/b.ts",
+      "sha256": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8",
+      "unchanged": true
+    },
+    {
+      "path": "packages/core/index.ts",
+      "sha256": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4",
+      "unchanged": true
+    },
+    {
+      "path": "packages/core/internal/database.ts",
+      "sha256": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424",
+      "unchanged": true
+    },
+    {
+      "path": "packages/core/package.json",
+      "sha256": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf",
+      "unchanged": true
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "sha256": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c",
+      "unchanged": true
+    },
+    {
+      "path": "packages/web/package.json",
+      "sha256": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326",
+      "unchanged": true
+    },
+    {
+      "path": "packages/web/public.ts",
+      "sha256": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230",
+      "unchanged": true
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "sha256": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769",
+      "unchanged": true
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "sha256": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c",
+      "unchanged": true
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49",
+      "unchanged": true
+    },
+    {
+      "path": "unit.test.mjs",
+      "sha256": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e",
+      "unchanged": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/health-probe-spec.json",
+      "originalSha256": "7b86ce47a75e613c018a794d38e7dc0ca7cf00b3800910048ae1863b4f8f5ed9",
+      "publishedSha256": "7b86ce47a75e613c018a794d38e7dc0ca7cf00b3800910048ae1863b4f8f5ed9"
+    },
+    {
+      "path": "artifacts/health-python-record.json",
+      "originalSha256": "55c53afddb872dc2eb6728592a392ad9575d21bc0a2e512abaa10fd80ea326dd",
+      "publishedSha256": "e29fdd9e9656d420d544fca0deb28fac00b54a4e3d54e950b0b14ce10760b938"
+    },
+    {
+      "path": "artifacts/health-record-output.json",
+      "originalSha256": "fd58f33353c39e2ff6ad6550e1001aebfd65bcfb9596cf35893c48c4f4dbc669",
+      "publishedSha256": "90ca25cb9db12d3651e710886d862d4a884f588d9f8341d30e6fa43776d3cd13"
+    },
+    {
+      "path": "artifacts/preflight.json",
+      "originalSha256": "4e2986a20edd4e0fb31550527a532f9a05b4a06b105eb6909ce453626e94cbc6",
+      "publishedSha256": "4e2986a20edd4e0fb31550527a532f9a05b4a06b105eb6909ce453626e94cbc6"
+    },
+    {
+      "path": "artifacts/unit-exit.txt",
+      "originalSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "publishedSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "artifacts/unit-output.txt",
+      "originalSha256": "e23b476e000ca41988a231cb88e6576410e89f6536eaff7588e4cb98f7029c31",
+      "publishedSha256": "e23b476e000ca41988a231cb88e6576410e89f6536eaff7588e4cb98f7029c31"
+    }
+  ]
+}

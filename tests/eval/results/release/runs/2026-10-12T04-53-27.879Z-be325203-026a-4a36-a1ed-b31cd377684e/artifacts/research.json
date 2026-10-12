@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API isolated audit workspace",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "VISION.md:3-7 explicitly approves the single-reader save/find/mark-read goal and excludes accounts, sharing and recommendations. DESIGN.md:3-7 settles local Node with JSON persistence and a queue-owned public boundary. glossary.md:3-5 confirms read articles remain in the queue and mark-read preserves title/address. These sources agree; no material intent or vocabulary gap was observed.",
+      "limitations": [
+        "Only three tracked documents exist; no README, instructions, prior audit, requirements or separate standards."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "VISION.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "VISION.md:6",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        },
+        {
+          "location": "DESIGN.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "c4df6fc9350fe8ed8552281064e0297101ea062b97034b754361ebb04410acbc"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "DESIGN.md:4-6 assigns article state to the queue and prohibits direct storage writes by presentation. No implementation, entry point, storage adapter, interface or runtime exists to inspect. Public operation names are documented; implementation compliance remains unverified.",
+      "limitations": [
+        "No runtime or code-level dependency analysis is possible."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        },
+        {
+          "location": "DESIGN.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        },
+        {
+          "location": "DESIGN.md:6",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "VISION.md:5 is the acceptance source for saving, finding and marking an article read without losing title/address. No manifest, lockfile, test, prepared environment, check command or CI is present. Git diff --check exits zero; that checks whitespace only and does not establish the user journey.",
+      "limitations": [
+        "No native product checks can run because application and check tooling are absent. Node v24.17.0 and Git 2.54.0 are available; no project version pin exists."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "c4df6fc9350fe8ed8552281064e0297101ea062b97034b754361ebb04410acbc"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}
