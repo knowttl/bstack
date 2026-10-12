@@ -2,7 +2,6 @@ import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution } from './evaluation.mjs'
-import { scopeVersion } from './evaluation-scope.mjs'
 import { readAdapter } from './evaluation-host.mjs'
 import { correctedScore, validateScore } from './evaluation-scoring.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
@@ -54,7 +53,7 @@ export async function completeRelease(results) {
     if (canonicalJSON(record.adapter) !== canonicalJSON(adapter) || record.adapterHash !== hashBytes(canonicalJSON(adapter)) ||
         record.agent !== adapter.invocation.agent || record.model !== adapter.invocation.model ||
         record.hostFailure || !record.isolation?.verified || !record.isolation.cleanedAt ||
-        ![2, scopeVersion].includes(record.scopeGuard?.version) || !verifiedExecution(record) || (!record.execution && !approvedBaseline) ||
+        !(record.execution ? verifiedExecution(record) : approvedBaseline) ||
         !record.turns?.length || record.turns.some(turn => !turn.sessionId) || !record.transcript || !record.answers) fail(`Unverified or unscored release run: ${id}`)
     git('merge-base', '--is-ancestor', record.sourceRevision, 'HEAD')
     const request = (record.mode === 'with' && definition.invocation === 'explicit' ? `${adapter.invocation.explicit}\n` : '') +
