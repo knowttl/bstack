@@ -189,6 +189,31 @@ Never remove a lock while its writer is still running.
 Batch publication records rates, including failing checks, and does not establish a release verdict.
 Unsupported hosts retain the `--manual` interface.
 
+### Evidence storage and raw-run archive
+
+For new batches, commit the append-only `tests/eval/results/ledger.jsonl` and the gate outputs in `tests/eval/results/release/`.
+Commit only redacted transcripts of blocking runs and the audited sample (one run per smoke scenario) under `tests/eval/results/transcripts/<run-id>/`, retaining run IDs and transcript hashes so reviewers can join them to the ledger.
+Do not commit whole run directories, scoring work files or private batch inventories.
+The default `tests/eval/results/runs/` and historical `tests/eval/results/release/runs/` locations are ignored for new files.
+Existing tracked historical evidence remains available for acceptance references and judge calibration; this policy does not rewrite it.
+An explicit `--results` directory is caller-owned: keep it outside Git or under `.cache/`, and copy its finalized ledger to the committed results directory.
+
+After scoring, finalizing all batches and writing the release gate, archive the default raw-run directory locally before any cleanup:
+
+```sh
+mkdir -p .cache/eval-archives
+tar -czf .cache/eval-archives/raw-runs-<version>.tar.gz -C tests/eval/results runs
+tar -tzf .cache/eval-archives/raw-runs-<version>.tar.gz
+git status --short --untracked-files=all -- tests/eval/results
+```
+
+Use a new archive name each time, and verify that its listing includes the batch inventories, contributing run IDs, conversations and scoring artifacts.
+For explicit `--results`, archive that entire directory instead.
+Keep the archive private: inventories and unfinished runs can contain local paths and session identifiers.
+Retain the local raw evidence for confirmation, correction and audit; the release validator still reads contributing run records beside the ledger or under `runs/`.
+The archive is a backup and does not replace the validator's input directory.
+After a fresh batch without sampled transcripts, Git status should show only the ledger and gate files.
+
 ### Isolation and authentication
 
 Every adapter run creates a new temporary home with mode 0700, an empty `.codex` state directory with mode 0700 and a fresh cache.
@@ -401,7 +426,7 @@ JSON property names are retained, and transcript line breaks and citation ranges
 Conversation hashes bind the published bytes.
 
 Open, unscored adapter run records retain private operational paths and session identifiers for resume and isolation checks, and must not be committed.
-Manual scoring leaves the supplied source answers and transcript files unchanged; keep those private and commit only their redacted publication copies.
+Manual scoring leaves the supplied source answers and transcript files unchanged; keep those private and commit only the redacted blocking or sampled transcripts described in [evidence storage](#evidence-storage-and-raw-run-archive).
 
 ## Registry and final selections
 
