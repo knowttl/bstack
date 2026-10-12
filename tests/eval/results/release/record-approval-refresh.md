@@ -12,6 +12,12 @@ An append-only score correction extends the original range by one line to includ
 The fixture contains only brief.md, whose observed SHA-256 4906b755de04d645627f82d8c2e32a7c3a63ff91d564fd841b7def2b4662c004 exactly matches the source fixture after both turns.
 The isolated login home is cleaned.
 
+The [implicit invocation comparison](implicit-invocation-record-approval-comparison.json) passes 1/1 in both modes after one installed refresh against the settled package.
+Its [complete conversation](runs/2026-10-12T03-08-18.826Z-796b35fa-68db-448f-9d0c-f4a9c7a2ce66/conversation.txt), lines 1–26, omits an explicit audit command and leaves repo-audit unstarted through both turns.
+All four completed commands were reviewed: they inspect target documents and Git state, and read only the installed dependency's Lavish skill instructions, with no repo-audit SKILL.md, reference or helper invocation.
+The [independent verification](runs/2026-10-12T03-08-18.826Z-796b35fa-68db-448f-9d0c-f4a9c7a2ce66/artifacts/independent-verification.json) confirms three unchanged tracked documents, clean working state, no scratch files and removal of the per-turn login.
+The isolated login home is cleaned after scoring.
+
 Other scenario refreshes and the final all-case validator remain outstanding.
 
 The [runtime independence comparison](runtime-independence-record-approval-comparison.json) passes from baseline 0/1 to installed 1/1, refreshing installed execution once at the final stage with the settled package.
