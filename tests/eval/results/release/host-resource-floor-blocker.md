@@ -37,3 +37,8 @@ Its transcript retains later native-control results even where their scratch fil
 Both isolated homes are removed and the stopped evaluation container is absent.
 Further execution requires restored host resources and a recovery ruling for the interrupted captures.
 The resource thresholds were not lowered, no timed-out turn was retried, and no missing evidence is waived.
+
+The commissioning ruling at 2026-10-12T01:19:50Z requires waiting for the host preflight to pass on its own, with a single foreground check no more often than approximately every 20 minutes.
+Eight finished capture fixtures were removed after verifying each exact standalone Git root and expected captured commit.
+The pinned image and historical maintained target remain because remaining scenarios need them; no unrelated image or temporary directory was removed.
+The next resource check is deferred until at least 2026-10-12T01:37:06Z, rather than repeatedly probing a busy host.
