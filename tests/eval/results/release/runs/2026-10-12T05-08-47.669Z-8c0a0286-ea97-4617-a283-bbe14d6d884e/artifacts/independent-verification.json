@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e",
+  "head": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+  "exactApprovedMove": true,
+  "oneRuleAuthority": true,
+  "linkAnchorValid": true,
+  "unrelatedGuidanceUnchanged": true,
+  "nativeSourceAndTestsUnchanged": true,
+  "loginAbsent": true,
+  "files": [
+    {
+      "path": ".gitignore",
+      "originalSha256": "d7edc7e4b5887be249b21a3907550206bbe141b43287c893a091cc80368e098a",
+      "currentSha256": "d7edc7e4b5887be249b21a3907550206bbe141b43287c893a091cc80368e098a",
+      "unchanged": true
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "originalSha256": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+      "currentSha256": "d2e97be0f70a880a54828411e3ac3cfcdff0ca5a0af2ede7f5cbaf22cb2590ce",
+      "unchanged": false
+    },
+    {
+      "path": "app.py",
+      "originalSha256": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972",
+      "currentSha256": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972",
+      "unchanged": true
+    },
+    {
+      "path": "boundaries.py",
+      "originalSha256": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e",
+      "currentSha256": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/__init__.py",
+      "originalSha256": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878",
+      "currentSha256": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/_internal.py",
+      "originalSha256": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef",
+      "currentSha256": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/book.py",
+      "originalSha256": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157",
+      "currentSha256": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157",
+      "unchanged": true
+    },
+    {
+      "path": "pyproject.toml",
+      "originalSha256": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af",
+      "currentSha256": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af",
+      "unchanged": true
+    },
+    {
+      "path": "startup.py",
+      "originalSha256": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7",
+      "currentSha256": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7",
+      "unchanged": true
+    },
+    {
+      "path": "test_ledger.py",
+      "originalSha256": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f",
+      "currentSha256": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f",
+      "unchanged": true
+    },
+    {
+      "path": "uv.lock",
+      "originalSha256": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3",
+      "currentSha256": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3",
+      "unchanged": true
+    }
+  ]
+}

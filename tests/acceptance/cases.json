@@ -75,9 +75,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "clear-goals",
         "artifacts": [
-          "tests/eval/results/release/record-approval-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/artifacts/independent-verification.json"
+          "tests/eval/results/release/structural-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/artifacts/independent-verification.json"
         ]
       }
     },
@@ -188,7 +188,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "selected-rule-relocation",
-        "artifacts": ["tests/eval/results/release/selected-rule-relocation-comparison.json", "tests/eval/results/release/selected-rule-relocation.md"]
+        "artifacts": [
+          "tests/eval/results/release/structural-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -497,9 +501,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "clear-goals",
         "artifacts": [
-          "tests/eval/results/release/record-approval-refresh.md",
-          "tests/eval/results/release/runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613/artifacts/independent-verification.json"
+          "tests/eval/results/release/structural-approval-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/artifacts/independent-verification.json"
         ]
       }
     },

@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "runId": "d2dc6b02-6661-4b29-ae4d-6791443705a7",
+  "phase": "after",
+  "status": "passed",
+  "planDigest": "14d53c8b5dd76c709ce0eb12ce21274bd84e2a7701d8234c67577c264c25cb51",
+  "originalState": {
+    "fingerprint": "3148ceba63327fe025117cb5deba86680d444e00de47a9922a011c2d7a090312",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+      "files": [
+        {
+          "path": "CODING_STANDARDS.md",
+          "present": true,
+          "mode": 33188,
+          "linkTarget": null,
+          "contentHash": "12bf0b554a2b90b6f37d5a0c932dcef76545d88fce92c3482e7faa4a1099aee8"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "d2e97be0f70a880a54828411e3ac3cfcdff0ca5a0af2ede7f5cbaf22cb2590ce"
+        },
+        {
+          "path": "ledger/__init__.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+        },
+        {
+          "path": "ledger/_internal.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+        },
+        {
+          "path": "ledger/book.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+        },
+        {
+          "path": "pyproject.toml",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+        },
+        {
+          "path": "startup.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+        },
+        {
+          "path": "uv.lock",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3"
+        }
+      ],
+      "inputs": {
+        "planDigest": "14d53c8b5dd76c709ce0eb12ce21274bd84e2a7701d8234c67577c264c25cb51",
+        "planContentHash": "cef02a7208e789f5d231944ba2cabc25f4a31325f7c9d3625a251aedb0c302d6"
+      }
+    }
+  },
+  "finalState": {
+    "fingerprint": "3148ceba63327fe025117cb5deba86680d444e00de47a9922a011c2d7a090312",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+      "files": [
+        {
+          "path": "CODING_STANDARDS.md",
+          "present": true,
+          "mode": 33188,
+          "linkTarget": null,
+          "contentHash": "12bf0b554a2b90b6f37d5a0c932dcef76545d88fce92c3482e7faa4a1099aee8"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "d2e97be0f70a880a54828411e3ac3cfcdff0ca5a0af2ede7f5cbaf22cb2590ce"
+        },
+        {
+          "path": "ledger/__init__.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+        },
+        {
+          "path": "ledger/_internal.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+        },
+        {
+          "path": "ledger/book.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+        },
+        {
+          "path": "pyproject.toml",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+        },
+        {
+          "path": "startup.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+        },
+        {
+          "path": "uv.lock",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3"
+        }
+      ],
+      "inputs": {
+        "planDigest": "14d53c8b5dd76c709ce0eb12ce21274bd84e2a7701d8234c67577c264c25cb51",
+        "planContentHash": "cef02a7208e789f5d231944ba2cabc25f4a31325f7c9d3625a251aedb0c302d6"
+      }
+    }
+  },
+  "startedAt": "2026-10-12T05:15:04.329Z",
+  "completedAt": "2026-10-12T05:15:04.758Z",
+  "priorRun": null,
+  "executionOrder": [
+    "d2dc6b02-6661-4b29-ae4d-6791443705a7"
+  ],
+  "checks": [
+    {
+      "id": "journey",
+      "role": "outcome",
+      "required": true,
+      "acceptanceCases": [
+        "journey"
+      ],
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "[isolated-home][scratch-path]"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "passed",
+      "satisfied": true,
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "PASS: real Python CLI exports matching CSV/JSON balanced postings; public Ledger imports them and preserves balance\n",
+        "stderr": "",
+        "durationMs": 397.95225000000005,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "Python 3.12.15\n",
+          "stderr": "",
+          "durationMs": 5.836656000000005,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 1
+    }
+  ],
+  "coverage": [
+    {
+      "id": "journey",
+      "sourceId": "contributing",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "The real startup CLI produces matching CSV/JSON balanced postings that the public Ledger API can import without losing balance.",
+      "userJourney": true,
+      "status": "passed",
+      "checkIds": [
+        "journey"
+      ],
+      "reason": null
+    }
+  ],
+  "journeyCoverage": "User journey evidence captured.",
+  "limitations": [
+    "Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Outside dependencies require separate live probe record and compare evidence."
+  ]
+}

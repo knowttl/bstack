@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"docs generate","status":"passed","problems":[],"data":{"sections":[]},"inputs":{"repo":"[isolated-home][scratch-path]","contract":".bstack/project.json"}}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T04-49-33.413Z-e3c779d5-5fb5-4072-8147-4f3ec6c057e6",
+  "status": "blocked",
+  "reason": "Additional exact snapshot approval is absent from the captured scripted protocol.",
+  "implementation": "42157a36b0a35ecd679d41b52313a0ea32660822",
+  "snapshotPlanDigest": "7e091e23b75eea4f8f5d5fe55ae89c980ba5ee2fcf251469c9b20e82177a6250",
+  "snapshotProposedHash": "350949127ab30d2e87a27d4b2d82d8ec5f1248aced1c6735503a3761ea20e799",
+  "approvedImplementationExcludesSnapshot": true,
+  "targetClean": true,
+  "snapshotAbsent": true,
+  "assessmentAbsent": true,
+  "nextScriptedAnswer": 3,
+  "remainingAnswerApprovesPortableAssessmentOnly": true,
+  "passingNativeControlGroups": [
+    "private",
+    "alias",
+    "reexport",
+    "cycle",
+    "nonpublic",
+    "maintained",
+    "journey"
+  ],
+  "loginAbsent": true,
+  "finalStandaloneEvidencePending": true
+}
