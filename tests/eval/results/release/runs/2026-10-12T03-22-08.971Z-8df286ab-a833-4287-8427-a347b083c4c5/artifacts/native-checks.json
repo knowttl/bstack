@@ -1,0 +1,102 @@
+{
+  "inputs": {
+    "/tmp/bstack-py-ledger-y3lVJU/app.py": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972",
+    "/tmp/bstack-py-ledger-y3lVJU/pyproject.toml": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af",
+    "/tmp/bstack-py-ledger-y3lVJU/startup.py": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7",
+    "/tmp/bstack-py-ledger-y3lVJU/CONTRIBUTING.md": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+    "/tmp/bstack-py-ledger-y3lVJU/.gitignore": "d7edc7e4b5887be249b21a3907550206bbe141b43287c893a091cc80368e098a",
+    "/tmp/bstack-py-ledger-y3lVJU/test_ledger.py": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f",
+    "/tmp/bstack-py-ledger-y3lVJU/uv.lock": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3",
+    "/tmp/bstack-py-ledger-y3lVJU/boundaries.py": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e",
+    "/tmp/bstack-py-ledger-y3lVJU/ledger/book.py": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157",
+    "/tmp/bstack-py-ledger-y3lVJU/ledger/_internal.py": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef",
+    "/tmp/bstack-py-ledger-y3lVJU/ledger/__init__.py": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878",
+    "/tmp/bstack-py-ledger-y3lVJU/.ruff_cache/CACHEDIR.TAG": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae",
+    "/tmp/bstack-py-ledger-y3lVJU/.ruff_cache/.gitignore": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316",
+    "/tmp/bstack-py-ledger-y3lVJU/.ruff_cache/0.14.0/93356837694143599": "87c70661347fc6f389b1b438a7ba5bd24ee8e68623fb7a1e0dac45bcb4c88223",
+    "/tmp/bstack-py-ledger-y3lVJU/.ruff_cache/0.14.0/17609475663121870854": "8bde92d586b6f15bcd8a6ed027131cdee323bca38b9d649413cc3186899bfb36"
+  },
+  "records": [
+    {
+      "command": [
+        ".venv/bin/python",
+        "--version"
+      ],
+      "exitCode": 0,
+      "stdout": "Python 3.12.15\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".venv/bin/ruff",
+        "--version"
+      ],
+      "exitCode": 0,
+      "stdout": "ruff 0.14.0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "unittest",
+        "-v"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "test_balanced_posting (test_ledger.LedgerTest.test_balanced_posting) ... ok\ntest_negative_posting_rejected (test_ledger.LedgerTest.test_negative_posting_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+    },
+    {
+      "command": [
+        ".venv/bin/ruff",
+        "check",
+        "--no-cache",
+        "."
+      ],
+      "exitCode": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".venv/bin/ruff",
+        "format",
+        "--check",
+        "--no-cache",
+        "."
+      ],
+      "exitCode": 1,
+      "stdout": "Would reformat: boundaries.py\nWould reformat: ledger/book.py\n2 files would be reformatted, 5 files already formatted\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "boundaries.py"
+      ],
+      "exitCode": 1,
+      "stdout": "[\"private\"]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "startup.py",
+        "[isolated-home][scratch-path]"
+      ],
+      "exitCode": 0,
+      "stdout": "cash,10.00,0,\nequity,0,10.00,\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        ".venv/bin/python",
+        "-c",
+        "from app import opening_balance; from decimal import Decimal; assert opening_balance() == Decimal(\"10\"); print(\"opening_balance=10\")"
+      ],
+      "exitCode": 0,
+      "stdout": "opening_balance=10\n",
+      "stderr": ""
+    }
+  ]
+}

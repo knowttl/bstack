@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "checkout-total-repair-blocked",
+  "writePaths": [
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts",
+    "unit.test.mjs",
+    "journey.mjs"
+  ],
+  "contracts": [
+    {
+      "id": "core-price-interface",
+      "files": [
+        "packages/core/index.ts"
+      ]
+    },
+    {
+      "id": "checkout-total",
+      "files": [
+        "DESIGN.md",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "journey.mjs"
+      ]
+    }
+  ]
+}

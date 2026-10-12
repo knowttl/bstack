@@ -1,0 +1,364 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512",
+  "createdAt": "2026-10-12T04:45:36.616Z",
+  "sourceRevision": "d2f60f2e231d635f644b1676e5f6430a510155fa",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "os": "linux 6.8.0-142-generic",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.162.1"
+  },
+  "fixture": {
+    "name": "clear-goals",
+    "path": "[fixture]",
+    "kind": "repo",
+    "revision": "8e436639af6ca78c93bb61e759d643c4f304bd66"
+  },
+  "scenario": {
+    "id": "implicit-invocation",
+    "fixture": "clear-goals",
+    "request": "audit this repo",
+    "answers": [
+      "Do not explicitly invoke repo-audit."
+    ],
+    "checkpoints": [
+      "baseline",
+      "final"
+    ],
+    "invocation": "implicit",
+    "checks": [
+      {
+        "id": "user-only",
+        "caseId": "AC-42",
+        "question": "Did the request omit the explicit command and leave repo-audit unstarted?"
+      }
+    ]
+  },
+  "criteriaHash": "94464ed5c075e1ef39c927a07e89e5a7c9b8247cf11fffe14c8130bd7b7a688e",
+  "stage": "final",
+  "mode": "with",
+  "request": "Active checkpoint: final.\naudit this repo",
+  "status": "passed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[scratch-path]",
+      "[scratch-path]",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": "3df1e3838f2ef123d5180d6338f6d4a0411aaed3cb0e341278cee022624af8c4",
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [
+      "[isolated-home]/.agents/skills/repo-audit/SKILL.md"
+    ],
+    "checkedAt": "2026-10-12T04:46:55.032Z",
+    "cleanedAt": "2026-10-12T04:46:55.126Z"
+  },
+  "transcript": "8607e5ec-d2e8-41bb-8552-c7af22256fc1/transcript.txt",
+  "answers": "8607e5ec-d2e8-41bb-8552-c7af22256fc1/answers.json",
+  "caseResults": [
+    {
+      "id": "user-only",
+      "caseId": "AC-42",
+      "question": "Did the request omit the explicit command and leave repo-audit unstarted?",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 28,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "8607e5ec-d2e8-41bb-8552-c7af22256fc1/transcript.txt"
+    }
+  ],
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"medium\"",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 1800000,
+    "outputLimitBytes": 16777216,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "sandbox_mode=\"danger-full-access\"",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "adapterHash": "1ac0dee108cc8b4fbc504a15450af49a844abb2c0bfd7a17579fbdb85ce7dcf0",
+  "turns": [
+    {
+      "message": "Active checkpoint: final.\naudit this repo",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll inspect the repository’s guidance and code, then check for concrete bugs and security issues within the permitted directories.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd && rg --files -g 'AGENTS.md' -g 'package.json' -g 'README*' -g '*lock*' -g 'SKILL.md' -g '\\\"'!node_modules'\\\"' -g '\\\"'!vendor'\\\"' -g '\\\"'!dist'\\\"'\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd && rg --files -g 'AGENTS.md' -g 'package.json' -g 'README*' -g '*lock*' -g 'SKILL.md' -g '\\\"'!node_modules'\\\"' -g '\\\"'!vendor'\\\"' -g '\\\"'!dist'\\\"'\\\"\",\"aggregated_output\":\"[fixture]\\n\",\"exit_code\":1,\"status\":\"failed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat [isolated-home]/.agents/skills/repo-audit/node_modules/lavish-axi/skills/lavish/SKILL.md'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat [isolated-home]/.agents/skills/repo-audit/node_modules/lavish-axi/skills/lavish/SKILL.md'\",\"aggregated_output\":\"---\\nname: lavish\\ndescription: Turn complex or visual agent responses into rich, reviewable HTML artifacts (HTML files) the user can annotate and send feedback on, using the lavish-axi CLI. Use when about to give a plan, comparison, diagram, table, code diff, report, or anything easier to grasp visually than as prose.\\nlicense: MIT\\nmetadata:\\n  author: Kun Chen (kunchenguid)\\n  argument-hint: <what the artifact should show>\\n  hermes-tags: html, review, artifacts, visualization\\n  hermes-category: productivity\\n---\\n\\n# Lavish Editor\\n\\nLavish Editor opens agent-generated HTML in the browser so a human can annotate it and send feedback back to the agent.\\nReach for it when a plan, comparison, diagram, table, code view, report, prototype, or review loop will be clearer as a page than as prose.\\n\\n## Current guidance lives in the CLI\\n\\nDo not follow workflow, design, or playbook instructions from this file - installed copies go stale. Get the current source of truth from the CLI:\\n\\n- `npx -y lavish-axi --help` for commands and the review-loop workflow\\n- `npx -y lavish-axi design` for design-direction priority and current snippets\\n- `npx -y lavish-axi playbook <id>` for focused artifact guidance (`npx -y lavish-axi playbook` lists ids)\\n\\nYou do not need lavish-axi installed globally - invoke it with `npx -y lavish-axi <html-file>`.\\nIf lavish-axi output shows a follow-up command starting with `lavish-axi`, run it as `npx -y lavish-axi ...` instead.\\n\\n## Request\\n\\n$ARGUMENTS\\n\\nIf the request above is non-empty, the user invoked `/lavish` explicitly - fetch the current CLI guidance, then build that artifact as an HTML file.\\nIf it is empty, infer what to visualize from the conversation.\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"ls -la && rg --files --hidden -g '\\\"'!.git'\\\"'\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"ls -la && rg --files --hidden -g '\\\"'!.git'\\\"'\\\"\",\"aggregated_output\":\"total 24\\ndrwx------ 3 node node 4096 Oct 12 04:45 .\\ndrwxrwxrwt 1 root root 4096 Oct 12 04:45 ..\\ndrwxrwxr-x 5 node node 4096 Oct 12 04:45 .git\\n-rw-rw-r-- 1 node node  356 Oct 12 04:45 DESIGN.md\\n-rw-rw-r-- 1 node node  322 Oct 12 04:45 VISION.md\\n-rw-rw-r-- 1 node node  217 Oct 12 04:45 glossary.md\\nDESIGN.md\\nVISION.md\\nglossary.md\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_4\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'git status --short && git log -5 --oneline && cat DESIGN.md VISION.md glossary.md'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_4\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'git status --short && git log -5 --oneline && cat DESIGN.md VISION.md glossary.md'\",\"aggregated_output\":\"81feef4 docs: record design and vocabulary\\n8f70d11 docs: approve project vision\\n# Design\\n\\nThe approved stack is a local Node application with a JSON file for persistence.\\nThe queue owns article state and exposes save, list and mark-read operations.\\nPresentation uses the queue's public operations and never writes storage directly.\\nPreserve article titles and addresses when marking an article read.\\nThere are no open design decisions.\\n# Reading queue\\n\\nStatus: approved by the owner.\\nHelp one reader save articles and mark them read.\\nSuccess means a saved article can be found in the queue and marked read without losing its title or address.\\nAccounts, sharing and recommendations are outside the first version.\\nThere are no open product or stack decisions.\\n# Glossary\\n\\n- Article: a saved title and address with a read status.\\n- Queue: the reader's saved articles, including read articles.\\n- Mark read: change an article's read status while preserving its title and address.\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_5\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'git ls-files && nl -ba VISION.md && nl -ba DESIGN.md && nl -ba glossary.md'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_5\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'git ls-files && nl -ba VISION.md && nl -ba DESIGN.md && nl -ba glossary.md'\",\"aggregated_output\":\"DESIGN.md\\nVISION.md\\nglossary.md\\n     1\\t# Reading queue\\n     2\\t\\n     3\\tStatus: approved by the owner.\\n     4\\tHelp one reader save articles and mark them read.\\n     5\\tSuccess means a saved article can be found in the queue and marked read without losing its title or address.\\n     6\\tAccounts, sharing and recommendations are outside the first version.\\n     7\\tThere are no open product or stack decisions.\\n     1\\t# Design\\n     2\\t\\n     3\\tThe approved stack is a local Node application with a JSON file for persistence.\\n     4\\tThe queue owns article state and exposes save, list and mark-read operations.\\n     5\\tPresentation uses the queue's public operations and never writes storage directly.\\n     6\\tPreserve article titles and addresses when marking an article read.\\n     7\\tThere are no open design decisions.\\n     1\\t# Glossary\\n     2\\t\\n     3\\t- Article: a saved title and address with a read status.\\n     4\\t- Queue: the reader's saved articles, including read articles.\\n     5\\t- Mark read: change an article's read status while preserving its title and address.\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_6\",\"type\":\"agent_message\",\"text\":\"The repository contains only three documentation files; no application code, dependency manifest, or tests are present.\\n\\n- **Implementation gap:** [VISION.md]([fixture]/VISION.md:5) defines saving, finding, and marking articles read as success criteria. None can currently be exercised.\\n- **Documentation is consistent:** [DESIGN.md]([fixture]/DESIGN.md:3) specifies a local Node application with JSON persistence, and all three documents agree that marking articles read preserves their title and address.\\n\\nNo code-level bugs or security findings could be assessed. No tests were run, and no files were changed.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":77178,\"cached_input_tokens\":69120,\"cache_write_input_tokens\":0,\"output_tokens\":491,\"reasoning_output_tokens\":48}}\n",
+        "stderr": "Reading additional input from stdin...\n",
+        "durationMs": 24861.924719000002,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 845.2845450000004,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 31.538993999999548,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    },
+    {
+      "message": "Do not explicitly invoke repo-audit.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"Understood. I’ll stay within the two permitted directories, run the required preflight before every Node suite, and won’t explicitly invoke repo-audit.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":93796,\"cached_input_tokens\":84736,\"cache_write_input_tokens\":0,\"output_tokens\":539,\"reasoning_output_tokens\":59}}\n",
+        "stderr": "",
+        "durationMs": 4910.83841,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 725.3071929999999,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 23.805995999999993,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    }
+  ],
+  "nextAnswer": 2,
+  "sessionId": "[identifier]",
+  "conversation": "conversation.txt",
+  "installer": {
+    "status": "passed",
+    "stdout": "{\"schemaVersion\":1,\"command\":\"install\",\"status\":\"passed\",\"problems\":[],\"data\":{\"sourceVersion\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"mode\":\"copy\",\"preview\":false,\"destinations\":[{\"host\":\"agents\",\"parent\":\"[isolated-home]/.agents/skills\",\"destination\":\"[isolated-home]/.agents/skills/repo-audit\",\"ownership\":\"[isolated-home]/.agents/skills/.bstack-install.json\",\"journal\":\"[isolated-home]/.agents/skills/.bstack-install-journal.json\",\"action\":\"copy\"}],\"changes\":[{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/agents/openai.yaml\",\"hash\":\"a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/assets/vision/review-template.html\",\"hash\":\"a7b927522b7f251c010d2417ffdd497a51231b02472b05ac453ff5bf0cc623c3\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/assets/vision/review.css\",\"hash\":\"487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/package-lock.json\",\"hash\":\"68ec187f7d6d5e0bda1859ebe6c7acec3fa8634375150a6d729ef49c24e09700\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/package.json\",\"hash\":\"69c8059f391cccf52a90a174e370846ca51afe83d4c426599073e20f12dd7fd1\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/references/architecture.md\",\"hash\":\"e5e649c5f6aef46331381a61937888bb8f04e8dcc442704c9d968cc54cc6d552\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/references/domain-language.md\",\"hash\":\"a3ea5988574ecb5bed0f0c24debffab276ef6b02da50c2866f1c81850a0e9d83\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/references/enforcement.md\",\"hash\":\"a60156a582bd05527776dd1888b294135037b0624e934c12bfa623a741e596e4\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/references/grilling.md\",\"hash\":\"82e4c0f6ffb3b2623a8e6a24f37d071fe615ae134d3e20e7d547f61e88f5504b\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/references/intent-interview.md\",\"hash\":\"58f69eb046338ac7c71ac004cc0116bf7479689e40561b2cc8d7484e3ff41597\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/references/maintenance-contract.md\",\"hash\":\"fc255dfd12be1c05283631399b9598b35072950dd9e1f85034a1b7fd330e8b1f\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/references/research-briefs.md\",\"hash\":\"7d476d9c6cb15e4ce1e5908d1a3fcbde72dfdf5cfd28e000a1dcafcfb17633a4\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/references/vision.md\",\"hash\":\"06dfe22d047e75163d3dd51676a376899f15bb5e93b447473f94de2f56e42a83\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/baseline.schema.json\",\"hash\":\"31213ebacaa0d2b35744ed76183eb29ea663b4e167354dd824e56f1b345c5eb4\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/change-set.schema.json\",\"hash\":\"3143f4f7d8419f36f458b40823d5951cbc70f80c00e7b0d5fb90dcdd6573cd7f\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/check-plan.json\",\"hash\":\"fbd60b49c341bb20a78dbc2235c27af303fa12f4fb8cb3d48d47b9c6817a2f52\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/contract-test.json\",\"hash\":\"17beb13367c79a7f42ea7fbadc0e7d94c18f880d64c22cc26bfe8de74f8057ec\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/evidence.schema.json\",\"hash\":\"072959c322b776427f4f578a4894529e0a285b1245726cf1723eedc9baf7b810\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/findings.schema.json\",\"hash\":\"920ffa5c5387b4e7c6e35bfffc0eb684876c986bd30f5b0604e6999c6681586c\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/impact-assessment.json\",\"hash\":\"4a7435b67367c9c67769edcebfa3a19b2cab5283f854f26ab5ce16613e359aef\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/measure-exclusions.json\",\"hash\":\"8a8ee801cd8c873f706f22174cd685c239d230cba9fb6a42b378448e027c33bf\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/overlap-plan.json\",\"hash\":\"9c4151ebfd2dce26cfb39dcf9e8fd19c943bb5ff2cb7f057afaf10c1990425e7\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/probe-record.json\",\"hash\":\"25bf5bafa245c412cc2462e3d60ecba8718c848747cd8401fd2eb97e9e632f78\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/probe-spec.json\",\"hash\":\"3870d211cdc3e3088a7f865d46dbafd3632c6917f1302b45b8caa8ca6bf27c75\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/project-create.json\",\"hash\":\"49f3253d3ef0f5feb5b4acebc0a077f82aa3208cf8f80cde5a5a23e42434f898\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/project.schema.json\",\"hash\":\"82111199bcb0fadb59c0fefda913cf3629b3214161f6aa8b42ea32d18afc8b77\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/research-report.json\",\"hash\":\"d325e95830b6864db568485d79d9cc9df4eeb8900fe3094a2008100961839268\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/resume-state.schema.json\",\"hash\":\"090e9f54d940bf85b49fef44d558155e731046966108b3adfb6f86ede2b4ebd2\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/vision-proposals.json\",\"hash\":\"7e1e7dcc17b96a44231bc330d328dd7327d479cb9a182acc8dc932977b631420\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/schemas/vision-verdicts.json\",\"hash\":\"055c7d445dc56cfc687826100bf0c812a15fbe82e6a16c5b14b6dde3c968e87b\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/bstack-check.mjs\",\"hash\":\"5636a36f7a528276f66d0ed7be3af6c45e219bf3e588f7406f35fcec4f05c373\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/apply.mjs\",\"hash\":\"72815c6bfb7013ad47c713081d22293897b97ee3498adddb468c108497d133e1\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/baseline.mjs\",\"hash\":\"0030416b5fe7816111e814bcae6de3354893d1df696e194a32d5fbaa94bf851b\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/cite-check.mjs\",\"hash\":\"b06e366ce45032c094033dc6e0331ff453500fc40688d1bfc7152f305d48d598\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/contract-test.mjs\",\"hash\":\"6dc8752903fc0dbf3954e17720ec804ec5b7e7a972c5039c2762cc8c0e77ccdc\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/contract.mjs\",\"hash\":\"74b53cf39db7ac1f0a7d256a1993a09d762a0db8e0c3930810035e1df2819155\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/docs-check.mjs\",\"hash\":\"f09409c4696a12ab10a317315549966938b2d322d53f9e95a211d0da5e98d784\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/docs-generate.mjs\",\"hash\":\"487a684257b9b759a69d7e410dc2f436fc3603c5440dc81bd45dca9735304556\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/evidence-validate.mjs\",\"hash\":\"8aa0eb22bb0505965f50cefc73350d60e496fc892cbebaa17b4cbf85b5d7790d\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/evidence.mjs\",\"hash\":\"c7cb901597a603cc7b7d7ec826bf6bb1082661096922b492960959ebbd70cddd\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/findings.mjs\",\"hash\":\"68b246b4c936372d1e0784cbe299749a902e449f5345f7621b089855dece140c\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/inspect.mjs\",\"hash\":\"8fcc2d8f24156bd0a018b67abb77f89af2c8370ac4c73ada98e3323658c91edc\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/inventory.mjs\",\"hash\":\"b04b3ee28aa8c1eec6f10710cc19beb0b6d27981accf168bef405976a07b23e8\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/measure.mjs\",\"hash\":\"95c94e3c611a8b32e28b238d508ed85bb095c1652c3f9f6059809fe5e1a9e480\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/overlap.mjs\",\"hash\":\"0522b6ad486902e97ce926fba0fb03af71ff57940ee5bc391402f94a9556ed8c\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/probe.mjs\",\"hash\":\"04d877973c51b1f0a7c04dc85a78104befe09482ee40b36a3a52fea3e56418c0\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/project.mjs\",\"hash\":\"32cb58420ea8110092b557156a8e5f5bf2b2a317e638a808e6828714732b156a\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/rule-proof.mjs\",\"hash\":\"c27edb536a591cc45b9655770d4f5134732ed38623c60df861fc03f817c93dbf\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/run-checks.mjs\",\"hash\":\"562d2a77f6e543eac458383a43c4980d4c493fae44e02aa38b1ac0fea55ca29f\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/state.mjs\",\"hash\":\"050a119cb97192e0c286a6ffacf8a439b6323a188a96bb970366700a7095d2db\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/vision-board-build.mjs\",\"hash\":\"a552868350527e839ce7f915cb6e3efc1742379f7b605fca40cdc8b6e38d267f\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/vision-board-launch.mjs\",\"hash\":\"21326ccb1a47626944b581c8062e1196217338ae8e64ccc5396e8a2226242cf9\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands/vision-board-verdicts.mjs\",\"hash\":\"c9a4b11cff3db41568244018d252af31116a26b6a76e47c644e2546bd7391ee9\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/commands.mjs\",\"hash\":\"4a9a41848de08512a04c467a0379d866fac845442ee66b3baf302aafb0a46b59\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/args.mjs\",\"hash\":\"a3c6da3b9e20a6e131bbbcedc51e4fce3109c849ced199585bead898dadf595a\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/check-integration.mjs\",\"hash\":\"2e35bf49111b67c0f998167fb2708bc2024b980f8e158311fe0a6a186eea54c5\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/discovery.mjs\",\"hash\":\"0056ffad9189ef4747b9eab8ba19f7392111121445045536f8cdbd7689c59452\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/document-references.mjs\",\"hash\":\"c8a1c54cb158e364dea08f3580d2b9d38ee772b626f58f774c0256e814f696b1\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/evidence-policy.mjs\",\"hash\":\"395a6099357ea8377f1445acb10cae3cdcab485b0d24656e024b92c5b7b4e527\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/fingerprint.mjs\",\"hash\":\"3ccdd02b7da28861c723f050e41dcdbed9f72489f6acbc3df351d9e503697151\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/glob.mjs\",\"hash\":\"f54d9f49efaf54b714e1038a419ab4a701fda0e1739ddd43f81985df7cca9792\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/json.mjs\",\"hash\":\"5c440b1ce37b491a2a2f050098360145ffc55ade0d0b104e3d234f8fd70db443\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/paths.mjs\",\"hash\":\"2f209d55cd56676c7e17abf8d9e33d52a2d1201220242fb68586a5afd2a4fac2\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/proposed-edit.mjs\",\"hash\":\"be5fc18fea1be78b1a90ea90b182f1fe44d5df0a16207be49b1388d4f9c19759\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/protected-write.mjs\",\"hash\":\"f08cb38d2bfa932a3b166f2fada11c15f4eed9043b33fca7d5f73c9ed17f93ee\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/repo.mjs\",\"hash\":\"e830b218f2646fb443d93b2657e9c264970a3e48891cb5c17620e569d3c17580\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/result.mjs\",\"hash\":\"4a3e517b84e4a127b5866eaf67aad29bc864b97a4897be146616c799a1046796\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/run.mjs\",\"hash\":\"c9c63fc1a65f250316eb7d29ef19d65eee9c8e630195cdd2bb9412b0b4d4b5b4\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/schema.mjs\",\"hash\":\"f278ded24f99af1b559a90ba11dadca7bad2cfb9d07a6cf47f22725b869f9ba8\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/scratch.mjs\",\"hash\":\"56ebe7034ec336d1409ae1f8f176b2855769507b6a620eaf11d28e67b2586aea\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/lib/vision-board.mjs\",\"hash\":\"bd38e0492375df21a7d2ac6dd5f4b96d8804a4aff080964296d7a58ae91d01a9\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs\",\"hash\":\"d806e97c0ea0d45ab73ecdf9bc6cfab5fe1bd938a3653549e93e007de6c251a3\"},{\"action\":\"copy\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/SKILL.md\",\"hash\":\"680c8a3ef04fb2cd5d649163854ae191eb9e6caf927fd253ba73caeac20f12ed\"},{\"action\":\"runtime-install\",\"path\":\"[isolated-home]/.agents/skills/repo-audit/node_modules\",\"version\":\"0.1.78\"},{\"action\":\"ownership\",\"path\":\"[isolated-home]/.agents/skills/.bstack-install.json\"},{\"action\":\"journal\",\"path\":\"[isolated-home]/.agents/skills/.bstack-install-journal.json\"}],\"installations\":[{\"destination\":\"[isolated-home]/.agents/skills/repo-audit\",\"files\":{\"agents/openai.yaml\":\"a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94\",\"assets/vision/review-template.html\":\"a7b927522b7f251c010d2417ffdd497a51231b02472b05ac453ff5bf0cc623c3\",\"assets/vision/review.css\":\"487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989\",\"package-lock.json\":\"68ec187f7d6d5e0bda1859ebe6c7acec3fa8634375150a6d729ef49c24e09700\",\"package.json\":\"69c8059f391cccf52a90a174e370846ca51afe83d4c426599073e20f12dd7fd1\",\"references/architecture.md\":\"e5e649c5f6aef46331381a61937888bb8f04e8dcc442704c9d968cc54cc6d552\",\"references/domain-language.md\":\"a3ea5988574ecb5bed0f0c24debffab276ef6b02da50c2866f1c81850a0e9d83\",\"references/enforcement.md\":\"a60156a582bd05527776dd1888b294135037b0624e934c12bfa623a741e596e4\",\"references/grilling.md\":\"82e4c0f6ffb3b2623a8e6a24f37d071fe615ae134d3e20e7d547f61e88f5504b\",\"references/intent-interview.md\":\"58f69eb046338ac7c71ac004cc0116bf7479689e40561b2cc8d7484e3ff41597\",\"references/maintenance-contract.md\":\"fc255dfd12be1c05283631399b9598b35072950dd9e1f85034a1b7fd330e8b1f\",\"references/research-briefs.md\":\"7d476d9c6cb15e4ce1e5908d1a3fcbde72dfdf5cfd28e000a1dcafcfb17633a4\",\"references/vision.md\":\"06dfe22d047e75163d3dd51676a376899f15bb5e93b447473f94de2f56e42a83\",\"schemas/baseline.schema.json\":\"31213ebacaa0d2b35744ed76183eb29ea663b4e167354dd824e56f1b345c5eb4\",\"schemas/change-set.schema.json\":\"3143f4f7d8419f36f458b40823d5951cbc70f80c00e7b0d5fb90dcdd6573cd7f\",\"schemas/check-plan.json\":\"fbd60b49c341bb20a78dbc2235c27af303fa12f4fb8cb3d48d47b9c6817a2f52\",\"schemas/contract-test.json\":\"17beb13367c79a7f42ea7fbadc0e7d94c18f880d64c22cc26bfe8de74f8057ec\",\"schemas/evidence.schema.json\":\"072959c322b776427f4f578a4894529e0a285b1245726cf1723eedc9baf7b810\",\"schemas/findings.schema.json\":\"920ffa5c5387b4e7c6e35bfffc0eb684876c986bd30f5b0604e6999c6681586c\",\"schemas/impact-assessment.json\":\"4a7435b67367c9c67769edcebfa3a19b2cab5283f854f26ab5ce16613e359aef\",\"schemas/measure-exclusions.json\":\"8a8ee801cd8c873f706f22174cd685c239d230cba9fb6a42b378448e027c33bf\",\"schemas/overlap-plan.json\":\"9c4151ebfd2dce26cfb39dcf9e8fd19c943bb5ff2cb7f057afaf10c1990425e7\",\"schemas/probe-record.json\":\"25bf5bafa245c412cc2462e3d60ecba8718c848747cd8401fd2eb97e9e632f78\",\"schemas/probe-spec.json\":\"3870d211cdc3e3088a7f865d46dbafd3632c6917f1302b45b8caa8ca6bf27c75\",\"schemas/project-create.json\":\"49f3253d3ef0f5feb5b4acebc0a077f82aa3208cf8f80cde5a5a23e42434f898\",\"schemas/project.schema.json\":\"82111199bcb0fadb59c0fefda913cf3629b3214161f6aa8b42ea32d18afc8b77\",\"schemas/research-report.json\":\"d325e95830b6864db568485d79d9cc9df4eeb8900fe3094a2008100961839268\",\"schemas/resume-state.schema.json\":\"090e9f54d940bf85b49fef44d558155e731046966108b3adfb6f86ede2b4ebd2\",\"schemas/vision-proposals.json\":\"7e1e7dcc17b96a44231bc330d328dd7327d479cb9a182acc8dc932977b631420\",\"schemas/vision-verdicts.json\":\"055c7d445dc56cfc687826100bf0c812a15fbe82e6a16c5b14b6dde3c968e87b\",\"scripts/bstack-check.mjs\":\"5636a36f7a528276f66d0ed7be3af6c45e219bf3e588f7406f35fcec4f05c373\",\"scripts/commands/apply.mjs\":\"72815c6bfb7013ad47c713081d22293897b97ee3498adddb468c108497d133e1\",\"scripts/commands/baseline.mjs\":\"0030416b5fe7816111e814bcae6de3354893d1df696e194a32d5fbaa94bf851b\",\"scripts/commands/cite-check.mjs\":\"b06e366ce45032c094033dc6e0331ff453500fc40688d1bfc7152f305d48d598\",\"scripts/commands/contract-test.mjs\":\"6dc8752903fc0dbf3954e17720ec804ec5b7e7a972c5039c2762cc8c0e77ccdc\",\"scripts/commands/contract.mjs\":\"74b53cf39db7ac1f0a7d256a1993a09d762a0db8e0c3930810035e1df2819155\",\"scripts/commands/docs-check.mjs\":\"f09409c4696a12ab10a317315549966938b2d322d53f9e95a211d0da5e98d784\",\"scripts/commands/docs-generate.mjs\":\"487a684257b9b759a69d7e410dc2f436fc3603c5440dc81bd45dca9735304556\",\"scripts/commands/evidence-validate.mjs\":\"8aa0eb22bb0505965f50cefc73350d60e496fc892cbebaa17b4cbf85b5d7790d\",\"scripts/commands/evidence.mjs\":\"c7cb901597a603cc7b7d7ec826bf6bb1082661096922b492960959ebbd70cddd\",\"scripts/commands/findings.mjs\":\"68b246b4c936372d1e0784cbe299749a902e449f5345f7621b089855dece140c\",\"scripts/commands/inspect.mjs\":\"8fcc2d8f24156bd0a018b67abb77f89af2c8370ac4c73ada98e3323658c91edc\",\"scripts/commands/inventory.mjs\":\"b04b3ee28aa8c1eec6f10710cc19beb0b6d27981accf168bef405976a07b23e8\",\"scripts/commands/measure.mjs\":\"95c94e3c611a8b32e28b238d508ed85bb095c1652c3f9f6059809fe5e1a9e480\",\"scripts/commands/overlap.mjs\":\"0522b6ad486902e97ce926fba0fb03af71ff57940ee5bc391402f94a9556ed8c\",\"scripts/commands/probe.mjs\":\"04d877973c51b1f0a7c04dc85a78104befe09482ee40b36a3a52fea3e56418c0\",\"scripts/commands/project.mjs\":\"32cb58420ea8110092b557156a8e5f5bf2b2a317e638a808e6828714732b156a\",\"scripts/commands/rule-proof.mjs\":\"c27edb536a591cc45b9655770d4f5134732ed38623c60df861fc03f817c93dbf\",\"scripts/commands/run-checks.mjs\":\"562d2a77f6e543eac458383a43c4980d4c493fae44e02aa38b1ac0fea55ca29f\",\"scripts/commands/state.mjs\":\"050a119cb97192e0c286a6ffacf8a439b6323a188a96bb970366700a7095d2db\",\"scripts/commands/vision-board-build.mjs\":\"a552868350527e839ce7f915cb6e3efc1742379f7b605fca40cdc8b6e38d267f\",\"scripts/commands/vision-board-launch.mjs\":\"21326ccb1a47626944b581c8062e1196217338ae8e64ccc5396e8a2226242cf9\",\"scripts/commands/vision-board-verdicts.mjs\":\"c9a4b11cff3db41568244018d252af31116a26b6a76e47c644e2546bd7391ee9\",\"scripts/commands.mjs\":\"4a9a41848de08512a04c467a0379d866fac845442ee66b3baf302aafb0a46b59\",\"scripts/lib/args.mjs\":\"a3c6da3b9e20a6e131bbbcedc51e4fce3109c849ced199585bead898dadf595a\",\"scripts/lib/check-integration.mjs\":\"2e35bf49111b67c0f998167fb2708bc2024b980f8e158311fe0a6a186eea54c5\",\"scripts/lib/discovery.mjs\":\"0056ffad9189ef4747b9eab8ba19f7392111121445045536f8cdbd7689c59452\",\"scripts/lib/document-references.mjs\":\"c8a1c54cb158e364dea08f3580d2b9d38ee772b626f58f774c0256e814f696b1\",\"scripts/lib/evidence-policy.mjs\":\"395a6099357ea8377f1445acb10cae3cdcab485b0d24656e024b92c5b7b4e527\",\"scripts/lib/fingerprint.mjs\":\"3ccdd02b7da28861c723f050e41dcdbed9f72489f6acbc3df351d9e503697151\",\"scripts/lib/glob.mjs\":\"f54d9f49efaf54b714e1038a419ab4a701fda0e1739ddd43f81985df7cca9792\",\"scripts/lib/json.mjs\":\"5c440b1ce37b491a2a2f050098360145ffc55ade0d0b104e3d234f8fd70db443\",\"scripts/lib/paths.mjs\":\"2f209d55cd56676c7e17abf8d9e33d52a2d1201220242fb68586a5afd2a4fac2\",\"scripts/lib/proposed-edit.mjs\":\"be5fc18fea1be78b1a90ea90b182f1fe44d5df0a16207be49b1388d4f9c19759\",\"scripts/lib/protected-write.mjs\":\"f08cb38d2bfa932a3b166f2fada11c15f4eed9043b33fca7d5f73c9ed17f93ee\",\"scripts/lib/repo.mjs\":\"e830b218f2646fb443d93b2657e9c264970a3e48891cb5c17620e569d3c17580\",\"scripts/lib/result.mjs\":\"4a3e517b84e4a127b5866eaf67aad29bc864b97a4897be146616c799a1046796\",\"scripts/lib/run.mjs\":\"c9c63fc1a65f250316eb7d29ef19d65eee9c8e630195cdd2bb9412b0b4d4b5b4\",\"scripts/lib/schema.mjs\":\"f278ded24f99af1b559a90ba11dadca7bad2cfb9d07a6cf47f22725b869f9ba8\",\"scripts/lib/scratch.mjs\":\"56ebe7034ec336d1409ae1f8f176b2855769507b6a620eaf11d28e67b2586aea\",\"scripts/lib/vision-board.mjs\":\"bd38e0492375df21a7d2ac6dd5f4b96d8804a4aff080964296d7a58ae91d01a9\",\"scripts/repo-audit.mjs\":\"d806e97c0ea0d45ab73ecdf9bc6cfab5fe1bd938a3653549e93e007de6c251a3\",\"SKILL.md\":\"680c8a3ef04fb2cd5d649163854ae191eb9e6caf927fd253ba73caeac20f12ed\"},\"fileVersions\":{\"agents/openai.yaml\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"assets/vision/review-template.html\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"assets/vision/review.css\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"package-lock.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"package.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"references/architecture.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"references/domain-language.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"references/enforcement.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"references/grilling.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"references/intent-interview.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"references/maintenance-contract.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"references/research-briefs.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"references/vision.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/baseline.schema.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/change-set.schema.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/check-plan.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/contract-test.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/evidence.schema.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/findings.schema.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/impact-assessment.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/measure-exclusions.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/overlap-plan.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/probe-record.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/probe-spec.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/project-create.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/project.schema.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/research-report.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/resume-state.schema.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/vision-proposals.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"schemas/vision-verdicts.json\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/bstack-check.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/apply.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/baseline.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/cite-check.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/contract-test.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/contract.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/docs-check.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/docs-generate.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/evidence-validate.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/evidence.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/findings.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/inspect.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/inventory.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/measure.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/overlap.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/probe.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/project.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/rule-proof.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/run-checks.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/state.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/vision-board-build.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/vision-board-launch.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands/vision-board-verdicts.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/commands.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/args.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/check-integration.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/discovery.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/document-references.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/evidence-policy.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/fingerprint.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/glob.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/json.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/paths.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/proposed-edit.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/protected-write.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/repo.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/result.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/run.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/schema.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/scratch.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/lib/vision-board.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"scripts/repo-audit.mjs\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\",\"SKILL.md\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\"},\"runtime\":{\"path\":\"[isolated-home]/.agents/skills/repo-audit/node_modules\",\"created\":true,\"version\":\"0.1.78\",\"verified\":true},\"conflicts\":[],\"sourceVersion\":\"development:d2f60f2e231d635f644b1676e5f6430a510155fa\"}],\"limitations\":[],\"blocked\":false},\"inputs\":{}}\n",
+    "stderr": "",
+    "durationMs": 4790.843035,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "cancelled": false,
+    "outputTruncated": false,
+    "error": null,
+    "toolVersion": {
+      "status": "passed",
+      "stdout": "v24.17.0\n",
+      "stderr": "",
+      "durationMs": 5.432522000000006,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "cancelled": false,
+      "outputTruncated": false,
+      "error": null
+    }
+  },
+  "resourcePreflight": {
+    "source": "host aggregate",
+    "clientHash": "2ba1e3f1753039d8ed34a284ba84f7d5ff30bfedd27ce84a0af87a0c02f275a9",
+    "checks": [
+      {
+        "source": "host",
+        "checkedAt": "2026-10-12T04:45:41.539Z",
+        "availableMemoryBytes": 25840386048,
+        "freeDiskBytes": 25484886016,
+        "load1m": 33.06,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      },
+      {
+        "source": "host",
+        "checkedAt": "2026-10-12T04:46:23.565Z",
+        "availableMemoryBytes": 27352150016,
+        "freeDiskBytes": 25877835776,
+        "load1m": 26.73,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      }
+    ]
+  },
+  "authenticatedVia": "throwaway copy",
+  "execution": {
+    "method": "docker",
+    "image": "bstack-eval-toolchain:node24-codex0.162.1",
+    "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+    "recipeHash": "3ba3f242862014f26c614cb060d1d4bfe8c01439d2f4b6518eeb181a05e83412",
+    "turns": [
+      {
+        "name": "bstack-eval-63477e70-a91b-446e-88be-14f1147eb8ab",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-12T04:46:08.551Z"
+      },
+      {
+        "name": "bstack-eval-ba586520-daec-4341-8b88-ad53edc35dac",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-12T04:46:29.843Z"
+      }
+    ],
+    "toolchain": {
+      "node": "v24.17.0",
+      "git": "git version 2.54.0",
+      "npm": "11.13.0",
+      "agent": "codex-cli 0.162.1"
+    }
+  },
+  "scopeGuard": {
+    "version": 3,
+    "advisory": true,
+    "verified": true,
+    "paths": []
+  },
+  "conversationHash": "facded29580976bb46600d0eb35a6b53f225a470150479278780f8d4f7a03f4e",
+  "scoredAt": "2026-10-12T04:46:55.178Z"
+}

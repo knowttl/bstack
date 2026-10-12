@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Design mandates UI isolation from storage and checkout total 10. Glossary assigns two meanings to Order. No vision, README or completion contract exists.",
+      "limitations": [
+        "No prior audit or history beyond initial commit."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "DESIGN.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "glossary.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "packages/web/public.ts"
+      ],
+      "findings": "Public core export exists. UI and routes access internal storage; aliasQuote uses a storage alias. Core a and b form a cycle. Public quote is an existing valid example.",
+      "limitations": [
+        "No prior audit or history beyond initial commit."
+      ],
+      "files": [
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/public.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "package.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "unit.test.mjs",
+        "journey.mjs"
+      ],
+      "findings": "TypeScript 5.9.3 is prepared locally. Check only typechecks; separate boundary analysis resolves aliases and cycles. Unit expectations use 12; HTTP mock supplies 10, but real loopback journey supplies 12 and asserts 10.",
+      "limitations": [
+        "No prior audit or history beyond initial commit."
+      ],
+      "files": [
+        {
+          "location": "package.json:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "tsconfig.json:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "boundaries.mjs:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "unit.test.mjs:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "journey.mjs:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

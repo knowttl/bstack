@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"docs generate","status":"passed","problems":[],"data":{"sections":[]},"inputs":{"repo":"[fixture]","contract":".bstack/project.json"}}

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50",
+  "artifacts": [
+    {
+      "path": "artifacts/scratch/base-resolution.txt",
+      "originalSha256": "a8f1fde37ed93272ae300d8dff690cd713eac53641a4a8081f9ee10c8c58a7f5",
+      "publishedSha256": "a8f1fde37ed93272ae300d8dff690cd713eac53641a4a8081f9ee10c8c58a7f5"
+    },
+    {
+      "path": "artifacts/scratch/checklist.md",
+      "originalSha256": "382461272afe122cf82b57ff2a6a86a21dd74bf43f623d6fee73c70097ee99ae",
+      "publishedSha256": "382461272afe122cf82b57ff2a6a86a21dd74bf43f623d6fee73c70097ee99ae"
+    },
+    {
+      "path": "artifacts/scratch/cite-check.json",
+      "originalSha256": "f942ed63a146cfd688966f2d604df978121737630604ac25a935e114ebc1995a",
+      "publishedSha256": "489981ade00e78243122df5f1e464277a4a4b021cfbee416d1a34f520ec314fd"
+    },
+    {
+      "path": "artifacts/scratch/findings-render.json",
+      "originalSha256": "e50143058723fb709388824ebd6340b65aea6be3e95b032c19ce6d59c2cf8a43",
+      "publishedSha256": "ac6a98182f0a5e5f1ecdf4ae7b5965a2d8fb95eaf97db31d5887e2760d3ce185"
+    },
+    {
+      "path": "artifacts/scratch/findings-validation.json",
+      "originalSha256": "c5ba73a79e386f45a764ecc1c7b49e40b3f93de8470a6cbf561185aaa11de6e2",
+      "publishedSha256": "bca2b5dbd29935c2d96addd6103f2f9340833bdb2ab3dac9aa5acf28497e801a"
+    },
+    {
+      "path": "artifacts/scratch/findings.json",
+      "originalSha256": "53691ae01faf709f054f8cbbbe668fab0d29265636ec6e9ebafbbeb6b4f8824e",
+      "publishedSha256": "df8d28b983d3278e05ae4ded8aaf2998782c52bfceba18cab7ce25cbdf6c2f9d"
+    },
+    {
+      "path": "artifacts/scratch/help.txt",
+      "originalSha256": "88463d68314a04b1ebcd5139b4a2845ff1ec07d4814925874cb430db67aa5456",
+      "publishedSha256": "88463d68314a04b1ebcd5139b4a2845ff1ec07d4814925874cb430db67aa5456"
+    },
+    {
+      "path": "artifacts/scratch/inspect.json",
+      "originalSha256": "e9cd1b0e52b3c4e85b0571da5344b25b7086cab9f5d261b783f477723d03bc82",
+      "publishedSha256": "9a951cd374d064dd1934f89c8688e1e0700ef8af93daa4bd78ee38f35b7e0b02"
+    },
+    {
+      "path": "artifacts/scratch/inventory.json",
+      "originalSha256": "45b0b81e9ba0f049de480c90057071c5def625258a325ef72f59e9162e8e2032",
+      "publishedSha256": "e74e604e354530024c4d95b3ffc10e7b29dab4646064cbecbba8adc4368f696a"
+    },
+    {
+      "path": "artifacts/scratch/measure.json",
+      "originalSha256": "767cc215c109b25ba80d66195932a8d4ab4d6447141ebf68211e37e07956d721",
+      "publishedSha256": "767cc215c109b25ba80d66195932a8d4ab4d6447141ebf68211e37e07956d721"
+    },
+    {
+      "path": "artifacts/scratch/native-test.txt",
+      "originalSha256": "48d5c605da6c0ab4f930f868e9a6a5775842231a4c5ee28da11551de4f558b74",
+      "publishedSha256": "48d5c605da6c0ab4f930f868e9a6a5775842231a4c5ee28da11551de4f558b74"
+    },
+    {
+      "path": "artifacts/scratch/preflight-citations.json",
+      "originalSha256": "6834cb3a9c5cfb33e80785941a784e5cdc10585df954b1c8e1669bd02c842ffa",
+      "publishedSha256": "6834cb3a9c5cfb33e80785941a784e5cdc10585df954b1c8e1669bd02c842ffa"
+    },
+    {
+      "path": "artifacts/scratch/preflight-native.json",
+      "originalSha256": "8833bc2c8020200ab402f1b67fcff94497a3ef78d7c82760fc51ffec0cd28947",
+      "publishedSha256": "8833bc2c8020200ab402f1b67fcff94497a3ef78d7c82760fc51ffec0cd28947"
+    },
+    {
+      "path": "artifacts/scratch/research-mode.txt",
+      "originalSha256": "aa5a5a98358069f1512738f7a161d7bf563e85807c78784d31ccf33d1dfb4864",
+      "publishedSha256": "aa5a5a98358069f1512738f7a161d7bf563e85807c78784d31ccf33d1dfb4864"
+    },
+    {
+      "path": "artifacts/scratch/research.json",
+      "originalSha256": "e302cf73a4760a6ee7330eaff6fcd6566ca324fc7f05ecce01deccf2731bedab",
+      "publishedSha256": "e302cf73a4760a6ee7330eaff6fcd6566ca324fc7f05ecce01deccf2731bedab"
+    },
+    {
+      "path": "artifacts/referenced/cache/bstack/2b86893b4737c8faafc434abff78f998ce80941354f75247d586ac7fd764d269/07ebf3fe-6643-40cd-8c8e-ec712f2d7418/repo-audit.md",
+      "originalSha256": "5c81acf482101b66cca305b9a2999d4578aed6f7c1ca9c63464090c2a3390b62",
+      "publishedSha256": "3fea40cc042fb8ab745336aead022cd873a57a45a36d10ff265a01bcef6782c9"
+    }
+  ]
+}

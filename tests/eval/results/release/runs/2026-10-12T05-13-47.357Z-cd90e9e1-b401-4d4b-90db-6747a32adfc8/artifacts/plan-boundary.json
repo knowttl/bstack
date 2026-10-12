@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "restore-public-boundary",
+  "writePaths": [
+    "packages/core/index.ts",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts",
+    "packages/web/alias.ts",
+    "package.json",
+    "boundaries.mjs"
+  ],
+  "contracts": [
+    {
+      "id": "public-core",
+      "files": [
+        "packages/core/index.ts",
+        "packages/core/package.json"
+      ]
+    }
+  ]
+}

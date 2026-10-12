@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "draftRevision": "735646d639b553d57762d86bf82ef98bf2eb083d3516d730f1fa74e1a04237c6",
+  "project": "Reading queue",
+  "runNote": "Candidate delta only; approved baseline retained. No implementation or stack approval.",
+  "cards": [
+    {
+      "id": "backup-sharing",
+      "title": "A local export optimized for sending to another reader",
+      "body": "Offer a self-contained HTML export containing titles, addresses and read statuses, with copy explaining how to send the file to friends. It stays local and requires no account or hosted service. Should this contribution be accepted, resisted, or accepted only after removing sharing-oriented design and copy?",
+      "tests": "“Accept local export of the reader's own saved articles, preserving title, address and read status, for personal backup.” “Resist changes that turn personal backup into sharing, accounts or recommendations.”",
+      "why": "Accept: a readable portable file makes backup useful, and any local backup can be manually copied; incidental copyability should not disqualify backup. Resist: explicitly helping readers distribute their queues makes sharing a product purpose even without accounts or hosting. Candidate interpretation: accept backup-oriented export; resist the distribution affordance. The owner must supply the actual verdict."
+    }
+  ]
+}

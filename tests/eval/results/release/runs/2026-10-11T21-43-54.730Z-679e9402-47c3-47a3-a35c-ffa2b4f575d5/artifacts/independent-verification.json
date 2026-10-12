@@ -1,0 +1,49 @@
+{
+  "originalCitations": [
+    {
+      "location": "CONTRIBUTING.md:1",
+      "originalHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+      "passed": true
+    },
+    {
+      "location": "app.py:1",
+      "originalHash": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972",
+      "passed": true
+    },
+    {
+      "location": "ledger/__init__.py:1",
+      "originalHash": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878",
+      "passed": true
+    },
+    {
+      "location": "ledger/book.py:1",
+      "originalHash": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157",
+      "passed": true
+    },
+    {
+      "location": "pyproject.toml:1",
+      "originalHash": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af",
+      "passed": true
+    },
+    {
+      "location": "test_ledger.py:1",
+      "originalHash": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f",
+      "passed": true
+    },
+    {
+      "location": "boundaries.py:1",
+      "originalHash": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e",
+      "passed": true
+    }
+  ],
+  "citationScope": "Pre-apply research hashes independently checked against original committed files. CONTRIBUTING.md was intentionally relocated; its old working-file hash is stale after apply.",
+  "originalContributing": "# Ledger standards\n\nExternal modules use the public ledger package.\nThe ledger owns entries and all balance calculations.\nUse native Python checks and preserve balanced postings.\n",
+  "contributing": "# Ledger standards\n\nSee [public-ledger ownership](CODING_STANDARDS.md#public-ledger-ownership).\nUse native Python checks and preserve balanced postings.\n",
+  "standards": "# Coding standards\n\n## Public-ledger ownership\n\nExternal modules use the public ledger package.\nThe ledger owns entries and all balance calculations.\n",
+  "trackedDiff": "diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md\nindex a3d40b4..12b6e6d 100644\n--- a/CONTRIBUTING.md\n+++ b/CONTRIBUTING.md\n@@ -1,5 +1,4 @@\n # Ledger standards\n \n-External modules use the public ledger package.\n-The ledger owns entries and all balance calculations.\n+See [public-ledger ownership](CODING_STANDARDS.md#public-ledger-ownership).\n Use native Python checks and preserve balanced postings.\n",
+  "workingTree": " M CONTRIBUTING.md\n?? CODING_STANDARDS.md\n",
+  "exactReplacement": true,
+  "oneAuthority": true,
+  "unrelatedTrackedBytesUnchanged": true,
+  "authenticationCopyAbsent": true
+}

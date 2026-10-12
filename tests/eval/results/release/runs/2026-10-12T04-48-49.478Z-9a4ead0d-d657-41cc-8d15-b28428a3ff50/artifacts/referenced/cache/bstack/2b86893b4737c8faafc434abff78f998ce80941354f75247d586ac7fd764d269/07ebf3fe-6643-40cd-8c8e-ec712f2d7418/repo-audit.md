@@ -1,0 +1,77 @@
+# Proposed repo audit record
+
+Result: verification blocked
+
+Stage: audit
+Target: [fixture]
+Revision: ec52939656c1bce417709f3d6c84038f8a15e51f
+Stated next change: Unresolved between a contract-preserving internal refactor and a public quote contract change. Read-only final checkpoint; no implementation direction or write path selected.
+Reviewed scope: DESIGN.md, project.json, price.mjs, price.test.mjs, notes.md, rename.md, remove.md
+Current fingerprint: fa68ab19f0a6c8184c2d49bc84071572ebabde37b065f20d51daf2928962e2d1
+
+## Readiness evidence
+
+- Missing required outcome: starting-checks.
+- Missing required outcome: scope-decision.
+- Missing required outcome: historical-comparison.
+- Unresolved finding: F-001.
+- Unresolved finding: F-002.
+
+## Documented intent
+
+- S-contract: A quote is quantity multiplied by 12. (DESIGN.md:3)
+
+## Observed behaviour
+
+- S-code: The exported quote function multiplies quantity by 12. (price.mjs:1)
+- S-test: The native test directly checks quote(3) = 36. node --test price.test.mjs passed one test with exit 0; output retained in scratch. (price.test.mjs:4)
+- S-history: HEAD^ resolution and parent object lookup failed with exit 128; exact HEAD^..HEAD helper measurement blocked with history-unreadable and exit 2. Checkout is shallow; origin is outside permitted roots. (git rev-parse --verify HEAD^; git cat-file -e 4c30913019f94a99eab09a7387a214ddd0ce12da^{commit}; measure.json)
+
+## Inferred intent
+
+- S-inferred: Preserving the documented behavior would provide the compatibility baseline for a refactor, but the requested direction has not been selected. (DESIGN.md:3; price.mjs:1)
+
+## Observed debt
+
+
+## Missing protections
+
+
+## Design decisions
+
+### F-001: Requested implementation scope is unresolved; the current contract is explicit, but no replacement outcome is approved.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: DESIGN.md, price.mjs, price.test.mjs. Command: none.
+Principle: Use the documented public pricing contract as the baseline until the owner resolves changed intent.
+Consequence: Choosing an implementation or acceptance path could silently change the public result.
+Fix: Ask whether the owner intends a contract-preserving refactor or a public contract change. Recommend preserving quantity * 12 for compatibility, with the trade-off that it cannot introduce new pricing behavior. This recommendation does not select a write scope.
+Scope: DESIGN.md, price.mjs, price.test.mjs
+Verification: Record owner decision; for a refactor retain current public acceptance and capture before/after coverage; for a contract change obtain the new quote rule and acceptance examples before dependent planning.
+Sources: S-contract, S-code, S-test, S-inferred
+
+### F-002: The exact requested historical base HEAD^ is unavailable in this shallow checkout.
+
+Status: proposed. Resolved: false. Blocks next change: true.
+Files: none. Command: node scripts/repo-audit.mjs measure --repo [fixture] --range HEAD^..HEAD --json.
+Principle: Only the exact requested revision range can establish the requested comparison.
+Consequence: Revision-bound change sizes, frequency and co-change evidence cannot be reported as measured.
+Fix: Provide the exact parent and needed history from an allowed local source before retrying HEAD^..HEAD. Do not access the configured origin outside the permitted roots.
+Scope: DESIGN.md, project.json, price.mjs, price.test.mjs, notes.md, rename.md, remove.md
+Verification: Resolve HEAD^ to 4c30913019f94a99eab09a7387a214ddd0ce12da in an authorized complete copy, then rerun the exact HEAD^..HEAD measurement and comparison.
+Sources: S-history
+
+
+## Proposed new principles
+
+
+## Selected findings
+
+
+## Limitations
+
+- Scope decision pending: dependent implementation recommendations, acceptance changes, write path selection, apply plans and before/after verification remain blocked.
+- Historical comparison unavailable: supply exact parent 4c30913019f94a99eab09a7387a214ddd0ce12da and required reachable history from a source within permitted roots; do not substitute another base. Existing origin is outside allowed filesystem scope and was not accessed.
+- Native test was captured directly as a read-only baseline, not through a selected change-kind run-checks plan. No findings-bound execution artifact or readiness proof is claimed.
+- The single public test establishes quote(3) = 36 only; no historical compatibility or changed contract is verified.
+- No project files changed; no selected changes, plan overlap, apply, vision rewrite or audit-record write.

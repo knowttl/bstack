@@ -1,0 +1,21 @@
+--- a/CONTRIBUTING.md
++++ b/CONTRIBUTING.md
+@@ -1,5 +1,4 @@
+-# Ledger standards
+-
+-External modules use the public ledger package.
+-The ledger owns entries and all balance calculations.
+-Use native Python checks and preserve balanced postings.
++# Ledger standards
++
++[Public ledger ownership](CODING_STANDARDS.md#public-ledger-ownership).
++Use native Python checks and preserve balanced postings.
+--- /dev/null
++++ b/CODING_STANDARDS.md
+@@ -0,0 +1,6 @@
++# Coding standards
++
++## Public ledger ownership
++
++External modules use the public ledger package.
++The ledger owns entries and all balance calculations.

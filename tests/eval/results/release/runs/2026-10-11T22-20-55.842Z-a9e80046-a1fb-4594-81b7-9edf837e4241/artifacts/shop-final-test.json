@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"run-checks","status":"usage-error","problems":[{"code":"unexpected-prior-run","message":"Only bug fixes and refactors use prior runs.","fix":"Omit --prior-run for this change kind."}],"data":{},"inputs":{}}

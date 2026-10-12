@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API shared fixture",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "CONTRIBUTING.md"
+      ],
+      "findings": "CONTRIBUTING.md establishes public-package access, ledger ownership of entries and balance calculations, native Python checks and balanced postings. No README, vision, design, glossary, prior audit, CI or instruction files are present. No conflicting intent was found.",
+      "limitations": [
+        "Main-thread research: the scoped repo has only a few small files; hand-off would be wasteful.",
+        "No external service is relevant; no external-language recommendation or external research was needed."
+      ],
+      "files": [
+        {
+          "location": "CONTRIBUTING.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "app.py",
+        "startup.py",
+        "ledger/__init__.py",
+        "ledger/book.py",
+        "ledger/_internal.py",
+        "boundaries.py"
+      ],
+      "findings": "Ledger cohesively owns posting, querying, transfer, reversal and import/export. Startup uses Ledger publicly and writes CSV stdout plus JSON output. app imports private amount despite the standard. Boundary analysis scans only app and ledger, checks two literal app imports, and resolves imports through find_spec; startup and other external callers are omitted. No domain-owner split is supported.",
+      "limitations": [
+        "Main-thread research: the scoped repo has only a few small files; hand-off would be wasteful.",
+        "No external service is relevant; no external-language recommendation or external research was needed."
+      ],
+      "files": [
+        {
+          "location": "app.py:2",
+          "state": {
+            "kind": "sha256",
+            "value": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972"
+          }
+        },
+        {
+          "location": "startup.py:15",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        },
+        {
+          "location": "ledger/book.py:21",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/book.py:81",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/__init__.py:3",
+          "state": {
+            "kind": "sha256",
+            "value": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+          }
+        },
+        {
+          "location": "boundaries.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        },
+        {
+          "location": "boundaries.py:27",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "pyproject.toml",
+        "uv.lock",
+        "test_ledger.py",
+        "boundaries.py"
+      ],
+      "findings": "Python 3.12 is required; Ruff 0.14.0 is pinned with E4,E7,E9,F. Prepared .venv provides Python 3.12.15 and Ruff 0.14.0. Two unittest cases use the public Ledger; neither directly checks startup output or failed-mutation atomicity. There is no maintained aggregate check command or type-check configuration.",
+      "limitations": [
+        "Main-thread research: the scoped repo has only a few small files; hand-off would be wasteful.",
+        "No external service is relevant; no external-language recommendation or external research was needed."
+      ],
+      "files": [
+        {
+          "location": "pyproject.toml:4",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "pyproject.toml:13",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "test_ledger.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        },
+        {
+          "location": "test_ledger.py:14",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"evidence validate","status":"blocked","problems":[{"code":"portable-source-mismatch","message":"Portable review must name the committed source; only its selected assessment may differ from HEAD.","fix":"Commit source changes and recollect portable review against the agreed base."}],"data":{},"inputs":{}}

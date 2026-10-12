@@ -1,0 +1,23 @@
+{
+  "command": [
+    "node",
+    "[isolated-home][scratch-path]",
+    "--repo",
+    "[isolated-home][scratch-path]",
+    "--base",
+    "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+    "--assessment",
+    "[isolated-home][scratch-path]",
+    "--json"
+  ],
+  "cwd": "[isolated-home][scratch-path]",
+  "exitCode": 0,
+  "stderr": "",
+  "isolation": {
+    "HOME": "[isolated-home][scratch-path]",
+    "XDG_CACHE_HOME": "[isolated-home][scratch-path]",
+    "TMPDIR": "[isolated-home][scratch-path]",
+    "npm_config_cache": "[isolated-home][scratch-path]"
+  },
+  "assessmentHash": "e604d34e06681effabdd9b85e4431616f2d11d71f80a6bfd591e279948c1748e"
+}

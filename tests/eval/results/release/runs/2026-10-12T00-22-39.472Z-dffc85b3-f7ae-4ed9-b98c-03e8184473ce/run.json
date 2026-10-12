@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-12T00-22-39.472Z-dffc85b3-f7ae-4ed9-b98c-03e8184473ce",
+  "createdAt": "2026-10-12T00:22:39.474Z",
+  "sourceRevision": "f5cddf67895920f323783b1ddbde63e5d8486e9d",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "os": "linux 6.8.0-142-generic",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.162.1"
+  },
+  "fixture": {
+    "name": "existing-vision-delta",
+    "path": "[fixture]",
+    "kind": "repo",
+    "revision": "8e436639af6ca78c93bb61e759d643c4f304bd66"
+  },
+  "scenario": {
+    "id": "existing-vision-delta",
+    "fixture": "existing-vision-delta",
+    "request": "Audit the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the audit finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
+    "answers": [
+      "Retain the existing vision as baseline. Local export of my own title, address and read status for personal backup fits. Accounts, sharing and recommendations remain excluded. Present the exact candidate line edits for review, with no project writes."
+    ],
+    "checkpoints": [
+      "foundation",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "delta",
+        "caseId": "AC-55",
+        "question": "Against docs/evaluation.md's existing-vision delta rubric, did it propose and review a minimal evidenced delta preserving the approved baseline and keep unavailable board approval blocked?"
+      }
+    ]
+  },
+  "criteriaHash": "f85c6d461bd51efd3c70bf33c58f0ff79777c0991548251052e09d081f2d45c8",
+  "stage": "final",
+  "mode": "without",
+  "request": "Active checkpoint: final.\nAudit the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the audit finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
+  "status": "passed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[scratch-path]",
+      "[scratch-path]",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": null,
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [],
+    "checkedAt": "2026-10-12T00:26:25.557Z",
+    "cleanedAt": "2026-10-12T00:26:25.578Z"
+  },
+  "transcript": "9c27400c-b7cf-4191-95b4-fc17ed877d55/transcript.txt",
+  "answers": "9c27400c-b7cf-4191-95b4-fc17ed877d55/answers.json",
+  "caseResults": [
+    {
+      "id": "delta",
+      "caseId": "AC-55",
+      "question": "Against docs/evaluation.md's existing-vision delta rubric, did it propose and review a minimal evidenced delta preserving the approved baseline and keep unavailable board approval blocked?",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 24,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "9c27400c-b7cf-4191-95b4-fc17ed877d55/transcript.txt"
+    }
+  ],
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"medium\"",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 1800000,
+    "outputLimitBytes": 16777216,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "sandbox_mode=\"danger-full-access\"",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "adapterHash": "1ac0dee108cc8b4fbc504a15450af49a844abb2c0bfd7a17579fbdb85ce7dcf0",
+  "turns": [
+    {
+      "message": "Active checkpoint: final.\nAudit the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the audit finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll read the approved vision, the portability decision, and accessible history, then present any material gap as a candidate delta for review without changing files.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g 'AGENTS.md' -g 'DESIGN.md' -g '*VISION*' -g '*vision*' -g '*README*' -g '*decision*' -g '*history*' -g '*checkpoint*'\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g 'AGENTS.md' -g 'DESIGN.md' -g '*VISION*' -g '*vision*' -g '*README*' -g '*decision*' -g '*history*' -g '*checkpoint*'\\\"\",\"aggregated_output\":\"[fixture]\\nDESIGN.md\\nVISION.md\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"rg --files --hidden -g '\\\"'!.git/**'\\\"'; cat DESIGN.md VISION.md; git status --short; git log -8 --format='%h %ad %s' --date=iso\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"rg --files --hidden -g '\\\"'!.git/**'\\\"'; cat DESIGN.md VISION.md; git status --short; git log -8 --format='%h %ad %s' --date=iso\\\"\",\"aggregated_output\":\"DESIGN.md\\nVISION.md\\nglossary.md\\n# Design\\n\\nThe approved stack is a local Node application with JSON persistence.\\nThe queue owns article state and exposes save, list and mark-read operations.\\nPresentation never writes storage directly.\\nPreserve article titles and addresses when marking an article read.\\n\\n# Approved portability decision\\n\\nThe owner approved local export of a reader's own saved articles, including title, address and read status.\\nExport is for personal backup, never accounts, sharing or recommendations.\\nThe existing vision lacks accept and resist criteria distinguishing local backup from sharing.\\nNo implementation or stack change is approved by this decision.\\n# Reading queue\\n\\nStatus: approved by the owner.\\nHelp one reader save articles and mark them read.\\nSuccess means a saved article can be found in the queue and marked read without losing its title or address.\\nAccounts, sharing and recommendations are outside the first version.\\nThere are no open product or stack decisions.\\n4e5e6b9 2026-01-02 12:00:00 +0000 docs: approve personal backup boundary\\ncdef266 2026-01-01 12:00:00 +0000 docs: approve local reading queue\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat glossary.md; git show --format=fuller --stat 4e5e6b9; git show 4e5e6b9 -- DESIGN.md VISION.md glossary.md; git show cdef266:VISION.md; git ls-files; git diff --exit-code'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat glossary.md; git show --format=fuller --stat 4e5e6b9; git show 4e5e6b9 -- DESIGN.md VISION.md glossary.md; git show cdef266:VISION.md; git ls-files; git diff --exit-code'\",\"aggregated_output\":\"# Glossary\\n\\n- Article: a saved title and address with a read status.\\n- Queue: the reader's saved articles, including read articles.\\n- Mark read: change an article's read status while preserving its title and address.\\ncommit 4e5e6b9ec5c22097dc947b1fedadd56b2f69e718\\nAuthor:     Fixture Author <fixture@example.invalid>\\nAuthorDate: Fri Jan 2 12:00:00 2026 +0000\\nCommit:     Fixture Author <fixture@example.invalid>\\nCommitDate: Fri Jan 2 12:00:00 2026 +0000\\n\\n    docs: approve personal backup boundary\\n\\n DESIGN.md | 12 +++++++++---\\n 1 file changed, 9 insertions(+), 3 deletions(-)\\ncommit 4e5e6b9ec5c22097dc947b1fedadd56b2f69e718\\nAuthor: Fixture Author <fixture@example.invalid>\\nDate:   Fri Jan 2 12:00:00 2026 +0000\\n\\n    docs: approve personal backup boundary\\n\\ndiff --git a/DESIGN.md b/DESIGN.md\\nindex f493ddc..4bd3ed6 100644\\n--- a/DESIGN.md\\n+++ b/DESIGN.md\\n@@ -1,7 +1,13 @@\\n # Design\\n \\n-The approved stack is a local Node application with a JSON file for persistence.\\n+The approved stack is a local Node application with JSON persistence.\\n The queue owns article state and exposes save, list and mark-read operations.\\n-Presentation uses the queue's public operations and never writes storage directly.\\n+Presentation never writes storage directly.\\n Preserve article titles and addresses when marking an article read.\\n-There are no open design decisions.\\n+\\n+# Approved portability decision\\n+\\n+The owner approved local export of a reader's own saved articles, including title, address and read status.\\n+Export is for personal backup, never accounts, sharing or recommendations.\\n+The existing vision lacks accept and resist criteria distinguishing local backup from sharing.\\n+No implementation or stack change is approved by this decision.\\n# Reading queue\\n\\nStatus: approved by the owner.\\nHelp one reader save articles and mark them read.\\nSuccess means a saved article can be found in the queue and marked read without losing its title or address.\\nAccounts, sharing and recommendations are outside the first version.\\nThere are no open product or stack decisions.\\nDESIGN.md\\nVISION.md\\nglossary.md\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_4\",\"type\":\"agent_message\",\"text\":\"The audit found a **material gap**: the approved vision covers saving and marking articles read, but omits the newer approved personal-backup capability and its accept/resist boundary.\\n\\nEvidence: commit `cdef266` (January 1, 2026) approved the current [VISION.md]([fixture]/VISION.md:3). Commit `4e5e6b9` (January 2) changed only DESIGN.md, approving local export of title, address and read status, and explicitly identifying the missing criteria. See [the portability decision]([fixture]/DESIGN.md:9).\\n\\n**Candidate delta for review — not applied:**\\n\\n> Help one reader save articles, mark them read, and locally export their own saved articles for personal backup.\\n>\\n> **Accept:** A reader can export their queue, including read articles, with each article’s title, address and read status preserved.\\n>\\n> **Resist:** Export must remain a personal-backup capability. Requests for accounts, sharing or recommendations fall outside this approval.\\n\\nThe important fault line is purpose and audience: a local copy of one reader’s own queue is approved; publishing or distributing that queue to others is sharing. Calling a sharing feature “export” would not bring it within scope. The glossary confirms that the queue includes read articles ([glossary.md]([fixture]/glossary.md:4)).\\n\\nThis candidate adds the missing product criteria without authorizing implementation, import/restore, synchronization or a stack change. The existing save/find/mark-read success criterion remains applicable.\\n\\n**Board interaction: blocked.** No board reference or applicable board connector was available, so board history, posting and review-state updates could not be completed. Evidence is limited to the local documents and Git history.\\n\\nNo files were changed; the approved vision remains intact.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":80582,\"cached_input_tokens\":64128,\"cache_write_input_tokens\":0,\"output_tokens\":804,\"reasoning_output_tokens\":51}}\n",
+        "stderr": "Reading additional input from stdin...\n",
+        "durationMs": 29507.741741,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 3059.6922669999994,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 29.881836000000476,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    },
+    {
+      "message": "Retain the existing vision as baseline. Local export of my own title, address and read status for personal backup fits. Accounts, sharing and recommendations remain excluded. Present the exact candidate line edits for review, with no project writes.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"Proposed edits to `VISION.md`, retaining its approved status and existing success criterion:\\n\\n```diff\\n-Help one reader save articles and mark them read.\\n+Help one reader save articles, mark them read, and locally export their own saved articles for personal backup.\\n Success means a saved article can be found in the queue and marked read without losing its title or address.\\n+Accept local export for personal backup when it preserves each saved article's title, address and read status, including read articles.\\n+Resist export features intended to share articles with others or provide accounts or recommendations.\\n Accounts, sharing and recommendations are outside the first version.\\n There are no open product or stack decisions.\\n```\\n\\nNo project writes were made. These are candidate wording edits for review; they do not authorize implementation or a stack change.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":109595,\"cached_input_tokens\":92160,\"cache_write_input_tokens\":0,\"output_tokens\":970,\"reasoning_output_tokens\":51}}\n",
+        "stderr": "",
+        "durationMs": 8356.274141,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 638.1259660000001,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 20.488369000000034,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    }
+  ],
+  "nextAnswer": 2,
+  "sessionId": "[identifier]",
+  "conversation": "conversation.txt",
+  "resourcePreflight": {
+    "source": "host aggregate",
+    "clientHash": "2ba1e3f1753039d8ed34a284ba84f7d5ff30bfedd27ce84a0af87a0c02f275a9",
+    "checks": [
+      {
+        "source": "host",
+        "checkedAt": "2026-10-12T00:22:39.538Z",
+        "availableMemoryBytes": 17347481600,
+        "freeDiskBytes": 22457012224,
+        "load1m": 30.05,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      },
+      {
+        "source": "host",
+        "checkedAt": "2026-10-12T00:24:57.755Z",
+        "availableMemoryBytes": 18238455808,
+        "freeDiskBytes": 24357625856,
+        "load1m": 8.23,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      }
+    ]
+  },
+  "authenticatedVia": "throwaway copy",
+  "execution": {
+    "method": "docker",
+    "image": "bstack-eval-toolchain:node24-codex0.162.1",
+    "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+    "recipeHash": "3ba3f242862014f26c614cb060d1d4bfe8c01439d2f4b6518eeb181a05e83412",
+    "turns": [
+      {
+        "name": "bstack-eval-bff87240-1f07-4282-a43e-f0505f4279ee",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-12T00:23:18.096Z"
+      },
+      {
+        "name": "bstack-eval-fb9808c9-32cd-4272-b888-468705f35cb1",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-12T00:25:07.342Z"
+      }
+    ],
+    "toolchain": {
+      "node": "v24.17.0",
+      "git": "git version 2.54.0",
+      "npm": "11.13.0",
+      "agent": "codex-cli 0.162.1"
+    }
+  },
+  "scopeGuard": {
+    "version": 3,
+    "advisory": true,
+    "verified": true,
+    "paths": []
+  },
+  "conversationHash": "5e17efd7a606351e5213f5ee41e1a6a437b28e54f52b00421300cd0ba3abf101",
+  "scoredAt": "2026-10-12T00:26:25.610Z"
+}

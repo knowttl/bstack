@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "bug-fix",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "total",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Checkout returns status 201 and total 10 over real HTTP",
+      "userJourney": true
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "UI never imports storage; use public core interface",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "types",
+      "role": "protection",
+      "command": {
+        "executable": "[isolated-home][scratch-path]",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md"
+      ]
+    },
+    {
+      "id": "units",
+      "role": "protection",
+      "command": {
+        "executable": "[isolated-home][scratch-path]",
+        "args": [
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "total"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "reproduction",
+      "command": {
+        "executable": "[isolated-home][scratch-path]",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "total"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "protection",
+      "command": {
+        "executable": "[isolated-home][scratch-path]",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md"
+      ]
+    }
+  ]
+}

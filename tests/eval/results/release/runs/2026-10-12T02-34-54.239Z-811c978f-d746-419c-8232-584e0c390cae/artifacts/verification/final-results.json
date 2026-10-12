@@ -1,0 +1,35 @@
+{
+  "status": "complete",
+  "assessmentCommit": "5f38849441d0a2035162f54bb6a71bf284575759",
+  "portableSourceHead": "c1300389bdfb125e73403605284d35f3ea004a45",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "assessmentSha256": "63d491767560ef0c86c01873ef5f874a4cd8084dc44143334197d6ca348ad4ac",
+  "fingerprint": "8cf46a0dc5b37879bf1e5f91fb12db5d3202139a1a8f5f1c53fae275a0002edf",
+  "approvedRecord": "applied unchanged",
+  "commitChangedPaths": [
+    ".bstack/assessment.json"
+  ],
+  "checks": {
+    "local": {
+      "status": "passed",
+      "previousPolicy": "passed",
+      "native": "passed",
+      "resourceGates": 5,
+      "artifact": "[isolated-home][scratch-path]",
+      "previousPolicyArtifact": "[isolated-home][scratch-path]"
+    },
+    "clean": {
+      "status": "passed",
+      "previousPolicy": "passed",
+      "native": "passed",
+      "resourceGates": 5,
+      "artifact": "[isolated-home][scratch-path]",
+      "previousPolicyArtifact": "[isolated-home][scratch-path]"
+    }
+  },
+  "preservation": "All other tracked files match approved prewrite hashes, including original quote and checkout cases, user note and historical snapshot.",
+  "workingCheckout": "clean",
+  "cleanClone": "clean",
+  "cleanCloneRoot": "[isolated-home][scratch-path]",
+  "furtherProtectedWrites": "none"
+}

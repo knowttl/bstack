@@ -1,0 +1,91 @@
+# Package-current final comparisons
+
+The native-environment instruction changes the installed package input, so earlier with-skill captures require refresh while matching without-skill baselines remain reusable.
+This report lists comparisons captured with that repaired instruction; earlier successful runs remain history.
+
+The [Python comparison](existing-repo-python-comparison.json) passes 4/4 against the retained 3/4 baseline, using the discovered prepared interpreter and Ruff without an environment hint in the request.
+The [native-environment report](native-environment-repair.md) retains exact tool versions, original artifacts and independent checks.
+
+The [ambiguity comparison](ambiguous-idea-comparison.json) passes 1/1 in both modes.
+The [current installed conversation](runs/2026-10-11T23-44-17.196Z-2e3af74d-504f-4f8a-ab7d-86ca625f0244/conversation.txt), lines 14–25, asks the offline-access question, explains the brief's two alternatives after the undecided answer and blocks foundation selection.
+Independent byte comparison confirms the fixture still contains only the original unchanged brief, with no selected stack or project write.
+
+The [runtime-independence comparison](runtime-independence-comparison.json) passes 1/1 with the package against the retained 0/1 baseline.
+The [current installed conversation](runs/2026-10-11T23-44-17.312Z-30c27023-b1a0-45e7-8356-e0e348f0a517/conversation.txt), lines 7–28, records actual unavailable-command checks and completes the bounded package audit without other skills or delivery services.
+The first scratch findings validation fails on scope, is corrected in scratch and then passes; the failure remains visible in the trace.
+All three tracked authorities remain unchanged, and absent implementation checks leave product readiness unverified.
+Ten audit artifacts retain original and published hashes.
+
+The [verification-limitations comparison](verification-limitations-precondition-comparison.json) passes 3/3 in both modes.
+The [current installed conversation](runs/2026-10-11T23-52-14.471Z-6a5b5c5a-d2cf-4b9e-8787-3194f2f3935e/conversation.txt), lines 7–25, records actual npm unit execution with two passes, zero failures and exit zero, followed by an unavailable curl command and a bounded Python GET that fails with connection refused.
+The browser flow and dependent service remain unverified; the costly billing POST remains unexecuted pending approval.
+Independent byte comparison confirms all 21 tracked files unchanged, and nine scratch artifacts retain original and published hashes.
+
+The [scope-and-prerequisites comparison](scope-and-prerequisites-comparison.json) passes 2/2 in both modes.
+The [current installed conversation](runs/2026-10-11T23-52-11.496Z-7b2b53d5-fe50-4bee-b37b-8f19f87755b4/conversation.txt), lines 27–64, records the actual inaccessible parent, blocked history measurement and scope question without selecting a write path.
+An independent Git check confirms the repository is shallow and resolving HEAD^ exits 128.
+The actual current public unit passes, while historical comparison remains blocked.
+Two scratch findings validation failures precede a corrected valid blocked assessment and remain visible in the trace.
+All seven tracked files remain unchanged, and eleven scratch artifacts retain original and published hashes.
+
+The [implicit-invocation comparison](implicit-invocation-comparison.json) passes 1/1 in both modes.
+The [current installed conversation](runs/2026-10-11T23-56-02.350Z-86f06e3c-6f0e-42aa-9b08-db23dd889b94/conversation.txt), lines 1–28, audits the three project documents and acknowledges the scripted instruction without starting repo-audit.
+Independent review of all five completed commands confirms no repo-audit procedure, references or helpers were opened or run.
+Reading a nested dependency's separate skill does not invoke repo-audit.
+All three tracked authority files remain byte-identical and the working tree is clean.
+
+The [maintenance comparison](maintenance-comparison.json) passes 2/2 in both modes.
+The [current installed conversation](runs/2026-10-11T23-56-05.675Z-0c7c0fb7-8198-4f75-9640-d4d0b49a64f6/conversation.txt), lines 7–77, retains the bounded route refactor, before/after protection, substantive no-impact review and fresh local and different-root checker executions.
+Independent verification checks sixteen literal citations, unchanged authorities, historical snapshot, contract, checker and original tests, plus clean source and clone trees with identical submitted heads and assessment bytes.
+Only the route and separately committed assessment change; no interview or full audit is repeated.
+The implementation is `9009fe97e495bb316de45cf203996fd31405ebfe`, the submitted assessment is `e6366d129b018058effbdeeae7cdcf2379d0cd73` and the explicit base remains `37864dacc088867c4aeeb0cd18275aa98b0c0a0b`.
+Seventy-four artifacts retain original and published hashes, including original native captures and both fresh checker results.
+Preparation failures were corrected before final successful verification and remain visible; renderer and hosted checks remain outside the required native evidence.
+
+The [TypeScript discovery comparison](research-main-typescript-comparison.json) passes 3/3 with the package against a fresh 0/3 baseline.
+The [baseline conversation](runs/2026-10-11T23-59-20.195Z-b3df9a3f-8bb2-41b0-bd6a-dfff0defdcdf/conversation.txt), lines 5–12, stops when the required briefs, schema and helper are absent; no report or native checks are claimed.
+The [installed conversation](runs/2026-10-12T00-00-18.664Z-b99ce706-296e-4cbf-8bce-fb9dc30600dc/conversation.txt), lines 6–40, completes all five briefs sequentially in the main thread, opens cited sources and runs the shipped cite-check successfully before reporting the result.
+Independent checks verify all 51 source citation hashes and locations against actual opened files and confirm five ordered briefs, disabled subagents, unavailable web research and no web citations.
+Both fixture trees retain all 21 tracked files byte-identically; the with-skill record preserves four scratch artifacts with original and published hashes.
+No native product checks or measurements run at this discovery checkpoint, and language/outside recommendations remain explicitly not researched under the author's network constraint.
+
+The [Python discovery comparison](research-main-python-comparison.json) passes 3/3 with the package against a fresh 0/3 baseline.
+The [baseline conversation](runs/2026-10-12T00-05-31.655Z-a2ad260b-af0a-428a-8e0a-d5fdfcce6348/conversation.txt), lines 5–14, records unavailable briefs, schema and cite-check without claiming completed dependent work.
+The [installed conversation](runs/2026-10-12T00-05-31.637Z-626c3b95-29a8-40ca-ae6a-75e2761e507d/conversation.txt), lines 6–45, completes all five sequential briefs and successfully checks 53 file citations before presenting the report.
+Independent verification checks all source hashes and citation locations against actually opened files, the report's disabled-subagent and unavailable-web capabilities, and explicit not-researched language/outside recommendations.
+Both fixtures retain all eleven tracked files unchanged; four with-skill scratch artifacts retain original and published hashes.
+No product checks, web research or measurements are claimed.
+
+The [repeat-audit comparison](final-repeat-audit-comparison.json) passes 1/1 in both modes.
+The [installed conversation](runs/2026-10-12T00-07-10.631Z-a38a5576-9f0f-4918-a8fd-f2f1d026e697/conversation.txt), lines 7–30, reuses the maintained authorities, captures passing native constraints and real HTTP checkout and leaves both exact notes untouched.
+Independent verification confirms all 29 tracked paths: the only difference from committed bytes is the original uncommitted export sentence, and the head remains the baseline's maintained commit.
+Fifty-eight scratch artifacts retain original and published hashes.
+The current portable assessment correctly remains blocked by the new source bytes; the fresh isolated clean-clone checker verifies the prior committed baseline, so its success does not establish current-tree portable readiness.
+The evidenced no-op neither duplicates rules nor reopens intent, erases the note or commits user work.
+
+The [maintained-project maintenance comparison](final-maintained-maintenance-comparison.json) passes 2/2 with the package against the retained 0/2 baseline.
+The [installed conversation](runs/2026-10-12T00-09-05.843Z-9edc9bf5-e921-4091-afdc-b33eedaaa4ee/conversation.txt), lines 7–54, captures original public protection before naming an intermediate subtotal, then repeats the native checks and substantive no-impact assessment with fresh local and isolated clean-clone checkers.
+Independent checks verify six literal citations, unchanged approved authorities, both notes, original acceptance/tests, historical snapshot, contract/checker and the complete prior foundation record.
+The only implementation path is packages/core/internal/database.ts; multiplication order, quantity factor, exports, storage effects and returned order shape are preserved.
+The explicit base is the baseline's identical fixture-author commit `156e8342bc33bb6ce7c7713c4df1735eeb13aa05`, the implementation is `753df024db225bde16ea88cf5112d5aaa1dfb8b8`, and the separately committed assessment is `d6ef3546b8ffc9d956dc1d9572b2be0f09ac4200`.
+Eighty-two artifacts retain original and published hashes, including before/final-after captures and two fresh checker results.
+Corrected preparation and validation failures remain visible; the final required checks pass, and no interview, full audit or delivery service is started.
+
+The [clear-goals final comparison](clear-goals-comparison.json) passes 2/2 in both modes.
+The [baseline conversation](runs/2026-10-12T00-16-39.505Z-c5f6296f-448a-409f-a281-b6747c9e2bfd/conversation.txt), lines 6–34, and [installed conversation](runs/2026-10-12T00-18-47.498Z-fe6cc908-216b-45da-8619-c866d1adb964/conversation.txt), lines 7–71, reuse the explicitly approved project vision, design and vocabulary without asking the owner to repeat settled goals.
+Both final-stage captures complete the two ordered scripted replies and recommend checks tied to the approved save/list/mark-read journey, persistence and storage ownership.
+Independent command review confirms the installed run never opens the vision procedure, intent-interview or domain-language reference; opening the project's own approved VISION.md supplies existing authority rather than restarting that procedure.
+Both fixtures retain all three tracked documents unchanged; ten with-skill scratch artifacts preserve original and published hashes.
+The installed run's corrected scratch scope validation remains visible, and absent implementation leaves product readiness blocked.
+An accidentally started foundation-stage baseline was closed after its opening turn and retained as unselected history; only the subsequent final-stage pair is release evidence.
+
+The [existing-vision delta comparison](existing-vision-delta-comparison.json) passes 1/1 in both modes under the candidate-delta rubric in docs/evaluation.md.
+The [baseline conversation](runs/2026-10-12T00-22-39.472Z-dffc85b3-f7ae-4ed9-b98c-03e8184473ce/conversation.txt), lines 6–24, and [installed conversation](runs/2026-10-12T00-25-52.070Z-7ab1794f-12af-412e-b7f3-670502acd871/conversation.txt), lines 19–77, establish the newer approved backup decision from design and accessible history, then present exact candidate edits preserving the existing product commitments and exclusions.
+The installed run discovers that material gap before opening vision guidance and reviews the concrete backup-versus-sharing fault line, incorporating the scripted author's reasoning without project writes.
+Board build and launch succeed, but no browser feedback or exact-revision approval is received; those steps remain explicitly blocked and are not credited as completed board interaction.
+Independent checks confirm the candidate preserves every approved baseline line and both fixture trees remain byte-identical.
+Twenty-three installed artifacts retain original and published hashes, including the complete board scratch, candidate, proposals, transcript and blocked audit record.
+Absent product implementation leaves runtime readiness unverified.
+
+All current captures retain complete ordered conversations and exact scores; login, owned-container and final isolated-home cleanup are recorded by the harness.
+Other scenario refreshes remain pending.

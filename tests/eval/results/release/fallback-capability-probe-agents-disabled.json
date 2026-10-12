@@ -1,0 +1,105 @@
+{
+  "purpose": "Capture-only capability probe; not scored acceptance evidence",
+  "candidate": [
+    "--disable",
+    "multi_agent_v2",
+    "--disable",
+    "multi_agent_v2_dynamic_tools",
+    "-c",
+    "agents.enabled=false"
+  ],
+  "sourceRevision": "e1c57a4068d99816552db07c9ba8aaaf834c70d4",
+  "adapterHash": "34b8a1f4a85eb0ec00057ef3ae58df3037478b683c078c39bc69b816ce4b2275",
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"medium\"",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "multi_agent_v2_dynamic_tools",
+      "-c",
+      "agents.enabled=false",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 1800000,
+    "outputLimitBytes": 16777216,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "sandbox_mode=\"danger-full-access\"",
+        "--disable",
+        "multi_agent",
+        "--disable",
+        "multi_agent_v2",
+        "--disable",
+        "multi_agent_v2_dynamic_tools",
+        "-c",
+        "agents.enabled=false",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "nativeSessions": [
+    {
+      "sha256": "73502f0df85480c052314e7a18c0630e6d29b334f6d93efae8cc89960d0772e7",
+      "spawnAgentDeclared": false,
+      "toolCalls": 0
+    }
+  ],
+  "agent": "codex-cli 0.162.1",
+  "scopeGuard": {
+    "version": 2,
+    "verified": true,
+    "paths": []
+  },
+  "conversation": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"The `spawn_agent` tool is not available to me in this session.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":12741,\"cached_input_tokens\":11392,\"cache_write_input_tokens\":0,\"output_tokens\":54,\"reasoning_output_tokens\":33}}\n",
+  "loginDeleted": true,
+  "homeDeleted": true
+}

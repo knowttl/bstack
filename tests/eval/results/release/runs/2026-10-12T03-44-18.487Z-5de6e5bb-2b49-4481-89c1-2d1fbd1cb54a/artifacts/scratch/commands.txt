@@ -1,0 +1,18 @@
+Base selected before edits: git rev-parse HEAD -> 37864dacc088867c4aeeb0cd18275aa98b0c0a0b
+Installed CLI: [isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs
+Target: [fixture]
+Capture prefix: [isolated-home][scratch-path]
+All suite runs preceded by node "$BSTACK_EVAL_PREFLIGHT"; final after capture and standalone invocations additionally use scratch bin/npm wrapper for fresh preflight on each npm run check.
+run-checks --repo [fixture] --plan [isolated-home][scratch-path] --phase before --json -> before.json
+run-checks --repo [fixture] --plan [isolated-home][scratch-path] --phase after --prior-run 7bf110f3-cdc3-4cb9-8861-bde1a4fb552b --json -> after-final.json
+Native leaf command in both phases and standalone checkers: npm run check (npm --version probe); execution stdout, stderr, exit codes, times and input state in captures/artifacts.
+contract validate --repo [fixture] --contract .bstack/project.json --json -> contract.json
+Evidence collection: evidence collect --repo [fixture] --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --portable .bstack/assessment.json --json -> final-collect.json
+Document checks: docs check / docs generate --check, each --repo [fixture] --json -> docs-check.json / docs-generate.json
+Final local validation: evidence validate --repo [fixture] --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json -> evidence-final.json
+Protected apply uses refactor-plan.json, assessment-plan.json, assessment-bind-plan.json, each with a dry-run preview and unchanged subsequent application; results captured under matching preview/apply filenames.
+Standalone command in each checkout: node .bstack/bin/bstack-check.mjs --repo . --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json
+Local working directory: [fixture]; HOME=.../ts-shop-maintenance/home; XDG_CACHE_HOME=.../ts-shop-maintenance/cache; npm_config_cache=.../ts-shop-maintenance/npm-cache -> local-checker.json
+Clone working directory: [isolated-home][scratch-path]; HOME=.../ts-shop-maintenance/clone-home; XDG_CACHE_HOME=.../ts-shop-maintenance/clone-cache; npm_config_cache=.../ts-shop-maintenance/clone-npm-cache; TMPDIR=.../ts-shop-maintenance/clone-tmp -> clone-checker.json
+Clone preparation: git clone --no-local [fixture] [isolated-home][scratch-path] -> clone.log; npm ci --prefix [isolated-home][scratch-path] (isolated clone home/npm cache) -> clone-npm-ci.log; exit 0.
+Final checkers each ran native once freshly, leaf exit 0. No checker or contract change; previous-policy checker replay is not triggered.

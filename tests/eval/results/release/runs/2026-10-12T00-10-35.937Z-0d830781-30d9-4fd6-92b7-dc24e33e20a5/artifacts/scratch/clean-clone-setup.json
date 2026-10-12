@@ -1,0 +1,19 @@
+{
+  "command": [
+    "npm",
+    "ci",
+    "--ignore-scripts",
+    "--cache",
+    "[isolated-home][scratch-path]"
+  ],
+  "cwd": "[isolated-home][scratch-path]",
+  "exitCode": 0,
+  "stdout": "\nadded 3 packages, and audited 6 packages in 980ms\n\nfound 0 vulnerabilities\n",
+  "stderr": "npm notice\nnpm notice New major version of npm available! 11.13.0 -> 12.2.0\nnpm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0\nnpm notice To update run: npm install -g npm@12.2.0\nnpm notice\n",
+  "isolation": {
+    "HOME": "[isolated-home][scratch-path]",
+    "XDG_CACHE_HOME": "[isolated-home][scratch-path]",
+    "TMPDIR": "[isolated-home][scratch-path]",
+    "npm_config_cache": "[isolated-home][scratch-path]"
+  }
+}

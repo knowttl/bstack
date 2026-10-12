@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "representative-pricing",
+  "writePaths": [
+    "packages/core/internal/database.ts",
+    "packages/core/index.ts",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts"
+  ],
+  "contracts": [
+    {
+      "id": "public-core",
+      "files": [
+        "packages/core/index.ts"
+      ]
+    }
+  ]
+}

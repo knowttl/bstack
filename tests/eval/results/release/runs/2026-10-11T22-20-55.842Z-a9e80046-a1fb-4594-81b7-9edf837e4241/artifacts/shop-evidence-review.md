@@ -1,0 +1,15 @@
+# Remaining exact evidence writes
+
+The approved 17-edit implementation is already applied unchanged. The only remaining proposed project writes are docs/repo-audit.md and .bstack/assessment.json. This combined review supersedes the pending snapshot-only review.
+
+The historical snapshot names observed parent b6c59b7810f5155fd514c9db60e98b7dffce0cc0 with reviewed uncommitted implementation; it records original failures, applied checks, owner decisions and remaining verification at its capture. It is never a current readiness authority and will not be rewritten after checker runs.
+
+The portable assessment records all 18 implementation paths including that snapshot, all three authoritative documents, all four maintained rules and no unmapped paths. It distinguishes purchase Order from Panel order, preserves total10 and quote12, and cites the separate recorded owner approval. Its explicit source is prospective implementation commit df0289b0424e4920a94ae80a38aa1141a1a11cda against base b6c59b7810f5155fd514c9db60e98b7dffce0cc0. Implementation bytes and parent are fixed, so that object was produced in the disposable proposal. The main checkout must reproduce that source object before assessment validation.
+
+The complete unchanged checker passes on this exact committed proposal assessment in scratch and in a fresh different-root clean clone with isolated home/cache. The portable assessment has no saved execution references: the checker supplies fresh execution on each invocation. Those successful proposal results do not establish final target readiness.
+
+After exact-byte approval: protected apply creates these two files; commit only the 18 implementation paths (exclude assessment) with the reviewed message/identity/date used in the proposal, and verify source object df0289b0424e4920a94ae80a38aa1141a1a11cda. Recollect portable coverage and validate semantic claims, bind/check its unchanged fingerprint, then commit assessment alone. Freshly invoke the maintained standalone checker in the target and another different-root clean clone with isolated home/cache, unchanged committed assessment and explicit base. Preserve final current-head findings/readiness in scratch. Stop after full-path evidence; no re-audit, extension, CI or delivery work.
+
+Current target remains b6c59b7810f5155fd514c9db60e98b7dffce0cc0 with applied uncommitted changes and the exact preserved user note. All seven independent native/aggregate controls pass, including the seeded endpoint12 failure against unchanged expected10. Type/unit/boundary and actual public-UI loopback journey pass on applied bytes.
+
+The before and final native captures retain the original expectations; automatic prior-run pairing was rejected because the maintained design source bytes changed. This is not described as automatic paired proof. The correction changes the endpoint fixture under explicit owner verdict, not checkout's expectation or business pricing policy. Existing public compatibility captures before and after remain independently available for semantic review.

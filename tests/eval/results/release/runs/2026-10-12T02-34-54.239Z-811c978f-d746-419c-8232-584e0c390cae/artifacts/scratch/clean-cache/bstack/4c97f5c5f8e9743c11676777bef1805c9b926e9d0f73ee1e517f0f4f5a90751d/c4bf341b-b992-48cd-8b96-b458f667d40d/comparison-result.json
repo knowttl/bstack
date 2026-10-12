@@ -1,0 +1,557 @@
+{
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "base": {
+      "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+      "kind": "commit",
+      "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+    },
+    "head": "d9c221614b4c821944e4ffd35115a05cda797994",
+    "changes": [
+      {
+        "source": "committed",
+        "status": "M",
+        "path": ".bstack/project.json"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "AGENTS.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "DESIGN.md"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "packages/web/public.ts"
+      },
+      {
+        "source": "committed",
+        "status": "M",
+        "path": "unit.test.mjs"
+      }
+    ],
+    "paths": [
+      ".bstack/project.json",
+      "AGENTS.md",
+      "DESIGN.md",
+      "packages/web/public.ts",
+      "unit.test.mjs"
+    ],
+    "mappings": [
+      {
+        "path": ".bstack/project.json",
+        "scopeIds": [
+          "maintained-repo"
+        ],
+        "documentIds": [
+          "design",
+          "language",
+          "guidance"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout-total",
+          "quote",
+          "acyclic",
+          "completion"
+        ]
+      },
+      {
+        "path": "AGENTS.md",
+        "scopeIds": [
+          "maintained-repo"
+        ],
+        "documentIds": [
+          "design",
+          "language",
+          "guidance"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout-total",
+          "quote",
+          "acyclic",
+          "completion"
+        ]
+      },
+      {
+        "path": "DESIGN.md",
+        "scopeIds": [
+          "maintained-repo"
+        ],
+        "documentIds": [
+          "design",
+          "language",
+          "guidance"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout-total",
+          "quote",
+          "acyclic",
+          "completion"
+        ]
+      },
+      {
+        "path": "packages/web/public.ts",
+        "scopeIds": [
+          "maintained-repo"
+        ],
+        "documentIds": [
+          "design",
+          "language",
+          "guidance"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout-total",
+          "quote",
+          "acyclic",
+          "completion"
+        ]
+      },
+      {
+        "path": "unit.test.mjs",
+        "scopeIds": [
+          "maintained-repo"
+        ],
+        "documentIds": [
+          "design",
+          "language",
+          "guidance"
+        ],
+        "ruleIds": [
+          "public-core",
+          "checkout-total",
+          "quote",
+          "acyclic",
+          "completion"
+        ]
+      }
+    ],
+    "candidateDocuments": [
+      {
+        "id": "design",
+        "path": "DESIGN.md"
+      },
+      {
+        "id": "language",
+        "path": "glossary.md"
+      },
+      {
+        "id": "guidance",
+        "path": "AGENTS.md"
+      }
+    ],
+    "unmappedPaths": [],
+    "policies": [
+      {
+        "contract": {
+          "schemaVersion": 1,
+          "documents": [
+            {
+              "id": "design",
+              "path": "DESIGN.md"
+            },
+            {
+              "id": "language",
+              "path": "glossary.md"
+            },
+            {
+              "id": "guidance",
+              "path": "AGENTS.md"
+            },
+            {
+              "id": "audit-snapshot",
+              "path": "docs/repo-audit.md"
+            }
+          ],
+          "scopes": [
+            {
+              "id": "maintained-repo",
+              "paths": [
+                "**"
+              ],
+              "documentIds": [
+                "design",
+                "language",
+                "guidance"
+              ],
+              "ruleIds": [
+                "public-core",
+                "checkout-total",
+                "quote",
+                "acyclic",
+                "completion"
+              ]
+            },
+            {
+              "id": "historical-audit",
+              "paths": [
+                "docs/repo-audit.md"
+              ],
+              "documentIds": [
+                "audit-snapshot"
+              ],
+              "ruleIds": []
+            }
+          ],
+          "rules": [
+            {
+              "id": "public-core",
+              "path": "DESIGN.md",
+              "pointer": "The UI never touches storage.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "checkout-total",
+              "path": "DESIGN.md",
+              "pointer": "The agreed checkout total is 10.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "quote",
+              "path": "DESIGN.md",
+              "pointer": "A selected quantity defaults to one: `quote() = 12` and `quote(2) = 24`.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "acyclic",
+              "path": "DESIGN.md",
+              "pointer": "Static import and re-export dependencies must be acyclic.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "completion",
+              "path": "DESIGN.md",
+              "pointer": "A change is complete when affected journeys and required checks pass on the final inputs; passing units alone does not establish completion.",
+              "checkIds": [
+                "native"
+              ]
+            }
+          ],
+          "checks": [
+            {
+              "id": "native",
+              "command": {
+                "executable": "npm",
+                "args": [
+                  "run",
+                  "check"
+                ],
+                "cwd": ".",
+                "versionArgs": [
+                  "--version"
+                ]
+              },
+              "inputScopes": [
+                "packages/**",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json",
+                "unit.test.mjs",
+                "journey.mjs",
+                "boundaries.mjs",
+                "AGENTS.md",
+                "DESIGN.md",
+                "glossary.md",
+                ".bstack/project.json",
+                ".bstack/bin/bstack-check.mjs",
+                "docs/repo-audit.md"
+              ]
+            }
+          ],
+          "generators": [],
+          "acceptanceSources": [
+            {
+              "id": "checkout",
+              "path": "DESIGN.md",
+              "pointer": "The agreed checkout total is 10."
+            },
+            {
+              "id": "quote",
+              "path": "DESIGN.md",
+              "pointer": "A selected quantity defaults to one: `quote() = 12` and `quote(2) = 24`."
+            }
+          ]
+        },
+        "path": ".bstack/project.json"
+      },
+      {
+        "path": ".bstack/project.json",
+        "contract": {
+          "schemaVersion": 1,
+          "documents": [
+            {
+              "id": "design",
+              "path": "DESIGN.md"
+            },
+            {
+              "id": "language",
+              "path": "glossary.md"
+            },
+            {
+              "id": "guidance",
+              "path": "AGENTS.md"
+            },
+            {
+              "id": "audit-snapshot",
+              "path": "docs/repo-audit.md"
+            }
+          ],
+          "scopes": [
+            {
+              "id": "maintained-repo",
+              "paths": [
+                "**"
+              ],
+              "documentIds": [
+                "design",
+                "language",
+                "guidance"
+              ],
+              "ruleIds": [
+                "public-core",
+                "checkout-total",
+                "quote",
+                "acyclic",
+                "completion"
+              ]
+            },
+            {
+              "id": "historical-audit",
+              "paths": [
+                "docs/repo-audit.md"
+              ],
+              "documentIds": [
+                "audit-snapshot"
+              ],
+              "ruleIds": []
+            }
+          ],
+          "rules": [
+            {
+              "id": "public-core",
+              "path": "DESIGN.md",
+              "pointer": "The UI never touches storage.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "checkout-total",
+              "path": "DESIGN.md",
+              "pointer": "The agreed checkout total is 10.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "quote",
+              "path": "DESIGN.md",
+              "pointer": "Quote remains 12.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "acyclic",
+              "path": "DESIGN.md",
+              "pointer": "Static import and re-export dependencies must be acyclic.",
+              "checkIds": [
+                "native"
+              ]
+            },
+            {
+              "id": "completion",
+              "path": "DESIGN.md",
+              "pointer": "A change is complete when affected journeys and required checks pass on the final inputs; passing units alone does not establish completion.",
+              "checkIds": [
+                "native"
+              ]
+            }
+          ],
+          "checks": [
+            {
+              "id": "native",
+              "command": {
+                "executable": "npm",
+                "args": [
+                  "run",
+                  "check"
+                ],
+                "cwd": ".",
+                "versionArgs": [
+                  "--version"
+                ]
+              },
+              "inputScopes": [
+                "packages/**",
+                "package.json",
+                "package-lock.json",
+                "tsconfig.json",
+                "unit.test.mjs",
+                "journey.mjs",
+                "boundaries.mjs",
+                "AGENTS.md",
+                "DESIGN.md",
+                "glossary.md",
+                ".bstack/project.json",
+                ".bstack/bin/bstack-check.mjs",
+                "docs/repo-audit.md"
+              ]
+            }
+          ],
+          "generators": [],
+          "acceptanceSources": [
+            {
+              "id": "checkout",
+              "path": "DESIGN.md",
+              "pointer": "The agreed checkout total is 10."
+            },
+            {
+              "id": "quote",
+              "path": "DESIGN.md",
+              "pointer": "Quote remains 12."
+            }
+          ]
+        }
+      }
+    ],
+    "previousContract": ".bstack/project.json",
+    "requiredCheckIds": [
+      "native"
+    ],
+    "requiredChecks": [
+      {
+        "id": "native",
+        "command": {
+          "executable": "npm",
+          "args": [
+            "run",
+            "check"
+          ],
+          "cwd": ".",
+          "versionArgs": [
+            "--version"
+          ]
+        },
+        "inputScopes": [
+          "packages/**",
+          "package.json",
+          "package-lock.json",
+          "tsconfig.json",
+          "unit.test.mjs",
+          "journey.mjs",
+          "boundaries.mjs",
+          "AGENTS.md",
+          "DESIGN.md",
+          "glossary.md",
+          ".bstack/project.json",
+          ".bstack/bin/bstack-check.mjs",
+          "docs/repo-audit.md"
+        ]
+      }
+    ],
+    "fingerprint": "edadc72f44b1cf886ee65e4d8ab5358522186b4b35b035df00e1ed0a6848c85f",
+    "limitations": [
+      "Structural validation cannot prove that explanations or document deltas agree semantically with code, or authenticate owner approval. The selected review process must assess these claims.",
+      "Local execution records are not authenticated portable attestations. Captures cover declared inputs only; transient changes restored before capture completion are not detected."
+    ],
+    "coverageLimits": [
+      {
+        "path": "DESIGN.md",
+        "reason": "Inline code and escaped Markdown require renderer review."
+      },
+      {
+        "path": "AGENTS.md",
+        "reason": "Inline code and escaped Markdown require renderer review."
+      },
+      {
+        "path": "docs/repo-audit.md",
+        "reason": "Inline code and escaped Markdown require renderer review."
+      }
+    ],
+    "phase": "previous-policy",
+    "startedAt": "2026-10-12T02:38:37.995Z",
+    "completedAt": "2026-10-12T02:38:41.454Z",
+    "sourceRevision": "c1300389bdfb125e73403605284d35f3ea004a45",
+    "comparison": {
+      "source": "d9c221614b4c821944e4ffd35115a05cda797994",
+      "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+      "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+    },
+    "checks": [
+      {
+        "check": {
+          "id": "native",
+          "command": {
+            "executable": "npm",
+            "args": [
+              "run",
+              "check"
+            ],
+            "cwd": ".",
+            "versionArgs": [
+              "--version"
+            ]
+          },
+          "inputScopes": [
+            "packages/**",
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "unit.test.mjs",
+            "journey.mjs",
+            "boundaries.mjs",
+            "AGENTS.md",
+            "DESIGN.md",
+            "glossary.md",
+            ".bstack/project.json",
+            ".bstack/bin/bstack-check.mjs",
+            "docs/repo-audit.md"
+          ]
+        },
+        "execution": {
+          "status": "passed",
+          "stdout": "{\"source\":\"host\",\"checkedAt\":\"2026-10-12T02:38:38.177Z\",\"availableMemoryBytes\":25574756352,\"freeDiskBytes\":24025350144,\"load1m\":7.75,\"existingNodeSuites\":0,\"proposedNodeSuites\":1,\"permitted\":true}\n\n> check\n> npm run typecheck && npm test && npm run boundaries && npm run journey\n\n{\"source\":\"host\",\"checkedAt\":\"2026-10-12T02:38:38.387Z\",\"availableMemoryBytes\":25572499456,\"freeDiskBytes\":24025346048,\"load1m\":7.75,\"existingNodeSuites\":0,\"proposedNodeSuites\":1,\"permitted\":true}\n\n> typecheck\n> tsc --noEmit\n\n{\"source\":\"host\",\"checkedAt\":\"2026-10-12T02:38:39.861Z\",\"availableMemoryBytes\":25638158336,\"freeDiskBytes\":24023973888,\"load1m\":7.75,\"existingNodeSuites\":0,\"proposedNodeSuites\":1,\"permitted\":true}\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (0.91995ms)\n✔ public price for quantity two (0.157634ms)\n✔ checkout HTTP mock (26.765943ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 139.160492\n{\"source\":\"host\",\"checkedAt\":\"2026-10-12T02:38:40.243Z\",\"availableMemoryBytes\":25606565888,\"freeDiskBytes\":24023965696,\"load1m\":7.75,\"existingNodeSuites\":0,\"proposedNodeSuites\":1,\"permitted\":true}\n\n> boundaries\n> node boundaries.mjs\n\n[]\n{\"source\":\"host\",\"checkedAt\":\"2026-10-12T02:38:41.028Z\",\"availableMemoryBytes\":25548070912,\"freeDiskBytes\":24030916608,\"load1m\":7.75,\"existingNodeSuites\":0,\"proposedNodeSuites\":1,\"permitted\":true}\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+          "stderr": "",
+          "durationMs": 3204.3480280000003,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "11.13.0\n",
+            "stderr": "",
+            "durationMs": 106.89183899999995,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      }
+    ],
+    "previous": null,
+    "path": "[isolated-home][scratch-path]"
+  }
+}

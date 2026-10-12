@@ -1,0 +1,22 @@
+✔ evaluation rejects scope-outside observations without scoring and deletes the isolated home (400.150836ms)
+✔ evaluation rejects scope-host-home observations without scoring and deletes the isolated home (408.529195ms)
+✔ evaluation rejects scope-output observations without scoring and deletes the isolated home (410.840496ms)
+✔ evaluation rejects scope-relative observations without scoring and deletes the isolated home (412.583302ms)
+✔ evaluation rejects scope-normalized-escape observations without scoring and deletes the isolated home (389.028273ms)
+✔ evaluation rejects scope-prefix observations without scoring and deletes the isolated home (374.955785ms)
+✔ evaluation rejects scope-tool-sibling observations without scoring and deletes the isolated home (420.362143ms)
+✔ evaluation rejects scope-native-read observations without scoring and deletes the isolated home (394.580013ms)
+✔ evaluation rejects scope-native-output observations without scoring and deletes the isolated home (375.821961ms)
+✔ evaluation rejects scope-runtime-skill observations without scoring and deletes the isolated home (373.872304ms)
+✔ evaluation rejects scope-resume observations without scoring and deletes the isolated home (561.582311ms)
+✔ evaluation accepts in-scope reports, runtime executables and non-filesystem URLs and routes (469.066335ms)
+✔ evaluation scope accepts a maintained repository whose root contains spaces (700.349223ms)
+✔ closing rejects out-of-scope worker observations arriving after the parent turn (440.757932ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6218.183141

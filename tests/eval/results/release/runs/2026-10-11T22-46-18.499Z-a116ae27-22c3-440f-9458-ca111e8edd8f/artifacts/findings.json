@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "ec52939656c1bce417709f3d6c84038f8a15e51f"
+  },
+  "nextChange": "Unresolved: contract-preserving internal refactor or public quote contract change.",
+  "reviewedScope": [
+    "DESIGN.md",
+    "project.json",
+    "price.mjs",
+    "price.test.mjs",
+    "notes.md",
+    "rename.md",
+    "remove.md"
+  ],
+  "sources": [
+    {
+      "id": "contract",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "A quote is quantity multiplied by 12."
+    },
+    {
+      "id": "implementation",
+      "pointer": "price.mjs:1",
+      "intent": "observed",
+      "summary": "Exported quote returns quantity multiplied by 12."
+    },
+    {
+      "id": "test",
+      "pointer": "price.test.mjs:4",
+      "intent": "observed",
+      "summary": "Direct public boundary check quote(3)=36; native execution passed one test at current HEAD."
+    },
+    {
+      "id": "boundary",
+      "pointer": "price.mjs:1",
+      "intent": "inferred",
+      "summary": "Exported quote is the pricing contract boundary, consistent with design and test."
+    },
+    {
+      "id": "history",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "HEAD^..HEAD measure blocked: history-unreadable. Exact HEAD^ resolution failed in shallow checkout; HEAD names parent 4c30913019f94a99eab09a7387a214ddd0ce12da."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Requested implementation scope is unresolved despite a clear current pricing contract.",
+      "files": [
+        "DESIGN.md",
+        "price.mjs",
+        "price.test.mjs"
+      ],
+      "command": null,
+      "principle": "Resolve consequential scope before dependent recommendations or writes; retain the documented contract as baseline.",
+      "consequence": "Cannot select acceptance changes, compatibility requirements, implementation scope or write paths.",
+      "fix": "Ask whether to preserve quantity times 12 through an internal refactor or change the public quote contract. Recommend preserving the contract unless a changed product outcome is intended; trade-off: retains existing pricing.",
+      "scope": [
+        "DESIGN.md",
+        "price.mjs",
+        "price.test.mjs"
+      ],
+      "verification": "Record the explicit answer; for refactor protect the existing public boundary before and after; for contract change obtain approved replacement outcomes before planning.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "contract",
+        "implementation",
+        "test"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Exact requested historical base HEAD^ is inaccessible in the shallow checkout.",
+      "files": [],
+      "command": "git rev-parse --verify HEAD^^{commit}; repo-audit measure --range HEAD^..HEAD",
+      "principle": "Historical conclusions require the requested revisions and readable history; no substitute base.",
+      "consequence": "Historical comparison and revision-bound change frequency, lineage and co-change evidence are blocked.",
+      "fix": "Provide an accessible complete-history copy inside the allowed roots containing HEAD and its exact parent and necessary ancestry; then retry HEAD^..HEAD. No fetch or repository mutation performed.",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "verification": "Resolve HEAD^ to the actual parent and rerun measure on the exact HEAD^..HEAD range.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "history"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "exact-history-comparison",
+    "scope-decision"
+  ],
+  "execution": [],
+  "limitations": [
+    "Direct native baseline passed (one test, exit 0), retained in baseline.out. It is not run-checks fingerprint-bound readiness evidence. No implementation or after-change verification occurred.",
+    "Historical measure is blocked, not passed. Parent object/ancestry must become accessible in a separate allowed-root complete-history copy.",
+    "No plans declared; overlap was not run and no write paths selected.",
+    "External/language recommendations not needed for this bounded final scope checkpoint; no third-party service is present.",
+    "Research ran in main thread because seven small files made delegation wasteful.",
+    "Read-only task prohibits apply, dry-run write plans, project audit record creation, and project changes.",
+    "Finding scope fields identify read-only evidence coverage only; they do not select implementation or write paths."
+  ]
+}

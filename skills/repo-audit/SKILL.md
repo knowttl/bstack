@@ -182,9 +182,10 @@ Done when: Every relevant evidence source is inventoried or listed as unavailabl
 
 ### Step 8: Resolve material gaps
 
-Summarise the evidence and clarify only missing facts or contradictions that would change a recommendation.
-For each question, name the affected recommendation and why the available sources do not settle it.
-Use a targeted decision round, resolving parents first and waiting for answers.
+Summarise the evidence and ask the owner about missing facts, conflicting intent or policy, and competing term meanings only when they would change a recommendation.
+Each targeted question must cite the conflicting or insufficient sources, name the affected recommendation, offer the plausible readings and recommend one with its trade-off.
+Resolve parent decisions first, group only independent questions into a small round and wait for answers before dependent recommendations.
+Recording an unresolved decision or drafting definitions for later approval does not replace asking the question.
 When the repo already answers the questions, proceed directly to recommendations without asking the user to repeat or reconfirm approved goals.
 Load interview, domain-language or vision guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
@@ -271,6 +272,7 @@ Validate important user flows directly against approved acceptance cases.
 Use meaningful interface tests for relevant behaviour, edges and failures, and independent review under the project's risk policy.
 Supply the reviewer with original requirements, cases, actual changes and execution evidence.
 Choose the execution method within project constraints, without dispatching a TDD workflow or imposing a universal sequence.
+Before running native checks, detect and prefer the project's prepared environment and tools, such as a project-local virtual environment or the lockfile's tool manager, over system defaults; report the interpreter and tool versions actually used.
 
 For a Git repo, capture an approved plan through `run-checks --repo <target> --plan <file> --json`.
 Use `schemas/check-plan.json` as the plan format, linking acceptance cases to approved source bytes and declaring relevant input scopes.
@@ -309,6 +311,7 @@ If so, obtain stronger outcome evidence, keeping unavailable flows unverified.
 
 Plan, validate, then execute.
 Only apply makes project edits, including AGENTS.md, after the user approves each change.
+Records outside the approved edit plan, including historical snapshots, assessments and portable records, must be proposed with their exact content and written only after their own exact approval; approval to complete verification or maintenance does not approve those additional edits.
 Do not bypass missing apply tooling with direct writes.
 Use the installed scripts/repo-audit.mjs entry point, run documented commands and read their output rather than script source.
 Resolve resources relative to the installed skill and pass the target explicitly.

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "corrections",
+  "writePaths": [
+    "packages/**",
+    "unit.test.mjs"
+  ],
+  "contracts": [
+    {
+      "id": "shop-design",
+      "files": [
+        "DESIGN.md",
+        "packages/core/index.ts"
+      ]
+    }
+  ]
+}

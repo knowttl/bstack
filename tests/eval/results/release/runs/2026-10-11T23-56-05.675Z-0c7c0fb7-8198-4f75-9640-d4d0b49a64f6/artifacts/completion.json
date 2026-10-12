@@ -1,0 +1,81 @@
+{
+  "status": "passed",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "assessedImplementation": "9009fe97e495bb316de45cf203996fd31405ebfe",
+  "sourceRevision": "e6366d129b018058effbdeeae7cdcf2379d0cd73",
+  "assessment": "[fixture]/.bstack/assessment.json",
+  "assessmentSha256": "0a82106459bcffdbd0cf0e4356b21bc02b9e89b4a77177c7b981c7b0989466ec",
+  "fingerprint": "5996171a7e8cb07612c07532db0520525501a948adfd6bb0210628664fc9da7c",
+  "versions": {
+    "node": "v24.17.0",
+    "npm": "11.13.0",
+    "typescript": "Version 5.9.3"
+  },
+  "freshArtifacts": {
+    "local": "[isolated-home]/cache/bstack/21e3383881633b1a68d1a1de8d73f6cccb461824495261cadd3cce9921f5cbac/e16060c9-69a4-4be7-be38-048362e46ec5/checker-result.json",
+    "cleanClone": "[isolated-home][scratch-path]"
+  },
+  "beforeCapture": "[isolated-home]/cache/bstack/21e3383881633b1a68d1a1de8d73f6cccb461824495261cadd3cce9921f5cbac/132e6591-194c-48e6-8f6a-4e339f8c334c/checks.json",
+  "afterCapture": "[isolated-home]/cache/bstack/21e3383881633b1a68d1a1de8d73f6cccb461824495261cadd3cce9921f5cbac/809da682-ec36-4842-8733-10c5ff9c8ba2/checks.json",
+  "cloneRoot": "[isolated-home][scratch-path]",
+  "preflights": {
+    "before": {
+      "source": "host",
+      "checkedAt": "2026-10-11T23:57:09.992Z",
+      "availableMemoryBytes": 19459239936,
+      "freeDiskBytes": 24827826176,
+      "load1m": 5.87,
+      "existingNodeSuites": 0,
+      "proposedNodeSuites": 1,
+      "permitted": true
+    },
+    "after": {
+      "source": "host",
+      "checkedAt": "2026-10-11T23:58:02.097Z",
+      "availableMemoryBytes": 19945852928,
+      "freeDiskBytes": 24930807808,
+      "load1m": 4.36,
+      "existingNodeSuites": 0,
+      "proposedNodeSuites": 1,
+      "permitted": true
+    },
+    "local-checker": {
+      "source": "host",
+      "checkedAt": "2026-10-11T23:59:40.691Z",
+      "availableMemoryBytes": 18943664128,
+      "freeDiskBytes": 24791130112,
+      "load1m": 3.75,
+      "existingNodeSuites": 0,
+      "proposedNodeSuites": 1,
+      "permitted": true
+    },
+    "clone-checker": {
+      "source": "host",
+      "checkedAt": "2026-10-12T00:00:00.437Z",
+      "availableMemoryBytes": 19004018688,
+      "freeDiskBytes": 24766357504,
+      "load1m": 3.36,
+      "existingNodeSuites": 0,
+      "proposedNodeSuites": 1,
+      "permitted": true
+    }
+  },
+  "capturesRoot": "[isolated-home][scratch-path]",
+  "limits": [
+    "Structural validation cannot prove that explanations or document deltas agree semantically with code, or authenticate owner approval. The selected review process must assess these claims.",
+    "Local execution records are not authenticated portable attestations. Captures cover declared inputs only; transient changes restored before capture completion are not detected.",
+    {
+      "path": "DESIGN.md",
+      "reason": "Inline code and escaped Markdown require renderer review."
+    },
+    {
+      "path": "AGENTS.md",
+      "reason": "Inline code and escaped Markdown require renderer review."
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "reason": "Inline code and escaped Markdown require renderer review."
+    }
+  ],
+  "workingTrees": "both clean"
+}

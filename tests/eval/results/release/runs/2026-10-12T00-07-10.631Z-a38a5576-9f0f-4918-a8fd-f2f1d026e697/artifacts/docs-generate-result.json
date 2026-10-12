@@ -1,0 +1,1 @@
+{"command": ["node", "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs", "docs", "generate", "--repo", "[fixture]", "--check", "--json"], "cwd": "[fixture]", "exitCode": 0}

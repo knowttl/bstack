@@ -1,0 +1,16 @@
+from maintain import *
+clone=S/'clean-checkout'; home=S/'clean-home'; (home/'tmp').mkdir(parents=True,exist_ok=True); (home/'cache').mkdir(exist_ok=True)
+env=os.environ.copy(); env.update(HOME=str(home),TMPDIR=str(home/'tmp'),XDG_CACHE_HOME=str(home/'cache'),npm_config_cache=str(home/'npm-cache'),MAINTENANCE_GATES=str(S/'gates'),PATH=str(S/'guard')+':'+env['PATH'])
+run('clean-clone',['git','clone','--no-local',str(R),str(clone)])
+run('clean-install',['npm','ci','--ignore-scripts','--no-audit','--no-fund'],cwd=clone,env=env)
+base=(S/'base.txt').read_text().strip()
+clean=run('checker-clean',['node','.bstack/bin/bstack-check.mjs','--repo',str(clone),'--base',base,'--assessment',str(clone/'.bstack/assessment.json'),'--json'],suite=True,cwd=clone,env=env)
+run('clean-status',['git','status','--porcelain'],cwd=clone)
+run('final-status',['git','status','--porcelain'])
+run('final-commits',['git','log','-2','--format=%H %s'])
+print('CLEAN ARTIFACT',clean['data']['path'])
+print('LOCAL ARTIFACT',json.loads((S/'checker-local.out').read_text())['data']['path'])
+assert (clone/'.bstack/assessment.json').read_bytes()==(R/'.bstack/assessment.json').read_bytes()
+for path in ['DESIGN.md','glossary.md','AGENTS.md','docs/repo-audit.md']:
+ assert subprocess.check_output(['git','show',base+':'+path],cwd=R)==(R/path).read_bytes()
+write('final-report.json',{'status':'passed','assessment':str(R/'.bstack/assessment.json'),'assessmentHash':hashlib.sha256((R/'.bstack/assessment.json').read_bytes()).hexdigest(),'base':base,'source':clean['data']['comparison']['source'],'checkoutHead':clean['data']['sourceRevision'],'fingerprint':clean['data']['fingerprint'],'localArtifact':json.loads((S/'checker-local.out').read_text())['data']['path'],'cleanArtifact':clean['data']['path'],'cleanRoot':str(clone),'isolatedHome':str(home),'isolatedCache':str(home/'cache'),'commandCaptures':str(S),'beforeCapture':json.loads((S/'before.out').read_text())['data']['path'],'afterCapture':json.loads((S/'after-final.out').read_text())['data']['path'],'coverage':['public quote12','mocked checkout201,total10','real HTTP checkout201,total10','TypeScript','static boundaries and cycles'],'preserved':['DESIGN.md','glossary.md','AGENTS.md','docs/repo-audit.md','both user notes','first-contract foundation record'],'unresolvedDecisions':[],'limitations':['Static graph does not cover dynamic imports or every transitive facade leak, as documented; no dependency syntax changes.','Receipt wording remains a future owner decision; export remains outside this change.','No hosted verification or delivery service selected.']})

@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "c0f7539cfb48acf094ed493fccc88931078c006a482cf2c556d301d6f1df6cd7"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real local HTTP checkout returns status 201 and total 10 from the approved controlled fixture.",
+      "userJourney": true
+    },
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "The public quote remains 12",
+      "outcome": "Public quote stays 12.",
+      "userJourney": false
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "Web consumers use `packages/core/index.ts`",
+      "outcome": "Web imports only the core public index, with private/alias bypasses rejected and core-internal storage access allowed.",
+      "userJourney": false
+    },
+    {
+      "id": "cycle",
+      "sourceId": "design",
+      "pointer": "Static imports and re-exports must be acyclic.",
+      "outcome": "Native static dependency analysis rejects cycles.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "typecheck",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "typecheck"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**",
+        "docs/repo-audit.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary",
+        "cycle"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**",
+        "docs/repo-audit.md"
+      ]
+    },
+    {
+      "id": "test",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "quote"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**",
+        "docs/repo-audit.md"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**",
+        "docs/repo-audit.md"
+      ]
+    },
+    {
+      "id": "aggregate",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary",
+        "cycle",
+        "quote",
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**",
+        "docs/repo-audit.md"
+      ]
+    }
+  ]
+}

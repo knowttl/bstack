@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "runId": "2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb",
+  "actualRecorderArtifactMatches": true,
+  "python": "Python 3.12.15",
+  "ruff": "ruff 0.14.0",
+  "unitExit": 0,
+  "unitCount": 2,
+  "lintExit": 0,
+  "boundaryExit": 1,
+  "boundaryDiagnostics": [
+    "private"
+  ],
+  "journeyExit": 0,
+  "journeyInterpreter": "Python 3.12.15",
+  "journeyOutput": "PASS: public posting, rejection without mutation, app opening balance, startup CSV/JSON and public re-import\n",
+  "journeyScriptSha256": "299c55ec6a20b4e2f04362ea198a842f9693176e93e835cd54eabe4ee104f24e",
+  "readinessUnverified": true
+}

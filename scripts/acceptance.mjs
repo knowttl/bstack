@@ -3,9 +3,11 @@ import { join, resolve } from 'node:path'
 import { root, text, object, array, options, readJSON, checkRegistry, fail } from './lib/evaluation.mjs'
 import { validateData } from '../skills/repo-audit/scripts/lib/schema.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { completeRelease } from './lib/release-evidence.mjs'
+import { correctedScore, validateScore } from './lib/evaluation-scoring.mjs'
 
 // Final selections are explicit inputs, independent of run history ordering.
-const help = 'acceptance --check-registry [--registry <file>] [--json]\nacceptance --selections <file> [--results <directory>] [--json]'
+const help = 'acceptance --check-registry [--registry <file>] [--json]\nacceptance --selections <file> [--results <directory>] [--json]\nacceptance --results <directory> --require-complete [--json]'
 
 async function selections(path, results) {
   const input = await readJSON(path)
@@ -23,10 +25,11 @@ async function selections(path, results) {
     if (!registry.cases.some(item => item.id === selected.caseId)) fail(`Unknown case: ${selected.caseId}`)
     if (!/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(selected.runId)) fail('Invalid selected run ID.')
     const directory = join(results, selected.runId)
-    const run = await readJSON(join(directory, 'run.json'))
+    const run = await correctedScore(directory, await readJSON(join(directory, 'run.json')))
     if (run.id !== selected.runId || run.stage !== selected.stage || run.sourceRevision !== selected.revision) fail('Selection does not match the run ID, stage and source revision.')
     const checks = run.caseResults.filter(check => check.caseId === selected.caseId)
     if (!checks.length || checks.some(check => check.passed !== true) || !run.transcript || !run.answers) fail(`Selected case has no passing scored evidence: ${selected.caseId}`)
+    validateScore(run, { runId: run.id, checks: run.caseResults }, await readFile(join(directory, run.transcript), 'utf8'))
     for (const file of [run.transcript, run.answers]) if (!(await readFile(join(directory, file), 'utf8')).trim()) fail(`Empty selected artifact: ${file}`)
     if (!run.isolation?.verified) fail(`Selected run has unverified host isolation: ${selected.runId}`)
   }
@@ -37,9 +40,11 @@ try {
   const args = process.argv.slice(2)
   if (args.includes('--help')) console.log(help)
   else {
-    const opts = options(args, ['registry', 'selections', 'results'], ['check-registry'])
-    if (Boolean(opts['check-registry']) === Boolean(opts.selections) || (opts.registry && !opts['check-registry']) || (opts.results && opts['check-registry'])) fail(help, 'usage-error')
-    const data = opts['check-registry'] ? await checkRegistry(resolve(opts.registry ?? join(root, 'tests', 'acceptance', 'cases.json')))
+    const opts = options(args, ['registry', 'selections', 'results'], ['check-registry', 'require-complete'])
+    if ([opts['check-registry'], opts.selections, opts['require-complete']].filter(Boolean).length !== 1 ||
+        (opts.registry && !opts['check-registry']) || (opts.results && opts['check-registry'])) fail(help, 'usage-error')
+    const data = opts['require-complete'] ? await completeRelease(resolve(opts.results ?? join(root, 'tests/eval/results')))
+      : opts['check-registry'] ? await checkRegistry(resolve(opts.registry ?? join(root, 'tests', 'acceptance', 'cases.json')))
       : await selections(resolve(opts.selections), resolve(opts.results ?? join(root, 'tests', 'eval', 'results', 'runs')))
     emitResult({ command: 'acceptance', status: 'passed', data }, true)
   }

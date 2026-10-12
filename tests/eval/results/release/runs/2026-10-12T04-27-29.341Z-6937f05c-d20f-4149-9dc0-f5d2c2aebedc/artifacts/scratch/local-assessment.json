@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "repo": "[fixture]",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "kind": "commit",
+    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "head": "cf1abf3d6cff050680a161867ab1dee661322ece",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/routes.ts"
+    }
+  ],
+  "paths": [
+    "packages/web/routes.ts"
+  ],
+  "mappings": [
+    {
+      "path": "packages/web/routes.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "No public behaviour change: name the existing unitPrice times quantity intermediate without changing arithmetic order, pricing or checkout.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "The route now assigns unitPrice * quantity to undiscountedTotal before applying the unchanged quantity > 5 multiplier. JavaScript multiplication was already left-associative, so operation order, default core price, stored total and status 201 response remain identical. No import or dependency changes: UI still uses public core, and the static graph is unchanged. Original protection and guarded final compatibility both pass npm run check, including quote 12 and real loopback checkout total 10.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "Review changes against this design and `glossary.md`, preserving public interfaces and agreed outcomes.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const undiscountedTotal = unitPrice * quantity",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
+            "version": "base"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "The UI never touches storage.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "Quote remains 12.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "The agreed checkout total is 10.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "Static import and re-export dependencies must be acyclic.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "No public behaviour change: name the existing unitPrice times quantity intermediate without changing arithmetic order, pricing or checkout.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "The added undiscountedTotal is a local numeric calculation; postOrder still records the same customer purchase total and response. It neither renames Order nor introduces or reorders UI panels, preserving the glossary distinction between Order and Panel order.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const undiscountedTotal = unitPrice * quantity",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
+            "version": "base"
+          },
+          {
+            "path": "glossary.md",
+            "pointer": "Panel order: the sequence in which UI panels appear.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "No public behaviour change: name the existing unitPrice times quantity intermediate without changing arithmetic order, pricing or checkout.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "Only packages/web/routes.ts changes: the public core import is retained and the calculation now names its existing first multiplication. The approved design and glossary remain accurate, npm run check remains the maintained command, and all mapped documents and this changed path are reviewed here. The historical audit is unchanged; current captures stay in scratch.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Treat `docs/repo-audit.md` as a historical snapshot; current assessed readiness belongs in scratch.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const undiscountedTotal = unitPrice * quantity",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
+            "version": "base"
+          }
+        ],
+        "dependentWork": []
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion"
+  ],
+  "execution": [
+    {
+      "runId": "0c342244-f62b-470c-b882-ceda07c60552",
+      "plan": "[isolated-home][scratch-path]"
+    }
+  ],
+  "fingerprint": "0ac2dbec2c8238567b57fc187b99f3bf6dfd2a34cd7a9a009aedbf9b1d940ac2"
+}

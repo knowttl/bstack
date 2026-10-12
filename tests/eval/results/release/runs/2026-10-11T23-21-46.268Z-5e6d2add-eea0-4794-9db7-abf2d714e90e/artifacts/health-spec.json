@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "endpoint": "http://127.0.0.1:1/health",
+  "environment": [],
+  "sideEffects": false,
+  "assumption": "GET /health responds with HTTP success; an unreachable endpoint leaves the service claim unverified.",
+  "inputScopes": [
+    "DESIGN.md",
+    "packages/core/**",
+    "packages/web/**"
+  ],
+  "cwd": ".",
+  "versionArgs": [
+    "--version"
+  ],
+  "timeoutMs": 5000
+}

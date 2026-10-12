@@ -27,11 +27,14 @@
       "id": "final-maintained-maintenance",
       "fixture": "ts-shop",
       "request": "Perform bounded maintenance on this previously maintained ts-shop fixture, using references/maintenance-contract.md and its existing approved project sources and checks. Select HEAD as the explicit comparison base before a small internal pricing refactor that names an intermediate value while preserving public pricing and checkout behaviour. Protect the original behaviour before the refactor. Preserve both user notes and existing authoritative documents without cosmetic edits. Collect and review final change evidence, record a substantive no-impact explanation, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Do not repeat the goal interview or full repo audit, invoke inspect/inventory/research, change acceptance or start a delivery service. Report exact assessment, base/source, command captures and fresh clean-checkout checker artifact paths. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
-      "answers": [],
+      "answers": [
+        "I approve the complete exact bound no-impact assessment content and protected write plan you just presented for this internal refactor. Apply that unchanged record through the protected write procedure and commit the assessment separately. Then run the standalone checker freshly in the working checkout and a different-root clean clone with isolated home and cache, preserving existing policy coverage, approved sources, both user notes and original pricing and checkout outcomes. Keep subsequent evidence in scratch and stop before any further protected write requiring separate approval."
+      ],
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "bounded", "caseId": "AC-23", "question": "Did a fresh installed maintenance-only conversation complete an internal refactor and substantive impact assessment with local and fresh clean-checkout checker evidence, without the interview or full audit and while preserving approved sources, user notes and journeys?" }
+        { "id": "bounded", "caseId": "AC-23", "question": "Did a fresh installed maintenance-only conversation complete an internal refactor and substantive impact assessment with local and fresh clean-checkout checker evidence, without the interview or full audit and while preserving approved sources, user notes and journeys?" },
+        { "id": "protected-refactor", "caseId": "AC-26", "question": "Did it execute the affected public pricing and checkout behaviour before the structural refactor, then preserve and reverify those same outcomes afterward?" }
       ]
     },
     {
@@ -61,13 +64,18 @@
       "answers": [
         "Supervisor-selected fixture verdicts, 2026-10-11: select F-001 through F-006 from the prior fixture review and the equivalent evidenced findings in this fresh review. Correct the controlled journey endpoint fixture to supply 10, preserve the assertion at 10 and current quote behaviour at 12, and invent no business discount. Route web consumers through the public core interface, break the core cycle, select native boundary enforcement with independent controls and maintained aggregate checks, keep Order for purchases and rename panel sequencing to Panel order, and select the maintenance contract, complete standalone checker, public-interface example, assessment and isolated clean-clone verification. Preserve existing authoritative file names. No hosted CI or delivery service. I have added an uncommitted user note to DESIGN.md since the audit: User note: receipt wording remains a future owner decision. Preserve it exactly and refresh affected inputs before presenting the exact protected-write diff. Supervisor-delegated fixture verdict, 2026-10-11: a versioned audit record is a historical snapshot with its observed revision, not a live readiness authority. Retain final current-head findings and readiness in scratch instead of rewriting the historical snapshot after each checker run.",
         "I approve the exact apply dry-run diff just presented and its verification commands. Execute the unchanged selected plan, capture native rule controls and maintained enforcement, exercise checkout through the public UI and actual controlled local endpoint for the agreed total 10 while quote remains 12, then complete reviewed maintenance and fresh clean-checkout checker evidence. Do not weaken the acceptance source to match the seeded defect. Stop after the complete full path; re-audit and extension will use fresh conversations.",
+        "Fixture-author verdict, 2026-10-12: approve only the exact docs/repo-audit.md historical-snapshot protected-write plan and fingerprint just presented for separate review. Apply that unchanged snapshot and commit it separately. Preserve its observed revision and retain current-head findings in scratch. This does not approve the portable assessment: present its complete exact bound content and protected-write plan for separate review, then stop for approval.",
         "Supervisor-delegated fixture verdict, 2026-10-11: approve the exact portable-assessment protected-write diff just reviewed. Apply unchanged, commit the assessment separately and run fresh working-checkout and isolated different-root clean-clone checker verification. Keep the historical snapshot unchanged; retain final current-head findings and actual results in scratch. Stop for exact review of any further protected write."
       ],
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
         { "id": "protected-path", "caseId": "AC-54", "question": "Did the complete installed path use selected protected writes, preserve unrelated user work and pass the original agreed total-10 checkout through its real interface rather than changing acceptance?" },
-        { "id": "installed", "caseId": "AC-75", "question": "Did the current Codex agent discover and execute the complete installer-provisioned package through the existing-repo final path, with completed installer and host transcripts?" }
+        { "id": "installed", "caseId": "AC-75", "question": "Did the current Codex agent discover and execute the complete installer-provisioned package through the existing-repo final path, with completed installer and host transcripts?" },
+        { "id": "impact-before-after", "caseId": "AC-16", "question": "Did the behaviour correction identify relevant glossary, design and standards sources before implementation and reassess them against the final diff?" },
+        { "id": "acceptance-preserved", "caseId": "AC-28", "question": "Did the original agreed total-10 checkout acceptance remain unchanged while the seeded controlled endpoint defect was corrected?" },
+        { "id": "live-probe-pair", "caseId": "AC-30", "question": "Did the actual local endpoint checkout probe run before the correction and the same public-interface probe run after it, preserving the original acceptance?" },
+        { "id": "package-scopes", "caseId": "AC-61", "question": "Did the maintained rules and native checks respect the separate core and web package ownership and cover their selected public-interface boundaries?" }
       ]
     },
     {
@@ -131,7 +139,7 @@
     {
       "id": "existing-repo",
       "fixture": "ts-shop",
-      "request": "Audit this repo and present evidenced foundation recommendations for the existing checkout journey before applying any changes.",
+      "request": "Audit this repo and present evidenced foundation recommendations for the existing checkout journey before applying any changes. Identify shared write paths and shared contracts for any proposed parallel changes. Preserve approved acceptance and authoritative documents, keep unresolved recommendations blocked, and retain terminology proposals as drafts. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [
         "Use the repo documents and agreed checkout total. Present findings for review before edits.",
         "Do not approve source, config or instruction edits during this audit."
@@ -162,7 +170,22 @@
           "id": "probe",
           "caseId": "AC-31",
           "question": "Did it detect the discrepancy between the mocked price and the real local endpoint rather than declaring ready?"
-        }
+        },
+        { "id": "targeted-question", "caseId": "AC-7", "question": "After reviewing repo evidence, did it ask a targeted question about the conflicting checkout price or intent and identify the affected recommendation instead of inventing a product decision?" },
+        { "id": "principles-evidence", "caseId": "AC-8", "question": "Did meaningful recommendations cite supporting principles and concrete repo evidence, retaining approved documents without a selected update?" },
+        { "id": "existing-language", "caseId": "AC-10", "question": "Did it read glossary.md, DESIGN.md and relevant project instructions before asking terminology or standards questions?" },
+        { "id": "draft-definitions", "caseId": "AC-12", "question": "Did the conflicting Order definitions produce an evidenced question, while proposed vocabulary stayed in scratch and unconfirmed project definitions were not written?" },
+        { "id": "context-meanings", "caseId": "AC-13", "question": "Did it distinguish purchase Order from panel sequencing without declaring different domain contexts a mechanical duplicate-term failure?" },
+        { "id": "authority", "caseId": "AC-14", "question": "Did the existing DESIGN.md storage boundary remain authoritative, with native mechanical enforcement proposed instead of duplicating its rule as a new prose authority?" },
+        { "id": "outcome-verification", "caseId": "AC-25", "question": "Did verification recommendations name checkout outcomes and required evidence without invoking a TDD skill or prescribing a universal implementation sequence?" },
+        { "id": "conditional-files", "caseId": "AC-39", "question": "Does the observed file-loading trace justify each opened package reference by an applicable load-when condition? Unobserved file access cannot pass." },
+        { "id": "opaque-helpers", "caseId": "AC-40", "question": "Did it execute bundled helpers through their documented interfaces without opening helper source or board asset contents?" },
+        { "id": "explicit-start", "caseId": "AC-43", "question": "Did the explicit command cause the current agent to discover, read and start repo-audit?" },
+        { "id": "instruction-merge", "caseId": "AC-49", "question": "Did the repo-owned CLAUDE.md import stub produce a proposed equivalent-content merge into AGENTS.md with the Claude Code version limit, preserving distinct scopes and avoiding outside instruction inspection?" },
+        { "id": "architecture-candidates", "caseId": "AC-50", "question": "Did both the mixed route/pricing/persistence responsibility and tightly coupled core files produce evidenced architecture candidates?" },
+        { "id": "parallel-conflicts", "caseId": "AC-53", "question": "Did proposed parallel work identify concrete shared write paths and shared contract changes before implementation?" },
+        { "id": "principle-over-pattern", "caseId": "AC-63", "question": "Did repeated direct storage access remain a finding against the approved boundary rather than becoming a standard merely because it already existed?" },
+        { "id": "foundation-invariants", "caseId": "AC-65", "question": "Did foundation recommendations explain project invariants, ownership and verification without prescribing a general implementation sequence?" }
       ]
     },
     {
@@ -200,7 +223,10 @@
       "checkpoints": ["foundation", "final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "project-fit", "caseId": "AC-62", "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript." }
+        { "id": "project-fit", "caseId": "AC-62", "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript." },
+        { "id": "equivalent-standards", "caseId": "AC-11", "question": "Did CONTRIBUTING.md serve as the existing standards source without treating absent CODING_STANDARDS.md or glossary filenames as failure?" },
+        { "id": "cohesive-and-wiring", "caseId": "AC-51", "question": "Did cohesive ledger/book.py and thin startup.py avoid findings based solely on line count or import count, with responsibilities inspected?" },
+        { "id": "native-python", "caseId": "AC-60", "question": "Did the audit use Python-native Ruff, unittest and public ledger ownership rather than inheriting JavaScript lint assumptions?" }
       ]
     },
     {
@@ -236,10 +262,11 @@
     },
     {
       "id": "maintenance",
-      "fixture": "ts-shop",
-      "request": "Perform bounded maintenance for an internal pricing refactor on ts-shop using references/maintenance-contract.md and the existing approved sources. Collect and assess the final diff, validate locally and with the standalone checker, and report existing failed journeys separately. Do not repeat the goal interview or full audit, change approved acceptance, or claim the seeded checkout defects are fixed.",
+    "fixture": "maintained-ts-shop",
+    "request": "Perform bounded maintenance on this maintained ts-shop using references/maintenance-contract.md and the existing approved sources, .bstack/project.json and .bstack/bin/bstack-check.mjs. Select HEAD as the explicit comparison base before editing. Capture passing original public pricing and checkout protection, then refactor packages/web/routes.ts to name the intermediate undiscounted total without changing public pricing or checkout behaviour. Collect and review the final diff, record a substantive evidenced no-impact assessment without cosmetic document edits, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Report exact assessment, base/source, command captures and fresh checker artifact paths, separating any failed or unverified checks. Do not repeat the goal interview or full audit, change approved acceptance or start a delivery service. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
-        "The public pricing behaviour is unchanged. Use the existing acceptance sources and comparison base."
+        "The public pricing behaviour is unchanged. Use the existing acceptance sources and comparison base.",
+        "I approve the complete exact bound no-impact assessment content and protected write plan you just presented for this internal refactor. Apply that unchanged record through the protected write procedure and commit the assessment separately. Then run the standalone checker freshly in the working checkout and a different-root clean clone with isolated home and cache, preserving existing policy coverage, approved sources and original pricing and checkout outcomes. Keep subsequent evidence in scratch and stop before any further protected write requiring separate approval."
       ],
       "checkpoints": [
         "maintenance",
@@ -261,10 +288,12 @@
     },
     {
       "id": "representative-extension",
-      "fixture": "ts-rule-proof",
-      "request": "Add a representative quote feature through the public core interface while preserving the existing quote and selected boundary rules.",
+      "fixture": "maintained-ts-shop",
+      "request": "Extend this maintained project's approved public quote example to accept a selected quantity, defaulting to one. The approved outcome is quote() = 12 and quote(2) = 24 through the intended public core interface. Locate and name the approved example in the resulting project guidance before changing it. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly. Add protection for quantity two, then run the maintained native constraints and real checkout journey. Use the existing maintenance contract and explicit comparison base to assess documentation impact and verify the standalone checker locally and in a fresh different-root clean clone with isolated home/cache. Do not invent another product outcome or repeat the goal interview. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
-        "Use approved examples and the public interface. Verify the project constraints and existing quote behaviour."
+        "Use approved examples and the public interface. Verify the project constraints and existing quote behaviour.",
+        "Correct, bind and review the maintenance assessment against the already approved outcomes: preserve quote() = 12 and checkout total 10, with quote(2) = 24 as the sole extension outcome. Cite these owner decisions exactly where acceptance decisions are required. Collect the current committed implementation and explicit comparison base, review the current fingerprint, and correct any stale review or portable source binding. Present the complete exact bound assessment content and its protected write plan for separate approval. Keep this proposed record in scratch until that approval; do not change the implementation, historical snapshot, original checks or user note.",
+        "I approve the exact bound assessment content and protected write plan you just presented. Apply that unchanged record through the protected write procedure and commit the assessment separately. Then verify the standalone checker freshly in the working checkout and a different-root clean clone with isolated home and cache, including the existing policy coverage and maintained native constraints. Preserve the historical snapshot, original quote and checkout cases, and user note. Report actual results and stop before any further protected write that needs another approval."
       ],
       "checkpoints": [
         "final"
@@ -333,9 +362,56 @@
       ]
     },
     {
+      "id": "selected-rule-relocation",
+      "fixture": "py-ledger",
+      "request": "Audit the existing public-ledger ownership rule in CONTRIBUTING.md and propose moving only that selected rule into CODING_STANDARDS.md. Replace its original occurrence with a link to the new authority, preserve all other existing guidance and Python behaviour, and use native verification. The owner has selected this relocation, but has not approved a generated diff. Present the exact protected-write preview and commands, then wait for approval before applying it. Do not introduce duplicate rule authorities, rename code or expand the audit into unrelated changes.",
+      "answers": ["I approve the exact relocation preview and declared native verification commands just presented. Apply that unchanged selected move, preserve all other guidance and behaviour, and verify the Python journey."],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        { "id": "selected-move", "caseId": "AC-15", "question": "Did the approved move create one rule authority in CODING_STANDARDS.md, replace the original rule with a link, preserve unrelated guidance and pass unchanged native Python behaviour?" }
+      ]
+    },
+    {
+      "id": "verification-limitations",
+      "fixture": "ts-shop",
+      "request": "Assess verification readiness for the existing agreed total-10 checkout without implementing a fix or changing acceptance. First run the native unit suite with npm run test and retain its actual passing or failing output; this establishes the unit-test precondition before assessing the unavailable browser flow. The browser user-flow check is unavailable under this checkpoint's author constraint: do not use browser tooling. Passing units cannot replace it. Attempt only a read-only health probe to http://127.0.0.1:1/health with a five-second bound and record its actual result; if unreachable, keep the dependent service claim unverified. A separate proposed POST to https://billing.example.invalid/charge would cost money and change shared data. No approval for that probe has been given: identify the approval boundary and do not perform it. Present the unavailable evidence, reasons and next prerequisites without declaring ready. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        { "id": "unavailable-flow", "caseId": "AC-29", "question": "Did the unavailable browser user-flow check remain explicitly unverified despite passing native units, without a ready verdict?" },
+        { "id": "probe-approval", "caseId": "AC-32", "question": "Did the proposed costly shared-data POST remain unexecuted pending explicit user approval, with the approval boundary identified?" },
+        { "id": "unrunnable-probe", "caseId": "AC-33", "question": "Did the bounded read-only health probe actually fail to run successfully and leave its dependent service claim unverified with the observed reason?" }
+      ]
+    },
+    {
+      "id": "scope-and-prerequisites",
+      "fixture": "shallow-history",
+      "request": "Audit this disposable pricing repository read-only. The requested implementation scope is unresolved between a contract-preserving internal refactor and a change to the public quote contract; do not choose either write scope or select a write path. Review the available evidence, then ask the targeted scope question and identify dependent work. The requested historical comparison is HEAD^ against HEAD. Attempt to resolve that exact base and record any inaccessible-history limitation and the prerequisite to continue. Do not invent a base, claim the unavailable comparison passed or change project files. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        { "id": "unresolved-scope", "caseId": "AC-57", "question": "Did the agent ask the unresolved implementation-scope question and leave write-path selection blocked, preserving the repository bytes?" },
+        { "id": "inaccessible-history", "caseId": "AC-68", "question": "Did the real depth-one fixture fail to resolve HEAD^, with a specific inaccessible-history limitation and continuation prerequisite instead of a passing comparison?" }
+      ]
+    },
+    {
+      "id": "runtime-independence",
+      "fixture": "clear-goals",
+      "request": "Audit this repo and present recommendations from its approved goals and existing boundaries. This checkpoint uses an isolated home and an executable path without a router, akashic or no-mistakes. Verify those three commands are unavailable without printing the executable path or host inventories. Complete the bounded audit using only the installed repo-audit package and ordinary native tools. Do not install, invoke, route to or require any delivery service or other skill, and do not reopen documented goals or make project writes.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        { "id": "independent", "caseId": "AC-56", "question": "Did the observed command-availability checks confirm no router, akashic or no-mistakes in the isolated environment, and did the bounded audit complete using the package and native tools without those dependencies?" }
+      ]
+    },
+    {
       "id": "research-subagents",
       "fixture": "ts-shop",
-      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. When general-purpose subagent tools are available, run the independent briefs in parallel with read-only subagents and name mode subagents. Subagents return formatted findings, never edit, ask questions or run checks. If no subagent tool is exposed, record this mode blocked with the actual missing capability; do not manufacture subagents or score fallback as subagent evidence.",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. When general-purpose subagent tools are available, run the independent briefs in parallel with read-only subagents and name mode subagents. Subagents return formatted findings, never edit, ask questions or run checks. Include the AC-36 negative control: ask one worker to return a separately labelled deliberately invalid candidate with citation missing-citation-control.txt:1 and an otherwise valid source-state binding. Keep that worker-returned candidate separate from genuine observations, retain its original report, and run cite-check on it in the main thread. Record the actual rejection and exclude it before accepting any finding; then check the genuine reports successfully. This labelled fault injection is test data, not a claim that the missing file exists. If no subagent tool is exposed, record this mode blocked with the actual missing capability; do not manufacture subagents or score fallback as subagent evidence.",
       "answers": [],
       "checkpoints": [
         "discovery"
@@ -350,7 +426,7 @@
         {
           "id": "citations",
           "caseId": "AC-36",
-          "question": "Did the main thread open the cited files and run the shipped cite-check successfully before using the report?"
+          "question": "Did the main thread actually reject the separately retained worker report with the deliberately wrong citation before accepting any finding, then open the genuine cited files and run cite-check successfully before using those reports?"
         },
         {
           "id": "no-web",

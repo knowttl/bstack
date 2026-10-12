@@ -1,0 +1,319 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "42157a36b0a35ecd679d41b52313a0ea32660822"
+  },
+  "nextChange": "Establish reviewed corrections and maintained foundation, then re-audit a user edit before a representative public-interface extension.",
+  "reviewedScope": [
+    ".bstack/assessment.json",
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "boundaries.mjs",
+    "docs/repo-audit.md",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/a.ts",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/web/alias.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts",
+    "unit.test.mjs",
+    ".bstack/selection.md"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3-4",
+      "intent": "documented",
+      "summary": "UI never touches storage; checkout acceptance remains 10."
+    },
+    {
+      "id": "interface",
+      "pointer": "packages/core/index.ts:1; packages/web/public.ts:1; DESIGN.md:10",
+      "intent": "documented",
+      "summary": "Core index exports price/servicePrice; web imports the public interface; quote remains 12."
+    },
+    {
+      "id": "checks",
+      "pointer": "package.json:12-15; journey.mjs:7-12; unit.test.mjs:5-9; boundaries.mjs",
+      "intent": "observed",
+      "summary": "Target aggregate passed actual loopback checkout 10, public quote 12 and clean native boundary graph. Seeded private/alias/re-export/nonpublic/cycle and endpoint12 controls failed with expected diagnostics."
+    },
+    {
+      "id": "language",
+      "pointer": "glossary.md:3-4",
+      "intent": "documented",
+      "summary": "Order is a purchase; Panel order is UI sequencing."
+    },
+    {
+      "id": "cycle",
+      "pointer": "Git b6c59b7810f5155fd514c9db60e98b7dffce0cc0:packages/core/a.ts and packages/core/b.ts; current deletion diff",
+      "intent": "observed",
+      "summary": "Unused unexported recursive pair was deleted; static graph and cycle controls establish maintained acyclicity."
+    },
+    {
+      "id": "maintenance",
+      "pointer": ".bstack/project.json; .bstack/bin/bstack-check.mjs; DESIGN.md:22",
+      "intent": "documented",
+      "summary": "Selected maintained contract and complete standalone checker installed; final portable assessment and clean-clone proof await exact review."
+    },
+    {
+      "id": "selection",
+      "pointer": ".bstack/selection.md:3; DESIGN.md:6",
+      "intent": "documented",
+      "summary": "Owner-selected corrections retain checkout10/quote12, Panel order, receipt note, historical snapshot policy and no hosted CI."
+    },
+    {
+      "id": "native-controls",
+      "pointer": "Scratch shop-target-proof-{private,alias,reexport,nonpublic,cycle,maintained,journey}.json",
+      "intent": "observed",
+      "summary": "All seven native proof results checked: every valid control exits0 and deliberate violation exits1 with expected diagnostic. Findings validates only declarations/artifact hashes, not semantic claims; actual outputs are separately reviewed."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Checkout journey returns 12 instead of approved 10.",
+      "files": [
+        "journey.mjs",
+        "packages/core/internal/database.ts",
+        "unit.test.mjs"
+      ],
+      "command": "npm run journey",
+      "principle": "Preserve checkout total 10.",
+      "consequence": "Current important journey fails although mocked tests pass.",
+      "fix": "Correct only the controlled journey endpoint fixture to supply 10; preserve assertion 10, public quote 12 and existing pricing behavior. No discount change.",
+      "scope": [
+        "journey.mjs"
+      ],
+      "verification": "Captured failing real loopback reproduction before, passing after; unchanged public quote 12 unit check.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "checks"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Web UI, routes and aliasQuote access core storage internals.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "UI uses only public core interface.",
+      "consequence": "Storage changes leak into web consumers.",
+      "fix": "Export servicePrice through core index and route all web imports through that public interface.",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts"
+      ],
+      "verification": "Native valid/violation proof for relative private import, alias and re-export; valid public and core-internal controls.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "interface",
+        "checks"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Core a/b cycle fails the existing native graph check.",
+      "files": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Keep the existing acyclic dependency check; document its scope as a selected principle.",
+      "consequence": "Calls recurse without termination; maintained graph cannot pass.",
+      "fix": "Delete the two unused, unexported mutually recursive a/b modules to remove the cycle without inventing finite business behavior.",
+      "scope": [
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "DESIGN.md"
+      ],
+      "verification": "Cycle negative proof and clean graph control; journey compatibility.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "cycle",
+        "checks"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Existing check command only typechecks; no maintained evidence foundation exists.",
+      "files": [
+        "package.json",
+        "DESIGN.md",
+        "AGENTS.md"
+      ],
+      "command": null,
+      "principle": "Completion requires affected approved journeys on final inputs.",
+      "consequence": "Future changes can pass check while checkout or architecture fails; guidance cannot support the requested extension.",
+      "fix": "Extend npm run check with boundary, unit and journey checks; add a short completion/maintenance section to DESIGN.md, pointers in AGENTS.md, selected .bstack contract and repo-owned standalone checker, then assessed portable evidence. Preserve names and CLAUDE import stub.",
+      "scope": [
+        "package.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        "boundaries.mjs",
+        ".bstack/selection.md"
+      ],
+      "verification": "Maintained command native positive/negative proof, docs/contract/evidence validation and fresh standalone checker in working checkout and different-root clean clone with isolated home/cache. Each generated payload and assessment needs exact approval.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "design",
+        "checks",
+        "maintenance"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "Order means both purchase and panel sequence.",
+      "files": [
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "One canonical meaning per concept in this context.",
+      "consequence": "Extension guidance is ambiguous.",
+      "fix": "Keep Order for customer purchases and rename UI sequencing to Panel order, preserving glossary.md.",
+      "scope": [
+        "glossary.md"
+      ],
+      "verification": "Owner confirms meaning; protected exact glossary diff and maintenance coverage.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": true,
+      "sourceIds": [
+        "language"
+      ]
+    },
+    {
+      "id": "F-006",
+      "problem": "No assessed-state historical audit snapshot or portable reviewed assessment exists.",
+      "files": [
+        "DESIGN.md",
+        "package.json"
+      ],
+      "command": null,
+      "principle": "Versioned audit records are historical observations; fresh scratch evidence decides current readiness.",
+      "consequence": "A future maintainer cannot trace selected corrections and independent current-checkout verification.",
+      "fix": "Create a historical docs/repo-audit.md snapshot with observed revision; later separately review and apply the exact portable .bstack/assessment.json. Retain final current-head findings/readiness in scratch.",
+      "scope": [
+        "docs/repo-audit.md",
+        ".bstack/assessment.json"
+      ],
+      "verification": "Final mapped impact assessment, actual execution artifacts and fresh standalone working-tree and isolated different-root clean-clone checker results.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "maintenance",
+        "checks"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001",
+    "F-002",
+    "F-003",
+    "F-004",
+    "F-005",
+    "F-006"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey",
+    "boundary-proof",
+    "maintained-enforcement",
+    "maintenance-contract",
+    "standalone-clean-clone"
+  ],
+  "execution": [
+    {
+      "id": "capture-1",
+      "outcome": "starting-checks",
+      "status": "passed",
+      "fingerprint": "3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e",
+      "artifact": "[isolated-home]/cache/bstack/0ab657b7899ba595ff4c28db1a6ac56ea74bbf315108aa81bc54002e1eee0d52/a075a92b-bed3-4cce-94d8-8b96a5e54ead/checks.json",
+      "artifactHash": "e354c76cd406ed92f4cca99ed6108b27f530b6e0b98037ec68acdd490e65df28",
+      "method": "run-checks native maintained aggregate"
+    },
+    {
+      "id": "capture-2",
+      "outcome": "journey",
+      "status": "passed",
+      "fingerprint": "3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e",
+      "artifact": "[isolated-home]/cache/bstack/0ab657b7899ba595ff4c28db1a6ac56ea74bbf315108aa81bc54002e1eee0d52/a075a92b-bed3-4cce-94d8-8b96a5e54ead/checks.json",
+      "artifactHash": "e354c76cd406ed92f4cca99ed6108b27f530b6e0b98037ec68acdd490e65df28",
+      "method": "run-checks real loopback checkout and public quote"
+    },
+    {
+      "id": "capture-3",
+      "outcome": "boundary-proof",
+      "status": "passed",
+      "fingerprint": "3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e",
+      "artifact": "[isolated-home]/cache/bstack/0ab657b7899ba595ff4c28db1a6ac56ea74bbf315108aa81bc54002e1eee0d52/ff2f5b3d-8cda-4a31-8d21-e311c40c4cfb/proof.json",
+      "artifactHash": "dc154793916d0bfb1cacd0a3e1d8d145b611e7cbde7078ed764cb643339ff96b",
+      "method": "rule-proof private"
+    },
+    {
+      "id": "capture-8",
+      "outcome": "maintained-enforcement",
+      "status": "passed",
+      "fingerprint": "3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e",
+      "artifact": "[isolated-home]/cache/bstack/0ab657b7899ba595ff4c28db1a6ac56ea74bbf315108aa81bc54002e1eee0d52/0426327c-4e86-498e-970a-7bb5152aa72d/proof.json",
+      "artifactHash": "2c6d0c3ecbd866efd720db661d59b98a5d0fd09eb4d359940c3c9f0400b4cf53",
+      "method": "rule-proof native aggregate"
+    },
+    {
+      "id": "capture-10",
+      "outcome": "maintenance-contract",
+      "status": "passed",
+      "fingerprint": "3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "7e8d450a0fa276ac079ce324a3d9386e2dc33570c169338fc1082ffe615739eb",
+      "method": "contract validate"
+    }
+  ],
+  "limitations": [
+    "Historical snapshot of implementation revision 42157a36b0a35ecd679d41b52313a0ea32660822; not a live readiness authority. Final current-head findings/readiness remain in scratch.",
+    "Receipt wording remains a future owner decision; its user note was preserved exactly.",
+    "The original before/after plan source hash became stale after approved DESIGN.md additions. Original failing captures are retained; fresh final native journey controls prove endpoint10 succeeds and endpoint12 fails without changing the assertion. No successful exact-plan before/after pairing is claimed.",
+    "Static boundary proof covers imports, aliases and re-exports plus cycles; dynamic imports, require and generated code require review.",
+    "No prior maintenance contract/checker exists at the comparison base. First-contract adoption is explicit selected foundation F-004; no hosted CI or delivery service selected.",
+    "Portable assessment exact review, protected write and final working/clean-clone checker execution remain pending."
+  ]
+}

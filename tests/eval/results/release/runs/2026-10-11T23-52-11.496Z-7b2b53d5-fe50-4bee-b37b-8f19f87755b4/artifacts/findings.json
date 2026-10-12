@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "ec52939656c1bce417709f3d6c84038f8a15e51f"
+  },
+  "nextChange": "Unresolved: contract-preserving internal refactor or public quote contract change.",
+  "reviewedScope": [
+    "DESIGN.md",
+    "price.mjs",
+    "price.test.mjs",
+    "project.json",
+    "notes.md",
+    "rename.md",
+    "remove.md"
+  ],
+  "sources": [
+    {
+      "id": "contract",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "A quote is quantity multiplied by 12."
+    },
+    {
+      "id": "implementation",
+      "pointer": "price.mjs:1",
+      "intent": "observed",
+      "summary": "quote(quantity) returns quantity * 12."
+    },
+    {
+      "id": "test",
+      "pointer": "price.test.mjs:4",
+      "intent": "observed",
+      "summary": "Public test expects quote(3) = 36; node --test price.test.mjs passed one case."
+    },
+    {
+      "id": "request",
+      "pointer": "User request in current session",
+      "intent": "documented",
+      "summary": "Read-only audit; implementation scope unresolved; exact historical comparison HEAD^ against HEAD."
+    },
+    {
+      "id": "history",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "measure --range HEAD^..HEAD exited 2 with history-unreadable; HEAD^ resolution fails; shallow checkout; parent 4c30913019f94a99eab09a7387a214ddd0ce12da is absent."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Requested implementation scope is unresolved.",
+      "files": [
+        "DESIGN.md",
+        "price.mjs",
+        "price.test.mjs"
+      ],
+      "command": null,
+      "principle": "Retain documented contract until the owner resolves intended behavior.",
+      "consequence": "Acceptance cases, compatibility requirements, implementation recommendations and write scope cannot be selected.",
+      "fix": "Ask whether quantity * 12 must be preserved or changed. Recommend preserving the current documented contract unless a changed outcome is intended; trade-off is deferring new pricing behavior.",
+      "scope": [
+        "DESIGN.md",
+        "price.mjs",
+        "price.test.mjs"
+      ],
+      "verification": "Owner resolves parent scope; then establish applicable acceptance cases and before/after evidence.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "contract",
+        "implementation",
+        "test",
+        "request"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Exact requested historical base HEAD^ is inaccessible.",
+      "files": [],
+      "command": "node scripts/repo-audit.mjs measure --repo [fixture] --range HEAD^..HEAD --json",
+      "principle": "Only actual exact-base history supports historical comparison claims.",
+      "consequence": "Historical size, frequency, co-change and before/after comparison unavailable.",
+      "fix": "Provide complete history for this HEAD including parent 4c30913019f94a99eab09a7387a214ddd0ce12da inside an allowed root, and restore traversable parent history in a scratch copy. Current origin is outside permitted scope and cannot be accessed.",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "verification": "Resolve HEAD^ to the exact parent and rerun HEAD^..HEAD measurement and comparison.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "history",
+        "request"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "scope-resolved",
+    "exact-history-comparison"
+  ],
+  "execution": [],
+  "limitations": [
+    "No project files changed; working tree clean at inspected HEAD.",
+    "Direct baseline node --test price.test.mjs passed one public case; retained native-test.txt. This is not run-checks-bound implementation or readiness evidence. A change-specific check plan is deferred until scope is resolved.",
+    "Every Node invocation was preceded by fresh host aggregate preflight returning permitted true, with memory >= 8 GB, disk >= 20 GB, load < 36 and proposed total suites <= 2.",
+    "History comparison blocked; no alternative base chosen.",
+    "No language or outside recommendations needed for this bounded final checkpoint. No third-party service boundary found."
+  ]
+}

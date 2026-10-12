@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"measure","status":"blocked","problems":[{"code":"history-unreadable","message":"Requested Git history or objects could not be read.","fix":"Supply locally available commit revisions and complete history."}],"data":{},"inputs":{}}

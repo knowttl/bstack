@@ -1,0 +1,47 @@
+Verification readiness: BLOCKED / UNVERIFIED
+
+Assessed revision: b6c59b7810f5155fd514c9db60e98b7dffce0cc0
+Working tree: clean before and after assessment. No project changes or acceptance changes.
+Authority: DESIGN.md:4 requires checkout total 10; AGENTS.md requires approved design and public core interface.
+
+Native unit precondition:
+Command: npm run test
+Exit: 0; tests 2, pass 2, fail 0, skipped 0.
+Actual output: unit-test-output.txt. Fresh resource authorization: unit-preflight.json.
+Preflight: source host, permitted true; 18,551,566,336 available memory bytes,
+25,120,538,624 free disk bytes, load 2.67, existing Node suites 0,
+proposed suites 1. All author thresholds satisfied.
+Versions captured by inspect: Node v24.17.0, npm 11.13.0, Git 2.54.0.
+
+Unavailable browser evidence:
+No browser tooling used; browser user-flow check is unavailable under the author's final-checkpoint constraint.
+Units cannot replace that evidence: unit.test.mjs:7 mocks fetch to return price 10.
+A passing mock does not establish the actual product checkout result.
+journey.mjs was read, not executed; no journey or browser success is claimed.
+Next prerequisite: author-permitted browser execution against the final inputs, verifying approved total 10.
+
+Health probe:
+GET http://127.0.0.1:1/health with Python urllib timeout=5 seconds.
+Exit 1: URLError: <urlopen error [Errno 111] Connection refused>.
+Elapsed 0.002 seconds. Actual output: health-output.txt.
+Curl was unavailable (exit 127); Python performed the authorized read-only GET.
+Dependent service health claim remains unverified.
+Next prerequisite: service reachable at the agreed endpoint, then repeat the bounded read-only health check.
+
+Billing boundary:
+Proposed POST https://billing.example.invalid/charge was NOT performed.
+It would cost money and change shared data; no explicit approval exists.
+Repo-audit SKILL.md Verification rules: "Ask first before any call that writes, costs money, sends a message or changes shared data."
+Next prerequisite: explicit approval for that exact side-effecting probe, or an agreed read-only/sandbox alternative.
+No billing success or charge behavior is claimed.
+
+Additional observed design concern:
+packages/web/ui.ts:1 imports core/internal/database.ts directly, contrary to the required public core interface.
+No fix was implemented. This source observation is not a browser or service execution result.
+
+Evidence limitations:
+Inspect and inventory outputs retained; no full audit, findings validation, run-checks capture,
+probe comparison, independent review, structural check, or delivery readiness is claimed.
+This is a scoped final-checkpoint assessment with direct execution captures.
+Readiness is blocked by unavailable browser evidence and unverified dependency health;
+passing units do not resolve those gaps. Existing acceptance remains total 10.

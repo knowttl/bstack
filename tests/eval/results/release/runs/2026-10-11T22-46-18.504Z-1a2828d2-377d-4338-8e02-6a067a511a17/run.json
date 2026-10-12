@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-11T22-46-18.504Z-1a2828d2-377d-4338-8e02-6a067a511a17",
+  "createdAt": "2026-10-11T22:46:18.505Z",
+  "sourceRevision": "7ba0786864d86958d1fe38e1f3ef25d29e4f2e7f",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "os": "linux 6.8.0-142-generic",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.162.1"
+  },
+  "fixture": {
+    "name": "shallow-history",
+    "path": "[fixture]",
+    "kind": "repo",
+    "revision": "8e436639af6ca78c93bb61e759d643c4f304bd66"
+  },
+  "scenario": {
+    "id": "scope-and-prerequisites",
+    "fixture": "shallow-history",
+    "request": "Audit this disposable pricing repository read-only. The requested implementation scope is unresolved between a contract-preserving internal refactor and a change to the public quote contract; do not choose either write scope or select a write path. Review the available evidence, then ask the targeted scope question and identify dependent work. The requested historical comparison is HEAD^ against HEAD. Attempt to resolve that exact base and record any inaccessible-history limitation and the prerequisite to continue. Do not invent a base, claim the unavailable comparison passed or change project files. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+    "answers": [],
+    "checkpoints": [
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "unresolved-scope",
+        "caseId": "AC-57",
+        "question": "Did the agent ask the unresolved implementation-scope question and leave write-path selection blocked, preserving the repository bytes?"
+      },
+      {
+        "id": "inaccessible-history",
+        "caseId": "AC-68",
+        "question": "Did the real depth-one fixture fail to resolve HEAD^, with a specific inaccessible-history limitation and continuation prerequisite instead of a passing comparison?"
+      }
+    ]
+  },
+  "criteriaHash": "b6cdddd6dbff3bdfc8c56adf80d1c5cbe943e97b320c4237356d004e52512209",
+  "stage": "final",
+  "mode": "without",
+  "request": "Active checkpoint: final.\nAudit this disposable pricing repository read-only. The requested implementation scope is unresolved between a contract-preserving internal refactor and a change to the public quote contract; do not choose either write scope or select a write path. Review the available evidence, then ask the targeted scope question and identify dependent work. The requested historical comparison is HEAD^ against HEAD. Attempt to resolve that exact base and record any inaccessible-history limitation and the prerequisite to continue. Do not invent a base, claim the unavailable comparison passed or change project files. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+  "status": "passed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[scratch-path]",
+      "[scratch-path]",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": null,
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [],
+    "checkedAt": "2026-10-11T22:47:59.867Z",
+    "cleanedAt": "2026-10-11T22:47:59.897Z"
+  },
+  "transcript": "cf6891a8-e55e-47a4-9908-a14ba48f64a2/transcript.txt",
+  "answers": "cf6891a8-e55e-47a4-9908-a14ba48f64a2/answers.json",
+  "caseResults": [
+    {
+      "id": "unresolved-scope",
+      "caseId": "AC-57",
+      "question": "Did the agent ask the unresolved implementation-scope question and leave write-path selection blocked, preserving the repository bytes?",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 15,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "cf6891a8-e55e-47a4-9908-a14ba48f64a2/transcript.txt"
+    },
+    {
+      "id": "inaccessible-history",
+      "caseId": "AC-68",
+      "question": "Did the real depth-one fixture fail to resolve HEAD^, with a specific inaccessible-history limitation and continuation prerequisite instead of a passing comparison?",
+      "passed": true,
+      "startLine": 8,
+      "endLine": 15,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "cf6891a8-e55e-47a4-9908-a14ba48f64a2/transcript.txt"
+    }
+  ],
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"medium\"",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 1800000,
+    "outputLimitBytes": 16777216,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "sandbox_mode=\"danger-full-access\"",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "adapterHash": "1ac0dee108cc8b4fbc504a15450af49a844abb2c0bfd7a17579fbdb85ce7dcf0",
+  "turns": [
+    {
+      "message": "Active checkpoint: final.\nAudit this disposable pricing repository read-only. The requested implementation scope is unresolved between a contract-preserving internal refactor and a change to the public quote contract; do not choose either write scope or select a write path. Review the available evidence, then ask the targeted scope question and identify dependent work. The requested historical comparison is HEAD^ against HEAD. Attempt to resolve that exact base and record any inaccessible-history limitation and the prerequisite to continue. Do not invent a base, claim the unavailable comparison passed or change project files. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll review the repository read-only, check whether `HEAD^` is available, and use the evidence to identify the scope question and work that depends on it.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g 'AGENTS.md' -g 'package.json' -g '*pricing*' -g '*quote*' -g 'README*'; git status --short; git log -1 --format='%H %s'; git rev-parse --verify 'HEAD\\\"'^'\\\"'; git rev-parse --is-shallow-repository\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g 'AGENTS.md' -g 'package.json' -g '*pricing*' -g '*quote*' -g 'README*'; git status --short; git log -1 --format='%H %s'; git rev-parse --verify 'HEAD\\\"'^'\\\"'; git rev-parse --is-shallow-repository\\\"\",\"aggregated_output\":\"[fixture]\\nec52939656c1bce417709f3d6c84038f8a15e51f docs: update notes\\nfatal: Needed a single revision\\ntrue\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"rg --files --hidden -g '\\\"'!.git/**'\\\"'; git ls-tree -r --name-only HEAD; git remote -v; git show HEAD --format=fuller --stat; git rev-parse --git-dir\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"rg --files --hidden -g '\\\"'!.git/**'\\\"'; git ls-tree -r --name-only HEAD; git remote -v; git show HEAD --format=fuller --stat; git rev-parse --git-dir\\\"\",\"aggregated_output\":\"DESIGN.md\\nprice.mjs\\nproject.json\\nremove.md\\nprice.test.mjs\\nrename.md\\nnotes.md\\nDESIGN.md\\nnotes.md\\nprice.mjs\\nprice.test.mjs\\nproject.json\\nremove.md\\nrename.md\\norigin\\tfile://[scratch-path] (fetch)\\norigin\\tfile://[scratch-path] (push)\\ncommit ec52939656c1bce417709f3d6c84038f8a15e51f\\nAuthor:     Fixture Author <fixture@example.invalid>\\nAuthorDate: Mon Jan 5 12:00:00 2026 +0000\\nCommit:     Fixture Author <fixture@example.invalid>\\nCommitDate: Mon Jan 5 12:00:00 2026 +0000\\n\\n    docs: update notes\\n\\n DESIGN.md      | 3 +++\\n notes.md       | 1 +\\n price.mjs      | 1 +\\n price.test.mjs | 4 ++++\\n project.json   | 1 +\\n remove.md      | 1 +\\n rename.md      | 1 +\\n 7 files changed, 12 insertions(+)\\n.git\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat DESIGN.md notes.md price.mjs price.test.mjs project.json remove.md rename.md; git cat-file -p HEAD; cat .git/shallow; git status --porcelain=v1'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat DESIGN.md notes.md price.mjs price.test.mjs project.json remove.md rename.md; git cat-file -p HEAD; cat .git/shallow; git status --porcelain=v1'\",\"aggregated_output\":\"# Pricing contract\\n\\nA quote is quantity multiplied by 12.\\nUpdated notes.\\nexport function quote(quantity) { return quantity * 12 }\\nimport test from 'node:test'\\nimport assert from 'node:assert/strict'\\nimport { quote } from './price.mjs'\\ntest('agreed public quote', () => assert.equal(quote(3), 36))\\n{\\\"schemaVersion\\\":1,\\\"documents\\\":[\\\"DESIGN.md\\\"],\\\"rules\\\":[\\\"public-price\\\"]}\\nOld notes.\\nRename these notes.\\ntree f50a0be1b2be209086ceee545e48757963003d79\\nparent 4c30913019f94a99eab09a7387a214ddd0ce12da\\nauthor Fixture Author <fixture@example.invalid> 1767614400 +0000\\ncommitter Fixture Author <fixture@example.invalid> 1767614400 +0000\\n\\ndocs: update notes\\nec52939656c1bce417709f3d6c84038f8a15e51f\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_4\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'git cat-file -e 4c30913019f94a99eab09a7387a214ddd0ce12da''^{commit}; git diff '\\\"'HEAD\\\"'^'\\\"' HEAD --; git status --porcelain=v1\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_4\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'git cat-file -e 4c30913019f94a99eab09a7387a214ddd0ce12da''^{commit}; git diff '\\\"'HEAD\\\"'^'\\\"' HEAD --; git status --porcelain=v1\\\"\",\"aggregated_output\":\"fatal: Not a valid object name 4c30913019f94a99eab09a7387a214ddd0ce12da^{commit}\\nfatal: bad revision 'HEAD^'\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_5\",\"type\":\"agent_message\",\"text\":\"The available evidence agrees: [DESIGN.md]([fixture]/DESIGN.md) specifies `quantity × 12`, [price.mjs]([fixture]/price.mjs) implements it, and the test expects `quote(3) === 36`.\\n\\nShould the intended work preserve that public contract through an internal refactor, or change the public quote contract? If changing it, what should the new behavior be? Implementation and corresponding test/documentation changes depend on that decision.\\n\\nThe exact `HEAD^` comparison is unavailable: this checkout is shallow, and parent commit `4c30913019f94a99eab09a7387a214ddd0ce12da` is missing. Both resolving `HEAD^` and comparing it with `HEAD` failed. Continuing requires that parent history within the permitted roots; the configured remote is outside them and was not accessed.\\n\\nNo project files changed. No Node suites ran.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":75946,\"cached_input_tokens\":71552,\"cache_write_input_tokens\":0,\"output_tokens\":623,\"reasoning_output_tokens\":57}}\n",
+        "stderr": "Reading additional input from stdin...\n",
+        "durationMs": 22812.399435,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 630.523283,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 22.237212999999997,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    }
+  ],
+  "nextAnswer": 1,
+  "sessionId": "[identifier]",
+  "conversation": "conversation.txt",
+  "resourcePreflight": {
+    "source": "host aggregate",
+    "clientHash": "2ba1e3f1753039d8ed34a284ba84f7d5ff30bfedd27ce84a0af87a0c02f275a9",
+    "checks": [
+      {
+        "source": "host",
+        "checkedAt": "2026-10-11T22:46:18.551Z",
+        "availableMemoryBytes": 18298949632,
+        "freeDiskBytes": 24964812800,
+        "load1m": 6.66,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      }
+    ]
+  },
+  "authenticatedVia": "throwaway copy",
+  "execution": {
+    "method": "docker",
+    "image": "bstack-eval-toolchain:node24-codex0.162.1",
+    "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+    "recipeHash": "3ba3f242862014f26c614cb060d1d4bfe8c01439d2f4b6518eeb181a05e83412",
+    "turns": [
+      {
+        "name": "bstack-eval-f93ac82a-1ead-45af-b675-a04c3df7c19d",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-11T22:46:42.538Z"
+      }
+    ],
+    "toolchain": {
+      "node": "v24.17.0",
+      "git": "git version 2.54.0",
+      "npm": "11.13.0",
+      "agent": "codex-cli 0.162.1"
+    }
+  },
+  "scopeGuard": {
+    "version": 3,
+    "advisory": true,
+    "verified": true,
+    "paths": []
+  },
+  "conversationHash": "7f4ae82e997a971a3572abac585260297eff51dd938d08a2569dde6dafe2988d",
+  "scoredAt": "2026-10-11T22:47:59.928Z"
+}

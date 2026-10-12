@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API workspace",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "VISION.md:3-7 is the approved single-reader baseline. DESIGN.md:10-13 approves personal local backup preserving title, address and read status; it explicitly records missing vision acceptance criteria and withholds implementation or stack approval. glossary.md:3-5 includes read articles in the queue. Accessible history contains two commits: cdef266 approved the queue; 4e5e6b9 changed only DESIGN.md and approved the backup boundary. No contradictory product choice requires an interview.",
+      "limitations": [
+        "Main-thread mode: only three short documents make delegation wasteful.",
+        "No merged PR or board verdict history is available in the supplied repository."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "DESIGN.md:10",
+          "state": {
+            "kind": "sha256",
+            "value": "5865faf07f72ffae5a6a794642e25c85e45b8fb38d9656247dd9c6fd582c0ed0"
+          }
+        },
+        {
+          "location": "DESIGN.md:12",
+          "state": {
+            "kind": "sha256",
+            "value": "5865faf07f72ffae5a6a794642e25c85e45b8fb38d9656247dd9c6fd582c0ed0"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "c4df6fc9350fe8ed8552281064e0297101ea062b97034b754361ebb04410acbc"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "inspect and inventory passed on a clean tree. git ls-files and scoped file inventory show only three Markdown documents; there is no implementation, manifest, native check command or executable journey to run. Tool versions observed: Node v24.17.0 and Git 2.54.0. Behaviour is documented intent, not observed product behaviour.",
+      "limitations": [
+        "Runtime save/list/mark-read/export behaviour cannot be verified; no executable product is present.",
+        "No language or external service recommendation is needed for this document-only audit."
+      ],
+      "files": [],
+      "web": []
+    }
+  ]
+}

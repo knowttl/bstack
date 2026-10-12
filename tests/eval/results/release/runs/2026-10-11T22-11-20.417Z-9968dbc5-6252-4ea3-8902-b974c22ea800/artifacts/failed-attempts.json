@@ -1,0 +1,12 @@
+{
+  "status": "resolved tooling preparation failures",
+  "items": [
+    "Initial check-plan validation: missing-compatibility; corrected by declaring separate protection and compatibility roles.",
+    "Second check-plan validation: no-required-checks/missing-protection; no native suite ran in either rejected attempt.",
+    "Apply previews rejected missing-stage-outcome, missing payload content and later assessment scope-mismatch; corrected before writes.",
+    "Scratch portable assessment validation rejected portable-source-mismatch: record needed its selected repository path.",
+    "Assessment preparation initially assumed an existing record; it was absent. Changed protected operation to create.",
+    "Unbound assessment validation reported required-check-missing/stale-review; final committed-input capture and reviewed fingerprint resolved both."
+  ],
+  "source": "Executed tool outputs retained in session transcript; some preparation capture filenames were overwritten by corrected attempts. No failed native behavior checks."
+}

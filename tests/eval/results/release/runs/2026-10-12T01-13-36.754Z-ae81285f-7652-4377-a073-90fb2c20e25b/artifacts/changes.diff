@@ -1,0 +1,41 @@
+--- a/DESIGN.md
++++ b/DESIGN.md
+@@ -9,7 +9,7 @@
+ 
+ Web consumers import core capabilities through `packages/core/index.ts`; storage stays in `packages/core/internal`. Core may use its own internals. Static import and re-export dependencies must be acyclic. These boundaries protect the approved separation of UI and storage; `boundaries.mjs` resolves TypeScript paths, including aliases, and rejects private web imports and cycles. No boundary exceptions are selected. Dynamic imports and runtime loading are outside this check and require review.
+ 
+-`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote()`. Quote remains 12. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.
++`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)` for a selected quantity, multiplying that quantity by the public core price. Quote remains 12. The approved selected-quantity example is `quote(2) = 24`. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.
+ 
+ ## Completing and maintaining a change
+ 
+--- a/packages/web/public.ts
++++ b/packages/web/public.ts
+@@ -1,2 +1,2 @@
+ import { price } from '../core/index.ts'
+-export function quote() { return price() }
++export function quote(quantity = 1) { return quantity * price() }
+--- a/unit.test.mjs
++++ b/unit.test.mjs
+@@ -3,6 +3,7 @@
+ import { quote } from './packages/web/public.ts'
+ import { checkout } from './packages/web/ui.ts'
+ test('public price', () => assert.equal(quote(), 12))
++test('public price for selected quantity', () => assert.equal(quote(2), 24))
+ test('checkout HTTP mock', async t => {
+   t.mock.method(globalThis, 'fetch', async () => new Response(JSON.stringify({ price: 10 })))
+   assert.deepEqual(await checkout('https://price.example.invalid/price'), { status: 201, total: 10 })
+--- a/.bstack/project.json
++++ b/.bstack/project.json
+@@ -132,6 +132,11 @@
+       "id": "quote",
+       "path": "DESIGN.md",
+       "pointer": "Quote remains 12."
++    },
++    {
++      "id": "quote-selected-quantity",
++      "path": "DESIGN.md",
++      "pointer": "The approved selected-quantity example is `quote(2) = 24`."
+     }
+   ]
+ }

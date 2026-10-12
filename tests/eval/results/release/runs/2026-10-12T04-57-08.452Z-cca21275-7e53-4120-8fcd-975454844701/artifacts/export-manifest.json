@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T04-57-08.452Z-cca21275-7e53-4120-8fcd-975454844701",
+  "artifacts": [
+    {
+      "path": "artifacts/scratch/cite-check.json",
+      "originalSha256": "fe38ca4179de0a155a60959ddcd0ae092acbf5666afbef9917cf13bb1fa32a3b",
+      "publishedSha256": "e0bfa83ede74ed548aeb2ea5a3822cb246a5ae03827eccffc8773c40b0fcf40b"
+    },
+    {
+      "path": "artifacts/scratch/inspect.json",
+      "originalSha256": "0d32961a67591d0b87c8bbcfa73f6bc655a0f571fe3bcf2ec6f0a4f3c2c84587",
+      "publishedSha256": "b06413e747453dc65dd8481c62ae8ada9e047975c64abf5100e862f32166cb0e"
+    },
+    {
+      "path": "artifacts/scratch/inventory.json",
+      "originalSha256": "235c6271eb6d25ec7d54ecd68b38b7f9eb9d524d60b7b57d96e2175f6b04e20f",
+      "publishedSha256": "92d74fbcd961fa60963392febb710d201b07ccd42b0f1e4bc44b92d7462a2fc2"
+    },
+    {
+      "path": "artifacts/scratch/research-report.json",
+      "originalSha256": "bae8355ea5775a9e70812cf74568819853323bc49ecd8246f2d6f991e0778e9e",
+      "publishedSha256": "55a4d637063f4992017d062af7d269f7f61ed5ef6cfdb3f3477504f963cb495b"
+    }
+  ]
+}

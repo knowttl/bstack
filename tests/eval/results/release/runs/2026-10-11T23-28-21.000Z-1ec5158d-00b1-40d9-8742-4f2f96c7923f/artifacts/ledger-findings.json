@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde"
+  },
+  "nextChange": "Foundation recommendations for balanced postings through the public ledger package; preserve native Python journey and standards; recommendations only.",
+  "reviewedScope": [
+    "CONTRIBUTING.md",
+    "pyproject.toml",
+    "uv.lock",
+    "app.py",
+    "startup.py",
+    "boundaries.py",
+    "test_ledger.py",
+    "ledger/__init__.py",
+    "ledger/_internal.py",
+    "ledger/book.py"
+  ],
+  "sources": [
+    {
+      "id": "S-standards",
+      "pointer": "CONTRIBUTING.md:3-5",
+      "intent": "documented",
+      "summary": "External modules use public ledger; ledger owns entries and balance calculations; native Python checks preserve balanced postings."
+    },
+    {
+      "id": "S-api",
+      "pointer": "ledger/__init__.py:1-3; ledger/book.py:15-90",
+      "intent": "observed",
+      "summary": "Ledger is the public export and cohesive owner of posting, transfer, reversal, reporting and atomic balanced row import."
+    },
+    {
+      "id": "S-app",
+      "pointer": "app.py:1-8",
+      "intent": "observed",
+      "summary": "Opening balance posts 10 through Ledger but imports private amount."
+    },
+    {
+      "id": "S-boundary",
+      "pointer": "boundaries.py:8-30",
+      "intent": "observed",
+      "summary": "AST check scans only app and ledger, with exact app-only private/bridge predicates."
+    },
+    {
+      "id": "S-tests",
+      "pointer": "test_ledger.py:8-16; startup.py:15-18",
+      "intent": "observed",
+      "summary": "Two public tests protect posting/negative rejection. Startup exports CSV/JSON with no committed journey test."
+    },
+    {
+      "id": "S-toolchain",
+      "pointer": "pyproject.toml:4-13; uv.lock:1-20",
+      "intent": "documented",
+      "summary": "Python 3.12 range, Ruff 0.14.0 pin and E4/E7/E9/F rules are the native baseline."
+    },
+    {
+      "id": "S-checks",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Captured Python 3.11.2: two unit tests pass, boundary exits 1 with private, supplemental public and startup checks pass. Supported interpreter and Ruff unavailable."
+    },
+    {
+      "id": "S-foundation",
+      "pointer": "ledger/book.py:15-16; CONTRIBUTING.md:4",
+      "intent": "inferred",
+      "summary": "Keep the existing cohesive ledger owner and Python journey; no evidence supports splitting balance calculations or exposing a forwarding bridge."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "app.py imports ledger._internal.amount in violation of the existing public-package standard.",
+      "files": [
+        "app.py",
+        "ledger/__init__.py",
+        "ledger/book.py"
+      ],
+      "command": "python3 -B boundaries.py",
+      "principle": "Existing CONTRIBUTING.md:3-4: callers use public Ledger; ledger owns amount normalization and entries. No exception is needed for this caller.",
+      "consequence": "A caller depends on private normalization despite Ledger.post already owning it. The native boundary check currently fails.",
+      "fix": "Remove the private import and pass the existing string value \"10\" directly to Ledger.post. Preserve opening_balance result; keep amount private, and retain Ledger as the cohesive owner.",
+      "scope": [
+        "app.py"
+      ],
+      "verification": "Capture opening_balance()==Decimal(\"10\") before and after; run public posting tests and the existing boundaries.py check, expecting private violation removed and no cycle. No bridge or additional public amount export.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "S-standards",
+        "S-app",
+        "S-api",
+        "S-checks"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Boundary enforcement omits startup.py and tests and checks only two exact imports for app, leaving equivalent private-module imports unchecked.",
+      "files": [
+        "boundaries.py",
+        "boundaries.py",
+        "boundaries.py",
+        "startup.py"
+      ],
+      "command": null,
+      "principle": "Existing public-package rule applies to external modules. Use the existing Python AST checker, resolving repo import paths and symbol origins where needed. Exceptions must be narrowly reviewed with reason and removal condition; dynamic imports are an explicit coverage limit.",
+      "consequence": "A startup/private import or a public-looking re-export can bypass the rule while the checker reports success.",
+      "fix": "Extend boundaries.py over the actual external Python callers, including startup and tests; reject access to ledger implementation modules through direct imports, from-package imports, aliases and an intermediate re-export; keep permitted ledger-internal imports and cycle detection. Resolve origins rather than adding only a bridge-name blacklist.",
+      "scope": [
+        "boundaries.py"
+      ],
+      "verification": "Before adopting the extended rule, disposable public-import controls must pass; separate private, from-ledger-import, alias, intermediate bridge and cycle violations must fail with specific diagnostics. A clean public startup must pass. Document unresolved/dynamic syntax coverage instead of claiming completeness.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "S-standards",
+        "S-boundary",
+        "S-tests"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Committed public tests cover only a happy posting and a negative amount, leaving startup/export and other balanced-entry mutation paths without durable acceptance protection.",
+      "files": [
+        "test_ledger.py",
+        "startup.py",
+        "ledger/book.py"
+      ],
+      "command": null,
+      "principle": "Existing balanced-posting and ledger-ownership standards (CONTRIBUTING.md:4-5) supply acceptance. Public journeys and observable outcomes, not private storage, supply checks. No exception may silently waive balance invariants.",
+      "consequence": "The two tests can pass while startup output diverges or import/transfer/reverse changes break balance preservation. The scratch probe is evidence, not maintained coverage.",
+      "fix": "Extend existing unittest coverage with a small public posting/transfer/reverse scenario, rejection-without-state-change cases (zero, negative, same account and unbalanced import), semantic row round trip, and a subprocess startup test comparing CSV/JSON accounts and amounts. Preserve the existing positive and negative tests.",
+      "scope": [
+        "test_ledger.py"
+      ],
+      "verification": "Use from ledger import Ledger and public entries/balances/export_rows; require equal debit/credit totals and unchanged state on rejection. Run startup with a temporary output file, assert CSV/JSON agree and cash/equity balances are +10/-10. Do not require Decimal textual scale equality or prescribe a new rounding policy. Run on Python 3.12.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "S-standards",
+        "S-api",
+        "S-tests",
+        "S-checks"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "CONTRIBUTING.md names native checks but documents neither setup nor one maintained check command nor what evidence completes a change.",
+      "files": [
+        "CONTRIBUTING.md",
+        "pyproject.toml"
+      ],
+      "command": null,
+      "principle": "Proposed completion principle: affected public acceptance journeys pass on final inputs; unit-only success does not establish the startup journey. Keep CONTRIBUTING.md as the authority and existing native configs as mechanical truth. Any temporary exception records scope, reason and removal condition.",
+      "consequence": "Contributors cannot reproduce the supported-runtime baseline or consistently retain boundary and public-journey failures. Python 3.12 and Ruff were unavailable in this audit.",
+      "fix": "Add a short setup/check/evidence section to CONTRIBUTING.md. Use uv sync --frozen and a fail-fast native sequence: uv run --frozen ruff check . && uv run --frozen python -m unittest discover -v && uv run --frozen python boundaries.py. Keep Python 3.12, locked Ruff rules and current package layout. No new type framework or hosted CI is necessary for this scope.",
+      "scope": [
+        "CONTRIBUTING.md"
+      ],
+      "verification": "On an environment with Python 3.12 and locked Ruff installed, capture tool versions and all command exits. Extend this same command with selected journey checks through unittest. Seed a boundary violation to prove the maintained sequence fails. Formatter adoption is optional and unverified; no type checker is configured. Hosted CI remains outside scope.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "S-standards",
+        "S-toolchain",
+        "S-tests"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Recommendations only: no edits selected or applied; no post-change readiness claimed.",
+    "Python 3.12 and Ruff unavailable: supported native lint/runtime checks are blocked; Python 3.11 checks are supplemental.",
+    "Captured check evidence is retained in ledger-check-results-final.json and its returned checks.json; it is not represented as findings-validated execution or a findings fingerprint.",
+    "Initial scratch probe required identical decimal text on round trip, an unsupported expectation. Final probe compares public Entry decimal values and balances; initial failed evidence is retained, not treated as a product defect.",
+    "Only one Git commit exists. Measurement range HEAD..HEAD has no change/co-change history; sizes are advisory.",
+    "Overlap compares two illustrative unselected plans, not real approved parallel work or predicted conflicts.",
+    "No README, vision, design, glossary, instructions, CI, audit or third-party service is present. Existing standards suffice for this bounded audit; no new vision interview is warranted.",
+    "AST rule extensions and seeded rule/integration proof are recommendations, not executed adopted rules.",
+    "Scratch journey script is outside repo input scopes of run-checks; preserve its exact bytes/hash alongside the result for review."
+  ]
+}

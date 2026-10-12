@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API workspace",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Owner-approved goal: one reader saves articles, finds them in the queue and marks them read without losing title or address. Accounts, sharing and recommendations are excluded. Local Node and JSON persistence are settled. Queue includes read articles; presentation uses queue operations. No conflicting vocabulary or material intent gaps were found.",
+      "limitations": [
+        "No README, instructions, standards, decisions or prior audit exists."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "c4df6fc9350fe8ed8552281064e0297101ea062b97034b754361ebb04410acbc"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Design assigns state to queue operations and prohibits presentation writes to storage. Repository has no implementation, entry points or executable interfaces. No observed code coupling can be assessed.",
+      "limitations": [
+        "Only design exists; history consists of two documentation commits. Co-change is advisory."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md"
+      ],
+      "findings": "No manifest, scripts, native configs, tests or CI exists. The save/list/mark-read journey and JSON persistence have no executable protection. Git and Node are available; no product check can run.",
+      "limitations": [
+        "Runtime readiness is unverified, not a failing test result."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Approved Node stack can use its built-in node:test runner, avoiding an extra test framework. Official Node documentation describes node:test as stable and supports running tests with node --test.",
+      "limitations": [
+        "No repository Node version policy or check integration exists; no proposed checks have executed."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://nodejs.org/api/test.html",
+          "readDate": "2026-10-11",
+          "verification": "verified"
+        }
+      ]
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "No third-party service is specified; local JSON persistence requires no external live probe.",
+      "limitations": [
+        "No invented external integration or service research."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

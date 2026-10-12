@@ -1,0 +1,5 @@
+- [x] Step 7: Starting-state audit, sources and actual native failures recorded.
+- [x] Step 8: Material gaps resolved by explicit supervisor verdicts; user note preserved.
+- [x] Step 9: Evidenced findings validated/rendered and selected.
+- [x] Step 10: Exact approved protected plans applied with hashes and recoverable originals.
+- [x] Step 11: Final committed-state assessment, native outcomes and both fresh full-checker invocations passed; current-head findings retained in scratch; historical snapshot unchanged.

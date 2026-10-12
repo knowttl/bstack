@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "nextChange": "Extend the approved public quote example to selected quantity, default one; quote() = 12 and quote(2) = 24.",
+  "reviewedScope": [
+    "DESIGN.md",
+    "packages/web/public.ts",
+    "unit.test.mjs",
+    ".bstack/project.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:12",
+      "intent": "documented",
+      "summary": "packages/web/public.ts is the representative public-interface example; quote remains 12 and checkout total remains 10."
+    },
+    {
+      "id": "selection",
+      "pointer": "User request: active checkpoint final, selected quantity",
+      "intent": "documented",
+      "summary": "Owner selected quote() = 12 and quote(2) = 24 through the public core interface, preserving checkout journey and user note exactly."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-007",
+      "problem": "The approved public quote example accepts no selected quantity and lacks quantity-two protection.",
+      "files": [
+        "DESIGN.md",
+        "packages/web/public.ts",
+        "unit.test.mjs",
+        ".bstack/project.json"
+      ],
+      "command": "npm run check",
+      "principle": "Extend the approved example through the public core interface while preserving default quote and checkout.",
+      "consequence": "Selected quantity two cannot produce the approved quote 24.",
+      "fix": "Document the selected outcome, default quantity to one in quote and multiply public price by quantity, retain original assertion and add quantity-two test, maintain quote contract pointers.",
+      "scope": [
+        "DESIGN.md",
+        "packages/web/public.ts",
+        "unit.test.mjs",
+        ".bstack/project.json"
+      ],
+      "verification": "Native types, public interface units, boundaries and original real loopback HTTP checkout; standalone checker locally and in isolated different-root clone.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "selection"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-007"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "native",
+    "standalone-local",
+    "standalone-clone"
+  ],
+  "execution": [],
+  "limitations": [
+    "No deployed service is configured; checkout journey uses the original real loopback HTTP endpoint.",
+    "Static boundaries do not cover dynamic imports or runtime loading.",
+    "Small maintenance scope reviewed in main thread; no independent research delegation needed."
+  ]
+}

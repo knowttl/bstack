@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "case-check",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "Native check check is preserved and passes",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "check",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "case-check"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "unit.test.mjs",
+        "DESIGN.md"
+      ]
+    }
+  ]
+}

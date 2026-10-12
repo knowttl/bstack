@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "runId": "8482ccc38c864c81dfc1900fdefa7fd3ee94ade1147406ace09c91277c8726e0",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "planDigest": "8482ccc38c864c81dfc1900fdefa7fd3ee94ade1147406ace09c91277c8726e0",
+  "edits": [
+    {
+      "id": "historical-audit",
+      "path": "docs/repo-audit.md",
+      "resolvedPath": "[fixture]/docs/repo-audit.md",
+      "originalHash": null,
+      "proposedHash": "240b215fe1ee3992891eff1ac8e3cc8ace09e1d15de67b69d1a74aba73e48a55",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "starting-checks",
+    "journey",
+    "boundary-proof",
+    "maintained-enforcement",
+    "foundation-review",
+    "maintenance-contract",
+    "standalone-clean-clone",
+    "final-proof-aggregate-cycle",
+    "final-proof-aggregate-dynamic",
+    "final-proof-aggregate-import-type",
+    "final-proof-aggregate-nonpublic",
+    "final-proof-aggregate-private",
+    "final-proof-aggregate-reexport",
+    "final-proof-aggregate-unknown-dynamic",
+    "final-proof-native-cycle",
+    "final-proof-native-dynamic",
+    "final-proof-native-import-type",
+    "final-proof-native-nonpublic",
+    "final-proof-native-private",
+    "final-proof-native-reexport",
+    "final-proof-native-unknown-dynamic"
+  ]
+}

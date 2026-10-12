@@ -1,0 +1,436 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-11T20-44-18.074Z-0c6f5736-e403-4a3e-be51-d0f884813b7f",
+  "createdAt": "2026-10-11T20:44:18.075Z",
+  "sourceRevision": "8c77a3507f2199f47c507ce93db506f014b1b36e",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "os": "linux 6.8.0-142-generic",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "agent": "codex-cli 0.162.1"
+  },
+  "fixture": {
+    "name": "clear-goals",
+    "path": "[fixture]",
+    "kind": "repo",
+    "revision": "c8576a3095a37da037d42c4bdf358d6372f5a91e"
+  },
+  "scenario": {
+    "id": "clear-goals",
+    "fixture": "clear-goals",
+    "request": "Audit this repo and recommend principles and checks appropriate to its approved goals.",
+    "answers": [
+      "The existing approved documents remain authoritative. Do not reopen settled decisions.",
+      "Present recommendations only."
+    ],
+    "checkpoints": [
+      "baseline",
+      "foundation",
+      "final"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "reuse",
+        "caseId": "AC-6",
+        "question": "Did it reach recommendations without asking the user to repeat documented goals and principles?"
+      },
+      {
+        "id": "conditional-load",
+        "caseId": "AC-38",
+        "question": "Does the opened-file record show no VISION, interview or domain-language reference opened? If the host provides no opened-file record, answer no and record the limitation."
+      }
+    ]
+  },
+  "criteriaHash": "a7207fa740cd04e9e181bce9a04b5c8d2cc4fdd8fac85f1079b02df23a2abc41",
+  "stage": "final",
+  "mode": "without",
+  "request": "Active checkpoint: final.\nAudit this repo and recommend principles and checks appropriate to its approved goals.",
+  "status": "passed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[scratch-path]",
+      "[scratch-path]",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": null,
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [],
+    "checkedAt": "2026-10-11T20:51:06.549Z",
+    "cleanedAt": "2026-10-11T20:51:06.581Z"
+  },
+  "transcript": "bb67503a-b534-44ab-8e82-6ea171a54132/transcript.txt",
+  "answers": "bb67503a-b534-44ab-8e82-6ea171a54132/answers.json",
+  "caseResults": [
+    {
+      "id": "reuse",
+      "caseId": "AC-6",
+      "question": "Did it reach recommendations without asking the user to repeat documented goals and principles?",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 34,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "bb67503a-b534-44ab-8e82-6ea171a54132/transcript.txt"
+    },
+    {
+      "id": "conditional-load",
+      "caseId": "AC-38",
+      "question": "Does the opened-file record show no VISION, interview or domain-language reference opened? If the host provides no opened-file record, answer no and record the limitation.",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 34,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "bb67503a-b534-44ab-8e82-6ea171a54132/transcript.txt"
+    }
+  ],
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"medium\"",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 1800000,
+    "outputLimitBytes": 16777216,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "sandbox_mode=\"danger-full-access\"",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "adapterHash": "1ac0dee108cc8b4fbc504a15450af49a844abb2c0bfd7a17579fbdb85ce7dcf0",
+  "turns": [
+    {
+      "message": "Active checkpoint: final.\nAudit this repo and recommend principles and checks appropriate to its approved goals.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll read the repo’s goals and project guidance, then audit the implementation and checks against that scope.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g 'AGENTS.md' -g '*goal*' -g '*GOAL*' -g 'README*' -g 'package.json' -g '*checkpoint*' -g '*approval*' -g '*principle*' -g '*audit*' -g '\\\"'!node_modules'\\\"' -g '\\\"'!.git'\\\"'\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g 'AGENTS.md' -g '*goal*' -g '*GOAL*' -g 'README*' -g 'package.json' -g '*checkpoint*' -g '*approval*' -g '*principle*' -g '*audit*' -g '\\\"'!node_modules'\\\"' -g '\\\"'!.git'\\\"'\\\"\",\"aggregated_output\":\"[fixture]\\n\",\"exit_code\":1,\"status\":\"failed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"ls -la; rg --files --hidden -g '\\\"'!.git'\\\"'\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"ls -la; rg --files --hidden -g '\\\"'!.git'\\\"'\\\"\",\"aggregated_output\":\"total 24\\ndrwx------ 3 node node 4096 Oct 11 20:44 .\\ndrwxrwxrwt 1 root root 4096 Oct 11 20:44 ..\\ndrwxrwxr-x 5 node node 4096 Oct 11 20:44 .git\\n-rw-rw-r-- 1 node node  356 Oct 11 20:44 DESIGN.md\\n-rw-rw-r-- 1 node node  322 Oct 11 20:44 VISION.md\\n-rw-rw-r-- 1 node node  217 Oct 11 20:44 glossary.md\\nDESIGN.md\\nVISION.md\\nglossary.md\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat VISION.md DESIGN.md glossary.md; git status --short; git log -5 --oneline'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc 'cat VISION.md DESIGN.md glossary.md; git status --short; git log -5 --oneline'\",\"aggregated_output\":\"# Reading queue\\n\\nStatus: approved by the owner.\\nHelp one reader save articles and mark them read.\\nSuccess means a saved article can be found in the queue and marked read without losing its title or address.\\nAccounts, sharing and recommendations are outside the first version.\\nThere are no open product or stack decisions.\\n# Design\\n\\nThe approved stack is a local Node application with a JSON file for persistence.\\nThe queue owns article state and exposes save, list and mark-read operations.\\nPresentation uses the queue's public operations and never writes storage directly.\\nPreserve article titles and addresses when marking an article read.\\nThere are no open design decisions.\\n# Glossary\\n\\n- Article: a saved title and address with a read status.\\n- Queue: the reader's saved articles, including read articles.\\n- Mark read: change an article's read status while preserving its title and address.\\n81feef4 docs: record design and vocabulary\\n8f70d11 docs: approve project vision\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_4\",\"type\":\"agent_message\",\"text\":\"The repo has an approved, consistent scope, but contains only documentation. There is no implementation or test suite, so the final checkpoint cannot yet establish that the product meets its success criteria.\\n\\n[VISION.md]([fixture]/VISION.md) fixes the goal: one reader can save articles, find them in a queue, and mark them read without losing their title or address. [DESIGN.md]([fixture]/DESIGN.md) fixes the local Node/JSON stack and queue boundary. [glossary.md]([fixture]/glossary.md) confirms that read articles remain in the queue. No product or stack decisions need reopening.\\n\\nRecommended principles:\\n\\n- Keep the first version focused on save, list, and mark-read. Accounts, sharing, and recommendations are explicitly outside scope.\\n- Make the queue own article state and persistence; presentation should call its public operations.\\n- Preserve titles and addresses exactly when changing read status.\\n- Keep persistence simple, while preventing failed writes from destroying saved data.\\n\\nChecks appropriate to the final checkpoint:\\n\\n- **Core flow:** save an article, find it in the queue, mark it read, and verify its title and address remain unchanged.\\n- **Persistence:** restart the application and verify saved articles and read status survive.\\n- **State isolation:** marking one article read leaves other articles unchanged; marking it read again is harmless.\\n- **Queue semantics:** read articles remain available in the queue.\\n- **Architecture:** confirm presentation never writes storage directly.\\n- **Storage failure:** verify malformed JSON or a failed write produces a clear error without silently replacing existing data.\\n\\nThese checks should use an isolated temporary JSON file. Before every Node suite, run the required preflight and proceed only when it exits zero with `source: host` and `permitted: true`. No Node suite was run during this documentation audit.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":59100,\"cached_input_tokens\":55680,\"cache_write_input_tokens\":0,\"output_tokens\":674,\"reasoning_output_tokens\":56}}\n",
+        "stderr": "Reading additional input from stdin...\n",
+        "durationMs": 24218.297512,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 597.924702,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 21.045644999999922,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    },
+    {
+      "message": "The existing approved documents remain authoritative. Do not reopen settled decisions.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"Understood. I’ll treat the approved vision, design, and glossary as authoritative, keep work within the two permitted roots, and apply the required preflight before every Node suite.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":75016,\"cached_input_tokens\":70656,\"cache_write_input_tokens\":0,\"output_tokens\":714,\"reasoning_output_tokens\":56}}\n",
+        "stderr": "",
+        "durationMs": 4013.0772670000006,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 583.730397,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 19.456182000000013,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    },
+    {
+      "message": "Present recommendations only.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"Recommended principles:\\n\\n- Keep the approved scope: one reader, save articles, list the queue, and mark articles read.\\n- Use the approved local Node application with JSON persistence.\\n- Route presentation through the queue’s public operations.\\n- Preserve titles and addresses when marking articles read, and retain read articles in the queue.\\n\\nRecommended final checks:\\n\\n- Save → list → mark read preserves the article’s title and address.\\n- Restarting preserves articles and read status.\\n- Marking one article read leaves other articles unchanged.\\n- Repeating mark-read is harmless.\\n- Presentation never writes storage directly.\\n- Storage errors are reported without overwriting existing data.\\n- Each Node suite uses isolated temporary storage and runs only after a fresh preflight exits zero with `source: host` and `permitted: true`.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":91238,\"cached_input_tokens\":86400,\"cache_write_input_tokens\":0,\"output_tokens\":877,\"reasoning_output_tokens\":56}}\n",
+        "stderr": "",
+        "durationMs": 7349.754992,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 565.153556,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 18.731288000000006,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    }
+  ],
+  "nextAnswer": 3,
+  "sessionId": "[identifier]",
+  "conversation": "conversation.txt",
+  "resourcePreflight": {
+    "source": "host aggregate",
+    "clientHash": "2ba1e3f1753039d8ed34a284ba84f7d5ff30bfedd27ce84a0af87a0c02f275a9",
+    "checks": [
+      {
+        "source": "host",
+        "checkedAt": "2026-10-11T20:44:18.118Z",
+        "availableMemoryBytes": 19064422400,
+        "freeDiskBytes": 21843816448,
+        "load1m": 1.72,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      },
+      {
+        "source": "host",
+        "checkedAt": "2026-10-11T20:46:44.437Z",
+        "availableMemoryBytes": 20119273472,
+        "freeDiskBytes": 21660291072,
+        "load1m": 1.7,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      },
+      {
+        "source": "host",
+        "checkedAt": "2026-10-11T20:50:33.770Z",
+        "availableMemoryBytes": 19590578176,
+        "freeDiskBytes": 21644492800,
+        "load1m": 1.83,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      }
+    ]
+  },
+  "authenticatedVia": "throwaway copy",
+  "execution": {
+    "method": "docker",
+    "image": "bstack-eval-toolchain:node24-codex0.162.1",
+    "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+    "recipeHash": "3ba3f242862014f26c614cb060d1d4bfe8c01439d2f4b6518eeb181a05e83412",
+    "turns": [
+      {
+        "name": "bstack-eval-79ee4d4c-cb44-4752-9add-55525b923ac7",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-11T20:44:43.454Z"
+      },
+      {
+        "name": "bstack-eval-c6c688ba-adfb-43e4-b854-a8fe83fe1713",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-11T20:46:49.512Z"
+      },
+      {
+        "name": "bstack-eval-081f2c69-4cb0-4176-a858-6529e65133e5",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-11T20:50:42.153Z"
+      }
+    ],
+    "toolchain": {
+      "node": "v24.17.0",
+      "git": "git version 2.54.0",
+      "npm": "11.13.0",
+      "agent": "codex-cli 0.162.1"
+    }
+  },
+  "scopeGuard": {
+    "version": 3,
+    "advisory": true,
+    "verified": true,
+    "paths": []
+  },
+  "conversationHash": "db5af738551d7fc2dfde3b07103b0a2ab5e4933e973adae3c3b1c4ec589e64eb",
+  "scoredAt": "2026-10-11T20:51:06.617Z"
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "command": "eval compare",
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "status": "passed",
+    "without": "2026-10-11T23-21-43.463Z-7df859b5-5cba-42e3-9ce6-3488363289f2",
+    "with": "2026-10-11T23-38-07.646Z-4b2b39e0-6e2e-4115-a125-f3ffe28e8ffb",
+    "lost": [],
+    "gained": [
+      "native-python"
+    ]
+  },
+  "inputs": {}
+}

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "git",
+    "log",
+    "-2",
+    "--format=%H %s"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "b7c2848f8c52eb3c3c275d507b354c4f367236e1 Record reviewed no-impact pricing maintenance assessment\ncd0867a247ef1ea23eddc3a4d8c860a7613c91a9 Name pricing subtotal without changing calculation\n",
+  "stderr": ""
+}

@@ -1,0 +1,181 @@
+{
+  "status": "passed",
+  "finalHead": "8087a0a341b076544e74aa31e1125148090d2260",
+  "implementation": "7a59dbda8ae832ffb953b469905786835d3b3160",
+  "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "assessmentHash": "6d208b10ae898ce3d6986bacf02fc05ed7958872d8e92c7a3bb353954b498e8e",
+  "historicalSnapshotHash": "82885a11705287105a26eadeba1315ea0bb552dc1d9e532b98fa00fe3498f8d0",
+  "ownerNote": "User note: receipt wording remains a future owner decision.",
+  "workingTree": "clean",
+  "cleanClone": "[isolated-home][scratch-path]",
+  "isolatedHome": "[isolated-home][scratch-path]",
+  "isolatedCache": "[isolated-home][scratch-path]",
+  "nativeEvidence": [
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "59d8f647e92bc3cd5b90d4f25e0d1a26e372d1f0586315be94c1b0f08bd59ccd",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "4443881f73ff719865b33cb3217674a65f342073720cea31c4c66af8c532cb53",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "1365447bc38999058f97e508a819164e0fcdbe00b2d3dd5eb52708174e9e5e69",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "f884803f7dc0cbc836b1ec2937301828a061c77287334381c73071472ccd2662",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "0ccca8a0a2e86cd02b125cbc4f268259e2ade22220dcb99737a3af7987fee053",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "63e0c8034779516790d0c8a1f42faa71d7b857ab96c26af835d640a9a178275f",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "5af3c2a9eaa707aae56ab411d1b053ed5c1a5372444c896167ed421f602e2c8e",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "896ce2363bb4f7a91858f9c9ea72b3e3b66277bfd55af93db318efea8e487e04",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "50c3eda2717f3c56addc8004cc1a9a2620bad98cf507d36a889bd2938f2f7286",
+      "status": "passed"
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "d71def4df7a180cd3113afe850589905861eafa868f95053c2da9f20f05d5dab",
+      "status": "passed"
+    }
+  ],
+  "standalone": [
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "21ef563cf98dc50099325363a20a25b603773bdf2c4339374241d606fea16e1a",
+      "status": "passed",
+      "fingerprint": "db74daa4bd9fbe516bdd2bd703ac07a43594e9405e0fb12b01ab5c5c65adfe9e",
+      "comparison": {
+        "source": "7a59dbda8ae832ffb953b469905786835d3b3160",
+        "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+        "mergeBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+      },
+      "unmappedPaths": [],
+      "mappedPathCount": 15,
+      "checks": [
+        {
+          "id": "typecheck",
+          "status": "passed",
+          "exit": 0,
+          "stdout": "\n> typecheck\n> tsc --noEmit\n\n"
+        },
+        {
+          "id": "boundaries",
+          "status": "passed",
+          "exit": 0,
+          "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n"
+        },
+        {
+          "id": "unit",
+          "status": "passed",
+          "exit": 0,
+          "stdout": "\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.839546ms)\n\u2714 checkout HTTP mock (26.789627ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 153.34769\n"
+        },
+        {
+          "id": "journey",
+          "status": "passed",
+          "exit": 0,
+          "stdout": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n"
+        }
+      ]
+    },
+    {
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "ed4326fc50b7a19796e3689c0adc99e6c0a8e4168bef63026ae625078fec8b5b",
+      "status": "passed",
+      "fingerprint": "db74daa4bd9fbe516bdd2bd703ac07a43594e9405e0fb12b01ab5c5c65adfe9e",
+      "comparison": {
+        "source": "7a59dbda8ae832ffb953b469905786835d3b3160",
+        "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+        "mergeBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+      },
+      "unmappedPaths": [],
+      "mappedPathCount": 15,
+      "checks": [
+        {
+          "id": "typecheck",
+          "status": "passed",
+          "exit": 0,
+          "stdout": "\n> typecheck\n> tsc --noEmit\n\n"
+        },
+        {
+          "id": "boundaries",
+          "status": "passed",
+          "exit": 0,
+          "stdout": "\n> boundaries\n> node boundaries.mjs\n\n[]\n"
+        },
+        {
+          "id": "unit",
+          "status": "passed",
+          "exit": 0,
+          "stdout": "\n> test\n> node --test unit.test.mjs\n\n\u2714 public price (0.776018ms)\n\u2714 checkout HTTP mock (26.383395ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 135.151038\n"
+        },
+        {
+          "id": "journey",
+          "status": "passed",
+          "exit": 0,
+          "stdout": "\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n"
+        }
+      ]
+    }
+  ],
+  "coverageLimits": [
+    "Static imports and re-exports only; dynamic imports/CommonJS require need explicit review.",
+    "Local HTTP checkout does not establish production-service behavior; no hosted CI/delivery service selected.",
+    "Structural checking does not authenticate owner approval or replace semantic review. Receipt wording remains a future owner decision."
+  ],
+  "recordExclusion": "The separately approved committed .bstack/assessment.json is the sole portable record excluded from leaf product scopes; all 15 implementation paths, including deletions, are mapped and reviewed.",
+  "beforeProtection": {
+    "runId": "8f08ee2a-6124-4931-a7ab-2aa4d5a709a7",
+    "artifact": "[isolated-home][scratch-path]",
+    "artifactHash": "76a6d31a7d092d01e65d7ff1e351d4561656b69a6c68653f7f9ac5bfe303a423",
+    "checks": [
+      {
+        "id": "journey",
+        "status": "failed",
+        "exit": 1
+      },
+      {
+        "id": "unit",
+        "status": "passed",
+        "exit": 0
+      }
+    ]
+  },
+  "findingsFingerprint": "892e645bdbafee8513807ec64cf2b546a685af2c039082337a25a113ae392da8"
+}

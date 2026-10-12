@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T21-57-18.284Z-ca76ff9d-3e62-47ed-b79a-52f5563dbfb3",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "no-impact",
+      "passed": false,
+      "startLine": 17,
+      "endLine": 68
+    },
+    {
+      "id": "bounded",
+      "passed": true,
+      "startLine": 6,
+      "endLine": 68
+    }
+  ]
+}

@@ -1,0 +1,784 @@
+{
+  "schemaVersion": 1,
+  "ownerDecisionDate": "2026-10-12",
+  "release": "v0.1.0",
+  "scope": "Owner-approved release of retained evidence with explicit v0.1.1 known issues.",
+  "completeAcceptanceClaimed": false,
+  "fullReleaseValidationRerun": false,
+  "publicationGateRun": false,
+  "validationWaiver": "Owner decision 2026-10-12: stop all further test and evaluation runs and publish the committed evidence directly, preserving incomplete qualification as v0.1.1 known issues.",
+  "passedCurrentAgentCases": 38,
+  "totalDesignCases": 75,
+  "selectedComparisons": [
+    {
+      "scenario": "ambiguous-idea",
+      "without": "2026-10-11T22-27-46.145Z-6c0b6ea4-5b79-4af5-bc01-882034bcb401",
+      "with": "2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f",
+      "baselinePassed": 1,
+      "installedPassed": 1,
+      "total": 1,
+      "lost": [],
+      "artifact": "tests/eval/results/release/ambiguous-idea-structural-comparison.json"
+    },
+    {
+      "scenario": "clear-goals",
+      "without": "2026-10-12T00-16-39.505Z-c5f6296f-448a-409f-a281-b6747c9e2bfd",
+      "with": "2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f",
+      "baselinePassed": 2,
+      "installedPassed": 2,
+      "total": 2,
+      "lost": [],
+      "artifact": "tests/eval/results/release/clear-goals-structural-comparison.json"
+    },
+    {
+      "scenario": "existing-repo-python",
+      "without": "2026-10-11T23-21-43.463Z-7df859b5-5cba-42e3-9ce6-3488363289f2",
+      "with": "2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659",
+      "baselinePassed": 3,
+      "installedPassed": 4,
+      "total": 4,
+      "lost": [],
+      "artifact": "tests/eval/results/release/existing-repo-python-structural-comparison.json"
+    },
+    {
+      "scenario": "existing-repo",
+      "without": "2026-10-12T05-01-10.405Z-671f5f98-ff14-44ad-ba1e-da0c9c63adc3",
+      "with": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "baselinePassed": 13,
+      "installedPassed": 17,
+      "total": 19,
+      "lost": [],
+      "artifact": "tests/eval/results/release/existing-repo-structural-comparison.json"
+    },
+    {
+      "scenario": "implicit-invocation",
+      "without": "2026-10-11T22-34-43.903Z-0a944d91-fd0d-4582-a6e5-211439bb9ef5",
+      "with": "2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512",
+      "baselinePassed": 1,
+      "installedPassed": 1,
+      "total": 1,
+      "lost": [],
+      "artifact": "tests/eval/results/release/implicit-invocation-structural-comparison.json"
+    },
+    {
+      "scenario": "maintenance",
+      "without": "2026-10-12T04-45-26.611Z-fbd0fe89-a41e-4279-81b1-89a41665e542",
+      "with": "2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc",
+      "baselinePassed": 2,
+      "installedPassed": 2,
+      "total": 2,
+      "lost": [],
+      "artifact": "tests/eval/results/release/maintenance-structural-comparison.json"
+    },
+    {
+      "scenario": "research-main-python",
+      "without": "2026-10-12T00-05-31.655Z-a2ad260b-af0a-428a-8e0a-d5fdfcce6348",
+      "with": "2026-10-12T04-57-08.452Z-cca21275-7e53-4120-8fcd-975454844701",
+      "baselinePassed": 0,
+      "installedPassed": 3,
+      "total": 3,
+      "lost": [],
+      "artifact": "tests/eval/results/release/research-main-python-structural-comparison.json"
+    },
+    {
+      "scenario": "research-main-typescript",
+      "without": "2026-10-11T23-59-20.195Z-b3df9a3f-8bb2-41b0-bd6a-dfff0defdcdf",
+      "with": "2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff",
+      "baselinePassed": 0,
+      "installedPassed": 3,
+      "total": 3,
+      "lost": [],
+      "artifact": "tests/eval/results/release/research-main-typescript-structural-comparison.json"
+    },
+    {
+      "scenario": "runtime-independence",
+      "without": "2026-10-11T23-19-36.297Z-6a14a0c1-4e0f-4365-9711-31c7e8ab71b3",
+      "with": "2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e",
+      "baselinePassed": 0,
+      "installedPassed": 1,
+      "total": 1,
+      "lost": [],
+      "artifact": "tests/eval/results/release/runtime-independence-structural-comparison.json"
+    },
+    {
+      "scenario": "scope-and-prerequisites",
+      "without": "2026-10-11T22-46-18.504Z-1a2828d2-377d-4338-8e02-6a067a511a17",
+      "with": "2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50",
+      "baselinePassed": 2,
+      "installedPassed": 2,
+      "total": 2,
+      "lost": [],
+      "artifact": "tests/eval/results/release/scope-and-prerequisites-structural-comparison.json"
+    },
+    {
+      "scenario": "selected-rule-relocation",
+      "without": "2026-10-12T05-08-46.399Z-bc781f92-81bc-45fe-8cf9-bb3d58c4b305",
+      "with": "2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e",
+      "baselinePassed": 1,
+      "installedPassed": 1,
+      "total": 1,
+      "lost": [],
+      "artifact": "tests/eval/results/release/selected-rule-relocation-structural-comparison.json"
+    },
+    {
+      "scenario": "verification-limitations",
+      "without": "2026-10-11T23-26-56.348Z-ef5c15c9-02c6-4742-9b29-3d7eea18e530",
+      "with": "2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046",
+      "baselinePassed": 3,
+      "installedPassed": 3,
+      "total": 3,
+      "lost": [],
+      "artifact": "tests/eval/results/release/verification-limitations-structural-comparison.json"
+    }
+  ],
+  "cases": [
+    {
+      "caseId": "AC-1",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "New-project final interview, board verdict and resumed-review evidence are incomplete."
+    },
+    {
+      "caseId": "AC-2",
+      "status": "passed",
+      "runId": "2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f",
+      "scenario": "ambiguous-idea",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-3",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "New-project final interview, board verdict and resumed-review evidence are incomplete."
+    },
+    {
+      "caseId": "AC-4",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-5",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-6",
+      "status": "passed",
+      "runId": "2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f",
+      "scenario": "clear-goals",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-7",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-8",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-9",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "New-project final interview, board verdict and resumed-review evidence are incomplete."
+    },
+    {
+      "caseId": "AC-10",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-11",
+      "status": "passed",
+      "runId": "2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659",
+      "scenario": "existing-repo-python",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-12",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-13",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-14",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-15",
+      "status": "passed",
+      "runId": "2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e",
+      "scenario": "selected-rule-relocation",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-16",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion."
+    },
+    {
+      "caseId": "AC-17",
+      "status": "passed",
+      "runId": "2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc",
+      "scenario": "maintenance",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-18",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-18.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-19",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-19.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-20",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-20.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-21",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-21.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-22",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-22.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-23",
+      "status": "passed",
+      "runId": "2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc",
+      "scenario": "maintenance",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-27-29.341Z-6937f05c-d20f-4149-9dc0-f5d2c2aebedc/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-24",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-24.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-25",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-26",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "Current maintained bug/refactor follow-up evidence is incomplete."
+    },
+    {
+      "caseId": "AC-27",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-28",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion."
+    },
+    {
+      "caseId": "AC-29",
+      "status": "passed",
+      "runId": "2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046",
+      "scenario": "verification-limitations",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-30",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion."
+    },
+    {
+      "caseId": "AC-31",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-32",
+      "status": "passed",
+      "runId": "2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046",
+      "scenario": "verification-limitations",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-33",
+      "status": "passed",
+      "runId": "2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046",
+      "scenario": "verification-limitations",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-34",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "A comparable final subagent discovery capture on the released package and fixture is not complete."
+    },
+    {
+      "caseId": "AC-35",
+      "status": "passed",
+      "runId": "2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff",
+      "scenario": "research-main-typescript",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-36",
+      "status": "passed",
+      "runId": "2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff",
+      "scenario": "research-main-typescript",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-37",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "A comparable final subagent discovery capture on the released package and fixture is not complete."
+    },
+    {
+      "caseId": "AC-38",
+      "status": "passed",
+      "runId": "2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f",
+      "scenario": "clear-goals",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-39",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-40",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-41",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-41-nested.json",
+        "tests/eval/results/release/automated/AC-41-oversized.json",
+        "tests/eval/results/release/automated/AC-41-valid.json",
+        "tests/eval/results/release/automated/AC-41.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-42",
+      "status": "passed",
+      "runId": "2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512",
+      "scenario": "implicit-invocation",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-43",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-44",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-44.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-45",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-45-unfinished.json",
+        "tests/eval/results/release/automated/AC-45.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-46",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "Twelve of twenty required baseline/installed scenario pairs are selected; complete all-scenario qualification is pending."
+    },
+    {
+      "caseId": "AC-47",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-47.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-48",
+      "status": "passed",
+      "runId": "2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff",
+      "scenario": "research-main-typescript",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-49",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "Instruction-stub consolidation and the harness version limit were inconsistent: an earlier audit scored 19/19; the released-package final audit scored 17/19 and failed this case."
+    },
+    {
+      "caseId": "AC-50",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "Mixed-responsibility and coupled-core recommendations were inconsistent: an earlier audit scored 19/19; the released-package final audit scored 17/19 and failed this case."
+    },
+    {
+      "caseId": "AC-51",
+      "status": "passed",
+      "runId": "2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659",
+      "scenario": "existing-repo-python",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-52",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-52.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-53",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-54",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion."
+    },
+    {
+      "caseId": "AC-55",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "Existing-vision delta evidence has not been refreshed for the released package."
+    },
+    {
+      "caseId": "AC-56",
+      "status": "passed",
+      "runId": "2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e",
+      "scenario": "runtime-independence",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-57",
+      "status": "passed",
+      "runId": "2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50",
+      "scenario": "scope-and-prerequisites",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-58",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-58.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-59",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-60",
+      "status": "passed",
+      "runId": "2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659",
+      "scenario": "existing-repo-python",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-61",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion."
+    },
+    {
+      "caseId": "AC-62",
+      "status": "passed",
+      "runId": "2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659",
+      "scenario": "existing-repo-python",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-63",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-64",
+      "status": "passed",
+      "runId": "2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b",
+      "scenario": "final-independent-extension",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-11T23-14-17.018Z-904e58d8-c6b0-47cf-9570-4eac4fcc110b/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-65",
+      "status": "passed",
+      "runId": "2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8",
+      "scenario": "existing-repo",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T05-13-47.357Z-cd90e9e1-b401-4d4b-90db-6747a32adfc8/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-66",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-67",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-67.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-68",
+      "status": "passed",
+      "runId": "2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50",
+      "scenario": "scope-and-prerequisites",
+      "artifacts": [
+        "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/conversation.txt",
+        "tests/eval/results/release/runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/run.json"
+      ]
+    },
+    {
+      "caseId": "AC-69",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "Repeat-audit evidence has not been refreshed for the released package."
+    },
+    {
+      "caseId": "AC-70",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-70.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-71",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-71.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-72",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-72.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-73",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-73.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-74",
+      "status": "known-issue",
+      "artifacts": [
+        "tests/eval/results/release/automated/AC-74.json"
+      ],
+      "reason": "Named automated evidence is retained where available, but final all-case qualification and complete procedure selection were not completed before the owner stopped evaluation."
+    },
+    {
+      "caseId": "AC-75",
+      "status": "known-issue",
+      "artifacts": [],
+      "reason": "The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion."
+    }
+  ],
+  "partialRunsClosedWithoutScore": [
+    "2026-10-12T04-49-33.413Z-e3c779d5-5fb5-4072-8147-4f3ec6c057e6",
+    "2026-10-12T05-03-51.866Z-be266525-0243-485a-9975-8e1575a8f915",
+    "2026-10-12T05-25-52.060Z-7f576194-654f-4897-8a4a-b5d34b16f389",
+    "2026-10-12T05-36-34.752Z-188bc7b7-76df-4ef2-b4a0-e963e0b99c8b"
+  ]
+}
