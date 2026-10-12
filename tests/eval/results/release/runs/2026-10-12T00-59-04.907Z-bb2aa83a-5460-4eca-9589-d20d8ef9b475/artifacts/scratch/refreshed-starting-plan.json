@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "bug-fix",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "5a0285bc75cedefb243402d8ff4df6bb46b2b3f210b01afdc53557e26f1496b7"
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "contentHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Agreed checkout total is 10 using real loopback HTTP",
+      "userJourney": true
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "UI never touches storage",
+      "userJourney": false
+    },
+    {
+      "id": "public",
+      "sourceId": "instructions",
+      "pointer": "Use the approved design and public core interface.",
+      "outcome": "Use approved design and public core interface",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "types",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "public"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        "boundaries.mjs",
+        "unit.test.mjs",
+        "journey.mjs"
+      ]
+    },
+    {
+      "id": "unit",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "public",
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        "boundaries.mjs",
+        "unit.test.mjs",
+        "journey.mjs"
+      ]
+    },
+    {
+      "id": "boundary",
+      "role": "reproduction",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        "boundaries.mjs",
+        "unit.test.mjs",
+        "journey.mjs"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "reproduction",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        "boundaries.mjs",
+        "unit.test.mjs",
+        "journey.mjs"
+      ]
+    }
+  ]
+}
