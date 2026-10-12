@@ -40,11 +40,18 @@ if (args.includes('--version')) {
     console.log(JSON.stringify({ type: 'thread.started', thread_id: mode === 'wrong-session' && args.includes('resume') ? randomUUID() : sessionId }))
     if (mode === 'fixture-byte-changed') await writeFile('price.mjs', 'export function quote(quantity) { return quantity * 13 }\n')
     if (mode === 'fixture-status-changed') await writeFile('untracked-note.md', 'Unexpected new file.\n')
-    if (['forbidden-reference', 'allowed-reference', 'large-forbidden-reference'].includes(mode)) {
+    if (['forbidden-reference', 'allowed-reference', 'large-forbidden-reference', 'forbidden-nl', 'forbidden-directory', 'forbidden-glob', 'forbidden-failed-command'].includes(mode)) {
       const reference = mode === 'allowed-reference' ? 'architecture.md' : 'vision.md'
+      const references = join(process.env.HOME, '.agents/skills/repo-audit/references')
+      const commands = {
+        'forbidden-nl': `bash -lc "nl -ba ${join(references, reference)} | sed -n '1,200p'"`,
+        'forbidden-directory': `rg -n Interview ${references}`,
+        'forbidden-glob': `awk '{print}' ${references}/*.md`,
+        'forbidden-failed-command': `cat ${join(references, reference)} && test -f missing`
+      }
       console.log(JSON.stringify({ type: 'item.completed', item: { type: 'command_execution',
-        command: `cat ${join(process.env.HOME, '.agents/skills/repo-audit/references', reference)}`,
-        aggregated_output: mode === 'large-forbidden-reference' ? 'x'.repeat(200000) : '', exit_code: 0 } }))
+        command: commands[mode] ?? `cat ${join(references, reference)}`,
+        aggregated_output: mode === 'large-forbidden-reference' ? 'x'.repeat(200000) : '', exit_code: mode === 'forbidden-failed-command' ? 1 : 0 } }))
     }
     if (mode === 'reviewer' || mode === 'reviewer-quoted') console.log(JSON.stringify({ type: 'item.completed', item: {
       type: 'agent_message', text: mode === 'reviewer' ? 'Reviewer: Alice Chen' : 'Reviewer: Alice "Ali" Chen' } }))

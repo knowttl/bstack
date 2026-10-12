@@ -19,7 +19,7 @@ function completed(result, operation) {
 // Docker receives exactly two mounts and a fixed capability/network policy.
 // Inspect the created container before starting the agent, and remove it even
 // when the attached client times out or fails.
-export async function containerTurn(record, args, env) {
+export async function containerTurn(record, args, env, capture) {
   const imageData = JSON.parse(completed(await docker(['image', 'inspect', image]), 'image inspection'))[0]
   const recipeHash = hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))
   if (!/^sha256:[a-f0-9]{64}$/.test(imageData.Id)) fail('Evaluation image has no immutable image ID.')
@@ -79,7 +79,8 @@ export async function containerTurn(record, args, env) {
         }
         await writeFile(path, JSON.stringify({ kind: record.fixture.kind, ...input }), { mode: 0o600 })
         const result = await docker(['run', '--rm', ...options.slice(2), '--name', `${name}-assertions`, imageData.Id,
-          'node', '--input-type=module', '-e', program, path])
+          'node', '--input-type=module', '-e', program, path],
+          120000 * (1 + checks.filter(check => ['command', 'citeCheck'].includes(check.machine.type)).length))
         return JSON.parse(completed(result, 'machine assertions'))
       } finally {
         await rm(path, { force: true })
@@ -89,14 +90,13 @@ export async function containerTurn(record, args, env) {
     if (checks.length && !record.fixtureSnapshot) record.fixtureSnapshot = await assertions({ action: 'snapshot' })
     const result = await docker(['start', '--attach', name], record.adapter.timeoutMs, record.adapter.outputLimitBytes)
     result.toolVersion = { ...version, stdout: `${toolchain.agent}\n` }
+    await capture(result)
     if (checks.length && result.status === 'passed' && !result.outputTruncated) {
-      const events = [...record.turns.map(turn => turn.result.stdout), result.stdout]
+      const events = record.turns.map(turn => turn.result.stdout)
         .flatMap(stdout => stdout.trim().split(/\r?\n/).map(line => JSON.parse(line)))
       record.machineResults = await assertions({ action: 'evaluate', checks, before: record.fixtureSnapshot,
-        events, installer: record.installer, final: record.turns.length === record.scenario.answers.length,
-        skill: join(record.isolation.stagedPath, 'scripts/repo-audit.mjs') })
+        events, installer: record.installer, final: record.turns.length === record.scenario.answers.length + 1 })
     }
-    return result
   } finally {
     const removal = await docker(['rm', '--force', name])
     if (removal.status !== 'passed' && !/No such container/.test(removal.stderr)) completed(removal, 'cleanup')

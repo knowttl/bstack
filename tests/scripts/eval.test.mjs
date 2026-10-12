@@ -347,7 +347,8 @@ for (const [mode, expected] of [['success', true], ['fixture-byte-changed', fals
   })
 }
 
-for (const [mode, expected] of [['allowed-reference', true], ['forbidden-reference', false], ['large-forbidden-reference', false], ['success', false]]) {
+for (const [mode, expected] of [['allowed-reference', true], ['forbidden-reference', false], ['large-forbidden-reference', false],
+  ['forbidden-nl', false], ['forbidden-directory', false], ['forbidden-glob', false], ['forbidden-failed-command', false], ['success', false]]) {
   test(`machine notOpened requires an access trace and rejects forbidden references: ${mode}`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory, mode)
@@ -418,15 +419,46 @@ for (const [name, machine, expected, installer = { status: 'passed' }] of [
 
 test('scenario fixture hashes bind selected source bytes and overlays without binding unrelated fixtures', async t => {
   const directory = await temporary(t)
-  const { fixtureHash } = await import('../../scripts/lib/evaluation.mjs')
-  await cp(join(root, 'tests/fixtures'), directory, { recursive: true })
-  const idea = await fixtureHash('ambiguous-idea', directory)
-  const maintained = await fixtureHash('maintained-ts-shop', directory)
-  await writeFile(join(directory, 'maintained-ts-shop/overlay/DESIGN.md'), 'Changed overlay byte.\n')
-  assert.equal(await fixtureHash('ambiguous-idea', directory), idea)
-  assert.notEqual(await fixtureHash('maintained-ts-shop', directory), maintained)
-  await writeFile(join(directory, 'ambiguous-idea/brief.md'), 'Changed request fixture byte.\n')
-  assert.notEqual(await fixtureHash('ambiguous-idea', directory), idea)
+  for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
+    'tests/fixtures', 'tests/eval/scenarios', 'tests/acceptance']) {
+    await cp(join(root, path), join(directory, path), { recursive: true })
+  }
+  execFileSync('git', ['init', '--initial-branch=main'], { cwd: directory, stdio: 'ignore' })
+  execFileSync('git', ['-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid',
+    '-c', 'commit.gpgsign=false', 'commit', '--allow-empty', '-m', 'Fixture checkout'], { cwd: directory, stdio: 'ignore' })
+  function revision(scenario) {
+    const result = spawnSync(process.execPath, [join(directory, 'scripts/eval.mjs'), '--manual',
+      '--scenario', scenario, '--mode', 'without', '--stage', 'final', '--agent', 'test-host',
+      '--model', 'test-model', '--results', join(directory, 'results'), '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, 2, result.stdout)
+    const record = JSON.parse(result.stdout).data
+    assert.ok(record.fixture, result.stdout)
+    t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+    return record.fixture.revision
+  }
+  const idea = revision('ambiguous-idea')
+  const maintained = revision('maintenance')
+  const overlay = join(directory, 'tests/fixtures/maintained-ts-shop/overlay/DESIGN.md')
+  await writeFile(overlay, `${await readFile(overlay, 'utf8')}\n`)
+  assert.equal(revision('ambiguous-idea'), idea)
+  const changedOverlay = revision('maintenance')
+  assert.notEqual(changedOverlay, maintained)
+  const sanity = join(directory, 'tests/fixtures/maintained-ts-shop/sanity.mjs')
+  await writeFile(sanity, `${await readFile(sanity, 'utf8')}\n`)
+  assert.notEqual(revision('maintenance'), changedOverlay)
+  const brief = join(directory, 'tests/fixtures/ambiguous-idea/brief.md')
+  await writeFile(brief, `${await readFile(brief, 'utf8')}\n`)
+  assert.notEqual(revision('ambiguous-idea'), idea)
+})
+
+test('malformed host output is retained before machine grading', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'malformed')
+  const { record } = hostStart(t, directory, path, 'without', 'clear-goals')
+  assert.equal(record.hostFailure, true)
+  assert.equal(record.turns.length, 1)
+  assert.match(record.reason, /Host did not complete a turn/)
+  assert.match(await readFile(join(directory, record.id, record.conversation), 'utf8'), /not JSONL/)
 })
 
 for (const [scenario, mode] of [['research-main-typescript', 'require-no-subagents'],
