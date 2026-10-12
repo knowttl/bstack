@@ -360,6 +360,9 @@ Tick each task when its "Done when" commands pass.
   - [x] T1.2 Build the evaluation runner and record the baseline
     - [x] C7a Acceptance registry and manual evaluation interface ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
     - [x] C7b Current-host Codex adapter, fresh state and discovery isolation, resumed scripted answers and three human-scored real baselines ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
+    - [x] Automatic batch replies and aggregate ledger finalization: fake-host coverage runs two scenarios three times, verifies ordered replies and container cleanup, retains failed semantic grades in the rates, and keeps failed captures unpublished.
+      Smoke uses the approved ten-scenario set until scenario-owned tiers arrive; semantic grading uses explicit scores until judge grading arrives.
+      Batch evidence counts every repetition; the legacy complete-release backend remains until the release gate replaces it.
   - [x] T1.3 Write the first `SKILL.md`: bounded checklists, inline safeguards and labelled unavailable tooling ([gap map](../tests/eval/results/gap-map.md), [evidence](../tests/eval/results/tasks/T1.3.json))
   - [x] T1.4 Bundle the interview and domain-language modules - C9a flattens decision rounds, the confirmed-intent rubric, glossary discovery and formats, and separate decision records. Registered packaging search and local checks are recorded in `tests/eval/results/tasks/T1.4.json`. AC-9 and AC-12 agent checks remain assigned to T1.7.
   - [x] T1.5 Adapt VISION and bundle the board assets ([evidence](../tests/eval/results/tasks/T1.5.json))
@@ -828,7 +831,8 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
    Missing answers or transcripts leave the run blocked, rather than waiting indefinitely or assuming success.
 7. Save unique run IDs with timestamps, agent, model, OS, tool versions, fixture revision, stage, transcript and case results.
    Keep earlier checkpoint runs as history.
-   Final evidence is an explicit selection of one run per case, stage and revision, so repeated execution artifacts are legitimate while duplicate final selections are rejected.
+   Batch evidence counts every repetition on the frozen candidate and appends per-check rates after every run is scored.
+   The legacy single-run selection backend remains for archived evidence until the release gate replaces it.
    Baseline and with-skill runs use the same fixture revision, agent, model and scoring criteria.
    Score deterministic checks from artifacts, and identify human-scored checks by reviewer and transcript location.
 8. Register every design acceptance ID in `tests/acceptance/cases.json` with its owner task, procedure, criterion source and evidence type.
