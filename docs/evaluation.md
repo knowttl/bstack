@@ -47,7 +47,8 @@ Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
 `--results <directory>` chooses another result directory on start, turn, close, score, correct, compare or selection validation.
 Starting a manual run creates a fresh fixture and unique record, with UTC timestamps, source revision, agent, model, OS, tool versions, fixture revision, checkpoint, criteria hash and case results.
 TypeScript fixtures also record npm and fixture-local TypeScript versions.
-The fixture revision is a SHA-256 of the scenario's effective builder definition, selected source files, overlay and builder script.
+The fixture revision is a SHA-256 of the scenario's effective builder definition, selected source files, overlay, fixture sanity script and builder script.
+It also binds the source fixture's sanity script when the selected sanity script imports it.
 Unrelated fixture changes do not invalidate the run.
 Run a committed checkout when recording evidence.
 Manual records initially have status `blocked` and no answers, transcript or case results.
@@ -95,7 +96,7 @@ Each `bstack-eval-*` container mounts only the disposable fixture and isolated h
 The default bridge permits outbound model API traffic without exposing the host network namespace.
 The runner inspects the created container before starting the agent and binds its immutable image ID, recipe hash, mounts and execution settings into `execution` in the run record.
 It removes the exact named container after each turn, including client timeout or failure.
-Every container, including fixture preparation and version queries, has `--cpus 2 --memory 4g` limits.
+Fixture preparation and version queries execute in the subject container under its `--cpus 2 --memory 4g` limits.
 Before creating an adapter run's fixture or containers, the runner checks once for at least 20 GB free disk at the repository root and 24 GiB available memory, the budget for six concurrent containers.
 The check uses Linux `MemAvailable` or `os.freemem()` on other platforms; it verifies capacity without reserving resources or coordinating concurrent starts.
 Insufficient capacity blocks startup; start the run again when capacity is available.
@@ -127,7 +128,7 @@ This reviewer-driven delivery uses `codex exec resume` instead of guessing which
 Do not send an answer merely because a turn completed.
 If a question cannot be answered from the approved script, close the run, record the limitation and score the unmet outcome honestly.
 The opening prompt never includes later scripted answers.
-Every command returns immediately after its bounded child execution and remains blocked until human scoring.
+Every command returns after its bounded child execution, including final-turn machine assertions, and remains blocked until explicit scoring.
 At most one opening and one turn per scripted answer may succeed.
 A failed, incomplete, malformed, truncated or wrong-session host result stays blocked and closes the isolated home.
 Neither deterministic fake-host tests nor an unscored transcript claim an agent acceptance pass.
@@ -197,12 +198,17 @@ Compare `existing-repo` and `existing-repo-python` findings for actual differenc
 The `clear-goals` loading score uses observed command/file-open events, never a search of the skill's source as proof of interpretation.
 
 Create a scoring answers file using the checklist IDs printed by the run.
-Every check needs a Boolean verdict and a one-based inclusive line range in the transcript, whether it passed or failed.
+Every conversation judgement needs a Boolean verdict and a one-based inclusive line range in the transcript, whether it passed or failed.
 The reviewer is responsible for the judgement and for identifying unavailable observations as a failed check with the limitation in the transcript.
 Reviewer identities must contain at least three characters and cannot be purely numeric.
-Checks use human, machine or judge scoring.
+The score command records conversation judgements as `human` and deterministic assertions as `machine` in `caseResults`.
+Release evidence also accepts `judge` scoring for conversation judgements.
 An optional `machine` object names a deterministic assertion: `fixtureUnchanged`, `opened`, `notOpened`, `installerPassed`, `command`, `citeCheck`, `filesEqual` or `contains`.
 Opened-path assertions take `patterns` with Node path glob syntax over captured command and file-tool events; a missing access trace cannot pass.
+`opened` requires every pattern to match a successful recognised reader command or file-tool read.
+`notOpened` rejects any matching command operand or file-tool read attempt, including failed execution and directory or glob operands that overlap a forbidden pattern.
+Direct execution of the shipped `scripts/repo-audit.mjs` helper and its asset arguments does not count as opening their source; a separate source read still counts.
+`fixtureUnchanged` compares exact tracked bytes and Git status for repository fixtures, or all workspace files for idea fixtures, with the initial snapshot.
 Commands take `executable` and `args`; citation checks take `report`, with `$HOME/` resolved inside the isolated home.
 File comparisons take `paths`; content checks take `path` and `text`.
 The runner captures fixture bytes and Git status before the conversation and evaluates assertions once after the last scripted answer, using `docker exec` in the live subject container before cleanup.
@@ -226,11 +232,11 @@ Fixture sanity remains deterministic in the existing builder and does not substi
 npm run eval -- score --run <id> --answers answers.json --transcript transcript.txt
 ```
 
-Missing files, empty transcripts, incomplete or duplicate check IDs, non-Boolean verdicts, wrong run IDs and out-of-range citations leave the run blocked.
+Missing files, empty transcripts, missing conversation judgement IDs or captured machine results, duplicate check IDs, non-Boolean verdicts, wrong run IDs and out-of-range citations leave the run blocked.
 The runner never waits for missing manual evidence.
 Successful scoring publishes redacted answers and transcript copies in a unique scoring artifact folder and records the anonymous reviewer placeholder and transcript location for every check.
 For adapter runs, scoring also replaces the retained conversation with the redacted scoring transcript and updates its conversation hash.
-All yes answers produce a passing score, and any no answer produces a failing score.
+Every conversation judgement and captured machine assertion must pass for the run to pass.
 A scored run cannot be rescored.
 Create a new run to retain earlier checkpoints and scoring history.
 An identified grading error can instead receive one append-only correction without repeating an unchanged agent run:
@@ -241,11 +247,11 @@ npm run eval -- correct --run <id> --correction correction.json
 
 The input contains `corrector`, `reason`, `evidence` with transcript `startLine` and `endLine`, and the complete corrected `checks` array.
 The command creates `score-correction.json` with hashes of the original answers and transcript, preserving the original run and scoring files byte for byte.
-It refuses overwrite, unchanged assessments, invalid evidence lines or stale original bindings.
+It refuses overwrite, unchanged assessments, invalid evidence lines, stale original bindings or verdicts that override captured machine results.
 Comparisons and acceptance use the validated correction; the original remains historical evidence.
 AC-29 credit additionally requires captured successful Node unit execution with a positive pass count and zero failures, either directly or in a captured `run-checks` result.
 An assistant assertion, unrun command or failed suite cannot establish that prerequisite.
-Pass and fail describe the human score, with any isolation limitation retained in the record.
+Pass and fail describe the combined score, with any isolation limitation retained in the record.
 Adapter scoring requires completed host turns and the exact captured conversation, and retains the isolation proof taken before deletion.
 
 ```sh
