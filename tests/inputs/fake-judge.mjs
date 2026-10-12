@@ -15,7 +15,7 @@ else {
   const input = JSON.parse(bytes)
   const mode = process.argv[3]
   if (input.caseResults || input.answers || input.mode || input.model || input.status) throw new Error('Human scores or subject metadata leaked to judge')
-  if (mode === 'failure') {
+  if (mode === 'failure' || (mode?.includes('fail-after-') && Number(input.runId.slice(-12)) > Number(mode.split('fail-after-')[1]))) {
     console.error('private-provider-credential')
     process.exitCode = 1
   } else {

@@ -75,12 +75,12 @@ try {
               human: { passed: human.passed, startLine: human.startLine, endLine: human.endLine }, judge: answer })
           }
         }
-        report.agreement = report.agreed / report.total
-        report.status = report.agreement >= minimumAgreement ? 'passed' : 'failed'
       } catch {
         // Never include provider diagnostics or automatically repeat a possibly billed request.
         report.reason = 'Calibration interrupted by invalid judge output or provider failure. Review saved answers and the private provider session; do not retry or tune the rubric.'
       }
+      report.agreement = report.total ? report.agreed / report.total : 0
+      if (report.completedRuns === expectedRuns) report.status = report.agreement >= minimumAgreement ? 'passed' : 'failed'
       report.finishedAt = new Date().toISOString()
       await writeFile(join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n', { flag: 'wx', mode: 0o600 })
       if (!opts.json) console.log(`report: ${join(output, 'report.json')}\nagreement: ${report.agreed}/${report.total}\ndisagreements: ${report.disagreements.length}`)
