@@ -144,7 +144,7 @@ npm run eval -- batch --batch <id>
 `--tier smoke` selects existing-repo, existing-repo-python, clear-goals, ambiguous-idea, implicit-invocation, verification-limitations, scope-and-prerequisites, research-main-typescript, maintenance and selected-rule-relocation.
 `--tier full` selects every registered scenario.
 An optional comma-separated `--scenario` subset must stay within the selected tier.
-This explicit smoke set precedes scenario-owned tier metadata and the release gate.
+Each scenario owns its `tier` value, `smoke` or `full`; the full batch tier includes both values.
 `--mode` and `--adapter` are required; `--repeat` defaults to 5 and must be a positive integer.
 Each scenario's `fixture` declares its starting state; an optional `mode` constraint overrides the requested mode for that scenario.
 `--concurrency` defaults to 6 and must be between 1 and 6, matching the container resource budget.
@@ -372,13 +372,13 @@ The deterministic map-completeness test requires coverage for every such heading
 With-skill release evidence remains fresh only when its scenario is unaffected by changes under `skills/repo-audit/` or `install/` since its source revision.
 Other execution and scoring bindings still apply.
 
-Comparison requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.
+Legacy single-run `eval compare` requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.
 Adapter comparisons also require the same adapter hash, preserving execution settings across modes.
 They require verified container execution, subject to the [approved archived baseline exception](#registry-and-final-selections).
 When both runs have container execution records, their image ID, recipe hash and toolchain must match.
 The scenario fixture, built fixture name, outcome request, ordered scripted answers and invocation mode must also match.
-No previously passing check may fail with the skill.
-At least one more check must pass with the skill, unless every check already passed in the baseline and still passes.
+This archived single-run interface reports lost and gained checks; it does not determine release qualification.
+The [release gate](#release-gate) instead compares repeated pass counts using k/N, confirmation and the per-check margin.
 Unscored or incomparable runs stay blocked.
 
 ### Evidence publication
@@ -413,16 +413,89 @@ It never scores planned or completed definitions as acceptance evidence.
 `--registry <file>` validates an alternate registry with the same repository authorities.
 
 Batch evidence uses every run in its saved batch and appends aggregate check rates to the ledger.
-The legacy `acceptance --selections` and `acceptance --require-complete` commands remain for archived evidence compatibility until the release gate replaces them.
-They do not consume the new batch ledger or determine a batch's result.
-Legacy validation rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
-Execution bindings include unchanged scenario-covered skill and installer inputs, per-scenario fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
+The legacy `acceptance --selections` command remains for archived single-run evidence compatibility.
+It does not consume the batch ledger or determine a release verdict.
+`acceptance --require-complete` and the `release/manifest.json` selection contract have been removed.
 The approved scope rerun retains the exact successful `scope-and-prerequisites` baseline `2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89`, bound by its complete record hash.
-Both `eval compare` and complete release validation accept only these exact archived record bytes without a container execution record; historical `scopeGuard` fields do not establish verified execution.
+Legacy `eval compare` accepts only these exact archived record bytes without a container execution record; historical `scopeGuard` fields do not establish verified execution.
 Its fixture, scoring criteria, request and tool versions must still match the container run.
 All other final runs require verified container execution and unchanged host runner, container runner and image recipe inputs.
 Grader-only repairs do not require repeating unchanged agent turns.
 Skill and installer freshness follows [impact selection](#impact-selection-and-comparison); verified without-skill baselines remain comparable because those inputs were absent from their isolated execution.
+
+## Release gate
+
+The release gate consumes finalized batch ledger lines and candidate-bound hard-break results.
+It does not start subject sessions or judge calls.
+Run the full deterministic suite, package check and registry validation on the frozen candidate, and record installation, isolation, approval and invocation outcomes from its evaluation evidence.
+The maintainer supplies those results in a report; the gate validates their candidate binding and completeness, but does not rerun or independently authenticate these procedures.
+
+```sh
+node scripts/acceptance.mjs --release 0.1.1 --candidate <full-HEAD-commit> --checks hard-break-report.json --results tests/eval/results --json
+```
+
+`--release` requires a three-part numeric version, `--candidate` must equal the full current HEAD, and `--checks` names this input format:
+
+```json
+{
+  "schemaVersion": 1,
+  "candidate": "<full-HEAD-commit>",
+  "model": "<release-model>",
+  "checks": [
+    { "id": "deterministic-suite", "passed": true },
+    { "id": "package-check", "passed": true },
+    { "id": "registry", "passed": true },
+    { "id": "installer", "passed": true },
+    { "id": "fixture-unchanged", "passed": true },
+    { "id": "approval-before-write", "passed": true },
+    { "id": "isolation", "passed": true },
+    { "id": "explicit-invocation", "passed": true },
+    { "id": "implicit-invocation", "passed": true }
+  ],
+  "agentProcesses": [
+    { "scenario": "existing-repo", "runs": 5, "failures": 0, "infrastructureFailures": 0 }
+  ]
+}
+```
+
+Include exactly one `agentProcesses` row for every smoke scenario; the example abbreviates that array.
+`failures` counts non-infrastructure agent process failures among the initial five attempts; two or more are a hard break.
+`infrastructureFailures` counts separate failures that need replacement evidence before qualification.
+The nine named checks must each appear exactly once.
+False means a hard break, including any read-only fixture mutation, write before scripted approval, failed installation or isolation, explicit invocation failing to start the skill, or implicit invocation starting it.
+Ledger failures for AC-42, AC-43, `fixtureUnchanged` and `installerPassed` also constitute hard breaks even when the report says passed.
+
+Each smoke check needs a five-run without-skill baseline with matching model, adapter, fixture and criteria hashes.
+Each with-skill check passes at 3 of 5.
+If it scores below 3, the gate returns `confirmation` scenario IDs and a blocked verdict until five more distinct runs of each named scenario have been captured, scored and finalized on the same candidate.
+The automation or operator that drives batches must request those five additional runs; the gate itself only reads evidence.
+The combined threshold is 6 of 10.
+All checks in a scenario must measure the same runs; overlapping or incompatible batches are rejected.
+For each baseline-failed check (b <= 2 of 5), the margin is w >= b + 2 of 5.
+After confirmation, both rules use pooled with-skill rates, and the margin requires a rate difference of at least 2/5 (0.4).
+Thus 7/10 against 1/5 passes; 6/10 against 2/5 fails the margin.
+Baseline checks at 3 of 5 or better require only the threshold.
+
+Hard breaks and regressions block the release.
+A regression is a check in the last passed release's gating set that now fails either threshold after confirmation or margin.
+Other check failures become known issues with their pass counts and sample sizes, and full-tier failures are non-blocking.
+The full tier runs weekly and on demand before candidates; it may use three runs for long paths.
+Agent or manual cases without a current measurement receive a deferred known-issue entry with zero runs, rather than an invented rate.
+Automated acceptance procedures remain covered by the deterministic suite and registry checks.
+
+The gate automatically reads the latest passed `release/<version>.json` in the results directory.
+Keep that release history with the ledger; do not omit it to obtain first-release treatment.
+Archived v0.1.0 evidence has no repeated-run gate, so the first ledger release has no regression comparison.
+Its own checks at 4 or 5 of 5 seed the gating set.
+Later gating sets require 4 or 5 of 5 in the latest smoke batch and at least 80% over the latest ten distinct measured runs, or the available history until ten exist.
+Reusing the same run IDs does not add observations to that history.
+Unaffected scenarios may carry results from an ancestor candidate after the impact map verifies unchanged covered skill and installer inputs; the output records that source candidate.
+Changed covered inputs require fresh measurements.
+
+The output is `release/<version>.json`, schema version 2, with `candidate`, `verdict`, `blocking`, `knownIssues`, `confirmation`, `pending`, `checks`, `gatingSet`, `carryover` and `ledger`.
+The ledger path is relative to the results directory.
+Exit 0 means passed, 1 means hard breaks or regressions, and 2 means incomplete qualification or invalid evidence.
+Known issues belong in release notes with their measured rates and in `next-release` issues; publishing those issues is a separate authorized release action.
 Every final capture must complete all ordered scripted answers.
 Historical process-only runs remain diagnostic history; no failed scope run is retroactively credited.
 Legacy complete validation requires every with-skill run to pass every check, and each pair to satisfy the design's improvement and regression rule.

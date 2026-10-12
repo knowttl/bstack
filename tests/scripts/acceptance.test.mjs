@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -84,34 +84,11 @@ for (const evidenceType of ['agent', 'manual']) {
   }
 }
 
-for (const [name, mutate, message] of [
-  ['missing final case', data => data.cases.pop(), /Select exactly one final run/],
-  ['duplicate final case', data => data.cases.push(data.cases[0]), /Duplicate final acceptance selection/],
-  ['missing scenario pair', data => data.comparisons.pop(), /Every scenario requires its final comparison/],
-  ['duplicate scenario pair', data => data.comparisons.push(data.comparisons[0]), /Duplicate final scenario comparison/]
-]) {
-  test(`complete acceptance rejects ${name}`, async t => {
-    const directory = await temporary(t)
-    const registry = await plannedRegistry()
-    const definitions = JSON.parse(await readFile(join(root, 'tests/eval/scenarios/scenarios.json'), 'utf8')).scenarios
-    const manifest = { schemaVersion: 1,
-      cases: registry.cases.filter(item => item.evidenceType !== 'automated' && item.id !== 'AC-46')
-        .map(item => ({ caseId: item.id, runId: 'unavailable' })),
-      comparisons: definitions.filter(item => item.id !== 'final-independent-extension')
-        .map(item => ({ scenario: item.id, without: 'unavailable', with: 'unavailable' })) }
-    mutate(manifest)
-    await mkdir(join(directory, 'release'))
-    await writeFile(join(directory, 'release/manifest.json'), JSON.stringify(manifest))
-    const result = run('--results', directory, '--require-complete')
-    assert.equal(result.status, 2)
-    assert.match(result.data.problems[0].message, message)
-  })
-}
-
-test('complete acceptance cannot be combined with structural registry validation', () => {
-  const result = run('--check-registry', '--require-complete')
+test('removed all-case release flag points to the release gate', () => {
+  const result = run('--require-complete')
   assert.equal(result.status, 3)
   assert.equal(result.data.status, 'usage-error')
+  assert.match(result.data.problems[0].message, /Use --release/)
 })
 
 test('duplicate final selections are blocked independently of run history', async t => {

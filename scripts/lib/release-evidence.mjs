@@ -1,122 +1,160 @@
-import { readFile } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution, isApprovedBaseline, fixtureHash } from './evaluation.mjs'
-import { readAdapter } from './evaluation-host.mjs'
-import { correctedScore, validateScore } from './evaluation-scoring.mjs'
+import { root, text, object, array, readJSON, scenario, fail } from './evaluation.mjs'
 import { affectedScenarios } from './evaluation-impact.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
-import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { canonicalJSON, hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 
-// AC-64 explicitly tests extension using only the resulting target guidance.
-const withoutOnly = 'final-independent-extension'
+// These candidate-bound checks cover hard breaks not represented by scored ledger rows.
+const hardChecks = ['deterministic-suite', 'package-check', 'registry', 'installer', 'fixture-unchanged',
+  'approval-before-write', 'isolation', 'explicit-invocation', 'implicit-invocation']
+// Commit and hash identities prevent accidental comparison across incompatible batches.
+const commit = { type: 'string', pattern: '^[0-9a-f]{40}$' }
+// Ledger identity hashes use the same SHA-256 format as batch finalization.
+const hash = { type: 'string', pattern: '^[0-9a-f]{64}$' }
+// Counts must be exact integers so threshold comparisons never accept partial runs.
+const count = { type: 'integer' }
 
-function git(...args) {
-  const result = spawnSync('git', args, { cwd: root, encoding: 'utf8' })
-  if (result.status !== 0) fail(`Release evidence source check failed: git ${args.join(' ')}`)
-  return result.stdout.trim()
+function key(row) { return `${row.scenario}/${row.check}` }
+function identity(row) { return canonicalJSON([row.model, row.adapterHash, row.fixtureHash, row.criteriaHash]) }
+
+async function previousRelease(directory, version) {
+  let names
+  try { names = await readdir(directory) } catch (error) {
+    if (error.code === 'ENOENT') return null
+    throw error
+  }
+  const releases = []
+  for (const name of names.filter(name => /^\d+\.\d+\.\d+\.json$/.test(name) && name !== `${version}.json`)) {
+    const record = await readJSON(join(directory, name))
+    if (record.schemaVersion !== 2 || record.verdict !== 'passed') continue
+    if (record.version !== name.slice(0, -5) || !Array.isArray(record.gatingSet) || !Array.isArray(record.checks)) fail(`Invalid previous release: ${name}`)
+    releases.push(record)
+  }
+  function compare(a, b) {
+    const av = a.version.split('.').map(Number)
+    const bv = b.version.split('.').map(Number)
+    return av[0] - bv[0] || av[1] - bv[1] || av[2] - bv[2]
+  }
+  if (releases.some(record => compare(record, { version }) >= 0)) fail('Release version must follow the last passed ledger release.')
+  return releases.sort(compare).at(-1) ?? null
 }
 
-export async function completeRelease(results) {
-  const registryPath = join(root, 'tests/acceptance/cases.json')
-  const registry = await readJSON(registryPath)
-  const manifest = await readJSON(join(results, 'release/manifest.json'))
-  validateData(object({ schemaVersion: { const: 1 },
-    cases: array(object({ caseId: text, runId: text })),
-    comparisons: array(object({ scenario: text, without: text, with: text })) }), manifest)
+export async function releaseGate(opts, results) {
+  if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(opts.release)) fail('Use a release version such as 0.1.1.', 'usage-error')
+  validateData(commit, opts.candidate)
+  const head = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' })
+  if (head.status !== 0 || head.stdout.trim() !== opts.candidate) fail('Release candidate must be the current full HEAD commit.')
+  const report = await readJSON(opts.checks)
+  validateData(object({ schemaVersion: { const: 1 }, candidate: commit, model: text,
+    checks: array(object({ id: { enum: hardChecks }, passed: { type: 'boolean' } })),
+    agentProcesses: array(object({ scenario: text, runs: { const: 5 }, failures: count, infrastructureFailures: count })) }), report)
+  if (report.candidate !== opts.candidate) fail('Hard-break report belongs to another candidate.')
+  if (report.checks.length !== hardChecks.length || new Set(report.checks.map(row => row.id)).size !== hardChecks.length) fail('Record every hard-break check exactly once.')
   const definitions = (await readJSON(join(root, 'tests/eval/scenarios/scenarios.json'))).scenarios
-  const expected = registry.cases.filter(item => item.evidenceType !== 'automated' && item.id !== 'AC-46')
-  if (new Set(manifest.cases.map(item => item.caseId)).size !== manifest.cases.length) fail('Duplicate final acceptance selection.')
-  if (manifest.cases.length !== expected.length || expected.some(item => !manifest.cases.some(row => row.caseId === item.id))) fail('Select exactly one final run for every agent or manual acceptance case.')
-  const paired = definitions.filter(item => item.id !== withoutOnly)
-  if (new Set(manifest.comparisons.map(item => item.scenario)).size !== manifest.comparisons.length) fail('Duplicate final scenario comparison.')
-  if (manifest.comparisons.length !== paired.length || paired.some(item => !manifest.comparisons.some(row => row.scenario === item.id))) fail('Every scenario requires its final comparison, except the without-only independent extension.')
-  const incomplete = registry.cases.filter(item => item.procedure.status !== 'completed').map(item => item.id)
-  if (incomplete.length) fail(`Incomplete acceptance procedures: ${incomplete.join(', ')}`)
-  const revision = git('rev-parse', 'HEAD')
-  const cache = new Map()
-  async function run(id) {
-    if (cache.has(id)) return cache.get(id)
-    if (!/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(id)) fail('Invalid release run ID.')
-    const directory = join(results, 'release/runs', id)
-    const recordBytes = await readFile(join(directory, 'run.json'))
-    const record = await correctedScore(directory, JSON.parse(recordBytes))
-    // The approved scope rerun retains this exact successful baseline; its
-    // fixture, criteria, request and toolchain still undergo the usual checks.
-    const approvedBaseline = isApprovedBaseline(record, recordBytes)
-    const definition = definitions.find(item => item.id === record.scenario?.id)
-    if (!definition || record.id !== id || canonicalJSON(definition) !== canonicalJSON(record.scenario) ||
-        record.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || record.stage !== definition.checkpoints.at(-1) ||
-        record.fixture?.revision !== await fixtureHash(definition.fixture)) fail(`Stale scenario, stage, scoring criteria or fixture: ${id}`)
-    const adapter = await readAdapter(join(root, 'tests/eval/adapters/codex-final.json'), definition.id)
-    if (canonicalJSON(record.adapter) !== canonicalJSON(adapter) || record.adapterHash !== hashBytes(canonicalJSON(adapter)) ||
-        record.agent !== adapter.invocation.agent || record.model !== adapter.invocation.model ||
-        record.hostFailure || !record.isolation?.verified || !record.isolation.cleanedAt ||
-        !(record.execution ? verifiedExecution(record) : approvedBaseline) ||
-        !record.turns?.length || record.turns.some(turn => !turn.sessionId) || !record.transcript || !record.answers) fail(`Unverified or unscored release run: ${id}`)
-    git('merge-base', '--is-ancestor', record.sourceRevision, 'HEAD')
-    const request = (record.mode === 'with' && definition.invocation === 'explicit' ? `${adapter.invocation.explicit}\n` : '') +
-      (['foundation', 'final'].includes(record.stage) ? `Active checkpoint: ${record.stage}.\n` : '') + definition.request
-    if (record.request !== request || record.turns.length !== definition.answers.length + 1 || record.turns[0].message !== request ||
-        record.turns.slice(1).some((turn, index) => turn.message !== definition.answers[index])) fail(`Changed agent request or scripted answers: ${id}`)
-    // Grader repairs do not change a captured agent's inputs.
-    git('diff', '--quiet', record.sourceRevision, '--', 'tests/eval/adapters')
-    // The verified without mode never stages the package or runs its installer.
-    if (record.mode === 'with' && (await affectedScenarios(root, record.sourceRevision, definitions, true)).scenarios.includes(definition.id)) {
-      fail(`Changed covered skill or installer inputs: ${id}`)
+  await scenario(definitions[0].id)
+  const smoke = definitions.filter(item => item.tier === 'smoke')
+  if (report.agentProcesses.length !== smoke.length || new Set(report.agentProcesses.map(row => row.scenario)).size !== smoke.length ||
+      report.agentProcesses.some(row => !smoke.some(item => item.id === row.scenario) || row.failures < 0 || row.infrastructureFailures < 0 || row.failures + row.infrastructureFailures > row.runs)) fail('Record five agent process outcomes per smoke scenario, separating infrastructure failures.')
+  const ledger = (await readFile(join(results, 'ledger.jsonl'), 'utf8')).split(/\r?\n/).filter(Boolean).map(line => JSON.parse(line))
+  for (const row of ledger) {
+    validateData(object({ date: text, candidate: commit, tier: { enum: ['smoke', 'full'] }, model: text,
+      adapterHash: hash, fixtureHash: hash, criteriaHash: hash, scenario: text, mode: { enum: ['without', 'with'] },
+      check: text, caseId: text, passes: count, runs: count, runIds: array(text) }), row)
+    if (!Number.isFinite(Date.parse(row.date)) || row.passes < 0 || row.runs < 1 || row.passes > row.runs || row.runIds.length !== row.runs ||
+        new Set(row.runIds).size !== row.runs) fail('Invalid ledger counts, date or contributing run IDs.')
+  }
+  const directory = join(results, 'release')
+  const previous = await previousRelease(directory, opts.release)
+  const blocking = report.checks.filter(row => !row.passed).map(row => ({ class: 'hard-break', check: row.id }))
+  blocking.push(...report.agentProcesses.filter(row => row.failures >= 2).map(row =>
+    ({ class: 'hard-break', scenario: row.scenario, check: 'agent-process', passes: row.runs - row.failures, runs: row.runs })))
+  const pending = report.agentProcesses.filter(row => row.infrastructureFailures).map(row => ({ scenario: row.scenario, reason: 'Replace infrastructure failures before qualification.' }))
+  const knownIssues = []
+  const checks = []
+  const confirmation = new Set()
+  const gatingSet = []
+  const carryover = []
+  const impact = new Map()
+  for (const definition of smoke) {
+    const history = ledger.filter(row => row.tier === 'smoke' && row.mode === 'with' && row.scenario === definition.id)
+    const source = history.findLast(row => row.candidate === opts.candidate)?.candidate ?? history.at(-1)?.candidate
+    if (source && source !== opts.candidate) {
+      const ancestor = spawnSync('git', ['merge-base', '--is-ancestor', source, opts.candidate], { cwd: root })
+      if (ancestor.status !== 0) fail(`Carryover candidate is not an ancestor: ${source}`)
+      const snapshot = spawnSync('git', ['show', `${source}:tests/eval/scenarios/scenarios.json`], { cwd: root, encoding: 'utf8' })
+      if (snapshot.status !== 0) fail('Cannot verify the carried scenario definition.')
+      const prior = JSON.parse(snapshot.stdout).scenarios.find(item => item.id === definition.id)
+      const inputs = ['fixture', 'request', 'answers', 'checkpoints', 'invocation', 'mode', 'checks']
+      if (!prior || inputs.some(name => canonicalJSON(prior[name] ?? null) !== canonicalJSON(definition[name] ?? null))) {
+        pending.push({ scenario: definition.id, reason: 'Changed scenario inputs require a fresh measurement.' })
+        continue
+      }
+      if (!impact.has(source)) impact.set(source, await affectedScenarios(root, source, definitions, true))
+      if (impact.get(source).scenarios.includes(definition.id)) {
+        pending.push({ scenario: definition.id, reason: 'Changed covered inputs require a fresh measurement.' })
+        continue
+      }
+      carryover.push({ scenario: definition.id, candidate: source })
     }
-    if (!approvedBaseline) {
-      git('diff', '--quiet', record.sourceRevision, '--', 'scripts/lib/evaluation-host.mjs',
-        'scripts/lib/evaluation-container.mjs', 'tests/eval/container')
-      if (record.execution.recipeHash !== hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))) fail(`Changed evaluation container recipe: ${id}`)
-      if (record.fixture.name.startsWith('py-') && (record.fixtureRuntime?.imageId !== record.execution.imageId ||
-          record.fixtureRuntime.python !== '3.12.15' || record.fixtureRuntime.result?.status !== 'passed' || record.fixtureRuntime.result.outputTruncated)) fail(`Unprepared locked Python fixture: ${id}`)
+    const rows = history.filter(row => row.candidate === source)
+    const groups = new Map()
+    for (const row of rows) {
+      const signature = canonicalJSON([...row.runIds].sort())
+      if (!groups.has(signature)) groups.set(signature, [])
+      groups.get(signature).push(row)
     }
-    if (record.tools.node !== process.version) fail(`Node version changed: ${id}`)
-    const version = spawnSync(record.adapter.executable, record.adapter.versionArgs, { cwd: root, encoding: 'utf8' })
-    if (version.status !== 0 || version.stdout.trim() !== record.tools.agent) fail(`Agent tool version changed: ${id}`)
-    const transcript = await readFile(resolve(directory, record.transcript), 'utf8')
-    const conversation = await readFile(join(directory, record.conversation), 'utf8')
-    const answers = record.scoreCorrection ? { runId: record.id, reviewer: record.scoreCorrection.corrector,
-      checks: record.scoreCorrection.checks } : await readJSON(resolve(directory, record.answers))
-    validateScore(record, answers, transcript)
-    if (!transcript.trim() || transcript !== conversation || record.conversationHash !== hashBytes(transcript) ||
-        answers.runId !== id || !answers.reviewer?.trim() || answers.checks.length !== definition.checks.length || record.caseResults.length !== definition.checks.length) fail(`Invalid retained scoring artifacts: ${id}`)
-    const lines = transcript.trimEnd().split(/\r?\n/).length
+    if ([...groups.values()].some(group => group.length !== definition.checks.length ||
+        new Set(group.map(row => row.check)).size !== definition.checks.length ||
+        group.some(row => !definition.checks.some(check => check.id === row.check)))) fail(`Scenario batch must contain every check exactly once: ${definition.id}`)
     for (const check of definition.checks) {
-      const scored = record.caseResults.filter(item => item.id === check.id)
-      const answered = answers.checks.filter(item => item.id === check.id)
-      if (scored.length !== 1 || answered.length !== 1 || scored[0].caseId !== check.caseId ||
-          (check.machine ? scored[0].scoring !== 'machine' : !['human', 'judge'].includes(scored[0].scoring)) ||
-          typeof answered[0].passed !== 'boolean' || ['passed', 'startLine', 'endLine'].some(key => scored[0][key] !== answered[0][key]) ||
-          answered[0].startLine < 1 || answered[0].endLine < answered[0].startLine || answered[0].endLine > lines) fail(`Unsupported scored claim: ${id}/${check.id}`)
+      const batches = [...groups.values()].map(group => group.find(row => row.check === check.id))
+      if (!batches.length) { pending.push({ scenario: definition.id, check: check.id, reason: 'Missing smoke measurement.' }); continue }
+      const first = batches[0]
+      if (batches.length > 2 || batches.some(row => row.runs !== 5 || row.caseId !== check.caseId || row.model !== report.model ||
+          row.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || identity(row) !== identity(first)) ||
+          new Set(batches.flatMap(row => row.runIds)).size !== batches.length * 5) fail(`Incompatible or overlapping smoke batches: ${key(first)}`)
+      const baseline = ledger.findLast(row => row.tier === 'smoke' && row.mode === 'without' && key(row) === key(first) && identity(row) === identity(first) && row.runs === 5)
+      if (!baseline || baseline.caseId !== check.caseId) { pending.push({ scenario: definition.id, check: check.id, reason: 'Missing comparable five-run baseline.' }); continue }
+      const total = { scenario: definition.id, check: check.id, caseId: check.caseId,
+        passes: batches.reduce((sum, row) => sum + row.passes, 0), runs: batches.length * 5,
+        baseline: { passes: baseline.passes, runs: baseline.runs }, identity: identity(first),
+        runIds: batches.flatMap(row => row.runIds) }
+      checks.push(total)
+      const hard = ['AC-42', 'AC-43'].includes(check.caseId) || ['fixtureUnchanged', 'installerPassed'].includes(check.machine?.type)
+      if (hard && total.passes < total.runs) blocking.push({ ...total, class: 'hard-break' })
+      if (first.passes < 3 && batches.length === 1) { confirmation.add(definition.id); continue }
+      const threshold = total.passes * 5 >= total.runs * 3
+      // Integer cross multiplication preserves the exact two-of-five margin at both sample sizes.
+      const margin = baseline.passes >= 3 || total.passes * 5 >= (baseline.passes + 2) * total.runs
+      if (!threshold || !margin) {
+        const issue = { ...total, reason: !threshold ? 'below k/N' : 'below per-check margin' }
+        if (previous?.gatingSet.includes(key(first))) blocking.push({ ...issue, class: 'regression' })
+        else knownIssues.push(issue)
+      }
+      const old = previous?.checks.find(row => key(row) === key(first) && row.identity === identity(first))
+      // Each smoke batch has five runs, so the last two batches give an exact ten-run history.
+      const recent = [...(old?.recent ?? []), ...batches.map(row => ({ passes: row.passes, runIds: row.runIds }))]
+        .filter((row, index, all) => all.findIndex(other => canonicalJSON([...other.runIds].sort()) === canonicalJSON([...row.runIds].sort())) === index).slice(-2)
+      total.recent = recent
+      if (batches.at(-1).passes >= 4 && recent.reduce((sum, row) => sum + row.passes, 0) >= recent.length * 4) gatingSet.push(key(first))
     }
-    cache.set(id, record)
-    return record
   }
-  for (const selection of manifest.cases) {
-    const entry = expected.find(item => item.id === selection.caseId)
-    const record = await run(selection.runId)
-    const checks = record.caseResults.filter(check => check.caseId === selection.caseId)
-    if (record.scenario.id !== entry.procedure.name || record.mode !== (record.scenario.id === withoutOnly ? 'without' : 'with') ||
-        !checks.length || checks.some(check => !check.passed)) fail(`No passing final case evidence: ${selection.caseId}`)
-    if (record.scenario.id !== withoutOnly && !manifest.comparisons.some(comparison => comparison.with === selection.runId && comparison.scenario === record.scenario.id)) fail(`Selected case is outside its final scenario pair: ${selection.caseId}`)
+  for (const row of ledger.filter(row => row.candidate === opts.candidate && row.tier === 'full' && row.passes < row.runs)) {
+    knownIssues.push({ scenario: row.scenario, check: row.check, caseId: row.caseId, passes: row.passes, runs: row.runs, reason: 'non-blocking full tier' })
   }
-  for (const comparison of manifest.comparisons) {
-    const before = await run(comparison.without)
-    const after = await run(comparison.with)
-    if (before.scenario.id !== comparison.scenario || after.scenario.id !== comparison.scenario ||
-        !after.caseResults.every(check => check.passed) || canonicalJSON(before.tools) !== canonicalJSON(after.tools) || before.os !== after.os) fail(`Invalid final scenario pair: ${comparison.scenario}`)
-    const result = spawnSync(process.execPath, [join(root, 'scripts/eval.mjs'), 'compare', '--without', comparison.without,
-      '--with', comparison.with, '--results', join(results, 'release/runs'), '--json'], { cwd: root, encoding: 'utf8' })
-    if (result.status !== 0 || JSON.parse(result.stdout).status !== 'passed') fail(`Scenario does not meet the design pass rule: ${comparison.scenario}`)
+  const registry = await readJSON(join(root, 'tests/acceptance/cases.json'))
+  for (const item of registry.cases.filter(item => item.evidenceType !== 'automated' && item.id !== 'AC-46')) {
+    if (!checks.some(row => row.caseId === item.id) && !ledger.some(row => row.candidate === opts.candidate && row.tier === 'full' && row.caseId === item.id)) {
+      knownIssues.push({ caseId: item.id, passes: 0, runs: 0, reason: 'not measured; full-tier evaluation deferred' })
+    }
   }
-  // Execute the registry's exact named automated procedures on the current inputs.
-  const checked = await checkRegistry(registryPath)
-  if (checked.planned) fail('Release acceptance still contains planned procedures.')
-  if (process.platform !== 'linux') fail('AC-74 requires real Linux lifecycle execution under R27.')
-  return { sourceRevision: revision, passed: registry.cases.length, total: registry.cases.length,
-    automated: registry.cases.filter(item => item.evidenceType === 'automated').map(item => ({
-      caseId: item.id, suite: item.procedure.path, test: item.procedure.name })),
-    selected: manifest.cases, comparisons: manifest.comparisons, withoutOnly }
+  const output = { schemaVersion: 2, version: opts.release, candidate: opts.candidate,
+    verdict: blocking.length ? 'failed' : pending.length || confirmation.size ? 'blocked' : 'passed',
+    previous: previous?.version ?? null, blocking, knownIssues, pending, confirmation: [...confirmation],
+    gatingSet, checks, carryover, hardBreakReportHash: hashBytes(canonicalJSON(report)), ledger: 'ledger.jsonl' }
+  await mkdir(directory, { recursive: true })
+  await writeFile(join(directory, `${opts.release}.json`), JSON.stringify(output, null, 2) + '\n')
+  return output
 }

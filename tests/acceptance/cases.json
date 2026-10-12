@@ -11,7 +11,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: New-project final interview, board verdict and resumed-review evidence are incomplete. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final new-project interview, board verdict and resumed-review procedure."
       }
     },
     {
@@ -42,7 +42,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: New-project final interview, board verdict and resumed-review evidence are incomplete. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final new-project interview, board verdict and resumed-review procedure."
       }
     },
     {
@@ -140,7 +140,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: New-project final interview, board verdict and resumed-review evidence are incomplete. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final new-project interview, board verdict and resumed-review procedure."
       }
     },
     {
@@ -255,7 +255,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final existing-project path through separate snapshot and assessment approvals and clean-clone completion."
       }
     },
     {
@@ -416,7 +416,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Current maintained bug/refactor follow-up evidence is incomplete. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the maintained bug and refactor follow-up procedure."
       }
     },
     {
@@ -445,7 +445,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final existing-project path through separate snapshot and assessment approvals and clean-clone completion."
       }
     },
     {
@@ -474,7 +474,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final existing-project path through separate snapshot and assessment approvals and clean-clone completion."
       }
     },
     {
@@ -537,7 +537,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: A comparable final subagent discovery capture on the released package and fixture is not complete. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run comparable final subagent discovery on the candidate package and fixture."
       }
     },
     {
@@ -583,7 +583,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: A comparable final subagent discovery capture on the released package and fixture is not complete. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run comparable final subagent discovery on the candidate package and fixture."
       }
     },
     {
@@ -728,7 +728,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Twelve of twenty required baseline/installed scenario pairs are selected; complete all-scenario qualification is pending. See tests/eval/results/release/approved-evidence.md."
+        "description": "Measure comparable repeated baseline and with-skill scenario checks, including confirmation and per-check margins."
       }
     },
     {
@@ -774,7 +774,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Instruction-stub consolidation and the harness version limit were inconsistent: an earlier audit scored 19/19; the released-package final audit scored 17/19 and failed this case. See tests/eval/results/release/approved-evidence.md."
+        "description": "Evaluate instruction-stub consolidation and harness version-limit handling in the existing-project audit."
       }
     },
     {
@@ -786,7 +786,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Mixed-responsibility and coupled-core recommendations were inconsistent: an earlier audit scored 19/19; the released-package final audit scored 17/19 and failed this case. See tests/eval/results/release/approved-evidence.md."
+        "description": "Evaluate mixed-responsibility and coupled-core recommendations in the existing-project audit."
       }
     },
     {
@@ -849,7 +849,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final existing-project path through separate snapshot and assessment approvals and clean-clone completion."
       }
     },
     {
@@ -861,7 +861,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Existing-vision delta evidence has not been refreshed for the released package. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the existing-vision delta procedure."
       }
     },
     {
@@ -957,7 +957,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final existing-project path through separate snapshot and assessment approvals and clean-clone completion."
       }
     },
     {
@@ -1087,7 +1087,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: Repeat-audit evidence has not been refreshed for the released package. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the repeat-audit procedure."
       }
     },
     {
@@ -1180,7 +1180,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "v0.1.1 known issue under the owner's 2026-10-12 release decision: The current full existing-project path stopped before separate snapshot and assessment approvals and final clean-clone completion. See tests/eval/results/release/approved-evidence.md."
+        "description": "Run the final existing-project path through separate snapshot and assessment approvals and clean-clone completion."
       }
     }
   ]

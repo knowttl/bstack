@@ -105,7 +105,7 @@ Separate script and installer records include local Node 24 and Node 26 runs, no
 Installer support and AC-74 acceptance are Linux-only under the owner's 2026-10-10 ruling R27; Windows and macOS execution is unverified.
 Hosted CI behaviour, CI adapter execution and forge enforcement are unverified.
 This repository has no hosted CI workflow; local clean-checkout results do not establish hosted execution.
-Final all-case evaluation and release approval remain separate work.
+Repeated-run release qualification and release approval remain separate work.
 
 Use Node 24 or later:
 
@@ -335,9 +335,12 @@ npm run eval -- turn --run <id> --answer 1
 npm run eval -- close --run <id>
 npm run eval -- score --run <id> --answers answers.json --transcript transcript.txt
 npm run eval -- batch --tier smoke --mode without --adapter tests/eval/adapters/codex.json --repeat 5 --concurrency 6 --json
+node scripts/acceptance.mjs --release <version> --candidate <full-HEAD-commit> --checks <hard-break-report.json> --json
 ```
 
 An unscored manual run exits 2 as blocked.
+The [release gate](docs/evaluation.md#release-gate) reads batch rates and candidate-bound hard-break results, requests confirmation below 3 of 5, and writes `release/<version>.json`.
+Hard breaks and regressions block; other failures become known issues.
 An adapter run also exits 2 until explicitly scored.
 See the [recorded initial baseline](docs/evaluation.md#recorded-initial-baseline) for host provenance and scenario outcomes.
 The [T1.3 gap map](tests/eval/results/gap-map.md) links every observed failure to the procedure and retains passing requirements.

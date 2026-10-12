@@ -330,7 +330,7 @@ Every slice records its task IDs, the original user intent and approved amendmen
 | C26 | T4.2 current-agent invocation/loading | C25c | Fresh plain vs explicit sessions, observed load conditions, no router/support skill required |
 | C27 | T4.3 final full paths/repeat/extension | C26 | Fresh complete installed paths, extension via public boundary/journey, clean-checkout evidence, fresh case selection |
 | C28 | T5.1 examples/limits | C27 | Examples tied to recorded results, reproducible install/use, accurate actual test scope |
-| C29 | T5.2 final evidence and manual release | C28, final release approval | All revised case evidence complete, baseline comparisons, final no-mistakes gate, exact approved tag/release |
+| C29 | T5.2 final evidence and manual release | C28, final release approval | Frozen-candidate release gate passes, measured cases or known issues, final no-mistakes gate, exact approved tag/release |
 
 C0's "conflicts above" are the hosted-CI and release conflicts that the commissioning review listed, now resolved in this plan and the design.
 Execute one slice at a time, as approved by the owner.
@@ -542,6 +542,7 @@ Tick each task when its "Done when" commands pass.
 - Phase 5: Release
   - [x] T5.1 Write worked examples and limitations
   - [ ] T5.2 Final evaluation and release
+    - [x] Repeated-run release gate and scenario tiers ([evidence](../tests/eval/results/tasks/evalr-pr08.json)); real evaluation and calibration remain deferred
 
 ## Phase 0: Package contract
 
@@ -832,7 +833,7 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
 7. Save unique run IDs with timestamps, agent, model, OS, tool versions, fixture revision, stage, transcript and case results.
    Keep earlier checkpoint runs as history.
    Batch evidence counts every repetition on the frozen candidate and appends per-check rates after every run is scored.
-   The legacy single-run selection backend remains for archived evidence until the release gate replaces it.
+   The legacy single-run selection backend remains only for archived evidence; T5.2 uses the repeated-run release gate.
    Baseline and with-skill runs use the same fixture revision, agent, model and scoring criteria.
    Score deterministic checks from artifacts, and identify human-scored checks by reviewer and transcript location.
 8. Register every design acceptance ID in `tests/acceptance/cases.json` with its owner task, procedure, criterion source and evidence type.
@@ -1841,21 +1842,21 @@ See [release notes](releases/v0.1.0.md) and the [case-by-case evidence inventory
 
 **Inputs and outputs:** All case evidence and comparable agent runs -> validated release evidence and approved tag.
 
-**Verification:** `npm run check` and `npm test` and `node scripts/acceptance.mjs --results tests/eval/results --require-complete`.
+**Verification:** `npm run check`, `npm test` and `node scripts/acceptance.mjs --release <version> --candidate <full-commit> --checks <hard-break-report.json> --results tests/eval/results`.
 
 **Read:** design "Acceptance cases" and "Model-agnostic by design".
 
 **Steps**
 
-1. Run every scenario in `with` mode at its final stage.
-   Each must pass under the design's pass rule.
-   Ensure each scenario also has a comparable baseline from the same scoring criteria and fixture revision.
-2. Run `node scripts/acceptance.mjs --results tests/eval/results --require-complete`.
-   Require passing evidence for all 75 design cases as amended by the commissioning decisions and R27, including AC-24 as a clean-checkout case and AC-74 with real Linux lifecycle execution.
-   Require baseline and final comparisons for every evaluation scenario.
-   Cases that already passed without the skill must still pass with it.
-   Fill the coverage table with actual evidence paths.
-   A blocked, skipped or missing procedure cannot be waived by ticking a task.
+1. Freeze the candidate and measure the smoke tier at its final checkpoints with five runs and comparable cached five-run baselines.
+   Confirm checks below 3 of 5 with five more scenario runs, requiring 6 of 10 pooled passes.
+   For baseline-failed checks require w >= b + 2 of 5, or a pooled pass-rate difference of at least 0.4 after confirmation.
+   Record full-tier rates weekly and before candidates; full-tier failures do not block.
+2. Run the release gate with candidate-bound hard-break results and the batch ledger, using the command above.
+   Hard breaks and regressions block; other failures become known issues with measured rates.
+   Missing smoke measurements, incompatible baselines and pending confirmation block qualification.
+   Preserve every acceptance case, including AC-24 clean-checkout evidence and AC-74 Linux lifecycle evidence under R27, as a measured result or a known-issue entry.
+   Fill the coverage table with actual evidence paths and deferred verification prerequisites.
 3. Ship the final evidence through the no-mistakes gate, and include that gate run and the landed commit in the release evidence.
 4. Ask the owner to approve the tag `v0.1.0` and a GitHub release.
    Then create the tag and the GitHub release manually.
@@ -1863,7 +1864,7 @@ See [release notes](releases/v0.1.0.md) and the [case-by-case evidence inventory
 
 **Done when**
 
-- Every acceptance case has a passing result in the coverage table.
+- The release gate passes for the frozen candidate, and every acceptance case has a measured result or a known-issue entry.
 - The owner has approved, and the tag and its GitHub release exist on GitHub.
 
 **Covers:** AC-46.
@@ -1879,9 +1880,9 @@ Automated procedures name the test title and file, with positive and negative co
 Agent and manual procedures name the scenario check and the transcript or board artifact needed to score it.
 The runner verifies that a named test actually executed, rather than accepting a zero-test exit code.
 Every result records passed, failed or blocked, its relevant input revision and an existing artifact path.
-T5.2 will add `scripts/acceptance.mjs --require-complete` to reject missing case records, duplicate final evidence selections and unsupported success claims.
+T5.2 uses `scripts/acceptance.mjs --release` to classify hard breaks, regressions and known issues from repeated measurements.
 See the [evaluation contract](evaluation.md#registry-and-final-selections) for the available registry and selection validation.
-Repeated execution artifacts with unique run IDs are legitimate history, and the validator prefers the explicitly selected fresh final evidence over stale earlier runs.
+Repeated execution artifacts with unique run IDs are legitimate history; the gate compares compatible ledger batches and records reusable evidence from unaffected scenarios.
 
 Fill in the "Evidence" column in T5.2.
 Registry completeness is a structural check, while final case evidence proves execution.
