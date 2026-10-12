@@ -13,13 +13,15 @@ else if (args[0] === 'image' && args[1] === 'inspect') console.log(JSON.stringif
 else if (args[0] === 'create' || args[0] === 'run') {
   const mounts = []
   const env = { PATH: process.env.PATH }
-  let name, cwd, user, index = 1
+  let name, cwd, user, cpus, memory, index = 1
   while (index < args.length && args[index] !== id) {
     const flag = args[index++]
     if (flag === '--rm') continue
     const value = args[index++]
     if (flag === '--name') name = value
     if (flag === '--user') user = value
+    if (flag === '--cpus') cpus = value
+    if (flag === '--memory') memory = value
     if (flag === '--workdir') cwd = value
     if (flag === '--env') { const separator = value.indexOf('='); env[value.slice(0, separator)] = value.slice(separator + 1) }
     if (flag === '--mount') {
@@ -28,12 +30,16 @@ else if (args[0] === 'create' || args[0] === 'run') {
     }
   }
   const record = { Image: id, Config: { User: user }, Mounts: mounts.sort((left, right) => left.Destination.localeCompare(right.Destination)), HostConfig: { Privileged: false, NetworkMode: 'bridge', PortBindings: {},
+    NanoCpus: Number(cpus) * 1_000_000_000, Memory: memory === '4g' ? 4 * 1024 ** 3 : 0,
     CapAdd: [], CapDrop: ['ALL'], SecurityOpt: ['no-new-privileges'] }, command: args.slice(index + 1), cwd, env }
+  if (cpus !== '2' || memory !== '4g') throw new Error('Missing evaluation container resource budget')
   if (args[0] === 'create') { writeFileSync(state(name), JSON.stringify(record)); console.log(name) }
   else execute(record)
 } else if (args[0] === 'inspect') {
   const record = JSON.parse(readFileSync(state(args[1]), 'utf8'))
   if (record.command.includes('container-extra-mount')) record.Mounts.push({ Type: 'bind', Source: '/unapproved', Destination: '/unapproved', RW: true })
+  if (record.command.includes('container-wrong-cpus')) record.HostConfig.NanoCpus = 1_000_000_000
+  if (record.command.includes('container-wrong-memory')) record.HostConfig.Memory = 0
   console.log(JSON.stringify([record]))
 }
 else if (args[0] === 'start') execute(JSON.parse(readFileSync(state(args.at(-1)), 'utf8')))
