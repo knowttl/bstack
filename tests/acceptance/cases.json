@@ -889,9 +889,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-repeat-audit",
         "artifacts": [
-          "tests/eval/results/release/final-repeat-audit-comparison.json",
-          "tests/eval/results/release/final-repeat-audit.md",
-          "tests/eval/results/release/runs/2026-10-11T23-08-13.735Z-5e67fd30-4e40-46ab-9f20-d507683f988d/artifacts/independent-verification.json"
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T00-07-10.631Z-a38a5576-9f0f-4918-a8fd-f2f1d026e697/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T00-07-10.631Z-a38a5576-9f0f-4918-a8fd-f2f1d026e697/artifacts/independent-verification.json"
         ]
       }
     },

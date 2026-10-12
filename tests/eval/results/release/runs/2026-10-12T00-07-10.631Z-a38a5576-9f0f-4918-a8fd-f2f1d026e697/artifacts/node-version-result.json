@@ -1,0 +1,1 @@
+{"command": ["node", "--version"], "cwd": "[fixture]", "exitCode": 0}

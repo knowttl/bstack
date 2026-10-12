@@ -1,0 +1,3 @@
+Capture declared checks and user outcome coverage in scratch.
+Usage: repo-audit.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]
+Phase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Outside dependencies also require probe record and probe compare.

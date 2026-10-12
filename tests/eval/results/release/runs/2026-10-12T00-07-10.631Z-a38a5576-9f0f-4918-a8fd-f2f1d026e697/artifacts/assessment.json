@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "repo": "[fixture]",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "86960291f55562154efc46f9a9af061884a1c29b",
+    "kind": "commit",
+    "objectId": "86960291f55562154efc46f9a9af061884a1c29b"
+  },
+  "head": "86960291f55562154efc46f9a9af061884a1c29b",
+  "changes": [
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "DESIGN.md"
+    }
+  ],
+  "paths": [
+    "DESIGN.md"
+  ],
+  "mappings": [
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "changedBehavior": "The user added an export non-goal sentence to DESIGN.md; executable behavior and approved acceptance outcomes are unchanged.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "dependentWork": [],
+        "result": "no-impact",
+        "reason": "The added user export note records an existing task boundary and changes no approved definition, rule, public interface or acceptance case. Storage remains owned by core; checkout still expects total 10, quote still expects 12, static cycles remain forbidden and final journeys remain required. The receipt wording note is byte-for-byte preserved. Fresh npm run check exercises these unchanged outcomes. No further DESIGN.md edits are needed.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: receipt wording remains a future owner decision.",
+            "version": "base"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: receipt wording remains a future owner decision.\nUser note: export remains outside this change.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "Public quote() continues to return 12.",
+            "version": "current"
+          }
+        ]
+      }
+    },
+    {
+      "id": "terms",
+      "path": "glossary.md",
+      "assessment": {
+        "changedBehavior": "The user added an export non-goal sentence to DESIGN.md; executable behavior and approved acceptance outcomes are unchanged.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "dependentWork": [],
+        "result": "no-impact",
+        "reason": "Excluding export adds no concept or naming change: Order still means a customer purchase and Panel order still means UI panel sequencing. No code or public API names change.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.\nPanel order: the sequence in which UI panels appear.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: export remains outside this change.",
+            "version": "current"
+          }
+        ]
+      }
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "assessment": {
+        "changedBehavior": "The user added an export non-goal sentence to DESIGN.md; executable behavior and approved acceptance outcomes are unchanged.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "dependentWork": [],
+        "result": "no-impact",
+        "reason": "The export exclusion changes no command or authority location. AGENTS.md still points to DESIGN.md, glossary.md and the existing contract; npm run check remains the complete native check and receipt wording remains a future owner decision.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Run `npm run check` for the maintained native checks.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: export remains outside this change.",
+            "version": "current"
+          }
+        ]
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [
+    "storage-interface",
+    "checkout-total",
+    "acyclic",
+    "final-evidence"
+  ],
+  "execution": [
+    {
+      "runId": "f8907614-ccec-40f6-87bf-33160486effe",
+      "plan": "[isolated-home][scratch-path]"
+    }
+  ],
+  "fingerprint": "8900eb0e1ae6d9f4db82c39208ffcf44dab8cf7c2d683564709ed09f2cf0c28d"
+}
