@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat, symlink } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat, symlink, cp } from 'node:fs/promises'
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -199,6 +199,26 @@ test('append-only correction changes comparison without modifying the original s
   await writeFile(join(directory, before.id, record.transcript), originalTranscript + 'Changed evidence.\n')
   assert.equal(run(directory, 'compare', '--without', before.id, '--with', after.id).status, 2)
 })
+
+for (const [name, mode, change, expected] of [
+  ['accepts approved baseline bytes', 'without', bytes => bytes, 0],
+  ['blocks changed approved baseline bytes', 'without', bytes => bytes + '\n', 2],
+  ['blocks unverified with-skill evidence', 'with', bytes => JSON.stringify({ ...JSON.parse(bytes), execution: undefined }), 2]
+]) {
+  test(`archived baseline comparison ${name}`, async t => {
+    const directory = await temporary(t)
+    const ids = { without: '2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89',
+      with: '2026-10-11T20-34-22.760Z-9af7cbc9-574d-4a38-9792-8c4f315b9bcc' }
+    for (const id of Object.values(ids)) {
+      await cp(join(root, 'tests/eval/results/release/runs', id), join(directory, id), { recursive: true })
+    }
+    const path = join(directory, ids[mode], 'run.json')
+    await writeFile(path, change(await readFile(path, 'utf8')))
+    const comparison = run(directory, 'compare', '--without', ids.without, '--with', ids.with)
+    assert.equal(comparison.status, expected, comparison.stdout)
+    assert.equal(comparison.data.status, expected === 0 ? 'passed' : 'blocked')
+  })
+}
 
 test('comparison blocks different models and unscored runs', async t => {
   const directory = await temporary(t)

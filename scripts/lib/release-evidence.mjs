@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution } from './evaluation.mjs'
+import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution, isApprovedBaseline } from './evaluation.mjs'
 import { readAdapter } from './evaluation-host.mjs'
 import { correctedScore, validateScore } from './evaluation-scoring.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
@@ -43,8 +43,7 @@ export async function completeRelease(results) {
     const record = await correctedScore(directory, JSON.parse(recordBytes))
     // The approved scope rerun retains this exact successful baseline; its
     // fixture, criteria, request and toolchain still undergo the usual checks.
-    const approvedBaseline = id === '2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89' &&
-      hashBytes(recordBytes) === '4930d2928e98e6d162fbb8052d2884be0d7d40c5994a453b17b6b60cc42a732a'
+    const approvedBaseline = isApprovedBaseline(record, recordBytes)
     const definition = definitions.find(item => item.id === record.scenario?.id)
     if (!definition || record.id !== id || canonicalJSON(definition) !== canonicalJSON(record.scenario) ||
         record.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || record.stage !== definition.checkpoints.at(-1) ||
