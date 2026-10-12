@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "642126c70e02b34be91fccb785f6ccd3c8379d68"
+  },
+  "nextChange": "Create the corrected bound portable assessment after separate exact approval.",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "owner",
+      "pointer": "Owner final-checkpoint request, 2026-10-12; latest instruction to correct and bind assessment in scratch",
+      "intent": "documented",
+      "summary": "Preserve quote() = 12 and checkout total 10. quote(2) = 24 is the sole extension outcome. Keep the proposed assessment in scratch until separate approval."
+    },
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:20",
+      "intent": "documented",
+      "summary": "Use a separately committed portable assessment, explicit ancestor base, prior-policy coverage and fresh local and clean-clone standalone checker runs."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-008",
+      "problem": "Earlier assessment used a scratch-only implementation commit and referenced an absent approval receipt.",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": "node .bstack/bin/bstack-check.mjs --repo . --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json",
+      "principle": "Bind portable review to the actual committed implementation and exact owner-approved acceptance cases.",
+      "consequence": "A stale source commit or nonexistent approval citation cannot verify the maintained project.",
+      "fix": "Create only the exact corrected assessment bound to current implementation; record exact owner decisions within the assessment, as a distinct record from DESIGN.md; retain no invented acceptance outcome or extra receipt.",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "Recollect live committed inventory, review every affected document and path, validate acceptance citations and bound fingerprint on an identical scratch checkout; dry-run protected create against the actual target. Fresh standalone verification of final project follows approval, protected apply and separate record commit.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "owner",
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-008"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "maintenance-contract",
+    "standalone-local",
+    "standalone-clone"
+  ],
+  "execution": [],
+  "limitations": [
+    "Assessment is a proposed record awaiting exact-content approval.",
+    "Owner quotes are retained from the conversation in the record; structural tools do not authenticate owner approval.",
+    "Portable execution references are empty; fresh standalone execution supplies the required leaf results after commit."
+  ]
+}

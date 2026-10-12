@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "98b7824a3ceed2a1bcbdb5dd236ae6b3c4f3188f"
+  },
+  "nextChange": "Finish portable maintenance evidence for the selected quote extension.",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "selection",
+      "pointer": "Owner final-checkpoint request, 2026-10-12",
+      "intent": "documented",
+      "summary": "quote() = 12 and quote(2) = 24 selected through the public core interface; maintain explicit-base portable assessment and clean-clone checker evidence."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-008",
+      "problem": "The changed acceptance source needs its separate owner-selection citation and reviewed portable assessment.",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": "node .bstack/bin/bstack-check.mjs --repo . --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json",
+      "principle": "DESIGN.md existing maintenance contract requires explicit-base reviewed portable evidence and unchanged acceptance provenance.",
+      "consequence": "Without a committed reviewed record the standalone checker cannot complete portable verification.",
+      "fix": "Create the exact reviewed record without altering any product behavior or historical snapshot.",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "Complete standalone checker passed against the proposed records locally in scratch and in a fresh isolated different-root clean clone; repeat against final project after protected apply and separate commits.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "selection"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-008"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "standalone-local",
+    "standalone-clone"
+  ],
+  "execution": [],
+  "limitations": [
+    "Record exact bytes are prepared for owner approval; original project record creation remains pending."
+  ]
+}
