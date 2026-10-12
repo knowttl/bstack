@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "restore-approved-checkout",
+  "writePaths": [
+    "packages/core/internal/database.ts",
+    "packages/core/index.ts",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts",
+    "unit.test.mjs"
+  ],
+  "contracts": [
+    {
+      "id": "checkout-total",
+      "files": [
+        "DESIGN.md",
+        "journey.mjs",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ]
+    },
+    {
+      "id": "public-core",
+      "files": [
+        "packages/core/index.ts",
+        "packages/core/package.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Approved design prohibits UI storage access and fixes checkout total at 10. Root CLAUDE is an AGENTS import stub. Glossary overloads Order. No vision, README, standards or audit record exists.",
+      "limitations": [
+        "Small checkout fixture: relevant briefs run in main thread; hand-off would be wasteful."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "packages",
+        "tsconfig.json",
+        "boundaries.mjs"
+      ],
+      "findings": "UI uses private servicePrice; routes and alias also import storage directly. Public core exports price only. Routes owns mutable totals and quantity discount. Core a and b form a recursive cycle; no checkout path uses them. Static compiler-resolved boundary analyzer detects private imports, aliases and cycles.",
+      "limitations": [
+        "Small checkout fixture: relevant briefs run in main thread; hand-off would be wasteful."
+      ],
+      "files": [
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "boundaries.mjs:15",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "package.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs"
+      ],
+      "findings": "check runs strict TypeScript only. Unit quote expects 12; HTTP checkout unit mocks 10. Local HTTP journey returns 12 and asserts approved total 10. Boundary command separate from check. No formatter, linter or CI is configured. Prepared local TypeScript exists.",
+      "limitations": [
+        "Small checkout fixture: relevant briefs run in main thread; hand-off would be wasteful."
+      ],
+      "files": [
+        {
+          "location": "package.json:12",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "tsconfig.json:6",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "unit.test.mjs:5",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "unit.test.mjs:7",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "journey.mjs:6",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "journey.mjs:12",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "boundaries.mjs:30",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

@@ -631,10 +631,8 @@
       "criterionSource": "docs/design.md#AC-49",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "status": "planned",
+        "description": "Current installed final run fails the instruction-merge rubric: no equivalent-content merge proposal or Claude Code version limit. Retained evidence: tests/eval/results/release/existing-repo-structural-blocker.md. Requires an honest passing current-package result before completion."
       }
     },
     {
@@ -643,10 +641,8 @@
       "criterionSource": "docs/design.md#AC-50",
       "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/eval/scenarios/scenarios.json",
-        "name": "existing-repo",
-        "artifacts": ["tests/eval/results/release/existing-repo-comparison.json", "tests/eval/results/release/existing-repo-question-repair.md"]
+        "status": "planned",
+        "description": "Current installed final run fails the two-candidate architecture rubric: boundary and cycle findings do not develop the observed mixed route responsibilities into the required architecture recommendation. Retained evidence: tests/eval/results/release/existing-repo-structural-blocker.md. Requires an honest passing current-package result before completion."
       }
     },
     {
