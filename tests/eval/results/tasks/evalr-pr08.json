@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "taskId": "evalr-pr08",
+  "slice": "evalr-pr08",
+  "sourceRevision": "e33845b5b9eb8adfe92ba2f469758e003e2164f2",
+  "intent": "Implement the approved release-evaluation redesign's release gate and tiers, replacing all-case passing requirements with hard-break and regression classification.",
+  "amendments": [
+    "The maintainer approved pooled confirmation rates for both threshold and margin: 7/10 against 1/5 passes; 6/10 against 2/5 fails the margin."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "linux",
+    "node": "v24.17.0",
+    "tools": { "npm": "11.13.0", "git": "git version 2.54.0" }
+  },
+  "commands": [
+    {
+      "id": "release-evaluation",
+      "executable": "node",
+      "args": ["scripts/acceptance.mjs", "--release", "<version>", "--candidate", "<commit>", "--checks", "<report>"],
+      "cwd": ".",
+      "exitCode": null,
+      "outputArtifact": null,
+      "status": "blocked",
+      "reason": "Real release evaluation is deferred by the maintainer.",
+      "nextPrerequisite": "Real evaluated ledger and candidate-bound hard-break results."
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-46",
+      "kind": "agent",
+      "procedure": "Comparable repeated baseline and with-skill evaluation, confirmation and per-check margins",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Real model evaluations were deferred by the maintainer; synthetic command tests verify the gate policy without establishing agent acceptance.",
+      "nextPrerequisite": "Authorization for real smoke baselines, candidate runs and any required confirmation runs."
+    }
+  ],
+  "limitations": [
+    "Deferred: real smoke baseline and candidate evaluation runs, including confirmation batches.",
+    "Deferred: full-tier evaluation sweeps and release-model anchor runs.",
+    "Deferred: real judge calibration, blocking-verdict audit and sampled conversation audit.",
+    "Deferred: an actual versioned release verdict and known-issue publication based on real measurements.",
+    "The hard-break report is a candidate-bound input supplied from recorded validation and evaluation outcomes; the gate does not independently rerun or authenticate those procedures."
+  ]
+}
