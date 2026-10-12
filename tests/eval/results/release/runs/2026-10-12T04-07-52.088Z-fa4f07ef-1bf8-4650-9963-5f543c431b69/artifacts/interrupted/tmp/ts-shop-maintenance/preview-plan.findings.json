@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[isolated-home][scratch-path]",
+    "revision": "61c5b92cdd3a221fc00836697915e54767a96511"
+  },
+  "nextChange": "Selected intermediate total naming refactor",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Preserve public core interface, quote 12 and checkout 10."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The selected multiplication intermediate has no descriptive name.",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": null,
+      "principle": "Preserve approved public behaviour during refactoring.",
+      "consequence": "Naming the intermediate improves clarity without changing the calculation.",
+      "fix": "Record reviewed no-impact maintenance assessment.",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "Captured original and final npm run check against DESIGN.md.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "Preserve quote 12 and real HTTP checkout total 10",
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance; no full audit performed."
+  ]
+}

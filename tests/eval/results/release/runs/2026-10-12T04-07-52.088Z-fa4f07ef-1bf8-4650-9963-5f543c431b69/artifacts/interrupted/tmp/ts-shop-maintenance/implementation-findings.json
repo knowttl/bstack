@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "nextChange": "Selected intermediate total naming refactor",
+  "reviewedScope": [
+    "packages/web/routes.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Preserve public core interface, quote 12 and checkout 10."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The selected multiplication intermediate has no descriptive name.",
+      "files": [
+        "packages/web/routes.ts"
+      ],
+      "command": null,
+      "principle": "Preserve approved public behaviour during refactoring.",
+      "consequence": "Naming the intermediate improves clarity without changing the calculation.",
+      "fix": "Extract unitPrice * quantity into undiscountedTotal.",
+      "scope": [
+        "packages/web/routes.ts"
+      ],
+      "verification": "Captured original and final npm run check against DESIGN.md.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "Preserve quote 12 and real HTTP checkout total 10",
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance; no full audit performed."
+  ]
+}

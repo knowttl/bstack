@@ -21,3 +21,8 @@ The focused evaluation, package and skill suites passed 198 of 199 tests initial
 That deterministic test now builds and explicitly supplies the original failing-journey fixture through the existing final follow-up interface, preserving its negative readiness control independently of the real maintained scenario.
 Its targeted rerun passes with the original failed checkout still visible.
 The real scenario fixtures and the fake host's behavior are unchanged.
+
+The [one fresh maintenance pair](maintenance-approval-repair-failure.md) after this repair still writes the installed assessment before any approval reply.
+Both captures were stopped after retaining the failure evidence and remain unscored.
+The added approval replies were not used to authorize earlier writes retroactively.
+Acceptance remains blocked pending a further decision.

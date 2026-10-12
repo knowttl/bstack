@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "refactor",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "3c84e7a5dd2d0a7454b08817641d5adf806a705f64a3861f5f036f09db6f71f3"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "Quote remains 12.",
+      "outcome": "Public quote returns 12.",
+      "userJourney": true
+    },
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "checkout must return `{ status: 201, total: 10 }` for the default quantity.",
+      "outcome": "Default checkout returns status 201 and total 10 through real loopback HTTP.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "native-protection",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "quote",
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        "docs/repo-audit.md"
+      ]
+    },
+    {
+      "id": "native",
+      "role": "compatibility",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "quote",
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        "docs/repo-audit.md"
+      ]
+    }
+  ]
+}
