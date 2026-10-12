@@ -10,6 +10,11 @@ Baselines are reused only when their fixture, request, scripted answers, invocat
 | Implicit invocation | [1/1](runs/2026-10-11T22-34-43.903Z-0a944d91-fd0d-4582-a6e5-211439bb9ef5/run.json) | [1/1](runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/run.json) | [Passed](implicit-invocation-structural-comparison.json) | [Three tracked files unchanged](runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/artifacts/independent-verification.json) |
 | Ambiguous idea | [1/1](runs/2026-10-11T22-27-46.145Z-6c0b6ea4-5b79-4af5-bc01-882034bcb401/run.json) | [1/1](runs/2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f/run.json) | [Passed](ambiguous-idea-structural-comparison.json) | [Original brief unchanged](runs/2026-10-12T04-47-09.943Z-05a54e3e-aa12-497a-abbe-f1941aadc57f/artifacts/independent-verification.json) |
 | Scope and prerequisites | [2/2](runs/2026-10-11T22-46-18.504Z-1a2828d2-377d-4338-8e02-6a067a511a17/run.json) | [2/2](runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/run.json) | [Passed](scope-and-prerequisites-structural-comparison.json) | [Seven tracked files unchanged](runs/2026-10-12T04-48-49.478Z-9a4ead0d-d657-41cc-8d15-b28428a3ff50/artifacts/independent-verification.json) |
+| Runtime independence | [0/1](runs/2026-10-11T23-19-36.297Z-6a14a0c1-4e0f-4365-9711-31c7e8ab71b3/run.json) | [1/1](runs/2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e/run.json) | [Passed](runtime-independence-structural-comparison.json) | [Three tracked files unchanged](runs/2026-10-12T04-53-27.879Z-be325203-026a-4a36-a1ed-b31cd377684e/artifacts/independent-verification.json) |
+| Verification limitations | [3/3](runs/2026-10-11T23-26-56.348Z-ef5c15c9-02c6-4742-9b29-3d7eea18e530/run.json) | [3/3](runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/run.json) | [Passed](verification-limitations-structural-comparison.json) | [21 tracked files unchanged](runs/2026-10-12T04-56-30.964Z-74853b71-cdad-4d02-8efd-ac6c04266046/artifacts/independent-verification.json) |
+| Python main-thread research | [0/3](runs/2026-10-12T00-05-31.655Z-a2ad260b-af0a-428a-8e0a-d5fdfcce6348/run.json) | [3/3](runs/2026-10-12T04-57-08.452Z-cca21275-7e53-4120-8fcd-975454844701/run.json) | [Passed](research-main-python-structural-comparison.json) | [37 citations verified](runs/2026-10-12T04-57-08.452Z-cca21275-7e53-4120-8fcd-975454844701/artifacts/independent-verification.json) |
+| TypeScript main-thread research | [0/3](runs/2026-10-11T23-59-20.195Z-b3df9a3f-8bb2-41b0-bd6a-dfff0defdcdf/run.json) | [3/3](runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/run.json) | [Passed](research-main-typescript-structural-comparison.json) | [67 citations verified](runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/artifacts/independent-verification.json) |
+| Python existing-repo audit | [3/4](runs/2026-10-11T23-21-43.463Z-7df859b5-5cba-42e3-9ce6-3488363289f2/run.json) | [4/4](runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json) | [Passed](existing-repo-python-structural-comparison.json) | [11 tracked files unchanged](runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/artifacts/independent-verification.json) |
 
 ## Recovery of the interrupted maintenance baseline
 
@@ -31,5 +36,21 @@ The implicit-invocation transcript reads the independently provisioned Lavish de
 The scope run genuinely fails to resolve `HEAD^`, names missing parent `4c30913019f94a99eab09a7387a214ddd0ce12da`, and leaves the exact comparison blocked.
 Independent host verification confirms this remains a shallow repository and `git rev-parse --verify HEAD^` exits 128.
 The original public quote test passes, but it does not resolve the owner scope question or missing history.
+
+Runtime independence confirms all three excluded commands are actually unavailable in the isolated host, while the bounded audit completes through shipped helpers and native tools.
+The verification-limitations run preserves passing native units alongside the prohibited browser flow, actual bounded health connection refusal and unapproved billing POST boundary.
+Its first health attempt records unavailable curl; the actual Python GET then records connection refusal within the five-second bound.
+No billing call was executed.
+
+Both discovery-only research runs contain five ordered main-thread briefs with effective subagent and web capabilities recorded as false.
+The shipped citation checker passed, and independent verification checked every cited file hash and main-thread file-opening trace: 67 TypeScript citations and 37 Python citations.
+No native project checks, network research, invented measurements or fixture writes were performed.
+The no-web reason appears in each language and outside finding, with its supporting limitations.
+
+The Python audit uses the prepared Python 3.12.15 interpreter and Ruff 0.14.0.
+Unittest and Ruff pass; the existing boundary checker fails with `private`, and readiness does not erase that violation.
+The actual startup journey verifies matching CSV/JSON rows, a public import round trip, cash `10`, equity `-10` and a balanced ledger.
+Recommendations retain CONTRIBUTING.md as the existing standards authority, the cohesive ledger owner and thin startup wiring.
+They propose stronger native boundary coverage and public journey protection without applying changes.
 
 Remaining scenarios, automated procedures, full-suite capture and release acceptance are still pending.

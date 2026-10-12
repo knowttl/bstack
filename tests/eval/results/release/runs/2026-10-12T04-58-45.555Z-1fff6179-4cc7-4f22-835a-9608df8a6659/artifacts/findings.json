@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde"
+  },
+  "nextChange": "Recommendations only for balanced postings through the public ledger package; preserve current native Python journey and standards.",
+  "reviewedScope": [
+    "CONTRIBUTING.md",
+    "pyproject.toml",
+    "uv.lock",
+    "app.py",
+    "startup.py",
+    "boundaries.py",
+    "test_ledger.py",
+    "ledger/__init__.py",
+    "ledger/book.py",
+    "ledger/_internal.py",
+    "check.py"
+  ],
+  "sources": [
+    {
+      "id": "standards",
+      "pointer": "CONTRIBUTING.md:3",
+      "intent": "documented",
+      "summary": "External modules use public ledger; ledger owns entries and balances; preserve native Python checks and balanced postings."
+    },
+    {
+      "id": "public",
+      "pointer": "ledger/__init__.py:1",
+      "intent": "observed",
+      "summary": "Public package exports Ledger; post normalizes amounts internally and records paired entries."
+    },
+    {
+      "id": "caller",
+      "pointer": "app.py:2",
+      "intent": "observed",
+      "summary": "app imports and calls private amount although public post already performs conversion."
+    },
+    {
+      "id": "checker",
+      "pointer": "boundaries.py:8",
+      "intent": "observed",
+      "summary": "Checker scans app and top-level ledger files only; exact names app/private and app/bridge are special-cased."
+    },
+    {
+      "id": "tests",
+      "pointer": "test_ledger.py:8",
+      "intent": "observed",
+      "summary": "Two public interface tests cover a positive posting and negative rejection, without startup or balanced import rejection protection."
+    },
+    {
+      "id": "startup",
+      "pointer": "startup.py:15",
+      "intent": "observed",
+      "summary": "Native startup posts through Ledger, prints CSV, and writes JSON. Manual current journey passed; no persistent journey check exists."
+    },
+    {
+      "id": "toolchain",
+      "pointer": "pyproject.toml:4",
+      "intent": "documented",
+      "summary": "Python 3.12 and Ruff 0.14.0 are declared; lint E4/E7/E9/F selected."
+    },
+    {
+      "id": "cohesion",
+      "pointer": "ledger/book.py:15",
+      "intent": "inferred",
+      "summary": "Entries, postings, balances and import/export serve one cohesive ledger responsibility; current evidence does not warrant splitting this owner."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "External app depends on private normalization; existing boundary check exits 1 with [\"private\"].",
+      "files": [
+        "app.py",
+        "app.py",
+        "ledger/book.py"
+      ],
+      "command": "python -B boundaries.py",
+      "principle": "Enforce the existing public-package standard. No private-helper exception is needed for this caller.",
+      "consequence": "Private normalization changes require caller coordination and violate the documented boundary.",
+      "fix": "Remove the private import and pass \"10\" directly to Ledger.post, keeping conversion inside ledger. Preserve opening_balance return value.",
+      "scope": [
+        "app.py"
+      ],
+      "verification": "Boundary check exits 0; opening_balance remains Decimal(\"10\"); same public posting and startup round-trip pass on final inputs.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "standards",
+        "public",
+        "caller"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Boundary enforcement omits startup, tests and nested modules; recognizes literal private and bridge names rather than resolved public-contract access.",
+      "files": [
+        "boundaries.py",
+        "boundaries.py",
+        "boundaries.py"
+      ],
+      "command": null,
+      "principle": "External modules use the public ledger package; automate this existing rule with scoped native AST analysis. Cycle prohibition is a proposed additional principle, pending selection.",
+      "consequence": "New callers or equivalent import forms can bypass the intended package boundary. Current literal alias rejection does not prove general re-export resolution.",
+      "fix": "Extend the existing checker to repo-owned Python callers and package nesting, normalize import/from/alias forms, resolve approved public exports and relative package edges, and retain clear diagnostics. Keep dynamic imports explicitly outside proven coverage.",
+      "scope": [
+        "boundaries.py",
+        "CONTRIBUTING.md"
+      ],
+      "verification": "Disposable valid public Ledger and unrelated permitted imports pass; separate private import, from-ledger submodule import, intermediary private-helper re-export, and any selected forbidden cycle fail with specific diagnostics. Prove nested resolution without executing imported application code.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "standards",
+        "checker",
+        "public"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Balanced postings have only two small public tests; the real CSV/JSON journey and rejected import atomicity have no maintained executable protection.",
+      "files": [
+        "test_ledger.py",
+        "startup.py",
+        "ledger/book.py"
+      ],
+      "command": null,
+      "principle": "Protect the documented balance invariant at the public Ledger boundary and preserve the observed native Python journey.",
+      "consequence": "Unit checks can stay green while startup output diverges or a failed import damages existing balances.",
+      "fix": "Retain unittest and add the fewest public acceptance checks: valid post checks both account balances and equal totals; subtests reject zero, negative and same-account posting without state change; import rejects unequal debit/credit totals without altering an existing ledger; one subprocess startup test parses CSV/JSON, compares rows, then imports via Ledger and checks balances. Use temporary output files.",
+      "scope": [
+        "test_ledger.py"
+      ],
+      "verification": "Expected equal debit/credit outcomes come from CONTRIBUTING.md:5. Run native unittest with actual startup subprocess; assert public entries/balances before and after rejection, never _entries. The current manual startup run is observed compatibility evidence, not a maintained test.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "standards",
+        "tests",
+        "startup",
+        "public"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Standards do not identify a maintained aggregate command or what evidence completes a change.",
+      "files": [
+        "CONTRIBUTING.md",
+        "pyproject.toml"
+      ],
+      "command": null,
+      "principle": "Proposed completion principle: affected public journeys and native checks pass on final inputs. Keep one standards authority and one repo-owned verification entry point.",
+      "consequence": "A contributor may run only lint or the two tests and miss the known boundary failure or an output regression.",
+      "fix": "Add a short verification section to CONTRIBUTING.md and a small repo-owned native Python check entry point that propagates failures from existing Ruff, boundaries and unittest, including the journey check. Document locked uv setup using the declared Python range. Retain current lint selection. Formatting remains a separate selection; no type checker or hosted CI is justified by this audit.",
+      "scope": [
+        "CONTRIBUTING.md",
+        "check.py"
+      ],
+      "verification": "Prepared Python 3.12 and pinned Ruff run all checks; a seeded boundary violation and journey failure cause a nonzero aggregate exit. Capture baseline failure rather than suppressing it. Hosted CI remains unverified unless separately selected and observed.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "standards",
+        "toolchain",
+        "checker",
+        "tests",
+        "startup"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Recommendations only; no project edits selected or applied. Existing-repo checklist: Step 7 audited, Step 8 no material policy conflicts, Step 9 proposals recorded; Steps 10 and 11 apply verification outside requested scope.",
+    "Read-heavy briefs ran in main thread because the repository contains only a few small files. File citations passed cite-check. Official Python AST and Ruff sources opened 2026-10-12. No external service requires a live probe.",
+    "Only one root commit exists. measure ran HEAD..HEAD with lockfile exclusion: endpoint sizes only; no change-frequency/co-change evidence. No two actual plans were supplied, so overlap is not applicable.",
+    "run-checks captured Python 3.12.15: unittest passes (2 tests), Ruff 0.14.0 passes, boundaries fails exit 1 with private diagnostic. Startup CSV/JSON and public import round-trip independently captured in scratch journey.json; this manual artifact is not validated by findings.",
+    "Execution is intentionally not attached as findings-bound readiness evidence: check-plan fingerprints cannot substitute for the findings fingerprint. No passing readiness claim is made.",
+    "Formatting requirement and type-checking policy are absent; do not silently introduce either. Decimal edge policies beyond existing balanced-positive posting behavior are outside these recommendations.",
+    "Optional visual helper executable was unavailable at the attempted in-scope path; visual rendering work stopped. The required repo-audit renderer remains available."
+  ]
+}
