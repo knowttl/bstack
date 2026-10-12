@@ -371,7 +371,7 @@ Load a schema only to prepare or validate input for a command required by the cu
 | Project terms are unclear or conflict | `references/domain-language.md` |
 | No `VISION.md`, or the audit found a vision gap | `references/vision.md` |
 | Recommending principles and their checks | `references/enforcement.md` |
-| Recommending module boundaries | `references/architecture.md` |
+| Recommending design principles or module boundaries | `references/architecture.md` |
 | Running research in the main thread or delegating it | `references/research-briefs.md` |
 | Preparing a research report for citation checking | `schemas/research-report.json` |
 | Recording or validating audit recommendations | `schemas/findings.schema.json` |
