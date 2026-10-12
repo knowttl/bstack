@@ -1,4 +1,4 @@
-import { readFile, statfs } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { root, fail } from './evaluation.mjs'
@@ -20,8 +20,6 @@ function completed(result, operation) {
 // Inspect the created container before starting the agent, and remove it even
 // when the attached client times out or fails.
 export async function containerTurn(record, args, env) {
-  const disk = await statfs(root)
-  if (disk.bavail * disk.bsize < 20_000_000_000) fail('Evaluation containers require at least 20 GB free disk.')
   const imageData = JSON.parse(completed(await docker(['image', 'inspect', image]), 'image inspection'))[0]
   const recipeHash = hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))
   if (!/^sha256:[a-f0-9]{64}$/.test(imageData.Id)) fail('Evaluation image has no immutable image ID.')
@@ -32,6 +30,7 @@ export async function containerTurn(record, args, env) {
   const environment = Object.entries(env).filter(([key]) => key !== 'PATH').flatMap(([key, value]) => ['--env', `${key}=${value}`])
   const user = `${process.getuid()}:${process.getgid()}`
   const options = ['--name', name, '--user', user, '--network', 'bridge', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
+    '--cpus', '2', '--memory', '4g',
     '--workdir', record.fixture.path, ...mounts.flatMap(mount => ['--mount', `type=bind,source=${mount.Source},target=${mount.Destination}`]), ...environment]
   const turn = { name, imageId: imageData.Id, mounts, user, network: 'bridge', privileged: false, publishedPorts: [], verified: false }
   record.execution.turns.push(turn)
@@ -43,6 +42,7 @@ export async function containerTurn(record, args, env) {
     const byDestination = (left, right) => left.Destination.localeCompare(right.Destination)
     if (canonicalJSON(observed.sort(byDestination)) !== canonicalJSON([...mounts].sort(byDestination)) || actual.Image !== imageData.Id || actual.Config.User !== user ||
         actual.HostConfig.Privileged || actual.HostConfig.NetworkMode !== 'bridge' ||
+        actual.HostConfig.NanoCpus !== 2_000_000_000 || actual.HostConfig.Memory !== 4 * 1024 ** 3 ||
         Object.keys(actual.HostConfig.PortBindings ?? {}).length || actual.HostConfig.VolumesFrom?.length ||
         actual.HostConfig.CapAdd?.length || canonicalJSON(actual.HostConfig.CapDrop) !== canonicalJSON(['ALL']) ||
         !actual.HostConfig.SecurityOpt.includes('no-new-privileges')) fail('Evaluation container configuration does not match the isolated execution contract.')
