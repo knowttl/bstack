@@ -38,6 +38,11 @@ if (args.includes('--version')) {
   if (mode === 'malformed') console.log('not JSONL')
   else {
     console.log(JSON.stringify({ type: 'thread.started', thread_id: mode === 'wrong-session' && args.includes('resume') ? randomUUID() : sessionId }))
+    if (mode === 'observe-installation') {
+      const installed = await stat(join(process.env.HOME, '.agents/skills/repo-audit/SKILL.md'))
+        .then(() => true, error => { if (error.code === 'ENOENT') return false; throw error })
+      console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: 'Installation observation.', installed } }))
+    }
     if (mode === 'fixture-byte-changed') await writeFile('price.mjs', 'export function quote(quantity) { return quantity * 13 }\n')
     if (mode === 'fixture-status-changed') await writeFile('untracked-note.md', 'Unexpected new file.\n')
     if (['forbidden-reference', 'allowed-reference', 'allowed-fixture-file', 'allowed-extensionless-file', 'allowed-git-status', 'large-forbidden-reference', 'forbidden-nl', 'forbidden-directory', 'forbidden-glob', 'forbidden-failed-command'].includes(mode)) {

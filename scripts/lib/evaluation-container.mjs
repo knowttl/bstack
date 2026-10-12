@@ -1,6 +1,7 @@
-import { readFile, writeFile, rm, cp } from 'node:fs/promises'
-import { join } from 'node:path'
+import { readFile, writeFile, rm, mkdir } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
 import { root, fail } from './evaluation.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
@@ -20,6 +21,7 @@ function completed(result, operation) {
 // Inspect the created container before starting the agent, and remove it even
 // when the attached client times out or fails.
 export async function containerTurn(record, args, env, capture) {
+  const committed = path => execFileSync('git', ['show', `${record.sourceRevision}:${path}`], { cwd: root, maxBuffer: 16777216 })
   const imageData = JSON.parse(completed(await docker(['image', 'inspect', image]), 'image inspection'))[0]
   const recipeHash = hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))
   if (!/^sha256:[a-f0-9]{64}$/.test(imageData.Id)) fail('Evaluation image has no immutable image ID.')
@@ -66,7 +68,7 @@ export async function containerTurn(record, args, env, capture) {
     turn.toolchain = toolchain
     record.execution.toolchain = toolchain
     const checks = record.scenario.checks.filter(check => check.machine)
-    const program = checks.length ? await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8') : null
+    const program = checks.length ? committed('tests/eval/container/assertions.mjs').toString('utf8') : null
     async function assertions(input) {
       const path = join(record.isolation.home, 'tmp', `${name}-assertions.json`)
       const grader = join(record.isolation.home, 'tmp', `${name}-grader`)
@@ -74,8 +76,13 @@ export async function containerTurn(record, args, env, capture) {
       try {
         // Baselines also receive citation grading, after the subject has finished.
         if (input.action === 'evaluate' && checks.some(check => check.machine.type === 'citeCheck')) {
-          for (const directory of ['scripts', 'schemas']) await cp(join(root, 'skills/repo-audit', directory),
-            join(grader, directory), { recursive: true })
+          const paths = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', record.sourceRevision, '--',
+            'skills/repo-audit/scripts', 'skills/repo-audit/schemas'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean)
+          for (const path of paths) {
+            const destination = join(grader, ...path.slice('skills/repo-audit/'.length).split('/'))
+            await mkdir(dirname(destination), { recursive: true })
+            await writeFile(destination, committed(path), { mode: 0o600 })
+          }
           input.skill = join(grader, 'scripts/repo-audit.mjs')
         }
         await writeFile(path, JSON.stringify({ kind: record.fixture.kind, ...input }), { mode: 0o600 })
