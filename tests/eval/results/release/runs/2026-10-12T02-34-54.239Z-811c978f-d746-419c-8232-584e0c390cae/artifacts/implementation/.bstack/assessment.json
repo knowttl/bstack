@@ -1,0 +1,330 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "kind": "commit",
+    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "head": "c1300389bdfb125e73403605284d35f3ea004a45",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "AGENTS.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/public.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "unit.test.mjs"
+    }
+  ],
+  "paths": [
+    ".bstack/project.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "packages/web/public.ts",
+    "unit.test.mjs"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "packages/web/public.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    },
+    {
+      "path": "unit.test.mjs",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "changedBehavior": "Preserve quote() = 12 and checkout total 10. The sole extension outcome is quote(2) = 24 through the approved public core interface, with quantity defaulting to one. Original checks, checkout journey and user note are preserved.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "dependentWork": [],
+        "result": "updated",
+        "reason": "Reviewed every changed implementation path: packages/web/public.ts retains the public core price import and adds quantity=1 multiplication; unit.test.mjs adds only quote(2)=24 protection while preserving the original quote and mocked checkout assertions; DESIGN.md documents the sole extension and preserves quote 12, checkout 10 and the exact user note; AGENTS.md names the approved example and records the existing owner decisions; .bstack/project.json expands quote pointers without removing previous rules, scopes or checks. Each required acceptance decision cites the exact owner-approved AGENTS.md paragraph separately from DESIGN.md. Original journey.mjs and core interface/storage bytes are unchanged. Prior policy coverage remains required. The journey covers loopback HTTP and boundaries cover static dependencies; no broader quantity-validation outcome is claimed.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)`. Quote remains 12. A selected quantity defaults to one: `quote() = 12` and `quote(2) = 24`. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` retains the original quantity-one quote assertion and protects quantity two and mocked checkout, while the unchanged journey observes a real loopback HTTP exchange. The quantity extension multiplies the public core price by the selected quantity; it introduces no discount or change to checkout pricing.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/public.ts",
+            "pointer": "export function quote(quantity = 1) { return quantity * price() }",
+            "version": "current"
+          },
+          {
+            "path": "unit.test.mjs",
+            "pointer": "test('public price', () => assert.equal(quote(), 12))",
+            "version": "current"
+          },
+          {
+            "path": "unit.test.mjs",
+            "pointer": "test('public price for quantity two', () => assert.equal(quote(2), 24))",
+            "version": "current"
+          },
+          {
+            "path": "journey.mjs",
+            "pointer": "assert.deepEqual(order, { status: 201, total: 10 }, 'agreed checkout total is 10')",
+            "version": "current"
+          },
+          {
+            "path": ".bstack/project.json",
+            "pointer": "A selected quantity defaults to one:",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "The approved public quote example is `packages/web/public.ts`, using `price` from `packages/core/index.ts`. Owner-approved quantity extension: accept a selected quantity, defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly; add quantity-two protection and run the maintained checks and real checkout journey.",
+            "version": "current"
+          }
+        ],
+        "delta": {
+          "before": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote()`. Quote remains 12. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+          "after": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote(quantity = 1)`. Quote remains 12. A selected quantity defaults to one: `quote() = 12` and `quote(2) = 24`. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` retains the original quantity-one quote assertion and protects quantity two and mocked checkout, while the unchanged journey observes a real loopback HTTP exchange. The quantity extension multiplies the public core price by the selected quantity; it introduces no discount or change to checkout pricing."
+        }
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "changedBehavior": "Preserve quote() = 12 and checkout total 10. The sole extension outcome is quote(2) = 24 through the approved public core interface, with quantity defaulting to one. Original checks, checkout journey and user note are preserved.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "dependentWork": [],
+        "result": "no-impact",
+        "reason": "Reviewed all five changed paths: quote parameter and assertion concern numeric quantity; design/contract acceptance pointers and guidance concern the same example. No customer purchase or panel sequence names change, so Order and Panel order retain their exact definitions.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          },
+          {
+            "path": "glossary.md",
+            "pointer": "Panel order: the sequence in which UI panels appear.",
+            "version": "current"
+          }
+        ]
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "changedBehavior": "Preserve quote() = 12 and checkout total 10. The sole extension outcome is quote(2) = 24 through the approved public core interface, with quantity defaulting to one. Original checks, checkout journey and user note are preserved.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "dependentWork": [],
+        "result": "updated",
+        "reason": "Reviewed all five changed paths against the exact owner-approved guidance: the public example and unit assertion implement only quote(2)=24; design and contract preserve default quote 12 and checkout 10; AGENTS.md names the public core interface and documents the existing authorization. CLAUDE.md delegates to AGENTS.md and needs no change. The proposed assessment binds current committed HEAD, retains the explicit ancestor base and excludes only its own selected portable record from implementation inventory. Approved acceptance decisions do not authorize writing this proposal; that write is awaiting separate approval. Current readiness stays in scratch and the historical snapshot is unchanged.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "The approved public quote example is `packages/web/public.ts`, using `price` from `packages/core/index.ts`. Owner-approved quantity extension: accept a selected quantity, defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly; add quantity-two protection and run the maintained checks and real checkout journey.",
+            "version": "current"
+          },
+          {
+            "path": "CLAUDE.md",
+            "pointer": "@AGENTS.md",
+            "version": "current"
+          }
+        ],
+        "delta": {
+          "before": "",
+          "after": "The approved public quote example is `packages/web/public.ts`, using `price` from `packages/core/index.ts`. Owner-approved quantity extension: accept a selected quantity, defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly; add quantity-two protection and run the maintained checks and real checkout journey."
+        }
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [
+    {
+      "id": "preserve-default-quote",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "Quote remains 12.",
+      "newCase": "Quote remains 12.",
+      "affectedWork": [
+        ".bstack/project.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "packages/web/public.ts",
+        "unit.test.mjs"
+      ],
+      "approval": {
+        "path": "AGENTS.md",
+        "pointer": "The approved public quote example is `packages/web/public.ts`, using `price` from `packages/core/index.ts`. Owner-approved quantity extension: accept a selected quantity, defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly; add quantity-two protection and run the maintained checks and real checkout journey.",
+        "version": "current"
+      }
+    },
+    {
+      "id": "preserve-checkout-total",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "The agreed checkout total is 10.",
+      "newCase": "The agreed checkout total is 10.",
+      "affectedWork": [
+        ".bstack/project.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "packages/web/public.ts",
+        "unit.test.mjs"
+      ],
+      "approval": {
+        "path": "AGENTS.md",
+        "pointer": "The approved public quote example is `packages/web/public.ts`, using `price` from `packages/core/index.ts`. Owner-approved quantity extension: accept a selected quantity, defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly; add quantity-two protection and run the maintained checks and real checkout journey.",
+        "version": "current"
+      }
+    },
+    {
+      "id": "approved-quote-quantity",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "exposes `quote()`. Quote remains 12.",
+      "newCase": "exposes `quote(quantity = 1)`. Quote remains 12. A selected quantity defaults to one: `quote() = 12` and `quote(2) = 24`.",
+      "affectedWork": [
+        ".bstack/project.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "packages/web/public.ts",
+        "unit.test.mjs"
+      ],
+      "approval": {
+        "path": "AGENTS.md",
+        "pointer": "The approved public quote example is `packages/web/public.ts`, using `price` from `packages/core/index.ts`. Owner-approved quantity extension: accept a selected quantity, defaulting to one, with `quote() = 12` and `quote(2) = 24`. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly; add quantity-two protection and run the maintained checks and real checkout journey.",
+        "version": "current"
+      }
+    }
+  ],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion"
+  ],
+  "execution": [],
+  "fingerprint": "8cf46a0dc5b37879bf1e5f91fb12db5d3202139a1a8f5f1c53fae275a0002edf"
+}
