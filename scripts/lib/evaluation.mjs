@@ -35,7 +35,8 @@ function validateMachine(machine) {
   validateData({ type: 'object', additionalProperties: false, required: Object.keys(properties), properties }, machine)
 }
 
-export async function fixtureHash(name, directory = join(root, 'tests', 'fixtures')) {
+export async function fixtureHash(name) {
+  const directory = join(root, 'tests', 'fixtures')
   const fixtures = await readJSON(join(directory, 'fixtures.json'))
   const fixture = { ...fixtures[fixtures[name].base], ...fixtures[name] }
   const inputs = []
@@ -47,6 +48,8 @@ export async function fixtureHash(name, directory = join(root, 'tests', 'fixture
   const source = fixture.source ?? fixture.base ?? name
   for (const file of fixture.files) await collect(join(directory, source, file), `${source}/${file}`)
   if (fixture.overlay) await collect(join(directory, name, fixture.overlay), `${name}/${fixture.overlay}`)
+  await collect(join(directory, name, 'sanity.mjs'), `${name}/sanity.mjs`)
+  if (source !== name) await collect(join(directory, source, 'sanity.mjs'), `${source}/sanity.mjs`)
   await collect(join(directory, 'build.mjs'), 'build.mjs')
   return hashBytes(canonicalJSON({ fixture, inputs }))
 }
