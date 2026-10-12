@@ -284,8 +284,8 @@
     },
     {
       "id": "representative-extension",
-      "fixture": "ts-rule-proof",
-      "request": "Add a representative quote feature through the public core interface while preserving the existing quote and selected boundary rules.",
+      "fixture": "maintained-ts-shop",
+      "request": "Extend this maintained project's approved public quote example to accept a selected quantity, defaulting to one. The approved outcome is quote() = 12 and quote(2) = 24 through the intended public core interface. Locate and name the approved example in the resulting project guidance before changing it. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly. Add protection for quantity two, then run the maintained native constraints and real checkout journey. Use the existing maintenance contract and explicit comparison base to assess documentation impact and verify the standalone checker locally and in a fresh different-root clean clone with isolated home/cache. Do not invent another product outcome or repeat the goal interview. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
         "Use approved examples and the public interface. Verify the project constraints and existing quote behaviour."
       ],
