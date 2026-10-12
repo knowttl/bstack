@@ -226,6 +226,8 @@ async function finishBatch(batch, results) {
     return await correctedScore(join(results, id), record)
   }))
   const pending = runs.filter(run => !run.transcript || run.hostFailure || !run.isolation.cleanedAt || !run.isolation.verified || !verifiedExecution(run)).map(run => run.id)
+  const errors = [...batch.errors, ...runs.filter(run => run.hostFailure).map(run =>
+    ({ scenario: run.scenario.id, runId: run.id, reason: run.reason }))]
   const entries = []
   for (const id of batch.scenarios) {
     const group = runs.filter(run => run.scenario.id === id)
@@ -246,7 +248,7 @@ async function finishBatch(batch, results) {
   }
   const ledger = join(results === defaultResults ? resolve(defaultResults, '..') : results, 'ledger.jsonl')
   if (pending.length || batch.errors.length || runs.length !== batch.scenarios.length * batch.repeat || entries.some(entry => entry.pending)) {
-    return { status: 'blocked', batch: batch.id, ledger, runIds: batch.runIds, pending, errors: batch.errors, checks: entries,
+    return { status: 'blocked', batch: batch.id, ledger, runIds: batch.runIds, pending, errors, checks: entries,
       reason: 'Score every completed conversation with eval score, then finalize with eval batch --batch <id> using the same --results directory. Failed captures require a fresh batch.' }
   }
   // Serialize ledger writers without making a second command wait or retry.
@@ -389,6 +391,12 @@ try {
     const results = resolve(opts.results ?? defaultResults)
     const data = await ({ batch, start, turn, close, score, correct, compare })[command](opts, results)
     if (!opts.json && command === 'start') console.log(JSON.stringify(data, null, 2))
+    if (!opts.json && command === 'batch') console.log([
+      `batch: ${data.batch}`, ...data.runIds.map(id => `run: ${id}`),
+      `pending: ${data.pending?.join(', ') || 'none'}`,
+      ...(data.errors ?? []).map(error => `${error.scenario}${error.runId ? ` (${error.runId})` : ''}: ${error.reason}`),
+      ...(data.reason ? [data.reason.replace('<id>', data.batch)] : []), `ledger: ${data.ledger}`
+    ].join('\n'))
     emitResult({ command: `eval ${command}`, status: data.status, data }, opts.json)
   }
 } catch (error) {
