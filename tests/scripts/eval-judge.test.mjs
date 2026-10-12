@@ -135,6 +135,49 @@ test('judge leaves a missing comparison pending and can grade after evidence arr
   assert.deepEqual(answers.checks.map(check => check.id), ['project-fit', 'native'])
 })
 
+for (const [name, fields, artifact, makeDirectory, passing] of [
+  ['unrelated startup failure', { scenario: { id: 'other-scenario', checks: [] } }, 'conversation.txt', false, true],
+  ['different scenario is filtered before evidence reads', { scenario: { id: 'other-scenario', checks: [] } }, 'conversation.txt', true, true],
+  ['different source is filtered before evidence reads', { sourceRevision: 'other-source' }, 'conversation.txt', true, true],
+  ['different mode is filtered before evidence reads', { mode: 'without' }, 'conversation.txt', true, true],
+  ['different batch is filtered before evidence reads', { batchId: 'other-batch' }, 'conversation.txt', true, true],
+  ['interrupted run directory', {}, 'run.json', false, true],
+  ['missing captured companion uses the passing fallback', {}, 'conversation.txt', false, true],
+  ['missing scored companion uses the passing fallback', { transcript: 'conversation.txt' }, 'conversation.txt', false, true],
+  ['missing captured companion stays pending without a fallback', {}, 'conversation.txt', false, false],
+  ['missing scored companion stays pending without a fallback', { transcript: 'conversation.txt' }, 'conversation.txt', false, false],
+  ['interrupted companion directory stays pending without a fallback', {}, 'run.json', false, false]
+]) {
+  test(`judge comparison tolerates incomplete history: ${name}`, async t => {
+    const directory = await temporary(t)
+    const capture = join(directory, 'capture')
+    await mkdir(capture)
+    const config = await judgeConfig(directory, 'capture', capture)
+    const record = await comparisonRun(directory, 1)
+    const broken = await comparisonRun(directory, 2, { scenario: { id: 'existing-repo', checks: [] }, ...fields })
+    await rm(join(directory, broken.id, artifact))
+    if (makeDirectory) await mkdir(join(directory, broken.id, artifact))
+    const companion = await comparisonRun(directory, 3, { scenario: { id: 'existing-repo', checks: [] },
+      repeatIndex: 0, status: passing ? 'passed' : 'failed' })
+    const before = await readFile(join(directory, record.id, 'run.json'), 'utf8')
+    const result = command('eval.mjs', ['judge', '--run', record.id, '--judge', config,
+      '--transcript', join(directory, record.id, record.conversation), '--results', directory])
+    assert.equal(result.status, passing ? 0 : 2, result.stdout)
+    assert.equal(await readFile(join(directory, record.id, 'run.json'), 'utf8'), before)
+    if (passing) {
+      const input = JSON.parse(await readFile(join(capture, `${record.id}.json`)))
+      assert.equal(input.companions[0].runId, companion.id)
+      const evidence = JSON.parse(await readFile(join(directory, record.id, 'judge/evidence.json')))
+      const { reviewer, ...bound } = input
+      assert.equal(evidence.inputHash, hashBytes(canonicalJSON(bound)))
+    } else {
+      assert.deepEqual(result.body.data.pending, [{ checkId: 'project-fit', scenario: 'existing-repo' }])
+      assert.deepEqual(await readdir(capture), [])
+      await assert.rejects(readFile(join(directory, record.id, 'judge/answers.json')), { code: 'ENOENT' })
+    }
+  })
+}
+
 test('human scoring preserves the cited companion run for calibration', async t => {
   const directory = await temporary(t)
   const record = await comparisonRun(directory, 1)
