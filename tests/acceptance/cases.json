@@ -213,8 +213,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "maintenance",
         "artifacts": [
-          "tests/eval/results/release/maintenance-comparison.json",
-          "tests/eval/results/release/maintenance-maintained-fixture.md"
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-56-05.675Z-0c7c0fb7-8198-4f75-9640-d4d0b49a64f6/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-56-05.675Z-0c7c0fb7-8198-4f75-9640-d4d0b49a64f6/artifacts/independent-verification.json"
         ]
       }
     },
@@ -276,11 +277,11 @@
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
-        "name": "final-maintained-maintenance",
+        "name": "maintenance",
         "artifacts": [
-          "tests/eval/results/release/final-followups.md",
-          "tests/eval/results/release/runs/2026-10-11T23-12-49.498Z-0e13810b-07fb-4292-a7ff-4bce0fb6bd00/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-11T23-12-49.498Z-0e13810b-07fb-4292-a7ff-4bce0fb6bd00/artifacts/independent-verification.json"
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-56-05.675Z-0c7c0fb7-8198-4f75-9640-d4d0b49a64f6/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-56-05.675Z-0c7c0fb7-8198-4f75-9640-d4d0b49a64f6/artifacts/independent-verification.json"
         ]
       }
     },
@@ -447,7 +448,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "research-main-typescript",
-        "artifacts": ["tests/eval/results/release/research-main-typescript-comparison.json", "tests/eval/results/release/research-main-python-comparison.json", "tests/eval/results/release/runs/2026-10-11T21-53-25.944Z-2e1e59c5-9c82-4419-acb7-a63d64edfe39/main-thread-trace.jsonl", "tests/eval/results/release/runs/2026-10-11T21-53-22.949Z-567a3c83-460a-43f7-a82e-d77b63b37d8d/main-thread-trace.jsonl"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T00-00-18.664Z-b99ce706-296e-4cbf-8bce-fb9dc30600dc/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T00-00-18.664Z-b99ce706-296e-4cbf-8bce-fb9dc30600dc/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -458,8 +463,12 @@
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
-        "name": "research-subagents",
-        "artifacts": ["tests/eval/results/release/research-subagents-comparison.json", "tests/eval/results/release/research-subagents-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50/conversation.txt"]
+        "name": "research-main-typescript",
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T00-00-18.664Z-b99ce706-296e-4cbf-8bce-fb9dc30600dc/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T00-00-18.664Z-b99ce706-296e-4cbf-8bce-fb9dc30600dc/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -529,7 +538,11 @@
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "implicit-invocation",
-        "artifacts": ["tests/eval/results/release/implicit-invocation-comparison.json", "tests/eval/results/release/runs/2026-10-11T22-34-43.922Z-95558e7b-ca11-42eb-8095-f70ee20e31bf/conversation.txt"]
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-11T23-56-02.350Z-86f06e3c-6f0e-42aa-9b08-db23dd889b94/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-11T23-56-02.350Z-86f06e3c-6f0e-42aa-9b08-db23dd889b94/artifacts/independent-verification.json"
+        ]
       }
     },
     {
@@ -592,8 +605,12 @@
       "procedure": {
         "status": "completed",
         "path": "tests/eval/scenarios/scenarios.json",
-        "name": "research-subagents",
-        "artifacts": ["tests/eval/results/release/research-subagents-comparison.json", "tests/eval/results/release/research-subagents-container-verification.json", "tests/eval/results/release/runs/2026-10-11T20-52-22.194Z-6559655e-80f4-41d8-be0f-f2bbd362bd50/conversation.txt"]
+        "name": "research-main-typescript",
+        "artifacts": [
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T00-00-18.664Z-b99ce706-296e-4cbf-8bce-fb9dc30600dc/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T00-00-18.664Z-b99ce706-296e-4cbf-8bce-fb9dc30600dc/artifacts/independent-verification.json"
+        ]
       }
     },
     {

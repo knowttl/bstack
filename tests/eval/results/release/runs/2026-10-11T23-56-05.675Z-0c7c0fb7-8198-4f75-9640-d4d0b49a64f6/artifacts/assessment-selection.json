@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "9009fe97e495bb316de45cf203996fd31405ebfe"
+  },
+  "nextChange": "User-selected bounded refactor naming the intermediate undiscounted total without pricing or checkout changes.",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Public core boundary, quote 12, checkout total 10 and before/after protection."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "User requests naming the intermediate unitPrice times quantity expression.",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": null,
+      "principle": "Preserve public core interface and approved pricing and checkout outcomes.",
+      "consequence": "Naming the existing expression improves readability without altering multiplication order.",
+      "fix": "Create the user-selected substantive portable no-impact assessment, with reviewed fingerprint binding.",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "Captured original npm run check; repeat compatibility capture and standalone aggregate locally and in clean clone.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "quote",
+    "checkout",
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "This record supports only the explicitly selected maintenance edit; no full audit was repeated."
+  ]
+}

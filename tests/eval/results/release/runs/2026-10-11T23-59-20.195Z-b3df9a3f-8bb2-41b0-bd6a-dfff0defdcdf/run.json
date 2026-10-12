@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "id": "2026-10-11T23-59-20.195Z-b3df9a3f-8bb2-41b0-bd6a-dfff0defdcdf",
+  "createdAt": "2026-10-11T23:59:20.196Z",
+  "sourceRevision": "4d716035da1a1530bd34c2131ee3c70ae224b7f8",
+  "agent": "codex",
+  "model": "gpt-6.1-sol",
+  "os": "linux 6.8.0-142-generic",
+  "tools": {
+    "node": "v24.17.0",
+    "git": "git version 2.54.0",
+    "npm": "11.13.0",
+    "typescript": "Version 5.9.3",
+    "agent": "codex-cli 0.162.1"
+  },
+  "fixture": {
+    "name": "ts-shop",
+    "path": "[fixture]",
+    "kind": "repo",
+    "revision": "8e436639af6ca78c93bb61e759d643c4f304bd66"
+  },
+  "scenario": {
+    "id": "research-main-typescript",
+    "fixture": "ts-shop",
+    "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+    "answers": [],
+    "checkpoints": [
+      "discovery"
+    ],
+    "invocation": "explicit",
+    "checks": [
+      {
+        "id": "mode",
+        "caseId": "AC-35",
+        "question": "Did the five briefs run sequentially in the main thread with the common report format, actual mode and host capabilities recorded?"
+      },
+      {
+        "id": "citations",
+        "caseId": "AC-36",
+        "question": "Did the main thread open the cited files and run the shipped cite-check successfully before using the report?"
+      },
+      {
+        "id": "no-web",
+        "caseId": "AC-48",
+        "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
+      }
+    ]
+  },
+  "criteriaHash": "a89fa68540d707817e98336e98f6462775e38d19ed9ee312a4da0ac3261c982d",
+  "stage": "discovery",
+  "mode": "without",
+  "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+  "status": "failed",
+  "reason": "Human-scored captured host conversation with verified discovery isolation.",
+  "isolation": {
+    "home": "[isolated-home]",
+    "state": "[isolated-home]/.codex",
+    "discoveryPaths": [
+      "[isolated-home]/.agents/skills",
+      "[isolated-home]/.codex/skills",
+      "[fixture]/.agents/skills",
+      "[fixture]/.codex/skills",
+      "[scratch-path]",
+      "[scratch-path]",
+      "/.agents/skills",
+      "/.codex/skills",
+      "/etc/codex/skills"
+    ],
+    "stagedPath": "[isolated-home]/.agents/skills/repo-audit",
+    "skillHash": null,
+    "verified": true,
+    "method": "Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.",
+    "discovered": [],
+    "checkedAt": "2026-10-12T00:00:38.023Z",
+    "cleanedAt": "2026-10-12T00:00:38.045Z"
+  },
+  "transcript": "45dd0bb6-f011-4cbf-a9a7-7e1bcf90660c/transcript.txt",
+  "answers": "45dd0bb6-f011-4cbf-a9a7-7e1bcf90660c/answers.json",
+  "caseResults": [
+    {
+      "id": "mode",
+      "caseId": "AC-35",
+      "question": "Did the five briefs run sequentially in the main thread with the common report format, actual mode and host capabilities recorded?",
+      "passed": false,
+      "startLine": 5,
+      "endLine": 12,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "45dd0bb6-f011-4cbf-a9a7-7e1bcf90660c/transcript.txt"
+    },
+    {
+      "id": "citations",
+      "caseId": "AC-36",
+      "question": "Did the main thread open the cited files and run the shipped cite-check successfully before using the report?",
+      "passed": false,
+      "startLine": 5,
+      "endLine": 12,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "45dd0bb6-f011-4cbf-a9a7-7e1bcf90660c/transcript.txt"
+    },
+    {
+      "id": "no-web",
+      "caseId": "AC-48",
+      "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?",
+      "passed": false,
+      "startLine": 5,
+      "endLine": 12,
+      "scoring": "human",
+      "reviewer": "[redacted: user name]",
+      "transcript": "45dd0bb6-f011-4cbf-a9a7-7e1bcf90660c/transcript.txt"
+    }
+  ],
+  "adapter": {
+    "schemaVersion": 1,
+    "executable": "codex",
+    "args": [
+      "--no-daemon",
+      "exec",
+      "--json",
+      "--ignore-user-config",
+      "--ignore-rules",
+      "--skip-git-repo-check",
+      "--model",
+      "gpt-6.1-sol",
+      "--sandbox",
+      "danger-full-access",
+      "-c",
+      "model_reasoning_effort=\"medium\"",
+      "--disable",
+      "multi_agent",
+      "--disable",
+      "multi_agent_v2",
+      "--disable",
+      "multi_agent_v2_dynamic_tools",
+      "-c",
+      "agents.enabled=false",
+      "{message}"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ],
+    "timeoutMs": 1800000,
+    "outputLimitBytes": 16777216,
+    "invocation": {
+      "agent": "codex",
+      "model": "gpt-6.1-sol",
+      "explicit": "$repo-audit",
+      "protocol": "codex-exec-jsonl",
+      "resumeArgs": [
+        "--no-daemon",
+        "exec",
+        "resume",
+        "--json",
+        "--ignore-user-config",
+        "--ignore-rules",
+        "--skip-git-repo-check",
+        "--model",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "-c",
+        "sandbox_mode=\"danger-full-access\"",
+        "--disable",
+        "multi_agent",
+        "--disable",
+        "multi_agent_v2",
+        "--disable",
+        "multi_agent_v2_dynamic_tools",
+        "-c",
+        "agents.enabled=false",
+        "{sessionId}",
+        "{message}"
+      ]
+    },
+    "isolation": {
+      "stateDirectory": ".codex",
+      "discoveryPaths": [
+        ".agents/skills",
+        ".codex/skills"
+      ],
+      "systemDiscoveryPaths": [
+        "/etc/codex/skills"
+      ],
+      "stagePath": ".agents/skills/repo-audit",
+      "authentication": "throwaway-codex-login"
+    }
+  },
+  "adapterHash": "34b8a1f4a85eb0ec00057ef3ae58df3037478b683c078c39bc69b816ce4b2275",
+  "turns": [
+    {
+      "message": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+      "result": {
+        "status": "passed",
+        "stdout": "{\"type\":\"thread.started\",\"thread_id\":\"[identifier]\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_0\",\"type\":\"agent_message\",\"text\":\"I’ll read the five briefs and installed report requirements, inspect the relevant fixture sources, then save and cite-check the discovery report in isolated scratch. I’ll use main-thread mode and keep the work read-only and offline.\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g '\\\"'!node_modules'\\\"' -g '\\\"'!.git'\\\"' -g '\\\"'!.venv'\\\"' -g 'AGENTS.md' -g '*research*' -g '*schema*' -g 'package.json' -g '*brief*' . [isolated-home]/.codex\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_1\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"pwd; rg --files -g '\\\"'!node_modules'\\\"' -g '\\\"'!.git'\\\"' -g '\\\"'!.venv'\\\"' -g 'AGENTS.md' -g '*research*' -g '*schema*' -g 'package.json' -g '*brief*' . [isolated-home]/.codex\\\"\",\"aggregated_output\":\"[fixture]\\n./package.json\\n./AGENTS.md\\n./packages/web/package.json\\n./packages/core/package.json\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/sites/1.0.0/skills/sites/templates/worker-esm-starter/package.json\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/sites/1.0.0/skills/sites/templates/vinext-starter/package.json\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/sites/1.0.0/skills/sites/templates/vinext-starter/examples/d1/db/schema.ts\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/sites/1.0.0/skills/sites/templates/vinext-starter/db/schema.ts\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"rg --files --hidden -g '\\\"'!node_modules'\\\"' -g '\\\"'!.git'\\\"' -g '\\\"'!.venv'\\\"' [isolated-home] | rg 'research|cite.check|brief|schema'; rg --files --hidden -g '\\\"'!node_modules'\\\"' -g '\\\"'!.git'\\\"' -g '\\\"'!.venv'\\\"' .; printf 'TMPDIR=%s\\\\\\\\nBSTACK_EVAL_PREFLIGHT=%s\\\\\\\\n' \\\\\\\"\\\"'$TMPDIR\\\" \\\"$BSTACK_EVAL_PREFLIGHT\\\"'\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_2\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"rg --files --hidden -g '\\\"'!node_modules'\\\"' -g '\\\"'!.git'\\\"' -g '\\\"'!.venv'\\\"' [isolated-home] | rg 'research|cite.check|brief|schema'; rg --files --hidden -g '\\\"'!node_modules'\\\"' -g '\\\"'!.git'\\\"' -g '\\\"'!.venv'\\\"' .; printf 'TMPDIR=%s\\\\\\\\nBSTACK_EVAL_PREFLIGHT=%s\\\\\\\\n' \\\\\\\"\\\"'$TMPDIR\\\" \\\"$BSTACK_EVAL_PREFLIGHT\\\"'\",\"aggregated_output\":\"[isolated-home]/.codex/plugins/cache/openai-curated-remote/sites/1.0.0/skills/sites/templates/vinext-starter/db/schema.ts\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/sites/1.0.0/skills/sites/templates/vinext-starter/examples/d1/db/schema.ts\\n./AGENTS.md\\n./glossary.md\\n./CLAUDE.md\\n./tsconfig.json\\n./package.json\\n./DESIGN.md\\n./unit.test.mjs\\n./journey.mjs\\n./.gitignore\\n./boundaries.mjs\\n./package-lock.json\\n./packages/web/public.ts\\n./packages/web/ui.ts\\n./packages/web/alias.ts\\n./packages/web/package.json\\n./packages/web/routes.ts\\n./packages/core/package.json\\n./packages/core/a.ts\\n./packages/core/b.ts\\n./packages/core/index.ts\\n./packages/core/internal/database.ts\\nTMPDIR=[isolated-home]/tmp\\nBSTACK_EVAL_PREFLIGHT=[isolated-home]/.evaluation/preflight.mjs\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.started\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"rg --files --hidden --no-ignore -g '\\\"'!node_modules/**'\\\"' -g '\\\"'!**/node_modules/**'\\\"' -g '\\\"'!.git/**'\\\"' -g '\\\"'!**/.git/**'\\\"' -g '\\\"'!.venv/**'\\\"' -g '\\\"'!**/.venv/**'\\\"' [fixture] [isolated-home] | rg '(\\\"'^|/)(research-briefs'\\\"\\\\\\\\.md|[\\\"'^/]*research[''^/]*|[''^/]*cite[''^/]*|SKILL'\\\"\\\\\\\\.md)\\\"'$'\\\"'; cat AGENTS.md\\\"\",\"aggregated_output\":\"\",\"exit_code\":null,\"status\":\"in_progress\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_3\",\"type\":\"command_execution\",\"command\":\"/bin/bash -lc \\\"rg --files --hidden --no-ignore -g '\\\"'!node_modules/**'\\\"' -g '\\\"'!**/node_modules/**'\\\"' -g '\\\"'!.git/**'\\\"' -g '\\\"'!**/.git/**'\\\"' -g '\\\"'!.venv/**'\\\"' -g '\\\"'!**/.venv/**'\\\"' [fixture] [isolated-home] | rg '(\\\"'^|/)(research-briefs'\\\"\\\\\\\\.md|[\\\"'^/]*research[''^/]*|[''^/]*cite[''^/]*|SKILL'\\\"\\\\\\\\.md)\\\"'$'\\\"'; cat AGENTS.md\\\"\",\"aggregated_output\":\"[isolated-home]/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/pets/SKILL.md\\n[isolated-home]/.codex/skills/.system/skill-installer/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-business-review/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/pages/0.1.21/skills/write-page/SKILL.md\\n[isolated-home]/.codex/skills/.system/skill-creator/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/plugin-management/0.1.0/skills/plugin-management/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/update-pet/SKILL.md\\n[isolated-home]/.codex/skills/.system/openai-docs/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-light-mode/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/work-pets/0.1.6/skills/create-pet/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/pages/0.1.21/skills/manage-schedules/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/pages/0.1.21/skills/organize-space/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-three-statement-forecast/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/sites/1.0.0/skills/sites/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/pages/0.1.21/skills/maintain-space/SKILL.md\\n[isolated-home]/.codex/skills/.system/review-agent/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-investment-committee-memo/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-team-alignment/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-legal-memorandum/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-sales-pipeline/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-experiment-analysis/SKILL.md\\n[isolated-home]/.codex/skills/.system/imagegen/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-financial-budget/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-tracker/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-analytics-dashboard/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-strategy-memorandum/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-kickoff/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-minimal-letterhead/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-calendar/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-system-design/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-dark-mode/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-market-trends-report/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-design-report/SKILL.md\\n[isolated-home]/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-review/SKILL.md\\nUse the approved design and public core interface.\\n\",\"exit_code\":0,\"status\":\"completed\"}}\n{\"type\":\"item.completed\",\"item\":{\"id\":\"item_4\",\"type\":\"agent_message\",\"text\":\"The required resources are unavailable in the two permitted roots: `references/research-briefs.md`, the research-report schema, and the shipped cite-check command.\\n\\nFollowing your scope instruction, I stopped dependent work. No report was created, no checks or network commands ran, and the fixture was unchanged. Mode: `main-thread`.\"}}\n{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":84279,\"cached_input_tokens\":58880,\"cache_write_input_tokens\":0,\"output_tokens\":550,\"reasoning_output_tokens\":39}}\n",
+        "stderr": "Reading additional input from stdin...\n",
+        "durationMs": 19608.766788,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "codex-cli 0.162.1\n",
+          "stderr": "",
+          "durationMs": 663.2212490000002,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null,
+          "toolVersion": {
+            "status": "passed",
+            "stdout": "Docker version 29.8.1, build 4a63305\n",
+            "stderr": "",
+            "durationMs": 18.92060900000024,
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "cancelled": false,
+            "outputTruncated": false,
+            "error": null
+          }
+        }
+      },
+      "sessionId": "[identifier]"
+    }
+  ],
+  "nextAnswer": 1,
+  "sessionId": "[identifier]",
+  "conversation": "conversation.txt",
+  "resourcePreflight": {
+    "source": "host aggregate",
+    "clientHash": "2ba1e3f1753039d8ed34a284ba84f7d5ff30bfedd27ce84a0af87a0c02f275a9",
+    "checks": [
+      {
+        "source": "host",
+        "checkedAt": "2026-10-11T23:59:20.497Z",
+        "availableMemoryBytes": 19179827200,
+        "freeDiskBytes": 24858583040,
+        "load1m": 4.09,
+        "existingNodeSuites": 0,
+        "proposedNodeSuites": 1,
+        "permitted": true
+      }
+    ]
+  },
+  "authenticatedVia": "throwaway copy",
+  "execution": {
+    "method": "docker",
+    "image": "bstack-eval-toolchain:node24-codex0.162.1",
+    "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+    "recipeHash": "3ba3f242862014f26c614cb060d1d4bfe8c01439d2f4b6518eeb181a05e83412",
+    "turns": [
+      {
+        "name": "bstack-eval-a9e2e0d2-b676-4894-85b3-a028d855424b",
+        "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+        "mounts": [
+          {
+            "Type": "bind",
+            "Source": "[fixture]",
+            "Destination": "[fixture]",
+            "RW": true
+          },
+          {
+            "Type": "bind",
+            "Source": "[isolated-home]",
+            "Destination": "[isolated-home]",
+            "RW": true
+          }
+        ],
+        "user": "1000:1000",
+        "network": "bridge",
+        "privileged": false,
+        "publishedPorts": [],
+        "verified": true,
+        "toolchain": {
+          "node": "v24.17.0",
+          "git": "git version 2.54.0",
+          "npm": "11.13.0",
+          "agent": "codex-cli 0.162.1"
+        },
+        "removedAt": "2026-10-11T23:59:41.372Z"
+      }
+    ],
+    "toolchain": {
+      "node": "v24.17.0",
+      "git": "git version 2.54.0",
+      "npm": "11.13.0",
+      "agent": "codex-cli 0.162.1"
+    }
+  },
+  "scopeGuard": {
+    "version": 3,
+    "advisory": true,
+    "verified": true,
+    "paths": []
+  },
+  "conversationHash": "28f27f0f7e406c81540d77ff61560e4438af5e82d1ad18be5242ac8092270460",
+  "scoredAt": "2026-10-12T00:00:38.078Z"
+}
