@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API workspace",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Approved purpose: one reader saves articles and marks them read without losing title or address. Accounts, sharing and recommendations are excluded. Design approves local Node and JSON persistence; queue owns state and presentation uses public operations. Vocabulary includes read articles in the queue. No conflicting terms or material intent gaps.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "VISION.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "VISION.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "VISION.md:5",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "VISION.md:6",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "VISION.md:7",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:5",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:6",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:7",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "glossary.md:5",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Only documents exist. Queue responsibility and presentation boundary are documented; no implementation exists to assess compliance. Measurement over the two available commits shows design and glossary added together, not architectural coupling.",
+      "limitations": [
+        "No code, imports, entry point or data-flow execution exists."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:5",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md"
+      ],
+      "findings": "No manifest, lockfile, prepared environment, formatter, linter, type configuration, tests, CI or maintained check command exists. No product journey can execute. Helper runtime is Node v24.17.0 and Git 2.54.0; these are audit tools, not project pins.",
+      "limitations": [
+        "Native starting checks unavailable; no product execution evidence."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:5",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Official Node documentation supports built-in node:test and node --test as a small initial JavaScript test setup. This is a recommendation, not an approved runtime pin or executed project check.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://nodejs.org/api/test.html",
+          "readDate": "2026-10-12",
+          "verification": "verified"
+        }
+      ]
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Approved storage is a local JSON file; no third-party service or live service probe is relevant.",
+      "limitations": [
+        "No external integration present."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}
