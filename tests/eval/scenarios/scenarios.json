@@ -3,6 +3,7 @@
   "scenarios": [
     {
       "id": "final-repeat-audit",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -83,6 +84,7 @@
     },
     {
       "id": "final-independent-extension",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -137,6 +139,7 @@
     },
     {
       "id": "final-maintained-maintenance",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -236,6 +239,7 @@
     },
     {
       "id": "final-new-project",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -305,6 +309,7 @@
     },
     {
       "id": "final-existing-repo",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -398,6 +403,7 @@
     },
     {
       "id": "new-idea",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -469,6 +475,7 @@
     },
     {
       "id": "ambiguous-idea",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -503,6 +510,7 @@
     },
     {
       "id": "existing-repo",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -678,6 +686,7 @@
     },
     {
       "id": "clear-goals",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -749,6 +758,7 @@
     },
     {
       "id": "existing-repo-python",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -818,6 +828,7 @@
     },
     {
       "id": "existing-vision-delta",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -865,6 +876,7 @@
     },
     {
       "id": "implicit-invocation",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -904,6 +916,7 @@
     },
     {
       "id": "maintenance",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -974,6 +987,7 @@
     },
     {
       "id": "representative-extension",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -1045,6 +1059,7 @@
     },
     {
       "id": "research-main-typescript",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -1117,6 +1132,7 @@
     },
     {
       "id": "research-main-python",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -1189,6 +1205,7 @@
     },
     {
       "id": "selected-rule-relocation",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -1262,6 +1279,7 @@
     },
     {
       "id": "verification-limitations",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -1290,6 +1308,7 @@
     },
     {
       "id": "scope-and-prerequisites",
+      "tier": "smoke",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -1350,6 +1369,7 @@
     },
     {
       "id": "runtime-independence",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",
@@ -1389,6 +1409,7 @@
     },
     {
       "id": "research-subagents",
+      "tier": "full",
       "covers": [
         "SKILL.md#scope",
         "SKILL.md#load-when",

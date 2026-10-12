@@ -190,10 +190,8 @@ async function batch(opts, results) {
   }
   const concurrency = Number(opts.concurrency)
   if (concurrency > 6) fail('--concurrency must be between 1 and 6 to fit the container budget.', 'usage-error')
-  // The approved smoke set precedes scenario-owned tier metadata.
-  const smoke = ['existing-repo', 'existing-repo-python', 'clear-goals', 'ambiguous-idea', 'implicit-invocation',
-    'verification-limitations', 'scope-and-prerequisites', 'research-main-typescript', 'maintenance', 'selected-rule-relocation']
   const registry = await readJSON(join(root, 'tests/eval/scenarios/scenarios.json'))
+  const smoke = registry.scenarios.filter(item => item.tier === 'smoke').map(item => item.id)
   const selected = opts.scenario ? opts.scenario.split(',') : opts.tier === 'smoke' ? smoke : registry.scenarios.map(item => item.id)
   if (new Set(selected).size !== selected.length) fail('Scenario subsets must contain unique comma-separated IDs.', 'usage-error')
   const candidate = (await child('git', ['rev-parse', 'HEAD'])).stdout.trim()
