@@ -1,0 +1,20 @@
+{
+  "command": [
+    "git",
+    "clone",
+    "--no-local",
+    "[fixture]",
+    "[isolated-home][scratch-path]"
+  ],
+  "exitCode": 0,
+  "stdout": "",
+  "stderr": "Cloning into '[isolated-home][scratch-path]'...\n",
+  "environment": {
+    "HOME": "[isolated-home][scratch-path]",
+    "XDG_CACHE_HOME": "[isolated-home][scratch-path]",
+    "npm_config_cache": "[isolated-home][scratch-path]",
+    "TMPDIR": "[isolated-home][scratch-path]",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "/dev/null"
+  }
+}

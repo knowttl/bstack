@@ -1,0 +1,1 @@
+Two check-plan validation attempts failed before any suite execution: protection-only plan: missing-compatibility; compatibility-only plan: no-required-checks and missing-protection. Final plan declares separate original-protection and native compatibility checks, selected by phase.
