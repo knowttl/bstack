@@ -84,6 +84,13 @@
       }
     ]
   },
+  "selected-ts-shop": {
+    "base": "ts-shop",
+    "overlay": "overlay",
+    "dirtyAppend": {
+      "DESIGN.md": "\nUser note: receipt wording remains a future owner decision.\n"
+    }
+  },
   "maintained-ts-shop": {
     "base": "ts-shop",
     "overlay": "overlay",

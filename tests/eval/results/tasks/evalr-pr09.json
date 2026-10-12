@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "taskId": "evalr-pr09",
+  "slice": "evalr-pr09",
+  "sourceRevision": "fcc5ffd6a5dc9d13b92fbfa5a2e680c523465c58",
+  "intent": "Split the existing-repo evaluation into audit and bounded selected apply/verification scenarios, retaining long paths only in the full tier and adding a configurable full-tier bulk adapter.",
+  "amendments": [
+    "The maintainer selected gpt-6-luna at high reasoning effort for the bulk adapter; the smoke gate stays on the release model."
+  ],
+  "status": "passed",
+  "environment": {
+    "os": "linux x64",
+    "node": "v24.17.0",
+    "tools": { "git": "git version 2.54.0" }
+  },
+  "commands": [
+    {
+      "id": "selected-apply-evaluation",
+      "executable": "node",
+      "args": ["scripts/eval.mjs", "batch", "--tier", "full", "--scenario", "selected-apply-verify", "--adapter", "tests/eval/adapters/codex-bulk.json"],
+      "cwd": ".",
+      "exitCode": null,
+      "outputArtifact": null,
+      "status": "blocked",
+      "reason": "Real model evaluations are deferred by the maintainer.",
+      "nextPrerequisite": "Authorization for real baseline and with-skill captures and semantic grading."
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-16",
+      "kind": "agent",
+      "procedure": "selected-apply-verify/impact-before-after",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Real selected-apply evaluations are deferred; fixture sanity does not establish agent acceptance.",
+      "nextPrerequisite": "Real baseline and with-skill captures with scored impact evidence."
+    },
+    {
+      "id": "AC-28",
+      "kind": "agent",
+      "procedure": "selected-apply-verify/acceptance-preserved",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Real selected-apply evaluations are deferred.",
+      "nextPrerequisite": "Real captures with scored preservation evidence."
+    },
+    {
+      "id": "AC-30",
+      "kind": "agent",
+      "procedure": "selected-apply-verify/live-probe-pair",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Real selected-apply evaluations are deferred.",
+      "nextPrerequisite": "Real captures with scored before/after local endpoint probes."
+    },
+    {
+      "id": "AC-54",
+      "kind": "agent",
+      "procedure": "selected-apply-verify/protected-path",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Real selected-apply evaluations are deferred.",
+      "nextPrerequisite": "Real captures with scored protected-write and user-work preservation evidence."
+    },
+    {
+      "id": "AC-61",
+      "kind": "agent",
+      "procedure": "selected-apply-verify/package-scopes",
+      "status": "blocked",
+      "artifact": null,
+      "reason": "Real selected-apply evaluations are deferred.",
+      "nextPrerequisite": "Real captures with scored package-scoped valid/violation controls."
+    }
+  ],
+  "limitations": [
+    "Deferred: real selected-apply-verify baseline and with-skill captures and semantic scoring.",
+    "Deferred: real smoke baselines, release-model candidate batches and confirmation runs.",
+    "Deferred: real full-tier bulk repetitions, their own baselines and release-model anchor runs.",
+    "Deferred: real judge calibration, blocking-verdict audit and sampled conversation audit.",
+    "Deferred: runtime, token and cost measurements of the shorter scenario and bulk model.",
+    "Fixture sanity and fake hosts establish harness behaviour only; they do not establish agent acceptance or measured savings."
+  ]
+}

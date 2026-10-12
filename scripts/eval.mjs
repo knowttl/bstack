@@ -202,6 +202,7 @@ async function batch(opts, results) {
     if (opts.tier === 'smoke' && !smoke.includes(id)) fail(`Scenario ${id} is outside the smoke tier. Use --tier full.`, 'usage-error')
     if (opts.stage !== undefined && !definition.checkpoints.includes(opts.stage)) fail(`Unknown checkpoint for ${id}: ${opts.stage}`, 'usage-error')
     const adapter = await readAdapter(resolve(opts.adapter), id)
+    if (adapter.tier === 'full' && opts.tier !== 'full') fail('This adapter is restricted to the full tier. Use the release-model adapter for smoke.', 'usage-error')
     const stage = opts.stage ?? definition.checkpoints.at(-1)
     const fixtureRevision = await fixtureHash(definition.fixture)
     const mode = definition.mode ?? opts.mode
