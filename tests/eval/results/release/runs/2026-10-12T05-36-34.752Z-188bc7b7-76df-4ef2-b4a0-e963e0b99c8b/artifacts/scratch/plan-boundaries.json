@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "separate-storage-and-route",
+  "writePaths": [
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/core/checkout.ts",
+    "packages/core/internal/orders.ts",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts",
+    "packages/web/alias.ts",
+    "package.json",
+    "DESIGN.md"
+  ],
+  "contracts": [
+    {
+      "id": "checkout-pricing-result",
+      "files": [
+        "packages/core/index.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "journey.mjs"
+      ]
+    },
+    {
+      "id": "public-core-entry",
+      "files": [
+        "packages/core/index.ts",
+        "packages/core/package.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "AC-45",
+  "sourceRevision": "34cc59096ac47d5ee953268a1d776f69a5dffd5f",
+  "platform": "linux",
+  "suite": "tests/scripts/package-check.test.mjs",
+  "name": "unexplained-constant fails with constant-comment",
+  "preflight": {
+    "checkedAt": "2026-10-12T05:40:56.352Z",
+    "availableMemoryBytes": 31434317824,
+    "freeDiskBytes": 26476163072,
+    "load1m": 2,
+    "existingNodeSuites": 0,
+    "proposedNodeSuites": 1,
+    "permitted": true
+  },
+  "execution": {
+    "status": "passed",
+    "stdout": "✔ unexplained-constant fails with constant-comment (102.276286ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 180.643214\n",
+    "stderr": "",
+    "durationMs": 224.151817,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "cancelled": false,
+    "outputTruncated": false,
+    "error": null,
+    "toolVersion": {
+      "status": "passed",
+      "stdout": "v24.17.0\n",
+      "stderr": "",
+      "durationMs": 7.8396960000000036,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "cancelled": false,
+      "outputTruncated": false,
+      "error": null
+    },
+    "executable": "node"
+  }
+}
