@@ -105,6 +105,68 @@ test('deleted headings retain their old impact key and unknown replacement headi
   assert.equal(result.data.scenarios.length, 21)
 })
 
+for (const [direction, heading, keys, scenarios] of [
+  ['deletion', '## Research rules', ['SKILL.md#research-rules', 'SKILL.md#write-rules'], ['maintenance', 'final-maintained-maintenance']],
+  ['insertion', '## Research rules', ['SKILL.md#research-rules', 'SKILL.md#write-rules'], ['maintenance', 'final-maintained-maintenance']],
+  ['deletion', '### Step 2: Resolve project terms', ['SKILL.md#step-1-confirm-intent', 'SKILL.md#step-2-resolve-project-terms'], ['new-idea']],
+  ['insertion', '### Step 2: Resolve project terms', ['SKILL.md#step-1-confirm-intent', 'SKILL.md#step-2-resolve-project-terms'], ['new-idea']]
+]) {
+  test(`heading ${direction} selects the section containing surviving text: ${heading}`, async t => {
+    const repo = await checkout(t)
+    const path = join(repo, 'skills/repo-audit/SKILL.md')
+    const original = await readFile(path, 'utf8')
+    const merged = original.replace(`${heading}\n`, '')
+    await writeFile(path, merged)
+    if (direction === 'insertion') {
+      git(repo, 'add', 'skills')
+      git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Merged sections')
+      await writeFile(path, original)
+    }
+    const result = affected(repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.keys, keys)
+    assert.ok(scenarios.every(id => result.data.scenarios.includes(id)), JSON.stringify(result.data.scenarios))
+  })
+}
+
+for (const [key, scenarios] of [
+  ['scripts/commands/apply.mjs', ['new-idea']],
+  ['scripts/commands/findings.mjs', ['new-idea', 'maintenance', 'final-maintained-maintenance', 'representative-extension']],
+  ['schemas/findings.schema.json', ['new-idea', 'maintenance', 'final-maintained-maintenance']],
+  ['schemas/change-set.schema.json', ['new-idea']],
+  ['schemas/resume-state.schema.json', ['new-idea']],
+  ['SKILL.md#review-before-apply', ['new-idea']],
+  ['SKILL.md#write-rules', ['new-idea']],
+  ['SKILL.md#verification-rules', ['new-idea']],
+  ['SKILL.md#step-3-review-the-vision', ['existing-vision-delta']],
+  ['scripts/commands/vision-board-build.mjs', ['existing-vision-delta']],
+  ['scripts/commands/vision-board-launch.mjs', ['existing-vision-delta']],
+  ['scripts/commands/vision-board-verdicts.mjs', ['existing-vision-delta']],
+  ['schemas/vision-proposals.json', ['existing-vision-delta']],
+  ['schemas/vision-verdicts.json', ['existing-vision-delta']],
+  ['assets/vision/review-template.html', ['existing-vision-delta']],
+  ['assets/vision/review.css', ['existing-vision-delta']]
+]) {
+  test(`exercised input selects its dependent scenarios: ${key}`, async t => {
+    const repo = await checkout(t)
+    const path = join(repo, 'skills/repo-audit', key.startsWith('SKILL.md#') ? 'SKILL.md' : key)
+    const source = await readFile(path, 'utf8')
+    const headings = {
+      'review-before-apply': '## Review before apply',
+      'write-rules': '## Write rules',
+      'verification-rules': '## Verification rules',
+      'step-3-review-the-vision': '### Step 3: Review the vision'
+    }
+    const heading = headings[key.slice('SKILL.md#'.length)]
+    await writeFile(path, heading ? source.replace(`${heading}\n`, `${heading}\nClarified guidance.\n`) : source + '\n')
+    const result = affected(repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.keys, [key])
+    assert.deepEqual(result.data.unmapped, [])
+    assert.ok(scenarios.every(id => result.data.scenarios.includes(id)), JSON.stringify(result.data.scenarios))
+  })
+}
+
 test('an unchanged checkout selects no scenarios and an inaccessible base is blocked', async t => {
   const repo = await checkout(t)
   const result = affected(repo)
