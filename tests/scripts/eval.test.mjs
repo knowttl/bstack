@@ -12,7 +12,7 @@ import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 function run(directory, ...args) {
-  const result = spawnSync(process.execPath, [join(root, 'scripts', 'eval.mjs'), ...args, '--results', directory, '--json'], { encoding: 'utf8', env: testEnvironment(directory) })
+  const result = spawnSync(process.execPath, ['--import', join(root, 'tests/inputs/evaluation-capacity.mjs'), join(root, 'scripts', 'eval.mjs'), ...args, '--results', directory, '--json'], { encoding: 'utf8', env: testEnvironment(directory) })
   return { ...result, data: JSON.parse(result.stdout) }
 }
 
@@ -298,7 +298,6 @@ test('automatic host execution requires an adapter', async t => {
 async function adapterFile(directory, mode = 'success') {
   await mkdir(join(directory, 'bin'), { recursive: true })
   try { await symlink(join(root, 'tests/inputs/docker.mjs'), join(directory, 'bin/docker')) } catch (error) { if (error.code !== 'EEXIST') throw error }
-  try { await symlink(join(root, 'tests/inputs/processes.mjs'), join(directory, 'bin/ps')) } catch (error) { if (error.code !== 'EEXIST') throw error }
   const adapter = JSON.parse(await readFile(join(root, 'tests/eval/adapters/codex.json'), 'utf8'))
   adapter.executable = 'node'
   adapter.isolation.authentication = 'none'
@@ -490,38 +489,51 @@ test('host runs use fresh homes, caches, fixtures, threads and transcripts witho
   assert.equal(observed.cwd, first.fixture.path)
   assert.ok(observed.message.endsWith('\n\n' + first.scenario.request))
   assert.ok(observed.message.includes(`work only inside ${first.fixture.path} and ${first.isolation.home}`))
+  assert.doesNotMatch(observed.message, /preflight|BSTACK_EVAL_PREFLIGHT/i)
   assert.ok((await readFile(join(directory, first.id, first.conversation), 'utf8')).includes(first.request))
 })
 
-test('an unexpected container mount blocks agent execution and removes the container', async t => {
-  const directory = await temporary(t)
-  const { path } = await adapterFile(directory, 'container-extra-mount')
-  const { record } = hostStart(t, directory, path)
-  assert.equal(record.hostFailure, true)
-  assert.match(record.reason, /container configuration/)
-  assert.equal(record.turns.length, 0)
-  assert.equal(record.execution.turns[0].verified, false)
-  assert.ok(record.execution.turns[0].removedAt)
-  assert.ok(record.isolation.cleanedAt)
-  assert.equal((await readdir(directory)).filter(name => name.endsWith('.docker.json')).length, 0)
-})
+for (const mode of ['container-extra-mount', 'container-wrong-cpus', 'container-wrong-memory']) {
+  test(`an unexpected container configuration blocks agent execution and removes the container: ${mode}`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const { record } = hostStart(t, directory, path)
+    assert.equal(record.hostFailure, true)
+    assert.match(record.reason, /container configuration/)
+    assert.equal(record.turns.length, 0)
+    assert.equal(record.execution.turns[0].verified, false)
+    assert.ok(record.execution.turns[0].removedAt)
+    assert.ok(record.isolation.cleanedAt)
+    assert.equal((await readdir(directory)).filter(name => name.endsWith('.docker.json')).length, 0)
+  })
+}
 
-test('evaluation captures fresh aggregate host resource preflight without process inventories', async t => {
+test('evaluation reserves capacity only at startup and resumes after host capacity drops', async t => {
   const directory = await temporary(t)
-  const { path } = await adapterFile(directory, 'host-preflight')
+  const { path } = await adapterFile(directory)
   const { record } = hostStart(t, directory, path)
   assert.equal(record.hostFailure, undefined, record.reason)
-  assert.equal(record.resourcePreflight.source, 'host aggregate')
-  assert.equal(record.resourcePreflight.checks.length, 2)
-  const event = record.turns[0].result.stdout.split('\n').filter(Boolean).map(line => JSON.parse(line))
-    .find(event => event.item?.command === 'node "$BSTACK_EVAL_PREFLIGHT"')
-  const observed = JSON.parse(event.item.aggregated_output)
-  assert.equal(observed.source, 'host')
-  assert.equal(observed.permitted, true)
-  assert.ok(observed.existingNodeSuites >= 1)
-  assert.deepEqual(observed, record.resourcePreflight.checks[1])
-  await assert.rejects(stat(join(record.isolation.home, '.evaluation/preflight.sock')), { code: 'ENOENT' })
+  await writeFile(join(directory, 'capacity.json'), JSON.stringify({ disk: 0, memory: 0 }))
+  const resumed = run(directory, 'turn', '--run', record.id, '--answer', '1')
+  assert.equal(resumed.data.data.hostFailure, undefined, resumed.stdout)
+  assert.equal(resumed.data.data.turns.length, 2)
+  assert.equal(resumed.data.data.resourcePreflight, undefined)
 })
+
+for (const [name, capacity] of [
+  ['disk', { disk: 19_999_999_999, memory: 24 * 1024 ** 3 }],
+  ['memory', { disk: 20_000_000_000, memory: 24 * 1024 ** 3 - 1024 }]
+]) {
+  test(`insufficient ${name} blocks startup before creating a fixture or container`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory)
+    await writeFile(join(directory, 'capacity.json'), JSON.stringify(capacity))
+    const result = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'without', '--stage', 'baseline', '--adapter', path)
+    assert.equal(result.status, 2, result.stdout)
+    assert.match(result.stdout, /startup requires/)
+    assert.equal((await readdir(directory)).filter(name => /^\d{4}-|\.docker\.json$/.test(name)).length, 0)
+  })
+}
 
 for (const [name, change] of [
   ['additional mount', turn => turn.mounts.push({ Type: 'bind', Source: '/unapproved', Destination: '/unapproved', RW: true })],
@@ -968,7 +980,7 @@ test('throwaway authentication copies only a dummy login with private permission
   const { path, adapter } = await adapterFile(directory, 'require-auth')
   adapter.isolation.authentication = 'throwaway-codex-login'
   await writeFile(path, JSON.stringify(adapter))
-  const execution = spawnSync(process.execPath, [join(root, 'scripts/eval.mjs'), '--scenario', 'ambiguous-idea', '--mode', 'without',
+  const execution = spawnSync(process.execPath, ['--import', join(root, 'tests/inputs/evaluation-capacity.mjs'), join(root, 'scripts/eval.mjs'), '--scenario', 'ambiguous-idea', '--mode', 'without',
     '--stage', 'baseline', '--adapter', path, '--results', directory, '--json'], { encoding: 'utf8', env: { ...testEnvironment(directory), CODEX_HOME: source } })
   const record = JSON.parse(execution.stdout).data
   assert.equal(record.turns[0].result.status, 'passed', execution.stdout)
