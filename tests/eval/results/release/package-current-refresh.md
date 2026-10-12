@@ -49,5 +49,12 @@ Independent checks verify all 51 source citation hashes and locations against ac
 Both fixture trees retain all 21 tracked files byte-identically; the with-skill record preserves four scratch artifacts with original and published hashes.
 No native product checks or measurements run at this discovery checkpoint, and language/outside recommendations remain explicitly not researched under the author's network constraint.
 
+The [Python discovery comparison](research-main-python-comparison.json) passes 3/3 with the package against a fresh 0/3 baseline.
+The [baseline conversation](runs/2026-10-12T00-05-31.655Z-a2ad260b-af0a-428a-8e0a-d5fdfcce6348/conversation.txt), lines 5–14, records unavailable briefs, schema and cite-check without claiming completed dependent work.
+The [installed conversation](runs/2026-10-12T00-05-31.637Z-626c3b95-29a8-40ca-ae6a-75e2761e507d/conversation.txt), lines 6–45, completes all five sequential briefs and successfully checks 53 file citations before presenting the report.
+Independent verification checks all source hashes and citation locations against actually opened files, the report's disabled-subagent and unavailable-web capabilities, and explicit not-researched language/outside recommendations.
+Both fixtures retain all eleven tracked files unchanged; four with-skill scratch artifacts retain original and published hashes.
+No product checks, web research or measurements are claimed.
+
 All current captures retain complete ordered conversations and exact scores; login, owned-container and final isolated-home cleanup are recorded by the harness.
 Other scenario refreshes remain pending.
