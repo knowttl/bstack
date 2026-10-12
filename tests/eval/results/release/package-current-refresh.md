@@ -56,5 +56,12 @@ Independent verification checks all source hashes and citation locations against
 Both fixtures retain all eleven tracked files unchanged; four with-skill scratch artifacts retain original and published hashes.
 No product checks, web research or measurements are claimed.
 
+The [repeat-audit comparison](final-repeat-audit-comparison.json) passes 1/1 in both modes.
+The [installed conversation](runs/2026-10-12T00-07-10.631Z-a38a5576-9f0f-4918-a8fd-f2f1d026e697/conversation.txt), lines 7–30, reuses the maintained authorities, captures passing native constraints and real HTTP checkout and leaves both exact notes untouched.
+Independent verification confirms all 29 tracked paths: the only difference from committed bytes is the original uncommitted export sentence, and the head remains the baseline's maintained commit.
+Fifty-eight scratch artifacts retain original and published hashes.
+The current portable assessment correctly remains blocked by the new source bytes; the fresh isolated clean-clone checker verifies the prior committed baseline, so its success does not establish current-tree portable readiness.
+The evidenced no-op neither duplicates rules nor reopens intent, erases the note or commits user work.
+
 All current captures retain complete ordered conversations and exact scores; login, owned-container and final isolated-home cleanup are recorded by the harness.
 Other scenario refreshes remain pending.
