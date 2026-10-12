@@ -8,6 +8,7 @@ import { execFileSync, spawn, spawnSync } from 'node:child_process'
 import { once } from 'node:events'
 import { createHash } from 'node:crypto'
 import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
+import { emptyRepo, git } from './discovery-fixture.mjs'
 
 // Each test invokes the real command with disposable evaluation records.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -487,6 +488,33 @@ test('batch delivers two scenarios three times, closes every container and appen
   assert.equal(run(directory, 'batch', '--batch', batch.batch).data.data.appended, 0)
   assert.equal(await readFile(join(directory, 'ledger.jsonl'), 'utf8'), ledger)
   assert.equal(await readFile(inventoryPath, 'utf8'), inventoryBytes)
+  await t.test('raw batch archives stay local while Git exposes ledger and gate files', async t => {
+    const { repo } = await emptyRepo(t)
+    await cp(join(root, '.gitignore'), join(repo, '.gitignore'))
+    git(repo, 'add', '.gitignore')
+    git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Storage policy')
+    const results = join(repo, 'tests/eval/results')
+    await cp(directory, join(results, 'runs'), { recursive: true })
+    await rename(join(results, 'runs/ledger.jsonl'), join(results, 'ledger.jsonl'))
+    await mkdir(join(results, 'release/runs'), { recursive: true })
+    // Gate contents are irrelevant to the storage policy; release-gate tests validate them.
+    await writeFile(join(results, 'release/0.1.1.json'), JSON.stringify({ candidate: lines[0].candidate }))
+    await writeFile(join(results, 'release/runs/new-raw-run.json'), '{}')
+    await mkdir(join(repo, '.cache/eval-archives'), { recursive: true })
+    const archive = join(repo, '.cache/eval-archives/raw-runs-0.1.1.tar.gz')
+    execFileSync('tar', ['-czf', archive, '-C', results, 'runs'])
+    const archived = execFileSync('tar', ['-tzf', archive], { encoding: 'utf8' }).split('\n')
+    assert.ok(archived.includes(`runs/batches/${batch.batch}.json`))
+    for (const id of batch.runIds) {
+      const record = JSON.parse(await readFile(join(results, 'runs', id, 'run.json'), 'utf8'))
+      assert.ok(archived.includes(`runs/${record.id}/run.json`))
+      assert.ok(archived.includes(`runs/${record.id}/${record.conversation}`))
+      assert.ok(archived.includes(`runs/${record.id}/${record.answers}`))
+    }
+    assert.deepEqual(git(repo, 'status', '--short', '--untracked-files=all').split('\n'), [
+      '?? tests/eval/results/ledger.jsonl', '?? tests/eval/results/release/0.1.1.json'
+    ])
+  })
   const published = spawnSync(process.execPath, [join(root, 'scripts/eval.mjs'), 'batch', '--batch', batch.batch,
     '--results', directory], { encoding: 'utf8', env: testEnvironment(directory) })
   assert.equal(published.status, 0, published.stdout)
