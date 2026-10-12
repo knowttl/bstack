@@ -486,6 +486,8 @@ Agent or manual cases without a current measurement receive a deferred known-iss
 Automated acceptance procedures remain covered by the deterministic suite and registry checks.
 
 The gate automatically reads the latest passed `release/<version>.json` in the results directory.
+Passed release records are immutable; use a higher version for another qualification.
+An incomplete qualification may retry its version only on the same candidate, including confirmation runs.
 Keep that release history with the ledger; do not omit it to obtain first-release treatment.
 Archived v0.1.0 evidence has no repeated-run gate, so the first ledger release has no regression comparison.
 Its own checks at 4 or 5 of 5 seed the gating set.

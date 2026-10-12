@@ -23,6 +23,19 @@ function canonical(value) {
   return JSON.stringify(value)
 }
 
+async function releaseRepo(t) {
+  const { repo } = await emptyRepo(t)
+  for (const path of ['scripts', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
+    await mkdir(resolve(repo, path, '..'), { recursive: true })
+    await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
+  }
+  await symlink(join(root, 'node_modules'), join(repo, 'node_modules'), 'dir')
+  await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
+  git(repo, 'add', 'scripts', 'skills', 'tests')
+  git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Release base')
+  return repo
+}
+
 async function fixture(t, repository = root) {
   const directory = await mkdtemp(join(tmpdir(), 'bstack release '))
   t.after(() => rm(directory, { recursive: true, force: true }))
@@ -258,15 +271,7 @@ for (const [name, path, expected, fullPasses, retained] of [
   ['full-tier changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2, 5, false]
 ]) {
   test(`release gate carryover: ${name}`, async t => {
-    const { repo } = await emptyRepo(t)
-    for (const path of ['scripts', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
-      await mkdir(resolve(repo, path, '..'), { recursive: true })
-      await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
-    }
-    await symlink(join(root, 'node_modules'), join(repo, 'node_modules'), 'dir')
-    await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
-    git(repo, 'add', 'scripts', 'skills', 'tests')
-    git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Release base')
+    const repo = await releaseRepo(t)
     const ancestor = git(repo, 'rev-parse', 'HEAD').trim()
     if (path.endsWith('scenarios.json')) {
       const data = JSON.parse(await readFile(join(repo, path), 'utf8'))
@@ -356,6 +361,61 @@ for (const passes of [4, 5]) {
     const next = await f.run('0.1.2')
     assert.equal(next.status, 1, next.stdout)
     assert.ok(next.data.data.blocking.some(row => row.scenario === 'ambiguous-idea' && row.class === 'regression'))
+  })
+}
+
+for (const [name, initial, firstStatus, differentCandidate, confirmation, expected, unchanged] of [
+  ['passed version refuses a different candidate', 5, 0, true, 3, 2, true],
+  ['passed version remains immutable on the same candidate', 5, 0, false, 3, 2, true],
+  ['incomplete qualification allows same-candidate confirmation', 2, 2, false, 5, 0, false],
+  ['incomplete qualification refuses a different candidate', 2, 2, true, 5, 2, true]
+]) {
+  test(`release version history: ${name}`, async t => {
+    const repo = await releaseRepo(t)
+    const f = await fixture(t, repo)
+    f.report.candidate = git(repo, 'rev-parse', 'HEAD')
+    for (const row of f.rows) row.candidate = f.report.candidate
+    f.measure(initial, 0)
+    const first = await f.run()
+    assert.equal(first.status, firstStatus, first.stdout)
+    const path = join(f.directory, 'release', '0.1.1.json')
+    const original = await readFile(path, 'utf8')
+    if (differentCandidate) {
+      await writeFile(join(repo, 'note.txt'), 'Unrelated documentation change.\n')
+      git(repo, 'add', 'note.txt')
+      git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Next candidate')
+      f.report.candidate = git(repo, 'rev-parse', 'HEAD')
+      for (const row of f.rows) {
+        row.candidate = f.report.candidate
+        row.runIds = row.runIds.map(id => `${id}-next`)
+      }
+    }
+    f.measure(2, 0, confirmation)
+    const retry = await f.run()
+    assert.equal(retry.status, expected, retry.stdout)
+    assert.equal((await readFile(path, 'utf8')) === original, unchanged)
+    if (expected === 2) assert.ok(retry.data.problems.some(problem => problem.message.includes('bump the release version')), retry.stdout)
+  })
+}
+
+for (const [name, initial, firstStatus, extra] of [
+  ['blocked qualification', 2, 2, undefined],
+  ['failed qualification', 2, 1, 3]
+]) {
+  test(`release version history: regression uses the last passed release after a ${name}`, async t => {
+    const f = await fixture(t)
+    const passed = await f.run()
+    assert.equal(passed.status, 0, passed.stdout)
+    for (const row of f.rows.filter(row => row.mode === 'with')) row.runIds = row.runIds.map(id => `${id}-next`)
+    f.measure(initial, 0, extra)
+    const incomplete = await f.run('0.1.2')
+    assert.equal(incomplete.status, firstStatus, incomplete.stdout)
+    if (extra === undefined) f.measure(2, 0, 3)
+    const next = await f.run('0.1.3')
+    assert.equal(next.status, 1, next.stdout)
+    assert.equal(next.data.data.previous, '0.1.1')
+    assert.ok(next.data.data.blocking.some(row => row.scenario === 'ambiguous-idea' && row.class === 'regression'))
+    assert.equal(await readFile(join(f.directory, 'release', '0.1.1.json'), 'utf8'), JSON.stringify(passed.data.data, null, 2) + '\n')
   })
 }
 
