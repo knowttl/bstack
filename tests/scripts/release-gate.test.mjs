@@ -97,6 +97,16 @@ async function fixture(t, repository = root) {
   return { directory, definitions, rows, report, run, measure, mutateRecords }
 }
 
+async function historyFixture(t) {
+  const repo = await releaseRepo(t)
+  const ancestor = git(repo, 'rev-parse', 'HEAD')
+  git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-qm', 'Compatible candidate')
+  const f = await fixture(t, repo)
+  f.report.candidate = git(repo, 'rev-parse', 'HEAD')
+  for (const row of f.rows) row.candidate = f.report.candidate
+  return { ...f, ancestor }
+}
+
 for (const [name, initial, baseline, extra, previous, expected, reason] of [
   ['pass', 3, 1, undefined, false, 'passed', null],
   ['baseline-passed check needs only threshold', 3, 5, undefined, false, 'passed', null],
@@ -227,14 +237,14 @@ test('passing full-tier checks retain measured counts and run identities in the 
 })
 
 test('gating set requires eighty percent over the latest ten runs', async t => {
-  const f = await fixture(t)
+  const f = await historyFixture(t)
   f.measure(3, 0)
   assert.equal((await f.run('0.1.1')).status, 0)
   const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
-  const ancestor = git(root, 'rev-parse', 'HEAD^')
+  const ancestor = f.ancestor
   f.rows.push({ ...current, candidate: ancestor, runIds: current.runIds.map(id => `${id}-history`) })
   f.measure(4, 0)
-  for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === candidate)) {
+  for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === f.report.candidate)) {
     row.runIds = row.runIds.map(id => `${id}-next`)
     row.date = '2026-10-12T01:00:00Z'
   }
@@ -243,7 +253,7 @@ test('gating set requires eighty percent over the latest ten runs', async t => {
   assert.ok(!second.data.data.gatingSet.includes('ambiguous-idea/decision'))
   f.rows.push({ ...current, candidate: ancestor, runIds: current.runIds.map(id => `${id}-history`) })
   f.measure(4, 0)
-  for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === candidate)) {
+  for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === f.report.candidate)) {
     row.runIds = row.runIds.map(id => `${id}-next`)
     row.date = '2026-10-12T02:00:00Z'
   }
@@ -263,12 +273,12 @@ test('release gate measures the approved ten smoke scenarios', async t => {
 })
 
 test('gating history includes compatible ledger measurements between releases', async t => {
-  const f = await fixture(t)
+  const f = await historyFixture(t)
   assert.equal((await f.run('0.1.1')).status, 0)
   const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
   f.measure(4, 0)
   current.runIds = current.runIds.map(id => `${id}-current`)
-  f.rows.splice(f.rows.indexOf(current), 0, { ...current, candidate: git(root, 'rev-parse', 'HEAD^'), passes: 3,
+  f.rows.splice(f.rows.indexOf(current), 0, { ...current, candidate: f.ancestor, passes: 3,
     runIds: current.runIds.map(id => `${id}-intermediate`) })
   const result = await f.run('0.1.2')
   assert.equal(result.status, 0, result.stdout)
@@ -410,11 +420,11 @@ for (const [name, path, gated, regressionStatus] of [
 
 for (const [passes, seeded] of [[3, false], [4, true], [5, true]]) {
   test(`first release seeds ${passes} of five independently of unreleased history`, async t => {
-    const f = await fixture(t)
+    const f = await historyFixture(t)
     f.measure(passes, 0)
     const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
     current.date = '2026-10-12T01:00:00Z'
-    f.rows.push({ ...current, candidate: git(root, 'rev-parse', 'HEAD^'), passes: 3, date: '2026-10-12T00:00:00Z',
+    f.rows.push({ ...current, candidate: f.ancestor, passes: 3, date: '2026-10-12T00:00:00Z',
       runIds: current.runIds.map(id => `${id}-unreleased`) })
     const result = await f.run()
     assert.equal(result.status, 0, result.stdout)
@@ -424,10 +434,10 @@ for (const [passes, seeded] of [[3, false], [4, true], [5, true]]) {
 
 for (const passes of [4, 5]) {
   test(`first-release seed at ${passes} of five blocks a subsequent confirmed regression`, async t => {
-    const f = await fixture(t)
+    const f = await historyFixture(t)
     f.measure(passes, 0)
     const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
-    f.rows.push({ ...current, candidate: git(root, 'rev-parse', 'HEAD^'), passes: 3,
+    f.rows.push({ ...current, candidate: f.ancestor, passes: 3,
       runIds: current.runIds.map(id => `${id}-unreleased`) })
     const first = await f.run()
     assert.equal(first.status, 0, first.stdout)
@@ -535,11 +545,11 @@ for (const [name, mutate] of [
 }
 
 test('reliability history uses capture dates when an older batch is finalized last', async t => {
-  const f = await fixture(t)
+  const f = await historyFixture(t)
   f.measure(4, 0)
   const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
   current.date = '2026-10-12T03:00:00Z'
-  const ancestor = git(root, 'rev-parse', 'HEAD^')
+  const ancestor = f.ancestor
   f.rows.push({ ...current, candidate: ancestor, date: '2026-10-12T02:00:00Z',
     runIds: current.runIds.map(id => `${id}-recent`) })
   f.rows.push({ ...current, candidate: ancestor, passes: 3, date: '2026-10-12T01:00:00Z',
