@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "runId": "3ce94c3d-0184-48fb-89ee-11624d6b09c8",
+  "draftRevision": "735646d639b553d57762d86bf82ef98bf2eb083d3516d730f1fa74e1a04237c6",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]"
+  },
+  "cardIds": [
+    "backup-sharing"
+  ]
+}
