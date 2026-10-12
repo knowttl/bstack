@@ -375,7 +375,7 @@ Missing native tools exit 2 as blocked.
 See the [fixture contract](docs/fixtures.md) for sources and sanity commands.
 
 Raw upstream development sources are committed outside the installed skill.
-[The manifest](upstream/sources.json) owns their exact pins and copied paths, and [NOTICE](NOTICE) records adaptations.
+[The manifest](upstream/sources.json) owns their exact pins, copied paths and generated SHA-256 hashes, and [NOTICE](NOTICE) records adaptations.
 To refresh the copies or verify them against their pinned remote bytes:
 
 ```sh
@@ -384,8 +384,18 @@ node upstream/fetch.mjs --check
 ```
 
 Both commands require network access and exit 1 if a listed remote file is missing or unavailable.
-Fetching replaces local copies only after every listed remote file downloads successfully.
-`--check` writes nothing and also exits 1 for missing or modified local copies.
+Fetching replaces local copies and regenerates each source's `sha256` map in the manifest only after every listed remote file downloads successfully.
+`--check` writes nothing and also exits 1 for missing or modified local copies, missing or malformed hash entries, or hashes that differ from the pinned remote bytes.
+
+To verify committed copies offline against the manifest:
+
+```sh
+node --test --test-name-pattern='committed upstream copies' tests/scripts/upstream.test.mjs
+```
+
+This check requires Git, verifies hash coverage and local bytes, and rejects tracked upstream copies absent from the manifest.
+The fetch script and manifest are excluded from the copy inventory.
+The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Generate the standalone maintenance validator artifact from this checkout after installing the root development dependencies.
 The generated file requires Node 24 or later and Git for repository validation.
