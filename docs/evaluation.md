@@ -197,6 +197,9 @@ Do not commit whole run directories, scoring work files or private batch invento
 The default `tests/eval/results/runs/` and historical `tests/eval/results/release/runs/` locations are ignored for new files.
 Existing tracked historical evidence remains available for acceptance references and judge calibration; this policy does not rewrite it.
 An explicit `--results` directory is caller-owned: keep it outside Git or under `.cache/`, and copy its finalized ledger to the committed results directory.
+Run the release gate with `--results` pointing to that same private directory, where contributing run directories sit beside its ledger.
+Keep prior gate outputs in its `release/` directory for regression comparison, and copy the new gate output to `tests/eval/results/release/` for publication.
+Copying the ledger alone does not make the default release-gate command usable: its contributing run records must also be available under `tests/eval/results/runs/`.
 
 After scoring, finalizing all batches and writing the release gate, archive the default raw-run directory locally before any cleanup:
 
@@ -210,7 +213,7 @@ git status --short --untracked-files=all -- tests/eval/results
 Use a new archive name each time, and verify that its listing includes the batch inventories, contributing run IDs, conversations and scoring artifacts.
 For explicit `--results`, archive that entire directory instead.
 Keep the archive private: inventories and unfinished runs can contain local paths and session identifiers.
-Retain the local raw evidence for confirmation, correction and audit; the release validator still reads contributing run records beside the ledger or under `runs/`.
+Retain the local raw evidence for confirmation, correction and audit; the release validator reads contributing run records under `runs/` for the default results directory, or beside the ledger for an explicit results directory.
 The archive is a backup and does not replace the validator's input directory.
 After a fresh batch without sampled transcripts, Git status should show only the ledger and gate files.
 
