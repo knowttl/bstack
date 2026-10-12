@@ -98,11 +98,11 @@ export async function judgeInput(record, transcript, { directory, corpus, human 
       candidates = []
       for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
         if (!entry.isDirectory() || !/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(entry.name)) continue
-        let other = await readJSON(join(directory, entry.name, 'run.json'))
+        let other
+        try { other = await readJSON(join(directory, entry.name, 'run.json')) }
+        catch (error) { if (error.code === 'ENOENT') continue; throw error }
         if (other.id !== entry.name) fail('Companion run ID does not match its directory.')
-        if (other.transcript) other = await correctedScore(join(directory, other.id), other)
-        const path = other.transcript ?? other.conversation
-        candidates.push({ record: other, transcript: path ? await readFile(join(directory, other.id, path), 'utf8') : '' })
+        candidates.push({ record: other })
       }
       let batches = []
       try { batches = await readdir(join(directory, 'batches')) }
@@ -117,16 +117,26 @@ export async function judgeInput(record, transcript, { directory, corpus, human 
     }
     for (const comparison of comparisons) {
       const cited = human?.checks.find(check => check.id === comparison.checkId)?.companionRunId
-      const eligible = candidates.filter(run => run.record.scenario.id === comparison.scenario && run.transcript.trim())
+      let eligible = candidates.filter(run => run.record.scenario.id === comparison.scenario &&
+        (cited ? run.record.id === cited : record.sourceRevision && run.record.sourceRevision === record.sourceRevision && run.record.mode === record.mode &&
+          (corpus || (record.batchId && run.record.batchId === record.batchId))))
         .sort((a, b) => a.record.id.localeCompare(b.record.id))
-      let companion
-      if (cited) companion = eligible.find(run => run.record.id === cited)
-      else {
-        const matching = eligible.filter(run => record.sourceRevision && run.record.sourceRevision === record.sourceRevision && run.record.mode === record.mode &&
-          (corpus || (record.batchId && run.record.batchId === record.batchId)))
-        companion = corpus ? matching[0] : matching.find(run => Number.isInteger(record.repeatIndex) && run.record.repeatIndex === record.repeatIndex) ??
-          matching.find(run => run.record.status === 'passed')
+      if (!corpus) {
+        const available = []
+        for (const run of eligible) {
+          try {
+            const other = run.record.transcript ? await correctedScore(join(directory, run.record.id), run.record) : run.record
+            const path = other.transcript ?? other.conversation
+            if (!path) continue
+            available.push({ record: other, transcript: await readFile(join(directory, other.id, path), 'utf8') })
+          } catch (error) { if (error.code !== 'ENOENT') throw error }
+        }
+        eligible = available
       }
+      eligible = eligible.filter(run => run.transcript.trim())
+      const companion = cited || corpus ? eligible[0] :
+        eligible.find(run => Number.isInteger(record.repeatIndex) && run.record.repeatIndex === record.repeatIndex) ??
+        eligible.find(run => run.record.status === 'passed')
       if (!companion) { pending.push(comparison); continue }
       companions.push({ ...comparison, runId: companion.record.id, transcriptHash: hashBytes(companion.transcript),
         transcript: companion.transcript.trimEnd().split(/\r?\n/).map((text, index) => ({ line: index + 1, text })) })
