@@ -24,12 +24,20 @@ async function compatibleEvidence(ledger, definitions, results) {
   const directory = results === join(root, 'tests/eval/results') ? join(results, 'runs') : results
   const records = new Map()
   const fixtures = new Map()
+  const runners = new Map()
   const compatible = []
   const recipeHash = hashBytes(await readFile(join(root, 'tests/eval/container/Dockerfile')))
   for (const row of ledger) {
     const definition = definitions.find(item => item.id === row.scenario)
-    if (!definition) fail(`Unknown ledger scenario: ${row.scenario}`)
-    if (!definition.checks.some(check => check.id === row.check && check.caseId === row.caseId)) fail(`Invalid ledger check: ${key(row)}`)
+    if (!definition || !definition.checks.some(check => check.id === row.check && check.caseId === row.caseId)) continue
+    if (!runners.has(row.candidate)) {
+      const diff = spawnSync('git', ['diff', '--quiet', '--no-ext-diff', '--no-textconv', row.candidate, '--',
+        'scripts/eval.mjs', 'scripts/lib/evaluation*.mjs', 'tests/eval/container',
+        'package.json', 'package-lock.json', 'skills/repo-audit/scripts/lib'], { cwd: root })
+      if (diff.status !== 0 && diff.status !== 1) fail(`Cannot verify evaluation runner inputs: ${row.candidate}`)
+      runners.set(row.candidate, diff.status === 0)
+    }
+    if (!runners.get(row.candidate)) continue
     if (!fixtures.has(definition.fixture)) fixtures.set(definition.fixture, await fixtureHash(definition.fixture))
     const bindings = []
     let matches = true
