@@ -330,8 +330,51 @@ async function adapterFile(directory, mode = 'success') {
   return { adapter, path }
 }
 
-function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-idea') {
-  const result = run(directory, '--scenario', scenario, '--mode', mode, '--stage', 'baseline', '--adapter', path)
+for (const [mode, expected] of [['success', true], ['fixture-byte-changed', false], ['fixture-status-changed', false]]) {
+  test(`machine fixtureUnchanged scores exact tracked bytes: ${mode}`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const { record } = hostStart(t, directory, path, 'without', 'scope-and-prerequisites', 'final')
+    assert.equal(record.hostFailure, undefined, record.reason)
+    assert.equal(record.machineResults.find(check => check.id === 'fixture-unchanged').passed, expected)
+    const answersPath = join(directory, 'answers.json')
+    await writeFile(answersPath, JSON.stringify({ schemaVersion: 1, runId: record.id, reviewer: 'Fixture reviewer',
+      checks: record.scenario.checks.map(check => ({ id: check.id, passed: true, startLine: 1, endLine: 1 })) }))
+    const scored = run(directory, 'score', '--run', record.id, '--answers', answersPath,
+      '--transcript', join(directory, record.id, record.conversation))
+    assert.equal(scored.status, expected ? 0 : 1, scored.stdout)
+    assert.equal(scored.data.data.caseResults.find(check => check.id === 'fixture-unchanged').scoring, 'machine')
+  })
+}
+
+for (const [mode, expected] of [['allowed-reference', true], ['allowed-fixture-file', true], ['allowed-extensionless-file', true], ['allowed-git-status', true],
+  ['forbidden-reference', false], ['large-forbidden-reference', false],
+  ['forbidden-nl', false], ['forbidden-directory', false], ['forbidden-glob', false], ['forbidden-failed-command', false], ['success', false]]) {
+  test(`machine notOpened requires an access trace and rejects forbidden references: ${mode}`, async t => {
+    const directory = await temporary(t)
+    const { path } = await adapterFile(directory, mode)
+    const { record: opening } = hostStart(t, directory, path, 'without', 'clear-goals')
+    assert.equal(opening.machineResults, undefined)
+    const firstReply = run(directory, 'turn', '--run', opening.id, '--answer', '1').data.data
+    assert.equal(firstReply.machineResults, undefined)
+    const record = run(directory, 'turn', '--run', opening.id, '--answer', '2').data.data
+    assert.equal(record.hostFailure, undefined, record.reason)
+    assert.equal(record.machineResults.find(check => check.id === 'conditional-load').passed, expected)
+    const events = (await readFile(join(directory, 'docker-events.jsonl'), 'utf8')).trim().split('\n').map(line => JSON.parse(line))
+    assert.equal(events.filter(event => event.operation === 'snapshot').length, 1)
+    const evaluations = events.filter(event => event.operation === 'evaluate')
+    assert.equal(evaluations.length, 1)
+    assert.equal(evaluations[0].container, events.filter(event => event.operation === 'host').at(-1).container)
+    const answersPath = join(directory, 'answers.json')
+    await writeFile(answersPath, JSON.stringify({ schemaVersion: 1, runId: record.id, reviewer: 'Fixture reviewer',
+      checks: [{ id: 'reuse', passed: true, startLine: 1, endLine: 1 }] }))
+    assert.equal(run(directory, 'score', '--run', record.id, '--answers', answersPath,
+      '--transcript', join(directory, record.id, record.conversation)).status, expected ? 0 : 1)
+  })
+}
+
+function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-idea', stage = 'baseline') {
+  const result = run(directory, '--scenario', scenario, '--mode', mode, '--stage', stage, '--adapter', path)
   const record = result.data.data
   if (record) {
     t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
@@ -339,6 +382,195 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   }
   return { result, record }
 }
+
+for (const [name, machine, expected, installer = { status: 'passed' }] of [
+  ['successful installer', { type: 'installerPassed' }, true],
+  ['failed installer', { type: 'installerPassed' }, false, { status: 'failed' }],
+  ['incomplete installer', { type: 'installerPassed' }, false, { status: 'passed', outputTruncated: true }],
+  ['equal files', { type: 'filesEqual', paths: ['first.md', 'same.md'] }, true],
+  ['different files', { type: 'filesEqual', paths: ['first.md', 'different.md'] }, false],
+  ['preserved text', { type: 'contains', path: 'first.md', text: 'User note: retain exactly.' }, true],
+  ['missing text', { type: 'contains', path: 'first.md', text: 'User note: changed.' }, false],
+  ['successful native command', { type: 'command', executable: process.execPath, args: ['-e', 'process.exit(0)'] }, true],
+  ['failed native command', { type: 'command', executable: process.execPath, args: ['-e', 'process.exit(7)'] }, false],
+  ['valid saved citations', { type: 'citeCheck', report: 'report.json' }, true],
+  ['missing saved report', { type: 'citeCheck', report: 'missing-report.json' }, false],
+  ['opened file tool path', { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] }, true],
+  ['unopened required path', { type: 'opened', patterns: ['**/references/vision.md'] }, false],
+  ['failed file read', { type: 'opened', patterns: ['**/references/architecture.md'] }, false],
+  ['nested shell forbidden read', { type: 'notOpened', patterns: ['**/references/intent-interview.md'] }, false]
+]) {
+  test(`container machine assertion checks ${name}`, async t => {
+    const directory = await temporary(t)
+    execFileSync('git', ['init', '--initial-branch=main'], { cwd: directory, stdio: 'ignore' })
+    await writeFile(join(directory, 'first.md'), 'User note: retain exactly.\n')
+    await writeFile(join(directory, 'same.md'), 'User note: retain exactly.\n')
+    await writeFile(join(directory, 'different.md'), 'User note: changed.\n')
+    await writeFile(join(directory, 'report.json'), JSON.stringify({ schemaVersion: 1, mode: 'main-thread', host: 'test',
+      capabilities: { subagents: false, web: false }, briefs: [{ id: 'documents', scope: ['first.md'],
+        findings: 'Keep the note.', limitations: [], web: [], files: [{ location: 'first.md:1',
+          state: { kind: 'sha256', value: createHash('sha256').update('User note: retain exactly.\n').digest('hex') } }] }] }))
+    const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
+    const input = { action: 'evaluate', checks: [{ id: 'control', machine }],
+      installer, skill: join(root, 'skills/repo-audit/scripts/repo-audit.mjs'),
+      events: [{ type: 'item.completed', item: { type: 'file_read', path: '/home/test/.agents/skills/repo-audit/SKILL.md' } },
+        { type: 'item.completed', item: { type: 'command_execution',
+          command: 'sh -c \'cat /home/test/.agents/skills/repo-audit/references/intent-interview.md\'', exit_code: 0 } },
+        { type: 'item.completed', item: { type: 'command_execution',
+          command: 'cat /home/test/.agents/skills/repo-audit/references/architecture.md', exit_code: 1 } }] }
+    const inputPath = join(directory, 'assertions.json')
+    await writeFile(inputPath, JSON.stringify(input))
+    const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath],
+      { cwd: directory, encoding: 'utf8' })
+    assert.equal(result.status, 0, result.stderr)
+    assert.equal(JSON.parse(result.stdout)[0].passed, expected, result.stdout)
+  })
+}
+
+test('helper execution is distinct from opening bundled source and assets', async t => {
+  const directory = await temporary(t)
+  const script = '/home/test/.agents/skills/repo-audit/scripts/repo-audit.mjs'
+  const asset = '/home/test/.agents/skills/repo-audit/assets/vision/review-template.html'
+  const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
+  for (const [name, item, type, expected] of [
+    ['direct helper execution', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/project --json`, exit_code: 0 }, 'notOpened', true],
+    ['helper asset argument', { type: 'command_execution', command: `node ${script} vision-board build --draft ${asset} --workspace /tmp/project --json`, exit_code: 0 }, 'notOpened', true],
+    ['quoted shell helper execution', { type: 'command_execution', command: `bash -lc 'node "${script}" inspect --repo /tmp/project --json'`, exit_code: 0 }, 'notOpened', true],
+    ['compound shell helper output read', { type: 'command_execution', command: `bash -lc 'node ${script} inventory --repo /tmp/project > result.json; cat result.json'`, exit_code: 0 }, 'notOpened', true],
+    ['compound shell helper source read', { type: 'command_execution', command: `bash -lc 'node ${script} inventory --repo /tmp/project; cat ${script}'`, exit_code: 0 }, 'notOpened', false],
+    ['failed helper execution', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/missing --json`, exit_code: 2 }, 'notOpened', true],
+    ['helper followed by source read', { type: 'command_execution', command: `node ${script} inspect --repo /tmp/project --json && cat ${script}`, exit_code: 0 }, 'notOpened', false],
+    ['failed source read command', { type: 'command_execution', command: `cat ${script} && test -f missing`, exit_code: 1 }, 'notOpened', false],
+    ['asset source read', { type: 'command_execution', command: `cat ${asset}`, exit_code: 0 }, 'notOpened', false],
+    ['inline Node source read', { type: 'command_execution', command: `node -e "require('node:fs').readFileSync('${script}', 'utf8')"`, exit_code: 0 }, 'notOpened', false],
+    ['source read in command substitution', { type: 'command_execution', command: `node ${script} inspect --repo "$(cat ${asset})"`, exit_code: 0 }, 'notOpened', false],
+    ['file-tool source read', { type: 'file_read', path: script }, 'notOpened', false],
+    ['helper arguments cannot satisfy opened', { type: 'command_execution', command: `node ${script} vision-board build --draft ${asset} --workspace cat --json`, exit_code: 0 }, 'opened', false]
+  ]) {
+    await t.test(name, async () => {
+      const inputPath = join(directory, 'assertions.json')
+      await writeFile(inputPath, JSON.stringify({ action: 'evaluate',
+        checks: [{ id: 'source', machine: { type, patterns: ['**/repo-audit/scripts/**', '**/repo-audit/assets/**'] } }],
+        events: [{ type: 'item.completed', item }] }))
+      const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
+      assert.equal(result.status, 0, result.stderr)
+      assert.equal(JSON.parse(result.stdout)[0].passed, expected, result.stdout)
+    })
+  }
+})
+
+test('quoted compound shell access is scored in both directions', async t => {
+  const directory = await temporary(t)
+  const path = '/home/test/.agents/skills/repo-audit/SKILL.md'
+  const spacedPath = '/home/test owner/.agents/skills/repo-audit/SKILL.md'
+  const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
+  for (const [name, command, exitCode, opened] of [
+    ['single-quoted payload', `bash -lc 'pwd; cat ${path}'`, 0, true],
+    ['double-quoted payload', `bash -lc "pwd; cat '${spacedPath}'"`, 0, true],
+    ['nested shells', `bash -lc 'sh -c "pwd; cat ${path}"'`, 0, true],
+    ['pipeline', `sh -c 'pwd; cat ${path} | head -n 1'`, 0, true],
+    ['failed compound command', `bash -lc 'pwd; cat ${path} && test -f missing'`, 1, false],
+    ['escaped space', 'cat /home/test\\ owner/.agents/skills/repo-audit/SKILL.md', 0, true]
+  ]) {
+    await t.test(name, async () => {
+      const inputPath = join(directory, 'assertions.json')
+      await writeFile(inputPath, JSON.stringify({ action: 'evaluate', checks: [
+        { id: 'opened', machine: { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] } },
+        { id: 'notOpened', machine: { type: 'notOpened', patterns: ['**/repo-audit/SKILL.md'] } }
+      ], events: [{ type: 'item.completed', item: { type: 'command_execution', command, exit_code: exitCode } }] }))
+      const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
+      assert.equal(result.status, 0, result.stderr)
+      assert.deepEqual(JSON.parse(result.stdout), [{ id: 'opened', passed: opened }, { id: 'notOpened', passed: false }])
+    })
+  }
+})
+
+test('file-tool access requires success for opened and retains attempts for notOpened', async t => {
+  const directory = await temporary(t)
+  const path = '/home/test/.agents/skills/repo-audit/SKILL.md'
+  const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
+  for (const [name, item, opened] of [
+    ['successful file_read', { type: 'file_read', path, status: 'completed' }, true],
+    ['failed file_read', { type: 'file_read', path, status: 'failed' }, false],
+    ['successful tool_call', { type: 'tool_call', name: 'open_file', arguments: { path }, status: 'completed' }, true],
+    ['failed tool_call', { type: 'tool_call', name: 'open_file', arguments: { path }, status: 'failed' }, false],
+    ['successful mcp_tool_call', { type: 'mcp_tool_call', tool: 'read_file', input: { file_path: path }, status: 'completed' }, true],
+    ['failed mcp_tool_call', { type: 'mcp_tool_call', tool: 'read_file', input: { file_path: path }, status: 'failed', error: { message: 'unavailable' } }, false],
+    ['error despite completed status', { type: 'file_read', path, status: 'completed', error: { message: 'unavailable' } }, false],
+    ['error-marked result', { type: 'mcp_tool_call', tool: 'read_file', arguments: JSON.stringify({ file_path: path }), result: { isError: true } }, false],
+    ['error-marked output', { type: 'tool_call', name: 'read_file', input: JSON.stringify({ path }), output: { isError: true } }, false],
+    ['result error', { type: 'tool_call', name: 'read_file', arguments: { path }, result: { error: { message: 'unavailable' } } }, false],
+    ['failed result status', { type: 'mcp_tool_call', tool: 'read_file', arguments: { path }, result: { status: 'failed' } }, false]
+  ]) {
+    await t.test(name, async () => {
+      const inputPath = join(directory, 'assertions.json')
+      await writeFile(inputPath, JSON.stringify({ action: 'evaluate', checks: [
+        { id: 'opened', machine: { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] } },
+        { id: 'notOpened', machine: { type: 'notOpened', patterns: ['**/repo-audit/SKILL.md'] } }
+      ], events: [{ type: 'item.completed', item }] }))
+      const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
+      assert.equal(result.status, 0, result.stderr)
+      assert.deepEqual(JSON.parse(result.stdout), [{ id: 'opened', passed: opened }, { id: 'notOpened', passed: false }])
+    })
+  }
+})
+
+test('scenario fixture hashes bind selected source bytes and overlays without binding unrelated fixtures', async t => {
+  const directory = await temporary(t)
+  for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
+    'tests/fixtures', 'tests/eval/scenarios', 'tests/acceptance', 'node_modules/acorn']) {
+    await cp(join(root, path), join(directory, path), { recursive: true })
+  }
+  execFileSync('git', ['init', '--initial-branch=main'], { cwd: directory, stdio: 'ignore' })
+  execFileSync('git', ['-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid',
+    '-c', 'commit.gpgsign=false', 'commit', '--allow-empty', '-m', 'Fixture checkout'], { cwd: directory, stdio: 'ignore' })
+  function revision(scenario) {
+    const result = spawnSync(process.execPath, [join(directory, 'scripts/eval.mjs'), '--manual',
+      '--scenario', scenario, '--mode', 'without', '--stage', 'final', '--agent', 'test-host',
+      '--model', 'test-model', '--results', join(directory, 'results'), '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, 2, result.stdout)
+    const record = JSON.parse(result.stdout).data
+    assert.ok(record.fixture, result.stdout)
+    t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+    return record.fixture.revision
+  }
+  const idea = revision('ambiguous-idea')
+  const maintained = revision('maintenance')
+  const delta = revision('existing-vision-delta')
+  const scenariosPath = join(directory, 'tests/eval/scenarios/scenarios.json')
+  const scenarios = JSON.parse(await readFile(scenariosPath, 'utf8'))
+  scenarios.scenarios.find(scenario => scenario.id === 'existing-repo').fixture = 'ts-rule-proof'
+  await writeFile(scenariosPath, JSON.stringify(scenarios))
+  const imported = revision('existing-repo')
+  const sourceSanity = join(directory, 'tests/fixtures/ts-shop/sanity.mjs')
+  await writeFile(sourceSanity, `${await readFile(sourceSanity, 'utf8')}\n`)
+  assert.equal(revision('maintenance'), maintained)
+  assert.notEqual(revision('existing-repo'), imported)
+  const unusedSanity = join(directory, 'tests/fixtures/clear-goals/sanity.mjs')
+  await writeFile(unusedSanity, `${await readFile(unusedSanity, 'utf8')}\n`)
+  assert.equal(revision('existing-vision-delta'), delta)
+  const overlay = join(directory, 'tests/fixtures/maintained-ts-shop/overlay/DESIGN.md')
+  await writeFile(overlay, `${await readFile(overlay, 'utf8')}\n`)
+  assert.equal(revision('ambiguous-idea'), idea)
+  const changedOverlay = revision('maintenance')
+  assert.notEqual(changedOverlay, maintained)
+  const sanity = join(directory, 'tests/fixtures/maintained-ts-shop/sanity.mjs')
+  await writeFile(sanity, `${await readFile(sanity, 'utf8')}\n`)
+  assert.notEqual(revision('maintenance'), changedOverlay)
+  const brief = join(directory, 'tests/fixtures/ambiguous-idea/brief.md')
+  await writeFile(brief, `${await readFile(brief, 'utf8')}\n`)
+  assert.notEqual(revision('ambiguous-idea'), idea)
+})
+
+test('malformed host output is retained before machine grading', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'malformed')
+  const { record } = hostStart(t, directory, path, 'without', 'clear-goals')
+  assert.equal(record.hostFailure, true)
+  assert.equal(record.turns.length, 1)
+  assert.match(record.reason, /Host did not complete a turn/)
+  assert.match(await readFile(join(directory, record.id, record.conversation), 'utf8'), /not JSONL/)
+})
 
 for (const [scenario, mode] of [['research-main-typescript', 'require-no-subagents'],
   ['research-main-python', 'require-no-subagents'], ['ambiguous-idea', 'require-subagents']]) {

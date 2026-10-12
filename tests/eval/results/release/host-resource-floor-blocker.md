@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Evaluation stopped at the host resource floor
 
 The shared write-rule repair is committed as a9b25b9 and passes the package checker.
@@ -11,7 +13,7 @@ The independent preflight at 2026-10-12T01:13:19.193Z passed at load 14.73 with 
 
 The [recovery opening](runs/2026-10-12T01-13-36.754Z-ae81285f-7652-4377-a073-90fb2c20e25b/conversation.txt), lines 7–36, locates the approved public quote example, captures passing original checks and presents an exact four-file proposal while preserving the project unchanged.
 Proposed-state verification was withheld at load 42.15.
-Its [independent opening record](runs/2026-10-12T01-13-36.754Z-ae81285f-7652-4377-a073-90fb2c20e25b/artifacts/independent-verification.json) verifies all 24 tracked files unchanged and retains the exact proposal.
+Its independent opening record (removed file: runs/2026-10-12T01-13-36.754Z-ae81285f-7652-4377-a073-90fb2c20e25b/artifacts/independent-verification.json) verifies all 24 tracked files unchanged and retains the exact proposal.
 The [proposal review](runs/2026-10-12T01-13-36.754Z-ae81285f-7652-4377-a073-90fb2c20e25b/artifacts/proposal-review.json) independently records its four payload hashes and digest before the ordered reply.
 
 Before sending that reply, the independent host preflight at 2026-10-12T01:17:06.669Z refused execution with these actual readings:
