@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { appendFile, cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -48,6 +48,30 @@ async function sandbox(t) {
   await cp(join(fixtures, 'valid'), directory, { recursive: true })
   return directory
 }
+
+test('package resources reject implementation playbook routing', async t => {
+  for (const [file, text] of [
+    ['SKILL.md', 'Follow the bstack implementation playbook for every feature.'],
+    ['references/guide.md', 'Use a general development workflow for ordinary changes.'],
+    ['scripts/router.mjs', '// Invoke the TDD dispatcher for bug fixes.']
+  ]) {
+    await t.test(file, async t => {
+      const directory = await sandbox(t)
+      await mkdir(join(directory, 'scripts'))
+      await appendFile(join(directory, file), '\n' + text + '\n')
+      const result = run('--skill', directory)
+      assert.equal(result.status, 1, result.stdout + result.stderr)
+      assert.match(result.stdout, new RegExp(`^implementation-routing: ${file.replaceAll('.', '\\.')}:`, 'm'))
+    })
+  }
+})
+
+test('bounded audit instructions and product boundary statements pass routing checks', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'references', 'guide.md'), 'Follow the audit procedure.\nGeneral development playbooks are outside this skill.\nChoose the implementation method within project constraints.\n')
+  const result = run('--skill', directory)
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+})
 
 test('every independent problem is reported together', async t => {
   const directory = await sandbox(t)

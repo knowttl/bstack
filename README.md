@@ -322,7 +322,7 @@ The [probe contract](docs/command-contract.md#live-probe-pairs) defines the desc
 The probe command must assert the agreed outcome and exit nonzero on disagreement.
 Passing checks alone do not replace a successful probe comparison for an outside dependency.
 
-The evaluation runner includes scenarios, all 75 planned acceptance procedures and a current-host Codex adapter.
+The evaluation runner includes scenarios, all 75 acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
 Scripted replies use the host's resume interface after a reviewer matches the question to the next scripted answer.
 See the [evaluation contract](docs/evaluation.md) for bounded runs, throwaway authentication, manual scoring, comparison and explicit final selections.
