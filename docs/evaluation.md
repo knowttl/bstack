@@ -41,7 +41,7 @@ Ordinary with-skill requests require the host's explicit command through `--invo
 Without-skill and implicit-invocation requests reject that option.
 Implicit requests use the [scenario registry](../tests/eval/scenarios/scenarios.json)'s outcome request without a skill invocation.
 Manual runs without an adapter do not stage the skill or verify discovery paths.
-They retain unverified isolation even after human scoring.
+They retain unverified isolation even after scoring.
 `--manual` and `--adapter` cannot be combined; adapter starts capture the opening turn automatically.
 
 Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
@@ -87,7 +87,7 @@ The adapter therefore selects `danger-full-access` for both opening and resumed 
 The resume command explicitly sets `sandbox_mode="danger-full-access"` instead of relying on the opening command's `--sandbox` option to carry over.
 Every evaluation agent turn now runs in a disposable Docker container, providing a separate filesystem from the operator's host.
 Build its pinned toolchain with `docker build --tag bstack-eval-toolchain:node24-codex0.162.1 --file tests/eval/container/Dockerfile tests/eval/container`.
-The recipe pins the Node base image digest, Node 24.17.0, npm 11.13.0, Git 2.54.0 and Codex CLI 0.162.1.
+The recipe pins the Node base image digest, Node 24.17.0, npm 11.13.0, Git 2.54.0, Codex CLI 0.162.1 and Claude Code 2.1.296.
 It includes uv 0.12.22 from a pinned image digest, lavish-axi 0.1.78, chrome-devtools-axi 0.1.34, chrome-devtools-mcp 1.10.1 and Chromium for the Python and browser procedures.
 Python fixtures use image-installed CPython 3.12.15 and their locked Ruff 0.14.0 dependency, cached during the image build.
 Before their opening turn, the runner recreates the ignored virtual environment with `uv sync --locked --offline --python 3.12.15` inside the same two mounts and records that result.
@@ -163,7 +163,7 @@ Machine check counts appear immediately in the command result, alongside pending
 The command remains blocked until every run has valid explicit scoring and verified cleanup.
 Use `eval score` with each run's captured `conversation.txt` and semantic answers, then run `eval batch --batch <id>` with the same `--results` directory to finalize without new captures.
 Machine answers continue to come from captured assertions, regardless of supplied reviewer answers.
-Judge grading is a later step; this command never invents semantic grades.
+Use the [judge command](#judge-command) to prepare semantic answers; batch capture and finalization never invent semantic grades.
 Failed captures leave the ledger unpublished and require a fresh batch.
 
 Finalization appends one JSONL line per candidate, tier, scenario, mode and check to `tests/eval/results/ledger.jsonl` by default, or `<results>/ledger.jsonl` for an explicit results directory.
@@ -245,7 +245,7 @@ The configuration requires `schemaVersion`, `model`, `host`, `executable`, `args
 `host` is `claude-container`, or `process` for a command that implements the plain JSON judge protocol, including test fakes.
 `args` contains `{model}`, replaced with the configured model.
 The command receives a JSON prompt on stdin and returns a JSON answers object; Claude print mode wraps that object in its successful JSON result envelope.
-The prompt contains only the rubric, historical conversation checklist, run ID, judge identity and numbered transcript, excluding human scores and subject model metadata.
+The prompt contains the rubric, historical conversation checklist, run ID, judge identity, numbered primary transcript and selected companion transcripts with their check IDs, scenario IDs, run IDs and transcript hashes, excluding human scores and subject model metadata.
 The judge cannot override captured machine assertions.
 
 The Claude container receives only a fresh working directory and private home, with 2 CPUs, 4 GiB memory, no extra capabilities or published ports, and the same container policy as subject evaluations.
@@ -263,6 +263,8 @@ An interrupted invocation requires review before any retry.
 Comparison checks receive a companion transcript from the same package source, mode and batch.
 Selection prefers the same explicitly recorded repeat index, then the first passing run in run-ID order when indexes differ or are unavailable.
 Batch inventories establish membership only; registration order does not establish repeat indexes.
+Ordinary companion lookup skips missing or incomplete historical run records and batch inventories, candidates with empty or truncated `score-correction.json` files, and candidates without an available nonempty transcript.
+Selection uses the remaining eligible evidence, or leaves the comparison pending when none qualifies.
 The input and companion hashes bind the selected transcript and run identity.
 Missing companions leave comparison checks pending and return blocked before reserving a provider call or writing answers.
 Supply companion evidence, then judge the same unscored run.
