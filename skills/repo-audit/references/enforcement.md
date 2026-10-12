@@ -36,6 +36,8 @@ Avoid arbitrary file, function or rule-count limits without a project-specific r
 
 | Principle | Concrete rule | Enforcement | Required evidence |
 |---|---|---|---|
+| DRY | Apply the architecture reference's DRY rule within the selected scope | Human review flags duplicated knowledge in code and docs; use [one authoritative source per rule](#one-authoritative-source-per-rule) for placement and links | Review names the duplicated rule, its authoritative owner and the coordinated change it risks, distinguishing incidental similarity |
+| KISS | Apply the architecture reference's KISS rule within the selected scope | Human review flags needless complexity against approved requirements | Review identifies an unnecessary abstraction, layer or option and a simpler alternative that preserves required behaviour |
 | Keep persistence behind one interface | UI modules cannot import the database adapter | Import boundary analysis resolving project paths and aliases | An allowed public interface import passes and a direct database import fails |
 | Write each rule once | Generated settings match the authoritative source | Deterministic regeneration and comparison | A stale generated value fails |
 | Validate external input | Reject invalid input at the actual public boundary | Behaviour tests and applicable schema or type checks | Invalid input is rejected and valid input succeeds |
@@ -45,6 +47,11 @@ Avoid arbitrary file, function or rule-count limits without a project-specific r
 
 Do not disguise a human design judgement as a deterministic violation.
 Give the reviewer the relevant authority, example and evidence instead.
+Recommend DRY and KISS as standards for agents changing the audited project only where its evidence supports them, following [Record each principle](#record-each-principle) and the skill's owner-selection boundary.
+Agent instructions point to the selected standards as described under [One authoritative source per rule](#one-authoritative-source-per-rule).
+Recommend a native duplication linter only when language research supports its syntax coverage and project-specific configuration, following [Proof required before adopting an automated rule](#proof-required-before-adopting-an-automated-rule).
+Clone detection supplies review candidates, not proof that similar code represents the same knowledge; neither duplication nor complexity scores establish DRY or KISS compliance.
+Use [Control existing debt](#control-existing-debt) for accepted exceptions rather than silently weakening either principle.
 
 ## Proof required before adopting an automated rule
 

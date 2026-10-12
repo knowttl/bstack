@@ -72,7 +72,7 @@ async function evidenceSandbox(t, source = "import test from 'node:test'\ntest('
   await cp(join(root, 'skills', 'repo-audit', 'scripts', 'lib'), join(directory, 'skills', 'repo-audit', 'scripts', 'lib'), { recursive: true })
   await mkdir(join(directory, 'tests', 'scripts'), { recursive: true })
   await writeFile(join(directory, 'tests', 'scripts', 'selected.test.mjs'), source)
-  await writeFile(join(directory, '.gitignore'), '.cache/\n')
+  await writeFile(join(directory, '.gitignore'), '.cache/\nnode_modules/\n')
   for (const args of [['init', '-q'], ['add', '.'], ['-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'initial'],
     ['update-ref', 'refs/remotes/origin/main', 'HEAD']]) {
     const result = spawnSync('git', args, { cwd: directory, encoding: 'utf8' })
