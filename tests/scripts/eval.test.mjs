@@ -316,10 +316,10 @@ test('automatic host execution requires an adapter', async t => {
   assert.equal(run(directory, '--scenario', 'new-idea', '--mode', 'without', '--stage', 'baseline', '--agent', 'test', '--model', 'test').status, 2)
 })
 
-async function adapterFile(directory, mode = 'success') {
+async function adapterFile(directory, mode = 'success', name = 'codex.json') {
   await mkdir(join(directory, 'bin'), { recursive: true })
   try { await symlink(join(root, 'tests/inputs/docker.mjs'), join(directory, 'bin/docker')) } catch (error) { if (error.code !== 'EEXIST') throw error }
-  const adapter = JSON.parse(await readFile(join(root, 'tests/eval/adapters/codex.json'), 'utf8'))
+  const adapter = JSON.parse(await readFile(join(root, 'tests/eval/adapters', name), 'utf8'))
   adapter.executable = 'node'
   adapter.isolation.authentication = 'none'
   const fake = join(root, 'tests/inputs/evaluation-host.mjs')
@@ -330,6 +330,31 @@ async function adapterFile(directory, mode = 'success') {
   await writeFile(path, JSON.stringify(adapter))
   return { adapter, path }
 }
+
+test('bulk adapter is rejected by smoke before creating resources', async t => {
+  const directory = await temporary(t)
+  const result = run(directory, 'batch', '--tier', 'smoke', '--mode', 'without',
+    '--adapter', join(root, 'tests/eval/adapters/codex-bulk.json'))
+  assert.equal(result.status, 3, result.stdout)
+  assert.match(result.stdout, /restricted to the full tier/)
+  assert.deepEqual(await readdir(directory), [])
+})
+
+test('full tier captures bulk model opening and resumed turns in its own series', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'success', 'codex-bulk.json')
+  const result = run(directory, 'batch', '--tier', 'full', '--scenario', 'clear-goals',
+    '--stage', 'baseline', '--mode', 'without', '--adapter', path, '--repeat', '1', '--concurrency', '1')
+  assert.equal(result.status, 2, result.stdout)
+  assert.deepEqual(result.data.data.errors, [])
+  const batch = JSON.parse(await readFile(join(directory, 'batches', `${result.data.data.batch}.json`), 'utf8'))
+  for (const fixture of batch.fixtures) t.after(() => rm(fixture.path, { recursive: true, force: true }))
+  const record = JSON.parse(await readFile(join(directory, batch.runIds[0], 'run.json'), 'utf8'))
+  assert.equal(batch.tier, 'full')
+  assert.equal(record.model, 'gpt-6-luna')
+  assert.equal(record.turns.length, 3)
+  assert.ok(record.isolation.cleanedAt)
+})
 
 test('batch delivers two scenarios three times, closes every container and appends all graded check rates once', async t => {
   const directory = await temporary(t)
@@ -734,7 +759,9 @@ test('batch closes failed replies, counts every attempt and leaves the ledger un
 
 for (const args of [
   ['--repeat', '0'], ['--repeat', '1.5'], ['--concurrency', '0'], ['--concurrency', '7'],
-  ['--tier', 'other'], ['--scenario', 'new-idea'], ['--scenario', 'ambiguous-idea,ambiguous-idea'],
+  ['--tier', 'other'], ['--scenario', 'new-idea'], ['--scenario', 'final-existing-repo'],
+  ['--scenario', 'final-new-project'], ['--scenario', 'representative-extension'], ['--scenario', 'selected-apply-verify'],
+  ['--scenario', 'ambiguous-idea,ambiguous-idea'],
   ['--scenario', 'unknown'], ['--stage', 'missing'], ['--unexpected', 'value']
 ]) {
   test(`batch rejects invalid options before creating resources: ${args.join(' ')}`, async t => {

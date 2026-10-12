@@ -8,8 +8,8 @@ import { emptyRepo, git } from './discovery-fixture.mjs'
 
 // Impact tests use the real command in a disposable checkout, without agent hosts.
 const root = fileURLToPath(new URL('../..', import.meta.url))
-// These five scenarios exercise maintenance guidance, including both final paths.
-const maintenance = ['final-maintained-maintenance', 'final-new-project', 'final-existing-repo', 'maintenance', 'representative-extension']
+// These scenarios exercise maintenance guidance, including both final paths and selected apply.
+const maintenance = ['final-maintained-maintenance', 'final-new-project', 'final-existing-repo', 'selected-apply-verify', 'maintenance', 'representative-extension']
 
 async function checkout(t) {
   const { repo } = await emptyRepo(t)
@@ -58,7 +58,7 @@ test('impact map covers every skill heading and required file with valid keys', 
   }
 })
 
-test('maintenance reference changes select only the five maintenance scenarios', async t => {
+test('maintenance reference changes select only the maintenance scenarios', async t => {
   const repo = await checkout(t)
   const path = join(repo, 'skills/repo-audit/references/maintenance-contract.md')
   await writeFile(path, (await readFile(path, 'utf8')) + '\nClarified maintenance guidance.\n')
@@ -102,7 +102,7 @@ test('deleted headings retain their old impact key and unknown replacement headi
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.deepEqual(result.data.keys, ['SKILL.md#different-research-rules', 'SKILL.md#research-rules'])
   assert.deepEqual(result.data.unmapped, ['SKILL.md#different-research-rules'])
-  assert.equal(result.data.scenarios.length, 21)
+  assert.equal(result.data.scenarios.length, 22)
 })
 
 for (const [direction, heading, keys, scenarios] of [
@@ -187,7 +187,7 @@ for (const key of [
   'schemas/change-set.schema.json',
   'schemas/resume-state.schema.json'
 ]) {
-  test(`required maintenance input selects all five maintenance flows: ${key}`, async t => {
+  test(`required maintenance input selects all maintenance flows: ${key}`, async t => {
     const repo = await checkout(t)
     const path = join(repo, 'skills/repo-audit', key)
     await writeFile(path, (await readFile(path, 'utf8')) + '\n')
