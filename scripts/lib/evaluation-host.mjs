@@ -62,12 +62,14 @@ export function redactEvidence(content, record) {
 
 export async function readAdapter(path, scenarioId) {
   const adapter = await readJSON(path)
-  validateData(object({ schemaVersion: { const: 1 }, executable: text, args: array(text), cwd: { const: '.' },
+  const schema = object({ schemaVersion: { const: 1 }, tier: { const: 'full' }, executable: text, args: array(text), cwd: { const: '.' },
     versionArgs: array(text), timeoutMs: { type: 'integer' }, outputLimitBytes: { type: 'integer' },
     invocation: object({ agent: text, model: text, explicit: text, protocol: { const: 'codex-exec-jsonl' }, resumeArgs: array(text) }),
     isolation: object({ stateDirectory: { const: '.codex' }, discoveryPaths: array(text), systemDiscoveryPaths: array(text), stagePath: text,
       authentication: { enum: ['none', 'throwaway-codex-login'] } })
-  }), adapter)
+  })
+  schema.required = schema.required.filter(key => key !== 'tier')
+  validateData(schema, adapter)
   if (adapter.timeoutMs < 1 || adapter.timeoutMs > 1800000) fail('Adapter timeoutMs must be between 1 and 1800000.')
   if (adapter.outputLimitBytes < 1 || adapter.outputLimitBytes > 16777216) fail('Adapter outputLimitBytes must be between 1 and 16777216.')
   if (!adapter.args.includes('{message}') || !adapter.invocation.resumeArgs.includes('{message}') ||

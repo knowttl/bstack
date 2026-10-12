@@ -334,7 +334,7 @@ npm run eval -- --scenario ambiguous-idea --mode without --stage baseline --adap
 npm run eval -- turn --run <id> --answer 1
 npm run eval -- close --run <id>
 npm run eval -- score --run <id> --answers answers.json --transcript transcript.txt
-npm run eval -- batch --tier smoke --mode without --adapter tests/eval/adapters/codex.json --repeat 5 --concurrency 6 --json
+npm run eval -- batch --tier smoke --mode without --adapter tests/eval/adapters/codex-final.json --repeat 5 --concurrency 6 --json
 node scripts/acceptance.mjs --release <version> --candidate <full-HEAD-commit> --checks <hard-break-report.json> --json
 ```
 
