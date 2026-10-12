@@ -6,7 +6,8 @@ import { root, fail } from './evaluation.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
 
-const image = 'bstack-eval-toolchain:node24-codex0.162.1'
+// Subject and judge sessions use the same pinned disposable toolchain.
+export const image = 'bstack-eval-toolchain:node24-codex0.162.1'
 
 async function docker(args, timeoutMs = 120000, outputLimitBytes = 16777216) {
   return runCommand({ root }, { executable: 'docker', args, cwd: '.', versionArgs: ['--version'], timeoutMs }, { outputLimitBytes })
@@ -15,6 +16,28 @@ async function docker(args, timeoutMs = 120000, outputLimitBytes = 16777216) {
 function completed(result, operation) {
   if (result.status !== 'passed' || result.outputTruncated) fail(`Evaluation container ${operation} failed: ${result.stderr || result.error || result.exitCode}`)
   return result.stdout.trim()
+}
+
+// Both subject and judge callers own cleanup; creation verifies the shared two-mount policy.
+export async function createContainer(name, imageId, paths, workdir, env) {
+  const mounts = paths.map(path => ({ Type: 'bind', Source: path, Destination: path, RW: true }))
+  const environment = Object.entries(env).filter(([key]) => key !== 'PATH').flatMap(([key, value]) => ['--env', `${key}=${value}`])
+  const user = `${process.getuid()}:${process.getgid()}`
+  const options = ['--name', name, '--user', user, '--network', 'bridge', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
+    '--cpus', '2', '--memory', '4g', '--workdir', workdir,
+    ...mounts.flatMap(mount => ['--mount', `type=bind,source=${mount.Source},target=${mount.Destination}`]), ...environment]
+  completed(await docker(['create', ...options, imageId, 'node', '-e', 'setInterval(() => {}, 2147483647)']), 'creation')
+  const actual = JSON.parse(completed(await docker(['inspect', name]), 'inspection'))[0]
+  const observed = actual.Mounts.map(({ Type, Source, Destination, RW }) => ({ Type, Source, Destination, RW }))
+  // Docker orders mounts by destination independently of their argv order.
+  const byDestination = (left, right) => left.Destination.localeCompare(right.Destination)
+  if (canonicalJSON(observed.sort(byDestination)) !== canonicalJSON([...mounts].sort(byDestination)) || actual.Image !== imageId || actual.Config.User !== user ||
+      actual.HostConfig.Privileged || actual.HostConfig.NetworkMode !== 'bridge' ||
+      actual.HostConfig.NanoCpus !== 2_000_000_000 || actual.HostConfig.Memory !== 4 * 1024 ** 3 ||
+      Object.keys(actual.HostConfig.PortBindings ?? {}).length || actual.HostConfig.VolumesFrom?.length ||
+      actual.HostConfig.CapAdd?.length || canonicalJSON(actual.HostConfig.CapDrop) !== canonicalJSON(['ALL']) ||
+      !actual.HostConfig.SecurityOpt.includes('no-new-privileges')) fail('Evaluation container configuration does not match the isolated execution contract.')
+  return { name, imageId, mounts, user, network: 'bridge', privileged: false, publishedPorts: [], verified: true }
 }
 
 // Docker receives exactly two mounts and a fixed capability/network policy.
@@ -28,27 +51,10 @@ export async function containerTurn(record, args, env, capture) {
   if (record.execution && (record.execution.imageId !== imageData.Id || record.execution.recipeHash !== recipeHash)) fail('Evaluation container image changed during this conversation.')
   record.execution ??= { method: 'docker', image, imageId: imageData.Id, recipeHash, turns: [] }
   const name = `bstack-eval-${randomUUID()}`
-  const mounts = [record.fixture.path, record.isolation.home].map(path => ({ Type: 'bind', Source: path, Destination: path, RW: true }))
-  const environment = Object.entries(env).filter(([key]) => key !== 'PATH').flatMap(([key, value]) => ['--env', `${key}=${value}`])
-  const user = `${process.getuid()}:${process.getgid()}`
-  const options = ['--name', name, '--user', user, '--network', 'bridge', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
-    '--cpus', '2', '--memory', '4g',
-    '--workdir', record.fixture.path, ...mounts.flatMap(mount => ['--mount', `type=bind,source=${mount.Source},target=${mount.Destination}`]), ...environment]
-  const turn = { name, imageId: imageData.Id, mounts, user, network: 'bridge', privileged: false, publishedPorts: [], verified: false }
+  const turn = { name, imageId: imageData.Id, verified: false }
   record.execution.turns.push(turn)
   try {
-    completed(await docker(['create', ...options, imageData.Id, 'node', '-e', 'setInterval(() => {}, 2147483647)']), 'creation')
-    const actual = JSON.parse(completed(await docker(['inspect', name]), 'inspection'))[0]
-    const observed = actual.Mounts.map(({ Type, Source, Destination, RW }) => ({ Type, Source, Destination, RW }))
-    // Docker orders mounts by destination independently of their argv order.
-    const byDestination = (left, right) => left.Destination.localeCompare(right.Destination)
-    if (canonicalJSON(observed.sort(byDestination)) !== canonicalJSON([...mounts].sort(byDestination)) || actual.Image !== imageData.Id || actual.Config.User !== user ||
-        actual.HostConfig.Privileged || actual.HostConfig.NetworkMode !== 'bridge' ||
-        actual.HostConfig.NanoCpus !== 2_000_000_000 || actual.HostConfig.Memory !== 4 * 1024 ** 3 ||
-        Object.keys(actual.HostConfig.PortBindings ?? {}).length || actual.HostConfig.VolumesFrom?.length ||
-        actual.HostConfig.CapAdd?.length || canonicalJSON(actual.HostConfig.CapDrop) !== canonicalJSON(['ALL']) ||
-        !actual.HostConfig.SecurityOpt.includes('no-new-privileges')) fail('Evaluation container configuration does not match the isolated execution contract.')
-    turn.verified = true
+    Object.assign(turn, await createContainer(name, imageData.Id, [record.fixture.path, record.isolation.home], record.fixture.path, env))
     completed(await docker(['start', name]), 'startup')
     if (record.fixture.name.startsWith('py-') && !record.fixtureRuntime) {
       const prepared = await docker(['exec', name,

@@ -11,7 +11,7 @@
   "T0.5.C5b": ["tests/scripts/package-check.test.mjs"],
   "T0.6": ["tests/scripts/package-check.test.mjs"],
   "T1.1": ["tests/scripts/fixtures.test.mjs"],
-  "T1.2": ["tests/scripts/eval.test.mjs", "tests/scripts/acceptance.test.mjs", "tests/scripts/child-contract.test.mjs"],
+  "T1.2": ["tests/scripts/eval.test.mjs", "tests/scripts/eval-judge.test.mjs", "tests/scripts/acceptance.test.mjs", "tests/scripts/child-contract.test.mjs"],
   "T1.3": ["tests/scripts/package-check.test.mjs", "tests/scripts/skill-skeleton.test.mjs"],
   "T1.4": ["tests/scripts/skill-skeleton.test.mjs", "tests/scripts/package-check.test.mjs"],
   "T1.5": ["tests/scripts/vision-board.test.mjs", "tests/scripts/package-check.test.mjs"],
