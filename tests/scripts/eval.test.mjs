@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdtemp, readFile, writeFile, rm, mkdir, chmod, readdir, rename, stat, symlink, cp } from 'node:fs/promises'
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { delimiter, dirname, join, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
@@ -423,6 +423,97 @@ test('batch delivers two scenarios three times, closes every container and appen
   }
   assert.equal(run(directory, 'batch', '--batch', batch.batch).data.data.appended, 0)
   assert.equal(await readFile(join(directory, 'ledger.jsonl'), 'utf8'), ledger)
+  const published = spawnSync(process.execPath, [join(root, 'scripts/eval.mjs'), 'batch', '--batch', batch.batch,
+    '--results', directory], { encoding: 'utf8', env: testEnvironment(directory) })
+  assert.equal(published.status, 0, published.stdout)
+  assert.ok(published.stdout.includes(`batch: ${batch.batch}`))
+  for (const id of batch.runIds) assert.ok(published.stdout.includes(`run: ${id}`))
+  assert.ok(published.stdout.includes('pending: none'))
+  assert.ok(published.stdout.includes(`ledger: ${join(directory, 'ledger.jsonl')}`))
+  assert.equal(await readFile(join(directory, 'ledger.jsonl'), 'utf8'), ledger)
+})
+
+for (const [name, file, replacement] of [
+  ['assertions', 'tests/eval/container/assertions.mjs',
+    'import { readFile } from "node:fs/promises"; const input = JSON.parse(await readFile(process.argv[1], "utf8")); console.log(JSON.stringify(input.action === "snapshot" ? {} : input.checks.map(check => ({ id: check.id, passed: true }))));\n'],
+  ['citation command', 'skills/repo-audit/scripts/commands/cite-check.mjs', 'export async function run() { return { data: {} } }\n'],
+  ['citation schema', 'skills/repo-audit/schemas/research-report.json', '{}\n']
+]) {
+  test(`batch grades with committed ${name} after the live implementation changes`, async t => {
+    const directory = await temporary(t)
+    const checkout = join(directory, 'checkout')
+    for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
+      'tests/fixtures', 'tests/eval/scenarios', 'tests/eval/container', 'tests/acceptance', 'node_modules/acorn']) {
+      await cp(join(root, path), join(checkout, path), { recursive: true })
+    }
+    const scenariosPath = join(checkout, 'tests/eval/scenarios/scenarios.json')
+    const scenarios = JSON.parse(await readFile(scenariosPath, 'utf8'))
+    scenarios.scenarios.find(scenario => scenario.id === 'clear-goals').checks = [
+      { id: 'fixture-unchanged', caseId: 'AC-4', question: 'Were fixture bytes preserved?', machine: { type: 'fixtureUnchanged' } },
+      { id: 'citations-valid', caseId: 'AC-36', question: 'Is the report valid?', machine: { type: 'citeCheck', report: '$HOME/research-report.json' } }
+    ]
+    await writeFile(scenariosPath, JSON.stringify(scenarios))
+    execFileSync('git', ['init', '--initial-branch=main'], { cwd: checkout, stdio: 'ignore' })
+    execFileSync('git', ['add', 'skills/repo-audit', 'tests/eval/container'], { cwd: checkout, stdio: 'ignore' })
+    execFileSync('git', ['-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid',
+      '-c', 'commit.gpgsign=false', 'commit', '-m', 'Committed graders'], { cwd: checkout, stdio: 'ignore' })
+    const { path, adapter } = await adapterFile(directory)
+    const host = join(directory, 'changing-host.mjs')
+    const report = { schemaVersion: 1, mode: 'invalid', host: 'test', capabilities: { subagents: false, web: false },
+      briefs: [{ id: 'documents', scope: [], findings: 'No citations.', limitations: [], files: [], web: [] }] }
+    await writeFile(host, `import { writeFile } from 'node:fs/promises';
+await import(${JSON.stringify(pathToFileURL(join(root, 'tests/inputs/evaluation-host.mjs')).href)});
+if (!process.argv.includes('--version')) {
+  await writeFile(${JSON.stringify(join(checkout, file))}, ${JSON.stringify(replacement)});
+  await writeFile(process.env.HOME + '/research-report.json', ${JSON.stringify(JSON.stringify(report))});
+}
+`)
+    adapter.args[0] = host
+    adapter.invocation.resumeArgs[0] = host
+    adapter.versionArgs[0] = host
+    await writeFile(path, JSON.stringify(adapter))
+    const captured = spawnSync(process.execPath, ['--import', join(root, 'tests/inputs/evaluation-capacity.mjs'),
+      join(checkout, 'scripts/eval.mjs'), 'batch', '--tier', 'smoke', '--scenario', 'clear-goals', '--stage', 'baseline',
+      '--mode', 'without', '--adapter', path, '--repeat', '2', '--concurrency', '1', '--results', directory, '--json'],
+    { encoding: 'utf8', env: testEnvironment(directory) })
+    const batch = JSON.parse(captured.stdout).data
+    assert.equal(batch.runIds.length, 2, captured.stdout)
+    for (const id of batch.runIds) {
+      const record = JSON.parse(await readFile(join(directory, id, 'run.json'), 'utf8'))
+      t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+      assert.equal(record.hostFailure, undefined, record.reason)
+      assert.deepEqual(record.machineResults, [{ id: 'fixture-unchanged', passed: true }, { id: 'citations-valid', passed: false }])
+      assert.ok(record.isolation.cleanedAt)
+    }
+    assert.deepEqual(batch.checks.map(check => [check.check, check.passes, check.runs]),
+      [['fixture-unchanged', 2, 2], ['citations-valid', 0, 2]])
+  })
+}
+
+test('batch default output identifies failed captures and explains continuation', async t => {
+  const directory = await temporary(t)
+  const { path } = await adapterFile(directory, 'wrong-session')
+  const captured = spawnSync(process.execPath, ['--import', join(root, 'tests/inputs/evaluation-capacity.mjs'),
+    join(root, 'scripts/eval.mjs'), 'batch', '--tier', 'smoke', '--scenario', 'ambiguous-idea', '--stage', 'baseline',
+    '--mode', 'without', '--adapter', path, '--repeat', '1', '--concurrency', '1', '--results', directory],
+  { encoding: 'utf8', env: testEnvironment(directory) })
+  assert.equal(captured.status, 2, captured.stdout)
+  const id = /^batch: ([0-9a-f-]{36})$/m.exec(captured.stdout)?.[1]
+  assert.ok(id, captured.stdout)
+  const batch = JSON.parse(await readFile(join(directory, 'batches', `${id}.json`), 'utf8'))
+  const record = JSON.parse(await readFile(join(directory, batch.runIds[0], 'run.json'), 'utf8'))
+  t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+  assert.ok(captured.stdout.includes(`run: ${record.id}`))
+  assert.ok(captured.stdout.includes(`pending: ${record.id}`))
+  assert.ok(captured.stdout.includes(record.reason))
+  assert.ok(captured.stdout.includes(`eval batch --batch ${id}`))
+  assert.ok(captured.stdout.includes('Failed captures require a fresh batch.'))
+  const finalized = spawnSync(process.execPath, [join(root, 'scripts/eval.mjs'), 'batch', '--batch', id,
+    '--results', directory], { encoding: 'utf8', env: testEnvironment(directory) })
+  assert.equal(finalized.status, 2, finalized.stdout)
+  assert.ok(finalized.stdout.includes(`batch: ${id}`))
+  assert.ok(finalized.stdout.includes(record.reason))
+  assert.ok(finalized.stdout.includes('Failed captures require a fresh batch.'))
 })
 
 test('batch blocks uncommitted candidate bytes before opening a host', async t => {
