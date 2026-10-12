@@ -30,6 +30,12 @@ This preserves the scoring criteria, fixture revision, package and toolchain, bu
 The shared skill now correctly blocks unapproved records, so no further skill instruction change is proposed.
 Removing the checker requirement from the request would not resolve the maintained project's own rule and is not proposed as a waiver.
 
+The commissioning decision approved exactly two additional ordered owner replies: first correct, bind and review the assessment against those already approved outcomes, then approve the exact presented record separately.
+The scenario now supplies those replies because its original single answer was exhausted before the new record approval boundary.
+The original reply, request, scoring criteria, maintained fixture and skill package remain unchanged.
+Both modes will be captured once with the amended script so their scenario inputs remain comparable.
+The failed comparison above remains historical evidence and is not converted into a pass.
+
 The recovered existing-project opening completed its audit and remains open at its selection boundary; its 21 tracked files are independently unchanged.
 It has not received its first author answer or a user-note edit yet.
 That capture is retained for continuation after the commissioning decision, with no active container or shell job.
