@@ -10,6 +10,16 @@ import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
 import { readAdapter, isolate, hostTurn, closeHost, redactEvidence, candidateSkillHash } from './lib/evaluation-host.mjs'
 import { scoreChecks, validateScore, correctedScore } from './lib/evaluation-scoring.mjs'
 import { readJudge, judgeInput, judgeAnswers } from './lib/evaluation-judge.mjs'
+import { affectedScenarios } from './lib/evaluation-impact.mjs'
+
+// Impact selection reads Git inputs without starting an evaluation host.
+const affectedHelp = 'eval affected --base <commit> [--json]\nLists changed paths, skill section keys and affected scenarios, including uncommitted changes. Unmapped keys select every scenario.\nExamples:\n  npm run eval -- affected --base HEAD\n  npm run eval -- affected --base main --json'
+
+async function affected(opts) {
+  const definitions = (await readJSON(join(root, 'tests/eval/scenarios/scenarios.json'))).scenarios
+  await scenario(definitions[0].id)
+  return affectedScenarios(root, opts.base, definitions)
+}
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
@@ -444,15 +454,19 @@ async function correct(opts, results) {
 
 try {
   const args = process.argv.slice(2)
-  if (args.includes('--help')) console.log(args[0] === 'batch' ? batchHelp : args[0] === 'judge' ? judgeHelp : batchHelp + '\n' + judgeHelp + '\n' + help)
+  if (args.includes('--help')) console.log(args[0] === 'affected' ? affectedHelp : args[0] === 'batch' ? batchHelp : args[0] === 'judge' ? judgeHelp : affectedHelp + '\n' + batchHelp + '\n' + judgeHelp + '\n' + help)
   else if (!args.length) fail('Select a batch, manual scenario, score or compare. ' + batchHelp + '\n' + help)
   else {
     const command = args[0].startsWith('--') ? 'start' : args.shift()
-    const allowed = { batch: ['batch', 'tier', 'repeat', 'concurrency', 'scenario', 'mode', 'stage', 'adapter'], start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], judge: ['run', 'judge', 'transcript'], score: ['run', 'answers', 'transcript'], correct: ['run', 'correction'], compare: ['without', 'with'] }
+    const allowed = { affected: ['base'], batch: ['batch', 'tier', 'repeat', 'concurrency', 'scenario', 'mode', 'stage', 'adapter'], start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], judge: ['run', 'judge', 'transcript'], score: ['run', 'answers', 'transcript'], correct: ['run', 'correction'], compare: ['without', 'with'] }
     if (!Object.hasOwn(allowed, command)) fail(`Unknown command: ${command}`, 'usage-error')
     const opts = options(args, [...allowed[command], 'results'], command === 'start' ? ['manual'] : [])
     const results = resolve(opts.results ?? defaultResults)
-    const data = await ({ batch, start, turn, close, judge, score, correct, compare })[command](opts, results)
+    const data = await ({ affected, batch, start, turn, close, judge, score, correct, compare })[command](opts, results)
+    if (!opts.json && command === 'affected') console.log([
+      ...data.paths.map(path => `changed: ${path}`), ...data.keys.map(key => `key: ${key}`),
+      ...data.unmapped.map(key => `unmapped: ${key}`), ...data.scenarios.map(id => `scenario: ${id}`)
+    ].join('\n'))
     if (!opts.json && command === 'judge') console.log(`answers: ${data.answers}\n${data.reason}`)
     if (!opts.json && command === 'start') console.log(JSON.stringify(data, null, 2))
     if (!opts.json && command === 'batch') console.log([

@@ -325,8 +325,10 @@ Passing checks alone do not replace a successful probe comparison for an outside
 The evaluation runner includes scenarios, all 75 acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
 See the [evaluation contract](docs/evaluation.md) for ordered reply delivery, bounded runs, throwaway authentication, scoring and comparison, and [automatic batches](docs/evaluation.md#automatic-batches-and-ledger) for repeated scenarios and aggregate ledger results.
+Use [impact selection](docs/evaluation.md#impact-selection-and-comparison) to list scenarios affected by changes since a base commit.
 
 ```sh
+npm run eval -- affected --base <commit>
 npm run eval -- --manual --scenario ambiguous-idea --mode without --stage baseline --agent <agent> --model <model>
 npm run eval -- --scenario ambiguous-idea --mode without --stage baseline --adapter tests/eval/adapters/codex.json
 npm run eval -- turn --run <id> --answer 1
