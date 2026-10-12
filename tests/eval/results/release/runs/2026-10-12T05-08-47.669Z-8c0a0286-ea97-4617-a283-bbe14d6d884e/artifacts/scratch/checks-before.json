@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "contributing",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "native",
+      "sourceId": "contributing",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Preserve balanced postings and use native Python checks; keep any starting failures visible.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "unit",
+      "role": "protection",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "lint",
+      "role": "protection",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "protection",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    }
+  ]
+}

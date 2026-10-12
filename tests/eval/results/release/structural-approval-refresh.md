@@ -15,6 +15,8 @@ Baselines are reused only when their fixture, request, scripted answers, invocat
 | Python main-thread research | [0/3](runs/2026-10-12T00-05-31.655Z-a2ad260b-af0a-428a-8e0a-d5fdfcce6348/run.json) | [3/3](runs/2026-10-12T04-57-08.452Z-cca21275-7e53-4120-8fcd-975454844701/run.json) | [Passed](research-main-python-structural-comparison.json) | [37 citations verified](runs/2026-10-12T04-57-08.452Z-cca21275-7e53-4120-8fcd-975454844701/artifacts/independent-verification.json) |
 | TypeScript main-thread research | [0/3](runs/2026-10-11T23-59-20.195Z-b3df9a3f-8bb2-41b0-bd6a-dfff0defdcdf/run.json) | [3/3](runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/run.json) | [Passed](research-main-typescript-structural-comparison.json) | [67 citations verified](runs/2026-10-12T04-57-10.357Z-a654bbce-6af2-4fa9-b6f8-fca745c4fdff/artifacts/independent-verification.json) |
 | Python existing-repo audit | [3/4](runs/2026-10-11T23-21-43.463Z-7df859b5-5cba-42e3-9ce6-3488363289f2/run.json) | [4/4](runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/run.json) | [Passed](existing-repo-python-structural-comparison.json) | [11 tracked files unchanged](runs/2026-10-12T04-58-45.555Z-1fff6179-4cc7-4f22-835a-9608df8a6659/artifacts/independent-verification.json) |
+| Clear goals | [2/2](runs/2026-10-12T00-16-39.505Z-c5f6296f-448a-409f-a281-b6747c9e2bfd/run.json) | [2/2](runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/run.json) | [Passed](clear-goals-structural-comparison.json) | [Three documents unchanged](runs/2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f/artifacts/independent-verification.json) |
+| Selected rule relocation | [1/1](runs/2026-10-12T05-08-46.399Z-bc781f92-81bc-45fe-8cf9-bb3d58c4b305/run.json) | [1/1](runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/run.json) | [Passed](selected-rule-relocation-structural-comparison.json) | [Baseline exact move](runs/2026-10-12T05-08-46.399Z-bc781f92-81bc-45fe-8cf9-bb3d58c4b305/artifacts/independent-verification.json), [installed exact move](runs/2026-10-12T05-08-47.669Z-8c0a0286-ea97-4617-a283-bbe14d6d884e/artifacts/independent-verification.json) |
 
 ## Recovery of the interrupted maintenance baseline
 
@@ -54,3 +56,11 @@ Recommendations retain CONTRIBUTING.md as the existing standards authority, the 
 They propose stronger native boundary coverage and public journey protection without applying changes.
 
 Remaining scenarios, automated procedures, full-suite capture and release acceptance are still pending.
+
+The clear-goals run consumes both scripted answers without repeating the settled goal or terminology interviews.
+Its observed loading trace never opens the vision, intent-interview or domain-language references.
+The selected-rule runs both wait for exact approval, move the two original ownership sentences verbatim into one authority, and replace the original rule with a valid section link.
+Independent byte checks confirm the unrelated guidance, Python source and original tests remain unchanged.
+Both runs pass the unchanged two native unit tests and Ruff, while preserving the existing private-import boundary failure.
+The installed run additionally executes the real CSV/JSON export and public import journey; the baseline does not claim that additional journey.
+The design-derived relocation rubric passes on both sides without requiring overall project readiness.

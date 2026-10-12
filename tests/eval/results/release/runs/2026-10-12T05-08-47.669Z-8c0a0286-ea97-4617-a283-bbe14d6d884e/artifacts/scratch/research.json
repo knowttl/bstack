@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "CONTRIBUTING.md"
+      ],
+      "findings": "CONTRIBUTING.md:3-4 contains the selected public-ledger ownership rule; line 5 requires native Python checks and balanced postings. CODING_STANDARDS.md is absent. The owner selected relocation only.",
+      "limitations": [
+        "Bounded final checkpoint; main-thread review chosen because only a few files are relevant."
+      ],
+      "files": [
+        {
+          "location": "CONTRIBUTING.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "app.py",
+        "ledger/__init__.py",
+        "ledger/book.py"
+      ],
+      "findings": "ledger/__init__.py exports Ledger; ledger/book.py owns entries and balances. app.py imports ledger._internal; this is existing behaviour outside selected scope.",
+      "limitations": [
+        "Bounded final checkpoint; main-thread review chosen because only a few files are relevant."
+      ],
+      "files": [
+        {
+          "location": "app.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972"
+          }
+        },
+        {
+          "location": "ledger/__init__.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+          }
+        },
+        {
+          "location": "ledger/book.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "pyproject.toml",
+        "test_ledger.py",
+        "boundaries.py"
+      ],
+      "findings": "Prepared .venv provides Python 3.12.15 and Ruff 0.14.0. unittest covers balanced postings and negative-posting rejection. boundaries.py checks imports and cycles; app.py private import is expected to fail its existing check.",
+      "limitations": [
+        "Bounded final checkpoint; main-thread review chosen because only a few files are relevant."
+      ],
+      "files": [
+        {
+          "location": "pyproject.toml:1",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "test_ledger.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        },
+        {
+          "location": "boundaries.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}
