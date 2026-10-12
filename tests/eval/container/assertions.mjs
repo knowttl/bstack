@@ -28,6 +28,16 @@ async function snapshot() {
   return { files, status }
 }
 
+function overlaps(left, right) {
+  if (!left.length) return right.every(part => part === '**')
+  if (!right.length) return left.every(part => part === '**')
+  if (left[0] === '**') return overlaps(left.slice(1), right) || overlaps(left, right.slice(1))
+  if (right[0] === '**') return overlaps(left, right.slice(1)) || overlaps(left.slice(1), right)
+  const wildcard = part => /[*?\[{}]/.test(part)
+  return (matchesGlob(left[0], right[0]) || matchesGlob(right[0], left[0]) ||
+    (wildcard(left[0]) && wildcard(right[0]))) && overlaps(left.slice(1), right.slice(1))
+}
+
 function opened(machine) {
   const paths = []
   let observed = false
@@ -36,15 +46,14 @@ function opened(machine) {
     const item = event.item
     if (item?.type === 'command_execution') {
       observed = true
-      if (item.exit_code !== 0) continue
-      // Inspect read commands only; assistant prose and command output are not access evidence.
+      if (machine.type === 'opened' && item.exit_code !== 0) continue
       function commands(source) {
         for (const command of source.split(/(?:&&|\|\||[;|\n])/)) {
-          if (!/(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)(?:\s|$)/.test(command)) continue
+          if (machine.type === 'opened' && !/(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)(?:\s|$)/.test(command)) continue
           for (const match of command.matchAll(/"([^"]+)"|'([^']+)'|([^\s]+)/g)) {
             const token = match[1] ?? match[2] ?? match[3]
             paths.push(token)
-            if (/\s/.test(token) && /(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)\s/.test(token)) commands(token)
+            if (/\s/.test(token) && (machine.type === 'notOpened' || /(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)\s/.test(token))) commands(token)
           }
         }
       }
@@ -61,6 +70,14 @@ function opened(machine) {
   // Match skill-relative paths too, because globstar excludes hidden install parents.
   const matches = pattern => paths.some(path => {
     const normal = path.replaceAll('\\', '/')
+    if (machine.type === 'notOpened') {
+      if (normal === '.' || normal === '..') return true
+      const relative = normal.replace(/^.*\/repo-audit(?=\/|$)/, 'repo-audit')
+      const scoped = relative === 'repo-audit' || relative.startsWith('repo-audit/')
+      const forbidden = scoped ? pattern.replace(/^\*\*\/(?:repo-audit\/)?/, 'repo-audit/') : pattern
+      return overlaps(forbidden.split('/').filter(Boolean),
+        [...relative.split('/').filter(Boolean), ...(normal.includes('/') ? ['**'] : [])])
+    }
     return matchesGlob(normal, pattern) || matchesGlob(normal.replace(/^.*\/repo-audit\//, 'repo-audit/'), pattern)
   })
   return observed && (machine.type === 'opened' ? machine.patterns.every(matches) : !machine.patterns.some(matches))
