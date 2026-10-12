@@ -145,6 +145,7 @@ npm run eval -- batch --batch <id>
 An optional comma-separated `--scenario` subset must stay within the selected tier.
 This explicit smoke set precedes scenario-owned tier metadata and the release gate.
 `--mode` and `--adapter` are required; `--repeat` defaults to 5 and must be a positive integer.
+Each scenario's `fixture` declares its starting state; an optional `mode` constraint overrides the requested mode for that scenario.
 `--concurrency` defaults to 6 and must be between 1 and 6, matching the container resource budget.
 The runner checks free disk and available memory once before creating batch resources, requiring 20 GB disk and 4 GiB memory per concurrency slot.
 `--stage` defaults to each scenario's last checkpoint, including discovery for research scenarios, and an explicit checkpoint must be supported by every selected scenario.
@@ -154,6 +155,8 @@ Each run starts with only its opening request, delivers scripted answer i after 
 Failed host turns stop that run and close its isolated home; other batch jobs continue.
 Every attempt remains in the batch, including failed captures and failed checks.
 The batch ID, all run IDs and errors are saved beneath the results directory in `batches/<id>.json`.
+This private operational inventory also retains each run's fixture path in `fixtures`, so callers can preserve outputs and remove the disposable repositories after conversations close.
+Do not publish the private inventory; public run evidence and ledger entries redact fixture locations.
 Machine check counts appear immediately in the command result, alongside pending semantic counts.
 The command remains blocked until every run has valid explicit scoring and verified cleanup.
 Use `eval score` with each run's captured `conversation.txt` and semantic answers, then run `eval batch --batch <id>` with the same `--results` directory to finalize without new captures.
@@ -187,10 +190,12 @@ Installer failure blocks the run before any agent turn.
 Final requests explicitly name the active final checkpoint.
 `final-new-project` and `final-existing-repo` cover the complete new-project and existing-repo paths respectively.
 Re-audit, extension and maintenance use separate fresh conversations on the resulting maintained fixture.
+Their declared `maintained-ts-shop` fixture builds the existing maintained overlay afresh per run, with approved guidance, passing native checks, the receipt note and an uncommitted export note.
 The original intent and foundation scenarios retain their narrower approval scripts and are not full-path evidence.
 Final adapter follow-ups can pass `--repo <disposable-maintained-root>` to reuse an explicit fixture rather than rebuild its original defects.
 The record retains its starting commit and working-tree state, and the caller owns preservation and cleanup.
 Use `final-independent-extension` in `without` mode for a fresh conversation with no discoverable repo-audit and only the resulting target guidance.
+Its scenario mode constraint keeps repo-audit undiscoverable even when a batch requests `--mode with`, and its ledger entries record the effective `without` mode.
 Use `final-maintained-maintenance` in `with` mode for a separate installed, bounded maintenance-only conversation on that maintained fixture.
 Use `final-repeat-audit` for a fresh installed reassessment preserving the uncommitted user note.
 The [scenario registry](../tests/eval/scenarios/scenarios.json) owns the scripted fixture author answers and their supervisor-delegated provenance; these do not change bstack product scope.

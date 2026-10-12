@@ -50,6 +50,7 @@ async function start(opts, results, frozen = null) {
   for (const name of ['scenario', 'mode', 'stage', ...(opts.adapter ? [] : ['agent', 'model'])]) if (!opts[name]?.trim()) fail(`Missing --${name}`, 'usage-error')
   if (!['without', 'with'].includes(opts.mode)) fail('Mode must be without or with.', 'usage-error')
   const definition = frozen ? structuredClone(frozen.definition) : await scenario(opts.scenario)
+  opts.mode = definition.mode ?? opts.mode
   if (!definition.checkpoints.includes(opts.stage)) fail(`Unknown checkpoint: ${opts.stage}`, 'usage-error')
   const adapter = frozen ? structuredClone(frozen.adapter) : opts.adapter ? await readAdapter(resolve(opts.adapter), definition.id) : null
   if (!opts.manual && !adapter) fail('Automatic execution requires --adapter. Use --manual for unsupported hosts.')
@@ -178,7 +179,7 @@ async function batch(opts, results) {
   const selected = opts.scenario ? opts.scenario.split(',') : opts.tier === 'smoke' ? smoke : registry.scenarios.map(item => item.id)
   if (new Set(selected).size !== selected.length) fail('Scenario subsets must contain unique comma-separated IDs.', 'usage-error')
   const candidate = (await child('git', ['rev-parse', 'HEAD'])).stdout.trim()
-  const skillHash = opts.mode === 'with' ? candidateSkillHash(candidate) : null
+  let skillHash = null
   const frozen = {}
   for (const id of selected) {
     const definition = await scenario(id)
@@ -187,27 +188,30 @@ async function batch(opts, results) {
     const adapter = await readAdapter(resolve(opts.adapter), id)
     const stage = opts.stage ?? definition.checkpoints.at(-1)
     const fixtureRevision = await fixtureHash(definition.fixture)
-    frozen[id] = { candidate, skillHash, definition, adapter, stage, fixtureRevision }
+    const mode = definition.mode ?? opts.mode
+    if (mode === 'with') skillHash ??= candidateSkillHash(candidate)
+    frozen[id] = { candidate, skillHash: mode === 'with' ? skillHash : null, definition, adapter, stage, fixtureRevision, mode }
   }
   await capacity(concurrency)
   const record = { schemaVersion: 1, id: randomUUID(), date: new Date().toISOString(),
     candidate, skillHash, inputs: Object.fromEntries(selected.map(id => {
-      const { definition, adapter, stage, fixtureRevision } = frozen[id]
+      const { definition, adapter, stage, fixtureRevision, mode } = frozen[id]
       return [id, batchInputs({ scenario: definition, adapter, adapterHash: hashBytes(canonicalJSON(adapter)),
         criteriaHash: hashBytes(canonicalJSON(definition.checks)), fixture: { revision: fixtureRevision },
-        agent: adapter.invocation.agent, model: adapter.invocation.model, stage, mode: opts.mode,
-        request: openingRequest({ stage, invocation: opts.mode === 'with' && definition.invocation === 'explicit' ? adapter.invocation.explicit : null }, definition) })]
+        agent: adapter.invocation.agent, model: adapter.invocation.model, stage, mode,
+        request: openingRequest({ stage, invocation: mode === 'with' && definition.invocation === 'explicit' ? adapter.invocation.explicit : null }, definition) })]
     })), tier: opts.tier, mode: opts.mode,
-    stage: opts.stage ?? null, repeat: Number(opts.repeat), concurrency, scenarios: selected, runIds: [], errors: [] }
-  await mkdir(join(results, 'batches'), { recursive: true })
-  await writeFile(join(results, 'batches', `${record.id}.json`), JSON.stringify(record, null, 2) + '\n', { flag: 'wx' })
+    stage: opts.stage ?? null, repeat: Number(opts.repeat), concurrency, scenarios: selected, runIds: [], fixtures: [], errors: [] }
+  await mkdir(join(results, 'batches'), { recursive: true, mode: 0o700 })
+  await writeFile(join(results, 'batches', `${record.id}.json`), JSON.stringify(record, null, 2) + '\n', { flag: 'wx', mode: 0o600 })
   const jobs = selected.flatMap(id => Array.from({ length: record.repeat }, () => id))
   await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, async () => {
     while (jobs.length) {
       const id = jobs.shift()
       try {
-        let run = await start({ scenario: id, mode: opts.mode, stage: frozen[id].stage, adapter: opts.adapter }, results, frozen[id])
+        let run = await start({ scenario: id, mode: frozen[id].mode, stage: frozen[id].stage, adapter: opts.adapter }, results, frozen[id])
         record.runIds.push(run.id)
+        record.fixtures.push({ runId: run.id, scenario: id, path: run.fixture.path })
         try {
           while (!run.hostFailure && run.nextAnswer <= run.scenario.answers.length) {
             run = await turn({ run: run.id, answer: String(run.nextAnswer) }, results)
@@ -234,14 +238,14 @@ async function finishBatch(batch, results) {
     if (!group.length) continue
     const first = group[0]
     const execution = group.find(run => !run.hostFailure)?.execution
-    if (group.some(run => run.sourceRevision !== batch.candidate || run.mode !== batch.mode || run.stage !== (batch.stage ?? first.scenario.checkpoints.at(-1)) ||
-        batchInputs(run) !== batch.inputs?.[id] || (!run.hostFailure && run.isolation.skillHash !== batch.skillHash) ||
+    if (group.some(run => run.sourceRevision !== batch.candidate || run.mode !== (first.scenario.mode ?? batch.mode) || run.stage !== (batch.stage ?? first.scenario.checkpoints.at(-1)) ||
+        batchInputs(run) !== batch.inputs?.[id] || (!run.hostFailure && run.isolation.skillHash !== (run.mode === 'with' ? batch.skillHash : null)) ||
         (!run.hostFailure && ['imageId', 'recipeHash', 'toolchain'].some(key => canonicalJSON(run.execution?.[key]) !== canonicalJSON(execution?.[key]))))) fail('Batch runs no longer match their candidate and execution inputs.')
     for (const check of first.scenario.checks) {
       const verdicts = group.map(run => run.caseResults.find(item => item.id === check.id) ?? run.machineResults?.find(item => item.id === check.id))
       entries.push({ date: batch.date, candidate: batch.candidate, tier: batch.tier, model: first.model,
         adapterHash: first.adapterHash, fixtureHash: first.fixture.revision, criteriaHash: first.criteriaHash,
-        scenario: id, mode: batch.mode, check: check.id, caseId: check.caseId,
+        scenario: id, mode: first.mode, check: check.id, caseId: check.caseId,
         passes: verdicts.filter(item => item?.passed === true).length, runs: group.length,
         pending: verdicts.filter(item => typeof item?.passed !== 'boolean').length, runIds: group.map(run => run.id).sort() })
     }
