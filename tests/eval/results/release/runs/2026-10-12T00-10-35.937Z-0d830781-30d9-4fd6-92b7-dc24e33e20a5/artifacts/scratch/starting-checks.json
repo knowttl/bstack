@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "bug-fix",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "contentHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "total",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Checkout through the real local HTTP journey returns status 201 and total 10.",
+      "userJourney": true
+    },
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "Web accesses core only through its public interface.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "types",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        "journey.mjs",
+        "unit.test.mjs",
+        "boundaries.mjs"
+      ]
+    },
+    {
+      "id": "unit",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "total"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        "journey.mjs",
+        "unit.test.mjs",
+        "boundaries.mjs"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "reproduction",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "total"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        "journey.mjs",
+        "unit.test.mjs",
+        "boundaries.mjs"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "DESIGN.md",
+        "AGENTS.md",
+        "journey.mjs",
+        "unit.test.mjs",
+        "boundaries.mjs"
+      ]
+    }
+  ]
+}

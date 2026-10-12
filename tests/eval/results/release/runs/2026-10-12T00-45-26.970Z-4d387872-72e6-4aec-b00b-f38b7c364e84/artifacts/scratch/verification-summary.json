@@ -1,0 +1,82 @@
+{
+  "head": "4a1566e6525baa2c51fcd9350551f54cdb7ad39e",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "changedPaths": [
+    ".bstack/assessment.json",
+    ".bstack/project.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "packages/web/public.ts",
+    "unit.test.mjs"
+  ],
+  "preservedPaths": [
+    "journey.mjs",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "glossary.md",
+    "docs/repo-audit.md",
+    ".bstack/bin/bstack-check.mjs"
+  ],
+  "results": {
+    "local": {
+      "status": "passed",
+      "sourceRevision": "4a1566e6525baa2c51fcd9350551f54cdb7ad39e",
+      "fingerprint": "ef35e0182eddccbe4e08be42ef155faf0d26434b38e9b564781a9244f5b4d34d",
+      "previousPolicyStatus": "passed",
+      "resourceChecks": [
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T00:47:10.442Z",
+          "availableMemoryBytes": 12307398656,
+          "freeDiskBytes": 23839690752,
+          "load1m": 11.7,
+          "existingNodeSuites": 1,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        },
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T00:47:10.442Z",
+          "availableMemoryBytes": 12307398656,
+          "freeDiskBytes": 23839690752,
+          "load1m": 11.7,
+          "existingNodeSuites": 1,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        }
+      ],
+      "artifact": "[isolated-home][scratch-path]"
+    },
+    "clone": {
+      "status": "passed",
+      "sourceRevision": "4a1566e6525baa2c51fcd9350551f54cdb7ad39e",
+      "fingerprint": "ef35e0182eddccbe4e08be42ef155faf0d26434b38e9b564781a9244f5b4d34d",
+      "previousPolicyStatus": "passed",
+      "resourceChecks": [
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T00:47:30.085Z",
+          "availableMemoryBytes": 12227739648,
+          "freeDiskBytes": 23801610240,
+          "load1m": 15.86,
+          "existingNodeSuites": 1,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        },
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T00:47:30.085Z",
+          "availableMemoryBytes": 12227739648,
+          "freeDiskBytes": 23801610240,
+          "load1m": 15.86,
+          "existingNodeSuites": 1,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        }
+      ],
+      "artifact": "[isolated-home][scratch-path]"
+    }
+  }
+}
