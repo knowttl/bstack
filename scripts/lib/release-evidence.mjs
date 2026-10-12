@@ -117,6 +117,7 @@ export async function releaseGate(opts, results) {
           new Set(batches.flatMap(row => row.runIds)).size !== batches.length * 5) fail(`Incompatible or overlapping smoke batches: ${key(first)}`)
       const baseline = ledger.findLast(row => row.tier === 'smoke' && row.mode === 'without' && key(row) === key(first) && identity(row) === identity(first) && row.runs === 5)
       if (!baseline || baseline.caseId !== check.caseId) { pending.push({ scenario: definition.id, check: check.id, reason: 'Missing comparable five-run baseline.' }); continue }
+      if (baseline.runIds.some(id => batches.some(row => row.runIds.includes(id)))) fail(`Baseline and with-skill runs overlap: ${key(first)}`)
       const total = { scenario: definition.id, check: check.id, caseId: check.caseId,
         passes: batches.reduce((sum, row) => sum + row.passes, 0), runs: batches.length * 5,
         baseline: { passes: baseline.passes, runs: baseline.runs }, identity: identity(first),
@@ -135,7 +136,8 @@ export async function releaseGate(opts, results) {
       }
       const old = previous?.checks.find(row => key(row) === key(first) && row.identity === identity(first))
       // Each smoke batch has five runs, so the last two batches give an exact ten-run history.
-      const recent = [...(old?.recent ?? []), ...batches.map(row => ({ passes: row.passes, runIds: row.runIds }))]
+      const recent = [...(old?.recent ?? []), ...history.filter(row => row.check === check.id && row.runs === 5 && identity(row) === identity(first))
+        .map(row => ({ passes: row.passes, runIds: row.runIds }))]
         .filter((row, index, all) => all.findIndex(other => canonicalJSON([...other.runIds].sort()) === canonicalJSON([...row.runIds].sort())) === index).slice(-2)
       total.recent = recent
       if (batches.at(-1).passes >= 4 && recent.reduce((sum, row) => sum + row.passes, 0) >= recent.length * 4) gatingSet.push(key(first))
