@@ -30,4 +30,5 @@ Their foreground commands have now returned normally, and both conversations rem
 The installed run `2026-10-12T05-25-52.060Z-7f576194-654f-4897-8a4a-b5d34b16f389` retained its opening audit and awaits selection.
 The baseline `2026-10-12T05-25-53.112Z-af0a742a-2bf0-470d-b113-303e5d65b9c7` retained its opening plus replies 1 and 2, and awaits reply 3.
 Neither is scored or claimed as complete.
-The representative-extension conversation also remains open at reply 2; no agent command remains running.
+After the targeted guidance repair was authorized, the installed full-path opening and representative-extension partial capture were exported and closed without scoring because their installed package became stale.
+The unchanged amended full-path baseline remains open at reply 3; no agent command remains running.

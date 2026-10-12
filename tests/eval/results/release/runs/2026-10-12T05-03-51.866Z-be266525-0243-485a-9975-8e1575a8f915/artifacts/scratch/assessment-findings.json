@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "647cb9e280cdb8c578dede85b6f7ae34e13dd7be"
+  },
+  "nextChange": "Selected quantity for the approved public quote example",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Public quote example and preserved checkout total 10"
+    },
+    {
+      "id": "owner",
+      "pointer": "User maintenance request",
+      "intent": "documented",
+      "summary": "quote() = 12 and quote(2) = 24; preserve original assertion, journey and note"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Portable maintenance assessment must be committed after exact owner approval",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": null,
+      "principle": "Use approved design and public core interface",
+      "consequence": "Cannot quote a selected quantity through the representative example",
+      "fix": "Create the reviewed assessment for the committed quote extension",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "npm run check and complete standalone checker locally and in clean different-root clone",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "owner"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "quote() = 12; quote(2) = 24; real checkout total 10"
+  ],
+  "execution": [],
+  "limitations": [
+    "Portable assessment requires exact owner approval under the invoked maintenance procedure."
+  ]
+}
