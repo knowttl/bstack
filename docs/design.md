@@ -1156,8 +1156,22 @@ The tests run in whatever agent and model the builder or user has.
 There is no host or model matrix, and passing in the current agent is enough.
 The release notes record the agent and model of the last test run, as a fact rather than a support limit.
 
-Each evaluation scenario has yes or no checks taken from its acceptance cases.
-The skill passes a scenario when no check that passed without the skill fails with it, and either more checks pass with the skill or every check already passed without it.
+Each evaluation scenario has yes or no checks taken from its acceptance cases and records pass counts over repeated comparable runs.
+Each with-skill check passes at 3 of 5; a lower count requires five confirmation runs and passes at 6 of 10 pooled runs.
+For each check with a baseline of at most 2 of 5, the margin is w >= b + 2 of 5.
+After confirmation, compare pooled rates: the with-skill rate must exceed the baseline rate by at least 2/5 (0.4).
+For example, 7/10 against 1/5 meets both rules; 6/10 against 2/5 meets the threshold and fails the margin.
+Baselines that reach 3 of 5 require the with-skill threshold without an additional margin.
+
+Release checks freeze one candidate commit and use the ten smoke scenarios identified by `tier` in the scenario registry.
+The full tier includes every scenario, runs weekly and before candidates, and records failures without blocking.
+Only hard breaks and regressions block; other failures are published as known issues with measured rates.
+Hard breaks are failing deterministic tests, package checks, registry checks or installation; changed read-only fixture bytes or writes before scripted approval; failed isolation; failed explicit invocation (AC-43) or implicit invocation starting the skill (AC-42); and at least two non-infrastructure agent process failures in five runs.
+A regression is a smoke check in the last release's gating set that fails the threshold after confirmation or the per-check margin.
+Later gating sets contain checks at 4 or 5 of 5 in the latest smoke batch and at least 80% across their latest ten compatible measured runs, or the available history until ten exist.
+The first ledger release has no regressions and seeds its gating set from its own checks at 4 or 5 of 5, without applying historical reliability.
+Gate output lives in `tests/eval/results/release/<version>.json`; registry procedures do not assert release status.
+Missing smoke evidence or confirmation leaves qualification blocked rather than proving a failure.
 
 ### Bundled sources and runtime
 
@@ -1251,7 +1265,7 @@ The phase checks use only components built in that phase or an earlier phase.
 | 3. Enforcement | Native rule setup, custom rules where needed, scoped debt handling and maintained check integration | Valid cases pass, and seeded violations fail through the maintained command in disposable local copies |
 | 3a. Maintenance | Change-evidence validator, document-impact assessment and native check integration | Unreviewed or stale input states fail, relevant docs receive an update or a checked no-impact explanation |
 | 4. Installation | Install, update, removal, explicit invocation and full-path integration | Clean installation protects user edits, both complete paths pass, and a representative extension uses the maintained constraints |
-| 5. Release | Worked examples, limitations and final end-to-end checks | Release evidence covers the acceptance cases below |
+| 5. Release | Worked examples, limitations and final end-to-end checks | Release evidence measures every acceptance case; hard breaks and regressions block, other failures are published as known issues with their measured rates |
 
 ### Implementation steps
 
@@ -1357,7 +1371,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 43. In the current agent, the explicit command starts repo-audit.
 44. The package check fails when the frontmatter setting or `agents/openai.yaml` is missing.
 45. The package check fails on a seeded unexplained constant and a seeded step with no completion criterion.
-46. Each evaluation scenario records the agent's result without the skill and with it, and the skill improves every scenario that the model did not already pass.
+46. Each evaluation scenario records pass rates over repeated runs without the skill and with it, and the skill meets the margin on every check that the model did not already pass.
 47. The skill folder contains no per-language rule set, lint preset or tool list.
 48. Each language-specific recommendation cites its source and read date, and a run with no web access marks them not researched.
 49. A repo with a repo-owned `CLAUDE.md`, including a stub that only imports `AGENTS.md`, gets a finding with a proposed merge of its equivalent content into `AGENTS.md` and the Claude Code version limit. Distinct scoped instructions keep their meaning, and local variants inside the repo are reported as shadowing without modification. Instruction files outside the repo are neither inspected nor reported.
