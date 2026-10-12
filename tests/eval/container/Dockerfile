@@ -16,9 +16,9 @@ RUN ln -s /opt/git/bin/git /usr/local/bin/git
 RUN mkdir -p /opt/google/chrome && ln -s /usr/bin/chromium /opt/google/chrome/chrome
 ENV CHROME_DEVTOOLS_AXI_MCP_PATH="/usr/local/lib/node_modules/chrome-devtools-mcp/build/src/bin/chrome-devtools-mcp.js"
 ENV CHROME_DEVTOOLS_AXI_CHROME_ARGS="--no-sandbox --disable-dev-shm-usage"
-RUN npm install --global npm@11.13.0 @openai/codex@0.162.1 lavish-axi@0.1.78 chrome-devtools-axi@0.1.34 chrome-devtools-mcp@1.10.1 \
+RUN npm install --global npm@11.13.0 @openai/codex@0.162.1 @anthropic-ai/claude-code@2.1.296 lavish-axi@0.1.78 chrome-devtools-axi@0.1.34 chrome-devtools-mcp@1.10.1 \
     && npm cache clean --force \
-    && node --version && npm --version && git --version && codex --version
+    && node --version && npm --version && git --version && codex --version && claude --version
 ENV UV_PYTHON_INSTALL_DIR="/opt/python"
 RUN uv python install 3.12.15 \
     && UV_CACHE_DIR=/opt/uv-cache uv venv /opt/ruff-env --python 3.12.15 \

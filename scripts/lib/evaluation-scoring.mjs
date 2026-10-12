@@ -4,8 +4,9 @@ import { text, object, array, readJSON, fail } from './evaluation.mjs'
 import { validateData, validateIds } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 
-export const scoreChecks = array(object({ id: text, passed: { type: 'boolean' },
-  startLine: { type: 'integer' }, endLine: { type: 'integer' } }))
+export const scoreChecks = array({ ...object({ id: text, passed: { type: 'boolean' },
+  startLine: { type: 'integer' }, endLine: { type: 'integer' }, companionRunId: text }),
+  required: ['id', 'passed', 'startLine', 'endLine'] })
 
 export function validateScore(record, answers, transcript) {
   validateIds(answers.checks, '$/checks')

@@ -361,7 +361,7 @@ Tick each task when its "Done when" commands pass.
     - [x] C7a Acceptance registry and manual evaluation interface ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
     - [x] C7b Current-host Codex adapter, fresh state and discovery isolation, resumed scripted answers and three human-scored real baselines ([contract](evaluation.md), [evidence](../tests/eval/results/tasks/T1.2.json))
     - [x] Automatic batch replies and aggregate ledger finalization: fake-host coverage runs two scenarios three times, verifies ordered replies and container cleanup, retains failed semantic grades in the rates, and keeps failed captures unpublished.
-      Smoke uses the approved ten-scenario set until scenario-owned tiers arrive; semantic grading uses explicit scores until judge grading arrives.
+      See the [evaluation contract](evaluation.md#automatic-batches-and-ledger) for the current smoke set and scoring workflow.
       Batch evidence counts every repetition; the legacy complete-release backend remains until the release gate replaces it.
   - [x] T1.3 Write the first `SKILL.md`: bounded checklists, inline safeguards and labelled unavailable tooling ([gap map](../tests/eval/results/gap-map.md), [evidence](../tests/eval/results/tasks/T1.3.json))
   - [x] T1.4 Bundle the interview and domain-language modules - C9a flattens decision rounds, the confirmed-intent rubric, glossary discovery and formats, and separate decision records. Registered packaging search and local checks are recorded in `tests/eval/results/tasks/T1.4.json`. AC-9 and AC-12 agent checks remain assigned to T1.7.
