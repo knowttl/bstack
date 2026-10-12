@@ -1,0 +1,11 @@
+{
+  "command": [
+    "git",
+    "status",
+    "--porcelain"
+  ],
+  "cwd": "[isolated-home][scratch-path]",
+  "exitCode": 0,
+  "stdout": "",
+  "stderr": ""
+}

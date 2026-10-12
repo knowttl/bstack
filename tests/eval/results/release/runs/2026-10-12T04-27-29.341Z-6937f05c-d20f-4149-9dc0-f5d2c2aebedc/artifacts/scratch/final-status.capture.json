@@ -1,0 +1,11 @@
+{
+  "command": [
+    "git",
+    "status",
+    "--short"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "",
+  "stderr": ""
+}

@@ -1,0 +1,71 @@
+{
+  "status": "passed",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "implementationSource": "cf1abf3d6cff050680a161867ab1dee661322ece",
+  "finalSourceRevision": "3f22861a65a6f698c117ec9ae9cb7a2fbec2fe71",
+  "assessment": "[fixture]/.bstack/assessment.json",
+  "assessmentHash": "fc2c508b8d9c52bbb7f5513e864e18f8c2b1144d572563810714adcbaf9db40e",
+  "approvedPlanDigest": "edf811e03a6742822ab0565e5d98ab2ebbd7556887fc0c76806e1ff5b6663d61",
+  "reviewFingerprint": "d1334078b7e3d056bf9a99060f66695ff17c3af3192c18565bcf30ecf61e58aa",
+  "changedPathReview": {
+    ".bstack/assessment.json": "Exact approved bytes applied through protected write, separately committed, identical in both clean working trees.",
+    "packages/web/routes.ts": "Names first multiplication without changing signature, imports, arithmetic order, discount condition, storage effect or returned status/total."
+  },
+  "documentReview": "DESIGN.md, glossary.md and AGENTS.md have substantive no-impact assessments; contract and historical audit unchanged.",
+  "outcomes": [
+    "quote 12",
+    "mocked checkout status 201 total 10",
+    "real loopback HTTP checkout status 201 total 10",
+    "TypeScript typecheck",
+    "public-core boundary and acyclic dependencies"
+  ],
+  "checkerResults": {
+    "working-checker": {
+      "status": "passed",
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "bc2de1489045847759890a6d641905798a6596b9d064a64b8859f7c2595e7ef9",
+      "comparison": {
+        "source": "cf1abf3d6cff050680a161867ab1dee661322ece",
+        "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+        "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+      },
+      "sourceRevision": "3f22861a65a6f698c117ec9ae9cb7a2fbec2fe71"
+    },
+    "clean-clone-checker": {
+      "status": "passed",
+      "capture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "e4f8e43063bbb91e565075f867268627d2c4a2fb255dde12913972cfb204a1a9",
+      "comparison": {
+        "source": "cf1abf3d6cff050680a161867ab1dee661322ece",
+        "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+        "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+      },
+      "sourceRevision": "3f22861a65a6f698c117ec9ae9cb7a2fbec2fe71"
+    }
+  },
+  "finalFailures": [],
+  "unverifiedRequiredChecks": [],
+  "supersededAttempts": [
+    "Initial check plans rejected before execution: missing compatibility, then missing protection. Corrected.",
+    "Initial implementation previews rejected: missing starting-checks outcome, then payload.content. Corrected before writes.",
+    "Initial after capture ran two suites under one preflight. Superseded by guarded capture with fresh preflight for each suite.",
+    "Isolated preview evidence lacks original root local capture records; not a portable execution attestation.",
+    "Preview standalone checker blocked assessment-not-committed; no fresh checker-result.json generated.",
+    "Local portable assessment at external scratch path rejected portable-source-mismatch; equivalent local-mode record validated successfully.",
+    "Initial local assessment listed the before record as current execution, rejected as stale; final assessment references the after record, whose priorRun binds original protection. Final local evidence validation passes."
+  ],
+  "limits": [
+    "Bounded maintenance, not full audit.",
+    "Checker validates captured coverage and bytes; semantic review remains human judgement.",
+    "Static dependency checking excludes dynamic runtime loading; receipt wording remains a future decision."
+  ],
+  "cleanClone": "[isolated-home][scratch-path]",
+  "isolatedHome": "[isolated-home][scratch-path]",
+  "isolatedCache": "[isolated-home][scratch-path]",
+  "tools": {
+    "node": "v24.17.0",
+    "npm": "11.13.0"
+  }
+}

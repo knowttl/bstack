@@ -1,0 +1,12 @@
+{
+  "command": [
+    "git",
+    "add",
+    "--",
+    ".bstack/assessment.json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "",
+  "stderr": ""
+}

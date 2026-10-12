@@ -1,0 +1,13 @@
+{
+  "command": [
+    "git",
+    "clone",
+    "--no-hardlinks",
+    "[fixture]",
+    "[isolated-home][scratch-path]"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "",
+  "stderr": "Cloning into '[isolated-home][scratch-path]'...\ndone.\n"
+}

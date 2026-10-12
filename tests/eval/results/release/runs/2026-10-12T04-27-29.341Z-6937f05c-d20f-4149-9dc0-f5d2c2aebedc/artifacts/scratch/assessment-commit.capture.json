@@ -1,0 +1,16 @@
+{
+  "command": [
+    "git",
+    "-c",
+    "user.name=Maintenance Agent",
+    "-c",
+    "user.email=maintenance@example.invalid",
+    "commit",
+    "-m",
+    "Record approved no-impact assessment for total refactor"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "[main 3f22861] Record approved no-impact assessment for total refactor\n 1 file changed, 176 insertions(+)\n create mode 100644 .bstack/assessment.json\n",
+  "stderr": ""
+}
