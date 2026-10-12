@@ -1,7 +1,7 @@
-import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, realpath, statfs, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
-import { platform, release } from 'node:os'
+import { freemem, platform, release } from 'node:os'
 import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution } from './lib/evaluation.mjs'
 import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
@@ -38,6 +38,16 @@ async function start(opts, results) {
   if (opts.mode === 'with' && definition.invocation === 'explicit' && !opts.invocation?.trim()) fail('An ordinary with-skill run requires --invocation for the current host.', 'usage-error')
   if (opts.invocation && (opts.mode === 'without' || definition.invocation === 'implicit')) fail('Baseline and implicit runs use the outcome request without --invocation.', 'usage-error')
   if (opts.repo && (!adapter || opts.stage !== 'final')) fail('--repo requires a final-stage adapter follow-up.', 'usage-error')
+  // Reserve the six-container budget once, before creating any run resources.
+  if (adapter) {
+    const disk = await statfs(root)
+    const memory = platform() === 'linux'
+      ? Number(/MemAvailable:\s+(\d+) kB/.exec(await readFile('/proc/meminfo', 'utf8'))?.[1]) * 1024
+      : freemem()
+    if (!(disk.bavail * disk.bsize >= 20_000_000_000 && memory >= 24 * 1024 ** 3)) {
+      fail('Evaluation startup requires at least 20 GB free disk and 24 GiB available memory. Start again when capacity is available.')
+    }
+  }
   const git = await child('git', ['rev-parse', 'HEAD'])
   const revision = git.stdout.trim()
   const fixtureRevision = (await child('git', ['rev-parse', 'HEAD:tests/fixtures'])).stdout.trim()

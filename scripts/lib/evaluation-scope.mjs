@@ -12,9 +12,6 @@ Use the isolated home's tmp directory for scratch, clones, reports and servers; 
 Do not search or read the host home, ancestor directories, other projects or other skill installations.
 If requested resources are absent from these two roots, report them unavailable and stop dependent work.
 Installed tool executables and their runtime resources may run normally; do not use their locations to discover project guidance.
-Read-only memory/load queries, process counts and filesystem capacity queries are allowed for resource preflight.
-Container process metadata cannot count host-wide Node suites. Before EVERY Node suite, run node "$BSTACK_EVAL_PREFLIGHT" and proceed only when it exits zero with source host and permitted true; this fresh aggregate check is required in addition to any container-local query.
-Use /proc/meminfo, /proc/loadavg, /proc/self and process metadata only for those queries; do not print process inventories.
 Keep filesystem writes inside the fixture or isolated home, including its own tmp directory.
 Pass this scope to any subagents. Docker exposes only these two host directories; transcript path checks are advisory and do not establish actual filesystem access.
 
