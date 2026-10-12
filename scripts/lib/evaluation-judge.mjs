@@ -100,7 +100,7 @@ export async function judgeInput(record, transcript, { directory, corpus, human 
         if (!entry.isDirectory() || !/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(entry.name)) continue
         let other
         try { other = await readJSON(join(directory, entry.name, 'run.json')) }
-        catch (error) { if (error.code === 'ENOENT') continue; throw error }
+        catch (error) { if (error.code === 'ENOENT' || error instanceof SyntaxError) continue; throw error }
         if (other.id !== entry.name) fail('Companion run ID does not match its directory.')
         candidates.push({ record: other })
       }
@@ -108,7 +108,9 @@ export async function judgeInput(record, transcript, { directory, corpus, human 
       try { batches = await readdir(join(directory, 'batches')) }
       catch (error) { if (error.code !== 'ENOENT') throw error }
       for (const file of batches.filter(file => file.endsWith('.json')).sort()) {
-        const batch = await readJSON(join(directory, 'batches', file))
+        let batch
+        try { batch = await readJSON(join(directory, 'batches', file)) }
+        catch (error) { if (error.code === 'ENOENT' || error instanceof SyntaxError) continue; throw error }
         for (const run of [{ record }, ...candidates]) {
           if (!batch.runIds.includes(run.record.id)) continue
           run.record.batchId = batch.id
@@ -129,7 +131,7 @@ export async function judgeInput(record, transcript, { directory, corpus, human 
             const path = other.transcript ?? other.conversation
             if (!path) continue
             available.push({ record: other, transcript: await readFile(join(directory, other.id, path), 'utf8') })
-          } catch (error) { if (error.code !== 'ENOENT') throw error }
+          } catch (error) { if (error.code !== 'ENOENT' && !(error instanceof SyntaxError)) throw error }
         }
         eligible = available
       }
