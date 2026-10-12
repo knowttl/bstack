@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Design requires UI/storage isolation and checkout total 10; glossary defines Order twice. No separate vision or audit exists; preserve design baseline.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+          }
+        },
+        {
+          "location": "DESIGN.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "glossary.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts"
+      ],
+      "findings": "Core exports price only. UI and routes directly import storage; alias resolves to storage. Core a/b form a recursive cycle.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "package.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "findings": "Native TypeScript checker exists; boundary parser resolves imports and aliases and detects cycles. Aggregate check runs types only. Journey uses real loopback HTTP and expects 10; mocked unit journey can pass with supplied price 10.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "package.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "tsconfig.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "boundaries.mjs:1",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        },
+        {
+          "location": "journey.mjs:1",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "unit.test.mjs:1",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}
