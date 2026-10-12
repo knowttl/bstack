@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process'
 import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution, isApprovedBaseline, fixtureHash } from './evaluation.mjs'
 import { readAdapter } from './evaluation-host.mjs'
 import { correctedScore, validateScore } from './evaluation-scoring.mjs'
+import { affectedScenarios } from './evaluation-impact.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 
@@ -61,7 +62,9 @@ export async function completeRelease(results) {
     // Grader repairs do not change a captured agent's inputs.
     git('diff', '--quiet', record.sourceRevision, '--', 'tests/eval/adapters')
     // The verified without mode never stages the package or runs its installer.
-    if (record.mode === 'with') git('diff', '--quiet', record.sourceRevision, '--', 'skills/repo-audit', 'install')
+    if (record.mode === 'with' && (await affectedScenarios(root, record.sourceRevision, definitions, true)).scenarios.includes(definition.id)) {
+      fail(`Changed covered skill or installer inputs: ${id}`)
+    }
     if (!approvedBaseline) {
       git('diff', '--quiet', record.sourceRevision, '--', 'scripts/lib/evaluation-host.mjs',
         'scripts/lib/evaluation-container.mjs', 'tests/eval/container')
