@@ -41,6 +41,13 @@ function overlaps(left, right) {
 function opened(machine) {
   const paths = []
   let observed = false
+  function tokens(source) {
+    return [...source.matchAll(/"([^"]+)"|'([^']+)'|([^\s]+)/g)].map(match => match[1] ?? match[2] ?? match[3])
+  }
+  function helperExecution(source) {
+    const [executable, script] = tokens(source).map(token => token.replaceAll('\\', '/'))
+    return !/\$\(|`|</.test(source) && /(?:^|\/)node(?:\.exe)?$/.test(executable ?? '') && /(?:^|\/)scripts\/repo-audit\.mjs$/.test(script ?? '')
+  }
   for (const event of input.events) {
     if (event.type !== 'item.completed') continue
     const item = event.item
@@ -49,9 +56,10 @@ function opened(machine) {
       if (machine.type === 'opened' && item.exit_code !== 0) continue
       function commands(source) {
         for (const command of source.split(/(?:&&|\|\||[;|\n])/)) {
+          if (helperExecution(command)) continue
           if (machine.type === 'opened' && !/(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)(?:\s|$)/.test(command)) continue
-          for (const match of command.matchAll(/"([^"]+)"|'([^']+)'|([^\s]+)/g)) {
-            const token = match[1] ?? match[2] ?? match[3]
+          for (const token of tokens(command)) {
+            if (helperExecution(token)) continue
             paths.push(token)
             if (/\s/.test(token) && (machine.type === 'notOpened' || /(?:^|[\s"'(])(?:cat|head|tail|sed|rg|grep|less|more|bat|read_file)\s/.test(token))) commands(token)
           }
