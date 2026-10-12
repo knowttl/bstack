@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T23-28-21.000Z-1ec5158d-00b1-40d9-8742-4f2f96c7923f",
+  "method": "Separate read-only container check of the original prepared fixture and original isolated home, after the captured agent turn and before cleanup; no agent repetition.",
+  "image": "bstack-eval-toolchain:node24-codex0.162.1",
+  "imageId": "sha256:925d4002d857de246518be52c738d95abbb04d5ea5e8929bdb470fe1adad60ba",
+  "commands": [".venv/bin/python --version", ".venv/bin/ruff --version"],
+  "exitCode": 0,
+  "stdout": "Python 3.12.15\nruff 0.14.0\n",
+  "network": "none",
+  "mounts": ["original fixture read-only", "original isolated home read-only"],
+  "agentUsedPreparedTools": false,
+  "availabilityIsNotAgentExecutionEvidence": true
+}

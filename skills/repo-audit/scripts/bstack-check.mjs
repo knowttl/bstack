@@ -41,7 +41,8 @@ function emitResult({ command, status, problems = [], data = {}, inputs = {} }, 
     ] : [],
     ...data.diff ? [data.diff] : [],
     ...(data.coverageLimits ?? []).map((limit) => `coverage limit: ${limit.path}: ${limit.reason}`),
-    ...problems.map((problem) => `${problem.code}: ${problem.message} Fix: ${problem.fix}`)
+    ...problems.map((problem) => `${problem.code}: ${problem.message} Fix: ${problem.fix}`),
+    ...data.approvalRequired ? [data.approvalRequired] : []
   ].join("\n"));
   process.exitCode = exitCodes[status];
 }
@@ -2793,4 +2794,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"47468b103d962bd98c6778e28579970ff72e166dad085c84ae0775c6c1532a22"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"5495f67a1f74bb32857554e9320cb01b84de4bbdf4f77f4c6cc942ef68d036b3"}

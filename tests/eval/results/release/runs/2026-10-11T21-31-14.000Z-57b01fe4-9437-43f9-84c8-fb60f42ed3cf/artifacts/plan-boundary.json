@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "public-boundary-repair",
+  "writePaths": [
+    "packages/core/index.ts",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts",
+    "packages/web/alias.ts",
+    "unit.test.mjs",
+    "journey.mjs"
+  ],
+  "contracts": [
+    {
+      "id": "core-price-interface",
+      "files": [
+        "packages/core/index.ts"
+      ]
+    },
+    {
+      "id": "checkout-total",
+      "files": [
+        "DESIGN.md",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "journey.mjs"
+      ]
+    }
+  ]
+}

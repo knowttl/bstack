@@ -1,0 +1,32 @@
+{
+  "sourceRevision": "bf57b47163b16252a3df3cc9f66fc6d17ed872b8",
+  "fixtureRevision": "c8576a3095a37da037d42c4bdf358d6372f5a91e",
+  "mode": "with",
+  "contractPresent": false,
+  "standaloneCheckerPresent": false,
+  "portableAssessmentPresent": false,
+  "workingTree": "",
+  "trackedDiff": "",
+  "changedPaths": [],
+  "currentFiles": {},
+  "authoritativeDocuments": {
+    "AGENTS.md": {
+      "unchanged": true,
+      "hash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+    },
+    "CLAUDE.md": {
+      "unchanged": true,
+      "hash": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+    },
+    "DESIGN.md": {
+      "unchanged": true,
+      "hash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+    },
+    "glossary.md": {
+      "unchanged": true,
+      "hash": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d"
+    }
+  },
+  "authenticationCopyAbsent": true,
+  "limitation": "The fixture does not provision the maintained contract or checker. No completed change-specific document-impact assessment or standalone maintenance validation is evidenced."
+}

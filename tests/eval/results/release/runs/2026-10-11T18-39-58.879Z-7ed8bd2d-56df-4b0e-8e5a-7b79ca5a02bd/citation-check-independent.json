@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"cite-check","status":"passed","problems":[],"data":{"mode":"main-thread","filesChecked":64,"webRecorded":0,"webVerifiedByChecker":false},"inputs":{"target":{"mode":"repo","root":"[fixture]"},"report":"tests/eval/results/release/runs/2026-10-11T18-39-58.879Z-7ed8bd2d-56df-4b0e-8e5a-7b79ca5a02bd/research-report.json"}}

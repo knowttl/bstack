@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "nextChange": "User-selected bounded intermediate total refactor",
+  "reviewedScope": [
+    "packages/web/routes.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Preserve public core interface, quote 12 and checkout 10."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Requested route expression has no named undiscounted intermediate.",
+      "files": [
+        "packages/web/routes.ts"
+      ],
+      "command": null,
+      "principle": "Preserve public interfaces and agreed outcomes.",
+      "consequence": "Naming the subtotal makes the existing calculation explicit.",
+      "fix": "Extract unitPrice * quantity into undiscountedTotal, preserving multiplication order and discount.",
+      "scope": [
+        "packages/web/routes.ts"
+      ],
+      "verification": "Capture npm run check before and after; freshly execute standalone checker locally and in clean clone.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance only; no full audit or new acceptance cases."
+  ]
+}

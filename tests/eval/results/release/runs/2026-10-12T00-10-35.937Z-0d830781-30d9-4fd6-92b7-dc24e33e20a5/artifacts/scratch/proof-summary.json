@@ -1,0 +1,130 @@
+[
+  {
+    "file": "proof-aggregate-alias.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/f0e3a6c9-0c65-4cbb-92d9-48952e78afff/proof.json",
+    "check": "aggregate",
+    "diagnostic": "alias",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-aggregate-cycle.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/cbfd267c-6bf5-44fb-88fd-dd8c058cfa62/proof.json",
+    "check": "aggregate",
+    "diagnostic": "cycle",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-aggregate-dynamic.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/79d6a7b2-88b8-4139-af47-9d85b93c26ed/proof.json",
+    "check": "aggregate",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-aggregate-import-type.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/f8a18b9e-c6a5-4d90-b9b6-9e7abbd720c8/proof.json",
+    "check": "aggregate",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-aggregate-nonpublic.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/f451f8af-1ea1-4ea0-985e-39317bb8b6f4/proof.json",
+    "check": "aggregate",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-aggregate-private.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/b7225c32-1115-44c7-89d4-5e7e901b0a2e/proof.json",
+    "check": "aggregate",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-aggregate-reexport.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/76917fa6-fe52-48aa-a769-7468b3f11cf1/proof.json",
+    "check": "aggregate",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-aggregate-unknown-dynamic.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/fe15f745-975b-47c9-9c74-821d52d181c3/proof.json",
+    "check": "aggregate",
+    "diagnostic": "dynamic",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-native-alias.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/2d7ba1f1-9bab-4f6f-814e-441968b50e6c/proof.json",
+    "check": "native",
+    "diagnostic": "alias",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-native-cycle.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/23561ade-b7e1-4f73-82f2-6b8112b5d082/proof.json",
+    "check": "native",
+    "diagnostic": "cycle",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-native-dynamic.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/d6b3494c-ee04-47c7-b3f1-332dd3eb1d4f/proof.json",
+    "check": "native",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-native-import-type.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/a4da91fd-157b-4bee-808b-f8e200f260ce/proof.json",
+    "check": "native",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-native-nonpublic.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/fb7a56b3-f08e-4c51-baed-beb353803738/proof.json",
+    "check": "native",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-native-private.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/17d004b2-c70f-43c0-a5a9-269d96fea91c/proof.json",
+    "check": "native",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-native-reexport.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/38b28824-9e60-43d8-b3aa-4a8375dea261/proof.json",
+    "check": "native",
+    "diagnostic": "private",
+    "validExit": 0,
+    "violationExit": 1
+  },
+  {
+    "file": "proof-native-unknown-dynamic.json",
+    "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/dbe74cdd-de16-4467-a603-85a7c551abf6/proof.json",
+    "check": "native",
+    "diagnostic": "dynamic",
+    "validExit": 0,
+    "violationExit": 1
+  }
+]

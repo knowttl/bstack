@@ -1,0 +1,1 @@
+{"command": ["node", ".bstack/bin/bstack-check.mjs", "--repo", "[isolated-home][scratch-path]", "--base", "b6c59b7810f5155fd514c9db60e98b7dffce0cc0", "--assessment", "[isolated-home][scratch-path]", "--json"], "cwd": "[isolated-home][scratch-path]", "exitCode": 0}

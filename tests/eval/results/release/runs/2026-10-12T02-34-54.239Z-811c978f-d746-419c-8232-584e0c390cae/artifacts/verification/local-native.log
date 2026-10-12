@@ -1,0 +1,38 @@
+{"source":"host","checkedAt":"2026-10-12T02:48:17.503Z","availableMemoryBytes":26584461312,"freeDiskBytes":23939686400,"load1m":3.36,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}
+
+> check
+> npm run typecheck && npm test && npm run boundaries && npm run journey
+
+{"source":"host","checkedAt":"2026-10-12T02:48:17.828Z","availableMemoryBytes":26587365376,"freeDiskBytes":23918559232,"load1m":3.09,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}
+
+> typecheck
+> tsc --noEmit
+
+{"source":"host","checkedAt":"2026-10-12T02:48:19.006Z","availableMemoryBytes":26563137536,"freeDiskBytes":23918555136,"load1m":3.09,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}
+
+> test
+> node --test unit.test.mjs
+
+✔ public price (0.989349ms)
+✔ public price for quantity two (0.205012ms)
+✔ checkout HTTP mock (26.093523ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 136.29175
+{"source":"host","checkedAt":"2026-10-12T02:48:19.371Z","availableMemoryBytes":26544336896,"freeDiskBytes":23918551040,"load1m":3.09,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}
+
+> boundaries
+> node boundaries.mjs
+
+[]
+{"source":"host","checkedAt":"2026-10-12T02:48:20.170Z","availableMemoryBytes":26467475456,"freeDiskBytes":23918538752,"load1m":3.09,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}
+
+> journey
+> node journey.mjs
+
+{"expectedTotal":10,"order":{"status":201,"total":10}}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "user-only",
+      "passed": true,
+      "startLine": 1,
+      "endLine": 28
+    }
+  ]
+}

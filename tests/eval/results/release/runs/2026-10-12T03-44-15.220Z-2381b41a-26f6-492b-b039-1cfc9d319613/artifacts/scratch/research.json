@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Owner-approved purpose: one reader saves articles and marks them read without losing title or address. Accounts, sharing and recommendations are excluded from version one. Design approves local Node and JSON persistence, queue-owned state and presentation through public operations. Glossary includes read articles in the queue. Sources agree and explicitly close product, stack and design decisions.",
+      "limitations": [
+        "No README, instructions, standards, contribution guide, prior audit or declared next change. Main-thread research chosen because only three short files exist."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "c4df6fc9350fe8ed8552281064e0297101ea062b97034b754361ebb04410acbc"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Documented queue operations are save, list and mark-read; presentation cannot write storage directly. No implementation or entry point exists. Measurement over 8f70d11..81feef4 shows DESIGN.md and glossary.md added together; this does not establish coupling or a violation.",
+      "limitations": [
+        "No runtime architecture to inspect or native dependency graph to analyse. No two declared plans exist for overlap comparison."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "c4df6fc9350fe8ed8552281064e0297101ea062b97034b754361ebb04410acbc"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md"
+      ],
+      "findings": "No manifest, lockfile, prepared environment, tests, check scripts, formatting, lint, type or CI configuration exists. No native journey can execute. Audit inspect, inventory and measure passed using Node v24.17.0 and Git 2.54.0; these are repository discovery checks, not product evidence.",
+      "limitations": [
+        "Important journey is unimplemented and unverified; no product test command was run."
+      ],
+      "files": [
+        {
+          "location": "VISION.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Approved Node stack can use the built-in node:test runner, documented stable since Node 20, with node --test. This is a candidate, not a selected repository configuration. No language style, formatter, linter or type system is established.",
+      "limitations": [
+        "Only built-in runner capability researched; no runtime pin or package manager assumed."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://nodejs.org/docs/latest-v24.x/api/test.html",
+          "readDate": "2026-10-12",
+          "verification": "verified"
+        }
+      ]
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "findings": "Local JSON persistence is the documented dependency boundary. No external service or integration is declared; no live service probe is relevant to the audit.",
+      "limitations": [
+        "No outside integration researched or inferred."
+      ],
+      "files": [
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

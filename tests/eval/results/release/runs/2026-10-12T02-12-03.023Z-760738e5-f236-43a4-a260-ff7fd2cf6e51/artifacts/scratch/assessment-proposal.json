@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "kind": "commit",
+    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "head": "3a3ff53805d1707891869a2df4e861e291b423c6",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/public.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "unit.test.mjs"
+    }
+  ],
+  "paths": [
+    ".bstack/project.json",
+    "DESIGN.md",
+    "packages/web/public.ts",
+    "unit.test.mjs"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "quote-quantity"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "quote-quantity"
+      ]
+    },
+    {
+      "path": "packages/web/public.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "quote-quantity"
+      ]
+    },
+    {
+      "path": "unit.test.mjs",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion",
+        "quote-quantity"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "changedBehavior": "packages/web/public.ts now accepts quantity = 1 and multiplies it by price() imported through packages/core/index.ts; the new public test asserts quote(2) = 24.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "dependentWork": [],
+        "result": "updated",
+        "reason": "The named representative public example retains its public core import and default quote 12. DESIGN.md adds the owner-selected quantity-two case; unit.test.mjs retains the original assertion verbatim and adds independent quantity-two protection. The maintained contract adds quote-quantity without removing previous rules, sources, commands or scope. Checkout code and journey remain byte-for-byte unchanged, preserving total 10; no storage responsibility or static dependency direction changes.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "Quote remains 12.",
+            "version": "base"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "The approved public quote example accepts a selected quantity, defaulting to one: `quote() = 12` and `quote(2) = 24`.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "The agreed checkout total is 10.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "Web consumers import core capabilities through `packages/core/index.ts`; storage stays in `packages/core/internal`.",
+            "version": "current"
+          }
+        ],
+        "delta": {
+          "before": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote()`. Quote remains 12. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount.",
+          "after": "`packages/web/public.ts` is the representative public-interface example: it imports `price` from `../core/index.ts` and exposes `quote()`. Quote remains 12. The approved public quote example accepts a selected quantity, defaulting to one: `quote() = 12` and `quote(2) = 24`. It multiplies the quantity by the price obtained through the public core interface. The controlled local HTTP endpoint in `journey.mjs` supplies 10; checkout must return `{ status: 201, total: 10 }` for the default quantity. `unit.test.mjs` protects quote and mocked checkout, while the journey observes a real loopback HTTP exchange. This fixture correction introduces no business pricing rule or discount."
+        }
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "changedBehavior": "packages/web/public.ts now accepts quantity = 1 and multiplies it by price() imported through packages/core/index.ts; the new public test asserts quote(2) = 24.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "dependentWork": [],
+        "result": "no-impact",
+        "reason": "Selected quote quantity is a function argument and introduces no new Order concept or Panel order meaning. Checkout still represents a customer purchase; no UI panel sequence is changed. Both glossary definitions remain unchanged.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          },
+          {
+            "path": "glossary.md",
+            "pointer": "Panel order: the sequence in which UI panels appear.",
+            "version": "current"
+          }
+        ]
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "changedBehavior": "packages/web/public.ts now accepts quantity = 1 and multiplies it by price() imported through packages/core/index.ts; the new public test asserts quote(2) = 24.",
+        "changedPaths": [
+          ".bstack/project.json",
+          "DESIGN.md",
+          "packages/web/public.ts",
+          "unit.test.mjs"
+        ],
+        "dependentWork": [],
+        "result": "no-impact",
+        "reason": "The extension follows the existing design/public core pointers. npm run check still runs types, units, static boundaries and the original HTTP checkout. The contract adds quantity-two coverage to the same native check while retaining previous policy. Guidance locations and explicit-base standalone command stay accurate; historical audit bytes remain unchanged and current results stay in scratch.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Use the approved [design](DESIGN.md) and public core interface.",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Maintain `.bstack/project.json` and review every affected document and changed path.",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Treat `docs/repo-audit.md` as a historical snapshot; current assessed readiness belongs in scratch.",
+            "version": "current"
+          }
+        ]
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [
+    {
+      "id": "quote-quantity-extension",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "quote() = 12; checkout returns status 201 and total 10 for default quantity.",
+      "newCase": "Preserve quote() = 12 and checkout status 201/total 10; add quote(2) = 24 through the intended public core interface.",
+      "affectedWork": [
+        ".bstack/project.json",
+        "DESIGN.md",
+        "packages/web/public.ts",
+        "unit.test.mjs"
+      ],
+      "approval": {
+        "path": "[isolated-home][scratch-path]",
+        "pointer": "Extend this maintained project's approved public quote example to accept a selected quantity, defaulting to one. The approved outcome is quote() = 12 and quote(2) = 24 through the intended public core interface.",
+        "version": "current"
+      }
+    }
+  ],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion",
+    "quote-quantity"
+  ],
+  "execution": [],
+  "fingerprint": null
+}

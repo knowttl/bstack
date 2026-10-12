@@ -1,0 +1,19 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "evidence",
+    "validate",
+    "--repo",
+    "[fixture]",
+    "--base",
+    "156e8342bc33bb6ce7c7713c4df1735eeb13aa05",
+    "--assessment",
+    "[isolated-home][scratch-path]",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 2,
+  "stdout": "{\"schemaVersion\":1,\"command\":\"evidence validate\",\"status\":\"blocked\",\"problems\":[{\"code\":\"portable-source-mismatch\",\"message\":\"Portable review must name the committed source; only its selected assessment may differ from HEAD.\",\"fix\":\"Commit source changes and recollect portable review against the agreed base.\"}],\"data\":{},\"inputs\":{}}\n",
+  "stderr": ""
+}

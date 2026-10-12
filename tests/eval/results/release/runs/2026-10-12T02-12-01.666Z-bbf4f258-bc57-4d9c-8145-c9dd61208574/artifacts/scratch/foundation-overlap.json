@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "foundation",
+  "writePaths": [
+    "package.json",
+    "DESIGN.md",
+    "AGENTS.md",
+    ".bstack/**",
+    "docs/repo-audit.md"
+  ],
+  "contracts": [
+    {
+      "id": "public-core",
+      "files": [
+        "packages/core/index.ts",
+        "packages/web/**"
+      ]
+    },
+    {
+      "id": "checkout-10",
+      "files": [
+        "DESIGN.md",
+        "journey.mjs",
+        "packages/core/**",
+        "packages/web/**"
+      ]
+    }
+  ]
+}

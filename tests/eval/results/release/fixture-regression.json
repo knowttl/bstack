@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "command": "node --test --test-concurrency=1 tests/scripts/fixtures.test.mjs",
+  "node": "v24.17.0",
+  "preflight": {
+    "availableMemoryBytes": 19013812224,
+    "freeDiskBytes": 25242472448,
+    "load1m": 3.42,
+    "existingNodeSuites": 0
+  },
+  "result": {
+    "tests": 14,
+    "passed": 14,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "durationMs": 30735.396459
+  },
+  "coverage": [
+    "All registered fixtures run native sanity and leave source bytes unchanged",
+    "Inherited fixture kind is resolved from its base entry",
+    "Two maintained shop builds produce the same clean Git history",
+    "Missing native tools remain blocked and changed seeds fail"
+  ]
+}

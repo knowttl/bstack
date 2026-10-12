@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "apply",
+    "--plan",
+    "[isolated-home][scratch-path]",
+    "--repo",
+    "[fixture]",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "{\"schemaVersion\":1,\"command\":\"apply\",\"status\":\"passed\",\"problems\":[],\"data\":{\"runId\":\"ff0b1a0a6fabdb4f457f5e49bf5baa4da066fe3816a632f80cff42fe8f36e103\",\"planDigest\":\"ff0b1a0a6fabdb4f457f5e49bf5baa4da066fe3816a632f80cff42fe8f36e103\",\"edits\":[{\"id\":\"name-total\",\"path\":\"packages/web/routes.ts\",\"resolvedPath\":\"[fixture]/packages/web/routes.ts\",\"originalHash\":\"bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8\",\"proposedHash\":\"b40d18a4283d3564af49cbf89b1b344b6084be1ce048df5c0fc31000113f7eca\",\"backup\":\"original-0\",\"completed\":true,\"temporary\":null,\"actualHash\":\"b40d18a4283d3564af49cbf89b1b344b6084be1ce048df5c0fc31000113f7eca\",\"state\":\"applied\"}],\"affectedChecks\":[\"starting-checks\",\"quote\",\"checkout\"],\"pending\":[],\"applied\":[\"packages/web/routes.ts\"],\"conflicting\":[],\"journal\":\"[isolated-home][scratch-path]\",\"outcome\":\"applied\",\"limitations\":[\"Replacement is atomic per file where supported, never across the whole change set.\"]},\"inputs\":{\"target\":{\"mode\":\"repo\",\"root\":\"[fixture]\"},\"plan\":\"[isolated-home][scratch-path]\"}}\n",
+  "stderr": ""
+}

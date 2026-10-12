@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"inspect","status":"passed","problems":[],"data":{"root":"[fixture]","revision":"ec52939656c1bce417709f3d6c84038f8a15e51f","changes":[],"manifests":[],"prerequisites":[{"tool":"git","found":true,"version":"git version 2.54.0"},{"tool":"node","found":true,"version":"v24.17.0"}]},"inputs":{"repo":"[fixture]"}}

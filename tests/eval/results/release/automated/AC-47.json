@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "AC-47",
+  "sourceRevision": "34cc59096ac47d5ee953268a1d776f69a5dffd5f",
+  "platform": "linux",
+  "suite": "tests/scripts/package-check.test.mjs",
+  "name": "language-policy fails with language-policy",
+  "preflight": {
+    "checkedAt": "2026-10-12T05:40:57.048Z",
+    "availableMemoryBytes": 31479177216,
+    "freeDiskBytes": 26476154880,
+    "load1m": 2,
+    "existingNodeSuites": 0,
+    "proposedNodeSuites": 1,
+    "permitted": true
+  },
+  "execution": {
+    "status": "passed",
+    "stdout": "✔ language-policy fails with language-policy (101.213985ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 184.278349\n",
+    "stderr": "",
+    "durationMs": 232.177166,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "cancelled": false,
+    "outputTruncated": false,
+    "error": null,
+    "toolVersion": {
+      "status": "passed",
+      "stdout": "v24.17.0\n",
+      "stderr": "",
+      "durationMs": 9.65947899999999,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "cancelled": false,
+      "outputTruncated": false,
+      "error": null
+    },
+    "executable": "node"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "contentHash": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "existing-check",
+      "sourceId": "instructions",
+      "pointer": "Use the approved design and public core interface.",
+      "outcome": "Existing native unit checks remains executable; this check alone does not establish design compliance or checkout readiness.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "test",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "existing-check"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "AGENTS.md"
+      ]
+    }
+  ]
+}

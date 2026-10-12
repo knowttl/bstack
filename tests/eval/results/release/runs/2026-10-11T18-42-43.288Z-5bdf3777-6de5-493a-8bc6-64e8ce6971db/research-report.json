@@ -1,0 +1,410 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API coding agent; zsh terminal; target [fixture]; observed Node v24.17.0 and Python 3.12.3",
+  "capabilities": {
+    "subagents": false,
+    "web": false
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "CONTRIBUTING.md"
+      ],
+      "findings": "CONTRIBUTING.md:1 is the only discovered project document. It establishes public-package access for external modules (CONTRIBUTING.md:3), ledger ownership of entries and balance calculations (CONTRIBUTING.md:4), and native Python checks with balanced postings (CONTRIBUTING.md:5). No purpose, intended users, first journey, or next product change is documented there. The app private import conflicts with the public-package standard; implementation evidence is recorded in the architecture brief.",
+      "limitations": [
+        "Scoped file inventory found no README, vision, requirements, glossary, design, decisions, prior audit, planned-change document, or repo instruction file. No interview or product decision was performed. Git metadata was excluded; revision and working-tree cleanliness are not established."
+      ],
+      "files": [
+        {
+          "location": "CONTRIBUTING.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        },
+        {
+          "location": "CONTRIBUTING.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        },
+        {
+          "location": "CONTRIBUTING.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        },
+        {
+          "location": "CONTRIBUTING.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "ledger/__init__.py",
+        "ledger/book.py",
+        "ledger/_internal.py",
+        "app.py",
+        "startup.py",
+        "test_ledger.py",
+        "CONTRIBUTING.md"
+      ],
+      "findings": "Source observation: the package exports Ledger (ledger/__init__.py:1). Ledger owns in-memory entries, paired posting, balance calculations, statements, transfers, reversals, totals, and row import/export (ledger/book.py:15). Its internal amount helper quantizes Decimal values to two places (ledger/_internal.py:4). app.opening_balance constructs a ledger, posts cash/equity, and returns the cash balance (app.py:5), but imports ledger._internal directly (app.py:2), contrary to CONTRIBUTING.md:3. startup.main parses an output path, posts cash/equity, emits CSV to stdout, and writes JSON rows to that path (startup.py:11). import_rows validates rows and their net balance before extending entries (ledger/book.py:81). These are inspected code paths, not executed outcomes. The tests use public Ledger methods (test_ledger.py:8). Inference: Ledger is a shared responsibility boundary for posting and reporting; this does not establish excessive coupling or justify splitting it.",
+      "limitations": [
+        "No stated next implementation change or supplied deterministic measurement output was found. No history, size, fan-in, cycle, change-frequency, co-change, overlap, or performance measurement is claimed. No measurement or overlap helper ran. Runtime behavior and filesystem output were not exercised."
+      ],
+      "files": [
+        {
+          "location": "ledger/__init__.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+          }
+        },
+        {
+          "location": "ledger/book.py:15",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/book.py:21",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/book.py:32",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/book.py:54",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/book.py:62",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/book.py:75",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/book.py:81",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/_internal.py:4",
+          "state": {
+            "kind": "sha256",
+            "value": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+          }
+        },
+        {
+          "location": "app.py:2",
+          "state": {
+            "kind": "sha256",
+            "value": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972"
+          }
+        },
+        {
+          "location": "app.py:5",
+          "state": {
+            "kind": "sha256",
+            "value": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972"
+          }
+        },
+        {
+          "location": "startup.py:11",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        },
+        {
+          "location": "test_ledger.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        },
+        {
+          "location": "CONTRIBUTING.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "pyproject.toml",
+        "uv.lock",
+        "boundaries.py",
+        "test_ledger.py",
+        "startup.py",
+        "CONTRIBUTING.md"
+      ],
+      "findings": "Python is constrained to >=3.12,<3.13 (pyproject.toml:4); uv.lock:3 agrees. Ruff 0.14.0 is a dev pin in both manifest and lock (pyproject.toml:7; uv.lock:18). Ruff targets py312 and selects E4, E7, E9, F (pyproject.toml:9). No explicit type-check config, CI, maintained combined check command, or documented invocation was found. test_ledger.py:8 checks a public posting/balance/balanced flow; test_ledger.py:14 checks negative-posting rejection using unittest, with a runnable main guard at line 19. These are public-contract tests, not private-state assertions. boundaries.py:8 scans app.py and ledger/*.py; it resolves imports, flags app imports of ledger._internal or ledger.bridge, checks cycles, prints violations and exits nonzero for them (boundaries.py:23, boundaries.py:40). Its scope excludes startup.py and tests. No test of startup CSV/JSON output, opening_balance, row import/export, statements, transfers, reversals, totals, zero postings, or same-account rejection was found in the supplied test file.",
+      "limitations": [
+        "No native test, lint, boundary, startup, setup, or live-probe command ran. Configuration is not evidence of a passing check. Import resolution can load packages; native checks were left unexecuted under the no-side-effects discovery constraint. Node --version and python3 --version returned exit 0 with v24.17.0 and Python 3.12.3; Ruff/uv installation was not checked, and .venv was excluded."
+      ],
+      "files": [
+        {
+          "location": "pyproject.toml:4",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "pyproject.toml:7",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "pyproject.toml:9",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "uv.lock:3",
+          "state": {
+            "kind": "sha256",
+            "value": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3"
+          }
+        },
+        {
+          "location": "uv.lock:18",
+          "state": {
+            "kind": "sha256",
+            "value": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3"
+          }
+        },
+        {
+          "location": "boundaries.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        },
+        {
+          "location": "boundaries.py:23",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        },
+        {
+          "location": "boundaries.py:40",
+          "state": {
+            "kind": "sha256",
+            "value": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+          }
+        },
+        {
+          "location": "test_ledger.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        },
+        {
+          "location": "test_ledger.py:14",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        },
+        {
+          "location": "test_ledger.py:19",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        },
+        {
+          "location": "startup.py:11",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        },
+        {
+          "location": "CONTRIBUTING.md:5",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md",
+        "ledger/book.py",
+        "ledger/_internal.py",
+        "test_ledger.py"
+      ],
+      "findings": "Language-specific recommendations: not researched because web access is unavailable by the checkpoint author constraint; no browsing or network commands were used. Repo evidence establishes Python 3.12, Ruff 0.14.0 with selected lint codes, Decimal quantization, dataclass entries, and unittest public-boundary checks (pyproject.toml:4, pyproject.toml:7, pyproject.toml:9, ledger/_internal.py:4, ledger/book.py:7, test_ledger.py:8). CONTRIBUTING.md:3-5 establishes the local standards. General principles retained for later consideration are matching evidence to authoritative expectations and distinguishing configured checks from executed results. No language rule set, tool replacement, numeric-policy decision, or external best-practice claim is selected.",
+      "limitations": [
+        "Subagent tools are unavailable in this evaluation. All five briefs ran sequentially in the main thread in documents, architecture, checks, language, outside order. Web tools are exposed by the host but unusable for this checkpoint by explicit author constraint; capabilities.web=false denotes usable capability. No official language/tool or community source was opened."
+      ],
+      "files": [
+        {
+          "location": "pyproject.toml:4",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "pyproject.toml:7",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "pyproject.toml:9",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "uv.lock:18",
+          "state": {
+            "kind": "sha256",
+            "value": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3"
+          }
+        },
+        {
+          "location": "CONTRIBUTING.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+          }
+        },
+        {
+          "location": "ledger/book.py:7",
+          "state": {
+            "kind": "sha256",
+            "value": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+          }
+        },
+        {
+          "location": "ledger/_internal.py:4",
+          "state": {
+            "kind": "sha256",
+            "value": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+          }
+        },
+        {
+          "location": "test_ledger.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "pyproject.toml",
+        "uv.lock",
+        "startup.py",
+        "ledger/_internal.py"
+      ],
+      "findings": "Outside recommendations and service/version behavior: not researched because web access is unavailable by the checkpoint author constraint. No third-party runtime service integration is present in the inspected boundary: startup.py:1-18 uses standard-library facilities and Ledger, and ledger/_internal.py:1 uses Decimal. The manifest declares only the pinned Ruff development dependency (pyproject.toml:6); the lock records its PyPI registry source and artifacts (uv.lock:20). Those recorded URLs are repository data, not verified web citations or observed service behavior. No supplied probe results were found. General principle: recorded configuration does not establish external runtime behavior.",
+      "limitations": [
+        "No relevant third-party runtime service or requested integration change was identified; no integration is invented. No upstream documentation, registry lookup, download, network command, or live probe ran. Dependency availability and outside behavior remain unverified."
+      ],
+      "files": [
+        {
+          "location": "startup.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        },
+        {
+          "location": "startup.py:8",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        },
+        {
+          "location": "startup.py:18",
+          "state": {
+            "kind": "sha256",
+            "value": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+          }
+        },
+        {
+          "location": "ledger/_internal.py:1",
+          "state": {
+            "kind": "sha256",
+            "value": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+          }
+        },
+        {
+          "location": "pyproject.toml:6",
+          "state": {
+            "kind": "sha256",
+            "value": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+          }
+        },
+        {
+          "location": "uv.lock:20",
+          "state": {
+            "kind": "sha256",
+            "value": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

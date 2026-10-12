@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "public-caller",
+  "writePaths": [
+    "app.py"
+  ],
+  "contracts": [
+    {
+      "id": "public-ledger",
+      "files": [
+        "ledger/__init__.py"
+      ]
+    }
+  ]
+}

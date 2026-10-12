@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "156e8342bc33bb6ce7c7713c4df1735eeb13aa05"
+  },
+  "nextChange": "Authorised bounded pricing refactor naming subtotal with preserved public behaviour.",
+  "reviewedScope": [
+    "packages/core/internal/database.ts",
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Public quote 12, checkout total 10 and existing quantity calculation are approved."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-007",
+      "problem": "The pricing calculation does not name its intermediate unit-price times quantity value.",
+      "files": [
+        "packages/core/internal/database.ts"
+      ],
+      "command": null,
+      "principle": "Preserve public pricing and checkout behaviour.",
+      "consequence": "The intermediate subtotal is implicit.",
+      "fix": "Name subtotal without changing multiplication order or the existing quantity multiplier.",
+      "scope": [
+        "packages/core/internal/database.ts",
+        ".bstack/assessment.json"
+      ],
+      "verification": "Original-state and final aggregate native captures; fresh local and clean-clone checker.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-007"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance selected by user; no audit, interview or delivery service."
+  ]
+}

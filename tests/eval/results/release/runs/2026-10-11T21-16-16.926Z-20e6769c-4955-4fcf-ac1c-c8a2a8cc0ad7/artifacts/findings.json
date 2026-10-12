@@ -1,0 +1,366 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "nextChange": "Review foundation recommendations for the existing checkout before selecting any implementation change.",
+  "reviewedScope": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "DESIGN.md",
+    "glossary.md",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "unit.test.mjs",
+    "journey.mjs",
+    "boundaries.mjs",
+    "packages/core/index.ts",
+    "packages/core/b.ts",
+    "packages/core/a.ts",
+    "packages/core/package.json",
+    "packages/core/internal/database.ts",
+    "packages/web/routes.ts",
+    "packages/web/package.json",
+    "packages/web/alias.ts",
+    "packages/web/ui.ts",
+    "packages/web/public.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "UI never touches storage; line 4 agrees checkout total 10. Preserve these approved commitments."
+    },
+    {
+      "id": "agents",
+      "pointer": "AGENTS.md:1",
+      "intent": "documented",
+      "summary": "Use approved design and public core interface. CLAUDE.md:1 imports this instruction; both remain unchanged."
+    },
+    {
+      "id": "glossary",
+      "pointer": "glossary.md:3",
+      "intent": "documented",
+      "summary": "Lines 3 and 4 define Order inconsistently as customer purchase and panel sequence."
+    },
+    {
+      "id": "price",
+      "pointer": "packages/core/internal/database.ts:1",
+      "intent": "observed",
+      "summary": "price returns 12; servicePrice returns unchecked fetch JSON price."
+    },
+    {
+      "id": "ui",
+      "pointer": "packages/web/ui.ts:1",
+      "intent": "observed",
+      "summary": "UI imports private servicePrice and feeds route with fetched price."
+    },
+    {
+      "id": "routes",
+      "pointer": "packages/web/routes.ts:1",
+      "intent": "observed",
+      "summary": "Private price import, quantity calculation, discount and module-local orders array."
+    },
+    {
+      "id": "alias",
+      "pointer": "packages/web/alias.ts:1",
+      "intent": "observed",
+      "summary": "Storage alias import bypasses public core entry."
+    },
+    {
+      "id": "public",
+      "pointer": "packages/core/index.ts:1",
+      "intent": "observed",
+      "summary": "Public core exports price only; package exports index.ts."
+    },
+    {
+      "id": "cycle",
+      "pointer": "packages/core/a.ts:1",
+      "intent": "observed",
+      "summary": "a calls b and b calls a; no checkout caller observed."
+    },
+    {
+      "id": "tests",
+      "pointer": "unit.test.mjs:5",
+      "intent": "observed",
+      "summary": "quote test expects 12; checkout HTTP test mocks 10."
+    },
+    {
+      "id": "journey",
+      "pointer": "journey.mjs:6",
+      "intent": "observed",
+      "summary": "Loopback HTTP fixture returns 12; line 12 asserts total 10."
+    },
+    {
+      "id": "commands",
+      "pointer": "package.json:12",
+      "intent": "observed",
+      "summary": "Maintained check runs only tsc; test, journey and boundaries are separate."
+    },
+    {
+      "id": "execution",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Captured run-checks: types/unit exit 0; boundaries/journey exit 1. No journey verified. Acceptance source hashes preserved."
+    },
+    {
+      "id": "overlap",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Declared candidate plans share core/index.ts, unit.test.mjs, journey.mjs and package.json; shared checkout-price and checkout-result contracts."
+    },
+    {
+      "id": "history",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Only initial commit exists; HEAD..HEAD measurement captures endpoint sizes, no interval commits or co-change pairs. No repeated coupling inferred."
+    },
+    {
+      "id": "gate-risk",
+      "pointer": "package.json:12",
+      "intent": "inferred",
+      "summary": "A type-only maintained command can pass despite approved checkout/boundary violations; observed by separate failing native checks."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Real loopback checkout returns 12 while approved acceptance remains 10. Unit mock conceals this failure.",
+      "files": [
+        "packages/core/internal/database.ts",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "command": "npm run journey",
+      "principle": "Preserve DESIGN.md:4 agreed total 10; expectations must come from approved acceptance.",
+      "consequence": "Existing checkout journey fails; green units cannot establish readiness.",
+      "fix": "Keep the 10 assertion unchanged. Review whether upstream contract should supply 10 or core must enforce agreed pricing on an upstream 12 response. Then fix the selected source/policy and public quote expectation where supported; do not merely retune the HTTP fixture to hide disagreement.",
+      "scope": [
+        "packages/core/internal/database.ts",
+        "packages/core/index.ts",
+        "unit.test.mjs",
+        "journey.mjs"
+      ],
+      "verification": "Reproduce original 12 response failure, then assert 10 through real loopback HTTP checkout on final inputs using the approved resolution; rerun units/types/boundaries.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "price",
+        "tests",
+        "journey",
+        "execution"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "Web UI/routes import private database directly, and aliasQuote accesses it through @storage.",
+      "files": [
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "tsconfig.json"
+      ],
+      "command": "npm run boundaries",
+      "principle": "AGENTS.md public core interface and DESIGN.md:3 UI/storage separation.",
+      "consequence": "Web depends on storage representation; internal changes require coordinated caller edits.",
+      "fix": "Provide the smallest reviewed public core capability for the current checkout; use existing public price export for routes and aliasQuote, and migrate UI to the selected public service operation. Decide whether route order-state ownership falls under storage prohibition before any dependent relocation.",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts"
+      ],
+      "verification": "Current TypeScript-resolved boundary checker must reject private and alias imports; prove clean public-import controls and deliberate bypasses on disposable fixtures if selected; retain real HTTP checkout before/after protection. Dynamic imports are outside current checker scope.",
+      "blocksNextChange": true,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "agents",
+        "design",
+        "ui",
+        "routes",
+        "alias",
+        "public",
+        "execution"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "Core a and b form a cycle and recurse without a terminating call if invoked. They are not exported or observed on checkout path.",
+      "files": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "command": "npm run boundaries",
+      "principle": "Proposed direction rule: core dependencies should not form recursive cycles; configured checker already reports them, but design does not establish an approved no-cycle policy.",
+      "consequence": "Boundary command fails; latent invocation can overflow. No observed checkout failure attributed to this cycle.",
+      "fix": "Review intended use, then select removal of unused modules or one directional implementation. Until selected, retain visible debt; do not suppress cycle checking globally.",
+      "scope": [
+        "packages/core/a.ts",
+        "packages/core/b.ts"
+      ],
+      "verification": "Selected cleanup must pass native boundaries and types without altering checkout/public price contract; no-cycle policy requires a valid control and deliberately seeded cycle proof.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "cycle",
+        "execution",
+        "public"
+      ]
+    },
+    {
+      "id": "F-004",
+      "problem": "Maintained npm run check enforces types alone; separately runnable journey and boundaries fail while units pass.",
+      "files": [
+        "package.json",
+        "boundaries.mjs",
+        "journey.mjs"
+      ],
+      "command": "npm run check",
+      "principle": "Proposed completion rule: approved affected journeys and boundaries pass on final inputs.",
+      "consequence": "Common check entry point can give a false readiness signal.",
+      "fix": "After selected fixes or explicitly accepted narrow debt, extend existing check with fail-fast type, boundary, unit and journey commands. Add a short evidence-completion section to existing DESIGN.md linking acceptance and checks, preserving its approved lines. Avoid a competing checker or unselected CI.",
+      "scope": [
+        "package.json",
+        "DESIGN.md"
+      ],
+      "verification": "Prove maintained command passes clean controls and fails seeded boundary/alias/cycle and checkout violations with expected diagnostics. Existing failures stay visible; no blanket suppression or baseline refresh to absorb new debt.",
+      "blocksNextChange": true,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "commands",
+        "execution",
+        "gate-risk",
+        "design"
+      ]
+    },
+    {
+      "id": "F-005",
+      "problem": "Order names both a purchase and UI panel sequence.",
+      "files": [
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Proposed vocabulary clarity: one canonical meaning per concept/context.",
+      "consequence": "Public contract naming and ownership proposals can encode incompatible meanings.",
+      "fix": "Draft only: retain Order for customer purchase; use Panel sequence for display ordering. Trade-off: clearer distinction changes existing terminology. Author decision required before glossary edits or naming migration.",
+      "scope": [
+        "glossary.md"
+      ],
+      "verification": "Review draft meanings against both existing definitions; no code renaming or glossary update until explicitly selected.",
+      "blocksNextChange": false,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "glossary",
+        "routes"
+      ]
+    },
+    {
+      "id": "F-006",
+      "problem": "No approved policy settles upstream pricing disagreement, malformed/unavailable service responses, quantity edges/discounts, or ownership of module-local order state.",
+      "files": [
+        "DESIGN.md",
+        "packages/core/internal/database.ts",
+        "packages/web/routes.ts"
+      ],
+      "command": null,
+      "principle": "Approved design remains baseline; new behaviour and acceptance cases need an explicit decision.",
+      "consequence": "A speculative validation, discount or persistence rewrite could change checkout beyond approved scope.",
+      "fix": "Keep dependent pricing/error/quantity/state recommendations blocked. Recommend core owns price-service interpretation and storage-related behaviour, web calls a public operation; author must decide price disagreement, error outcome and whether order state is storage. Add only approved public-boundary cases; no invented status codes or discounts.",
+      "scope": [
+        "DESIGN.md",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ],
+      "verification": "After decisions, the fewest real HTTP/public-boundary checks covering approved success and failure outcomes. No real external endpoint is configured; loopback HTTP does not prove third-party live behaviour.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design",
+        "price",
+        "routes",
+        "ui"
+      ]
+    },
+    {
+      "id": "F-007",
+      "problem": "Representative pricing and boundary changes share write paths and contracts; parallel editing is not independent.",
+      "files": [
+        "packages/core/index.ts",
+        "unit.test.mjs",
+        "journey.mjs",
+        "package.json"
+      ],
+      "command": null,
+      "principle": "Proposed coordination rule: one writer per shared path and explicit shared contract ownership.",
+      "consequence": "Concurrent edits can disagree on public service pricing and checkout result despite disjoint adapter/caller paths.",
+      "fix": "Agree checkout-price and checkout-result contracts first. Assign one owner to core/index.ts, unit.test.mjs, journey.mjs and package.json. Sequence shared edits; private adapter and web callers may proceed in parallel only after contract decisions and selection. Plans are advisory proposals, not authorized work.",
+      "scope": [
+        "packages/core/index.ts",
+        "unit.test.mjs",
+        "journey.mjs",
+        "package.json",
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts"
+      ],
+      "verification": "Use retained overlap output and reviewed contract descriptions, then rerun affected native checks on integrated final inputs. Do not claim semantic independence or observed merge conflicts from overlap/history.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "overlap",
+        "history",
+        "public",
+        "ui",
+        "routes"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey",
+    "foundation-review"
+  ],
+  "execution": [],
+  "limitations": [
+    "No changes selected or applied. All findings unresolved; terminology remains draft.",
+    "Native check results captured in check-results.json; these are not attached as validated findings execution evidence because the check-plan fingerprint is not the findings fingerprint. Rendered readiness remains blocked, never passing.",
+    "Typecheck proves typing, not public-interface conformance. Unit pass does not establish agreed total; real HTTP journey failed.",
+    "Only initial commit exists: measured HEAD..HEAD, no historical change-frequency or co-change evidence.",
+    "No broader approved vision available. Scoped design/acceptance is sufficient for this audit; no speculative vision creation or board approval.",
+    "Service price policy, error/quantity acceptance and order-state boundary interpretation remain decision blockers.",
+    "Loopback HTTP exercised; no external live service endpoint configured or probed.",
+    "Static checker covers resolved top-level imports/exports and cycles; dynamic imports/runtime imports not analyzed.",
+    "No formatter/linter/CI configured; no generic tooling addition recommended. CLAUDE stub remains unchanged; consolidation not proposed."
+  ]
+}

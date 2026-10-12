@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"run-checks","status":"failed","problems":[{"code":"stale-acceptance-source","message":"Source design no longer matches its approved bytes.","fix":"Review the check plan and capture the required evidence against the correct state."}],"data":{},"inputs":{}}

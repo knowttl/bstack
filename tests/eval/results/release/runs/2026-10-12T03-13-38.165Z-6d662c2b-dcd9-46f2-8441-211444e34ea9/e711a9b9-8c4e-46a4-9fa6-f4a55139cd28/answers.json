@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T03-13-38.165Z-6d662c2b-dcd9-46f2-8441-211444e34ea9",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "unresolved-scope",
+      "passed": true,
+      "startLine": 7,
+      "endLine": 42
+    },
+    {
+      "id": "inaccessible-history",
+      "passed": true,
+      "startLine": 7,
+      "endLine": 42
+    }
+  ]
+}

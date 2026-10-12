@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "runId": "d30d104b6a131c0c24d69d8f668a881e06a22e6dd75ee3ab3adc058034a26583",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "planDigest": "d30d104b6a131c0c24d69d8f668a881e06a22e6dd75ee3ab3adc058034a26583",
+  "edits": [
+    {
+      "id": "name-total",
+      "path": "packages/web/routes.ts",
+      "resolvedPath": "[fixture]/packages/web/routes.ts",
+      "originalHash": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8",
+      "proposedHash": "b40d18a4283d3564af49cbf89b1b344b6084be1ce048df5c0fc31000113f7eca",
+      "backup": "original-0",
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "Preserve quote 12 and real HTTP checkout total 10",
+    "starting-checks"
+  ]
+}

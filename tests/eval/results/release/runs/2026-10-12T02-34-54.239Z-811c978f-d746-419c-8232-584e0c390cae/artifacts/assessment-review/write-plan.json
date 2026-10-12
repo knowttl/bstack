@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "kind": "protected-assessment-replacement",
+  "approval": {
+    "required": true,
+    "received": false,
+    "reason": "User explicitly requires complete exact bound assessment content and its protected write plan for separate approval; keep the proposed record in scratch until approval."
+  },
+  "repo": "[fixture]",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "expectedHead": "c1300389bdfb125e73403605284d35f3ea004a45",
+  "allowedWritePaths": [
+    ".bstack/assessment.json"
+  ],
+  "preconditions": {
+    "workingTree": "clean",
+    "baseMustBeAncestor": true,
+    "assessmentOldSha256": "903bb91d08e210eb6c58579ec524c86b97a5d96b02cfe8568435a3d6789b1ba6",
+    "trackedFileSha256": {
+      ".bstack/assessment.json": "903bb91d08e210eb6c58579ec524c86b97a5d96b02cfe8568435a3d6789b1ba6",
+      ".bstack/bin/bstack-check.mjs": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a",
+      ".bstack/project.json": "07707b15d680fb98b592c1931b86bc10616560bce7a6c313a5a86259ac2b66e2",
+      ".gitignore": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97",
+      "AGENTS.md": "fd6796cbc59d63fc0f5f963e1330056d4fc6126d1b15348819d6e91fa0a36d1f",
+      "CLAUDE.md": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49",
+      "DESIGN.md": "560ab216836370ebafbc680dd918d5581515ee8f8c885b75719fe797ec02d708",
+      "boundaries.mjs": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449",
+      "docs/repo-audit.md": "c89179911311f8e067c5abcb29bc20cc79ba3690a143958d4b9b6e41d4937908",
+      "glossary.md": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5",
+      "journey.mjs": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605",
+      "package-lock.json": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b",
+      "package.json": "0f0f74d494ef41a0b0104ce393316742ef9aa6e9f9bf5ffbf53c06c07f7f0b9a",
+      "packages/core/a.ts": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb",
+      "packages/core/b.ts": "e643c78cec79bba9faa93c39fb78e056f39ed1fd7ce6095d642c5bd6fbd3bd4d",
+      "packages/core/index.ts": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82",
+      "packages/core/internal/database.ts": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424",
+      "packages/core/package.json": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf",
+      "packages/web/alias.ts": "c0770fe9f064e5731cc884e570f625766dc965766bf11646bdb3aed012cfcd90",
+      "packages/web/package.json": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326",
+      "packages/web/public.ts": "5710a8b0e59d341ace0ae6050c9974442efd435581b72eb9f243e1eab1327290",
+      "packages/web/routes.ts": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8",
+      "packages/web/ui.ts": "d2f7ebf1d59d4059fa75ac71348de81d7aebda282e642305f4b3c43aeea1bf2c",
+      "tsconfig.json": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49",
+      "unit.test.mjs": "37fe27e78977034a90b3036af71f2ff54431cd97e7e7a884b378c37cca05924a"
+    },
+    "proposalSha256": "63d491767560ef0c86c01873ef5f874a4cd8084dc44143334197d6ca348ad4ac",
+    "boundFingerprint": "8cf46a0dc5b37879bf1e5f91fb12db5d3202139a1a8f5f1c53fae275a0002edf",
+    "portableSourceHead": "c1300389bdfb125e73403605284d35f3ea004a45",
+    "requiredAcceptanceOutcomes": [
+      "quote() = 12",
+      "checkout total 10",
+      "quote(2) = 24 (sole extension)"
+    ],
+    "structuralReview": "Revalidate exact proposal in isolated scratch checkout against expectedHead and base with validateEvidence(preflight:true); no reported problems; match boundFingerprint. Abort on any mismatch."
+  },
+  "operation": {
+    "type": "replace-file",
+    "path": ".bstack/assessment.json",
+    "exactContentSource": "[isolated-home][scratch-path]",
+    "sha256": "63d491767560ef0c86c01873ef5f874a4cd8084dc44143334197d6ca348ad4ac",
+    "mode": "preserve existing regular-file permissions",
+    "backup": "Retain original bytes in isolated scratch before replacing.",
+    "protection": "After approval, verify all preconditions immediately before the write; replace only this regular file atomically; abort if HEAD, paths, hashes, scope, proposal bytes or fingerprint changed.",
+    "postcondition": "New file SHA-256 equals proposalSha256 and every other tracked-file hash remains unchanged; git diff contains only .bstack/assessment.json."
+  },
+  "afterApprovedWrite": [
+    "Review the exact applied assessment diff and revalidate portable binding.",
+    "Commit only .bstack/assessment.json separately from implementation.",
+    "Run complete standalone checker locally and in a fresh different-root clean clone with isolated home/cache against the same explicit base and committed assessment.",
+    "Before every Node suite run node \"$BSTACK_EVAL_PREFLIGHT\"; require exit zero, source host, permitted true, memory at least 8 GB, disk at least 20 GB, load below 36 and no more than two host-wide proposed-inclusive Node suites. Never kill another lane.",
+    "Record final current-head verification in scratch; no implementation, checks, historical snapshot or user-note changes."
+  ],
+  "executionState": "Proposed only; no fixture write, commit or suite execution performed for this proposal."
+}

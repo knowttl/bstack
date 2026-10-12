@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T03-44-15.220Z-2381b41a-26f6-492b-b039-1cfc9d319613",
+  "artifacts": [
+    {
+      "path": "artifacts/scratch/checklist.md",
+      "originalSha256": "2b352d9a1275e5e4a094f59284fcc854f4b88c17d389fbbcc69b613b563bedb1",
+      "publishedSha256": "2b352d9a1275e5e4a094f59284fcc854f4b88c17d389fbbcc69b613b563bedb1"
+    },
+    {
+      "path": "artifacts/scratch/citations.json",
+      "originalSha256": "537f2e8135e2250ee45198c903acb85efdcfc6937b7b1d039fd08b2a296c7da9",
+      "publishedSha256": "fc4392df54cec6e2cfba8217946e09be8cc9b3b11ddd98660d603edc28e6193b"
+    },
+    {
+      "path": "artifacts/scratch/findings.json",
+      "originalSha256": "24223d8e2bbd54d0c39f243766803adf3e11187d194f534a3b5cb210948bead8",
+      "publishedSha256": "ea279374bcd19ff7aacda922c55dd2a72b6dc0ae4d9cf219db8d227e0ea1dc70"
+    },
+    {
+      "path": "artifacts/scratch/render.json",
+      "originalSha256": "86876cebae8881440bab8f52929b08db6b0532fdb12a90218498f29ab16b337c",
+      "publishedSha256": "2ff0480bd81634e06bf6ae3398b8298a73f4b68c25b7e4917eb63b1ef8c155d0"
+    },
+    {
+      "path": "artifacts/scratch/repo-audit.md",
+      "originalSha256": "7d6362e3a8e644e49553ad4c2eba2f039304ec1ff34414d8bfe28c044668461d",
+      "publishedSha256": "16c32e61057a61ea7ddd73bdb5febb907ac9b5d6218fbdd64f6b6c0001f62128"
+    },
+    {
+      "path": "artifacts/scratch/report.html",
+      "originalSha256": "50b5041c91bbbc5d92c5762a7c72ed601fdec7286bfb0127e8a06fb814d521fd",
+      "publishedSha256": "dbba1d32eacff9e5f9a6945cdbac73653d116e6065e213e47144819edf88344f"
+    },
+    {
+      "path": "artifacts/scratch/research.json",
+      "originalSha256": "926b64a16667d520256df15dc00cb19dc444c86e71af0c77117774250af19190",
+      "publishedSha256": "926b64a16667d520256df15dc00cb19dc444c86e71af0c77117774250af19190"
+    },
+    {
+      "path": "artifacts/scratch/validation.json",
+      "originalSha256": "a9ad57b8bbb4a2b350685e44e34e55c6f6139d1fba161962663ad7888a41155c",
+      "publishedSha256": "51996ed8f11c82787771cd1fb62b32a9318ca3ad045d0b0a27975376fca5e504"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-inventory.json",
+      "originalSha256": "acd899f84d94cd55044bbb3388a2e96083189c68f8d76e19ce20cf85d047a4c8",
+      "publishedSha256": "8267528f733bf227a0fc0743a5b63a716438a5be70532460ed2215b16362eed2"
+    },
+    {
+      "path": "artifacts/referenced/cache/bstack/a360942cfa763916fa2772d13ede1029d6145774fc165e46ab22268aa57d5ace/591ef616-9204-430d-af9e-d14fd5bacc4e/repo-audit.md",
+      "originalSha256": "7d6362e3a8e644e49553ad4c2eba2f039304ec1ff34414d8bfe28c044668461d",
+      "publishedSha256": "16c32e61057a61ea7ddd73bdb5febb907ac9b5d6218fbdd64f6b6c0001f62128"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-inspect.json",
+      "originalSha256": "f80ab2a2b08a9a70c2fbce85d480a6dac352d795207d9ce861114afc46003c71",
+      "publishedSha256": "b1b0b4d6ba1070426f6f158852e412960f292477c3afffe02d70b173449454bd"
+    },
+    {
+      "path": "artifacts/referenced/tmp/repo-measure.json",
+      "originalSha256": "fcc29ddbdcd9363775593a3049129ecf2ae44ca846095ec7207575617da01059",
+      "publishedSha256": "7adecff4dcad6b8ffee345320c202042f74d1a47e2bbbbbe8c1b7b3a1da66e72"
+    }
+  ]
+}

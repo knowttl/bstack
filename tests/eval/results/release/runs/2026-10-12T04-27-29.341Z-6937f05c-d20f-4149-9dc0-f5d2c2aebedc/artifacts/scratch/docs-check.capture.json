@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "docs",
+    "check",
+    "--repo",
+    "[fixture]",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "{\"schemaVersion\":1,\"command\":\"docs check\",\"status\":\"passed\",\"problems\":[],\"data\":{\"documents\":[{\"path\":\"DESIGN.md\",\"links\":0},{\"path\":\"glossary.md\",\"links\":0},{\"path\":\"AGENTS.md\",\"links\":0},{\"path\":\"docs/repo-audit.md\",\"links\":0}],\"coverageLimits\":[{\"path\":\"DESIGN.md\",\"reason\":\"Inline code and escaped Markdown require renderer review.\"},{\"path\":\"AGENTS.md\",\"reason\":\"Inline code and escaped Markdown require renderer review.\"},{\"path\":\"docs/repo-audit.md\",\"reason\":\"Inline code and escaped Markdown require renderer review.\"}]},\"inputs\":{\"repo\":\"[fixture]\",\"contract\":\".bstack/project.json\"}}\n",
+  "stderr": ""
+}

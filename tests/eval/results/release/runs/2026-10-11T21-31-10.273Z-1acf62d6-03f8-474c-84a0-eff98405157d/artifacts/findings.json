@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "4e5e6b9ec5c22097dc947b1fedadd56b2f69e718"
+  },
+  "nextChange": "Review an evidenced candidate vision delta for the approved personal-backup decision; no apply or implementation.",
+  "reviewedScope": [
+    "VISION.md",
+    "DESIGN.md",
+    "glossary.md"
+  ],
+  "sources": [
+    {
+      "id": "vision",
+      "pointer": "VISION.md:3-7",
+      "intent": "documented",
+      "summary": "Approved baseline: one-reader reading queue, preservation of titles and addresses, excluded accounts/sharing/recommendations."
+    },
+    {
+      "id": "portability",
+      "pointer": "DESIGN.md:10-13",
+      "intent": "documented",
+      "summary": "Approved local personal-backup export includes title/address/read status; missing accept/resist criteria explicitly identified; no implementation or stack approval."
+    },
+    {
+      "id": "history",
+      "pointer": "git:cdef26629d6a304ab88bb7417edfa298a1d34f9f..4e5e6b9ec5c22097dc947b1fedadd56b2f69e718",
+      "intent": "observed",
+      "summary": "Two accessible commits; later approval changes DESIGN.md only, leaving VISION.md unchanged."
+    },
+    {
+      "id": "risk",
+      "pointer": "VISION.md:6; DESIGN.md:11-12",
+      "intent": "inferred",
+      "summary": "Without explicit contribution criteria, reviewers may conflate portable backup with a sharing feature."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Approved vision omits accept/resist criteria for the newer approved local personal-backup decision.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md"
+      ],
+      "command": null,
+      "principle": "Serve one reader; permit local backup of their own articles while retaining the exclusion of accounts, sharing and recommendations.",
+      "consequence": "A local backup may be rejected as outside the original journey, or sharing may be accepted as portability.",
+      "fix": "Append the three exact candidate sentences shown in VISION.delta.diff; retain all seven baseline lines.",
+      "scope": [
+        "VISION.md"
+      ],
+      "verification": "Check each added sentence against DESIGN.md:10-13; review backup-versus-sharing board and obtain approval of exact candidate revision before any protected apply.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "portability",
+        "history",
+        "risk"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "vision-board-review",
+    "exact-delta-approval"
+  ],
+  "execution": [],
+  "limitations": [
+    "Only document artifacts exist; no native product or journey check is available.",
+    "No changes selected or applied. Existing approved vision remains authoritative.",
+    "Board build and launch passed, but the pinned listener has returned no complete-round author feedback. Board interaction and exact candidate approval are blocked at this checkpoint; browser reachability is not established and no verdicts are inferred.",
+    "No declared pair of plans; overlap analysis is inapplicable."
+  ]
+}

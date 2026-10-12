@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574",
+  "status": "passed",
+  "planDigest": "1c760cc9ec0e38009eb3af64b9cd2c0cfaab3976d6cf82db81c54f1de58ec2f9",
+  "edits": [
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "operation": "create",
+      "sha256": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+    },
+    {
+      "path": ".bstack/project.json",
+      "operation": "create",
+      "sha256": "45553e43656a09a67d135ab1bba9d9f4a7d0884145fff68f97a9a0815c843034"
+    },
+    {
+      "path": "AGENTS.md",
+      "operation": "replace-file",
+      "sha256": "9f4f865d4c3f99d71bc693e4819a9bb77fcf580b690284587bf9945426c2c0a7"
+    },
+    {
+      "path": "DESIGN.md",
+      "operation": "replace-file",
+      "sha256": "da4ff39367c06a091e1880c9fc98b36babd52ca4e6f687b503fa1ac7f9adcf46"
+    },
+    {
+      "path": "boundaries.mjs",
+      "operation": "replace-file",
+      "sha256": "e4f494f851ab46e3cc6f9b3f9d46ade28c61c5e8d50f41072d777fccff100973"
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "operation": "create",
+      "sha256": "82885a11705287105a26eadeba1315ea0bb552dc1d9e532b98fa00fe3498f8d0"
+    },
+    {
+      "path": "glossary.md",
+      "operation": "replace-file",
+      "sha256": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5"
+    },
+    {
+      "path": "journey.mjs",
+      "operation": "replace-file",
+      "sha256": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605"
+    },
+    {
+      "path": "package.json",
+      "operation": "replace-file",
+      "sha256": "8c784463a39813290269899ed3bb833acec919b525aaf69436d350eb38a80127"
+    },
+    {
+      "path": "packages/core/a.ts",
+      "operation": "delete",
+      "sha256": null
+    },
+    {
+      "path": "packages/core/b.ts",
+      "operation": "delete",
+      "sha256": null
+    },
+    {
+      "path": "packages/core/index.ts",
+      "operation": "replace-file",
+      "sha256": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82"
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "operation": "replace-file",
+      "sha256": "c0770fe9f064e5731cc884e570f625766dc965766bf11646bdb3aed012cfcd90"
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "operation": "replace-file",
+      "sha256": "bb5aa648e5ff3ce4a089536acc4c34ac38cbdc5718d9e7c2515f298c45d82ba8"
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "operation": "replace-file",
+      "sha256": "d2f7ebf1d59d4059fa75ac71348de81d7aebda282e642305f4b3c43aeea1bf2c"
+    }
+  ],
+  "unchangedPublishedCheckerBundle": true,
+  "userNotePreservedAsExactPrefix": true,
+  "originalUnitsAndQuoteSourceUnchanged": true,
+  "endpointOnlyJourneyCorrection": true,
+  "nativeControlArtifactsVerified": 7,
+  "standalonePreviewsVerified": 2,
+  "authority": "Ordered scripted fixture-author reply 2 approves this exact reviewed dry-run diff and commands.",
+  "actualTargetUnchangedBeforeApproval": true
+}

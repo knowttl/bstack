@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde"
+  },
+  "nextChange": "Move only the selected public-ledger ownership rule into CODING_STANDARDS.md and link its original location; preserve all other guidance and Python behaviour.",
+  "reviewedScope": [
+    "CONTRIBUTING.md",
+    "CODING_STANDARDS.md"
+  ],
+  "sources": [
+    {
+      "id": "S-1",
+      "pointer": "CONTRIBUTING.md:3",
+      "intent": "documented",
+      "summary": "External modules use the public ledger package. The ledger owns entries and all balance calculations."
+    },
+    {
+      "id": "S-2",
+      "pointer": "CONTRIBUTING.md:5",
+      "intent": "documented",
+      "summary": "Use native Python checks and preserve balanced postings."
+    },
+    {
+      "id": "S-3",
+      "pointer": "app.py:2",
+      "intent": "observed",
+      "summary": "Existing private import is outside the selected documentation relocation."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The selected ownership rule currently resides in CONTRIBUTING.md; the owner selected CODING_STANDARDS.md as its authority.",
+      "files": [
+        "CONTRIBUTING.md"
+      ],
+      "command": null,
+      "principle": "Keep one authoritative occurrence of the existing rule.",
+      "consequence": "Copying rather than relocating would create duplicate rule authorities.",
+      "fix": "Move both sentences verbatim into CODING_STANDARDS.md and replace the original occurrence with a link.",
+      "scope": [
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md"
+      ],
+      "verification": "Protected exact-byte preview, native Python structural verification, unittest, Ruff and existing boundaries check; preserve existing failures.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "S-1",
+        "S-2"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "relocation"
+  ],
+  "execution": [
+    {
+      "id": "b966b3ff-759b-49ad-8b10-a0640a6d72a4",
+      "outcome": "starting-checks",
+      "status": "failed",
+      "fingerprint": "c1a663c25be8ca64676e203b02fa0cca65200f8cf405964cb9548653f916d6fd",
+      "artifact": "[isolated-home]/cache/bstack/47201b61b78c3116ed8ca48f1657b641f72a5da5f484c9cf05548b85eb7f4c30/b966b3ff-759b-49ad-8b10-a0640a6d72a4/checks.json",
+      "artifactHash": "b7f95f7f81fc44ba8dc7691a02a3f1c55191705b6258cf869eeb697cb60e2f97",
+      "method": "run-checks --phase before; prepared .venv via PATH"
+    }
+  ],
+  "limitations": [
+    "Exact generated diff has not been approved or applied.",
+    "Existing app.py private import remains outside the selected scope.",
+    "No unrelated audit record or enforcement change is proposed.",
+    "Captured baseline: unittest 2 tests passed; Ruff passed; boundaries.py failed with [\"private\"] due to app.py:2. Post-apply verification awaits approval."
+  ]
+}

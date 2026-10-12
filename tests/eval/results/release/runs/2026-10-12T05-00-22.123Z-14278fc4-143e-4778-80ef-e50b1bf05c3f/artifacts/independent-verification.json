@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T05-00-22.123Z-14278fc4-143e-4778-80ef-e50b1bf05c3f",
+  "head": "81feef422f8fda1c96302a7fb3c09070f60045ab",
+  "workingTree": "",
+  "allTrackedFilesUnchanged": true,
+  "loginAbsent": true,
+  "files": [
+    {
+      "path": "DESIGN.md",
+      "sha256": "80bd8eaa044f402d0443fdc85f9a7676eea096808e69b5716aee0db89f138cfa",
+      "unchanged": true
+    },
+    {
+      "path": "VISION.md",
+      "sha256": "e05749213df1e9023dd769415222a264a8e57bea6f709dda561e3a78b6c4532e",
+      "unchanged": true
+    },
+    {
+      "path": "glossary.md",
+      "sha256": "c4df6fc9350fe8ed8552281064e0297101ea062b97034b754361ebb04410acbc",
+      "unchanged": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/clear-goals-checklist.md",
+      "originalSha256": "c0ad1bdaea2d525adf44d515a315e46942a3ba2420578fc2a5d12a352faec205",
+      "publishedSha256": "c0ad1bdaea2d525adf44d515a315e46942a3ba2420578fc2a5d12a352faec205"
+    },
+    {
+      "path": "artifacts/clear-goals-findings.json",
+      "originalSha256": "dfd580a8751791211e20284965a0567982f8084b98abf1a89f55ca07ac4ea432",
+      "publishedSha256": "b362dc09eb82179e8f2b0b4159192462c907077bb8c4ae8470a47666db03ce53"
+    },
+    {
+      "path": "artifacts/clear-goals-inspect.json",
+      "originalSha256": "bb8b1235db7ffccb632469d9591bf4a2951950fc5724c8bb8890cc23551f86c3",
+      "publishedSha256": "b1b0b4d6ba1070426f6f158852e412960f292477c3afffe02d70b173449454bd"
+    },
+    {
+      "path": "artifacts/clear-goals-inventory.json",
+      "originalSha256": "34b3ef3edbcd23f7a468a5f77f76d9a50f192a7e1d6a72ad08ac289bb38d22e5",
+      "publishedSha256": "8267528f733bf227a0fc0743a5b63a716438a5be70532460ed2215b16362eed2"
+    },
+    {
+      "path": "artifacts/clear-goals-measure.json",
+      "originalSha256": "7d7f644c595f65c26d1ffe4b4228d008765096c9071226bdbdbc478538eab451",
+      "publishedSha256": "7adecff4dcad6b8ffee345320c202042f74d1a47e2bbbbbe8c1b7b3a1da66e72"
+    },
+    {
+      "path": "artifacts/clear-goals-research.json",
+      "originalSha256": "a6258f9f3ecfb99edf52e7e138ff703a037cada4d6523f266ca91a9e56390665",
+      "publishedSha256": "a6258f9f3ecfb99edf52e7e138ff703a037cada4d6523f266ca91a9e56390665"
+    }
+  ]
+}

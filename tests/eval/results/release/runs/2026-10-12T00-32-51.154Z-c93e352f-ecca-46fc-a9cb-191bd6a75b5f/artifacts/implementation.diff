@@ -1,0 +1,37 @@
+diff --git a/packages/core/index.ts b/packages/core/index.ts
+index 6e0da96..57ad9ff 100644
+--- a/packages/core/index.ts
++++ b/packages/core/index.ts
+@@ -1 +1 @@
+-export { price } from './internal/database.ts'
++export { price, servicePrice } from './internal/database.ts'
+diff --git a/packages/web/public.ts b/packages/web/public.ts
+index 674750e..a3339cd 100644
+--- a/packages/web/public.ts
++++ b/packages/web/public.ts
+@@ -1,2 +1,3 @@
+-import { price } from '../core/index.ts'
++import { price, servicePrice } from '../core/index.ts'
+ export function quote() { return price() }
++export async function serviceQuote(url: string) { return servicePrice(url) }
+diff --git a/unit.test.mjs b/unit.test.mjs
+index 7b44adb..055c3e9 100644
+--- a/unit.test.mjs
++++ b/unit.test.mjs
+@@ -1,4 +1,15 @@
+ import test from 'node:test'
+ import assert from 'node:assert/strict'
+-import { quote } from './packages/web/public.ts'
++import { quote, serviceQuote } from './packages/web/public.ts'
+ test('public quote', () => assert.equal(quote(), 12))
++test('public service quote uses the supplied service URL', async (t) => {
++  const url = 'https://prices.example/quote'
++  const fetch = t.mock.method(globalThis, 'fetch', async (requestedUrl) => {
++    assert.equal(requestedUrl, url)
++    return new Response(JSON.stringify({ price: 27 }), {
++      headers: { 'Content-Type': 'application/json' },
++    })
++  })
++  assert.equal(await serviceQuote(url), 27)
++  assert.equal(fetch.mock.callCount(), 1)
++})

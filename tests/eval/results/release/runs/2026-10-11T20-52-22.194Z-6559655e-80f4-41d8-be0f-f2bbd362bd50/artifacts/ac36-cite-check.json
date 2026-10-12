@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"cite-check","status":"failed","problems":[{"code":"citation-file-unavailable","message":"Cited path must be a readable file.","path":"missing-citation-control.txt:1","fix":"Reopen the cited source and regenerate its location and state."}],"data":{},"inputs":{}}

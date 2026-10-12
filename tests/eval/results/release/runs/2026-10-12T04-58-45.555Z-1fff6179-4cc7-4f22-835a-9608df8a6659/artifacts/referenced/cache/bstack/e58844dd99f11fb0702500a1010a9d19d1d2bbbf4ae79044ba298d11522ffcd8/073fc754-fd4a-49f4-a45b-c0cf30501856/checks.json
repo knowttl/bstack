@@ -1,0 +1,440 @@
+{
+  "schemaVersion": 1,
+  "runId": "073fc754-fd4a-49f4-a45b-c0cf30501856",
+  "phase": "after",
+  "status": "failed",
+  "planDigest": "1e14aee46d93e94cce17d9a2bc1d540b3ece13669ce74b2910b767a904be4f73",
+  "originalState": {
+    "fingerprint": "59c6ad817adde6c57da8159882b4590062f20d2792f3267778c0988192e6cd33",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+      "files": [
+        {
+          "path": ".gitignore",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "d7edc7e4b5887be249b21a3907550206bbe141b43287c893a091cc80368e098a"
+        },
+        {
+          "path": ".ruff_cache/.gitignore",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+        },
+        {
+          "path": ".ruff_cache/0.14.0/14722053766288549244",
+          "present": true,
+          "mode": 33152,
+          "linkTarget": null,
+          "contentHash": "43467f610bc89a72519ca984ca5e6022a8affdc30b09175717436814b2d63d01"
+        },
+        {
+          "path": ".ruff_cache/0.14.0/3010792738607748798",
+          "present": true,
+          "mode": 33152,
+          "linkTarget": null,
+          "contentHash": "353248e00569921a450e6780b983264c03a1944421d7a003f05a3e6536ea3d60"
+        },
+        {
+          "path": ".ruff_cache/CACHEDIR.TAG",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+        },
+        {
+          "path": "app.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972"
+        },
+        {
+          "path": "boundaries.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+        },
+        {
+          "path": "ledger/__init__.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+        },
+        {
+          "path": "ledger/_internal.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+        },
+        {
+          "path": "ledger/book.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+        },
+        {
+          "path": "pyproject.toml",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+        },
+        {
+          "path": "startup.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+        },
+        {
+          "path": "test_ledger.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+        },
+        {
+          "path": "uv.lock",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3"
+        }
+      ],
+      "inputs": {
+        "planDigest": "1e14aee46d93e94cce17d9a2bc1d540b3ece13669ce74b2910b767a904be4f73",
+        "planContentHash": "7dbdb062e128d12ccb804fb89c6424abac507349a55bc0006318f0977c0524ec"
+      }
+    }
+  },
+  "finalState": {
+    "fingerprint": "59c6ad817adde6c57da8159882b4590062f20d2792f3267778c0988192e6cd33",
+    "state": {
+      "root": "[fixture]",
+      "baseCommit": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+      "files": [
+        {
+          "path": ".gitignore",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "d7edc7e4b5887be249b21a3907550206bbe141b43287c893a091cc80368e098a"
+        },
+        {
+          "path": ".ruff_cache/.gitignore",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "9e3a60f1e6ec4ae60215c11d54b171392745ec25e9dded433d5bd921363af316"
+        },
+        {
+          "path": ".ruff_cache/0.14.0/14722053766288549244",
+          "present": true,
+          "mode": 33152,
+          "linkTarget": null,
+          "contentHash": "43467f610bc89a72519ca984ca5e6022a8affdc30b09175717436814b2d63d01"
+        },
+        {
+          "path": ".ruff_cache/0.14.0/3010792738607748798",
+          "present": true,
+          "mode": 33152,
+          "linkTarget": null,
+          "contentHash": "353248e00569921a450e6780b983264c03a1944421d7a003f05a3e6536ea3d60"
+        },
+        {
+          "path": ".ruff_cache/CACHEDIR.TAG",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "5953156d7e0c564a427251316eaf26f8870e6483ae2197f916b630e4f93e31ae"
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862"
+        },
+        {
+          "path": "app.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972"
+        },
+        {
+          "path": "boundaries.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e"
+        },
+        {
+          "path": "ledger/__init__.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878"
+        },
+        {
+          "path": "ledger/_internal.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+        },
+        {
+          "path": "ledger/book.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157"
+        },
+        {
+          "path": "pyproject.toml",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af"
+        },
+        {
+          "path": "startup.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7"
+        },
+        {
+          "path": "test_ledger.py",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f"
+        },
+        {
+          "path": "uv.lock",
+          "present": true,
+          "mode": 33204,
+          "linkTarget": null,
+          "contentHash": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3"
+        }
+      ],
+      "inputs": {
+        "planDigest": "1e14aee46d93e94cce17d9a2bc1d540b3ece13669ce74b2910b767a904be4f73",
+        "planContentHash": "7dbdb062e128d12ccb804fb89c6424abac507349a55bc0006318f0977c0524ec"
+      }
+    }
+  },
+  "startedAt": "2026-10-12T05:00:46.334Z",
+  "completedAt": "2026-10-12T05:00:46.758Z",
+  "priorRun": null,
+  "executionOrder": [
+    "073fc754-fd4a-49f4-a45b-c0cf30501856"
+  ],
+  "checks": [
+    {
+      "id": "unittest",
+      "role": "outcome",
+      "required": true,
+      "acceptanceCases": [
+        "balanced"
+      ],
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "passed",
+      "satisfied": true,
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "",
+        "stderr": "test_balanced_posting (test_ledger.LedgerTest.test_balanced_posting) ... ok\ntest_negative_posting_rejected (test_ledger.LedgerTest.test_negative_posting_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n",
+        "durationMs": 195.487816,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "Python 3.12.15\n",
+          "stderr": "",
+          "durationMs": 5.3786269999999945,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 1
+    },
+    {
+      "id": "ruff",
+      "role": "outcome",
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "passed",
+      "satisfied": true,
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "All checks passed!\n",
+        "stderr": "",
+        "durationMs": 10.851199000000008,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "ruff 0.14.0\n",
+          "stderr": "",
+          "durationMs": 4.36304100000001,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 2
+    },
+    {
+      "id": "boundaries",
+      "role": "outcome",
+      "required": true,
+      "acceptanceCases": [
+        "public"
+      ],
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "active": true,
+      "status": "failed",
+      "satisfied": false,
+      "reason": "Command did not pass.",
+      "execution": {
+        "status": "failed",
+        "stdout": "[\"private\"]\n",
+        "stderr": "",
+        "durationMs": 176.258958,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "Python 3.12.15\n",
+          "stderr": "",
+          "durationMs": 2.713086999999973,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      },
+      "order": 3
+    }
+  ],
+  "coverage": [
+    {
+      "id": "public",
+      "sourceId": "standards",
+      "pointer": "External modules use the public ledger package.",
+      "outcome": "External consumers use the public ledger package.",
+      "userJourney": false,
+      "status": "failed",
+      "checkIds": [
+        "boundaries"
+      ],
+      "reason": null
+    },
+    {
+      "id": "native",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Existing configured native Python checks pass.",
+      "userJourney": false,
+      "status": "passed",
+      "checkIds": [
+        "ruff"
+      ],
+      "reason": null
+    },
+    {
+      "id": "balanced",
+      "sourceId": "standards",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Posting through the public Ledger produces equal debit and credit balances and preserves balance.",
+      "userJourney": true,
+      "status": "passed",
+      "checkIds": [
+        "unittest"
+      ],
+      "reason": null
+    }
+  ],
+  "journeyCoverage": "User journey evidence captured.",
+  "limitations": [
+    "Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Outside dependencies require separate live probe record and compare evidence."
+  ]
+}

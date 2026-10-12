@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "feature",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "c5357d02e5abf9d8e2dd68708ba2ea43f5b18281eed0613348d6c5fd58b014a4"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "`quote()` = 12 and `quote(2)` = 24; the selected quantity multiplies the public unit price.",
+      "outcome": "Default quote 12 and selected quantity two quote 24",
+      "userJourney": false
+    },
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real loopback HTTP checkout returns status 201 and total 10",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "quote",
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        "docs/repo-audit.md"
+      ]
+    }
+  ]
+}

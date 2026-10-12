@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "draftRevision": "dff694f852dd3db44ffff8d03ad880a311e4eac23578e8c648349d62b5bcf4cd",
+  "project": "Reading queue",
+  "runNote": "Unapproved candidate delta to approved VISION.md; no project edits authorized. Review backup versus sharing.",
+  "cards": [
+    {
+      "id": "backup-sharing",
+      "title": "Add a send-to-another-reader action to backup export",
+      "body": "Keep local export of title, address and read status, then offer an action that attaches that backup file to an email for another reader. The proposal claims the same portable file should serve backup and exchanging queues.",
+      "tests": "\u201cAccept changes that let the reader export their own saved articles locally for personal backup, preserving title, address and read status.\u201d\n\u201cResist changes that turn personal backup into sharing or introduce accounts or recommendations.\u201d",
+      "why": "Accept reasoning: a portable backup file is already transferable, and a convenient send action can reuse that file without accounts or server storage. Resist reasoning: an explicit recipient action makes sharing a product responsibility; DESIGN.md:11 restricts export to personal backup and excludes sharing. A reader manually transferring a local file does not by itself authorize the product to add a sharing journey. The recommended reading is to accept local backup and resist the recipient action, retaining the one-reader boundary."
+    }
+  ]
+}

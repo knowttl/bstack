@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "contributing",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "d2e97be0f70a880a54828411e3ac3cfcdff0ca5a0af2ede7f5cbaf22cb2590ce"
+    },
+    {
+      "id": "ownership",
+      "path": "CODING_STANDARDS.md",
+      "contentHash": "12bf0b554a2b90b6f37d5a0c932dcef76545d88fce92c3482e7faa4a1099aee8"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "native",
+      "sourceId": "contributing",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Preserve balanced postings and use native Python checks; keep any starting failures visible.",
+      "userJourney": false
+    },
+    {
+      "id": "relocation",
+      "sourceId": "ownership",
+      "pointer": "External modules use the public ledger package.",
+      "outcome": "Exactly one ownership rule authority, working contribution link, retained guidance, and unchanged other tracked files.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "unit",
+      "role": "compatibility",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md"
+      ]
+    },
+    {
+      "id": "lint",
+      "role": "compatibility",
+      "command": {
+        "executable": "ruff",
+        "args": [
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "compatibility",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md"
+      ]
+    },
+    {
+      "id": "relocation",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "[isolated-home][scratch-path]"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "relocation"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md",
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        ".gitignore"
+      ]
+    }
+  ]
+}

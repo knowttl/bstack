@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"cite-check","status":"passed","problems":[],"data":{"mode":"main-thread","filesChecked":9,"webRecorded":0,"webVerifiedByChecker":false},"inputs":{"target":{"mode":"repo","root":"[fixture]"},"report":"[isolated-home][scratch-path]"}}

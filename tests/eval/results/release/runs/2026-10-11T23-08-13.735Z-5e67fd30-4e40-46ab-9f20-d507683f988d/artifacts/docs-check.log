@@ -1,0 +1,3 @@
+{"source":"host","checkedAt":"2026-10-11T23:09:24.932Z","availableMemoryBytes":18088767488,"freeDiskBytes":25205469184,"load1m":2.46,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}
+{"availableMemoryBytes": 18088353792, "freeDiskBytes": 25205465088, "load1": 2.46}
+{"schemaVersion":1,"command":"docs check","status":"passed","problems":[],"data":{"documents":[{"path":"DESIGN.md","links":0},{"path":"glossary.md","links":0},{"path":"AGENTS.md","links":0}],"coverageLimits":[{"path":"AGENTS.md","reason":"Inline code and escaped Markdown require renderer review."}]},"inputs":{"repo":"[fixture]","contract":".bstack/project.json"}}

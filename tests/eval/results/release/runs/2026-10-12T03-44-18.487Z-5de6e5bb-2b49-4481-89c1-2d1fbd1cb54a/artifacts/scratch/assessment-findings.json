@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "ffcf64aa195c339af4632f0c7d92b315b95ed4db"
+  },
+  "nextChange": "Name undiscountedTotal preserving public pricing and checkout",
+  "reviewedScope": [
+    ".bstack/assessment.json"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Quote remains 12; agreed checkout total is 10; UI uses public core; native checks protect boundaries and live HTTP journey."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-002",
+      "problem": "The committed refactor needs a portable assessment for the explicit base.",
+      "files": [
+        ".bstack/assessment.json"
+      ],
+      "command": null,
+      "principle": "Preserve approved public interface and outcomes",
+      "consequence": "Naming the intermediate makes the calculation easier to read without changing arithmetic.",
+      "fix": "Record substantive no-impact review for design, glossary and guidance with full maintained rule coverage.",
+      "scope": [
+        ".bstack/assessment.json"
+      ],
+      "verification": "Captured original npm run check; final compatibility and standalone checker in clean clone.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-002"
+  ],
+  "requiredOutcomes": [
+    "Quote remains 12 and live HTTP checkout remains status 201 total 10",
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance review; no full audit or new pricing rule."
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T22-20-55.828Z-0ec4962f-27e9-4c9f-9ee8-75fbefe45d53",
+  "head": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "workingTree": " M DESIGN.md\n",
+  "diff": "diff --git a/DESIGN.md b/DESIGN.md\nindex a7a2a0c..c39d3cf 100644\n--- a/DESIGN.md\n+++ b/DESIGN.md\n@@ -2,3 +2,5 @@\n \n The UI never touches storage.\n The agreed checkout total is 10.\n+\n+User note: receipt wording remains a future owner decision.\n",
+  "documents": [
+    {
+      "path": "DESIGN.md",
+      "content": "# Shop design\n\nThe UI never touches storage.\nThe agreed checkout total is 10.\n\nUser note: receipt wording remains a future owner decision.\n"
+    },
+    {
+      "path": "AGENTS.md",
+      "content": "Use the approved design and public core interface.\n"
+    },
+    {
+      "path": "CLAUDE.md",
+      "content": "@AGENTS.md\n"
+    },
+    {
+      "path": "glossary.md",
+      "content": "# Glossary\n\nOrder: a customer purchase.\nOrder: the sequence in which UI panels appear.\n"
+    }
+  ],
+  "codeUnchanged": true,
+  "userNotePreserved": true,
+  "contractPresent": false,
+  "checkerPresent": false,
+  "limitation": "All three scripted replies completed; package-dependent work stopped without inventing a protected diff or assessment approval. No completed full-path or clean-checkout evidence."
+}

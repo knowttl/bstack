@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "native-guidance",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "f5473a26e0a2ed86203e6a72b07651bdefecebb660945c6fb66cdc23cd1a9887"
+    },
+    {
+      "id": "ownership",
+      "path": "CODING_STANDARDS.md",
+      "contentHash": "8fc014ca2ae3d661dd08d5289eb6eaf9fcc29c0b58cc0d5f4543cd4ccce5e4aa"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "native",
+      "sourceId": "native-guidance",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "Use native Python checks and preserve balanced postings.",
+      "userJourney": true
+    },
+    {
+      "id": "relocation",
+      "sourceId": "ownership",
+      "pointer": "External modules use the public ledger package.",
+      "outcome": "The two ownership sentences are the sole rule authority, reached by the contributor link; unrelated bytes are preserved.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "unittest",
+      "role": "compatibility",
+      "command": {
+        "executable": "uv",
+        "args": [
+          "run",
+          "--offline",
+          "--no-sync",
+          "python",
+          "-B",
+          "-m",
+          "unittest",
+          "-v"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "ruff",
+      "role": "compatibility",
+      "command": {
+        "executable": "uv",
+        "args": [
+          "run",
+          "--offline",
+          "--no-sync",
+          "ruff",
+          "check",
+          "--no-cache",
+          "."
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "boundaries",
+      "role": "compatibility",
+      "command": {
+        "executable": "uv",
+        "args": [
+          "run",
+          "--offline",
+          "--no-sync",
+          "python",
+          "-B",
+          "boundaries.py"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "native"
+      ],
+      "inputScopes": [
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock",
+        "CONTRIBUTING.md"
+      ]
+    },
+    {
+      "id": "relocation",
+      "role": "outcome",
+      "command": {
+        "executable": "uv",
+        "args": [
+          "run",
+          "--offline",
+          "--no-sync",
+          "python",
+          "-B",
+          "[isolated-home][scratch-path]",
+          "after"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "relocation"
+      ],
+      "inputScopes": [
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md",
+        "**/*.py",
+        "pyproject.toml",
+        "uv.lock"
+      ]
+    }
+  ]
+}

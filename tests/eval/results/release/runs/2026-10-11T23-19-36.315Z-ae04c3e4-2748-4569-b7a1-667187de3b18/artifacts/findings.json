@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+  },
+  "nextChange": "Read-only final audit and recommendations; no implementation or project writes requested.",
+  "reviewedScope": [
+    "VISION.md",
+    "DESIGN.md",
+    "glossary.md"
+  ],
+  "sources": [
+    {
+      "id": "vision",
+      "pointer": "VISION.md:3",
+      "intent": "documented",
+      "summary": "Owner-approved one-reader save/find/mark-read journey preserves title and address; excludes accounts, sharing and recommendations."
+    },
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "Local Node, JSON persistence, queue public operations and presentation/storage boundary; no open design decisions."
+    },
+    {
+      "id": "terms",
+      "pointer": "glossary.md:4",
+      "intent": "documented",
+      "summary": "Queue includes read articles; mark-read preserves title and address."
+    },
+    {
+      "id": "inventory",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Inventory and full rg/git file inspection show three documents only; no implementation, manifest or checks."
+    },
+    {
+      "id": "state",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Clean Git revision 81feef422f8fda1c96302a7fb3c09070f60045ab; git 2.54.0 and Node v24.17.0 available."
+    },
+    {
+      "id": "maturity",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "inferred",
+      "summary": "This is an approved design awaiting implementation, not evidence of a runtime defect."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The approved journey has no runnable implementation. This is absent capability, not an observed runtime bug.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "DESIGN.md"
+      ],
+      "command": null,
+      "principle": "Implement the existing one-reader outcome in the approved local Node/JSON design.",
+      "consequence": "No reader can yet save, find or mark an article read through this repository.",
+      "fix": "When implementation is selected, build the smallest local journey with queue-owned save/list/mark-read operations, JSON persistence and presentation calling only those operations. Keep accounts, sharing and recommendations outside scope.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "DESIGN.md"
+      ],
+      "verification": "Exercise the actual local presentation: save an article, find it, mark it read, verify unchanged title/address and continued queue membership; reopen the application against disposable JSON storage and verify saved state. No custom architecture checker or delivery integration is needed.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "terms",
+        "inventory",
+        "maturity"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "The approved journey has no executable acceptance check or maintained product check command.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Protect the public save/list/mark-read contract using approved expectations.",
+      "consequence": "Later unit checks could pass while persistence, presentation wiring or preservation of article identity breaks.",
+      "fix": "Add one direct journey check using temporary JSON storage that covers save, list, mark-read and reload; verify read articles remain listed and titles/addresses survive. Expose it through one repo-owned native check command when code exists.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "The check must run on real queue/storage and presentation wiring rather than mocked persistence, pass the agreed journey, and fail when marking-read loses title/address or the persisted read status fails to reload. Clean up only disposable test storage.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "terms",
+        "inventory"
+      ]
+    },
+    {
+      "id": "F-003",
+      "problem": "DESIGN.md does not state what execution evidence completes a change.",
+      "files": [
+        "DESIGN.md",
+        "VISION.md"
+      ],
+      "command": null,
+      "principle": "Proposed review principle: affected approved journeys pass on final inputs before a change is called complete.",
+      "consequence": "Contributors have no recorded rule distinguishing passing unit tests from verified reader outcomes.",
+      "fix": "If selected later, add one short evidence section to DESIGN.md pointing to the approved acceptance case and future journey-check command, requiring final-input affected-journey results. Keep design boundaries in DESIGN.md; use human review for presentation/storage separation until native enforcement is justified.",
+      "scope": [
+        "DESIGN.md",
+        "VISION.md"
+      ],
+      "verification": "Review the section against VISION.md:5 and DESIGN.md:4-6; execute its referenced command once implemented. Proposed policy applies to relevant product changes; unavailable checks remain explicitly unverified and no exception permits claiming the journey passed.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "inventory"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "No native application or native check command exists; product readiness is verification blocked. Audit helper successes are not product checks.",
+    "No changes were selected or applied; implementation recommendations are proposals only.",
+    "Goals, stack and terms are settled and retained; no vision board or interview required.",
+    "No declared pair of plans exists; overlap was not run. Measurements are advisory and limited to the declared revision range.",
+    "No external documentation or live dependencies were needed or researched.",
+    "Excluded router, akashic and no-mistakes commands were verified unavailable; no other skill or delivery service was invoked."
+  ]
+}

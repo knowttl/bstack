@@ -68,11 +68,11 @@ test('all fixtures run sanity checks and leave source bytes unchanged', async t 
   const fixtures = build(t, '--all')
   const registry = JSON.parse(await readFile(join(sources, 'fixtures.json'), 'utf8'))
   assert.deepEqual(fixtures.map(({ name, kind }) => ({ name, kind })),
-    Object.entries(registry).map(([name, fixture]) => ({ name, kind: fixture.kind })))
+    Object.entries(registry).map(([name, fixture]) => ({ name, kind: fixture.kind ?? registry[fixture.base].kind })))
   assert.deepEqual(await bytes(sources), before)
 })
 
-for (const name of ['dirty-work', 'refactor', 'contract-removal', 'shallow-history', 'installer-collision']) {
+for (const name of ['dirty-work', 'refactor', 'contract-removal', 'shallow-history', 'installer-collision', 'maintained-ts-shop']) {
   test(`${name} reproduces its declared state with deterministic history`, t => {
     const [first] = build(t, name)
     const [second] = build(t, name)

@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "kind": "commit",
+    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "head": "9009fe97e495bb316de45cf203996fd31405ebfe",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/routes.ts"
+    }
+  ],
+  "paths": [
+    "packages/web/routes.ts"
+  ],
+  "mappings": [
+    {
+      "path": "packages/web/routes.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "postOrder now names the existing unitPrice * quantity intermediate as undiscountedTotal; public pricing and checkout behavior are unchanged.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "The expression remains left-associative: (unitPrice * quantity) * (quantity > 5 ? 0.9 : 1). The public price import, default unitPrice, quantity threshold, factor, orders.push(total) and returned status/total remain identical. Quote stays 12 and the controlled HTTP checkout returns status 201 and total 10 in both before run 132e6591-194c-48e6-8f6a-4e339f8c334c and after run 809da682-ec36-4842-8733-10c5ff9c8ba2. Types and static boundaries also passed. No business pricing rule or discount is introduced; the existing conditional arithmetic is retained. No new dependency or cycle is added.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "Quote remains 12.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "checkout must return `{ status: 201, total: 10 }` for the default quantity.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "The UI never touches storage.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "Static import and re-export dependencies must be acyclic.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "This fixture correction introduces no business pricing rule or discount.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
+            "version": "base"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const undiscountedTotal = unitPrice * quantity",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "postOrder now names the existing unitPrice * quantity intermediate as undiscountedTotal; public pricing and checkout behavior are unchanged.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "undiscountedTotal is a local arithmetic variable, not a renamed domain concept. postOrder still records the same customer purchase total and returns the same object; no panel sequencing code or vocabulary changes. Order remains a customer purchase, and Panel order remains the UI panel sequence.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          },
+          {
+            "path": "glossary.md",
+            "pointer": "Panel order: the sequence in which UI panels appear.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "orders.push(total)",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "postOrder now names the existing unitPrice * quantity intermediate as undiscountedTotal; public pricing and checkout behavior are unchanged.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "The local variable extraction continues to import price from the public core entry point, so the public-core instruction and UI/storage separation still hold. The npm run check command, authority links, document registrations, contract rule/check/input coverage and standalone checker are unchanged. Original and final native checks passed. This assessment records current review without rewriting the historical audit or authoritative documents.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Use the approved [design](DESIGN.md) and public core interface.",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Run `npm run check` for maintained native verification;",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Treat `docs/repo-audit.md` as a historical snapshot; current assessed readiness belongs in scratch.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "import { price } from '../core/index.ts'",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "A change is complete when affected journeys and required checks pass on the final inputs; passing units alone does not establish completion.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion"
+  ],
+  "execution": [
+    {
+      "runId": "809da682-ec36-4842-8733-10c5ff9c8ba2",
+      "plan": "[isolated-home][scratch-path]"
+    }
+  ],
+  "fingerprint": "5996171a7e8cb07612c07532db0520525501a948adfd6bb0210628664fc9da7c"
+}

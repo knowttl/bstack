@@ -1,0 +1,140 @@
+--- /dev/null
++++ b/docs/repo-audit.md
+@@ -0,0 +1,137 @@
++# Proposed repo audit record
++
++Result: verification blocked
++
++Stage: audit
++Target: [fixture]
++Revision: 42157a36b0a35ecd679d41b52313a0ea32660822
++Stated next change: Establish reviewed corrections and maintained foundation, then re-audit a user edit before a representative public-interface extension.
++Reviewed scope: .bstack/assessment.json, .bstack/bin/bstack-check.mjs, .bstack/project.json, AGENTS.md, DESIGN.md, boundaries.mjs, docs/repo-audit.md, glossary.md, journey.mjs, package.json, packages/core/a.ts, packages/core/b.ts, packages/core/index.ts, packages/core/internal/database.ts, packages/web/alias.ts, packages/web/routes.ts, packages/web/ui.ts, unit.test.mjs, .bstack/selection.md
++Current fingerprint: 3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e
++
++## Readiness evidence
++
++- Missing required outcome: standalone-clean-clone.
++- Unresolved finding: F-006.
++- starting-checks: passed. Method: run-checks native maintained aggregate. Artifact: [isolated-home]/cache/bstack/0ab657b7899ba595ff4c28db1a6ac56ea74bbf315108aa81bc54002e1eee0d52/a075a92b-bed3-4cce-94d8-8b96a5e54ead/checks.json. Fingerprint: 3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e.
++- journey: passed. Method: run-checks real loopback checkout and public quote. Artifact: [isolated-home]/cache/bstack/0ab657b7899ba595ff4c28db1a6ac56ea74bbf315108aa81bc54002e1eee0d52/a075a92b-bed3-4cce-94d8-8b96a5e54ead/checks.json. Fingerprint: 3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e.
++- boundary-proof: passed. Method: rule-proof private. Artifact: [isolated-home]/cache/bstack/0ab657b7899ba595ff4c28db1a6ac56ea74bbf315108aa81bc54002e1eee0d52/ff2f5b3d-8cda-4a31-8d21-e311c40c4cfb/proof.json. Fingerprint: 3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e.
++- maintained-enforcement: passed. Method: rule-proof native aggregate. Artifact: [isolated-home]/cache/bstack/0ab657b7899ba595ff4c28db1a6ac56ea74bbf315108aa81bc54002e1eee0d52/0426327c-4e86-498e-970a-7bb5152aa72d/proof.json. Fingerprint: 3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e.
++- maintenance-contract: passed. Method: contract validate. Artifact: [isolated-home][scratch-path] Fingerprint: 3e4dee5eac0fa8a2df0bba6619f406b13b3098256735ca743315179cfee1fe0e.
++
++## Documented intent
++
++- design: UI never touches storage; checkout acceptance remains 10. (DESIGN.md:3-4)
++- interface: Core index exports price/servicePrice; web imports the public interface; quote remains 12. (packages/core/index.ts:1; packages/web/public.ts:1; DESIGN.md:10)
++- language: Order is a purchase; Panel order is UI sequencing. (glossary.md:3-4)
++- maintenance: Selected maintained contract and complete standalone checker installed; final portable assessment and clean-clone proof await exact review. (.bstack/project.json; .bstack/bin/bstack-check.mjs; DESIGN.md:22)
++- selection: Owner-selected corrections retain checkout10/quote12, Panel order, receipt note, historical snapshot policy and no hosted CI. (.bstack/selection.md:3; DESIGN.md:6)
++
++## Observed behaviour
++
++- checks: Target aggregate passed actual loopback checkout 10, public quote 12 and clean native boundary graph. Seeded private/alias/re-export/nonpublic/cycle and endpoint12 controls failed with expected diagnostics. (package.json:12-15; journey.mjs:7-12; unit.test.mjs:5-9; boundaries.mjs)
++- cycle: Unused unexported recursive pair was deleted; static graph and cycle controls establish maintained acyclicity. (Git b6c59b7810f5155fd514c9db60e98b7dffce0cc0:packages/core/a.ts and packages/core/b.ts; current deletion diff)
++- native-controls: All seven native proof results checked: every valid control exits0 and deliberate violation exits1 with expected diagnostic. Findings validates only declarations/artifact hashes, not semantic claims; actual outputs are separately reviewed. (Scratch shop-target-proof-{private,alias,reexport,nonpublic,cycle,maintained,journey}.json)
++
++## Inferred intent
++
++
++## Observed debt
++
++### F-001: Checkout journey returns 12 instead of approved 10.
++
++Status: selected. Resolved: true. Blocks next change: true.
++Files: journey.mjs, packages/core/internal/database.ts, unit.test.mjs. Command: npm run journey.
++Principle: Preserve checkout total 10.
++Consequence: Current important journey fails although mocked tests pass.
++Fix: Correct only the controlled journey endpoint fixture to supply 10; preserve assertion 10, public quote 12 and existing pricing behavior. No discount change.
++Scope: journey.mjs
++Verification: Captured failing real loopback reproduction before, passing after; unchanged public quote 12 unit check.
++Sources: design, checks
++
++### F-002: Web UI, routes and aliasQuote access core storage internals.
++
++Status: selected. Resolved: true. Blocks next change: true.
++Files: packages/web/ui.ts, packages/web/routes.ts, packages/web/alias.ts. Command: npm run boundaries.
++Principle: UI uses only public core interface.
++Consequence: Storage changes leak into web consumers.
++Fix: Export servicePrice through core index and route all web imports through that public interface.
++Scope: packages/core/index.ts, packages/web/ui.ts, packages/web/routes.ts, packages/web/alias.ts
++Verification: Native valid/violation proof for relative private import, alias and re-export; valid public and core-internal controls.
++Sources: design, interface, checks
++
++### F-003: Core a/b cycle fails the existing native graph check.
++
++Status: selected. Resolved: true. Blocks next change: true.
++Files: packages/core/a.ts, packages/core/b.ts. Command: npm run boundaries.
++Principle (proposed new principle): Keep the existing acyclic dependency check; document its scope as a selected principle.
++Consequence: Calls recurse without termination; maintained graph cannot pass.
++Fix: Delete the two unused, unexported mutually recursive a/b modules to remove the cycle without inventing finite business behavior.
++Scope: packages/core/a.ts, packages/core/b.ts, DESIGN.md
++Verification: Cycle negative proof and clean graph control; journey compatibility.
++Sources: cycle, checks
++
++
++## Missing protections
++
++### F-004: Existing check command only typechecks; no maintained evidence foundation exists.
++
++Status: selected. Resolved: true. Blocks next change: true.
++Files: package.json, DESIGN.md, AGENTS.md. Command: none.
++Principle (proposed new principle): Completion requires affected approved journeys on final inputs.
++Consequence: Future changes can pass check while checkout or architecture fails; guidance cannot support the requested extension.
++Fix: Extend npm run check with boundary, unit and journey checks; add a short completion/maintenance section to DESIGN.md, pointers in AGENTS.md, selected .bstack contract and repo-owned standalone checker, then assessed portable evidence. Preserve names and CLAUDE import stub.
++Scope: package.json, DESIGN.md, AGENTS.md, .bstack/project.json, .bstack/bin/bstack-check.mjs, boundaries.mjs, .bstack/selection.md
++Verification: Maintained command native positive/negative proof, docs/contract/evidence validation and fresh standalone checker in working checkout and different-root clean clone with isolated home/cache. Each generated payload and assessment needs exact approval.
++Sources: design, checks, maintenance
++
++### F-006: No assessed-state historical audit snapshot or portable reviewed assessment exists.
++
++Status: selected. Resolved: false. Blocks next change: true.
++Files: DESIGN.md, package.json. Command: none.
++Principle (proposed new principle): Versioned audit records are historical observations; fresh scratch evidence decides current readiness.
++Consequence: A future maintainer cannot trace selected corrections and independent current-checkout verification.
++Fix: Create a historical docs/repo-audit.md snapshot with observed revision; later separately review and apply the exact portable .bstack/assessment.json. Retain final current-head findings/readiness in scratch.
++Scope: docs/repo-audit.md, .bstack/assessment.json
++Verification: Final mapped impact assessment, actual execution artifacts and fresh standalone working-tree and isolated different-root clean-clone checker results.
++Sources: maintenance, checks
++
++
++## Design decisions
++
++### F-005: Order means both purchase and panel sequence.
++
++Status: selected. Resolved: true. Blocks next change: true.
++Files: glossary.md. Command: none.
++Principle (proposed new principle): One canonical meaning per concept in this context.
++Consequence: Extension guidance is ambiguous.
++Fix: Keep Order for customer purchases and rename UI sequencing to Panel order, preserving glossary.md.
++Scope: glossary.md
++Verification: Owner confirms meaning; protected exact glossary diff and maintenance coverage.
++Sources: language
++
++
++## Proposed new principles
++
++- F-003: Keep the existing acyclic dependency check; document its scope as a selected principle. (selected)
++- F-004: Completion requires affected approved journeys on final inputs. (selected)
++- F-005: One canonical meaning per concept in this context. (selected)
++- F-006: Versioned audit records are historical observations; fresh scratch evidence decides current readiness. (selected)
++
++## Selected findings
++
++- F-001
++- F-002
++- F-003
++- F-004
++- F-005
++- F-006
++
++## Limitations
++
++- Historical snapshot of implementation revision 42157a36b0a35ecd679d41b52313a0ea32660822; not a live readiness authority. Final current-head findings/readiness remain in scratch.
++- Receipt wording remains a future owner decision; its user note was preserved exactly.
++- The original before/after plan source hash became stale after approved DESIGN.md additions. Original failing captures are retained; fresh final native journey controls prove endpoint10 succeeds and endpoint12 fails without changing the assertion. No successful exact-plan before/after pairing is claimed.
++- Static boundary proof covers imports, aliases and re-exports plus cycles; dynamic imports, require and generated code require review.
++- No prior maintenance contract/checker exists at the comparison base. First-contract adoption is explicit selected foundation F-004; no hosted CI or delivery service selected.
++- Portable assessment exact review, protected write and final working/clean-clone checker execution remain pending.

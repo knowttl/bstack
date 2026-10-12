@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T05-08-46.399Z-bc781f92-81bc-45fe-8cf9-bb3d58c4b305",
+  "reviewer": "[redacted: user name]",
+  "checks": [
+    {
+      "id": "selected-move",
+      "passed": true,
+      "startLine": 19,
+      "endLine": 43
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "156e8342bc33bb6ce7c7713c4df1735eeb13aa05"
+  },
+  "nextChange": "Authorized bounded pricing refactor: name subtotal while preserving public behavior.",
+  "reviewedScope": [
+    "packages/core/internal/database.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:21",
+      "intent": "documented",
+      "summary": "Public quote12, checkout10 and existing quantity calculation retained."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-007",
+      "problem": "Pricing combines multiplication and quantity factor in one expression.",
+      "files": [
+        "packages/core/internal/database.ts"
+      ],
+      "command": null,
+      "principle": "Preserve public pricing and checkout compatibility.",
+      "consequence": "An unnamed intermediate makes the existing calculation less explicit.",
+      "fix": "Name unitPrice * quantity as subtotal, then apply the unchanged factor.",
+      "scope": [
+        "packages/core/internal/database.ts"
+      ],
+      "verification": "Passing native public pricing and real HTTP checkout protection before and compatibility after.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-007"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "journey"
+  ],
+  "execution": [],
+  "limitations": [
+    "Bounded maintenance, no full audit or hosted delivery."
+  ]
+}

@@ -1,0 +1,1 @@
+User selected bounded maintenance: name intermediate undiscounted total in packages/web/routes.ts, preserve pricing and checkout, review and record portable no-impact assessment, commit implementation and assessment separately per DESIGN.md, validate locally and freshly in a different-root clean clone. Explicit base: 37864dacc088867c4aeeb0cd18275aa98b0c0a0b

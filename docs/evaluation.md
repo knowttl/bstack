@@ -44,7 +44,7 @@ They retain unverified isolation even after human scoring.
 `--manual` and `--adapter` cannot be combined; adapter starts capture the opening turn automatically.
 
 Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
-`--results <directory>` chooses another result directory on start, turn, close, score, compare or selection validation.
+`--results <directory>` chooses another result directory on start, turn, close, score, correct, compare or selection validation.
 Starting a manual run creates a fresh fixture and unique record, with UTC timestamps, source revision, agent, model, OS, tool versions, fixture revision, checkpoint, criteria hash and case results.
 TypeScript fixtures also record npm and fixture-local TypeScript versions.
 The fixture revision is the committed `tests/fixtures` Git tree, so skill-only commits do not prevent comparison.
@@ -67,13 +67,56 @@ Unknown fields and shell command strings are rejected.
 `invocation` names the agent, model, explicit command, `codex-exec-jsonl` protocol and string-array `resumeArgs`.
 `{message}` and `{sessionId}` are replaced only when they occupy whole arguments.
 Both command forms require JSONL, the declared model, ignored user config and a separate process.
+For `research-main-typescript` and `research-main-python`, the runner adds `-c agents.enabled=false` and disables `multi_agent`, `multi_agent_v2` and `multi_agent_v2_dynamic_tools` in both opening and resume arguments, before their positional arguments.
+The effective adapter, including this restriction, is retained and hashed in each run; a restricted fallback cannot compare against an unrestricted baseline.
+Other scenarios retain the supplied adapter's capability settings.
+Before scoring fallback evidence, a capture-only probe must confirm that the actual native session no longer declares `spawn_agent`.
+Sequential execution requested only through the prompt does not establish AC-35.
+The [capture-only probe](../tests/eval/results/release/fallback-capability-probe.json) on Codex CLI 0.162.1 retained the switch in both argument forms, but the actual session still declared `spawn_agent` and reported that it was available.
+The [corrected capture-only probe](../tests/eval/results/release/fallback-capability-probe-agents-disabled.json) additionally disabled the V2 features and set `agents.enabled=false`: the native declaration omitted `spawn_agent` and the assistant independently reported it unavailable, with zero tool calls.
+The [configuration schema](https://learn.chatgpt.com/docs/config-schema.json) defines `agents.enabled` as the multi-agent tool control and notes that an enabled V2 setting takes precedence.
+The capability prerequisite and both [corrected final fallback comparisons](../tests/eval/results/release/summary.md) pass under this effective adapter.
 The opening command creates a new resumable thread, and later turns must retain that exact thread ID.
 The installed CLI's `codex exec --help` and `codex exec resume --help` define its supported options.
 The host interface follows the official [non-interactive execution documentation](https://developers.openai.com/codex/noninteractive/).
 The recorded Linux host cannot start Codex's workspace sandbox because `bwrap` cannot configure its loopback interface.
 The adapter therefore selects `danger-full-access` for both opening and resumed turns in the disposable fixture, while separately isolating host state and verifying skill discovery.
 The resume command explicitly sets `sandbox_mode="danger-full-access"` instead of relying on the opening command's `--sandbox` option to carry over.
-This is discovery and conversation isolation, not an operating-system security boundary.
+Every evaluation agent turn now runs in a disposable Docker container, providing a separate filesystem from the operator's host.
+Build its pinned toolchain with `docker build --tag bstack-eval-toolchain:node24-codex0.162.1 --file tests/eval/container/Dockerfile tests/eval/container`.
+The recipe pins the Node base image digest, Node 24.17.0, npm 11.13.0, Git 2.54.0 and Codex CLI 0.162.1.
+It includes uv 0.12.22 from a pinned image digest, lavish-axi 0.1.78, chrome-devtools-axi 0.1.34, chrome-devtools-mcp 1.10.1 and Chromium for the Python and browser procedures.
+Python fixtures use image-installed CPython 3.12.15 and their locked Ruff 0.14.0 dependency, cached during the image build.
+Before their opening turn, the runner recreates the ignored virtual environment with `uv sync --locked --offline --python 3.12.15` inside the same two mounts and records that result.
+This replaces interpreter links created by host fixture setup with image-local runtime links, without changing project files or downloading dependencies during the agent turn.
+Git is also linked into the login shell's ordinary executable path.
+Each `bstack-eval-*` container mounts only the disposable fixture and isolated home, both read-write at their original paths; it has no Docker socket, other host mounts, added capabilities, privileged mode, host networking or published ports.
+The default bridge permits outbound model API traffic without exposing the host network namespace.
+The runner inspects the created container before starting the agent and binds its immutable image ID, recipe hash, mounts and execution settings into `execution` in the run record.
+It removes the exact named container after each turn, including client timeout or failure, and requires at least 20 GB free disk before starting.
+The existing throwaway-login procedure copies only the login file into the isolated home for the turn and deletes it in failure cleanup as well as success.
+Before every Node suite, the agent runs `node "$BSTACK_EVAL_PREFLIGHT"` and requires a zero exit with `source: "host"` and `permitted: true`.
+The runner supplies that repository-owned client in the isolated home and serves fresh aggregate host memory, disk, load and Node-suite counts over a pathname socket in the same mounted home.
+This exposes no host filesystem or process inventory, accepts no commands or paths, records each returned preflight in the run and closes the socket after the turn.
+Container-local process counts cannot replace this host-wide check.
+
+Every adapter turn also receives an explicit filesystem scope: the disposable fixture and its isolated home only.
+The isolated home's `tmp` directory is created with mode `0700` and owns scratch files, clones and reports through `TMPDIR`, `TMP` and `TEMP`.
+Access to the shared `/tmp` root is not allowed, including capacity queries; query the run's own directory instead.
+Missing resources remain unavailable instead of prompting searches in the host home, ancestor directories, other projects or other skill installations.
+Installed executable paths and system runtime resources remain available for normal tool execution.
+The runner checks filesystem access targets in captured commands and native parent/worker file-tool calls after each turn and again before deleting the home.
+Paths merely printed in tool output do not establish access and are excluded, including filesystem device names in capacity tables and process command lines in resource-query output.
+Complete command arguments are resolved against their working directory and checked as read targets only when they exist; revision ranges, refs, flags and other nonexistent tokens are not filesystem paths.
+Explicit write destinations are checked even before they exist.
+The transcript parser records advisory hits in `scopeGuard.paths` and `scopeGuard.violations`, with the target, triggering operation and parent/native trace origin.
+Command text cannot reliably distinguish file access from program operators or revision syntax, so parser hits never reject a run on their own.
+Docker's verified mounts enforce host filesystem isolation; the advisory parser does not claim to detect actual reads.
+Comparisons require the same verified scope-contract version on both sides.
+Scope version 3 recognizes read-only resource preflight: memory/load files, process metadata/counts and filesystem capacity queries.
+The advisory guard recognizes the run's isolated temporary directory and reports apparent targets outside the fixture or isolated home.
+System runtime access does not authorize writing those runtime files; `/dev/null` remains an ordinary output sink.
+Contaminated transcripts may contain unrelated host inventories and must stay private.
 
 ```sh
 npm run eval -- --scenario ambiguous-idea --mode without --stage baseline --adapter tests/eval/adapters/codex.json
@@ -187,6 +230,18 @@ For adapter runs, scoring also replaces the retained conversation with the redac
 All yes answers produce a passing score, and any no answer produces a failing score.
 A scored run cannot be rescored.
 Create a new run to retain earlier checkpoints and scoring history.
+An identified grading error can instead receive one append-only correction without repeating an unchanged agent run:
+
+```sh
+npm run eval -- correct --run <id> --correction correction.json
+```
+
+The input contains `corrector`, `reason`, `evidence` with transcript `startLine` and `endLine`, and the complete corrected `checks` array.
+The command creates `score-correction.json` with hashes of the original answers and transcript, preserving the original run and scoring files byte for byte.
+It refuses overwrite, unchanged assessments, invalid evidence lines or stale original bindings.
+Comparisons and acceptance use the validated correction; the original remains historical evidence.
+AC-29 credit additionally requires captured successful Node unit execution with a positive pass count and zero failures, either directly or in a captured `run-checks` result.
+An assistant assertion, unrun command or failed suite cannot establish that prerequisite.
 Pass and fail describe the human score, with any isolation limitation retained in the record.
 Adapter scoring requires completed host turns and the exact captured conversation, and retains the isolation proof taken before deletion.
 
@@ -256,6 +311,28 @@ Every selected run must match that identity, have passing results for all checks
 All C7a manual runs therefore remain blocked as final acceptance evidence.
 This command validates the supplied selections, not coverage of an entire release.
 T5.2 owns complete release evidence, including automated cases and with-skill baseline comparison.
+
+```sh
+node scripts/acceptance.mjs --results tests/eval/results --require-complete
+```
+
+Complete validation reads `release/manifest.json` beneath the results directory.
+Its version 1 format contains `cases` with one `{caseId, runId}` selection per agent or manual case except AC-46, and `comparisons` with one `{scenario, without, with}` pair per scenario.
+AC-46 is established by all scenario comparisons together.
+The independent extension is the approved without-only exception: its AC-64 procedure requires that repo-audit be undiscoverable.
+All other selected cases must use the with-skill run of their declared final comparison.
+The validator rejects incomplete registry procedures, duplicate or missing selections, stale fixture or scenario inputs, changed execution inputs, unsupported adapter settings, unverified scope or cleanup, and scored claims without matching retained transcript locations.
+Execution bindings include unchanged package, installer, fixtures, host adapter implementation, effective adapter, exact request/scripted answers and tool versions.
+The approved scope rerun retains the exact successful `scope-and-prerequisites` baseline `2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89`, bound by its complete record hash.
+Its fixture, scoring criteria, request and tool versions must still match the container run.
+All other final runs require verified container execution and unchanged host runner, container runner and image recipe inputs.
+Grader-only repairs do not require repeating unchanged agent turns.
+Package and installer changes invalidate with-skill captures; verified without-skill baselines remain comparable because those inputs were absent from their isolated execution.
+Every final capture must complete all ordered scripted answers.
+Historical process-only runs remain diagnostic history; no failed scope run is retroactively credited.
+Every with-skill run must pass every check, and each pair must satisfy the design's improvement and regression rule.
+Automated procedures execute their exact named tests against the current inputs, including the clean-checkout procedure and real Linux lifecycle execution.
+Only complete passing evidence can produce the 75-case release result.
 
 The commands reuse the shared schema, joining-ID, fingerprint, child-command and result libraries.
 Their options parser has no target argument because evaluation creates targets through the fixture builder.

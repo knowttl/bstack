@@ -1,0 +1,33 @@
+{
+  "citationCheck": {
+    "schemaVersion": 1,
+    "command": "cite-check",
+    "status": "passed",
+    "problems": [],
+    "data": {
+      "mode": "main-thread",
+      "filesChecked": 8,
+      "webRecorded": 1,
+      "webVerifiedByChecker": false
+    },
+    "inputs": {
+      "target": {
+        "mode": "repo",
+        "root": "[fixture]"
+      },
+      "report": "[isolated-home][scratch-path]"
+    }
+  },
+  "workingTree": "",
+  "referenceAccess": [
+    {
+      "line": 21,
+      "command": "/bin/bash -lc 'cat [isolated-home]/.agents/skills/repo-audit/references/research-briefs.md\ncat [isolated-home]/.agents/skills/repo-audit/schemas/research-report.json'"
+    },
+    {
+      "line": 25,
+      "command": "/bin/bash -lc 'cat [isolated-home]/.agents/skills/repo-audit/references/enforcement.md\ncat [isolated-home]/.agents/skills/repo-audit/schemas/findings.schema.json'"
+    }
+  ],
+  "authenticationCopyAbsent": true
+}

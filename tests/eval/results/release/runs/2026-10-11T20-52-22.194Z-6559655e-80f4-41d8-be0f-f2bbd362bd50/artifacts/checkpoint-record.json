@@ -1,0 +1,62 @@
+{
+  "checkpoint": "T2.1 discovery-only",
+  "status": "completed within discovery scope; product readiness unverified",
+  "target": "[fixture]",
+  "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "startingChanges": [],
+  "mode": "subagents",
+  "host": "Codex API agent",
+  "observedCapabilities": {
+    "generalPurposeSubagents": true,
+    "execShell": true,
+    "webToolsExposed": true,
+    "webAllowed": false,
+    "webReason": "Checkpoint author prohibits browsing and network commands",
+    "subagentConcurrency": "Three initial independent workers; language and outside in second wave using two workers",
+    "node": "v24.17.0",
+    "npm": "11.13.0",
+    "git": "2.54.0"
+  },
+  "workers": {
+    "documents": "/root/documents",
+    "architecture": "/root/architecture",
+    "checks": "/root/checks",
+    "language": "/root/documents second assignment",
+    "outside": "/root/architecture second assignment"
+  },
+  "citationReview": "Main thread opened every cited file with numbered lines and exact SHA-256, reviewed claim support, and confirmed current hashes after checks. All five genuine reports and common report passed cite-check.",
+  "negativeControl": {
+    "label": "AC-36 DELIBERATELY INVALID CANDIDATE",
+    "original": "ac36-worker-original.json",
+    "result": "ac36-cite-check.json",
+    "exitCode": 1,
+    "status": "failed",
+    "problem": "citation-file-unavailable",
+    "location": "missing-citation-control.txt:1",
+    "accepted": false,
+    "ordering": "Rejected before genuine report acceptance; never merged into genuine observations."
+  },
+  "report": "[isolated-home][scratch-path]",
+  "executedAuditCommands": [
+    "inspect",
+    "inventory",
+    "cite-check (negative control)",
+    "cite-check (five genuine reports and combined report)"
+  ],
+  "productChecks": "Not executed: discovery-only author constraint; no test, compiler, boundary check, server, fetch or live probe outcomes claimed.",
+  "measurements": "None supplied or run; no invented size, history, dependency metrics or overlap results.",
+  "changes": "No fixture edits, interviews or product decisions; only scratch report/evidence writes.",
+  "limitations": [
+    "Language-specific and outside recommendations not researched because web unavailable by author constraint.",
+    "Instruction loading compatibility not checked; inventory consolidation candidate not selected or acted on.",
+    "Full Step 7 done criterion unmet because product starting-check results were not captured within this checkpoint. Steps 8\u201311 not undertaken."
+  ],
+  "checklist": {
+    "step7": false,
+    "step8": false,
+    "step9": false,
+    "step10": false,
+    "step11": false
+  },
+  "validation": "validation-results.json"
+}

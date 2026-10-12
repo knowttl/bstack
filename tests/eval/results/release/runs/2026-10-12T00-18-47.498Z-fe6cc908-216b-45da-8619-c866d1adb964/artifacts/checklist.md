@@ -1,0 +1,5 @@
+- [x] Step 7: Audit starting state (native checks unavailable and recorded)
+- [x] Step 8: Resolve material gaps (none in approved intent)
+- [x] Step 9: Present evidenced findings (pending validator/render outputs)
+- [ ] Step 10: Apply selected findings (no changes selected; out of requested scope)
+- [ ] Step 11: Product readiness (blocked by absent application/native checks)
