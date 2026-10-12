@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T03-13-38.165Z-6d662c2b-dcd9-46f2-8441-211444e34ea9",
+  "head": "ec52939656c1bce417709f3d6c84038f8a15e51f",
+  "workingTree": "",
+  "allTrackedFilesUnchanged": true,
+  "loginAbsent": true,
+  "files": [
+    {
+      "path": "DESIGN.md",
+      "sha256": "d84c651d9522913c6b9e21659e659a4fe372b4031a5aec7dca8eb02ead44f353",
+      "unchanged": true
+    },
+    {
+      "path": "notes.md",
+      "sha256": "d72f15cf34af6fd82badaceaa29f8c3fcf79c6513c85e827a8cb7f329c1c74ea",
+      "unchanged": true
+    },
+    {
+      "path": "price.mjs",
+      "sha256": "b2a4a39c3c1a88b4652ffcb12518679794d8fe77951838cf27fa991858d07604",
+      "unchanged": true
+    },
+    {
+      "path": "price.test.mjs",
+      "sha256": "3d8ea7c17a814be790c7cf4fcb4f16fe7def3300307c2ef1131e25f534d556c8",
+      "unchanged": true
+    },
+    {
+      "path": "project.json",
+      "sha256": "3a594be1aefdf9a6a311a5dec7a6442e79314ebbdfdb39c91325b7d70e56f6b8",
+      "unchanged": true
+    },
+    {
+      "path": "remove.md",
+      "sha256": "8bf5e8b468ee2371808dc76ec56f38ff8d1b81b46d2b96f8204a6815e441ce00",
+      "unchanged": true
+    },
+    {
+      "path": "rename.md",
+      "sha256": "68b38cbd41534b3b021b48fc6ef40131d125e6f384c13e08f8945128cb6ba0d8",
+      "unchanged": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/citations.json",
+      "originalSha256": "34a77d9a7e66044a75e72a7c5baa560dd0910bf134a3880ad66e8b78acbb3076",
+      "publishedSha256": "abd29ee3297a0ed09d19952f96c3ceefefb308ca7d21b7ad2845fd042135c561"
+    },
+    {
+      "path": "artifacts/findings.json",
+      "originalSha256": "04005f4866392c3e834a2ae8c4f8f8bef7956e6b3cefc146ec224f9d30346942",
+      "publishedSha256": "dca0df81d0c557de54b3d9b86bef9db14061c8ff36e587e414f86461b6d734eb"
+    },
+    {
+      "path": "artifacts/inspect.json",
+      "originalSha256": "0b8236662297246eef644805e2510887704d1fb7d2faf6f9f8a80843bec96107",
+      "publishedSha256": "9a951cd374d064dd1934f89c8688e1e0700ef8af93daa4bd78ee38f35b7e0b02"
+    },
+    {
+      "path": "artifacts/inventory.json",
+      "originalSha256": "77d251471ee9d36baed34ca4b97442a1a411e241caed89d5c38efb72e532c526",
+      "publishedSha256": "e74e604e354530024c4d95b3ffc10e7b29dab4646064cbecbba8adc4368f696a"
+    },
+    {
+      "path": "artifacts/measure.json",
+      "originalSha256": "767cc215c109b25ba80d66195932a8d4ab4d6447141ebf68211e37e07956d721",
+      "publishedSha256": "767cc215c109b25ba80d66195932a8d4ab4d6447141ebf68211e37e07956d721"
+    },
+    {
+      "path": "artifacts/native-test.txt",
+      "originalSha256": "08dc40cb0195936c4bcd449bf087f6e48ab9c87f6677c6541e827f1eb33ffef5",
+      "publishedSha256": "08dc40cb0195936c4bcd449bf087f6e48ab9c87f6677c6541e827f1eb33ffef5"
+    },
+    {
+      "path": "artifacts/render.json",
+      "originalSha256": "98db1b3b7e8f8b724adfe0c1e403367dd382f87ef9e408d4eb26428be6b28cdb",
+      "publishedSha256": "6dac9dd1f2b9a40b13590d5ceafcb5e6948ba357085ac3f9f06ec3a880cb1bf0"
+    },
+    {
+      "path": "artifacts/research.json",
+      "originalSha256": "981dbe6f2e8b0eb7a3ddf0517e11b9a9b3fbd3e8ab135c3a31d792ba62c76ab5",
+      "publishedSha256": "981dbe6f2e8b0eb7a3ddf0517e11b9a9b3fbd3e8ab135c3a31d792ba62c76ab5"
+    },
+    {
+      "path": "artifacts/validation.json",
+      "originalSha256": "e4207ea36daedb4519e960db4bb7481edf729d7dbc915c8eaff8862aeace6a58",
+      "publishedSha256": "53cb291a219c1a2ed4042403f00d362fa3affefa11ea94f4983971004607b4c9"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "ec52939656c1bce417709f3d6c84038f8a15e51f"
+  },
+  "nextChange": "Unresolved: contract-preserving internal refactor or public quote contract change",
+  "reviewedScope": [
+    "DESIGN.md",
+    "price.mjs",
+    "price.test.mjs",
+    "project.json",
+    "notes.md",
+    "rename.md",
+    "remove.md"
+  ],
+  "sources": [
+    {
+      "id": "contract",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "Quotes equal quantity multiplied by 12."
+    },
+    {
+      "id": "code",
+      "pointer": "price.mjs:1",
+      "intent": "observed",
+      "summary": "Exported quote implements multiplication by 12."
+    },
+    {
+      "id": "test",
+      "pointer": "price.test.mjs:4",
+      "intent": "observed",
+      "summary": "One directly imported public quote case passed; raw native evidence only."
+    },
+    {
+      "id": "history",
+      "pointer": "git HEAD^ and measure HEAD^..HEAD",
+      "intent": "observed",
+      "summary": "HEAD^ is unavailable; measure returned history-unreadable."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "Implementation scope remains unresolved.",
+      "files": [
+        "DESIGN.md",
+        "price.mjs",
+        "price.test.mjs"
+      ],
+      "command": null,
+      "principle": "Documented pricing contract is the current baseline.",
+      "consequence": "Acceptance cases, implementation recommendations and verification plan depend on the owner decision.",
+      "fix": "Ask whether to preserve the current quote contract or change it; recommend preserving it absent an approved new outcome, with the trade-off that pricing behavior stays unchanged.",
+      "scope": [
+        "DESIGN.md",
+        "price.mjs",
+        "price.test.mjs"
+      ],
+      "verification": "Retain explicit owner answer; if changing contract, obtain exact new formula and acceptance cases before dependent work.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "contract",
+        "code",
+        "test"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks",
+    "scope-decision",
+    "exact-history-comparison"
+  ],
+  "execution": [],
+  "limitations": [
+    "Native test passed one case; it is raw evidence and has not been captured by run-checks or bound to a findings fingerprint. No changeKind selected while scope is unresolved.",
+    "Exact requested history is inaccessible in this shallow checkout. Origin is outside both permitted roots and was not accessed.",
+    "No edits applied; readiness remains blocked.",
+    "reviewedScope paths name read-only evidence, not an approved write scope.",
+    "Parent commit 4c30913019f94a99eab09a7387a214ddd0ce12da is missing. Provide complete history in the allowed roots; no alternate base is acceptable."
+  ]
+}
