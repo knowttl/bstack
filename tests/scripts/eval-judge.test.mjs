@@ -174,15 +174,27 @@ test('calibration refuses an incomplete corpus before making any calls', async t
   assert.match(result.stdout, /found 123/)
 })
 
-test('calibration stops after a provider failure and preserves a blocked report without diagnostics', async t => {
-  const directory = await temporary(t)
-  const config = await judgeConfig(directory, 'failure')
-  const runs = await corpus(directory)
-  const output = join(directory, 'calibration')
-  const result = command('eval-calibrate.mjs', ['--judge', config, '--runs', runs, '--output', output])
-  assert.equal(result.status, 2, result.stdout)
-  const report = await readFile(join(output, 'report.json'), 'utf8')
-  assert.equal(JSON.parse(report).completedRuns, 0)
-  assert.equal(JSON.parse(report).status, 'blocked')
-  assert.ok(!report.includes('private-provider-credential'))
-})
+for (const [mode, completedRuns, agreed, agreement] of [
+  ['failure', 0, 0, 0],
+  ['fail-after-10', 10, 10, 1],
+  ['disagree-2-fail-after-10', 10, 8, 0.8]
+]) {
+  test(`calibration preserves agreement and a blocked report after provider failure: ${mode}`, async t => {
+    const directory = await temporary(t)
+    const config = await judgeConfig(directory, mode)
+    const runs = await corpus(directory)
+    const output = join(directory, 'calibration')
+    const result = command('eval-calibrate.mjs', ['--judge', config, '--runs', runs, '--output', output])
+    assert.equal(result.status, 2, result.stdout)
+    const bytes = await readFile(join(output, 'report.json'), 'utf8')
+    const report = JSON.parse(bytes)
+    assert.equal(report.completedRuns, completedRuns)
+    assert.equal(report.total, completedRuns)
+    assert.equal(report.agreed, agreed)
+    assert.equal(report.agreement, agreement)
+    assert.equal(report.status, 'blocked')
+    assert.equal(report.disagreements.length, completedRuns - agreed)
+    assert.deepEqual(result.body.data, report)
+    assert.ok(!bytes.includes('private-provider-credential'))
+  })
+}
