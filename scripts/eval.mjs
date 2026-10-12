@@ -9,9 +9,12 @@ import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
 import { readAdapter, isolate, hostTurn, closeHost, redactEvidence, candidateSkillHash } from './lib/evaluation-host.mjs'
 import { scoreChecks, validateScore, correctedScore } from './lib/evaluation-scoring.mjs'
+import { readJudge, judgeAnswers } from './lib/evaluation-judge.mjs'
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
+// Judge grading remains explicit so callers can audit answers before score publication.
+const judgeHelp = 'eval judge --run <id> [--judge <config.json>] [--transcript <manual-file>] [--results <directory>] [--json]\nDefault: Claude Sonnet 5.5 medium in the disposable container. Writes answers.json for eval score; real calibration must pass before release adoption.\nExamples:\n  npm run eval -- judge --run <id> --json\n  npm run eval -- judge --run <id> --judge judge.json --results <directory> --json'
 // Batch capture and grading are separate until the judge is available.
 const batchHelp = 'eval batch --tier smoke|full --mode without|with --adapter <file> [--repeat 5] [--concurrency 6] [--scenario <id,id>] [--stage <checkpoint>] [--results <directory>] [--json]\neval batch --batch <id> [--results <directory>] [--json]\nConcurrency: 1 to 6. Stage defaults to each scenario\'s last checkpoint. Captures all scripted replies and closes every host. Score pending runs with eval score, then finalize with --batch to append aggregate ledger lines.\nExamples:\n  npm run eval -- batch --tier smoke --mode without --adapter tests/eval/adapters/codex.json\n  npm run eval -- batch --tier full --scenario ambiguous-idea,clear-goals --stage baseline --mode without --adapter tests/eval/adapters/codex.json --repeat 3 --concurrency 2\n  npm run eval -- batch --batch <id>'
 // Adapter runs capture host turns, while unsupported hosts retain the manual interface.
@@ -333,6 +336,9 @@ async function score(opts, results) {
   })) }), answers)
   validateIds(answers.checks, '$/checks')
   if (answers.reviewer.trim().length < 3 || /^\d+$/.test(answers.reviewer.trim())) fail('Reviewer identities must contain at least three characters and cannot be purely numeric.')
+  const judge = answers.reviewer.startsWith('judge:')
+  if (judge && !/^judge:[a-zA-Z0-9][a-zA-Z0-9._:/-]*$/.test(answers.reviewer)) fail('Judge reviewer must name a model as judge:<model>.')
+  const reviewer = judge ? answers.reviewer : '[redacted: user name]'
   for (const check of record.scenario.checks.filter(check => check.machine)) {
     const result = record.machineResults?.find(result => result.id === check.id)
     if (!record.adapter || !result || typeof result.passed !== 'boolean') fail(`Missing captured machine assertion: ${check.id}. Use an adapter run.`)
@@ -364,18 +370,37 @@ async function score(opts, results) {
   record.answers = join(attempt, 'answers.json')
   const redaction = { ...record, caseResults: [{ reviewer: answers.reviewer }] }
   record.caseResults = record.scenario.checks.map(check => ({ ...check, ...answers.checks.find(answer => answer.id === check.id),
-    scoring: check.machine ? 'machine' : 'human', reviewer: '[redacted: user name]', transcript: record.transcript }))
+    scoring: check.machine ? 'machine' : judge ? 'judge' : 'human', reviewer, transcript: record.transcript }))
   const evidence = redactEvidence(transcript, redaction)
   await writeFile(join(directory, record.transcript), evidence, { flag: 'wx' })
-  await writeFile(join(directory, record.answers), redactEvidence(JSON.stringify({ ...answers, reviewer: '[redacted: user name]' }, null, 2) + '\n', redaction), { flag: 'wx' })
+  await writeFile(join(directory, record.answers), redactEvidence(JSON.stringify({ ...answers, reviewer }, null, 2) + '\n', redaction), { flag: 'wx' })
   if (record.adapter) {
     await writeFile(join(directory, record.conversation), evidence)
     record.conversationHash = hashBytes(evidence)
   }
   record.scoredAt = new Date().toISOString()
   record.status = record.caseResults.every(check => check.passed) ? 'passed' : 'failed'
-  record.reason = record.adapter ? 'Human-scored captured host conversation with verified discovery isolation.' : 'Human-scored transcript. Host isolation remains unverified for this manual host.'
+  record.reason = `${judge ? 'Judge' : 'Human'}-scored ` + (record.adapter ? 'captured host conversation with verified discovery isolation.' : 'transcript. Host isolation remains unverified for this manual host.')
   return await saveRecord(JSON.parse(redactEvidence(JSON.stringify(record), redaction)), directory)
+}
+
+async function judge(opts, results) {
+  const config = await readJudge(resolve(opts.judge ?? join(root, 'tests/eval/judge/claude.json')))
+  const { record } = await load(results, opts.run)
+  if (record.transcript) fail('This run is already scored. Calibration reads historical runs separately.')
+  if (!record.conversation && !opts.transcript) fail('Supply --transcript for a manual run.', 'usage-error')
+  const transcript = await readFile(opts.transcript ? resolve(opts.transcript) : join(results, record.id, record.conversation), 'utf8')
+  if (record.adapter && (record.hostFailure || !record.isolation.cleanedAt || !record.isolation.verified ||
+      !verifiedExecution(record) || record.conversationHash !== hashBytes(transcript))) fail('Judge requires an unchanged captured conversation with verified cleanup.')
+  const directory = join(results, record.id, 'judge')
+  // Reserve the invocation before spending so accidental repeats cannot call the model twice.
+  await mkdir(directory)
+  const { answers, evidence } = await judgeAnswers(config, record, transcript)
+  const path = join(directory, 'answers.json')
+  await writeFile(path, JSON.stringify(answers, null, 2) + '\n', { flag: 'wx', mode: 0o600 })
+  await writeFile(join(directory, 'evidence.json'), JSON.stringify(evidence, null, 2) + '\n', { flag: 'wx', mode: 0o600 })
+  return { status: 'passed', runId: record.id, answers: path, model: config.model,
+    reason: 'Pass these answers and the captured transcript to eval score. Human audit is required for every blocking verdict and one random run per smoke scenario per release.' }
 }
 
 async function compare(opts, results) {
@@ -417,15 +442,16 @@ async function correct(opts, results) {
 
 try {
   const args = process.argv.slice(2)
-  if (args.includes('--help')) console.log(args[0] === 'batch' ? batchHelp : batchHelp + '\n' + help)
+  if (args.includes('--help')) console.log(args[0] === 'batch' ? batchHelp : args[0] === 'judge' ? judgeHelp : batchHelp + '\n' + judgeHelp + '\n' + help)
   else if (!args.length) fail('Select a batch, manual scenario, score or compare. ' + batchHelp + '\n' + help)
   else {
     const command = args[0].startsWith('--') ? 'start' : args.shift()
-    const allowed = { batch: ['batch', 'tier', 'repeat', 'concurrency', 'scenario', 'mode', 'stage', 'adapter'], start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], score: ['run', 'answers', 'transcript'], correct: ['run', 'correction'], compare: ['without', 'with'] }
+    const allowed = { batch: ['batch', 'tier', 'repeat', 'concurrency', 'scenario', 'mode', 'stage', 'adapter'], start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], judge: ['run', 'judge', 'transcript'], score: ['run', 'answers', 'transcript'], correct: ['run', 'correction'], compare: ['without', 'with'] }
     if (!Object.hasOwn(allowed, command)) fail(`Unknown command: ${command}`, 'usage-error')
     const opts = options(args, [...allowed[command], 'results'], command === 'start' ? ['manual'] : [])
     const results = resolve(opts.results ?? defaultResults)
-    const data = await ({ batch, start, turn, close, score, correct, compare })[command](opts, results)
+    const data = await ({ batch, start, turn, close, judge, score, correct, compare })[command](opts, results)
+    if (!opts.json && command === 'judge') console.log(`answers: ${data.answers}\n${data.reason}`)
     if (!opts.json && command === 'start') console.log(JSON.stringify(data, null, 2))
     if (!opts.json && command === 'batch') console.log([
       `batch: ${data.batch}`, ...data.runIds.map(id => `run: ${id}`),
