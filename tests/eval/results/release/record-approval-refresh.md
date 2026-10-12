@@ -20,6 +20,14 @@ The isolated login home is cleaned after scoring.
 
 Other scenario refreshes and the final all-case validator remain outstanding.
 
+The [scope and prerequisites comparison](scope-and-prerequisites-record-approval-comparison.json) passes 2/2 in both modes after one installed refresh against the settled package.
+The [complete installed conversation](runs/2026-10-12T03-13-38.165Z-6d662c2b-dcd9-46f2-8441-211444e34ea9/conversation.txt), lines 7–42, asks whether to preserve or change the public quote contract and leaves implementation scope and write paths unselected.
+Actual HEAD^ resolution and exact history measurement fail; the final response identifies missing parent 4c30913019f94a99eab09a7387a214ddd0ce12da and requires sufficient history within the allowed roots without substituting a passing base.
+A separate post-run Git check confirms shallow=true and HEAD^ exit 128.
+The [independent verification](runs/2026-10-12T03-13-38.165Z-6d662c2b-dcd9-46f2-8441-211444e34ea9/artifacts/independent-verification.json) confirms seven unchanged tracked files, and the [export manifest](runs/2026-10-12T03-13-38.165Z-6d662c2b-dcd9-46f2-8441-211444e34ea9/artifacts/export-manifest.json) retains ten native artifact hashes.
+The existing public quote unit passes, but historical comparison and dependent implementation remain explicitly unverified.
+The isolated login home is cleaned.
+
 The [runtime independence comparison](runtime-independence-record-approval-comparison.json) passes from baseline 0/1 to installed 1/1, refreshing installed execution once at the final stage with the settled package.
 The [installed conversation](runs/2026-10-12T03-00-37.847Z-0688a166-4ff6-480c-a464-ceb051fed867/conversation.txt), lines 7–54, retains actual command-availability observations for all three excluded tools and completes the bounded audit through inspect, inventory, citation/history checks and validated scratch findings.
 Product readiness stays explicitly unverified because this documented-only fixture has no application or native tests.
