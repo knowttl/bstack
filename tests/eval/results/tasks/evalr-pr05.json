@@ -29,7 +29,7 @@
     "Judge grading, scenario-owned tiers and the release gate remain later work. The ledger records rates and does not establish a release verdict.",
     "Full-suite execution does not replace task-specific agent or manual acceptance procedures."
   ],
-  "sourceRevision": "8cd93599a50749b228fd7093f196a3d0a68ecc0f",
+  "sourceRevision": "d55aefbc352d776fa3cee52b83bbb7fbad53b168",
   "status": "passed",
   "environment": {
     "os": "linux 6.8.0-142-generic x64",
@@ -44,7 +44,9 @@
       "id": "full-tests",
       "executable": "node",
       "args": [
-        "scripts/test.mjs"
+        "scripts/test.mjs",
+        "--capture",
+        ".cache/full-suite.json"
       ],
       "cwd": ".",
       "exitCode": 0,
@@ -82,11 +84,6 @@
           "sha256": "c6c3eb43d29f65a17bc030c8592cbbfe0edc753e497f145ac6b9b31f7886d0fe"
         },
         {
-          "path": "README.md",
-          "executable": false,
-          "sha256": "070c6be0194dac05b2d72bc0e17b07fa0b2a8425aac5613e2be52be7458a4aa1"
-        },
-        {
           "path": "docs/C24c-maintenance-transcript.md",
           "executable": false,
           "sha256": "d4def0cfd5666846cb526605f187d74859a663855a2faa802c801b4c4777421a"
@@ -105,11 +102,6 @@
           "path": "docs/design.md",
           "executable": false,
           "sha256": "71974b78808fc82f1defc16a9a0e39cfd937cb8b2a487fe07237c1b981a20582"
-        },
-        {
-          "path": "docs/evaluation.md",
-          "executable": false,
-          "sha256": "5d592b3178266300be13bfeaa1a5a0482de210a0e42ab19af82376e7e6563d68"
         },
         {
           "path": "docs/examples/README.md",
@@ -147,11 +139,6 @@
           "sha256": "7aec23a577ba28dff72bf8ff8731e1cd7a9bbdd31232a64026bbe79af26fbb9a"
         },
         {
-          "path": "docs/fixtures.md",
-          "executable": false,
-          "sha256": "72217eb207e57e641d36213195088072cb68f459dea64b0eb3d7b7202e330d43"
-        },
-        {
           "path": "docs/implementation-plan.md",
           "executable": false,
           "sha256": "59ce44b7c24adbd012487a1a4f52b802b9f72de5cb8854d9728d368b897dca7e"
@@ -160,6 +147,11 @@
           "path": "docs/releases/v0.1.0.md",
           "executable": false,
           "sha256": "0e7bcad3ca62010971887af53134279795fafa392e3a5e8cd3d882c5ecfbc937"
+        },
+        {
+          "path": "docs/review-log.md",
+          "executable": false,
+          "sha256": "0fe7e6260c4eb1d8175a4c21bb8bdbe964619b3911715abe330e8fde03ab210a"
         },
         {
           "path": "install/install.mjs",
@@ -204,7 +196,7 @@
         {
           "path": "scripts/eval.mjs",
           "executable": false,
-          "sha256": "23c91140e3f53796e3bbbfdb132c008b0d7c0fbe1fa9561d83f63b327a139630"
+          "sha256": "7fc812052745f7d5edc98bb49753494bd1c46148d6d9fdfdad24f82eabe70e7a"
         },
         {
           "path": "scripts/generate-checker.mjs",
@@ -214,12 +206,12 @@
         {
           "path": "scripts/lib/evaluation-container.mjs",
           "executable": false,
-          "sha256": "2d11cc114a21968b34068f32696e6d6382ee61840ae5c2f4df9f1d5df012d517"
+          "sha256": "aa38afcc457080b0308b399fccbb5db49d4d001d131a9b0dc07118445468c638"
         },
         {
           "path": "scripts/lib/evaluation-host.mjs",
           "executable": false,
-          "sha256": "204d6e0eaec58dbc9e2318841db77a46dfc7dc0aa98b85e39959bc2004ba09ab"
+          "sha256": "4dcd138ccf7d98663214265963c220a6d81446cedfb561f108da41874239b8b1"
         },
         {
           "path": "scripts/lib/evaluation-scope.mjs",
@@ -234,7 +226,7 @@
         {
           "path": "scripts/lib/evaluation.mjs",
           "executable": false,
-          "sha256": "9ca938d9498917d6ab14aa957024923586802f20e487beb82d9d4494876168e5"
+          "sha256": "6f3d8534f4926ba0ebc4ef92b756a9bebe4e7c8e552b567cbd25a20684bb2516"
         },
         {
           "path": "scripts/lib/release-evidence.mjs",
@@ -24049,7 +24041,7 @@
         {
           "path": "tests/eval/scenarios/scenarios.json",
           "executable": false,
-          "sha256": "176e79e7b2f33a87c71c74cde280365aa40d3477741e47f1a6ed11735c7c2ef0"
+          "sha256": "14cd6859279750625eebfa9a8e278596438b9ed7d481f28fdb4c0375c31918b5"
         },
         {
           "path": "tests/eval/task-evidence.schema.json",
@@ -24074,7 +24066,7 @@
         {
           "path": "tests/fixtures/build.mjs",
           "executable": false,
-          "sha256": "b619529e40a7867c3a51cb8893e80414ec95be02048c529d09e2ac3c7402af82"
+          "sha256": "b7d2292fd2c2dd663cdc0745749cf8e451c31750195efbcafd2d64364d61874f"
         },
         {
           "path": "tests/fixtures/clear-goals/DESIGN.md",
@@ -24134,7 +24126,7 @@
         {
           "path": "tests/fixtures/fixtures.json",
           "executable": false,
-          "sha256": "8db8efda34839e43cb1ced4e5b902e9646844443cae583c3d6e4e0f26608b059"
+          "sha256": "4234a90e0995ac49a89f3ea4f02cab1024814eaf57288b5b5555172bcbde6d3f"
         },
         {
           "path": "tests/fixtures/installer-collision/FIXTURE.md",
@@ -24239,7 +24231,7 @@
         {
           "path": "tests/fixtures/maintained-ts-shop/sanity.mjs",
           "executable": false,
-          "sha256": "9aea6a480938c313ca0002747a745702d98d855ebb7fb3fd3f7ad1b451340df0"
+          "sha256": "75db8e5c995944e80ebdaf35933344efbe1aaded1ca5ef60d4e5cbccad1537e4"
         },
         {
           "path": "tests/fixtures/maintenance/DESIGN.md",
@@ -24614,7 +24606,7 @@
         {
           "path": "tests/inputs/docker.mjs",
           "executable": true,
-          "sha256": "bea3dad605a9201d2d3436a7c74ca33fa17dce4a0aa4bfbb800cfca27b1cd29e"
+          "sha256": "b61dfb006a931187676b0b70dddf71b46ca22c12f9f8b5bf7324f6ebd14fde85"
         },
         {
           "path": "tests/inputs/draft.json",
@@ -24634,7 +24626,17 @@
         {
           "path": "tests/inputs/evaluation-host.mjs",
           "executable": false,
-          "sha256": "46d8e2f6f3d7a6a640cd9380a9b11ad75f2be65c91de0bccb250b6500e592c2d"
+          "sha256": "51c589a17f094ff0d1ec2d1ec9069d118debd11f481ad3449ea8f46270767d96"
+        },
+        {
+          "path": "tests/inputs/evaluation-interruption.mjs",
+          "executable": false,
+          "sha256": "2b3fa800026545e0958a1e231c9d819e083e97be6e04016faf8eafbbd72ac15b"
+        },
+        {
+          "path": "tests/inputs/evaluation-ledger-interruption.mjs",
+          "executable": false,
+          "sha256": "3fed9209882da4f33ceeffd77ddc196e053270cc7b0b942d9bec42ddebdc00ba"
         },
         {
           "path": "tests/inputs/findings-audit.json",
@@ -25009,7 +25011,7 @@
         {
           "path": "tests/scripts/eval.test.mjs",
           "executable": false,
-          "sha256": "afb50bf92dac3b6e738b7294585257e5800dd42b71e9c2dee465df1dc149a59f"
+          "sha256": "0c49e20fb19866f9dd3acbe65d746ced23bfb73110cf870c3026de55fd0b50dc"
         },
         {
           "path": "tests/scripts/evidence-collect.test.mjs",
@@ -25327,7 +25329,7 @@
           "sha256": "487db86570c747028f62edfc28b11ab7a9cff675bfea0659e293629935168989"
         }
       ],
-      "sha256": "6b92e3f14f3c4e66d604e3b2820ea7b0ce609d58c83da469333a06794b934116"
+      "sha256": "24f1e019659bbf86fe7408dcc699c73eb643d6f4f10a547b3f31ec5b75a4e6b8"
     },
     "suites": [
       "tests/scripts/acceptance.test.mjs",
@@ -25375,20 +25377,60 @@
       "tests/scripts/vision-review.test.mjs",
       "tests/scripts/vision-runtime.test.mjs"
     ],
-    "postCaptureDocumentation": [],
+    "postCaptureDocumentation": [
+      {
+        "path": "README.md",
+        "before": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "070c6be0194dac05b2d72bc0e17b07fa0b2a8425aac5613e2be52be7458a4aa1"
+        },
+        "after": {
+          "path": "README.md",
+          "executable": false,
+          "sha256": "97d8ac7bc30063fc7adbaaa51a8fe050b0e0185a3b1b6f84b38cf53b7ba0df4d"
+        }
+      },
+      {
+        "path": "docs/evaluation.md",
+        "before": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "512b616f41584945c28b275aa2b6fa58f879ae32b12fbe3439054e349b1f5285"
+        },
+        "after": {
+          "path": "docs/evaluation.md",
+          "executable": false,
+          "sha256": "3e0268e7b61dd6c468e0676411e8c49f78cbce0047df9910053a50baa40ee882"
+        }
+      },
+      {
+        "path": "docs/fixtures.md",
+        "before": {
+          "path": "docs/fixtures.md",
+          "executable": false,
+          "sha256": "72217eb207e57e641d36213195088072cb68f459dea64b0eb3d7b7202e330d43"
+        },
+        "after": {
+          "path": "docs/fixtures.md",
+          "executable": false,
+          "sha256": "f76e5bad2f7c5338884697f0288925d2669b159d684176927f1ae21e1c01362e"
+        }
+      }
+    ],
     "counts": {
-      "tests": 2545,
+      "tests": 2568,
       "failed": 0,
-      "passed": 2545,
+      "passed": 2568,
       "cancelled": 0,
       "skipped": 0,
       "todo": 0,
-      "topLevel": 2503,
+      "topLevel": 2511,
       "suites": 0
     },
-    "durationMs": 439081.687417,
-    "outputSha256": "63f61f1265c0a43ae080cc10acd0d486c63ba1c0ec8d158be55893c67d44a90c",
-    "eventsSha256": "6ccab93a74758b776c6e121aeb6c0ef389f19b07701700f22c7a8e80eadfdc7d",
+    "durationMs": 454181.124686,
+    "outputSha256": "bbc4c0edb98af2e304d145ef34826b2e090a05cde6ea368fa41f9710812f5354",
+    "eventsSha256": "3e0356fe7e7873d4df4a6f767f9307cfc043dfc247dbf4ee3ddaa781ec698128",
     "eventsArtifact": "tests/eval/results/tasks/evalr-pr05.events.jsonl"
   }
 }
