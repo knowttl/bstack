@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Targeted decision questions
 
 The final [existing-repo comparison](existing-repo-comparison.json) passes 19/19 against the retained 13/19 baseline, with six gained checks and none lost.
@@ -21,7 +23,7 @@ Instruction consolidation is evidenced by the actual inventory candidate at line
 The route's mixed pricing/state responsibilities and the coupled core files are evidenced in the research report, findings and scoped review, rather than inferred from sizes or single-commit history.
 The original native check capture records passing types and two units alongside failed boundaries and the agreed total-10 journey returning 12.
 Readiness remains blocked by those fixture defects.
-The [independent verification](runs/2026-10-11T21-31-14.000Z-57b01fe4-9437-43f9-84c8-fb60f42ed3cf/artifacts/independent-verification.json) checks every original file citation, an unchanged project and removal of the login copy.
+The independent verification (removed file: runs/2026-10-11T21-31-14.000Z-57b01fe4-9437-43f9-84c8-fb60f42ed3cf/artifacts/independent-verification.json) checks every original file citation, an unchanged project and removal of the login copy.
 The scored record verifies container removal and deletion of the isolated home.
 
 The [existing-vision comparison](existing-vision-delta-comparison.json) also passes 1/1 in both modes under the documented candidate-delta rubric.

@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Representative extension requires a fixture decision
 
 AC-64 cannot pass the representative-extension scenario on its current ts-rule-proof starting state.
@@ -10,7 +12,7 @@ Independent checks retain its three changed files and diff, the unchanged origin
 The [installed conversation](runs/2026-10-12T00-34-38.718Z-0bbff631-6f4f-464b-9916-13844ced9f2a/conversation.txt), lines 7–60, actually validates the absent .bstack/project.json and returns contract-unavailable.
 After the ordered scripted reply, it passes existing quote units, types and boundaries but leaves the new feature unimplemented because approved examples and the contract are missing.
 The declared journey command also has no journey.mjs file.
-Its [independent record](runs/2026-10-12T00-34-38.718Z-0bbff631-6f4f-464b-9916-13844ced9f2a/artifacts/independent-verification.json) verifies all eleven tracked files unchanged and login removal.
+Its independent record (removed file: runs/2026-10-12T00-34-38.718Z-0bbff631-6f4f-464b-9916-13844ced9f2a/artifacts/independent-verification.json) verifies all eleven tracked files unchanged and login removal.
 Both complete conversations, false scores and final isolated-home/container cleanup are retained.
 
 A differently shaped check confirms the fixture mismatch: the actual Git inventory has no guidance, design, approved-example record, maintenance contract or journey file, and [the fixture declaration](../../../fixtures/ts-rule-proof/FIXTURE.md) describes rule-proof inputs serving AC-52, AC-60 and AC-66 rather than a maintained extension starting state.

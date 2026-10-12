@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Existing-project final path remains blocked
 
 The [installed final-stage conversation](runs/2026-10-12T00-10-35.937Z-0d830781-30d9-4fd6-92b7-dc24e33e20a5/conversation.txt) cannot establish passing AC-54 or AC-75 evidence.
@@ -30,6 +32,6 @@ The 30-minute limit remains unchanged unless separately approved.
 
 The separately approved representative-extension correction is committed and its fresh maintained-fixture baseline passes 1/1 in [its complete conversation](runs/2026-10-12T00-45-26.970Z-4d387872-72e6-4aec-b00b-f38b7c364e84/conversation.txt), lines 6–75.
 It locates the approved public example, preserves the original quote assertion, checkout journey, total 10 and user note, adds quote(2) = 24, and passes native and standalone checks locally and in an isolated different-root clone.
-Its [independent record](runs/2026-10-12T00-45-26.970Z-4d387872-72e6-4aec-b00b-f38b7c364e84/artifacts/independent-verification.json) retains changed files, unchanged protected-source hashes, full diff and actual native checker captures.
+Its independent record (removed file: runs/2026-10-12T00-45-26.970Z-4d387872-72e6-4aec-b00b-f38b7c364e84/artifacts/independent-verification.json) retains changed files, unchanged protected-source hashes, full diff and actual native checker captures.
 Its isolated login home was cleaned after scoring.
 The installed half of this changed pair has not been started because the existing-project acceptance blocker requires a decision first.

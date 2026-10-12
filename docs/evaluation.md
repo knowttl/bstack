@@ -205,8 +205,8 @@ An optional `machine` object names a deterministic assertion: `fixtureUnchanged`
 Opened-path assertions take `patterns` with Node path glob syntax over captured command and file-tool events; a missing access trace cannot pass.
 Commands take `executable` and `args`; citation checks take `report`, with `$HOME/` resolved inside the isolated home.
 File comparisons take `paths`; content checks take `path` and `text`.
-The runner captures fixture bytes and Git status before the conversation and evaluates assertions with the same container image, mounts and limits before cleanup.
-Native commands and citation reruns execute after the last scripted answer.
+The runner captures fixture bytes and Git status before the conversation and evaluates assertions once after the last scripted answer, using `docker exec` in the live subject container before cleanup.
+Host turns, native commands and citation reruns execute inside that container with its configured mounts and limits.
 The citation grader is staged in private scratch only after the subject finishes and removed after grading, including for without-skill baselines.
 Reviewer answers may omit machine check IDs, and supplied machine verdicts are replaced by captured results.
 Manual hosts cannot supply machine evidence.

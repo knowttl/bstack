@@ -71,12 +71,13 @@ function opened(machine) {
   const matches = pattern => paths.some(path => {
     const normal = path.replaceAll('\\', '/')
     if (machine.type === 'notOpened') {
-      if (normal === '.' || normal === '..') return true
       const relative = normal.replace(/^.*\/repo-audit(?=\/|$)/, 'repo-audit')
       const scoped = relative === 'repo-audit' || relative.startsWith('repo-audit/')
       const forbidden = scoped ? pattern.replace(/^\*\*\/(?:repo-audit\/)?/, 'repo-audit/') : pattern
-      return overlaps(forbidden.split('/').filter(Boolean),
-        [...relative.split('/').filter(Boolean), ...(normal.includes('/') ? ['**'] : [])])
+      const parts = forbidden.split('/').filter(Boolean)
+      const token = relative.split('/').filter(Boolean)
+      return overlaps(parts, token) || parts.slice(0, -1).some((part, index) =>
+        part !== '**' && overlaps(parts.slice(0, index + 1), token))
     }
     return matchesGlob(normal, pattern) || matchesGlob(normal.replace(/^.*\/repo-audit\//, 'repo-audit/'), pattern)
   })
@@ -92,7 +93,6 @@ async function assertion(machine) {
     const files = await Promise.all(machine.paths.map(path => readFile(path)))
     return files.every(file => file.equals(files[0]))
   }
-  if (!input.final) return false
   const command = machine.type === 'citeCheck'
     ? { executable: 'node', args: [input.skill, 'cite-check', '--repo', process.cwd(), '--report', machine.report.replace(/^\$HOME\//, `${process.env.HOME}/`), '--json'] }
     : machine

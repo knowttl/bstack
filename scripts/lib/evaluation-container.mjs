@@ -35,7 +35,7 @@ export async function containerTurn(record, args, env, capture) {
   const turn = { name, imageId: imageData.Id, mounts, user, network: 'bridge', privileged: false, publishedPorts: [], verified: false }
   record.execution.turns.push(turn)
   try {
-    completed(await docker(['create', ...options, imageData.Id, record.adapter.executable, ...args]), 'creation')
+    completed(await docker(['create', ...options, imageData.Id, 'node', '-e', 'setInterval(() => {}, 2147483647)']), 'creation')
     const actual = JSON.parse(completed(await docker(['inspect', name]), 'inspection'))[0]
     const observed = actual.Mounts.map(({ Type, Source, Destination, RW }) => ({ Type, Source, Destination, RW }))
     // Docker orders mounts by destination independently of their argv order.
@@ -47,8 +47,9 @@ export async function containerTurn(record, args, env, capture) {
         actual.HostConfig.CapAdd?.length || canonicalJSON(actual.HostConfig.CapDrop) !== canonicalJSON(['ALL']) ||
         !actual.HostConfig.SecurityOpt.includes('no-new-privileges')) fail('Evaluation container configuration does not match the isolated execution contract.')
     turn.verified = true
+    completed(await docker(['start', name]), 'startup')
     if (record.fixture.name.startsWith('py-') && !record.fixtureRuntime) {
-      const prepared = await docker(['run', '--rm', ...options.slice(2), '--name', `${name}-prepare`, imageData.Id,
+      const prepared = await docker(['exec', name,
         'sh', '-c', 'mkdir -p "$XDG_CACHE_HOME" && cp -R /opt/uv-cache "$XDG_CACHE_HOME/uv" && uv sync --locked --offline --python 3.12.15'])
       completed(prepared, 'locked Python fixture preparation')
       record.fixtureRuntime = { imageId: imageData.Id, python: '3.12.15', result: prepared }
@@ -58,7 +59,7 @@ export async function containerTurn(record, args, env, capture) {
     const query = 'const {execFileSync}=require("node:child_process");const [executable,...args]=JSON.parse(process.argv[1]);' +
       'console.log(JSON.stringify({node:process.version,git:execFileSync("git",["--version"],{encoding:"utf8"}).trim(),' +
       'npm:execFileSync("npm",["--version"],{encoding:"utf8"}).trim(),agent:execFileSync(executable,args,{encoding:"utf8"}).trim()}))'
-    const version = await docker(['run', '--rm', ...options.slice(2), '--name', `${name}-version`, imageData.Id,
+    const version = await docker(['exec', name,
       'node', '-e', query, JSON.stringify([record.adapter.executable, ...record.adapter.versionArgs])])
     const toolchain = JSON.parse(completed(version, 'toolchain version query'))
     if (Object.entries(toolchain).some(([key, value]) => record.tools[key] && record.tools[key] !== value)) fail('Evaluation container tool versions differ from the recorded toolchain.')
@@ -72,13 +73,13 @@ export async function containerTurn(record, args, env, capture) {
       // Captured traces can exceed OS argument limits, so use the existing home mount.
       try {
         // Baselines also receive citation grading, after the subject has finished.
-        if (input.final && checks.some(check => check.machine.type === 'citeCheck')) {
+        if (input.action === 'evaluate' && checks.some(check => check.machine.type === 'citeCheck')) {
           for (const directory of ['scripts', 'schemas']) await cp(join(root, 'skills/repo-audit', directory),
             join(grader, directory), { recursive: true })
           input.skill = join(grader, 'scripts/repo-audit.mjs')
         }
         await writeFile(path, JSON.stringify({ kind: record.fixture.kind, ...input }), { mode: 0o600 })
-        const result = await docker(['run', '--rm', ...options.slice(2), '--name', `${name}-assertions`, imageData.Id,
+        const result = await docker(['exec', name,
           'node', '--input-type=module', '-e', program, path],
           120000 * (1 + checks.filter(check => ['command', 'citeCheck'].includes(check.machine.type)).length))
         return JSON.parse(completed(result, 'machine assertions'))
@@ -88,26 +89,18 @@ export async function containerTurn(record, args, env, capture) {
       }
     }
     if (checks.length && !record.fixtureSnapshot) record.fixtureSnapshot = await assertions({ action: 'snapshot' })
-    const result = await docker(['start', '--attach', name], record.adapter.timeoutMs, record.adapter.outputLimitBytes)
+    const result = await docker(['exec', name, record.adapter.executable, ...args], record.adapter.timeoutMs, record.adapter.outputLimitBytes)
     result.toolVersion = { ...version, stdout: `${toolchain.agent}\n` }
     await capture(result)
-    if (checks.length && result.status === 'passed' && !result.outputTruncated) {
+    if (checks.length && record.turns.length === record.scenario.answers.length + 1) {
       const events = record.turns.map(turn => turn.result.stdout)
         .flatMap(stdout => stdout.trim().split(/\r?\n/).map(line => JSON.parse(line)))
       record.machineResults = await assertions({ action: 'evaluate', checks, before: record.fixtureSnapshot,
-        events, installer: record.installer, final: record.turns.length === record.scenario.answers.length + 1 })
+        events, installer: record.installer })
     }
   } finally {
     const removal = await docker(['rm', '--force', name])
     if (removal.status !== 'passed' && !/No such container/.test(removal.stderr)) completed(removal, 'cleanup')
-    // The version query normally removes itself; explicit cleanup also covers
-    // a client timeout. No resource is selected by a shared name or inventory.
-    const versionRemoval = await docker(['rm', '--force', `${name}-version`])
-    if (versionRemoval.status !== 'passed' && !/No such container/.test(versionRemoval.stderr)) completed(versionRemoval, 'version cleanup')
-    const preparationRemoval = await docker(['rm', '--force', `${name}-prepare`])
-    if (preparationRemoval.status !== 'passed' && !/No such container/.test(preparationRemoval.stderr)) completed(preparationRemoval, 'fixture preparation cleanup')
-    const assertionRemoval = await docker(['rm', '--force', `${name}-assertions`])
-    if (assertionRemoval.status !== 'passed' && !/No such container/.test(assertionRemoval.stderr)) completed(assertionRemoval, 'assertion cleanup')
     turn.removedAt = new Date().toISOString()
   }
 }
