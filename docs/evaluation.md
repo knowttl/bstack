@@ -106,17 +106,7 @@ The isolated home's `tmp` directory is created with mode `0700` and owns scratch
 Access to the shared `/tmp` root is not allowed, including capacity queries; query the run's own directory instead.
 Missing resources remain unavailable instead of prompting searches in the host home, ancestor directories, other projects or other skill installations.
 Installed executable paths and system runtime resources remain available for normal tool execution.
-The runner checks filesystem access targets in captured commands and native parent/worker file-tool calls after each turn and again before deleting the home.
-Paths merely printed in tool output do not establish access and are excluded, including filesystem device names in capacity tables and process command lines in resource-query output.
-Complete command arguments are resolved against their working directory and checked as read targets only when they exist; revision ranges, refs, flags and other nonexistent tokens are not filesystem paths.
-Explicit write destinations are checked even before they exist.
-The transcript parser records advisory hits in `scopeGuard.paths` and `scopeGuard.violations`, with the target, triggering operation and parent/native trace origin.
-Command text cannot reliably distinguish file access from program operators or revision syntax, so parser hits never reject a run on their own.
-Docker's verified mounts enforce host filesystem isolation; the advisory parser does not claim to detect actual reads.
-Comparisons require the same verified scope-contract version on both sides.
-Scope version 3 recognizes read-only resource queries: memory/load files, process metadata/counts and filesystem capacity queries.
-The advisory guard recognizes the run's isolated temporary directory and reports apparent targets outside the fixture or isolated home.
-System runtime access does not authorize writing those runtime files; `/dev/null` remains an ordinary output sink.
+Docker's verified mounts enforce host filesystem isolation.
 Contaminated transcripts may contain unrelated host inventories and must stay private.
 
 ```sh

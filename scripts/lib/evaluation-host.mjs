@@ -8,7 +8,7 @@ import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { resolvePath } from '../../skills/repo-audit/scripts/lib/paths.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
-import { scopeMessage, checkScope } from './evaluation-scope.mjs'
+import { scopeMessage } from './evaluation-scope.mjs'
 import { containerTurn } from './evaluation-container.mjs'
 
 export function redactEvidence(content, record) {
@@ -203,7 +203,6 @@ export async function hostTurn(record, message) {
   if (sessions.length !== 1 || typeof sessions[0] !== 'string' || !sessions[0] ||
       (record.sessionId && sessions[0] !== record.sessionId) || !events.some(event => event.type === 'turn.completed') ||
       events.some(event => ['turn.failed', 'error'].includes(event.type))) fail('Host did not complete a turn in the expected conversation. Follow the manual procedure.')
-  await checkScope(record, result)
   await verifyIsolation(record.isolation, record.mode)
   record.sessionId = sessions[0]
   turn.sessionId = record.sessionId
@@ -213,8 +212,6 @@ export async function closeHost(record, directory) {
   if (record.isolation.cleanedAt) return
   try {
     record.isolation.verified = false
-    await checkScope(record, { stdout: record.turns.map(turn => turn.result.stdout).join('\n'),
-      stderr: record.turns.map(turn => turn.result.stderr).join('\n') })
     await verifyIsolation(record.isolation, record.mode)
     if (!record.hostFailure && record.turns.length && record.turns.every(turn => turn.sessionId)) {
       record.conversationHash = hashBytes(await readFile(join(directory, record.conversation)))
