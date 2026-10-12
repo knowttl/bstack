@@ -41,9 +41,8 @@ export async function affectedScenarios(repo, base, definitions, packageOnly = f
     const diff = git('diff', '--unified=0', '--no-ext-diff', '--no-textconv', revision, '--', path)
     for (const hunk of diff.matchAll(/^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/gm)) {
       for (const [index, headings] of versions.entries()) {
-        const start = Number(hunk[index * 2 + 1])
         const count = Number(hunk[index * 2 + 2] ?? 1)
-        if (!count) continue
+        const start = Number(hunk[index * 2 + 1]) + (count ? 0 : 1)
         keys.push(headings.findLast(heading => heading.line <= start)?.key ?? 'SKILL.md')
         keys.push(...headings.filter(heading => heading.line > start && heading.line < start + count).map(heading => heading.key))
       }
