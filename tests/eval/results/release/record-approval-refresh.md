@@ -20,6 +20,16 @@ The isolated login home is cleaned after scoring.
 
 Other scenario refreshes and the final all-case validator remain outstanding.
 
+The [TypeScript main-thread research comparison](research-main-typescript-record-approval-comparison.json) passes from baseline 0/3 to installed 3/3 after one installed refresh against the settled package.
+The [complete installed conversation](runs/2026-10-12T03-30-20.912Z-e0df9c3f-8a1f-4ff5-ba1c-8fa0d4492cea/conversation.txt), lines 6–44, performs the five briefs sequentially with the common format and actual main-thread/no-web capabilities.
+Language and outside briefs retain repository evidence and explicit author-prohibited web limitations without importing an unsupported language rule set.
+The actual shipped cite-check execution exits zero at line 41 and reports 51 citations checked with zero problems before the final report is used.
+The saved cite-check.json copies that returned result; the captured native command output is the execution evidence.
+The [independent verification](runs/2026-10-12T03-30-20.912Z-e0df9c3f-8a1f-4ff5-ba1c-8fa0d4492cea/artifacts/independent-verification.json) verifies all 51 cited source hashes and line bounds, confirms every source was opened, five ordered briefs and no web citations, and checks 21 unchanged tracked files.
+The helper's original author-prohibition assertion rejected an equivalent word order; separate assertions for the author/checkpoint and prohibition now verify the actual retained wording without changing scoring criteria or recapturing the agent.
+No product checks or measurements ran, and runtime behavior remains unverified.
+The isolated login home is cleaned.
+
 The [Python comparison](existing-repo-python-record-approval-comparison.json) passes from baseline 3/4 to installed 4/4 after one installed refresh against the settled package.
 The [complete installed conversation](runs/2026-10-12T03-22-08.971Z-8df286ab-a833-4287-8427-a347b083c4c5/conversation.txt), lines 7–59, uses the prepared Python 3.12 environment, pinned Ruff and unittest, inspects responsibilities and uses CONTRIBUTING.md as the existing authority.
 Recommendations protect public Ledger ownership and balanced posting without imposing TypeScript structure or findings based solely on file/import count.
