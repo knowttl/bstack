@@ -1,0 +1,36 @@
+{
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "implementationSource": "925a1879bf665e187936a00412b9a360857a5127",
+  "source": "3bcc385f57e2fd514cf89226ef3780d2f3074bd3",
+  "assessmentUnchanged": true,
+  "protectedWrite": "Not performed: no protected-write procedure or plan available; existing assessment preserved in its prior separate commit.",
+  "checks": {
+    "approved-local-checker": {
+      "status": "passed",
+      "capture": "[isolated-home][scratch-path]",
+      "commandCapture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "comparison": {
+        "source": "925a1879bf665e187936a00412b9a360857a5127",
+        "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+        "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+      },
+      "nativeExit": 0
+    },
+    "approved-clone-checker": {
+      "status": "passed",
+      "capture": "[isolated-home][scratch-path]",
+      "commandCapture": "[isolated-home][scratch-path]",
+      "artifact": "[isolated-home][scratch-path]",
+      "comparison": {
+        "source": "925a1879bf665e187936a00412b9a360857a5127",
+        "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+        "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+      },
+      "nativeExit": 0
+    }
+  },
+  "failedChecks": [],
+  "workingTrees": "clean",
+  "furtherRepositoryWrites": false
+}

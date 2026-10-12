@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "implementationSource": "925a1879bf665e187936a00412b9a360857a5127",
+  "finalSource": "3bcc385f57e2fd514cf89226ef3780d2f3074bd3",
+  "assessment": "[fixture]/.bstack/assessment.json",
+  "assessmentSHA256": "b97e3c15fda6dd0cefc60f6590af9960c9dc53e897751093f48aa4905cff62c3",
+  "fingerprint": "9b91764438fbdc094e7c81883df941ca6396e6622a1a8fd5ec414f4301976881",
+  "assessmentResults": {
+    "DESIGN.md": "no-impact",
+    "glossary.md": "no-impact",
+    "AGENTS.md": "no-impact"
+  },
+  "reviewedChangedPaths": [
+    "packages/web/routes.ts",
+    ".bstack/assessment.json"
+  ],
+  "review": "Reviewed complete diff and both changed paths. First multiplication, conditional multiplier, defaults, storage and return remain the same. Assessed all mapped documents and five rules; no unmapped paths or acceptance changes. Existing project contract still covers final implementation. Assessment is evidence-only and separately committed; checker excludes its selected self-reference from source inventory. No cosmetic or historical document changes.",
+  "commands": [
+    "npm ci",
+    "npm run check",
+    "node .bstack/bin/bstack-check.mjs --repo . --base 37864dacc088867c4aeeb0cd18275aa98b0c0a0b --assessment .bstack/assessment.json --json"
+  ],
+  "captures": {
+    "baseline": "[isolated-home][scratch-path]",
+    "finalNative": "[isolated-home][scratch-path]",
+    "localChecker": "[isolated-home][scratch-path]",
+    "cloneChecker": "[isolated-home][scratch-path]"
+  },
+  "freshArtifacts": {
+    "local-checker": "[isolated-home][scratch-path]",
+    "clone-checker": "[isolated-home][scratch-path]"
+  },
+  "cleanClone": "[isolated-home][scratch-path]",
+  "failedChecks": [],
+  "unverified": [
+    "references/maintenance-contract.md unavailable; continued with existing approved sources per user follow-up.",
+    "Dynamic dependency loading and deployed services are outside existing approved checks."
+  ],
+  "resourceGates": "Each suite authorized by fresh host preflight with source host, permitted true, >=8 GiB available memory, >=20 GiB free disk, load <36 and existing suites + proposed <=2; local resources additionally verified for final and checker runs."
+}
