@@ -7,7 +7,7 @@ import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/sche
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
-import { readAdapter, isolate, hostTurn, closeHost, redactEvidence } from './lib/evaluation-host.mjs'
+import { readAdapter, isolate, hostTurn, closeHost, redactEvidence, candidateSkillHash } from './lib/evaluation-host.mjs'
 import { scoreChecks, validateScore, correctedScore } from './lib/evaluation-scoring.mjs'
 
 // Manual runs remain separate from task evidence and final selections.
@@ -33,13 +33,25 @@ async function capacity(concurrency = 6) {
   }
 }
 
-async function start(opts, results, capacityChecked = false) {
+function openingRequest(opts, definition) {
+  return (opts.invocation ? `${opts.invocation}\n` : '') +
+    (['foundation', 'final'].includes(opts.stage) ? `Active checkpoint: ${opts.stage}.\n` : '') + definition.request
+}
+
+function batchInputs(record) {
+  const inputs = { scenario: record.scenario, request: record.request, adapter: record.adapter,
+    adapterHash: record.adapterHash, criteriaHash: record.criteriaHash, fixtureHash: record.fixture.revision,
+    agent: record.agent, model: record.model, stage: record.stage, mode: record.mode }
+  return hashBytes(canonicalJSON(JSON.parse(redactEvidence(JSON.stringify(inputs), record))))
+}
+
+async function start(opts, results, frozen = null) {
   if (opts.manual && opts.adapter) fail('Adapter runs capture the opening turn automatically. Omit --manual, or omit --adapter and supply --agent and --model for a manual run.', 'usage-error')
   for (const name of ['scenario', 'mode', 'stage', ...(opts.adapter ? [] : ['agent', 'model'])]) if (!opts[name]?.trim()) fail(`Missing --${name}`, 'usage-error')
   if (!['without', 'with'].includes(opts.mode)) fail('Mode must be without or with.', 'usage-error')
-  const definition = await scenario(opts.scenario)
+  const definition = frozen ? structuredClone(frozen.definition) : await scenario(opts.scenario)
   if (!definition.checkpoints.includes(opts.stage)) fail(`Unknown checkpoint: ${opts.stage}`, 'usage-error')
-  const adapter = opts.adapter ? await readAdapter(resolve(opts.adapter), definition.id) : null
+  const adapter = frozen ? structuredClone(frozen.adapter) : opts.adapter ? await readAdapter(resolve(opts.adapter), definition.id) : null
   if (!opts.manual && !adapter) fail('Automatic execution requires --adapter. Use --manual for unsupported hosts.')
   if (adapter) {
     if (opts.agent || opts.model || opts.invocation) fail('The adapter owns agent, model and invocation. Omit these options.', 'usage-error')
@@ -51,10 +63,11 @@ async function start(opts, results, capacityChecked = false) {
   if (opts.invocation && (opts.mode === 'without' || definition.invocation === 'implicit')) fail('Baseline and implicit runs use the outcome request without --invocation.', 'usage-error')
   if (opts.repo && (!adapter || opts.stage !== 'final')) fail('--repo requires a final-stage adapter follow-up.', 'usage-error')
   // A batch checks its resource budget once before creating any run resources.
-  if (adapter && !capacityChecked) await capacity()
+  if (adapter && !frozen) await capacity()
   const git = await child('git', ['rev-parse', 'HEAD'])
   const revision = git.stdout.trim()
   const fixtureRevision = await fixtureHash(definition.fixture)
+  if (frozen && (revision !== frozen.candidate || fixtureRevision !== frozen.fixtureRevision)) fail('Batch candidate or fixture inputs changed before execution.')
   let fixture
   if (opts.repo) {
     const path = await realpath(resolve(opts.repo))
@@ -66,14 +79,17 @@ async function start(opts, results, capacityChecked = false) {
     const built = await child('node', ['tests/fixtures/build.mjs', definition.fixture])
     fixture = JSON.parse(built.stdout.trim())
   }
+  if (frozen && await fixtureHash(definition.fixture) !== frozen.fixtureRevision) {
+    await rm(fixture.path, { recursive: true, force: true })
+    fail('Batch fixture inputs changed during preparation.')
+  }
   const id = `${new Date().toISOString().replaceAll(':', '-')}-${randomUUID()}`
   const directory = join(results, id)
   await mkdir(directory, { recursive: true })
   const record = { schemaVersion: 1, id, createdAt: new Date().toISOString(), sourceRevision: revision,
     agent: opts.agent, model: opts.model, os: `${platform()} ${release()}`, tools: { node: process.version, git: git.toolVersion.stdout.trim() },
     fixture: { ...fixture, revision: fixtureRevision }, scenario: definition, criteriaHash: hashBytes(canonicalJSON(definition.checks)),
-    stage: opts.stage, mode: opts.mode, request: (opts.invocation ? `${opts.invocation}\n` : '') +
-      (['foundation', 'final'].includes(opts.stage) ? `Active checkpoint: ${opts.stage}.\n` : '') + definition.request,
+    stage: opts.stage, mode: opts.mode, request: openingRequest(opts, definition),
     status: 'blocked', reason: 'Awaiting explicit manual answers and transcript. Host isolation is not verified by C7a.',
     isolation: { verified: false }, transcript: null, answers: null, caseResults: [] }
   if (definition.fixture.startsWith('ts-') || definition.fixture === 'maintained-ts-shop') {
@@ -88,7 +104,7 @@ async function start(opts, results, capacityChecked = false) {
     record.sessionId = null
     record.conversation = 'conversation.txt'
     try {
-      await isolate(record)
+      await isolate(record, frozen?.skillHash)
       await captureTurn(record, record.request, directory)
     } catch (error) {
       record.reason = error.message
@@ -161,15 +177,27 @@ async function batch(opts, results) {
   const registry = await readJSON(join(root, 'tests/eval/scenarios/scenarios.json'))
   const selected = opts.scenario ? opts.scenario.split(',') : opts.tier === 'smoke' ? smoke : registry.scenarios.map(item => item.id)
   if (new Set(selected).size !== selected.length) fail('Scenario subsets must contain unique comma-separated IDs.', 'usage-error')
+  const candidate = (await child('git', ['rev-parse', 'HEAD'])).stdout.trim()
+  const skillHash = opts.mode === 'with' ? candidateSkillHash(candidate) : null
+  const frozen = {}
   for (const id of selected) {
     const definition = await scenario(id)
     if (opts.tier === 'smoke' && !smoke.includes(id)) fail(`Scenario ${id} is outside the smoke tier. Use --tier full.`, 'usage-error')
     if (opts.stage !== undefined && !definition.checkpoints.includes(opts.stage)) fail(`Unknown checkpoint for ${id}: ${opts.stage}`, 'usage-error')
-    await readAdapter(resolve(opts.adapter), id)
+    const adapter = await readAdapter(resolve(opts.adapter), id)
+    const stage = opts.stage ?? definition.checkpoints.at(-1)
+    const fixtureRevision = await fixtureHash(definition.fixture)
+    frozen[id] = { candidate, skillHash, definition, adapter, stage, fixtureRevision }
   }
   await capacity(concurrency)
   const record = { schemaVersion: 1, id: randomUUID(), date: new Date().toISOString(),
-    candidate: (await child('git', ['rev-parse', 'HEAD'])).stdout.trim(), tier: opts.tier, mode: opts.mode,
+    candidate, skillHash, inputs: Object.fromEntries(selected.map(id => {
+      const { definition, adapter, stage, fixtureRevision } = frozen[id]
+      return [id, batchInputs({ scenario: definition, adapter, adapterHash: hashBytes(canonicalJSON(adapter)),
+        criteriaHash: hashBytes(canonicalJSON(definition.checks)), fixture: { revision: fixtureRevision },
+        agent: adapter.invocation.agent, model: adapter.invocation.model, stage, mode: opts.mode,
+        request: openingRequest({ stage, invocation: opts.mode === 'with' && definition.invocation === 'explicit' ? adapter.invocation.explicit : null }, definition) })]
+    })), tier: opts.tier, mode: opts.mode,
     stage: opts.stage ?? null, repeat: Number(opts.repeat), concurrency, scenarios: selected, runIds: [], errors: [] }
   await mkdir(join(results, 'batches'), { recursive: true })
   await writeFile(join(results, 'batches', `${record.id}.json`), JSON.stringify(record, null, 2) + '\n', { flag: 'wx' })
@@ -178,8 +206,7 @@ async function batch(opts, results) {
     while (jobs.length) {
       const id = jobs.shift()
       try {
-        const definition = await scenario(id)
-        let run = await start({ scenario: id, mode: opts.mode, stage: opts.stage ?? definition.checkpoints.at(-1), adapter: opts.adapter }, results, true)
+        let run = await start({ scenario: id, mode: opts.mode, stage: frozen[id].stage, adapter: opts.adapter }, results, frozen[id])
         record.runIds.push(run.id)
         try {
           while (!run.hostFailure && run.nextAnswer <= run.scenario.answers.length) {
@@ -204,8 +231,10 @@ async function finishBatch(batch, results) {
     const group = runs.filter(run => run.scenario.id === id)
     if (!group.length) continue
     const first = group[0]
+    const execution = group.find(run => !run.hostFailure)?.execution
     if (group.some(run => run.sourceRevision !== batch.candidate || run.mode !== batch.mode || run.stage !== (batch.stage ?? first.scenario.checkpoints.at(-1)) ||
-        ['adapterHash', 'criteriaHash', 'model'].some(key => run[key] !== first[key]) || run.fixture.revision !== first.fixture.revision)) fail('Batch runs no longer match their candidate and execution inputs.')
+        batchInputs(run) !== batch.inputs?.[id] || (!run.hostFailure && run.isolation.skillHash !== batch.skillHash) ||
+        (!run.hostFailure && ['imageId', 'recipeHash', 'toolchain'].some(key => canonicalJSON(run.execution?.[key]) !== canonicalJSON(execution?.[key]))))) fail('Batch runs no longer match their candidate and execution inputs.')
     for (const check of first.scenario.checks) {
       const verdicts = group.map(run => run.caseResults.find(item => item.id === check.id) ?? run.machineResults?.find(item => item.id === check.id))
       entries.push({ date: batch.date, candidate: batch.candidate, tier: batch.tier, model: first.model,
