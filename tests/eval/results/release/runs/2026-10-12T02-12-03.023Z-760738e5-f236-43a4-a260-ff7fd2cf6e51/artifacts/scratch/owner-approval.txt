@@ -1,0 +1,3 @@
+User final-checkpoint request in this conversation:
+Extend this maintained project's approved public quote example to accept a selected quantity, defaulting to one. The approved outcome is quote() = 12 and quote(2) = 24 through the intended public core interface.
+Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly.
