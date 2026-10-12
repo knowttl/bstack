@@ -72,16 +72,21 @@ async function compatibleEvidence(ledger, definitions, results) {
     canonicalJSON([...a.runIds].sort()).localeCompare(canonicalJSON([...b.runIds].sort())))
 }
 
-async function previousRelease(directory, version) {
+async function previousRelease(directory, version, candidate) {
   let names
   try { names = await readdir(directory) } catch (error) {
     if (error.code === 'ENOENT') return null
     throw error
   }
   const releases = []
-  for (const name of names.filter(name => /^\d+\.\d+\.\d+\.json$/.test(name) && name !== `${version}.json`)) {
+  for (const name of names.filter(name => /^\d+\.\d+\.\d+\.json$/.test(name))) {
     const record = await readJSON(join(directory, name))
-    if (record.schemaVersion !== 2 || record.verdict !== 'passed') continue
+    if (record.schemaVersion !== 2) continue
+    if (name === `${version}.json`) {
+      if (record.verdict === 'passed') fail(`Release ${version} has already passed; bump the release version.`)
+      if (record.candidate !== candidate) fail(`Release ${version} belongs to another candidate; bump the release version.`)
+    }
+    if (record.verdict !== 'passed') continue
     if (record.version !== name.slice(0, -5) || !Array.isArray(record.gatingSet) || !Array.isArray(record.checks)) fail(`Invalid previous release: ${name}`)
     releases.push(record)
   }
@@ -120,7 +125,7 @@ export async function releaseGate(opts, results) {
   }
   const ledger = await compatibleEvidence(entries, definitions, results)
   const directory = join(results, 'release')
-  const previous = await previousRelease(directory, opts.release)
+  const previous = await previousRelease(directory, opts.release, opts.candidate)
   const blocking = report.checks.filter(row => !row.passed).map(row => ({ class: 'hard-break', check: row.id }))
   blocking.push(...report.agentProcesses.filter(row => row.failures >= 2).map(row =>
     ({ class: 'hard-break', scenario: row.scenario, check: 'agent-process', passes: row.runs - row.failures, runs: row.runs })))
