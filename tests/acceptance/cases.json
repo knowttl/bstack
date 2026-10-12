@@ -317,9 +317,9 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "final-maintained-maintenance",
         "artifacts": [
-          "tests/eval/results/release/final-followups.md",
-          "tests/eval/results/release/runs/2026-10-11T23-12-49.498Z-0e13810b-07fb-4292-a7ff-4bce0fb6bd00/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-11T23-12-49.498Z-0e13810b-07fb-4292-a7ff-4bce0fb6bd00/artifacts/independent-verification.json"
+          "tests/eval/results/release/package-current-refresh.md",
+          "tests/eval/results/release/runs/2026-10-12T00-09-05.843Z-9edc9bf5-e921-4091-afdc-b33eedaaa4ee/conversation.txt",
+          "tests/eval/results/release/runs/2026-10-12T00-09-05.843Z-9edc9bf5-e921-4091-afdc-b33eedaaa4ee/artifacts/independent-verification.json"
         ]
       }
     },

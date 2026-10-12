@@ -1,0 +1,20 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "evidence",
+    "validate",
+    "--repo",
+    "[fixture]",
+    "--base",
+    "156e8342bc33bb6ce7c7713c4df1735eeb13aa05",
+    "--assessment",
+    ".bstack/assessment.json",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "[isolated-home][scratch-path]",
+  "stderr": "[isolated-home][scratch-path]",
+  "time": 1791763936.0490005
+}

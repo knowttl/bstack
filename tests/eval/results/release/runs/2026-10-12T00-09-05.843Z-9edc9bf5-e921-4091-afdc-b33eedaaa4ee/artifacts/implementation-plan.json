@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "156e8342bc33bb6ce7c7713c4df1735eeb13aa05"
+  },
+  "findings": "[isolated-home][scratch-path]",
+  "findingsDigest": "62efe5109b2d7690e9d2d794a788e4a0f99556e1d255f8f637de9d335ef9d141",
+  "selectedFindingIds": [
+    "F-007"
+  ],
+  "reviewedScope": [
+    {
+      "path": "packages/core/internal/database.ts",
+      "resolvedPath": "[fixture]/packages/core/internal/database.ts"
+    },
+    {
+      "path": ".bstack/assessment.json",
+      "resolvedPath": "[fixture]/.bstack/assessment.json"
+    }
+  ],
+  "edits": [
+    {
+      "id": "pricing-subtotal",
+      "findingId": "F-007",
+      "path": "packages/core/internal/database.ts",
+      "originalHash": "dacf980aa2f4fbbee6f03e7cf729547fd457daf92a887b20938f418f6db2707a",
+      "proposedHash": "15ff74fbb3e4edafe3e9c262829412b99fad7ed73828d0ec8b58c83057df67ba",
+      "operation": "replace-file",
+      "payload": {
+        "content": "export function price() { return 12 }\nexport async function servicePrice(url: string) {\n  return (await (await fetch(url)).json()).price\n}\n\nconst orders: number[] = []\nexport function postOrder(quantity: number, unitPrice = price()) {\n  const subtotal = unitPrice * quantity\n  const total = subtotal * (quantity > 5 ? 0.9 : 1)\n  orders.push(total)\n  return { status: 201, total }\n}\n"
+      },
+      "proposedContent": "export function price() { return 12 }\nexport async function servicePrice(url: string) {\n  return (await (await fetch(url)).json()).price\n}\n\nconst orders: number[] = []\nexport function postOrder(quantity: number, unitPrice = price()) {\n  const subtotal = unitPrice * quantity\n  const total = subtotal * (quantity > 5 ? 0.9 : 1)\n  orders.push(total)\n  return { status: 201, total }\n}\n"
+    }
+  ],
+  "planDigest": "5067445fe2b92f71bd59932ffe6923a5f106fef2c593999dcd00d8cc8633ae0d"
+}
