@@ -1,0 +1,4 @@
+{"source":"host","checkedAt":"2026-10-12T04:12:58.073Z","availableMemoryBytes":22526431232,"freeDiskBytes":24233226240,"load1m":38.77,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":false}
+{"source":"host","checkedAt":"2026-10-12T04:12:58.382Z","availableMemoryBytes":22484086784,"freeDiskBytes":24225452032,"load1m":38.77,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":false}
+{"source":"host","checkedAt":"2026-10-12T04:15:04.144Z","availableMemoryBytes":20949180416,"freeDiskBytes":25136025600,"load1m":34.49,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}
+{"source":"host","checkedAt":"2026-10-12T04:15:06.383Z","availableMemoryBytes":21171605504,"freeDiskBytes":25125888000,"load1m":34.49,"existingNodeSuites":0,"proposedNodeSuites":1,"permitted":true}

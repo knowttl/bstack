@@ -1,0 +1,12 @@
+{
+  "command": [
+    "node",
+    "--test",
+    "unit.test.mjs"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "\u2714 public price (0.800219ms)\n\u2714 checkout HTTP mock (26.064273ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 129.588738\n",
+  "stderr": "",
+  "elapsedSeconds": 0.16976380348205566
+}

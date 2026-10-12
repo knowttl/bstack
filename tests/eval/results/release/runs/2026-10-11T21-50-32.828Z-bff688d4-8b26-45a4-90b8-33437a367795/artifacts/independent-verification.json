@@ -1,0 +1,12 @@
+{
+  "briefUnchanged": true,
+  "briefHash": "4906b755de04d645627f82d8c2e32a7c3a63ff91d564fd841b7def2b4662c004",
+  "workspaceEntries": [
+    "brief.md"
+  ],
+  "gitAbsent": true,
+  "authenticationCopyAbsent": true,
+  "observedQuestionLine": 18,
+  "unresolvedReplyLine": 29,
+  "limitation": "The assistant presents a paraphrased offline decision boundary as a quotation; no literal-quotation claim is relied on for AC-2."
+}

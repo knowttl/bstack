@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "command": "eval compare",
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "status": "passed",
+    "without": "2026-10-11T22-20-55.828Z-0ec4962f-27e9-4c9f-9ee8-75fbefe45d53",
+    "with": "2026-10-12T02-12-01.666Z-bbf4f258-bc57-4d9c-8145-c9dd61208574",
+    "lost": [],
+    "gained": ["protected-path", "installed", "impact-before-after", "acceptance-preserved", "live-probe-pair", "package-scopes"]
+  },
+  "inputs": {}
+}

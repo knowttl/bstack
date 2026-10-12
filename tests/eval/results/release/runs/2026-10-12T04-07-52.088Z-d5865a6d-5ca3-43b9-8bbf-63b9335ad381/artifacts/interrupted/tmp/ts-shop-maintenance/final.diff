@@ -1,0 +1,181 @@
+diff --git a/.bstack/assessment.json b/.bstack/assessment.json
+new file mode 100644
+index 0000000..3f637e5
+--- /dev/null
++++ b/.bstack/assessment.json
+@@ -0,0 +1,161 @@
++{
++  "schemaVersion": 1,
++  "repo": ".",
++  "contract": ".bstack/project.json",
++  "previousContract": ".bstack/project.json",
++  "base": {
++    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
++    "kind": "commit",
++    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
++  },
++  "head": "4c6f814f63bc3b56018bc9816c7e80934a02388c",
++  "changes": [
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/web/routes.ts"
++    }
++  ],
++  "paths": [
++    "packages/web/routes.ts"
++  ],
++  "mappings": [
++    {
++      "path": "packages/web/routes.ts",
++      "scopeIds": [
++        "maintained-repo"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "guidance"
++      ],
++      "ruleIds": [
++        "public-core",
++        "checkout-total",
++        "quote",
++        "acyclic",
++        "completion"
++      ]
++    }
++  ],
++  "unmappedPaths": [],
++  "documents": [
++    {
++      "id": "design",
++      "path": "DESIGN.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Only the local intermediate product is named undiscountedTotal. Public signatures, default price lookup, numeric multiplication order, existing quantity > 5 factor, orders.push(total), and returned status/total remain unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The route still imports price through ../core/index.ts; no storage dependency or dependency edge changes. The original public price and mocked checkout tests and real HTTP journey passed (original-native.stdout in scratch). The same left-associative product and existing quantity factor preserve all pricing, including the threshold; no new discount or business rule is introduced. Existing acceptance assertions remain unchanged and final native/checker runs are required. Boundary coverage remains static; the journey covers the controlled loopback endpoint, not deployment.",
++        "citations": [
++          {
++            "path": "DESIGN.md",
++            "pointer": "Quote remains 12.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const undiscountedTotal = unitPrice * quantity",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    },
++    {
++      "id": "language",
++      "path": "glossary.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Only the local intermediate product is named undiscountedTotal. Public signatures, default price lookup, numeric multiplication order, existing quantity > 5 factor, orders.push(total), and returned status/total remain unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The intermediate name describes a purchase amount; it introduces no new domain concept or UI panel ordering. Order remains a customer purchase and Panel order remains UI sequence. Neither definition needs a document edit.",
++        "citations": [
++          {
++            "path": "glossary.md",
++            "pointer": "Order: a customer purchase.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const undiscountedTotal = unitPrice * quantity",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    },
++    {
++      "id": "guidance",
++      "path": "AGENTS.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Only the local intermediate product is named undiscountedTotal. Public signatures, default price lookup, numeric multiplication order, existing quantity > 5 factor, orders.push(total), and returned status/total remain unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The sole implementation path was reviewed against design, glossary and guidance. The unchanged project contract already maps this path to all five required rules and native verification; it needs no scope or command changes. Portable assessment is committed separately and both local and different-root fresh checker executions are required. The historical audit remains untouched, and current readiness is recorded in scratch.",
++        "citations": [
++          {
++            "path": "AGENTS.md",
++            "pointer": "Maintain `.bstack/project.json` and review every affected document and changed path.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const undiscountedTotal = unitPrice * quantity",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    }
++  ],
++  "unmappedAssessments": [],
++  "decisions": [],
++  "coverage": [
++    "public-core",
++    "checkout-total",
++    "quote",
++    "acyclic",
++    "completion"
++  ],
++  "execution": [],
++  "fingerprint": "b745ef119a687c99694d46c275fcdb1f0f99b38d0812b80da0d0eb3de4c5d014"
++}
+diff --git a/packages/web/routes.ts b/packages/web/routes.ts
+index d58183c..3fee8c9 100644
+--- a/packages/web/routes.ts
++++ b/packages/web/routes.ts
+@@ -1,7 +1,8 @@
+ import { price } from '../core/index.ts'
+ const orders: number[] = []
+ export function postOrder(quantity: number, unitPrice = price()) {
+-  const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)
++  const undiscountedTotal = unitPrice * quantity
++  const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)
+   orders.push(total)
+   return { status: 201, total }
+ }

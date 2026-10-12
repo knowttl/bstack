@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "restore-approved-checkout",
+  "writePaths": [
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/core/pricing.ts",
+    "packages/web/ui.ts",
+    "packages/web/routes.ts",
+    "unit.test.mjs"
+  ],
+  "contracts": [
+    {
+      "id": "checkout-pricing-result",
+      "files": [
+        "packages/core/index.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "journey.mjs"
+      ]
+    },
+    {
+      "id": "public-core-entry",
+      "files": [
+        "packages/core/index.ts",
+        "packages/core/package.json"
+      ]
+    }
+  ]
+}

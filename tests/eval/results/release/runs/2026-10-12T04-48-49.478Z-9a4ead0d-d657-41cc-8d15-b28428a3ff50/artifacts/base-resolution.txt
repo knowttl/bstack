@@ -1,0 +1,4 @@
+fatal: Needed a single revision
+exitCode=128
+fatal: Not a valid object name 4c30913019f94a99eab09a7387a214ddd0ce12da^{commit}
+parentObjectExitCode=128

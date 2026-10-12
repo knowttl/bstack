@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "apply",
+    "--repo",
+    "[fixture]",
+    "--plan",
+    "[isolated-home][scratch-path]",
+    "--dry-run",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0
+}

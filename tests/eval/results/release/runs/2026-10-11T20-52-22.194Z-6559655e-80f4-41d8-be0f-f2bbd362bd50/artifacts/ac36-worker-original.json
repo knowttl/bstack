@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "mode": "subagents",
+  "host": "Codex API agent with collaboration tools and exec shell",
+  "capabilities": {
+    "subagents": true,
+    "web": false
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md"
+      ],
+      "findings": "AC-36 deliberately invalid candidate: missing-citation-control.txt:1 is an intentionally invalid citation used exclusively to test rejection; it is not a repository observation.",
+      "limitations": [
+        "Fault-injection test data; exclude this candidate from accepted findings."
+      ],
+      "files": [
+        {
+          "location": "missing-citation-control.txt:1",
+          "state": {
+            "kind": "sha256",
+            "value": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

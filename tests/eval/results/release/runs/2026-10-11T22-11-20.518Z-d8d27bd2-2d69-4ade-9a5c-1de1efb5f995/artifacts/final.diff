@@ -1,0 +1,166 @@
+diff --git a/.bstack/assessment.json b/.bstack/assessment.json
+new file mode 100644
+index 0000000..6bee375
+--- /dev/null
++++ b/.bstack/assessment.json
+@@ -0,0 +1,146 @@
++{
++  "schemaVersion": 1,
++  "repo": ".",
++  "contract": ".bstack/project.json",
++  "previousContract": ".bstack/project.json",
++  "base": {
++    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
++    "kind": "commit",
++    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
++  },
++  "head": "3c2933e2b49b8e826bd43ae9d2ad3d0281ec7171",
++  "changes": [
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/web/routes.ts"
++    }
++  ],
++  "paths": [
++    "packages/web/routes.ts"
++  ],
++  "mappings": [
++    {
++      "path": "packages/web/routes.ts",
++      "scopeIds": [
++        "maintained-repo"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "guidance"
++      ],
++      "ruleIds": [
++        "public-core",
++        "checkout-total",
++        "quote",
++        "acyclic",
++        "completion"
++      ]
++    }
++  ],
++  "unmappedPaths": [],
++  "documents": [
++    {
++      "id": "design",
++      "path": "DESIGN.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Only the local name undiscountedTotal is introduced for unitPrice * quantity. The same product is multiplied by the existing quantity > 5 ? 0.9 : 1 factor, then pushed and returned exactly as before; exports, parameters, defaults, imports, storage access and checkout HTTP behavior are unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The reviewed route diff preserves JavaScript left-associative multiplication, the existing quantity threshold and factor, public price() default and response shape. Original and final npm run check passed quote=12, mocked checkout=10, static boundaries and real loopback checkout=10. Original and final scratch pricing protection also passed default pricing and ten arithmetic cases including quantity 5/6, explicit price 10, fractions and numeric edges. The public core import is unchanged; no dependencies or pricing rules are added. Therefore the approved design and both acceptance sources need no edits. Limits: representative cases do not enumerate all numeric inputs; arithmetic equivalence follows from the unchanged operation order. Static boundaries do not cover dynamic loading; the journey uses loopback rather than production.",
++        "citations": [
++          {
++            "path": "DESIGN.md",
++            "pointer": "Quote remains 12.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const undiscountedTotal = unitPrice * quantity",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          }
++        ],
++        "dependentWork": []
++      }
++    },
++    {
++      "id": "language",
++      "path": "glossary.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Only the local name undiscountedTotal is introduced for unitPrice * quantity. The same product is multiplied by the existing quantity > 5 ? 0.9 : 1 factor, then pushed and returned exactly as before; exports, parameters, defaults, imports, storage access and checkout HTTP behavior are unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The route still records an Order as a customer purchase in its existing orders array and contains no panel sequence. Naming a local arithmetic intermediate creates no domain term, public field or interface change. The complete one-file diff introduces no Panel order behavior, so both glossary definitions remain accurate without edits.",
++        "citations": [
++          {
++            "path": "glossary.md",
++            "pointer": "Order: a customer purchase.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const undiscountedTotal = unitPrice * quantity",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          }
++        ],
++        "dependentWork": []
++      }
++    },
++    {
++      "id": "guidance",
++      "path": "AGENTS.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Only the local name undiscountedTotal is introduced for unitPrice * quantity. The same product is multiplied by the existing quantity > 5 ? 0.9 : 1 factor, then pushed and returned exactly as before; exports, parameters, defaults, imports, storage access and checkout HTTP behavior are unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The only implementation path imports price through the public core interface and does not introduce storage access or cycles. The maintained native command passed before and after on the same approved acceptance assertions. The contract was reviewed and already maps this route to every applicable rule and authoritative document; it requires no change. This portable assessment covers the committed implementation against the selected ancestor and will be committed separately before fresh standalone local and isolated-clone validation. The historical audit is left intact and final readiness is recorded in scratch. No exception, changed acceptance or owner decision is needed.",
++        "citations": [
++          {
++            "path": "AGENTS.md",
++            "pointer": "Run `npm run check` for maintained native verification;",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const undiscountedTotal = unitPrice * quantity",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          }
++        ],
++        "dependentWork": []
++      }
++    }
++  ],
++  "unmappedAssessments": [],
++  "decisions": [],
++  "coverage": [
++    "public-core",
++    "checkout-total",
++    "quote",
++    "acyclic",
++    "completion"
++  ],
++  "execution": [],
++  "fingerprint": "25de6bbd75654267afa322eb4d84fd4c3c781ce6c4465efafa56662eec615cd3"
++}
+diff --git a/packages/web/routes.ts b/packages/web/routes.ts
+index d58183c..3fee8c9 100644
+--- a/packages/web/routes.ts
++++ b/packages/web/routes.ts
+@@ -1,7 +1,8 @@
+ import { price } from '../core/index.ts'
+ const orders: number[] = []
+ export function postOrder(quantity: number, unitPrice = price()) {
+-  const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)
++  const undiscountedTotal = unitPrice * quantity
++  const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)
+   orders.push(total)
+   return { status: 201, total }
+ }

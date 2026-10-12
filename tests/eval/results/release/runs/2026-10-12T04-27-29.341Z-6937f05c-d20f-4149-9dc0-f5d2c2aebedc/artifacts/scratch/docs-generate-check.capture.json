@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "docs",
+    "generate",
+    "--check",
+    "--repo",
+    "[fixture]",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "{\"schemaVersion\":1,\"command\":\"docs generate\",\"status\":\"passed\",\"problems\":[],\"data\":{\"sections\":[]},\"inputs\":{\"repo\":\"[fixture]\",\"contract\":\".bstack/project.json\"}}\n",
+  "stderr": ""
+}

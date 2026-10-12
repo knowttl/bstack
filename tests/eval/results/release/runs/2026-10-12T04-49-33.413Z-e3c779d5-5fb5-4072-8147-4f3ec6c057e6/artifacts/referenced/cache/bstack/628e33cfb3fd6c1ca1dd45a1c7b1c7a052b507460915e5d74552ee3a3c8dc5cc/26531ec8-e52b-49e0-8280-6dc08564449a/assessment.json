@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": null,
+  "base": {
+    "ref": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+    "kind": "commit",
+    "objectId": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "head": "d7bca8e6f70ccb6d2036ac39fde735291b041b13",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/bin/bstack-check.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/selection.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "AGENTS.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "boundaries.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "glossary.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "journey.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "package.json"
+    },
+    {
+      "source": "committed",
+      "status": "D",
+      "path": "packages/core/a.ts"
+    },
+    {
+      "source": "committed",
+      "status": "D",
+      "path": "packages/core/b.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/core/index.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/alias.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/routes.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/ui.ts"
+    }
+  ],
+  "paths": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".bstack/selection.md",
+    "AGENTS.md",
+    "DESIGN.md",
+    "boundaries.mjs",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/a.ts",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/web/alias.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": ".bstack/selection.md",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "boundaries.mjs",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "glossary.md",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "journey.mjs",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "package.json",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "packages/core/a.ts",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "packages/core/b.ts",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "packages/core/index.ts",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "scopeIds": [
+        "shop"
+      ],
+      "documentIds": [
+        "design",
+        "glossary",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout",
+        "completion",
+        "language",
+        "maintenance"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": null
+    },
+    {
+      "id": "glossary",
+      "path": "glossary.md",
+      "assessment": null
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": null
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [],
+  "execution": [],
+  "fingerprint": null
+}

@@ -1,0 +1,922 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": null,
+  "base": {
+    "ref": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+    "kind": "commit",
+    "objectId": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+  },
+  "head": "df0289b0424e4920a94ae80a38aa1141a1a11cda",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/bin/bstack-check.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/project.json"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/schemas/check-plan.json"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/schemas/evidence.schema.json"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/schemas/impact-assessment.json"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": ".bstack/schemas/project.schema.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "AGENTS.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "DESIGN.md"
+    },
+    {
+      "source": "committed",
+      "status": "A",
+      "path": "docs/repo-audit.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "glossary.md"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "journey.mjs"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "package.json"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/core/b.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/core/index.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/core/internal/database.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/alias.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/routes.ts"
+    },
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/ui.ts"
+    }
+  ],
+  "paths": [
+    ".bstack/bin/bstack-check.mjs",
+    ".bstack/project.json",
+    ".bstack/schemas/check-plan.json",
+    ".bstack/schemas/evidence.schema.json",
+    ".bstack/schemas/impact-assessment.json",
+    ".bstack/schemas/project.schema.json",
+    "AGENTS.md",
+    "DESIGN.md",
+    "docs/repo-audit.md",
+    "glossary.md",
+    "journey.mjs",
+    "package.json",
+    "packages/core/b.ts",
+    "packages/core/index.ts",
+    "packages/core/internal/database.ts",
+    "packages/web/alias.ts",
+    "packages/web/routes.ts",
+    "packages/web/ui.ts"
+  ],
+  "mappings": [
+    {
+      "path": ".bstack/bin/bstack-check.mjs",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/project.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/schemas/check-plan.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/schemas/evidence.schema.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/schemas/impact-assessment.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": ".bstack/schemas/project.schema.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "AGENTS.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "docs/repo-audit.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "glossary.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "journey.mjs",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "package.json",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/core/b.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/core/index.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/core/internal/database.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/web/alias.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/web/routes.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    },
+    {
+      "path": "packages/web/ui.ts",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "Approved storage prohibition and total10 are preserved. The endpoint is corrected to10 without changing assertion10; quote12 and quantity formula remain. Core now owns order storage and exports servicePrice/postOrder; cycle is removed. Added completion and portable-impact guidance records the selected native checks and historical snapshot policy. The uncommitted receipt note is preserved exactly and receipt wording remains deferred.",
+        "changedPaths": [
+          ".bstack/bin/bstack-check.mjs",
+          ".bstack/project.json",
+          ".bstack/schemas/check-plan.json",
+          ".bstack/schemas/evidence.schema.json",
+          ".bstack/schemas/impact-assessment.json",
+          ".bstack/schemas/project.schema.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "docs/repo-audit.md",
+          "glossary.md",
+          "journey.mjs",
+          "package.json",
+          "packages/core/b.ts",
+          "packages/core/index.ts",
+          "packages/core/internal/database.ts",
+          "packages/web/alias.ts",
+          "packages/web/routes.ts",
+          "packages/web/ui.ts"
+        ],
+        "reason": "Approved storage prohibition and total10 are preserved. The endpoint is corrected to10 without changing assertion10; quote12 and quantity formula remain. Core now owns order storage and exports servicePrice/postOrder; cycle is removed. Added completion and portable-impact guidance records the selected native checks and historical snapshot policy. The uncommitted receipt note is preserved exactly and receipt wording remains deferred.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "# Shop design\n\nThe UI never touches storage.\nThe agreed checkout total is 10.",
+            "version": "base"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "# Shop design\n\nThe UI never touches storage.\nThe agreed checkout total is 10.\n\nUser note: receipt wording remains a future owner decision.\n\n## Responsibilities and public interface\n\nWeb consumers use the public core interface in packages/core/index.ts (also exported as @shop/core). Storage access and the order list belong to core; web routes may forward the public postOrder function. Core implementation modules may import core storage. The native static dependency graph must be acyclic. No boundary or cycle exceptions are accepted.\n\nFor example, a web consumer can use the public interface without importing storage:\n\n```ts\nimport { servicePrice, postOrder } from '@shop/core'\nexport async function checkout(url: string, quantity = 1) {\n  return postOrder(quantity, await servicePrice(url))\n}\n```\n\nThe controlled HTTP endpoint in journey.mjs supplies price 10; checkout must return { status: 201, total: 10 } for the default quantity. Public quote() continues to return 12. The existing quantity calculation is retained; no new business discount is introduced. Receipt wording is outside this correction.\n\n## Checks and completion evidence\n\nInstall the locked development dependencies with npm ci using Node 24 or later. Run npm run check: TypeScript, unit tests, native boundaries and the real local HTTP journey must all pass. package.json owns the commands; boundaries.mjs owns static import/export resolution and cycle detection. The boundary check does not cover dynamic imports or every transitive facade leak; review new dependency syntax against the public-interface rule.\n\nAcceptance cases live in this design, unit.test.mjs and journey.mjs. A change is complete when its affected journeys pass on the final inputs and authoritative-source impacts have been reviewed. Passing unit tests alone does not establish journey completion. For structural changes, capture passing public compatibility checks before and after; for bug fixes, retain the original failing reproduction and the final passing outcome. No hosted CI or delivery service is selected.\n\n## Maintenance contract and portable assessment\n\n.bstack/project.json maps paths to these rules and to DESIGN.md, glossary.md and AGENTS.md. For every change, compare against an explicit ancestor commit, inspect the diff and assess every mapped document and unmapped path. Record changed behavior, changed paths, a substantive reason, literal base/current source citations and any dependent work. Use updated with the actual before/after excerpt, no-impact with the preserved invariant, or decision-needed and stop dependent work. Keep correct sources unchanged and preserve user edits. Acceptance changes require a separate owner approval; never change an expectation to excuse a failure.\n\nCommit reviewed implementation first. Prepare .bstack/assessment.json against that implementation commit and explicit base using the bundled evidence schema; include reviewed coverage and bind the current fingerprint. Commit only that assessment afterward. Keep execution captures outside product scopes. The selected first-contract foundation finding and its protected-write record must be retained in the assessment. The assessment is the explicit review record, not an activity log.\n\nRun the complete dependency-free checker from this checkout:\n\n```sh\nnode .bstack/bin/bstack-check.mjs --repo . --base <ancestor-commit> --assessment .bstack/assessment.json --json\n```\n\nIt validates assessment coverage, runs required native checks freshly, then revalidates. Run it again in a different-root clean clone with an isolated home and cache and the same base and committed assessment. Failed, missing or stale evidence leaves the change unverified. Contract/checker changes preserve previous coverage or require a reviewed migration.\n\nThe versioned docs/repo-audit.md is a historical snapshot of its stated observed revision. It is not a live readiness authority. Keep final current-head findings and readiness evidence in scratch rather than rewriting that snapshot after each checker invocation. A later user edit requires fresh affected evidence and impact review.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "",
+          "after": "The native static dependency graph must be acyclic."
+        }
+      }
+    },
+    {
+      "id": "terms",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "Purchase remains Order. The selected presentation meaning is renamed Panel order, eliminating two incompatible Order definitions. Code paths and public exports do not gain a new business meaning.",
+        "changedPaths": [
+          ".bstack/bin/bstack-check.mjs",
+          ".bstack/project.json",
+          ".bstack/schemas/check-plan.json",
+          ".bstack/schemas/evidence.schema.json",
+          ".bstack/schemas/impact-assessment.json",
+          ".bstack/schemas/project.schema.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "docs/repo-audit.md",
+          "glossary.md",
+          "journey.mjs",
+          "package.json",
+          "packages/core/b.ts",
+          "packages/core/index.ts",
+          "packages/core/internal/database.ts",
+          "packages/web/alias.ts",
+          "packages/web/routes.ts",
+          "packages/web/ui.ts"
+        ],
+        "reason": "Purchase remains Order. The selected presentation meaning is renamed Panel order, eliminating two incompatible Order definitions. Code paths and public exports do not gain a new business meaning.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "# Glossary\n\nOrder: a customer purchase.\nOrder: the sequence in which UI panels appear.",
+            "version": "base"
+          },
+          {
+            "path": "glossary.md",
+            "pointer": "# Glossary\n\nOrder: a customer purchase.\nPanel order: the sequence in which UI panels appear.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "# Glossary\n\nOrder: a customer purchase.\nOrder: the sequence in which UI panels appear.",
+          "after": "# Glossary\n\nOrder: a customer purchase.\nPanel order: the sequence in which UI panels appear."
+        }
+      }
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "updated",
+        "changedBehavior": "Existing approved design/public-interface instruction becomes maintained pointers to DESIGN.md and glossary.md, native aggregate command and contract. Distinct CLAUDE.md import stub is retained; no instruction-loading migration or hosted delivery is implied.",
+        "changedPaths": [
+          ".bstack/bin/bstack-check.mjs",
+          ".bstack/project.json",
+          ".bstack/schemas/check-plan.json",
+          ".bstack/schemas/evidence.schema.json",
+          ".bstack/schemas/impact-assessment.json",
+          ".bstack/schemas/project.schema.json",
+          "AGENTS.md",
+          "DESIGN.md",
+          "docs/repo-audit.md",
+          "glossary.md",
+          "journey.mjs",
+          "package.json",
+          "packages/core/b.ts",
+          "packages/core/index.ts",
+          "packages/core/internal/database.ts",
+          "packages/web/alias.ts",
+          "packages/web/routes.ts",
+          "packages/web/ui.ts"
+        ],
+        "reason": "Existing approved design/public-interface instruction becomes maintained pointers to DESIGN.md and glossary.md, native aggregate command and contract. Distinct CLAUDE.md import stub is retained; no instruction-loading migration or hosted delivery is implied.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Use the approved design and public core interface.",
+            "version": "base"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Use [DESIGN.md](DESIGN.md) for approved responsibilities, the public core example, acceptance cases and change evidence. Use [glossary.md](glossary.md) for project terms.\n\nRun `npm run check` for the maintained native checks. Follow the maintenance contract in [.bstack/project.json](.bstack/project.json) and the standalone assessment check documented in DESIGN.md. Preserve user work; receipt wording remains a future owner decision.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": [],
+        "delta": {
+          "before": "Use the approved design and public core interface.",
+          "after": "Use [DESIGN.md](DESIGN.md) for approved responsibilities, the public core example, acceptance cases and change evidence. Use [glossary.md](glossary.md) for project terms.\n\nRun `npm run check` for the maintained native checks. Follow the maintenance contract in [.bstack/project.json](.bstack/project.json) and the standalone assessment check documented in DESIGN.md. Preserve user work; receipt wording remains a future owner decision."
+        }
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [
+    {
+      "id": "checkout-source-maintenance",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "The agreed checkout total is 10.",
+      "newCase": "The agreed checkout total is 10.",
+      "affectedWork": [
+        "journey.mjs",
+        "DESIGN.md"
+      ],
+      "approval": {
+        "path": "docs/repo-audit.md",
+        "pointer": "Supervisor-selected fixture verdicts, 2026-10-11: Correct the controlled journey endpoint fixture to supply 10, preserve the assertion at 10 and current quote behaviour at 12, and invent no business discount. Keep Order for purchases and rename panel sequencing to Panel order.",
+        "version": "current"
+      }
+    },
+    {
+      "id": "quote-source-maintenance",
+      "status": "approved",
+      "source": "DESIGN.md",
+      "oldCase": "Existing public quote behavior12 in unit.test.mjs is retained.",
+      "newCase": "Public quote() continues to return 12.",
+      "affectedWork": [
+        "DESIGN.md",
+        "packages/core/index.ts"
+      ],
+      "approval": {
+        "path": "docs/repo-audit.md",
+        "pointer": "Supervisor-selected fixture verdicts, 2026-10-11: Correct the controlled journey endpoint fixture to supply 10, preserve the assertion at 10 and current quote behaviour at 12, and invent no business discount. Keep Order for purchases and rename panel sequencing to Panel order.",
+        "version": "current"
+      }
+    }
+  ],
+  "coverage": [
+    "storage-interface",
+    "checkout-total",
+    "acyclic",
+    "final-evidence"
+  ],
+  "execution": [
+    {
+      "runId": "d3a918a2-c955-4ac1-8429-507ab6296942",
+      "plan": "[isolated-home][scratch-path]"
+    }
+  ],
+  "fingerprint": "e1a51e96c05d06762f1f8623033678990a4bacaeead88fd4c87aea2566893b2b",
+  "foundation": {
+    "findingId": "F-006",
+    "record": {
+      "schemaVersion": 1,
+      "stage": "foundation",
+      "target": {
+        "mode": "repo",
+        "root": "[fixture]",
+        "revision": "df0289b0424e4920a94ae80a38aa1141a1a11cda"
+      },
+      "nextChange": "Finish the existing-repo final checkpoint, then support a user edit/re-audit and representative extension from maintained guidance.",
+      "reviewedScope": [
+        ".bstack/assessment.json",
+        ".bstack/bin/bstack-check.mjs",
+        ".bstack/project.json",
+        ".bstack/schemas/check-plan.json",
+        ".bstack/schemas/evidence.schema.json",
+        ".bstack/schemas/impact-assessment.json",
+        ".bstack/schemas/project.schema.json",
+        "AGENTS.md",
+        "DESIGN.md",
+        "boundaries.mjs",
+        "docs/repo-audit.md",
+        "glossary.md",
+        "journey.mjs",
+        "package.json",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/alias.ts",
+        "packages/web/routes.ts",
+        "packages/web/ui.ts"
+      ],
+      "sources": [
+        {
+          "id": "design",
+          "pointer": "DESIGN.md:3",
+          "intent": "documented",
+          "summary": "UI never touches storage; checkout total10 at line4."
+        },
+        {
+          "id": "instructions",
+          "pointer": "AGENTS.md:1",
+          "intent": "documented",
+          "summary": "Use approved design and public core interface."
+        },
+        {
+          "id": "checks",
+          "pointer": "package.json:12",
+          "intent": "observed",
+          "summary": "Aggregate check currently runs types only; separate journey and boundaries exist."
+        },
+        {
+          "id": "journey",
+          "pointer": "journey.mjs:6",
+          "intent": "observed",
+          "summary": "HTTP service gives12, checkout must return201,total10; actual native run fails with12."
+        },
+        {
+          "id": "graph",
+          "pointer": "boundaries.mjs:19",
+          "intent": "observed",
+          "summary": "Native graph run exits1 with alias,cycle,private."
+        },
+        {
+          "id": "terms",
+          "pointer": "glossary.md:3",
+          "intent": "documented",
+          "summary": "Order defined twice: purchase and UI panel sequence."
+        },
+        {
+          "id": "public",
+          "pointer": "packages/web/public.ts:1",
+          "intent": "observed",
+          "summary": "Existing public core index import example; current quote12 is observed unit expectation, not approved checkout acceptance."
+        },
+        {
+          "id": "proposal",
+          "pointer": "DESIGN.md:3",
+          "intent": "inferred",
+          "summary": "Keeping pricing and order storage behind core is a proposed responsibility allocation derived from no-UI-storage constraint."
+        },
+        {
+          "id": "selection",
+          "pointer": "DESIGN.md:6",
+          "intent": "documented",
+          "summary": "User note is preserved exactly; supervisor selected endpoint10/quote12, Panel order, public core, cycle enforcement, maintained foundation, historical snapshot semantics. Approval retained in scratch shop-selection.txt."
+        }
+      ],
+      "findings": [
+        {
+          "id": "F-001",
+          "problem": "Real HTTP checkout returns12, violating agreed total10.",
+          "files": [
+            "journey.mjs"
+          ],
+          "command": "npm run journey",
+          "principle": "Honor the approved checkout total10.",
+          "consequence": "Unit mock success conceals the failing actual fetch journey.",
+          "fix": "Correct the controlled journey endpoint fixture to supply10, keep expected10 and public quote12, and invent no business discount.",
+          "scope": [
+            "journey.mjs"
+          ],
+          "verification": "Original failing reproduction, unchanged real HTTP journey passes with total10; surrounding public quote remains covered.",
+          "blocksNextChange": true,
+          "category": "debt",
+          "status": "selected",
+          "newPrinciple": false,
+          "resolved": false,
+          "sourceIds": [
+            "design",
+            "journey",
+            "selection"
+          ]
+        },
+        {
+          "id": "F-002",
+          "problem": "UI imports storage directly and through alias; routes owns mutable order storage.",
+          "files": [
+            "packages/core/index.ts",
+            "packages/core/internal/database.ts",
+            "packages/web/ui.ts",
+            "packages/web/routes.ts",
+            "packages/web/alias.ts",
+            "DESIGN.md"
+          ],
+          "command": "npm run boundaries",
+          "principle": "UI never touches storage; consumers use public core interface.",
+          "consequence": "Storage details leak into UI and obstruct a representative extension through public guidance.",
+          "fix": "Route UI and alias consumers through core index; place order persistence behind core. Add a representative approved public-interface example in DESIGN.md, preserving current exported web functions.",
+          "scope": [
+            "packages/core/index.ts",
+            "packages/core/internal/database.ts",
+            "packages/web/ui.ts",
+            "packages/web/routes.ts",
+            "packages/web/alias.ts",
+            "DESIGN.md"
+          ],
+          "verification": "Capture original-state public compatibility; clean public imports pass, separate private and alias seeds fail native rule-proof; sibling core internal use remains permitted.",
+          "blocksNextChange": true,
+          "category": "debt",
+          "status": "selected",
+          "newPrinciple": false,
+          "resolved": false,
+          "sourceIds": [
+            "design",
+            "instructions",
+            "public",
+            "proposal"
+          ]
+        },
+        {
+          "id": "F-003",
+          "problem": "Core a and b form a recursive cycle flagged by the native checker.",
+          "files": [
+            "packages/core/a.ts",
+            "packages/core/b.ts"
+          ],
+          "command": "npm run boundaries",
+          "principle": "Proposed adoption of the existing checker's acyclic graph rule.",
+          "consequence": "Calling either function recurses without terminating; aggregate check currently misses it.",
+          "fix": "Select acyclic enforcement and remove this unused cycle while preserving exported function names, with reviewed terminating behavior.",
+          "scope": [
+            "packages/core/a.ts",
+            "packages/core/b.ts"
+          ],
+          "verification": "Native clean boundary check and independent cycle violation proof; owner review of new terminating behavior.",
+          "blocksNextChange": true,
+          "category": "debt",
+          "status": "selected",
+          "newPrinciple": true,
+          "resolved": false,
+          "sourceIds": [
+            "graph"
+          ]
+        },
+        {
+          "id": "F-004",
+          "problem": "Order has incompatible definitions.",
+          "files": [
+            "glossary.md"
+          ],
+          "command": null,
+          "principle": "One resolved meaning per canonical domain term.",
+          "consequence": "Future extension cannot rely unambiguously on repo language.",
+          "fix": "Retain Order for purchases; rename the presentation concept to Panel order in existing glossary.md.",
+          "scope": [
+            "glossary.md"
+          ],
+          "verification": "Owner chooses terms, then reviewed exact glossary diff and contract coverage.",
+          "blocksNextChange": true,
+          "category": "decision",
+          "status": "selected",
+          "newPrinciple": true,
+          "resolved": true,
+          "sourceIds": [
+            "terms",
+            "selection"
+          ]
+        },
+        {
+          "id": "F-005",
+          "problem": "Maintained check currently runs types only and omits the failing native boundary and HTTP journey checks.",
+          "files": [
+            "package.json",
+            "boundaries.mjs"
+          ],
+          "command": "npm run check",
+          "principle": "Proposed final-input journey evidence and maintained authoritative-source impact review.",
+          "consequence": "Green types/unit checks do not prevent agreed journey failures or guide later maintenance.",
+          "fix": "Extend the existing check command with fail-fast types, tests, boundaries and real HTTP journey; prove native boundary rules independently and through that aggregate.",
+          "scope": [
+            "package.json",
+            "boundaries.mjs"
+          ],
+          "verification": "Native valid/private/alias/cycle controls and maintained aggregate controls; final native capture on applied inputs.",
+          "blocksNextChange": true,
+          "category": "missing-protection",
+          "status": "selected",
+          "newPrinciple": true,
+          "resolved": false,
+          "sourceIds": [
+            "design",
+            "checks",
+            "instructions"
+          ]
+        },
+        {
+          "id": "F-006",
+          "problem": "No maintained source-impact contract, complete standalone assessment checker or portable review record exists.",
+          "files": [
+            "DESIGN.md",
+            "AGENTS.md",
+            ".bstack/project.json",
+            ".bstack/bin/bstack-check.mjs",
+            ".bstack/assessment.json",
+            "docs/repo-audit.md",
+            ".bstack/schemas/check-plan.json",
+            ".bstack/schemas/evidence.schema.json",
+            ".bstack/schemas/impact-assessment.json",
+            ".bstack/schemas/project.schema.json"
+          ],
+          "command": "npm run check",
+          "principle": "Proposed final-input journey evidence and maintained authoritative-source impact review.",
+          "consequence": "Green types/unit checks do not prevent agreed journey failures or guide later maintenance.",
+          "fix": "Create selected first-contract foundation, install the complete dependency-free checker unchanged with maintenance schemas, add public-interface and maintenance guidance; retain a historical versioned audit snapshot and current-head readiness in scratch. Collect and review final portable assessment after implementation, then prove the unchanged record in an isolated different-root clone.",
+          "scope": [
+            "DESIGN.md",
+            "AGENTS.md",
+            ".bstack/project.json",
+            ".bstack/bin/bstack-check.mjs",
+            ".bstack/assessment.json",
+            "docs/repo-audit.md",
+            ".bstack/schemas/check-plan.json",
+            ".bstack/schemas/evidence.schema.json",
+            ".bstack/schemas/impact-assessment.json",
+            ".bstack/schemas/project.schema.json"
+          ],
+          "verification": "Contract/docs validation, complete assessed final change coverage, first-foundation protected record, fresh standalone checker locally and in a different-root clean clone with isolated home/cache and explicit base.",
+          "blocksNextChange": true,
+          "category": "missing-protection",
+          "status": "selected",
+          "newPrinciple": true,
+          "resolved": false,
+          "sourceIds": [
+            "design",
+            "checks",
+            "instructions",
+            "selection"
+          ]
+        }
+      ],
+      "selectedFindingIds": [
+        "F-001",
+        "F-002",
+        "F-003",
+        "F-004",
+        "F-005",
+        "F-006"
+      ],
+      "requiredOutcomes": [
+        "starting-checks",
+        "journey",
+        "native-boundary-proof",
+        "maintained-enforcement-proof",
+        "maintenance-contract",
+        "standalone-clean-clone",
+        "foundation-review"
+      ],
+      "execution": [],
+      "limitations": [
+        "Selected scope approved by supervisor2026-10-11; exact proposed bytes are not yet approved or applied.",
+        "DESIGN.md has an uncommitted user note preserved exactly; original captures refreshed against its bytes.",
+        "Only one Git commit; no history/co-change trend established.",
+        "Boundary analysis covers top-level static imports/exports; dynamic imports and arbitrary transitive facade leaks remain review limits.",
+        "Final portable assessment and historical audit snapshot require their own concrete exact-byte protected review after implementation; current-head readiness stays in scratch.",
+        "No hosted CI, delivery service or external deployed service evidence is claimed."
+      ]
+    }
+  }
+}

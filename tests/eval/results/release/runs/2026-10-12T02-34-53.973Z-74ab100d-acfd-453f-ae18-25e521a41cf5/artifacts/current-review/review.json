@@ -1,0 +1,57 @@
+{
+  "state": "Corrected portable assessment prepared and separately reviewed in scratch; original project record remains absent pending exact approval.",
+  "source": "642126c70e02b34be91fccb785f6ccd3c8379d68",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "fingerprint": "06d13d4bd4450cf95242eb538f1e17498c32c920cdd130d637bcd6aa897ddea3",
+  "assessmentSha256": "1d6185307ab6ee8311f5cdd483ea57929486accfff4826702a6a93fdacc2983e",
+  "planDigest": "e4ea7cc03954afbe34f983e94c806057b1fe571ce820911ff1e2b6e4853ed6bd",
+  "reviewedPaths": [
+    ".bstack/project.json",
+    "DESIGN.md",
+    "packages/web/public.ts",
+    "unit.test.mjs"
+  ],
+  "documentVerdicts": {
+    "DESIGN.md": "updated",
+    "glossary.md": "no-impact",
+    "AGENTS.md": "no-impact"
+  },
+  "ownerSelectionProvenance": "Exact original owner final-checkpoint sentences are retained in decisions[*].approval.pointer. The proposed assessment is the distinct approval-citation record; DESIGN.md remains the acceptance source. Content review checks those quotes against the user messages; tooling does not independently authenticate conversation provenance. No separate approval receipt is proposed.",
+  "preservation": "All tracked original-project bytes and HEAD match the reviewed starting state of this turn. No implementation, original checks, historical snapshot or user note changed.",
+  "scope": "Create only .bstack/assessment.json after separate exact approval; no implementation commit or receipt commit required. Commit that record separately; repeat final project standalone execution and a different-root isolated clean clone.",
+  "checkEvidence": {
+    "scratch": {
+      "status": "passed",
+      "comparison": {
+        "source": "642126c70e02b34be91fccb785f6ccd3c8379d68",
+        "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+        "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+      },
+      "fingerprint": "06d13d4bd4450cf95242eb538f1e17498c32c920cdd130d637bcd6aa897ddea3",
+      "artifact": "[isolated-home]/cache/bstack/5f9a2771ffeb8edd3b86b70e5bb7593b208fb7f6d7a2b933b555998510c806f7/bed50427-1b52-402b-9c06-0bf513892a62/checker-result.json",
+      "previousPolicy": "passed",
+      "leafExitCodes": [
+        0
+      ]
+    },
+    "clean-clone": {
+      "status": "passed",
+      "comparison": {
+        "source": "642126c70e02b34be91fccb785f6ccd3c8379d68",
+        "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+        "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+      },
+      "fingerprint": "06d13d4bd4450cf95242eb538f1e17498c32c920cdd130d637bcd6aa897ddea3",
+      "artifact": "[isolated-home][scratch-path]",
+      "previousPolicy": "passed",
+      "leafExitCodes": [
+        0
+      ]
+    }
+  },
+  "limits": [
+    "Proposed bytes passed in scratch; final original-project application and checks are not claimed complete before approval.",
+    "Portable execution is intentionally empty: every complete standalone invocation executes its own fresh required leaves. Bound evidence validation alone reports required-check-missing until execution; no stale-review or acceptance-citation errors remain.",
+    "Static boundaries exclude dynamic imports and runtime loading; journey covers a real loopback HTTP exchange, not a deployed pricing service."
+  ]
+}

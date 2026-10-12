@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "repo": "[fixture]",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "86960291f55562154efc46f9a9af061884a1c29b",
+    "kind": "commit",
+    "objectId": "86960291f55562154efc46f9a9af061884a1c29b"
+  },
+  "head": "86960291f55562154efc46f9a9af061884a1c29b",
+  "changes": [
+    {
+      "source": "unstaged",
+      "status": "M",
+      "path": "DESIGN.md"
+    }
+  ],
+  "paths": [
+    "DESIGN.md"
+  ],
+  "mappings": [
+    {
+      "path": "DESIGN.md",
+      "scopeIds": [
+        "project"
+      ],
+      "documentIds": [
+        "design",
+        "terms",
+        "instructions"
+      ],
+      "ruleIds": [
+        "storage-interface",
+        "checkout-total",
+        "acyclic",
+        "final-evidence"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "Owner adds an explicit export non-goal; no executable code, acceptance case, dependency, command or domain term changes.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "reason": "The owner export annotation does not replace either acceptance case or alter an existing rule: checkout remains total 10, public quote remains 12, storage remains behind core and the static graph remains acyclic. Export is excluded from this reassessment and receipt wording remains a future owner decision; no implementation, command, interface or rule changes follow from the note.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: export remains outside this change.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "User note: receipt wording remains a future owner decision.",
+            "version": "base"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "The agreed checkout total is 10.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "Public quote() continues to return 12.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "terms",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "Owner adds an explicit export non-goal; no executable code, acceptance case, dependency, command or domain term changes.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "reason": "The export scope sentence introduces no new domain concept: Order remains a customer purchase and Panel order remains UI sequencing. The glossary is unchanged because no naming or meaning migration occurs.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "instructions",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "Owner adds an explicit export non-goal; no executable code, acceptance case, dependency, command or domain term changes.",
+        "changedPaths": [
+          "DESIGN.md"
+        ],
+        "reason": "The export scope sentence leaves the DESIGN.md and glossary.md authority pointers, npm run check command and maintenance contract unchanged. No duplicated rules or guidance are needed.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Run `npm run check` for the maintained native checks.",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [
+    "storage-interface",
+    "checkout-total",
+    "acyclic",
+    "final-evidence"
+  ],
+  "execution": [
+    {
+      "runId": "06363e1c-d5aa-4c54-9ccc-4d155fb28a0a",
+      "plan": "[isolated-home][scratch-path]"
+    }
+  ],
+  "fingerprint": "76466f11b23a0fcaab3d48c947681101dcdaec6314fd1593b276e92f284f66be"
+}

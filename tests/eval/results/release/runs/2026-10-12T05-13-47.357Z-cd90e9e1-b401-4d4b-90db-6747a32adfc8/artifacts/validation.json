@@ -1,0 +1,1 @@
+{"schemaVersion":1,"command":"findings validate","status":"failed","problems":[{"code":"invalid-scope","message":"Reviewed scope cannot contain globs.","fix":"List concrete file paths, including planned absent files.","path":"packages/**"}],"data":{},"inputs":{}}

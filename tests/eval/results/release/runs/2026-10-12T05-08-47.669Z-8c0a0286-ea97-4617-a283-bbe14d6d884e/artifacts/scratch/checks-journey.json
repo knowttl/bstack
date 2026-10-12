@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "contributing",
+      "path": "CONTRIBUTING.md",
+      "contentHash": "d2e97be0f70a880a54828411e3ac3cfcdff0ca5a0af2ede7f5cbaf22cb2590ce"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "journey",
+      "sourceId": "contributing",
+      "pointer": "Use native Python checks and preserve balanced postings.",
+      "outcome": "The real startup CLI produces matching CSV/JSON balanced postings that the public Ledger API can import without losing balance.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "journey",
+      "role": "outcome",
+      "command": {
+        "executable": "python",
+        "args": [
+          "-B",
+          "[isolated-home][scratch-path]"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "journey"
+      ],
+      "inputScopes": [
+        "startup.py",
+        "ledger/**/*.py",
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md",
+        "pyproject.toml",
+        "uv.lock"
+      ]
+    }
+  ]
+}

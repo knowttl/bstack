@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "feature",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "b1e1f8e812c182092c920064e4dbf4a6d52afc7623286775a0933a7f59cb8e5d"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real loopback checkout returns status 201 and total 10.",
+      "userJourney": true
+    },
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "Quote remains 12.",
+      "outcome": "Original quote() assertion remains 12.",
+      "userJourney": true
+    },
+    {
+      "id": "quote-quantity",
+      "sourceId": "design",
+      "pointer": "The approved public quote example accepts a selected quantity, defaulting to one: `quote() = 12` and `quote(2) = 24`.",
+      "outcome": "Public quote(2) returns 24.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout",
+        "quote",
+        "quote-quantity"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs",
+        "AGENTS.md",
+        "DESIGN.md",
+        "glossary.md",
+        ".bstack/project.json",
+        ".bstack/bin/bstack-check.mjs",
+        "docs/repo-audit.md"
+      ]
+    }
+  ]
+}

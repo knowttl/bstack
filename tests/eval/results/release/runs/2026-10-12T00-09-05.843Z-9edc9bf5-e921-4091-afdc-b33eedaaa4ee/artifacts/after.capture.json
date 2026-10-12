@@ -1,0 +1,21 @@
+{
+  "command": [
+    "node",
+    "[isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs",
+    "run-checks",
+    "--repo",
+    "[fixture]",
+    "--plan",
+    "[isolated-home][scratch-path]",
+    "--phase",
+    "after",
+    "--prior-run",
+    "d664bcf7-0606-4d82-b7e6-1840a16e504c",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "[isolated-home][scratch-path]",
+  "stderr": "[isolated-home][scratch-path]",
+  "time": 1791763851.5476246
+}

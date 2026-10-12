@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "repo": ".",
+  "contract": ".bstack/project.json",
+  "previousContract": ".bstack/project.json",
+  "base": {
+    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "kind": "commit",
+    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "head": "ffcf64aa195c339af4632f0c7d92b315b95ed4db",
+  "changes": [
+    {
+      "source": "committed",
+      "status": "M",
+      "path": "packages/web/routes.ts"
+    }
+  ],
+  "paths": [
+    "packages/web/routes.ts"
+  ],
+  "mappings": [
+    {
+      "path": "packages/web/routes.ts",
+      "scopeIds": [
+        "maintained-repo"
+      ],
+      "documentIds": [
+        "design",
+        "language",
+        "guidance"
+      ],
+      "ruleIds": [
+        "public-core",
+        "checkout-total",
+        "quote",
+        "acyclic",
+        "completion"
+      ]
+    }
+  ],
+  "unmappedPaths": [],
+  "documents": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "postOrder now names unitPrice * quantity as undiscountedTotal before applying the existing quantity > 5 multiplier; public pricing, order accumulation and checkout response are unchanged.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "Extracting the leftmost multiplication preserves JavaScript evaluation order and the existing quantity threshold and multiplier. postOrder still imports price only through ../core/index.ts, pushes the same total and returns status 201 with that total; no dependencies or storage responsibilities change. The unchanged public quote test passes at 12 and mocked plus real loopback checkout pass at total 10 before and after; types and static boundaries also pass. No pricing rule or acceptance change is introduced. Boundary coverage remains static; the journey observes controlled loopback HTTP, not a deployed price service.",
+        "citations": [
+          {
+            "path": "DESIGN.md",
+            "pointer": "The UI never touches storage.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "Quote remains 12.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "The agreed checkout total is 10.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "Static import and re-export dependencies must be acyclic.",
+            "version": "current"
+          },
+          {
+            "path": "DESIGN.md",
+            "pointer": "A change is complete when affected journeys and required checks pass on the final inputs; passing units alone does not establish completion.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
+            "version": "base"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const undiscountedTotal = unitPrice * quantity",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "language",
+      "path": "glossary.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "postOrder now names unitPrice * quantity as undiscountedTotal before applying the existing quantity > 5 multiplier; public pricing, order accumulation and checkout response are unchanged.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "undiscountedTotal names a numeric calculation inside postOrder. It introduces no domain concept, changes no customer purchase or UI panel sequencing behavior, and leaves orders accumulation and the exported postOrder signature unchanged. Order remains a customer purchase; Panel order remains UI sequence. No glossary migration is needed.",
+        "citations": [
+          {
+            "path": "glossary.md",
+            "pointer": "Order: a customer purchase.",
+            "version": "current"
+          },
+          {
+            "path": "glossary.md",
+            "pointer": "Panel order: the sequence in which UI panels appear.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
+            "version": "base"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const undiscountedTotal = unitPrice * quantity",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    },
+    {
+      "id": "guidance",
+      "path": "AGENTS.md",
+      "assessment": {
+        "result": "no-impact",
+        "changedBehavior": "postOrder now names unitPrice * quantity as undiscountedTotal before applying the existing quantity > 5 multiplier; public pricing, order accumulation and checkout response are unchanged.",
+        "changedPaths": [
+          "packages/web/routes.ts"
+        ],
+        "reason": "The only implementation edit is a local calculation name in packages/web/routes.ts; public core imports, authoritative document locations, native npm run check command and standalone checker invocation remain the same. The unchanged maintained contract maps this path to all five existing rules and three reviewed documents. Before/after native captures and forthcoming fresh standalone executions follow the existing guidance. The portable assessment is verification metadata, not new project policy; docs/repo-audit.md remains an unchanged historical snapshot.",
+        "citations": [
+          {
+            "path": "AGENTS.md",
+            "pointer": "Use the approved [design](DESIGN.md) and public core interface.",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Use [glossary.md](glossary.md) for Order and Panel order.",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Run `npm run check` for maintained native verification; see DESIGN.md for acceptance cases, completion evidence and review limits.",
+            "version": "current"
+          },
+          {
+            "path": "AGENTS.md",
+            "pointer": "Treat `docs/repo-audit.md` as a historical snapshot; current assessed readiness belongs in scratch.",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
+            "version": "base"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const undiscountedTotal = unitPrice * quantity",
+            "version": "current"
+          },
+          {
+            "path": "packages/web/routes.ts",
+            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
+            "version": "current"
+          }
+        ],
+        "dependentWork": []
+      }
+    }
+  ],
+  "unmappedAssessments": [],
+  "decisions": [],
+  "coverage": [
+    "public-core",
+    "checkout-total",
+    "quote",
+    "acyclic",
+    "completion"
+  ],
+  "execution": [
+    {
+      "runId": "2ee3e5b9-79d4-457f-ae78-d99393b65e0a",
+      "plan": "[isolated-home][scratch-path]"
+    }
+  ],
+  "fingerprint": "30eaf032ee25cae389269a9ceb82f734937fe9f3eeeb7a5c55ad8847b387b247"
+}

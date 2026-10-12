@@ -131,9 +131,24 @@ export async function run(options) {
   const target = await resolveTarget(options, { draftOnly: true })
   const { inputs, plan, staged, directory, journal, findings, coverageLimits } = await prepareChangeSet(options, target)
   const { planDigest } = plan
+  const assessmentSchema = JSON.parse(await readFile(new URL('../../schemas/evidence.schema.json', import.meta.url), 'utf8'))
+  const assessment = staged.some(edit => edit.path === '.bstack/assessment.json' ||
+    [edit.originalBytes?.toString('utf8'), edit.proposedContent].some(content => {
+      if (!content) return false
+      try {
+        const record = JSON.parse(content)
+        return record !== null && typeof record === 'object' && assessmentSchema.required.every(key => Object.hasOwn(record, key))
+      } catch { return false }
+    }))
+  if (!options['dry-run'] && (assessment || options['approved-fingerprint'] !== undefined) && options['approved-fingerprint'] !== planDigest) {
+    throw new CommandError('blocked', [{ code: options['approved-fingerprint'] === undefined ? 'assessment-approval-required' : 'assessment-approval-mismatch',
+      message: 'Assessment apply requires the owner-approved fingerprint of this exact previewed plan.',
+      fix: 'Show apply --dry-run output to the owner and end your turn. After the owner approves the exact preview, supply its planDigest as --approved-fingerprint.' }])
+  }
   if (coverageLimits.length) return { inputs, status: 'blocked', data: { planDigest, coverageLimits } }
   if (options['dry-run']) return { inputs, data: { planDigest, dryRun: true,
-    edits: staged.map(({ originalBytes, resolvedPath, ...edit }) => edit), diff: staged.map(edit => edit.diff).join('') } }
+    edits: staged.map(({ originalBytes, resolvedPath, ...edit }) => edit), diff: staged.map(edit => edit.diff).join(''),
+    ...(assessment ? { approvalRequired: `Approval required: show this preview to the owner and end your turn; do not run assessment apply until the owner approves this exact fingerprint: ${planDigest}.` } : {}) } }
   if (journal) {
     const state = await inspectJournal(journal)
     if (state.conflicting.length) return { inputs, status: 'blocked', problems: state.conflicting.map(path => ({ code: 'user-change', path,

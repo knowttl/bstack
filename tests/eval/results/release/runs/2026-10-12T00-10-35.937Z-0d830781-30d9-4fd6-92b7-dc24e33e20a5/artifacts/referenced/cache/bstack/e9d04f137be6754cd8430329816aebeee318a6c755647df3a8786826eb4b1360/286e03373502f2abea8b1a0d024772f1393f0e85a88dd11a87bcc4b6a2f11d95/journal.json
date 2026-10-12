@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "runId": "286e03373502f2abea8b1a0d024772f1393f0e85a88dd11a87bcc4b6a2f11d95",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "e31d443d89069004a2bd620208cfcc76d8d32154"
+  },
+  "planDigest": "286e03373502f2abea8b1a0d024772f1393f0e85a88dd11a87bcc4b6a2f11d95",
+  "edits": [
+    {
+      "id": "bind-reviewed-assessment",
+      "path": ".bstack/assessment.json",
+      "resolvedPath": "[fixture]/.bstack/assessment.json",
+      "originalHash": "0bcb95f55a7aef8bbdda6fbbe262e10db1b47a2ed2dd2e8d3560fdb415b83072",
+      "proposedHash": "e604d34e06681effabdd9b85e4431616f2d11d71f80a6bfd591e279948c1748e",
+      "backup": "original-0",
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "starting-checks",
+    "journey",
+    "boundary-proof",
+    "maintained-enforcement",
+    "foundation-review",
+    "maintenance-contract",
+    "standalone-clean-clone",
+    "final-proof-aggregate-cycle",
+    "final-proof-aggregate-dynamic",
+    "final-proof-aggregate-import-type",
+    "final-proof-aggregate-nonpublic",
+    "final-proof-aggregate-private",
+    "final-proof-aggregate-reexport",
+    "final-proof-aggregate-unknown-dynamic",
+    "final-proof-native-cycle",
+    "final-proof-native-dynamic",
+    "final-proof-native-import-type",
+    "final-proof-native-nonpublic",
+    "final-proof-native-private",
+    "final-proof-native-reexport",
+    "final-proof-native-unknown-dynamic"
+  ]
+}

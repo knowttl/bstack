@@ -1,0 +1,46 @@
+{
+  "state": "Implementation committed and native checks pass; final original-checkout portable records await exact approval.",
+  "implementation": "642126c70e02b34be91fccb785f6ccd3c8379d68",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "proposedPortableSource": "98b7824a3ceed2a1bcbdb5dd236ae6b3c4f3188f",
+  "checkerEvidence": {
+    "proposal-local": {
+      "status": "passed",
+      "artifact": "[isolated-home]/cache/bstack/7f12f526962ee7a4bc4394db21b4a74da566bc05578f06d05f81864487a5b793/7dac3b2f-d0e7-4f55-9518-8bb74a1a1f07/checker-result.json",
+      "sourceRevision": "953f20b5967ca1c5bbaab9ba3df43714d3a8c54c",
+      "comparison": {
+        "source": "98b7824a3ceed2a1bcbdb5dd236ae6b3c4f3188f",
+        "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+        "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+      },
+      "priorPolicyStatus": "passed"
+    },
+    "proposal-clean-clone": {
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "sourceRevision": "953f20b5967ca1c5bbaab9ba3df43714d3a8c54c",
+      "comparison": {
+        "source": "98b7824a3ceed2a1bcbdb5dd236ae6b3c4f3188f",
+        "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+        "mergeBase": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+      },
+      "priorPolicyStatus": "passed"
+    }
+  },
+  "preserved": [
+    "Original quote() = 12 assertion",
+    "Checkout total 10",
+    "Exact original journey.mjs",
+    "Exact user note",
+    "Public core exports and storage implementation",
+    "glossary.md definitions",
+    "Historical docs/repo-audit.md"
+  ],
+  "limits": [
+    "No deployed price service is configured; journey makes a real loopback HTTP exchange.",
+    "Static dependency checks exclude dynamic imports and runtime loading.",
+    "Proposed portable checker successes do not establish final original-checkout readiness before record approval, apply and fresh execution."
+  ],
+  "nativeArtifact": "[isolated-home]/cache/bstack/efab73784cce94304649ce79620fc6c37dee3b70ac6e00bed819115641c1b645/d91d5607-a24d-4484-8079-a5f9274fd886/checks.json",
+  "nativeStatus": "passed"
+}

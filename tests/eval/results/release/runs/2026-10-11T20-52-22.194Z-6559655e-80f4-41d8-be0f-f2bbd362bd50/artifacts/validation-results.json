@@ -1,0 +1,32 @@
+[
+  {
+    "report": "documents-report.json",
+    "exitCode": 0,
+    "output": "documents-cite-check.json"
+  },
+  {
+    "report": "architecture-report.json",
+    "exitCode": 0,
+    "output": "architecture-cite-check.json"
+  },
+  {
+    "report": "checks-report.json",
+    "exitCode": 0,
+    "output": "checks-cite-check.json"
+  },
+  {
+    "report": "language-report.json",
+    "exitCode": 0,
+    "output": "language-cite-check.json"
+  },
+  {
+    "report": "outside-report.json",
+    "exitCode": 0,
+    "output": "outside-cite-check.json"
+  },
+  {
+    "report": "research-report.json",
+    "exitCode": 0,
+    "output": "research-cite-check.json"
+  }
+]

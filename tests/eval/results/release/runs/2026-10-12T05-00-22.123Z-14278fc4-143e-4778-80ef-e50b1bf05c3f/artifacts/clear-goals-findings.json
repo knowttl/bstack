@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+  },
+  "nextChange": "Read-only audit and recommendations for approved goals; no implementation or changes selected.",
+  "reviewedScope": [
+    "VISION.md",
+    "DESIGN.md",
+    "glossary.md"
+  ],
+  "sources": [
+    {
+      "id": "vision",
+      "pointer": "VISION.md:3",
+      "intent": "documented",
+      "summary": "Owner-approved one-reader article queue; preserve title and address; exclude accounts, sharing and recommendations."
+    },
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "Local Node and JSON persistence; queue owns article state; presentation uses public operations."
+    },
+    {
+      "id": "vocabulary",
+      "pointer": "glossary.md:4",
+      "intent": "documented",
+      "summary": "Queue includes read articles; marking read preserves title and address."
+    },
+    {
+      "id": "inventory",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Only three project documents; no instructions, code, manifest, native tools, tests or CI. Clean working tree."
+    },
+    {
+      "id": "node-tests",
+      "pointer": "https://nodejs.org/api/test.html",
+      "intent": "documented",
+      "summary": "Official Node documentation opened 2026-10-12: built-in stable node:test and node --test."
+    },
+    {
+      "id": "persistence-inference",
+      "pointer": "DESIGN.md:3",
+      "intent": "inferred",
+      "summary": "Persistence suggests saved state should survive reopening; proposed acceptance extension, not a separately approved requirement."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The approved save/list/mark-read journey has no executable implementation or protection.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Protect the public reader journey and preserve title and address.",
+      "consequence": "Documentation cannot demonstrate the first version works.",
+      "fix": "When implementation is selected, add one journey check through the real presentation and queue boundary with a disposable JSON file: save, list, mark read, list again; assert unchanged title/address and continued queue membership. Propose reopening and confirming persistence as an explicit acceptance extension. Built-in node:test is a minimal candidate; avoid mock storage and private-method assertions.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "Acceptance source: VISION.md:5, DESIGN.md:6, glossary.md:4-5. Execute the real-file journey; a deliberate title/address loss or read-article disappearance must fail. Reopen verification requires selection of the inferred extension. No exception permits claiming a broken approved journey works.",
+      "sourceIds": [
+        "vision",
+        "design",
+        "vocabulary",
+        "inventory",
+        "node-tests",
+        "persistence-inference"
+      ],
+      "newPrinciple": false,
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "resolved": false
+    },
+    {
+      "id": "F-002",
+      "problem": "The presentation/storage boundary is documented but cannot yet be verified because there is no implementation.",
+      "files": [
+        "DESIGN.md"
+      ],
+      "command": null,
+      "principle": "Queue owns article state; presentation uses save, list and mark-read.",
+      "consequence": "Direct storage writes could bypass state ownership and lose article fields.",
+      "fix": "Preserve the documented boundary during implementation. Start with import and responsibility review: presentation calls the queue, and storage access stays behind it. Adopt native import analysis only if a concrete module layout makes it useful; avoid a custom text checker.",
+      "scope": [
+        "DESIGN.md"
+      ],
+      "verification": "Review actual imports and presentation call paths against DESIGN.md:4-5. Before adopting automated enforcement, prove a public queue import passes and a direct storage import fails in disposable fixtures, covering aliases if present. Exceptions require an owner-approved design change, narrow reason and removal condition.",
+      "sourceIds": [
+        "design",
+        "inventory"
+      ],
+      "newPrinciple": false,
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "resolved": false
+    },
+    {
+      "id": "F-003",
+      "problem": "DESIGN.md does not state what execution evidence completes a change, and no maintained project check command exists.",
+      "files": [
+        "DESIGN.md",
+        "VISION.md"
+      ],
+      "command": null,
+      "principle": "Proposed: completion requires affected approved journeys passing on final inputs.",
+      "consequence": "A future unit-only green result could conceal a broken reader journey.",
+      "fix": "Propose a short completion-evidence section in DESIGN.md pointing to approved acceptance cases and the future real-file journey test. When scaffolding is selected, expose one project-owned check command with failures propagated, document setup/runtime, and select formatting/lint only for actual source conventions. This is a new principle for review; CI is not selected.",
+      "scope": [
+        "DESIGN.md",
+        "VISION.md"
+      ],
+      "verification": "Review exact documentation and command bytes before apply. Run the maintained command on final inputs; a clean case passes and a broken journey fails. Unit tests alone are insufficient; unavailable required journeys remain unverified. Exceptions identify missing evidence and end when the journey is runnable.",
+      "sourceIds": [
+        "design",
+        "vision",
+        "inventory"
+      ],
+      "newPrinciple": true,
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "resolved": false
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "No application, manifest, runtime pin, prepared dependencies or native checks exist; starting application verification is blocked.",
+    "Inspect, inventory, cite-check and revision-bound measure passed; these audit helpers are not product readiness evidence.",
+    "No implementation or next feature is requested; findings do not block the recommendation task, but the approved journey is unverified.",
+    "Main-thread research used because three small files make delegation wasteful; cited documents were opened.",
+    "Two documentation commits provide no architectural co-change conclusion. No two declared plans exist for overlap analysis.",
+    "No material goal, vocabulary or stack gap; approved baseline retained without interview or vision board.",
+    "No findings selected; no project writes. Apply and post-apply verification are not performed.",
+    "Reopening acceptance and completion-evidence policy are proposed additions; no error or concurrency policy was invented."
+  ]
+}

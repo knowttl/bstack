@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T02-56-08.786Z-b8fbf160-20dd-4544-a6f0-7957b11b092b",
+  "correctedAt": "2026-10-12T03:00:17.992Z",
+  "corrector": "Release evaluator",
+  "reason": "Extend the evidence range to include the final response after the ordered author reply; the passing decision assessment is unchanged.",
+  "evidence": {
+    "startLine": 14,
+    "endLine": 25
+  },
+  "checks": [
+    {
+      "id": "decision",
+      "passed": true,
+      "startLine": 14,
+      "endLine": 25
+    }
+  ],
+  "originalAnswers": "2aff39d1-e65d-45b8-953c-b04c64d8bed9/answers.json",
+  "originalAnswersSha256": "e4e8607d6ba9c856fb7d1c577179476c1b0e3835681d2068648edf263bd70796",
+  "conversationSha256": "c1d08e4b59f047bbfd8ed50efe498e1378a8941046e9c2203f2620700cf5d033"
+}

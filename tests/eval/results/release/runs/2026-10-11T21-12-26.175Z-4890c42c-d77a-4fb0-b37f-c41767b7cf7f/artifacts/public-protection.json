@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "public-protection",
+  "writePaths": [
+    "boundaries.py",
+    "test_ledger.py",
+    "CONTRIBUTING.md"
+  ],
+  "contracts": [
+    {
+      "id": "public-ledger",
+      "files": [
+        "ledger/__init__.py"
+      ]
+    }
+  ]
+}

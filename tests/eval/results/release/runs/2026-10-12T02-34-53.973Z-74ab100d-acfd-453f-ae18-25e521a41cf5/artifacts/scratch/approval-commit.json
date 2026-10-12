@@ -1,0 +1,10 @@
+{
+  "object": "98b7824a3ceed2a1bcbdb5dd236ae6b3c4f3188f",
+  "authorName": "Codex",
+  "authorEmail": "codex@example.invalid",
+  "authorDate": "2026-10-12T02:42:31Z",
+  "committerName": "Codex",
+  "committerEmail": "codex@example.invalid",
+  "committerDate": "2026-10-12T02:42:31Z",
+  "message": "Record owner-selected quote acceptance"
+}

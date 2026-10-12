@@ -1,0 +1,118 @@
+{
+  "initialPlanDigest": "1c760cc9ec0e38009eb3af64b9cd2c0cfaab3976d6cf82db81c54f1de58ec2f9",
+  "targetState": "Only original uncommitted DESIGN.md owner note remains; no target project writes performed.",
+  "dryRun": "passed",
+  "proposedInitialEdits": 15,
+  "ownerNotePreservedExactly": true,
+  "previewOnly": true,
+  "standalonePreviews": [
+    {
+      "name": "final-proposal",
+      "status": "passed",
+      "sourceRevision": "891b050623e3d8e13094dc6aadfddf58051809ca",
+      "assessedImplementation": "83f04b75a60198c5f80de4287dff5d54ab15bff2",
+      "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "fingerprint": "b4623070154fa61b6f9ec0eaedfcae8b3a5b33b33084bac8cf273fed32ba5f12",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "7ab48800e8226db0f9a1812bc0fd2326d10c2ab81c734333ae227665f46cc3a4",
+      "checks": [
+        {
+          "id": "typecheck",
+          "exit": 0,
+          "status": "passed"
+        },
+        {
+          "id": "boundaries",
+          "exit": 0,
+          "status": "passed"
+        },
+        {
+          "id": "unit",
+          "exit": 0,
+          "status": "passed"
+        },
+        {
+          "id": "journey",
+          "exit": 0,
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "name": "clean-clone-preview",
+      "status": "passed",
+      "sourceRevision": "891b050623e3d8e13094dc6aadfddf58051809ca",
+      "assessedImplementation": "83f04b75a60198c5f80de4287dff5d54ab15bff2",
+      "base": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+      "fingerprint": "b4623070154fa61b6f9ec0eaedfcae8b3a5b33b33084bac8cf273fed32ba5f12",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "5007cd708a68b8d67e4c369a35381a922512b1bf6d5c913aa0590508b43ef3e5",
+      "checks": [
+        {
+          "id": "typecheck",
+          "exit": 0,
+          "status": "passed"
+        },
+        {
+          "id": "boundaries",
+          "exit": 0,
+          "status": "passed"
+        },
+        {
+          "id": "unit",
+          "exit": 0,
+          "status": "passed"
+        },
+        {
+          "id": "journey",
+          "exit": 0,
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "nativeProofs": [
+    {
+      "case": "private",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "8450b36cb31cf4d9fa30f2d0fd04df353111aff477a338704301f21f65b1f6c2"
+    },
+    {
+      "case": "alias",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "8af5b2db6011513876187e35d50bc35470512b8c9990904612e0ad206b775817"
+    },
+    {
+      "case": "reexport",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "e4615b740434a2cdc65a5d161c686693fdd129ab52c0f2c1b3c7c46c04098654"
+    },
+    {
+      "case": "nonentry",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "467fd6593c6a8c468eb0f1b6978a9b1cd4544fc25456c99fb18c54654e3f427d"
+    },
+    {
+      "case": "cycle",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "cc61df0d5e3c471d6b5a8bf99722d23e66bd334ec6d45d8a5bdf163804fed993"
+    },
+    {
+      "case": "aggregate-private",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "f94472ccb008c4f8ddf3fecbeade804e0eace88f887b9e3b523b29a8fe622762"
+    },
+    {
+      "case": "aggregate-cycle",
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactHash": "904b35195776906862b29815a14f3d988c4dfcd31e63cf23a9eed4d664546234"
+    }
+  ]
+}

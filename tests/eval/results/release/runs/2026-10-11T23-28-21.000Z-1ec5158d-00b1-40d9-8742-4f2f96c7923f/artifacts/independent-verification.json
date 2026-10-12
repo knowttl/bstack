@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-11T23-28-21.000Z-1ec5158d-00b1-40d9-8742-4f2f96c7923f",
+  "head": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+  "workingTree": "",
+  "allTrackedFilesUnchanged": true,
+  "loginAbsent": true,
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "d7edc7e4b5887be249b21a3907550206bbe141b43287c893a091cc80368e098a",
+      "unchanged": true
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "sha256": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+      "unchanged": true
+    },
+    {
+      "path": "app.py",
+      "sha256": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972",
+      "unchanged": true
+    },
+    {
+      "path": "boundaries.py",
+      "sha256": "60469f21052f7807a8e96ef0f914fd45402d7b48a4aee8a07bb1bf38894b9f3e",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/__init__.py",
+      "sha256": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/_internal.py",
+      "sha256": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef",
+      "unchanged": true
+    },
+    {
+      "path": "ledger/book.py",
+      "sha256": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157",
+      "unchanged": true
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "0c202ff7a13eb3eb620968b7c16990ce1d57bf79718dd4d53a1d9ede896878af",
+      "unchanged": true
+    },
+    {
+      "path": "startup.py",
+      "sha256": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7",
+      "unchanged": true
+    },
+    {
+      "path": "test_ledger.py",
+      "sha256": "f48adfd216e10d4aa41b1f53092855237f711260b58bfba9b6b6cd30491a600f",
+      "unchanged": true
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "6f5f3e8976e9e0adab72a06a275270b942088e71b89115a2e31a7db879c8c4e3",
+      "unchanged": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/ledger-artifact-hashes.json",
+      "originalSha256": "ece5126bdfb80690867bc9e5255c257af4c4941b3de8ce9ca3f331dd168d555b",
+      "publishedSha256": "ece5126bdfb80690867bc9e5255c257af4c4941b3de8ce9ca3f331dd168d555b"
+    },
+    {
+      "path": "artifacts/ledger-audit-final.md",
+      "originalSha256": "fe589654501b84c244f5b7b0f235a9d98420e49b38f161048c5cbb322825a5bf",
+      "publishedSha256": "c2f746a7fe0e80f8103a90bab0cb090032a644c317d888f20e9a89caf2693384"
+    },
+    {
+      "path": "artifacts/ledger-check-plan.json",
+      "originalSha256": "d2749d85283d0bc2568834a0031ac6f916aec6b19a06cf1876765018ca66775d",
+      "publishedSha256": "0a47b0c78ff01984907e0b184d23b34204ec37219053117b541e407bece1c1c1"
+    },
+    {
+      "path": "artifacts/ledger-check-results-final.json",
+      "originalSha256": "330a7a0200dfb485c80761d4d46e5b075740ca57192fa799a1432c5a94e4bf3b",
+      "publishedSha256": "3513ae1d8c4d8c59f6f7b65311125b443c0b4a592648ead1b17d687492c5a6ad"
+    },
+    {
+      "path": "artifacts/ledger-check-results.json",
+      "originalSha256": "cfcedc977b748cb0f795b7d66d6603ac7f3af517bf021c6f387f3b644edff22e",
+      "publishedSha256": "b7e860b881dba256f6e6073a8080becbbc07d639459e046f5249ee5bdf550abd"
+    },
+    {
+      "path": "artifacts/ledger-citations.json",
+      "originalSha256": "e1517e357d4b826b2e4e21b654b61f8d7dafa1708badc50ec4c44d220b492a8d",
+      "publishedSha256": "0cebfeacbdf45bffd305ef970bcb091f940911d533e4d4a79cf4e4691bcad0b5"
+    },
+    {
+      "path": "artifacts/ledger-final-state.txt",
+      "originalSha256": "77016ba0fc62c501431d0af77745f4fc2b97e4048d13acff69bc853cc99b2400",
+      "publishedSha256": "77016ba0fc62c501431d0af77745f4fc2b97e4048d13acff69bc853cc99b2400"
+    },
+    {
+      "path": "artifacts/ledger-findings-validation.json",
+      "originalSha256": "6c20e3d8d0933ce2ac071d30b64d2efb730228343c5268781cd28d9a225c1499",
+      "publishedSha256": "43e45a7a59b64edb7954f81cc0d52d43db6a07407f9f2568bfec783507f222f1"
+    },
+    {
+      "path": "artifacts/ledger-findings.json",
+      "originalSha256": "47c63af6f025550f09aa9da792ae256c6ab25920d4508bd5d313f3a731e1a686",
+      "publishedSha256": "98813cd74bfe73843a0b72f9d4a4f6a84727903c4eb778a675a9e4a11924a277"
+    },
+    {
+      "path": "artifacts/ledger-inspect.json",
+      "originalSha256": "dd7fb996db0dcfe15f518c1f7255fcae0320ab08001d4fc39e08c274c3c57b44",
+      "publishedSha256": "b06413e747453dc65dd8481c62ae8ada9e047975c64abf5100e862f32166cb0e"
+    },
+    {
+      "path": "artifacts/ledger-inventory.json",
+      "originalSha256": "e7773192f2832e9c71a00cb0fb672e6976ce4c165a33e1bf6794d7cfd57378d2",
+      "publishedSha256": "92d74fbcd961fa60963392febb710d201b07ccd42b0f1e4bc44b92d7462a2fc2"
+    },
+    {
+      "path": "artifacts/ledger-measure.json",
+      "originalSha256": "bdfa8b0f27a33407128c5fabc4e38091c91219ec744d964322bff78580b8923c",
+      "publishedSha256": "ddac4e6f553d992b8ee4b4fee7c72b08e7e9e4960c20ea1c9d593234128620cb"
+    },
+    {
+      "path": "artifacts/ledger-overlap.json",
+      "originalSha256": "e1be808348ce2e3f555560e87641c1656693f3903a7ca6fa51ee3ed258409a4c",
+      "publishedSha256": "ccc628e37aeca19bb3cb47b1563a78bf0530d5d68cfaeb2b52d51a172b465f50"
+    },
+    {
+      "path": "artifacts/ledger-plan-posting-policy.json",
+      "originalSha256": "78c640bf0170407560e1e72343cc7b1cd363bd75201b2139589d3da4fcd40b3a",
+      "publishedSha256": "78c640bf0170407560e1e72343cc7b1cd363bd75201b2139589d3da4fcd40b3a"
+    },
+    {
+      "path": "artifacts/ledger-plan-startup-output.json",
+      "originalSha256": "8ed26ecbcd997d432ba0e0e19b361a7bb2520154f7a27081eaf9cac2e2fef82c",
+      "publishedSha256": "8ed26ecbcd997d432ba0e0e19b361a7bb2520154f7a27081eaf9cac2e2fef82c"
+    },
+    {
+      "path": "artifacts/ledger-public-probe.py",
+      "originalSha256": "21c465341087f94bf2faf7e20f8f698219472a1badd14ca180c9fa0eea2103a9",
+      "publishedSha256": "21c465341087f94bf2faf7e20f8f698219472a1badd14ca180c9fa0eea2103a9"
+    },
+    {
+      "path": "artifacts/ledger-render.json",
+      "originalSha256": "3fecf63e04f55745d22e885358430f674de13e07c611cf24ca4dace8cda99dc5",
+      "publishedSha256": "9d792ec9dac38b2d261630bb10e2a1d3bda4c2bb53ebde7858c172adfa3d46fb"
+    },
+    {
+      "path": "artifacts/ledger-research.json",
+      "originalSha256": "d4c89d7ae3eb2140a7fdb9cc4d8e09013a6caceab0d1cb5b0abb5e63de25dffe",
+      "publishedSha256": "d4c89d7ae3eb2140a7fdb9cc4d8e09013a6caceab0d1cb5b0abb5e63de25dffe"
+    },
+    {
+      "path": "artifacts/ledger-startup-output.json",
+      "originalSha256": "26f7d4f69592a56aa841d333225b379654897940d4c32e2d83601c945eea8155",
+      "publishedSha256": "5d7c46b94f602788799d7aa3ea2cfb864b81bb791678aa3816589d2fdfa1c88f"
+    },
+    {
+      "path": "artifacts/uv-49c783a2f2e9d1cc.lock",
+      "originalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "publishedSha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--",
+    "packages/core/internal/database.ts"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "diff --git a/packages/core/internal/database.ts b/packages/core/internal/database.ts\nindex 7f7fc53..6acdec5 100644\n--- a/packages/core/internal/database.ts\n+++ b/packages/core/internal/database.ts\n@@ -5,7 +5,8 @@ export async function servicePrice(url: string) {\n \n const orders: number[] = []\n export function postOrder(quantity: number, unitPrice = price()) {\n-  const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)\n+  const subtotal = unitPrice * quantity\n+  const total = subtotal * (quantity > 5 ? 0.9 : 1)\n   orders.push(total)\n   return { status: 201, total }\n }\n",
+  "stderr": ""
+}

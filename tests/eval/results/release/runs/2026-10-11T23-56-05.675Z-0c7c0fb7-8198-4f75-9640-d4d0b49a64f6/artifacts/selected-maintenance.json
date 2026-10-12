@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
+  },
+  "nextChange": "User-selected bounded refactor naming the intermediate undiscounted total without pricing or checkout changes.",
+  "reviewedScope": [
+    "packages/web/routes.ts"
+  ],
+  "sources": [
+    {
+      "id": "design",
+      "pointer": "DESIGN.md",
+      "intent": "documented",
+      "summary": "Public core boundary, quote 12, checkout total 10 and before/after protection."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "User requests naming the intermediate unitPrice times quantity expression.",
+      "files": [
+        "packages/web/routes.ts"
+      ],
+      "command": null,
+      "principle": "Preserve public core interface and approved pricing and checkout outcomes.",
+      "consequence": "Naming the existing expression improves readability without altering multiplication order.",
+      "fix": "Extract const undiscountedTotal = unitPrice * quantity; retain the existing conditional factor in total.",
+      "scope": [
+        "packages/web/routes.ts"
+      ],
+      "verification": "Captured original npm run check; repeat compatibility capture and standalone aggregate locally and in clean clone.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "design"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "quote",
+    "checkout",
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "This record supports only the explicitly selected maintenance edit; no full audit was repeated."
+  ]
+}

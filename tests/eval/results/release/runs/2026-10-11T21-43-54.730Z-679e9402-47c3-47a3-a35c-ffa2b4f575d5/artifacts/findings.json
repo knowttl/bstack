@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde"
+  },
+  "nextChange": "Relocate only the selected public-ledger ownership rule to CODING_STANDARDS.md with a contributor link.",
+  "reviewedScope": [
+    "CONTRIBUTING.md",
+    "CODING_STANDARDS.md"
+  ],
+  "sources": [
+    {
+      "id": "S-001",
+      "pointer": "CONTRIBUTING.md:3-4",
+      "intent": "documented",
+      "summary": "External modules use the public ledger package.\nThe ledger owns entries and all balance calculations."
+    },
+    {
+      "id": "S-002",
+      "pointer": "CONTRIBUTING.md:5",
+      "intent": "documented",
+      "summary": "Use native Python checks and preserve balanced postings."
+    },
+    {
+      "id": "S-003",
+      "pointer": "app.py:2",
+      "intent": "observed",
+      "summary": "Existing private import is outside the selected relocation."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The selected ownership rule is currently authoritative in CONTRIBUTING.md; the owner selected CODING_STANDARDS.md as its destination.",
+      "files": [
+        "CONTRIBUTING.md"
+      ],
+      "command": null,
+      "principle": "External modules use the public ledger package.\nThe ledger owns entries and all balance calculations.",
+      "consequence": "Copying the rule would create competing authorities; relocation must leave only a link at the original location.",
+      "fix": "Move both ownership sentences verbatim into CODING_STANDARDS.md and replace their original occurrence with an anchor link.",
+      "scope": [
+        "CONTRIBUTING.md",
+        "CODING_STANDARDS.md"
+      ],
+      "verification": "Native Python exact-byte, unique-authority and link checks; existing unittest, Ruff and boundary checks with failures preserved.",
+      "blocksNextChange": true,
+      "category": "decision",
+      "status": "selected",
+      "newPrinciple": false,
+      "resolved": true,
+      "sourceIds": [
+        "S-001",
+        "S-002"
+      ]
+    }
+  ],
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "requiredOutcomes": [
+    "starting-checks",
+    "Exact relocation preserves all unrelated guidance and leaves one linked authority.",
+    "Native balanced-posting and rejected-negative tests pass; all existing boundary failures remain visible."
+  ],
+  "execution": [
+    {
+      "id": "0dbb0afc-1b7b-4aad-83d7-e9ffe94c4cc4",
+      "outcome": "starting-checks",
+      "status": "failed",
+      "fingerprint": "f716e1f882d54ebd138835822720899ab41424780ae02f2adc644ad4a6554ace",
+      "artifact": "[isolated-home]/cache/bstack/54c2c2bbee7d52f369e13332b52189f3914e179d1a401cfdda6a7f8b66a46eb4/0dbb0afc-1b7b-4aad-83d7-e9ffe94c4cc4/checks.json",
+      "artifactHash": "a36c54262630a59cddbdf0b0b160b0a3cc89da1dd9ceac7dfceaa3201b7d8719",
+      "method": "run-checks --phase before; unittest and Ruff exit 0, boundaries exits 1 with private."
+    }
+  ],
+  "limitations": [
+    "Exact generated diff awaits owner approval; no project writes are authorised yet.",
+    "Existing boundary check fails on app.py private import; no repair is selected.",
+    "Main-thread bounded research; few files make delegation wasteful. No outside research or new policies are needed."
+  ]
+}

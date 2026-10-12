@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "command": "eval compare",
+  "status": "passed",
+  "problems": [],
+  "data": {
+    "status": "passed",
+    "without": "2026-10-12T02-34-54.239Z-811c978f-d746-419c-8232-584e0c390cae",
+    "with": "2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5",
+    "lost": [],
+    "gained": []
+  },
+  "inputs": {}
+}

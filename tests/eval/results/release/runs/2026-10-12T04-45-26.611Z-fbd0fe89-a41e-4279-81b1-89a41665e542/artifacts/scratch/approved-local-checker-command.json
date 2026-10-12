@@ -1,0 +1,27 @@
+{
+  "command": [
+    "node",
+    ".bstack/bin/bstack-check.mjs",
+    "--repo",
+    ".",
+    "--base",
+    "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+    "--assessment",
+    ".bstack/assessment.json",
+    "--json"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "durationSeconds": 4.209693431854248,
+  "preflight": {
+    "source": "host",
+    "checkedAt": "2026-10-12T04:50:21.660Z",
+    "availableMemoryBytes": 28123340800,
+    "freeDiskBytes": 25667526656,
+    "load1m": 11.92,
+    "existingNodeSuites": 0,
+    "proposedNodeSuites": 1,
+    "permitted": true
+  },
+  "capture": "[isolated-home][scratch-path]"
+}

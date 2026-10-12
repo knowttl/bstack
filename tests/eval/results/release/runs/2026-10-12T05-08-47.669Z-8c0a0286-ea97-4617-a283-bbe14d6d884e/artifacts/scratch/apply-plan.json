@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde"
+  },
+  "findings": "[isolated-home][scratch-path]",
+  "findingsDigest": "2b0204b353f674f9cbae611273dfd59679e989fbb41766e39bccb8ddfeb445d8",
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "reviewedScope": [
+    {
+      "path": "CONTRIBUTING.md",
+      "resolvedPath": "[fixture]/CONTRIBUTING.md"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "resolvedPath": "[fixture]/CODING_STANDARDS.md"
+    }
+  ],
+  "edits": [
+    {
+      "id": "E-1",
+      "findingId": "F-001",
+      "path": "CONTRIBUTING.md",
+      "originalHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+      "proposedHash": "d2e97be0f70a880a54828411e3ac3cfcdff0ca5a0af2ede7f5cbaf22cb2590ce",
+      "operation": "replace-file",
+      "payload": {
+        "content": "# Ledger standards\n\n[Public ledger ownership](CODING_STANDARDS.md#public-ledger-ownership).\nUse native Python checks and preserve balanced postings.\n"
+      },
+      "proposedContent": "# Ledger standards\n\n[Public ledger ownership](CODING_STANDARDS.md#public-ledger-ownership).\nUse native Python checks and preserve balanced postings.\n"
+    },
+    {
+      "id": "E-2",
+      "findingId": "F-001",
+      "path": "CODING_STANDARDS.md",
+      "originalHash": null,
+      "proposedHash": "12bf0b554a2b90b6f37d5a0c932dcef76545d88fce92c3482e7faa4a1099aee8",
+      "operation": "create",
+      "payload": {
+        "content": "# Coding standards\n\n## Public ledger ownership\n\nExternal modules use the public ledger package.\nThe ledger owns entries and all balance calculations.\n"
+      },
+      "proposedContent": "# Coding standards\n\n## Public ledger ownership\n\nExternal modules use the public ledger package.\nThe ledger owns entries and all balance calculations.\n"
+    }
+  ],
+  "planDigest": "6e7a4c642f20d2f0d34050ce03cc16d2438a924c7d9dc1403f5222df63097e89"
+}

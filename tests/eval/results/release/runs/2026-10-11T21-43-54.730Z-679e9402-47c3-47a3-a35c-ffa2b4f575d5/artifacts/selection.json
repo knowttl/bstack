@@ -1,0 +1,11 @@
+{
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "scope": [
+    "CONTRIBUTING.md",
+    "CODING_STANDARDS.md"
+  ],
+  "ownerSelection": "Move only the existing public-ledger ownership rule, replace its original occurrence with a link, preserve all other guidance and Python behaviour.",
+  "generatedDiffApproved": false
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "caseId": "AC-52",
+  "sourceRevision": "34cc59096ac47d5ee953268a1d776f69a5dffd5f",
+  "platform": "linux",
+  "suite": "tests/scripts/rule-proof.test.mjs",
+  "name": "ts native public imports and permitted direction pass while private, alias and cycles fail",
+  "preflight": {
+    "checkedAt": "2026-10-12T05:42:38.095Z",
+    "availableMemoryBytes": 29659922432,
+    "freeDiskBytes": 23733297152,
+    "load1m": 24.49,
+    "existingNodeSuites": 0,
+    "proposedNodeSuites": 1,
+    "permitted": true
+  },
+  "execution": {
+    "status": "passed",
+    "stdout": "✔ ts native public imports and permitted direction pass while private, alias and cycles fail (44748.551719ms)\nℹ {\"stack\":\"ts\",\"violation\":\"private\",\"command\":{\"executable\":\"node\",\"args\":[\"boundaries.mjs\"],\"versionArgs\":[\"-p\",\"require(\\\"typescript\\\").version\"],\"cwd\":\".\"},\"cases\":[{\"kind\":\"valid\",\"status\":\"passed\",\"toolVersion\":\"5.9.3\",\"exitCode\":0,\"stdout\":\"[]\\n\",\"stderr\":\"\"},{\"kind\":\"violation\",\"status\":\"passed\",\"toolVersion\":\"5.9.3\",\"exitCode\":1,\"stdout\":\"[\\\"private\\\"]\\n\",\"stderr\":\"\"}]}\nℹ {\"stack\":\"ts\",\"violation\":\"alias\",\"command\":{\"executable\":\"node\",\"args\":[\"boundaries.mjs\"],\"versionArgs\":[\"-p\",\"require(\\\"typescript\\\").version\"],\"cwd\":\".\"},\"cases\":[{\"kind\":\"valid\",\"status\":\"passed\",\"toolVersion\":\"5.9.3\",\"exitCode\":0,\"stdout\":\"[]\\n\",\"stderr\":\"\"},{\"kind\":\"violation\",\"status\":\"passed\",\"toolVersion\":\"5.9.3\",\"exitCode\":1,\"stdout\":\"[\\\"alias\\\"]\\n\",\"stderr\":\"\"}]}\nℹ {\"stack\":\"ts\",\"violation\":\"cycle\",\"command\":{\"executable\":\"node\",\"args\":[\"boundaries.mjs\"],\"versionArgs\":[\"-p\",\"require(\\\"typescript\\\").version\"],\"cwd\":\".\"},\"cases\":[{\"kind\":\"valid\",\"status\":\"passed\",\"toolVersion\":\"5.9.3\",\"exitCode\":0,\"stdout\":\"[]\\n\",\"stderr\":\"\"},{\"kind\":\"violation\",\"status\":\"passed\",\"toolVersion\":\"5.9.3\",\"exitCode\":1,\"stdout\":\"[\\\"cycle\\\"]\\n\",\"stderr\":\"\"}]}\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 44908.178825\n",
+    "stderr": "",
+    "durationMs": 45028.934573,
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "cancelled": false,
+    "outputTruncated": false,
+    "error": null,
+    "toolVersion": {
+      "status": "passed",
+      "stdout": "v24.17.0\n",
+      "stderr": "",
+      "durationMs": 12.987271000000021,
+      "exitCode": 0,
+      "signal": null,
+      "timedOut": false,
+      "cancelled": false,
+      "outputTruncated": false,
+      "error": null
+    },
+    "executable": "node"
+  }
+}

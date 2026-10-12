@@ -1,0 +1,55 @@
+{
+  "checkpoint": "final",
+  "outcome": "no-maintenance-changes-needed",
+  "head": "86960291f55562154efc46f9a9af061884a1c29b",
+  "comparisonBase": "86960291f55562154efc46f9a9af061884a1c29b",
+  "historicalAssessmentBase": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "changedPaths": [
+    "DESIGN.md"
+  ],
+  "diff": "diff --git a/DESIGN.md b/DESIGN.md\nindex 4412e20..91ee9cb 100644\n--- a/DESIGN.md\n+++ b/DESIGN.md\n@@ -4,6 +4,7 @@ The UI never touches storage.\n The agreed checkout total is 10.\n \n User note: receipt wording remains a future owner decision.\n+User note: export remains outside this change.\n \n ## Responsibilities and public interface\n \n",
+  "behavior": "User adds an export scope exclusion; no executable behavior, acceptance expectation, public interface, terminology or guidance changes are required.",
+  "documentImpacts": [
+    {
+      "path": "DESIGN.md",
+      "result": "no-impact",
+      "reason": "The user scope exclusion is preserved; existing rules, examples and acceptance cases remain applicable.",
+      "baseCitation": "User note: receipt wording remains a future owner decision.",
+      "currentCitation": "User note: receipt wording remains a future owner decision.\nUser note: export remains outside this change.",
+      "dependentWork": []
+    },
+    {
+      "path": "glossary.md",
+      "result": "no-impact",
+      "reason": "The scope exclusion introduces no domain term or change to Order or Panel order.",
+      "baseCitation": "Order: a customer purchase.\nPanel order: the sequence in which UI panels appear.",
+      "currentCitation": "Order: a customer purchase.\nPanel order: the sequence in which UI panels appear.",
+      "dependentWork": []
+    },
+    {
+      "path": "AGENTS.md",
+      "result": "no-impact",
+      "reason": "Existing instructions still point to approved authorities and the maintained checks; no duplicate guidance is needed.",
+      "baseCitation": "Preserve user work; receipt wording remains a future owner decision.",
+      "currentCitation": "Preserve user work; receipt wording remains a future owner decision.",
+      "dependentWork": []
+    }
+  ],
+  "unmappedPaths": [],
+  "native": "passed: TypeScript, 2 unit tests (quote 12 and mocked checkout 10), boundary/cycle check [], real HTTP status 201 total 10.",
+  "portableCurrentTree": "blocked: portable-source-mismatch. The unchanged committed assessment cannot verify the uncommitted user edit.",
+  "portableCommittedBaseline": "passed in different-root clean clone with isolated home/cache; unchanged assessment and explicit original base; fresh native run.",
+  "resourcePreflights": "Fresh host preflight exited 0 and permitted true before every Node suite/install. Observed available memory >=18.19 GB, free disk >=25.21 GB, load <=2.93 and existing Node suites 0, proposed total 1.",
+  "limitations": [
+    "Separate installed audit package unavailable within permitted roots; dependent package-specific work stopped. Bundled complete checker hash matches historical installed-package hash.",
+    "Portable current-tree readiness remains unverified. User work was neither committed nor erased.",
+    "Native graph limits remain static imports/exports; no new dependency syntax was introduced.",
+    "AGENTS.md renderer-review limitation inspected: its inline paths and Markdown links correctly reference existing authority files."
+  ],
+  "selection": "No agent changes to select. No files added or modified in fixture.",
+  "evidence": [
+    "native.log",
+    "checker-working-tree.json",
+    "checker-clean.json"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "verdict": "passed; ready for authorised bounded maintenance",
+  "base": "156e8342bc33bb6ce7c7713c4df1735eeb13aa05",
+  "implementationSource": "753df024db225bde16ea88cf5112d5aaa1dfb8b8",
+  "assessmentCommit": "d6ef3546b8ffc9d956dc1d9572b2be0f09ac4200",
+  "assessment": "[fixture]/.bstack/assessment.json",
+  "assessmentSHA256": "356acbf0b7bdbd1141ffb11f391ed21e6e48bb7ab63516972b2393195327b2eb",
+  "fingerprint": "a1f6e00baa1781558245144ac1020010270e859d70f5d919464f0b9962e32793",
+  "artifacts": {
+    "before": "[isolated-home][scratch-path]",
+    "final-after": "[isolated-home][scratch-path]",
+    "local-checker": "[isolated-home][scratch-path]",
+    "clean-checker": "[isolated-home][scratch-path]"
+  },
+  "commandCaptures": [
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]",
+    "[isolated-home][scratch-path]"
+  ],
+  "preservedExactBytes": {
+    "DESIGN.md": "c5d6569edc9a12ae8bd03ec9be49fe7d9bae84c53071602b606efa81c48e5db8",
+    "glossary.md": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5",
+    "AGENTS.md": "e455f5fee064be1a49da504453da0292905504ba6400f612456e5d37f8b34cf9",
+    "docs/repo-audit.md": "6ca8bc8c44188e9500ec8361cc5e5f5a84741cb13e264936db2cb576af046df2",
+    "unit.test.mjs": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e",
+    "journey.mjs": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605",
+    ".bstack/project.json": "86b03b66383e9a0ce32adc514399470e2b0adb63b8c13a6ade3e82d0bcc5eca9",
+    ".bstack/bin/bstack-check.mjs": "08930e9bb9e797ce4197654da492f90699ca7d198d5dfa9c28571d432e720d8a"
+  },
+  "semanticReview": "Only unitPrice * quantity is named subtotal. Left-to-right multiplication, quantity > 5 multiplier, exports, imports, storage push and return shape are identical. All three document no-impact entries reviewed against literal base/current citations. All four mapped rules covered; no unmapped paths or acceptance changes. Foundation record preserved exactly.",
+  "toolVersions": {
+    "node": "v24.17.0",
+    "npm": "11.13.0"
+  },
+  "unresolvedOwnerDecision": "Receipt wording remains future owner decision; export remains outside this change.",
+  "limits": [
+    "Static boundary analysis excludes dynamic imports and arbitrary facade leakage; no dependency syntax changed.",
+    "Initial after capture was superseded by final-after, whose individual aggregate invocations each received a fresh host preflight.",
+    "No hosted delivery or external deployed-service claim."
+  ]
+}

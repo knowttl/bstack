@@ -1,0 +1,14 @@
+diff --git a/packages/web/routes.ts b/packages/web/routes.ts
+index d58183c..3fee8c9 100644
+--- a/packages/web/routes.ts
++++ b/packages/web/routes.ts
+@@ -1,7 +1,8 @@
+ import { price } from '../core/index.ts'
+ const orders: number[] = []
+ export function postOrder(quantity: number, unitPrice = price()) {
+-  const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)
++  const undiscountedTotal = unitPrice * quantity
++  const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)
+   orders.push(total)
+   return { status: 201, total }
+ }

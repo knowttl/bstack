@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "runId": "2026-10-12T04-45-26.611Z-fbd0fe89-a41e-4279-81b1-89a41665e542",
+  "artifacts": [
+    {
+      "path": "artifacts/scratch/approved-clone-checker-command.json",
+      "originalSha256": "a87fea1a303c95986d3644e46a08371752428f902e2c56d667d6f01d0cf6ade7",
+      "publishedSha256": "f8b708ce5fb02d82f433c2a81d54e9a201569586e6fd78c570ef6de7cd11760d"
+    },
+    {
+      "path": "artifacts/scratch/approved-clone-checker-preflight.json",
+      "originalSha256": "66fd185cb1e09237a6c2f2b3326cb7a608965720d7570a53b3b17ba2ec849a7b",
+      "publishedSha256": "66fd185cb1e09237a6c2f2b3326cb7a608965720d7570a53b3b17ba2ec849a7b"
+    },
+    {
+      "path": "artifacts/scratch/approved-clone-checker.log",
+      "originalSha256": "2b12e7e16c636867a84f19f4e2c95a1eb08f256ec8fbc9519519b10b98e9ebfd",
+      "publishedSha256": "8457fc2717927532d0e6f8f097dede8d90e4ffffaf2b3e7aab0988d63936738e"
+    },
+    {
+      "path": "artifacts/scratch/approved-clone-npm-ci.log",
+      "originalSha256": "94a73ab1c69f11dc4adef9507adb941a8a7685eeaab910b9579de96eb4657857",
+      "publishedSha256": "94a73ab1c69f11dc4adef9507adb941a8a7685eeaab910b9579de96eb4657857"
+    },
+    {
+      "path": "artifacts/scratch/approved-clone.log",
+      "originalSha256": "05a3e2e7910a7c0e215ccba4c75a3520023b3f13fffb365b52c1e72db2825df5",
+      "publishedSha256": "d938a6a1439ced8145626ab4b5901aecb16172bc9149accce670b7616c7f96f3"
+    },
+    {
+      "path": "artifacts/scratch/approved-local-checker-command.json",
+      "originalSha256": "a143c5f99fa77097b15e0bf5402013a394145a3afd1507aa32630983acb98e81",
+      "publishedSha256": "fb2a121b9e1e3759300545782029250dbf20b7596f288dcc7feb0d4aa626d884"
+    },
+    {
+      "path": "artifacts/scratch/approved-local-checker-preflight.json",
+      "originalSha256": "7848181ca940ad590d75b4217a867c3804a043a5702e69581d394d862a9d9635",
+      "publishedSha256": "7848181ca940ad590d75b4217a867c3804a043a5702e69581d394d862a9d9635"
+    },
+    {
+      "path": "artifacts/scratch/approved-local-checker.log",
+      "originalSha256": "53e7ab8224931a0815dc82ddc91a793b32b7cc9fd4b7c631ca10c89cddee4cdd",
+      "publishedSha256": "ab6406074c9d8998c13a6d1d479b537a96adce9fd46ca7e533d5dff971ddbda5"
+    },
+    {
+      "path": "artifacts/scratch/approved-readiness.json",
+      "originalSha256": "3f3c2bb3657be594b472cf6d49afec6b7b15cbebab58fc52082bec670ef0c273",
+      "publishedSha256": "de7659649395345d711f026d015b72f2b9db12cec2db49c028d726b8e7e71729"
+    },
+    {
+      "path": "artifacts/scratch/approved-record-verification.json",
+      "originalSha256": "57094c8df285d387fa3635cba341bd470d50e5a14161e1ce9968be9673a30969",
+      "publishedSha256": "57094c8df285d387fa3635cba341bd470d50e5a14161e1ce9968be9673a30969"
+    },
+    {
+      "path": "artifacts/scratch/assessment-binding.json",
+      "originalSha256": "07b9897ec6751bce59ee2a9f43771a47a60edbe284d71feaec7e957f3aba40e9",
+      "publishedSha256": "03b54878b8e6811d8a4fbbe54ec4759014fb1094a4400c4ee89c6aca1a0fe307"
+    },
+    {
+      "path": "artifacts/scratch/assessment.diff",
+      "originalSha256": "38a6de7e09ba20808cd0bec9124bf81486c8b994d75056c15cf6a8a77b696cb7",
+      "publishedSha256": "38a6de7e09ba20808cd0bec9124bf81486c8b994d75056c15cf6a8a77b696cb7"
+    },
+    {
+      "path": "artifacts/scratch/baseline-check.log",
+      "originalSha256": "7e1d9fdb5669ee8a5c9c99e57abe5a133d79654dd5e30c226b070fa0b403c338",
+      "publishedSha256": "7e1d9fdb5669ee8a5c9c99e57abe5a133d79654dd5e30c226b070fa0b403c338"
+    },
+    {
+      "path": "artifacts/scratch/baseline-preflight.json",
+      "originalSha256": "7013b71651f1066c6fec27fd5e6d94e53bf28d3a040b735e00356d2b787bd2f5",
+      "publishedSha256": "7013b71651f1066c6fec27fd5e6d94e53bf28d3a040b735e00356d2b787bd2f5"
+    },
+    {
+      "path": "artifacts/scratch/clone-checker-command.json",
+      "originalSha256": "e5b5d2921c586c033daa847f648062370df755960fb05f871b2da4da504fb90d",
+      "publishedSha256": "f8ddfdb28ff0a7d1e731e30cff1c9f953a74747dec4c4c4e0964982b290655e9"
+    },
+    {
+      "path": "artifacts/scratch/clone-checker-preflight.json",
+      "originalSha256": "14c6367ba823ab726d08e92e37adf924e5f84cdbad22c10b3f37fe7e201f4a01",
+      "publishedSha256": "14c6367ba823ab726d08e92e37adf924e5f84cdbad22c10b3f37fe7e201f4a01"
+    },
+    {
+      "path": "artifacts/scratch/clone-checker.log",
+      "originalSha256": "ef6115f0bfb1aec0a6c6c4cdb038c3bd49f136a3612ab4e5a85f1543b1114054",
+      "publishedSha256": "e0459fb903bb55bea909a070cbccdfbb086d12c31f3543452bcf1aacb42462d3"
+    },
+    {
+      "path": "artifacts/scratch/clone-npm-ci.log",
+      "originalSha256": "5292449327041cc5dd61794be03707bef43bdebb60848936c47ee3ae8a1b48c6",
+      "publishedSha256": "5292449327041cc5dd61794be03707bef43bdebb60848936c47ee3ae8a1b48c6"
+    },
+    {
+      "path": "artifacts/scratch/clone.log",
+      "originalSha256": "837c7b868feb2fe9cdd1aacee577f45018d584b22b0b8e6086380ed4cf7bf7b8",
+      "publishedSha256": "d938a6a1439ced8145626ab4b5901aecb16172bc9149accce670b7616c7f96f3"
+    },
+    {
+      "path": "artifacts/scratch/final-native-command.json",
+      "originalSha256": "16211356ce73d8adcfb95d2d8d83c66fd6f28c94e819bc68f3a2d1643980d009",
+      "publishedSha256": "7d56605f7c960aafc751dbc72fd94358244b5129c2b1cfcac9b3828728e04535"
+    },
+    {
+      "path": "artifacts/scratch/final-native-preflight.json",
+      "originalSha256": "2412ac9cb6ac8d942a8b914491b9250e75860f14f8c7843f56cb5cad2b6cb3b0",
+      "publishedSha256": "2412ac9cb6ac8d942a8b914491b9250e75860f14f8c7843f56cb5cad2b6cb3b0"
+    },
+    {
+      "path": "artifacts/scratch/final-native.log",
+      "originalSha256": "6bece8dae7bfef0922a272259df453daf1c66ccb9b8875301e18f6d7005a3a42",
+      "publishedSha256": "6bece8dae7bfef0922a272259df453daf1c66ccb9b8875301e18f6d7005a3a42"
+    },
+    {
+      "path": "artifacts/scratch/final.diff",
+      "originalSha256": "be3c555bb5578176679494a6854d714f0c4db4d3c25667569b74f8aeefd49af7",
+      "publishedSha256": "be3c555bb5578176679494a6854d714f0c4db4d3c25667569b74f8aeefd49af7"
+    },
+    {
+      "path": "artifacts/scratch/local-checker-command.json",
+      "originalSha256": "5fee1fdd1358b65c7bccc5288f7b6e98a361fa1437705f66cb9d1618f498209f",
+      "publishedSha256": "a32500f0c3b47722d3c9e349d93702e847a701f7b43f92a1d7db3787bac30c0f"
+    },
+    {
+      "path": "artifacts/scratch/local-checker-preflight.json",
+      "originalSha256": "4a4058b174dd8e07b2e33be36c3704fc231ec647102c95d26df4316cfbf9cdba",
+      "publishedSha256": "4a4058b174dd8e07b2e33be36c3704fc231ec647102c95d26df4316cfbf9cdba"
+    },
+    {
+      "path": "artifacts/scratch/local-checker.log",
+      "originalSha256": "c4d29727039aa42a15cb2a7674412d6fad4743f5a5a9e48b8e3d463c1fe65396",
+      "publishedSha256": "1d1a3034e886587385507483289facae1abb277eca461008ebd2e611d1b4e3c5"
+    },
+    {
+      "path": "artifacts/scratch/npm-ci.log",
+      "originalSha256": "2429c27fe47a8235aca4b3a0734a2f317a778d47b12938c382566da3b9554589",
+      "publishedSha256": "2429c27fe47a8235aca4b3a0734a2f317a778d47b12938c382566da3b9554589"
+    },
+    {
+      "path": "artifacts/scratch/readiness.json",
+      "originalSha256": "6408f03e1f6392859b668dfcef7d1fbb97c20d3f2544c330f02a29f1c0de7a1f",
+      "publishedSha256": "455b511cd9b9b60c5373b8927913d5c848ba537cfdcc66e012541af3dcc744f1"
+    },
+    {
+      "path": "artifacts/scratch/run-guarded.py",
+      "originalSha256": "1271f8b6da3e3ae253c19b256d2fa11d6e8fcf7eb400622b780e64efdfe772e5",
+      "publishedSha256": "1271f8b6da3e3ae253c19b256d2fa11d6e8fcf7eb400622b780e64efdfe772e5"
+    },
+    {
+      "path": "artifacts/target/.bstack/assessment.json",
+      "originalSha256": "b97e3c15fda6dd0cefc60f6590af9960c9dc53e897751093f48aa4905cff62c3",
+      "publishedSha256": "b97e3c15fda6dd0cefc60f6590af9960c9dc53e897751093f48aa4905cff62c3"
+    },
+    {
+      "path": "artifacts/target/docs/repo-audit.md",
+      "originalSha256": "c89179911311f8e067c5abcb29bc20cc79ba3690a143958d4b9b6e41d4937908",
+      "publishedSha256": "c89179911311f8e067c5abcb29bc20cc79ba3690a143958d4b9b6e41d4937908"
+    },
+    {
+      "path": "artifacts/scratch/approved-clone-cache/bstack/a299dac5b74316047a7ae973e4fd5010db45dd6392bba99bf737daf677f452a0/41d04ad8-092a-462c-86c8-e38bb0aac244/checker-result.json",
+      "originalSha256": "48f71aa64a20aafad7eea097cc8d3e8bdbea27d76e8650b67d7ac5e4bf5e6244",
+      "publishedSha256": "45a364b86db0aae2297ce4baccc1410e5d1d764089878cebe17bf628fa9a57c0"
+    },
+    {
+      "path": "artifacts/scratch/approved-clean-clone/.bstack/assessment.json",
+      "originalSha256": "b97e3c15fda6dd0cefc60f6590af9960c9dc53e897751093f48aa4905cff62c3",
+      "publishedSha256": "b97e3c15fda6dd0cefc60f6590af9960c9dc53e897751093f48aa4905cff62c3"
+    },
+    {
+      "path": "artifacts/scratch/local-cache/bstack/e4e1c546e993c21a197e8aa742dc3afb9764fafb01e05163b47885e3f75aa629/09ec3fa2-9edf-4d92-991a-29ce2235442a/checker-result.json",
+      "originalSha256": "67806cce04ab1731a2d30c0b1d6eea824f273371153958745d0a3bfcac630869",
+      "publishedSha256": "207854a2bb4ccac93e4686900c5fa05b19c7a29e397728b3db9cf368d23d0505"
+    },
+    {
+      "path": "artifacts/scratch/clone-cache/bstack/ca1231a9c936802a970759c713aec6f4dcce88d79e98ecd41d95733d81a749e7/f575e260-f75b-4e28-8f94-3125294fdc0f/checker-result.json",
+      "originalSha256": "0d578493731523dd2c79b6f0b56d47dcd20ee4b1b8806bb8b00038599139b571",
+      "publishedSha256": "1ff6019672b70d0c51415c04c36ea428e4d366b989039192b7b30c89524fa7c5"
+    },
+    {
+      "path": "artifacts/scratch/clean-clone/.bstack/assessment.json",
+      "originalSha256": "b97e3c15fda6dd0cefc60f6590af9960c9dc53e897751093f48aa4905cff62c3",
+      "publishedSha256": "b97e3c15fda6dd0cefc60f6590af9960c9dc53e897751093f48aa4905cff62c3"
+    },
+    {
+      "path": "artifacts/scratch/local-cache/bstack/e4e1c546e993c21a197e8aa742dc3afb9764fafb01e05163b47885e3f75aa629/327910cf-feaf-40a2-9691-63dfa526eba0/checker-result.json",
+      "originalSha256": "fc0c3efb33da6076fc4e76c77925af8f84be21d042ef1cb63bf518b194147df0",
+      "publishedSha256": "0ab0c2fe663898ab14bd39a89fcab3eeeb0651b0c5fd138a2f11968eb0e63edc"
+    }
+  ]
+}

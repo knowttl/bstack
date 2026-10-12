@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "mode": "subagents",
+  "host": "Codex API agent with collaboration tools and exec shell",
+  "capabilities": {
+    "subagents": true,
+    "web": false
+  },
+  "briefs": [
+    {
+      "id": "language",
+      "scope": [
+        "package.json",
+        "tsconfig.json",
+        "packages/core/package.json",
+        "packages/web/public.ts",
+        "packages/web/alias.ts"
+      ],
+      "findings": "Language-specific recommendations: not researched because web access is unavailable by checkpoint author constraint. Repository evidence declares ESM, Node >=24, TypeScript 5.9.3 and tsc --noEmit. Config uses ES2022, NodeNext, strict checking, no emit and TypeScript-extension imports. @storage/* maps to core/internal/*.ts and packages/**/*.ts is included. Core exports index.ts; web/public.ts imports the index and web/alias.ts uses the internal-path alias. These are configuration/source facts, not observed compiler or runtime resolution.",
+      "limitations": [
+        "Language-specific recommendations not researched: author prohibits web. No official documentation opened or memory used as external research. Configured commands not executed."
+      ],
+      "files": [
+        {
+          "location": "package.json:4",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:6",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:12",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:18",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "tsconfig.json:3",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "tsconfig.json:10",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "tsconfig.json:16",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "packages/core/package.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+          }
+        },
+        {
+          "location": "packages/web/public.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

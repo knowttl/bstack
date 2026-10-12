@@ -1,0 +1,109 @@
+{
+  "status": "ready for the approved quote extension",
+  "implementationCommit": "642126c70e02b34be91fccb785f6ccd3c8379d68",
+  "assessmentCommit": "72739613be576cf48e245226989dc1d3cb3b42cf",
+  "base": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
+  "fingerprint": "06d13d4bd4450cf95242eb538f1e17498c32c920cdd130d637bcd6aa897ddea3",
+  "assessmentSha256": "1d6185307ab6ee8311f5cdd483ea57929486accfff4826702a6a93fdacc2983e",
+  "protectedPlanDigest": "e4ea7cc03954afbe34f983e94c806057b1fe571ce820911ff1e2b6e4853ed6bd",
+  "approvedScopeApplied": [
+    ".bstack/assessment.json"
+  ],
+  "acceptance": {
+    "quote()": 12,
+    "quote(2)": 24,
+    "originalCheckout": {
+      "status": 201,
+      "total": 10
+    }
+  },
+  "checks": {
+    "working": {
+      "status": "passed",
+      "artifact": "[isolated-home]/cache/bstack/efab73784cce94304649ce79620fc6c37dee3b70ac6e00bed819115641c1b645/1eb5f1b3-6d01-4748-8c7f-63830b99db82/checker-result.json",
+      "artifactSha256": "0fdabc19efceddb5fe7782e7791fa28eced892df64845d596d420c0096d097ae",
+      "previousPolicyStatus": "passed",
+      "nativeExitCode": 0,
+      "hostPreflights": [
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T02:50:47.514Z",
+          "availableMemoryBytes": 25496203264,
+          "freeDiskBytes": 23847854080,
+          "load1m": 2.03,
+          "existingNodeSuites": 0,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        },
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T02:50:48.885Z",
+          "availableMemoryBytes": 25369341952,
+          "freeDiskBytes": 23847849984,
+          "load1m": 1.95,
+          "existingNodeSuites": 0,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        },
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T02:50:49.991Z",
+          "availableMemoryBytes": 25345040384,
+          "freeDiskBytes": 23847845888,
+          "load1m": 1.95,
+          "existingNodeSuites": 0,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        }
+      ]
+    },
+    "clean-clone": {
+      "status": "passed",
+      "artifact": "[isolated-home][scratch-path]",
+      "artifactSha256": "64f8891b84208c562a3464b533c108aeb84d0cc29b03f02b1d4b6e420b6ee5ee",
+      "previousPolicyStatus": "passed",
+      "nativeExitCode": 0,
+      "hostPreflights": [
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T02:51:11.883Z",
+          "availableMemoryBytes": 25243389952,
+          "freeDiskBytes": 23933665280,
+          "load1m": 1.81,
+          "existingNodeSuites": 0,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        },
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T02:51:13.529Z",
+          "availableMemoryBytes": 25182191616,
+          "freeDiskBytes": 23931990016,
+          "load1m": 1.9,
+          "existingNodeSuites": 0,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        },
+        {
+          "source": "host",
+          "checkedAt": "2026-10-12T02:51:14.751Z",
+          "availableMemoryBytes": 24960233472,
+          "freeDiskBytes": 23931752448,
+          "load1m": 1.9,
+          "existingNodeSuites": 0,
+          "proposedNodeSuites": 1,
+          "permitted": true
+        }
+      ]
+    }
+  },
+  "preserved": "Original quote assertion, checkout journey, checkout and core implementation, historical snapshot, original check commands and user note were byte-checked against the implementation state before assessment apply. Only the approved assessment was added.",
+  "workingTree": "clean",
+  "cleanCloneTree": "clean",
+  "limits": [
+    "Static boundary checks exclude dynamic imports and runtime loading.",
+    "Checkout journey uses the approved real loopback HTTP endpoint; no deployed service is configured.",
+    "No hosted enforcement was selected or claimed."
+  ],
+  "nextProtectedWrite": "None performed or proposed."
+}

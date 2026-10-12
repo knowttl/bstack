@@ -1,0 +1,450 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex (GPT-6) via API; functions.exec/exec_command with bash in [fixture]; discovery performed sequentially in the main thread. Observed inspect runtime: Node v24.17.0, npm 11.13.0, git 2.54.0. Subagent tools disabled by evaluation and unavailable in the active tool surface; web tool exposed but unusable under the author prohibition. Filesystem scope restricted to fixture and [isolated-home]; scratch uses TMPDIR. Fresh aggregate host preflights returned source host and permitted true before each Node helper.",
+  "capabilities": {
+    "subagents": false,
+    "web": false
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Documented: AGENTS.md:1 requires the approved design and public core interface. CLAUDE.md:1 imports AGENTS.md; no instruction consolidation is selected. DESIGN.md:3 states that UI never touches storage, and DESIGN.md:4 sets the agreed checkout total to 10. glossary.md:3 and glossary.md:4 give Order two meanings: customer purchase and UI panel sequence. This is an observed vocabulary conflict; discovery does not resolve it. Inventory found these root instruction, design and glossary files, with no scoped or local instructions. No separate purpose, user, vision, standards, decisions, prior audit or next-change document was identified in the eligible file inventory. The approved design remains the baseline.",
+      "limitations": [
+        "No interview, new product decision or instruction-loading research is authorized for this checkpoint.",
+        "Inspect recorded clean revision b6c59b7810f5155fd514c9db60e98b7dffce0cc0; inspect.json and inventory.json are retained alongside this report. No direct .git content was read."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "DESIGN.md",
+        "packages/core/index.ts",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/public.ts",
+        "packages/web/ui.ts",
+        "packages/web/alias.ts",
+        "packages/web/routes.ts",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs"
+      ],
+      "findings": "Observed source: packages/core/index.ts:1 exposes price from internal/database.ts. That implementation returns 12 and servicePrice fetches a caller-supplied URL and reads JSON.price (packages/core/internal/database.ts:1). public.ts:1 uses the public core index. ui.ts:1 directly imports servicePrice from core internals, then checkout passes the fetched price and quantity to postOrder. routes.ts:1 imports internal price; postOrder multiplies quantity and unit price, discounts quantities above five, appends totals to a module-local array and returns status 201 with total. alias.ts:1 imports @storage/database, which tsconfig.json:11 maps to core internals. These imports are candidate boundary conflicts with DESIGN.md:3 and AGENTS.md:1. a.ts:1 and b.ts:1 import and call one another; this observed reciprocal pair is not a measured dependency analysis. unit.test.mjs:5 expects public price 12, while its mocked checkout uses price 10. journey.mjs:6 supplies price 12 through a local HTTP server and journey.mjs:12 asserts total 10. This source-level discrepancy warrants future execution evidence; no failure is claimed. Inferred: price and checkout responsibilities cross the intended public boundary. No structural recommendation or product choice is selected.",
+      "limitations": [
+        "No measurements or probe results were supplied; measure and overlap were not executed. No size, fan-in, frequency, co-change, overlap or measured cycle claim is made.",
+        "Implementation and tests were read only; runtime behavior and journey outcomes remain unverified. No stated next product change was supplied."
+      ],
+      "files": [
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4"
+          }
+        },
+        {
+          "location": "packages/core/internal/database.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+          }
+        },
+        {
+          "location": "packages/web/public.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c"
+          }
+        },
+        {
+          "location": "tsconfig.json:11",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+          }
+        },
+        {
+          "location": "unit.test.mjs:5",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        },
+        {
+          "location": "journey.mjs:6",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "journey.mjs:12",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/core/package.json",
+        "packages/web/package.json",
+        "boundaries.mjs",
+        "unit.test.mjs",
+        "journey.mjs",
+        "DESIGN.md"
+      ],
+      "findings": "Configured: package.json:5 requires Node >=24, declares packages/* workspaces and pins TypeScript 5.9.3. package-lock.json:26 records the same compiler version. package.json:12 defines check as tsc --noEmit, test as node --test unit.test.mjs, journey as node journey.mjs, and boundaries as node boundaries.mjs; check does not aggregate the other commands. tsconfig.json:3 selects ES2022, NodeNext, strict and noEmit, allows .ts imports, maps @storage to core internals and includes packages/**/*.ts. Core exports index.ts; both packages declare ESM. boundaries.mjs:15 resolves imports using TypeScript, records direct/alias web-to-internal imports and traverses edges for cycles, with nonzero exit when violations exist. This describes script logic, not an executed result. unit.test.mjs:5 asserts public price 12; its checkout check mocks fetch with price 10. journey.mjs:4 contains a local HTTP checkout check against DESIGN.md:4, but its fixture supplies 12. Neither script demonstrates a real third-party-service outcome. No lint, formatter or CI configuration appeared in the eligible inventory. Executed discovery helpers only: inspect and inventory returned passed; inspect observed Node v24.17.0, npm 11.13.0 and git 2.54.0. No native product checks were run.",
+      "limitations": [
+        "Discovery-only constraint excludes side-effecting checks; the journey opens a listener and checkout mutates module state. Native test, type and boundary results are not available.",
+        "Excluded node_modules contents were not inspected; dependency installation availability is not established. No downloads, install, server, probe or CI execution was attempted."
+      ],
+      "files": [
+        {
+          "location": "package.json:5",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:12",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:18",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package-lock.json:26",
+          "state": {
+            "kind": "sha256",
+            "value": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+          }
+        },
+        {
+          "location": "tsconfig.json:3",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "packages/core/package.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+          }
+        },
+        {
+          "location": "packages/web/package.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "f83b34655bee3687b1364a8654397fba1d7141039e7efe2b5d902ef23a350326"
+          }
+        },
+        {
+          "location": "boundaries.mjs:15",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        },
+        {
+          "location": "boundaries.mjs:19",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        },
+        {
+          "location": "boundaries.mjs:26",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        },
+        {
+          "location": "unit.test.mjs:5",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        },
+        {
+          "location": "journey.mjs:4",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/core/package.json",
+        "packages/core/index.ts",
+        "packages/web/alias.ts",
+        "boundaries.mjs"
+      ],
+      "findings": "Language-specific recommendations: not researched because the checkpoint author prohibits web access and network commands. Repo evidence only: package.json:18 and package-lock.json:26 pin TypeScript 5.9.3; package.json:6 requires Node >=24. tsconfig.json:3 configures ES2022, NodeNext, strict checking, noEmit and explicit TypeScript extensions; tsconfig.json:11 maps an alias to internal files. packages/core/package.json:1 declares an ESM package with index.ts as its export, and index.ts:1 re-exports price. alias.ts:1 directly uses the internal alias. boundaries.mjs:15 uses native TypeScript module resolution for its configured boundary analysis. General principle retained for later assessment: evaluate existing native enforcement against the approved public-interface constraint before proposing additional tools. This is not a researched TypeScript recommendation or a selected new rule.",
+      "limitations": [
+        "Not researched: web access is disabled by the checkpoint author constraint, despite a web tool being exposed by the host. No official or community language/tool documentation was fetched; memory was not used as external evidence.",
+        "No language migration, lint preset, tool addition or runtime compatibility claim is selected or verified."
+      ],
+      "files": [
+        {
+          "location": "package.json:6",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:18",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package-lock.json:26",
+          "state": {
+            "kind": "sha256",
+            "value": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+          }
+        },
+        {
+          "location": "tsconfig.json:3",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "tsconfig.json:11",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "packages/core/package.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+          }
+        },
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c"
+          }
+        },
+        {
+          "location": "boundaries.mjs:15",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "unit.test.mjs",
+        "journey.mjs",
+        "package.json",
+        "package-lock.json"
+      ],
+      "findings": "Outside recommendations and service facts: not researched because the checkpoint author prohibits web access and network commands. Repo evidence: servicePrice(url) in packages/core/internal/database.ts:2 fetches a supplied URL, parses JSON and returns its price field; no explicit response-status or payload validation appears in this function. ui.ts:3 accepts that URL and uses the result for checkout. unit.test.mjs:7 replaces fetch and passes a price.example.invalid URL; this establishes a mocked test boundary, not an observed service. journey.mjs:4 defines a local server fixture rather than a third-party endpoint. package.json:17 lists TypeScript as its only devDependency; package-lock.json:28 records its registry artifact URL, which was read as metadata and not opened. No named real pricing service, service API version, credentials, deployment endpoint or supplied live-probe result was identified. General principle: mocked/local fixtures cannot establish external service behavior. No integration is invented and no external behavior is claimed.",
+      "limitations": [
+        "Not researched: author-constrained web and network prohibition. No web citations, upstream documentation, service-version research or live probes.",
+        "The runtime URL is caller supplied; a relevant named third-party service and its contract are unavailable. External failure behavior and service assumptions remain unverified."
+      ],
+      "files": [
+        {
+          "location": "packages/core/internal/database.ts:2",
+          "state": {
+            "kind": "sha256",
+            "value": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:3",
+          "state": {
+            "kind": "sha256",
+            "value": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+          }
+        },
+        {
+          "location": "unit.test.mjs:7",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        },
+        {
+          "location": "journey.mjs:4",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "package.json:17",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package-lock.json:28",
+          "state": {
+            "kind": "sha256",
+            "value": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

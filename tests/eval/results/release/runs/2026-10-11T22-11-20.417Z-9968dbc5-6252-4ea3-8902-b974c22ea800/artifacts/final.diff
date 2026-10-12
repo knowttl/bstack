@@ -1,0 +1,206 @@
+diff --git a/.bstack/assessment.json b/.bstack/assessment.json
+new file mode 100644
+index 0000000..757ff91
+--- /dev/null
++++ b/.bstack/assessment.json
+@@ -0,0 +1,186 @@
++{
++  "schemaVersion": 1,
++  "repo": ".",
++  "contract": ".bstack/project.json",
++  "previousContract": ".bstack/project.json",
++  "base": {
++    "ref": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b",
++    "kind": "commit",
++    "objectId": "37864dacc088867c4aeeb0cd18275aa98b0c0a0b"
++  },
++  "head": "f96d5447776bd2487be2aa420e4caa14117d4e84",
++  "changes": [
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/web/routes.ts"
++    }
++  ],
++  "paths": [
++    "packages/web/routes.ts"
++  ],
++  "mappings": [
++    {
++      "path": "packages/web/routes.ts",
++      "scopeIds": [
++        "maintained-repo"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "guidance"
++      ],
++      "ruleIds": [
++        "public-core",
++        "checkout-total",
++        "quote",
++        "acyclic",
++        "completion"
++      ]
++    }
++  ],
++  "unmappedPaths": [],
++  "documents": [
++    {
++      "id": "design",
++      "path": "DESIGN.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Name unitPrice * quantity as undiscountedTotal, then apply the identical quantity > 5 ? 0.9 : 1 factor; imports, default unit price, order recording and returned status/total remain unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The diff extracts only the existing first multiplication, preserving JavaScript's left-to-right evaluation and the existing discount factor. It retains the public core import and adds no dependency edge, so UI/storage separation and acyclicity remain true. Public quote stays 12 and default checkout stays { status: 201, total: 10 }, as captured by passing original and compatibility npm run check runs (including real loopback HTTP). No acceptance, public signature, receipt wording or responsibility changes are required.",
++        "citations": [
++          {
++            "path": "DESIGN.md",
++            "pointer": "The UI never touches storage.",
++            "version": "current"
++          },
++          {
++            "path": "DESIGN.md",
++            "pointer": "Quote remains 12.",
++            "version": "current"
++          },
++          {
++            "path": "DESIGN.md",
++            "pointer": "The agreed checkout total is 10.",
++            "version": "current"
++          },
++          {
++            "path": "DESIGN.md",
++            "pointer": "Static import and re-export dependencies must be acyclic.",
++            "version": "current"
++          },
++          {
++            "path": "DESIGN.md",
++            "pointer": "A change is complete when affected journeys and required checks pass on the final inputs; passing units alone does not establish completion.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    },
++    {
++      "id": "language",
++      "path": "glossary.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Name unitPrice * quantity as undiscountedTotal, then apply the identical quantity > 5 ? 0.9 : 1 factor; imports, default unit price, order recording and returned status/total remain unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "undiscountedTotal names a local numeric intermediate; it introduces no domain concept or naming migration. postOrder still records and returns the same customer purchase total; no UI panel sequence is involved. The distinct Order and Panel order definitions therefore remain correct.",
++        "citations": [
++          {
++            "path": "glossary.md",
++            "pointer": "Order: a customer purchase.",
++            "version": "current"
++          },
++          {
++            "path": "glossary.md",
++            "pointer": "Panel order: the sequence in which UI panels appear.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    },
++    {
++      "id": "guidance",
++      "path": "AGENTS.md",
++      "assessment": {
++        "result": "no-impact",
++        "changedBehavior": "Name unitPrice * quantity as undiscountedTotal, then apply the identical quantity > 5 ? 0.9 : 1 factor; imports, default unit price, order recording and returned status/total remain unchanged.",
++        "changedPaths": [
++          "packages/web/routes.ts"
++        ],
++        "reason": "The route retains its ../core/index.ts import and all documented verification commands and authority paths remain valid. The original/compatibility captures use npm run check; this portable record covers the route diff and is subsequently checked freshly with the explicit pinned base locally and in an isolated clean clone. Current readiness and captures stay in scratch; docs/repo-audit.md remains the historical snapshot.",
++        "citations": [
++          {
++            "path": "AGENTS.md",
++            "pointer": "Use the approved [design](DESIGN.md) and public core interface.",
++            "version": "current"
++          },
++          {
++            "path": "AGENTS.md",
++            "pointer": "Run `npm run check` for maintained native verification; see DESIGN.md for acceptance cases, completion evidence and review limits.",
++            "version": "current"
++          },
++          {
++            "path": "AGENTS.md",
++            "pointer": "Treat `docs/repo-audit.md` as a historical snapshot; current assessed readiness belongs in scratch.",
++            "version": "current"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)",
++            "version": "base"
++          },
++          {
++            "path": "packages/web/routes.ts",
++            "pointer": "const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)",
++            "version": "current"
++          }
++        ],
++        "dependentWork": []
++      }
++    }
++  ],
++  "unmappedAssessments": [],
++  "decisions": [],
++  "coverage": [
++    "public-core",
++    "checkout-total",
++    "quote",
++    "acyclic",
++    "completion"
++  ],
++  "execution": [
++    {
++      "runId": "affc40bb-ef64-4494-b549-b8bda50c6b8b",
++      "plan": "[isolated-home][scratch-path]"
++    }
++  ],
++  "fingerprint": "fd0266ec9831aa6b428d11ee079d3c8e4f393cca87f004a22044dd68e78c4d1e"
++}
+diff --git a/packages/web/routes.ts b/packages/web/routes.ts
+index d58183c..3fee8c9 100644
+--- a/packages/web/routes.ts
++++ b/packages/web/routes.ts
+@@ -1,7 +1,8 @@
+ import { price } from '../core/index.ts'
+ const orders: number[] = []
+ export function postOrder(quantity: number, unitPrice = price()) {
+-  const total = unitPrice * quantity * (quantity > 5 ? 0.9 : 1)
++  const undiscountedTotal = unitPrice * quantity
++  const total = undiscountedTotal * (quantity > 5 ? 0.9 : 1)
+   orders.push(total)
+   return { status: 201, total }
+ }

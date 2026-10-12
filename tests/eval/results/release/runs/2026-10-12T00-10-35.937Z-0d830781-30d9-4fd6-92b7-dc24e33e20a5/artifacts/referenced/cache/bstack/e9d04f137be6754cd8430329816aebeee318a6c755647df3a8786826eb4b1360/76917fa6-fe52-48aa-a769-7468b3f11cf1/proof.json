@@ -1,0 +1,82 @@
+{
+  "checkId": "aggregate",
+  "command": {
+    "executable": "npm",
+    "args": [
+      "run",
+      "check"
+    ],
+    "cwd": ".",
+    "versionArgs": [
+      "--version"
+    ]
+  },
+  "expectedDiagnostic": "private",
+  "status": "passed",
+  "cases": [
+    {
+      "kind": "valid",
+      "source": "[isolated-home][scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "passed",
+        "stdout": "\n> check\n> tsc --noEmit && npm run boundaries && npm test && npm run journey\n\n\n> boundaries\n> node boundaries.mjs\n\n[]\n\n> test\n> node --test unit.test.mjs\n\n✔ public price (0.890302ms)\n✔ checkout HTTP mock (28.454016ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 143.443363\n\n> journey\n> node journey.mjs\n\n{\"expectedTotal\":10,\"order\":{\"status\":201,\"total\":10}}\n",
+        "stderr": "",
+        "durationMs": 2524.107977,
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 98.43213800000001,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    },
+    {
+      "kind": "violation",
+      "source": "[isolated-home][scratch-path]",
+      "status": "passed",
+      "reason": null,
+      "execution": {
+        "status": "failed",
+        "stdout": "\n> check\n> tsc --noEmit && npm run boundaries && npm test && npm run journey\n\n\n> boundaries\n> node boundaries.mjs\n\n[\"private\"]\n",
+        "stderr": "",
+        "durationMs": 2130.5779890000003,
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "cancelled": false,
+        "outputTruncated": false,
+        "error": null,
+        "toolVersion": {
+          "status": "passed",
+          "stdout": "11.13.0\n",
+          "stderr": "",
+          "durationMs": 100.98446899999999,
+          "exitCode": 0,
+          "signal": null,
+          "timedOut": false,
+          "cancelled": false,
+          "outputTruncated": false,
+          "error": null
+        }
+      }
+    }
+  ],
+  "path": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/76917fa6-fe52-48aa-a769-7468b3f11cf1/proof.json",
+  "limitations": [
+    "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."
+  ]
+}

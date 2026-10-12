@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "642126c70e02b34be91fccb785f6ccd3c8379d68"
+  },
+  "findings": "[isolated-home][scratch-path]",
+  "findingsDigest": "de89819bf5edbf6b9e107f20f851bfbe40fb1e4032110a37e5379a63670b7e8f",
+  "selectedFindingIds": [
+    "F-008"
+  ],
+  "reviewedScope": [
+    {
+      "path": ".bstack/quote-approval.md",
+      "resolvedPath": "[fixture]/.bstack/quote-approval.md"
+    }
+  ],
+  "edits": [
+    {
+      "id": "E-approval",
+      "findingId": "F-008",
+      "path": ".bstack/quote-approval.md",
+      "originalHash": null,
+      "proposedHash": "e332d297ad01205c8b22513793c9d934d516e1095dd6e76811b6c4cb108b1d5f",
+      "operation": "create",
+      "payload": {
+        "content": "# Selected quote acceptance\n\nSource: owner request at the final checkpoint, 2026-10-12.\n\nThe approved outcome is quote() = 12 and quote(2) = 24 through the intended public core interface.\n\nPreserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly.\n\nThis records the existing owner selection; receipt wording remains a future owner decision.\n"
+      },
+      "proposedContent": "# Selected quote acceptance\n\nSource: owner request at the final checkpoint, 2026-10-12.\n\nThe approved outcome is quote() = 12 and quote(2) = 24 through the intended public core interface.\n\nPreserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly.\n\nThis records the existing owner selection; receipt wording remains a future owner decision.\n"
+    }
+  ],
+  "planDigest": "d03caa4187bf3545ac1c3ca558958c1b84c1da8d9ebe5f5a043af96f854305c5"
+}

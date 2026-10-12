@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "scenario": "scope-and-prerequisites",
+  "caseIds": [
+    "AC-57",
+    "AC-68"
+  ],
+  "runId": "2026-10-11T19-29-21.669Z-b0fe2186-45d8-4bf6-ab0a-9ac29002e221",
+  "sourceRevision": "4529d8b883e888491120979146c6ce82f2564a9e",
+  "status": "blocked-unscored",
+  "runSha256": "fe18e3554054f31f2479331b2fd783aff6261a25be78b2a4ae563aa08c5d99a3",
+  "conversationSha256": "c69b716da4968570341ae57ed7ebcf2b6296dfe9302216d9fea784de1fc77a3c",
+  "scopeGuard": {
+    "version": 3,
+    "verified": false,
+    "paths": [
+      "/tmp"
+    ],
+    "violations": [
+      {
+        "target": "/tmp",
+        "operation": "[host-home]/.nix-profile/bin/zsh -lc \"node [isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs measure --repo [fixture] --range 'HEAD\"'^..HEAD'\"' --json > \\\"\"'$TMPDIR/pricing-audit/measure.json\"\ncat \"$TMPDIR/pricing-audit/measure.json\"\ngit cat-file -e '\"'4c30913019f94a99eab09a7387a214ddd0ce12da\"'^{commit}'\"'\"",
+        "origin": "parent command"
+      },
+      {
+        "target": "/tmp",
+        "operation": "node [isolated-home]/.agents/skills/repo-audit/scripts/repo-audit.mjs measure --repo [fixture] --range 'HEAD^..HEAD' --json > \"$TMPDIR/pricing-audit/measure.json\"\ncat \"$TMPDIR/pricing-audit/measure.json\"\ngit cat-file -e '4c30913019f94a99eab09a7387a214ddd0ce12da^{commit}'",
+        "origin": "native exec (rollout-2026-10-11T12-29-27-01a12c71-080e-7033-bac8-864b1af5b93f.jsonl:40)"
+      }
+    ]
+  },
+  "triggeringParentCommandLine": 22,
+  "diagnosis": "The relative-path expression matches the two dots inside the Git range HEAD^..HEAD. Resolving that fragment against the disposable fixture produces its parent /tmp. The command does not access that parent directory.",
+  "independentReproduction": {
+    "argument": "measure --range 'HEAD^..HEAD'",
+    "matchedFragment": "..",
+    "fixture": "/tmp/disposable-fixture",
+    "resolvedTarget": "/tmp"
+  },
+  "finalResponseLine": 37,
+  "isolatedHomeDeletedAt": "2026-10-11T19:31:46.277Z",
+  "disposition": "Stop after the authorized rerun. Retain the full capture privately, do not score it or select it as release evidence, and do not repeat the unchanged agent run."
+}

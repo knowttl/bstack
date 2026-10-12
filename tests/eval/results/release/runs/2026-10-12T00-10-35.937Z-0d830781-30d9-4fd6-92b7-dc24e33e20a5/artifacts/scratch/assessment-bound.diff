@@ -1,0 +1,5237 @@
+--- a/.bstack/assessment.json
++++ b/.bstack/assessment.json
+@@ -1,2617 +1,2617 @@
+-{
+-  "schemaVersion": 1,
+-  "repo": ".",
+-  "contract": ".bstack/project.json",
+-  "previousContract": null,
+-  "base": {
+-    "ref": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+-    "kind": "commit",
+-    "objectId": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+-  },
+-  "head": "e31d443d89069004a2bd620208cfcc76d8d32154",
+-  "changes": [
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/bstack-check.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/apply.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/baseline.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/cite-check.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/contract-test.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/contract.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/docs-check.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/docs-generate.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/evidence-validate.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/evidence.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/findings.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/inspect.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/inventory.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/measure.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/overlap.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/probe.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/project.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/rule-proof.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/run-checks.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/state.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/vision-board-build.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/vision-board-launch.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/commands/vision-board-verdicts.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/args.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/check-integration.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/discovery.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/document-references.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/evidence-policy.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/fingerprint.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/glob.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/json.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/paths.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/proposed-edit.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/protected-write.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/repo.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/result.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/run.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/schema.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/scratch.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/lib/vision-board.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/bin/repo-audit.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/project.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/baseline.schema.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/change-set.schema.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/check-plan.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/contract-test.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/evidence.schema.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/findings.schema.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/impact-assessment.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/measure-exclusions.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/overlap-plan.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/probe-record.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/probe-spec.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/project-create.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/project.schema.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/research-report.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/resume-state.schema.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/vision-proposals.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": ".bstack/schemas/vision-verdicts.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "AGENTS.md"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "DESIGN.md"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "boundaries.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "A",
+-      "path": "docs/repo-audit.md"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "glossary.md"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "journey.mjs"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "package.json"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "packages/core/b.ts"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "packages/core/index.ts"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "packages/web/alias.ts"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "packages/web/routes.ts"
+-    },
+-    {
+-      "source": "committed",
+-      "status": "M",
+-      "path": "packages/web/ui.ts"
+-    }
+-  ],
+-  "paths": [
+-    ".bstack/bin/bstack-check.mjs",
+-    ".bstack/bin/commands.mjs",
+-    ".bstack/bin/commands/apply.mjs",
+-    ".bstack/bin/commands/baseline.mjs",
+-    ".bstack/bin/commands/cite-check.mjs",
+-    ".bstack/bin/commands/contract-test.mjs",
+-    ".bstack/bin/commands/contract.mjs",
+-    ".bstack/bin/commands/docs-check.mjs",
+-    ".bstack/bin/commands/docs-generate.mjs",
+-    ".bstack/bin/commands/evidence-validate.mjs",
+-    ".bstack/bin/commands/evidence.mjs",
+-    ".bstack/bin/commands/findings.mjs",
+-    ".bstack/bin/commands/inspect.mjs",
+-    ".bstack/bin/commands/inventory.mjs",
+-    ".bstack/bin/commands/measure.mjs",
+-    ".bstack/bin/commands/overlap.mjs",
+-    ".bstack/bin/commands/probe.mjs",
+-    ".bstack/bin/commands/project.mjs",
+-    ".bstack/bin/commands/rule-proof.mjs",
+-    ".bstack/bin/commands/run-checks.mjs",
+-    ".bstack/bin/commands/state.mjs",
+-    ".bstack/bin/commands/vision-board-build.mjs",
+-    ".bstack/bin/commands/vision-board-launch.mjs",
+-    ".bstack/bin/commands/vision-board-verdicts.mjs",
+-    ".bstack/bin/lib/args.mjs",
+-    ".bstack/bin/lib/check-integration.mjs",
+-    ".bstack/bin/lib/discovery.mjs",
+-    ".bstack/bin/lib/document-references.mjs",
+-    ".bstack/bin/lib/evidence-policy.mjs",
+-    ".bstack/bin/lib/fingerprint.mjs",
+-    ".bstack/bin/lib/glob.mjs",
+-    ".bstack/bin/lib/json.mjs",
+-    ".bstack/bin/lib/paths.mjs",
+-    ".bstack/bin/lib/proposed-edit.mjs",
+-    ".bstack/bin/lib/protected-write.mjs",
+-    ".bstack/bin/lib/repo.mjs",
+-    ".bstack/bin/lib/result.mjs",
+-    ".bstack/bin/lib/run.mjs",
+-    ".bstack/bin/lib/schema.mjs",
+-    ".bstack/bin/lib/scratch.mjs",
+-    ".bstack/bin/lib/vision-board.mjs",
+-    ".bstack/bin/repo-audit.mjs",
+-    ".bstack/project.json",
+-    ".bstack/schemas/baseline.schema.json",
+-    ".bstack/schemas/change-set.schema.json",
+-    ".bstack/schemas/check-plan.json",
+-    ".bstack/schemas/contract-test.json",
+-    ".bstack/schemas/evidence.schema.json",
+-    ".bstack/schemas/findings.schema.json",
+-    ".bstack/schemas/impact-assessment.json",
+-    ".bstack/schemas/measure-exclusions.json",
+-    ".bstack/schemas/overlap-plan.json",
+-    ".bstack/schemas/probe-record.json",
+-    ".bstack/schemas/probe-spec.json",
+-    ".bstack/schemas/project-create.json",
+-    ".bstack/schemas/project.schema.json",
+-    ".bstack/schemas/research-report.json",
+-    ".bstack/schemas/resume-state.schema.json",
+-    ".bstack/schemas/vision-proposals.json",
+-    ".bstack/schemas/vision-verdicts.json",
+-    "AGENTS.md",
+-    "DESIGN.md",
+-    "boundaries.mjs",
+-    "docs/repo-audit.md",
+-    "glossary.md",
+-    "journey.mjs",
+-    "package.json",
+-    "packages/core/b.ts",
+-    "packages/core/index.ts",
+-    "packages/web/alias.ts",
+-    "packages/web/routes.ts",
+-    "packages/web/ui.ts"
+-  ],
+-  "mappings": [
+-    {
+-      "path": ".bstack/bin/bstack-check.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/apply.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/baseline.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/cite-check.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/contract-test.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/contract.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/docs-check.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/docs-generate.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/evidence-validate.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/evidence.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/findings.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/inspect.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/inventory.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/measure.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/overlap.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/probe.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/project.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/rule-proof.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/run-checks.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/state.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/vision-board-build.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/vision-board-launch.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/commands/vision-board-verdicts.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/args.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/check-integration.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/discovery.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/document-references.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/evidence-policy.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/fingerprint.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/glob.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/json.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/paths.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/proposed-edit.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/protected-write.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/repo.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/result.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/run.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/schema.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/scratch.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/lib/vision-board.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/bin/repo-audit.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/project.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/baseline.schema.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/change-set.schema.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/check-plan.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/contract-test.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/evidence.schema.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/findings.schema.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/impact-assessment.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/measure-exclusions.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/overlap-plan.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/probe-record.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/probe-spec.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/project-create.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/project.schema.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/research-report.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/resume-state.schema.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/vision-proposals.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": ".bstack/schemas/vision-verdicts.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "AGENTS.md",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "DESIGN.md",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "boundaries.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "docs/repo-audit.md",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "glossary.md",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "journey.mjs",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "package.json",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "packages/core/b.ts",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "packages/core/index.ts",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "packages/web/alias.ts",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "packages/web/routes.ts",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    },
+-    {
+-      "path": "packages/web/ui.ts",
+-      "scopeIds": [
+-        "shop"
+-      ],
+-      "documentIds": [
+-        "design",
+-        "language",
+-        "agent"
+-      ],
+-      "ruleIds": [
+-        "public-core",
+-        "acyclic",
+-        "checkout",
+-        "quote",
+-        "maintenance"
+-      ]
+-    }
+-  ],
+-  "unmappedPaths": [],
+-  "documents": [
+-    {
+-      "id": "design",
+-      "path": "DESIGN.md",
+-      "assessment": {
+-        "result": "updated",
+-        "changedBehavior": "Correct controlled HTTP fixture and web/public-core dependencies, remove recursion, and establish reviewed native and portable evidence rules.",
+-        "changedPaths": [
+-          ".bstack/bin/bstack-check.mjs",
+-          ".bstack/bin/commands.mjs",
+-          ".bstack/bin/commands/apply.mjs",
+-          ".bstack/bin/commands/baseline.mjs",
+-          ".bstack/bin/commands/cite-check.mjs",
+-          ".bstack/bin/commands/contract-test.mjs",
+-          ".bstack/bin/commands/contract.mjs",
+-          ".bstack/bin/commands/docs-check.mjs",
+-          ".bstack/bin/commands/docs-generate.mjs",
+-          ".bstack/bin/commands/evidence-validate.mjs",
+-          ".bstack/bin/commands/evidence.mjs",
+-          ".bstack/bin/commands/findings.mjs",
+-          ".bstack/bin/commands/inspect.mjs",
+-          ".bstack/bin/commands/inventory.mjs",
+-          ".bstack/bin/commands/measure.mjs",
+-          ".bstack/bin/commands/overlap.mjs",
+-          ".bstack/bin/commands/probe.mjs",
+-          ".bstack/bin/commands/project.mjs",
+-          ".bstack/bin/commands/rule-proof.mjs",
+-          ".bstack/bin/commands/run-checks.mjs",
+-          ".bstack/bin/commands/state.mjs",
+-          ".bstack/bin/commands/vision-board-build.mjs",
+-          ".bstack/bin/commands/vision-board-launch.mjs",
+-          ".bstack/bin/commands/vision-board-verdicts.mjs",
+-          ".bstack/bin/lib/args.mjs",
+-          ".bstack/bin/lib/check-integration.mjs",
+-          ".bstack/bin/lib/discovery.mjs",
+-          ".bstack/bin/lib/document-references.mjs",
+-          ".bstack/bin/lib/evidence-policy.mjs",
+-          ".bstack/bin/lib/fingerprint.mjs",
+-          ".bstack/bin/lib/glob.mjs",
+-          ".bstack/bin/lib/json.mjs",
+-          ".bstack/bin/lib/paths.mjs",
+-          ".bstack/bin/lib/proposed-edit.mjs",
+-          ".bstack/bin/lib/protected-write.mjs",
+-          ".bstack/bin/lib/repo.mjs",
+-          ".bstack/bin/lib/result.mjs",
+-          ".bstack/bin/lib/run.mjs",
+-          ".bstack/bin/lib/schema.mjs",
+-          ".bstack/bin/lib/scratch.mjs",
+-          ".bstack/bin/lib/vision-board.mjs",
+-          ".bstack/bin/repo-audit.mjs",
+-          ".bstack/project.json",
+-          ".bstack/schemas/baseline.schema.json",
+-          ".bstack/schemas/change-set.schema.json",
+-          ".bstack/schemas/check-plan.json",
+-          ".bstack/schemas/contract-test.json",
+-          ".bstack/schemas/evidence.schema.json",
+-          ".bstack/schemas/findings.schema.json",
+-          ".bstack/schemas/impact-assessment.json",
+-          ".bstack/schemas/measure-exclusions.json",
+-          ".bstack/schemas/overlap-plan.json",
+-          ".bstack/schemas/probe-record.json",
+-          ".bstack/schemas/probe-spec.json",
+-          ".bstack/schemas/project-create.json",
+-          ".bstack/schemas/project.schema.json",
+-          ".bstack/schemas/research-report.json",
+-          ".bstack/schemas/resume-state.schema.json",
+-          ".bstack/schemas/vision-proposals.json",
+-          ".bstack/schemas/vision-verdicts.json",
+-          "AGENTS.md",
+-          "DESIGN.md",
+-          "boundaries.mjs",
+-          "docs/repo-audit.md",
+-          "glossary.md",
+-          "journey.mjs",
+-          "package.json",
+-          "packages/core/b.ts",
+-          "packages/core/index.ts",
+-          "packages/web/alias.ts",
+-          "packages/web/routes.ts",
+-          "packages/web/ui.ts"
+-        ],
+-        "reason": "The approved total-10 and UI/storage boundaries remain the acceptance source. The endpoint supplies 10 instead of 12, while the asserted result and public quote 12 remain unchanged. servicePrice becomes publicly available through core index; ui/routes/alias stop using storage; b uses core-owned price rather than a. The existing design adds selected completion/impact and historical-audit policies, including allowed core internals, acyclicity, independent controls, and fresh standalone leaf execution. The exact uncommitted receipt wording note is retained. The copied complete checker/runtime, schemas and first contract serve that policy without hosted CI. The historical docs/repo-audit.md records its observed revision and working-tree state with final portable readiness pending; it is an assessed snapshot rather than acceptance or current readiness authority.",
+-        "citations": [
+-          {
+-            "path": "DESIGN.md",
+-            "pointer": "# Shop design\n\nThe UI never touches storage.\nThe agreed checkout total is 10.",
+-            "version": "base"
+-          },
+-          {
+-            "path": "DESIGN.md",
+-            "pointer": "# Shop design\n\nThe UI never touches storage.\nThe agreed checkout total is 10.\n\nUser note: receipt wording remains a future owner decision.\n\n## Public core boundary\n\nWeb consumers import only the core entry point, `packages/core/index.ts`; storage remains behind it. Core may use its own storage internals. Dependencies must be acyclic. There are no boundary or cycle exceptions.\nThe existing `packages/web/public.ts` is a representative public consumer:\n\n```ts\nimport { price } from '../core/index.ts'\nexport function quote() { return price() }\n```\n\nPublic quote remains 12. The controlled HTTP endpoint in `journey.mjs` supplies price 10; checkout must return status 201 and total 10. No new discount or receipt wording is selected.\n`boundaries.mjs` uses TypeScript resolution for static imports, re-exports, import types, import-equals and literal dynamic imports. Nonliteral dynamic imports and require calls are rejected because their dependency cannot be established.\n\n## Completing and maintaining a change\n\nUse Node 24 or later and the lockfile-pinned TypeScript toolchain. Set up with `npm ci`; run `npm run check` for types, native boundaries, public unit checks and the real loopback HTTP checkout journey. Acceptance cases live here and in `journey.mjs` and `unit.test.mjs`. A change is complete when its affected journeys pass on final inputs; passing unit tests alone does not establish completion.\n\n`.bstack/project.json` maps changed paths to this design, `glossary.md`, agent pointers, rules and required leaf checks. For each change, compare against an explicit ancestor base; assess every mapped document and unmapped path against literal base/current sources. Record substantive updates, concrete no-impact reasoning or blocked owner decisions. Review the live diff before binding the assessment fingerprint. New failures must fail checks; do not add blanket exclusions or silently accept new debt.\n\nFor portable review, commit implementation first, collect and review `.bstack/assessment.json`, bind its fingerprint, then commit the assessment separately. The assessment retains the implementation head and only that assessment may change afterwards. Use the repo-owned command helpers to collect and validate:\n\n```sh\nnode .bstack/bin/repo-audit.mjs evidence collect --repo . --base <ancestor-commit> --portable .bstack/assessment.json --json\nnode .bstack/bin/repo-audit.mjs evidence validate --repo . --base <ancestor-commit> --assessment .bstack/assessment.json --json\nnode .bstack/bin/bstack-check.mjs --repo . --base <ancestor-commit> --assessment .bstack/assessment.json --json\n```\n\nThe last command executes required checks freshly. Run it in the working checkout and a different-root clean clone with isolated home/cache and the same base and committed assessment. Dependency installation remains an explicit prerequisite. No hosted CI or delivery service is selected.\n\nThe first maintenance contract is selected foundation F-005. Future changes must retain previous policy coverage or obtain explicit migration approval. Repo-owned checker/runtime and schema files are copied from the complete installed repo-audit package; the standalone gate requires Node and Git without an agent session. Review authority changes independently of passing checks.\n\n`docs/repo-audit.md` is a historical snapshot with its observed revision, not a live readiness authority. Keep current-head findings, checker captures and readiness in scratch; do not rewrite the snapshot after each run.",
+-            "version": "current"
+-          }
+-        ],
+-        "dependentWork": [],
+-        "delta": {
+-          "before": "",
+-          "after": "Web consumers import only the core entry point, `packages/core/index.ts`; storage remains behind it. Core may use its own storage internals. Dependencies must be acyclic. There are no boundary or cycle exceptions."
+-        }
+-      }
+-    },
+-    {
+-      "id": "language",
+-      "path": "glossary.md",
+-      "assessment": {
+-        "result": "updated",
+-        "changedBehavior": "Disambiguate Order and Panel order while preserving customer-purchase semantics.",
+-        "changedPaths": [
+-          ".bstack/bin/bstack-check.mjs",
+-          ".bstack/bin/commands.mjs",
+-          ".bstack/bin/commands/apply.mjs",
+-          ".bstack/bin/commands/baseline.mjs",
+-          ".bstack/bin/commands/cite-check.mjs",
+-          ".bstack/bin/commands/contract-test.mjs",
+-          ".bstack/bin/commands/contract.mjs",
+-          ".bstack/bin/commands/docs-check.mjs",
+-          ".bstack/bin/commands/docs-generate.mjs",
+-          ".bstack/bin/commands/evidence-validate.mjs",
+-          ".bstack/bin/commands/evidence.mjs",
+-          ".bstack/bin/commands/findings.mjs",
+-          ".bstack/bin/commands/inspect.mjs",
+-          ".bstack/bin/commands/inventory.mjs",
+-          ".bstack/bin/commands/measure.mjs",
+-          ".bstack/bin/commands/overlap.mjs",
+-          ".bstack/bin/commands/probe.mjs",
+-          ".bstack/bin/commands/project.mjs",
+-          ".bstack/bin/commands/rule-proof.mjs",
+-          ".bstack/bin/commands/run-checks.mjs",
+-          ".bstack/bin/commands/state.mjs",
+-          ".bstack/bin/commands/vision-board-build.mjs",
+-          ".bstack/bin/commands/vision-board-launch.mjs",
+-          ".bstack/bin/commands/vision-board-verdicts.mjs",
+-          ".bstack/bin/lib/args.mjs",
+-          ".bstack/bin/lib/check-integration.mjs",
+-          ".bstack/bin/lib/discovery.mjs",
+-          ".bstack/bin/lib/document-references.mjs",
+-          ".bstack/bin/lib/evidence-policy.mjs",
+-          ".bstack/bin/lib/fingerprint.mjs",
+-          ".bstack/bin/lib/glob.mjs",
+-          ".bstack/bin/lib/json.mjs",
+-          ".bstack/bin/lib/paths.mjs",
+-          ".bstack/bin/lib/proposed-edit.mjs",
+-          ".bstack/bin/lib/protected-write.mjs",
+-          ".bstack/bin/lib/repo.mjs",
+-          ".bstack/bin/lib/result.mjs",
+-          ".bstack/bin/lib/run.mjs",
+-          ".bstack/bin/lib/schema.mjs",
+-          ".bstack/bin/lib/scratch.mjs",
+-          ".bstack/bin/lib/vision-board.mjs",
+-          ".bstack/bin/repo-audit.mjs",
+-          ".bstack/project.json",
+-          ".bstack/schemas/baseline.schema.json",
+-          ".bstack/schemas/change-set.schema.json",
+-          ".bstack/schemas/check-plan.json",
+-          ".bstack/schemas/contract-test.json",
+-          ".bstack/schemas/evidence.schema.json",
+-          ".bstack/schemas/findings.schema.json",
+-          ".bstack/schemas/impact-assessment.json",
+-          ".bstack/schemas/measure-exclusions.json",
+-          ".bstack/schemas/overlap-plan.json",
+-          ".bstack/schemas/probe-record.json",
+-          ".bstack/schemas/probe-spec.json",
+-          ".bstack/schemas/project-create.json",
+-          ".bstack/schemas/project.schema.json",
+-          ".bstack/schemas/research-report.json",
+-          ".bstack/schemas/resume-state.schema.json",
+-          ".bstack/schemas/vision-proposals.json",
+-          ".bstack/schemas/vision-verdicts.json",
+-          "AGENTS.md",
+-          "DESIGN.md",
+-          "boundaries.mjs",
+-          "docs/repo-audit.md",
+-          "glossary.md",
+-          "journey.mjs",
+-          "package.json",
+-          "packages/core/b.ts",
+-          "packages/core/index.ts",
+-          "packages/web/alias.ts",
+-          "packages/web/routes.ts",
+-          "packages/web/ui.ts"
+-        ],
+-        "reason": "Only the selected glossary definition changes from the second Order meaning to Panel order. Runtime functions, purchase status/total, and existing authoritative file names remain unchanged in meaning; no code naming migration or pricing rule is inferred. Native check and checker/runtime additions govern verification rather than domain vocabulary.",
+-        "citations": [
+-          {
+-            "path": "glossary.md",
+-            "pointer": "# Glossary\n\nOrder: a customer purchase.\nOrder: the sequence in which UI panels appear.",
+-            "version": "base"
+-          },
+-          {
+-            "path": "glossary.md",
+-            "pointer": "# Glossary\n\nOrder: a customer purchase.\nPanel order: the sequence in which UI panels appear.",
+-            "version": "current"
+-          }
+-        ],
+-        "dependentWork": [],
+-        "delta": {
+-          "before": "# Glossary\n\nOrder: a customer purchase.\nOrder: the sequence in which UI panels appear.\n",
+-          "after": "# Glossary\n\nOrder: a customer purchase.\nPanel order: the sequence in which UI panels appear.\n"
+-        }
+-      }
+-    },
+-    {
+-      "id": "agent",
+-      "path": "AGENTS.md",
+-      "assessment": {
+-        "result": "updated",
+-        "changedBehavior": "Point agents to existing design, glossary, native aggregate and maintained impact contract.",
+-        "changedPaths": [
+-          ".bstack/bin/bstack-check.mjs",
+-          ".bstack/bin/commands.mjs",
+-          ".bstack/bin/commands/apply.mjs",
+-          ".bstack/bin/commands/baseline.mjs",
+-          ".bstack/bin/commands/cite-check.mjs",
+-          ".bstack/bin/commands/contract-test.mjs",
+-          ".bstack/bin/commands/contract.mjs",
+-          ".bstack/bin/commands/docs-check.mjs",
+-          ".bstack/bin/commands/docs-generate.mjs",
+-          ".bstack/bin/commands/evidence-validate.mjs",
+-          ".bstack/bin/commands/evidence.mjs",
+-          ".bstack/bin/commands/findings.mjs",
+-          ".bstack/bin/commands/inspect.mjs",
+-          ".bstack/bin/commands/inventory.mjs",
+-          ".bstack/bin/commands/measure.mjs",
+-          ".bstack/bin/commands/overlap.mjs",
+-          ".bstack/bin/commands/probe.mjs",
+-          ".bstack/bin/commands/project.mjs",
+-          ".bstack/bin/commands/rule-proof.mjs",
+-          ".bstack/bin/commands/run-checks.mjs",
+-          ".bstack/bin/commands/state.mjs",
+-          ".bstack/bin/commands/vision-board-build.mjs",
+-          ".bstack/bin/commands/vision-board-launch.mjs",
+-          ".bstack/bin/commands/vision-board-verdicts.mjs",
+-          ".bstack/bin/lib/args.mjs",
+-          ".bstack/bin/lib/check-integration.mjs",
+-          ".bstack/bin/lib/discovery.mjs",
+-          ".bstack/bin/lib/document-references.mjs",
+-          ".bstack/bin/lib/evidence-policy.mjs",
+-          ".bstack/bin/lib/fingerprint.mjs",
+-          ".bstack/bin/lib/glob.mjs",
+-          ".bstack/bin/lib/json.mjs",
+-          ".bstack/bin/lib/paths.mjs",
+-          ".bstack/bin/lib/proposed-edit.mjs",
+-          ".bstack/bin/lib/protected-write.mjs",
+-          ".bstack/bin/lib/repo.mjs",
+-          ".bstack/bin/lib/result.mjs",
+-          ".bstack/bin/lib/run.mjs",
+-          ".bstack/bin/lib/schema.mjs",
+-          ".bstack/bin/lib/scratch.mjs",
+-          ".bstack/bin/lib/vision-board.mjs",
+-          ".bstack/bin/repo-audit.mjs",
+-          ".bstack/project.json",
+-          ".bstack/schemas/baseline.schema.json",
+-          ".bstack/schemas/change-set.schema.json",
+-          ".bstack/schemas/check-plan.json",
+-          ".bstack/schemas/contract-test.json",
+-          ".bstack/schemas/evidence.schema.json",
+-          ".bstack/schemas/findings.schema.json",
+-          ".bstack/schemas/impact-assessment.json",
+-          ".bstack/schemas/measure-exclusions.json",
+-          ".bstack/schemas/overlap-plan.json",
+-          ".bstack/schemas/probe-record.json",
+-          ".bstack/schemas/probe-spec.json",
+-          ".bstack/schemas/project-create.json",
+-          ".bstack/schemas/project.schema.json",
+-          ".bstack/schemas/research-report.json",
+-          ".bstack/schemas/resume-state.schema.json",
+-          ".bstack/schemas/vision-proposals.json",
+-          ".bstack/schemas/vision-verdicts.json",
+-          "AGENTS.md",
+-          "DESIGN.md",
+-          "boundaries.mjs",
+-          "docs/repo-audit.md",
+-          "glossary.md",
+-          "journey.mjs",
+-          "package.json",
+-          "packages/core/b.ts",
+-          "packages/core/index.ts",
+-          "packages/web/alias.ts",
+-          "packages/web/routes.ts",
+-          "packages/web/ui.ts"
+-        ],
+-        "reason": "AGENTS.md retains its original public-core instruction and adds links to the selected authorities and commands. It keeps receipt wording a future owner decision. CLAUDE.md remains the import stub; no instruction merge or host-loading assumption is used. All implementation/runtime and contract paths are covered by selected guidance rather than duplicated vision or standards documents.",
+-        "citations": [
+-          {
+-            "path": "AGENTS.md",
+-            "pointer": "Use the approved design and public core interface.",
+-            "version": "base"
+-          },
+-          {
+-            "path": "AGENTS.md",
+-            "pointer": "Use the approved design and public core interface.\n\nRead [DESIGN.md](DESIGN.md) for public boundaries, acceptance cases and completion evidence, and [glossary.md](glossary.md) for domain terms.\nRun `npm run check` using the prepared lockfile toolchain.\nUse [.bstack/project.json](.bstack/project.json) for impact coverage and the standalone command documented in DESIGN.md for reviewed final assessments.\nThe audit record is historical; resolve receipt wording with the owner before dependent work.",
+-            "version": "current"
+-          }
+-        ],
+-        "dependentWork": [],
+-        "delta": {
+-          "before": "",
+-          "after": "Use [.bstack/project.json](.bstack/project.json) for impact coverage and the standalone command documented in DESIGN.md for reviewed final assessments."
+-        }
+-      }
+-    }
+-  ],
+-  "unmappedAssessments": [],
+-  "decisions": [
+-    {
+-      "id": "retain-approved-checkout",
+-      "status": "approved",
+-      "source": "DESIGN.md",
+-      "oldCase": "The agreed checkout total is 10.",
+-      "newCase": "The agreed checkout total is 10.",
+-      "affectedWork": [
+-        "journey.mjs",
+-        "DESIGN.md"
+-      ],
+-      "approval": {
+-        "path": "docs/repo-audit.md",
+-        "pointer": "Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy.",
+-        "version": "current"
+-      }
+-    },
+-    {
+-      "id": "clarify-approved-public-boundary",
+-      "status": "approved",
+-      "source": "DESIGN.md",
+-      "oldCase": "The UI never touches storage.",
+-      "newCase": "Web consumers import only the core entry point",
+-      "affectedWork": [
+-        "packages/core/index.ts",
+-        "packages/web/ui.ts",
+-        "packages/web/routes.ts",
+-        "packages/web/alias.ts",
+-        "boundaries.mjs",
+-        "DESIGN.md"
+-      ],
+-      "approval": {
+-        "path": "docs/repo-audit.md",
+-        "pointer": "Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy.",
+-        "version": "current"
+-      }
+-    },
+-    {
+-      "id": "retain-approved-public-quote",
+-      "status": "approved",
+-      "source": "DESIGN.md",
+-      "oldCase": "test('public price', () => assert.equal(quote(), 12))",
+-      "newCase": "Public quote remains 12.",
+-      "affectedWork": [
+-        "unit.test.mjs",
+-        "packages/web/public.ts",
+-        "DESIGN.md"
+-      ],
+-      "approval": {
+-        "path": "docs/repo-audit.md",
+-        "pointer": "Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy.",
+-        "version": "current"
+-      }
+-    }
+-  ],
+-  "coverage": [
+-    "public-core",
+-    "acyclic",
+-    "checkout",
+-    "quote",
+-    "maintenance"
+-  ],
+-  "execution": [
+-    {
+-      "runId": "e612be27-2cdb-4e85-a577-28cae4a8c837",
+-      "plan": "[isolated-home][scratch-path]"
+-    }
+-  ],
+-  "fingerprint": null,
+-  "foundation": {
+-    "findingId": "F-005",
+-    "record": {
+-      "schemaVersion": 1,
+-      "stage": "foundation",
+-      "target": {
+-        "mode": "repo",
+-        "root": "[fixture]",
+-        "revision": "e31d443d89069004a2bd620208cfcc76d8d32154"
+-      },
+-      "nextChange": "Selected first maintenance contract and complete standalone checker for the approved Shop design.",
+-      "reviewedScope": [
+-        "DESIGN.md",
+-        "AGENTS.md",
+-        ".bstack/project.json",
+-        ".bstack/bin/bstack-check.mjs",
+-        ".bstack/bin/commands.mjs",
+-        ".bstack/bin/commands/apply.mjs",
+-        ".bstack/bin/commands/baseline.mjs",
+-        ".bstack/bin/commands/cite-check.mjs",
+-        ".bstack/bin/commands/contract-test.mjs",
+-        ".bstack/bin/commands/contract.mjs",
+-        ".bstack/bin/commands/docs-check.mjs",
+-        ".bstack/bin/commands/docs-generate.mjs",
+-        ".bstack/bin/commands/evidence-validate.mjs",
+-        ".bstack/bin/commands/evidence.mjs",
+-        ".bstack/bin/commands/findings.mjs",
+-        ".bstack/bin/commands/inspect.mjs",
+-        ".bstack/bin/commands/inventory.mjs",
+-        ".bstack/bin/commands/measure.mjs",
+-        ".bstack/bin/commands/overlap.mjs",
+-        ".bstack/bin/commands/probe.mjs",
+-        ".bstack/bin/commands/project.mjs",
+-        ".bstack/bin/commands/rule-proof.mjs",
+-        ".bstack/bin/commands/run-checks.mjs",
+-        ".bstack/bin/commands/state.mjs",
+-        ".bstack/bin/commands/vision-board-build.mjs",
+-        ".bstack/bin/commands/vision-board-launch.mjs",
+-        ".bstack/bin/commands/vision-board-verdicts.mjs",
+-        ".bstack/bin/lib/args.mjs",
+-        ".bstack/bin/lib/check-integration.mjs",
+-        ".bstack/bin/lib/discovery.mjs",
+-        ".bstack/bin/lib/document-references.mjs",
+-        ".bstack/bin/lib/evidence-policy.mjs",
+-        ".bstack/bin/lib/fingerprint.mjs",
+-        ".bstack/bin/lib/glob.mjs",
+-        ".bstack/bin/lib/json.mjs",
+-        ".bstack/bin/lib/paths.mjs",
+-        ".bstack/bin/lib/proposed-edit.mjs",
+-        ".bstack/bin/lib/protected-write.mjs",
+-        ".bstack/bin/lib/repo.mjs",
+-        ".bstack/bin/lib/result.mjs",
+-        ".bstack/bin/lib/run.mjs",
+-        ".bstack/bin/lib/schema.mjs",
+-        ".bstack/bin/lib/scratch.mjs",
+-        ".bstack/bin/lib/vision-board.mjs",
+-        ".bstack/bin/repo-audit.mjs",
+-        ".bstack/schemas/baseline.schema.json",
+-        ".bstack/schemas/change-set.schema.json",
+-        ".bstack/schemas/check-plan.json",
+-        ".bstack/schemas/contract-test.json",
+-        ".bstack/schemas/evidence.schema.json",
+-        ".bstack/schemas/findings.schema.json",
+-        ".bstack/schemas/impact-assessment.json",
+-        ".bstack/schemas/measure-exclusions.json",
+-        ".bstack/schemas/overlap-plan.json",
+-        ".bstack/schemas/probe-record.json",
+-        ".bstack/schemas/probe-spec.json",
+-        ".bstack/schemas/project-create.json",
+-        ".bstack/schemas/project.schema.json",
+-        ".bstack/schemas/research-report.json",
+-        ".bstack/schemas/resume-state.schema.json",
+-        ".bstack/schemas/vision-proposals.json",
+-        ".bstack/schemas/vision-verdicts.json"
+-      ],
+-      "sources": [
+-        {
+-          "id": "design",
+-          "pointer": "DESIGN.md:3-4",
+-          "intent": "documented",
+-          "summary": "UI never touches storage; agreed checkout total is 10."
+-        },
+-        {
+-          "id": "instructions",
+-          "pointer": "AGENTS.md:1",
+-          "intent": "documented",
+-          "summary": "Use approved design and public core interface."
+-        },
+-        {
+-          "id": "runtime",
+-          "pointer": "packages/web/ui.ts:1; packages/web/routes.ts:1; packages/web/alias.ts:1; packages/core/a.ts:1; packages/core/b.ts:1",
+-          "intent": "observed",
+-          "summary": "Private and aliased imports and a cycle are present."
+-        },
+-        {
+-          "id": "checks",
+-          "pointer": "package.json:12; journey.mjs:6-12; unit.test.mjs:5",
+-          "intent": "observed",
+-          "summary": "Types and units pass; real loopback checkout returns 12; boundaries reports alias, cycle, private."
+-        },
+-        {
+-          "id": "vocabulary",
+-          "pointer": "glossary.md:3-4",
+-          "intent": "documented",
+-          "summary": "Order has two conflicting meanings."
+-        },
+-        {
+-          "id": "selection",
+-          "pointer": "[isolated-home][scratch-path]",
+-          "intent": "documented",
+-          "summary": "Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy."
+-        },
+-        {
+-          "id": "user-note",
+-          "pointer": "DESIGN.md:6",
+-          "intent": "documented",
+-          "summary": "User note: receipt wording remains a future owner decision."
+-        },
+-        {
+-          "id": "initial-capture",
+-          "pointer": "[isolated-home][scratch-path]",
+-          "intent": "observed",
+-          "summary": "At b6c59b7 plus preserved user note, types and unit checks passed; actual checkout returned 12, and boundaries failed alias/cycle/private."
+-        },
+-        {
+-          "id": "current-capture",
+-          "pointer": "[isolated-home][scratch-path]",
+-          "intent": "observed",
+-          "summary": "Approved implementation applied via protected writes; maintained aggregate passes, quote is 12 and real controlled HTTP checkout returns total 10."
+-        }
+-      ],
+-      "findings": [
+-        {
+-          "id": "F-005",
+-          "problem": "No maintained change evidence contract, standalone checker or completion guidance exists.",
+-          "files": [
+-            "DESIGN.md",
+-            "AGENTS.md",
+-            ".bstack/project.json",
+-            ".bstack/bin/bstack-check.mjs",
+-            ".bstack/bin/commands.mjs",
+-            ".bstack/bin/commands/apply.mjs",
+-            ".bstack/bin/commands/baseline.mjs",
+-            ".bstack/bin/commands/cite-check.mjs",
+-            ".bstack/bin/commands/contract-test.mjs",
+-            ".bstack/bin/commands/contract.mjs",
+-            ".bstack/bin/commands/docs-check.mjs",
+-            ".bstack/bin/commands/docs-generate.mjs",
+-            ".bstack/bin/commands/evidence-validate.mjs",
+-            ".bstack/bin/commands/evidence.mjs",
+-            ".bstack/bin/commands/findings.mjs",
+-            ".bstack/bin/commands/inspect.mjs",
+-            ".bstack/bin/commands/inventory.mjs",
+-            ".bstack/bin/commands/measure.mjs",
+-            ".bstack/bin/commands/overlap.mjs",
+-            ".bstack/bin/commands/probe.mjs",
+-            ".bstack/bin/commands/project.mjs",
+-            ".bstack/bin/commands/rule-proof.mjs",
+-            ".bstack/bin/commands/run-checks.mjs",
+-            ".bstack/bin/commands/state.mjs",
+-            ".bstack/bin/commands/vision-board-build.mjs",
+-            ".bstack/bin/commands/vision-board-launch.mjs",
+-            ".bstack/bin/commands/vision-board-verdicts.mjs",
+-            ".bstack/bin/lib/args.mjs",
+-            ".bstack/bin/lib/check-integration.mjs",
+-            ".bstack/bin/lib/discovery.mjs",
+-            ".bstack/bin/lib/document-references.mjs",
+-            ".bstack/bin/lib/evidence-policy.mjs",
+-            ".bstack/bin/lib/fingerprint.mjs",
+-            ".bstack/bin/lib/glob.mjs",
+-            ".bstack/bin/lib/json.mjs",
+-            ".bstack/bin/lib/paths.mjs",
+-            ".bstack/bin/lib/proposed-edit.mjs",
+-            ".bstack/bin/lib/protected-write.mjs",
+-            ".bstack/bin/lib/repo.mjs",
+-            ".bstack/bin/lib/result.mjs",
+-            ".bstack/bin/lib/run.mjs",
+-            ".bstack/bin/lib/schema.mjs",
+-            ".bstack/bin/lib/scratch.mjs",
+-            ".bstack/bin/lib/vision-board.mjs",
+-            ".bstack/bin/repo-audit.mjs",
+-            ".bstack/schemas/baseline.schema.json",
+-            ".bstack/schemas/change-set.schema.json",
+-            ".bstack/schemas/check-plan.json",
+-            ".bstack/schemas/contract-test.json",
+-            ".bstack/schemas/evidence.schema.json",
+-            ".bstack/schemas/findings.schema.json",
+-            ".bstack/schemas/impact-assessment.json",
+-            ".bstack/schemas/measure-exclusions.json",
+-            ".bstack/schemas/overlap-plan.json",
+-            ".bstack/schemas/probe-record.json",
+-            ".bstack/schemas/probe-spec.json",
+-            ".bstack/schemas/project-create.json",
+-            ".bstack/schemas/project.schema.json",
+-            ".bstack/schemas/research-report.json",
+-            ".bstack/schemas/resume-state.schema.json",
+-            ".bstack/schemas/vision-proposals.json",
+-            ".bstack/schemas/vision-verdicts.json"
+-          ],
+-          "command": null,
+-          "principle": "Changes complete when affected approved journeys pass on final inputs; unit success alone is insufficient.",
+-          "consequence": "Later user edits and extensions have no portable impact and acceptance gate.",
+-          "fix": "Maintain completion/impact guidance in DESIGN.md, pointers in AGENTS.md, selected first contract and complete standalone runtime/schemas. Preserve exact user note and CLAUDE.md.",
+-          "scope": [
+-            "DESIGN.md",
+-            "AGENTS.md",
+-            ".bstack/project.json",
+-            ".bstack/bin/bstack-check.mjs",
+-            ".bstack/bin/commands.mjs",
+-            ".bstack/bin/commands/apply.mjs",
+-            ".bstack/bin/commands/baseline.mjs",
+-            ".bstack/bin/commands/cite-check.mjs",
+-            ".bstack/bin/commands/contract-test.mjs",
+-            ".bstack/bin/commands/contract.mjs",
+-            ".bstack/bin/commands/docs-check.mjs",
+-            ".bstack/bin/commands/docs-generate.mjs",
+-            ".bstack/bin/commands/evidence-validate.mjs",
+-            ".bstack/bin/commands/evidence.mjs",
+-            ".bstack/bin/commands/findings.mjs",
+-            ".bstack/bin/commands/inspect.mjs",
+-            ".bstack/bin/commands/inventory.mjs",
+-            ".bstack/bin/commands/measure.mjs",
+-            ".bstack/bin/commands/overlap.mjs",
+-            ".bstack/bin/commands/probe.mjs",
+-            ".bstack/bin/commands/project.mjs",
+-            ".bstack/bin/commands/rule-proof.mjs",
+-            ".bstack/bin/commands/run-checks.mjs",
+-            ".bstack/bin/commands/state.mjs",
+-            ".bstack/bin/commands/vision-board-build.mjs",
+-            ".bstack/bin/commands/vision-board-launch.mjs",
+-            ".bstack/bin/commands/vision-board-verdicts.mjs",
+-            ".bstack/bin/lib/args.mjs",
+-            ".bstack/bin/lib/check-integration.mjs",
+-            ".bstack/bin/lib/discovery.mjs",
+-            ".bstack/bin/lib/document-references.mjs",
+-            ".bstack/bin/lib/evidence-policy.mjs",
+-            ".bstack/bin/lib/fingerprint.mjs",
+-            ".bstack/bin/lib/glob.mjs",
+-            ".bstack/bin/lib/json.mjs",
+-            ".bstack/bin/lib/paths.mjs",
+-            ".bstack/bin/lib/proposed-edit.mjs",
+-            ".bstack/bin/lib/protected-write.mjs",
+-            ".bstack/bin/lib/repo.mjs",
+-            ".bstack/bin/lib/result.mjs",
+-            ".bstack/bin/lib/run.mjs",
+-            ".bstack/bin/lib/schema.mjs",
+-            ".bstack/bin/lib/scratch.mjs",
+-            ".bstack/bin/lib/vision-board.mjs",
+-            ".bstack/bin/repo-audit.mjs",
+-            ".bstack/schemas/baseline.schema.json",
+-            ".bstack/schemas/change-set.schema.json",
+-            ".bstack/schemas/check-plan.json",
+-            ".bstack/schemas/contract-test.json",
+-            ".bstack/schemas/evidence.schema.json",
+-            ".bstack/schemas/findings.schema.json",
+-            ".bstack/schemas/impact-assessment.json",
+-            ".bstack/schemas/measure-exclusions.json",
+-            ".bstack/schemas/overlap-plan.json",
+-            ".bstack/schemas/probe-record.json",
+-            ".bstack/schemas/probe-spec.json",
+-            ".bstack/schemas/project-create.json",
+-            ".bstack/schemas/project.schema.json",
+-            ".bstack/schemas/research-report.json",
+-            ".bstack/schemas/resume-state.schema.json",
+-            ".bstack/schemas/vision-proposals.json",
+-            ".bstack/schemas/vision-verdicts.json"
+-          ],
+-          "verification": "Contract/docs validation; final impact assessment covering changed and unmapped paths; fresh standalone check in checkout and different-root clean clone with isolated home/cache, same explicit base.",
+-          "blocksNextChange": true,
+-          "category": "missing-protection",
+-          "status": "selected",
+-          "newPrinciple": true,
+-          "resolved": true,
+-          "sourceIds": [
+-            "design",
+-            "instructions",
+-            "checks"
+-          ]
+-        }
+-      ],
+-      "selectedFindingIds": [
+-        "F-005"
+-      ],
+-      "requiredOutcomes": [
+-        "starting-checks",
+-        "journey",
+-        "boundary-proof",
+-        "maintained-enforcement",
+-        "foundation-review",
+-        "maintenance-contract",
+-        "standalone-clean-clone",
+-        "final-proof-aggregate-cycle",
+-        "final-proof-aggregate-dynamic",
+-        "final-proof-aggregate-import-type",
+-        "final-proof-aggregate-nonpublic",
+-        "final-proof-aggregate-private",
+-        "final-proof-aggregate-reexport",
+-        "final-proof-aggregate-unknown-dynamic",
+-        "final-proof-native-cycle",
+-        "final-proof-native-dynamic",
+-        "final-proof-native-import-type",
+-        "final-proof-native-nonpublic",
+-        "final-proof-native-private",
+-        "final-proof-native-reexport",
+-        "final-proof-native-unknown-dynamic"
+-      ],
+-      "execution": [
+-        {
+-          "id": "current-native",
+-          "outcome": "starting-checks",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/2c1eabae-bd3c-4520-8a96-c3a1df06eaed/checks.json",
+-          "artifactHash": "211ba86eb0d175af7d1ec24ed090f844864b1f0977bd0ef0fa5fb40cafba62f7",
+-          "method": "run-checks captured actual target commands and declared inputs; primary review verified acceptance coverage."
+-        },
+-        {
+-          "id": "actual-ui-http",
+-          "outcome": "journey",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/8701ca05-635e-4169-8c9b-e94130d9220d/checks.json",
+-          "artifactHash": "5a7403d2e913185bdc8469ce1a03343b7cb27d5f5e3466a5ee80596ff2797a97",
+-          "method": "run-checks captured actual target commands and declared inputs; primary review verified acceptance coverage."
+-        },
+-        {
+-          "id": "final-proof-aggregate-alias",
+-          "outcome": "maintained-enforcement",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/d299d50e-8ff2-4b22-8e4d-9e48f7547027/proof.json",
+-          "artifactHash": "140c078ad4d6535217af1263f1212354b06032d52c9590910e7ee1788b6a486c",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-aggregate-cycle",
+-          "outcome": "final-proof-aggregate-cycle",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/65c1a237-7c2b-43eb-9808-de54b14731e5/proof.json",
+-          "artifactHash": "e39bbcde4865375dbe8e6ebaf002993d2328eaa085e0aa97fb4b664a7850a2ab",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-aggregate-dynamic",
+-          "outcome": "final-proof-aggregate-dynamic",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/c0cf1503-1147-4609-b2ef-9718d2ca208c/proof.json",
+-          "artifactHash": "1dee09c24612a76e1324039d5795769d8ea07ed70b784ed7b8bbde807deebbfb",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-aggregate-import-type",
+-          "outcome": "final-proof-aggregate-import-type",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/69325e83-83e8-4b3e-9b91-39464355cee8/proof.json",
+-          "artifactHash": "ffed1d45b9ddce9559391dffa1605164fd573d944bb3821155beb98f0ff9125f",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-aggregate-nonpublic",
+-          "outcome": "final-proof-aggregate-nonpublic",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/5554acb3-8d8e-4990-9ae4-cb7d8b215e65/proof.json",
+-          "artifactHash": "612138fd29ffe2557e5db2dca0a80e83ba5df67b82570bd2217c77e44289347b",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-aggregate-private",
+-          "outcome": "final-proof-aggregate-private",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e2a28860-65ee-446c-b376-4c97e0d40d49/proof.json",
+-          "artifactHash": "028d41496485333502ccb6bae7816cd05fd103a37245cce6ebdd95228f0c8b25",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-aggregate-reexport",
+-          "outcome": "final-proof-aggregate-reexport",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e98e7c1a-08cb-44c7-bac1-1c6286da5f4e/proof.json",
+-          "artifactHash": "66b42383d09ad68043ec8f2e3f7d6e8f70f1071beeb27b44e49902fec046b9af",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-aggregate-unknown-dynamic",
+-          "outcome": "final-proof-aggregate-unknown-dynamic",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/8ecf6b39-3f80-4a41-88a7-0bb2b0e361a1/proof.json",
+-          "artifactHash": "81a9958d72a3b0fb975e105c14e0055c05075c3e72541058c7b10df4be4b2ce9",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-native-alias",
+-          "outcome": "boundary-proof",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/1c3195d5-0089-490e-addc-b0e119d5a2f6/proof.json",
+-          "artifactHash": "bfbe58acfa0d409633c02b52071119ed3e8fc0de6c3d8b6b6e0723f791487ed5",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-native-cycle",
+-          "outcome": "final-proof-native-cycle",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/850e52e7-798a-4ad6-8df0-d379487c024a/proof.json",
+-          "artifactHash": "98ce7eba8f42b2b422e9bdc39bb58689956180901385b57cf455774bf17c8952",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-native-dynamic",
+-          "outcome": "final-proof-native-dynamic",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/437755fd-e2e5-45fc-b997-5bdca3349573/proof.json",
+-          "artifactHash": "e2c7534d3dee44839fcf0160dce577adf4f8aa3423af72a2711a6902d0d69d45",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-native-import-type",
+-          "outcome": "final-proof-native-import-type",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e11ebefa-ae79-4bc8-80e4-d558c5b7bb91/proof.json",
+-          "artifactHash": "e4965e3cf60bde6e8e93274596bcdd9e642835ffea700fd22e2c0c7c1b8ca564",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-native-nonpublic",
+-          "outcome": "final-proof-native-nonpublic",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/1a750aca-bb23-449c-a836-b9abc1665dcb/proof.json",
+-          "artifactHash": "63b9e7666d3e683dfc7f570476998d626167eedf83037950e36b667a663bc341",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-native-private",
+-          "outcome": "final-proof-native-private",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/9d20ddcf-7529-4334-af81-37df562e3522/proof.json",
+-          "artifactHash": "29242351732a4aa9ede748473bd00fe97b5c9ff58c97b0671bd91a8097b4c9e1",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-native-reexport",
+-          "outcome": "final-proof-native-reexport",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/d40e79f8-baad-41cd-acb0-0bac5691cbe6/proof.json",
+-          "artifactHash": "51c8f6af5e9df6d37a69b528db81c4a505630bbb4d7678802db556fc195ade7a",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "final-proof-native-unknown-dynamic",
+-          "outcome": "final-proof-native-unknown-dynamic",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/db306f23-97b0-4707-a797-38bf34c0f8a3/proof.json",
+-          "artifactHash": "dc0056db9b35b3cf9f8243b2cf941d44aa18c0f89a3f4ad522eed66a36e0711e",
+-          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
+-        },
+-        {
+-          "id": "owner-approved-foundation",
+-          "outcome": "foundation-review",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home][scratch-path]",
+-          "artifactHash": "dddee931ce3dedc65a3e6ef4994e4960e086976ec1aa07824c9c193f1b184335",
+-          "method": "Primary semantic review of owner-approved exact bytes and captured actual execution."
+-        },
+-        {
+-          "id": "contract-native",
+-          "outcome": "maintenance-contract",
+-          "status": "passed",
+-          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
+-          "artifact": "[isolated-home][scratch-path]",
+-          "artifactHash": "c5eaca0ab4b56f1401f703bf8389b39948ed76681a2a32a996c2d599e9f0146c",
+-          "method": "Native contract validate captured on applied target."
+-        }
+-      ],
+-      "limitations": [
+-        "Historical snapshot after approved implementation at b6c59b7810f5155fd514c9db60e98b7dffce0cc0 with selected working-tree edits; final portable assessment and standalone checkout/isolated-clone verification still pending.",
+-        "Receipt wording remains a future owner decision; exact user note preserved. No hosted CI selected.",
+-        "One-commit starting history provides sizes but no change frequency or co-change history.",
+-        "Native controls cover static imports, aliases, re-exports, nonpublic core targets, import types, literal and unknown dynamic imports, and cycles; require calls are rejected. Dynamic runtime behaviour outside these controls remains a coverage limit.",
+-        "Line-style glossary is explicitly reviewed; automated glossary-format validation is limited.",
+-        "Tool results establish declared coverage and execution; primary review assessed semantics against the approved design and supervisor verdicts."
+-      ]
+-    }
+-  }
+-}
++{
++  "schemaVersion": 1,
++  "repo": ".",
++  "contract": ".bstack/project.json",
++  "previousContract": null,
++  "base": {
++    "ref": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
++    "kind": "commit",
++    "objectId": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
++  },
++  "head": "e31d443d89069004a2bd620208cfcc76d8d32154",
++  "changes": [
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/bstack-check.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/apply.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/baseline.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/cite-check.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/contract-test.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/contract.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/docs-check.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/docs-generate.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/evidence-validate.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/evidence.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/findings.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/inspect.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/inventory.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/measure.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/overlap.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/probe.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/project.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/rule-proof.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/run-checks.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/state.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/vision-board-build.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/vision-board-launch.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/commands/vision-board-verdicts.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/args.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/check-integration.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/discovery.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/document-references.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/evidence-policy.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/fingerprint.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/glob.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/json.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/paths.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/proposed-edit.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/protected-write.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/repo.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/result.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/run.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/schema.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/scratch.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/lib/vision-board.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/bin/repo-audit.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/project.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/baseline.schema.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/change-set.schema.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/check-plan.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/contract-test.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/evidence.schema.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/findings.schema.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/impact-assessment.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/measure-exclusions.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/overlap-plan.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/probe-record.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/probe-spec.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/project-create.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/project.schema.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/research-report.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/resume-state.schema.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/vision-proposals.json"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": ".bstack/schemas/vision-verdicts.json"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "AGENTS.md"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "DESIGN.md"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "boundaries.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "A",
++      "path": "docs/repo-audit.md"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "glossary.md"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "journey.mjs"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "package.json"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/core/b.ts"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/core/index.ts"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/web/alias.ts"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/web/routes.ts"
++    },
++    {
++      "source": "committed",
++      "status": "M",
++      "path": "packages/web/ui.ts"
++    }
++  ],
++  "paths": [
++    ".bstack/bin/bstack-check.mjs",
++    ".bstack/bin/commands.mjs",
++    ".bstack/bin/commands/apply.mjs",
++    ".bstack/bin/commands/baseline.mjs",
++    ".bstack/bin/commands/cite-check.mjs",
++    ".bstack/bin/commands/contract-test.mjs",
++    ".bstack/bin/commands/contract.mjs",
++    ".bstack/bin/commands/docs-check.mjs",
++    ".bstack/bin/commands/docs-generate.mjs",
++    ".bstack/bin/commands/evidence-validate.mjs",
++    ".bstack/bin/commands/evidence.mjs",
++    ".bstack/bin/commands/findings.mjs",
++    ".bstack/bin/commands/inspect.mjs",
++    ".bstack/bin/commands/inventory.mjs",
++    ".bstack/bin/commands/measure.mjs",
++    ".bstack/bin/commands/overlap.mjs",
++    ".bstack/bin/commands/probe.mjs",
++    ".bstack/bin/commands/project.mjs",
++    ".bstack/bin/commands/rule-proof.mjs",
++    ".bstack/bin/commands/run-checks.mjs",
++    ".bstack/bin/commands/state.mjs",
++    ".bstack/bin/commands/vision-board-build.mjs",
++    ".bstack/bin/commands/vision-board-launch.mjs",
++    ".bstack/bin/commands/vision-board-verdicts.mjs",
++    ".bstack/bin/lib/args.mjs",
++    ".bstack/bin/lib/check-integration.mjs",
++    ".bstack/bin/lib/discovery.mjs",
++    ".bstack/bin/lib/document-references.mjs",
++    ".bstack/bin/lib/evidence-policy.mjs",
++    ".bstack/bin/lib/fingerprint.mjs",
++    ".bstack/bin/lib/glob.mjs",
++    ".bstack/bin/lib/json.mjs",
++    ".bstack/bin/lib/paths.mjs",
++    ".bstack/bin/lib/proposed-edit.mjs",
++    ".bstack/bin/lib/protected-write.mjs",
++    ".bstack/bin/lib/repo.mjs",
++    ".bstack/bin/lib/result.mjs",
++    ".bstack/bin/lib/run.mjs",
++    ".bstack/bin/lib/schema.mjs",
++    ".bstack/bin/lib/scratch.mjs",
++    ".bstack/bin/lib/vision-board.mjs",
++    ".bstack/bin/repo-audit.mjs",
++    ".bstack/project.json",
++    ".bstack/schemas/baseline.schema.json",
++    ".bstack/schemas/change-set.schema.json",
++    ".bstack/schemas/check-plan.json",
++    ".bstack/schemas/contract-test.json",
++    ".bstack/schemas/evidence.schema.json",
++    ".bstack/schemas/findings.schema.json",
++    ".bstack/schemas/impact-assessment.json",
++    ".bstack/schemas/measure-exclusions.json",
++    ".bstack/schemas/overlap-plan.json",
++    ".bstack/schemas/probe-record.json",
++    ".bstack/schemas/probe-spec.json",
++    ".bstack/schemas/project-create.json",
++    ".bstack/schemas/project.schema.json",
++    ".bstack/schemas/research-report.json",
++    ".bstack/schemas/resume-state.schema.json",
++    ".bstack/schemas/vision-proposals.json",
++    ".bstack/schemas/vision-verdicts.json",
++    "AGENTS.md",
++    "DESIGN.md",
++    "boundaries.mjs",
++    "docs/repo-audit.md",
++    "glossary.md",
++    "journey.mjs",
++    "package.json",
++    "packages/core/b.ts",
++    "packages/core/index.ts",
++    "packages/web/alias.ts",
++    "packages/web/routes.ts",
++    "packages/web/ui.ts"
++  ],
++  "mappings": [
++    {
++      "path": ".bstack/bin/bstack-check.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/apply.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/baseline.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/cite-check.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/contract-test.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/contract.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/docs-check.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/docs-generate.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/evidence-validate.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/evidence.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/findings.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/inspect.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/inventory.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/measure.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/overlap.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/probe.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/project.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/rule-proof.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/run-checks.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/state.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/vision-board-build.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/vision-board-launch.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/commands/vision-board-verdicts.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/args.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/check-integration.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/discovery.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/document-references.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/evidence-policy.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/fingerprint.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/glob.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/json.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/paths.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/proposed-edit.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/protected-write.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/repo.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/result.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/run.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/schema.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/scratch.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/lib/vision-board.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/bin/repo-audit.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/project.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/baseline.schema.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/change-set.schema.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/check-plan.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/contract-test.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/evidence.schema.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/findings.schema.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/impact-assessment.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/measure-exclusions.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/overlap-plan.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/probe-record.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/probe-spec.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/project-create.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/project.schema.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/research-report.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/resume-state.schema.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/vision-proposals.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": ".bstack/schemas/vision-verdicts.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "AGENTS.md",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "DESIGN.md",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "boundaries.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "docs/repo-audit.md",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "glossary.md",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "journey.mjs",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "package.json",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "packages/core/b.ts",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "packages/core/index.ts",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "packages/web/alias.ts",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "packages/web/routes.ts",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    },
++    {
++      "path": "packages/web/ui.ts",
++      "scopeIds": [
++        "shop"
++      ],
++      "documentIds": [
++        "design",
++        "language",
++        "agent"
++      ],
++      "ruleIds": [
++        "public-core",
++        "acyclic",
++        "checkout",
++        "quote",
++        "maintenance"
++      ]
++    }
++  ],
++  "unmappedPaths": [],
++  "documents": [
++    {
++      "id": "design",
++      "path": "DESIGN.md",
++      "assessment": {
++        "result": "updated",
++        "changedBehavior": "Correct controlled HTTP fixture and web/public-core dependencies, remove recursion, and establish reviewed native and portable evidence rules.",
++        "changedPaths": [
++          ".bstack/bin/bstack-check.mjs",
++          ".bstack/bin/commands.mjs",
++          ".bstack/bin/commands/apply.mjs",
++          ".bstack/bin/commands/baseline.mjs",
++          ".bstack/bin/commands/cite-check.mjs",
++          ".bstack/bin/commands/contract-test.mjs",
++          ".bstack/bin/commands/contract.mjs",
++          ".bstack/bin/commands/docs-check.mjs",
++          ".bstack/bin/commands/docs-generate.mjs",
++          ".bstack/bin/commands/evidence-validate.mjs",
++          ".bstack/bin/commands/evidence.mjs",
++          ".bstack/bin/commands/findings.mjs",
++          ".bstack/bin/commands/inspect.mjs",
++          ".bstack/bin/commands/inventory.mjs",
++          ".bstack/bin/commands/measure.mjs",
++          ".bstack/bin/commands/overlap.mjs",
++          ".bstack/bin/commands/probe.mjs",
++          ".bstack/bin/commands/project.mjs",
++          ".bstack/bin/commands/rule-proof.mjs",
++          ".bstack/bin/commands/run-checks.mjs",
++          ".bstack/bin/commands/state.mjs",
++          ".bstack/bin/commands/vision-board-build.mjs",
++          ".bstack/bin/commands/vision-board-launch.mjs",
++          ".bstack/bin/commands/vision-board-verdicts.mjs",
++          ".bstack/bin/lib/args.mjs",
++          ".bstack/bin/lib/check-integration.mjs",
++          ".bstack/bin/lib/discovery.mjs",
++          ".bstack/bin/lib/document-references.mjs",
++          ".bstack/bin/lib/evidence-policy.mjs",
++          ".bstack/bin/lib/fingerprint.mjs",
++          ".bstack/bin/lib/glob.mjs",
++          ".bstack/bin/lib/json.mjs",
++          ".bstack/bin/lib/paths.mjs",
++          ".bstack/bin/lib/proposed-edit.mjs",
++          ".bstack/bin/lib/protected-write.mjs",
++          ".bstack/bin/lib/repo.mjs",
++          ".bstack/bin/lib/result.mjs",
++          ".bstack/bin/lib/run.mjs",
++          ".bstack/bin/lib/schema.mjs",
++          ".bstack/bin/lib/scratch.mjs",
++          ".bstack/bin/lib/vision-board.mjs",
++          ".bstack/bin/repo-audit.mjs",
++          ".bstack/project.json",
++          ".bstack/schemas/baseline.schema.json",
++          ".bstack/schemas/change-set.schema.json",
++          ".bstack/schemas/check-plan.json",
++          ".bstack/schemas/contract-test.json",
++          ".bstack/schemas/evidence.schema.json",
++          ".bstack/schemas/findings.schema.json",
++          ".bstack/schemas/impact-assessment.json",
++          ".bstack/schemas/measure-exclusions.json",
++          ".bstack/schemas/overlap-plan.json",
++          ".bstack/schemas/probe-record.json",
++          ".bstack/schemas/probe-spec.json",
++          ".bstack/schemas/project-create.json",
++          ".bstack/schemas/project.schema.json",
++          ".bstack/schemas/research-report.json",
++          ".bstack/schemas/resume-state.schema.json",
++          ".bstack/schemas/vision-proposals.json",
++          ".bstack/schemas/vision-verdicts.json",
++          "AGENTS.md",
++          "DESIGN.md",
++          "boundaries.mjs",
++          "docs/repo-audit.md",
++          "glossary.md",
++          "journey.mjs",
++          "package.json",
++          "packages/core/b.ts",
++          "packages/core/index.ts",
++          "packages/web/alias.ts",
++          "packages/web/routes.ts",
++          "packages/web/ui.ts"
++        ],
++        "reason": "The approved total-10 and UI/storage boundaries remain the acceptance source. The endpoint supplies 10 instead of 12, while the asserted result and public quote 12 remain unchanged. servicePrice becomes publicly available through core index; ui/routes/alias stop using storage; b uses core-owned price rather than a. The existing design adds selected completion/impact and historical-audit policies, including allowed core internals, acyclicity, independent controls, and fresh standalone leaf execution. The exact uncommitted receipt wording note is retained. The copied complete checker/runtime, schemas and first contract serve that policy without hosted CI. The historical docs/repo-audit.md records its observed revision and working-tree state with final portable readiness pending; it is an assessed snapshot rather than acceptance or current readiness authority.",
++        "citations": [
++          {
++            "path": "DESIGN.md",
++            "pointer": "# Shop design\n\nThe UI never touches storage.\nThe agreed checkout total is 10.",
++            "version": "base"
++          },
++          {
++            "path": "DESIGN.md",
++            "pointer": "# Shop design\n\nThe UI never touches storage.\nThe agreed checkout total is 10.\n\nUser note: receipt wording remains a future owner decision.\n\n## Public core boundary\n\nWeb consumers import only the core entry point, `packages/core/index.ts`; storage remains behind it. Core may use its own storage internals. Dependencies must be acyclic. There are no boundary or cycle exceptions.\nThe existing `packages/web/public.ts` is a representative public consumer:\n\n```ts\nimport { price } from '../core/index.ts'\nexport function quote() { return price() }\n```\n\nPublic quote remains 12. The controlled HTTP endpoint in `journey.mjs` supplies price 10; checkout must return status 201 and total 10. No new discount or receipt wording is selected.\n`boundaries.mjs` uses TypeScript resolution for static imports, re-exports, import types, import-equals and literal dynamic imports. Nonliteral dynamic imports and require calls are rejected because their dependency cannot be established.\n\n## Completing and maintaining a change\n\nUse Node 24 or later and the lockfile-pinned TypeScript toolchain. Set up with `npm ci`; run `npm run check` for types, native boundaries, public unit checks and the real loopback HTTP checkout journey. Acceptance cases live here and in `journey.mjs` and `unit.test.mjs`. A change is complete when its affected journeys pass on final inputs; passing unit tests alone does not establish completion.\n\n`.bstack/project.json` maps changed paths to this design, `glossary.md`, agent pointers, rules and required leaf checks. For each change, compare against an explicit ancestor base; assess every mapped document and unmapped path against literal base/current sources. Record substantive updates, concrete no-impact reasoning or blocked owner decisions. Review the live diff before binding the assessment fingerprint. New failures must fail checks; do not add blanket exclusions or silently accept new debt.\n\nFor portable review, commit implementation first, collect and review `.bstack/assessment.json`, bind its fingerprint, then commit the assessment separately. The assessment retains the implementation head and only that assessment may change afterwards. Use the repo-owned command helpers to collect and validate:\n\n```sh\nnode .bstack/bin/repo-audit.mjs evidence collect --repo . --base <ancestor-commit> --portable .bstack/assessment.json --json\nnode .bstack/bin/repo-audit.mjs evidence validate --repo . --base <ancestor-commit> --assessment .bstack/assessment.json --json\nnode .bstack/bin/bstack-check.mjs --repo . --base <ancestor-commit> --assessment .bstack/assessment.json --json\n```\n\nThe last command executes required checks freshly. Run it in the working checkout and a different-root clean clone with isolated home/cache and the same base and committed assessment. Dependency installation remains an explicit prerequisite. No hosted CI or delivery service is selected.\n\nThe first maintenance contract is selected foundation F-005. Future changes must retain previous policy coverage or obtain explicit migration approval. Repo-owned checker/runtime and schema files are copied from the complete installed repo-audit package; the standalone gate requires Node and Git without an agent session. Review authority changes independently of passing checks.\n\n`docs/repo-audit.md` is a historical snapshot with its observed revision, not a live readiness authority. Keep current-head findings, checker captures and readiness in scratch; do not rewrite the snapshot after each run.",
++            "version": "current"
++          }
++        ],
++        "dependentWork": [],
++        "delta": {
++          "before": "",
++          "after": "Web consumers import only the core entry point, `packages/core/index.ts`; storage remains behind it. Core may use its own storage internals. Dependencies must be acyclic. There are no boundary or cycle exceptions."
++        }
++      }
++    },
++    {
++      "id": "language",
++      "path": "glossary.md",
++      "assessment": {
++        "result": "updated",
++        "changedBehavior": "Disambiguate Order and Panel order while preserving customer-purchase semantics.",
++        "changedPaths": [
++          ".bstack/bin/bstack-check.mjs",
++          ".bstack/bin/commands.mjs",
++          ".bstack/bin/commands/apply.mjs",
++          ".bstack/bin/commands/baseline.mjs",
++          ".bstack/bin/commands/cite-check.mjs",
++          ".bstack/bin/commands/contract-test.mjs",
++          ".bstack/bin/commands/contract.mjs",
++          ".bstack/bin/commands/docs-check.mjs",
++          ".bstack/bin/commands/docs-generate.mjs",
++          ".bstack/bin/commands/evidence-validate.mjs",
++          ".bstack/bin/commands/evidence.mjs",
++          ".bstack/bin/commands/findings.mjs",
++          ".bstack/bin/commands/inspect.mjs",
++          ".bstack/bin/commands/inventory.mjs",
++          ".bstack/bin/commands/measure.mjs",
++          ".bstack/bin/commands/overlap.mjs",
++          ".bstack/bin/commands/probe.mjs",
++          ".bstack/bin/commands/project.mjs",
++          ".bstack/bin/commands/rule-proof.mjs",
++          ".bstack/bin/commands/run-checks.mjs",
++          ".bstack/bin/commands/state.mjs",
++          ".bstack/bin/commands/vision-board-build.mjs",
++          ".bstack/bin/commands/vision-board-launch.mjs",
++          ".bstack/bin/commands/vision-board-verdicts.mjs",
++          ".bstack/bin/lib/args.mjs",
++          ".bstack/bin/lib/check-integration.mjs",
++          ".bstack/bin/lib/discovery.mjs",
++          ".bstack/bin/lib/document-references.mjs",
++          ".bstack/bin/lib/evidence-policy.mjs",
++          ".bstack/bin/lib/fingerprint.mjs",
++          ".bstack/bin/lib/glob.mjs",
++          ".bstack/bin/lib/json.mjs",
++          ".bstack/bin/lib/paths.mjs",
++          ".bstack/bin/lib/proposed-edit.mjs",
++          ".bstack/bin/lib/protected-write.mjs",
++          ".bstack/bin/lib/repo.mjs",
++          ".bstack/bin/lib/result.mjs",
++          ".bstack/bin/lib/run.mjs",
++          ".bstack/bin/lib/schema.mjs",
++          ".bstack/bin/lib/scratch.mjs",
++          ".bstack/bin/lib/vision-board.mjs",
++          ".bstack/bin/repo-audit.mjs",
++          ".bstack/project.json",
++          ".bstack/schemas/baseline.schema.json",
++          ".bstack/schemas/change-set.schema.json",
++          ".bstack/schemas/check-plan.json",
++          ".bstack/schemas/contract-test.json",
++          ".bstack/schemas/evidence.schema.json",
++          ".bstack/schemas/findings.schema.json",
++          ".bstack/schemas/impact-assessment.json",
++          ".bstack/schemas/measure-exclusions.json",
++          ".bstack/schemas/overlap-plan.json",
++          ".bstack/schemas/probe-record.json",
++          ".bstack/schemas/probe-spec.json",
++          ".bstack/schemas/project-create.json",
++          ".bstack/schemas/project.schema.json",
++          ".bstack/schemas/research-report.json",
++          ".bstack/schemas/resume-state.schema.json",
++          ".bstack/schemas/vision-proposals.json",
++          ".bstack/schemas/vision-verdicts.json",
++          "AGENTS.md",
++          "DESIGN.md",
++          "boundaries.mjs",
++          "docs/repo-audit.md",
++          "glossary.md",
++          "journey.mjs",
++          "package.json",
++          "packages/core/b.ts",
++          "packages/core/index.ts",
++          "packages/web/alias.ts",
++          "packages/web/routes.ts",
++          "packages/web/ui.ts"
++        ],
++        "reason": "Only the selected glossary definition changes from the second Order meaning to Panel order. Runtime functions, purchase status/total, and existing authoritative file names remain unchanged in meaning; no code naming migration or pricing rule is inferred. Native check and checker/runtime additions govern verification rather than domain vocabulary.",
++        "citations": [
++          {
++            "path": "glossary.md",
++            "pointer": "# Glossary\n\nOrder: a customer purchase.\nOrder: the sequence in which UI panels appear.",
++            "version": "base"
++          },
++          {
++            "path": "glossary.md",
++            "pointer": "# Glossary\n\nOrder: a customer purchase.\nPanel order: the sequence in which UI panels appear.",
++            "version": "current"
++          }
++        ],
++        "dependentWork": [],
++        "delta": {
++          "before": "# Glossary\n\nOrder: a customer purchase.\nOrder: the sequence in which UI panels appear.\n",
++          "after": "# Glossary\n\nOrder: a customer purchase.\nPanel order: the sequence in which UI panels appear.\n"
++        }
++      }
++    },
++    {
++      "id": "agent",
++      "path": "AGENTS.md",
++      "assessment": {
++        "result": "updated",
++        "changedBehavior": "Point agents to existing design, glossary, native aggregate and maintained impact contract.",
++        "changedPaths": [
++          ".bstack/bin/bstack-check.mjs",
++          ".bstack/bin/commands.mjs",
++          ".bstack/bin/commands/apply.mjs",
++          ".bstack/bin/commands/baseline.mjs",
++          ".bstack/bin/commands/cite-check.mjs",
++          ".bstack/bin/commands/contract-test.mjs",
++          ".bstack/bin/commands/contract.mjs",
++          ".bstack/bin/commands/docs-check.mjs",
++          ".bstack/bin/commands/docs-generate.mjs",
++          ".bstack/bin/commands/evidence-validate.mjs",
++          ".bstack/bin/commands/evidence.mjs",
++          ".bstack/bin/commands/findings.mjs",
++          ".bstack/bin/commands/inspect.mjs",
++          ".bstack/bin/commands/inventory.mjs",
++          ".bstack/bin/commands/measure.mjs",
++          ".bstack/bin/commands/overlap.mjs",
++          ".bstack/bin/commands/probe.mjs",
++          ".bstack/bin/commands/project.mjs",
++          ".bstack/bin/commands/rule-proof.mjs",
++          ".bstack/bin/commands/run-checks.mjs",
++          ".bstack/bin/commands/state.mjs",
++          ".bstack/bin/commands/vision-board-build.mjs",
++          ".bstack/bin/commands/vision-board-launch.mjs",
++          ".bstack/bin/commands/vision-board-verdicts.mjs",
++          ".bstack/bin/lib/args.mjs",
++          ".bstack/bin/lib/check-integration.mjs",
++          ".bstack/bin/lib/discovery.mjs",
++          ".bstack/bin/lib/document-references.mjs",
++          ".bstack/bin/lib/evidence-policy.mjs",
++          ".bstack/bin/lib/fingerprint.mjs",
++          ".bstack/bin/lib/glob.mjs",
++          ".bstack/bin/lib/json.mjs",
++          ".bstack/bin/lib/paths.mjs",
++          ".bstack/bin/lib/proposed-edit.mjs",
++          ".bstack/bin/lib/protected-write.mjs",
++          ".bstack/bin/lib/repo.mjs",
++          ".bstack/bin/lib/result.mjs",
++          ".bstack/bin/lib/run.mjs",
++          ".bstack/bin/lib/schema.mjs",
++          ".bstack/bin/lib/scratch.mjs",
++          ".bstack/bin/lib/vision-board.mjs",
++          ".bstack/bin/repo-audit.mjs",
++          ".bstack/project.json",
++          ".bstack/schemas/baseline.schema.json",
++          ".bstack/schemas/change-set.schema.json",
++          ".bstack/schemas/check-plan.json",
++          ".bstack/schemas/contract-test.json",
++          ".bstack/schemas/evidence.schema.json",
++          ".bstack/schemas/findings.schema.json",
++          ".bstack/schemas/impact-assessment.json",
++          ".bstack/schemas/measure-exclusions.json",
++          ".bstack/schemas/overlap-plan.json",
++          ".bstack/schemas/probe-record.json",
++          ".bstack/schemas/probe-spec.json",
++          ".bstack/schemas/project-create.json",
++          ".bstack/schemas/project.schema.json",
++          ".bstack/schemas/research-report.json",
++          ".bstack/schemas/resume-state.schema.json",
++          ".bstack/schemas/vision-proposals.json",
++          ".bstack/schemas/vision-verdicts.json",
++          "AGENTS.md",
++          "DESIGN.md",
++          "boundaries.mjs",
++          "docs/repo-audit.md",
++          "glossary.md",
++          "journey.mjs",
++          "package.json",
++          "packages/core/b.ts",
++          "packages/core/index.ts",
++          "packages/web/alias.ts",
++          "packages/web/routes.ts",
++          "packages/web/ui.ts"
++        ],
++        "reason": "AGENTS.md retains its original public-core instruction and adds links to the selected authorities and commands. It keeps receipt wording a future owner decision. CLAUDE.md remains the import stub; no instruction merge or host-loading assumption is used. All implementation/runtime and contract paths are covered by selected guidance rather than duplicated vision or standards documents.",
++        "citations": [
++          {
++            "path": "AGENTS.md",
++            "pointer": "Use the approved design and public core interface.",
++            "version": "base"
++          },
++          {
++            "path": "AGENTS.md",
++            "pointer": "Use the approved design and public core interface.\n\nRead [DESIGN.md](DESIGN.md) for public boundaries, acceptance cases and completion evidence, and [glossary.md](glossary.md) for domain terms.\nRun `npm run check` using the prepared lockfile toolchain.\nUse [.bstack/project.json](.bstack/project.json) for impact coverage and the standalone command documented in DESIGN.md for reviewed final assessments.\nThe audit record is historical; resolve receipt wording with the owner before dependent work.",
++            "version": "current"
++          }
++        ],
++        "dependentWork": [],
++        "delta": {
++          "before": "",
++          "after": "Use [.bstack/project.json](.bstack/project.json) for impact coverage and the standalone command documented in DESIGN.md for reviewed final assessments."
++        }
++      }
++    }
++  ],
++  "unmappedAssessments": [],
++  "decisions": [
++    {
++      "id": "retain-approved-checkout",
++      "status": "approved",
++      "source": "DESIGN.md",
++      "oldCase": "The agreed checkout total is 10.",
++      "newCase": "The agreed checkout total is 10.",
++      "affectedWork": [
++        "journey.mjs",
++        "DESIGN.md"
++      ],
++      "approval": {
++        "path": "docs/repo-audit.md",
++        "pointer": "Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy.",
++        "version": "current"
++      }
++    },
++    {
++      "id": "clarify-approved-public-boundary",
++      "status": "approved",
++      "source": "DESIGN.md",
++      "oldCase": "The UI never touches storage.",
++      "newCase": "Web consumers import only the core entry point",
++      "affectedWork": [
++        "packages/core/index.ts",
++        "packages/web/ui.ts",
++        "packages/web/routes.ts",
++        "packages/web/alias.ts",
++        "boundaries.mjs",
++        "DESIGN.md"
++      ],
++      "approval": {
++        "path": "docs/repo-audit.md",
++        "pointer": "Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy.",
++        "version": "current"
++      }
++    },
++    {
++      "id": "retain-approved-public-quote",
++      "status": "approved",
++      "source": "DESIGN.md",
++      "oldCase": "test('public price', () => assert.equal(quote(), 12))",
++      "newCase": "Public quote remains 12.",
++      "affectedWork": [
++        "unit.test.mjs",
++        "packages/web/public.ts",
++        "DESIGN.md"
++      ],
++      "approval": {
++        "path": "docs/repo-audit.md",
++        "pointer": "Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy.",
++        "version": "current"
++      }
++    }
++  ],
++  "coverage": [
++    "public-core",
++    "acyclic",
++    "checkout",
++    "quote",
++    "maintenance"
++  ],
++  "execution": [
++    {
++      "runId": "e612be27-2cdb-4e85-a577-28cae4a8c837",
++      "plan": "[isolated-home][scratch-path]"
++    }
++  ],
++  "fingerprint": "220be2badc9a6b8c22091871aac10279f34347fc36dc67bfd1c00cec7e91074e",
++  "foundation": {
++    "findingId": "F-005",
++    "record": {
++      "schemaVersion": 1,
++      "stage": "foundation",
++      "target": {
++        "mode": "repo",
++        "root": "[fixture]",
++        "revision": "e31d443d89069004a2bd620208cfcc76d8d32154"
++      },
++      "nextChange": "Selected first maintenance contract and complete standalone checker for the approved Shop design.",
++      "reviewedScope": [
++        "DESIGN.md",
++        "AGENTS.md",
++        ".bstack/project.json",
++        ".bstack/bin/bstack-check.mjs",
++        ".bstack/bin/commands.mjs",
++        ".bstack/bin/commands/apply.mjs",
++        ".bstack/bin/commands/baseline.mjs",
++        ".bstack/bin/commands/cite-check.mjs",
++        ".bstack/bin/commands/contract-test.mjs",
++        ".bstack/bin/commands/contract.mjs",
++        ".bstack/bin/commands/docs-check.mjs",
++        ".bstack/bin/commands/docs-generate.mjs",
++        ".bstack/bin/commands/evidence-validate.mjs",
++        ".bstack/bin/commands/evidence.mjs",
++        ".bstack/bin/commands/findings.mjs",
++        ".bstack/bin/commands/inspect.mjs",
++        ".bstack/bin/commands/inventory.mjs",
++        ".bstack/bin/commands/measure.mjs",
++        ".bstack/bin/commands/overlap.mjs",
++        ".bstack/bin/commands/probe.mjs",
++        ".bstack/bin/commands/project.mjs",
++        ".bstack/bin/commands/rule-proof.mjs",
++        ".bstack/bin/commands/run-checks.mjs",
++        ".bstack/bin/commands/state.mjs",
++        ".bstack/bin/commands/vision-board-build.mjs",
++        ".bstack/bin/commands/vision-board-launch.mjs",
++        ".bstack/bin/commands/vision-board-verdicts.mjs",
++        ".bstack/bin/lib/args.mjs",
++        ".bstack/bin/lib/check-integration.mjs",
++        ".bstack/bin/lib/discovery.mjs",
++        ".bstack/bin/lib/document-references.mjs",
++        ".bstack/bin/lib/evidence-policy.mjs",
++        ".bstack/bin/lib/fingerprint.mjs",
++        ".bstack/bin/lib/glob.mjs",
++        ".bstack/bin/lib/json.mjs",
++        ".bstack/bin/lib/paths.mjs",
++        ".bstack/bin/lib/proposed-edit.mjs",
++        ".bstack/bin/lib/protected-write.mjs",
++        ".bstack/bin/lib/repo.mjs",
++        ".bstack/bin/lib/result.mjs",
++        ".bstack/bin/lib/run.mjs",
++        ".bstack/bin/lib/schema.mjs",
++        ".bstack/bin/lib/scratch.mjs",
++        ".bstack/bin/lib/vision-board.mjs",
++        ".bstack/bin/repo-audit.mjs",
++        ".bstack/schemas/baseline.schema.json",
++        ".bstack/schemas/change-set.schema.json",
++        ".bstack/schemas/check-plan.json",
++        ".bstack/schemas/contract-test.json",
++        ".bstack/schemas/evidence.schema.json",
++        ".bstack/schemas/findings.schema.json",
++        ".bstack/schemas/impact-assessment.json",
++        ".bstack/schemas/measure-exclusions.json",
++        ".bstack/schemas/overlap-plan.json",
++        ".bstack/schemas/probe-record.json",
++        ".bstack/schemas/probe-spec.json",
++        ".bstack/schemas/project-create.json",
++        ".bstack/schemas/project.schema.json",
++        ".bstack/schemas/research-report.json",
++        ".bstack/schemas/resume-state.schema.json",
++        ".bstack/schemas/vision-proposals.json",
++        ".bstack/schemas/vision-verdicts.json"
++      ],
++      "sources": [
++        {
++          "id": "design",
++          "pointer": "DESIGN.md:3-4",
++          "intent": "documented",
++          "summary": "UI never touches storage; agreed checkout total is 10."
++        },
++        {
++          "id": "instructions",
++          "pointer": "AGENTS.md:1",
++          "intent": "documented",
++          "summary": "Use approved design and public core interface."
++        },
++        {
++          "id": "runtime",
++          "pointer": "packages/web/ui.ts:1; packages/web/routes.ts:1; packages/web/alias.ts:1; packages/core/a.ts:1; packages/core/b.ts:1",
++          "intent": "observed",
++          "summary": "Private and aliased imports and a cycle are present."
++        },
++        {
++          "id": "checks",
++          "pointer": "package.json:12; journey.mjs:6-12; unit.test.mjs:5",
++          "intent": "observed",
++          "summary": "Types and units pass; real loopback checkout returns 12; boundaries reports alias, cycle, private."
++        },
++        {
++          "id": "vocabulary",
++          "pointer": "glossary.md:3-4",
++          "intent": "documented",
++          "summary": "Order has two conflicting meanings."
++        },
++        {
++          "id": "selection",
++          "pointer": "[isolated-home][scratch-path]",
++          "intent": "documented",
++          "summary": "Supervisor selects endpoint price 10, assertion 10, quote 12, public core, acyclic dependencies, Panel order, native and aggregate enforcement, maintenance and standalone clean clone; historical snapshot policy."
++        },
++        {
++          "id": "user-note",
++          "pointer": "DESIGN.md:6",
++          "intent": "documented",
++          "summary": "User note: receipt wording remains a future owner decision."
++        },
++        {
++          "id": "initial-capture",
++          "pointer": "[isolated-home][scratch-path]",
++          "intent": "observed",
++          "summary": "At b6c59b7 plus preserved user note, types and unit checks passed; actual checkout returned 12, and boundaries failed alias/cycle/private."
++        },
++        {
++          "id": "current-capture",
++          "pointer": "[isolated-home][scratch-path]",
++          "intent": "observed",
++          "summary": "Approved implementation applied via protected writes; maintained aggregate passes, quote is 12 and real controlled HTTP checkout returns total 10."
++        }
++      ],
++      "findings": [
++        {
++          "id": "F-005",
++          "problem": "No maintained change evidence contract, standalone checker or completion guidance exists.",
++          "files": [
++            "DESIGN.md",
++            "AGENTS.md",
++            ".bstack/project.json",
++            ".bstack/bin/bstack-check.mjs",
++            ".bstack/bin/commands.mjs",
++            ".bstack/bin/commands/apply.mjs",
++            ".bstack/bin/commands/baseline.mjs",
++            ".bstack/bin/commands/cite-check.mjs",
++            ".bstack/bin/commands/contract-test.mjs",
++            ".bstack/bin/commands/contract.mjs",
++            ".bstack/bin/commands/docs-check.mjs",
++            ".bstack/bin/commands/docs-generate.mjs",
++            ".bstack/bin/commands/evidence-validate.mjs",
++            ".bstack/bin/commands/evidence.mjs",
++            ".bstack/bin/commands/findings.mjs",
++            ".bstack/bin/commands/inspect.mjs",
++            ".bstack/bin/commands/inventory.mjs",
++            ".bstack/bin/commands/measure.mjs",
++            ".bstack/bin/commands/overlap.mjs",
++            ".bstack/bin/commands/probe.mjs",
++            ".bstack/bin/commands/project.mjs",
++            ".bstack/bin/commands/rule-proof.mjs",
++            ".bstack/bin/commands/run-checks.mjs",
++            ".bstack/bin/commands/state.mjs",
++            ".bstack/bin/commands/vision-board-build.mjs",
++            ".bstack/bin/commands/vision-board-launch.mjs",
++            ".bstack/bin/commands/vision-board-verdicts.mjs",
++            ".bstack/bin/lib/args.mjs",
++            ".bstack/bin/lib/check-integration.mjs",
++            ".bstack/bin/lib/discovery.mjs",
++            ".bstack/bin/lib/document-references.mjs",
++            ".bstack/bin/lib/evidence-policy.mjs",
++            ".bstack/bin/lib/fingerprint.mjs",
++            ".bstack/bin/lib/glob.mjs",
++            ".bstack/bin/lib/json.mjs",
++            ".bstack/bin/lib/paths.mjs",
++            ".bstack/bin/lib/proposed-edit.mjs",
++            ".bstack/bin/lib/protected-write.mjs",
++            ".bstack/bin/lib/repo.mjs",
++            ".bstack/bin/lib/result.mjs",
++            ".bstack/bin/lib/run.mjs",
++            ".bstack/bin/lib/schema.mjs",
++            ".bstack/bin/lib/scratch.mjs",
++            ".bstack/bin/lib/vision-board.mjs",
++            ".bstack/bin/repo-audit.mjs",
++            ".bstack/schemas/baseline.schema.json",
++            ".bstack/schemas/change-set.schema.json",
++            ".bstack/schemas/check-plan.json",
++            ".bstack/schemas/contract-test.json",
++            ".bstack/schemas/evidence.schema.json",
++            ".bstack/schemas/findings.schema.json",
++            ".bstack/schemas/impact-assessment.json",
++            ".bstack/schemas/measure-exclusions.json",
++            ".bstack/schemas/overlap-plan.json",
++            ".bstack/schemas/probe-record.json",
++            ".bstack/schemas/probe-spec.json",
++            ".bstack/schemas/project-create.json",
++            ".bstack/schemas/project.schema.json",
++            ".bstack/schemas/research-report.json",
++            ".bstack/schemas/resume-state.schema.json",
++            ".bstack/schemas/vision-proposals.json",
++            ".bstack/schemas/vision-verdicts.json"
++          ],
++          "command": null,
++          "principle": "Changes complete when affected approved journeys pass on final inputs; unit success alone is insufficient.",
++          "consequence": "Later user edits and extensions have no portable impact and acceptance gate.",
++          "fix": "Maintain completion/impact guidance in DESIGN.md, pointers in AGENTS.md, selected first contract and complete standalone runtime/schemas. Preserve exact user note and CLAUDE.md.",
++          "scope": [
++            "DESIGN.md",
++            "AGENTS.md",
++            ".bstack/project.json",
++            ".bstack/bin/bstack-check.mjs",
++            ".bstack/bin/commands.mjs",
++            ".bstack/bin/commands/apply.mjs",
++            ".bstack/bin/commands/baseline.mjs",
++            ".bstack/bin/commands/cite-check.mjs",
++            ".bstack/bin/commands/contract-test.mjs",
++            ".bstack/bin/commands/contract.mjs",
++            ".bstack/bin/commands/docs-check.mjs",
++            ".bstack/bin/commands/docs-generate.mjs",
++            ".bstack/bin/commands/evidence-validate.mjs",
++            ".bstack/bin/commands/evidence.mjs",
++            ".bstack/bin/commands/findings.mjs",
++            ".bstack/bin/commands/inspect.mjs",
++            ".bstack/bin/commands/inventory.mjs",
++            ".bstack/bin/commands/measure.mjs",
++            ".bstack/bin/commands/overlap.mjs",
++            ".bstack/bin/commands/probe.mjs",
++            ".bstack/bin/commands/project.mjs",
++            ".bstack/bin/commands/rule-proof.mjs",
++            ".bstack/bin/commands/run-checks.mjs",
++            ".bstack/bin/commands/state.mjs",
++            ".bstack/bin/commands/vision-board-build.mjs",
++            ".bstack/bin/commands/vision-board-launch.mjs",
++            ".bstack/bin/commands/vision-board-verdicts.mjs",
++            ".bstack/bin/lib/args.mjs",
++            ".bstack/bin/lib/check-integration.mjs",
++            ".bstack/bin/lib/discovery.mjs",
++            ".bstack/bin/lib/document-references.mjs",
++            ".bstack/bin/lib/evidence-policy.mjs",
++            ".bstack/bin/lib/fingerprint.mjs",
++            ".bstack/bin/lib/glob.mjs",
++            ".bstack/bin/lib/json.mjs",
++            ".bstack/bin/lib/paths.mjs",
++            ".bstack/bin/lib/proposed-edit.mjs",
++            ".bstack/bin/lib/protected-write.mjs",
++            ".bstack/bin/lib/repo.mjs",
++            ".bstack/bin/lib/result.mjs",
++            ".bstack/bin/lib/run.mjs",
++            ".bstack/bin/lib/schema.mjs",
++            ".bstack/bin/lib/scratch.mjs",
++            ".bstack/bin/lib/vision-board.mjs",
++            ".bstack/bin/repo-audit.mjs",
++            ".bstack/schemas/baseline.schema.json",
++            ".bstack/schemas/change-set.schema.json",
++            ".bstack/schemas/check-plan.json",
++            ".bstack/schemas/contract-test.json",
++            ".bstack/schemas/evidence.schema.json",
++            ".bstack/schemas/findings.schema.json",
++            ".bstack/schemas/impact-assessment.json",
++            ".bstack/schemas/measure-exclusions.json",
++            ".bstack/schemas/overlap-plan.json",
++            ".bstack/schemas/probe-record.json",
++            ".bstack/schemas/probe-spec.json",
++            ".bstack/schemas/project-create.json",
++            ".bstack/schemas/project.schema.json",
++            ".bstack/schemas/research-report.json",
++            ".bstack/schemas/resume-state.schema.json",
++            ".bstack/schemas/vision-proposals.json",
++            ".bstack/schemas/vision-verdicts.json"
++          ],
++          "verification": "Contract/docs validation; final impact assessment covering changed and unmapped paths; fresh standalone check in checkout and different-root clean clone with isolated home/cache, same explicit base.",
++          "blocksNextChange": true,
++          "category": "missing-protection",
++          "status": "selected",
++          "newPrinciple": true,
++          "resolved": true,
++          "sourceIds": [
++            "design",
++            "instructions",
++            "checks"
++          ]
++        }
++      ],
++      "selectedFindingIds": [
++        "F-005"
++      ],
++      "requiredOutcomes": [
++        "starting-checks",
++        "journey",
++        "boundary-proof",
++        "maintained-enforcement",
++        "foundation-review",
++        "maintenance-contract",
++        "standalone-clean-clone",
++        "final-proof-aggregate-cycle",
++        "final-proof-aggregate-dynamic",
++        "final-proof-aggregate-import-type",
++        "final-proof-aggregate-nonpublic",
++        "final-proof-aggregate-private",
++        "final-proof-aggregate-reexport",
++        "final-proof-aggregate-unknown-dynamic",
++        "final-proof-native-cycle",
++        "final-proof-native-dynamic",
++        "final-proof-native-import-type",
++        "final-proof-native-nonpublic",
++        "final-proof-native-private",
++        "final-proof-native-reexport",
++        "final-proof-native-unknown-dynamic"
++      ],
++      "execution": [
++        {
++          "id": "current-native",
++          "outcome": "starting-checks",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/2c1eabae-bd3c-4520-8a96-c3a1df06eaed/checks.json",
++          "artifactHash": "211ba86eb0d175af7d1ec24ed090f844864b1f0977bd0ef0fa5fb40cafba62f7",
++          "method": "run-checks captured actual target commands and declared inputs; primary review verified acceptance coverage."
++        },
++        {
++          "id": "actual-ui-http",
++          "outcome": "journey",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/8701ca05-635e-4169-8c9b-e94130d9220d/checks.json",
++          "artifactHash": "5a7403d2e913185bdc8469ce1a03343b7cb27d5f5e3466a5ee80596ff2797a97",
++          "method": "run-checks captured actual target commands and declared inputs; primary review verified acceptance coverage."
++        },
++        {
++          "id": "final-proof-aggregate-alias",
++          "outcome": "maintained-enforcement",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/d299d50e-8ff2-4b22-8e4d-9e48f7547027/proof.json",
++          "artifactHash": "140c078ad4d6535217af1263f1212354b06032d52c9590910e7ee1788b6a486c",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-aggregate-cycle",
++          "outcome": "final-proof-aggregate-cycle",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/65c1a237-7c2b-43eb-9808-de54b14731e5/proof.json",
++          "artifactHash": "e39bbcde4865375dbe8e6ebaf002993d2328eaa085e0aa97fb4b664a7850a2ab",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-aggregate-dynamic",
++          "outcome": "final-proof-aggregate-dynamic",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/c0cf1503-1147-4609-b2ef-9718d2ca208c/proof.json",
++          "artifactHash": "1dee09c24612a76e1324039d5795769d8ea07ed70b784ed7b8bbde807deebbfb",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-aggregate-import-type",
++          "outcome": "final-proof-aggregate-import-type",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/69325e83-83e8-4b3e-9b91-39464355cee8/proof.json",
++          "artifactHash": "ffed1d45b9ddce9559391dffa1605164fd573d944bb3821155beb98f0ff9125f",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-aggregate-nonpublic",
++          "outcome": "final-proof-aggregate-nonpublic",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/5554acb3-8d8e-4990-9ae4-cb7d8b215e65/proof.json",
++          "artifactHash": "612138fd29ffe2557e5db2dca0a80e83ba5df67b82570bd2217c77e44289347b",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-aggregate-private",
++          "outcome": "final-proof-aggregate-private",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e2a28860-65ee-446c-b376-4c97e0d40d49/proof.json",
++          "artifactHash": "028d41496485333502ccb6bae7816cd05fd103a37245cce6ebdd95228f0c8b25",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-aggregate-reexport",
++          "outcome": "final-proof-aggregate-reexport",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e98e7c1a-08cb-44c7-bac1-1c6286da5f4e/proof.json",
++          "artifactHash": "66b42383d09ad68043ec8f2e3f7d6e8f70f1071beeb27b44e49902fec046b9af",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-aggregate-unknown-dynamic",
++          "outcome": "final-proof-aggregate-unknown-dynamic",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/8ecf6b39-3f80-4a41-88a7-0bb2b0e361a1/proof.json",
++          "artifactHash": "81a9958d72a3b0fb975e105c14e0055c05075c3e72541058c7b10df4be4b2ce9",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-native-alias",
++          "outcome": "boundary-proof",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/1c3195d5-0089-490e-addc-b0e119d5a2f6/proof.json",
++          "artifactHash": "bfbe58acfa0d409633c02b52071119ed3e8fc0de6c3d8b6b6e0723f791487ed5",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-native-cycle",
++          "outcome": "final-proof-native-cycle",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/850e52e7-798a-4ad6-8df0-d379487c024a/proof.json",
++          "artifactHash": "98ce7eba8f42b2b422e9bdc39bb58689956180901385b57cf455774bf17c8952",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-native-dynamic",
++          "outcome": "final-proof-native-dynamic",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/437755fd-e2e5-45fc-b997-5bdca3349573/proof.json",
++          "artifactHash": "e2c7534d3dee44839fcf0160dce577adf4f8aa3423af72a2711a6902d0d69d45",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-native-import-type",
++          "outcome": "final-proof-native-import-type",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/e11ebefa-ae79-4bc8-80e4-d558c5b7bb91/proof.json",
++          "artifactHash": "e4965e3cf60bde6e8e93274596bcdd9e642835ffea700fd22e2c0c7c1b8ca564",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-native-nonpublic",
++          "outcome": "final-proof-native-nonpublic",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/1a750aca-bb23-449c-a836-b9abc1665dcb/proof.json",
++          "artifactHash": "63b9e7666d3e683dfc7f570476998d626167eedf83037950e36b667a663bc341",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-native-private",
++          "outcome": "final-proof-native-private",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/9d20ddcf-7529-4334-af81-37df562e3522/proof.json",
++          "artifactHash": "29242351732a4aa9ede748473bd00fe97b5c9ff58c97b0671bd91a8097b4c9e1",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-native-reexport",
++          "outcome": "final-proof-native-reexport",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/d40e79f8-baad-41cd-acb0-0bac5691cbe6/proof.json",
++          "artifactHash": "51c8f6af5e9df6d37a69b528db81c4a505630bbb4d7678802db556fc195ade7a",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "final-proof-native-unknown-dynamic",
++          "outcome": "final-proof-native-unknown-dynamic",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home]/cache/bstack/e9d04f137be6754cd8430329816aebeee318a6c755647df3a8786826eb4b1360/db306f23-97b0-4707-a797-38bf34c0f8a3/proof.json",
++          "artifactHash": "dc0056db9b35b3cf9f8243b2cf941d44aa18c0f89a3f4ad522eed66a36e0711e",
++          "method": "rule-proof captured independent valid exit 0 and seeded nonzero diagnostic; reviewed native checker bytes match applied target."
++        },
++        {
++          "id": "owner-approved-foundation",
++          "outcome": "foundation-review",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home][scratch-path]",
++          "artifactHash": "dddee931ce3dedc65a3e6ef4994e4960e086976ec1aa07824c9c193f1b184335",
++          "method": "Primary semantic review of owner-approved exact bytes and captured actual execution."
++        },
++        {
++          "id": "contract-native",
++          "outcome": "maintenance-contract",
++          "status": "passed",
++          "fingerprint": "7001b0a798f37e06d695b5052a97d13485b463dfd7680e5293f5afbca2bd85d6",
++          "artifact": "[isolated-home][scratch-path]",
++          "artifactHash": "c5eaca0ab4b56f1401f703bf8389b39948ed76681a2a32a996c2d599e9f0146c",
++          "method": "Native contract validate captured on applied target."
++        }
++      ],
++      "limitations": [
++        "Historical snapshot after approved implementation at b6c59b7810f5155fd514c9db60e98b7dffce0cc0 with selected working-tree edits; final portable assessment and standalone checkout/isolated-clone verification still pending.",
++        "Receipt wording remains a future owner decision; exact user note preserved. No hosted CI selected.",
++        "One-commit starting history provides sizes but no change frequency or co-change history.",
++        "Native controls cover static imports, aliases, re-exports, nonpublic core targets, import types, literal and unknown dynamic imports, and cycles; require calls are rejected. Dynamic runtime behaviour outside these controls remains a coverage limit.",
++        "Line-style glossary is explicitly reviewed; automated glossary-format validation is limited.",
++        "Tool results establish declared coverage and execution; primary review assessed semantics against the approved design and supervisor verdicts."
++      ]
++    }
++  }
++}

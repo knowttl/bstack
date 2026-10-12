@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "reviewer": "Primary agent review; owner selected findings and approved exact implementation diff",
+  "approvedPlanDigest": "a585415450a974ec1b6c085cfa993139981c6fea91008ff4122329916b871358",
+  "authoritativeSources": [
+    "DESIGN.md",
+    "glossary.md",
+    "AGENTS.md"
+  ],
+  "assessment": "The controlled endpoint now supplies 10 without altering the total-10 assertion or public quote 12. Web accesses only existing public core index, and core-owned storage remains allowed. The recursive a/b edge is removed. The selected native aggregate fails deliberate violations. The user receipt note is preserved exactly. Existing source names and CLAUDE.md import stub remain. Complete checker/runtime and maintenance contract are repo-owned. Historical record is not a current readiness authority; final standalone gate remains pending.",
+  "sourceHashes": {
+    "DESIGN.md": "1ed1b52483306b9e35072d3f762467e0183a3a8e89524b9915cdcce161de86c4",
+    "glossary.md": "28cab76c3df5b68eabd5ba380a4dbfd513a13ab223d76c53be6b8bf054272db5",
+    "AGENTS.md": "f7b07df4793e3ee008eb00cfb17a717867c566f5b06f454ff8d11a999ac0fe97",
+    "journey.mjs": "4be3e55c69ae52e59e1c874855dd5152b84a1b3ca263134546354d9ab8cd0605",
+    "unit.test.mjs": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e",
+    "packages/web/public.ts": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230",
+    "packages/core/index.ts": "df1ccb02fa8cf080aeec6c62ea454f85e8980587acf87c26950130468de6fd82"
+  },
+  "approval": "I approve the exact apply dry-run diff just presented and its verification commands."
+}

@@ -1,0 +1,18 @@
+{
+  "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -B -c <execute scratch ledger-journey.py> <scratch ledger-startup.json>",
+  "interpreter": "Python 3.12.15",
+  "exitCode": 0,
+  "output": "PASS: public posting, rejection without mutation, app opening balance, startup CSV/JSON and public re-import\n",
+  "script": "[isolated-home][scratch-path]",
+  "scriptHash": "299c55ec6a20b4e2f04362ea198a842f9693176e93e835cd54eabe4ee104f24e",
+  "targetRevision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde",
+  "inputs": {
+    "CONTRIBUTING.md": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+    "app.py": "c7e19ddad24285ab3ea27aaea530f9f6e1fe2997ebe8aab4326ae3493d07b972",
+    "startup.py": "51f012f5c21b4dc13710a3f90183b42e52e7cbd509afdf30c9b2a8bc024489d7",
+    "ledger/__init__.py": "0f82013053fde319ae984fe6e031e25ba9b112b22571245a584dbc898482d878",
+    "ledger/book.py": "95f5286a1a48f4978e65550b38c8cc26dc439ecd5364d0d406d413103b236157",
+    "ledger/_internal.py": "fe70459bd83635fdad6fc7707ec5a7070941bfdf6e2cf9559e1125b149e7d4ef"
+  },
+  "capture": "Direct native execution; separate from run-checks/findings validation."
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "refactor",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "c5d6569edc9a12ae8bd03ec9be49fe7d9bae84c53071602b606efa81c48e5db8"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "The agreed checkout total is 10.",
+      "userJourney": true
+    },
+    {
+      "id": "public-quote",
+      "sourceId": "design",
+      "pointer": "Public quote() continues to return 12.",
+      "outcome": "Public quote() continues to return 12.",
+      "userJourney": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "native-protection",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout",
+        "public-quote"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**"
+      ]
+    },
+    {
+      "id": "native",
+      "role": "compatibility",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout",
+        "public-quote"
+      ],
+      "inputScopes": [
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/**",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/**",
+        ".bstack/schemas/**"
+      ]
+    }
+  ]
+}

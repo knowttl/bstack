@@ -1,0 +1,8 @@
+{
+  "cwd": "[fixture]",
+  "argv": [
+    "npm",
+    "run",
+    "check"
+  ]
+}

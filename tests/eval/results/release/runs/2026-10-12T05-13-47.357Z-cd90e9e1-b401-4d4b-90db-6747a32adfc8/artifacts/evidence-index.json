@@ -1,0 +1,34 @@
+[
+  {
+    "check": "types",
+    "path": "[isolated-home][scratch-path]",
+    "sha256": "fe4689105cf7bc27620e81b875844fc4b19aab154f6b95eb62a37c5696f3108a",
+    "runId": "a54cc82e-218d-4598-8e30-3619c425fb1a",
+    "status": "passed",
+    "exitCode": 0
+  },
+  {
+    "check": "unit",
+    "path": "[isolated-home][scratch-path]",
+    "sha256": "49e2b9e69a6803bbddf116424a3a35af2aca8044fba77ea029d905dc60c6b07f",
+    "runId": "6f942738-ec8b-4795-a67a-caece7c1b8a2",
+    "status": "passed",
+    "exitCode": 0
+  },
+  {
+    "check": "journey",
+    "path": "[isolated-home][scratch-path]",
+    "sha256": "c149434b540f7927255b51d275e3fa17855f91ae0ca633c9181a468be53dd35c",
+    "runId": "0e01399d-586f-4b20-8b23-0b7ee36c4081",
+    "status": "failed",
+    "exitCode": 1
+  },
+  {
+    "check": "boundaries",
+    "path": "[isolated-home][scratch-path]",
+    "sha256": "e9f72fb60fed103c353a2cb028ba0d68ef30d27958e2b85775ff75b82b085c8c",
+    "runId": "fff262be-4aae-4a69-aa8c-04f2dbffacc7",
+    "status": "failed",
+    "exitCode": 1
+  }
+]

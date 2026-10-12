@@ -1,0 +1,18 @@
+{
+  "command": [
+    "env",
+    "HOME=[isolated-home][scratch-path]",
+    "XDG_CACHE_HOME=[isolated-home][scratch-path]",
+    "npm_config_cache=[isolated-home][scratch-path]",
+    "TMPDIR=[isolated-home][scratch-path]",
+    "npm",
+    "ci",
+    "--prefix",
+    "[isolated-home][scratch-path]"
+  ],
+  "cwd": "[fixture]",
+  "exitCode": 0,
+  "stdout": "[isolated-home][scratch-path]",
+  "stderr": "[isolated-home][scratch-path]",
+  "time": 1791763966.2813516
+}

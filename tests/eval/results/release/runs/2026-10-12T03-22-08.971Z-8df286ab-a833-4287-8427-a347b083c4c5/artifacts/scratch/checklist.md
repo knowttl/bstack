@@ -1,0 +1,5 @@
+- [x] Step 7: Audit starting state; native failures and source limits recorded.
+- [x] Step 8: Resolve material gaps; scope answered by existing standards.
+- [x] Step 9: Present evidenced findings; cite-check, findings validate and render passed; readiness remains blocked.
+- [ ] Step 10: Apply selected findings; excluded by recommendations-only request.
+- [ ] Step 11: Post-apply readiness; excluded; current boundary failure and protection gaps remain.

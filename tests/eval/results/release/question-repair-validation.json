@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "command": "node --test --test-concurrency=1 tests/scripts/acceptance.test.mjs tests/scripts/eval.test.mjs",
+  "node": "v24.17.0",
+  "resourcePreflight": {
+    "availableMemoryBytes": 19986563072,
+    "freeDiskBytes": 26073997312,
+    "load1m": 1.87,
+    "existingNodeSuites": 0
+  },
+  "result": {
+    "passed": 165,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "durationMs": 188261.880433
+  },
+  "scope": "Evaluation and acceptance regression checks; complete release acceptance and the full-suite capture remain pending."
+}

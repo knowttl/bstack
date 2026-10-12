@@ -1,0 +1,26 @@
+{
+  "revision": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0",
+  "workingTree": "",
+  "inputHashes": {
+    "DESIGN.md": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279",
+    "package.json": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d",
+    "unit.test.mjs": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e",
+    "packages/core/a.ts": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb",
+    "packages/core/b.ts": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8",
+    "packages/core/index.ts": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4",
+    "packages/core/internal/database.ts": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424",
+    "packages/web/alias.ts": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c",
+    "packages/web/public.ts": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230",
+    "packages/web/routes.ts": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769",
+    "packages/web/ui.ts": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+  },
+  "artifactHashes": {
+    "unit-exit-code.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "health-exit-code.txt": "743c7850cccfba5e53a9002663ec1ddd1079315a98bdbfdde10e6044f56abefe",
+    "unit-preflight.json": "cc81b4e0f0f876210efa6a3257a94a5025a411570e04c695233bd3db2dfa2d86",
+    "health-output.txt": "b9ee9fd019cfd4197f8e53013b9a45394d2dac03cb1c536877d148d666102a59",
+    "unit-output.txt": "48b4bb5c0f3c0b2819d51dab4320a187f43a15540db60fa41e5b10dfa6bae06c",
+    "health-record.json": "3d6d83f7f78f150ebf733b42e41f45c881b24ec9a1397fb70bf78d29f75d9a2c",
+    "health-spec.json": "5218bc5887dc214469b17826beb3262bc178e550cc01b7f3a61981c1e913a107"
+  }
+}

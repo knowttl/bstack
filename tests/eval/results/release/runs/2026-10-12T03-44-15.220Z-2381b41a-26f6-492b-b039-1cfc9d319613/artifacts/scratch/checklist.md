@@ -1,0 +1,5 @@
+- [x] Step 7: Audit starting state; unavailable native checks recorded
+- [x] Step 8: Resolve material gaps; approved documents agree
+- [x] Step 9: Findings validated and rendered
+- [ ] Step 10: Not requested; no edits selected or applied
+- [ ] Step 11: Verification blocked; no application or native checks

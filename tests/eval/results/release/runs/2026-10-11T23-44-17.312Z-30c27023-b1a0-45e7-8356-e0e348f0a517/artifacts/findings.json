@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "stage": "audit",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "81feef422f8fda1c96302a7fb3c09070f60045ab"
+  },
+  "nextChange": "Read-only final audit and recommendations for the existing approved reading-queue goals; no implementation change selected.",
+  "reviewedScope": [
+    "VISION.md",
+    "DESIGN.md",
+    "glossary.md"
+  ],
+  "sources": [
+    {
+      "id": "vision",
+      "pointer": "VISION.md:3",
+      "intent": "documented",
+      "summary": "Owner-approved single-reader goal, success journey, non-goals and closed product decisions."
+    },
+    {
+      "id": "design",
+      "pointer": "DESIGN.md:3",
+      "intent": "documented",
+      "summary": "Approved local Node/JSON stack, queue public operations, presentation boundary and preservation requirement."
+    },
+    {
+      "id": "terms",
+      "pointer": "glossary.md:3",
+      "intent": "documented",
+      "summary": "Article, queue including read articles and mark-read meanings."
+    },
+    {
+      "id": "inventory",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Only three documentation files; no implementation or check toolchain found by additional full repo file listing."
+    },
+    {
+      "id": "inspection",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Clean revision 81feef422f8fda1c96302a7fb3c09070f60045ab; helper tool versions captured."
+    },
+    {
+      "id": "measurement",
+      "pointer": "[isolated-home][scratch-path]",
+      "intent": "observed",
+      "summary": "Adjacent revision measurement; document co-change is advisory only."
+    },
+    {
+      "id": "implementation-status",
+      "pointer": "VISION.md:5",
+      "intent": "inferred",
+      "summary": "The first journey remains to be built, based on approved success criterion and absence of executable files."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "problem": "The approved reading queue has documentation but no runnable implementation.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md"
+      ],
+      "command": null,
+      "principle": "Implement the approved single-reader journey using the settled local Node/JSON stack and queue-owned state.",
+      "consequence": "A reader cannot yet save, find or mark an article read.",
+      "fix": "In a separately selected implementation change, build the smallest local application exposing save, list and mark-read through the queue; presentation uses those operations and JSON persistence remains behind that boundary. Exclude accounts, sharing and recommendations.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md"
+      ],
+      "verification": "Run the actual local application against a disposable JSON file: save a title/address, find it, mark it read, then reopen the application and verify the same title/address and read state remain. Include read articles in the queue per glossary.md:4.",
+      "blocksNextChange": false,
+      "category": "debt",
+      "status": "proposed",
+      "newPrinciple": false,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "terms",
+        "inventory",
+        "implementation-status"
+      ]
+    },
+    {
+      "id": "F-002",
+      "problem": "No executable check protects the approved first journey, and no project source defines evidence required to complete a change.",
+      "files": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "command": null,
+      "principle": "Proposed completion policy: affected approved journeys must pass on final inputs; unit tests alone do not establish the user outcome. Acceptance expectations come from the existing vision, design and glossary.",
+      "consequence": "Future implementation could pass isolated unit tests while persistence, article visibility or mark-read preservation is broken.",
+      "fix": "Alongside the first implementation, add one public journey check using real JSON persistence and restart/reopen; assert save/list/mark-read, preserved title/address/read status, and continued visibility of read articles. Add a short evidence section to DESIGN.md pointing to that check and its acceptance sources; expose one maintained native check command after its toolchain is selected.",
+      "scope": [
+        "VISION.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "verification": "The check passes the actual application with disposable storage and fails when marking read loses the title/address or when reopening loses saved state. Inspect expectations against VISION.md:5, DESIGN.md:3-6 and glossary.md:4-5. Record command, version, exit and output on final inputs.",
+      "blocksNextChange": false,
+      "category": "missing-protection",
+      "status": "proposed",
+      "newPrinciple": true,
+      "resolved": false,
+      "sourceIds": [
+        "vision",
+        "design",
+        "terms",
+        "inventory"
+      ]
+    }
+  ],
+  "selectedFindingIds": [],
+  "requiredOutcomes": [
+    "starting-checks"
+  ],
+  "execution": [],
+  "limitations": [
+    "Audit recommendations only; user prohibits project writes and no findings are selected.",
+    "No runnable application, manifest, prepared environment or native check command exists; starting product checks and release readiness remain verification blocked.",
+    "No Node suite was run; the host preflight prerequisite applies before any future Node suite.",
+    "The two-commit history yields document measurements only, not implementation coupling or conflicts.",
+    "No two declared plans are available for overlap analysis.",
+    "router, akashic and no-mistakes were each checked with command -v and were unavailable; no delivery service, other skill, installation or routing used.",
+    "Goals, stack and vocabulary are settled; no interview or vision board is needed."
+  ]
+}

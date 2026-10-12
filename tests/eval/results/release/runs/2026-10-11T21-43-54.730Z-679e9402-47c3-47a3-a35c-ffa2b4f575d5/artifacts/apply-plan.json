@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "be5906f640a5f7fc7f2fcd1939dd8785bbb45cde"
+  },
+  "findings": "[isolated-home][scratch-path]",
+  "findingsDigest": "2696e0c847a7475a8a0c45f724676c3d189bca651f939087ee8e8cd96b670794",
+  "selectedFindingIds": [
+    "F-001"
+  ],
+  "reviewedScope": [
+    {
+      "path": "CONTRIBUTING.md",
+      "resolvedPath": "[fixture]/CONTRIBUTING.md"
+    },
+    {
+      "path": "CODING_STANDARDS.md",
+      "resolvedPath": "[fixture]/CODING_STANDARDS.md"
+    }
+  ],
+  "edits": [
+    {
+      "id": "CONTRIBUTING.md",
+      "findingId": "F-001",
+      "path": "CONTRIBUTING.md",
+      "originalHash": "2aabfcc4539af9e559b5b3dc33d60aeeffb869d293948a9a5ec6bbfdcc53b862",
+      "proposedHash": "f5473a26e0a2ed86203e6a72b07651bdefecebb660945c6fb66cdc23cd1a9887",
+      "operation": "replace-file",
+      "payload": {
+        "content": "# Ledger standards\n\nSee [public-ledger ownership](CODING_STANDARDS.md#public-ledger-ownership).\nUse native Python checks and preserve balanced postings.\n"
+      },
+      "proposedContent": "# Ledger standards\n\nSee [public-ledger ownership](CODING_STANDARDS.md#public-ledger-ownership).\nUse native Python checks and preserve balanced postings.\n"
+    },
+    {
+      "id": "CODING_STANDARDS.md",
+      "findingId": "F-001",
+      "path": "CODING_STANDARDS.md",
+      "originalHash": null,
+      "proposedHash": "8fc014ca2ae3d661dd08d5289eb6eaf9fcc29c0b58cc0d5f4543cd4ccce5e4aa",
+      "operation": "create",
+      "payload": {
+        "content": "# Coding standards\n\n## Public-ledger ownership\n\nExternal modules use the public ledger package.\nThe ledger owns entries and all balance calculations.\n"
+      },
+      "proposedContent": "# Coding standards\n\n## Public-ledger ownership\n\nExternal modules use the public ledger package.\nThe ledger owns entries and all balance calculations.\n"
+    }
+  ],
+  "planDigest": "2d6908cf493b6859fa17faaa4be81120efbc69f7aee9e0e882585bb5bb4da3fb"
+}

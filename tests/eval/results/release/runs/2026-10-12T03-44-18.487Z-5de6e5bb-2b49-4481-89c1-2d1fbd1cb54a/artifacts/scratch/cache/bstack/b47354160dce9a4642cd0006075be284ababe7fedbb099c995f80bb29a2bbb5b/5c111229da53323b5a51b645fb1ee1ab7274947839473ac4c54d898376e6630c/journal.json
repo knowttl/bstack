@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "runId": "5c111229da53323b5a51b645fb1ee1ab7274947839473ac4c54d898376e6630c",
+  "target": {
+    "mode": "repo",
+    "root": "[fixture]",
+    "revision": "ffcf64aa195c339af4632f0c7d92b315b95ed4db"
+  },
+  "planDigest": "5c111229da53323b5a51b645fb1ee1ab7274947839473ac4c54d898376e6630c",
+  "edits": [
+    {
+      "id": "portable-review",
+      "path": ".bstack/assessment.json",
+      "resolvedPath": "[fixture]/.bstack/assessment.json",
+      "originalHash": null,
+      "proposedHash": "384aaf2f9b763e73e9ac76e8f63d4d00db54fbc265aebdcecd566a59c01631ba",
+      "backup": null,
+      "completed": true,
+      "temporary": null
+    }
+  ],
+  "affectedChecks": [
+    "Quote remains 12 and live HTTP checkout remains status 201 total 10",
+    "starting-checks"
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "document-config",
+  "acceptanceSources": [
+    {
+      "id": "design",
+      "path": "DESIGN.md",
+      "contentHash": "c833469ed8b75279098689f079e816359c9c552a5acd917c58f0f383ba766ab5"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "boundary",
+      "sourceId": "design",
+      "pointer": "The UI never touches storage.",
+      "outcome": "Web accesses core only through its public index; core-internal use remains permitted and static graph is acyclic.",
+      "userJourney": false
+    },
+    {
+      "id": "journey",
+      "sourceId": "design",
+      "pointer": "The agreed checkout total is 10.",
+      "outcome": "Real loopback checkout returns status 201 and total 10.",
+      "userJourney": true
+    },
+    {
+      "id": "quote",
+      "sourceId": "design",
+      "pointer": "quote() returns 12.",
+      "outcome": "Public quote remains 12.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "native",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "check"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary",
+        "journey",
+        "quote"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "tsconfig.json",
+        "package.json",
+        "package-lock.json",
+        "*.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/**"
+      ]
+    },
+    {
+      "id": "boundary",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "boundaries"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "boundary"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "tsconfig.json",
+        "package.json",
+        "package-lock.json",
+        "*.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/**"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "outcome",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "journey"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "tsconfig.json",
+        "package.json",
+        "package-lock.json",
+        "*.mjs",
+        "DESIGN.md",
+        "glossary.md",
+        "AGENTS.md",
+        ".bstack/project.json",
+        ".bstack/bin/**"
+      ]
+    }
+  ]
+}

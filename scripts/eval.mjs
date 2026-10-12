@@ -2,17 +2,18 @@ import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { platform, release } from 'node:os'
-import { root, text, object, array, options, scenario, readJSON, fail } from './lib/evaluation.mjs'
+import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution } from './lib/evaluation.mjs'
 import { validateData, validateIds } from '../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
 import { readAdapter, isolate, hostTurn, closeHost, redactEvidence } from './lib/evaluation-host.mjs'
+import { scoreChecks, validateScore, correctedScore } from './lib/evaluation-scoring.mjs'
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
 // Adapter runs capture host turns, while unsupported hosts retain the manual interface.
-const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--repo <maintained-fixture>] [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> --answer <one-based-script-index> [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]\n--repo reuses an explicit disposable maintained fixture for a final adapter follow-up; the caller owns its preservation and cleanup.'
+const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--repo <maintained-fixture>] [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> --answer <one-based-script-index> [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval correct --run <id> --correction <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]\n--repo reuses an explicit disposable maintained fixture for a final adapter follow-up; the caller owns its preservation and cleanup.'
 
 async function child(executable, args, targetRoot = root) {
   const result = await runCommand({ root: targetRoot }, { executable, args, cwd: '.', versionArgs: ['--version'], timeoutMs: 120000 })
@@ -26,7 +27,7 @@ async function start(opts, results) {
   if (!['without', 'with'].includes(opts.mode)) fail('Mode must be without or with.', 'usage-error')
   const definition = await scenario(opts.scenario)
   if (!definition.checkpoints.includes(opts.stage)) fail(`Unknown checkpoint: ${opts.stage}`, 'usage-error')
-  const adapter = opts.adapter ? await readAdapter(resolve(opts.adapter)) : null
+  const adapter = opts.adapter ? await readAdapter(resolve(opts.adapter), definition.id) : null
   if (!opts.manual && !adapter) fail('Automatic execution requires --adapter. Use --manual for unsupported hosts.')
   if (adapter) {
     if (opts.agent || opts.model || opts.invocation) fail('The adapter owns agent, model and invocation. Omit these options.', 'usage-error')
@@ -61,7 +62,7 @@ async function start(opts, results) {
       (['foundation', 'final'].includes(opts.stage) ? `Active checkpoint: ${opts.stage}.\n` : '') + definition.request,
     status: 'blocked', reason: 'Awaiting explicit manual answers and transcript. Host isolation is not verified by C7a.',
     isolation: { verified: false }, transcript: null, answers: null, caseResults: [] }
-  if (definition.fixture.startsWith('ts-')) {
+  if (definition.fixture.startsWith('ts-') || definition.fixture === 'maintained-ts-shop') {
     record.tools.npm = (await child('npm', ['--version'], fixture.path)).stdout.trim()
     record.tools.typescript = (await child('node', [join('node_modules', 'typescript', 'bin', 'tsc'), '--version'], fixture.path)).stdout.trim()
   }
@@ -154,9 +155,11 @@ async function score(opts, results) {
   if (!transcript.trim()) fail('Transcript is empty. The run remains blocked.')
   const lines = transcript.trimEnd().split(/\r?\n/).length
   for (const answer of answers.checks) if (answer.startLine < 1 || answer.endLine < answer.startLine || answer.endLine > lines) fail(`Invalid transcript location for ${answer.id}`)
+  validateScore(record, answers, transcript)
   const directory = join(results, record.id)
   if (record.adapter) {
     if (record.hostFailure || !record.turns?.length || record.turns.some(turn => !turn.sessionId)) fail('Adapter scoring requires completed host turns. Use the manual procedure for unsupported conversations.')
+    if (!verifiedExecution(record)) fail('Adapter scoring requires verified evaluation filesystem scope.')
     if (transcript !== await readFile(join(results, record.id, record.conversation), 'utf8')) fail('Score the captured adapter conversation without replacing its transcript.')
     if (record.isolation.cleanedAt) {
       if (!record.isolation.verified || record.conversationHash !== hashBytes(transcript)) fail('Closed host evidence has unverified isolation or a changed conversation.')
@@ -186,10 +189,15 @@ async function score(opts, results) {
 }
 
 async function compare(opts, results) {
-  const before = await load(results, opts.without)
-  const after = await load(results, opts.with)
+  const before = await correctedScore(join(results, opts.without), await load(results, opts.without))
+  const after = await correctedScore(join(results, opts.with), await load(results, opts.with))
   if (!before.transcript || !after.transcript) fail('Both runs need explicit scoring before comparison.')
+  for (const record of [before, after]) validateScore(record, { runId: record.id, checks: record.caseResults },
+    await readFile(join(results, record.id, record.transcript), 'utf8'))
   if (before.adapterHash !== after.adapterHash) fail('Comparison requires the same host adapter and execution settings.')
+  if (before.adapter && (!verifiedExecution(before) || !verifiedExecution(after) ||
+      before.scopeGuard.version !== after.scopeGuard.version)) fail('Comparison requires the same verified filesystem scope contract.')
+  if (before.execution && after.execution && ['imageId', 'recipeHash', 'toolchain'].some(key => canonicalJSON(before.execution[key]) !== canonicalJSON(after.execution[key]))) fail('Comparison requires the same container image, recipe and toolchain.')
   if (before.mode !== 'without' || after.mode !== 'with' || ['agent', 'model', 'criteriaHash', 'stage'].some(key => before[key] !== after[key]) ||
       before.scenario.id !== after.scenario.id || ['name', 'revision'].some(key => before.fixture[key] !== after.fixture[key]) ||
       ['fixture', 'request', 'answers', 'invocation'].some(key => canonicalJSON(before.scenario[key]) !== canonicalJSON(after.scenario[key]))) fail('Comparison requires the same scenario, fixture revision, agent, model, stage and criteria, with identical fixture names, requests, scripted answers and invocation modes.')
@@ -199,17 +207,33 @@ async function compare(opts, results) {
     without: before.id, with: after.id, lost: lost.map(check => check.id), gained: gained.map(check => check.id) }
 }
 
+async function correct(opts, results) {
+  const record = await load(results, opts.run)
+  if (!record.transcript || !record.answers) fail('Only a scored run can receive an append-only correction.')
+  if (!opts.correction) fail('Supply --correction with a corrector, reason, evidence lines and complete checks.', 'usage-error')
+  const correction = await readJSON(resolve(opts.correction))
+  validateData(object({ corrector: text, reason: text,
+    evidence: object({ startLine: { type: 'integer' }, endLine: { type: 'integer' } }), checks: scoreChecks }), correction)
+  const directory = join(results, record.id)
+  const bound = { schemaVersion: 1, runId: record.id, correctedAt: new Date().toISOString(), ...correction,
+    originalAnswers: record.answers, originalAnswersSha256: hashBytes(await readFile(join(directory, record.answers), 'utf8')),
+    conversationSha256: hashBytes(await readFile(join(directory, record.transcript), 'utf8')) }
+  const corrected = await correctedScore(directory, record, bound)
+  await writeFile(join(directory, 'score-correction.json'), redactEvidence(JSON.stringify(bound, null, 2) + '\n', record), { flag: 'wx' })
+  return corrected
+}
+
 try {
   const args = process.argv.slice(2)
   if (args.includes('--help')) console.log(help)
   else if (!args.length) fail('Select a manual scenario, score or compare. ' + help)
   else {
     const command = args[0].startsWith('--') ? 'start' : args.shift()
-    const allowed = { start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], score: ['run', 'answers', 'transcript'], compare: ['without', 'with'] }
+    const allowed = { start: ['scenario', 'mode', 'stage', 'agent', 'model', 'invocation', 'adapter', 'repo'], turn: ['run', 'answer'], close: ['run'], score: ['run', 'answers', 'transcript'], correct: ['run', 'correction'], compare: ['without', 'with'] }
     if (!Object.hasOwn(allowed, command)) fail(`Unknown command: ${command}`, 'usage-error')
     const opts = options(args, [...allowed[command], 'results'], command === 'start' ? ['manual'] : [])
     const results = resolve(opts.results ?? defaultResults)
-    const data = await ({ start, turn, close, score, compare })[command](opts, results)
+    const data = await ({ start, turn, close, score, correct, compare })[command](opts, results)
     if (!opts.json && command === 'start') console.log(JSON.stringify(data, null, 2))
     emitResult({ command: `eval ${command}`, status: data.status, data }, opts.json)
   }

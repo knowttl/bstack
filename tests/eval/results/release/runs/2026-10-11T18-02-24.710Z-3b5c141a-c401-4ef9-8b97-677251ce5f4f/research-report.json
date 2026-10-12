@@ -1,0 +1,506 @@
+{
+  "schemaVersion": 1,
+  "mode": "subagents",
+  "host": "Codex API coding-agent host; zsh shell; general-purpose collaboration subagents actually used (three concurrent child slots). Web tool exposed but unavailable for this checkpoint by author constraint; capabilities.web records usable access, not tool exposure. Main thread opened and checked every cited file. No network or target checks executed.",
+  "capabilities": {
+    "subagents": true,
+    "web": false
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "AGENTS.md:1 requires the approved design and public core interface. CLAUDE.md:1 references AGENTS.md; host loading was not tested. DESIGN.md:3 prohibits UI storage access and DESIGN.md:4 sets checkout total 10. glossary.md:3 and glossary.md:4 define Order as both a customer purchase and UI panel sequence, leaving a vocabulary ambiguity. No broader purpose or users are stated in these documents.",
+      "limitations": [
+        "No interview, product decision or instruction consolidation performed.",
+        "Inventory reports vision, context-map, standards, decisions, audit and context absent; file listing contains no README.",
+        "Instruction-loading compatibility not researched or tested."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d"
+          }
+        },
+        {
+          "location": "glossary.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "26743f8100db6fa95c289297b40604922bf534f3ff08575d22a8d2f3661c9a8d"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "AGENTS.md",
+        "DESIGN.md",
+        "packages/core/index.ts",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/core/internal/database.ts",
+        "packages/web/public.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "tsconfig.json",
+        "unit.test.mjs",
+        "journey.mjs",
+        "boundaries.mjs"
+      ],
+      "findings": "The public core entry exports price (packages/core/index.ts:1), used by web quote (packages/web/public.ts:1). Database source returns price 12 and fetches JSON price from a caller-supplied URL (packages/core/internal/database.ts:1). Checkout imports that internal fetch function and passes the result to postOrder (packages/web/ui.ts:1). Routes imports internal price, multiplies quantity, applies a discount above five, stores totals in a module-local array and returns status 201 (packages/web/routes.ts:1). aliasQuote uses @storage/database (packages/web/alias.ts:1), mapped to core internals (tsconfig.json:11). These observed source dependencies conflict with the documented public boundary (AGENTS.md:1; DESIGN.md:3). Core a and b import and call each other (packages/core/a.ts:1; packages/core/b.ts:1); no executed cycle result is claimed. Unit tests assert quote 12 and mock checkout price 10 (unit.test.mjs:5). The journey supplies price 12 but asserts checkout total 10 (journey.mjs:6, journey.mjs:12), exposing a source-level expectation mismatch against DESIGN.md:4. boundaries.mjs:15 resolves dependencies and checks internal edges and cycles.",
+      "limitations": [
+        "Source inspection only; no runtime outcomes or check failures observed.",
+        "No supplied deterministic measurements; measure and overlap not run, no sizes, fan-in, history or co-change metrics claimed.",
+        "No next implementation change supplied."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4"
+          }
+        },
+        {
+          "location": "packages/web/public.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+          }
+        },
+        {
+          "location": "packages/core/internal/database.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c"
+          }
+        },
+        {
+          "location": "tsconfig.json:11",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "b0e3b8270e224a0b606fa5f3bc27e07dc4a410d68166b738519f83545b11d7bb"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "590dfdf27a9e6b8f42b50240795b379a71547927bb2d37b310d25cb318c835a8"
+          }
+        },
+        {
+          "location": "unit.test.mjs:5",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        },
+        {
+          "location": "journey.mjs:6",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "journey.mjs:12",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "boundaries.mjs:15",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "AGENTS.md",
+        "DESIGN.md",
+        "package.json",
+        "package-lock.json",
+        "packages/core/package.json",
+        "packages/web/package.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "unit.test.mjs",
+        "journey.mjs"
+      ],
+      "findings": "package.json:11 configures independent check (tsc --noEmit), test, journey and boundaries commands; check does not compose the others. package.json:5 requires Node >=24; package.json:18 and package-lock.json:26 pin TypeScript 5.9.3. tsconfig.json:3 enables NodeNext resolution, strict checking and no emit for packages/**/*.ts, including the storage alias. boundaries.mjs:8 inspects non-declaration files and top-level static import/export declarations, resolves targets, flags web-to-core-internal edges and cycles, and sets failure status for detected violations; dynamic imports are not examined by this syntax loop. unit.test.mjs:5 asserts public quote 12; its checkout case mocks fetch price 10. journey.mjs:4 configures checkout against a localhost HTTP server returning 12 while asserting the approved total 10 (DESIGN.md:4; journey.mjs:12). This protects a checkout function journey, not browser interaction or a live external service. These are configured checks and source assertions only.",
+      "limitations": [
+        "No target checks executed; no compiler, boundary, unit or journey pass/fail claims.",
+        "Dependency directories excluded; installed TypeScript availability not established.",
+        "Inspect captured Node v24.17.0, npm 11.13.0, git 2.54.0; inspect and inventory passed, with clean revision b6c59b7810f5155fd514c9db60e98b7dffce0cc0.",
+        "No supplied check or measurement results."
+      ],
+      "files": [
+        {
+          "location": "package.json:11",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:5",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:18",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package-lock.json:26",
+          "state": {
+            "kind": "sha256",
+            "value": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+          }
+        },
+        {
+          "location": "tsconfig.json:3",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "boundaries.mjs:8",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        },
+        {
+          "location": "unit.test.mjs:5",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        },
+        {
+          "location": "journey.mjs:4",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "journey.mjs:12",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "DESIGN.md:4",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "AGENTS.md",
+        "DESIGN.md",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "packages/core/package.json",
+        "packages/core/index.ts",
+        "packages/web/public.ts",
+        "packages/web/ui.ts",
+        "packages/web/routes.ts",
+        "packages/web/alias.ts",
+        "boundaries.mjs"
+      ],
+      "findings": "Language-specific recommendations: not researched because the checkpoint author prohibits web and network access. Repository evidence: package.json:5 declares Node >=24 and package.json:18 pins TypeScript 5.9.3, also recorded in package-lock.json:26. tsconfig.json:2 configures ES2022, NodeNext modules/resolution, strict checking, no emit, TypeScript extension imports and a storage alias. packages/core/package.json:1 exposes index.ts, which exports price (packages/core/index.ts:1). Web public.ts uses this entry, while ui.ts and routes.ts import internals and alias.ts uses the storage alias (each at line 1). boundaries.mjs:3 builds a TypeScript program, inspects static import/export declarations at line 11 and traverses collected edges at line 26. The general principle of comparing dependencies with approved boundaries is grounded in AGENTS.md:1 and DESIGN.md:3; no new language rules or stack replacement are proposed.",
+      "limitations": [
+        "External language/tool practice not researched: author prohibits web/network, even though a web tool is exposed.",
+        "No checks run by the subagent; manifest declarations do not establish installed compiler version.",
+        "No measurements supplied."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "sha256",
+            "value": "69dc5ca634f9785804be14fa8282d08bca79c3252e4be69ff9f34c6bec8f01c4"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "sha256",
+            "value": "4c299da72dc068e0e7cd820e9f7fab1f4ba067358ce7b4c7df02f622f0dd2279"
+          }
+        },
+        {
+          "location": "package.json:5",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package.json:18",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package-lock.json:26",
+          "state": {
+            "kind": "sha256",
+            "value": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+          }
+        },
+        {
+          "location": "tsconfig.json:2",
+          "state": {
+            "kind": "sha256",
+            "value": "a880ae4738a028ef88220763d06832afc107c87dd3d850fbfe853a74555fad49"
+          }
+        },
+        {
+          "location": "packages/core/package.json:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e79964fc4a98faf8d42b03223673d41af539786abc9004900c5bbc5b4deb65bf"
+          }
+        },
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "ed023b804a7591602877189764309b1cfd23922c82a23eece7edeb1b669157e4"
+          }
+        },
+        {
+          "location": "packages/web/public.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "cb49bdc57a47282d61020849ea8fe64a5d88e4f68c34d81ce407fb8bc6e3f230"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "e917a2596ec0683e381a94bf6da8f310ba35be21e46610fba546cda8453e6769"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "sha256",
+            "value": "1ce41e2a22d1fd6efa480042449db4a363e05114802e962ac749c54f9091af5c"
+          }
+        },
+        {
+          "location": "boundaries.mjs:3",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        },
+        {
+          "location": "boundaries.mjs:11",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        },
+        {
+          "location": "boundaries.mjs:26",
+          "state": {
+            "kind": "sha256",
+            "value": "239f40167824b92e3b21eefd12fb56a1723e0db0d33d960df9db833eb2eb6449"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "packages/core/internal/database.ts",
+        "packages/web/ui.ts",
+        "unit.test.mjs",
+        "journey.mjs",
+        "package.json",
+        "package-lock.json"
+      ],
+      "findings": "Outside recommendations: not researched because this checkpoint's author prohibits web access and network commands. servicePrice(url) fetches the supplied URL, parses JSON and returns its price property (packages/core/internal/database.ts:2). Checkout passes that value into postOrder (packages/web/ui.ts:3). No named service, provider-specific API or integration version is identified in these sources. The unit checkout test replaces global fetch and supplies price 10; its example.invalid URL provides no real-service evidence (unit.test.mjs:6). The journey defines a local HTTP server returning price 12 and asserts order total 10 (journey.mjs:4; journey.mjs:12); this is configured local-fixture coverage, not an executed result or live third-party observation. The manifest and lockfile identify TypeScript 5.9.3 and workspace links, with no declared service SDK (package.json:17; package-lock.json:18). General principle: a mock or local server does not establish an outside service's behavior. No probe results supplied or probes executed.",
+      "limitations": [
+        "Outside recommendations not researched: checkpoint author prohibits web and network commands.",
+        "No specific third-party provider or integration version established.",
+        "No live probes supplied or executed; runtime behavior remains unverified."
+      ],
+      "files": [
+        {
+          "location": "packages/core/internal/database.ts:2",
+          "state": {
+            "kind": "sha256",
+            "value": "c0b2a20634a79a05b1ff7ab234661c4fd38a771bd286de6debedacfe5b7ad424"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:3",
+          "state": {
+            "kind": "sha256",
+            "value": "005f456fc1304cea4e7f7e10ee26ae7442983b86f9179f590480fb3600879e7c"
+          }
+        },
+        {
+          "location": "unit.test.mjs:6",
+          "state": {
+            "kind": "sha256",
+            "value": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+          }
+        },
+        {
+          "location": "journey.mjs:4",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "journey.mjs:12",
+          "state": {
+            "kind": "sha256",
+            "value": "afbcda63da1b8ee1e236f97f188833d29940b08ad07030a00fbc58d0fea5daf6"
+          }
+        },
+        {
+          "location": "package.json:17",
+          "state": {
+            "kind": "sha256",
+            "value": "b83b6ef0d0ad81967919c72f885cc3ab8b5998f86fcdf2161ae12695d4190f3d"
+          }
+        },
+        {
+          "location": "package-lock.json:18",
+          "state": {
+            "kind": "sha256",
+            "value": "77e474f4a704c4dc80036090c298cfcb8a5b0d47f1b0fe63c992b2f603ec5a6b"
+          }
+        }
+      ],
+      "web": []
+    }
+  ]
+}

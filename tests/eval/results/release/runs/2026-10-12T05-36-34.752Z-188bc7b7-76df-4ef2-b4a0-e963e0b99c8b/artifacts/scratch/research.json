@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "mode": "main-thread",
+  "host": "Codex API",
+  "capabilities": {
+    "subagents": true,
+    "web": true
+  },
+  "briefs": [
+    {
+      "id": "documents",
+      "scope": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "DESIGN.md",
+        "glossary.md"
+      ],
+      "findings": "Design mandates no UI storage and checkout total 10. Root instructions require public core interface. CLAUDE is an import-only stub. Glossary overloads Order with purchase and panel sequence.",
+      "limitations": [
+        "No README, vision, decisions, audit or contribution guide. Baseline design retained; no vision rewrite warranted. Small repository researched in main thread; hand-off would be wasteful."
+      ],
+      "files": [
+        {
+          "location": "AGENTS.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "DESIGN.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "glossary.md:3",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "architecture",
+      "scope": [
+        "packages/core/index.ts",
+        "packages/core/internal/database.ts",
+        "packages/core/a.ts",
+        "packages/core/b.ts",
+        "packages/web/ui.ts",
+        "packages/web/alias.ts",
+        "packages/web/routes.ts"
+      ],
+      "findings": "Public core re-exports database price. UI, alias and route import storage internals. Route owns quantity discount calculation, mutable totals storage and response construction. Core database combines static price and remote fetch. a and b mutually recurse with no base case; neither is on checkout path. Candidate coupled core and mixed route responsibilities require separate findings.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "packages/core/index.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/internal/database.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/a.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/core/b.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/ui.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/alias.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "packages/web/routes.ts:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "checks",
+      "scope": [
+        "package.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs"
+      ],
+      "findings": "Prepared TypeScript 5.9.3; check only typechecks. Separate boundary and loopback journey scripts exist. Unit public-price test expects 12 without authoritative acceptance, fetch mock returns 10. Native resolver catches private, alias and cycle paths. Journey uses real local HTTP and approved total 10.",
+      "limitations": [
+        "No configured format/lint/CI. No external live pricing endpoint or approved failure/quantity cases. Static checker examines top-level import/export declarations, not dynamic imports or require."
+      ],
+      "files": [
+        {
+          "location": "package.json:12",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "tsconfig.json:10",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "boundaries.mjs:19",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "journey.mjs:10",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "unit.test.mjs:5",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": []
+    },
+    {
+      "id": "language",
+      "scope": [
+        "tsconfig.json",
+        "boundaries.mjs"
+      ],
+      "findings": "Reuse existing TypeScript resolution for boundary analysis. TypeScript paths does not rewrite runtime imports; successful typecheck cannot prove alias runtime availability.",
+      "limitations": [],
+      "files": [
+        {
+          "location": "tsconfig.json:10",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "boundaries.mjs:15",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://www.typescriptlang.org/tsconfig/paths.html",
+          "readDate": "2026-10-12",
+          "verification": "verified"
+        }
+      ]
+    },
+    {
+      "id": "outside",
+      "scope": [
+        "CLAUDE.md",
+        "journey.mjs"
+      ],
+      "findings": "Claude docs support AGENTS directly from 2.1.277 with host limitations; existing stub has no unique rule to merge. Runtime Claude executable absent: removal blocked. Pricing check observes loopback only, not a live third-party service.",
+      "limitations": [
+        "No third-party endpoint specified; no external price behaviour claimed. No ancestor/profile instruction search performed."
+      ],
+      "files": [
+        {
+          "location": "CLAUDE.md:1",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        },
+        {
+          "location": "journey.mjs:4",
+          "state": {
+            "kind": "revision",
+            "value": "b6c59b7810f5155fd514c9db60e98b7dffce0cc0"
+          }
+        }
+      ],
+      "web": [
+        {
+          "url": "https://code.claude.com/docs/en/memory",
+          "readDate": "2026-10-12",
+          "verification": "verified"
+        }
+      ]
+    }
+  ]
+}
