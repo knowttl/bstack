@@ -9,7 +9,7 @@ import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
 import { readAdapter, isolate, hostTurn, closeHost, redactEvidence, candidateSkillHash } from './lib/evaluation-host.mjs'
 import { scoreChecks, validateScore, correctedScore } from './lib/evaluation-scoring.mjs'
-import { readJudge, judgeAnswers } from './lib/evaluation-judge.mjs'
+import { readJudge, judgeInput, judgeAnswers } from './lib/evaluation-judge.mjs'
 
 // Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
@@ -96,6 +96,7 @@ async function start(opts, results, frozen = null) {
     stage: opts.stage, mode: opts.mode, request: openingRequest(opts, definition),
     status: 'blocked', reason: 'Awaiting explicit manual answers and transcript. Host isolation is not verified by C7a.',
     isolation: { verified: false }, transcript: null, answers: null, caseResults: [] }
+  if (frozen) { record.batchId = frozen.batchId; record.repeatIndex = frozen.repeatIndex }
   if (definition.fixture.startsWith('ts-') || definition.fixture === 'maintained-ts-shop') {
     record.tools.npm = (await child('npm', ['--version'], fixture.path)).stdout.trim()
     record.tools.typescript = (await child('node', [join('node_modules', 'typescript', 'bin', 'tsc'), '--version'], fixture.path)).stdout.trim()
@@ -226,12 +227,12 @@ async function batch(opts, results) {
     record.fixtures.push({ runId: run.id, scenario: run.scenario.id, path: run.fixture.path })
     await persist()
   }
-  const jobs = selected.flatMap(id => Array.from({ length: record.repeat }, () => id))
+  const jobs = selected.flatMap(id => Array.from({ length: record.repeat }, (_, repeatIndex) => ({ id, repeatIndex })))
   await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, async () => {
     while (jobs.length) {
-      const id = jobs.shift()
+      const { id, repeatIndex } = jobs.shift()
       try {
-        let run = await start({ scenario: id, mode: frozen[id].mode, stage: frozen[id].stage, adapter: opts.adapter }, results, { ...frozen[id], register })
+        let run = await start({ scenario: id, mode: frozen[id].mode, stage: frozen[id].stage, adapter: opts.adapter }, results, { ...frozen[id], register, batchId: record.id, repeatIndex })
         try {
           while (!run.hostFailure && run.nextAnswer <= run.scenario.answers.length) {
             run = await turn({ run: run.id, answer: String(run.nextAnswer) }, results)
@@ -331,9 +332,7 @@ async function score(opts, results) {
   if (!opts.answers || !opts.transcript) fail('Missing answers or transcript. The run remains blocked.')
   if (record.transcript) fail('This run is already scored. Create a fresh run to keep checkpoint history.')
   const answers = await readJSON(resolve(opts.answers))
-  validateData(object({ schemaVersion: { const: 1 }, runId: text, reviewer: text, checks: array(object({
-    id: text, passed: { type: 'boolean' }, startLine: { type: 'integer' }, endLine: { type: 'integer' }
-  })) }), answers)
+  validateData(object({ schemaVersion: { const: 1 }, runId: text, reviewer: text, checks: scoreChecks }), answers)
   validateIds(answers.checks, '$/checks')
   if (answers.reviewer.trim().length < 3 || /^\d+$/.test(answers.reviewer.trim())) fail('Reviewer identities must contain at least three characters and cannot be purely numeric.')
   const judge = answers.reviewer.startsWith('judge:')
@@ -393,9 +392,12 @@ async function judge(opts, results) {
   if (record.adapter && (record.hostFailure || !record.isolation.cleanedAt || !record.isolation.verified ||
       !verifiedExecution(record) || record.conversationHash !== hashBytes(transcript))) fail('Judge requires an unchanged captured conversation with verified cleanup.')
   const directory = join(results, record.id, 'judge')
+  const prepared = await judgeInput(record, transcript, { directory: results })
+  if (prepared.pending.length) return { status: 'blocked', runId: record.id, pending: prepared.pending,
+    reason: 'Comparison checks remain pending. Supply companion evidence before judging this run.' }
   // Reserve the invocation before spending so accidental repeats cannot call the model twice.
   await mkdir(directory)
-  const { answers, evidence } = await judgeAnswers(config, record, transcript)
+  const { answers, evidence } = await judgeAnswers(config, record, transcript, prepared)
   const path = join(directory, 'answers.json')
   await writeFile(path, JSON.stringify(answers, null, 2) + '\n', { flag: 'wx', mode: 0o600 })
   await writeFile(join(directory, 'evidence.json'), JSON.stringify(evidence, null, 2) + '\n', { flag: 'wx', mode: 0o600 })

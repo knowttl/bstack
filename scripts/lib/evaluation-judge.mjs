@@ -1,10 +1,10 @@
-import { chmod, copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { chmod, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { constants } from 'node:fs'
 import { homedir, tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { root, text, object, array, readJSON, fail } from './evaluation.mjs'
-import { scoreChecks, validateScore } from './evaluation-scoring.mjs'
+import { scoreChecks, validateScore, correctedScore } from './evaluation-scoring.mjs'
 import { createContainer, image } from './evaluation-container.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
@@ -81,19 +81,73 @@ export async function readJudge(path) {
   return config
 }
 
-export async function judgeInput(record, transcript) {
+export async function judgeInput(record, transcript, { directory, corpus, human } = {}) {
   if (!transcript.trim()) fail('Judge requires a nonempty captured transcript.')
   const rubric = await readFile(join(root, 'tests/eval/judge/rubric.md'), 'utf8')
-  const checks = record.scenario.checks.filter(check => !check.machine)
+  let checks = record.scenario.checks.filter(check => !check.machine)
   if (!checks.length) fail('This run has no conversation judgements. Use captured machine results.')
+  const comparisons = checks.flatMap(check => {
+    const scenario = /Compare with the ([a-z0-9-]+) transcript\./.exec(check.question)?.[1]
+    return scenario ? [{ checkId: check.id, scenario }] : []
+  })
+  const companions = []
+  const pending = []
+  if (comparisons.length) {
+    let candidates = corpus
+    if (!candidates) {
+      candidates = []
+      for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
+        if (!entry.isDirectory() || !/^[\dTZ.-]+-[0-9a-f-]{36}$/.test(entry.name)) continue
+        let other = await readJSON(join(directory, entry.name, 'run.json'))
+        if (other.id !== entry.name) fail('Companion run ID does not match its directory.')
+        if (other.transcript) other = await correctedScore(join(directory, other.id), other)
+        const path = other.transcript ?? other.conversation
+        candidates.push({ record: other, transcript: path ? await readFile(join(directory, other.id, path), 'utf8') : '' })
+      }
+      let batches = []
+      try { batches = await readdir(join(directory, 'batches')) }
+      catch (error) { if (error.code !== 'ENOENT') throw error }
+      for (const file of batches.filter(file => file.endsWith('.json')).sort()) {
+        const batch = await readJSON(join(directory, 'batches', file))
+        for (const run of [{ record }, ...candidates]) {
+          if (!batch.runIds.includes(run.record.id)) continue
+          run.record.batchId = batch.id
+          run.record.repeatIndex ??= batch.runIds.filter(id =>
+            [record, ...candidates.map(other => other.record)].find(other => other.id === id)?.scenario.id === run.record.scenario.id).indexOf(run.record.id)
+        }
+      }
+    }
+    for (const comparison of comparisons) {
+      const cited = human?.checks.find(check => check.id === comparison.checkId)?.companionRunId
+      const eligible = candidates.filter(run => run.record.scenario.id === comparison.scenario && run.transcript.trim())
+        .sort((a, b) => a.record.id.localeCompare(b.record.id))
+      let companion
+      if (cited) companion = eligible.find(run => run.record.id === cited)
+      else {
+        const matching = eligible.filter(run => record.sourceRevision && run.record.sourceRevision === record.sourceRevision && run.record.mode === record.mode &&
+          (corpus || (record.batchId && run.record.batchId === record.batchId)))
+        companion = corpus ? matching[0] : matching.find(run => Number.isInteger(record.repeatIndex) && run.record.repeatIndex === record.repeatIndex) ??
+          matching.find(run => run.record.status === 'passed')
+      }
+      if (!companion) { pending.push(comparison); continue }
+      companions.push({ ...comparison, runId: companion.record.id, transcriptHash: hashBytes(companion.transcript),
+        transcript: companion.transcript.trimEnd().split(/\r?\n/).map((text, index) => ({ line: index + 1, text })) })
+    }
+    checks = checks.filter(check => !pending.some(item => item.checkId === check.id))
+  }
   const input = { schemaVersion: 1, runId: record.id, rubric, checks,
-    transcript: transcript.trimEnd().split(/\r?\n/).map((text, index) => ({ line: index + 1, text })) }
-  return { input, rubricHash: hashBytes(rubric), inputHash: hashBytes(canonicalJSON(input)),
+    transcript: transcript.trimEnd().split(/\r?\n/).map((text, index) => ({ line: index + 1, text })), companions }
+  return { input, pending, companions: companions.map(({ transcript, ...binding }) => binding),
+    companionsHash: hashBytes(canonicalJSON(companions)), rubricHash: hashBytes(rubric), inputHash: hashBytes(canonicalJSON(input)),
     transcriptHash: hashBytes(transcript), criteriaHash: hashBytes(canonicalJSON(checks)) }
 }
 
 export async function judgeAnswers(config, record, transcript, prepared) {
-  prepared ??= await judgeInput(record, transcript)
+  const evidence = { model: config.model, configHash: hashBytes(canonicalJSON(config)), rubricHash: prepared.rubricHash,
+    inputHash: prepared.inputHash, transcriptHash: prepared.transcriptHash, criteriaHash: prepared.criteriaHash,
+    companions: prepared.companions, companionsHash: prepared.companionsHash, pending: prepared.pending }
+  if (!prepared.input.checks.length) return { answers: { schemaVersion: 1, runId: record.id, reviewer: `judge:${config.model}`, checks: [] },
+    evidence }
   const directory = await mkdtemp(join(tmpdir(), 'bstack-judge-'))
   try {
     const result = await executeJudge(config, directory, JSON.stringify({ ...prepared.input, reviewer: `judge:${config.model}` }) + '\n')
@@ -106,13 +160,12 @@ export async function judgeAnswers(config, record, transcript, prepared) {
       } else answers = response
     } catch { fail('Judge did not return one JSON answers object.') }
     validateData(object({ schemaVersion: { const: 1 }, runId: text, reviewer: text, checks: scoreChecks }), answers)
+    if (answers.checks.some(check => Object.hasOwn(check, 'companionRunId'))) fail('Companion selection belongs to the retained human score, not judge output.')
     if (answers.reviewer !== `judge:${config.model}`) fail('Judge output names a different model.')
     // The judge cannot replace machine results, even in otherwise valid output.
     const semantic = { ...record, scenario: { ...record.scenario, checks: prepared.input.checks } }
     validateScore(semantic, answers, transcript)
-    return { answers, evidence: { model: config.model, configHash: hashBytes(canonicalJSON(config)),
-      rubricHash: prepared.rubricHash, inputHash: prepared.inputHash, transcriptHash: prepared.transcriptHash,
-      criteriaHash: prepared.criteriaHash, toolVersion: result.toolVersion, durationMs: result.durationMs,
+    return { answers, evidence: { ...evidence, toolVersion: result.toolVersion, durationMs: result.durationMs,
       ...(result.imageId ? { imageId: result.imageId, recipeHash: result.recipeHash } : {}) } }
   } finally { await rm(directory, { recursive: true, force: true }) }
 }

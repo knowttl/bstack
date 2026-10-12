@@ -497,6 +497,8 @@ test('interrupted batch retains the private fixture inventory after its first ru
   assert.ok(closed.isolation.cleanedAt)
   assert.equal(closed.fixture.path, '[fixture]')
   assert.equal(closed.nextAnswer, closed.scenario.answers.length + 1)
+  assert.equal(closed.batchId, inventory.id)
+  assert.equal(closed.repeatIndex, 0)
   await assert.rejects(readFile(join(directory, 'ledger.jsonl')), { code: 'ENOENT' })
 })
 
@@ -514,9 +516,12 @@ test('batch builds fresh maintained starting fixtures and enforces the independe
   const inventoryBytes = await readFile(inventoryPath, 'utf8')
   const inventory = JSON.parse(inventoryBytes)
   assert.equal(new Set(inventory.fixtures.map(fixture => fixture.path)).size, 6)
+  const repetitions = []
   for (const fixture of inventory.fixtures) {
     t.after(() => rm(fixture.path, { recursive: true, force: true }))
     const record = JSON.parse(await readFile(join(directory, fixture.runId, 'run.json'), 'utf8'))
+    assert.equal(record.batchId, inventory.id)
+    repetitions.push([record.scenario.id, record.repeatIndex])
     assert.equal(record.fixture.name, 'maintained-ts-shop')
     assert.equal(record.fixture.path, '[fixture]')
     assert.equal(record.hostFailure, undefined, record.reason)
@@ -560,6 +565,7 @@ test('batch builds fresh maintained starting fixtures and enforces the independe
     assert.equal(entry.runIds.length, 2)
   }
   assert.equal(await readFile(inventoryPath, 'utf8'), inventoryBytes)
+  assert.deepEqual(repetitions.sort(), ids.flatMap(id => [[id, 0], [id, 1]]).sort())
 })
 
 test('direct final extension enforces its skill-free scenario mode', async t => {
