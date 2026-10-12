@@ -19,7 +19,7 @@ A missing browser, terminal feedback or board approval remains explicitly blocke
 A reviewed candidate delta does not establish completed interactive board approval.
 For checks requiring comparison between existing-repo and existing-repo-python, compare findings for actual differences in goals, ownership and native checks rather than vocabulary alone.
 For a comparison check, use its supplied companion transcript; cite the primary transcript in the answer.
-Companions are selected by matching package source, mode and batch, preferring the same repeat index and otherwise the first passing run.
+Companions are selected by matching package source, mode and batch, preferring the same explicitly recorded repeat index and otherwise the first passing run when indexes differ or are unavailable.
 Calibration uses the companionRunId cited by the retained human check, otherwise the first retained run with matching scenario, package source and mode.
 Checks without a companion are pending and omitted from the supplied checklist; never invent a verdict for them.
 For clear-goals, loading credit requires observed command/file-open events, never a search of skill source as proof of interpretation.
