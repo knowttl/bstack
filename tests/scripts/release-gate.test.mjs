@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { emptyRepo, git } from './discovery-fixture.mjs'
+import { fixtureHash } from '../../scripts/lib/evaluation.mjs'
 
 // Exercise the public release command against disposable synthetic evidence.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -27,17 +28,47 @@ async function fixture(t, repository = root) {
   t.after(() => rm(directory, { recursive: true, force: true }))
   const definitions = JSON.parse(await readFile(join(root, 'tests/eval/scenarios/scenarios.json'), 'utf8')).scenarios
   const smoke = definitions.filter(item => item.tier === 'smoke')
+  const hashes = new Map(await Promise.all(definitions.map(async item => [item.fixture, await fixtureHash(item.fixture)])))
+  const recipeHash = createHash('sha256').update(await readFile(join(root, 'tests/eval/container/Dockerfile'))).digest('hex')
   const report = { schemaVersion: 1, candidate, model: 'synthetic-model',
     checks: hardChecks.map(id => ({ id, passed: true })),
     agentProcesses: smoke.map(item => ({ scenario: item.id, runs: 5, failures: 0, infrastructureFailures: 0 })) }
   const rows = smoke.flatMap(item => item.checks.flatMap(check => ['without', 'with'].map(mode => ({
     date: '2026-10-12T00:00:00Z', candidate, tier: 'smoke', model: report.model,
-    adapterHash: 'a'.repeat(64), fixtureHash: 'f'.repeat(64),
+    adapterHash: 'a'.repeat(64), fixtureHash: hashes.get(item.fixture),
     criteriaHash: createHash('sha256').update(canonical(item.checks)).digest('hex'),
     scenario: item.id, mode, check: check.id, caseId: check.caseId, passes: mode === 'with' ? 5 : 0, runs: 5,
     runIds: Array.from({ length: 5 }, (_, index) => `${item.id}-${mode}-${index}`)
   }))))
+  const records = new Map()
+  const mutateRecords = []
   async function run(version = '0.1.1') {
+    for (const row of rows) for (const id of row.runIds) {
+      if (!records.has(id)) {
+        const definition = definitions.find(item => item.id === row.scenario)
+        const stage = definition.checkpoints.at(-1)
+        const request = (row.mode === 'with' && definition.invocation === 'explicit' ? '$repo-audit\n' : '') +
+          (['foundation', 'final'].includes(stage) ? `Active checkpoint: ${stage}.\n` : '') + definition.request
+        const toolchain = { node: 'v24.17.0', git: 'git version 2.50', npm: '11', agent: 'synthetic-agent' }
+        const turns = [request, ...definition.answers].map(message => ({ message }))
+        records.set(id, { id, createdAt: row.date, sourceRevision: row.candidate, scenario: structuredClone(definition),
+          stage, request, mode: row.mode, model: row.model, agent: 'synthetic-agent', os: 'synthetic-os',
+          adapterHash: row.adapterHash, criteriaHash: row.criteriaHash,
+          adapter: { invocation: { agent: 'synthetic-agent', model: row.model, explicit: '$repo-audit' } },
+          fixture: { name: definition.fixture, path: '[fixture]', revision: row.fixtureHash },
+          tools: toolchain, transcript: 'conversation.txt', turns,
+          isolation: { home: '[isolated-home]', verified: true, cleanedAt: row.date },
+          execution: { method: 'docker', imageId: `sha256:${'a'.repeat(64)}`, recipeHash, toolchain,
+            turns: turns.map(() => ({ verified: true, removedAt: row.date, imageId: `sha256:${'a'.repeat(64)}`,
+              user: '1000:1000', network: 'bridge', privileged: false, publishedPorts: [], toolchain,
+              mounts: ['[fixture]', '[isolated-home]'].map(path => ({ Type: 'bind', Source: path, Destination: path, RW: true })) })) } })
+      }
+    }
+    for (const mutate of mutateRecords) mutate(records)
+    for (const [id, record] of records) {
+      await mkdir(join(directory, id), { recursive: true })
+      await writeFile(join(directory, id, 'run.json'), JSON.stringify(record))
+    }
     await writeFile(join(directory, 'ledger.jsonl'), rows.map(row => JSON.stringify(row)).join('\n') + '\n')
     await writeFile(join(directory, 'checks.json'), JSON.stringify(report))
     const result = spawnSync(process.execPath, [join(repository, 'scripts/acceptance.mjs'), '--release', version,
@@ -48,9 +79,9 @@ async function fixture(t, repository = root) {
     rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'without').passes = baseline
     const row = rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
     row.passes = passes
-    if (extra !== undefined) rows.push({ ...row, passes: extra, runIds: row.runIds.map(id => `${id}-confirm`) })
+    if (extra !== undefined) rows.push({ ...row, date: '2026-10-12T01:00:00Z', passes: extra, runIds: row.runIds.map(id => `${id}-confirm`) })
   }
-  return { directory, definitions, rows, report, run, measure }
+  return { directory, definitions, rows, report, run, measure, mutateRecords }
 }
 
 for (const [name, initial, baseline, extra, previous, expected, reason] of [
@@ -143,7 +174,10 @@ for (const [name, mutate] of [
 
 test('full tier failures remain known issues', async t => {
   const f = await fixture(t)
-  f.rows.push({ ...f.rows[0], tier: 'full', scenario: 'new-idea', check: 'interview', caseId: 'AC-1', passes: 0, mode: 'with' })
+  const definition = f.definitions.find(item => item.id === 'new-idea')
+  f.rows.push({ ...f.rows[0], tier: 'full', scenario: definition.id, check: definition.checks[0].id,
+    caseId: 'AC-1', criteriaHash: createHash('sha256').update(canonical(definition.checks)).digest('hex'),
+    fixtureHash: await fixtureHash(definition.fixture), runIds: Array.from({ length: 5 }, (_, index) => `full-${index}`), passes: 0, mode: 'with' })
   const result = await f.run()
   assert.equal(result.status, 0, result.stdout)
   assert.ok(result.data.data.knownIssues.some(row => row.scenario === 'new-idea' && row.passes === 0 && row.runs === 5))
@@ -151,7 +185,10 @@ test('full tier failures remain known issues', async t => {
 
 test('full-tier baseline failures do not become skill known issues', async t => {
   const f = await fixture(t)
-  const baseline = { ...f.rows[0], tier: 'full', mode: 'without', passes: 0 }
+  const definition = f.definitions.find(item => item.id === 'new-idea')
+  const baseline = { ...f.rows[0], tier: 'full', scenario: definition.id, check: definition.checks[0].id, caseId: definition.checks[0].caseId,
+    criteriaHash: createHash('sha256').update(canonical(definition.checks)).digest('hex'), fixtureHash: await fixtureHash(definition.fixture),
+    runIds: Array.from({ length: 5 }, (_, index) => `full-baseline-${index}`), mode: 'without', passes: 0 }
   f.rows.push(baseline, { ...baseline, mode: 'with', passes: 5, runIds: baseline.runIds.map(id => `${id}-with`) })
   const result = await f.run()
   assert.equal(result.status, 0, result.stdout)
@@ -162,13 +199,22 @@ test('gating set requires eighty percent over the latest ten runs', async t => {
   const f = await fixture(t)
   f.measure(3, 0)
   assert.equal((await f.run('0.1.1')).status, 0)
+  const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
+  f.rows.push({ ...current, candidate: 'c'.repeat(40), runIds: current.runIds.map(id => `${id}-history`) })
   f.measure(4, 0)
-  for (const row of f.rows.filter(row => row.mode === 'with')) row.runIds = row.runIds.map(id => `${id}-next`)
+  for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === candidate)) {
+    row.runIds = row.runIds.map(id => `${id}-next`)
+    row.date = '2026-10-12T01:00:00Z'
+  }
   const second = await f.run('0.1.2')
   assert.equal(second.status, 0, second.stdout)
   assert.ok(!second.data.data.gatingSet.includes('ambiguous-idea/decision'))
+  f.rows.push({ ...current, candidate: 'd'.repeat(40), runIds: current.runIds.map(id => `${id}-history`) })
   f.measure(4, 0)
-  for (const row of f.rows.filter(row => row.mode === 'with')) row.runIds = row.runIds.map(id => `${id}-next`)
+  for (const row of f.rows.filter(row => row.mode === 'with' && row.candidate === candidate)) {
+    row.runIds = row.runIds.map(id => `${id}-next`)
+    row.date = '2026-10-12T02:00:00Z'
+  }
   const third = await f.run('0.1.3')
   assert.equal(third.status, 0, third.stdout)
   assert.ok(third.data.data.gatingSet.includes('ambiguous-idea/decision'))
@@ -200,11 +246,12 @@ test('gating history includes compatible ledger measurements between releases', 
 for (const [name, path, expected] of [
   ['unaffected ancestor measurements', 'note.txt', 0],
   ['changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2],
-  ['changed scenario requests need measurement', 'tests/eval/scenarios/scenarios.json', 2]
+  ['changed scenario requests need measurement', 'tests/eval/scenarios/scenarios.json', 2],
+  ['changed fixture bytes need measurement', 'tests/fixtures/build.mjs', 2]
 ]) {
   test(`release gate carryover: ${name}`, async t => {
     const { repo } = await emptyRepo(t)
-    for (const path of ['scripts', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/fixtures', 'tests/acceptance/cases.json']) {
+    for (const path of ['scripts', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
       await mkdir(resolve(repo, path, '..'), { recursive: true })
       await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
     }
@@ -228,6 +275,64 @@ for (const [name, path, expected] of [
     if (expected === 0) {
       assert.equal(result.data.data.carryover.length, 10)
       assert.ok(result.data.data.carryover.every(row => row.candidate === ancestor))
-    } else assert.equal(result.data.data.pending.length, 10)
+    } else assert.equal(new Set(result.data.data.pending.map(row => row.scenario)).size, 10)
   })
 }
+
+for (const [name, mutate] of [
+  ['checkpoint', run => { run.stage = 'baseline' }],
+  ['request', run => { run.request += 'Different request' }],
+  ['ordered answers', run => { run.scenario.answers = [...run.scenario.answers].reverse().concat('Different answer') }],
+  ['invocation', run => { run.scenario.invocation = 'implicit' }],
+  ['fixture bytes', run => { run.fixture.revision = 'e'.repeat(64) }],
+  ['runner', run => { run.agent = 'different-agent'; run.adapter.invocation.agent = run.agent }],
+  ['image', run => { run.execution.imageId = `sha256:${'c'.repeat(64)}`; for (const turn of run.execution.turns) turn.imageId = run.execution.imageId }],
+  ['recipe', run => { run.execution.recipeHash = 'c'.repeat(64) }],
+  ['toolchain', run => { run.tools.agent = 'different-version'; run.execution.toolchain.agent = 'different-version' }]
+]) {
+  test(`release gate cannot compare a baseline with different ${name}`, async t => {
+    const f = await fixture(t)
+    f.mutateRecords.push(records => {
+      for (const row of f.rows.filter(row => row.scenario === 'ambiguous-idea' && row.mode === 'without')) {
+        for (const id of row.runIds) mutate(records.get(id))
+      }
+    })
+    const result = await f.run()
+    assert.equal(result.status, 2, result.stdout)
+  })
+}
+
+test('reliability history uses capture dates when an older batch is finalized last', async t => {
+  const f = await fixture(t)
+  f.measure(4, 0)
+  const current = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'with')
+  current.date = '2026-10-12T03:00:00Z'
+  f.rows.push({ ...current, candidate: 'c'.repeat(40), date: '2026-10-12T02:00:00Z',
+    runIds: current.runIds.map(id => `${id}-recent`) })
+  f.rows.push({ ...current, candidate: 'b'.repeat(40), passes: 3, date: '2026-10-12T01:00:00Z',
+    runIds: current.runIds.map(id => `${id}-older`) })
+  const result = await f.run()
+  assert.equal(result.status, 0, result.stdout)
+  assert.ok(result.data.data.gatingSet.includes('ambiguous-idea/decision'))
+})
+
+test('initial measurement precedes its earlier-finalized confirmation', async t => {
+  const f = await fixture(t)
+  f.measure(2, 0, 4)
+  const confirmation = f.rows.pop()
+  f.rows.unshift(confirmation)
+  const result = await f.run()
+  assert.equal(result.status, 0, result.stdout)
+  assert.ok(!result.data.data.gatingSet.includes('ambiguous-idea/decision'))
+})
+
+test('latest comparable baseline follows capture date', async t => {
+  const f = await fixture(t)
+  f.measure(3, 2)
+  const baseline = f.rows.find(row => row.scenario === 'ambiguous-idea' && row.mode === 'without')
+  baseline.date = '2026-10-12T02:00:00Z'
+  f.rows.push({ ...baseline, passes: 0, date: '2026-10-12T01:00:00Z', runIds: baseline.runIds.map(id => `${id}-older`) })
+  const result = await f.run()
+  assert.equal(result.status, 0, result.stdout)
+  assert.ok(result.data.data.knownIssues.some(row => row.check === 'decision' && row.reason === 'below per-check margin'))
+})
