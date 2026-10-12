@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "bug-fix",
+  "acceptanceSources": [
+    {
+      "id": "approved-public-cases",
+      "path": "unit.test.mjs",
+      "contentHash": "473ed1c2608eff988457a55b243ec4872611b3d43eec13cc41fad1677e312c7e"
+    }
+  ],
+  "acceptanceCases": [
+    {
+      "id": "checkout",
+      "sourceId": "approved-public-cases",
+      "pointer": "assert.deepEqual(await checkout('https://price.example.invalid/price'), { status: 201, total: 10 })",
+      "outcome": "Supervisor-selected checkout outcome is status 201 and total 10; exercise same native real HTTP journey.",
+      "userJourney": true
+    },
+    {
+      "id": "quote",
+      "sourceId": "approved-public-cases",
+      "pointer": "test('public price', () => assert.equal(quote(), 12))",
+      "outcome": "Supervisor-selected public quote remains 12 during structural correction.",
+      "userJourney": false
+    }
+  ],
+  "checks": [
+    {
+      "id": "unit",
+      "role": "protection",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "test"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "quote"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "AGENTS.md",
+        "glossary.md"
+      ]
+    },
+    {
+      "id": "journey",
+      "role": "reproduction",
+      "command": {
+        "executable": "npm",
+        "args": [
+          "run",
+          "journey"
+        ],
+        "cwd": ".",
+        "versionArgs": [
+          "--version"
+        ]
+      },
+      "required": true,
+      "acceptanceCases": [
+        "checkout"
+      ],
+      "inputScopes": [
+        "packages/**",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
+        "boundaries.mjs",
+        "journey.mjs",
+        "unit.test.mjs",
+        "DESIGN.md",
+        "AGENTS.md",
+        "glossary.md"
+      ]
+    }
+  ]
+}

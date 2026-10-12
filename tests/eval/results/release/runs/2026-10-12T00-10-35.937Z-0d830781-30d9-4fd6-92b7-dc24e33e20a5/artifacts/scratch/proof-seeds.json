@@ -1,0 +1,10 @@
+{
+  "private": "private",
+  "alias": "alias",
+  "reexport": "private",
+  "cycle": "cycle",
+  "nonpublic": "private",
+  "import-type": "private",
+  "dynamic": "private",
+  "unknown-dynamic": "dynamic"
+}

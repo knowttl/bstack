@@ -22,7 +22,8 @@ The disposable login home and container were removed on timeout; the complete fa
 No procedure was marked completed using this run.
 
 A commissioning decision is required before another real-agent run.
-One bounded option is to clarify only this scenario's ordered script: the implementation approval must expressly require stopping before separately generated record writes, and the final exact-byte approval must cover the actual reviewed historical snapshot and portable assessment plans together.
+One bounded option is to clarify only this scenario's ordered script: the implementation approval must expressly require stopping before separately generated record writes, followed by a new exact historical-snapshot approval and then the existing exact portable-assessment approval.
+Each reply must require stopping at the next review boundary, giving four ordered author answers rather than three and allowing the assessment to bind the committed implementation after historical approval.
 That would change only this pair's inputs and require one fresh baseline and installed capture, while preserving the scoring criteria and global fixture revision.
 Changing the shared skill instead would invalidate all installed comparisons and require their refresh.
 The 30-minute limit remains unchanged unless separately approved.
