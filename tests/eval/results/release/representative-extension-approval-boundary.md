@@ -1,3 +1,5 @@
+Historical (v0.1.0): the per-run independent-verification.json files cited below were removed when machine assertions replaced them.
+
 # Maintained extension stops at separate record approval
 
 AC-64 remains blocked: the [maintained-fixture comparison](representative-extension-maintained-comparison.json) scores 1/1 without the skill and 0/1 with it.
@@ -8,7 +10,7 @@ The [installed conversation](runs/2026-10-12T02-12-03.023Z-760738e5-f236-43a4-a2
 The ordered scripted reply at line 40 is followed by protected implementation and actual native verification at lines 44–55.
 Quote defaults to 12 and supports quantity two at 24, while the original quote assertion, total-10 checkout journey and user note remain unchanged.
 The implementation commit is 3a3ff53805d1707891869a2df4e861e291b423c6.
-The [independent verification](runs/2026-10-12T02-12-03.023Z-760738e5-f236-43a4-a260-ff7fd2cf6e51/artifacts/independent-verification.json) confirms all 24 tracked bytes match in the clean implementation checkout and different-root clone, preserves original protected-source hashes and retains the complete implementation diff.
+The independent verification (removed file: runs/2026-10-12T02-12-03.023Z-760738e5-f236-43a4-a260-ff7fd2cf6e51/artifacts/independent-verification.json) confirms all 24 tracked bytes match in the clean implementation checkout and different-root clone, preserves original protected-source hashes and retains the complete implementation diff.
 Native checks also pass in the isolated clone.
 
 At lines 62–63 the agent presents the portable assessment for its own exact approval and correctly leaves it unwritten under the repaired shared write rule.
@@ -53,9 +55,9 @@ The exact-record approval precedes protected creation of only `.bstack/assessmen
 The retained [working checker](runs/2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5/artifacts/current-review/final-working-checker.json) and [final clone checker](runs/2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5/artifacts/current-review/final-clone-checker.json) both pass result-validation at that final head, including previous-policy coverage and fresh types, three units, boundaries and real HTTP checkout total 10.
 Conversation lines 108–114 retain protected apply, exact proposed-byte verification, separate commit, fresh different-root clone creation and isolated home/cache execution.
 
-The [installed independent verification](runs/2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5/artifacts/independent-verification.json) checks 62 retained artifact hashes, implementation-state hashes, all 25 current tracked files, the exact original unit file after removing only the added quantity-two assertion, unchanged journey/checker/history and the user note.
+The installed independent verification (removed file: runs/2026-10-12T02-34-53.973Z-74ab100d-acfd-453f-ae18-25e521a41cf5/artifacts/independent-verification.json) checks 62 retained artifact hashes, implementation-state hashes, all 25 current tracked files, the exact original unit file after removing only the added quantity-two assertion, unchanged journey/checker/history and the user note.
 The first clone byte-comparison helper selected an earlier proposal clone rather than the final verification clone.
 That assertion was not treated as passing; the login home was subsequently cleaned by scoring, so final clone verification relies on its actual retained checker and native transcript rather than an independent post-run clone byte comparison.
-The [baseline independent verification](runs/2026-10-12T02-34-54.239Z-811c978f-d746-419c-8232-584e0c390cae/artifacts/independent-verification.json) also confirms matching final tracked bytes in its actual final clean clone.
+The baseline independent verification (removed file: runs/2026-10-12T02-34-54.239Z-811c978f-d746-419c-8232-584e0c390cae/artifacts/independent-verification.json) also confirms matching final tracked bytes in its actual final clean clone.
 Both isolated login homes are cleaned.
 No criterion, fixture, package or acceptance requirement was weakened.

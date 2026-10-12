@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution, isApprovedBaseline } from './evaluation.mjs'
+import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution, isApprovedBaseline, fixtureHash } from './evaluation.mjs'
 import { readAdapter } from './evaluation-host.mjs'
 import { correctedScore, validateScore } from './evaluation-scoring.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
@@ -33,7 +33,6 @@ export async function completeRelease(results) {
   const incomplete = registry.cases.filter(item => item.procedure.status !== 'completed').map(item => item.id)
   if (incomplete.length) fail(`Incomplete acceptance procedures: ${incomplete.join(', ')}`)
   const revision = git('rev-parse', 'HEAD')
-  const fixtureRevision = git('rev-parse', 'HEAD:tests/fixtures')
   const cache = new Map()
   async function run(id) {
     if (cache.has(id)) return cache.get(id)
@@ -47,7 +46,7 @@ export async function completeRelease(results) {
     const definition = definitions.find(item => item.id === record.scenario?.id)
     if (!definition || record.id !== id || canonicalJSON(definition) !== canonicalJSON(record.scenario) ||
         record.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || record.stage !== definition.checkpoints.at(-1) ||
-        record.fixture?.revision !== fixtureRevision) fail(`Stale scenario, stage, scoring criteria or fixture: ${id}`)
+        record.fixture?.revision !== await fixtureHash(definition.fixture)) fail(`Stale scenario, stage, scoring criteria or fixture: ${id}`)
     const adapter = await readAdapter(join(root, 'tests/eval/adapters/codex-final.json'), definition.id)
     if (canonicalJSON(record.adapter) !== canonicalJSON(adapter) || record.adapterHash !== hashBytes(canonicalJSON(adapter)) ||
         record.agent !== adapter.invocation.agent || record.model !== adapter.invocation.model ||
@@ -60,7 +59,7 @@ export async function completeRelease(results) {
     if (record.request !== request || record.turns.length !== definition.answers.length + 1 || record.turns[0].message !== request ||
         record.turns.slice(1).some((turn, index) => turn.message !== definition.answers[index])) fail(`Changed agent request or scripted answers: ${id}`)
     // Grader repairs do not change a captured agent's inputs.
-    git('diff', '--quiet', record.sourceRevision, '--', 'tests/fixtures', 'tests/eval/adapters')
+    git('diff', '--quiet', record.sourceRevision, '--', 'tests/eval/adapters')
     // The verified without mode never stages the package or runs its installer.
     if (record.mode === 'with') git('diff', '--quiet', record.sourceRevision, '--', 'skills/repo-audit', 'install')
     if (!approvedBaseline) {
@@ -84,7 +83,8 @@ export async function completeRelease(results) {
     for (const check of definition.checks) {
       const scored = record.caseResults.filter(item => item.id === check.id)
       const answered = answers.checks.filter(item => item.id === check.id)
-      if (scored.length !== 1 || answered.length !== 1 || scored[0].caseId !== check.caseId || scored[0].scoring !== 'human' ||
+      if (scored.length !== 1 || answered.length !== 1 || scored[0].caseId !== check.caseId ||
+          (check.machine ? scored[0].scoring !== 'machine' : !['human', 'judge'].includes(scored[0].scoring)) ||
           typeof answered[0].passed !== 'boolean' || ['passed', 'startLine', 'endLine'].some(key => scored[0][key] !== answered[0][key]) ||
           answered[0].startLine < 1 || answered[0].endLine < answered[0].startLine || answered[0].endLine > lines) fail(`Unsupported scored claim: ${id}/${check.id}`)
     }

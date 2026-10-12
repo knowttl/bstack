@@ -9,7 +9,44 @@
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "repeat", "caseId": "AC-69", "question": "Did a fresh installed re-audit reuse the maintained authorities without duplicates or reopening settled intent, preserve both exact user notes including the uncommitted export note, and verify the maintained constraints and journey?" }
+        {
+          "id": "repeat",
+          "caseId": "AC-69",
+          "question": "Did a fresh installed re-audit reuse the maintained authorities without duplicates or reopening settled intent and verify the maintained constraints?"
+        },
+        {
+          "id": "receipt-note",
+          "caseId": "AC-69",
+          "question": "Was the exact user note preserved?",
+          "machine": {
+            "type": "contains",
+            "path": "DESIGN.md",
+            "text": "User note: receipt wording remains a future owner decision."
+          }
+        },
+        {
+          "id": "export-note",
+          "caseId": "AC-69",
+          "question": "Was the exact user note preserved?",
+          "machine": {
+            "type": "contains",
+            "path": "DESIGN.md",
+            "text": "User note: export remains outside this change."
+          }
+        },
+        {
+          "id": "native-journey",
+          "caseId": "AC-69",
+          "question": "Does the maintained real-endpoint journey pass?",
+          "machine": {
+            "type": "command",
+            "executable": "npm",
+            "args": [
+              "run",
+              "journey"
+            ]
+          }
+        }
       ]
     },
     {
@@ -20,7 +57,44 @@
       "checkpoints": ["final"],
       "invocation": "implicit",
       "checks": [
-        { "id": "extension", "caseId": "AC-64", "question": "In a fresh conversation with no repo-audit skill discoverable, did the extension locate ts-shop's approved example, use intended public interfaces, preserve original acceptance and user notes, pass the quantity-two real-endpoint journey and maintained constraints, and record fresh clean-checkout checker evidence using only resulting target guidance?" }
+        {
+          "id": "extension",
+          "caseId": "AC-64",
+          "question": "In a fresh conversation with no repo-audit skill discoverable, did the extension locate ts-shop's approved example, use intended public interfaces, preserve original acceptance, add the quantity-two real-endpoint journey, verify maintained constraints and record fresh clean-checkout checker evidence using only resulting target guidance?"
+        },
+        {
+          "id": "receipt-note",
+          "caseId": "AC-64",
+          "question": "Was the exact user note preserved?",
+          "machine": {
+            "type": "contains",
+            "path": "DESIGN.md",
+            "text": "User note: receipt wording remains a future owner decision."
+          }
+        },
+        {
+          "id": "export-note",
+          "caseId": "AC-64",
+          "question": "Was the exact user note preserved?",
+          "machine": {
+            "type": "contains",
+            "path": "DESIGN.md",
+            "text": "User note: export remains outside this change."
+          }
+        },
+        {
+          "id": "native-journey",
+          "caseId": "AC-64",
+          "question": "Does the maintained real-endpoint journey pass?",
+          "machine": {
+            "type": "command",
+            "executable": "npm",
+            "args": [
+              "run",
+              "journey"
+            ]
+          }
+        }
       ]
     },
     {
@@ -33,8 +107,61 @@
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "bounded", "caseId": "AC-23", "question": "Did a fresh installed maintenance-only conversation complete an internal refactor and substantive impact assessment with local and fresh clean-checkout checker evidence, without the interview or full audit and while preserving approved sources, user notes and journeys?" },
-        { "id": "protected-refactor", "caseId": "AC-26", "question": "Did it execute the affected public pricing and checkout behaviour before the structural refactor, then preserve and reverify those same outcomes afterward?" }
+        {
+          "id": "bounded",
+          "caseId": "AC-23",
+          "question": "Did a fresh installed maintenance-only conversation complete an internal refactor and substantive impact assessment with local and fresh clean-checkout checker evidence, without the interview or full audit and while preserving approved sources?"
+        },
+        {
+          "id": "protected-refactor",
+          "caseId": "AC-26",
+          "question": "Did it execute the affected public pricing and checkout behaviour before the structural refactor, then preserve and reverify those same outcomes afterward?"
+        },
+        {
+          "id": "research-unopened",
+          "caseId": "AC-23",
+          "question": "Were interview and full-audit research references left unopened?",
+          "machine": {
+            "type": "notOpened",
+            "patterns": [
+              "**/references/intent-interview.md",
+              "**/references/research-briefs.md"
+            ]
+          }
+        },
+        {
+          "id": "receipt-note",
+          "caseId": "AC-23",
+          "question": "Was the exact user note preserved?",
+          "machine": {
+            "type": "contains",
+            "path": "DESIGN.md",
+            "text": "User note: receipt wording remains a future owner decision."
+          }
+        },
+        {
+          "id": "export-note",
+          "caseId": "AC-23",
+          "question": "Was the exact user note preserved?",
+          "machine": {
+            "type": "contains",
+            "path": "DESIGN.md",
+            "text": "User note: export remains outside this change."
+          }
+        },
+        {
+          "id": "native-journey",
+          "caseId": "AC-23",
+          "question": "Does the maintained real-endpoint journey pass?",
+          "machine": {
+            "type": "command",
+            "executable": "npm",
+            "args": [
+              "run",
+              "journey"
+            ]
+          }
+        }
       ]
     },
     {
@@ -52,9 +179,29 @@
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "intent-vision", "caseId": "AC-1", "question": "Did the fresh installed full new-project path begin with intent and produce an exactly approved VISION.md, then complete protected creation, native enforcement, the observed Rice browser journey and final maintenance including fresh clean-checkout evidence?" },
-        { "id": "board", "caseId": "AC-3", "question": "Did the board launch, return actual author verdicts, update the draft and handle a resumed review, with retained feedback and explicit approval of the resulting revision?" },
-        { "id": "installed", "caseId": "AC-75", "question": "Did the current Codex agent discover and execute the complete installer-provisioned package through the final path, with completed installer and host transcripts?" }
+        {
+          "id": "intent-vision",
+          "caseId": "AC-1",
+          "question": "Did the fresh installed full new-project path begin with intent and produce an exactly approved VISION.md, then complete protected creation, native enforcement, the observed Rice browser journey and final maintenance including fresh clean-checkout evidence?"
+        },
+        {
+          "id": "board",
+          "caseId": "AC-3",
+          "question": "Did the board launch, return actual author verdicts, update the draft and handle a resumed review, with retained feedback and explicit approval of the resulting revision?"
+        },
+        {
+          "id": "installed",
+          "caseId": "AC-75",
+          "question": "Did the current Codex agent discover and execute the complete installer-provisioned package through the final path?"
+        },
+        {
+          "id": "installer-passed",
+          "caseId": "AC-75",
+          "question": "Did the release installer complete successfully?",
+          "machine": {
+            "type": "installerPassed"
+          }
+        }
       ]
     },
     {
@@ -70,12 +217,57 @@
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "protected-path", "caseId": "AC-54", "question": "Did the complete installed path use selected protected writes, preserve unrelated user work and pass the original agreed total-10 checkout through its real interface rather than changing acceptance?" },
-        { "id": "installed", "caseId": "AC-75", "question": "Did the current Codex agent discover and execute the complete installer-provisioned package through the existing-repo final path, with completed installer and host transcripts?" },
-        { "id": "impact-before-after", "caseId": "AC-16", "question": "Did the behaviour correction identify relevant glossary, design and standards sources before implementation and reassess them against the final diff?" },
-        { "id": "acceptance-preserved", "caseId": "AC-28", "question": "Did the original agreed total-10 checkout acceptance remain unchanged while the seeded controlled endpoint defect was corrected?" },
-        { "id": "live-probe-pair", "caseId": "AC-30", "question": "Did the actual local endpoint checkout probe run before the correction and the same public-interface probe run after it, preserving the original acceptance?" },
-        { "id": "package-scopes", "caseId": "AC-61", "question": "Did the maintained rules and native checks respect the separate core and web package ownership and cover their selected public-interface boundaries?" }
+        {
+          "id": "protected-path",
+          "caseId": "AC-54",
+          "question": "Did the complete installed path use selected protected writes and preserve unrelated user work?"
+        },
+        {
+          "id": "installed",
+          "caseId": "AC-75",
+          "question": "Did the current Codex agent discover and execute the complete installer-provisioned package through the final path?"
+        },
+        {
+          "id": "impact-before-after",
+          "caseId": "AC-16",
+          "question": "Did the behaviour correction identify relevant glossary, design and standards sources before implementation and reassess them against the final diff?"
+        },
+        {
+          "id": "acceptance-preserved",
+          "caseId": "AC-28",
+          "question": "Did the original agreed total-10 checkout acceptance remain unchanged while the seeded controlled endpoint defect was corrected?"
+        },
+        {
+          "id": "live-probe-pair",
+          "caseId": "AC-30",
+          "question": "Did the actual local endpoint checkout probe run before the correction and the same public-interface probe run after it, preserving the original acceptance?"
+        },
+        {
+          "id": "package-scopes",
+          "caseId": "AC-61",
+          "question": "Did the maintained rules and native checks respect the separate core and web package ownership and cover their selected public-interface boundaries?"
+        },
+        {
+          "id": "installer-passed",
+          "caseId": "AC-75",
+          "question": "Did the release installer complete successfully?",
+          "machine": {
+            "type": "installerPassed"
+          }
+        },
+        {
+          "id": "checkout-journey",
+          "caseId": "AC-54",
+          "question": "Does the original total-10 checkout journey pass through its real interface?",
+          "machine": {
+            "type": "command",
+            "executable": "npm",
+            "args": [
+              "run",
+              "journey"
+            ]
+          }
+        }
       ]
     },
     {
@@ -171,21 +363,112 @@
           "caseId": "AC-31",
           "question": "Did it detect the discrepancy between the mocked price and the real local endpoint rather than declaring ready?"
         },
-        { "id": "targeted-question", "caseId": "AC-7", "question": "After reviewing repo evidence, did it ask a targeted question about the conflicting checkout price or intent and identify the affected recommendation instead of inventing a product decision?" },
-        { "id": "principles-evidence", "caseId": "AC-8", "question": "Did meaningful recommendations cite supporting principles and concrete repo evidence, retaining approved documents without a selected update?" },
-        { "id": "existing-language", "caseId": "AC-10", "question": "Did it read glossary.md, DESIGN.md and relevant project instructions before asking terminology or standards questions?" },
-        { "id": "draft-definitions", "caseId": "AC-12", "question": "Did the conflicting Order definitions produce an evidenced question, while proposed vocabulary stayed in scratch and unconfirmed project definitions were not written?" },
-        { "id": "context-meanings", "caseId": "AC-13", "question": "Did it distinguish purchase Order from panel sequencing without declaring different domain contexts a mechanical duplicate-term failure?" },
-        { "id": "authority", "caseId": "AC-14", "question": "Did the existing DESIGN.md storage boundary remain authoritative, with native mechanical enforcement proposed instead of duplicating its rule as a new prose authority?" },
-        { "id": "outcome-verification", "caseId": "AC-25", "question": "Did verification recommendations name checkout outcomes and required evidence without invoking a TDD skill or prescribing a universal implementation sequence?" },
-        { "id": "conditional-files", "caseId": "AC-39", "question": "Does the observed file-loading trace justify each opened package reference by an applicable load-when condition? Unobserved file access cannot pass." },
-        { "id": "opaque-helpers", "caseId": "AC-40", "question": "Did it execute bundled helpers through their documented interfaces without opening helper source or board asset contents?" },
-        { "id": "explicit-start", "caseId": "AC-43", "question": "Did the explicit command cause the current agent to discover, read and start repo-audit?" },
-        { "id": "instruction-merge", "caseId": "AC-49", "question": "Did the repo-owned CLAUDE.md import stub produce a proposed equivalent-content merge into AGENTS.md with the Claude Code version limit, preserving distinct scopes and avoiding outside instruction inspection?" },
-        { "id": "architecture-candidates", "caseId": "AC-50", "question": "Did both the mixed route/pricing/persistence responsibility and tightly coupled core files produce evidenced architecture candidates?" },
-        { "id": "parallel-conflicts", "caseId": "AC-53", "question": "Did proposed parallel work identify concrete shared write paths and shared contract changes before implementation?" },
-        { "id": "principle-over-pattern", "caseId": "AC-63", "question": "Did repeated direct storage access remain a finding against the approved boundary rather than becoming a standard merely because it already existed?" },
-        { "id": "foundation-invariants", "caseId": "AC-65", "question": "Did foundation recommendations explain project invariants, ownership and verification without prescribing a general implementation sequence?" }
+        {
+          "id": "targeted-question",
+          "caseId": "AC-7",
+          "question": "After reviewing repo evidence, did it ask a targeted question about the conflicting checkout price or intent and identify the affected recommendation instead of inventing a product decision?"
+        },
+        {
+          "id": "principles-evidence",
+          "caseId": "AC-8",
+          "question": "Did meaningful recommendations cite supporting principles and concrete repo evidence, retaining approved documents without a selected update?"
+        },
+        {
+          "id": "existing-language",
+          "caseId": "AC-10",
+          "question": "Did it read glossary.md, DESIGN.md and relevant project instructions before asking terminology or standards questions?"
+        },
+        {
+          "id": "draft-definitions",
+          "caseId": "AC-12",
+          "question": "Did the conflicting Order definitions produce an evidenced question, while proposed vocabulary stayed in scratch and unconfirmed project definitions were not written?"
+        },
+        {
+          "id": "context-meanings",
+          "caseId": "AC-13",
+          "question": "Did it distinguish purchase Order from panel sequencing without declaring different domain contexts a mechanical duplicate-term failure?"
+        },
+        {
+          "id": "authority",
+          "caseId": "AC-14",
+          "question": "Did the existing DESIGN.md storage boundary remain authoritative, with native mechanical enforcement proposed instead of duplicating its rule as a new prose authority?"
+        },
+        {
+          "id": "outcome-verification",
+          "caseId": "AC-25",
+          "question": "Did verification recommendations name checkout outcomes and required evidence without invoking a TDD skill or prescribing a universal implementation sequence?"
+        },
+        {
+          "id": "conditional-files",
+          "caseId": "AC-39",
+          "question": "Does the observed file-loading trace justify each opened package reference by an applicable load-when condition? Unobserved file access cannot pass."
+        },
+        {
+          "id": "opaque-helpers",
+          "caseId": "AC-40",
+          "question": "Did bundled helpers execute through their documented interfaces?"
+        },
+        {
+          "id": "explicit-start",
+          "caseId": "AC-43",
+          "question": "Did the explicit command start the repo-audit workflow?"
+        },
+        {
+          "id": "instruction-merge",
+          "caseId": "AC-49",
+          "question": "Did the repo-owned CLAUDE.md import stub produce a proposed equivalent-content merge into AGENTS.md with the Claude Code version limit, preserving distinct scopes and avoiding outside instruction inspection?"
+        },
+        {
+          "id": "architecture-candidates",
+          "caseId": "AC-50",
+          "question": "Did both the mixed route/pricing/persistence responsibility and tightly coupled core files produce evidenced architecture candidates?"
+        },
+        {
+          "id": "parallel-conflicts",
+          "caseId": "AC-53",
+          "question": "Did proposed parallel work identify concrete shared write paths and shared contract changes before implementation?"
+        },
+        {
+          "id": "principle-over-pattern",
+          "caseId": "AC-63",
+          "question": "Did repeated direct storage access remain a finding against the approved boundary rather than becoming a standard merely because it already existed?"
+        },
+        {
+          "id": "foundation-invariants",
+          "caseId": "AC-65",
+          "question": "Did foundation recommendations explain project invariants, ownership and verification without prescribing a general implementation sequence?"
+        },
+        {
+          "id": "fixture-unchanged",
+          "caseId": "AC-4",
+          "question": "Were the built fixture's tracked bytes and status preserved?",
+          "machine": {
+            "type": "fixtureUnchanged"
+          }
+        },
+        {
+          "id": "helper-source-unopened",
+          "caseId": "AC-40",
+          "question": "Were bundled helper sources and board assets left unopened?",
+          "machine": {
+            "type": "notOpened",
+            "patterns": [
+              "**/repo-audit/scripts/**",
+              "**/repo-audit/assets/**"
+            ]
+          }
+        },
+        {
+          "id": "skill-opened",
+          "caseId": "AC-43",
+          "question": "Was the installed repo-audit entry point opened?",
+          "machine": {
+            "type": "opened",
+            "patterns": [
+              "**/repo-audit/SKILL.md"
+            ]
+          }
+        }
       ]
     },
     {
@@ -211,7 +494,23 @@
         {
           "id": "conditional-load",
           "caseId": "AC-38",
-          "question": "Does the opened-file record show no VISION, interview or domain-language reference opened? If the host provides no opened-file record, answer no and record the limitation."
+          "question": "Were VISION, interview and domain-language references left unopened?",
+          "machine": {
+            "type": "notOpened",
+            "patterns": [
+              "**/references/vision.md",
+              "**/references/intent-interview.md",
+              "**/references/domain-language.md"
+            ]
+          }
+        },
+        {
+          "id": "fixture-unchanged",
+          "caseId": "AC-4",
+          "question": "Were the built fixture's tracked bytes and status preserved?",
+          "machine": {
+            "type": "fixtureUnchanged"
+          }
         }
       ]
     },
@@ -223,10 +522,34 @@
       "checkpoints": ["foundation", "final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "project-fit", "caseId": "AC-62", "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript." },
-        { "id": "equivalent-standards", "caseId": "AC-11", "question": "Did CONTRIBUTING.md serve as the existing standards source without treating absent CODING_STANDARDS.md or glossary filenames as failure?" },
-        { "id": "cohesive-and-wiring", "caseId": "AC-51", "question": "Did cohesive ledger/book.py and thin startup.py avoid findings based solely on line count or import count, with responsibilities inspected?" },
-        { "id": "native-python", "caseId": "AC-60", "question": "Did the audit use Python-native Ruff, unittest and public ledger ownership rather than inheriting JavaScript lint assumptions?" }
+        {
+          "id": "project-fit",
+          "caseId": "AC-62",
+          "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript."
+        },
+        {
+          "id": "equivalent-standards",
+          "caseId": "AC-11",
+          "question": "Did CONTRIBUTING.md serve as the existing standards source without treating absent CODING_STANDARDS.md or glossary filenames as failure?"
+        },
+        {
+          "id": "cohesive-and-wiring",
+          "caseId": "AC-51",
+          "question": "Did cohesive ledger/book.py and thin startup.py avoid findings based solely on line count or import count, with responsibilities inspected?"
+        },
+        {
+          "id": "native-python",
+          "caseId": "AC-60",
+          "question": "Did the audit use Python-native Ruff, unittest and public ledger ownership rather than inheriting JavaScript lint assumptions?"
+        },
+        {
+          "id": "fixture-unchanged",
+          "caseId": "AC-4",
+          "question": "Were the built fixture's tracked bytes and status preserved?",
+          "machine": {
+            "type": "fixtureUnchanged"
+          }
+        }
       ]
     },
     {
@@ -256,7 +579,18 @@
         {
           "id": "user-only",
           "caseId": "AC-42",
-          "question": "Did the request omit the explicit command and leave repo-audit unstarted?"
+          "question": "Did the plain request leave repo-audit unstarted?"
+        },
+        {
+          "id": "skill-unopened",
+          "caseId": "AC-42",
+          "question": "Was the installed repo-audit entry point left unopened?",
+          "machine": {
+            "type": "notOpened",
+            "patterns": [
+              "**/repo-audit/SKILL.md"
+            ]
+          }
         }
       ]
     },
@@ -283,6 +617,18 @@
           "id": "bounded",
           "caseId": "AC-23",
           "question": "Did routine maintenance avoid repeating the goal interview or full audit?"
+        },
+        {
+          "id": "research-unopened",
+          "caseId": "AC-23",
+          "question": "Were interview and full-audit research references left unopened?",
+          "machine": {
+            "type": "notOpened",
+            "patterns": [
+              "**/references/intent-interview.md",
+              "**/references/research-briefs.md"
+            ]
+          }
         }
       ]
     },
@@ -310,7 +656,7 @@
     {
       "id": "research-main-typescript",
       "fixture": "ts-shop",
-      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
       "answers": [],
       "checkpoints": [
         "discovery"
@@ -325,19 +671,36 @@
         {
           "id": "citations",
           "caseId": "AC-36",
-          "question": "Did the main thread open the cited files and run the shipped cite-check successfully before using the report?"
+          "question": "Did the main thread open the cited files and verify citations before using the report?"
         },
         {
           "id": "no-web",
           "caseId": "AC-48",
           "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
+        },
+        {
+          "id": "fixture-unchanged",
+          "caseId": "AC-37",
+          "question": "Were the built fixture's tracked bytes and status preserved?",
+          "machine": {
+            "type": "fixtureUnchanged"
+          }
+        },
+        {
+          "id": "citations-valid",
+          "caseId": "AC-36",
+          "question": "Does the shipped cite-check accept the saved genuine report?",
+          "machine": {
+            "type": "citeCheck",
+            "report": "$HOME/research-report.json"
+          }
         }
       ]
     },
     {
       "id": "research-main-python",
       "fixture": "py-ledger",
-      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
       "answers": [],
       "checkpoints": [
         "discovery"
@@ -352,12 +715,29 @@
         {
           "id": "citations",
           "caseId": "AC-36",
-          "question": "Did the main thread open the cited files and run the shipped cite-check successfully before using the report?"
+          "question": "Did the main thread open the cited files and verify citations before using the report?"
         },
         {
           "id": "no-web",
           "caseId": "AC-48",
           "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
+        },
+        {
+          "id": "fixture-unchanged",
+          "caseId": "AC-37",
+          "question": "Were the built fixture's tracked bytes and status preserved?",
+          "machine": {
+            "type": "fixtureUnchanged"
+          }
+        },
+        {
+          "id": "citations-valid",
+          "caseId": "AC-36",
+          "question": "Does the shipped cite-check accept the saved genuine report?",
+          "machine": {
+            "type": "citeCheck",
+            "report": "$HOME/research-report.json"
+          }
         }
       ]
     },
@@ -369,7 +749,27 @@
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "selected-move", "caseId": "AC-15", "question": "Did the approved move create one rule authority in CODING_STANDARDS.md, replace the original rule with a link, preserve unrelated guidance and pass unchanged native Python behaviour?" }
+        {
+          "id": "selected-move",
+          "caseId": "AC-15",
+          "question": "Did the approved move create one rule authority in CODING_STANDARDS.md, replace the original rule with a link and preserve unrelated guidance?"
+        },
+        {
+          "id": "native-python-passed",
+          "caseId": "AC-15",
+          "question": "Does unchanged native Python behaviour pass?",
+          "machine": {
+            "type": "command",
+            "executable": "uv",
+            "args": [
+              "run",
+              "--offline",
+              "python",
+              "-m",
+              "unittest"
+            ]
+          }
+        }
       ]
     },
     {
@@ -393,8 +793,24 @@
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "unresolved-scope", "caseId": "AC-57", "question": "Did the agent ask the unresolved implementation-scope question and leave write-path selection blocked, preserving the repository bytes?" },
-        { "id": "inaccessible-history", "caseId": "AC-68", "question": "Did the real depth-one fixture fail to resolve HEAD^, with a specific inaccessible-history limitation and continuation prerequisite instead of a passing comparison?" }
+        {
+          "id": "unresolved-scope",
+          "caseId": "AC-57",
+          "question": "Did the agent ask the unresolved implementation-scope question and leave write-path selection blocked?"
+        },
+        {
+          "id": "inaccessible-history",
+          "caseId": "AC-68",
+          "question": "Did it report a specific inaccessible-history limitation and continuation prerequisite instead of a passing comparison?"
+        },
+        {
+          "id": "fixture-unchanged",
+          "caseId": "AC-57",
+          "question": "Were the built fixture's tracked bytes and status preserved?",
+          "machine": {
+            "type": "fixtureUnchanged"
+          }
+        }
       ]
     },
     {
@@ -411,7 +827,7 @@
     {
       "id": "research-subagents",
       "fixture": "ts-shop",
-      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the common JSON report outside the fixture in scratch, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. When general-purpose subagent tools are available, run the independent briefs in parallel with read-only subagents and name mode subagents. Subagents return formatted findings, never edit, ask questions or run checks. Include the AC-36 negative control: ask one worker to return a separately labelled deliberately invalid candidate with citation missing-citation-control.txt:1 and an otherwise valid source-state binding. Keep that worker-returned candidate separate from genuine observations, retain its original report, and run cite-check on it in the main thread. Record the actual rejection and exclude it before accepting any finding; then check the genuine reports successfully. This labelled fault injection is test data, not a claim that the missing file exists. If no subagent tool is exposed, record this mode blocked with the actual missing capability; do not manufacture subagents or score fallback as subagent evidence.",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. When general-purpose subagent tools are available, run the independent briefs in parallel with read-only subagents and name mode subagents. Subagents return formatted findings, never edit, ask questions or run checks. Include the AC-36 negative control: ask one worker to return a separately labelled deliberately invalid candidate with citation missing-citation-control.txt:1 and an otherwise valid source-state binding. Keep that worker-returned candidate separate from genuine observations, retain its original report, and run cite-check on it in the main thread. Record the actual rejection and exclude it before accepting any finding; then check the genuine reports successfully. This labelled fault injection is test data, not a claim that the missing file exists. If no subagent tool is exposed, record this mode blocked with the actual missing capability; do not manufacture subagents or score fallback as subagent evidence.",
       "answers": [],
       "checkpoints": [
         "discovery"
@@ -436,7 +852,24 @@
         {
           "id": "read-only",
           "caseId": "AC-37",
-          "question": "Did observed subagents refrain from edits, user questions and checks with side effects, with the target unchanged?"
+          "question": "Did observed subagents refrain from edits, user questions and checks with side effects?"
+        },
+        {
+          "id": "fixture-unchanged",
+          "caseId": "AC-37",
+          "question": "Were the built fixture's tracked bytes and status preserved?",
+          "machine": {
+            "type": "fixtureUnchanged"
+          }
+        },
+        {
+          "id": "citations-valid",
+          "caseId": "AC-36",
+          "question": "Does the shipped cite-check accept the saved genuine report?",
+          "machine": {
+            "type": "citeCheck",
+            "report": "$HOME/research-report.json"
+          }
         }
       ]
     }

@@ -1882,7 +1882,7 @@ Repeated execution artifacts with unique run IDs are legitimate history, and the
 Fill in the "Evidence" column in T5.2.
 Registry completeness is a structural check, while final case evidence proves execution.
 Comparisons predating the targeted-question skill repair are historical and require refresh against the settled package before final selection.
-The maintained maintenance fixture also changes the globally bound fixture revision; all earlier pairs require refresh, while [AC-17 now passes](../tests/eval/results/release/maintenance-maintained-fixture.md) on the commissioned starting state.
+Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-runs); [AC-17 now passes](../tests/eval/results/release/maintenance-maintained-fixture.md) on the commissioned starting state.
 
 | Task | Acceptance cases | Required procedure | Evidence |
 |---|---|---|---|
