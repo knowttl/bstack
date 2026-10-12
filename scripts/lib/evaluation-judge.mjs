@@ -112,8 +112,6 @@ export async function judgeInput(record, transcript, { directory, corpus, human 
         for (const run of [{ record }, ...candidates]) {
           if (!batch.runIds.includes(run.record.id)) continue
           run.record.batchId = batch.id
-          run.record.repeatIndex ??= batch.runIds.filter(id =>
-            [record, ...candidates.map(other => other.record)].find(other => other.id === id)?.scenario.id === run.record.scenario.id).indexOf(run.record.id)
         }
       }
     }

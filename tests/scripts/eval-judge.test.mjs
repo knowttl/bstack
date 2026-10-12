@@ -85,22 +85,38 @@ for (const [name, first, second, selected] of [
   })
 }
 
-test('judge comparison uses repeat positions from an existing batch inventory', async t => {
-  const directory = await temporary(t)
-  const capture = join(directory, 'capture')
-  await mkdir(capture)
-  const config = await judgeConfig(directory, 'capture', capture)
-  const first = await comparisonRun(directory, 1, { batchId: undefined, repeatIndex: undefined })
-  const record = await comparisonRun(directory, 2, { batchId: undefined, repeatIndex: undefined })
-  const companion = await comparisonRun(directory, 3, { scenario: { id: 'existing-repo', checks: [] }, batchId: undefined, repeatIndex: undefined })
-  const second = await comparisonRun(directory, 4, { scenario: { id: 'existing-repo', checks: [] }, batchId: undefined, repeatIndex: undefined })
-  await mkdir(join(directory, 'batches'))
-  await writeFile(join(directory, 'batches/fixture.json'), JSON.stringify({ id: 'fixture', runIds: [first.id, companion.id, record.id, second.id] }))
-  const result = command('eval.mjs', ['judge', '--run', record.id, '--judge', config, '--transcript', join(directory, record.id, record.conversation), '--results', directory])
-  assert.equal(result.status, 0, result.stdout)
-  const input = JSON.parse(await readFile(join(capture, `${record.id}.json`)))
-  assert.equal(input.companions[0].runId, second.id)
-})
+for (const [name, repeatIndex, firstIndex, secondIndex, status, selected] of [
+  ['missing indexes use the passing fallback', undefined, undefined, undefined, 'passed', true],
+  ['missing indexes without a passing companion stay pending', undefined, undefined, undefined, 'failed', false],
+  ['recorded indexes select the exact repeat', 1, 0, 1, 'failed', true],
+  ['missing companion indexes use the passing fallback', 1, undefined, undefined, 'passed', true],
+  ['missing subject index uses the passing fallback', undefined, 0, 1, 'passed', true]
+]) {
+  test(`judge comparison ignores out-of-order batch registration: ${name}`, async t => {
+    const directory = await temporary(t)
+    const capture = join(directory, 'capture')
+    await mkdir(capture)
+    const config = await judgeConfig(directory, 'capture', capture)
+    const first = await comparisonRun(directory, 1, { batchId: undefined, repeatIndex: firstIndex })
+    const record = await comparisonRun(directory, 2, { batchId: undefined, repeatIndex })
+    const companion = await comparisonRun(directory, 3, { scenario: { id: 'existing-repo', checks: [] },
+      batchId: undefined, repeatIndex: firstIndex, status: 'failed' })
+    const second = await comparisonRun(directory, 4, { scenario: { id: 'existing-repo', checks: [] },
+      batchId: undefined, repeatIndex: secondIndex, status })
+    await mkdir(join(directory, 'batches'))
+    await writeFile(join(directory, 'batches/fixture.json'), JSON.stringify({ id: 'fixture', runIds: [record.id, companion.id, first.id, second.id] }))
+    const result = command('eval.mjs', ['judge', '--run', record.id, '--judge', config, '--transcript', join(directory, record.id, record.conversation), '--results', directory])
+    assert.equal(result.status, selected ? 0 : 2, result.stdout)
+    if (selected) {
+      const input = JSON.parse(await readFile(join(capture, `${record.id}.json`)))
+      assert.equal(input.companions[0].runId, second.id)
+    } else {
+      assert.deepEqual(result.body.data.pending, [{ checkId: 'project-fit', scenario: 'existing-repo' }])
+      assert.deepEqual(await readdir(capture), [])
+      await assert.rejects(readFile(join(directory, record.id, 'judge/answers.json')), { code: 'ENOENT' })
+    }
+  })
+}
 
 test('judge leaves a missing comparison pending and can grade after evidence arrives', async t => {
   const directory = await temporary(t)
