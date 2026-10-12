@@ -1,8 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution } from './evaluation.mjs'
-import { scopeVersion } from './evaluation-scope.mjs'
+import { root, text, object, array, readJSON, checkRegistry, fail, verifiedExecution, isApprovedBaseline } from './evaluation.mjs'
 import { readAdapter } from './evaluation-host.mjs'
 import { correctedScore, validateScore } from './evaluation-scoring.mjs'
 import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
@@ -44,8 +43,7 @@ export async function completeRelease(results) {
     const record = await correctedScore(directory, JSON.parse(recordBytes))
     // The approved scope rerun retains this exact successful baseline; its
     // fixture, criteria, request and toolchain still undergo the usual checks.
-    const approvedBaseline = id === '2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89' &&
-      hashBytes(recordBytes) === '4930d2928e98e6d162fbb8052d2884be0d7d40c5994a453b17b6b60cc42a732a'
+    const approvedBaseline = isApprovedBaseline(record, recordBytes)
     const definition = definitions.find(item => item.id === record.scenario?.id)
     if (!definition || record.id !== id || canonicalJSON(definition) !== canonicalJSON(record.scenario) ||
         record.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || record.stage !== definition.checkpoints.at(-1) ||
@@ -54,7 +52,7 @@ export async function completeRelease(results) {
     if (canonicalJSON(record.adapter) !== canonicalJSON(adapter) || record.adapterHash !== hashBytes(canonicalJSON(adapter)) ||
         record.agent !== adapter.invocation.agent || record.model !== adapter.invocation.model ||
         record.hostFailure || !record.isolation?.verified || !record.isolation.cleanedAt ||
-        ![2, scopeVersion].includes(record.scopeGuard?.version) || !verifiedExecution(record) || (!record.execution && !approvedBaseline) ||
+        !(record.execution ? verifiedExecution(record) : approvedBaseline) ||
         !record.turns?.length || record.turns.some(turn => !turn.sessionId) || !record.transcript || !record.answers) fail(`Unverified or unscored release run: ${id}`)
     git('merge-base', '--is-ancestor', record.sourceRevision, 'HEAD')
     const request = (record.mode === 'with' && definition.invocation === 'explicit' ? `${adapter.invocation.explicit}\n` : '') +

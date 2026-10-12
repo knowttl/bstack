@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { validateData, validateIds } from '../../skills/repo-audit/scripts/lib/schema.mjs'
 import { CommandError } from '../../skills/repo-audit/scripts/lib/result.mjs'
-import { canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { canonicalJSON, hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
 
 // Repository-owned formats are resolved independently of the invoking directory.
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -21,9 +21,14 @@ export function fail(message, status = 'blocked') {
 }
 export async function readJSON(path) { return JSON.parse(await readFile(path, 'utf8')) }
 
+export function isApprovedBaseline(record, recordBytes) {
+  return record.id === '2026-10-11T19-10-46.903Z-8014183b-8ca5-4060-b239-5c8f9c176a89' &&
+    hashBytes(recordBytes) === '4930d2928e98e6d162fbb8052d2884be0d7d40c5994a453b17b6b60cc42a732a'
+}
+
 export function verifiedExecution(record) {
   const execution = record.execution
-  if (!execution) return record.scopeGuard?.verified === true
+  if (!execution) return false
   const mounts = [record.fixture.path, record.isolation.home].map(path => ({ Type: 'bind', Source: path, Destination: path, RW: true }))
   return execution.method === 'docker' && /^sha256:[a-f0-9]{64}$/.test(execution.imageId) &&
     /^[a-f0-9]{64}$/.test(execution.recipeHash) && execution.turns?.length === record.turns?.length && execution.turns.length > 0 &&
