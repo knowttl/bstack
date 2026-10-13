@@ -3,7 +3,7 @@ const exemptions = {
   python: ['^#\\s*[a-z]+:\\s*ignore\\[[A-Za-z0-9_, -]+\\]\\s*$', '^#\\s*(?:[a-z]+:\\s*)?noqa:\\s*[A-Z]+[0-9]+(?:\\s*,\\s*[A-Z]+[0-9]+)*\\s*$',
     '^#\\s*[a-z]+:\\s*disable=[a-z0-9-]+(?:,[a-z0-9-]+)*\\s*$'],
   go: ['^//go:[a-z]+', '^//nolint:[A-Za-z0-9_,-]+', '^//lint:ignore [A-Za-z0-9]+'],
-  typescript: ['^//\\s*[a-z]+-disable-(?:next-)?line\\s+[@\\w/-]+', '^/\\*\\s*[a-z]+-(?:disable|enable)\\s+[@\\w/-]+', '^///\\s*<reference\\s']
+  typescript: ['^//\\s*[a-z]+-disable-(?:next-)?line\\s+[@\\w/-]+', '^/\\*\\s*[a-z]+-(?:disable(?:-(?:next-)?line)?|enable)\\s+[@\\w/-]+', '^///\\s*<reference\\s']
 }
 // A header comment group carrying one of these markers is a legally required license header.
 const licenseMarker = 'SPDX-License-Identifier|Copyright|Licensed under|All rights reserved'
