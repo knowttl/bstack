@@ -688,7 +688,8 @@ Use the explicit-file runner above rather than passing a directory as a test fil
 
 **Steps**
 
-1. Write `scripts/check-package.mjs --skill <folder>`, defaulting to `skills/repo-audit/`.
+1. Write `scripts/check-package.mjs --skill <folder>`.
+   See the [package check contract](command-contract.md#package-check) for the current default scope.
    Check authored package resources, excluding installed dependency contents and local runtime caches.
    Report every problem before exiting.
    It fails on:

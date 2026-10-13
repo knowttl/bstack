@@ -57,7 +57,7 @@ Each feature declares:
 - `sourcePaths`: the repo paths that implement it, as paths or `**` globs. Change-impact checks read this line, so keep it narrow and true.
 - `subFeatures`: short IDs with one line each.
 - `entryPoints`: every way a user reaches it.
-- `preconditions` and `steps`: each step pairs one user action with an exact command, a human `expect` sentence and a machine `match` pattern tested against the command's output. Add `artifacts` the step must write.
+- `preconditions` and `steps`: each step pairs one user action with an exact command, a human `expect` sentence and a machine `match` pattern tested against the command's stdout. Add `artifacts` the step must write inside `{evidenceDir}/`, avoiding the reserved `<feature id>.json` proof record.
 - `gotchas`: traps that waste or invalidate a run.
 
 Prefer stable handles, such as accessible names, data attributes, prompt strings and route paths, over coordinates and tab order.
@@ -86,7 +86,8 @@ Write them in the project's own language where it has one, so the kit needs no e
 | `.claude/skills/verify-<app>/SKILL.md` | A thin pointer to the kit |
 | `AGENTS.md` | A one-line pointer, appended to an existing file or creating it |
 
-Edit the plan and scaffold again rather than hand-editing the rendered files, so the plan and the kit cannot disagree.
+Before applying, edit the plan and scaffold again to refresh the proposed files.
+After applying, scaffold refuses existing kit files; propose repairs through a new hash-checked change set for `apply`, keeping `kit.json` and its rendered documents consistent.
 
 ## Prove the kit
 

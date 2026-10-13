@@ -1460,12 +1460,15 @@ It never writes to the target.
 The change set creates `.agents/skills/verify-<app>/` with `SKILL.md`, `kit.json`, `features/README.md`, one file per feature and each helper, plus `.claude/skills/verify-<app>/SKILL.md`, and either creates `AGENTS.md` or appends one pointer line to it.
 The result carries `data.path` (the change set), `data.planDigest`, `data.files` and the exact `data.diff`.
 Declared captured artifacts must use paths inside `{evidenceDir}/`; validation rejects other destinations with `artifact-outside-evidence` before commands run.
-Plan validation fails with a stable code before any change set exists: `invalid-ready`, `invalid-timeout`, `invalid-match`, `unsafe-path`, `evidence-inside-kit`, `artifact-outside-evidence`, `helper-collision`, `duplicate-feature` or the schema codes.
+The path `{evidenceDir}/<feature id>.json` is reserved for the proof record; a declared artifact using that path, including a normalized equivalent, fails plan validation with `evidence-collision`.
+Plan validation fails with a stable code before any change set exists: `invalid-ready`, `invalid-timeout`, `invalid-match`, `unsafe-path`, `evidence-inside-kit`, `artifact-outside-evidence`, `evidence-collision`, `helper-collision`, `duplicate-feature` or the schema codes.
 An existing file the change set would create blocks with `kit-exists`.
 
 `kit prove --repo <path> --app <name> --feature <id>` runs the applied kit's `kit.json` once, replacing `{port}`, `{runDir}` and `{evidenceDir}` in commands.
 It launches without a shell in its own process group, waits for the declared readiness, runs doctor and then each step of the feature, writing `<evidence directory>/<run id>/<feature>.json` with every command, exit code and output.
-A step passes when it exits 0, its output matches the step's `match` pattern and each declared artifact exists.
+A step passes when it exits 0, its complete stdout matches the step's `match` pattern and each declared artifact exists.
+Output readiness matches the complete launch stdout followed by stderr.
+Only the recorded stdout and stderr previews are bounded to their last 65,536 characters; matching uses the complete streams.
 Cleanup always stops the launched process group, runs the optional cleanup command and removes the run directory, then confirms the evidence files are byte-identical to before cleanup.
 After confirming survival, it updates the proof record with the launch termination and cleanup command results.
 The proof-record filename is reserved before commands run; colliding artifacts fail with `evidence-collision` and are never overwritten by the recorder.
@@ -1476,5 +1479,6 @@ The result carries `data.runId`, `data.evidenceDirectory`, each evidence file wi
 `comment-check generate --repo <path> --language python|go|typescript` writes a self-contained, comment-free checker to scratch and returns `data.path`, `data.suggestedPath` and `data.run`.
 The checker exits 1 and prints `path:line:column: no-prose-comments: prose comment: <text>` for each comment that is neither an exempt directive nor a license header.
 `--list` prints the current violations as an array of rule, path and key objects and exits 0.
-`--baseline <file>` follows [the baseline schema](../runtime/schemas/baseline.schema.json) and additionally fails on a listed entry that no longer matches a comment.
+`--baseline <file>` follows [the baseline schema](../runtime/schemas/baseline.schema.json), rejects duplicate rule/path/key identities and additionally fails on a listed entry that no longer matches a comment.
+An unreadable or invalid baseline prints `invalid-baseline:` and exits 2, including when combined with `--list`.
 Python uses the standard library tokenizer, Go its scanner package, and TypeScript the target project's `typescript` package.
