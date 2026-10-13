@@ -51,21 +51,10 @@ Dropped: `require-safety-comment-for-type-assertion`, which conflicts with the c
 
 ## What is proven and what is not
 
-- Python SL-1, SL-2, SL-4, SL-5, SL-6 and SL-8 were proven on this skill's disposable fixture with ruff 0.15.20, through one maintained command that rejected a seeded violation of each with its diagnostic. The configuration that passed is below. Prove it again on every project, since versions, rule sets and existing code differ.
+- Python SL-1, SL-2, SL-4, SL-5, SL-6 and SL-8 were proven on this skill's disposable fixture with ruff 0.15.20, through one maintained command that rejected a seeded violation of each with its diagnostic. In the bstack source checkout, the configuration lives in `tests/fixtures/py-greeter/pyproject.toml`. Prove it again on every project, since versions, rule sets and existing code differ.
 - Python SL-3 and SL-7, and Go SL-2, SL-6 and SL-7, have no native rule in this mapping and need a custom check if enabled.
 - Go SL-1, SL-3, SL-4 and SL-5 are verified by rule name in the golangci-lint reference only; golangci-lint itself was not run, so each Go mapping needs a project-specific configuration and proof. `gofmt` for SL-8 ships with the Go toolchain.
 - No Go or TypeScript slop rule was proven by this skill's tests. The comment-ban checkers were tested for Python, Go and TypeScript.
-
-Configuration that passed the Python proof:
-
-```toml
-[tool.ruff.lint]
-select = ["TID251", "ANN401", "PERF401", "PGH003", "PGH004"]
-
-[tool.ruff.lint.flake8-tidy-imports.banned-api]
-"typing.cast".msg = "Parse at the boundary instead of casting."
-"unittest.mock.patch".msg = "Use a real seam instead of patching modules."
-```
 
 ## The comment ban
 
@@ -77,10 +66,12 @@ No mainstream linter bans every comment: the Python rules `ERA001` and `FIX002` 
 |---|---|
 | Shebang on line 1 | `#!/usr/bin/env python3` |
 | Build and generate directives | `//go:build linux`, `//go:generate`, `/// <reference types="node" />` |
-| Suppressions that name a rule or code | `# type: ignore[assignment]`, `# noqa: E501`, `//nolint:unused`, `// eslint-disable-next-line no-var` |
+| Suppressions that name a rule or code | `# type: ignore[assignment]`, `# noqa: E501`, `# pylint: disable=E1101`, `# pylint: disable-next=no-member`, `# pylint: enable=no-member`, `//nolint:unused`, `// eslint-disable-next-line no-var` |
 | License header | A comment group at the top of a file carrying `SPDX-License-Identifier`, `Copyright`, `Licensed under` or `All rights reserved` |
 
 A bare `# type: ignore`, `# noqa` or a suppression without a rule name is a prose comment; SL-6 requires suppressions to be narrow.
+Blanket selectors such as `all` and Pylint group or category selectors such as `typecheck` or `C` are not exemptions.
+An explanation after `--` does not replace the required rule name.
 
 Generate the checker with `comment-check generate --repo <target> --language python|go|typescript --json`.
 It uses the language's own tokenizer, so comment-like text inside strings, regular expressions and templates is never flagged.
@@ -91,7 +82,8 @@ For another language, write the same check with that language's tokenizer and pr
 
 Existing prose comments go into the shrinking baseline and are removed only through selected fixes:
 
-- `--list` prints the current violations as rule, path and key objects. Keys hash the comment text, so they survive moved lines.
+- `--list` prints the current violations as rule, path and key objects. Keys hash the comment text and include a per-file occurrence number, so they survive moved lines but not a move to another file.
+- List output contains identities only; add the reason and removal condition required by `schemas/baseline.schema.json` before adopting entries as a baseline.
 - `--baseline <file>` accepts entries following `schemas/baseline.schema.json`, fails on any violation not listed, and fails on any listed entry that no longer matches a comment so the baseline shrinks.
 
 Before removing a warning comment such as "do not remove", encode the requirement it protects as a type, test or lint constraint, then delete the comment.
