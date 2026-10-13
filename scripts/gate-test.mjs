@@ -7,7 +7,7 @@ import { selectCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
 // the task whose suites read skills and documents. Any other change, or any doubt about the diff, runs the full suite.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const markdownTask = 'T3.1'
-const markdownPaths = [/^README\.md$/, /^docs\//, /^skills\/.+\.md$/, /^skills\/.+\/references\//]
+const markdownPaths = [/^README\.md$/, /^docs\/.+\.md$/, /^skills\/.+\.md$/]
 
 const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8' })
 const paths = (...args) => git(...args).split('\0').filter(Boolean)

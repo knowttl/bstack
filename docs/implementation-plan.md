@@ -270,7 +270,9 @@ bstack has no hosted CI, no GitHub Actions workflows and no release automation (
 Every shipping slice goes through the no-mistakes pipeline configured in `.no-mistakes.yaml`, which declares `no_ci: true`.
 Green work merges unattended.
 [The gate configuration](../.no-mistakes.yaml) owns automatic repair budgets and the build's review focus.
-Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs): a change that touches only `README.md`, `docs/**`, `skills/**/*.md` or `skills/**/references/**` runs `npm run check` and `npm test -- --task T3.1`; any other change, including one to `.no-mistakes.yaml`, runs the full suite with capture.
+Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs): a change that touches only `.md` files at `README.md`, under `docs/**` or under `skills/**` (including references) runs `npm run check` and `npm test -- --task T3.1`.
+T3.1 includes the package-check and skill-skeleton suites plus `eval.test.mjs`, `eval-judge.test.mjs`, `eval-impact.test.mjs`, `release-gate.test.mjs` and `acceptance.test.mjs`, each executed once by the existing test runner.
+Any other change, including non-Markdown files under docs or references and changes to `.no-mistakes.yaml`, runs the full suite with capture.
 Required validation after a change still runs, and no further autonomous repair round follows once the configured budget is spent.
 Recorded local runs and clean-checkout runs, as each task defines, supply the execution evidence that hosted CI would otherwise provide.
 These runs do not prove support on an operating system they did not run on.
