@@ -2,7 +2,7 @@
 
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
-The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime implemented; the verification skill's procedure, entry point and installation remain pending.
+The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime and the verification skill's `create` mode implemented; `maintain`, the no-mistakes wiring with its coverage gate, and installation remain pending.
 The installation and usage below apply to the implemented repo-audit skill.
 
 This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
@@ -141,7 +141,7 @@ npm test -- --task T2.8
 npm test -- --task T2.9
 npm test -- --task T3.1
 node scripts/acceptance.mjs --check-registry
-node scripts/check-package.mjs --skill skills/repo-audit
+node scripts/check-package.mjs
 ```
 
 `check` first verifies the [shared runtime](runtime/) copies, then runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](docs/command-contract.md#standalone-checker-generation).
@@ -399,8 +399,9 @@ This check requires Git, verifies hash coverage and local bytes, and rejects tra
 The fetch script and manifest are excluded from the copy inventory.
 The check also runs in `npm test` and `npm test -- --task T0.3`.
 
-The scripts and schemas behind `rule-proof`, `baseline check`, `run-checks` and `probe record`, with the `contract` and `findings` modules and shared libraries they import, have one source in [runtime/](runtime/).
-An installed skill cannot import outside its own folder, so [skills/repo-audit](skills/repo-audit/SKILL.md) and `skills/verification` each commit a byte-for-byte copy at the same relative paths.
+The scripts and schemas behind `rule-proof`, `baseline check`, `run-checks`, `probe record`, `apply` and `state show`, with the `contract` and `findings` modules and shared libraries they import, have one source in [runtime/](runtime/).
+`apply` and its protected-write libraries are shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+An installed skill cannot import outside its own folder, so [skills/repo-audit](skills/repo-audit/SKILL.md) and [skills/verification](skills/verification/SKILL.md) each commit a byte-for-byte copy at the same relative paths.
 Edit only `runtime/`, then refresh the copies or verify them without writes:
 
 ```sh
@@ -411,6 +412,18 @@ node scripts/sync-runtime.mjs --check
 `--check` exits 1 for a missing or modified copy, and both commands exit 1 if a runtime script imports a file outside `runtime/`.
 Removing a file from `runtime/` also requires removing its copies by hand.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
+
+The [verification skill](skills/verification/SKILL.md) is started by the user and currently provides `create`: it interviews a repo, renders a verification kit as a reviewable change set, applies it after exact-diff approval and proves it once.
+Its entry point and generators, documented in the [command contract](docs/command-contract.md#verification-skill-commands), run from a checkout like this:
+
+```sh
+node skills/verification/scripts/verification.mjs kit scaffold --repo <target> --plan <kit-plan.json>
+node skills/verification/scripts/verification.mjs apply --repo <target> --plan <change-set.json> --dry-run
+node skills/verification/scripts/verification.mjs kit prove --repo <target> --app <name> --feature <id>
+node skills/verification/scripts/verification.mjs comment-check generate --repo <target> --language python
+```
+
+Its fixture acceptance needs Git, Python 3, Ruff and Go on `PATH`, and the TypeScript comment-checker test needs the `ts-shop` fixture's npm install.
 
 Generate the standalone maintenance validator artifact from this checkout after installing the root development dependencies.
 The generated file requires Node 24 or later and Git for repository validation.
