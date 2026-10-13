@@ -66,8 +66,8 @@ Read only the task and the shared contract it needs.
 
 In a Git checkout with available evidence metadata, `npm test` captures its full-suite output and test identities in `.cache/full-suite.json`, recording whether its source inputs are committed.
 When capture metadata is unavailable, ordinary `npm test` still executes the full suite; explicit capture remains strict.
-The [gate configuration](../.no-mistakes.yaml) owns the explicit capture command; ordinary and explicit capture execute the same full suite.
-After the final source, test and documentation fixes, Document attaches that run with `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>` before publication.
+Ordinary and explicit capture execute the same full suite.
+The author attaches a saved run with `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>`; the delivery gate neither requires attachment nor reruns the suite to refresh it.
 The generator reads the saved run rather than executing another suite or starting another pipeline.
 The saved run records the tested head, resolved base, command, environment, selected suite paths, test identities, counts, timing, output hashes and complete authored input inventory.
 Attachment can reuse the tested head when the generator confirms ancestry and identical bound inputs, base and environment, subject to the exclusions below.
@@ -270,6 +270,10 @@ bstack has no hosted CI, no GitHub Actions workflows and no release automation (
 Every shipping slice goes through the no-mistakes pipeline configured in `.no-mistakes.yaml`, which declares `no_ci: true`.
 Green work merges unattended.
 [The gate configuration](../.no-mistakes.yaml) owns automatic repair budgets and the build's review focus.
+Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs): a change that touches only `.md` files at `README.md`, under `docs/**` or under `skills/**` (including references) runs `npm run check` and `npm test -- --task T3.1`.
+The [task registry](../tests/tasks.json) owns T3.1's suite selection, which retains the evaluation-harness tests in every per-piece gate; the existing test runner executes each selected suite once.
+Any other change, including non-Markdown files under docs or references and changes to `.no-mistakes.yaml`, runs the full suite with capture.
+The script checks tracked changes against the merge base with `origin/main` and includes untracked files; an unavailable base or no changed files also selects the full suite.
 Required validation after a change still runs, and no further autonomous repair round follows once the configured budget is spent.
 Recorded local runs and clean-checkout runs, as each task defines, supply the execution evidence that hosted CI would otherwise provide.
 These runs do not prove support on an operating system they did not run on.
@@ -426,7 +430,7 @@ Tick each task when its "Done when" commands pass.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
-      `npm test -- --task T3.1` reuses package and skill command-interface suites, with package check and routing searches recorded in [task evidence](../tests/eval/results/tasks/T3.1.json).
+      The checkpoint's package check and routing searches are recorded in [task evidence](../tests/eval/results/tasks/T3.1.json); current T3.1 suite selection follows the [delivery gate](#delivery-gate).
       This checkpoint claims useful references only.
       C19 adds rule-proof usage, equivalent-resolution coverage limits and debt baseline guidance after native proof in both stacks.
   - [x] T3.2 Build `rule-proof`
@@ -448,7 +452,7 @@ Tick each task when its "Done when" commands pass.
     - The end-of-Phase-3 validation reran the native rule-proof, debt baseline and maintained-command procedures in disposable fixtures: all 37 checks passed with TypeScript 5.9.3 and Python 3.12.3.
       Clean public imports and permitted direction passed, each private/alias/cycle seed failed, baseline debt stayed visible with unauthorized growth rejected and fixed entries removed, and the identical maintained command returned 0/1 for valid/seeded copies while permitting the core import.
       README incorrectly described maintained enforcement as pending after C20; the validation corrected that availability statement without changing executable behavior.
-      The [task evidence contract](#task-evidence-contract) requires attachment of the final full-suite capture after documentation fixes; the [T3.4 record](../tests/eval/results/tasks/T3.4.json) owns attached counts, environment and input binding.
+      The [T3.4 record](../tests/eval/results/tasks/T3.4.json) owns attached counts, environment and input binding; current attachment rules follow the [task evidence contract](#task-evidence-contract).
 - Phase 3a: Maintenance
   - [x] T3a.1 Define the project contract
     - C21 adds the installed `schemas/project.schema.json` version 1 and `contract validate` with explicit `--contract`, defaulting to `.bstack/project.json`.
