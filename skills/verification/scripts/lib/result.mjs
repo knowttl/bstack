@@ -1,0 +1,36 @@
+// Status and exit code are one contract across every command.
+const exitCodes = { passed: 0, failed: 1, blocked: 2, 'usage-error': 3 }
+
+export class CommandError extends Error {
+  constructor(status, problems) {
+    super(problems.map(problem => problem.message).join('\n'))
+    this.status = status
+    this.problems = problems
+  }
+}
+
+export function emitResult({ command, status, problems = [], data = {}, inputs = {} }, json) {
+  if (!Object.hasOwn(exitCodes, status)) throw new Error(`Unknown result status: ${status}`)
+  const result = { schemaVersion: 1, command, status, problems, data, inputs }
+  console.log(json ? JSON.stringify(result) : [
+    `${command}: ${status}`,
+    ...(command === 'baseline check' ? [
+      ...data.debt?.map(entry => `debt: ${entry.rule} ${entry.path} ${entry.key}. Reason: ${entry.reason} Removal: ${entry.removalCondition}`) ?? [],
+      ...(data.refreshed ? ['baseline refreshed'] : [])
+    ] : []),
+    ...(command === 'run-checks' && data.runId ? [`capture: ${data.runId}`, data.journeyCoverage,
+      ...data.checks.map(check => `${check.id}: ${check.status}${check.reason ? ` (${check.reason})` : ''}`)] : []),
+    ...(data.runId && command !== 'run-checks' ? [`run: ${data.runId}`, ...(data.outcome ? [data.outcome] : []),
+      ...['applied', 'pending', 'conflicting'].map(state => `${state}: ${(data[state] ?? []).join(', ') || 'none'}`),
+      ...(data.affectedChecks?.length ? [`checks to rerun: ${data.affectedChecks.join(', ')}`] : []), ...(data.limitations ?? [])] : []),
+    ...(data.path ? [data.path] : []),
+    ...(command === 'evidence validate' ? [
+      ...(data.fingerprint ? [`review fingerprint: ${data.fingerprint}`] : []), ...(data.limitations ?? [])
+    ] : []),
+    ...(data.diff ? [data.diff] : []),
+    ...(data.coverageLimits ?? []).map(limit => `coverage limit: ${limit.path}: ${limit.reason}`),
+    ...problems.map(problem => `${problem.code}: ${problem.message} Fix: ${problem.fix}`),
+    ...(data.approvalRequired ? [data.approvalRequired] : [])
+  ].join('\n'))
+  process.exitCode = exitCodes[status]
+}
