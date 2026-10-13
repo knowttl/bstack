@@ -128,7 +128,7 @@ node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> -
 
 Both commands require a Git working tree and accept `--contract`, defaulting to `.bstack/project.json`.
 The selected contract path resolves from the target root, independent of the caller's working directory.
-The installed [project schema](../skills/repo-audit/schemas/project.schema.json) owns version 1 and rejects unknown fields and versions.
+The [project schema source](../runtime/schemas/project.schema.json) owns version 1 and rejects unknown fields and versions.
 Existing config is usable only if it expresses the entire contract without loss.
 No adapter is provided for the discovered native check configs: their rules and scripts do not express document relationships, generators and acceptance pointers.
 Unsupported formats block with the prerequisite to review a standalone contract.
@@ -1100,7 +1100,7 @@ Acorn and Marked are root development dependencies used by this checker, not dep
 ## Findings
 
 `findings validate --findings <file> --json` and `findings render --findings <file>` require an explicit `--repo` or draft-only `--workspace` target.
-The [findings schema](../skills/repo-audit/schemas/findings.schema.json) owns every field.
+The [findings schema source](../runtime/schemas/findings.schema.json) owns every field.
 Complete [audit](../tests/inputs/findings-audit.json) and [foundation](../tests/inputs/findings-foundation.json) examples deliberately lack execution evidence and therefore cannot claim ready.
 Replace their target placeholder with the resolved root and record the current full Git HEAD, or null for a repo without commits or a non-Git workspace.
 
@@ -1365,7 +1365,7 @@ Outside dependencies require separate live probe evidence as described below.
 `probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]` captures one live call in scratch `probe.json`.
 The command after `--` is a literal argument array, with no shell interpolation.
 All helper options precede that delimiter.
-The [descriptor schema](../skills/repo-audit/schemas/probe-spec.json) defines this input:
+The [descriptor schema source](../runtime/schemas/probe-spec.json) defines this input:
 
 ```json
 {
@@ -1389,7 +1389,7 @@ A successful process alone does not prove an arbitrary printed result matches an
 Nonzero outcome assertions fail the probe, including disagreement with a mock.
 The helper captures tool version, exit code, output tails and timing through the shared child-command runner.
 
-The [record schema](../skills/repo-audit/schemas/probe-record.json) defines persisted fields.
+The [record schema source](../runtime/schemas/probe-record.json) defines persisted fields.
 Nested descriptors and command objects are validated against the descriptor and check-plan command schemas.
 Records bind the target, name, literal command, endpoint, relevant environment, side-effect marker and assumption with a canonical SHA-256 call digest.
 Side-effecting probes refuse before version or command execution without `--approved-by-user`.
@@ -1433,7 +1433,7 @@ See [fixture construction](fixtures.md) for the native stacks and independently 
 `baseline check --repo <target> --baseline <repo-relative-file> --violations <file> [--json]` compares complete current normalized native diagnostics with `schemas/baseline.schema.json`.
 Native adapters must preserve stable rule/path/key identities, and must not present setup failure or unavailable analysis as an empty violation list.
 This command compares supplied data; it does not execute the native analysis.
-The [baseline schema](../skills/repo-audit/schemas/baseline.schema.json) owns the fields; each entry records a narrow reason and removal condition.
+The [baseline schema source](../runtime/schemas/baseline.schema.json) owns the fields; each entry records a narrow reason and removal condition.
 The baseline file must already exist; start with `{"schemaVersion":1,"entries":[]}` when no debt has been accepted.
 
 The violation file is an array such as `[{"rule":"private-import","path":"src/app.py","key":"ledger._internal"}]`.
