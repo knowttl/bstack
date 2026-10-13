@@ -1,7 +1,8 @@
 # bstack
 
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
-The approved [design](docs/design.md) defines the `repo-audit` first release, and the [implementation plan](docs/implementation-plan.md) tracks its build.
+The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
+The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with implementation pending; the installation and usage below apply to the implemented repo-audit skill.
 
 This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
