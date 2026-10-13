@@ -13,7 +13,7 @@ meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
   - Scope: repo-audit, verification and their complete dependency set
-  - Revision: 27, maintainer-approved verification design, implementation pending
+  - Revision: 27, maintainer-approved verification design, create mode implemented, maintain mode pending
 ---
 
 ## Summary
@@ -241,6 +241,7 @@ TypeScript uses the applicable [anti-slop rules](https://github.com/dmmulroy/ant
 TypeScript-specific rules are not generalised to other languages; Effect rules apply only where Effect is a direct dependency.
 Drop `require-safety-comment-for-type-assertion` because it conflicts with the prose-comment ban; SL-1 supplies the constraint instead.
 Python and Go mappings in the report are research candidates verified by name only, not proven equivalents.
+The package check allows tool names in the verification skill's slop-baseline reference only, because that reference is where per-language tools are mapped.
 Every enabled mapping needs project-specific configuration and `rule-proof` evidence; use a custom syntax-tree check only for a demonstrated native-tool gap.
 
 Ban all prose comments, exempting rule-specific machine directives and legally required license headers.
@@ -289,6 +290,7 @@ Unavailable credentials or vendor access remain explicit verification limits, ne
 Keep `rule-proof`, `baseline check`, `run-checks` and `probe record` in one source module in bstack, with byte-for-byte checked copies in each skill that needs them.
 The extraction preserves public command behaviour and portable installed execution.
 The freshness check rejects stale copies; generated checked copies do not become independent sources of knowledge.
+The shared module also carries `apply`, `state show` and the protected-write libraries they need, because the standalone skill may not depend on repo-audit to honour review before apply and protected writes.
 
 Verification takes ownership of all suite auditing, the eight wasteful-test patterns and prevention rules, test-recommendation findings, research-brief test questions and testing guidance written into agent instructions and review configuration.
 Remove repo-audit's corresponding test-necessity load row when that transfer ships.
@@ -302,6 +304,7 @@ Every enabled constraint must accept valid code and reject a seeded violation wi
 A change touching a mapped source path without a map update or no-impact reason must fail coverage.
 Maintain must report clean on an unchanged fixture and flag a deliberately drifted feature file.
 These are acceptance requirements for the later implementation, not evidence supplied by this documentation amendment.
+The create-kit and enabled-constraint cases run against the `py-greeter` fixture in `tests/scripts/verification-create.test.mjs` and `tests/scripts/verification-constraints.test.mjs`; the coverage-gate and maintain cases remain with the maintain implementation.
 
 The report inferred that some Claude Code hosts may not discover `.agents/skills/` alone; Q17's pointer is required regardless, and discovery remains a runtime verification question.
 It also inferred that trusted no-mistakes instructions read kit files from the branch under test; that behaviour still needs direct verification, and Review must assess kit changes.
@@ -1696,3 +1699,4 @@ Historical entries keep their original decisions and name their current applicat
 | R27, 2026-10-10 | "only linux is good" | Amend R26's installer support and acceptance scope for C25c/AC-74 to Linux-only lifecycle evidence. No Windows/macOS runs will be supplied; their execution remains unverified, with no remaining OS acceptance gate |
 | R28, 2026-10-10 | Ignore user-profile and other outside-repo instruction files; surface a universal test-first mandate as a proposed principle change | Limit instruction discovery and reporting to the selected repo, amending R26's ancestor-shadowing behaviour and AC-49. Confirm R11 permits proposing a change to a universal sequence mandate, retaining it unless selected |
 | R29, 2026-10-13 | The maintainer commissioned the test-principles report: standalone verification with create and maintain, its kit, testing and constraints, shared runtime and selected no-mistakes integration | Extends R1; transfers all test auditing from repo-audit. The maintainer's subsequent clarification leaves repo-audit's slimming and split pending, superseding that part of Q10, Q15 and Q16 |
+| R30, 2026-10-13 | The maintainer split the verification skill build: `create` with its references, kit scaffold and proof, comment-ban generation and slop baseline first; `maintain`, the drift check, the no-mistakes wiring reference and the feature-map coverage gate second; installation of the skill as its own piece | The package check covers every skill folder and exempts only `skills/verification/references/slop-baseline.md` from the tool-name scan |
