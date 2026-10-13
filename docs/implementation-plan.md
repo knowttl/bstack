@@ -66,8 +66,8 @@ Read only the task and the shared contract it needs.
 
 In a Git checkout with available evidence metadata, `npm test` captures its full-suite output and test identities in `.cache/full-suite.json`, recording whether its source inputs are committed.
 When capture metadata is unavailable, ordinary `npm test` still executes the full suite; explicit capture remains strict.
-The [gate configuration](../.no-mistakes.yaml) owns the explicit capture command; ordinary and explicit capture execute the same full suite.
-After the final source, test and documentation fixes, Document attaches that run with `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>` before publication.
+Ordinary and explicit capture execute the same full suite.
+The author attaches a saved run with `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>`; the delivery gate neither requires attachment nor reruns the suite to refresh it.
 The generator reads the saved run rather than executing another suite or starting another pipeline.
 The saved run records the tested head, resolved base, command, environment, selected suite paths, test identities, counts, timing, output hashes and complete authored input inventory.
 Attachment can reuse the tested head when the generator confirms ancestry and identical bound inputs, base and environment, subject to the exclusions below.
@@ -270,6 +270,7 @@ bstack has no hosted CI, no GitHub Actions workflows and no release automation (
 Every shipping slice goes through the no-mistakes pipeline configured in `.no-mistakes.yaml`, which declares `no_ci: true`.
 Green work merges unattended.
 [The gate configuration](../.no-mistakes.yaml) owns automatic repair budgets and the build's review focus.
+Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs): a change that touches only `README.md`, `docs/**`, `skills/**/*.md` or `skills/**/references/**` runs `npm run check` and `npm test -- --task T3.1`; any other change, including one to `.no-mistakes.yaml`, runs the full suite with capture.
 Required validation after a change still runs, and no further autonomous repair round follows once the configured budget is spent.
 Recorded local runs and clean-checkout runs, as each task defines, supply the execution evidence that hosted CI would otherwise provide.
 These runs do not prove support on an operating system they did not run on.
