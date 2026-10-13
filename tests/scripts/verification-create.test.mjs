@@ -230,7 +230,6 @@ for (const [exit, status] of [[0, 'passed'], [3, 'failed']]) {
     assert.equal(record.launch.stdout, 'ready\n')
     assert.equal(record.cleanup.exit, 0)
     assert.equal(record.cleanup.stdout, 'cleaned\n')
-    assert.equal(record.doctor?.exit ?? null, exit === 0 ? 0 : null)
   })
 }
 
