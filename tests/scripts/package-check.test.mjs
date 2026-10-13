@@ -299,14 +299,19 @@ for (const [file, text, expected] of [
   })
 }
 
-test('only the slop baseline reference may name language tools', async t => {
+test('only the source verification slop baseline reference may name language tools', async t => {
+  const verification = fileURLToPath(new URL('../../skills/verification/', import.meta.url))
+  const allowed = run('--skill', verification)
+  assert.equal(allowed.status, 0, allowed.stdout + allowed.stderr)
   const directory = await sandbox(t)
   await appendFile(join(directory, 'SKILL.md'), '| Baseline | `references/slop-baseline.md` |\n')
   await writeFile(join(directory, 'references', 'slop-baseline.md'), '- ESLint\n- Ruff\n')
-  assert.equal(run('--skill', directory).status, 0)
+  const forbidden = run('--skill', directory)
+  assert.equal(forbidden.status, 1, forbidden.stdout)
+  assert.match(forbidden.stdout, /language-policy: references\/slop-baseline\.md:/)
   await writeFile(join(directory, 'references', 'guide.md'), '- ESLint\n')
   const result = run('--skill', directory)
   assert.equal(result.status, 1)
   assert.match(result.stdout, /language-policy: references\/guide\.md:/)
-  assert.doesNotMatch(result.stdout, /slop-baseline/)
+  assert.match(result.stdout, /language-policy: references\/slop-baseline\.md:/)
 })
