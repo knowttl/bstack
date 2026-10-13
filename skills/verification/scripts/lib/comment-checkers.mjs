@@ -82,12 +82,47 @@ def violations(path):
     return found
 
 
+def load_baseline(path):
+    with open(path) as handle:
+        document = json.load(handle)
+    if (
+        not isinstance(document, dict)
+        or set(document) != {"schemaVersion", "entries"}
+        or type(document["schemaVersion"]) not in (int, float)
+        or document["schemaVersion"] != 1
+        or not isinstance(document["entries"], list)
+    ):
+        raise ValueError("Expected a version-1 baseline with an entries array.")
+    fields = {"rule", "path", "key", "reason", "removalCondition"}
+    recorded = set()
+    for entry in document["entries"]:
+        if (
+            not isinstance(entry, dict)
+            or set(entry) != fields
+            or any(
+                not isinstance(entry[field], str) or not re.search(r"\\S", entry[field])
+                for field in fields
+            )
+        ):
+            raise ValueError("Baseline entries require five nonempty string fields.")
+        identity = (entry["rule"], entry["path"], entry["key"])
+        if identity in recorded:
+            raise ValueError("Duplicate baseline entry.")
+        recorded.add(identity)
+    return recorded
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline")
     parser.add_argument("--list", action="store_true")
     parser.add_argument("files", nargs="*")
     options = parser.parse_args()
+    try:
+        recorded = load_baseline(options.baseline) if options.baseline else set()
+    except (OSError, ValueError) as error:
+        print("invalid-baseline: " + str(error), file=sys.stderr)
+        return 2
     files = options.files or subprocess.run(
         [
             "git",
@@ -117,13 +152,6 @@ def main():
             )
         )
         return 0
-    recorded = set()
-    if options.baseline:
-        with open(options.baseline) as handle:
-            recorded = {
-                (entry["rule"], entry["path"], entry["key"])
-                for entry in json.load(handle)["entries"]
-            }
     current = {(item["rule"], item["path"], item["key"]) for item in found}
     failed = False
     for item in found:
@@ -243,10 +271,58 @@ func identity(item comment) string {
 	return rule + "\\x00" + item.path + "\\x00" + item.key
 }
 
+func loadBaseline(path string) (map[string]bool, error) {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var document map[string]json.RawMessage
+	if err := json.Unmarshal(content, &document); err != nil {
+		return nil, err
+	}
+	if len(document) != 2 || document["schemaVersion"] == nil || document["entries"] == nil {
+		return nil, fmt.Errorf("expected a version-1 baseline with an entries array")
+	}
+	var version float64
+	if err := json.Unmarshal(document["schemaVersion"], &version); err != nil || version != 1 {
+		return nil, fmt.Errorf("expected schemaVersion 1")
+	}
+	var entries []map[string]string
+	if err := json.Unmarshal(document["entries"], &entries); err != nil || entries == nil {
+		return nil, fmt.Errorf("expected an entries array of string records")
+	}
+	recorded := map[string]bool{}
+	for _, entry := range entries {
+		if len(entry) != 5 {
+			return nil, fmt.Errorf("baseline entries require five nonempty string fields")
+		}
+		for _, field := range []string{"rule", "path", "key", "reason", "removalCondition"} {
+			if strings.TrimSpace(entry[field]) == "" {
+				return nil, fmt.Errorf("baseline entries require five nonempty string fields")
+			}
+		}
+		id := entry["rule"] + "\\x00" + entry["path"] + "\\x00" + entry["key"]
+		if recorded[id] {
+			return nil, fmt.Errorf("duplicate baseline entry")
+		}
+		recorded[id] = true
+	}
+	return recorded, nil
+}
+
 func main() {
 	baseline := flag.String("baseline", "", "")
 	list := flag.Bool("list", false, "")
 	flag.Parse()
+	recorded := map[string]bool{}
+	if *baseline != "" {
+		var err error
+		recorded, err = loadBaseline(*baseline)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "invalid-baseline:", err)
+			os.Exit(2)
+		}
+	}
 	files := flag.Args()
 	if len(files) == 0 {
 		output, err := exec.Command("git", "ls-files", "--cached", "--others", "--exclude-standard", "--deduplicate", "-z", "--", "*.go").Output()
@@ -283,24 +359,6 @@ func main() {
 		encoded, _ := json.Marshal(entries)
 		fmt.Println(string(encoded))
 		return
-	}
-	recorded := map[string]bool{}
-	if *baseline != "" {
-		content, err := os.ReadFile(*baseline)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(2)
-		}
-		var document struct {
-			Entries []map[string]string
-		}
-		if err := json.Unmarshal(content, &document); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(2)
-		}
-		for _, entry := range document.Entries {
-			recorded[entry["rule"]+"\\x00"+entry["path"]+"\\x00"+entry["key"]] = true
-		}
 	}
 	failed := false
 	current := map[string]bool{}
@@ -379,8 +437,29 @@ function violations(path) {
   return kept
 }
 
+function loadBaseline(path) {
+  const document = JSON.parse(readFileSync(path, 'utf8'))
+  if (!document || typeof document !== 'object' || Array.isArray(document) || Object.keys(document).length !== 2 || document.schemaVersion !== 1 || !Array.isArray(document.entries)) throw new Error('Expected a version-1 baseline with an entries array.')
+  const fields = ['rule', 'path', 'key', 'reason', 'removalCondition']
+  const seen = new Set()
+  for (const entry of document.entries) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry) || Object.keys(entry).length !== fields.length || fields.some(field => typeof entry[field] !== 'string' || !/\\S/.test(entry[field]))) throw new Error('Baseline entries require five nonempty string fields.')
+    const id = JSON.stringify([entry.rule, entry.path, entry.key])
+    if (seen.has(id)) throw new Error('Duplicate baseline entry.')
+    seen.add(id)
+  }
+  return document.entries
+}
+
 const args = process.argv.slice(2)
 const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined
+let entries = []
+try {
+  if (args.includes('--baseline')) entries = loadBaseline(option('--baseline'))
+} catch (error) {
+  console.error('invalid-baseline: ' + error.message)
+  process.exit(2)
+}
 const files = args.filter((arg, index) => !arg.startsWith('--') && args[index - 1] !== '--baseline')
 const listed = files.length ? files : execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '--deduplicate', '-z', '--', '*.ts', '*.tsx', '*.mts', '*.cts', '*.js', '*.jsx', '*.mjs', '*.cjs'], { encoding: 'utf8' }).split('\\0').filter(Boolean)
 const found = [...new Set(listed)].filter(path => files.length || existsSync(path)).flatMap(violations)
@@ -388,8 +467,7 @@ if (args.includes('--list')) {
   console.log(JSON.stringify(found.map(({ rule, path, key }) => ({ rule, path, key }))))
 } else {
   const identity = item => JSON.stringify([item.rule, item.path, item.key])
-  const baseline = option('--baseline')
-  const recorded = new Map((baseline ? JSON.parse(readFileSync(baseline, 'utf8')).entries : []).map(entry => [identity(entry), entry]))
+  const recorded = new Map(entries.map(entry => [identity(entry), entry]))
   const current = new Set(found.map(identity))
   let failed = false
   for (const item of found.filter(item => !recorded.has(identity(item)))) {

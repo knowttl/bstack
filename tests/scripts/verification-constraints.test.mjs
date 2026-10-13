@@ -121,7 +121,7 @@ for (const [language, spec] of Object.entries(languages)) {
     const listed = execute(repo, command, [...args, '--list'])
     assert.equal(listed.exit, 0, listed.output)
     const baseline = join(f.directory, 'baseline.json')
-    await writeFile(baseline, JSON.stringify({ schemaVersion: 1, entries: JSON.parse(listed.output) }))
+    await writeFile(baseline, JSON.stringify({ schemaVersion: 1, entries: JSON.parse(listed.output).map(entry => ({ ...entry, reason: 'Legacy comment.', removalCondition: 'Remove the comment.' })) }))
     const moved = `moved-${spec.file}`
     await rename(join(repo, spec.file), join(repo, moved))
     const failed = execute(repo, command, args)
@@ -187,7 +187,7 @@ test('typescript comment ban scans untracked files once and excludes ignored fil
   assert.equal(explicit.exit, 0, explicit.output)
   assert.deepEqual(JSON.parse(explicit.output).map(item => item.path), ['new.ts'])
   const baseline = join(f.directory, 'baseline.json')
-  await writeFile(baseline, JSON.stringify({ schemaVersion: 1, entries: JSON.parse(listed.output) }))
+  await writeFile(baseline, JSON.stringify({ schemaVersion: 1, entries: JSON.parse(listed.output).map(entry => ({ ...entry, reason: 'Legacy comment.', removalCondition: 'Remove the comment.' })) }))
   git(repo, 'add', 'new.ts')
   await rename(join(repo, 'new.ts'), join(repo, 'moved.ts'))
   const moved = execute(repo, command, args)
@@ -201,6 +201,68 @@ test('typescript comment ban scans untracked files once and excludes ignored fil
   assert.equal(stale.exit, 1, stale.output)
   assert.match(stale.output, /no longer matches a comment; remove it/)
 })
+
+for (const language of ['python', 'go', 'typescript']) {
+  test(`${language} generated comment checker validates baselines before accepting exemptions`, async t => {
+    const f = await scratch(t)
+    const spec = language === 'typescript' ? { file: 'baseline.ts', prose: '// explain why\nexport const value = 1\n' } : languages[language]
+    const repo = language === 'typescript' ? build(t, 'ts-shop') : await repository(t, { [spec.file]: spec.prose, ...spec.extra })
+    await writeFile(join(repo, spec.file), spec.prose)
+    const [command, ...args] = await install(f, repo, language)
+    args.pop()
+    const listed = execute(repo, command, [...args, '--list'])
+    assert.equal(listed.exit, 0, listed.output)
+    const entries = JSON.parse(listed.output)
+    const valid = { schemaVersion: 1, entries: entries.map(entry => ({ ...entry, reason: 'Legacy comment.', removalCondition: 'Remove the comment.' })) }
+    const path = join(f.directory, 'valid.json')
+    await writeFile(path, JSON.stringify(valid))
+    const accepted = execute(repo, command, [...args, '--baseline', path])
+    assert.equal(accepted.exit, 0, accepted.output)
+    const acceptedList = execute(repo, command, [...args, '--baseline', path, '--list'])
+    assert.equal(acceptedList.exit, 0, acceptedList.output)
+    assert.deepEqual(JSON.parse(acceptedList.output), entries)
+    const empty = join(f.directory, 'empty.json')
+    await writeFile(empty, JSON.stringify({ schemaVersion: 1, entries: [] }))
+    const unrecorded = execute(repo, command, [...args, '--baseline', empty])
+    assert.equal(unrecorded.exit, 1, unrecorded.output)
+    assert.match(unrecorded.output, /no-prose-comments/)
+    const cases = [
+      ['null document', () => null],
+      ['array document', () => []],
+      ['missing version', value => { delete value.schemaVersion; return value }],
+      ['wrong version', value => ({ ...value, schemaVersion: 2 })],
+      ['boolean version', value => ({ ...value, schemaVersion: true })],
+      ['string version', value => ({ ...value, schemaVersion: '1' })],
+      ['unknown document field', value => ({ ...value, extra: true })],
+      ['missing entries', () => ({ schemaVersion: 1 })],
+      ['null entries', value => ({ ...value, entries: null })],
+      ['object entries', value => ({ ...value, entries: {} })],
+      ['null entry', value => ({ ...value, entries: [null] })],
+      ['array entry', value => ({ ...value, entries: [[]] })],
+      ['unknown entry field', value => { value.entries[0].extra = true; return value }],
+      ['duplicate entry', value => { value.entries.push({ ...value.entries[0] }); return value }],
+      ['duplicate identity with different metadata', value => { value.entries.push({ ...value.entries[0], reason: 'Another reason.' }); return value }],
+      ...['rule', 'path', 'key', 'reason', 'removalCondition'].flatMap(field => [
+        [`missing ${field}`, value => { delete value.entries[0][field]; return value }],
+        [`empty ${field}`, value => { value.entries[0][field] = ''; return value }],
+        [`blank ${field}`, value => { value.entries[0][field] = ' \n\t'; return value }],
+        [`non-string ${field}`, value => { value.entries[0][field] = 7; return value }]
+      ])
+    ]
+    for (const [name, mutate] of cases) {
+      await t.test(name, async () => {
+        const baseline = join(f.directory, `${name.replaceAll(' ', '-')}.json`)
+        await writeFile(baseline, JSON.stringify(mutate(structuredClone(valid))))
+        const rejected = execute(repo, command, [...args, '--baseline', baseline])
+        assert.notEqual(rejected.exit, 0, rejected.output)
+        assert.match(rejected.output, /invalid-baseline:/)
+        const rejectedList = execute(repo, command, [...args, '--baseline', baseline, '--list'])
+        assert.notEqual(rejectedList.exit, 0, rejectedList.output)
+        assert.match(rejectedList.output, /invalid-baseline:/)
+      })
+    }
+  })
+}
 
 // Each enabled constraint has a seeded violation the one maintained command must reject with that constraint's diagnostic.
 const seeds = [
