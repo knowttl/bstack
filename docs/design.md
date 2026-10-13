@@ -1,6 +1,6 @@
 ---
 title: "bstack: First Release"
-eyebrow: Personal project · Foundation design · Revision 27
+eyebrow: Personal project · Foundation design · Revision 28
 subtitle: Establish project-specific guidelines, rules and checks that give agents a sound foundation to extend.
 theme: slate-dark
 logo: false
@@ -12,26 +12,28 @@ footer: Built from docs/design.md. Markdown is authoritative. The HTML is genera
 meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
-  - Scope: repo-audit, verification and their complete dependency set
-  - Revision: 27, maintainer-approved verification design, create mode implemented, maintain mode pending
+  - Scope: eight skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md) and their complete dependency set
+  - Revision: 28, maintainer-approved repo-audit split design, split build pending, verification create mode implemented, verification maintain mode pending
 ---
 
 ## Summary
 
 **bstack helps developers design project-specific guidelines, rules and checks that give agents a sound foundation to extend.**
 Agent drift means changes that depart from the project's agreed purpose, design or behaviour.
-The first release includes `repo-audit`, the standalone `verification` skill and everything those skills need.
-It helps you establish a new project and strengthen an existing repo before more changes add technical debt.
+The first release ships eight skills and everything they need: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance` and `agents-md`.
+["The skill split"](#the-skill-split) names each skill, its boundary and the order to run them.
+The sections below that describe `repo-audit` as one skill specify the foundation capabilities; the split assigns each capability to the skill that owns it.
+Together they help you establish a new project and strengthen an existing repo before more changes add technical debt.
 Technical debt means design or implementation choices that make later changes harder or less reliable.
 
-For a new idea, the skill first asks what you are building and why.
+For a new idea, the foundation starts by asking what you are building and why.
 For an existing project, it first audits the repo and reads relevant files to understand the purpose, goals and defined principles.
 It uses Matt Pocock's `grill-me` interview method only where intent or important design decisions remain unclear.
 It then recommends guidelines and protections tailored to that project's goals, structure and risks.
 Suitable principles become native lint rules, scripts or other checks.
 
 New projects establish `VISION.md`, while existing projects reuse their approved documents and propose updates only where needed.
-The skill also maintains resolved project vocabulary and identifies standards that need judgement rather than an automated check.
+The foundation also maintains resolved project vocabulary and identifies standards that need judgement rather than an automated check.
 You review the proposed foundation before the agent applies changes.
 
 This design owns the first-release requirements.
@@ -47,7 +49,9 @@ The new-project path can implement the approved foundation, but it does not buil
 
 | Decision | Current direction |
 |---|---|
-| Release scope | `repo-audit`, standalone `verification` and their full dependency set (R29) |
+| Release scope | Eight skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance` and `agents-md`, with their full dependency set (R29, R31) |
+| Skill split | `repo-audit` audits at overview level and lists which skill to run next, with one evidenced reason per line; each other skill does one job and runs on its own (R31) |
+| Docs upkeep | Per-change upkeep rides the no-mistakes pipeline with no new user step, and the user runs `/maintenance sweep` now and then (R31) |
 | Existing repos | Audit the repo and relevant files first, then recommend improvements and apply the changes you choose |
 | Project intent | Interview first for a new idea, establish existing-project intent from repo evidence before asking about gaps |
 | Interview | Use `grill-me` for unresolved intent and decisions, without asking users to repeat what the repo explains |
@@ -59,7 +63,7 @@ The new-project path can implement the approved foundation, but it does not buil
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
-| Invocation | Only the user can start either skill, in every supported host |
+| Invocation | Only the user can start each of the eight skills, in every supported host. No skill starts another (R17, R31) |
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
@@ -69,7 +73,7 @@ The new-project path can implement the approved foundation, but it does not buil
 
 ### Recommendations carried into this design
 
-- Include all interview and VISION resources in the installed `repo-audit` folder.
+- Include each skill's interview, VISION and other resources in that skill's own installed folder.
 - Adapt VISION for projects with no history, using your approved intent as evidence.
 - Keep purpose in `VISION.md`, technical design in the project's design document, and executable rules in their native tool configs.
 - Prove each new automated rule rejects a real violation and accepts valid code.
@@ -134,9 +138,191 @@ R29 records the scope amendment.
 | Q14 | One runtime source with checked copies in each skill |
 | Q10 | Move all test auditing out of repo-audit into verification |
 
-The maintainer's subsequent scope clarification leaves repo-audit's slimming and split as a pending design decision, superseding that part of the report's Q10, Q15 and Q16.
-Only the transfer of test auditing is settled here; no final routing shape or additional sub-skills are commissioned by this amendment.
-The existing repo-audit requirements below remain in force until that separate design is approved, except for the testing ownership explicitly transferred here.
+The maintainer's subsequent scope clarification held repo-audit's slimming and split for a separate design, which suspended that part of the report's Q10, Q15 and Q16.
+The next section records that design.
+It restores the report's Q15 and Q16: repo-audit only tells the user which skill to run next, as a checklist the user works through.
+Until the split build ships each move, repo-audit keeps the content that has not yet moved, except for the testing ownership transferred here.
+
+### Repo-audit split commissioning decisions (2026-10-13)
+
+The maintainer approved the repo-audit split design and commissioned its build on 2026-10-13 with "yes commission the build."
+Today's repo-audit is one skill that does seventeen distinct jobs, from interviewing the user about a new idea to checking that docs stay current after every change.
+The maintainer's opening request was to review how to "split up the repo-audit skill into other skills and slim it down properly", with the glossary and the `AGENTS.md` work as their own skills.
+
+This section records that design's decisions as release requirements, not claims of implemented behaviour.
+The IDs below retain the split report's question numbers with a "Split" prefix, because the verification report above uses the same numbers for different questions.
+R31 records the scope amendment.
+
+| Report decision | Approved requirement |
+|---|---|
+| Split Q1 | `glossary` owns the glossary and context map only; ADRs go to `architecture` |
+| Split Q2 | Each skill adds its own one-line pointer to `AGENTS.md`; `agents-md` owns the file, its structure, the `CLAUDE.md` merge and the pointer audit |
+| Split Q3 | No separate interview skill: `vision` and `foundation` each interview for their own gaps, and grilling becomes a shared reference |
+| Split Q4 | Constraints (types, lint and the slop baseline) go to `verification`; design rules and `CODING_STANDARDS.md` go to `architecture`; `rule-proof` and `baseline` are shared |
+| Split Q5 | The new-project scaffold is its own skill, `foundation` |
+| Split Q6, Q10 | The maintenance contract is its own skill, named `maintenance` |
+| Split Q7 | repo-audit is an overview audit: inspect, inventory, one documents research brief with checked citations, then the checklist with one reason per skill |
+| Split Q8 | No audit record file: checklist status is recomputed by rerunning repo-audit, and each skill reports its own outcome |
+| Split Q9 | One generated file per skill holding only the commands that skill needs, freshness-checked |
+| Split Q10 | Verdicts agreed for `vision`, `glossary`, `architecture`, `foundation`, `maintenance`, `agents-md` and the slim `repo-audit` |
+| Split Q11 | Migrate in the order recorded under "Split build order" |
+| Split Q13 | Glossary and architecture stay current in both layers: a per-change contract assessment, plus `glossary maintain` and `architecture maintain` on demand. The maintainer's reason: "as we introduce new features there may be new terms ... and also architecture as new features are added there may be new boundaries" |
+| Split Q14 | Automatic upkeep per change through no-mistakes (a document ownership map and a docs gate), plus one user-started `maintenance sweep` that lists which `maintain` mode to run; all skills stay user-started |
+
+## The skill split
+
+The first release ships eight skills.
+Each does one job, runs on its own, and installs alone.
+Only the user starts any of them, and none starts another.
+repo-audit lists which skill to run next; the user decides whether to run it.
+
+| Skill | Modes | Job |
+|---|---|---|
+| `repo-audit` | none | Audit the repo at overview level and list which skill to run next |
+| `vision` | none | Draft or revise `VISION.md` and stress-test it on the review board |
+| `glossary` | `create`, `maintain` | Find, resolve and write domain terms |
+| `architecture` | `create`, `maintain` | Propose or audit module boundaries, record decisions and own design rules |
+| `foundation` | none | Turn an approved idea into the smallest working project |
+| `verification` | `create`, `maintain` | Verification kit, testing guidance and lint and type constraints |
+| `maintenance` | `create`, `sweep` | Keep project docs true as code changes |
+| `agents-md` | none | Create and maintain one root `AGENTS.md` of pointers |
+
+### Run order
+
+Each checklist is the order of dependency: an idea precedes its vocabulary, vocabulary and boundaries precede the scaffold, and `AGENTS.md` comes last because it points at what the earlier skills produce.
+
+| Repo | Order |
+|---|---|
+| New idea | `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification create`, `/maintenance`, `/agents-md` |
+| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification create`, `/maintenance`, `/agents-md` |
+
+repo-audit prints the checklist for the repo's case with one reason per line, each citing the evidence that makes the skill relevant or its output already present.
+It computes status again on every run, writes nothing to the project and keeps no audit record, so `docs/repo-audit.md` is dropped.
+The `/maintenance sweep` mode, not repo-audit, reports later drift.
+
+### repo-audit
+
+- Keeps the user-only start, the scope guard and the rule that it never starts another skill.
+- Runs `inspect` and `inventory`, one documents research brief whose citations `cite-check` validates, then prints the checklist.
+- Writes nothing to the project.
+
+### vision
+
+- Drafts or revises `VISION.md`, and writes it only after the user's explicit approval of the exact draft.
+- Boundary: purpose, users and refusals; no backlog or design.
+- Interviews for purpose, users, success and non-goals itself.
+- For an existing repo, the current vision is the baseline, and the board opens only for a real gap.
+- Takes the board scripts, assets and the pinned `lavish-axi` runtime, which no other skill needs.
+
+### glossary
+
+- `create`: a new repo drafts the glossary on the first agreed term, never an empty template. An existing repo derives candidate terms from docs and code and flags conflicts with citations.
+- `maintain`: since the last review, finds names in code and docs that the glossary lacks, drifted meanings and returning synonyms, and proposes edits.
+- Writes `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per real context.
+- Boundary: domain concepts only, never implementation details. Code renames are separate selected changes that `glossary` does not make.
+
+### architecture
+
+- `create`: a new repo reviews expected changes against proposed boundaries. An existing repo gets the full boundary audit of coupling, mixed responsibilities and shared edit targets.
+- `maintain`: reruns `measure` and `overlap` since the last review, checks new modules against the design, and proposes new boundaries with their import rules proven by `rule-proof`.
+- Writes design sections, ADRs when selected, import-boundary rules and `CODING_STANDARDS.md` when a standards source is needed.
+- Owns design judgement rules such as DRY, KISS and boundaries. Lint and type constraints belong to `verification`.
+
+### foundation
+
+- For new projects only: turns the approved idea into stack, scaffold, setup commands and a first user journey.
+- Takes the approved `VISION.md`, the glossary and the design as inputs, and interviews for data, interfaces, deployment and the first journey itself.
+- Boundary: never adopts a non-empty directory, and never builds product features.
+
+### verification
+
+- Contract: ["Standalone verification skill"](#standalone-verification-skill).
+- Takes every part of test auditing and the lint and type constraints that repo-audit holds today.
+
+### maintenance
+
+- `create`: registers the docs, scopes and checks in `.bstack/project.json`, and writes the no-mistakes wiring described under "Upkeep".
+- `sweep`: user-started and read-only. It checks every registered doc, the verification kit and the `AGENTS.md` pointers against the whole repo, then returns one list naming which `maintain` mode fixes each item. It fixes nothing itself.
+- The full per-change assessment record from ["Change evidence contract"](#change-evidence-contract) stays available when signed-off evidence is wanted.
+- Owns the generated repo checker.
+
+### agents-md
+
+- Creates and maintains one root `AGENTS.md` of pointers to the project's rules, evidence requirements and check commands.
+- Each other skill adds its own one-line pointer; `agents-md` owns the file, its structure, the `CLAUDE.md` merge and the pointer audit.
+- Boundary: keeps distinct nested instructions, reports `CLAUDE.local.md` as shadowing without editing it, touches nothing outside the repo, and rechecks the host's loading docs before removing a `CLAUDE.md`.
+
+### Not separate skills
+
+- Grilling and research briefs become shared references, with a checked copy in each skill that asks or researches.
+- Findings, apply, run-checks, probe, `rule-proof` and `baseline` become shared scripts.
+- Each skill verifies its own changes with the shared verification rules.
+
+### Shared scripts
+
+Every command keeps one source in the bstack repo.
+A generator bundles each skill's commands into one file inside that skill, and a `--check` fails when a bundle is stale.
+This extends the checked-copy rule in ["Shared runtime and ownership transfer"](#shared-runtime-and-ownership-transfer-q10-q14) and replaces its byte-for-byte copies once the generator ships.
+A shared runtime folder beside the skills is ruled out because installing one skill folder alone must not leave references to missing siblings.
+
+| Skill | Commands |
+|---|---|
+| `repo-audit` | `inspect`, `inventory`, `cite-check` |
+| `vision` | `vision-board` build, launch and verdicts, `apply`, `state show`, `cite-check` |
+| `glossary` | `docs check`, `apply`, `state show`, `cite-check` |
+| `architecture` | `measure`, `overlap`, `rule-proof`, `baseline`, `findings`, `apply`, `state show`, `cite-check` |
+| `foundation` | `project create`, `apply`, `run-checks`, `rule-proof` |
+| `verification` | `rule-proof`, `baseline`, `run-checks`, `probe`, `findings`, `apply`, `state show` |
+| `maintenance` | `contract validate`, `evidence collect` and `validate`, `docs check` and `generate`, `run-checks`, `probe`, `apply`, `state show` |
+| `agents-md` | `inventory`, `apply`, `state show` |
+
+The lists come from each command's imports and the steps that call it; the build may find one more shared helper.
+
+### Upkeep
+
+Docs stay current in two layers, and neither adds a step to the user's everyday work.
+
+| When | User does | What happens |
+|---|---|---|
+| Once per repo | Runs `/maintenance create`, approves and merges | Registers the docs and adds two things to `.no-mistakes.yaml`: an ownership map in `document.instructions` (`GLOSSARY.md` owns terms, the design doc owns boundaries, `VISION.md` owns purpose) and a docs gate after `document` |
+| Every change | Nothing new; runs no-mistakes as today | The Document step updates `GLOSSARY.md` or the design doc in the same branch when a term or boundary changed. A change to purpose comes back as a finding for the user. The docs gate checks links, glossary structure and stale generated sections. The run stops only if the vision would change or the gate fails |
+| Now and then | Runs `/maintenance sweep` | One list of what drifted and which `maintain` mode fixes it, for example "3 new terms - run /glossary maintain" |
+
+The pinned no-mistakes reference cited under ["Independent verification and automatic map upkeep"](#independent-verification-and-automatic-map-upkeep-q3-q8-q11) sets these constraints:
+
+- The Document step finds documentation gaps on every run and accepts ownership rules through `document.instructions`.
+- Gates are shell commands only, may anchor after `document`, and the parser rejects agent gates.
+- The Document step sees only the change's diff, and treats `AGENTS.md` as correction-only, so it can never add a pointer. That is why `agents-md` owns the file, and why a full sweep cannot run inside no-mistakes.
+- `document.instructions` and `gates` are honoured only from the default branch, so the wiring takes effect after it merges.
+
+The ownership map and gate are new behaviour.
+The repo checker's docs checks already exist, but the checker refuses to run without a per-change assessment file, so the gate needs a small docs-only mode.
+The full per-change assessment uses the skill's own scripts and its committed form waits for the project owner's approval each time, which is why the no-mistakes route carries everyday upkeep.
+
+### Split build order
+
+Each piece is its own change.
+Each move removes the moved content from repo-audit and replaces it with a checklist line naming the new skill, so repo-audit keeps working after every piece.
+
+| Piece | Build | Done when |
+|---|---|---|
+| 1 | This design update | The design names every skill, its boundary and the run order, and the decision history records R31 |
+| 2 | Shared runtime, generator and multi-skill install | Each skill folder installs alone, its bundle passes `--check`, and existing tests pass |
+| 3 | `verification` (under way), and the removal of test auditing from repo-audit | Set when the piece is commissioned |
+| 4 | `vision`, with the board scripts, assets, two schemas and the `lavish-axi` dependency | A draft goes through build, launch and verdicts from the new folder, and other skills need no npm install |
+| 5 | `glossary` with `create` and `maintain` | Set when the piece is commissioned |
+| 6 | `agents-md`; other skills add their own pointer line | Set when the piece is commissioned |
+| 7 | `maintenance` with `create` and `sweep`; the checker's home moves and gains its docs-only mode | On a fixture repo, a change that adds a term without a glossary update is caught by the Document step or the gate, a broken doc link fails the gate, and `sweep` lists a seeded drift with the right `maintain` mode |
+| 8 | `architecture` with `create` and `maintain`, ADRs and design standards | Set when the piece is commissioned |
+| 9 | `foundation`, the new-project path and `project create` | Set when the piece is commissioned |
+| 10 | Final repo-audit slim: only scope, overview audit and the two checklists remain; its acceptance cases and the evaluation harness move to the skills they now test | `/repo-audit` on a fixture prints the checklist with a cited reason per skill and writes nothing |
+
+### Split limitations
+
+- The split was designed from source and has no running implementation: no command ran against a test repo, and no no-mistakes pipeline ran with the proposed wiring.
+- Each skill starting with a short self-check of its own area on an existing repo, the `maintain` and `sweep` modes, the ownership map and the checker's docs-only mode are new behaviour, not present today.
+- The verification build may already cover piece 2, which is an inference to confirm before piece 2 starts.
+- The no-mistakes constraints above rest on the pinned reference at commit 93b4407, and the wiring has not run end to end.
 
 ## Standalone verification skill
 
@@ -295,7 +481,7 @@ The shared module also carries `apply`, `state show` and the protected-write lib
 Verification takes ownership of all suite auditing, the eight wasteful-test patterns and prevention rules, test-recommendation findings, research-brief test questions and testing guidance written into agent instructions and review configuration.
 Remove repo-audit's corresponding test-necessity load row when that transfer ships.
 repo-audit retains verification of its own outcomes.
-Its wider slimming and split remain pending a separate maintainer decision.
+["The skill split"](#the-skill-split) records its wider slimming.
 
 ### Acceptance and remaining evidence
 
@@ -1030,6 +1216,7 @@ An instruction to keep every document current is insufficient on its own.
 The foundation should connect relevant project documents to the project's maintained check command.
 bstack defines the required assessment and evidence, while contributors or akashic choose how to perform the work.
 This section proposes bstack's maintenance contract, rather than claiming that an upstream pack already implements it.
+The `maintenance` skill owns the contract, and ["Upkeep"](#upkeep) describes how everyday upkeep reaches the user.
 
 Pstack's [Encode Lessons in Structure](https://github.com/cursor/plugins/blob/9f451cf875ad1239912762f67741e8e5ba6ac0f1/pstack/skills/principle-encode-lessons-in-structure/SKILL.md) favours durable checks over repeated instructions.
 Its [Build the Lever](https://github.com/cursor/plugins/blob/9f451cf875ad1239912762f67741e8e5ba6ac0f1/pstack/skills/principle-build-the-lever/SKILL.md) favours rerunnable tools for mechanical work.
@@ -1256,19 +1443,19 @@ New recurring agent mistakes should become a regression case or structural check
 
 ## Complete first-release package
 
-`repo-audit` is the entry point for the project-specific foundation.
-Its installed folder contains the complete foundation resources and assets it reads.
-Installing that folder alone must not leave references to missing sibling skills.
+Each of the eight skills is a self-contained folder holding the resources, assets and script bundles it reads.
+Installing one folder alone must not leave references to missing sibling skills.
+`repo-audit` is the entry point: it lists which skill to run next and requires none of them to run.
 
 ### What ships
 
-The release scope is defined in the [summary](#summary).
-The table below describes repo-audit's self-contained package; the [standalone verification requirements](#standalone-verification-skill) own the additional skill's contract.
-repo-audit does not require another installed skill to run.
+The release scope is defined in the [summary](#summary), and ["The skill split"](#the-skill-split) assigns the components below to skills.
+The table lists the components as they exist before the split build moves them; the [standalone verification requirements](#standalone-verification-skill) own that skill's contract.
+No skill requires another installed skill to run.
 
 | Component | Kind | What it does | Source |
 |---|---|---|---|
-| `repo-audit` | Skill, started by the user only | Runs the new-idea and existing-repo paths, recommends a foundation and applies the changes the user chooses | bstack |
+| `repo-audit` | Skill, started by the user only | Today runs the new-idea and existing-repo paths, recommends a foundation and applies the changes the user chooses; after the split, audits at overview level and lists which skill to run next | bstack |
 | `grill-me` and `grilling` | Bundled reference modules | Decision-tree interview for intent and decisions the evidence does not settle | Matt Pocock, adapted |
 | Domain language and glossary | Bundled reference module | Resolves project terms, defines the glossary format and finds existing standards and decision records | Matt Pocock, adapted |
 | VISION procedure, review template and stylesheet | Bundled module and assets | Drafts `VISION.md` and stress-tests it on the review board | [kunchenguid/vision](https://github.com/kunchenguid/vision), adapted |
@@ -1404,26 +1591,28 @@ Node and the required target toolchains remain declared system prerequisites, ra
 
 ### Installation and host contract
 
-repo-audit works in any host that supports skills, with explicit invocation and no required router.
-The package includes the documented settings for Claude Code, Codex and Pi, so the user-only rule holds in each.
+Every skill works in any host that supports skills, with explicit invocation and no required router.
+The package includes the documented settings for Claude Code, Codex and Pi in each skill folder, so the user-only rule holds in each.
 The package check confirms those settings are present. bstack does not run each host to test them.
 
-**Only the user can start repo-audit.**
-The agent must not start it on its own because a request looks like an audit.
-repo-audit reads the whole repo, interviews the user and can write files, so the user decides when it runs.
-Each host has its own setting for this, and the package sets all of them.
+**Only the user can start any of the eight skills.**
+The agent must not start one on its own because a request looks like an audit, a glossary change or a scaffold.
+These skills read the repo, interview the user and can write files, so the user decides when each runs.
+The setting is per skill, not per mode, so `create`, `maintain` and `sweep` are user-started too.
+No skill starts another; repo-audit lists the next skill and the user starts it.
+Each host has its own setting for this, and the package sets all of them in every skill folder.
 
-| Host | Setting | Where | How the user starts it | Source |
+| Host | Setting | Where | How the user starts a skill | Source |
 |---|---|---|---|---|
-| Claude Code | `disable-model-invocation: true` | `SKILL.md` frontmatter | `/repo-audit` | [Claude Code skills](https://code.claude.com/docs/en/skills) |
+| Claude Code | `disable-model-invocation: true` | `SKILL.md` frontmatter | `/repo-audit`, `/vision` and so on | [Claude Code skills](https://code.claude.com/docs/en/skills) |
 | Codex | `policy.allow_implicit_invocation: false` | `agents/openai.yaml` in the skill folder | `$repo-audit` or `/skills` | [Codex skills](https://learn.chatgpt.com/docs/build-skills) |
-| Pi | `disable-model-invocation: true` | `SKILL.md` frontmatter | `/skill:repo-audit` | [Pi skills](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md) |
+| Pi | `disable-model-invocation: true` | `SKILL.md` frontmatter | `/skill:repo-audit`, `/skill:vision` and so on | [Pi skills](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md) |
 
-In Claude Code, the setting also keeps the skill's description out of the agent's context.
-The skill then costs no context until the user starts it.
-Claude Code also blocks the call if the agent tries to invoke the skill anyway.
-An akashic playbook or another agent cannot start repo-audit either.
-They use the project checks and documents that repo-audit established, which matches the product boundary.
+In Claude Code, the setting also keeps each skill's description out of the agent's context.
+The skills then cost no context until the user starts one.
+Claude Code also blocks the call if the agent tries to invoke a skill anyway.
+An akashic playbook or another agent cannot start any of them either.
+They use the project checks and documents that the skills established, which matches the product boundary.
 
 The installer is a Node script with no bash prerequisite.
 Linux is the accepted installer platform; Windows and macOS branches remain unverified.
@@ -1444,10 +1633,10 @@ A clean install must work without an existing bstack checkout or globally instal
 
 ### Delivery remains project-owned
 
-repo-audit reports the selected changes, preserved behaviour, actual verification results and remaining limitations.
-It does not select a delivery service, open pull requests or run a CI watcher by default.
+Each skill that changes a project reports the selected changes, preserved behaviour, actual verification results and remaining limitations.
+No skill selects a delivery service, opens pull requests or runs a CI watcher by default.
 no-mistakes, a separate review and delivery tool, can still satisfy project verification or delivery requirements when chosen by the user or an akashic playbook.
-It is not a mandatory repo-audit runtime dependency.
+It is not a mandatory runtime dependency of any skill; `maintenance create` and `verification create` offer its wiring as a selected step.
 
 Use the project's existing delivery path when the user authorises delivery.
 Push, pull-request creation and external configuration changes require that instruction.
@@ -1500,7 +1689,7 @@ These steps give the order of work inside those phases.
 15. Run worked examples, validate evidence for every acceptance case, write the limitations and release through a manually approved Git tag and GitHub release, with no release automation or npm publish. Phase 5.
 
 The detailed implementation plan covers the original repo-audit build, phases 0 to 5.
-The [verification amendment](#standalone-verification-skill) remains unscheduled in that plan.
+The [verification amendment](#standalone-verification-skill) and the [skill split](#the-skill-split) remain unscheduled in that plan; the split's own order is under ["Split build order"](#split-build-order).
 Each task declares prerequisites, inputs, outputs and verification evidence.
 Early checkpoints prove only components already built.
 Phase 1 keeps drafts in scratch, Phase 2 applies selected foundations, and Phase 4 proves the complete installed paths.
@@ -1663,14 +1852,14 @@ Historical entries keep their original decisions and name their current applicat
 | D2 | `/bstack` router | Superseded by R12, `repo-audit` uses native host invocation |
 | D3 | Preserve imported script languages, new scripts use JavaScript on Node | Applies to new helpers and declared runtime prerequisites |
 | D4 | Explicit invocation, staying on is opt-in | Explicit invocation applies, sticky workflow execution is excluded by R12 |
-| D5 and D6 | Include broader support skills, keep Anthropic's skill-creator unchanged | Outside the release scope in the summary; R29 commissions standalone verification separately |
+| D5 and D6 | Include broader support skills, keep Anthropic's skill-creator unchanged | Outside the release scope in the summary; R29 commissions standalone verification separately and R31 commissions the split skills |
 | V1 | no-mistakes owns final review and delivery | Mandatory dependency superseded by R12, delivery is project-owned |
 | V2 | deslop and no-comments precede broader hand-off | Sequenced delivery pipeline excluded by R12 |
 | V3 | no-mistakes writes the pull-request body | Applies only to a separately chosen no-mistakes integration |
 | S1 | Hand-off intent carries Problem, Consequence, Fix and Scope | Historical interface guidance for a separately chosen integration |
 | S2 | Machine config changes need confirmation per change | Retained |
 | S3 | Do not file the no-mistakes documentation issues | Retained |
-| R1, 2026-10-06 | First release contains repo-audit and everything it needs | Amended by R29 to include standalone verification |
+| R1, 2026-10-06 | First release contains repo-audit and everything it needs | Amended by R29 to include standalone verification and by R31 to split repo-audit into eight skills |
 | R2, 2026-10-06 | Review an existing repo, then apply chosen changes | Defines the existing-repo workflow |
 | R3, 2026-10-06 | Understand the intended project with grill-me before recommending principles | New ideas interview first, R7 makes existing projects audit first |
 | R4, 2026-10-06 | Include initial VISION.md setup for a new project where it fits | Designed as adapted new-project vision support |
@@ -1698,5 +1887,5 @@ Historical entries keep their original decisions and name their current applicat
 | R26, 2026-10-07 | Approve the commissioning review and its six recommendations | Recorded in "Commissioning decisions (2026-10-07)". No hosted CI or release automation for bstack, three real OS runs for AC-74, slices C0 to C29, a baseline with no failure quota, and scoped instruction preservation. The current review repair budget is owned by `.no-mistakes.yaml` |
 | R27, 2026-10-10 | "only linux is good" | Amend R26's installer support and acceptance scope for C25c/AC-74 to Linux-only lifecycle evidence. No Windows/macOS runs will be supplied; their execution remains unverified, with no remaining OS acceptance gate |
 | R28, 2026-10-10 | Ignore user-profile and other outside-repo instruction files; surface a universal test-first mandate as a proposed principle change | Limit instruction discovery and reporting to the selected repo, amending R26's ancestor-shadowing behaviour and AC-49. Confirm R11 permits proposing a change to a universal sequence mandate, retaining it unless selected |
-| R29, 2026-10-13 | The maintainer commissioned the test-principles report: standalone verification with create and maintain, its kit, testing and constraints, shared runtime and selected no-mistakes integration | Extends R1; transfers all test auditing from repo-audit. The maintainer's subsequent clarification leaves repo-audit's slimming and split pending, superseding that part of Q10, Q15 and Q16 |
+| R29, 2026-10-13 | The maintainer commissioned the test-principles report: standalone verification with create and maintain, its kit, testing and constraints, shared runtime and selected no-mistakes integration | Extends R1; transfers all test auditing from repo-audit. The maintainer's subsequent clarification held repo-audit's slimming and split for a separate design, which suspended that part of Q10, Q15 and Q16; R31 records that design |
 | R30, 2026-10-13 | The maintainer split the verification skill build: `create` with its references, kit scaffold and proof, comment-ban generation and slop baseline first; `maintain`, the drift check, the no-mistakes wiring reference and the feature-map coverage gate second; installation of the skill as its own piece | The package check covers every skill folder and exempts only `skills/verification/references/slop-baseline.md` from the tool-name scan |
