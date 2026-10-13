@@ -1459,7 +1459,8 @@ It runs `apply`, `state show`, `findings validate`, `rule-proof`, `baseline chec
 It never writes to the target.
 The change set creates `.agents/skills/verify-<app>/` with `SKILL.md`, `kit.json`, `features/README.md`, one file per feature and each helper, plus `.claude/skills/verify-<app>/SKILL.md`, and either creates `AGENTS.md` or appends one pointer line to it.
 The result carries `data.path` (the change set), `data.planDigest`, `data.files` and the exact `data.diff`.
-Plan validation fails with a stable code before any change set exists: `invalid-ready`, `invalid-timeout`, `invalid-match`, `unsafe-path`, `evidence-inside-kit`, `helper-collision`, `duplicate-feature` or the schema codes.
+Declared captured artifacts must use paths inside `{evidenceDir}/`; validation rejects other destinations with `artifact-outside-evidence` before commands run.
+Plan validation fails with a stable code before any change set exists: `invalid-ready`, `invalid-timeout`, `invalid-match`, `unsafe-path`, `evidence-inside-kit`, `artifact-outside-evidence`, `helper-collision`, `duplicate-feature` or the schema codes.
 An existing file the change set would create blocks with `kit-exists`.
 
 `kit prove --repo <path> --app <name> --feature <id>` runs the applied kit's `kit.json` once, replacing `{port}`, `{runDir}` and `{evidenceDir}` in commands.

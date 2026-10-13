@@ -62,7 +62,9 @@ export function validateKitPlan(plan) {
     for (const step of feature.steps) {
       for (const artifact of step.artifacts ?? []) {
         relativePath(artifact, `$/features/${index}/steps`)
-        if (posix.normalize(artifact.replaceAll('\\', '/')) === `{evidenceDir}/${feature.id}.json`) invalid('evidence-collision', `Artifact path is reserved for the proof record: ${artifact}`, `$/features/${index}/steps`)
+        const normalized = posix.normalize(artifact.replaceAll('\\', '/'))
+        if (!normalized.startsWith('{evidenceDir}/')) invalid('artifact-outside-evidence', `Captured artifacts must be inside {evidenceDir}: ${artifact}`, `$/features/${index}/steps`)
+        if (normalized === `{evidenceDir}/${feature.id}.json`) invalid('evidence-collision', `Artifact path is reserved for the proof record: ${artifact}`, `$/features/${index}/steps`)
       }
       try { new RegExp(step.match) } catch { invalid('invalid-match', `Step match is not a valid pattern: ${step.match}`, `$/features/${index}/steps`) }
     }

@@ -202,6 +202,66 @@ test('typescript comment ban scans untracked files once and excludes ignored fil
   assert.match(stale.output, /no longer matches a comment; remove it/)
 })
 
+for (const [language, cases] of Object.entries({
+  python: [
+    ['# pylint: disable=unused-import', 0],
+    ['# pylint: disable=unused-import,too-many-locals', 0],
+    ['# pylint: disable=consider-using-any-or-all', 0],
+    ['# pylint: disable=all', 1],
+    ['# pylint: disable=all,unused-import', 1],
+    ['# pylint: disable=unused-import, all', 1],
+    ['# pylint: disable=*', 1],
+    ['# type: ignore[all]', 1],
+    ['# type: ignore[assignment, all]', 1]
+  ],
+  go: [
+    ['//nolint:unused', 0],
+    ['//nolint:unused,errcheck', 0],
+    ['//nolint:all-custom', 0],
+    ['//go:build all', 0],
+    ['//nolint:all', 1],
+    ['//nolint:all,unused', 1],
+    ['//nolint:unused,all', 1],
+    ['//nolint:-- temporary exemption', 1],
+    ['//lint:ignore all temporary exemption', 1]
+  ],
+  typescript: [
+    ['// eslint-disable-next-line no-alert -- all callers use this', 0],
+    ['// eslint-disable-line @typescript-eslint/no-explicit-any, no-alert', 0],
+    ['/* eslint-disable-next-line no-alert */', 0],
+    ['/* eslint-disable-line no-alert -- all callers use this */', 0],
+    ['/* eslint-disable no-alert */', 0],
+    ['/* eslint-enable no-alert */', 0],
+    ['// eslint-disable-next-line -- temporary exemption', 1],
+    ['// eslint-disable-line -- temporary exemption', 1],
+    ['/* eslint-disable-next-line -- temporary exemption */', 1],
+    ['/* eslint-disable-line -- temporary exemption */', 1],
+    ['/* eslint-disable -- temporary exemption */', 1],
+    ['/* eslint-enable -- temporary exemption */', 1],
+    ['// eslint-disable-next-line no-alert, all', 1],
+    ['/* eslint-disable all, no-alert */', 1]
+  ]
+})) {
+  test(`${language} comment checker distinguishes named directives from blanket suppressions`, async t => {
+    const f = await scratch(t)
+    const repo = language === 'typescript' ? build(t, 'ts-shop') : await repository(t, { [languages[language].file]: languages[language].clean, ...languages[language].extra })
+    const file = language === 'typescript' ? 'suppression.ts' : languages[language].file
+    const [command, ...args] = await install(f, repo, language)
+    args.pop()
+    for (const [directive, expected] of cases) {
+      await t.test(directive, async () => {
+        await writeFile(join(repo, file), `${directive}\n${language === 'go' ? 'package main\nfunc main() {}' : language === 'python' ? 'value = 1' : 'export const value = 1'}\n`)
+        const result = execute(repo, command, args)
+        assert.equal(result.exit, expected, result.output)
+        const listed = execute(repo, command, [...args, '--list'])
+        assert.equal(listed.exit, 0, listed.output)
+        assert.equal(JSON.parse(listed.output).length, expected)
+        if (expected) assert.match(result.output, /no-prose-comments: prose comment/)
+      })
+    }
+  })
+}
+
 for (const language of ['python', 'go', 'typescript']) {
   test(`${language} generated comment checker validates baselines before accepting exemptions`, async t => {
     const f = await scratch(t)
