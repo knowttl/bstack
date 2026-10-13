@@ -44,44 +44,60 @@ function prepare(spec, values, root) {
 function start({ argv, cwd, env }) {
   const output = { stdout: '', stderr: '' }
   const child = spawn(argv[0], argv.slice(1), { cwd, env, shell: false, detached: true, stdio: ['ignore', 'pipe', 'pipe'] })
+  const run = { child, output, command: argv, exit: null, finished: false }
   for (const stream of ['stdout', 'stderr']) {
     child[stream].on('data', chunk => { output[stream] = (output[stream] + chunk).slice(-outputLimit) })
   }
-  const exited = new Promise(done => {
-    child.once('error', error => { output.error = error.message; done(null) })
-    child.once('close', code => done(code ?? 1))
+  run.exited = new Promise(done => {
+    const finish = code => { run.exit = code; run.finished = true; done(code) }
+    child.once('error', error => { output.error = error.message; finish(null) })
+    child.once('close', code => finish(code ?? 1))
   })
-  return { child, output, exited }
+  return run
 }
 
-function stop(child) {
+function stop(child, signal = 'SIGTERM') {
   if (!child.pid) return
-  try { process.kill(-child.pid, 'SIGTERM') } catch (error) { if (error.code !== 'ESRCH') throw error }
+  try { process.kill(-child.pid, signal) } catch (error) { if (error.code !== 'ESRCH') throw error }
+}
+
+async function terminate(run) {
+  const grace = setTimeout(() => stop(run.child, 'SIGKILL'), terminationGraceMs)
+  try {
+    stop(run.child)
+    await run.exited
+  } finally {
+    clearTimeout(grace)
+    stop(run.child, 'SIGKILL')
+  }
 }
 
 async function capture(spec) {
-  const { child, output, exited } = start(spec)
+  const run = start(spec)
   let timedOut = false
-  const timer = setTimeout(() => { timedOut = true; stop(child) }, commandTimeoutMs)
-  const exit = await exited
-  clearTimeout(timer)
-  try { process.kill(-child.pid, 'SIGKILL') } catch {}
-  return { command: spec.argv, exit: timedOut ? null : exit, timedOut, ...output }
+  let timer
+  try {
+    await Promise.race([run.exited, new Promise(done => {
+      timer = setTimeout(() => { timedOut = true; done() }, commandTimeoutMs)
+    })])
+  } finally {
+    clearTimeout(timer)
+    await terminate(run)
+  }
+  return { command: spec.argv, exit: timedOut ? null : run.exit, timedOut, ...run.output }
 }
 
-async function launch(spec, plan, values) {
-  const run = start(spec)
+async function launch(run, plan, values) {
   const deadline = Date.now() + readySeconds(plan) * 1000
   const { url, output } = plan.launch.ready
-  let early = false
-  run.exited.then(() => { early = true })
   while (Date.now() < deadline) {
-    if (early) return { run, problem: failure('launch-exited', `The launch command exited before it was ready: ${(run.output.error ?? run.output.stderr).slice(-500)}`, 'Fix the launch command or its prerequisites; report a product blocker instead of editing product code.') }
-    if (output ? new RegExp(output).test(run.output.stdout + run.output.stderr)
-      : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1000) }).then(response => response.ok, () => false)) return { run }
+    const ready = output ? new RegExp(output).test(run.output.stdout + run.output.stderr)
+      : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1000) }).then(response => response.ok, () => false)
+    if (run.finished && (run.exit !== 0 || !ready)) return failure('launch-exited', `The launch command exited before it was ready: ${(run.output.error ?? run.output.stderr).slice(-500)}`, 'Fix the launch command or its prerequisites; report a product blocker instead of editing product code.')
+    if (ready) return
     await new Promise(done => setTimeout(done, 100))
   }
-  return { run, problem: failure('launch-not-ready', `The launch command was not ready within ${readySeconds(plan)} seconds.`, 'Correct the ready condition or the launch command.') }
+  return failure('launch-not-ready', `The launch command was not ready within ${readySeconds(plan)} seconds.`, 'Correct the ready condition or the launch command.')
 }
 
 async function evidenceHashes(directory) {
@@ -109,15 +125,16 @@ export async function run(options) {
   const evidenceRoot = await resolvePath(target.root, plan.evidence.directory, undefined, true)
   const runId = randomUUID().slice(0, 8)
   const values = { port: await freePort(), runDir: await mkdtemp(join(tmpdir(), `verify-${plan.app}-`)), evidenceDir: join(evidenceRoot, runId) }
-  const record = { app: plan.app, feature: feature.id, runId, doctor: null, steps: [] }
+  const record = { app: plan.app, feature: feature.id, runId, launch: null, doctor: null, steps: [], cleanup: null }
   const problems = []
   let launched
-  let before
+  const recordPath = join(values.evidenceDir, `${feature.id}.json`)
+  const launchRecord = () => launched ? { command: launched.command, exit: launched.exit, ...launched.output } : null
   try {
     await mkdir(values.evidenceDir, { recursive: true })
-    const started = await launch(prepare(plan.launch, values, target.root), plan, values)
-    launched = started.run
-    if (started.problem) problems.push(started.problem)
+    launched = start(prepare(plan.launch, values, target.root))
+    const problem = await launch(launched, plan, values)
+    if (problem) problems.push(problem)
     else {
       record.doctor = await capture(prepare(plan.doctor, values, target.root))
       if (record.doctor.exit !== 0) problems.push(failure('doctor-failed', `Doctor exited ${record.doctor.exit}: ${record.doctor.stdout.slice(-300)}${record.doctor.stderr.slice(-300)}`, 'Fix the instance or the doctor command before driving.'))
@@ -136,23 +153,34 @@ export async function run(options) {
       }
     }
   } finally {
-    await writeFile(join(values.evidenceDir, `${feature.id}.json`), `${JSON.stringify(record, null, 2)}\n`)
-    before = await evidenceHashes(values.evidenceDir)
-    if (launched) {
-      stop(launched.child)
-      const grace = setTimeout(() => { try { process.kill(-launched.child.pid, 'SIGKILL') } catch {} }, terminationGraceMs)
-      await launched.exited
-      clearTimeout(grace)
-      try { process.kill(-launched.child.pid, 'SIGKILL') } catch {}
+    let before
+    try {
+      record.launch = launchRecord()
+      await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
+      before = await evidenceHashes(values.evidenceDir)
+    } finally {
+      try {
+        if (launched) await terminate(launched)
+      } finally {
+        try {
+          if (plan.cleanup.command) {
+            record.cleanup = await capture(prepare(plan.cleanup, values, target.root))
+            if (record.cleanup.exit !== 0) problems.push(failure('cleanup-failed', `Cleanup exited ${record.cleanup.exit}: ${record.cleanup.stderr.slice(-300)}`, 'Fix the cleanup command so it leaves nothing running.'))
+          }
+        } finally {
+          await rm(values.runDir, { recursive: true, force: true })
+        }
+      }
     }
-    if (plan.cleanup.command) {
-      const cleaned = await capture(prepare(plan.cleanup, values, target.root))
-      if (cleaned.exit !== 0) problems.push(failure('cleanup-failed', `Cleanup exited ${cleaned.exit}: ${cleaned.stderr.slice(-300)}`, 'Fix the cleanup command so it leaves nothing running.'))
+    const after = await evidenceHashes(values.evidenceDir)
+    if (JSON.stringify(before) !== JSON.stringify(after)) {
+      problems.push(failure('evidence-lost', 'Evidence changed or disappeared during cleanup.', 'Make cleanup remove only what the run started, never the evidence directory.'))
+    } else {
+      record.launch = launchRecord()
+      await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
     }
-    await rm(values.runDir, { recursive: true, force: true })
   }
   const after = await evidenceHashes(values.evidenceDir)
-  if (JSON.stringify(before) !== JSON.stringify(after)) problems.push(failure('evidence-lost', 'Evidence changed or disappeared during cleanup.', 'Make cleanup remove only what the run started, never the evidence directory.'))
   if (problems.length) throw new CommandError('failed', problems)
   return { inputs: { target, app: plan.app, feature: feature.id }, data: { runId, evidenceDirectory: relative(target.root, values.evidenceDir),
     evidence: after.map(([path, sha256]) => ({ path, sha256 })), steps: record.steps.map(step => ({ label: step.label, exit: step.exit })) } }

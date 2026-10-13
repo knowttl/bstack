@@ -122,7 +122,11 @@ function featureDocument(plan, feature) {
     '## Sub-features', '', ...feature.subFeatures.map(item => `- \`${item.id}\` ${item.description}`), '',
     '## How to get to it (user POV)', '', ...bullets(feature.entryPoints), '',
     `## Driving it with ${plan.drive.harness}`, '', 'Preconditions:', '', ...bullets(feature.preconditions), '',
-    ...feature.steps.map(step => `- **${step.label}.** Run \`${shown(step.command)}\`. ${step.expect}`), '',
+    ...feature.steps.flatMap(step => [
+      `- **${step.label}.** ${step.expect}`,
+      ...commandLines('Run', step).map(line => `  ${line}`),
+      ...(step.artifacts?.length ? [`  Required artifacts: ${step.artifacts.map(path => `\`${path}\``).join(', ')}.`] : [])
+    ]), '',
     '## Gotchas', '', ...(feature.gotchas.length ? bullets(feature.gotchas) : ['- None recorded.']), ''
   ].join('\n')
 }

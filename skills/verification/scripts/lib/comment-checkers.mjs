@@ -88,12 +88,22 @@ def main():
     parser.add_argument("files", nargs="*")
     options = parser.parse_args()
     files = options.files or subprocess.run(
-        ["git", "ls-files", "-z", "--", "*.py"],
+        [
+            "git",
+            "ls-files",
+            "--cached",
+            "--others",
+            "--exclude-standard",
+            "--deduplicate",
+            "-z",
+            "--",
+            "*.py",
+        ],
         capture_output=True,
         text=True,
         check=True,
     ).stdout.split("\\0")
-    found = [item for path in files if path for item in violations(path)]
+    found = [item for path in dict.fromkeys(files) if path for item in violations(path)]
     if options.list:
         print(
             json.dumps(
@@ -236,7 +246,7 @@ func main() {
 	flag.Parse()
 	files := flag.Args()
 	if len(files) == 0 {
-		output, err := exec.Command("git", "ls-files", "-z", "--", "*.go").Output()
+		output, err := exec.Command("git", "ls-files", "--cached", "--others", "--exclude-standard", "--deduplicate", "-z", "--", "*.go").Output()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(2)
@@ -248,7 +258,12 @@ func main() {
 		}
 	}
 	var found []comment
+	seen := map[string]bool{}
 	for _, name := range files {
+		if seen[name] {
+			continue
+		}
+		seen[name] = true
 		items, err := scan(name)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -363,8 +378,8 @@ function violations(path) {
 const args = process.argv.slice(2)
 const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined
 const files = args.filter((arg, index) => !arg.startsWith('--') && args[index - 1] !== '--baseline')
-const listed = files.length ? files : execFileSync('git', ['ls-files', '-z', '--', '*.ts', '*.tsx', '*.mts', '*.cts', '*.js', '*.jsx', '*.mjs', '*.cjs'], { encoding: 'utf8' }).split('\\0').filter(Boolean)
-const found = listed.flatMap(violations)
+const listed = files.length ? files : execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '--deduplicate', '-z', '--', '*.ts', '*.tsx', '*.mts', '*.cts', '*.js', '*.jsx', '*.mjs', '*.cjs'], { encoding: 'utf8' }).split('\\0').filter(Boolean)
+const found = [...new Set(listed)].flatMap(violations)
 if (args.includes('--list')) {
   console.log(JSON.stringify(found.map(({ rule, path, key }) => ({ rule, path, key }))))
 } else {
