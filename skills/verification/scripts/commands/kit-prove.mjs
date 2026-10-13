@@ -1,9 +1,9 @@
 import { spawn } from 'node:child_process'
 import { createHash, randomUUID } from 'node:crypto'
-import { mkdtemp, mkdir, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readdir, readFile, realpath, rm, stat, writeFile } from 'node:fs/promises'
 import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
-import { isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { join, relative, resolve } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolvePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
@@ -46,6 +46,7 @@ function start({ argv, cwd, env }) {
   const child = spawn(argv[0], argv.slice(1), { cwd, env, shell: false, detached: true, stdio: ['ignore', 'pipe', 'pipe'] })
   const run = { child, output, command: argv, exit: null, finished: false }
   for (const stream of ['stdout', 'stderr']) {
+    child[stream].setEncoding('utf8')
     child[stream].on('data', chunk => { output[stream] = (output[stream] + chunk).slice(-outputLimit) })
   }
   run.exited = new Promise(done => {
@@ -101,16 +102,21 @@ async function launch(run, plan, values) {
   return failure('launch-not-ready', `The launch command was not ready within ${readySeconds(plan)} seconds.`, 'Correct the ready condition or the launch command.')
 }
 
-async function evidenceHashes(directory, artifacts) {
-  const entries = await readdir(directory, { recursive: true, withFileTypes: true }).catch(() => [])
+async function evidenceHashes(directory) {
   const hashes = []
-  const paths = new Set([...entries.filter(entry => entry.isFile() || entry.isSymbolicLink()).map(entry => join(entry.parentPath, entry.name)), ...artifacts])
-  for (const path of paths) {
+  async function visit(path, ancestors) {
     const info = await stat(path).catch(error => { if (error.code === 'ENOENT') return null; throw error })
-    if (info?.isDirectory()) continue
-    const bytes = await readFile(path).catch(error => { if (error.code === 'ENOENT') return null; throw error })
-    hashes.push([relative(directory, path), bytes === null ? null : createHash('sha256').update(bytes).digest('hex')])
+    if (info?.isDirectory()) {
+      const actual = await realpath(path)
+      if (ancestors.has(actual)) return
+      const parents = new Set(ancestors).add(actual)
+      for (const name of await readdir(path)) await visit(join(path, name), parents)
+    } else {
+      const bytes = await readFile(path).catch(error => { if (error.code === 'ENOENT') return null; throw error })
+      hashes.push([relative(directory, path), bytes === null ? null : createHash('sha256').update(bytes).digest('hex')])
+    }
   }
+  await visit(directory, new Set())
   return hashes.sort(([a], [b]) => a.localeCompare(b))
 }
 
@@ -129,8 +135,6 @@ export async function run(options) {
   const evidenceRoot = await resolvePath(target.root, plan.evidence.directory, undefined, true)
   const runId = randomUUID().slice(0, 8)
   const values = { port: await freePort(), runDir: await mkdtemp(join(tmpdir(), `verify-${plan.app}-`)), evidenceDir: join(evidenceRoot, runId) }
-  const artifacts = feature.steps.flatMap(step => step.artifacts ?? []).map(artifact => resolve(target.root, substitute(artifact, values)))
-    .filter(path => { const name = relative(values.evidenceDir, path); return name !== '..' && !name.startsWith(`..${sep}`) && !isAbsolute(name) })
   const record = { app: plan.app, feature: feature.id, runId, launch: null, doctor: null, steps: [], cleanup: null }
   const problems = []
   let launched
@@ -170,7 +174,7 @@ export async function run(options) {
         if (await readFile(recordPath, 'utf8') !== reservation) problems.push(failure('evidence-collision', `A command replaced the reserved proof record: ${relative(target.root, recordPath)}.`, 'Write captured artifacts to a different path from the proof record.'))
         else await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
       }
-      before = await evidenceHashes(values.evidenceDir, artifacts)
+      before = await evidenceHashes(values.evidenceDir)
     } finally {
       try {
         if (launched) {
@@ -188,7 +192,7 @@ export async function run(options) {
         }
       }
     }
-    const after = await evidenceHashes(values.evidenceDir, artifacts)
+    const after = await evidenceHashes(values.evidenceDir)
     if (JSON.stringify(before) !== JSON.stringify(after)) {
       problems.push(failure('evidence-lost', 'Evidence changed or disappeared during cleanup.', 'Make cleanup remove only what the run started, never the evidence directory.'))
     } else if (reserved && !problems.some(problem => problem.code === 'evidence-collision')) {
@@ -196,7 +200,7 @@ export async function run(options) {
       await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
     }
   }
-  const after = await evidenceHashes(values.evidenceDir, artifacts)
+  const after = await evidenceHashes(values.evidenceDir)
   if (problems.length) throw new CommandError('failed', problems)
   return { inputs: { target, app: plan.app, feature: feature.id }, data: { runId, evidenceDirectory: relative(target.root, values.evidenceDir),
     evidence: after.map(([path, sha256]) => ({ path, sha256 })), steps: record.steps.map(step => ({ label: step.label, exit: step.exit })) } }
