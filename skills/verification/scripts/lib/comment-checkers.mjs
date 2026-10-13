@@ -1,9 +1,9 @@
 // Machine-read directives that name a specific rule or code stay legal; every other comment is prose.
 const exemptions = {
-  python: ['^#\\s*[a-z]+:\\s*ignore\\[[A-Za-z0-9_, -]+\\]\\s*$', '^#\\s*(?:[a-z]+:\\s*)?noqa:\\s*[A-Z]+[0-9]+(?:\\s*,\\s*[A-Z]+[0-9]+)*\\s*$',
-    '^#\\s*[a-z]+:\\s*disable=[a-z0-9-]+(?:,[a-z0-9-]+)*\\s*$'],
-  go: ['^//go:[a-z]+', '^//nolint:[A-Za-z0-9_,-]+', '^//lint:ignore [A-Za-z0-9]+'],
-  typescript: ['^//\\s*[a-z]+-disable-(?:next-)?line\\s+[@\\w/-]+', '^/\\*\\s*[a-z]+-(?:disable(?:-(?:next-)?line)?|enable)\\s+[@\\w/-]+', '^///\\s*<reference\\s']
+  python: ['^#\\s*[a-z]+:\\s*ignore\\[\\s*([A-Za-z][A-Za-z0-9_-]*(?:\\s*,\\s*[A-Za-z][A-Za-z0-9_-]*)*)\\s*\\]\\s*$', '^#\\s*(?:[a-z]+:\\s*)?noqa:\\s*([A-Z]+[0-9]+(?:\\s*,\\s*[A-Z]+[0-9]+)*)\\s*$',
+    '^#\\s*[a-z]+:\\s*disable=([a-z][a-z0-9-]*(?:\\s*,\\s*[a-z][a-z0-9-]*)*)\\s*$'],
+  go: ['^//go:[a-z]+', '^//nolint:([A-Za-z][A-Za-z0-9_-]*(?:,[A-Za-z][A-Za-z0-9_-]*)*)(?:\\s|$)', '^//lint:ignore ([A-Za-z0-9]+)(?:\\s|$)'],
+  typescript: ['^//\\s*[a-z]+-disable-(?:next-)?line\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|$)', '^/\\*\\s*[a-z]+-(?:disable(?:-(?:next-)?line)?|enable)\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|\\*/|$)', '^///\\s*<reference\\s']
 }
 // A header comment group carrying one of these markers is a legally required license header.
 const licenseMarker = 'SPDX-License-Identifier|Copyright|Licensed under|All rights reserved'
@@ -50,6 +50,16 @@ def license_lines(tokens):
     }
 
 
+def is_exempt(text):
+    for pattern in EXEMPT:
+        match = pattern.search(text)
+        if match and all(
+            selector.strip().lower() != "all" for selector in match[1].split(",")
+        ):
+            return True
+    return False
+
+
 def violations(path):
     with open(path, "rb") as handle:
         tokens = list(tokenize.tokenize(handle.readline))
@@ -61,11 +71,7 @@ def violations(path):
             continue
         line, column = token.start
         text = token.string
-        if (
-            (line == 1 and text.startswith("#!"))
-            or line in licensed
-            or any(pattern.search(text) for pattern in EXEMPT)
-        ):
+        if (line == 1 and text.startswith("#!")) or line in licensed or is_exempt(text):
             continue
         digest = hashlib.sha256(text.strip().encode()).hexdigest()[:12]
         seen[digest] = seen.get(digest, 0) + 1
@@ -253,7 +259,19 @@ func scan(path string) ([]comment, error) {
 	for index, item := range found {
 		skip := licensed[index]
 		for _, pattern := range exempt {
-			skip = skip || pattern.MatchString(item.text)
+			match := pattern.FindStringSubmatch(item.text)
+			if match == nil {
+				continue
+			}
+			named := true
+			if len(match) > 1 {
+				for _, selector := range strings.Split(match[1], ",") {
+					if strings.EqualFold(strings.TrimSpace(selector), "all") {
+						named = false
+					}
+				}
+			}
+			skip = skip || named
 		}
 		if skip {
 			continue
@@ -429,7 +447,11 @@ function violations(path) {
   const seen = new Map()
   const kept = []
   for (const [index, item] of found.entries()) {
-    if (licensed.has(index) || (item.line === 1 && item.text.startsWith('#!')) || exempt.some(pattern => pattern.test(item.text))) continue
+    const directive = exempt.some(pattern => {
+      const match = pattern.exec(item.text)
+      return match && (!match[1] || match[1].split(',').every(selector => selector.trim().toLowerCase() !== 'all'))
+    })
+    if (licensed.has(index) || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
     kept.push({ rule, path, key: digest + ':' + seen.get(digest), line: item.line, column: item.column, text: item.text })
