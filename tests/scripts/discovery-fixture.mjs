@@ -39,6 +39,12 @@ export function run(command, repo, env = process.env, extra = [], platform) {
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
+export function runVerification(command, repo, env = process.env, extra = []) {
+  const result = spawnSync(process.execPath, [join(checkout, 'skills', 'verification', 'scripts', 'verification.mjs'), ...command.split(' '), '--repo', repo, '--json', ...extra], { encoding: 'utf8', maxBuffer: Infinity, cwd: tmpdir(), env })
+  assert.equal(result.stderr, '')
+  return { exit: result.status, ...JSON.parse(result.stdout) }
+}
+
 export async function snapshot(directory) {
   const files = {}
   for (const entry of await readdir(directory, { withFileTypes: true })) {
