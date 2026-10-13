@@ -1,0 +1,22 @@
+{
+  "title": "Temporary debt baseline version 1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "entries"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "entries": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["rule", "path", "key", "reason", "removalCondition"],
+        "properties": {
+          "rule": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "path": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "key": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "reason": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "removalCondition": { "type": "string", "minLength": 1, "pattern": "\\S" }
+        }
+      }
+    }
+  }
+}
