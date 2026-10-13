@@ -1,7 +1,7 @@
 // Machine-read directives that name a specific rule or code stay legal; every other comment is prose.
 const exemptions = {
   python: ['^#\\s*[a-z]+:\\s*ignore\\[\\s*([A-Za-z][A-Za-z0-9_-]*(?:\\s*,\\s*[A-Za-z][A-Za-z0-9_-]*)*)\\s*\\]\\s*$', '^#\\s*(?:[a-z]+:\\s*)?noqa:\\s*([A-Z]+[0-9]+(?:\\s*,\\s*[A-Z]+[0-9]+)*)\\s*$',
-    '^#\\s*[a-z]+:\\s*disable=([a-z][a-z0-9-]*(?:\\s*,\\s*[a-z][a-z0-9-]*)*)\\s*$'],
+    '^#\\s*[a-z]+:\\s*(?:disable(?:-next)?|enable)\\s*=\\s*(?P<messages>[A-Za-z][A-Za-z0-9-]*(?:\\s*,\\s*[A-Za-z][A-Za-z0-9-]*)*)\\s*$'],
   go: ['^//go:[a-z]+', '^//nolint:([A-Za-z][A-Za-z0-9_-]*(?:,[A-Za-z][A-Za-z0-9_-]*)*)(?:\\s|$)', '^//lint:ignore ([A-Za-z0-9]+)(?:\\s|$)'],
   typescript: ['^//\\s*[a-z]+-disable-(?:next-)?line\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|$)', '^/\\*\\s*[a-z]+-(?:disable(?:-(?:next-)?line)?|enable)\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|\\*/|$)', '^///\\s*<reference\\s']
 }
@@ -53,10 +53,21 @@ def license_lines(tokens):
 def is_exempt(text):
     for pattern in EXEMPT:
         match = pattern.search(text)
-        if match and all(
-            selector.strip().lower() != "all" for selector in match[1].split(",")
+        if not match:
+            continue
+        selectors = [selector.strip() for selector in match[1].split(",")]
+        if any(selector.lower() == "all" for selector in selectors):
+            continue
+        if "messages" in match.re.groupindex and not all(
+            re.fullmatch(
+                r"(?:[CREFWI][0-9]{4}|[a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)+"
+                r"|fatal|fixme|unreachable)",
+                selector,
+            )
+            for selector in selectors
         ):
-            return True
+            continue
+        return True
     return False
 
 
