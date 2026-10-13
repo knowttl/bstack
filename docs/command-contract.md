@@ -1045,7 +1045,7 @@ This read-only test interface implements no audit, apply or evidence workflow.
 ## Package check
 
 `node scripts/check-package.mjs [--skill <folder>]` checks authored skill resources without writing files.
-The default is this checkout's `skills/repo-audit/`, independent of the caller's working directory.
+The default is every folder under this checkout's `skills/`, independent of the caller's working directory, with each problem path prefixed by its skill name.
 An explicit folder resolves from the caller's working directory.
 `--help` exits 0, unsupported or repeated arguments exit 3, detected package problems exit 1, and a passing package exits 0.
 Output uses the shared text result format and reports all detected problems before exiting.
@@ -1069,7 +1069,7 @@ Unreadable files or folders report `package-unreadable` and do not stop checks o
 | `script-import` | Parse every scanned `.js`, `.mjs` and `.cjs` text file with Acorn's latest JavaScript grammar. Use module mode except for `.cjs`, which uses script mode with top-level return permitted by the CommonJS function wrapper. Inspect import declarations, re-exports with sources, dynamic imports and bare identifier `require(...)` calls at every depth. For string literal specifiers, accept `./` and `../` local paths, Node built-ins recognised by `node:module` isBuiltin, or a package name in the skill-root package.json dependencies or optionalDependencies. Scoped names use their first two slash-separated components, other packages their first component, so declared package subpaths pass. devDependencies and peerDependencies do not supply an installed runtime. |
 | `constant-comment` | A direct Program-body const VariableDeclaration, including one wrapped by ExportNamedDeclaration, must have an actual JavaScript line or block comment whose ending line is exactly one line before the statement's starting line. An exported declaration uses the export statement's starting line. One comment covers a declaration with several bindings or destructuring. Nested statements, functions and loop declarations are outside this control. |
 | `step-done` | In the SKILL.md body, Marked's top-level token stream recognises an ATX heading of depth three whose raw spelling starts with up to three spaces then `###` and whitespace, and whose text starts with `Step` followed by whitespace or end of text. Before the next top-level heading of any depth, a paragraph token must contain an unindented line starting exactly `Done when:`. Fenced or indented code, lists and block quotes cannot supply the heading or completion line. |
-| `language-policy` | At any scanned depth, deny basenames matching .eslintrc and .prettierrc with no extension or json, yaml, yml, js, cjs or mjs extensions, eslint.config.js/cjs/mjs, prettier.config.js/cjs/mjs, ruff.toml, .ruff.toml, .pylintrc, mypy.ini, .flake8 and biome.json/jsonc. Case is ignored. In every scanned text file, deny whole-word eslint, prettier, ruff, pylint, mypy, flake8 and biome, plus eslint-config- names with word or hyphen suffixes, case-insensitively. This includes tool lists, presets, package declarations, prose, examples and comments. The short deny list lives only in the check script. |
+| `language-policy` | At any scanned depth, deny basenames matching .eslintrc and .prettierrc with no extension or json, yaml, yml, js, cjs or mjs extensions, eslint.config.js/cjs/mjs, prettier.config.js/cjs/mjs, ruff.toml, .ruff.toml, .pylintrc, mypy.ini, .flake8 and biome.json/jsonc. Case is ignored. In every scanned text file, deny whole-word eslint, prettier, ruff, pylint, mypy, flake8 and biome, plus eslint-config- names with word or hyphen suffixes, case-insensitively. This includes tool lists, presets, package declarations, prose, examples and comments. The only exempt file is this checkout\'s `skills/verification/references/slop-baseline.md`, including when that source skill is checked through `--skill`; references with the same name in other packages or copies are not exempt, because the slop baseline maps principles to per-language tools by design; the tool-name scan skips it and every other check still applies. The short deny list lives only in the check script. |
 | `implementation-routing` | In every scanned text file, case-insensitively reject follow, use, run, load, invoke, start or select followed by whitespace, optional the/a/an/bstack/bstack possessive qualifiers, one or more general/development/implementation/TDD qualifiers, then playbook, workflow or dispatcher. Whitespace can span lines. Examples and comments participate. Bounded audit instructions and statements that general development playbooks are outside the skill pass. |
 | `script-syntax` | JavaScript parsing fails. Report the parser diagnostic and keep collecting problems from other files. |
 | `package-manifest` | A present skill-root package.json is invalid JSON, is not an object, or has a present dependencies or optionalDependencies field that is not an object of nonempty string values. An absent manifest supplies no runtime dependencies. |
@@ -1448,3 +1448,37 @@ Findings follow `schemas/findings.schema.json`, refer to the selected target and
 The command rejects missing, unselected, resolved, out-of-scope or non-debt findings.
 If other new debt remains, the refresh writes nothing even when the one entry is authorized.
 Apply the selected native tool's own baseline or suppression mechanism instead when research finds one, retaining the same no-growth and removal requirements.
+
+## Verification skill commands
+
+`node skills/verification/scripts/verification.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone verification skill, with the same argument, target, scratch and result contracts as repo-audit.
+It runs `apply`, `state show`, `findings validate`, `rule-proof`, `baseline check`, `run-checks`, `probe record` and `probe compare` from the [shared runtime](../runtime/), with the same behaviour as in repo-audit, and adds the commands below.
+`--help` lists the commands, and `<command> --help` prints that command's syntax.
+
+`kit scaffold --repo <path> --plan <file>` reads a kit plan following [the plan schema](../skills/verification/schemas/kit-plan.json) and writes a change set and findings file to scratch for review through `apply`.
+It never writes to the target.
+The change set creates `.agents/skills/verify-<app>/` with `SKILL.md`, `kit.json`, `features/README.md`, one file per feature and each helper, plus `.claude/skills/verify-<app>/SKILL.md`, and either creates `AGENTS.md` or appends one pointer line to it.
+The result carries `data.path` (the change set), `data.planDigest`, `data.files` and the exact `data.diff`.
+Declared captured artifacts must use paths inside `{evidenceDir}/`; validation rejects other destinations with `artifact-outside-evidence` before commands run.
+The path `{evidenceDir}/<feature id>.json` is reserved for the proof record; a declared artifact using that path, including a normalized equivalent, fails plan validation with `evidence-collision`.
+Plan validation fails with a stable code before any change set exists: `invalid-ready`, `invalid-timeout`, `invalid-match`, `unsafe-path`, `evidence-inside-kit`, `artifact-outside-evidence`, `evidence-collision`, `helper-collision`, `duplicate-feature` or the schema codes.
+An existing file the change set would create blocks with `kit-exists`.
+
+`kit prove --repo <path> --app <name> --feature <id>` runs the applied kit's `kit.json` once, replacing `{port}`, `{runDir}` and `{evidenceDir}` in commands.
+It launches without a shell in its own process group, waits for the declared readiness, runs doctor and then each step of the feature, writing `<evidence directory>/<run id>/<feature>.json` with every command, exit code and output.
+A step passes when it exits 0, its complete stdout matches the step's `match` pattern and each declared artifact exists.
+Output readiness matches the complete launch stdout followed by stderr.
+Only the recorded stdout and stderr previews are bounded to their last 65,536 characters; matching uses the complete streams.
+Cleanup always stops the launched process group, runs the optional cleanup command and removes the run directory, then confirms the evidence files are byte-identical to before cleanup.
+After confirming survival, it updates the proof record with the launch termination and cleanup command results.
+The proof-record filename is reserved before commands run; colliding artifacts fail with `evidence-collision` and are never overwritten by the recorder.
+A failed proof exits 1 with the first failure code: `launch-exited`, `launch-not-ready`, `doctor-failed`, `step-failed`, `step-mismatch`, `artifact-missing`, `cleanup-failed` or `evidence-lost`; it still cleans up and keeps its evidence.
+An unreadable kit blocks with `kit-unavailable` and an unknown feature is a usage error naming the available features.
+The result carries `data.runId`, `data.evidenceDirectory`, each evidence file with its SHA-256 and each step's exit code.
+
+`comment-check generate --repo <path> --language python|go|typescript` writes a self-contained, comment-free checker to scratch and returns `data.path`, `data.suggestedPath` and `data.run`.
+The checker exits 1 and prints `path:line:column: no-prose-comments: prose comment: <text>` for each comment that is neither an exempt directive nor a license header.
+`--list` prints the current violations as an array of rule, path and key objects and exits 0.
+`--baseline <file>` follows [the baseline schema](../runtime/schemas/baseline.schema.json), rejects duplicate rule/path/key identities and additionally fails on a listed entry that no longer matches a comment.
+An unreadable or invalid baseline prints `invalid-baseline:` and exits 2, including when combined with `--list`.
+Python uses the standard library tokenizer, Go its scanner package, and TypeScript the target project's `typescript` package.
