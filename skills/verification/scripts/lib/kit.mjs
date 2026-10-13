@@ -60,7 +60,10 @@ export function validateKitPlan(plan) {
     ids.add(feature.id)
     for (const path of feature.sourcePaths) relativePath(path, `$/features/${index}/sourcePaths`)
     for (const step of feature.steps) {
-      for (const artifact of step.artifacts ?? []) relativePath(artifact, `$/features/${index}/steps`)
+      for (const artifact of step.artifacts ?? []) {
+        relativePath(artifact, `$/features/${index}/steps`)
+        if (posix.normalize(artifact.replaceAll('\\', '/')) === `{evidenceDir}/${feature.id}.json`) invalid('evidence-collision', `Artifact path is reserved for the proof record: ${artifact}`, `$/features/${index}/steps`)
+      }
       try { new RegExp(step.match) } catch { invalid('invalid-match', `Step match is not a valid pattern: ${step.match}`, `$/features/${index}/steps`) }
     }
   }
@@ -76,7 +79,7 @@ function link(text, destination) {
 }
 
 function shown(command) {
-  return command.map(word => /^[\w@%+=:,./{}-]+$/.test(word) ? word : JSON.stringify(word)).join(' ')
+  return command.map(word => `'${word.replaceAll("'", "'\"'\"'")}'`).join(' ')
 }
 
 function bullets(items) {
@@ -84,7 +87,9 @@ function bullets(items) {
 }
 
 function commandLines(label, spec) {
-  return [`${label}: \`${shown(spec.command)}\`${spec.cwd ? ` from \`${spec.cwd}\`` : ''}.`,
+  const command = shown(spec.command)
+  const fence = '~'.repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map(run => run.length + 1)))
+  return [`${label}${spec.cwd ? ` from \`${spec.cwd}\`` : ''}:`, '', `${fence}sh`, ...command.split('\n'), fence,
     ...(spec.env ? [`Environment: ${Object.entries(spec.env).map(([key, value]) => `\`${key}=${value}\``).join(', ')}.`] : [])]
 }
 

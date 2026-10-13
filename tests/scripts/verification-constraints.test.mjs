@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { appendFile, cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { appendFile, cp, mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { build, git, runVerification } from './discovery-fixture.mjs'
@@ -112,6 +112,29 @@ for (const [language, spec] of Object.entries(languages)) {
     assert.equal(explicit.exit, 0, explicit.output)
     assert.deepEqual(JSON.parse(explicit.output).map(item => item.path), [untracked])
   })
+
+  test(`${language} comment ban handles unstaged deletions and moves without hiding explicit errors or stale debt`, async t => {
+    const f = await scratch(t)
+    const repo = await repository(t, { [spec.file]: spec.prose, ...spec.extra })
+    const [command, ...args] = await install(f, repo, language)
+    args.pop()
+    const listed = execute(repo, command, [...args, '--list'])
+    assert.equal(listed.exit, 0, listed.output)
+    const baseline = join(f.directory, 'baseline.json')
+    await writeFile(baseline, JSON.stringify({ schemaVersion: 1, entries: JSON.parse(listed.output) }))
+    const moved = `moved-${spec.file}`
+    await rename(join(repo, spec.file), join(repo, moved))
+    const failed = execute(repo, command, args)
+    assert.equal(failed.exit, 1, failed.output)
+    assert.match(failed.output, new RegExp(`${moved}:\\d+:\\d+: no-prose-comments`))
+    await rm(join(repo, moved))
+    const clean = execute(repo, command, args)
+    assert.equal(clean.exit, 0, clean.output)
+    assert.notEqual(execute(repo, command, [...args, spec.file]).exit, 0)
+    const stale = execute(repo, command, [...args, '--baseline', baseline])
+    assert.equal(stale.exit, 1, stale.output)
+    assert.match(stale.output, /no longer matches a comment; remove it/)
+  })
 }
 
 test('typescript comment ban uses the compiler scanner, ignoring comment-like text in strings, regexes and templates', async t => {
@@ -149,6 +172,20 @@ test('typescript comment ban scans untracked files once and excludes ignored fil
   const explicit = execute(repo, command, [...args, '--list', 'new.ts', 'new.ts'])
   assert.equal(explicit.exit, 0, explicit.output)
   assert.deepEqual(JSON.parse(explicit.output).map(item => item.path), ['new.ts'])
+  const baseline = join(f.directory, 'baseline.json')
+  await writeFile(baseline, JSON.stringify({ schemaVersion: 1, entries: JSON.parse(listed.output) }))
+  git(repo, 'add', 'new.ts')
+  await rename(join(repo, 'new.ts'), join(repo, 'moved.ts'))
+  const moved = execute(repo, command, args)
+  assert.equal(moved.exit, 1, moved.output)
+  assert.match(moved.output, /moved\.ts:\d+:\d+: no-prose-comments/)
+  await rm(join(repo, 'moved.ts'))
+  const clean = execute(repo, command, args)
+  assert.equal(clean.exit, 0, clean.output)
+  assert.notEqual(execute(repo, command, [...args, 'new.ts']).exit, 0)
+  const stale = execute(repo, command, [...args, '--baseline', baseline])
+  assert.equal(stale.exit, 1, stale.output)
+  assert.match(stale.output, /no longer matches a comment; remove it/)
 })
 
 // Each enabled constraint has a seeded violation the one maintained command must reject with that constraint's diagnostic.

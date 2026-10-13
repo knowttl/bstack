@@ -1467,6 +1467,7 @@ It launches without a shell in its own process group, waits for the declared rea
 A step passes when it exits 0, its output matches the step's `match` pattern and each declared artifact exists.
 Cleanup always stops the launched process group, runs the optional cleanup command and removes the run directory, then confirms the evidence files are byte-identical to before cleanup.
 After confirming survival, it updates the proof record with the launch termination and cleanup command results.
+The proof-record filename is reserved before commands run; colliding artifacts fail with `evidence-collision` and are never overwritten by the recorder.
 A failed proof exits 1 with the first failure code: `launch-exited`, `launch-not-ready`, `doctor-failed`, `step-failed`, `step-mismatch`, `artifact-missing`, `cleanup-failed` or `evidence-lost`; it still cleans up and keeps its evidence.
 An unreadable kit blocks with `kit-unavailable` and an unknown feature is a usage error naming the available features.
 The result carries `data.runId`, `data.evidenceDirectory`, each evidence file with its SHA-256 and each step's exit code.
