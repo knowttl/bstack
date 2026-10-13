@@ -421,6 +421,42 @@ for (const [text, status] of [['café', 'passed'], ['cafè', 'failed']]) {
   })
 }
 
+test('proof matches a feature result preceding logs beyond the recorded preview limit', async t => {
+  const f = await setup(t, value => {
+    value.features[0].steps = [{ label: 'Read the result before logs', command: ['python3', '-c', 'print("Hello, Ada!"); print("x" * 70000)'], expect: 'Hello, Ada!', match: 'Hello, Ada!' }]
+  })
+  await createKit(f)
+  const result = prove(f)
+  assert.equal(result.status, 'passed', JSON.stringify(result))
+  const { record } = await evidenceRecord(f.repo)
+  assert.equal(record.steps[0].matched, true)
+  assert.equal(record.steps[0].stdout, `${'x'.repeat(65535)}\n`)
+})
+
+for (const [readyStream, stepText, status] of [['stdout', 'Hello, Ada!', 'passed'], ['stderr', 'Hello, Ada!', 'passed'], ['stdout', 'Goodbye', 'failed']]) {
+  test(`proof matches full output with readiness on ${readyStream} and ${status === 'passed' ? 'accepts' : 'rejects'} ${stepText} while bounding evidence previews`, async t => {
+    const noisy = (stdout, stderr) => ['python3', '-c', `import sys; sys.stdout.write(${JSON.stringify(stdout)} + "\\n" + "x" * 70000 + "\\n"); sys.stderr.write(${JSON.stringify(stderr)} + "\\n" + "y" * 70000 + "\\n")`]
+    const f = await setup(t, value => {
+      value.launch.command = noisy(readyStream === 'stdout' ? 'READY' : 'launch logs', readyStream === 'stderr' ? 'READY' : 'launch logs')
+      value.launch.ready = { output: 'READY' }
+      value.doctor.command = noisy('healthy', 'doctor logs')
+      value.features[0].steps = [{ label: 'Read noisy output', command: noisy(stepText, 'step logs'), expect: 'Hello, Ada! followed by logs.', match: '^Hello, Ada!\\nx{70000}\\n$' }]
+      value.cleanup.command = noisy('cleaned', 'cleanup logs')
+    })
+    await createKit(f)
+    const result = prove(f)
+    assert.equal(result.status, status, JSON.stringify(result))
+    const { record } = await evidenceRecord(f.repo)
+    assert.equal(record.launch.exit, 0)
+    assert.equal(record.steps[0].matched, status === 'passed')
+    for (const captured of [record.launch, record.doctor, record.steps[0], record.cleanup]) {
+      assert.equal(captured.stdout, `${'x'.repeat(65535)}\n`)
+      assert.equal(captured.stderr, `${'y'.repeat(65535)}\n`)
+    }
+    if (status === 'failed') assert.ok(result.problems.some(problem => problem.code === 'step-mismatch'), JSON.stringify(result))
+  })
+}
+
 for (const stage of ['doctor', 'step', 'cleanup']) {
   test(`proof bounds a ${stage} command that ignores SIGTERM`, async t => {
     const command = ['python3', '-c', 'import os, signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); print(os.getpid(), flush=True); time.sleep(60)']

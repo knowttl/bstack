@@ -21,6 +21,10 @@ function failure(code, message, fix) {
   return { code, message, fix }
 }
 
+function proofJSON(record) {
+  return `${JSON.stringify(record, (key, value) => (key === 'stdout' || key === 'stderr') && typeof value === 'string' ? value.slice(-outputLimit) : value, 2)}\n`
+}
+
 function freePort() {
   return new Promise((resolvePort, reject) => {
     const server = createServer()
@@ -47,7 +51,7 @@ function start({ argv, cwd, env }) {
   const run = { child, output, command: argv, exit: null, finished: false }
   for (const stream of ['stdout', 'stderr']) {
     child[stream].setEncoding('utf8')
-    child[stream].on('data', chunk => { output[stream] = (output[stream] + chunk).slice(-outputLimit) })
+    child[stream].on('data', chunk => { output[stream] += chunk })
   }
   run.exited = new Promise(done => {
     const finish = code => { run.exit = code; run.finished = true; done(code) }
@@ -139,7 +143,7 @@ export async function run(options) {
   const problems = []
   let launched
   const recordPath = join(values.evidenceDir, `${feature.id}.json`)
-  const reservation = `${JSON.stringify(record, null, 2)}\n`
+  const reservation = proofJSON(record)
   let reserved = false
   const launchRecord = () => launched ? { command: launched.command, exit: launched.exit, ...launched.output } : null
   try {
@@ -172,7 +176,7 @@ export async function run(options) {
       record.launch = launchRecord()
       if (reserved) {
         if (await readFile(recordPath, 'utf8') !== reservation) problems.push(failure('evidence-collision', `A command replaced the reserved proof record: ${relative(target.root, recordPath)}.`, 'Write captured artifacts to a different path from the proof record.'))
-        else await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
+        else await writeFile(recordPath, proofJSON(record))
       }
       before = await evidenceHashes(values.evidenceDir)
     } finally {
@@ -197,7 +201,7 @@ export async function run(options) {
       problems.push(failure('evidence-lost', 'Evidence changed or disappeared during cleanup.', 'Make cleanup remove only what the run started, never the evidence directory.'))
     } else if (reserved && !problems.some(problem => problem.code === 'evidence-collision')) {
       record.launch = launchRecord()
-      await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
+      await writeFile(recordPath, proofJSON(record))
     }
   }
   const after = await evidenceHashes(values.evidenceDir)
