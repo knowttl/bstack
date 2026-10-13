@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { connect } from 'node:net'
 import { mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -303,6 +304,30 @@ test('emitted launch, doctor, cleanup and feature commands preserve literal argv
     assert.deepEqual(JSON.parse(executed.stdout), literal)
   }
 })
+
+for (const [kind, retained, status] of [['file', true, 'passed'], ['file', false, 'failed'], ['directory', true, 'passed'], ['directory', false, 'failed']]) {
+  test(`proof inventories ${kind} symlink evidence and ${retained ? 'keeps' : 'detects losing'} its bytes`, async t => {
+    const artifact = kind === 'file' ? 'response.txt' : 'linked/response.txt'
+    const f = await setup(t, value => {
+      value.features[0].steps = [{ label: 'Capture a linked response',
+        command: ['python3', '-c', 'import sys; from pathlib import Path; run, evidence, kind, retained = sys.argv[1:]; e = Path(evidence); target = e / "data" if retained == "yes" else Path(run) / "data"; target.mkdir(); response = target / "response.txt"; response.write_text("Hello, Ada!"); link = e / "response.txt" if kind == "file" else e / "linked"; link.symlink_to(response if kind == "file" else target, target_is_directory=kind == "directory"); print("Hello, Ada!")', '{runDir}', '{evidenceDir}', kind, retained ? 'yes' : 'no'],
+        expect: 'Hello, Ada!', match: 'Hello, Ada!', artifacts: [`{evidenceDir}/${artifact}`] }]
+    })
+    await createKit(f)
+    const result = prove(f)
+    assert.equal(result.status, status, JSON.stringify(result))
+    const { directory, record } = await evidenceRecord(f.repo)
+    assert.equal(record.steps[0].exit, 0)
+    assert.equal(await closed(Number(/:(\d+)$/.exec(record.doctor.command.at(-1))[1])), true)
+    if (retained) {
+      assert.equal(await readFile(join(directory, artifact), 'utf8'), 'Hello, Ada!')
+      assert.equal(result.data.evidence.find(item => item.path === artifact)?.sha256, createHash('sha256').update('Hello, Ada!').digest('hex'))
+    } else {
+      assert.ok(result.problems.some(problem => problem.code === 'evidence-lost'), JSON.stringify(result))
+      assert.equal(await stat(join(directory, artifact)).then(() => true, () => false), false)
+    }
+  })
+}
 
 for (const stage of ['doctor', 'step', 'cleanup']) {
   test(`proof bounds a ${stage} command that ignores SIGTERM`, async t => {

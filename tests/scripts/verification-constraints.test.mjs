@@ -154,6 +154,20 @@ test('typescript comment ban uses the compiler scanner, ignoring comment-like te
   assert.match(failed.output, /prose comment: \/\* trailing prose \*\//)
   await writeFile(join(repo, 'packages/core/index.ts'), '// eslint-disable-next-line no-var\nexport var legacy = 1\n')
   assert.equal(execute(repo, command, args).exit, 0)
+  for (const directive of ['/* eslint-disable-next-line no-alert */', '/* eslint-disable-line no-alert */', '/* eslint-disable no-alert */', '/* eslint-enable no-alert */']) {
+    await writeFile(join(repo, 'directive.ts'), `${directive}\nexport const value = 1\n`)
+    const passed = execute(repo, command, args)
+    assert.equal(passed.exit, 0, passed.output)
+    const listed = execute(repo, command, [...args, '--list'])
+    assert.equal(listed.exit, 0, listed.output)
+    assert.deepEqual(JSON.parse(listed.output), [])
+  }
+  for (const directive of ['/* eslint-disable-next-line */', '/* eslint-disable-line */', '/* eslint-disable */']) {
+    await writeFile(join(repo, 'directive.ts'), `${directive}\nexport const value = 1\n`)
+    const rejected = execute(repo, command, args)
+    assert.equal(rejected.exit, 1, rejected.output)
+    assert.match(rejected.output, /directive\.ts:\d+:\d+: no-prose-comments/)
+  }
 })
 
 test('typescript comment ban scans untracked files once and excludes ignored files', async t => {
