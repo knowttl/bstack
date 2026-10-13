@@ -1,5 +1,5 @@
 import { readdir, readFile, stat } from 'node:fs/promises'
-import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { isBuiltin } from 'node:module'
 import { parse } from 'acorn'
@@ -7,7 +7,9 @@ import { lexer } from 'marked'
 import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
 
 // Keep the default independent of the caller's working directory.
-const defaultSkill = fileURLToPath(new URL('../skills/repo-audit/', import.meta.url))
+const skillsRoot = fileURLToPath(new URL('../skills/', import.meta.url))
+// The slop baseline maps principles to per-language tools by design, so only this file may name them.
+const languageToolReference = 'references/slop-baseline.md'
 // Installed dependencies, Git data and local scratch are not authored resources.
 const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
 // Recognise common bundled lint policies without prescribing a language stack.
@@ -142,7 +144,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     if (reference && !listed.has(file)) add('reference-unlisted', file, 'Reference is absent from the Load when table.', 'List this file in a table row under Load when.')
     if (text === null) continue
     if (implementationRouting.test(text)) add('implementation-routing', file, 'Package resource directs work into an implementation playbook.', 'Remove general development routing and keep instructions within the bounded audit.')
-    const tools = [...new Set([...text.matchAll(lintTools)].map(match => match[0].toLowerCase()))]
+    const tools = file === languageToolReference ? [] : [...new Set([...text.matchAll(lintTools)].map(match => match[0].toLowerCase()))]
     if (tools.length) add('language-policy', file, `Bundled language tool or preset names: ${tools.join(', ')}`, 'Remove bundled tool names and select tools through project research.')
     if (/\.(?:mjs|cjs|js)$/.test(file)) scriptProblems(file, text, dependencies, add)
     if (reference && lines(text) > 100 && !/^#{1,6} (?:Table of contents|Contents|TOC)\s*$/im.test(text.split(/\r?\n/).slice(0, 20).join('\n'))) {
@@ -177,13 +179,18 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
 async function main() {
   const args = process.argv.slice(2)
   if (args.length === 1 && args[0] === '--help') {
-    console.log('Usage: node scripts/check-package.mjs [--skill <folder>]\nChecks authored skill metadata, resources, imports, constants, steps and language policy.\nDefault: skills/repo-audit/ in this checkout.\nExample: node scripts/check-package.mjs --skill tests/package-check/valid')
+    console.log('Usage: node scripts/check-package.mjs [--skill <folder>]\nChecks authored skill metadata, resources, imports, constants, steps and language policy.\nDefault: every skill folder under skills/ in this checkout.\nExample: node scripts/check-package.mjs --skill tests/package-check/valid')
   } else if (args.length && (args.length !== 2 || args[0] !== '--skill' || !args[1] || args[1].startsWith('--'))) {
     emitResult({ command: 'check-package', status: 'usage-error', problems: [{ code: 'invalid-arguments', message: 'Expected only --skill <folder>.', fix: 'Run node scripts/check-package.mjs --help.' }] }, false)
   } else {
-    const skill = args.length ? resolve(args[1]) : defaultSkill
-    const problems = await checkPackage(skill)
-    emitResult({ command: 'check-package', status: problems.length ? 'failed' : 'passed', problems, inputs: { skill } }, false)
+    const skills = args.length ? [resolve(args[1])]
+      : (await readdir(skillsRoot, { withFileTypes: true })).filter(entry => entry.isDirectory()).map(entry => join(skillsRoot, entry.name)).sort()
+    const problems = []
+    for (const skill of skills) {
+      const label = args.length ? '' : `${basename(skill)}/`
+      problems.push(...(await checkPackage(skill)).map(problem => ({ ...problem, path: label + problem.path, message: label + problem.message })))
+    }
+    emitResult({ command: 'check-package', status: problems.length ? 'failed' : 'passed', problems, inputs: { skills } }, false)
   }
 }
 

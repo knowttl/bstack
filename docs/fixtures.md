@@ -38,6 +38,8 @@ The clean `ts-rule-proof` and `py-rule-proof` fixtures pass with public imports.
 Their `-private`, `-alias` and `-cycle` variants each fail only that boundary probe while native compilation, lint and units pass.
 Python's alias variant uses a relative-import re-export bridge.
 `ts-shop` additionally proves the failing checkout against an ephemeral local HTTP server despite passing mocked units.
+`py-greeter` is the verification skill's disposable target: a small Python HTTP service with the Python slop-baseline mappings enabled in `pyproject.toml` and a maintained `check.py` that runs lint, the formatter check and the generated comment-ban checker.
+Its sanity needs Python 3 and Ruff on `PATH` rather than a lock, and the verification tests generate the kit and checker into disposable copies of it.
 Native command results go to stderr while the builder's stdout remains JSON lines.
 
 `dirty-work` contains staged and unstaged edits, new files, a deletion and a rename.
