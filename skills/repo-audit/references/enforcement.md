@@ -68,14 +68,16 @@ Similar inputs alone do not establish duplicate coverage: different boundaries m
 | Tests that re-run tests already in the suite, such as a nested `go test` | Let the suite run each test once; invoke a test runner inside a test only when that runner's behaviour is the contract under test. |
 | Expensive setup repeated for every table case | Share expensive setup when cases can remain isolated and deterministic; retain per-case setup where isolation requires it. |
 | Cold rebuilds that build a binary per test | Reuse a binary built for the current source inputs across tests; rebuild only when a case changes build inputs or tests the build itself. |
+| Tautological tests that assert their own setup or cannot fail | Assert production outcomes against independent expectations; do not add assertions that only confirm test setup or cannot fail when production behaviour breaks. |
+| Tests of impossible scenarios no production path can reach | Use inputs and states reachable through supported production paths, including invalid external input at real boundaries; do not fabricate states that production cannot create. |
 
 For each existing instance, cite the tests, production callers, overlapping protection or repeated work, and the smallest change that preserves the acceptance criteria.
 Do not infer runtime savings from source inspection; distinguish observed timings from expected savings.
 These are human review judgements, not substring checks or universal limits on case counts.
 
-When selected, adapt all six prevention rules into concise testing guidance in the target project's `AGENTS.md`, linking to any existing authoritative testing policy for rationale and exceptions rather than copying that policy.
+When selected, adapt all eight prevention rules into concise testing guidance in the target project's `AGENTS.md`, linking to any existing authoritative testing policy for rationale and exceptions rather than copying that policy.
 Apply this to new foundations and existing-repo guidance updates through the normal selection and exact-diff approval boundary.
-Where repo-audit configures review instructions, such as `.no-mistakes.yaml`, include all six patterns as explicit review criteria so reviewers flag new instances with the same evidence and exceptions.
+Where repo-audit configures review instructions, such as `.no-mistakes.yaml`, include all eight patterns as explicit review criteria so reviewers flag new instances with the same evidence and exceptions.
 Extend the existing review configuration and preserve unrelated instructions; do not introduce a review service solely for these rules.
 
 ## Proof required before adopting an automated rule
