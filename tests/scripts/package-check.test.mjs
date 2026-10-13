@@ -298,3 +298,15 @@ for (const [file, text, expected] of [
     if (expected) assert.match(result.stdout, /language-policy:/)
   })
 }
+
+test('only the slop baseline reference may name language tools', async t => {
+  const directory = await sandbox(t)
+  await appendFile(join(directory, 'SKILL.md'), '| Baseline | `references/slop-baseline.md` |\n')
+  await writeFile(join(directory, 'references', 'slop-baseline.md'), '- ESLint\n- Ruff\n')
+  assert.equal(run('--skill', directory).status, 0)
+  await writeFile(join(directory, 'references', 'guide.md'), '- ESLint\n')
+  const result = run('--skill', directory)
+  assert.equal(result.status, 1)
+  assert.match(result.stdout, /language-policy: references\/guide\.md:/)
+  assert.doesNotMatch(result.stdout, /slop-baseline/)
+})
