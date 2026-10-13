@@ -53,6 +53,7 @@ function start({ argv, cwd, env }) {
     child.once('error', error => { output.error = error.message; finish(null) })
     child.once('close', code => finish(code ?? 1))
   })
+  child.once('exit', code => { run.exit = code ?? 1; run.finished = true })
   return run
 }
 
@@ -129,9 +130,13 @@ export async function run(options) {
   const problems = []
   let launched
   const recordPath = join(values.evidenceDir, `${feature.id}.json`)
+  const reservation = `${JSON.stringify(record, null, 2)}\n`
+  let reserved = false
   const launchRecord = () => launched ? { command: launched.command, exit: launched.exit, ...launched.output } : null
   try {
     await mkdir(values.evidenceDir, { recursive: true })
+    await writeFile(recordPath, reservation, { flag: 'wx' })
+    reserved = true
     launched = start(prepare(plan.launch, values, target.root))
     const problem = await launch(launched, plan, values)
     if (problem) problems.push(problem)
@@ -156,11 +161,17 @@ export async function run(options) {
     let before
     try {
       record.launch = launchRecord()
-      await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
+      if (reserved) {
+        if (await readFile(recordPath, 'utf8') !== reservation) problems.push(failure('evidence-collision', `A command replaced the reserved proof record: ${relative(target.root, recordPath)}.`, 'Write captured artifacts to a different path from the proof record.'))
+        else await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
+      }
       before = await evidenceHashes(values.evidenceDir)
     } finally {
       try {
-        if (launched) await terminate(launched)
+        if (launched) {
+          if (launched.finished && launched.exit !== 0 && !problems.some(problem => problem.code === 'launch-exited')) problems.push(failure('launch-exited', `The launch command exited unsuccessfully: ${launched.exit}.`, 'Fix the launch command or report a product blocker.'))
+          await terminate(launched)
+        }
       } finally {
         try {
           if (plan.cleanup.command) {
@@ -175,7 +186,7 @@ export async function run(options) {
     const after = await evidenceHashes(values.evidenceDir)
     if (JSON.stringify(before) !== JSON.stringify(after)) {
       problems.push(failure('evidence-lost', 'Evidence changed or disappeared during cleanup.', 'Make cleanup remove only what the run started, never the evidence directory.'))
-    } else {
+    } else if (reserved && !problems.some(problem => problem.code === 'evidence-collision')) {
       record.launch = launchRecord()
       await writeFile(recordPath, `${JSON.stringify(record, null, 2)}\n`)
     }
