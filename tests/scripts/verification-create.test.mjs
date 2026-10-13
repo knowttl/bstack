@@ -162,6 +162,9 @@ for (const [name, mutate, code] of [
   ['duplicate feature IDs', value => { value.features.push(structuredClone(value.features[0])) }, 'duplicate-feature'],
   ['an artifact occupying the proof record', value => { value.features[0].steps[0].artifacts = ['{evidenceDir}/greeting.json'] }, 'evidence-collision'],
   ['a normalized artifact occupying the proof record', value => { value.features[0].steps[0].artifacts = ['{evidenceDir}/./greeting.json'] }, 'evidence-collision'],
+  ['a captured artifact in the run directory', value => { value.features[0].steps[0].artifacts = ['{runDir}/response.txt'] }, 'artifact-outside-evidence'],
+  ['a captured artifact in the repo root', value => { value.features[0].steps[0].artifacts = ['response.txt'] }, 'artifact-outside-evidence'],
+  ['a captured artifact in another evidence run', value => { value.features[0].steps[0].artifacts = ['.verification/greeter/another/response.txt'] }, 'artifact-outside-evidence'],
   ['a step without an observable match', value => { delete value.features[0].steps[0].match }, 'missing-field']
 ]) {
   test(`scaffold rejects ${name} before any change set exists`, async t => {
@@ -245,6 +248,37 @@ test('the generated feature recipe retains cwd, environment and required artifac
   assert.equal(prove(f).status, 'passed')
   const { directory } = await evidenceRecord(f.repo)
   assert.equal(await readFile(join(directory, 'greeting.txt'), 'utf8'), 'Hello, Ada!')
+})
+
+for (const artifact of ['{runDir}/response.txt', 'response.txt', '.verification/greeter/another/response.txt']) {
+  test(`proof rejects captured artifact ${artifact} before starting commands`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    const path = join(f.repo, kit, 'kit.json')
+    const value = JSON.parse(await readFile(path, 'utf8'))
+    value.features[0].steps[0].artifacts = [artifact]
+    value.features[0].steps[0].command = ['python3', '-c', 'from pathlib import Path; Path("drive-attempted").write_text("yes")']
+    await writeFile(path, JSON.stringify(value))
+    const result = prove(f)
+    assert.equal(result.status, 'failed', JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'artifact-outside-evidence')
+    assert.equal(await stat(join(f.repo, 'drive-attempted')).then(() => true, () => false), false)
+    assert.equal(await stat(join(f.repo, '.verification')).then(() => true, () => false), false)
+  })
+}
+
+test('proof retains a declared artifact at a normalized nested evidence path', async t => {
+  const f = await setup(t, value => {
+    value.features[0].steps = [{ label: 'Capture',
+      command: ['python3', '-c', 'import sys; from pathlib import Path; p = Path(sys.argv[1]); p.parent.mkdir(); p.write_text("Hello, Ada!"); print("Hello, Ada!")', '{evidenceDir}/nested/response.txt'],
+      expect: 'Hello, Ada!', match: 'Hello, Ada!', artifacts: ['{evidenceDir}//nested/./response.txt'] }]
+  })
+  await createKit(f)
+  const result = prove(f)
+  assert.equal(result.status, 'passed', JSON.stringify(result))
+  const { directory } = await evidenceRecord(f.repo)
+  assert.equal(await readFile(join(directory, 'nested/response.txt'), 'utf8'), 'Hello, Ada!')
+  assert.ok(result.data.evidence.some(item => item.path === 'nested/response.txt'))
 })
 
 for (const stage of ['doctor', 'step']) {
