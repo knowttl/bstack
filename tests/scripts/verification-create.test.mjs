@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { connect } from 'node:net'
-import { mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { build, git, runVerification } from './discovery-fixture.mjs'
@@ -71,7 +71,7 @@ async function setup(t, adjust = () => {}) {
   await writeFile(file, JSON.stringify(value))
   const env = { ...process.env, XDG_CACHE_HOME: cache, LOCALAPPDATA: cache }
   const call = (command, extra = []) => runVerification(command, repo, env, extra)
-  return { repo, file, call }
+  return { repo, file, call, env, cache }
 }
 
 async function createKit(f) {
@@ -109,6 +109,10 @@ test('create produces a kit that launches, passes doctor, drives one feature and
   assert.equal(await readFile(join(directory, 'greeting.txt'), 'utf8'), 'Hello, Ada!\n')
   assert.deepEqual(result.data.evidence.map(item => item.path).toSorted(), ['greeting.json', 'greeting.txt'])
   assert.equal(record.doctor.exit, 0)
+  assert.equal(record.launch.command[0], 'python3')
+  assert.equal(typeof record.launch.exit, 'number')
+  assert.equal(typeof record.launch.stdout, 'string')
+  assert.equal(record.cleanup, null)
   assert.match(record.doctor.stdout, /healthy at http:\/\/127\.0\.0\.1:\d+/)
   assert.equal(await closed(Number(/:(\d+)$/.exec(record.doctor.command.at(-1))[1])), true)
 })
@@ -202,3 +206,79 @@ test('proving an unknown feature names the features the kit has', async t => {
   assert.equal(result.problems[0].code, 'unknown-feature')
   assert.match(result.problems[0].fix, /greeting/)
 })
+
+for (const [exit, status] of [[0, 'passed'], [3, 'failed']]) {
+  test(`a finite launch emitting readiness and exiting ${exit} produces ${status} with launch evidence`, async t => {
+    const f = await setup(t, value => {
+      value.launch.command = ['python3', '-c', `import sys; print("ready"); sys.exit(${exit})`]
+      value.launch.ready = { output: 'ready' }
+      value.doctor.command = ['python3', '-c', 'print("healthy")']
+      value.features[0].steps = [{ label: 'Drive', command: ['python3', '-c', 'print("Hello, Ada!")'], expect: 'Hello, Ada!', match: 'Hello, Ada!' }]
+      value.cleanup.command = ['python3', '-c', 'print("cleaned")']
+    })
+    await createKit(f)
+    assert.equal(prove(f).status, status)
+    const { record } = await evidenceRecord(f.repo)
+    assert.equal(record.launch.exit, exit)
+    assert.equal(record.launch.stdout, 'ready\n')
+    assert.equal(record.cleanup.exit, 0)
+    assert.equal(record.cleanup.stdout, 'cleaned\n')
+    assert.equal(record.doctor?.exit ?? null, exit === 0 ? 0 : null)
+  })
+}
+
+test('the generated feature recipe retains cwd, environment and required artifacts used by proof', async t => {
+  const f = await setup(t, value => {
+    value.features[0].steps = [{ label: 'Drive', cwd: 'greeter', env: { GREETING: 'Hello, Ada!' },
+      command: ['python3', '-c', 'import os, sys; from pathlib import Path; assert Path("greeting.py").is_file(); Path(sys.argv[1]).write_text(os.environ["GREETING"]); print(os.environ["GREETING"])', '{evidenceDir}/greeting.txt'],
+      expect: 'Hello, Ada!', match: 'Hello, Ada!', artifacts: ['{evidenceDir}/greeting.txt'] }]
+  })
+  await createKit(f)
+  const recipe = await readFile(join(f.repo, kit, 'features/greeting.md'), 'utf8')
+  assert.match(recipe, /from `greeter`/)
+  assert.match(recipe, /Environment: `GREETING=Hello, Ada!`/)
+  assert.match(recipe, /Required artifacts: `\{evidenceDir\}\/greeting.txt`/)
+  assert.equal(prove(f).status, 'passed')
+  const { directory } = await evidenceRecord(f.repo)
+  assert.equal(await readFile(join(directory, 'greeting.txt'), 'utf8'), 'Hello, Ada!')
+})
+
+for (const stage of ['doctor', 'step', 'cleanup']) {
+  test(`proof bounds a ${stage} command that ignores SIGTERM`, async t => {
+    const command = ['python3', '-c', 'import os, signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); print(os.getpid(), flush=True); time.sleep(60)']
+    const f = await setup(t, value => {
+      if (stage === 'step') value.features[0].steps[0].command = command
+      else value[stage].command = command
+    })
+    await createKit(f)
+    const hook = join(f.cache, 'clock.mjs')
+    await writeFile(hook, `const original = globalThis.setTimeout\nglobalThis.setTimeout = (fn, delay, ...args) => original(fn, delay === 120000 ? 1000 : delay === 5000 ? 100 : delay, ...args)\n`)
+    const result = runVerification('kit prove', f.repo, { ...f.env, NODE_OPTIONS: `--import=${JSON.stringify(hook)}` }, ['--app', 'greeter', '--feature', 'greeting'])
+    assert.equal(result.status, 'failed')
+    assert.ok(result.problems.some(item => item.code === `${stage}-failed`), JSON.stringify(result))
+    const { record } = await evidenceRecord(f.repo)
+    const captured = stage === 'step' ? record.steps[0] : record[stage]
+    assert.equal(captured.timedOut, true)
+    assert.equal(captured.exit, null)
+    assert.throws(() => process.kill(Number(captured.stdout.trim()), 0), { code: 'ESRCH' })
+    if (stage !== 'doctor') assert.equal(await closed(Number(/:(\d+)$/.exec(record.doctor.command.at(-1))[1])), true)
+  })
+}
+
+for (const fault of ['write', 'hash', 'cleanup']) {
+  test(`a ${fault} failure still stops the service, attempts cleanup and removes the run directory`, async t => {
+    const f = await setup(t, value => {
+      value.doctor.command.push('{runDir}')
+      value.cleanup.command = ['python3', '-c', 'from pathlib import Path; Path("cleanup-attempted").write_text("yes")']
+    })
+    await createKit(f)
+    const hook = join(f.cache, 'filesystem.mjs')
+    await writeFile(hook, `import fs from 'node:fs/promises'\nimport { syncBuiltinESMExports } from 'node:module'\nconst write = fs.writeFile\nconst read = fs.readFile\nconst rm = fs.rm\nfs.writeFile = async (path, data, ...args) => {\n  if (String(path).endsWith('/greeting.json')) {\n    const record = JSON.parse(data)\n    await write(${JSON.stringify(join(f.repo, 'lifecycle.json'))}, JSON.stringify({ port: Number(record.doctor.command.at(-2).split(':').at(-1)), runDir: record.doctor.command.at(-1) }))\n    if (${JSON.stringify(fault)} === 'write') throw new Error('seeded evidence write failure')\n  }\n  return write(path, data, ...args)\n}\nfs.readFile = async (path, ...args) => {\n  if (${JSON.stringify(fault)} === 'hash' && String(path).endsWith('/greeting.json')) throw new Error('seeded evidence hash failure')\n  return read(path, ...args)\n}\nif (${JSON.stringify(fault)} === 'cleanup') {\n  const timers = globalThis.setTimeout\n  globalThis.setTimeout = (fn, delay, ...args) => {\n    if (delay === 120000 && process.env.FAIL_CLEANUP === 'yes') throw new Error('seeded cleanup failure')\n    return timers(fn, delay, ...args)\n  }\n  const spawn = (await import('node:child_process')).default\n  const start = spawn.spawn\n  spawn.spawn = (...args) => {\n    if (args[1]?.includes('from pathlib import Path; Path("cleanup-attempted").write_text("yes")')) process.env.FAIL_CLEANUP = 'yes'\n    return start(...args)\n  }\n}\nsyncBuiltinESMExports()\n`)
+    const result = runVerification('kit prove', f.repo, { ...f.env, NODE_OPTIONS: `--import=${JSON.stringify(hook)}` }, ['--app', 'greeter', '--feature', 'greeting'])
+    assert.equal(result.status, 'blocked')
+    const lifecycle = JSON.parse(await readFile(join(f.repo, 'lifecycle.json'), 'utf8'))
+    assert.equal(await closed(lifecycle.port), true)
+    assert.equal(await stat(lifecycle.runDir).then(() => true, () => false), false)
+    if (fault !== 'cleanup') assert.equal(await readFile(join(f.repo, 'cleanup-attempted'), 'utf8'), 'yes')
+  })
+}

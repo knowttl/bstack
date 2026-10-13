@@ -93,6 +93,25 @@ for (const [language, spec] of Object.entries(languages)) {
     await writeFile(join(repo, spec.file), spec.clean)
     assert.match(execute(repo, command, [...args, '--baseline', baseline]).output, /baseline entry .* no longer matches a comment; remove it/)
   })
+
+  test(`${language} comment ban scans untracked files once and excludes ignored files`, async t => {
+    const f = await scratch(t)
+    const repo = await repository(t, { [spec.file]: spec.clean, ...spec.extra })
+    const [command, ...args] = await install(f, repo, language)
+    args.pop()
+    const untracked = `new-${spec.file}`
+    await writeFile(join(repo, untracked), spec.prose)
+    await writeFile(join(repo, `ignored-${spec.file}`), spec.prose)
+    await writeFile(join(repo, '.gitignore'), `ignored-${spec.file}\n`)
+    const failed = execute(repo, command, args)
+    assert.equal(failed.exit, 1, failed.output)
+    const listed = execute(repo, command, [...args, '--list'])
+    assert.equal(listed.exit, 0, listed.output)
+    assert.deepEqual(JSON.parse(listed.output).map(item => item.path), [untracked])
+    const explicit = execute(repo, command, [...args, '--list', untracked, untracked])
+    assert.equal(explicit.exit, 0, explicit.output)
+    assert.deepEqual(JSON.parse(explicit.output).map(item => item.path), [untracked])
+  })
 }
 
 test('typescript comment ban uses the compiler scanner, ignoring comment-like text in strings, regexes and templates', async t => {
@@ -112,6 +131,24 @@ test('typescript comment ban uses the compiler scanner, ignoring comment-like te
   assert.match(failed.output, /prose comment: \/\* trailing prose \*\//)
   await writeFile(join(repo, 'packages/core/index.ts'), '// eslint-disable-next-line no-var\nexport var legacy = 1\n')
   assert.equal(execute(repo, command, args).exit, 0)
+})
+
+test('typescript comment ban scans untracked files once and excludes ignored files', async t => {
+  const f = await scratch(t)
+  const repo = build(t, 'ts-shop')
+  const [command, ...args] = await install(f, repo, 'typescript')
+  args.pop()
+  await writeFile(join(repo, 'new.ts'), '// explain why\nexport const value = 1\n')
+  await writeFile(join(repo, 'ignored.ts'), '// ignored prose\n')
+  await appendFile(join(repo, '.gitignore'), '\nignored.ts\n')
+  const failed = execute(repo, command, args)
+  assert.equal(failed.exit, 1, failed.output)
+  const listed = execute(repo, command, [...args, '--list'])
+  assert.equal(listed.exit, 0, listed.output)
+  assert.deepEqual(JSON.parse(listed.output).map(item => item.path), ['new.ts'])
+  const explicit = execute(repo, command, [...args, '--list', 'new.ts', 'new.ts'])
+  assert.equal(explicit.exit, 0, explicit.output)
+  assert.deepEqual(JSON.parse(explicit.output).map(item => item.path), ['new.ts'])
 })
 
 // Each enabled constraint has a seeded violation the one maintained command must reject with that constraint's diagnostic.
