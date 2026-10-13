@@ -12,6 +12,7 @@ const licenseMarker = 'SPDX-License-Identifier|Copyright|Licensed under|All righ
 const python = `import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -103,6 +104,8 @@ def main():
         text=True,
         check=True,
     ).stdout.split("\\0")
+    if not options.files:
+        files = [path for path in files if os.path.exists(path)]
     found = [item for path in dict.fromkeys(files) if path for item in violations(path)]
     if options.list:
         print(
@@ -252,7 +255,8 @@ func main() {
 			os.Exit(2)
 		}
 		for _, name := range strings.Split(string(output), "\\x00") {
-			if name != "" {
+			_, err := os.Stat(name)
+			if name != "" && !os.IsNotExist(err) {
 				files = append(files, name)
 			}
 		}
@@ -328,7 +332,7 @@ func main() {
 // The project's own TypeScript compiler scanner locates comments, so text inside strings, regexes and templates is never mistaken for one.
 const typescript = `import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import ts from 'typescript'
 
 const rule = 'no-prose-comments'
@@ -379,7 +383,7 @@ const args = process.argv.slice(2)
 const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined
 const files = args.filter((arg, index) => !arg.startsWith('--') && args[index - 1] !== '--baseline')
 const listed = files.length ? files : execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '--deduplicate', '-z', '--', '*.ts', '*.tsx', '*.mts', '*.cts', '*.js', '*.jsx', '*.mjs', '*.cjs'], { encoding: 'utf8' }).split('\\0').filter(Boolean)
-const found = [...new Set(listed)].flatMap(violations)
+const found = [...new Set(listed)].filter(path => files.length || existsSync(path)).flatMap(violations)
 if (args.includes('--list')) {
   console.log(JSON.stringify(found.map(({ rule, path, key }) => ({ rule, path, key }))))
 } else {
