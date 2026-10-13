@@ -1,7 +1,9 @@
 # bstack: repo-audit implementation plan
 
 This plan tells a build agent how to build the first release of bstack, the `repo-audit` skill, in order.
-The design is [design.md](design.md), revision 26.
+The design is [design.md](design.md), revision 27.
+Its 2026-10-13 verification amendment adds a standalone skill and transfers test auditing out of repo-audit.
+The tasks below describe the original repo-audit build; they do not yet schedule that amendment or settle repo-audit's pending slimming and split.
 Implementation review applied on 2026-10-07, with owner approval to apply the recommendations.
 Commissioning review applied on 2026-10-07, with the owner's approval of its six recommendations.
 The design records them under "Commissioning decisions (2026-10-07)".
@@ -24,7 +26,8 @@ Read this section before your first task.
 `repo-audit` is one skill that only the user can start.
 It audits an existing repo, or interviews the user about a new idea.
 It then recommends project-specific principles, rules and checks, and applies the ones the user selects.
-Everything it needs ships inside one folder, `skills/repo-audit/`.
+Everything the original skill needs ships inside one folder, `skills/repo-audit/`.
+The amended release also includes standalone `skills/verification/` and checked runtime copies from one shared source (design R29).
 The bstack repo also holds a package check, an installer, test fixtures, an evaluation runner and the no-mistakes gate config.
 It has no hosted CI workflows (design "Commissioning decisions (2026-10-07)").
 

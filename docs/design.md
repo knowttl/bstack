@@ -1,6 +1,6 @@
 ---
 title: "bstack: repo-audit First Release"
-eyebrow: Personal project · Foundation design · Revision 26
+eyebrow: Personal project · Foundation design · Revision 27
 subtitle: Establish project-specific guidelines, rules and checks that give agents a sound foundation to extend.
 theme: slate-dark
 logo: false
@@ -12,15 +12,15 @@ footer: Built from docs/design.md. Markdown is authoritative. The HTML is genera
 meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
-  - Scope: repo-audit and its complete dependency set
-  - Revision: 26, commissioning decisions applied, safe to publish
+  - Scope: repo-audit, verification and their complete dependency set
+  - Revision: 27, maintainer-approved verification design, implementation pending
 ---
 
 ## Summary
 
 **bstack helps developers design project-specific guidelines, rules and checks that give agents a sound foundation to extend.**
 Agent drift means changes that depart from the project's agreed purpose, design or behaviour.
-The first release centres on `repo-audit` and includes everything that skill needs.
+The first release includes `repo-audit`, the standalone `verification` skill and everything those skills need.
 It helps you establish a new project and strengthen an existing repo before more changes add technical debt.
 Technical debt means design or implementation choices that make later changes harder or less reliable.
 
@@ -47,7 +47,7 @@ The new-project path can implement the approved foundation, but it does not buil
 
 | Decision | Current direction |
 |---|---|
-| Release scope | `repo-audit` plus its full dependency set |
+| Release scope | `repo-audit`, standalone `verification` and their full dependency set (R29) |
 | Existing repos | Audit the repo and relevant files first, then recommend improvements and apply the changes you choose |
 | Project intent | Interview first for a new idea, establish existing-project intent from repo evidence before asking about gaps |
 | Interview | Use `grill-me` for unresolved intent and decisions, without asking users to repeat what the repo explains |
@@ -59,7 +59,7 @@ The new-project path can implement the approved foundation, but it does not buil
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
-| Invocation | Only the user can start repo-audit, in every supported host |
+| Invocation | Only the user can start either skill, in every supported host |
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
@@ -110,6 +110,204 @@ The owner approved the commissioning review and its six recommendations as writt
 5. **Scoped instructions.** The audit preserves the meaning of scoped instructions and consolidates equivalent repo-owned `CLAUDE.md` content only through reviewed protected edits.
    It reports local shadowing inside the selected repo and ignores instruction files outside it.
 6. **Automatic review repair budget.** The current budget and build review focus are owned by `.no-mistakes.yaml`; see [the delivery gate](implementation-plan.md#delivery-gate).
+
+### Verification commissioning decisions (2026-10-13)
+
+The maintainer approved the test-principles design session report and commissioned its build on 2026-10-13.
+This section records that report's decisions as release requirements, not claims of implemented behaviour.
+The decision IDs below retain the report's Q, P, L and SL identifiers so later work can trace its acceptance source without access to the review board.
+R29 records the scope amendment.
+
+| Report decision | Approved requirement |
+|---|---|
+| Round 1, L1-L8 | Include strong lint-rule principles: types, lint, architecture constraints, proof and incremental adoption |
+| Q1, Q9 | One standalone `verification` skill, invocable without repo-audit, with `create` and `maintain` modes |
+| Q2, Q17 | Kit in `.agents/skills/verify-<app>/`, a thin `.claude/skills/verify-<app>/SKILL.md` pointer and an `AGENTS.md` pointer |
+| Q3 | Feature-change maintenance-contract row plus on-demand maintenance; automatic map upkeep through no-mistakes |
+| Q4 | Offline network blocking in every repo where the runner supports it |
+| Q5 | Third-party lens only for external service or API integrations involving authentication, secrets or rate limits |
+| Q6 | Full community anti-slop ruleset by default, expressed as language-agnostic principles with native per-project implementations |
+| Q7, Q13 | Ban prose comments; exempt rule-specific machine directives and legally required license headers |
+| P1-P10 | Keep all ten testing principles and the four-question test gate below |
+| Q8 | Use the kit while building, then independently through no-mistakes using the same kit |
+| Q11 | Also offer selected no-mistakes setup in repos without it |
+| Q14 | One runtime source with checked copies in each skill |
+| Q10 | Move all test auditing out of repo-audit into verification |
+
+The maintainer's subsequent scope clarification leaves repo-audit's slimming and split as a pending design decision, superseding that part of the report's Q10, Q15 and Q16.
+Only the transfer of test auditing is settled here; no final routing shape or additional sub-skills are commissioned by this amendment.
+The existing repo-audit requirements below remain in force until that separate design is approved, except for the testing ownership explicitly transferred here.
+
+## Standalone verification skill
+
+`skills/verification/` owns creation and maintenance of a project-local verification kit, testing guidance and constraint adoption.
+Only explicit user invocation starts either mode.
+Both modes preserve review before apply, exact-diff approval, protected writes and existing user work.
+They never implement product features, fix product bugs or open pull requests.
+Checks remain host-agnostic and runnable without bstack installed.
+Hosted CI is never added by default; it remains an explicitly selected integration.
+
+### Create mode (Q1, Q2, Q9, Q17)
+
+Inspect a new or existing repo to establish its user surface, run command, existing drive harness, observable evidence and isolation requirements.
+Ask only about what the repo cannot establish.
+Generate one kit at `.agents/skills/verify-<app>/` with Launch, Doctor, Drive, Evidence, Cleanup and Helpers sections.
+Create `features/README.md` and one file per identified user-facing feature.
+Each feature file uses four sections: Sub-features, How to get to it (user POV), Driving it with the selected harness, and Gotchas.
+It records observable success, prerequisites and declared source paths for change-impact checking.
+Add a thin Claude Code skill pointer and a root `AGENTS.md` pointer through selected protected edits; these point to the same kit rather than duplicate it.
+
+Prove the generated kit once end to end: launch, doctor, drive one mapped feature, capture evidence, clean up and confirm the evidence survived.
+An unexecuted kit remains a draft.
+Failed attempts clean up their own processes and scratch state without deleting evidence.
+When startup requires a product fix, report the blocker rather than edit product code.
+
+Propose the testing policy, test gate, constraint principles, slop baseline and comment ban as selected changes in the target's existing authoritative surfaces.
+Prove each enabled lint rule with `rule-proof` and place existing violations in the shrinking baseline.
+On existing repos, audit the suite for all eight wasteful-test patterns and journeys protected only by unit or mocked tests.
+Offer no-mistakes wiring and, where absent, setup as a selected step (Q11), without generating GitHub workflows unless explicitly requested.
+
+The kit shape adapts pstack's [create-verification-skill](https://github.com/cursor/plugins/blob/dbf49813a39c1a5389c5e28cb8e4c1c2379e2454/pstack/skills/create-verification-skill/SKILL.md), with the report's host-neutral location and pointer decisions replacing its host-specific path.
+
+### Maintain mode (Q3, Q9)
+
+Run on demand, including before a release when requested.
+Check index hygiene, assign one read-only source reader per feature where the host supports subagents (otherwise read sequentially), reconcile source findings and drive every feature live.
+Triage discrepancies into doc drift, harness gaps or product bugs.
+Propose reviewed kit corrections for drift and harness gaps, re-drive harness fixes and report product bugs without weakening the map to hide them.
+Mine no-mistakes findings and review comments for repeated mistakes and move them down the constraint ladder.
+Audit the suite for all eight wasteful-test patterns.
+Report clean, changed through a reviewed change set, or blocked, with coverage and unreachable prerequisites explicit.
+The full pass remains user-invoked; automatic per-change upkeep does not replace it.
+
+This adapts pstack's [maintain-verification-skill](https://github.com/cursor/plugins/blob/dbf49813a39c1a5389c5e28cb8e4c1c2379e2454/pstack/skills/maintain-verification-skill/SKILL.md), retaining source and live coverage while replacing its PR delivery with bstack's reviewed apply boundary.
+
+### Testing principles (P1-P10)
+
+These are the report's ten agreed principles.
+
+- **P1** A change is done when its affected user journeys work on the real product, with captured evidence.
+- **P2** Every project keeps one verification kit: a stable driver plus a feature map of how a user reaches each feature.
+- **P3** Add a test only if it passes the four-question gate; otherwise verify by driving and add nothing.
+- **P4** Test through the interface a user or caller touches, at the lowest level that still sees the behaviour; never private internals.
+- **P5** Assert the exact result the user sees; a test that would still pass if the code under test returned nothing is rewritten or deleted.
+- **P6** No TDD by default; a bug fix starts with a reproduction as close to the user as possible, kept as a test only if it passes the gate.
+- **P7** The default test command is offline, deterministic and fast; live network is blocked by configuration in every repo where the runner supports it (Q4).
+- **P8** Anything outside the codebase is proven by a small live probe before and after the change; mocks only at true boundaries, sanitized, testing the failures the product handles differently.
+- **P9** One paved path: one runner, one fixture builder, one command that runs everything; new tests extend it.
+- **P10** Every repeated correction moves down the ladder; wasteful tests are flagged with evidence and removed only when the owner selects them.
+
+Ask the four-question gate once per change after driving the affected features.
+Any no means no new test:
+
+1. Does the change alter behaviour a user or caller relies on?
+2. Would a plausible future change break it silently?
+3. Is that break unprotected today?
+4. Is the expected result from an agreed source, not the code's current output?
+
+The eight audit patterns move with their evidence and owner-selection requirements: duplicate scenario coverage, guards without production callers, oversized combination tables, tests re-running tests, repeated expensive setup, cold rebuilds per test, tautological tests and impossible production scenarios.
+Public-interface unit tests remain valid when they see the behaviour; mocked coverage alone never establishes a live journey.
+
+### Constraint principles (L1-L8)
+
+Use this ladder: eliminate through types, schemas or architecture; detect through lint, type or dependency-graph checks in the maintained command; encode in instructions or skills; review.
+
+- **L1** Beyond the default slop baseline, start from a repeated, observed mistake with evidence, not a style wish.
+- **L2** Use the highest rung that works: make it unrepresentable before you lint it.
+- **L3** Implement each slop principle with the language's native linter first; write a custom syntax-tree check only where nothing native exists.
+- **L4** Semantic rules read the syntax tree or dependency graph, never raw text.
+- **L5** Prove every rule: a valid example passes and a seeded violation fails with the expected message.
+- **L6** The rule fails the one maintained check command; CI runs that same command, wired only when the owner selects it.
+- **L7** Existing violations go into a visible, shrinking baseline; new ones fail; exceptions are narrow, reasoned and have a removal condition.
+- **L8** No arbitrary size limits, and no design call disguised as a lint error.
+
+### Default slop baseline and comment ban (Q6, Q7, Q13)
+
+The report approves the full community anti-slop ruleset by default, translated into these language-agnostic principles.
+Research the project's language and native tools; rule names alone never prove equivalent enforcement.
+
+| ID | Constraint |
+|---|---|
+| SL-1 | No fabricated type evidence: parse instead of cast; assertions are banned outside the parse boundary |
+| SL-2 | No escape-hatch types in contracts |
+| SL-3 | Parse at the boundary, do not probe |
+| SL-4 | Real seams, not module patching |
+| SL-5 | No accidental extra passes or copies |
+| SL-6 | Suppressions are narrow |
+| SL-7 | Names describe the domain |
+| SL-8 | Layout belongs to the formatter |
+
+TypeScript uses the applicable [anti-slop rules](https://github.com/dmmulroy/anti-slop/tree/c44ef22ca116d0ba62a3ff663a0bd13a3f3fa40b).
+TypeScript-specific rules are not generalised to other languages; Effect rules apply only where Effect is a direct dependency.
+Drop `require-safety-comment-for-type-assertion` because it conflicts with the prose-comment ban; SL-1 supplies the constraint instead.
+Python and Go mappings in the report are research candidates verified by name only, not proven equivalents.
+Every enabled mapping needs project-specific configuration and `rule-proof` evidence; use a custom syntax-tree check only for a demonstrated native-tool gap.
+
+Ban all prose comments, exempting rule-specific machine directives and legally required license headers.
+Examples of exempt directives include build/generate directives, shebangs, named-rule lint suppressions and coded type ignores.
+Generate a language-tokenizer-based check for comment tokens; partial native comment rules do not establish the complete ban.
+Before removing a warning such as a do-not-remove comment, encode its protected requirement as a type, test or lint constraint.
+Existing prose comments enter the L7 baseline and are removed only through selected fixes.
+
+### Independent verification and automatic map upkeep (Q3, Q8, Q11)
+
+The implementing agent drives the kit while building, applies the test gate and updates the changed feature's map entry.
+Its own summary does not establish independent success.
+Selected no-mistakes integration uses the same kit with a fresh evidence agent and separates responsibilities:
+
+| Phase | Responsibility |
+|---|---|
+| Review | Judge diff, intent and tests using testing criteria in `review.path_instructions`; do not drive the product |
+| Test | Run targeted offline `commands.test`, then independently drive changed scenarios live through the kit named in `test.instructions`; do not run the complete repository suite |
+| Document | Use `document.instructions` to maintain feature files as the authority for how users reach features |
+| Gate after Document | Deterministically check feature-map coverage; do not make design judgements |
+| Lint | Run the maintained check command through `commands.lint` |
+| CI, only if selected or already present | Run the full offline suite without calling live vendors |
+| Maintain | Drive every feature on demand and report repeated mistakes and product bugs |
+
+The feature-map coverage command fails when a change touches a feature's declared source paths without updating that feature file or recording a no-impact reason.
+Add it as a shell command gate after `document`, not a dedicated agent review round.
+A maintenance-contract row connects feature changes to map upkeep.
+Review judges the map's meaning; Test drives changed features; the deterministic gate checks coverage only.
+The full maintain pass stays manual because Test covers only the change.
+
+The pinned [no-mistakes configuration reference](https://github.com/kunchenguid/no-mistakes/blob/93b4407137efde476e6588fca809884afa543b9c/docs/src/content/docs/reference/repo-config.md) supports command gates and the review, test and document instruction fields.
+These trusted fields take effect after merging to the default branch.
+It does not support agent gates.
+The [Test reference](https://github.com/kunchenguid/no-mistakes/blob/93b4407137efde476e6588fca809884afa543b9c/docs/src/content/docs/reference/pipeline-steps.md) separates targeted commands from live evidence driving.
+
+### Third-party lens (Q5)
+
+Run this lens only when the app integrates with an external service or API involving authentication, secrets or rate limits.
+Establish safe live probes before and after dependency changes, sanitized boundary fixtures and the distinct failure behaviours the product handles.
+Keep the default suite offline; live probes supply vendor evidence rather than run inside that suite.
+Existing approval requirements for writes, cost, messages and shared data still apply.
+Unavailable credentials or vendor access remain explicit verification limits, never a mocked claim of success.
+
+### Shared runtime and ownership transfer (Q10, Q14)
+
+Keep `rule-proof`, `baseline check`, `run-checks` and `probe record` in one source module in bstack, with byte-for-byte checked copies in each skill that needs them.
+The extraction preserves public command behaviour and portable installed execution.
+The freshness check rejects stale copies; generated checked copies do not become independent sources of knowledge.
+
+Verification takes ownership of all suite auditing, the eight wasteful-test patterns and prevention rules, test-recommendation findings, research-brief test questions and testing guidance written into agent instructions and review configuration.
+Remove repo-audit's corresponding test-necessity load row when that transfer ships.
+repo-audit retains verification of its own outcomes.
+Its wider slimming and split remain pending a separate maintainer decision.
+
+### Acceptance and remaining evidence
+
+On a disposable fixture app, create must produce a kit that launches, passes doctor, drives one mapped feature and retains evidence after cleanup.
+Every enabled constraint must accept valid code and reject a seeded violation with its diagnostic.
+A change touching a mapped source path without a map update or no-impact reason must fail coverage.
+Maintain must report clean on an unchanged fixture and flag a deliberately drifted feature file.
+These are acceptance requirements for the later implementation, not evidence supplied by this documentation amendment.
+
+The report inferred that some Claude Code hosts may not discover `.agents/skills/` alone; Q17's pointer is required regardless, and discovery remains a runtime verification question.
+It also inferred that trusted no-mistakes instructions read kit files from the branch under test; that behaviour still needs direct verification, and Review must assess kit changes.
+Per-language lint equivalence remains unproven until project-specific rule proofs pass.
+The talk summary was not checked against its recording and is not independent enforcement evidence.
+The coverage gate and comment checker are new implementation work.
 
 ## Project-specific foundation
 
@@ -1468,7 +1666,7 @@ Historical entries keep their original decisions and name their current applicat
 | S1 | Hand-off intent carries Problem, Consequence, Fix and Scope | Historical interface guidance for a separately chosen integration |
 | S2 | Machine config changes need confirmation per change | Retained |
 | S3 | Do not file the no-mistakes documentation issues | Retained |
-| R1, 2026-10-06 | First release contains repo-audit and everything it needs | Replaces the broader first-release scope |
+| R1, 2026-10-06 | First release contains repo-audit and everything it needs | Amended by R29 to include standalone verification |
 | R2, 2026-10-06 | Review an existing repo, then apply chosen changes | Defines the existing-repo workflow |
 | R3, 2026-10-06 | Understand the intended project with grill-me before recommending principles | New ideas interview first, R7 makes existing projects audit first |
 | R4, 2026-10-06 | Include initial VISION.md setup for a new project where it fits | Designed as adapted new-project vision support |
@@ -1496,3 +1694,4 @@ Historical entries keep their original decisions and name their current applicat
 | R26, 2026-10-07 | Approve the commissioning review and its six recommendations | Recorded in "Commissioning decisions (2026-10-07)". No hosted CI or release automation for bstack, three real OS runs for AC-74, slices C0 to C29, a baseline with no failure quota, and scoped instruction preservation. The current review repair budget is owned by `.no-mistakes.yaml` |
 | R27, 2026-10-10 | "only linux is good" | Amend R26's installer support and acceptance scope for C25c/AC-74 to Linux-only lifecycle evidence. No Windows/macOS runs will be supplied; their execution remains unverified, with no remaining OS acceptance gate |
 | R28, 2026-10-10 | Ignore user-profile and other outside-repo instruction files; surface a universal test-first mandate as a proposed principle change | Limit instruction discovery and reporting to the selected repo, amending R26's ancestor-shadowing behaviour and AC-49. Confirm R11 permits proposing a change to a universal sequence mandate, retaining it unless selected |
+| R29, 2026-10-13 | The maintainer commissioned the test-principles report: standalone verification with create and maintain, its kit, testing and constraints, shared runtime and selected no-mistakes integration | Extends R1; transfers all test auditing from repo-audit. The maintainer's subsequent clarification leaves repo-audit's slimming and split pending, superseding that part of Q10, Q15 and Q16 |
