@@ -329,6 +329,64 @@ for (const [kind, retained, status] of [['file', true, 'passed'], ['file', false
   })
 }
 
+for (const [cleanup, status] of [['keep', 'passed'], ['remove', 'failed'], ['change', 'failed']]) {
+  test(`proof inventories undeclared nested evidence through directory aliases when cleanup will ${cleanup} it`, async t => {
+    const f = await setup(t, value => {
+      value.features[0].steps = [{ label: 'Capture a linked session',
+        command: ['python3', '-c', 'import sys; from pathlib import Path; target = Path("captures").resolve(); target.mkdir(); nested = target / "nested"; nested.mkdir(); (target / "response.txt").write_text("Hello, Ada!"); (nested / "screenshot.png").write_bytes(b"screen bytes"); (target / "extra").symlink_to(nested, target_is_directory=True); (target / "cycle").symlink_to(target, target_is_directory=True); evidence = Path(sys.argv[1]); (evidence / "session").symlink_to(target, target_is_directory=True); (evidence / "mirror").symlink_to(target, target_is_directory=True); print("Hello, Ada!")', '{evidenceDir}'],
+        expect: 'Hello, Ada!', match: 'Hello, Ada!', artifacts: ['{evidenceDir}/session/response.txt'] }]
+      if (cleanup === 'remove') value.cleanup.command = ['python3', '-c', 'from pathlib import Path; Path("captures/nested/screenshot.png").unlink()']
+      if (cleanup === 'change') value.cleanup.command = ['python3', '-c', 'from pathlib import Path; Path("captures/nested/screenshot.png").write_bytes(b"different bytes")']
+    })
+    await createKit(f)
+    const result = prove(f)
+    assert.equal(result.status, status, JSON.stringify(result))
+    const { directory, record } = await evidenceRecord(f.repo)
+    assert.equal(record.steps[0].exit, 0)
+    assert.equal(await readFile(join(directory, 'session/response.txt'), 'utf8'), 'Hello, Ada!')
+    if (cleanup === 'keep') {
+      const hash = createHash('sha256').update('screen bytes').digest('hex')
+      assert.deepEqual(result.data.evidence.filter(item => item.path.endsWith('screenshot.png')), [
+        { path: 'mirror/extra/screenshot.png', sha256: hash },
+        { path: 'mirror/nested/screenshot.png', sha256: hash },
+        { path: 'session/extra/screenshot.png', sha256: hash },
+        { path: 'session/nested/screenshot.png', sha256: hash }
+      ])
+    } else {
+      assert.ok(result.problems.some(problem => problem.code === 'evidence-lost'), JSON.stringify(result))
+    }
+  })
+}
+
+for (const [text, status] of [['café', 'passed'], ['cafè', 'failed']]) {
+  test(`proof preserves split UTF-8 on both streams and ${status === 'passed' ? 'matches' : 'rejects'} ${text}`, async t => {
+    const command = text => ['python3', '-c', `import sys; print(${JSON.stringify(text)}); print(${JSON.stringify(text)}, file=sys.stderr)`]
+    const f = await setup(t, value => {
+      value.launch.command = command('café')
+      value.launch.ready = { output: 'café' }
+      value.doctor.command = command('café')
+      value.features[0].steps = [{ label: 'Read Unicode output', command: command(text), expect: 'café', match: '^café\\n$' }]
+      value.cleanup.command = command('café')
+    })
+    await createKit(f)
+    const hook = join(f.cache, 'split-output.mjs')
+    await writeFile(hook, `import childProcess from 'node:child_process'\nimport { syncBuiltinESMExports } from 'node:module'\nimport { PassThrough } from 'node:stream'\nconst spawn = childProcess.spawn\nchildProcess.spawn = (...args) => {\n  const child = spawn(...args)\n  for (const name of ['stdout', 'stderr']) {\n    const original = child[name]\n    const split = new PassThrough()\n    original.on('data', chunk => { for (const byte of chunk) split.write(Buffer.from([byte])) })\n    original.on('end', () => split.end())\n    child[name] = split\n  }\n  return child\n}\nsyncBuiltinESMExports()\n`)
+    const result = runVerification('kit prove', f.repo, { ...f.env, NODE_OPTIONS: `--import=${JSON.stringify(hook)}` }, ['--app', 'greeter', '--feature', 'greeting'])
+    assert.equal(result.status, status, JSON.stringify(result))
+    const { record } = await evidenceRecord(f.repo)
+    assert.equal(record.launch.exit, 0)
+    assert.equal(record.launch.stdout, 'café\n')
+    assert.equal(record.launch.stderr, 'café\n')
+    assert.equal(record.doctor.stdout, 'café\n')
+    assert.equal(record.doctor.stderr, 'café\n')
+    assert.equal(record.steps[0].stdout, `${text}\n`)
+    assert.equal(record.steps[0].stderr, `${text}\n`)
+    assert.equal(record.cleanup.stdout, 'café\n')
+    assert.equal(record.cleanup.stderr, 'café\n')
+    if (status === 'failed') assert.ok(result.problems.some(problem => problem.code === 'step-mismatch'), JSON.stringify(result))
+  })
+}
+
 for (const stage of ['doctor', 'step', 'cleanup']) {
   test(`proof bounds a ${stage} command that ignores SIGTERM`, async t => {
     const command = ['python3', '-c', 'import os, signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); print(os.getpid(), flush=True); time.sleep(60)']
