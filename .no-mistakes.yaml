@@ -1,19 +1,14 @@
 no_ci: true
 commands:
   prepare: 'npm ci --prefer-offline --ignore-scripts && npm ci --omit=dev --prefix skills/repo-audit'
-  test: 'npm test -- --capture .cache/full-suite.json'
+  test: 'node scripts/gate-test.mjs'
   lint: 'npm run check'
 document:
   instructions: |
     docs/design.md owns the first-release requirements. docs/implementation-plan.md owns the build sequence
     and evidence; each task's evidence contract decides what a change must record.
     README.md owns installation and current usage. skills/*/SKILL.md owns each skill's agent-facing contract.
-    After all source, test and documentation fixes, attach the final Test step's captured full-suite run with
-    node scripts/task-evidence.mjs .cache/full-suite.json <task-id> before publication. Preserve existing
-    task-specific commands, acceptance cases and limitations when refreshing an existing task record.
-    For test-speed work use task-id test-speed. Never start another pipeline just to attach evidence.
-    If attachment rejects changed inputs, base or environment, run the configured full test command again
-    on the final inputs and attach that result within this run. Behavioural changes always need fresh validation.
+    Never run the test command again just to attach or refresh evidence, and never start another pipeline for it.
 review:
   ignore_patterns: ["upstream/**"]
   path_instructions:
