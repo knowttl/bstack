@@ -1,5 +1,5 @@
 ---
-title: "bstack: repo-audit First Release"
+title: "bstack: First Release"
 eyebrow: Personal project · Foundation design · Revision 27
 subtitle: Establish project-specific guidelines, rules and checks that give agents a sound foundation to extend.
 theme: slate-dark
@@ -1253,19 +1253,19 @@ New recurring agent mistakes should become a regression case or structural check
 
 ## Complete first-release package
 
-`repo-audit` is the main entry point.
+`repo-audit` is the entry point for the project-specific foundation.
 Its installed folder contains the complete foundation resources and assets it reads.
 Installing that folder alone must not leave references to missing sibling skills.
 
 ### What ships
 
-**The first release ships one skill that users invoke, `repo-audit`.**
-Every other component is a module, script or asset inside its folder.
-The user never invokes a second skill, and the agent never needs one installed.
+The release scope is defined in the [summary](#summary).
+The table below describes repo-audit's self-contained package; the [standalone verification requirements](#standalone-verification-skill) own the additional skill's contract.
+repo-audit does not require another installed skill to run.
 
 | Component | Kind | What it does | Source |
 |---|---|---|---|
-| `repo-audit` | Skill, the only entry point, started by the user only | Runs the new-idea and existing-repo paths, recommends a foundation and applies the changes the user chooses | bstack |
+| `repo-audit` | Skill, started by the user only | Runs the new-idea and existing-repo paths, recommends a foundation and applies the changes the user chooses | bstack |
 | `grill-me` and `grilling` | Bundled reference modules | Decision-tree interview for intent and decisions the evidence does not settle | Matt Pocock, adapted |
 | Domain language and glossary | Bundled reference module | Resolves project terms, defines the glossary format and finds existing standards and decision records | Matt Pocock, adapted |
 | VISION procedure, review template and stylesheet | Bundled module and assets | Drafts `VISION.md` and stress-tests it on the review board | [kunchenguid/vision](https://github.com/kunchenguid/vision), adapted |
@@ -1496,7 +1496,8 @@ These steps give the order of work inside those phases.
 14. Prove both complete paths and a representative extension after enforcement and maintenance exist. Phase 4.
 15. Run worked examples, validate evidence for every acceptance case, write the limitations and release through a manually approved Git tag and GitHub release, with no release automation or npm publish. Phase 5.
 
-The detailed implementation plan covers the complete first release of repo-audit, phases 0 to 5.
+The detailed implementation plan covers the original repo-audit build, phases 0 to 5.
+The [verification amendment](#standalone-verification-skill) remains unscheduled in that plan.
 Each task declares prerequisites, inputs, outputs and verification evidence.
 Early checkpoints prove only components already built.
 Phase 1 keeps drafts in scratch, Phase 2 applies selected foundations, and Phase 4 proves the complete installed paths.
@@ -1659,7 +1660,7 @@ Historical entries keep their original decisions and name their current applicat
 | D2 | `/bstack` router | Superseded by R12, `repo-audit` uses native host invocation |
 | D3 | Preserve imported script languages, new scripts use JavaScript on Node | Applies to new helpers and declared runtime prerequisites |
 | D4 | Explicit invocation, staying on is opt-in | Explicit invocation applies, sticky workflow execution is excluded by R12 |
-| D5 and D6 | Include broader support skills, keep Anthropic's skill-creator unchanged | Outside the first release unless a component is a real repo-audit dependency |
+| D5 and D6 | Include broader support skills, keep Anthropic's skill-creator unchanged | Outside the release scope in the summary; R29 commissions standalone verification separately |
 | V1 | no-mistakes owns final review and delivery | Mandatory dependency superseded by R12, delivery is project-owned |
 | V2 | deslop and no-comments precede broader hand-off | Sequenced delivery pipeline excluded by R12 |
 | V3 | no-mistakes writes the pull-request body | Applies only to a separately chosen no-mistakes integration |
