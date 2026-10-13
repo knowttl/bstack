@@ -587,7 +587,7 @@ These are initial development observations, not final released-skill acceptance 
 
 The early T3.1 reference checkpoint supplies enforcement and architecture guidance before foundation integration.
 Its [two-stack relevance rubric](../tests/eval/results/tasks/T3.1.verification.md) records a completed manual review of ts-shop and py-ledger, including distinct scopes, reused standards and signals that are not violations.
-`npm test -- --task T3.1` validates package behaviour only.
+Current T3.1 suite selection follows the [delivery gate](implementation-plan.md#delivery-gate).
 The [task record](../tests/eval/results/tasks/T3.1.json) retains command execution evidence and limits.
 This review does not establish final agent acceptance, native rule-proof or maintenance.
 
