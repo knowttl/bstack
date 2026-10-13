@@ -88,6 +88,7 @@ ID: checks.
 Question: Which existing commands and native configurations enforce the project's approved expectations, and what prerequisites or coverage limits remain?
 Which important user journeys have direct executable checks, which rely only on unit, mocked or private-implementation tests, and which have none?
 Which existing tests duplicate a scenario across levels or siblings, protect paths without production callers, enumerate unnecessary combinations, re-run other suite tests, repeat expensive setup per case, or cold-build a binary per test instead of reusing it?
+Which tests assert only their own setup or cannot fail when production behaviour breaks, and which exercise inputs or states no production path can reach?
 What caller, coverage or setup evidence supports each candidate finding, and which distinct failures or isolation needs justify retaining it?
 Paths in scope: Selected manifests, lockfiles, check scripts, native format, lint, type and test configs, relevant tests and production callers, delivery configs and supporting standards.
 Report format: Inventory documented commands, versions or pins, config scopes and what they enforce in the common entry format, distinguishing configured checks from checks actually executed.
