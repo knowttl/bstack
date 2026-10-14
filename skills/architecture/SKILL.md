@@ -64,7 +64,7 @@ Load the grilling guide when an unresolved choice would change a boundary, and t
 When the repo already answers the questions, proceed to the proposal without asking the user to reconfirm approved choices.
 A choice the user has not confirmed stays a draft, and silence or an interrupted session is not confirmation.
 
-Done when: Each boundary or decision to propose is confirmed or named as an open decision, each conflict with a recorded decision has an answer or blocks only its own proposal, and a project whose boundaries are already sound has been told so and stopped here.
+Done when: Each boundary or decision to propose is confirmed or named as an open decision, each conflict with a recorded decision has an answer or blocks only its own proposal, and a project whose boundaries are already sound has been told so and stopped here only when no boundary, decision or standards proposal remains.
 
 ### Step 3: Propose the boundaries and standards
 
@@ -124,11 +124,12 @@ Maintain needs a design document in a Git repo; without one, run `create`.
 
 ### Step M1: Fix the baseline
 
-Read the design document, its decision records and the standards, and take the last review as the commit that last changed the design or a decision record unless the user names another baseline.
+Read the design document, its decision records and the standards, and use the last confirmed architectural review as the baseline unless the user names another.
+Design or decision-record edits alone do not establish a review; when the evidence does not establish the baseline, ask the user for one before collecting changes or reporting clean.
 Use the [maintain guide](references/maintain.md) for the baseline, the four classes and the outcomes.
 Record the revision and working-tree state and preserve uncommitted user work.
 
-Done when: The design files, the baseline commit and the current revision are recorded, or the missing baseline has been asked of the user.
+Done when: The design files, the established baseline commit and the current revision are recorded, or the pass is blocked awaiting the user's answer about the missing baseline.
 
 ### Step M2: Rerun the measurements
 
@@ -137,7 +138,7 @@ Run `node scripts/architecture.mjs measure --repo <target> --range <baseline>..H
 Where the host supports subagents, give each independent area one read-only reader who reports modules and dependency edges with file and line citations.
 Record the citations in scratch following `schemas/research-report.json` and run `cite-check --repo <target> --report <file> --json`.
 
-Done when: Every candidate has a cited location checked for exact-byte freshness and the measurement and overlap results are saved, or the complete inventory has no committed changes since the baseline and no staged, unstaged or untracked changes in code, and the report stops here as clean.
+Done when: Every candidate has a cited location checked for exact-byte freshness and the measurement and overlap results are saved, or the complete inventory from the established baseline has no committed changes and no staged, unstaged or untracked changes in code, and the report stops here as clean.
 
 ### Step M3: Classify and resolve
 
