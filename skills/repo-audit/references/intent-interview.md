@@ -15,7 +15,7 @@ Keep proposals and interview notes in scratch outside the target workspace until
 Use available documents and facts instead of asking the user to look them up.
 Identify which statements are author decisions and which are assumptions or unresolved questions.
 Do not claim support from nonexistent project history.
-Clarify project terms alongside the interview only when their meaning affects these decisions, without adding a mandatory second interview.
+When project terms need clarification, list `/glossary` as a next step in the checklist with the reason it applies, and leave dependent recommendations blocked until the user resolves those terms through it.
 
 ## Work through decisions
 

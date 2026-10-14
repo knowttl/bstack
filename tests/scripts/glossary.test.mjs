@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
+import { git } from './discovery-fixture.mjs'
 
 // The skill is driven only through its installed entry point, as the user's agent would.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -54,6 +55,36 @@ test('the glossary skill ships only the commands its procedure runs', () => {
   const result = spawnSync(process.execPath, [entry, '--help'], { encoding: 'utf8' })
   assert.equal(result.status, 0, result.stderr)
   assert.deepEqual(result.stdout.match(/^ {2}\S.*$/gm).map(line => line.trim()), ['docs check', 'apply', 'state show', 'cite-check'])
+})
+
+test('maintain citations validate an uncommitted domain term and become stale when its exact bytes change', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'GLOSSARY.md'), '# Ordering\n\n**Order**:\nA customer request.\n')
+  git(f.repo, 'add', '.')
+  git(f.repo, '-c', 'user.name=Fixture author', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'glossary baseline')
+  const baseline = git(f.repo, 'rev-parse', 'HEAD')
+  const path = 'src/reservation.mjs'
+  const content = 'export class Reservation {}\r\n'
+  await writeFile(join(f.repo, path), content)
+  assert.equal(git(f.repo, 'diff', '--name-only', baseline, 'HEAD'), '')
+  assert.equal(git(f.repo, 'status', '--porcelain'), `?? ${path}`)
+  const report = {
+    schemaVersion: 1, mode: 'main-thread', host: 'test host', capabilities: { subagents: false, web: false },
+    briefs: [{ id: 'language', scope: [path], findings: 'Reservation is a domain term missing from the glossary.', limitations: [],
+      files: [{ location: `${path}:1`, state: { kind: 'sha256', value: hash(await readFile(join(f.repo, path))) } }], web: [] }]
+  }
+  const input = join(f.directory, 'research-report.json')
+  await writeFile(input, JSON.stringify(report))
+  const args = ['cite-check', '--repo', f.repo, '--report', input]
+  const checked = glossary(f.directory, args)
+  assert.equal(checked.exit, 0, JSON.stringify(checked))
+  assert.equal(checked.data.filesChecked, 1)
+
+  await writeFile(join(f.repo, path), content.replace('\r\n', '\n'))
+  const stale = glossary(f.directory, args)
+  assert.equal(stale.exit, 1, JSON.stringify(stale))
+  assert.equal(stale.problems[0].code, 'stale-citation')
+  assert.equal(stale.problems[0].path, `${path}:1`)
 })
 
 test('a new idea gets its approved glossary and nothing else, and only after the exact bytes are approved', async t => {
