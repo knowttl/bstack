@@ -2,12 +2,12 @@
   "repo-audit": {
     "commands": [
       "docs check", "docs generate", "contract validate", "evidence collect", "evidence validate", "rule-proof",
-      "baseline check", "project create", "probe record", "probe compare", "run-checks", "apply", "state show",
+      "baseline check", "probe record", "probe compare", "run-checks", "apply", "state show",
       "findings validate", "findings render", "inspect", "inventory", "cite-check", "contract-test"
     ],
     "schemas": [
       "baseline.schema.json", "change-set.schema.json", "check-plan.json", "contract-test.json", "evidence.schema.json",
-      "findings.schema.json", "impact-assessment.json", "probe-record.json", "probe-spec.json", "project-create.json",
+      "findings.schema.json", "impact-assessment.json", "probe-record.json", "probe-spec.json",
       "project.schema.json", "research-report.json", "resume-state.schema.json"
     ],
     "assets": [],
@@ -47,6 +47,15 @@
     "schemas": [
       "baseline.schema.json", "change-set.schema.json", "check-plan.json", "evidence.schema.json", "findings.schema.json",
       "measure-exclusions.json", "overlap-plan.json", "project.schema.json", "research-report.json", "resume-state.schema.json"
+    ],
+    "assets": [],
+    "references": ["grilling.md", "agents-pointer.md"]
+  },
+  "foundation": {
+    "commands": ["project create", "apply", "run-checks", "rule-proof"],
+    "schemas": [
+      "change-set.schema.json", "check-plan.json", "evidence.schema.json", "findings.schema.json", "project-create.json",
+      "resume-state.schema.json"
     ],
     "assets": [],
     "references": ["grilling.md", "agents-pointer.md"]

@@ -3,18 +3,18 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate; the remaining split pieces are pending.
-The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
-The installation below covers repo-audit, verification, vision, glossary, architecture, agents-md and maintenance; audit usage applies to repo-audit.
+The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [foundation](skills/foundation/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
+The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md and maintenance; audit usage applies to repo-audit.
 
 This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, research and enforcement references, read-only starting-state inspection, document inventory, findings validation and scratch reports, check-plan execution capture and live probe pairs, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea or grilling for a material unresolved decision.
-These establish confirmed intent while keeping technical decisions in their existing sources, and repo-audit lists `/glossary` as a next step for unclear terms and `/architecture` for boundaries, recorded decisions and design standards instead of resolving them.
+These establish confirmed intent while keeping technical decisions in their existing sources; see the [repo-audit checklist](skills/repo-audit/SKILL.md#new-idea-path-checklist) for the skills the user runs next.
 Follow the [load-when table](skills/repo-audit/SKILL.md#load-when) for the enforcement reference when recommending checks.
 It provides project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
-Protected new-project creation is available after the intent checkpoint and exact foundation review.
+Protected new-project creation is available through the [foundation skill](skills/foundation/SKILL.md) after the approved vision and exact foundation review.
 Use the [maintenance reference](skills/maintenance/references/maintenance-contract.md) for bounded change assessment and local or standalone validation without repeating the interview or full audit; repo-audit lists `/maintenance` as a next step instead of registering documents itself.
 The copy installer supports previews, verified no-op repeats, updates, uninstall and interrupted-run resume.
 Link installation, explicit developer-checkout updates and owned-link removal are available.
@@ -207,13 +207,13 @@ See the apply contract for preflight protection, backup and journal recovery, an
 Create an approved minimal project inside the existing idea workspace:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <idea-workspace> --plan <file> --dry-run --json
-node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <idea-workspace> --plan <file> --json
+node skills/foundation/scripts/foundation.mjs project create --workspace <idea-workspace> --plan <file> --dry-run --json
+node skills/foundation/scripts/foundation.mjs project create --workspace <idea-workspace> --plan <file> --json
 ```
 
 The [creation contract](docs/command-contract.md#protected-project-creation) documents the versioned plan, selected destination, scratch scaffold and exact diff.
-The owner selects the stack, scaffold and first journey after approving the scratch vision.
-Follow [Step 5](skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for scratch verification and repair before presenting the exact files, declared commands and captured results or verification limits for approval.
+The owner selects the stack, scaffold and first journey after approving the vision.
+Follow [Step 4](skills/foundation/SKILL.md#step-4-verify-the-proposal-in-scratch) for scratch verification and repair before presenting the exact files, declared commands and captured results or verification limits for approval.
 Creation journals directories and files through the existing protected-write engine before initialising Git only at the reviewed destination.
 Repeat the unchanged plan to resume directory, file or Git interruption.
 Failed or interrupted setup and journey commands retain the project as unverified and are not rerun automatically.
@@ -405,7 +405,7 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Every command, shared library, schema, asset and shared reference has one source in [runtime/](runtime/), and [runtime/skills.json](runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
-[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md), [skills/glossary](skills/glossary/SKILL.md), [skills/architecture](skills/architecture/SKILL.md), [skills/agents-md](skills/agents-md/SKILL.md) and [skills/maintenance](skills/maintenance/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md), [skills/glossary](skills/glossary/SKILL.md), [skills/architecture](skills/architecture/SKILL.md), [skills/foundation](skills/foundation/SKILL.md), [skills/agents-md](skills/agents-md/SKILL.md) and [skills/maintenance](skills/maintenance/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 
 ```sh
@@ -518,9 +518,14 @@ The [architecture skill](skills/architecture/SKILL.md) is started by the user in
 Both write only through `apply` after the user approves the exact bytes and never move product code.
 `measure`, `overlap`, `rule-proof` and `baseline check` need a Git repo, so a new idea in a non-Git workspace reviews planned changes by reading and leaves its rules unproven until code exists.
 
+The [foundation skill](skills/foundation/SKILL.md) is started by the user for a new project only.
+It requires the approved `VISION.md` in the idea workspace, takes the glossary and design when they exist, interviews for data, interfaces, deployment and the first journey, and proposes the stack, minimal scaffold, setup commands and native checks.
+It builds the scaffold in scratch, runs the declared setup and first-journey commands there, and creates the Git project through `project create` only after the user approves the exact files and commands.
+It never adopts a non-empty directory, and it writes the scaffold's `README.md` of setup and check commands and a root `AGENTS.md` holding its one pointer line.
+
 The [agents-md skill](skills/agents-md/SKILL.md) is started by the user and creates or maintains one root `AGENTS.md` of one-line pointers to the project's rules, evidence requirements and check commands.
 It audits each pointer against the repo, merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked, keeps distinct nested instruction files, reports `CLAUDE.local.md` as possible shadowing without editing it, and reads nothing outside the repo.
-The glossary, vision, architecture and maintenance skills each propose their own pointer line, following the shared [pointer contract](runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
+The glossary, vision, architecture, foundation and maintenance skills each propose their own pointer line, following the shared [pointer contract](runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
 
 The [maintenance skill](skills/maintenance/SKILL.md) is started by the user in `create` or `sweep` mode and owns the maintenance contract and the standalone checker.
 `create` registers the project's documents, scopes, rules and checks in `.bstack/project.json`, installs the checker at `.bstack/bin/bstack-check.mjs`, and proposes the no-mistakes wiring: an ownership map in `document.instructions` that tells the Document step which file owns terms, boundaries and purpose, and a `docs` gate after `document` that runs the checker with `--docs-only`.

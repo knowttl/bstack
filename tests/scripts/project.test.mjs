@@ -40,7 +40,10 @@ async function setup(t) {
     'VISION.md': '# Pantry\nA household marks supplies to buy.\n',
     'GLOSSARY.md': '# Terms\nAn item is a named pantry supply.\n',
     'docs/design.md': '# Foundation\nThe list owns marks. The CLI prints the list.\n',
-    'journey.mjs': "import assert from 'node:assert/strict'\nconst needed = new Set()\nneeded.add('Rice')\nassert.deepEqual([...needed], ['Rice'])\nconsole.log('shopping list: Rice')\n"
+    'journey.mjs': "import assert from 'node:assert/strict'\nconst needed = new Set()\nneeded.add('Rice')\nassert.deepEqual([...needed], ['Rice'])\nconsole.log('shopping list: Rice')\n",
+    'README.md': '# Pantry\n\nRun `node journey.mjs` to print the shopping list.\n',
+    // The foundation skill's own pointer line, created with the scaffold because a new project has no instruction file.
+    'AGENTS.md': '# Agent instructions\n\nRun the setup and check commands in [README.md](README.md) before reporting a change complete.\n'
   }
   const findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-foundation.json'), 'utf8'))
   findings.target = { mode: 'workspace', root: destination, revision: null }
@@ -59,7 +62,7 @@ async function setup(t) {
 }
 
 function execute(context, { dryRun = false, fault } = {}) {
-  const result = spawnSync(process.execPath, [...(fault ? ['--import', join(root, 'tests/inputs/create-fault.mjs')] : []), join(root, 'skills/repo-audit/scripts/repo-audit.mjs'),
+  const result = spawnSync(process.execPath, [...(fault ? ['--import', join(root, 'tests/inputs/create-fault.mjs')] : []), join(root, 'skills/foundation/scripts/foundation.mjs'),
     'project', 'create', '--workspace', context.workspace, '--plan', context.file, '--json', ...(dryRun ? ['--dry-run'] : [])],
   { encoding: 'utf8', env: { ...context.env, BSTACK_TEST_FAULT: fault, BSTACK_TEST_DESTINATION: context.destination } })
   return { exit: result.status, ...(result.stdout ? JSON.parse(result.stdout) : {}), stderr: result.stderr }
@@ -86,6 +89,7 @@ test('reviewed scratch scaffold creates a minimal Git project and passes its nat
   assert.equal(await readFile(join(context.workspace, 'brief.md'), 'utf8'), 'Approved local pantry list.\n')
   assert.equal(execute(context).exit, 0)
   assert.equal(await readFile(join(context.destination, 'GLOSSARY.md'), 'utf8'), context.changeSet.edits[1].proposedContent)
+  assert.match(await readFile(join(context.destination, 'AGENTS.md'), 'utf8'), /\[README\.md\]\(README\.md\)/)
 })
 
 for (const [name, code, mutate] of [
