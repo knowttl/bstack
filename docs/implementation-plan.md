@@ -842,9 +842,7 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
    The adapter uses the shared child-command object and documents how it creates a fresh session.
 3. `eval --scenario <id> --mode without|with --stage <stage> --adapter <file>` creates a fresh fixture and isolated agent state.
    Record the skill discovery paths and verify the isolation before scoring.
-   In `without` mode, no repo-audit skill is discoverable.
-   In `with` mode, stage the current skill and its built runtime resources into the isolated host's documented discovery path.
-   This temporary staging is a test helper, not the release installer built in T4.1.
+   Follow the [evaluation isolation contract](evaluation.md#isolation-and-authentication) for without-skill discovery absence, scenario-owned skill staging and final-checkpoint installation through the release installer built in T4.1.
 4. Ordinary `with` scenarios explicitly invoke the skill using the adapter's host-specific invocation.
    The implicit-invocation scenario installs the skill but sends only "audit this repo".
    Baseline runs use the equivalent user outcome request without the explicit skill command.

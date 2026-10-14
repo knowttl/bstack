@@ -10,7 +10,7 @@
   "invocation": {
     "agent": "codex",
     "model": "gpt-6-luna",
-    "explicit": "$repo-audit",
+    "explicit": "${skill}",
     "protocol": "codex-exec-jsonl",
     "resumeArgs": ["--no-daemon", "exec", "resume", "--json", "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--model", "gpt-6-luna", "-c", "model_reasoning_effort=\"high\"", "-c", "sandbox_mode=\"danger-full-access\"", "{sessionId}", "{message}"]
   },
@@ -18,7 +18,7 @@
     "stateDirectory": ".codex",
     "discoveryPaths": [".agents/skills", ".codex/skills"],
     "systemDiscoveryPaths": ["/etc/codex/skills"],
-    "stagePath": ".agents/skills/repo-audit",
+    "skillsPath": ".agents/skills",
     "authentication": "throwaway-codex-login"
   }
 }
