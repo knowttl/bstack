@@ -273,6 +273,7 @@ bstack has no hosted CI, no GitHub Actions workflows and no release automation (
 Every shipping slice goes through the no-mistakes pipeline configured in `.no-mistakes.yaml`, which declares `no_ci: true`.
 Green work merges unattended.
 [The gate configuration](../.no-mistakes.yaml) owns automatic repair budgets and the build's review focus.
+Its Prepare command installs the root development lock and each skill runtime declared by `skills/*/package.json`, stopping if any install fails.
 Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs): a change that touches only `.md` files at `README.md`, under `docs/**` or under `skills/**` (including references) runs `npm run check` and `npm test -- --task T3.1`.
 The [task registry](../tests/tasks.json) owns T3.1's suite selection, which retains the evaluation-harness tests in every per-piece gate; the existing test runner executes each selected suite once.
 Any other change, including non-Markdown files under docs or references and changes to `.no-mistakes.yaml`, runs the full suite with capture.
