@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
-import { git, run, snapshot } from './discovery-fixture.mjs'
+import { git, runMaintenance as run, snapshot } from './discovery-fixture.mjs'
 
 function commit(repo) {
   git(repo, 'add', '.')

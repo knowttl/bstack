@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { mkdir, readFile, symlink, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { emptyRepo, build, run, snapshot } from './discovery-fixture.mjs'
+import { emptyRepo, build, runVerification as run, snapshot } from './discovery-fixture.mjs'
 
 async function setup(t, command) {
   const f = await emptyRepo(t)

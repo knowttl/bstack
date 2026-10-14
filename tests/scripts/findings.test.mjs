@@ -10,7 +10,7 @@ import { emptyRepo, git, snapshot } from './discovery-fixture.mjs'
 // Public commands run from outside the checkout and target.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 // No private validator or report helper is used by these tests.
-const entry = join(root, 'skills', 'repo-audit', 'scripts', 'repo-audit.mjs')
+const entry = join(root, 'skills', 'verification', 'scripts', 'verification.mjs')
 
 function run(context, action = 'validate', json = true, target = '--repo') {
   const result = spawnSync(process.execPath, [entry, 'findings', action, target, context.repo, '--findings', context.file, ...(json ? ['--json'] : [])],
@@ -80,34 +80,16 @@ for (const [name, mutate, code] of [
   })
 }
 
-test('render separates source intent, selected debt and new principles in scratch', async t => {
-  const context = await setup(t)
-  context.findings.findings[0].newPrinciple = true
-  await save(context)
-  const before = await snapshot(context.repo)
-  const result = run(context, 'render')
-  assert.equal(result.exit, 0)
-  assert.ok(result.data.path.startsWith(context.cache))
-  const report = await readFile(result.data.path, 'utf8')
-  for (const text of ['Documented intent', 'Observed behaviour', 'Inferred intent', 'Observed debt', 'proposed new principle', 'Selected findings', 'F-001']) assert.ok(report.includes(text), text)
-  assert.equal(report.match(/^Result:/gm).length, 1)
-  assert.equal(Object.hasOwn(result.data, 'score'), false)
-  assert.deepEqual(await snapshot(context.repo), before)
-  const plain = run(context, 'render', false)
-  assert.equal(plain.status, 0)
-  assert.ok(plain.stdout.includes(context.cache))
-})
-
 for (const stage of ['audit', 'foundation']) {
   test(`${stage} requires current evidence before ready`, async t => {
     const context = await setup(t, stage)
     context.findings.findings[0].resolved = true
     await save(context)
-    assert.equal(run(context, 'render').data.result, 'verification blocked')
+    assert.equal(run(context).data.result, 'verification blocked')
     await evidence(context)
-    assert.equal(run(context, 'render').data.result, 'ready for the stated next change')
+    assert.equal(run(context).data.result, 'ready for the stated next change')
     await writeFile(join(context.repo, 'src', 'price.mjs'), 'export const price = 43\n')
-    assert.equal(run(context, 'render').data.result, 'verification blocked')
+    assert.equal(run(context).data.result, 'verification blocked')
   })
 }
 
@@ -131,7 +113,7 @@ for (const [name, mutate, expected] of [
     await evidence(context)
     mutate(context.findings)
     await save(context)
-    assert.equal(run(context, 'render').data.result, expected)
+    assert.equal(run(context).data.result, expected)
   })
 }
 
@@ -175,13 +157,11 @@ test('Git revision changes block readiness even with unchanged scoped bytes', as
   assert.equal(run(context).data.result, 'ready for the stated next change')
 })
 
-test('foundation workspace renders without Git and refuses scratch inside target', async t => {
+test('foundation workspace validates without Git', async t => {
   const context = await setup(t, 'foundation')
   context.findings.target.mode = 'workspace'
   await save(context)
-  assert.equal(run(context, 'render', true, '--workspace').data.result, 'verification blocked')
-  context.cache = context.repo
-  assert.equal(run(context, 'render', true, '--workspace').problems[0].code, 'scratch-inside-target')
+  assert.equal(run(context, 'validate', true, '--workspace').data.result, 'verification blocked')
 })
 
 test('findings rejects malformed input and missing option', async t => {
@@ -193,18 +173,16 @@ test('findings rejects malformed input and missing option', async t => {
   assert.equal(JSON.parse(result.stdout).problems[0].code, 'missing-findings')
 })
 
-for (const action of ['validate', 'render']) {
-  test(`findings ${action} rejects escaped duplicate members without target writes`, async t => {
-    const context = await setup(t)
-    const input = await readFile(context.file, 'utf8')
-    await writeFile(context.file, input.replace('"nextChange":', '"next\\u0043hange":"discarded","nextChange":'))
-    const before = await snapshot(context.repo)
-    const result = run(context, action)
-    assert.equal(result.exit, 1)
-    assert.equal(result.problems[0].code, 'duplicate-key')
-    assert.deepEqual(await snapshot(context.repo), before)
-  })
-}
+test('findings validate rejects escaped duplicate members without target writes', async t => {
+  const context = await setup(t)
+  const input = await readFile(context.file, 'utf8')
+  await writeFile(context.file, input.replace('"nextChange":', '"next\\u0043hange":"discarded","nextChange":'))
+  const before = await snapshot(context.repo)
+  const result = run(context)
+  assert.equal(result.exit, 1)
+  assert.equal(result.problems[0].code, 'duplicate-key')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
 
 for (const [path, code] of [
   ['src', 'invalid-scope'], ['src/*.md', 'invalid-scope'], ['src/?.md', 'invalid-scope'],

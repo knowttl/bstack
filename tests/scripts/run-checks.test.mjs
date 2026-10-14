@@ -5,7 +5,7 @@ import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { emptyRepo, build, run, snapshot, git } from './discovery-fixture.mjs'
+import { emptyRepo, build, runVerification as run, snapshot, git } from './discovery-fixture.mjs'
 import { checkInputState } from '../../runtime/scripts/commands/run-checks.mjs'
 
 // Exercise the installed CLI from an unrelated directory with isolated cache evidence.
@@ -118,7 +118,7 @@ test('cancelled required check stays unverified even with other passing checks',
   await writeFile(f.path, JSON.stringify(f.plan))
   const controller = new AbortController()
   const watcher = watch(f.directory, { signal: controller.signal })
-  const child = spawn(process.execPath, [join(checkout, 'skills/repo-audit/scripts/repo-audit.mjs'), 'run-checks', '--repo', f.repo, '--plan', f.path, '--json'], { env: f.env, stdio: ['ignore', 'pipe', 'pipe'] })
+  const child = spawn(process.execPath, [join(checkout, 'skills/verification/scripts/verification.mjs'), 'run-checks', '--repo', f.repo, '--plan', f.path, '--json'], { env: f.env, stdio: ['ignore', 'pipe', 'pipe'] })
   t.after(() => { controller.abort(); child.kill('SIGKILL') })
   let stdout = ''
   child.stdout.on('data', chunk => { stdout += chunk })

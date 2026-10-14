@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
-import { run, snapshot } from './discovery-fixture.mjs'
+import { runMaintenance as run, snapshot } from './discovery-fixture.mjs'
 import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
 
 const start = '<!-- bstack:generated render -->'
@@ -125,7 +125,7 @@ test('multiple sections preserve surrounding bytes and use independent generator
 
 test('plain regeneration output exposes a readable proposal file', async t => {
   const f = await setup(t)
-  const result = spawnSync(process.execPath, [fileURLToPath(new URL('../../skills/repo-audit/scripts/repo-audit.mjs', import.meta.url)),
+  const result = spawnSync(process.execPath, [fileURLToPath(new URL('../../skills/maintenance/scripts/maintenance.mjs', import.meta.url)),
     'docs', 'generate', '--repo', f.repo], { encoding: 'utf8', env: f.env })
   assert.equal(result.status, 0, result.stderr)
   const [status, path] = result.stdout.trim().split('\n')

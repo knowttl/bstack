@@ -734,34 +734,6 @@ function exactDiff(path, original, proposed) {
   return output.join("\n") + "\n";
 }
 
-// runtime/scripts/lib/scratch.mjs
-import { mkdir, realpath as realpath3 } from "node:fs/promises";
-import { createHash as createHash2, randomUUID } from "node:crypto";
-import { homedir } from "node:os";
-import { join as join3, isAbsolute as isAbsolute2 } from "node:path";
-async function scratchDirectory(target, runId) {
-  if (!/^[a-zA-Z0-9-]+$/.test(runId)) throw new CommandError("usage-error", [{ code: "invalid-run", message: "Run ID must contain only letters, digits and hyphens.", fix: "Use the run ID returned by the command." }]);
-  const cache = process.platform === "win32" ? process.env.LOCALAPPDATA : process.platform === "darwin" ? join3(homedir(), "Library", "Caches") : process.env.XDG_CACHE_HOME || join3(homedir(), ".cache");
-  if (!cache || !isAbsolute2(cache)) {
-    throw new CommandError("blocked", [{ code: "cache-unavailable", message: "The OS cache directory must be absolute.", fix: "Configure an absolute OS cache directory." }]);
-  }
-  const base = await resolveLinks(join3(cache, "bstack"));
-  if (isInside(target.root, base)) {
-    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch would be written inside the target.", fix: "Select an OS cache directory outside the target.", path: base }]);
-  }
-  const key = createHash2("sha256").update(target.root).digest("hex");
-  const directory = await resolveLinks(join3(base, key, runId));
-  if (isInside(target.root, directory)) {
-    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch links resolve inside the target.", fix: "Repair the cache link or select a different cache directory.", path: directory }]);
-  }
-  return directory;
-}
-async function createScratch(target) {
-  const directory = await scratchDirectory(target, randomUUID());
-  await mkdir(directory, { recursive: true });
-  return await realpath3(directory);
-}
-
 // runtime/schemas/findings.schema.json
 var findings_schema_default = {
   type: "object",
@@ -1099,6 +1071,36 @@ async function validateFindings(findings, target, deletionScope = []) {
 import { readFile as readFile2, open, mkdir as mkdir2, rename, unlink, stat as stat4 } from "node:fs/promises";
 import { basename, dirname as dirname3, join as join4 } from "node:path";
 import { randomUUID as randomUUID2 } from "node:crypto";
+
+// runtime/scripts/lib/scratch.mjs
+import { mkdir, realpath as realpath3 } from "node:fs/promises";
+import { createHash as createHash2, randomUUID } from "node:crypto";
+import { homedir } from "node:os";
+import { join as join3, isAbsolute as isAbsolute2 } from "node:path";
+async function scratchDirectory(target, runId) {
+  if (!/^[a-zA-Z0-9-]+$/.test(runId)) throw new CommandError("usage-error", [{ code: "invalid-run", message: "Run ID must contain only letters, digits and hyphens.", fix: "Use the run ID returned by the command." }]);
+  const cache = process.platform === "win32" ? process.env.LOCALAPPDATA : process.platform === "darwin" ? join3(homedir(), "Library", "Caches") : process.env.XDG_CACHE_HOME || join3(homedir(), ".cache");
+  if (!cache || !isAbsolute2(cache)) {
+    throw new CommandError("blocked", [{ code: "cache-unavailable", message: "The OS cache directory must be absolute.", fix: "Configure an absolute OS cache directory." }]);
+  }
+  const base = await resolveLinks(join3(cache, "bstack"));
+  if (isInside(target.root, base)) {
+    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch would be written inside the target.", fix: "Select an OS cache directory outside the target.", path: base }]);
+  }
+  const key = createHash2("sha256").update(target.root).digest("hex");
+  const directory = await resolveLinks(join3(base, key, runId));
+  if (isInside(target.root, directory)) {
+    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch links resolve inside the target.", fix: "Repair the cache link or select a different cache directory.", path: directory }]);
+  }
+  return directory;
+}
+async function createScratch(target) {
+  const directory = await scratchDirectory(target, randomUUID());
+  await mkdir(directory, { recursive: true });
+  return await realpath3(directory);
+}
+
+// runtime/scripts/lib/protected-write.mjs
 async function fileBytes(path) {
   try {
     return await readFile2(path);

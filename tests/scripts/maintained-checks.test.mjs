@@ -4,7 +4,7 @@ import { cp, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { build, run, git, snapshot } from './discovery-fixture.mjs'
+import { build, runVerification as run, git, snapshot } from './discovery-fixture.mjs'
 
 const hash = text => text === null ? null : createHash('sha256').update(text).digest('hex')
 function canonical(value) {

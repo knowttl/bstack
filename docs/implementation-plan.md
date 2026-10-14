@@ -1451,7 +1451,7 @@ Native rule implementation stays in T3.2 to T3.4, and any reference revision tha
 **Steps**
 
 1. Selected checks go into the project's existing check command through `apply`.
-   Declare selected command paths in each edit's `checkIntegration` using the [enforcement reference](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command).
+   Declare selected command paths in each edit's `checkIntegration` using the [checks reference](../skills/foundation/references/checks.md#integrate-the-maintained-command).
    When the project selects CI, the same command also goes into its CI config through `apply`, as an optional integration.
    The enforcement reference owns the supported CI format and selected-command validation scope.
 2. `apply` rejects a command or CI edit that ignores a failure, such as `continue-on-error: true` or `|| true` on a check command.
