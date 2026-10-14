@@ -1328,8 +1328,8 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
     error = failure.message;
   });
   let finish;
-  const completion = new Promise((resolve13) => {
-    finish = resolve13;
+  const completion = new Promise((resolve12) => {
+    finish = resolve12;
   });
   child.on("close", (code, exitSignal2) => finish([code, exitSignal2]));
   const cleanupFailed = (message) => {
@@ -1342,15 +1342,15 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   const stop = () => {
     if (!child.pid) return;
     if (process.platform === "win32") {
-      cleanup = new Promise((resolve13) => {
+      cleanup = new Promise((resolve12) => {
         const killer = spawn("taskkill", ["/pid", String(child.pid), "/T", "/F"], { shell: false, stdio: "ignore" });
         killer.on("error", (failure) => {
           cleanupFailed(failure.message);
-          resolve13();
+          resolve12();
         });
         killer.on("close", (code) => {
           if (code !== 0) cleanupFailed("Process-tree cleanup failed.");
-          resolve13();
+          resolve12();
         });
       });
     } else {
@@ -1744,7 +1744,7 @@ function baseText(root, base, path) {
   }
   return "";
 }
-async function previousPolicy(root, base, contractPath, inventory2, priorPath) {
+async function previousPolicy(root, base, contractPath, inventory, priorPath) {
   if (base.kind === "empty-tree") return null;
   const tree = readGit(root, ["ls-tree", "-r", "--name-only", "-z", base.objectId]);
   if (tree.status !== 0) throw new CommandError("blocked", [{
@@ -1754,8 +1754,8 @@ async function previousPolicy(root, base, contractPath, inventory2, priorPath) {
   }]);
   const candidates = [];
   const paths = tree.stdout.split("\0").filter(Boolean);
-  const removed = new Set(inventory2.changes.filter((change) => change.status === "D" || change.status.startsWith("R")).map((change) => change.oldPath ?? change.path));
-  const relocated = new Set(inventory2.changes.filter((change) => change.status.startsWith("R") && change.path === contractPath).map((change) => change.oldPath));
+  const removed = new Set(inventory.changes.filter((change) => change.status === "D" || change.status.startsWith("R")).map((change) => change.oldPath ?? change.path));
+  const relocated = new Set(inventory.changes.filter((change) => change.status.startsWith("R") && change.path === contractPath).map((change) => change.oldPath));
   if (priorPath) await resolvePath(root, priorPath, void 0, true);
   const selected = [.../* @__PURE__ */ new Set([...paths.includes(".bstack/project.json") ? [".bstack/project.json"] : [], ...priorPath ? [priorPath] : []])];
   if (!selected.length) {
@@ -1823,8 +1823,8 @@ async function previousPolicy(root, base, contractPath, inventory2, priorPath) {
   }]);
   return candidates[0];
 }
-function mapInventory(inventory2, contracts) {
-  const mappings = inventory2.paths.map((path) => {
+function mapInventory(inventory, contracts) {
+  const mappings = inventory.paths.map((path) => {
     const scopes = contracts.flatMap((contract) => contract.scopes.filter((scope) => scope.paths.some((pattern) => matchesPath(pathGlob(pattern), path))));
     return {
       path,
@@ -1897,32 +1897,32 @@ function collectInventory(root, base) {
 async function run4(options) {
   if (!options.base) throw new CommandError("usage-error", [{ code: "missing-base", message: "An explicit comparison base is required.", fix: "Supply --base <ref>, or --base empty before the first commit." }]);
   const target = await resolveTarget(options);
-  const inventory2 = collectInventory(target.root, options.base);
+  const inventory = collectInventory(target.root, options.base);
   if (options.portable) {
     const path2 = relative5(target.root, await resolveLinks(resolve6(target.root, options.portable))).split("\\").join("/");
-    if (!inventory2.head || path2.startsWith("../") || path2 === ".." || !path2) throw new CommandError("usage-error", [{
+    if (!inventory.head || path2.startsWith("../") || path2 === ".." || !path2) throw new CommandError("usage-error", [{
       code: "invalid-portable-assessment",
       message: "Portable collection needs a committed source and an internal assessment path.",
       fix: "Commit source changes, then supply --portable <repo-relative-assessment>."
     }]);
-    if (inventory2.changes.some((change) => change.oldPath && [change.oldPath, change.path].includes(path2) || change.source !== "committed" && change.path !== path2)) throw new CommandError("blocked", [{
+    if (inventory.changes.some((change) => change.oldPath && [change.oldPath, change.path].includes(path2) || change.source !== "committed" && change.path !== path2)) throw new CommandError("blocked", [{
       code: "uncommitted-source",
       message: "Commit source changes before collecting portable review.",
       fix: "Commit the reviewed implementation first."
     }]);
-    inventory2.changes = inventory2.changes.filter((change) => change.path !== path2 && change.oldPath !== path2);
-    inventory2.paths = inventory2.paths.filter((item) => item !== path2);
+    inventory.changes = inventory.changes.filter((change) => change.path !== path2 && change.oldPath !== path2);
+    inventory.paths = inventory.paths.filter((item) => item !== path2);
   }
-  const removedPaths = new Set(inventory2.changes.filter((change) => change.status === "D" || change.status.startsWith("R")).map((change) => change.oldPath ?? change.path));
+  const removedPaths = new Set(inventory.changes.filter((change) => change.status === "D" || change.status.startsWith("R")).map((change) => change.oldPath ?? change.path));
   const { contract, path: contractPath } = await loadContract(target, options.contract, removedPaths);
-  const previous = await previousPolicy(target.root, inventory2.base, contractPath, inventory2, options["previous-contract"]);
-  const { mappings, unmappedPaths, candidateDocuments } = mapInventory(inventory2, [contract, ...previous ? [previous.contract] : []]);
+  const previous = await previousPolicy(target.root, inventory.base, contractPath, inventory, options["previous-contract"]);
+  const { mappings, unmappedPaths, candidateDocuments } = mapInventory(inventory, [contract, ...previous ? [previous.contract] : []]);
   const assessment = {
     schemaVersion: 1,
     repo: options.portable ? "." : target.root,
     contract: contractPath,
     previousContract: previous?.path ?? null,
-    ...inventory2,
+    ...inventory,
     mappings,
     unmappedPaths,
     documents: candidateDocuments.map((document) => ({ ...document, assessment: null })),
@@ -1937,7 +1937,7 @@ async function run4(options) {
   await writeFile2(path, JSON.stringify(assessment, null, 2) + "\n");
   return {
     inputs: { repo: target.root, contract: contractPath, base: options.base },
-    data: { ...inventory2, mappings, candidateDocuments, unmappedPaths, path }
+    data: { ...inventory, mappings, candidateDocuments, unmappedPaths, path }
   };
 }
 
@@ -3001,7 +3001,7 @@ async function run7(options) {
     fix: "Supply --base <ref> --assessment <file> [--contract <path>]."
   }]);
   const target = await resolveTarget(options);
-  const inventory2 = collectInventory(target.root, options.base);
+  const inventory = collectInventory(target.root, options.base);
   let assessment;
   try {
     options = { ...options, assessment: await resolveLinks(resolve9(options.assessment)) };
@@ -3015,30 +3015,30 @@ async function run7(options) {
     const path = relative7(target.root, resolve9(options.assessment)).split("\\").join("/");
     const source = readGit(target.root, ["rev-parse", "--verify", "--end-of-options", `${assessment.head}^{commit}`]);
     const delta = readGit(target.root, ["diff", "--name-only", "-z", assessment.head ?? "", "HEAD", "--"]);
-    if (!assessment.head || source.status !== 0 || delta.status !== 0 || path.startsWith("../") || path === ".." || readGit(target.root, ["merge-base", "--is-ancestor", assessment.head, "HEAD"]).status !== 0 || delta.stdout.split("\0").some((item) => item && item !== path) || inventory2.changes.some((change) => change.oldPath && [change.oldPath, change.path].includes(path) || change.source !== "committed" && change.path !== path)) {
+    if (!assessment.head || source.status !== 0 || delta.status !== 0 || path.startsWith("../") || path === ".." || readGit(target.root, ["merge-base", "--is-ancestor", assessment.head, "HEAD"]).status !== 0 || delta.stdout.split("\0").some((item) => item && item !== path) || inventory.changes.some((change) => change.oldPath && [change.oldPath, change.path].includes(path) || change.source !== "committed" && change.path !== path)) {
       throw new CommandError("blocked", [{
         code: "portable-source-mismatch",
         message: "Portable review must name the committed source; only its selected assessment may differ from HEAD.",
         fix: "Commit source changes and recollect portable review against the agreed base."
       }]);
     }
-    inventory2.head = assessment.head;
-    inventory2.changes = inventory2.changes.filter((change) => change.path !== path && change.oldPath !== path);
-    inventory2.paths = inventory2.paths.filter((item) => item !== path);
+    inventory.head = assessment.head;
+    inventory.changes = inventory.changes.filter((change) => change.path !== path && change.oldPath !== path);
+    inventory.paths = inventory.paths.filter((item) => item !== path);
   }
-  if (inventory2.head && readGit(target.root, ["merge-base", "--is-ancestor", inventory2.base.objectId, inventory2.head]).status !== 0) {
+  if (inventory.head && readGit(target.root, ["merge-base", "--is-ancestor", inventory.base.objectId, inventory.head]).status !== 0) {
     throw new CommandError("blocked", [{ code: "unsupported-comparison-base", message: "The base must be an ancestor of HEAD.", fix: "Select the agreed ancestor commit, or empty only before the first commit." }]);
   }
-  const removed = new Set(inventory2.changes.filter((change) => change.status === "D" || change.oldPath).map((change) => change.oldPath ?? change.path));
+  const removed = new Set(inventory.changes.filter((change) => change.status === "D" || change.oldPath).map((change) => change.oldPath ?? change.path));
   const proposed = await loadContract(target, options.contract, removed);
-  const previous = await previousPolicy(target.root, inventory2.base, proposed.path, inventory2, options["previous-contract"]);
+  const previous = await previousPolicy(target.root, inventory.base, proposed.path, inventory, options["previous-contract"]);
   const contracts = [proposed.contract, ...previous ? [previous.contract] : []];
-  const mapping = mapInventory(inventory2, contracts);
+  const mapping = mapInventory(inventory, contracts);
   validateIds(assessment.decisions, "decisions");
   const problems = [];
   const problem2 = (code, message) => problems.push({ code, message, fix: "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks." });
   const equal = (a, b) => canonicalJSON(a) === canonicalJSON(b);
-  for (const key of ["base", "head", "changes", "paths"]) if (!equal(assessment[key], inventory2[key])) problem2("inventory-mismatch", `Assessment ${key} does not match the complete live comparison.`);
+  for (const key of ["base", "head", "changes", "paths"]) if (!equal(assessment[key], inventory[key])) problem2("inventory-mismatch", `Assessment ${key} does not match the complete live comparison.`);
   if (![".", target.root].includes(assessment.repo) || assessment.contract !== proposed.path) problem2("target-mismatch", "Assessment names a different repo or contract.");
   if (assessment.previousContract !== (previous?.path ?? null)) problem2("target-mismatch", "Assessment names a different previous policy.");
   if (!equal(assessment.mappings, mapping.mappings) || !equal(assessment.unmappedPaths, mapping.unmappedPaths) || !equal(assessment.documents.map(({ id, path }) => ({ id, path })), mapping.candidateDocuments) || !equal(assessment.unmappedAssessments.map((item) => item.path), mapping.unmappedPaths)) problem2("coverage-mismatch", "Assessments omit or replace live previous/proposed document or unmapped-path coverage.");
@@ -3049,7 +3049,7 @@ async function run7(options) {
       const record = assessment.repo === "." ? { ...foundation.record, target: { ...foundation.record.target, root: target.root } } : foundation.record;
       await validateFindings(record, target);
       const finding = record.findings.find((item) => item.id === foundation.findingId);
-      if (record.stage !== "foundation" || record.target.root !== target.root || record.target.revision !== inventory2.head || !record.selectedFindingIds.includes(foundation.findingId) || finding?.status !== "selected" || !finding.scope.includes(proposed.path)) problem2("unselected-foundation", "Initial contract needs a selected foundation finding covering this contract and target.");
+      if (record.stage !== "foundation" || record.target.root !== target.root || record.target.revision !== inventory.head || !record.selectedFindingIds.includes(foundation.findingId) || finding?.status !== "selected" || !finding.scope.includes(proposed.path)) problem2("unselected-foundation", "Initial contract needs a selected foundation finding covering this contract and target.");
     } else problem2("previous-contract-unavailable", "Prerequisite: restore the previous contract or supply the explicitly selected initial foundation finding.");
   }
   const citedPaths = [];
@@ -3057,7 +3057,7 @@ async function run7(options) {
     validateData(impact_assessment_default.properties.citations.items, cite);
     const path = await resolvePath(target.root, cite.path);
     citedPaths.push(cite.path);
-    const text = cite.version === "base" ? baseText(target.root, inventory2.base, cite.path) : await readFile8(path, "utf8").catch(() => "");
+    const text = cite.version === "base" ? baseText(target.root, inventory.base, cite.path) : await readFile8(path, "utf8").catch(() => "");
     if (!text.includes(cite.pointer)) problem2("citation-unavailable", `Citation ${cite.path} does not contain the ${cite.version} source pointer.`);
   }
   async function impact(entry, document) {
@@ -3067,7 +3067,7 @@ async function run7(options) {
     }
     const value = entry.assessment;
     validateData(impact_assessment_default, value);
-    if (value.changedPaths.some((path) => !inventory2.paths.includes(path))) problem2("unsupported-impact-path", `Assessment ${entry.path} names unchanged paths.`);
+    if (value.changedPaths.some((path) => !inventory.paths.includes(path))) problem2("unsupported-impact-path", `Assessment ${entry.path} names unchanged paths.`);
     const expected = document ? mapping.mappings.filter((item) => item.documentIds.includes(entry.id) || item.path === entry.path).map((item) => item.path) : [entry.path];
     if (expected.some((path) => !value.changedPaths.includes(path))) problem2("omitted-impact-path", `Assessment ${entry.path} omits changed behaviour inputs.`);
     for (const cite of value.citations) await citation(cite);
@@ -3077,7 +3077,7 @@ async function run7(options) {
       problem2("decision-needed", `Decision for ${entry.path} blocks ${value.dependentWork.join(", ") || "dependent work"}.`);
     }
     if (value.result === "updated") {
-      const before = baseText(target.root, inventory2.base, entry.path);
+      const before = baseText(target.root, inventory.base, entry.path);
       const after = await readFile8(await resolvePath(target.root, entry.path), "utf8").catch(() => "");
       const delta = value.delta;
       const oldDocument = meaningful(before, void 0, entry.path);
@@ -3093,7 +3093,7 @@ async function run7(options) {
   for (const entry of assessment.unmappedAssessments) await impact(entry, false);
   const sources = contracts.flatMap((contract) => contract.acceptanceSources);
   for (const source of sources) {
-    const before = baseText(target.root, inventory2.base, source.path);
+    const before = baseText(target.root, inventory.base, source.path);
     const after = await readFile8(await resolvePath(target.root, source.path), "utf8").catch(() => "");
     if (before === after) continue;
     const decision = assessment.decisions.find((item) => item.source === source.path && item.status === "approved");
@@ -3102,8 +3102,8 @@ async function run7(options) {
   }
   for (const decision of assessment.decisions) if (decision.status !== "approved") problem2("unresolved-decision", `Decision ${decision.id} blocks ${decision.affectedWork.join(", ")}.`);
   const affectedRules = contracts.flatMap((contract) => contract.rules.filter((rule) => mapping.mappings.some((item) => item.ruleIds.includes(rule.id) || item.path === rule.path)));
-  const commandPaths = await checkCommandPaths(target, contracts.flatMap((contract) => contract.checks), inventory2.paths);
-  const requiredChecks = contracts.flatMap((contract) => contract.checks.filter((check) => affectedRules.some((rule) => rule.checkIds.includes(check.id)) || commandPaths.get(check).some((path) => inventory2.paths.includes(path)) || inventory2.paths.some((path) => check.inputScopes.some((scope) => matchesPath(pathGlob(scope), path))) || inventory2.paths.includes(proposed.path) || inventory2.paths.includes(previous?.path))).filter((check, i, all) => all.findIndex((item) => equal(item, check)) === i);
+  const commandPaths = await checkCommandPaths(target, contracts.flatMap((contract) => contract.checks), inventory.paths);
+  const requiredChecks = contracts.flatMap((contract) => contract.checks.filter((check) => affectedRules.some((rule) => rule.checkIds.includes(check.id)) || commandPaths.get(check).some((path) => inventory.paths.includes(path)) || inventory.paths.some((path) => check.inputScopes.some((scope) => matchesPath(pathGlob(scope), path))) || inventory.paths.includes(proposed.path) || inventory.paths.includes(previous?.path))).filter((check, i, all) => all.findIndex((item) => equal(item, check)) === i);
   for (const rule of affectedRules) if (!assessment.coverage.includes(rule.id)) problem2("missing-rule-coverage", `Rule ${rule.id} from previous/proposed policy has no assessment coverage.`);
   const captures = [];
   for (const record of options.preflight || options.currentResults ? [] : assessment.execution) {
@@ -3131,14 +3131,14 @@ async function run7(options) {
       const declared = plan.checks.find((item) => item.id === check.id && item.required && equal(item.command, check.command) && check.inputScopes.every((scope) => item.inputScopes.includes(scope)));
       const executed = capture2.checks?.find((item) => item.id === check.id && item.required && item.satisfied && item.status === "passed" && equal(item.command, check.command));
       const result = executed?.execution;
-      const relevant = [...policyInputs, ...commandPaths.get(check), ...inventory2.paths.filter((path) => check.inputScopes.some((scope) => matchesPath(pathGlob(scope), path)))];
+      const relevant = [...policyInputs, ...commandPaths.get(check), ...inventory.paths.filter((path) => check.inputScopes.some((scope) => matchesPath(pathGlob(scope), path)))];
       return declared && successful(result) && successful(result.toolVersion) && relevant.every((path) => current.state.files.some((file) => file.path === path));
     })) problem2("required-check-missing", `Required previous/proposed check ${check.id} has no successful matching capture.`);
   }
   const files = await repoFiles(target.root);
   const scopes = contracts.flatMap((contract) => contract.checks.flatMap((check) => check.inputScopes)).map(pathGlob);
   const paths = [
-    ...inventory2.paths,
+    ...inventory.paths,
     proposed.path,
     ...previous ? [previous.path] : [],
     ...citedPaths,
@@ -3148,7 +3148,7 @@ async function run7(options) {
     ...files.filter((path) => scopes.some((scope) => matchesPath(scope, path)))
   ];
   const binding = await fingerprint(target, {
-    baseCommit: inventory2.base.objectId,
+    baseCommit: inventory.base.objectId,
     paths,
     inputs: assessment,
     evidencePath: relative7(target.root, resolve9(options.assessment))
@@ -3159,7 +3159,7 @@ async function run7(options) {
     problems,
     inputs: { repo: target.root, base: options.base, assessment: options.assessment, contract: proposed.path },
     data: {
-      ...inventory2,
+      ...inventory,
       ...mapping,
       policies: [proposed, ...previous ? [previous] : []],
       previousContract: previous?.path ?? null,
@@ -3299,18 +3299,200 @@ async function run9(options) {
   return { status: problems.length ? "failed" : "passed", problems, data: { baseline: path, debt: retained, newDebt, removedDebt, refreshed: Boolean(options.refresh && !problems.length) } };
 }
 
-// runtime/scripts/commands/project.mjs
-import { readFile as readFile13, writeFile as writeFile7, mkdir as mkdir3, readdir as readdir5, lstat as lstat5, realpath as realpath6 } from "node:fs/promises";
-import { dirname as dirname8, join as join14, resolve as resolve11 } from "node:path";
-import { spawnSync as spawnSync6 } from "node:child_process";
+// runtime/scripts/commands/probe.mjs
+import { readFile as readFile11, writeFile as writeFile7, stat as stat9 } from "node:fs/promises";
+import { basename as basename3, join as join13, resolve as resolve10 } from "node:path";
+var schemas = {
+  "probe-spec": new URL("../schemas/probe-spec.json", import.meta.url),
+  "probe-record": new URL("../schemas/probe-record.json", import.meta.url),
+  "check-plan": new URL("../schemas/check-plan.json", import.meta.url)
+};
+async function schema(name) {
+  return JSON.parse(await readFile11(schemas[name], "utf8"));
+}
+function problem(code, message) {
+  return { code, message, fix: "Capture the required probe against the correct state, using the same call and explicit approval for any side effects." };
+}
+function callIdentity(record) {
+  return hashBytes(canonicalJSON({
+    name: record.name,
+    target: record.target,
+    command: record.command,
+    endpoint: record.spec.endpoint,
+    environment: record.environment,
+    sideEffects: record.spec.sideEffects,
+    assumption: record.spec.assumption
+  }));
+}
+async function inputState(target, spec, callDigest, specPath) {
+  const globs = spec.inputScopes.map(pathGlob);
+  const files = await repoFiles(target.root);
+  const literals = spec.inputScopes.filter((scope) => !/[*?]/.test(scope));
+  for (const path of literals) await resolveFilePath(target.root, path);
+  const head = readGit(target.root, ["rev-parse", "--verify", "HEAD"]);
+  let specContentHash = null;
+  try {
+    specContentHash = hashBytes(await readFile11(specPath));
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+  return fingerprint(target, {
+    baseCommit: head.status === 0 ? head.stdout.trim() : null,
+    paths: [...literals, ...files.filter((path) => globs.some((glob) => matchesPath(glob, path)))],
+    inputs: { spec, callDigest, specContentHash }
+  });
+}
+async function run10(options, commandName) {
+  if (!options.name?.trim()) throw new CommandError("usage-error", [problem("missing-probe-name", "Supply --name for the outside dependency requiring verification.")]);
+  const target = await resolveTarget(options);
+  if (commandName === "probe compare") return compare(target, options);
+  if (!["before", "after"].includes(options.phase) || !options.spec || !Array.isArray(options.command) || !options.command.length) {
+    throw new CommandError("usage-error", [problem("invalid-probe-options", "Supply --phase before|after, --spec <file> and -- <executable> [args...].")]);
+  }
+  let spec;
+  let validatedSpecHash;
+  const specPath = resolve10(options.spec);
+  try {
+    const bytes = await readFile11(specPath);
+    spec = inspectJSON(bytes.toString("utf8")).value;
+    validatedSpecHash = hashBytes(bytes);
+  } catch (error) {
+    if (error instanceof CommandError) throw error;
+    throw new CommandError("failed", [problem("invalid-probe-spec", "Probe descriptor must be readable JSON.")]);
+  }
+  validateData(await schema("probe-spec"), spec);
+  const command = {
+    executable: options.command[0],
+    args: options.command.slice(1),
+    cwd: spec.cwd,
+    versionArgs: spec.versionArgs,
+    ...spec.timeoutMs === void 0 ? {} : { timeoutMs: spec.timeoutMs }
+  };
+  validateData((await schema("check-plan")).properties.checks.items.properties.command, command);
+  if (spec.timeoutMs !== void 0 && (!Number.isSafeInteger(spec.timeoutMs) || spec.timeoutMs <= 0)) {
+    throw new CommandError("usage-error", [problem("invalid-timeout", "Probe timeout must be a positive safe integer.")]);
+  }
+  if (!(await stat9(await resolvePath(target.root, spec.cwd))).isDirectory()) {
+    throw new CommandError("failed", [problem("invalid-cwd", "Probe working directory must be a directory.")]);
+  }
+  if (spec.sideEffects && !options["approved-by-user"]) {
+    throw new CommandError("blocked", [problem("probe-approval-required", "This specific side-effecting call needs --approved-by-user before execution.")]);
+  }
+  const environment = Object.fromEntries(spec.environment.map((key) => [key, process.env[key] ?? null]));
+  const binding = { name: options.name, target, spec, command, environment };
+  const callDigest = callIdentity(binding);
+  const originalState = await inputState(target, spec, callDigest, specPath);
+  if (originalState.state.inputs.specContentHash !== validatedSpecHash) {
+    throw new CommandError("failed", [problem("stale-probe-spec", "Probe descriptor changed before capture.")]);
+  }
+  const directory = await createScratch(target);
+  const runId = basename3(directory);
+  const startedAt = (/* @__PURE__ */ new Date()).toISOString();
+  const approval = spec.sideEffects ? { runId, callDigest, approvedByUser: true } : null;
+  let execution = null;
+  let status = "unverified";
+  let reason = null;
+  const controller = new AbortController();
+  const cancel = () => controller.abort();
+  process.on("SIGINT", cancel);
+  process.on("SIGTERM", cancel);
+  try {
+    execution = await runCommand(target, command, { signal: controller.signal });
+    status = execution.status === "passed" ? "passed" : execution.error || execution.cancelled || execution.timedOut || execution.toolVersion.status !== "passed" ? "unverified" : "failed";
+    reason = execution.error ?? (execution.cancelled ? "Probe was cancelled." : execution.timedOut ? "Probe timed out." : execution.toolVersion.status !== "passed" ? "Tool version was unavailable." : status === "failed" ? "Live call did not meet the asserted outcome." : null);
+  } catch (error) {
+    reason = error.message;
+  } finally {
+    process.removeListener("SIGINT", cancel);
+    process.removeListener("SIGTERM", cancel);
+  }
+  const finalState = await inputState(target, spec, callDigest, specPath).catch(() => null);
+  if (originalState.fingerprint !== finalState?.fingerprint) {
+    status = "blocked";
+    reason = "inputs changed during run";
+  }
+  const record = {
+    schemaVersion: 1,
+    runId,
+    ...binding,
+    specPath,
+    phase: options.phase,
+    callDigest,
+    approval,
+    startedAt,
+    completedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    originalState,
+    finalState,
+    execution,
+    status,
+    reason
+  };
+  validateData(await schema("probe-record"), record);
+  const path = join13(directory, "probe.json");
+  await writeFile7(path, JSON.stringify(record, null, 2) + "\n", { flag: "wx" });
+  return { status: status === "unverified" ? "blocked" : status, problems: reason ? [problem("probe-not-verified", reason)] : [], data: { ...record, path } };
+}
+async function compare(target, options) {
+  const problems = [];
+  const captures = {};
+  for (const phase of ["before", "after"]) {
+    try {
+      if (!options[phase]) throw new Error("Missing run ID.");
+      const record = inspectJSON(await readFile11(join13(await scratchDirectory(target, options[phase]), "probe.json"), "utf8")).value;
+      validateData(await schema("probe-record"), record);
+      validateData(await schema("probe-spec"), record.spec);
+      validateData((await schema("check-plan")).properties.checks.items.properties.command, record.command);
+      captures[phase] = record;
+      if (record.runId !== options[phase] || record.phase !== phase || record.name !== options.name || canonicalJSON(record.target) !== canonicalJSON(target) || record.callDigest !== callIdentity(record)) {
+        problems.push(problem("incompatible-probe", `${phase} capture does not identify this probe, phase and target.`));
+      }
+      if (record.status !== "passed" || record.execution?.status !== "passed" || record.execution.toolVersion?.status !== "passed" || record.originalState.fingerprint !== record.finalState?.fingerprint) {
+        problems.push(problem("probe-not-verified", `${phase} probe is not verified: ${record.reason ?? "No complete successful execution."}`));
+      }
+      if (record.spec.sideEffects && (!record.approval?.approvedByUser || record.approval.runId !== record.runId || record.approval.callDigest !== record.callDigest)) {
+        problems.push(problem("probe-approval-required", `${phase} capture lacks approval for that specific call.`));
+      }
+    } catch {
+      problems.push(problem(`missing-${phase}-probe`, `No readable valid ${phase} probe was supplied.`));
+    }
+  }
+  const { before, after } = captures;
+  if (before && after) {
+    if (before.callDigest !== after.callDigest || canonicalJSON(before.spec) !== canonicalJSON(after.spec)) {
+      problems.push(problem("probe-pair-mismatch", "Before and after must repeat the same command, endpoint and relevant environment, with the same descriptor."));
+    }
+    if (before.runId === after.runId || before.completedAt > after.startedAt) problems.push(problem("probe-order", "The before probe must finish before the after probe starts."));
+    const environment = Object.fromEntries(after.spec.environment.map((key) => [key, process.env[key] ?? null]));
+    const current = await inputState(target, after.spec, after.callDigest, after.specPath).catch(() => null);
+    if (current?.fingerprint !== after.finalState?.fingerprint || canonicalJSON(environment) !== canonicalJSON(after.environment)) {
+      problems.push(problem("stale-probe", "The after probe no longer matches current declared inputs or relevant environment."));
+    }
+  }
+  return {
+    status: problems.length ? "failed" : "passed",
+    problems,
+    data: {
+      name: options.name,
+      before: before?.runId ?? null,
+      after: after?.runId ?? null,
+      verified: !problems.length,
+      assumption: after?.spec.assumption ?? before?.spec.assumption ?? null
+    }
+  };
+}
+
+// runtime/scripts/commands/apply.mjs
+import { readFile as readFile13 } from "node:fs/promises";
+import { dirname as dirname7, relative as relative9, resolve as resolve11 } from "node:path";
+import { spawnSync as spawnSync5 } from "node:child_process";
 
 // runtime/scripts/lib/protected-write.mjs
-import { readFile as readFile11, open, mkdir as mkdir2, rename as rename2, unlink, stat as stat9 } from "node:fs/promises";
-import { basename as basename3, dirname as dirname6, join as join13 } from "node:path";
+import { readFile as readFile12, open, mkdir as mkdir2, rename as rename2, unlink, stat as stat10 } from "node:fs/promises";
+import { basename as basename4, dirname as dirname6, join as join14 } from "node:path";
 import { randomUUID as randomUUID3 } from "node:crypto";
 async function fileBytes(path) {
   try {
-    return await readFile11(path);
+    return await readFile12(path);
   } catch (error) {
     if (error.code === "ENOENT") return null;
     throw error;
@@ -3318,10 +3500,10 @@ async function fileBytes(path) {
 }
 async function loadJournal(target, runId) {
   const directory = await scratchDirectory(target, runId);
-  const bytes = await fileBytes(join13(directory, "journal.json"));
+  const bytes = await fileBytes(join14(directory, "journal.json"));
   if (bytes === null) return { directory, journal: null };
   const journal = inspectJSON(bytes.toString("utf8")).value;
-  validateData(JSON.parse(await readFile11(new URL("../schemas/resume-state.schema.json", import.meta.url), "utf8")), journal);
+  validateData(JSON.parse(await readFile12(new URL("../schemas/resume-state.schema.json", import.meta.url), "utf8")), journal);
   validateIds(journal.edits, "$/edits");
   if (journal.runId !== runId || journal.target.root !== target.root || journal.target.mode !== target.mode) {
     throw new CommandError("blocked", [{ code: "journal-mismatch", message: "Journal belongs to a different run or target.", fix: "Use the original reviewed target and run ID." }]);
@@ -3356,7 +3538,7 @@ async function journalOriginal(directory, journal, plan, edit, index) {
   if (journal.planDigest !== plan.planDigest || canonicalJSON(journal.target) !== canonicalJSON(plan.target) || journal.edits.length !== plan.edits.length || !recorded || ["id", "path", "originalHash", "proposedHash"].some((key) => recorded[key] !== edit[key]) || recorded.resolvedPath !== plan.reviewedScope.find((entry) => entry.path === edit.path)?.resolvedPath || recorded.backup !== (edit.originalHash === null ? null : `original-${index}`)) {
     throw new CommandError("blocked", [{ code: "journal-mismatch", message: "Journal does not match the reviewed plan.", fix: "Use the unchanged reviewed plan or review a new plan." }]);
   }
-  const bytes = recorded.backup === null ? null : await fileBytes(join13(directory, recorded.backup));
+  const bytes = recorded.backup === null ? null : await fileBytes(join14(directory, recorded.backup));
   if ((bytes === null ? null : hashBytes(bytes)) !== edit.originalHash) {
     throw new CommandError("blocked", [{ code: "backup-mismatch", message: "Recoverable original is missing or changed.", path: edit.path, fix: "Restore the original backup before resuming." }]);
   }
@@ -3392,7 +3574,7 @@ async function durableDirectory(directory, limitations) {
   }
 }
 async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary, prefix = ".bstack") {
-  const temporary = join13(dirname6(path), `${prefix}-${randomUUID3()}.tmp`);
+  const temporary = join14(dirname6(path), `${prefix}-${randomUUID3()}.tmp`);
   try {
     if (prepareTemporary) await prepareTemporary(temporary);
     await durableFile(temporary, bytes, mode);
@@ -3414,12 +3596,6 @@ async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepar
     }
   }
 }
-async function saveRecovery(path, value) {
-  const limitations = [];
-  await durableDirectory(dirname6(path), limitations);
-  await replaceFile(path, Buffer.from(JSON.stringify(value, null, 2) + "\n"), void 0, limitations, void 0, void 0, `.bstack-recovery-${basename3(path)}`);
-  return limitations;
-}
 async function applyWrites(target, plan, staged, directory, previous, affectedChecks, guard) {
   const limitations = ["Replacement is atomic per file where supported, never across the whole change set."];
   const journal = previous ?? {
@@ -3438,7 +3614,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     })),
     affectedChecks
   };
-  const journalPath = join13(directory, "journal.json");
+  const journalPath = join14(directory, "journal.json");
   const save = () => replaceFile(journalPath, Buffer.from(JSON.stringify(journal, null, 2) + "\n"), void 0, limitations);
   try {
     let state = await inspectJournal(journal);
@@ -3451,8 +3627,8 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
         if (state.edits[index].state === "applied") recorded.completed = true;
         if (!recorded.temporary) continue;
         const path = await resolveFilePath(target.root, recorded.path, recorded.resolvedPath);
-        if (dirname6(recorded.temporary) !== dirname6(path) || !/^\.bstack-[0-9a-f-]{36}\.tmp$/.test(basename3(recorded.temporary))) throw new Error("Recovery temporary path differs from its write directory.");
-        await resolveFilePath(dirname6(path), basename3(recorded.temporary), recorded.temporary);
+        if (dirname6(recorded.temporary) !== dirname6(path) || !/^\.bstack-[0-9a-f-]{36}\.tmp$/.test(basename4(recorded.temporary))) throw new Error("Recovery temporary path differs from its write directory.");
+        await resolveFilePath(dirname6(path), basename4(recorded.temporary), recorded.temporary);
         const bytes = await fileBytes(recorded.temporary);
         const proposed = Buffer.from(staged[index].proposedContent ?? "");
         if (bytes !== null && (bytes.length > proposed.length || !bytes.equals(proposed.subarray(0, bytes.length)))) {
@@ -3471,7 +3647,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
         if (edit.originalHash !== null) {
-          const backup = join13(directory, journal.edits[index].backup);
+          const backup = join14(directory, journal.edits[index].backup);
           const existing = await fileBytes(backup);
           if (existing !== null && hashBytes(existing) !== edit.originalHash) throw new Error("Prepared backup differs from the reviewed original.");
           if (existing === null) await replaceFile(backup, edit.originalBytes, void 0, limitations);
@@ -3502,7 +3678,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
         await syncDirectory(dirname6(path), limitations);
       } else {
         await durableDirectory(dirname6(path), limitations);
-        const mode = edit.originalHash === null ? void 0 : (await stat9(path)).mode;
+        const mode = edit.originalHash === null ? void 0 : (await stat10(path)).mode;
         await replaceFile(path, Buffer.from(edit.proposedContent), mode, limitations, beforeWrite, async (temporary) => {
           journal.edits[index].temporary = temporary;
           await save();
@@ -3533,15 +3709,12 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
 }
 
 // runtime/scripts/commands/apply.mjs
-import { readFile as readFile12 } from "node:fs/promises";
-import { dirname as dirname7, relative as relative9, resolve as resolve10 } from "node:path";
-import { spawnSync as spawnSync5 } from "node:child_process";
 function reject5(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
 }
 async function input(file) {
   try {
-    return inspectJSON(await readFile12(file, "utf8")).value;
+    return inspectJSON(await readFile13(file, "utf8")).value;
   } catch (error) {
     if (error instanceof CommandError) throw error;
     reject5("invalid-input", "Input must be readable JSON.", file);
@@ -3550,8 +3723,8 @@ async function input(file) {
 async function prepareChangeSet(options, target) {
   if (!options.plan) throw new CommandError("usage-error", [{ code: "missing-plan", message: "--plan is required.", fix: "Supply a reviewed change set." }]);
   const plan = await input(options.plan);
-  validateData(JSON.parse(await readFile12(new URL("../schemas/change-set.schema.json", import.meta.url), "utf8")), plan);
-  const findings = await input(resolve10(dirname7(resolve10(options.plan)), plan.findings));
+  validateData(JSON.parse(await readFile13(new URL("../schemas/change-set.schema.json", import.meta.url), "utf8")), plan);
+  const findings = await input(resolve11(dirname7(resolve11(options.plan)), plan.findings));
   const { directory, journal } = options["dry-run"] ? { directory: null, journal: null } : await loadJournal(target, plan.planDigest);
   const deletionScope = plan.reviewedScope.filter((entry) => journal?.edits.some((edit) => edit.originalHash !== null && edit.proposedHash === null && edit.resolvedPath === entry.resolvedPath));
   await validateFindings(findings, target, deletionScope);
@@ -3636,7 +3809,7 @@ async function prepareChangeSet(options, target) {
     let linkedPath;
     try {
       const pathPart = decodeURIComponent(href.split("#")[0].split("?")[0]);
-      linkedPath = await resolvePath(target.root, relative9(target.root, resolve10(target.root, dirname7(sourcePath), pathPart)));
+      linkedPath = await resolvePath(target.root, relative9(target.root, resolve11(target.root, dirname7(sourcePath), pathPart)));
     } catch {
       reject5("invalid-rule-link", "The replacement must resolve to the selected local destination.", sourcePath);
     }
@@ -3659,11 +3832,11 @@ async function prepareChangeSet(options, target) {
   }
   return { inputs: { target, plan: options.plan }, plan, staged, directory, journal, findings, coverageLimits };
 }
-async function run10(options) {
+async function run11(options) {
   const target = await resolveTarget(options, { draftOnly: true });
   const { inputs, plan, staged, directory, journal, findings, coverageLimits } = await prepareChangeSet(options, target);
   const { planDigest } = plan;
-  const assessmentSchema = JSON.parse(await readFile12(new URL("../schemas/evidence.schema.json", import.meta.url), "utf8"));
+  const assessmentSchema = JSON.parse(await readFile13(new URL("../schemas/evidence.schema.json", import.meta.url), "utf8"));
   const assessment = staged.some((edit) => edit.path === ".bstack/assessment.json" || [edit.originalBytes?.toString("utf8"), edit.proposedContent].some((content) => {
     if (!content) return false;
     try {
@@ -3701,378 +3874,8 @@ async function run10(options) {
   return result.status ? { inputs, ...result } : { inputs, data: result };
 }
 
-// runtime/scripts/commands/project.mjs
-function block(code, message, path) {
-  throw new CommandError("blocked", [{ code, message, path, fix: "Inspect the retained scratch plan and project, resolve the conflict and resume the unchanged approved plan." }]);
-}
-async function exists(path) {
-  try {
-    return await lstat5(path);
-  } catch (error) {
-    if (error.code === "ENOENT") return null;
-    throw error;
-  }
-}
-async function inventory(root, files, directories, gitAllowed = false, temporaries = []) {
-  if (!await exists(root)) return;
-  async function visit(directory, prefix = "") {
-    for (const entry of await readdir5(directory, { withFileTypes: true })) {
-      const path = prefix + entry.name;
-      if (temporaries.includes(join14(root, path)) && entry.isFile()) continue;
-      if (gitAllowed && path === ".git" && entry.isDirectory()) continue;
-      if (entry.isDirectory() && directories.has(path)) await visit(join14(directory, entry.name), path + "/");
-      else if (!entry.isFile() || !files.has(path)) block("destination-collision", "Unrelated paths block project creation.", path);
-    }
-  }
-  await visit(root);
-}
-async function run11(options) {
-  if (!options.workspace || !options.plan) throw new CommandError("usage-error", [{ code: "missing-project-input", message: "project create requires --workspace and --plan.", fix: "Select the existing idea workspace and reviewed creation plan." }]);
-  const workspace = await resolveTarget(options, { draftOnly: true });
-  const plan = inspectJSON(await readFile13(options.plan, "utf8")).value;
-  validateData(JSON.parse(await readFile13(new URL("../schemas/project-create.json", import.meta.url), "utf8")), plan);
-  const { planDigest, ...reviewed } = plan;
-  if (hashBytes(canonicalJSON(reviewed)) !== planDigest || plan.workspace !== workspace.root) block("changed-plan", "Creation plan digest or workspace identity differs from review.");
-  const destination = await resolvePath(workspace.root, plan.destination.path, plan.destination.resolvedPath);
-  if (destination === workspace.root) block("destination-collision", "Select a new destination inside the idea workspace.");
-  const parent = await realpath6(dirname8(destination));
-  if (parent !== dirname8(destination)) block("changed-parent", "The reviewed parent resolution changed.");
-  const target = { mode: "workspace", root: destination };
-  const changeSetPath = resolve11(dirname8(resolve11(options.plan)), plan.changeSet);
-  const prepared = await prepareChangeSet({ plan: changeSetPath, "dry-run": options["dry-run"] }, target);
-  const { plan: changeSet, staged, journal, findings } = prepared;
-  if (journal) {
-    const state = await inspectJournal(journal);
-    if (state.conflicting.length) block("user-change", "A user change blocks project creation.", state.conflicting[0]);
-  }
-  if (changeSet.planDigest !== plan.changeSetDigest || findings.stage !== "foundation" || staged.some((edit) => edit.originalHash !== null || edit.proposedContent === null || changeSet.edits.find((item) => item.id === edit.id).operation !== "create")) {
-    block("invalid-scaffold", "Creation requires the reviewed foundation findings and complete create-only file payloads.");
-  }
-  for (const path of [plan.visionPath, plan.glossaryPath].filter(Boolean)) {
-    if (!staged.some((edit) => edit.path === path && edit.proposedContent.trim())) block("missing-approved-document", "The approved vision and any confirmed glossary must be in the same change set.", path);
-  }
-  const files = new Set(staged.map((edit) => edit.path));
-  const directories = /* @__PURE__ */ new Set();
-  for (const path of files) {
-    if (path.split(/[\\/]/).includes(".git")) block("invalid-scaffold", "Git metadata is created only by git init.", path);
-    if (path !== path.split("/").filter((part) => part && part !== ".").join("/") || path.includes("\\")) block("unsupported-path", "Scaffold paths require canonical forward-slash names.", path);
-    for (let directory2 = dirname8(path); directory2 !== "."; directory2 = dirname8(directory2)) directories.add(directory2);
-  }
-  if ([...files].some((path) => directories.has(path))) block("invalid-scaffold", "A scaffold file cannot also be a parent directory.");
-  validateIds([...plan.prerequisites, ...plan.setupCommands, plan.journeyCommand], "$/commands");
-  if ([...plan.prerequisites, ...plan.setupCommands, plan.journeyCommand].some((command) => !Number.isSafeInteger(command.timeoutMs) || command.timeoutMs <= 0)) block("invalid-command", "Commands require positive safe-integer timeouts.");
-  for (const command of [...plan.setupCommands, plan.journeyCommand]) {
-    const cwd = await resolvePath(destination, command.cwd);
-    if (cwd !== destination && !directories.has(command.cwd)) block("invalid-command-directory", "Command directory must belong to the reviewed scaffold.", command.cwd);
-    await selectCommand(command.executable, command.args);
-  }
-  const directory = await scratchDirectory(target, planDigest);
-  const recoveryPath = join14(directory, "creation.json");
-  const bytes = await fileBytes(recoveryPath);
-  const previous = bytes === null ? null : inspectJSON(bytes.toString("utf8")).value;
-  if (previous) validateData({
-    type: "object",
-    additionalProperties: false,
-    required: ["schemaVersion", "planDigest", "destination", "directories", "gitStarted", "gitComplete", "commandsStarted", "commands"],
-    properties: {
-      schemaVersion: { const: 1 },
-      planDigest: { const: planDigest },
-      destination: { const: destination },
-      directories: { const: ["", ...directories].sort((a, b) => a.split("/").length - b.split("/").length) },
-      gitStarted: { type: "boolean" },
-      gitComplete: { type: "boolean" },
-      commandsStarted: { type: "boolean" },
-      gitVersion: { type: "string" },
-      commands: { type: "array", items: { type: "object", required: ["id", "status"], properties: { id: { type: "string" }, status: { enum: ["passed", "failed", "unverified", "blocked"] } } } }
-    }
-  }, previous);
-  const current = await exists(destination);
-  if (current && (!current.isDirectory() || current.isSymbolicLink())) block("destination-collision", "Destination must be an absent or explicitly selected empty directory.");
-  if (!previous && current && (!plan.destination.allowEmpty || (await readdir5(destination)).length)) block("destination-collision", "Destination was not selected as empty or contains existing files.");
-  const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
-  const git = (args, root = destination) => spawnSync6("git", ["-C", root, ...args], { encoding: "utf8", env });
-  const gitVersion = git(["--version"], parent);
-  if (gitVersion.error || gitVersion.status !== 0) block("git-unavailable", "Git is required before creating the destination.");
-  const temporaries = journal?.edits.map((edit) => edit.temporary).filter(Boolean) ?? [];
-  if (!previous?.commandsStarted) await inventory(destination, files, directories, previous?.gitStarted, temporaries);
-  if (previous?.gitComplete && !await exists(join14(destination, ".git"))) block("git-collision", "Previously initialised Git metadata is missing. Review its removal before continuing.");
-  if (await exists(join14(destination, ".git"))) {
-    const head = git(["rev-parse", "--show-toplevel"]);
-    if (!previous?.gitStarted || previous.gitComplete && (head.status !== 0 || await realpath6(head.stdout.trim()) !== destination)) block("git-collision", "Existing Git metadata does not identify this reviewed creation.");
-  }
-  const prerequisiteResults = [];
-  for (const command of plan.prerequisites) {
-    const result = await runCommand({ root: parent }, command);
-    prerequisiteResults.push({ id: command.id, ...result });
-    if (result.status !== "passed") return { status: "blocked", problems: [{ code: "missing-prerequisite", message: "A declared prerequisite failed.", fix: "Restore the prerequisite and repeat the unchanged plan." }], data: { prerequisiteResults } };
-  }
-  const scratch = await createScratch(workspace);
-  for (const edit of staged) {
-    const path = await resolveFilePath(scratch, edit.path);
-    await mkdir3(dirname8(path), { recursive: true });
-    await writeFile7(path, edit.proposedContent, { flag: "wx" });
-  }
-  const diff = staged.map((edit) => edit.diff).join("");
-  const inputs = { workspace, plan: options.plan };
-  if (options["dry-run"]) return { inputs, data: { dryRun: true, planDigest, destination, scratch, diff, prerequisiteResults, setupCommands: plan.setupCommands, journeyCommand: plan.journeyCommand } };
-  const recovery = previous ?? { schemaVersion: 1, planDigest, destination, directories: ["", ...directories].sort((a, b) => a.split("/").length - b.split("/").length), gitStarted: false, gitComplete: false, commandsStarted: false, commands: [] };
-  const save = () => saveRecovery(recoveryPath, recovery);
-  try {
-    await save();
-    for (const path of recovery.directories) {
-      const resolved = await resolvePath(destination, path || ".");
-      if (resolved !== join14(destination, path)) block("changed-directory", "Creation directory resolution changed.", path);
-      try {
-        await mkdir3(resolved);
-      } catch (error) {
-        if (error.code !== "EEXIST" || !(await lstat5(resolved)).isDirectory()) throw error;
-      }
-    }
-    const applied = await applyWrites(
-      target,
-      changeSet,
-      staged,
-      prepared.directory,
-      journal,
-      findings.requiredOutcomes,
-      recovery.commandsStarted ? void 0 : (temporary) => inventory(destination, files, directories, recovery.gitStarted, [...temporaries, temporary])
-    );
-    if (applied.status) return { inputs, ...applied, data: { ...applied.data, recovery: recoveryPath } };
-    if (!recovery.gitComplete) {
-      await inventory(destination, files, directories, recovery.gitStarted);
-      recovery.gitStarted = true;
-      await save();
-      const initialized = git(["init", "--", destination], parent);
-      if (initialized.error || initialized.status !== 0) block("git-init-failed", "Git initialisation failed. The project remains available for recovery.");
-      const head = git(["rev-parse", "--show-toplevel"]);
-      if (head.status !== 0 || await realpath6(head.stdout.trim()) !== destination) block("git-init-failed", "Initialised Git root differs from the reviewed destination.");
-      recovery.gitComplete = true;
-      recovery.gitVersion = gitVersion.stdout.trim();
-      await save();
-    }
-    recovery.commandsStarted = true;
-    await save();
-    for (const command of [...plan.setupCommands, plan.journeyCommand]) {
-      const recorded = recovery.commands.find((record2) => record2.id === command.id);
-      if (recorded?.status === "passed") continue;
-      if (recorded) break;
-      const record = { id: command.id, status: "unverified", reason: "Execution interrupted before a result was saved." };
-      recovery.commands.push(record);
-      await save();
-      const result = await runCommand(target, command);
-      recovery.commands[recovery.commands.length - 1] = { id: command.id, ...result };
-      await save();
-      if (result.status !== "passed") break;
-    }
-    const verified = recovery.commands.length === plan.setupCommands.length + 1 && recovery.commands.every((record) => record.status === "passed");
-    return {
-      inputs,
-      status: verified ? "passed" : "blocked",
-      problems: verified ? [] : [{ code: "creation-unverified", message: "Setup or the first journey failed or was interrupted. The project is retained.", fix: "Inspect captured results and verify the affected native commands before claiming readiness." }],
-      data: {
-        planDigest,
-        destination,
-        diff,
-        scratch,
-        recovery: recoveryPath,
-        fileJournal: applied.journal,
-        directories: recovery.directories,
-        gitComplete: recovery.gitComplete,
-        prerequisiteResults,
-        commands: recovery.commands,
-        verified,
-        pending: ["maintained enforcement (T3.4)", "portable maintenance (Phase 3a)"]
-      }
-    };
-  } catch (error) {
-    return { inputs, status: "blocked", problems: error instanceof CommandError ? error.problems : [{ code: "creation-io-failure", message: error.message, fix: "Restore access and resume the unchanged plan." }], data: { recovery: recoveryPath, destination } };
-  }
-}
-
-// runtime/scripts/commands/probe.mjs
-import { readFile as readFile14, writeFile as writeFile8, stat as stat10 } from "node:fs/promises";
-import { basename as basename4, join as join15, resolve as resolve12 } from "node:path";
-var schemas = {
-  "probe-spec": new URL("../schemas/probe-spec.json", import.meta.url),
-  "probe-record": new URL("../schemas/probe-record.json", import.meta.url),
-  "check-plan": new URL("../schemas/check-plan.json", import.meta.url)
-};
-async function schema(name) {
-  return JSON.parse(await readFile14(schemas[name], "utf8"));
-}
-function problem(code, message) {
-  return { code, message, fix: "Capture the required probe against the correct state, using the same call and explicit approval for any side effects." };
-}
-function callIdentity(record) {
-  return hashBytes(canonicalJSON({
-    name: record.name,
-    target: record.target,
-    command: record.command,
-    endpoint: record.spec.endpoint,
-    environment: record.environment,
-    sideEffects: record.spec.sideEffects,
-    assumption: record.spec.assumption
-  }));
-}
-async function inputState(target, spec, callDigest, specPath) {
-  const globs = spec.inputScopes.map(pathGlob);
-  const files = await repoFiles(target.root);
-  const literals = spec.inputScopes.filter((scope) => !/[*?]/.test(scope));
-  for (const path of literals) await resolveFilePath(target.root, path);
-  const head = readGit(target.root, ["rev-parse", "--verify", "HEAD"]);
-  let specContentHash = null;
-  try {
-    specContentHash = hashBytes(await readFile14(specPath));
-  } catch (error) {
-    if (error.code !== "ENOENT") throw error;
-  }
-  return fingerprint(target, {
-    baseCommit: head.status === 0 ? head.stdout.trim() : null,
-    paths: [...literals, ...files.filter((path) => globs.some((glob) => matchesPath(glob, path)))],
-    inputs: { spec, callDigest, specContentHash }
-  });
-}
-async function run12(options, commandName) {
-  if (!options.name?.trim()) throw new CommandError("usage-error", [problem("missing-probe-name", "Supply --name for the outside dependency requiring verification.")]);
-  const target = await resolveTarget(options);
-  if (commandName === "probe compare") return compare(target, options);
-  if (!["before", "after"].includes(options.phase) || !options.spec || !Array.isArray(options.command) || !options.command.length) {
-    throw new CommandError("usage-error", [problem("invalid-probe-options", "Supply --phase before|after, --spec <file> and -- <executable> [args...].")]);
-  }
-  let spec;
-  let validatedSpecHash;
-  const specPath = resolve12(options.spec);
-  try {
-    const bytes = await readFile14(specPath);
-    spec = inspectJSON(bytes.toString("utf8")).value;
-    validatedSpecHash = hashBytes(bytes);
-  } catch (error) {
-    if (error instanceof CommandError) throw error;
-    throw new CommandError("failed", [problem("invalid-probe-spec", "Probe descriptor must be readable JSON.")]);
-  }
-  validateData(await schema("probe-spec"), spec);
-  const command = {
-    executable: options.command[0],
-    args: options.command.slice(1),
-    cwd: spec.cwd,
-    versionArgs: spec.versionArgs,
-    ...spec.timeoutMs === void 0 ? {} : { timeoutMs: spec.timeoutMs }
-  };
-  validateData((await schema("check-plan")).properties.checks.items.properties.command, command);
-  if (spec.timeoutMs !== void 0 && (!Number.isSafeInteger(spec.timeoutMs) || spec.timeoutMs <= 0)) {
-    throw new CommandError("usage-error", [problem("invalid-timeout", "Probe timeout must be a positive safe integer.")]);
-  }
-  if (!(await stat10(await resolvePath(target.root, spec.cwd))).isDirectory()) {
-    throw new CommandError("failed", [problem("invalid-cwd", "Probe working directory must be a directory.")]);
-  }
-  if (spec.sideEffects && !options["approved-by-user"]) {
-    throw new CommandError("blocked", [problem("probe-approval-required", "This specific side-effecting call needs --approved-by-user before execution.")]);
-  }
-  const environment = Object.fromEntries(spec.environment.map((key) => [key, process.env[key] ?? null]));
-  const binding = { name: options.name, target, spec, command, environment };
-  const callDigest = callIdentity(binding);
-  const originalState = await inputState(target, spec, callDigest, specPath);
-  if (originalState.state.inputs.specContentHash !== validatedSpecHash) {
-    throw new CommandError("failed", [problem("stale-probe-spec", "Probe descriptor changed before capture.")]);
-  }
-  const directory = await createScratch(target);
-  const runId = basename4(directory);
-  const startedAt = (/* @__PURE__ */ new Date()).toISOString();
-  const approval = spec.sideEffects ? { runId, callDigest, approvedByUser: true } : null;
-  let execution = null;
-  let status = "unverified";
-  let reason = null;
-  const controller = new AbortController();
-  const cancel = () => controller.abort();
-  process.on("SIGINT", cancel);
-  process.on("SIGTERM", cancel);
-  try {
-    execution = await runCommand(target, command, { signal: controller.signal });
-    status = execution.status === "passed" ? "passed" : execution.error || execution.cancelled || execution.timedOut || execution.toolVersion.status !== "passed" ? "unverified" : "failed";
-    reason = execution.error ?? (execution.cancelled ? "Probe was cancelled." : execution.timedOut ? "Probe timed out." : execution.toolVersion.status !== "passed" ? "Tool version was unavailable." : status === "failed" ? "Live call did not meet the asserted outcome." : null);
-  } catch (error) {
-    reason = error.message;
-  } finally {
-    process.removeListener("SIGINT", cancel);
-    process.removeListener("SIGTERM", cancel);
-  }
-  const finalState = await inputState(target, spec, callDigest, specPath).catch(() => null);
-  if (originalState.fingerprint !== finalState?.fingerprint) {
-    status = "blocked";
-    reason = "inputs changed during run";
-  }
-  const record = {
-    schemaVersion: 1,
-    runId,
-    ...binding,
-    specPath,
-    phase: options.phase,
-    callDigest,
-    approval,
-    startedAt,
-    completedAt: (/* @__PURE__ */ new Date()).toISOString(),
-    originalState,
-    finalState,
-    execution,
-    status,
-    reason
-  };
-  validateData(await schema("probe-record"), record);
-  const path = join15(directory, "probe.json");
-  await writeFile8(path, JSON.stringify(record, null, 2) + "\n", { flag: "wx" });
-  return { status: status === "unverified" ? "blocked" : status, problems: reason ? [problem("probe-not-verified", reason)] : [], data: { ...record, path } };
-}
-async function compare(target, options) {
-  const problems = [];
-  const captures = {};
-  for (const phase of ["before", "after"]) {
-    try {
-      if (!options[phase]) throw new Error("Missing run ID.");
-      const record = inspectJSON(await readFile14(join15(await scratchDirectory(target, options[phase]), "probe.json"), "utf8")).value;
-      validateData(await schema("probe-record"), record);
-      validateData(await schema("probe-spec"), record.spec);
-      validateData((await schema("check-plan")).properties.checks.items.properties.command, record.command);
-      captures[phase] = record;
-      if (record.runId !== options[phase] || record.phase !== phase || record.name !== options.name || canonicalJSON(record.target) !== canonicalJSON(target) || record.callDigest !== callIdentity(record)) {
-        problems.push(problem("incompatible-probe", `${phase} capture does not identify this probe, phase and target.`));
-      }
-      if (record.status !== "passed" || record.execution?.status !== "passed" || record.execution.toolVersion?.status !== "passed" || record.originalState.fingerprint !== record.finalState?.fingerprint) {
-        problems.push(problem("probe-not-verified", `${phase} probe is not verified: ${record.reason ?? "No complete successful execution."}`));
-      }
-      if (record.spec.sideEffects && (!record.approval?.approvedByUser || record.approval.runId !== record.runId || record.approval.callDigest !== record.callDigest)) {
-        problems.push(problem("probe-approval-required", `${phase} capture lacks approval for that specific call.`));
-      }
-    } catch {
-      problems.push(problem(`missing-${phase}-probe`, `No readable valid ${phase} probe was supplied.`));
-    }
-  }
-  const { before, after } = captures;
-  if (before && after) {
-    if (before.callDigest !== after.callDigest || canonicalJSON(before.spec) !== canonicalJSON(after.spec)) {
-      problems.push(problem("probe-pair-mismatch", "Before and after must repeat the same command, endpoint and relevant environment, with the same descriptor."));
-    }
-    if (before.runId === after.runId || before.completedAt > after.startedAt) problems.push(problem("probe-order", "The before probe must finish before the after probe starts."));
-    const environment = Object.fromEntries(after.spec.environment.map((key) => [key, process.env[key] ?? null]));
-    const current = await inputState(target, after.spec, after.callDigest, after.specPath).catch(() => null);
-    if (current?.fingerprint !== after.finalState?.fingerprint || canonicalJSON(environment) !== canonicalJSON(after.environment)) {
-      problems.push(problem("stale-probe", "The after probe no longer matches current declared inputs or relevant environment."));
-    }
-  }
-  return {
-    status: problems.length ? "failed" : "passed",
-    problems,
-    data: {
-      name: options.name,
-      before: before?.runId ?? null,
-      after: after?.runId ?? null,
-      verified: !problems.length,
-      assumption: after?.spec.assumption ?? before?.spec.assumption ?? null
-    }
-  };
-}
-
 // runtime/scripts/commands/state.mjs
-async function run13(options) {
+async function run12(options) {
   if (!options.run) throw new CommandError("usage-error", [{ code: "missing-run", message: "--run is required.", fix: "Supply the run ID returned by apply." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   const { journal } = await loadJournal(target, options.run);
@@ -4081,11 +3884,11 @@ async function run13(options) {
 }
 
 // runtime/scripts/commands/inspect.mjs
-import { readFile as readFile15 } from "node:fs/promises";
-import { join as join16 } from "node:path";
-import { spawnSync as spawnSync7 } from "node:child_process";
+import { readFile as readFile14 } from "node:fs/promises";
+import { join as join15 } from "node:path";
+import { spawnSync as spawnSync6 } from "node:child_process";
 var manifests = /* @__PURE__ */ new Set(["package.json", "package-lock.json", "npm-shrinkwrap.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb", "pyproject.toml", "requirements.txt", "Pipfile", "Pipfile.lock", "uv.lock", "poetry.lock", "Cargo.toml", "Cargo.lock", "go.mod", "go.sum", "Gemfile", "Gemfile.lock", "composer.json", "composer.lock"]);
-async function run14(options) {
+async function run13(options) {
   const target = await resolveTarget(options);
   const problems = [];
   const tools = /* @__PURE__ */ new Set(["git", "node"]);
@@ -4093,7 +3896,7 @@ async function run14(options) {
   for (const path of await repoFiles(target.root)) {
     const name = path.split("/").at(-1);
     if (!manifests.has(name)) continue;
-    const bytes = await readFile15(join16(target.root, path));
+    const bytes = await readFile14(join15(target.root, path));
     detected.push({ path, hash: hashBytes(bytes) });
     if (name === "package.json") {
       try {
@@ -4119,7 +3922,7 @@ async function run14(options) {
     let version;
     try {
       const selected = await selectCommand(tool, [tool === "go" ? "version" : "--version"]);
-      version = spawnSync7(selected.executable, selected.args, { cwd: target.root, encoding: "utf8", timeout: 1e4 });
+      version = spawnSync6(selected.executable, selected.args, { cwd: target.root, encoding: "utf8", timeout: 1e4 });
     } catch (error) {
       version = { error };
     }
@@ -4158,8 +3961,8 @@ async function run14(options) {
 }
 
 // runtime/scripts/commands/inventory.mjs
-import { readFile as readFile16 } from "node:fs/promises";
-import { basename as basename5, dirname as dirname9, join as join17, relative as relative10, sep as sep4 } from "node:path";
+import { readFile as readFile15 } from "node:fs/promises";
+import { basename as basename5, dirname as dirname8, join as join16, relative as relative10, sep as sep4 } from "node:path";
 var documentNames = {
   vision: /^(?:vision|goals|purpose|product[-_ ]?requirements|requirements|prd)$/i,
   design: /^(?:design|architecture|technical[-_ ]?design|principles)$/i,
@@ -4179,24 +3982,24 @@ function kindFor(path) {
   if (path.split("/").slice(0, -1).some((part) => /^(?:adr|adrs|decisions|architecture-decisions)$/i.test(part))) return "decisions";
   return Object.entries(documentNames).find(([, pattern]) => pattern.test(stem))?.[0] ?? null;
 }
-async function run15(options) {
+async function run14(options) {
   const target = await resolveTarget(options, { draftOnly: true });
   const files = [];
   const candidates = [];
   const shadowing = [];
   const paths = new Set(await repoFiles(target.root));
   async function add(path) {
-    const absolute = join17(target.root, path);
+    const absolute = join16(target.root, path);
     const kind = kindFor(path);
     if (!kind) return;
-    const bytes = await readFile16(absolute);
+    const bytes = await readFile15(absolute);
     const file = { path, hash: hashBytes(bytes), kind };
     if (kind === "instructions") {
-      const directory = dirname9(absolute);
-      const scopeDirectory = basename5(path) === "CLAUDE.md" && basename5(directory) === ".claude" ? dirname9(directory) : directory;
+      const directory = dirname8(absolute);
+      const scopeDirectory = basename5(path) === "CLAUDE.md" && basename5(directory) === ".claude" ? dirname8(directory) : directory;
       const scope = relative10(target.root, scopeDirectory).split(sep4).join("/") || ".";
       Object.assign(file, {
-        directory: dirname9(path),
+        directory: dirname8(path),
         scope,
         insideRepo: true,
         scoped: scope !== ".",
@@ -4204,12 +4007,12 @@ async function run15(options) {
       });
       if (file.local) shadowing.push({ path, scope, insideRepo: true, modifiable: false, reason: "Possible shadowing of AGENTS.md. Preserve this instruction source." });
       else if (basename5(path) === "CLAUDE.md") {
-        const destination = relative10(target.root, join17(scopeDirectory, "AGENTS.md")).split(sep4).join("/");
+        const destination = relative10(target.root, join16(scopeDirectory, "AGENTS.md")).split(sep4).join("/");
         let equivalent = false;
         try {
-          const agents = paths.has(destination) ? await readFile16(join17(scopeDirectory, "AGENTS.md")) : null;
+          const agents = paths.has(destination) ? await readFile15(join16(scopeDirectory, "AGENTS.md")) : null;
           const content = bytes.toString("utf8").trim();
-          const importPath = relative10(directory, join17(scopeDirectory, "AGENTS.md")).split(sep4).join("/");
+          const importPath = relative10(directory, join16(scopeDirectory, "AGENTS.md")).split(sep4).join("/");
           equivalent = agents !== null && (bytes.equals(agents) || content === `@${importPath}` || content === `@./${importPath}`);
         } catch (error) {
           if (error.code !== "ENOENT") throw error;
@@ -4233,18 +4036,18 @@ async function run15(options) {
 }
 
 // runtime/scripts/commands/cite-check.mjs
-import { readFile as readFile17 } from "node:fs/promises";
-import { spawnSync as spawnSync8 } from "node:child_process";
-async function run16(options) {
+import { readFile as readFile16 } from "node:fs/promises";
+import { spawnSync as spawnSync7 } from "node:child_process";
+async function run15(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let report;
   try {
-    report = JSON.parse(await readFile17(options.report, "utf8"));
+    report = JSON.parse(await readFile16(options.report, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-report", message: "Report must be readable JSON.", path: options.report, fix: "Supply a readable research report." }]);
   }
-  const schema2 = JSON.parse(await readFile17(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
+  const schema2 = JSON.parse(await readFile16(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
   validateData(schema2, report);
   validateIds(report.briefs, "$/briefs");
   const problems = [];
@@ -4256,7 +4059,7 @@ async function run16(options) {
       const problem2 = (code, message) => problems.push({ code, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
       let bytes;
       try {
-        bytes = await readFile17(await resolvePath(target.root, path));
+        bytes = await readFile16(await resolvePath(target.root, path));
       } catch (error) {
         if (error instanceof CommandError) problems.push(...error.problems);
         else problem2("citation-file-unavailable", "Cited path must be a readable file.");
@@ -4272,8 +4075,8 @@ async function run16(options) {
         if (hashBytes(bytes) !== value) problem2("stale-citation", "Cited exact file bytes have changed.");
       } else {
         const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
-        const recorded = spawnSync8("git", ["-C", target.root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
-        const current = spawnSync8("git", ["-C", target.root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
+        const recorded = spawnSync7("git", ["-C", target.root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
+        const current = spawnSync7("git", ["-C", target.root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
         if (recorded.error || current.error || recorded.status !== 0 || current.status !== 0) problem2("citation-revision-unavailable", "Cited revision or file object is unavailable.");
         else if (recorded.stdout.trim() !== current.stdout.trim()) problem2("stale-citation", "Current file bytes differ from the cited revision.");
       }
@@ -4294,15 +4097,15 @@ async function run16(options) {
 }
 
 // runtime/scripts/commands/contract-test.mjs
-import { readFile as readFile18 } from "node:fs/promises";
+import { readFile as readFile17 } from "node:fs/promises";
 async function readJSON(path) {
   try {
-    return JSON.parse(await readFile18(path, "utf8"));
+    return JSON.parse(await readFile17(path, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-input", message: `Input must be readable JSON: ${path}`, fix: "Supply a readable JSON file.", path: String(path) }]);
   }
 }
-async function run17(options) {
+async function run16(options) {
   if (!options.input) throw new CommandError("usage-error", [{ code: "missing-input", message: "--input is required.", fix: "Supply --input <file>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   const schema2 = await readJSON(options.schema ?? new URL("../schemas/contract-test.json", import.meta.url));
@@ -4335,16 +4138,15 @@ await dispatch(process.argv.slice(2), "repo-audit", {
   "evidence validate": { options: ["contract", "base", "assessment", "previous-contract"], help: "Validate live change coverage, substantive review freshness and captured required checks.\nUsage: repo-audit.mjs evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Assessment follows schemas/evidence.schema.json. Returns the current review fingerprint; review must bind it explicitly. Missing prior policy, decisions or checks block completion. Structural validation cannot prove semantic correctness.", run: run7 },
   "rule-proof": { options: ["check-plan", "check-id", "valid", "violation", "expect"], help: "Prove a selected native check against disposable valid and violation copies.\nUsage: repo-audit.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]\nUses schemas/check-plan.json. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.", run: run8 },
   "baseline check": { options: ["baseline", "violations", "refresh", "finding", "findings", "entry"], help: "Check visible temporary debt and reject new or fixed entries.\nUsage: repo-audit.mjs baseline check --repo <path> --baseline <repo-relative-file> --violations <file> [--refresh [--finding <id> --findings <file> --entry <file>]] [--json]\nBaseline follows schemas/baseline.schema.json; violations are an array of rule/path/key objects. Refresh removes fixed entries. Adding one entry requires a selected unresolved debt finding in its scope. A failing refresh writes nothing.", run: run9 },
-  "project create": { options: ["plan", "dry-run"], help: "Create or resume the approved minimal project.\nUsage: repo-audit.mjs project create --workspace <existing-directory> --plan <file> [--dry-run] [--json]\nPlan follows schemas/project-create.json and references a reviewed change set. Dry run builds only in scratch. Repeat the unchanged plan to recover directory, file and Git creation. Failed setup or journey keeps the project unverified.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run11 },
-  "probe record": { options: ["name", "phase", "spec", "approved-by-user", "command"], help: "Capture a live call in scratch.\nUsage: repo-audit.mjs probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]\nDescriptor follows schemas/probe-spec.json. Side effects require approval for each call. Unavailable calls remain unverified.", run: run12 },
-  "probe compare": { options: ["name", "before", "after"], help: "Require a successful matching live probe pair for an outside dependency.\nUsage: repo-audit.mjs probe compare --repo <path> --name <n> --before <run-id> --after <run-id> [--json]\nMissing, mismatched, unsuccessful or stale evidence cannot pass.", run: run12 },
+  "probe record": { options: ["name", "phase", "spec", "approved-by-user", "command"], help: "Capture a live call in scratch.\nUsage: repo-audit.mjs probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]\nDescriptor follows schemas/probe-spec.json. Side effects require approval for each call. Unavailable calls remain unverified.", run: run10 },
+  "probe compare": { options: ["name", "before", "after"], help: "Require a successful matching live probe pair for an outside dependency.\nUsage: repo-audit.mjs probe compare --repo <path> --name <n> --before <run-id> --after <run-id> [--json]\nMissing, mismatched, unsuccessful or stale evidence cannot pass.", run: run10 },
   "run-checks": { options: ["plan", "phase", "prior-run"], help: "Capture declared checks and user outcome coverage in scratch.\nUsage: repo-audit.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]\nPhase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Outside dependencies also require probe record and probe compare.", run: run5 },
-  "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run10 },
-  "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: repo-audit.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run13 },
+  "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run11 },
+  "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: repo-audit.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run12 },
   "findings validate": { options: ["findings"], help: "Validate findings and assess current readiness without writes.\nUsage: repo-audit.mjs findings validate --repo <path>|--workspace <path> --findings <file> [--json]", run: run6 },
   "findings render": { options: ["findings"], help: "Render a proposed audit record only in scratch and return its path.\nUsage: repo-audit.mjs findings render --repo <path>|--workspace <path> --findings <file> [--json]", run: run6 },
-  "inspect": { options: [], help: "Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]", run: run14 },
-  "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run15 },
-  "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run16 },
-  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run17 }
+  "inspect": { options: [], help: "Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]", run: run13 },
+  "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run14 },
+  "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run15 },
+  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run16 }
 });
