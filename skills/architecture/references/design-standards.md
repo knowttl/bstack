@@ -42,7 +42,8 @@ Keep proposals as drafts until selected, and keep review before apply for docume
 
 `/maintenance` reads the project's contract, `.bstack/project.json`, to find which document owns module boundaries, and it routes drift in that document to `/architecture maintain`.
 Register the design or architecture document on its document record with the ID `design`, because that exact ID is how the owner is found.
-Only propose registration when the project already has a contract, as a separate selected `replace-file` edit of that file with its complete reviewed content, following `schemas/project.schema.json`.
+Only propose registration when the project already has a contract, independently for selection, following `schemas/project.schema.json`.
+Consolidate it with any other selected changes to that file into one `replace-file` edit with its complete reviewed content.
 A project without a contract gets no new one from this skill, because registering documents and checks belongs to `/maintenance`.
 
 ## CODING_STANDARDS.md

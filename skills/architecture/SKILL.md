@@ -90,13 +90,14 @@ Done when: Every selected rule has a passing proof or is reported unproven with 
 ### Step 5: Review and apply
 
 Record the findings in scratch following `schemas/findings.schema.json` with stage `audit`, the target and the reviewed paths as its scope, and run `node scripts/architecture.mjs findings validate --repo <target> --findings <file> --json`, with `--workspace` for a new idea.
-Prepare a change set following `schemas/change-set.schema.json` with the exact approved UTF-8 bytes and their hashes for each selected design section, rule configuration, baseline, decision record and standards file, one edit each so the user can deselect any of them.
+Keep each design section, rule configuration, baseline, decision record and standards proposal independently selectable.
+After selection, consolidate all selected changes to the same resolved file into one complete edit following `schemas/change-set.schema.json`, with the exact reviewed UTF-8 bytes and their hashes; use `create` for a new file and `replace-file` for multiple changes to an existing file.
 Include `starting-checks` in the findings' `requiredOutcomes`, as required by stage `audit`.
 A new idea uses mode `workspace` with a null revision, and an existing repo uses mode `repo` with its current revision.
 Run `node scripts/architecture.mjs apply --repo <target> --plan <file> --dry-run --json`, with `--workspace` for a new idea, present the exact diff, then run the unchanged plan without `--dry-run` only after the user approves those bytes.
 Use `state show` with the returned run ID to inspect an interrupted apply, and repeat the unchanged plan to resume.
-When the repo already has `.bstack/project.json`, propose registering the design document under the ID `design` as a separate selected edit in the same plan, following the [design standards reference](references/design-standards.md#register-the-design-document); otherwise do not create a contract.
-Propose each pointer line as a separate selected edit in the same plan, following the [pointer guide](references/agents-pointer.md): `Follow the module boundaries in DESIGN.md when adding or moving code.` linking the design document's real path, and `Review changes against the standards in CODING_STANDARDS.md.` only when that file was written.
+When the repo already has `.bstack/project.json`, propose registering the design document under the ID `design` independently for selection in the same review, following the [design standards reference](references/design-standards.md#register-the-design-document); otherwise do not create a contract.
+Propose each pointer line independently for selection, then consolidate selected lines into one edit of `AGENTS.md` in the same plan, following the [pointer guide](references/agents-pointer.md): `Follow the module boundaries in DESIGN.md when adding or moving code.` linking the design document's real path, and `Review changes against the standards in CODING_STANDARDS.md.` only when that file was written.
 
 Done when: Only the approved files, and any selected registration or pointer, have been written with unchanged hash preconditions and recoverable originals, or the write remains blocked with its reason.
 
@@ -150,7 +151,7 @@ Done when: Every candidate has one class with its evidence or a stated reason fo
 
 Propose each design edit and each new boundary rule independently with its evidence and obtain the user's selection.
 Prove every selected new rule as in Step 4 and keep existing violations in the baseline.
-Record the selection in scratch as a finding with stage `audit` and a change set that replaces each design file with the complete reviewed UTF-8 content, with the same target and `starting-checks` outcome as `create`.
+Record the selection in scratch as a finding with stage `audit` and prepare the change set as in Step 5, consolidating all selected changes into one complete edit per resolved file, with the same target and `starting-checks` outcome as `create`.
 Run `apply --repo <target> --plan <file> --dry-run --json`, present the exact diff, then run the unchanged plan without `--dry-run` only after the user approves those bytes.
 Use `state show` to inspect an interrupted apply, and repeat the unchanged plan to resume.
 
