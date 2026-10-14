@@ -1,10 +1,10 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { parseArgs } from '../../skills/repo-audit/scripts/lib/args.mjs'
-import { CommandError, emitResult } from '../../skills/repo-audit/scripts/lib/result.mjs'
-import { resolveTarget } from '../../skills/repo-audit/scripts/lib/repo.mjs'
-import { resolvePath } from '../../skills/repo-audit/scripts/lib/paths.mjs'
-import { createScratch } from '../../skills/repo-audit/scripts/lib/scratch.mjs'
+import { parseArgs } from '../../runtime/scripts/lib/args.mjs'
+import { CommandError, emitResult } from '../../runtime/scripts/lib/result.mjs'
+import { resolveTarget } from '../../runtime/scripts/lib/repo.mjs'
+import { resolvePath } from '../../runtime/scripts/lib/paths.mjs'
+import { createScratch } from '../../runtime/scripts/lib/scratch.mjs'
 
 // This public test command exercises C4a before production dispatch lands in C4c.
 const argv = process.argv.slice(2)

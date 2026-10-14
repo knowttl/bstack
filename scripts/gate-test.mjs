@@ -1,7 +1,7 @@
 import { execFileSync, spawnSync } from 'node:child_process'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { selectCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
+import { selectCommand } from '../runtime/scripts/lib/run.mjs'
 
 // The Test gate's command: a Markdown-only change cannot break executable code, so it runs the package check and
 // the task whose suites read skills and documents. Any other change, or any doubt about the diff, runs the full suite.

@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { root, text, object, array, options, readJSON, checkRegistry, fail } from './lib/evaluation.mjs'
-import { validateData } from '../skills/repo-audit/scripts/lib/schema.mjs'
-import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { validateData } from '../runtime/scripts/lib/schema.mjs'
+import { emitResult } from '../runtime/scripts/lib/result.mjs'
 import { releaseGate } from './lib/release-evidence.mjs'
 import { correctedScore, validateScore } from './lib/evaluation-scoring.mjs'
 

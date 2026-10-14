@@ -4,12 +4,13 @@ import { fileURLToPath } from 'node:url'
 import { isBuiltin } from 'node:module'
 import { parse } from 'acorn'
 import { lexer } from 'marked'
-import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { emitResult } from '../runtime/scripts/lib/result.mjs'
 
 // Keep the default independent of the caller's working directory.
 const skillsRoot = fileURLToPath(new URL('../skills/', import.meta.url))
 // The slop baseline maps principles to per-language tools by design, so only this file may name them.
-const languageToolReference = fileURLToPath(new URL('../skills/verification/references/slop-baseline.md', import.meta.url))
+// It is identified by skill name because installed and staged copies live at other paths.
+const languageToolReference = { skill: 'verification', file: 'references/slop-baseline.md' }
 // Installed dependencies, Git data and local scratch are not authored resources.
 const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
 // Recognise common bundled lint policies without prescribing a language stack.
@@ -106,6 +107,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
   const document = files.get('SKILL.md') ?? ''
   const frontmatter = document.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)
   const body = frontmatter ? document.slice(frontmatter[0].length) : document
+  const skillName = frontmatter?.[1].match(/^name:\s*(\S+)\s*$/m)?.[1]
   const dependencies = new Set()
   if (files.has('package.json')) {
     try {
@@ -144,7 +146,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     if (reference && !listed.has(file)) add('reference-unlisted', file, 'Reference is absent from the Load when table.', 'List this file in a table row under Load when.')
     if (text === null) continue
     if (implementationRouting.test(text)) add('implementation-routing', file, 'Package resource directs work into an implementation playbook.', 'Remove general development routing and keep instructions within the bounded audit.')
-    const tools = resolve(skill, file) === languageToolReference ? [] : [...new Set([...text.matchAll(lintTools)].map(match => match[0].toLowerCase()))]
+    const tools = skillName === languageToolReference.skill && file === languageToolReference.file ? [] : [...new Set([...text.matchAll(lintTools)].map(match => match[0].toLowerCase()))]
     if (tools.length) add('language-policy', file, `Bundled language tool or preset names: ${tools.join(', ')}`, 'Remove bundled tool names and select tools through project research.')
     if (/\.(?:mjs|cjs|js)$/.test(file)) scriptProblems(file, text, dependencies, add)
     if (reference && lines(text) > 100 && !/^#{1,6} (?:Table of contents|Contents|TOC)\s*$/im.test(text.split(/\r?\n/).slice(0, 20).join('\n'))) {
