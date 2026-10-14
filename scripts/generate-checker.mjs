@@ -15,7 +15,7 @@ import { CommandError, emitResult } from '../runtime/scripts/lib/result.mjs'
 // Generation always resolves authored sources from this checkout, never the target.
 const root = fileURLToPath(new URL('../', import.meta.url))
 // This is the canonical generated package resource.
-const generatedPath = 'skills/repo-audit/scripts/bstack-check.mjs'
+const generatedPath = 'skills/maintenance/scripts/bstack-check.mjs'
 
 async function generate() {
   const result = await bundle(root, { entryPoints: ['scripts/checker-entry.mjs'] })
