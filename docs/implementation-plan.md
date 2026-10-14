@@ -1288,8 +1288,8 @@ T3.1 supplies the enforcement and architecture references that recommendations l
 
 1. Complete the existing-repo steps in `SKILL.md` in this order: `inspect`, `inventory`, research briefs, `cite-check`, evidence summary, a targeted interview only for gaps that change a recommendation, findings, user selection, `apply`, `run-checks`, and the audit record.
 2. When the repo already has an approved vision, the steps propose a reviewed change to it only when the audit found a real gap.
-3. A selected instruction merge moves equivalent repo-owned `CLAUDE.md` content into `AGENTS.md` and removes the `CLAUDE.md` only through `apply`, using the selected delete from T2.6.
-   Scoped and local repo instruction files are reported as `inventory` classified them and are never modified. Outside-repo instruction files are neither inspected nor reported (R28).
+3. Since R35, repo-audit reports instruction candidates and lists `/agents-md` as the last next step instead of editing instruction files.
+   The [agents-md contract](../skills/agents-md/SKILL.md) owns the merge and scoped-instruction boundaries.
 4. Run the existing-repo and clear-goals scenarios in `with` mode.
 
 **Done when**

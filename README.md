@@ -100,10 +100,8 @@ Measurements cannot prove semantic independence or predict every merge conflict,
 Review and observed user journeys remain necessary; see the [design's machine-check limits](docs/design.md#what-machines-can-check).
 
 The [recorded instruction-loading limit](docs/design.md#reusable-guidance-for-future-changes) matters before the [agents-md skill](skills/agents-md/SKILL.md) consolidates repo-owned guidance into `AGENTS.md`.
-Claude Code reads it only when no `CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or above it.
-Versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled can read only `CLAUDE.md`.
-Removing that file can therefore hide project instructions in those sessions.
-Recheck the host's official documentation and observed loading behaviour before approving removal; bstack neither inspects nor changes instruction files outside the selected repo.
+Removing `CLAUDE.md` can hide project instructions in sessions that cannot load `AGENTS.md` directly.
+Follow the skill's [host loading check](skills/agents-md/references/agents-md.md#host-loading-check) before approving removal; bstack neither inspects nor changes instruction files outside the selected repo.
 
 The examples' actual agent evidence uses one agent family and model: Codex with gpt-6.1-sol, not a host or model matrix.
 The four earlier checkpoints ran on Linux 6.8.0-142-generic with Node v24.17.0 and codex-cli 0.160.1; the foundation audits used low reasoning.
@@ -482,8 +480,7 @@ Root `CLAUDE.md`, including import-only stubs, yields a consolidation candidate 
 repo-audit only reports it and lists `/agents-md`, which owns the [merge](skills/agents-md/SKILL.md#step-3-decide-the-merge).
 Local instruction variants inside the repo are possible shadowing sources and are never proposed for modification.
 Instruction files outside the repo, including ancestor directories and user profiles, are neither inspected nor reported.
-Claude Code versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled may read only `CLAUDE.md`.
-Recheck current host loading behaviour before proposing removal.
+Follow the [host loading check](skills/agents-md/references/agents-md.md#host-loading-check) before proposing removal.
 Both commands are read-only and do not run native project checks.
 See the [discovery contract](docs/command-contract.md#inspect-and-inventory) for the supported name families and traversal limits.
 
