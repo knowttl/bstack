@@ -363,6 +363,10 @@ Duplicate canonical terms fail within the same registered context, including acr
 The same word in two different contexts is valid.
 Synonyms, contradictory definitions and domain relevance remain reviewer judgements.
 An unrecognized glossary format reports a coverage limit while supported local links in that document are still checked.
+Inline emphasis anywhere in a document is also a coverage limit that skips the whole document, so a glossary written for this check puts avoided names in plain `Avoid:` lines.
+
+`node skills/glossary/scripts/glossary.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone glossary skill.
+It runs `docs check`, `apply`, `state show` and `cite-check` from the [shared runtime](../runtime/), with the same arguments, target, scratch and result contracts as repo-audit.
 
 ## Measure and overlap
 

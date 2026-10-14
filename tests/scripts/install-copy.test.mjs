@@ -201,7 +201,7 @@ test('all-host install preserves the existing installer collision fixture before
 for (const broken of ['missing-resource', 'outside-resource', 'unpinned-runtime', 'lock-mismatch', 'symlink-source']) {
   test(`source preflight rejects ${broken} without destination mutations`, async t => {
     const f = await fixture(t)
-    if (broken === 'missing-resource') await rm(join(f.source, 'references/domain-language.md'))
+    if (broken === 'missing-resource') await rm(join(f.source, 'references/decisions.md'))
     if (broken === 'outside-resource') {
       await writeFile(join(f.checkout, 'outside.md'), 'Outside package\n')
       await writeFile(join(f.source, 'extra.md'), '[Outside](../../outside.md)\n')

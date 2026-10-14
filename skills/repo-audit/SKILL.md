@@ -52,28 +52,24 @@ Done when: The intent interview has established the required facts or named the 
 
 ### Step 2: Resolve project terms
 
-Clarify conflicting or unclear terms alongside the interview, without a separate mandatory interview.
-Use the project's vocabulary source, otherwise propose GLOSSARY.md only when useful terms are resolved.
-Keep canonical domain concepts and their distinctions in the glossary.
-Keep storage choices, frameworks and other implementation details in the design instead of treating them as domain terms.
-Naming migrations are separate selected changes.
-Load domain-language guidance from the table below when terms are unclear or conflict.
+The glossary, its context map and the resolution of conflicting or unclear terms belong to `/glossary`: list it as a next step for the user to run, and do not draft, resolve or write glossary entries here.
+Note the terms that are unclear or conflict while interviewing, so the user can bring them to it.
 
-Done when: Each term needed for the first journey has a resolved meaning or a named unresolved decision, and the proposed vocabulary contains no implementation details or empty template entries.
+Done when: `/glossary` is listed as the next step with the reason it applies, and no glossary entry has been drafted or written here.
 
 ### Step 3: Review the vision
 
 The vision, its review board and the approval of VISION.md belong to `/vision`: list it as a next step for the user to run, and do not draft, review or write the vision here.
-At this intent checkpoint, stop after the resolved vocabulary and confirmed summary.
+At this intent checkpoint, stop after the confirmed summary.
 Name protected creation in Step 5 as the later prerequisite without creating Git or project files.
 
-Done when: `/vision` is listed as the next step with the reason it applies, and the confirmed summary and resolved vocabulary are kept for it.
+Done when: `/vision` is listed as the next step with the reason it applies, and the confirmed summary is kept for it.
 
 ### Step 4: Propose the foundation
 
 Use the vision approved through `/vision` to propose the smallest sound foundation.
 Tie stack choices and meaningful alternatives to requirements, keeping the target's language independent of this skill's Node helpers.
-Cover system boundaries, module responsibilities, data flow, the first working journey and its acceptance check, needed errors, configuration and external interfaces, resolved terms and necessary review standards.
+Cover system boundaries, module responsibilities, data flow, the first working journey and its acceptance check, needed errors, configuration and external interfaces, the terms confirmed through `/glossary` and necessary review standards.
 Give each principle a reason, source, scope, enforcement method and exception policy.
 Prefer native checks and one source of truth over duplicated prose or a second verification engine.
 Distinguish automated rules from judgement rules.
@@ -90,7 +86,7 @@ Done when: Every proposed foundation change supports an approved outcome, has a 
 ### Step 5: Review and apply selected changes
 
 Present the exact changes and findings for selection using the shared review and write rules below.
-Prepare a create-only change set following schemas/change-set.schema.json, including the VISION.md approved through `/vision`, confirmed glossary when useful and selected foundation with complete UTF-8 payloads and hashes.
+Prepare a create-only change set following schemas/change-set.schema.json, including the VISION.md approved through `/vision`, the glossary confirmed through `/glossary` when useful and selected foundation with complete UTF-8 payloads and hashes.
 Use the resolved planned destination as the change set and findings target, with mode workspace and revision null.
 Prepare schemas/project-create.json in scratch, binding the creation plan to the change set digest and approved destination, stack, first journey, setup commands and prerequisites.
 Select an absent destination under an existing parent, or explicitly select an empty directory with allowEmpty true.
@@ -164,16 +160,17 @@ Done when: Every relevant evidence source is inventoried or listed as unavailabl
 
 ### Step 8: Resolve material gaps
 
-Summarise the evidence and ask the owner about missing facts, conflicting intent or policy, and competing term meanings only when they would change a recommendation.
+Summarise the evidence and ask the owner about missing facts, conflicting intent or policy, and recorded decisions that conflict with a recommendation, only when they would change it.
 Each targeted question must cite the conflicting or insufficient sources, name the affected recommendation, offer the plausible readings and recommend one with its trade-off.
 Resolve parent decisions first, group only independent questions into a small round and wait for answers before dependent recommendations.
 Recording an unresolved decision or drafting definitions for later approval does not replace asking the question.
 When the repo already answers the questions, proceed directly to recommendations without asking the user to repeat or reconfirm approved goals.
-Load interview or domain-language guidance only for a corresponding gap.
+Load interview or decisions guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
 A material vision gap or requested direction change is reported with its evidence, and `/vision` is listed as a next step for the user to run; do not draft a delta or open a board here.
-If there is no corresponding gap, do not open the intent interview or domain-language references.
-Targeted interview and language procedures are available from the table below.
+Unclear or competing term meanings that would change a recommendation are reported with their citations, and `/glossary` is listed as a next step for the user to run; do not resolve them or draft entries here.
+If there is no corresponding gap, do not open the intent interview or decisions references.
+Targeted interview and decisions procedures are available from the table below.
 
 Done when: Every material gap is resolved or explicitly blocks its dependent recommendation, settled decisions are retained, and no unnecessary interview or vision review has been opened.
 
@@ -343,7 +340,7 @@ Load a schema only to prepare or validate input for a command required by the cu
 |---|---|
 | A new idea with no repo | `references/intent-interview.md` |
 | An unresolved decision would change a recommendation | `references/grilling.md` |
-| Project terms are unclear or conflict | `references/domain-language.md` |
+| A recommendation conflicts with a recorded decision or needs a new one | `references/decisions.md` |
 | Recommending principles and their checks | `references/enforcement.md` |
 | Recommending design principles or module boundaries | `references/architecture.md` |
 | Running research in the main thread or delegating it | `references/research-briefs.md` |
