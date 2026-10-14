@@ -174,17 +174,12 @@ test('sweep reports a repo with no contract as the first item for create', async
   assert.deepEqual(swept.problems.map(problem => [problem.code, problem.fix]), [['contract-missing', 'Run /maintenance create.']])
 })
 
-for (const { name, path, text, code, fix } of [
-  { name: 'registered README inline code', path: 'README.md', text: '`command` and [missing](missing.md)\n',
-    code: 'document-coverage-limit', fix: 'No skill owns this document; correct it by hand or register it under an owning document ID.' },
-  { name: 'registered design fragment', path: 'docs/design.md', text: '[reference](../reference.md#heading)\n',
-    code: 'document-coverage-limit', fix: 'Run /architecture maintain.' },
-  { name: 'agent pointer inline code', path: 'AGENTS.md', text: '`command` and [missing](missing.md)\n',
-    code: 'document-coverage-limit', fix: 'Run /agents-md.' },
-  { name: 'agent pointer HTML', path: 'AGENTS.md', text: '<a href="missing.md">Missing</a>\n',
-    code: 'document-coverage-limit', fix: 'Run /agents-md.' },
-  { name: 'agent pointer fragment', path: 'AGENTS.md', text: '[reference](reference.md#heading)\n',
-    code: 'unsupported-link-fragment', fix: 'Run /agents-md.' }
+for (const { name, path, text } of [
+  { name: 'registered README inline code', path: 'README.md', text: '`npm start`\n' },
+  { name: 'registered design fragment', path: 'docs/design.md', text: '[reference](../reference.md#heading)\n' },
+  { name: 'agent pointer inline code', path: 'AGENTS.md', text: '`command` and [missing](missing.md)\n' },
+  { name: 'agent pointer HTML', path: 'AGENTS.md', text: '<a href="missing.md">Missing</a>\n' },
+  { name: 'agent pointer fragment', path: 'AGENTS.md', text: '[reference](reference.md#heading)\n' }
 ]) {
   test(`sweep reports incomplete coverage for ${name}`, async t => {
     const f = await documentedRepo(t)
@@ -197,10 +192,27 @@ for (const { name, path, text, code, fix } of [
     f.commit('baseline')
     const before = await snapshot(f.repo)
     const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
-    assert.equal(swept.exit, 1, JSON.stringify(swept))
-    assert.equal(swept.status, 'failed')
-    assert.deepEqual(swept.problems.map(problem => ({ code: problem.code, path: problem.path, fix: problem.fix })), [{ code, path, fix }])
-    assert.match(swept.problems[0].message, /review|coverage/)
+    assert.equal(swept.exit, 0, JSON.stringify(swept))
+    assert.equal(swept.status, 'passed')
+    assert.deepEqual(swept.problems, [])
+    assert.equal(swept.data.coverageLimits.length, 1)
+    assert.deepEqual(Object.keys(swept.data.coverageLimits[0]).sort(), ['path', 'reason'])
+    assert.equal(swept.data.coverageLimits[0].path, path)
+    assert.match(swept.data.coverageLimits[0].reason, /review|coverage/)
     assert.deepEqual(await snapshot(f.repo), before)
   })
 }
+
+test('sweep fails on a broken link while retaining unchecked scope as data', async t => {
+  const f = await documentedRepo(t)
+  await mkdir(join(f.repo, '.bstack'))
+  await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(contract))
+  await writeFile(join(f.repo, 'docs/design.md'), '[missing](missing.md)\n')
+  await writeFile(join(f.repo, 'AGENTS.md'), '`command`\n')
+  const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
+  assert.equal(swept.exit, 1, JSON.stringify(swept))
+  assert.equal(swept.status, 'failed')
+  assert.deepEqual(swept.problems.map(problem => [problem.code, problem.path, problem.fix]),
+    [['broken-local-link', 'docs/design.md', 'Run /architecture maintain.']])
+  assert.deepEqual(swept.data.coverageLimits, [{ path: 'AGENTS.md', reason: 'Inline code and escaped Markdown require renderer review.' }])
+})

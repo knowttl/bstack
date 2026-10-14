@@ -394,6 +394,8 @@ node skills/maintenance/scripts/maintenance.mjs sweep --repo <path> [--contract 
 It returns `passed` when nothing drifted and `failed` (exit 1) with one problem per drifted item, and each problem's `fix` field names the skill mode that repairs it.
 A missing contract is a `contract-missing` problem fixed by `/maintenance create`, and an invalid one returns the contract's own problem codes with the same fix.
 It then runs `docs check` and `docs generate --check` over the registered documents.
+Skipped Markdown and unsupported link fragments in registered content or `AGENTS.md` are reported as unchecked scope in `data.coverageLimits`, with a `path` and `reason`.
+Coverage limits are never problems or repair items and never fail sweep by themselves; `passed` means no drift was demonstrated in the checked scope.
 A broken link or invalid glossary entry in a document is fixed by that document's owner: `/glossary maintain` for a registered glossary, `/architecture maintain` for the document with ID `design`, `/vision` for the one with ID `vision`, and by hand for any other.
 A stale generated section is fixed by running `docs generate` in `/maintenance`.
 Code changes or document age alone never produce a repair item or fail the command.
