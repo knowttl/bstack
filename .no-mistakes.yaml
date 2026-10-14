@@ -1,6 +1,6 @@
 no_ci: true
 commands:
-  prepare: 'npm ci --prefer-offline --ignore-scripts && for p in skills/*/package.json; do npm ci --omit=dev --prefix "$(dirname "$p")"; done'
+  prepare: 'npm ci --prefer-offline --ignore-scripts && for p in skills/*/package.json; do npm ci --omit=dev --prefix "$(dirname "$p")" || exit "$?"; done'
   test: 'node scripts/gate-test.mjs'
   lint: 'npm run check'
 document:
