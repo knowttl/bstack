@@ -160,3 +160,34 @@ test('sweep reports a repo with no contract as the first item for create', async
   assert.equal(swept.exit, 1)
   assert.deepEqual(swept.problems.map(problem => [problem.code, problem.fix]), [['contract-missing', 'Run /maintenance create.']])
 })
+
+for (const { name, path, text, code, fix } of [
+  { name: 'registered README inline code', path: 'README.md', text: '`command` and [missing](missing.md)\n',
+    code: 'document-coverage-limit', fix: 'No skill owns this document; correct it by hand or register it under an owning document ID.' },
+  { name: 'registered design fragment', path: 'docs/design.md', text: '[reference](../reference.md#heading)\n',
+    code: 'document-coverage-limit', fix: 'Run /architecture maintain.' },
+  { name: 'agent pointer inline code', path: 'AGENTS.md', text: '`command` and [missing](missing.md)\n',
+    code: 'document-coverage-limit', fix: 'Run /agents-md.' },
+  { name: 'agent pointer HTML', path: 'AGENTS.md', text: '<a href="missing.md">Missing</a>\n',
+    code: 'document-coverage-limit', fix: 'Run /agents-md.' },
+  { name: 'agent pointer fragment', path: 'AGENTS.md', text: '[reference](reference.md#heading)\n',
+    code: 'unsupported-link-fragment', fix: 'Run /agents-md.' }
+]) {
+  test(`sweep reports incomplete coverage for ${name}`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract,
+      documents: [...contract.documents, { id: 'readme', path: 'README.md' }] }))
+    await writeFile(join(f.repo, 'README.md'), '# Shop\n')
+    await writeFile(join(f.repo, 'reference.md'), '# Heading with `code`\n')
+    await writeFile(join(f.repo, path), text)
+    f.commit('baseline')
+    const before = await snapshot(f.repo)
+    const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
+    assert.equal(swept.exit, 1, JSON.stringify(swept))
+    assert.equal(swept.status, 'failed')
+    assert.deepEqual(swept.problems.map(problem => ({ code: problem.code, path: problem.path, fix: problem.fix })), [{ code, path, fix }])
+    assert.match(swept.problems[0].message, /review|coverage/)
+    assert.deepEqual(await snapshot(f.repo), before)
+  })
+}

@@ -3576,6 +3576,7 @@ async function contractItems(target, options) {
   const owner = (path2) => fixFor(policy.contract.documents.find((document) => document.path === path2));
   const docs = await run2({ ...options, coveragePolicy: policy });
   items.push(...docs.problems.map((problem2) => ({ ...problem2, fix: owner(problem2.path) })));
+  items.push(...docs.data.coverageLimits.map((limit) => ({ code: "document-coverage-limit", path: limit.path, message: limit.reason, fix: owner(limit.path) })));
   const regenerate = "Run /maintenance and its docs generate command, then apply the reviewed proposal.";
   try {
     items.push(...(await run3({ ...options, check: true, coveragePolicy: policy })).problems.map((problem2) => ({ ...problem2, fix: regenerate })));
@@ -3617,10 +3618,13 @@ async function kitItems(target) {
 }
 async function pointerItems(target) {
   const text = await readIfPresent2(target.root, "AGENTS.md");
+  if (text === null) return [];
+  const limit = text.includes("\0") ? "Local links require supported Markdown text." : markdownCoverageLimit(text);
+  if (limit) return [{ code: "document-coverage-limit", path: "AGENTS.md", message: limit, fix: "Run /agents-md." }];
   const items = [];
-  for (const href of text === null ? [] : markdownLinks(text)) {
+  for (const href of markdownLinks(text)) {
     const problem2 = await checkLocalLink(target.root, "AGENTS.md", href);
-    if (problem2 && problem2.code !== "unsupported-link-fragment") items.push({ ...problem2, fix: "Run /agents-md." });
+    if (problem2) items.push({ ...problem2, fix: "Run /agents-md." });
   }
   return items;
 }
