@@ -1,15 +1,16 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
-import { build, version } from 'esbuild'
-import { parseArgs } from '../skills/repo-audit/scripts/lib/args.mjs'
-import { resolveTarget } from '../skills/repo-audit/scripts/lib/repo.mjs'
-import { createScratch } from '../skills/repo-audit/scripts/lib/scratch.mjs'
-import { fileBytes } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
-import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
-import { resolveFilePath } from '../skills/repo-audit/scripts/lib/paths.mjs'
-import { exactDiff } from '../skills/repo-audit/scripts/lib/proposed-edit.mjs'
-import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { version } from 'esbuild'
+import { bundle } from './lib/bundle.mjs'
+import { parseArgs } from '../runtime/scripts/lib/args.mjs'
+import { resolveTarget } from '../runtime/scripts/lib/repo.mjs'
+import { createScratch } from '../runtime/scripts/lib/scratch.mjs'
+import { fileBytes } from '../runtime/scripts/lib/protected-write.mjs'
+import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
+import { resolveFilePath } from '../runtime/scripts/lib/paths.mjs'
+import { exactDiff } from '../runtime/scripts/lib/proposed-edit.mjs'
+import { CommandError, emitResult } from '../runtime/scripts/lib/result.mjs'
 
 // Generation always resolves authored sources from this checkout, never the target.
 const root = fileURLToPath(new URL('../', import.meta.url))
@@ -17,8 +18,7 @@ const root = fileURLToPath(new URL('../', import.meta.url))
 const generatedPath = 'skills/repo-audit/scripts/bstack-check.mjs'
 
 async function generate() {
-  const result = await build({ absWorkingDir: root, entryPoints: ['scripts/checker-entry.mjs'], bundle: true,
-    platform: 'node', target: 'node24', format: 'esm', write: false, metafile: true, legalComments: 'none' })
+  const result = await bundle(root, { entryPoints: ['scripts/checker-entry.mjs'] })
   const files = [...Object.keys(result.metafile.inputs), 'scripts/generate-checker.mjs', 'package.json', 'package-lock.json'].sort()
   const inputs = await Promise.all(files.map(async path => ({ path, sha256: hashBytes(await readFile(join(root, path))) })))
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))

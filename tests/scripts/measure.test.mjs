@@ -4,7 +4,7 @@ import { appendFile, mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { build, emptyRepo, git, run, snapshot } from './discovery-fixture.mjs'
-import { repoFiles } from '../../skills/repo-audit/scripts/lib/discovery.mjs'
+import { repoFiles } from '../../runtime/scripts/lib/discovery.mjs'
 
 function commitIndex(repo, message, date) {
   const result = spawnSync('git', ['-C', repo, '-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', message], {

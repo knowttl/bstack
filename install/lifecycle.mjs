@@ -1,10 +1,10 @@
 import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rename, rmdir, unlink, writeFile } from 'node:fs/promises'
 import { basename, dirname, join, relative } from 'node:path'
 import { createInterface } from 'node:readline/promises'
-import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
-import { resolvePath } from '../skills/repo-audit/scripts/lib/paths.mjs'
-import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
-import { CommandError } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
+import { resolvePath } from '../runtime/scripts/lib/paths.mjs'
+import { saveRecovery } from '../runtime/scripts/lib/protected-write.mjs'
+import { CommandError } from '../runtime/scripts/lib/result.mjs'
 
 function blocked(code, message) {
   throw new CommandError('blocked', [{ code, message, fix: 'Preserve the installation and journal. Review the reported paths before retrying.' }])
@@ -182,7 +182,7 @@ export async function approveRecoveryReplacements(entry, selected, runtimeVersio
     journal.files = { ...journal.record.files }
     journal.fileVersions = { ...journal.record.fileVersions }
     plan = journal.plan = { operations: [], conflicts: [], desired: journal.record.files, version: journal.record.sourceVersion,
-      runtime: journal.record.runtime.version, uninstall: false, runtimeAllowed: true }
+      runtime: journal.record.runtime?.version ?? null, uninstall: false, runtimeAllowed: Boolean(journal.record.runtime) }
   }
   if (entry.cleanup) {
     for (const file of entry.sourceFiles.filter(file => Object.hasOwn(plan.desired, file.path))) {
@@ -398,8 +398,9 @@ export async function planLifecycle(entry, files, version, runtime, selected) {
   const runtimePath = join(entry.destination, 'node_modules')
   let runtimeStat
   try { runtimeStat = await lstat(runtimePath) } catch (error) { if (error.code !== 'ENOENT') throw error }
-  const runtimeAllowed = !runtimeStat || await ownsRuntime(runtimePath, previous.runtime)
-  if (!runtimeAllowed && (!selected.uninstall || previous.runtime?.created)) conflicts.push({ path: 'node_modules', actualHash: 'unowned-runtime', diff: 'Preserve runtime directory whose ownership or type cannot be verified.', decision: entry.runtimeDecision?.decision ?? 'Review runtime ownership before retrying.' })
+  // A skill that pins no runtime never touches the runtime directory.
+  const runtimeAllowed = runtime !== null && (!runtimeStat || await ownsRuntime(runtimePath, previous.runtime))
+  if (runtime !== null && !runtimeAllowed && (!selected.uninstall || previous.runtime?.created)) conflicts.push({ path: 'node_modules', actualHash: 'unowned-runtime', diff: 'Preserve runtime directory whose ownership or type cannot be verified.', decision: entry.runtimeDecision?.decision ?? 'Review runtime ownership before retrying.' })
   return { operations, conflicts, desired, version, runtime, uninstall: Boolean(selected.uninstall),
     runtimeAllowed }
 }
@@ -548,7 +549,7 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
     } else runtime = await ownsRuntime(target, runtime) ? runtime : activatedRuntime
   }
   const complete = !journal.plan.uninstall && !conflicts.length && canonicalJSON(journal.files) === canonicalJSON(journal.plan.desired) &&
-    runtime?.version === journal.plan.runtime
+    (runtime?.version ?? null) === journal.plan.runtime
   const record = { ...journal.record, files: journal.files, fileVersions: journal.fileVersions, runtime,
     sourceVersion: complete ? journal.plan.version : journal.plan.uninstall && !Object.keys(journal.files).length && !runtime ? 'uninstalled' : 'mixed' }
   delete record.acceptedAdoption
@@ -635,7 +636,7 @@ export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVer
   if (journal.record.destination !== entry.destination || journal.ownership !== entry.ownership ||
       dirname(journal.stage) !== entry.parent || !basename(journal.stage).startsWith('.bstack-stage-')) blocked('journal-mismatch', 'Journal paths do not match the selected installation.')
   const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
-  if (canonicalJSON(journal.record.files) !== canonicalJSON(hashes) || journal.record.runtime.version !== runtime) blocked('journal-source-changed', 'Resume requires the original source package and pinned runtime.')
+  if (canonicalJSON(journal.record.files) !== canonicalJSON(hashes) || (journal.record.runtime?.version ?? null) !== runtime) blocked('journal-source-changed', 'Resume requires the original source package and pinned runtime.')
   const activated = ['activated', 'completed'].includes(journal.state) || !await exists(journal.stage)
   const directory = activated ? entry.destination : journal.stage
   for (const file of files) {
@@ -661,15 +662,15 @@ export async function resumeCopy(entry, files, runtime, checkPackage, runtimeVer
   if (!await runtimeVersion(directory, runtime)) blocked('pending-recovery', 'Runtime installation did not produce the pinned runtime.')
   const problems = await checkPackage(directory)
   if (problems.length) throw new CommandError('blocked', problems)
-  if (!journal.record.runtime.identity && !activated) {
+  if (journal.record.runtime && !journal.record.runtime.identity && !activated) {
     journal.record.runtime.identity = await runtimeIdentity(join(directory, 'node_modules'))
     await saveRecovery(entry.journal, journal)
   }
-  if (journal.record.runtime.identity && !await ownsRuntime(join(directory, 'node_modules'), { ...journal.record.runtime, path: join(directory, 'node_modules') })) blocked('runtime-conflict', 'Prepared runtime directory identity changed before recovery.')
+  if (journal.record.runtime?.identity && !await ownsRuntime(join(directory, 'node_modules'), { ...journal.record.runtime, path: join(directory, 'node_modules') })) blocked('runtime-conflict', 'Prepared runtime directory identity changed before recovery.')
   if (journal.update) {
     entry.previous = journal.update.previous
     entry.recovery = null
-    return applyLifecycle(entry, journal.update.plan, journal.stage, runtimeVersion, { ...journal.record.runtime, path: join(journal.stage, 'node_modules') })
+    return applyLifecycle(entry, journal.update.plan, journal.stage, runtimeVersion, journal.record.runtime && { ...journal.record.runtime, path: join(journal.stage, 'node_modules') })
   }
   if (!activated) {
     await verifyDestination(entry)

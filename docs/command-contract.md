@@ -633,7 +633,7 @@ See the [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md) for
 
 Verdicts takes the complete-round Context data JSON embedded in the terminal's vision-verdict prompt.
 Copy that JSON unchanged to a scratch file, retaining the captured terminal response as provenance.
-The installed [vision-verdicts schema](../skills/repo-audit/schemas/vision-verdicts.json) defines the input fields and accepted verdict labels:
+The [vision-verdicts schema source](../runtime/schemas/vision-verdicts.json) defines the input fields and accepted verdict labels:
 
 ```json
 {
@@ -664,7 +664,7 @@ node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <existi
 ```
 
 The owner approves intent and the exact scratch vision first, then selects the destination, stack, minimal scaffold and first journey.
-The versioned [creation schema](../skills/repo-audit/schemas/project-create.json) owns the plan's fields and command objects.
+The versioned [creation schema source](../runtime/schemas/project-create.json) owns the plan's fields and command objects.
 `workspace` identifies the real idea directory.
 The destination path is workspace-relative and its resolvedPath binds the reviewed absolute location.
 `changeSet` resolves relative to the creation plan.
@@ -781,16 +781,17 @@ Child execution and fingerprints are implemented in C4b.
 
 ## Installer copy and preview (C25a)
 
-`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]` installs, updates or removes the skill beside the installer.
+`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--skill <name>]... [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]` installs, updates or removes the skill folders beside the installer.
+Without `--skill` it handles every folder under `skills/` that holds a `SKILL.md`, one skill at a time and each on its own records; repeated `--skill` selects some, and an unknown name is a usage error that lists the available skills.
 The scope and host are required, project scope requires an existing project directory, and user scope rejects `--project`.
-Unknown, repeated or missing arguments return usage error before dependency calls, except that `--replace` and `--adopt-runtime` can repeat for distinct decisions.
+Unknown, repeated or missing arguments return usage error before dependency calls, except that `--skill`, `--replace` and `--adopt-runtime` can repeat for distinct values.
 `--help` prints the supported interface.
 `--link` selects the developer-checkout link lifecycle described below.
 C25c and AC-74 use Linux-only installer acceptance under the owner's 2026-10-10 scope amendment.
 Windows and macOS execution remains unverified and is outside this acceptance scope.
 
-Claude uses `.claude/skills/repo-audit`, and agents uses `.agents/skills/repo-audit`, beneath the selected real home or project root.
-`all` selects both, deduplicates their canonical destinations and checks every destination before staging any copy.
+Claude uses `.claude/skills/<skill>`, and agents uses `.agents/skills/<skill>`, beneath the selected real home or project root.
+For each skill, `all` selects both, deduplicates their canonical destinations and checks every destination before staging any copy for that skill.
 Escaping destination links are rejected through the shared path resolver.
 An occupied folder without matching external ownership is always blocked, including an empty folder or one containing files identical to source.
 The installer never adopts an existing dependency directory.
@@ -813,12 +814,14 @@ Owned files must remain regular files, and source and staged authored inventorie
 
 Copy installation stages only authored files in a unique `.bstack-stage-*` sibling of the destination.
 Git data, node_modules, caches and scratch are excluded.
-The shared child runner executes `npm ci --omit=dev --no-audit --no-fund` in the stage, including the Windows npm adapter and bounded command capture.
-The package checker, authored hashes and installed lavish-axi version must pass before activation.
+For a skill with a pinned runtime, the shared child runner executes `npm ci --omit=dev --no-audit --no-fund` in the stage, including the Windows npm adapter and bounded command capture.
+The package checker, authored hashes and any pinned lavish-axi version must pass before activation.
 Dependency scripts that alter authored files cannot activate a copy.
 The source skill and its runtime are never changed by copy installation.
 
-Each host skills parent holds `.bstack-install.json` with schema version 1, copy mode, source version, absolute destination, exact authored `files` hashes and a separate `runtime` record with path, version and `created: true`.
+Each host skills parent holds one ownership file per skill: `.bstack-install.json` for repo-audit, which predates multi-skill installs, and `.bstack-install-<skill>.json` for every other skill.
+It records schema version 1, copy mode, source version, absolute destination, exact authored `files` hashes and a separate `runtime` record with path, version and `created: true`.
+A skill without a `package.json` pins no runtime, runs no npm install, and records `runtime: null`; a skill whose installed record has a runtime but whose source no longer pins one blocks with `runtime-dropped`.
 Mutable caches, backups and dependency contents are absent from `files`.
 Lifecycle records also retain `fileVersions`, preserving the source provenance of each owned hash.
 An incomplete update records `sourceVersion: "mixed"`, retains the last owned hashes of edited files, and reports actual installed hashes separately under `data.installations[].files`.
@@ -851,11 +854,11 @@ It prunes empty directories without following links and reports every retained p
 Retained owned files keep their original ownership hashes and versions for later explicit cleanup and return blocked.
 Unowned retained files alone do not block successful removal, and ownership is removed when no owned file or runtime remains.
 A later install into that remaining unowned folder blocks instead of adopting it.
-`.bstack-install-journal.json` holds the stage, intended ownership and activation state before the directory rename.
+The journal, `.bstack-install-journal.json` for repo-audit and `.bstack-install-<skill>-journal.json` for every other skill, holds the stage, intended ownership and activation state before the directory rename.
 The destination is rechecked after runtime installation, then the validated stage is renamed into place and ownership is durably saved through the existing recovery writer.
 Successful installation removes its journal.
-Multiple host destinations activate sequentially, so a later failure can leave an earlier host installed and owned.
-The operation is not an atomic transaction across hosts.
+Skills and their host destinations activate sequentially, so a later failure can leave an earlier skill or host installed and owned.
+The operation is not an atomic transaction across skills or hosts.
 
 Runtime or application failure returns non-passing output and retains the stage or activated destination plus its journal, including bounded runtime failure output.
 An npm failure never activates or claims ownership of the destination.
@@ -882,7 +885,7 @@ See the [C26 checkpoint](../tests/eval/results/invocation-C26/summary.md) for cu
 
 `--link` installs a directory symlink on Linux/macOS or a directory junction on Windows to the source skill folder.
 The source remains a developer checkout, and reports use `mode: link` even at an exact tag.
-All selected destinations are checked before mutation, and occupied unowned destinations or copy-to-link conversions block.
+All selected destinations for each skill are checked before that skill's mutation, and occupied unowned destinations or copy-to-link conversions block.
 External ownership records identify the absolute source and destination, source directory identity, source hashes and version, and link device, inode, creation time and literal target.
 Verification checks the directory entry without following it, then checks source resolution before an install or update.
 An identical target reached through a replacement link does not transfer ownership.
@@ -975,7 +978,7 @@ All other fields, including nested fields with those names, remain substantive.
 When `evidencePath` is supplied, its resolved file and every inventoried alias retain presence, mode and link state, but their serialized content is not hashed.
 The caller must include the evidence's substantive fields in `inputs`.
 This avoids a self-referential evidence hash without omitting the assessment itself.
-Portable committed identity follows the standalone execution contract above; [the assessment schema](../skills/repo-audit/schemas/evidence.schema.json) owns the implemented assessment format.
+Portable committed identity follows the standalone execution contract above; [the assessment schema source](../runtime/schemas/evidence.schema.json) owns the implemented assessment format.
 
 ## Structured inputs and later contracts
 
@@ -1007,12 +1010,12 @@ Repeated IDs report `duplicate-id` with the repeated value.
 
 ## Command dispatch
 
-The entry point registers command metadata in `scripts/commands.mjs` and loads only the selected implementation from `scripts/commands/` after argument validation.
-`<command> --help` prints that command's options without importing its implementation or resolving a target.
-No arguments print the available and planned commands with exit 3, and global `--help` succeeds.
-Unknown and unbuilt commands are usage errors.
+`runtime/scripts/commands.mjs` registers every command's metadata, and `runtime/skills.json` lists the commands each skill ships.
+The generator bundles a skill's commands and their metadata into that skill's one entry file, `skills/<skill>/scripts/<skill>.mjs`, which validates arguments before it runs the selected command.
+`<command> --help` prints that command's options without resolving a target.
+No arguments print the skill's available commands with exit 3, and global `--help` succeeds.
+Unknown commands, and commands a skill does not ship, are usage errors.
 Command implementations return data and inputs, while the entry point owns result emission and error exit codes.
-Unbuilt production commands remain listed as planned until their owning task registers them.
 
 ## C4a public test command
 
@@ -1035,7 +1038,7 @@ These fixture commands are test interfaces, not production command wiring or sch
 
 `node skills/repo-audit/scripts/repo-audit.mjs contract-test --workspace <directory> --input tests/inputs/schema-valid.json --json` exercises dispatch, schema validation and joining IDs through the installed entry point.
 It also accepts `--repo` and leaves the target unchanged.
-The installed [input schema](../skills/repo-audit/schemas/contract-test.json) owns the required fields, allowed values and unknown-field constraints.
+The [input schema source](../runtime/schemas/contract-test.json) owns the required fields, allowed values and unknown-field constraints.
 The command also checks the `records` collection with `validateIds`, as described above.
 `--schema <file>` selects an explicit definition for schema-subset tests.
 Input and schema file paths resolve from the caller's working directory, while the default schema resolves from the installed command module.
@@ -1173,7 +1176,7 @@ Dry run writes no target, scratch, dependency or journal files.
 Omitting `--dry-run` applies or resumes the reviewed plan with backups and a durable journal.
 The plan digest selects the run automatically.
 
-The [change-set schema](../skills/repo-audit/schemas/change-set.schema.json) owns the plan fields.
+The [change-set schema source](../runtime/schemas/change-set.schema.json) owns the plan fields.
 Each plan declares `schemaVersion: 1`, `target`, `findings`, `findingsDigest`, `selectedFindingIds`, `reviewedScope`, `edits` and `planDigest`.
 `--plan` resolves from the invoking cwd; `findings` resolves from the plan's directory and names the full T2.5 findings input.
 Both the findings and plan schemas reject unknown fields.
@@ -1274,7 +1277,7 @@ CRLF carriage returns remain in the diff; there is no line-ending normalisation.
 Dry-run JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edits` containing each complete proposed content, original/proposed hashes and diff.
 An unchanged proposed file produces an empty diff.
 
-The [resume-state schema](../skills/repo-audit/schemas/resume-state.schema.json) owns the durable journal.
+The [resume-state schema source](../runtime/schemas/resume-state.schema.json) owns the durable journal.
 The run ID is the reviewed plan digest, under the target's existing OS-cache identity folder.
 Before any replacement, apply revalidates all targets, stages complete proposed bytes, saves exact originals in scratch and flushes the journal containing original/proposed hashes.
 Each replacement uses a flushed same-directory temporary file followed by rename, preserving existing file permissions.

@@ -1,9 +1,9 @@
 import { lstat, mkdir, mkdtemp, readFile, readlink, realpath, rename, rmdir, symlink, unlink, writeFile } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
-import { canonicalJSON, hashBytes } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
-import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mjs'
-import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
-import { CommandError } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { canonicalJSON, hashBytes } from '../runtime/scripts/lib/fingerprint.mjs'
+import { isInside, resolvePath } from '../runtime/scripts/lib/paths.mjs'
+import { saveRecovery } from '../runtime/scripts/lib/protected-write.mjs'
+import { CommandError } from '../runtime/scripts/lib/result.mjs'
 import { runtimeIdentity, ownsRuntime, removeEmpty } from './lifecycle.mjs'
 
 function blocked(code, message) {
@@ -28,6 +28,11 @@ async function verifyLink(path, saved) {
   if (canonicalJSON(await linkIdentity(path)) !== canonicalJSON(saved.link)) blocked('changed-link', 'Owned link identity or target changed.')
 }
 
+// A skill that pins no runtime has none to report.
+function runtimeReport(runtime) {
+  return runtime === null ? {} : { runtime: { version: runtime, verified: true } }
+}
+
 // Link ownership covers the directory entry, never the files reached through it.
 export async function installLinks(context) {
   const { root, source, files, hashes, version, runtime, destinations, selected, child, runtimeVersion, checkPackage, authored } = context
@@ -38,7 +43,7 @@ export async function installLinks(context) {
         canonicalJSON(Object.fromEntries((await authored(source)).map(file => [file.path, file.hash]))) !== canonicalJSON(hashes)) blocked('journal-source-changed', 'Source identity or authored bytes changed during link installation.')
   }
   if (selected.replace?.length || selected['adopt-runtime']?.length) blocked('link-decision', 'Copy replacement and runtime adoption decisions do not apply to links.')
-  if (!context.copyRemoval && await stat(join(root, '.bstack-install-cleanup.json'))) blocked('pending-recovery', 'Complete pending copy cleanup before selecting link mode.')
+  if (!context.copyRemoval && context.pendingCleanup) blocked('pending-recovery', 'Complete pending copy cleanup before selecting link mode.')
   const parentUnchanged = async entry => {
     if (await resolvePath(root, `.${entry.host}/skills`) !== entry.parent) blocked('changed-destination', 'Link parent changed.')
     for (const path of [entry.ownership, entry.journal]) {
@@ -59,7 +64,7 @@ export async function installLinks(context) {
       if (path && (dirname(path) !== parent || !basename(path).startsWith('.bstack-stage-'))) blocked('journal-mismatch', 'Recorded stage does not match its preparation parent.')
     }
     if (entry.recovery?.runtimeStage && await stat(entry.recovery.runtimeStage) && canonicalJSON(await runtimeIdentity(entry.recovery.runtimeStage)) !== canonicalJSON(entry.recovery.stageIdentity)) blocked('runtime-conflict', 'Runtime preparation stage was replaced.')
-    if (entry.recovery && !selected.uninstall && (saved.sourceVersion !== version || canonicalJSON(saved.files) !== canonicalJSON(hashes) || saved.runtime.version !== runtime)) blocked('journal-source-changed', 'Interrupted link installation requires its original source bytes and runtime.')
+    if (entry.recovery && !selected.uninstall && (saved.sourceVersion !== version || canonicalJSON(saved.files) !== canonicalJSON(hashes) || (saved.runtime?.version ?? null) !== runtime)) blocked('journal-source-changed', 'Interrupted link installation requires its original source bytes and runtime.')
     const occupied = await stat(entry.destination)
     if (occupied) {
       if (!saved?.link) blocked('unowned-collision', 'Occupied destination is not the recorded owned link.')
@@ -92,14 +97,14 @@ export async function installLinks(context) {
         if (!selected.uninstall) {
           await verifyLink(entry.destination, entry.previous)
           await verifySource()
-          data.installations.push({ destination: entry.destination, mode: 'link', sourceVersion: version, target: source, runtime: { version: runtime, verified: true } })
+          data.installations.push({ destination: entry.destination, mode: 'link', sourceVersion: version, target: source, ...runtimeReport(runtime) })
         }
         continue
       }
       await parentUnchanged(entry)
       await mkdir(entry.parent, { recursive: true })
       const journal = entry.recovery ?? { schemaVersion: 1, state: 'staging', ownership: entry.ownership, uninstall: Boolean(selected.uninstall),
-        record: selected.uninstall ? entry.previous : { ...entry.previous, schemaVersion: 1, mode: 'link', destination: entry.destination, source, sourceIdentity, sourceVersion: version, files: hashes, runtime: { version: runtime } } }
+        record: selected.uninstall ? entry.previous : { ...entry.previous, schemaVersion: 1, mode: 'link', destination: entry.destination, source, sourceIdentity, sourceVersion: version, files: hashes, runtime: runtime === null ? null : { version: runtime } } }
       entry.recovery = journal
       data.limitations = await saveRecovery(entry.journal, journal)
       if (selected.uninstall) {
@@ -164,7 +169,7 @@ export async function installLinks(context) {
       await verifyLink(entry.destination, journal.record)
       journal.record = { ...journal.record, sourceVersion: version, files: hashes,
         ...(journal.runtimeStages ? { runtimeStages: journal.runtimeStages } : {}),
-        runtime: { version: runtime, path: join(source, 'node_modules'), created: false } }
+        runtime: runtime === null ? null : { version: runtime, path: join(source, 'node_modules'), created: false } }
       await saveRecovery(entry.ownership, journal.record)
       if (journal.runtimeStage) {
         if (await stat(journal.runtimeStage) && canonicalJSON(await runtimeIdentity(journal.runtimeStage)) !== canonicalJSON(journal.stageIdentity)) blocked('runtime-conflict', 'Runtime stage changed before cleanup.')
@@ -175,7 +180,7 @@ export async function installLinks(context) {
         await removeEmpty(journal.runtimeStage, files.map(file => file.path))
       }
       await unlink(entry.journal)
-      data.installations.push({ destination: entry.destination, mode: 'link', sourceVersion: version, target: source, runtime: { version: runtime, verified: true },
+      data.installations.push({ destination: entry.destination, mode: 'link', sourceVersion: version, target: source, ...runtimeReport(runtime),
         ...(journal.runtimeStage && await stat(journal.runtimeStage) ? { retainedStage: journal.runtimeStage } : {}) })
     }
     return data
