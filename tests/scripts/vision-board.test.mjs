@@ -27,7 +27,7 @@ async function setup(t, draft = '# Vision\n' + text + '\n') {
   async function run(data = proposals, args = []) {
     await writeFile(proposalsPath, JSON.stringify(data))
     const { NODE_TEST_CONTEXT, ...env } = process.env
-    const result = spawnSync(process.execPath, [join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'vision-board', 'build',
+    const result = spawnSync(process.execPath, [join(root, 'skills/vision/scripts/vision.mjs'), 'vision-board', 'build',
       '--workspace', target, '--draft', draftPath, '--proposals', proposalsPath, '--json', ...args], {
       cwd: directory, encoding: 'utf8', env: { ...env, HOME: directory, USERPROFILE: directory, XDG_CACHE_HOME: cache, LOCALAPPDATA: cache }
     })
@@ -124,7 +124,7 @@ for (const [name, draft] of [['empty', ' \n'], ['invalid UTF-8', Buffer.from([0x
 
 test('board reports missing files, missing options and unknown options', async t => {
   const box = await setup(t)
-  const missing = spawnSync(process.execPath, [join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'vision-board', 'build', '--workspace', box.target, '--json'], { encoding: 'utf8' })
+  const missing = spawnSync(process.execPath, [join(root, 'skills/vision/scripts/vision.mjs'), 'vision-board', 'build', '--workspace', box.target, '--json'], { encoding: 'utf8' })
   assert.equal(missing.status, 3)
   assert.equal(JSON.parse(missing.stdout).problems[0].code, 'missing-input')
   const unknown = await box.run(box.proposals, ['--unexpected'])

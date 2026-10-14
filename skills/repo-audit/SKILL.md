@@ -22,7 +22,7 @@ Security hardening of created skills and licensing review are outside scope.
 
 Routine maintenance uses the maintenance-contract reference directly, without repeating either audit checklist or the goal interview.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
-Do not substitute direct project edits or an invented board approval for unavailable tooling.
+Do not substitute direct project edits or an invented approval for unavailable tooling.
 
 ## New-idea path checklist
 
@@ -63,35 +63,15 @@ Done when: Each term needed for the first journey has a resolved meaning or a na
 
 ### Step 3: Review the vision
 
-Draft a contribution acceptance policy from confirmed author intent, without claiming evidence from nonexistent history.
-Include purpose and users, the responsibility the project owns, commitments, boundaries, non-goals and criteria for accepting or resisting future changes.
-Keep the vision separate from a backlog or implementation plan.
-Stress-test the important fault lines with concrete proposals, adapting their number to real unresolved trade-offs.
-Keep the draft, board and interview transcript outside the project in scratch.
-Collect verdicts against the current draft, revise it and obtain explicit user approval of the resulting vision.
-Approval of a brief's goals or stack does not approve the generated VISION.md.
-Silence and interrupted sessions do not count as approval.
-Write the approved reasoning so the eventual VISION.md stands on its own.
-Load the adapted vision procedure for this step and build the board through the documented command interface.
-For a new idea, use the existing non-Git directory as --workspace and keep all drafts, vocabulary, transcripts and verdicts outside it in scratch.
-Run vision-board build with --draft and --proposals, then vision-board launch with the returned --board path and the same target.
-Use --json to read the runtime output and returned listener command, then run that pinned listener in the terminal to receive board feedback.
-The host needs a browser that can reach the printed review URL.
-Save the complete-round Context data JSON from the terminal feedback unchanged, including its run ID, draft revision and every card verdict.
-Interpret the author's reasoning into a new semantic draft with an edit-to-verdict explanation.
-Run vision-board verdicts with --board, --input pointing to that complete-round JSON and --draft pointing to the revised draft.
-The command validates the bindings, saves the revised draft and decisions in new scratch and preserves the original draft.
-Read the saved revision back, present it for explicit approval, and retain that approval with its exact revision in the scratch transcript.
-For another board round, use the saved draft and matching new proposals, retaining the previous review.json decisions as evidence.
-If launch, browser access, feedback or author approval is unavailable, preserve scratch for resume and keep the step blocked with the missing prerequisite and fix.
-At this intent checkpoint, stop after the approved scratch vision, resolved vocabulary and confirmed summary.
+The vision, its review board and the approval of VISION.md belong to `/vision`: list it as a next step for the user to run, and do not draft, review or write the vision here.
+At this intent checkpoint, stop after the resolved vocabulary and confirmed summary.
 Name protected creation in Step 5 as the later prerequisite without creating Git or project files.
 
-Done when: The current draft has been stress-tested through the board, its verdicts are resolved and the user has explicitly approved that revision, otherwise this step remains blocked.
+Done when: `/vision` is listed as the next step with the reason it applies, and the confirmed summary and resolved vocabulary are kept for it.
 
 ### Step 4: Propose the foundation
 
-Use the approved vision to propose the smallest sound foundation.
+Use the vision approved through `/vision` to propose the smallest sound foundation.
 Tie stack choices and meaningful alternatives to requirements, keeping the target's language independent of this skill's Node helpers.
 Cover system boundaries, module responsibilities, data flow, the first working journey and its acceptance check, needed errors, configuration and external interfaces, resolved terms and necessary review standards.
 Give each principle a reason, source, scope, enforcement method and exception policy.
@@ -110,7 +90,7 @@ Done when: Every proposed foundation change supports an approved outcome, has a 
 ### Step 5: Review and apply selected changes
 
 Present the exact changes and findings for selection using the shared review and write rules below.
-Prepare a create-only change set following schemas/change-set.schema.json, including the approved VISION.md, confirmed glossary when useful and selected foundation with complete UTF-8 payloads and hashes.
+Prepare a create-only change set following schemas/change-set.schema.json, including the VISION.md approved through `/vision`, confirmed glossary when useful and selected foundation with complete UTF-8 payloads and hashes.
 Use the resolved planned destination as the change set and findings target, with mode workspace and revision null.
 Prepare schemas/project-create.json in scratch, binding the creation plan to the change set digest and approved destination, stack, first journey, setup commands and prerequisites.
 Select an absent destination under an existing parent, or explicitly select an empty directory with allowEmpty true.
@@ -189,13 +169,11 @@ Each targeted question must cite the conflicting or insufficient sources, name t
 Resolve parent decisions first, group only independent questions into a small round and wait for answers before dependent recommendations.
 Recording an unresolved decision or drafting definitions for later approval does not replace asking the question.
 When the repo already answers the questions, proceed directly to recommendations without asking the user to repeat or reconfirm approved goals.
-Load interview, domain-language or vision guidance only for a corresponding gap.
+Load interview or domain-language guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
-A new vision or reviewed delta needs a material gap or requested direction change, with the same draft approval boundary as Step 3.
-For a delta, retain the approved baseline in scratch and show each proposed line edit, its gap evidence and the commitments it preserves.
-Review the real fault lines through the vision board, trace revisions to current author verdicts and obtain approval of that exact revision before selected apply.
-If there is no corresponding gap, do not open the vision, intent interview or domain-language references.
-Targeted interview, language, vision and board review procedures are available from the table below.
+A material vision gap or requested direction change is reported with its evidence, and `/vision` is listed as a next step for the user to run; do not draft a delta or open a board here.
+If there is no corresponding gap, do not open the intent interview or domain-language references.
+Targeted interview and language procedures are available from the table below.
 
 Done when: Every material gap is resolved or explicitly blocks its dependent recommendation, settled decisions are retained, and no unnecessary interview or vision review has been opened.
 
@@ -366,7 +344,6 @@ Load a schema only to prepare or validate input for a command required by the cu
 | A new idea with no repo | `references/intent-interview.md` |
 | An unresolved decision would change a recommendation | `references/grilling.md` |
 | Project terms are unclear or conflict | `references/domain-language.md` |
-| No `VISION.md`, or the audit found a vision gap | `references/vision.md` |
 | Recommending principles and their checks | `references/enforcement.md` |
 | Recommending design principles or module boundaries | `references/architecture.md` |
 | Running research in the main thread or delegating it | `references/research-briefs.md` |

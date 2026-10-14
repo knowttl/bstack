@@ -245,16 +245,18 @@ bstack/
   skills/repo-audit/             independently installable skill folder
     SKILL.md
     agents/openai.yaml
-    package.json, package-lock.json   pins lavish-axi only
     references/
-      intent-interview.md  grilling.md  domain-language.md  vision.md
+      intent-interview.md  grilling.md  domain-language.md
       enforcement.md  architecture.md  research-briefs.md  maintenance-contract.md
-    assets/vision/               board template and stylesheet
     schemas/                     JSON schemas for every structured file
     scripts/
       repo-audit.mjs             generated command bundle
       bstack-check.mjs           the dependency-free validator copied into target repos
   skills/verification/           independently installable verification skill folder
+  skills/vision/                 independently installable vision skill folder
+    package.json, package-lock.json   pins lavish-axi only
+    references/                  interview.md  vision.md  grilling.md
+    assets/vision/               board template and stylesheet
   tests/
     scripts/                     node:test suites for every command
     package-check/               seeded broken skill folders
@@ -951,7 +953,7 @@ Record the mapping in the T1.2 results folder as `gap-map.md`.
 
 **Inputs and outputs:** Board assets and live runtime probe -> pinned launcher, inputs and verdict tests.
 
-**Verification:** `npm ci --omit=dev --prefix skills/repo-audit` and `npm test -- --task T1.6, then the live board procedure`.
+**Verification:** `npm ci --omit=dev --prefix skills/vision` and `npm test -- --task T1.6, then the live board procedure`.
 
 **Read:** design "Bundled sources and runtime".
 
@@ -960,8 +962,8 @@ Record the mapping in the T1.2 results folder as `gap-map.md`.
 1. Research `lavish-axi`: the package name, the current version, how to start it and how verdicts come back.
    Find out how a host with only a terminal gets verdicts back, for example by opening a local URL in a browser or by writing a verdict file.
    Record the findings in `docs/design.md` "Evidence and limitations".
-2. Pin the exact version in `skills/repo-audit/package.json` and commit the lockfile.
-   Run `npm ci --omit=dev --prefix skills/repo-audit` now, and add that setup step to the local validation and no-mistakes gate path from T0.6.
+2. Pin the exact version in `skills/vision/package.json` and commit the lockfile.
+   Run `npm ci --omit=dev --prefix skills/vision` now, and add that setup step to the local validation and no-mistakes gate path from T0.6.
    Make the gate's nested setup conditional only until the nested manifest exists, then validate both lockfiles and the runtime closure.
    Prove the setup with a fresh disposable install that has no globally installed support skills.
    Add no workflow file.
