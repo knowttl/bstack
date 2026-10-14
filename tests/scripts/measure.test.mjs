@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { appendFile, mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { build, emptyRepo, git, run, snapshot } from './discovery-fixture.mjs'
+import { build, emptyRepo, git, runArchitecture as run, snapshot } from './discovery-fixture.mjs'
 import { repoFiles } from '../../runtime/scripts/lib/discovery.mjs'
 
 function commitIndex(repo, message, date) {

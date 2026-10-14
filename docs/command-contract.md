@@ -406,10 +406,12 @@ Staged, unstaged and untracked content is included; history may order the review
 ## Measure and overlap
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs measure --repo <path> --range <base>..<head> [--exclusions <file>] --json
-node skills/repo-audit/scripts/repo-audit.mjs overlap --repo <path> --plans <file> <file> --json
+node skills/architecture/scripts/architecture.mjs measure --repo <path> --range <base>..<head> [--exclusions <file>] --json
+node skills/architecture/scripts/architecture.mjs overlap --repo <path> --plans <file> <file> --json
 ```
 
+Both commands ship in the [architecture skill](../skills/architecture/SKILL.md), which also runs `rule-proof`, `baseline check`, `findings validate`, `apply`, `state show` and `cite-check` from the shared runtime with those same contracts.
+`measure`, `overlap`, `rule-proof` and `baseline check` accept only `--repo`; `--workspace` is a usage error for them.
 Both commands require a Git repo, accept optional `--json`, and make no writes or scratch files.
 Input JSON filenames resolve from the caller's working directory.
 Missing options and unsupported arguments are usage errors, malformed inputs fail with named problems, and unavailable Git objects block measurement.

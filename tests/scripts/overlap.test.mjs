@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { emptyRepo, run, snapshot } from './discovery-fixture.mjs'
+import { emptyRepo, runArchitecture as run, snapshot } from './discovery-fixture.mjs'
 
 async function plans(t, left, right) {
   const { directory, repo } = await emptyRepo(t)

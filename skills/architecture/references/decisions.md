@@ -1,7 +1,7 @@
 # Decisions
 
 Keep decisions out of the project's vocabulary and in their own source.
-Glossary work belongs to `/glossary`; keep proposals in scratch until confirmed or selected, then use the main procedure's review-before-apply and protected write boundary for project edits.
+Glossary work belongs to `/glossary`; keep proposals in scratch until selected, then use the skill's review-before-apply and protected write boundary for project edits.
 
 ## Find existing decisions
 

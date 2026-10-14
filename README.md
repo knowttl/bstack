@@ -3,16 +3,16 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate; the remaining split pieces are pending.
-The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
-The installation below covers repo-audit, verification, vision, glossary, agents-md and maintenance; audit usage applies to repo-audit.
+The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
+The installation below covers repo-audit, verification, vision, glossary, architecture, agents-md and maintenance; audit usage applies to repo-audit.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, decisions, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, research and enforcement references, read-only starting-state inspection, document inventory, findings validation and scratch reports, check-plan execution capture and live probe pairs, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
-Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or decisions guidance for a recorded decision.
-These establish confirmed intent while keeping technical decisions in their existing sources, and repo-audit lists `/glossary` as a next step for unclear terms instead of resolving them.
-Follow the [load-when table](skills/repo-audit/SKILL.md#load-when) for the enforcement and architecture references when recommending design principles, checks or module boundaries.
-These provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
+Use the load-when table to read the self-contained intent interview for a new idea or grilling for a material unresolved decision.
+These establish confirmed intent while keeping technical decisions in their existing sources, and repo-audit lists `/glossary` as a next step for unclear terms and `/architecture` for boundaries, recorded decisions and design standards instead of resolving them.
+Follow the [load-when table](skills/repo-audit/SKILL.md#load-when) for the enforcement reference when recommending checks.
+It provides project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
 Use the [maintenance reference](skills/maintenance/references/maintenance-contract.md) for bounded change assessment and local or standalone validation without repeating the interview or full audit; repo-audit lists `/maintenance` as a next step instead of registering documents itself.
@@ -161,9 +161,9 @@ See the [C27 final-path evidence](tests/eval/results/full-path-C27/summary.md) f
 Collect repeatable size and change-history signals, or compare two declared change plans:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs measure --repo <path> --range <base>..<head> --json
-node skills/repo-audit/scripts/repo-audit.mjs measure --repo <path> --range HEAD --exclusions <file> --json
-node skills/repo-audit/scripts/repo-audit.mjs overlap --repo <path> --plans <file> <file> --json
+node skills/architecture/scripts/architecture.mjs measure --repo <path> --range <base>..<head> --json
+node skills/architecture/scripts/architecture.mjs measure --repo <path> --range HEAD --exclusions <file> --json
+node skills/architecture/scripts/architecture.mjs overlap --repo <path> --plans <file> <file> --json
 ```
 
 See the [measurement and overlap contract](docs/command-contract.md#measure-and-overlap) for input examples, lineage handling, exclusions and glob semantics.
@@ -405,7 +405,7 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Every command, shared library, schema, asset and shared reference has one source in [runtime/](runtime/), and [runtime/skills.json](runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
-[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md), [skills/glossary](skills/glossary/SKILL.md), [skills/agents-md](skills/agents-md/SKILL.md) and [skills/maintenance](skills/maintenance/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md), [skills/glossary](skills/glossary/SKILL.md), [skills/architecture](skills/architecture/SKILL.md), [skills/agents-md](skills/agents-md/SKILL.md) and [skills/maintenance](skills/maintenance/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 
 ```sh
@@ -512,9 +512,15 @@ The [glossary skill](skills/glossary/SKILL.md) is started by the user in `create
 For an existing glossary, follow the skill's [maintain checklist](skills/glossary/SKILL.md#maintain-checklist) to review changed domain language.
 Both write only through `apply` after the user approves the exact bytes, never rename code, and run `docs check` on a registered glossary.
 
+The [architecture skill](skills/architecture/SKILL.md) is started by the user in `create` or `maintain` mode.
+`create` proposes or audits module boundaries, dependency direction and shared edit targets from measured history, planned-change overlap and the project's own dependency analysis, then writes the selected design sections, decision records, `CODING_STANDARDS.md` when the project needs it, and import-boundary rules proven with `rule-proof` and a visible debt baseline.
+`maintain` takes the commit that last changed the design as its baseline, reruns `measure` and `overlap`, and sorts what changed into undescribed modules, broken boundaries, shared edit targets and decisions to record; follow its [maintain checklist](skills/architecture/SKILL.md#maintain-checklist).
+Both write only through `apply` after the user approves the exact bytes and never move product code.
+`measure`, `overlap`, `rule-proof` and `baseline check` need a Git repo, so a new idea in a non-Git workspace reviews planned changes by reading and leaves its rules unproven until code exists.
+
 The [agents-md skill](skills/agents-md/SKILL.md) is started by the user and creates or maintains one root `AGENTS.md` of one-line pointers to the project's rules, evidence requirements and check commands.
 It audits each pointer against the repo, merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked, keeps distinct nested instruction files, reports `CLAUDE.local.md` as possible shadowing without editing it, and reads nothing outside the repo.
-The glossary, vision and maintenance skills each propose their own pointer line, following the shared [pointer contract](runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
+The glossary, vision, architecture and maintenance skills each propose their own pointer line, following the shared [pointer contract](runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
 
 The [maintenance skill](skills/maintenance/SKILL.md) is started by the user in `create` or `sweep` mode and owns the maintenance contract and the standalone checker.
 `create` registers the project's documents, scopes, rules and checks in `.bstack/project.json`, installs the checker at `.bstack/bin/bstack-check.mjs`, and proposes the no-mistakes wiring: an ownership map in `document.instructions` that tells the Document step which file owns terms, boundaries and purpose, and a `docs` gate after `document` that runs the checker with `--docs-only`.
