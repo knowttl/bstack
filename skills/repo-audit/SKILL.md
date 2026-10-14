@@ -69,7 +69,8 @@ Done when: `/vision` is listed as the next step with the reason it applies, and 
 
 Use the vision approved through `/vision` to propose the smallest sound foundation.
 Tie stack choices and meaningful alternatives to requirements, keeping the target's language independent of this skill's Node helpers.
-Cover system boundaries, module responsibilities, data flow, the first working journey and its acceptance check, needed errors, configuration and external interfaces, the terms confirmed through `/glossary` and necessary review standards.
+Cover data flow, the first working journey and its acceptance check, needed errors, configuration and external interfaces and the terms confirmed through `/glossary`.
+System boundaries, module responsibilities, dependency direction, decision records and the design standards belong to `/architecture`: list it as a next step for the user to run, after `/glossary` and before `/foundation`, and do not draft them here.
 Give each principle a reason, source, scope, enforcement method and exception policy.
 Prefer native checks and one source of truth over duplicated prose or a second verification engine.
 Distinguish automated rules from judgement rules.
@@ -147,15 +148,7 @@ Inspect instruction files only inside the selected repo, and do not inspect or r
 The root `AGENTS.md`, the merge of equivalent `CLAUDE.md` content into it and the audit of its pointers belong to `/agents-md`: list it as the last next step for the user to run, after the skills that write what it points at, and do not propose instruction-file edits here.
 Load the research briefs, run the relevant briefs, open each cited source and run `cite-check --repo <target> --report <file> --json` before relying on the report.
 Summarise documented intent, observed behaviour and inferred intent with checked citations and actual starting-check results before any question.
-Run `node scripts/repo-audit.mjs measure --repo <target> --range <base>..<head> --json` for revision-bound sizes, change frequency and co-change signals with supporting commits.
-Measurement covers eligible files present at the endpoint and follows detected lineage back through renames to addition.
-Merged deletion and unrelated path reuse can attribute old-lifetime commits and co-change pairs to the replacement; treat signals as advisory evidence, never violations.
-Use `--exclusions <file>` following `schemas/measure-exclusions.json` for project-generated paths and explicitly identified broad formatting commits.
-Compare two declared plans with `node scripts/repo-audit.mjs overlap --repo <target> --plans <file> <file> --json`, following `schemas/overlap-plan.json`.
-Plan paths use forward slashes, case-sensitive `*` and `?` within segments and whole-segment `**` for recursive matching, including planned new files.
-Signals do not establish violations, observed conflicts or semantic independence.
-Import and dependency analysis remains the native language tool's job.
-Manual observations do not establish that those helpers ran.
+The boundary audit, including history measurement, overlap checks and import and dependency analysis, belongs to `/architecture`: list it as a next step for the user to run, after `/glossary` and before `/verification create`, and do not run `measure` or `overlap` here.
 
 Done when: Every relevant evidence source is inventoried or listed as unavailable, the starting state and native check results are recorded, and the audit distinguishes documented intent, observed behaviour and inferred intent with file citations.
 
@@ -166,12 +159,13 @@ Each targeted question must cite the conflicting or insufficient sources, name t
 Resolve parent decisions first, group only independent questions into a small round and wait for answers before dependent recommendations.
 Recording an unresolved decision does not replace asking the question.
 When the repo already answers the questions, proceed directly to recommendations without asking the user to repeat or reconfirm approved goals.
-Load interview or decisions guidance only for a corresponding gap.
+Load interview guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.
+A recorded decision that conflicts with a recommendation, a choice that needs a new decision record and an unclear module boundary are reported with their citations, and `/architecture` is listed as a next step for the user to run; do not draft a record or resolve boundaries here.
 A material vision gap or requested direction change is reported with its evidence, and `/vision` is listed as a next step for the user to run; do not draft a delta or open a board here.
 Unclear or competing term meanings that would change a recommendation are reported with their citations, and `/glossary` is listed as a next step for the user to run; do not resolve them or draft entries here.
 If there is no corresponding gap, do not open the intent interview or decisions references.
-Targeted interview and decisions procedures are available from the table below.
+The targeted interview procedure is available from the table below.
 
 Done when: Every material gap is resolved or explicitly blocks its dependent recommendation, settled decisions are retained, and no unnecessary interview or vision review has been opened.
 
@@ -331,9 +325,7 @@ Load a schema only to prepare or validate input for a command required by the cu
 |---|---|
 | A new idea with no repo | `references/intent-interview.md` |
 | An unresolved decision would change a recommendation | `references/grilling.md` |
-| A recommendation conflicts with a recorded decision or needs a new one | `references/decisions.md` |
 | Recommending principles and their checks | `references/enforcement.md` |
-| Recommending design principles or module boundaries | `references/architecture.md` |
 | Running research in the main thread or delegating it | `references/research-briefs.md` |
 | Preparing a research report for citation checking | `schemas/research-report.json` |
 | Recording or validating audit recommendations | `schemas/findings.schema.json` |

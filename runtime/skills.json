@@ -3,12 +3,12 @@
     "commands": [
       "docs check", "docs generate", "contract validate", "evidence collect", "evidence validate", "rule-proof",
       "baseline check", "project create", "probe record", "probe compare", "run-checks", "apply", "state show",
-      "findings validate", "findings render", "inspect", "inventory", "measure", "overlap", "cite-check", "contract-test"
+      "findings validate", "findings render", "inspect", "inventory", "cite-check", "contract-test"
     ],
     "schemas": [
       "baseline.schema.json", "change-set.schema.json", "check-plan.json", "contract-test.json", "evidence.schema.json",
-      "findings.schema.json", "impact-assessment.json", "measure-exclusions.json", "overlap-plan.json", "probe-record.json",
-      "probe-spec.json", "project-create.json", "project.schema.json", "research-report.json", "resume-state.schema.json"
+      "findings.schema.json", "impact-assessment.json", "probe-record.json", "probe-spec.json", "project-create.json",
+      "project.schema.json", "research-report.json", "resume-state.schema.json"
     ],
     "assets": [],
     "references": ["grilling.md"]
@@ -38,6 +38,15 @@
     "schemas": [
       "change-set.schema.json", "evidence.schema.json", "findings.schema.json", "project.schema.json", "research-report.json",
       "resume-state.schema.json"
+    ],
+    "assets": [],
+    "references": ["grilling.md", "agents-pointer.md"]
+  },
+  "architecture": {
+    "commands": ["measure", "overlap", "rule-proof", "baseline check", "findings validate", "apply", "state show", "cite-check"],
+    "schemas": [
+      "baseline.schema.json", "change-set.schema.json", "check-plan.json", "evidence.schema.json", "findings.schema.json",
+      "measure-exclusions.json", "overlap-plan.json", "project.schema.json", "research-report.json", "resume-state.schema.json"
     ],
     "assets": [],
     "references": ["grilling.md", "agents-pointer.md"]

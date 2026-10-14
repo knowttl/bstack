@@ -46,7 +46,7 @@ These adaptations follow the pinned design and module guidance attributed in the
 - Tests requiring unrelated modules or asserting implementation details rather than a public contract.
 - Two representative planned changes, their write paths and the shared contracts they would modify.
 
-Collect dependency edges through the native analysis selected by the language research brief.
+Collect dependency edges through the native analysis that the boundary checks reference's language research selects.
 Resolve aliases, re-exports and package entry points.
 Report unsupported syntax, dynamic dependencies and unresolved imports as coverage limits.
 Unresolved imports do not demonstrate independence.
@@ -88,9 +88,9 @@ A script reports overlap evidence but cannot prove independence or predict every
 Fewer unrelated shared edits are an expected benefit, not a measured reduction until actual evidence exists.
 
 Record each proposed boundary's project-specific reason, source, scope, enforcement and exception policy.
-Reuse existing design decisions and standards rather than duplicating their rules.
+Reuse existing design decisions and the design standards reference's sources rather than duplicating their rules.
 Present evidenced candidates and alternatives for selection before applying changes.
 Verification requires representative allowed and forbidden imports and compatible public behaviour, not file-count targets.
-Use rule-proof for a clean public-import control and independent private, alias or equivalent resolution bypass and cycle violations with the selected native check.
+Use rule-proof, as the boundary checks reference describes, for a clean public-import control and independent private, alias or equivalent resolution bypass and cycle violations with the selected native check.
 The Python equivalent-resolution fixture exercises an intermediate public-looking bridge to private implementation; proof does not establish every possible re-export or dynamic dependency.
 Maintain these coverage limits alongside the rule evidence.
