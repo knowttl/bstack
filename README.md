@@ -2,7 +2,7 @@
 
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
-The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` mode implemented; `maintain` and the no-mistakes wiring with its coverage gate remain pending.
+The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate; the remaining split pieces are pending.
 The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, while the remaining skill boundaries and workflows are pending.
 The installation below covers repo-audit and verification; audit usage applies to repo-audit.
 
@@ -10,7 +10,7 @@ This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), i
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
-Follow the [load-when table](skills/repo-audit/SKILL.md#load-when) for the enforcement and architecture references when reviewing test necessity and cost or recommending design principles, checks or module boundaries.
+Follow the [load-when table](skills/repo-audit/SKILL.md#load-when) for the enforcement and architecture references when recommending design principles, checks or module boundaries.
 These provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
 Protected new-project creation is available after the intent checkpoint and exact foundation review.
@@ -419,13 +419,16 @@ Both commands exit 1 when a skill lists a command, schema or asset that `runtime
 To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
 
-The [verification skill](skills/verification/SKILL.md) is started by the user and currently provides `create`: it interviews a repo, renders a verification kit as a reviewable change set, applies it after exact-diff approval and proves it once.
+The [verification skill](skills/verification/SKILL.md) is started by the user and provides `create` and `maintain`: `create` interviews a repo, renders a verification kit as a reviewable change set, applies it after exact-diff approval and proves it once, and `maintain` checks an applied kit for drift, drives every feature and proposes reviewed corrections.
+Test auditing and testing guidance live here and no longer in repo-audit, which now points the user to `/verification`.
 Its entry point and generators, documented in the [command contract](docs/command-contract.md#verification-skill-commands), run from a checkout like this:
 
 ```sh
 node skills/verification/scripts/verification.mjs kit scaffold --repo <target> --plan <kit-plan.json>
 node skills/verification/scripts/verification.mjs apply --repo <target> --plan <change-set.json> --dry-run
 node skills/verification/scripts/verification.mjs kit prove --repo <target> --app <name> --feature <id>
+node skills/verification/scripts/verification.mjs kit check --repo <target> --app <name>
+node skills/verification/scripts/verification.mjs kit scaffold --repo <target> --plan <kit-plan.json> --update
 node skills/verification/scripts/verification.mjs comment-check generate --repo <target> --language python
 ```
 
