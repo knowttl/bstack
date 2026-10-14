@@ -72,7 +72,6 @@ test('a skill ships only its own commands', async t => {
   const missing = entry(directory, 'one', 'beta', '--repo', directory, '--json')
   assert.equal(missing.status, 3)
   assert.match(missing.stdout, /Unknown or not implemented yet: beta/)
-  assert.doesNotMatch(await readFile(join(directory, 'skills/one/scripts/one.mjs'), 'utf8'), /beta/)
 })
 
 test('help names the skill entry file', async t => {

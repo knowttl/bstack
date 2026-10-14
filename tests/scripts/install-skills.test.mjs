@@ -106,6 +106,43 @@ for (const skill of ['repo-audit', 'verification']) {
     assert.equal(replaced.status, 0, replaced.stdout + replaced.stderr)
     assert.equal(await readFile(path, 'utf8'), await readFile(join(f.checkout, 'skills', skill, 'SKILL.md'), 'utf8'))
   })
+  test(`stale replacement for ${skill} reports its current conflict`, async t => {
+    const f = await twoSkills(t)
+    assert.equal(f.run(...f.args).status, 0)
+    const destination = join(f.parent, skill)
+    const path = join(destination, 'SKILL.md')
+    await writeFile(path, 'First edit\n')
+    const blocked = f.run(...f.args)
+    const decision = blocked.value.data.installations.find(entry => entry.destination === destination).conflicts[0].decision
+    await writeFile(path, 'Second edit\n')
+    const before = await inventory(f.project)
+    const stale = f.run(...f.args, ...decision.split(' '))
+    assert.equal(stale.status, 3, stale.stdout)
+    assert.equal(stale.value.problems[0].code, 'stale-replacement')
+    const conflict = stale.value.data.installations.find(entry => entry.destination === destination).conflicts[0]
+    assert.match(conflict.diff, /-Second edit/)
+    assert.notEqual(conflict.decision, decision)
+    assert.deepEqual(await inventory(f.project), before)
+  })
+
+  for (const boundary of ['writer-activated', 'cleanup-saved']) {
+    test(`approved ${skill} repair resumes after ${boundary}`, async t => {
+      const f = await twoSkills(t)
+      await interrupt(f, boundary)
+      assert.equal(f.run(...f.args, '--skill', skill).status, 86)
+      delete f.env.NODE_OPTIONS
+      const destination = join(f.parent, skill)
+      const path = join(destination, 'SKILL.md')
+      await writeFile(path, 'Recovery edit\n')
+      const blocked = f.run(...f.args)
+      assert.equal(blocked.status, 2, blocked.stdout)
+      const conflict = blocked.value.data.installations.find(entry => entry.destination === destination).conflicts[0]
+      const repaired = f.run(...f.args, ...conflict.decision.split(' '))
+      assert.equal(repaired.status, 0, repaired.stdout)
+      assert.equal(await readFile(path, 'utf8'), await readFile(join(f.checkout, 'skills', skill, 'SKILL.md'), 'utf8'))
+      assert.equal(await readFile(join(repaired.value.data.installations.find(entry => entry.destination === destination).backup, 'SKILL.md'), 'utf8'), 'Recovery edit\n')
+    })
+  }
 }
 
 test('copy replacement decisions do not block removal of a sibling link', async t => {
@@ -115,9 +152,11 @@ test('copy replacement decisions do not block removal of a sibling link', async 
   const path = join(f.parent, 'verification', 'SKILL.md')
   await writeFile(path, (await readFile(path, 'utf8')) + '\nLocal edit\n')
   const blocked = f.run(...f.args, '--uninstall', '--dry-run')
+  assert.equal(blocked.value.data.mode, 'mixed')
   const conflict = blocked.value.data.destinations.find(entry => entry.destination === join(f.parent, 'verification')).conflicts[0]
   const removed = f.run(...f.args, '--uninstall', ...conflict.decision.split(' '))
   assert.equal(removed.status, 0, removed.stdout + removed.stderr)
+  assert.equal(removed.value.data.mode, 'mixed')
   assert.equal(await lstat(join(f.parent, 'repo-audit')).catch(error => error.code), 'ENOENT')
   assert.equal(await lstat(join(f.parent, 'verification')).catch(error => error.code), 'ENOENT')
 })
@@ -134,4 +173,24 @@ for (const [args, ownershipRemains] of [[[], true], [['--uninstall', '--link'], 
   const adopted = f.run(...f.args, ...args, ...decision.split(' '))
   assert.equal(adopted.status, 0, adopted.stdout + adopted.stderr)
   assert.equal(Boolean(await lstat(ownership).catch(() => null)), ownershipRemains)
+})
+
+test('stale runtime adoption reports the current ownership decision', async t => {
+  const f = await twoSkills(t)
+  assert.equal(f.run(...f.args).status, 0)
+  const ownership = join(f.parent, '.bstack-install.json')
+  const record = JSON.parse(await readFile(ownership, 'utf8'))
+  delete record.runtime.identity
+  await writeFile(ownership, JSON.stringify(record))
+  const preview = f.run(...f.args, '--dry-run')
+  const decision = preview.value.data.destinations[0].conflicts.find(conflict => conflict.path === 'node_modules').decision
+  await writeFile(join(f.parent, 'repo-audit/node_modules/keep.txt'), 'Later runtime content\n')
+  const before = await inventory(f.project)
+  const stale = f.run(...f.args, ...decision.split(' '))
+  assert.equal(stale.status, 3, stale.stdout)
+  assert.equal(stale.value.problems[0].code, 'stale-runtime-decision')
+  const conflict = stale.value.data.installations.find(entry => entry.destination === join(f.parent, 'repo-audit')).conflicts.find(conflict => conflict.path === 'node_modules')
+  assert.match(conflict.decision, /^--adopt-runtime /)
+  assert.notEqual(conflict.decision, decision)
+  assert.deepEqual(await inventory(f.project), before)
 })
