@@ -51,7 +51,7 @@ export async function run(options) {
   validateKitPlan(plan)
   const update = options.update === true
   const kit = kitDirectory(plan.app)
-  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app, { sourcePaths: false }) : null
+  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app, { forUpdate: true }) : null
   const edits = []
   const reviewedScope = []
   async function stage(path, operation, payload) {
