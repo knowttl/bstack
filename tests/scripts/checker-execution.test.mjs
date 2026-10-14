@@ -35,7 +35,7 @@ async function fixture(t, { initial = false, submodule = false, diagnostic = fal
   await mkdir(f.env.HOME)
   await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { maintain: 'node .bstack/bin/bstack-check.mjs' } }))
   await mkdir(join(f.repo, '.bstack/bin'))
-  await cp(join(root, 'skills/repo-audit/scripts/bstack-check.mjs'), join(f.repo, checkerPath))
+  await cp(join(root, 'skills/maintenance/scripts/bstack-check.mjs'), join(f.repo, checkerPath))
   await writeFile(join(f.repo, 'src/change.mjs'), 'export const price = 12\n')
   await writeFile(join(f.repo, 'leaf.mjs'), "import { appendFileSync } from 'node:fs'; appendFileSync(process.env.BSTACK_LEAF_LOG, 'run\\n'); process.exit(0)\n")
   f.contract.generators = []
@@ -212,7 +212,7 @@ export async function runChecker(options, mode) {
 ${outcome === 'blocked' ? "writeFileSync('.bstack/assessment.json', JSON.stringify(JSON.parse(readFileSync('.bstack/assessment.json', 'utf8'))));" : ''}
 appendFileSync(process.env.BSTACK_LEAF_LOG, 'run\\n'); console.log('leaf diagnostic'); process.exit(${outcome === 'failed' ? 1 : 0})\n`)
   f.base = commit(f.repo)
-  await cp(join(root, 'skills/repo-audit/scripts/bstack-check.mjs'), join(f.repo, checkerPath))
+  await cp(join(root, 'skills/maintenance/scripts/bstack-check.mjs'), join(f.repo, checkerPath))
   await writeFile(join(f.repo, 'src/change.mjs'), 'export const price = 12;;\n')
   commit(f.repo)
   await bindReview(f)

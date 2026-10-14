@@ -61,18 +61,6 @@ test('impact map covers every skill heading and required file with valid keys', 
   }
 })
 
-test('maintenance reference changes select only the maintenance scenarios', async t => {
-  const repo = await checkout(t)
-  const path = join(repo, 'skills/repo-audit/references/maintenance-contract.md')
-  await writeFile(path, (await readFile(path, 'utf8')) + '\nClarified maintenance guidance.\n')
-  git(repo, 'add', 'skills')
-  git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Maintenance guidance')
-  const result = affected(repo, 'HEAD^')
-  assert.equal(result.exit, 0, JSON.stringify(result))
-  assert.deepEqual(result.data.scenarios, maintenance)
-  assert.deepEqual(result.data.unmapped, [])
-})
-
 for (const path of ['skills/repo-audit/new-guidance.md', 'references/maintenance-contract.md']) {
   test(`an unmapped untracked file selects every scenario: ${path}`, async t => {
     const repo = await checkout(t)

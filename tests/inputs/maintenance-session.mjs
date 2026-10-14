@@ -6,8 +6,8 @@ import { execFileSync, spawnSync } from 'node:child_process'
 // This deterministic host fixture exercises real commands, not model judgement.
 export async function maintenanceSession() {
   const repo = process.cwd()
-  const skill = join(process.env.HOME, '.agents/skills/repo-audit')
-  const helper = join(skill, 'scripts/repo-audit.mjs')
+  const skill = join(process.env.HOME, '.agents/skills/maintenance')
+  const helper = join(skill, 'scripts/maintenance.mjs')
   const assessmentPath = '.bstack/assessment.json'
   const source = 'packages/core/internal/database.ts'
   const events = []

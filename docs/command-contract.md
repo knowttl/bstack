@@ -9,7 +9,7 @@ The emitted file uses only Node built-ins and needs no skill folder or installed
 Its exported `buildVersion` records the package version, bundler version and a digest of source modules, schemas, generator and package manifests.
 Changed source bytes invalidate freshness even when their bundled executable output would be equivalent.
 
-With `--check`, generation stays in memory and compares exact bytes against `skills/repo-audit/scripts/bstack-check.mjs` in the source checkout.
+With `--check`, generation stays in memory and compares exact bytes against `skills/maintenance/scripts/bstack-check.mjs` in the source checkout.
 The command returns `passed` (exit 0) for current bytes or `failed` with problem code `stale-checker` (exit 1) for absent or different bytes.
 It creates no scratch directory and changes neither source nor target.
 `npm run check` runs this freshness gate after package validation.
@@ -31,7 +31,7 @@ C24a exports `validateContract`, `checkDocuments`, `checkGeneratedFacts`, `valid
 `checkGeneratedFacts` always selects check mode and cannot create regeneration proposals.
 The existing validators retain their coverage and proof limits, including generated commands' read-only contract and local evidence captures' lack of portable attestation.
 C24b adds the aggregate execution interface below.
-The [maintenance reference](../skills/repo-audit/references/maintenance-contract.md) owns the bounded maintenance procedure.
+The [maintenance reference](../skills/maintenance/references/maintenance-contract.md) owns the bounded maintenance procedure.
 Hosted CI behavior is unverified.
 
 ## Standalone checker execution
@@ -100,6 +100,17 @@ git fetch origin <required-base-commit>
 For a full clone with a missing object, fetch the required commit explicitly.
 After rebasing or changing the agreed base, recollect, review, bind and commit the assessment again.
 `--base empty` remains supported only before a repository's first commit, using an explicitly selected initial foundation assessment.
+
+### Docs-only mode
+
+```sh
+node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <repo-relative-file>] [--json]
+```
+
+`--docs-only` runs `docs check` and the `docs generate --check` comparison on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
+Supplying `--base`, `--assessment` or `--workspace` with it is a usage error (exit 3, problem code `docs-only-input`).
+Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current, 1 for a broken link, invalid or duplicate glossary entry or stale generated section, and 2 when the contract or a registered source cannot be read.
+It is the command of the no-mistakes docs gate that the [maintenance skill](../skills/maintenance/SKILL.md) wires.
 
 ### Previous-policy execution
 
@@ -369,6 +380,28 @@ It runs `docs check`, `apply`, `state show` and `cite-check` from the [shared ru
 
 `node skills/agents-md/scripts/agents-md.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone agents-md skill.
 It runs `inventory`, `apply` and `state show` from the shared runtime with those same contracts, and writes `AGENTS.md` and deletes a merged `CLAUDE.md` through one reviewed `apply` plan.
+
+`node skills/maintenance/scripts/maintenance.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone maintenance skill.
+It runs `contract validate`, `evidence collect`, `evidence validate`, `docs check`, `docs generate`, `run-checks`, `probe record`, `probe compare`, `apply`, `state show` and `sweep` from the shared runtime with those same contracts, and ships the generated checker beside it.
+
+### Sweep
+
+```sh
+node skills/maintenance/scripts/maintenance.mjs sweep --repo <path> [--contract <repo-relative-file>] [--json]
+```
+
+`sweep` accepts `--repo` and optional `--contract` and `--json`, writes nothing and creates no scratch.
+It returns `passed` when nothing drifted and `failed` (exit 1) with one problem per drifted item, and each problem's `fix` field names the skill mode that repairs it.
+A missing contract is a `contract-missing` problem fixed by `/maintenance create`, and an invalid one returns the contract's own problem codes with the same fix.
+It then runs `docs check` and `docs generate --check` over the registered documents.
+Skipped Markdown and unsupported link fragments in registered content or `AGENTS.md` are reported as unchecked scope in `data.coverageLimits`, with a `path` and `reason`.
+Coverage limits are never problems or repair items and never fail sweep by themselves; `passed` means no drift was demonstrated in the checked scope.
+A broken link or invalid glossary entry in a document is fixed by that document's owner: `/glossary maintain` for a registered glossary, `/architecture maintain` for the document with ID `design`, `/vision` for the one with ID `vision`, and by hand for any other.
+A stale generated section is fixed by running `docs generate` in `/maintenance`.
+Code changes or document age alone never produce a repair item or fail the command.
+Each applied verification kit under `.agents/skills/verify-*/` is checked with the `kit check` rules and fixed by `/verification maintain`, and a link in the root `AGENTS.md` that does not resolve is fixed by `/agents-md`.
+The skill judges every registered document against the whole current repo by reading, including glossary terms, design boundaries, README instructions and facts, vision claims and other registered content, as its sweep guide describes.
+Staged, unstaged and untracked content is included; history may order the review but never exclude a document or repository area, and no baseline is required.
 
 ## Measure and overlap
 
