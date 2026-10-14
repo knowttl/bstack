@@ -157,7 +157,7 @@ Local validation runs the package check and full tests after dependency setup.
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 See the [delivery gate](docs/implementation-plan.md#delivery-gate) for gate preparation and validation.
 Recorded runs on Linux do not prove support on Windows or macOS.
-Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation, vision review and final verification requirements.
+Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation and final verification requirements.
 See the [C27 final-path evidence](tests/eval/results/full-path-C27/summary.md) for completed installed paths, repeated audit, independent extension, bounded maintenance and observed limitations.
 
 Collect repeatable size and change-history signals, or compare two declared change plans:

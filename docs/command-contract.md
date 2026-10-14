@@ -821,7 +821,9 @@ The source skill and its runtime are never changed by copy installation.
 
 Each host skills parent holds one ownership file per skill: `.bstack-install.json` for repo-audit, which predates multi-skill installs, and `.bstack-install-<skill>.json` for every other skill.
 It records schema version 1, copy mode, source version, absolute destination, exact authored `files` hashes and a separate `runtime` record with path, version and `created: true`.
-A skill without a `package.json` pins no runtime, runs no npm install, and records `runtime: null`; a skill whose installed record has a runtime but whose source no longer pins one blocks with `runtime-dropped`.
+A skill without a `package.json` pins no runtime, runs no npm install, and records `runtime: null`.
+When an update retires a previously pinned runtime, preview reports `runtime-remove`, and application removes only the installer-owned runtime directory after verifying its identity.
+A replaced or unverifiable runtime is preserved and reported as a conflict; interrupted retirement resumes through the same journal and ownership checks as other lifecycle operations.
 Mutable caches, backups and dependency contents are absent from `files`.
 Lifecycle records also retain `fileVersions`, preserving the source provenance of each owned hash.
 An incomplete update records `sourceVersion: "mixed"`, retains the last owned hashes of edited files, and reports actual installed hashes separately under `data.installations[].files`.
