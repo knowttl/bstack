@@ -3,7 +3,7 @@ import { constants } from 'node:fs'
 import { dirname, join, sep } from 'node:path'
 import { homedir, tmpdir, userInfo } from 'node:os'
 import { execFileSync } from 'node:child_process'
-import { root, text, object, array, readJSON, fail } from './evaluation.mjs'
+import { root, text, object, array, readJSON, fail, skillNames, evaluatedSkills } from './evaluation.mjs'
 import { validateData } from '../../runtime/scripts/lib/schema.mjs'
 import { resolvePath } from '../../runtime/scripts/lib/paths.mjs'
 import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.mjs'
@@ -65,7 +65,7 @@ export async function readAdapter(path, scenarioId) {
   const schema = object({ schemaVersion: { const: 1 }, tier: { const: 'full' }, executable: text, args: array(text), cwd: { const: '.' },
     versionArgs: array(text), timeoutMs: { type: 'integer' }, outputLimitBytes: { type: 'integer' },
     invocation: object({ agent: text, model: text, explicit: text, protocol: { const: 'codex-exec-jsonl' }, resumeArgs: array(text) }),
-    isolation: object({ stateDirectory: { const: '.codex' }, discoveryPaths: array(text), systemDiscoveryPaths: array(text), stagePath: text,
+    isolation: object({ stateDirectory: { const: '.codex' }, discoveryPaths: array(text), systemDiscoveryPaths: array(text), skillsPath: text,
       authentication: { enum: ['none', 'throwaway-codex-login'] } })
   })
   schema.required = schema.required.filter(key => key !== 'tier')
@@ -81,7 +81,8 @@ export async function readAdapter(path, scenarioId) {
   if (adapter.args.some(arg => ['resume', '--last', '--ephemeral'].includes(arg))) fail('Opening turns must create a fresh resumable thread.')
   if (canonicalJSON(adapter.isolation.discoveryPaths) !== canonicalJSON(['.agents/skills', '.codex/skills']) ||
       canonicalJSON(adapter.isolation.systemDiscoveryPaths) !== canonicalJSON(['/etc/codex/skills']) ||
-      adapter.isolation.stagePath !== '.agents/skills/repo-audit') fail('Use the documented Codex discovery paths and staging destination.')
+      adapter.isolation.skillsPath !== '.agents/skills') fail('Use the documented Codex discovery paths and staging destination.')
+  if (!adapter.invocation.explicit.includes('{skill}')) fail('Adapter explicit invocation requires the skill placeholder.')
   if (['research-main-typescript', 'research-main-python'].includes(scenarioId)) {
     const disableSubagents = args => {
       const index = args.findIndex(arg => ['{sessionId}', '{message}'].includes(arg))
@@ -117,8 +118,18 @@ async function snapshot(directory) {
     [path.slice(directory.length), hashBytes(await readFile(path))]))))
 }
 
-export function candidateSkillHash(revision) {
-  const prefix = 'skills/repo-audit'
+// Staged skills hash as one set, so a scenario's candidate is bound to every skill it stages.
+async function stagedHash(isolation) {
+  return hashBytes(canonicalJSON(await Promise.all(isolation.skills.map(async skill =>
+    [skill, await snapshot(join(isolation.skillsPath, skill))]))))
+}
+
+export function candidateSkillHash(revision, skills) {
+  return hashBytes(canonicalJSON(skills.map(skill => [skill, committedSkillHash(revision, skill)])))
+}
+
+function committedSkillHash(revision, skill) {
+  const prefix = `skills/${skill}`
   const paths = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', revision, '--', prefix], { cwd: root, encoding: 'utf8' })
     .split('\0').filter(path => path && !path.split('/').includes('node_modules'))
   paths.sort((left, right) => {
@@ -158,9 +169,10 @@ export async function isolate(record, expectedSkillHash) {
     parent = dirname(parent)
   }
   discoveryPaths.push(...adapter.isolation.systemDiscoveryPaths)
-  const stagedPath = await resolvePath(home, adapter.isolation.stagePath)
+  const skillsPath = await resolvePath(home, adapter.isolation.skillsPath)
   const isolation = record.isolation = { home, state: join(home, adapter.isolation.stateDirectory), discoveryPaths: [...new Set(discoveryPaths)],
-    stagedPath, skillHash: null, verified: false, method: 'Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.' }
+    skillsPath, skills: mode === 'with' ? await evaluatedSkills(record.scenario, record.stage) : [], skillHash: null, verified: false,
+    method: 'Fresh HOME, CODEX_HOME and cache, fresh exec thread and discovery inventory.' }
   await verifyIsolation(isolation, 'without')
   if (mode === 'with') {
     if (record.stage === 'final') {
@@ -169,8 +181,8 @@ export async function isolate(record, expectedSkillHash) {
         versionArgs: ['--version'], timeoutMs: 120000 }, { env: isolatedEnvironment(isolation), outputLimitBytes: 16777216 })
       record.installer = result
       if (result.status !== 'passed' || result.outputTruncated) fail('Final evaluation requires a completed release installer run.')
-    } else await cp(join(root, 'skills', 'repo-audit'), stagedPath, { recursive: true, dereference: true })
-    isolation.skillHash = await snapshot(stagedPath)
+    } else for (const skill of isolation.skills) await cp(join(root, 'skills', skill), join(skillsPath, skill), { recursive: true, dereference: true })
+    isolation.skillHash = await stagedHash(isolation)
     if (expectedSkillHash && isolation.skillHash !== expectedSkillHash) fail('Staged skill does not match the committed batch candidate.')
   }
   await verifyIsolation(isolation, mode)
@@ -179,17 +191,18 @@ export async function isolate(record, expectedSkillHash) {
 export async function verifyIsolation(isolation, mode) {
   isolation.verified = false
   const discovered = []
+  const names = await skillNames()
   for (const directory of isolation.discoveryPaths) {
     for (const path of await files(directory)) {
       if (!path.endsWith('SKILL.md')) continue
-      const content = await readFile(path, 'utf8')
-      if (/^name:\s*["']?repo-audit["']?\s*$/m.test(content)) discovered.push(path)
+      const name = /^name:\s*["']?([^"'\s]+)["']?\s*$/m.exec(await readFile(path, 'utf8'))?.[1]
+      if (names.includes(name)) discovered.push(path)
     }
   }
   isolation.discovered = [...new Set(discovered)]
-  const expected = mode === 'with' ? [join(isolation.stagedPath, 'SKILL.md')] : []
-  if (canonicalJSON(isolation.discovered.sort()) !== canonicalJSON(expected) ||
-      (mode === 'with' && await snapshot(isolation.stagedPath) !== isolation.skillHash)) fail('Host isolation changed or repo-audit discovery does not match the run mode. Restore the isolated fixture and skill before scoring.')
+  const expected = mode === 'with' ? isolation.skills.map(skill => join(isolation.skillsPath, skill, 'SKILL.md')) : []
+  if (canonicalJSON(isolation.discovered.sort()) !== canonicalJSON(expected.sort()) ||
+      (mode === 'with' && await stagedHash(isolation) !== isolation.skillHash)) fail('Host isolation changed or bstack skill discovery does not match the run mode. Restore the isolated fixture and skills before scoring.')
   isolation.verified = true
   isolation.checkedAt = new Date().toISOString()
 }
