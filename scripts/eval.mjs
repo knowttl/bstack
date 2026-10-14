@@ -2,7 +2,7 @@ import { appendFile, mkdir, readFile, realpath, rename, rm, statfs, writeFile } 
 import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { freemem, platform, release } from 'node:os'
-import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution, isApprovedBaseline, fixtureHash } from './lib/evaluation.mjs'
+import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution, isApprovedBaseline, fixtureHash, evaluatedSkills, explicitInvocation } from './lib/evaluation.mjs'
 import { validateData, validateIds } from '../runtime/scripts/lib/schema.mjs'
 import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
 import { runCommand } from '../runtime/scripts/lib/run.mjs'
@@ -71,7 +71,7 @@ async function start(opts, results, frozen = null) {
     if (opts.agent || opts.model || opts.invocation) fail('The adapter owns agent, model and invocation. Omit these options.', 'usage-error')
     opts.agent = adapter.invocation.agent
     opts.model = adapter.invocation.model
-    if (opts.mode === 'with' && definition.invocation === 'explicit') opts.invocation = adapter.invocation.explicit
+    if (opts.mode === 'with' && definition.invocation === 'explicit') opts.invocation = explicitInvocation(adapter, definition)
   }
   if (opts.mode === 'with' && definition.invocation === 'explicit' && !opts.invocation?.trim()) fail('An ordinary with-skill run requires --invocation for the current host.', 'usage-error')
   if (opts.invocation && (opts.mode === 'without' || definition.invocation === 'implicit')) fail('Baseline and implicit runs use the outcome request without --invocation.', 'usage-error')
@@ -195,7 +195,7 @@ async function batch(opts, results) {
   const selected = opts.scenario ? opts.scenario.split(',') : opts.tier === 'smoke' ? smoke : registry.scenarios.map(item => item.id)
   if (new Set(selected).size !== selected.length) fail('Scenario subsets must contain unique comma-separated IDs.', 'usage-error')
   const candidate = (await child('git', ['rev-parse', 'HEAD'])).stdout.trim()
-  let skillHash = null
+  const skillHashes = {}
   const frozen = {}
   for (const id of selected) {
     const definition = await scenario(id)
@@ -206,17 +206,18 @@ async function batch(opts, results) {
     const stage = opts.stage ?? definition.checkpoints.at(-1)
     const fixtureRevision = await fixtureHash(definition.fixture)
     const mode = definition.mode ?? opts.mode
-    if (mode === 'with') skillHash ??= candidateSkillHash(candidate)
-    frozen[id] = { candidate, skillHash: mode === 'with' ? skillHash : null, definition, adapter, stage, fixtureRevision, mode }
+    // Each scenario is bound to the skills it stages, so the hash is per scenario.
+    skillHashes[id] = mode === 'with' ? candidateSkillHash(candidate, await evaluatedSkills(definition, stage)) : null
+    frozen[id] = { candidate, skillHash: skillHashes[id], definition, adapter, stage, fixtureRevision, mode }
   }
   await capacity(concurrency)
   const record = { schemaVersion: 1, id: randomUUID(), date: new Date().toISOString(),
-    candidate, skillHash, inputs: Object.fromEntries(selected.map(id => {
+    candidate, skillHashes, inputs: Object.fromEntries(selected.map(id => {
       const { definition, adapter, stage, fixtureRevision, mode } = frozen[id]
       return [id, batchInputs({ scenario: definition, adapter, adapterHash: hashBytes(canonicalJSON(adapter)),
         criteriaHash: hashBytes(canonicalJSON(definition.checks)), fixture: { revision: fixtureRevision },
         agent: adapter.invocation.agent, model: adapter.invocation.model, stage, mode,
-        request: openingRequest({ stage, invocation: mode === 'with' && definition.invocation === 'explicit' ? adapter.invocation.explicit : null }, definition) })]
+        request: openingRequest({ stage, invocation: mode === 'with' && definition.invocation === 'explicit' ? explicitInvocation(adapter, definition) : null }, definition) })]
     })), tier: opts.tier, mode: opts.mode,
     stage: opts.stage ?? null, repeat: Number(opts.repeat), concurrency, scenarios: selected, runIds: [], fixtures: [], errors: [] }
   await mkdir(join(results, 'batches'), { recursive: true, mode: 0o700 })
@@ -272,7 +273,7 @@ async function finishBatch(batch, results) {
     const first = group[0]
     const execution = group.find(run => !run.hostFailure)?.execution
     if (group.some(run => run.sourceRevision !== batch.candidate || run.mode !== (first.scenario.mode ?? batch.mode) || run.stage !== (batch.stage ?? first.scenario.checkpoints.at(-1)) ||
-        batchInputs(run) !== batch.inputs?.[id] || (!run.hostFailure && run.isolation.skillHash !== (run.mode === 'with' ? batch.skillHash : null)) ||
+        batchInputs(run) !== batch.inputs?.[id] || (!run.hostFailure && run.isolation.skillHash !== (run.mode === 'with' ? batch.skillHashes?.[id] : null)) ||
         (!run.hostFailure && ['imageId', 'recipeHash', 'toolchain'].some(key => canonicalJSON(run.execution?.[key]) !== canonicalJSON(execution?.[key]))))) fail('Batch runs no longer match their candidate and execution inputs.')
     for (const check of first.scenario.checks) {
       const verdicts = group.map(run => run.caseResults.find(item => item.id === check.id) ?? run.machineResults?.find(item => item.id === check.id))

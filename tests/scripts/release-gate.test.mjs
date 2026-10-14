@@ -23,7 +23,7 @@ function canonical(value) {
 
 async function releaseRepo(t) {
   const { repo } = await emptyRepo(t)
-  for (const path of ['scripts', 'runtime', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
+  for (const path of ['scripts', 'runtime', 'skills', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
     await mkdir(resolve(repo, path, '..'), { recursive: true })
     await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
   }
@@ -60,14 +60,14 @@ async function fixture(t, repository) {
       if (!records.has(id)) {
         const definition = definitions.find(item => item.id === row.scenario)
         const stage = definition.checkpoints.at(-1)
-        const request = (row.mode === 'with' && definition.invocation === 'explicit' ? '$repo-audit\n' : '') +
+        const request = (row.mode === 'with' && definition.invocation === 'explicit' ? `$${definition.skills[0]}\n` : '') +
           (['foundation', 'final'].includes(stage) ? `Active checkpoint: ${stage}.\n` : '') + definition.request
         const toolchain = { node: 'v24.17.0', git: 'git version 2.50', npm: '11', agent: 'synthetic-agent' }
         const turns = [request, ...definition.answers].map(message => ({ message }))
         records.set(id, { id, createdAt: row.date, sourceRevision: row.candidate, scenario: structuredClone(definition),
           stage, request, mode: row.mode, model: row.model, agent: 'synthetic-agent', os: 'synthetic-os',
           adapterHash: row.adapterHash, criteriaHash: row.criteriaHash,
-          adapter: { invocation: { agent: 'synthetic-agent', model: row.model, explicit: '$repo-audit' } },
+          adapter: { invocation: { agent: 'synthetic-agent', model: row.model, explicit: '${skill}' } },
           fixture: { name: definition.fixture, path: '[fixture]', revision: row.fixtureHash },
           tools: toolchain, transcript: 'conversation.txt', turns,
           isolation: { home: '[isolated-home]', verified: true, cleanedAt: row.date },
@@ -285,9 +285,10 @@ test('gating history includes compatible ledger measurements between releases', 
   assert.ok(!result.data.data.gatingSet.includes('ambiguous-idea/decision'))
 })
 
-for (const [name, path, expected, fullPasses, retained] of [
+for (const [name, path, expected, fullPasses, retained, pending = 10] of [
   ['unaffected ancestor measurements', 'note.txt', 0],
   ['changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2],
+  ['final installed skill inputs need measurement', 'skills/vision/SKILL.md', 2, undefined, undefined, 9],
   ['changed scenario requests need measurement', 'tests/eval/scenarios/scenarios.json', 2],
   ['changed fixture bytes need measurement', 'tests/fixtures/build.mjs', 2],
   ['changed scope prefix needs measurement', 'scripts/lib/evaluation-scope.mjs', 2],
@@ -298,7 +299,7 @@ for (const [name, path, expected, fullPasses, retained] of [
   ['assertion-only repair retains captures', 'tests/eval/container/assertions.mjs', 0],
   ['full-tier passing ancestor measurements', 'note.txt', 0, 5, true],
   ['full-tier failed ancestor measurements', 'note.txt', 0, 2, true],
-  ['full-tier changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2, 5, false]
+  ['full-tier skill changes retain the skill-free extension measurements', 'skills/repo-audit/new-guidance.md', 2, 5, true]
 ]) {
   test(`release gate carryover: ${name}`, async t => {
     const repo = await releaseRepo(t)
@@ -331,7 +332,7 @@ for (const [name, path, expected, fullPasses, retained] of [
     if (expected === 0) {
       assert.equal(result.data.data.carryover.filter(row => row.tier !== 'full').length, 10)
       assert.ok(result.data.data.carryover.every(row => row.candidate === ancestor))
-    } else assert.equal(new Set(result.data.data.pending.map(row => row.scenario)).size, 10)
+    } else assert.equal(new Set(result.data.data.pending.map(row => row.scenario)).size, pending)
     if (fullPasses !== undefined) {
       assert.equal(result.data.data.carryover.some(row => row.tier === 'full' && row.scenario === 'final-independent-extension'), retained)
       assert.equal(result.data.data.knownIssues.some(row => row.caseId === 'AC-64' && row.runs === 0), !retained)
@@ -369,7 +370,7 @@ for (const [name, path, expected, fullPasses, retained] of [
 }
 
 for (const [name, path, gated, regressionStatus] of [
-  ['covered skill changes exclude older measurements', 'skills/repo-audit/references/intent-interview.md', true, 1],
+  ['final installed skill changes exclude older measurements', 'skills/repo-audit/new-guidance.md', true, 1],
   ['unrelated changes retain older measurements', 'next-note.txt', false, 0]
 ]) {
   test(`release reliability compatibility: ${name}`, async t => {

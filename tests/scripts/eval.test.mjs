@@ -652,8 +652,8 @@ for (const [name, file, replacement] of [
     const scenariosPath = join(checkout, 'tests/eval/scenarios/scenarios.json')
     const scenarios = JSON.parse(await readFile(scenariosPath, 'utf8'))
     scenarios.scenarios.find(scenario => scenario.id === 'clear-goals').checks = [
-      { id: 'fixture-unchanged', caseId: 'AC-4', question: 'Were fixture bytes preserved?', machine: { type: 'fixtureUnchanged' } },
-      { id: 'citations-valid', caseId: 'AC-36', question: 'Is the report valid?', machine: { type: 'citeCheck', report: '$HOME/research-report.json' } }
+      { id: 'fixture-unchanged', caseId: 'AC-4', skill: 'repo-audit', question: 'Were fixture bytes preserved?', machine: { type: 'fixtureUnchanged' } },
+      { id: 'citations-valid', caseId: 'AC-36', skill: 'repo-audit', question: 'Is the report valid?', machine: { type: 'citeCheck', report: '$HOME/research-report.json' } }
     ]
     await writeFile(scenariosPath, JSON.stringify(scenarios))
     execFileSync('git', ['init', '--initial-branch=main'], { cwd: checkout, stdio: 'ignore' })
@@ -719,29 +719,30 @@ test('batch default output identifies failed captures and explains continuation'
   assert.ok(finalized.stdout.includes('Failed captures require a fresh batch.'))
 })
 
-test('batch blocks uncommitted candidate bytes before opening a host', async t => {
+async function expectUncommittedCandidateBlocked(t, scenario, stage, changed) {
   const directory = await temporary(t)
   const checkout = join(directory, 'checkout')
-  for (const path of ['scripts', 'runtime', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas', 'skills/repo-audit/SKILL.md',
+  for (const path of ['scripts', 'runtime', 'skills/repo-audit', 'skills/architecture',
     'tests/fixtures', 'tests/eval/scenarios', 'tests/eval/container', 'tests/acceptance', 'node_modules/acorn']) {
-    await cp(join(root, path), join(checkout, path), { recursive: true })
+    await cp(join(root, path), join(checkout, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') || path === 'node_modules/acorn' })
   }
   execFileSync('git', ['init', '--initial-branch=main'], { cwd: checkout, stdio: 'ignore' })
-  execFileSync('git', ['add', 'skills/repo-audit'], { cwd: checkout, stdio: 'ignore' })
+  // The scenario's machine checks run the committed assertions program.
+  execFileSync('git', ['add', 'skills', 'tests/eval/container'], { cwd: checkout, stdio: 'ignore' })
   execFileSync('git', ['-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid',
     '-c', 'commit.gpgsign=false', 'commit', '-m', 'Committed candidate'], { cwd: checkout, stdio: 'ignore' })
   const { path } = await adapterFile(directory)
   const args = ['--import', join(root, 'tests/inputs/evaluation-capacity.mjs'), join(checkout, 'scripts/eval.mjs'),
-    'batch', '--tier', 'smoke', '--scenario', 'ambiguous-idea', '--stage', 'baseline', '--mode', 'with',
+    'batch', '--tier', 'smoke', '--scenario', scenario, '--stage', stage, '--mode', 'with',
     '--adapter', path, '--repeat', '1', '--concurrency', '1', '--results', directory, '--json']
   const clean = spawnSync(process.execPath, args, { encoding: 'utf8', env: testEnvironment(directory) })
   const captured = JSON.parse(clean.stdout).data
   assert.equal(captured.runIds.length, 1, clean.stdout)
   const cleanRecord = JSON.parse(await readFile(join(directory, captured.runIds[0], 'run.json'), 'utf8'))
   t.after(() => rm(cleanRecord.fixture.path, { recursive: true, force: true }))
-  assert.equal(cleanRecord.hostFailure, undefined, clean.stdout)
+  assert.equal(cleanRecord.hostFailure, undefined, cleanRecord.reason)
   assert.equal(cleanRecord.turns.length, cleanRecord.scenario.answers.length + 1)
-  const skill = join(checkout, 'skills/repo-audit/SKILL.md')
+  const skill = join(checkout, `skills/${changed}/SKILL.md`)
   await writeFile(skill, `${await readFile(skill, 'utf8')}\nChanged candidate bytes.\n`)
   const rejected = spawnSync(process.execPath, args, { encoding: 'utf8', env: testEnvironment(directory) })
   const blocked = JSON.parse(rejected.stdout).data
@@ -754,7 +755,12 @@ test('batch blocks uncommitted candidate bytes before opening a host', async t =
   assert.deepEqual(record.turns, [])
   assert.ok(record.isolation.cleanedAt)
   await assert.rejects(readFile(join(directory, 'ledger.jsonl')), { code: 'ENOENT' })
-})
+}
+
+// Every skill a scenario stages is bound to the committed candidate, not only its first.
+for (const [scenario, stage, changed] of [['clear-goals', 'baseline', 'repo-audit'], ['research-main-typescript', 'discovery', 'architecture']]) {
+  test(`batch blocks uncommitted candidate bytes in ${changed} before opening a host`, t => expectUncommittedCandidateBlocked(t, scenario, stage, changed))
+}
 
 test('batch closes failed replies, counts every attempt and leaves the ledger unpublished', async t => {
   const directory = await temporary(t)
@@ -858,7 +864,7 @@ function hostStart(t, directory, path, mode = 'without', scenario = 'ambiguous-i
   return { result, record }
 }
 
-for (const [name, machine, expected, installer = { status: 'passed' }] of [
+for (const [name, machine, expected, installer = { status: 'passed' }, skill = 'repo-audit'] of [
   ['successful installer', { type: 'installerPassed' }, true],
   ['failed installer', { type: 'installerPassed' }, false, { status: 'failed' }],
   ['incomplete installer', { type: 'installerPassed' }, false, { status: 'passed', outputTruncated: true }],
@@ -873,7 +879,11 @@ for (const [name, machine, expected, installer = { status: 'passed' }] of [
   ['opened file tool path', { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] }, true],
   ['unopened required path', { type: 'opened', patterns: ['**/references/vision.md'] }, false],
   ['failed file read', { type: 'opened', patterns: ['**/references/architecture.md'] }, false],
-  ['nested shell forbidden read', { type: 'notOpened', patterns: ['**/references/intent-interview.md'] }, false]
+  ['nested shell forbidden read', { type: 'notOpened', patterns: ['**/references/intent-interview.md'] }, false],
+  // The check's own skill scopes its patterns and selects the cite-check it grades with.
+  ['another skill entry point opened', { type: 'opened', patterns: ['**/vision/SKILL.md'] }, true, undefined, 'vision'],
+  ['skill-scoped forbidden read', { type: 'notOpened', patterns: ['**/references/interview.md'] }, false, undefined, 'vision'],
+  ['valid saved citations from another skill', { type: 'citeCheck', report: 'report.json' }, true, undefined, 'vision']
 ]) {
   test(`container machine assertion checks ${name}`, async t => {
     const directory = await temporary(t)
@@ -886,9 +896,12 @@ for (const [name, machine, expected, installer = { status: 'passed' }] of [
         findings: 'Keep the note.', limitations: [], web: [], files: [{ location: 'first.md:1',
           state: { kind: 'sha256', value: createHash('sha256').update('User note: retain exactly.\n').digest('hex') } }] }] }))
     const program = await readFile(join(root, 'tests/eval/container/assertions.mjs'), 'utf8')
-    const input = { action: 'evaluate', checks: [{ id: 'control', machine }],
-      installer, skill: join(root, 'skills/repo-audit/scripts/repo-audit.mjs'),
+    const input = { action: 'evaluate', checks: [{ id: 'control', skill, machine }],
+      installer, skills: { [skill]: join(root, `skills/${skill}/scripts/${skill}.mjs`) },
       events: [{ type: 'item.completed', item: { type: 'file_read', path: '/home/test/.agents/skills/repo-audit/SKILL.md' } },
+        { type: 'item.completed', item: { type: 'file_read', path: '/home/test/.agents/skills/vision/SKILL.md' } },
+        { type: 'item.completed', item: { type: 'command_execution',
+          command: 'cat /home/test/.agents/skills/vision/references/interview.md', exit_code: 0 } },
         { type: 'item.completed', item: { type: 'command_execution',
           command: 'sh -c \'cat /home/test/.agents/skills/repo-audit/references/intent-interview.md\'', exit_code: 0 } },
         { type: 'item.completed', item: { type: 'command_execution',
@@ -925,7 +938,7 @@ test('helper execution is distinct from opening bundled source and assets', asyn
     await t.test(name, async () => {
       const inputPath = join(directory, 'assertions.json')
       await writeFile(inputPath, JSON.stringify({ action: 'evaluate',
-        checks: [{ id: 'source', machine: { type, patterns: ['**/repo-audit/scripts/**', '**/repo-audit/assets/**'] } }],
+        checks: [{ id: 'source', skill: 'repo-audit', machine: { type, patterns: ['**/repo-audit/scripts/**', '**/repo-audit/assets/**'] } }],
         events: [{ type: 'item.completed', item }] }))
       const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
       assert.equal(result.status, 0, result.stderr)
@@ -950,8 +963,8 @@ test('quoted compound shell access is scored in both directions', async t => {
     await t.test(name, async () => {
       const inputPath = join(directory, 'assertions.json')
       await writeFile(inputPath, JSON.stringify({ action: 'evaluate', checks: [
-        { id: 'opened', machine: { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] } },
-        { id: 'notOpened', machine: { type: 'notOpened', patterns: ['**/repo-audit/SKILL.md'] } }
+        { id: 'opened', skill: 'repo-audit', machine: { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] } },
+        { id: 'notOpened', skill: 'repo-audit', machine: { type: 'notOpened', patterns: ['**/repo-audit/SKILL.md'] } }
       ], events: [{ type: 'item.completed', item: { type: 'command_execution', command, exit_code: exitCode } }] }))
       const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
       assert.equal(result.status, 0, result.stderr)
@@ -980,8 +993,8 @@ test('file-tool access requires success for opened and retains attempts for notO
     await t.test(name, async () => {
       const inputPath = join(directory, 'assertions.json')
       await writeFile(inputPath, JSON.stringify({ action: 'evaluate', checks: [
-        { id: 'opened', machine: { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] } },
-        { id: 'notOpened', machine: { type: 'notOpened', patterns: ['**/repo-audit/SKILL.md'] } }
+        { id: 'opened', skill: 'repo-audit', machine: { type: 'opened', patterns: ['**/repo-audit/SKILL.md'] } },
+        { id: 'notOpened', skill: 'repo-audit', machine: { type: 'notOpened', patterns: ['**/repo-audit/SKILL.md'] } }
       ], events: [{ type: 'item.completed', item }] }))
       const result = spawnSync(process.execPath, ['--input-type=module', '-e', program, inputPath], { cwd: directory, encoding: 'utf8' })
       assert.equal(result.status, 0, result.stderr)
@@ -1036,6 +1049,33 @@ test('scenario fixture hashes bind selected source bytes and overlays without bi
   await writeFile(brief, `${await readFile(brief, 'utf8')}\n`)
   assert.notEqual(revision('ambiguous-idea'), idea)
 })
+
+// A scenario is staged, graded and impact-mapped by its skills, so names that do not line up are rejected before any run.
+for (const [name, mutate, message] of [
+  ['a check testing a skill the scenario does not stage', scenario => { scenario.checks[0].skill = 'glossary' }, /does not stage/],
+  ['a check testing a skill other than its case owner', scenario => { scenario.skills.push('glossary'); scenario.checks[0].skill = 'glossary' }, /AC-2 belongs to vision/],
+  ['an unknown skill', scenario => { scenario.skills.push('unknown-skill') }, /Invalid scenario skills/],
+  ['a repeated skill', scenario => { scenario.skills.push('vision') }, /Invalid scenario skills/],
+  ['no skills', scenario => { scenario.skills = [] }, /at least 1 items/]
+]) {
+  test(`scenario registry blocks ${name}`, async t => {
+    const directory = await temporary(t)
+    for (const path of ['scripts', 'runtime', 'tests/fixtures', 'tests/eval/scenarios', 'tests/acceptance', 'node_modules/acorn']) {
+      await cp(join(root, path), join(directory, path), { recursive: true })
+    }
+    execFileSync('git', ['init', '--initial-branch=main'], { cwd: directory, stdio: 'ignore' })
+    execFileSync('git', ['-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid',
+      '-c', 'commit.gpgsign=false', 'commit', '--allow-empty', '-m', 'Fixture checkout'], { cwd: directory, stdio: 'ignore' })
+    const scenariosPath = join(directory, 'tests/eval/scenarios/scenarios.json')
+    const scenarios = JSON.parse(await readFile(scenariosPath, 'utf8'))
+    mutate(scenarios.scenarios.find(scenario => scenario.id === 'ambiguous-idea'))
+    await writeFile(scenariosPath, JSON.stringify(scenarios))
+    const result = spawnSync(process.execPath, [join(directory, 'scripts/eval.mjs'), '--manual', '--scenario', 'ambiguous-idea',
+      '--mode', 'without', '--stage', 'baseline', '--agent', 'test-host', '--model', 'test-model', '--results', join(directory, 'results'), '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, 2, result.stdout)
+    assert.match(JSON.parse(result.stdout).problems[0].message, message)
+  })
+}
 
 test('malformed host output is retained before machine grading', async t => {
   const directory = await temporary(t)
@@ -1360,16 +1400,24 @@ test('captured listings and closed evidence redact host identities while retaini
     { ...files.answers, reviewer: '[redacted: user name]' })
 })
 
-test('with-skill staging preserves resources and ordinary invocation while implicit invocation sends only the request', async t => {
+test('with-skill staging follows the scenario skills, invokes the first and lets implicit invocation send only the request', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory)
-  for (const scenario of ['ambiguous-idea', 'implicit-invocation']) {
-    const { record } = hostStart(t, directory, path, 'with', scenario)
+  for (const [scenario, stage, skills, request] of [
+    ['ambiguous-idea', 'baseline', ['vision'], '$vision\n'],
+    ['research-main-typescript', 'discovery', ['repo-audit', 'architecture'], '$repo-audit\n'],
+    ['implicit-invocation', 'baseline', ['repo-audit'], null]
+  ]) {
+    const { record } = hostStart(t, directory, path, 'with', scenario, stage)
     assert.equal(record.isolation.verified, true)
-    assert.deepEqual(record.isolation.discovered, [join(record.isolation.stagedPath, 'SKILL.md')])
-    assert.equal(record.request, scenario === 'ambiguous-idea' ? '$repo-audit\n' + record.scenario.request : 'audit this repo')
-    assert.equal(await readFile(join(record.isolation.stagedPath, 'scripts/repo-audit.mjs'), 'utf8'),
-      await readFile(join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'utf8'))
+    assert.deepEqual(record.isolation.skills, skills)
+    assert.deepEqual(record.isolation.discovered, skills.map(skill => join(record.isolation.skillsPath, skill, 'SKILL.md')).sort())
+    assert.equal(record.request, request === null ? 'audit this repo' : request + record.scenario.request)
+    for (const skill of skills) {
+      assert.equal(await readFile(join(record.isolation.skillsPath, skill, `scripts/${skill}.mjs`), 'utf8'),
+        await readFile(join(root, `skills/${skill}/scripts/${skill}.mjs`), 'utf8'))
+    }
+    await assert.rejects(readFile(join(record.isolation.skillsPath, 'glossary', 'SKILL.md')), { code: 'ENOENT' })
   }
 })
 
@@ -1381,7 +1429,7 @@ test('foundation execution delivers the active checkpoint to the host', async t 
   t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
   t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
   const observed = JSON.parse(record.turns[0].result.stdout.split('\n')[1]).item.observed
-  assert.ok(observed.message.endsWith('$repo-audit\nActive checkpoint: foundation.\n' + record.scenario.request))
+  assert.ok(observed.message.endsWith('$vision\nActive checkpoint: foundation.\n' + record.scenario.request))
 })
 
 test('final with-skill execution installs the complete package in the isolated home before the host turn', async t => {
@@ -1389,7 +1437,7 @@ test('final with-skill execution installs the complete package in the isolated h
   const { path, adapter } = await adapterFile(directory)
   adapter.timeoutMs = 1800000
   await writeFile(path, JSON.stringify(adapter))
-  const result = run(directory, '--scenario', 'ambiguous-idea', '--mode', 'with', '--stage', 'final', '--adapter', path)
+  const result = run(directory, '--scenario', 'clear-goals', '--mode', 'with', '--stage', 'final', '--adapter', path)
   const record = result.data.data
   assert.ok(record, result.stdout)
   t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
@@ -1399,13 +1447,18 @@ test('final with-skill execution installs the complete package in the isolated h
   const installed = JSON.parse(record.installer.stdout)
   assert.equal(installed.status, 'passed')
   assert.equal(installed.data.mode, 'copy')
+  // The final checkpoint installs and discovers every skill, not only the scenario's own.
+  const names = Object.keys(JSON.parse(await readFile(join(root, 'runtime/skills.json'), 'utf8')))
+  const skillPath = skill => join(record.isolation.skillsPath, skill)
+  assert.deepEqual(record.isolation.skills, names)
+  assert.deepEqual(installed.data.installations.map(item => item.destination).sort(), names.map(skillPath).sort())
+  assert.deepEqual(record.isolation.discovered, names.map(skill => join(skillPath(skill), 'SKILL.md')).sort())
   // Installations list every skill in name order, so the evaluated skill is found by its folder rather than its position.
   const installation = installed.data.installations.find(item => item.destination.endsWith('/repo-audit'))
-  assert.equal(installation.destination, record.isolation.stagedPath)
   assert.equal(installation.runtime, null)
   assert.ok(Object.keys(installation.files).includes('scripts/repo-audit.mjs'))
   assert.ok(Object.keys(installed.data.installations.find(item => item.destination.endsWith('/maintenance')).files).includes('scripts/bstack-check.mjs'))
-  await assert.rejects(stat(join(record.isolation.stagedPath, 'node_modules')), { code: 'ENOENT' })
+  await assert.rejects(stat(join(skillPath('repo-audit'), 'node_modules')), { code: 'ENOENT' })
   assert.equal(record.isolation.verified, true)
   assert.equal(record.turns[0].message, '$repo-audit\nActive checkpoint: final.\n' + record.scenario.request)
   const artifact = JSON.parse(await readFile(join(directory, record.id, 'installer.json'), 'utf8'))
@@ -1413,7 +1466,7 @@ test('final with-skill execution installs the complete package in the isolated h
   assert.ok(!JSON.stringify(artifact).includes(record.isolation.home))
   const closed = run(directory, 'close', '--run', record.id)
   assert.equal(closed.data.data.isolation.verified, true)
-  await assert.rejects(readFile(join(record.isolation.stagedPath, 'SKILL.md')), { code: 'ENOENT' })
+  await assert.rejects(readFile(join(skillPath('repo-audit'), 'SKILL.md')), { code: 'ENOENT' })
 })
 
 test('final follow-up uses the explicit maintained repository in a fresh skill-free conversation', async t => {
@@ -1567,9 +1620,10 @@ test('adapter scoring requires the captured conversation and rechecks isolation 
   const files = await inputs(directory, record)
   assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath).status, 2)
   const transcriptPath = join(directory, record.id, record.conversation)
-  await writeFile(join(record.isolation.stagedPath, 'SKILL.md'), '---\nname: repo-audit\n---\nchanged\n')
+  const staged = join(record.isolation.skillsPath, 'vision', 'SKILL.md')
+  await writeFile(staged, '---\nname: vision\n---\nchanged\n')
   assert.equal(run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath).status, 2)
-  await assert.rejects(readFile(join(record.isolation.stagedPath, 'SKILL.md')), { code: 'ENOENT' })
+  await assert.rejects(readFile(staged), { code: 'ENOENT' })
   const rejected = JSON.parse(await readFile(join(directory, record.id, 'run.json'), 'utf8'))
   assert.ok(rejected.isolation.cleanedAt)
   assert.equal(rejected.isolation.verified, false)
@@ -1591,7 +1645,8 @@ for (const [name, mutate] of [
   ['empty capture', adapter => { adapter.outputLimitBytes = 0 }],
   ['missing message placeholder', adapter => { adapter.args = ['exec'] }],
   ['wrong discovery paths', adapter => { adapter.isolation.discoveryPaths = [] }],
-  ['escaping staging path', adapter => { adapter.isolation.stagePath = '../skill' }]
+  ['escaping staging path', adapter => { adapter.isolation.skillsPath = '../skills' }],
+  ['explicit invocation without a skill placeholder', adapter => { adapter.invocation.explicit = '$repo-audit' }]
 ]) {
   test(`adapter blocks ${name} before creating a run`, async t => {
     const directory = await temporary(t)
