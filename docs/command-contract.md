@@ -338,7 +338,7 @@ Optional titles and other destination spellings are coverage limits.
 Heading fragments use lowercase ATX or setext heading slugs, with punctuation removed, whitespace changed to hyphens and repeated headings suffixed `-1`, `-2` and so on.
 External URLs are not fetched.
 Code fences, indented code and HTML comments do not contribute links or glossary entries.
-Inline code, escaped labels, emphasis, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
+Inline code, escaped labels, emphasis other than the supported `**Term**:` entry prefix, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
 When such markup occurs outside excluded blocks, the source document's links and glossary are left for renderer review; registered paths are still verified.
 A fragment target containing such markup also reports a coverage limit rather than a missing heading.
 Fragments in non-Markdown targets are not validated.
@@ -363,6 +363,9 @@ Duplicate canonical terms fail within the same registered context, including acr
 The same word in two different contexts is valid.
 Synonyms, contradictory definitions and domain relevance remain reviewer judgements.
 An unrecognized glossary format reports a coverage limit while supported local links in that document are still checked.
+
+`node skills/glossary/scripts/glossary.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone glossary skill.
+It runs `docs check`, `apply`, `state show` and `cite-check` from the [shared runtime](../runtime/), with the same arguments, target, scratch and result contracts as repo-audit.
 
 ## Measure and overlap
 
@@ -672,7 +675,7 @@ The referenced change set follows the existing apply schema and owns complete ge
 Its findings use stage foundation and both targets identify the planned destination as `{ mode: "workspace", root: <resolved-destination>, revision: null }`.
 Every scaffold edit uses create with originalHash null and complete UTF-8 payloads.
 See the [apply operation table](#apply-dry-run) for supported file formats.
-The same plan writes the approved vision, confirmed glossary when useful and selected foundation.
+Follow the [repo-audit creation procedure](../skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for the documents included in its scaffold.
 The creation digest uses the existing canonical JSON hash algorithm on every field except planDigest.
 
 Commands have unique IDs across prerequisites, setup and journey, and a positive safe-integer timeoutMs.
