@@ -18,7 +18,7 @@ test('gate prepare installs both locks and runs the pinned runtime without globa
   await mkdir(home)
   await mkdir(checkout)
   for (const name of ['package.json', 'package-lock.json']) await copyFile(join(root, name), join(checkout, name))
-  await cp(join(root, 'skills/repo-audit'), join(checkout, 'skills/repo-audit'), { recursive: true,
+  await cp(join(root, 'skills/vision'), join(checkout, 'skills/vision'), { recursive: true,
     filter: path => !path.split(/[\\/]/).includes('node_modules') })
   assert.deepEqual(await readdir(home), [])
   const { NODE_TEST_CONTEXT, ...env } = process.env
@@ -27,15 +27,30 @@ test('gate prepare installs both locks and runs the pinned runtime without globa
   const config = parse(await readFile(join(root, '.no-mistakes.yaml'), 'utf8'))
   const install = spawnSync(config.commands.prepare, { cwd: checkout, env: isolated, shell: true, encoding: 'utf8', timeout: 120000 })
   assert.equal(install.status, 0, install.stderr + install.stdout)
-  const version = spawnSync(process.execPath, [join(checkout, 'skills/repo-audit/node_modules/lavish-axi/dist/cli.mjs'), '--version'], {
+  const version = spawnSync(process.execPath, [join(checkout, 'skills/vision/node_modules/lavish-axi/dist/cli.mjs'), '--version'], {
     cwd: checkout, env: isolated, encoding: 'utf8', timeout: 10000
   })
   assert.equal(version.status, 0, version.stderr)
   assert.equal(version.stdout.trim(), '0.1.78')
-  const help = spawnSync(process.execPath, [join(checkout, 'skills/repo-audit/scripts/repo-audit.mjs'), 'vision-board', 'build', '--help'], {
+  const help = spawnSync(process.execPath, [join(checkout, 'skills/vision/scripts/vision.mjs'), 'vision-board', 'build', '--help'], {
     cwd: home, env: isolated, encoding: 'utf8'
   })
   assert.equal(help.status, 0, help.stderr)
   assert.match(help.stdout, /--draft <file> --proposals <file>/)
+  const validate = () => spawnSync(process.execPath, [join(root, 'scripts/check-package.mjs'), '--skill', join(checkout, 'skills/vision')], { cwd: home, env: isolated, encoding: 'utf8' })
+  assert.equal(validate().status, 0)
+  await rm(join(checkout, 'skills/vision/node_modules/lavish-axi/dist/cli.mjs'))
+  const removed = validate()
+  assert.equal(removed.status, 1, removed.stdout)
+  assert.match(removed.stdout, /local-path-missing:.*node_modules\/lavish-axi\/dist\/cli\.mjs/)
   console.log('Fresh gate prepare: both lockfiles installed. Nested lavish-axi --version: 0.1.78. Empty isolated home, no support skill installed, installed command help: exit 0.')
+})
+
+test('only the vision skill declares a runtime dependency', async () => {
+  const declared = {}
+  for (const skill of await readdir(join(root, 'skills'))) {
+    const manifest = await readFile(join(root, 'skills', skill, 'package.json'), 'utf8').catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
+    if (manifest !== null) declared[skill] = JSON.parse(manifest).dependencies
+  }
+  assert.deepEqual(declared, { vision: { 'lavish-axi': '0.1.78' } })
 })

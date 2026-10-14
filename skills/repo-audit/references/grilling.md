@@ -12,7 +12,7 @@ A question is ready only when its prerequisites are settled.
 An unanswered question or missing factual evidence keeps its dependent questions blocked.
 
 Find facts in the repo, available documentation and environment rather than asking the user to look them up.
-Use read-only research under the main procedure's research rules where needed.
+Use read-only research where needed.
 Continue independent questions while factual research is unresolved.
 Decisions belong to the user.
 
