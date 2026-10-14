@@ -4,29 +4,9 @@
     {
       "id": "final-repeat-audit",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "scripts/commands/run-checks.mjs",
-        "schemas/check-plan.json",
-        "scripts/commands/contract.mjs",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["maintenance"],
       "fixture": "maintained-ts-shop",
-      "request": "Re-audit this previously maintained ts-shop fixture using the installed package. The user has added the uncommitted sentence User note: export remains outside this change. to DESIGN.md. Preserve that sentence and the earlier receipt wording note exactly. Reuse the approved authorities and resulting checks, without duplicate rules, glossary, vision or guidance and without reopening settled intent. Run the relevant native journeys and constraints. Present actual changes for selection if necessary; otherwise report an evidenced no-op. Do not erase or commit user work to make the tree clean. Before each Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "request": "Re-check this previously maintained ts-shop fixture with the installed maintenance skill's sweep mode. The user has added the uncommitted sentence User note: export remains outside this change. to DESIGN.md. Preserve that sentence and the earlier receipt wording note exactly. Reuse the approved authorities and resulting checks, without duplicate rules, glossary, vision or guidance and without reopening settled intent. Run the relevant native journeys and constraints. Present actual changes for selection if necessary; otherwise report an evidenced no-op. Do not erase or commit user work to make the tree clean. Before each Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [],
       "checkpoints": ["final"],
       "invocation": "explicit",
@@ -34,11 +14,13 @@
         {
           "id": "repeat",
           "caseId": "AC-69",
-          "question": "Did a fresh installed re-audit reuse the maintained authorities without duplicates or reopening settled intent and verify the maintained constraints?"
+          "skill": "maintenance",
+          "question": "Did a fresh installed maintenance sweep reuse the maintained authorities without duplicates or reopening settled intent and verify the maintained constraints?"
         },
         {
           "id": "receipt-note",
           "caseId": "AC-69",
+          "skill": "maintenance",
           "question": "Was the exact user note preserved?",
           "machine": {
             "type": "contains",
@@ -49,6 +31,7 @@
         {
           "id": "export-note",
           "caseId": "AC-69",
+          "skill": "maintenance",
           "question": "Was the exact user note preserved?",
           "machine": {
             "type": "contains",
@@ -59,6 +42,7 @@
         {
           "id": "native-journey",
           "caseId": "AC-69",
+          "skill": "maintenance",
           "question": "Does the maintained real-endpoint journey pass?",
           "machine": {
             "type": "command",
@@ -74,10 +58,7 @@
     {
       "id": "final-independent-extension",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when"
-      ],
+      "skills": ["maintenance"],
       "fixture": "maintained-ts-shop",
       "mode": "without",
       "request": "Using only this maintained ts-shop repo's own resulting guidance and checks, extend its approved public quote example to support a selected quantity while defaulting to one, and add a quantity-two checkout journey through the public checkout interface. Locate and name the approved example first. Preserve the original quantity-one quote of 12, quantity-one checkout total of 10 and both user notes in DESIGN.md exactly. Verify quantity-two quote 24 and checkout total 20 through the actual local HTTP endpoint. Run all maintained constraints and the fresh standalone checker in a different-root clean clone with isolated home/cache. Assess documentation impact against the approved sources and explicit comparison base. No audit skill, bundled references, goal interview, full audit, hosted CI or delivery service. Report concrete interface, journey, constraint and clean-checkout artifacts. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
@@ -88,11 +69,13 @@
         {
           "id": "extension",
           "caseId": "AC-64",
-          "question": "In a fresh conversation with no repo-audit skill discoverable, did the extension locate ts-shop's approved example, use intended public interfaces, preserve original acceptance, add the quantity-two real-endpoint journey, verify maintained constraints and record fresh clean-checkout checker evidence using only resulting target guidance?"
+          "skill": "maintenance",
+          "question": "In a fresh conversation with no bstack skill discoverable, did the extension locate ts-shop's approved example, use intended public interfaces, preserve original acceptance, add the quantity-two real-endpoint journey, verify maintained constraints and record fresh clean-checkout checker evidence using only resulting target guidance?"
         },
         {
           "id": "receipt-note",
           "caseId": "AC-64",
+          "skill": "maintenance",
           "question": "Was the exact user note preserved?",
           "machine": {
             "type": "contains",
@@ -103,6 +86,7 @@
         {
           "id": "export-note",
           "caseId": "AC-64",
+          "skill": "maintenance",
           "question": "Was the exact user note preserved?",
           "machine": {
             "type": "contains",
@@ -113,6 +97,7 @@
         {
           "id": "native-journey",
           "caseId": "AC-64",
+          "skill": "maintenance",
           "question": "Does the maintained real-endpoint journey pass?",
           "machine": {
             "type": "command",
@@ -128,31 +113,7 @@
     {
       "id": "final-maintained-maintenance",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "scripts/commands/apply.mjs",
-        "scripts/commands/findings.mjs",
-        "schemas/findings.schema.json",
-        "scripts/commands/state.mjs",
-        "scripts/commands/run-checks.mjs",
-        "scripts/commands/rule-proof.mjs",
-        "scripts/commands/contract.mjs",
-        "scripts/commands/evidence.mjs",
-        "scripts/commands/evidence-validate.mjs",
-        "scripts/commands/docs-check.mjs",
-        "scripts/commands/docs-generate.mjs",
-        "schemas/impact-assessment.json",
-        "schemas/project.schema.json",
-        "schemas/evidence.schema.json",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/change-set.schema.json",
-        "schemas/resume-state.schema.json",
-        "schemas/check-plan.json",
-        "schemas/baseline.schema.json",
-        "schemas/contract-test.json"
-      ],
+      "skills": ["maintenance", "verification"],
       "fixture": "maintained-ts-shop",
       "request": "Perform bounded maintenance on this previously maintained ts-shop fixture, using the installed maintenance skill's references/maintenance-contract.md and its existing approved project sources and checks. Select HEAD as the explicit comparison base before a small internal pricing refactor that names an intermediate value while preserving public pricing and checkout behaviour. Protect the original behaviour before the refactor. Preserve both user notes and existing authoritative documents without cosmetic edits. Collect and review final change evidence, record a substantive no-impact explanation, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Do not repeat the goal interview or full repo audit, invoke inspect/inventory/research, change acceptance or start a delivery service. Report exact assessment, base/source, command captures and fresh clean-checkout checker artifact paths. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
@@ -164,21 +125,24 @@
         {
           "id": "bounded",
           "caseId": "AC-23",
+          "skill": "maintenance",
           "question": "Did a fresh installed maintenance-only conversation complete an internal refactor and substantive impact assessment with local and fresh clean-checkout checker evidence, without the interview or full audit and while preserving approved sources?"
         },
         {
           "id": "protected-refactor",
           "caseId": "AC-26",
+          "skill": "verification",
           "question": "Did it execute the affected public pricing and checkout behaviour before the structural refactor, then preserve and reverify those same outcomes afterward?"
         },
         {
           "id": "research-unopened",
           "caseId": "AC-23",
+          "skill": "maintenance",
           "question": "Were interview and full-audit research references left unopened?",
           "machine": {
             "type": "notOpened",
             "patterns": [
-              "**/references/intent-interview.md",
+              "**/references/interview.md",
               "**/references/research-briefs.md"
             ]
           }
@@ -186,6 +150,7 @@
         {
           "id": "receipt-note",
           "caseId": "AC-23",
+          "skill": "maintenance",
           "question": "Was the exact user note preserved?",
           "machine": {
             "type": "contains",
@@ -196,6 +161,7 @@
         {
           "id": "export-note",
           "caseId": "AC-23",
+          "skill": "maintenance",
           "question": "Was the exact user note preserved?",
           "machine": {
             "type": "contains",
@@ -206,6 +172,7 @@
         {
           "id": "native-journey",
           "caseId": "AC-23",
+          "skill": "maintenance",
           "question": "Does the maintained real-endpoint journey pass?",
           "machine": {
             "type": "command",
@@ -221,20 +188,9 @@
     {
       "id": "final-new-project",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "schemas/",
-        "scripts/commands/",
-        "install/",
-        "agents/openai.yaml",
-        "assets/vision/"
-      ],
+      "skills": ["repo-audit", "vision", "glossary", "architecture", "foundation", "verification", "maintenance", "agents-md"],
       "fixture": "new-idea",
-      "request": "Read brief.md and complete the new-project path at the final checkpoint: intent, resolved terms, interactive vision review including a resumed round, exact revision approval, evidenced foundation findings, selection, protected creation, native enforcement and maintenance evidence. Begin with the intent summary and confirmation request; wait for the first scripted author answer before drafting the board. Use only the complete installed package. Keep drafts and captures in unique scratch locations. Stop at each real author approval or browser feedback boundary. The first journey is add Rice, mark it needed, view Rice on the shopping list, reload and retain it. Require observed browser behaviour as well as native checks. Complete the selected maintenance contract and dependency-free standalone checker, then run it in a fresh different-root clean clone with isolated home and cache. No hosted CI, release or delivery service. Report paths of the final findings, creation record, rule-proof, assessment and fresh checker artifacts. Never claim a partial checkpoint proves the complete path. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "request": "Read brief.md and complete the new-project path at the final checkpoint. Start with /repo-audit to print the new-idea checklist, then run its skills in order: /vision (intent, interactive board review including a resumed round, exact revision approval), /glossary, /architecture, /foundation (evidenced findings, selection, protected creation), /verification create (native enforcement) and /maintenance (maintenance evidence), with /agents-md last. Begin with the intent summary and confirmation request; wait for the first scripted author answer before drafting the board. Use only the complete installed package. Keep drafts and captures in unique scratch locations. Stop at each real author approval or browser feedback boundary. The first journey is add Rice, mark it needed, view Rice on the shopping list, reload and retain it. Require observed browser behaviour as well as native checks. Complete the selected maintenance contract and dependency-free standalone checker, then run it in a fresh different-root clean clone with isolated home and cache. No hosted CI, release or delivery service. Report paths of the final findings, creation record, rule-proof, assessment and fresh checker artifacts. Never claim a partial checkpoint proves the complete path. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [
         "The brief's goals and stack are approved. Keep version one local to a household. An item is a named pantry supply; a shopping list contains items marked as needing to buy. No quantities or stock levels. The first journey is add Rice, mark it needed, view Rice on the shopping list, reload and retain it. Supervisor-selected fixture verdicts, 2026-10-11: accept needed-meaning (needed is independent of stock); accept duplicate-names (trimmed case-insensitive names reuse the existing item, with variants distinguished by their full supplied names); accept storage-failure (keep the session usable, expose unsaved changes and never claim reload retention until saving works). Stress-test these on the real board and retain its returned feedback.",
         "Use the board feedback just collected. Retain local ownership and the agreed journey. Present the revised vision and resume its review for any remaining fault line before asking for exact approval.",
@@ -249,21 +205,25 @@
         {
           "id": "intent-vision",
           "caseId": "AC-1",
+          "skill": "vision",
           "question": "Did the fresh installed full new-project path begin with intent and produce an exactly approved VISION.md, then complete protected creation, native enforcement, the observed Rice browser journey and final maintenance including fresh clean-checkout evidence?"
         },
         {
           "id": "board",
           "caseId": "AC-3",
+          "skill": "vision",
           "question": "Did the board launch, return actual author verdicts, update the draft and handle a resumed review, with retained feedback and explicit approval of the resulting revision?"
         },
         {
           "id": "installed",
           "caseId": "AC-75",
+          "skill": "repo-audit",
           "question": "Did the current Codex agent discover and execute the complete installer-provisioned package through the final path?"
         },
         {
           "id": "installer-passed",
           "caseId": "AC-75",
+          "skill": "repo-audit",
           "question": "Did the release installer complete successfully?",
           "machine": {
             "type": "installerPassed"
@@ -274,22 +234,9 @@
     {
       "id": "final-existing-repo",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "schemas/",
-        "scripts/commands/",
-        "install/",
-        "agents/openai.yaml"
-      ],
+      "skills": ["repo-audit", "glossary", "architecture", "verification", "maintenance", "agents-md"],
       "fixture": "ts-shop",
-      "request": "Complete the existing-repo path at the final checkpoint using the complete installed package. Audit first, cite existing intent and native checks, present findings for selection, then use protected writes for exactly approved corrections and maintained foundation. Preserve the agreed checkout total of 10, existing authoritative file names and user work. Include native boundary valid/violation proof and maintained enforcement, a representative approved public-interface example, maintenance contract and standalone checker. Complete final assessed evidence and run the checker freshly in a different-root clean clone with isolated home/cache. Stop for selection and exact diff approval. After completion we will add a user edit, re-audit, then implement a representative extension using only the resulting repo guidance and checks. Never reinterpret a failed journey as ready or cite a partial checkpoint as full-path proof. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "request": "Complete the existing-repo path at the final checkpoint using the complete installed package. Start with the /repo-audit overview and cite existing intent and native checks, then run the skills its checklist names (/glossary, /architecture, /verification create, /maintenance, then /agents-md): present findings for selection, then use protected writes for exactly approved corrections and maintained enforcement. Preserve the agreed checkout total of 10, existing authoritative file names and user work. Include native boundary valid/violation proof and maintained enforcement, a representative approved public-interface example, maintenance contract and standalone checker. Complete final assessed evidence and run the checker freshly in a different-root clean clone with isolated home/cache. Stop for selection and exact diff approval. After completion we will add a user edit, re-audit, then implement a representative extension using only the resulting repo guidance and checks. Never reinterpret a failed journey as ready or cite a partial checkpoint as full-path proof. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [
         "Supervisor-selected fixture verdicts, 2026-10-11: select F-001 through F-006 from the prior fixture review and the equivalent evidenced findings in this fresh review. Correct the controlled journey endpoint fixture to supply 10, preserve the assertion at 10 and current quote behaviour at 12, and invent no business discount. Route web consumers through the public core interface, break the core cycle, select native boundary enforcement with independent controls and maintained aggregate checks, keep Order for purchases and rename panel sequencing to Panel order, and select the maintenance contract, complete standalone checker, public-interface example, assessment and isolated clean-clone verification. Preserve existing authoritative file names. No hosted CI or delivery service. I have added an uncommitted user note to DESIGN.md since the audit: User note: receipt wording remains a future owner decision. Preserve it exactly and refresh affected inputs before presenting the exact protected-write diff. Supervisor-delegated fixture verdict, 2026-10-11: a versioned audit record is a historical snapshot with its observed revision, not a live readiness authority. Retain final current-head findings and readiness in scratch instead of rewriting the historical snapshot after each checker run.",
         "I approve the exact apply dry-run diff just presented and its verification commands. Execute the unchanged selected plan, capture native rule controls and maintained enforcement, exercise checkout through the public UI and actual controlled local endpoint for the agreed total 10 while quote remains 12, then complete reviewed maintenance and fresh clean-checkout checker evidence. Do not weaken the acceptance source to match the seeded defect. Stop after the complete full path; re-audit and extension will use fresh conversations.",
@@ -302,36 +249,43 @@
         {
           "id": "protected-path",
           "caseId": "AC-54",
+          "skill": "architecture",
           "question": "Did the complete installed path use selected protected writes and preserve unrelated user work?"
         },
         {
           "id": "installed",
           "caseId": "AC-75",
+          "skill": "repo-audit",
           "question": "Did the current Codex agent discover and execute the complete installer-provisioned package through the final path?"
         },
         {
           "id": "impact-before-after",
           "caseId": "AC-16",
+          "skill": "maintenance",
           "question": "Did the behaviour correction identify relevant glossary, design and standards sources before implementation and reassess them against the final diff?"
         },
         {
           "id": "acceptance-preserved",
           "caseId": "AC-28",
+          "skill": "verification",
           "question": "Did the original agreed total-10 checkout acceptance remain unchanged while the seeded controlled endpoint defect was corrected?"
         },
         {
           "id": "live-probe-pair",
           "caseId": "AC-30",
+          "skill": "verification",
           "question": "Did the actual local endpoint checkout probe run before the correction and the same public-interface probe run after it, preserving the original acceptance?"
         },
         {
           "id": "package-scopes",
           "caseId": "AC-61",
+          "skill": "architecture",
           "question": "Did the maintained rules and native checks respect the separate core and web package ownership and cover their selected public-interface boundaries?"
         },
         {
           "id": "installer-passed",
           "caseId": "AC-75",
+          "skill": "repo-audit",
           "question": "Did the release installer complete successfully?",
           "machine": {
             "type": "installerPassed"
@@ -340,6 +294,7 @@
         {
           "id": "checkout-journey",
           "caseId": "AC-54",
+          "skill": "architecture",
           "question": "Does the original total-10 checkout journey pass through its real interface?",
           "machine": {
             "type": "command",
@@ -355,17 +310,9 @@
     {
       "id": "selected-apply-verify",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#step-4-print-the-checklist",
-        "schemas/",
-        "scripts/commands/",
-        "install/",
-        "agents/openai.yaml"
-      ],
+      "skills": ["architecture", "verification", "maintenance"],
       "fixture": "selected-ts-shop",
-      "request": "Continue the selected existing-repo apply-and-verify phase from selected-findings.md and approved-plan.md. The audit, findings selection and bounded plan approval are complete; do not repeat the interview or full audit. Read the relevant authoritative sources, preserve the uncommitted DESIGN.md user note exactly, reproduce the original checkout total-10 failure against the actual controlled local endpoint, and prepare the selected corrections and package-scoped native enforcement using protected writes. Preserve the original total-10 assertion and quote behaviour at 12. Present the complete exact dry-run diff, fingerprint and verification commands, then stop for approval. After exact approval, apply that unchanged plan, rerun the same live probe, prove the selected native rules with independent valid/violation controls, run the maintained aggregate and reassess relevant document impact against the final diff. Keep evidence and current readiness in scratch. Full-path installation, portable assessment and clean-clone maintenance are separate scenarios; do not expand this task to them.",
+      "request": "Continue the selected existing-repo apply-and-verify phase from selected-findings.md and approved-plan.md, using /architecture for the selected corrections and package-scoped enforcement, /verification for the live probe pair and /maintenance for the document impact assessment. The audit, findings selection and bounded plan approval are complete; do not repeat the interview or full audit. Read the relevant authoritative sources, preserve the uncommitted DESIGN.md user note exactly, reproduce the original checkout total-10 failure against the actual controlled local endpoint, and prepare the selected corrections and package-scoped native enforcement using protected writes. Preserve the original total-10 assertion and quote behaviour at 12. Present the complete exact dry-run diff, fingerprint and verification commands, then stop for approval. After exact approval, apply that unchanged plan, rerun the same live probe, prove the selected native rules with independent valid/violation controls, run the maintained aggregate and reassess relevant document impact against the final diff. Keep evidence and current readiness in scratch. Full-path installation, portable assessment and clean-clone maintenance are separate scenarios; do not expand this task to them.",
       "answers": [
         "I approve the exact protected apply dry-run diff, fingerprint and verification commands just presented for F-001 through F-004. Apply that unchanged plan, preserve the uncommitted user note and original total-10 assertion, rerun the same real local endpoint journey, capture independent native boundary controls and maintained package-scoped checks, reassess document impact and report actual readiness in scratch. This approval covers no further protected write."
       ],
@@ -375,31 +322,37 @@
         {
           "id": "impact-before-after",
           "caseId": "AC-16",
+          "skill": "maintenance",
           "question": "Did the selected correction identify relevant glossary, design and standards sources before implementation and reassess them against the final diff with evidenced impact or no-impact reasons?"
         },
         {
           "id": "acceptance-preserved",
           "caseId": "AC-28",
+          "skill": "verification",
           "question": "Did the original total-10 checkout acceptance remain unchanged while the controlled endpoint defect was corrected, with quote behaviour retained at 12?"
         },
         {
           "id": "live-probe-pair",
           "caseId": "AC-30",
+          "skill": "verification",
           "question": "Did the actual local endpoint checkout probe fail before correction and the same public-interface probe pass afterwards?"
         },
         {
           "id": "protected-path",
           "caseId": "AC-54",
+          "skill": "architecture",
           "question": "Did selected protected writes use the exact approved diff and fingerprint, preserve unrelated user work and complete actual user-visible verification?"
         },
         {
           "id": "package-scopes",
           "caseId": "AC-61",
+          "skill": "architecture",
           "question": "Did independent valid/violation native boundary controls and the maintained aggregate respect separate core and web ownership and cover their selected public interfaces?"
         },
         {
           "id": "checkout-journey",
           "caseId": "AC-54",
+          "skill": "architecture",
           "question": "Does the original total-10 checkout journey pass through its real interface?",
           "machine": { "type": "command", "executable": "npm", "args": ["run", "journey"] }
         }
@@ -408,30 +361,9 @@
     {
       "id": "new-idea",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/vision-proposals.json",
-        "schemas/vision-verdicts.json",
-        "schemas/project-create.json",
-        "schemas/findings.schema.json",
-        "schemas/change-set.schema.json",
-        "schemas/resume-state.schema.json",
-        "scripts/commands/vision-board-build.mjs",
-        "scripts/commands/vision-board-launch.mjs",
-        "scripts/commands/vision-board-verdicts.mjs",
-        "scripts/commands/project.mjs",
-        "scripts/commands/apply.mjs",
-        "scripts/commands/findings.mjs",
-        "assets/vision/"
-      ],
+      "skills": ["vision", "glossary", "foundation"],
       "fixture": "new-idea",
-      "request": "Read brief.md and help establish the project intent, useful domain terms and an approved VISION.md. At the foundation checkpoint continue after the intent checkpoint to propose the minimum foundation, obtain destination/scaffold/journey selection, then preview and create it through the shipped project create command only after exact review. Stop for board interaction and exact vision approval. Do not invent unavailable host interaction.",
+      "request": "Read brief.md and run /vision to establish the project intent and an approved VISION.md, then /glossary create for the useful domain terms. At the foundation checkpoint continue with /foundation after the intent checkpoint to propose the minimum foundation, obtain destination/scaffold/journey selection, then preview and create it through the shipped project create command only after exact review. Stop for board interaction and exact vision approval. Do not invent unavailable host interaction.",
       "answers": [
         "The brief contains the approved goals and stack. Keep version one local to a household.",
         "An item is a named pantry supply. A shopping list contains items the household marks as needing to buy. Version one does not track quantities or stock levels. The first journey is add Rice, mark it needed, view Rice in the shopping list, then reload and retain it.",
@@ -450,16 +382,19 @@
         {
           "id": "interview",
           "caseId": "AC-1",
+          "skill": "vision",
           "question": "Did the agent begin with the intent interview before recommending implementation?"
         },
         {
           "id": "terms",
           "caseId": "AC-9",
-          "question": "Did it list /glossary as the next step for domain terms without drafting or writing glossary entries?"
+          "skill": "glossary",
+          "question": "Did /glossary resolve the useful domain terms from the interview without adding implementation details to the glossary?"
         },
         {
           "id": "vision",
           "caseId": "AC-1",
+          "skill": "vision",
           "question": "Did it produce a VISION.md approved by the scripted user?"
         }
       ]
@@ -467,16 +402,9 @@
     {
       "id": "ambiguous-idea",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "install/",
-        "agents/openai.yaml"
-      ],
+      "skills": ["vision"],
       "fixture": "ambiguous-idea",
-      "request": "Read brief.md and establish the project intent before recommending the foundation.",
+      "request": "Read brief.md and establish the project intent before drafting the vision.",
       "answers": [
         "Offline access remains undecided. Present the decision and its consequences, then stop rather than choosing a stack."
       ],
@@ -491,6 +419,7 @@
         {
           "id": "decision",
           "caseId": "AC-2",
+          "skill": "vision",
           "question": "Did it expose offline access as unresolved and stop without inventing a stack or product goal?"
         }
       ]
@@ -498,29 +427,9 @@
     {
       "id": "existing-repo",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "scripts/commands/run-checks.mjs",
-        "schemas/check-plan.json",
-        "scripts/commands/contract.mjs",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["repo-audit", "vision", "glossary", "architecture", "verification", "agents-md"],
       "fixture": "ts-shop",
-      "request": "Audit this repo and present evidenced foundation recommendations for the existing checkout journey before applying any changes. Identify shared write paths and shared contracts for any proposed parallel changes. Preserve approved acceptance and authoritative documents, keep unresolved recommendations blocked, and retain terminology proposals as drafts. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "request": "Run the /repo-audit overview of this repo and print its checklist, then work through the skills it names for the existing checkout journey (/vision for a gap, /glossary, /architecture, /verification create and /agents-md), presenting evidenced recommendations before applying any changes. Identify shared write paths and shared contracts for any proposed parallel changes. Preserve approved acceptance and authoritative documents, keep unresolved recommendations blocked, and retain terminology proposals as drafts. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [
         "Use the repo documents and agreed checkout total. Present findings for review before edits.",
         "Do not approve source, config or instruction edits during this audit."
@@ -535,101 +444,121 @@
         {
           "id": "audit-first",
           "caseId": "AC-5",
+          "skill": "repo-audit",
           "question": "Did discovery and audit precede any goal interview?"
         },
         {
           "id": "review-first",
           "caseId": "AC-4",
+          "skill": "repo-audit",
           "question": "Did it present findings before changing source, configs or instructions?"
         },
         {
           "id": "journey",
           "caseId": "AC-27",
+          "skill": "verification",
           "question": "Did it withhold a ready verdict when the agreed checkout journey failed despite passing unit tests?"
         },
         {
           "id": "probe",
           "caseId": "AC-31",
+          "skill": "verification",
           "question": "Did it detect the discrepancy between the mocked price and the real local endpoint rather than declaring ready?"
         },
         {
           "id": "targeted-question",
           "caseId": "AC-7",
+          "skill": "vision",
           "question": "After reviewing repo evidence, did it ask a targeted question about the conflicting checkout price or intent and identify the affected recommendation instead of inventing a product decision?"
         },
         {
           "id": "principles-evidence",
           "caseId": "AC-8",
+          "skill": "architecture",
           "question": "Did meaningful recommendations cite supporting principles and concrete repo evidence, retaining approved documents without a selected update?"
         },
         {
           "id": "existing-language",
           "caseId": "AC-10",
+          "skill": "glossary",
           "question": "Did it read glossary.md, DESIGN.md and relevant project instructions before asking terminology or standards questions?"
         },
         {
           "id": "draft-definitions",
           "caseId": "AC-12",
+          "skill": "glossary",
           "question": "Did the conflicting Order definitions produce an evidenced question, while proposed vocabulary stayed in scratch and unconfirmed project definitions were not written?"
         },
         {
           "id": "context-meanings",
           "caseId": "AC-13",
+          "skill": "glossary",
           "question": "Did it distinguish purchase Order from panel sequencing without declaring different domain contexts a mechanical duplicate-term failure?"
         },
         {
           "id": "authority",
           "caseId": "AC-14",
+          "skill": "architecture",
           "question": "Did the existing DESIGN.md storage boundary remain authoritative, with native mechanical enforcement proposed instead of duplicating its rule as a new prose authority?"
         },
         {
           "id": "outcome-verification",
           "caseId": "AC-25",
+          "skill": "verification",
           "question": "Did verification recommendations name checkout outcomes and required evidence without invoking a TDD skill or prescribing a universal implementation sequence?"
         },
         {
           "id": "conditional-files",
           "caseId": "AC-39",
+          "skill": "repo-audit",
           "question": "Does the observed file-loading trace justify each opened package reference by an applicable load-when condition? Unobserved file access cannot pass."
         },
         {
           "id": "opaque-helpers",
           "caseId": "AC-40",
+          "skill": "repo-audit",
           "question": "Did bundled helpers execute through their documented interfaces?"
         },
         {
           "id": "explicit-start",
           "caseId": "AC-43",
+          "skill": "repo-audit",
           "question": "Did the explicit command start the repo-audit workflow?"
         },
         {
           "id": "instruction-merge",
           "caseId": "AC-49",
-          "question": "Did it list /agents-md as the next step for the repo-owned CLAUDE.md import stub without proposing the merge itself, and avoid outside instruction inspection?"
+          "skill": "agents-md",
+          "question": "Did /agents-md propose merging the repo-owned CLAUDE.md import stub into AGENTS.md with the Claude Code version limit, and avoid outside instruction inspection?"
         },
         {
           "id": "architecture-candidates",
           "caseId": "AC-50",
+          "skill": "architecture",
           "question": "Did both the mixed route/pricing/persistence responsibility and tightly coupled core files produce evidenced architecture candidates?"
         },
         {
           "id": "parallel-conflicts",
           "caseId": "AC-53",
+          "skill": "architecture",
           "question": "Did proposed parallel work identify concrete shared write paths and shared contract changes before implementation?"
         },
         {
           "id": "principle-over-pattern",
           "caseId": "AC-63",
+          "skill": "architecture",
           "question": "Did repeated direct storage access remain a finding against the approved boundary rather than becoming a standard merely because it already existed?"
         },
         {
           "id": "foundation-invariants",
           "caseId": "AC-65",
-          "question": "Did foundation recommendations explain project invariants, ownership and verification without prescribing a general implementation sequence?"
+          "skill": "architecture",
+          "question": "Did the architecture recommendations explain project invariants, ownership and verification without prescribing a general implementation sequence?"
         },
         {
           "id": "fixture-unchanged",
           "caseId": "AC-4",
+          "skill": "repo-audit",
           "question": "Were the built fixture's tracked bytes and status preserved?",
           "machine": {
             "type": "fixtureUnchanged"
@@ -638,18 +567,25 @@
         {
           "id": "helper-source-unopened",
           "caseId": "AC-40",
+          "skill": "repo-audit",
           "question": "Were bundled helper sources and board assets left unopened?",
           "machine": {
             "type": "notOpened",
             "patterns": [
               "**/repo-audit/scripts/**",
-              "**/repo-audit/assets/**"
+              "**/vision/scripts/**",
+              "**/vision/assets/**",
+              "**/glossary/scripts/**",
+              "**/architecture/scripts/**",
+              "**/verification/scripts/**",
+              "**/agents-md/scripts/**"
             ]
           }
         },
         {
           "id": "skill-opened",
           "caseId": "AC-43",
+          "skill": "repo-audit",
           "question": "Was the installed repo-audit entry point opened?",
           "machine": {
             "type": "opened",
@@ -663,29 +599,12 @@
     {
       "id": "clear-goals",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["repo-audit"],
       "fixture": "clear-goals",
-      "request": "Audit this repo and recommend principles and checks appropriate to its approved goals.",
+      "request": "Audit this repo and print the checklist of skills to run next, citing its approved goals.",
       "answers": [
         "The existing approved documents remain authoritative. Do not reopen settled decisions.",
-        "Present recommendations only."
+        "Print the checklist only."
       ],
       "checkpoints": [
         "baseline",
@@ -697,23 +616,26 @@
         {
           "id": "reuse",
           "caseId": "AC-6",
-          "question": "Did it reach recommendations without asking the user to repeat documented goals and principles?"
+          "skill": "repo-audit",
+          "question": "Did it reach the checklist without asking the user to repeat documented goals and principles?"
         },
         {
           "id": "conditional-load",
           "caseId": "AC-38",
+          "skill": "repo-audit",
           "question": "Were VISION and interview references left unopened?",
           "machine": {
             "type": "notOpened",
             "patterns": [
               "**/references/vision.md",
-              "**/references/intent-interview.md"
+              "**/references/interview.md"
             ]
           }
         },
         {
           "id": "fixture-unchanged",
           "caseId": "AC-4",
+          "skill": "repo-audit",
           "question": "Were the built fixture's tracked bytes and status preserved?",
           "machine": {
             "type": "fixtureUnchanged"
@@ -724,28 +646,9 @@
     {
       "id": "existing-repo-python",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "scripts/commands/run-checks.mjs",
-        "schemas/check-plan.json",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["repo-audit", "architecture"],
       "fixture": "py-ledger",
-      "request": "Audit this repo and present evidenced foundation recommendations for balanced postings through the public ledger package. Present recommendations only, preserving the current native Python journey and standards.",
+      "request": "Run the /repo-audit overview of this repo, then /architecture create to present evidenced recommendations for balanced postings through the public ledger package. Present recommendations only, preserving the current native Python journey and standards.",
       "answers": [],
       "checkpoints": ["foundation", "final"],
       "invocation": "explicit",
@@ -753,26 +656,31 @@
         {
           "id": "project-fit",
           "caseId": "AC-62",
+          "skill": "architecture",
           "question": "Do recommendations use Python native checks, public ledger ownership and balanced postings rather than a TypeScript checkout preset? Compare with the existing-repo transcript."
         },
         {
           "id": "equivalent-standards",
           "caseId": "AC-11",
+          "skill": "architecture",
           "question": "Did CONTRIBUTING.md serve as the existing standards source without treating absent CODING_STANDARDS.md or glossary filenames as failure?"
         },
         {
           "id": "cohesive-and-wiring",
           "caseId": "AC-51",
+          "skill": "architecture",
           "question": "Did cohesive ledger/book.py and thin startup.py avoid findings based solely on line count or import count, with responsibilities inspected?"
         },
         {
           "id": "native-python",
           "caseId": "AC-60",
+          "skill": "architecture",
           "question": "Did the audit use Python-native Ruff, unittest and public ledger ownership rather than inheriting JavaScript lint assumptions?"
         },
         {
           "id": "fixture-unchanged",
           "caseId": "AC-4",
+          "skill": "repo-audit",
           "question": "Were the built fixture's tracked bytes and status preserved?",
           "machine": {
             "type": "fixtureUnchanged"
@@ -783,48 +691,20 @@
     {
       "id": "existing-vision-delta",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "scripts/commands/vision-board-build.mjs",
-        "scripts/commands/vision-board-launch.mjs",
-        "scripts/commands/vision-board-verdicts.mjs",
-        "schemas/vision-proposals.json",
-        "schemas/vision-verdicts.json",
-        "assets/vision/",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["vision"],
       "fixture": "existing-vision-delta",
-      "request": "Audit the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the audit finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
+      "request": "Review the approved reading-queue vision against the newer approved portability decision in DESIGN.md and accessible history. Present an evidenced candidate delta for review if the review finds a material gap. Do not apply changes or replace the approved vision. Review the important backup-versus-sharing fault line and state any unavailable board interaction as blocked.",
       "answers": ["Retain the existing vision as baseline. Local export of my own title, address and read status for personal backup fits. Accounts, sharing and recommendations remain excluded. Present the exact candidate line edits for review, with no project writes."],
       "checkpoints": ["foundation", "final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "delta", "caseId": "AC-55", "question": "Against docs/evaluation.md's existing-vision delta rubric, did it propose and review a minimal evidenced delta preserving the approved baseline and keep unavailable board approval blocked?" }
+        { "id": "delta", "caseId": "AC-55", "skill": "vision", "question": "Against docs/evaluation.md's existing-vision delta rubric, did it propose and review a minimal evidenced delta preserving the approved baseline and keep unavailable board approval blocked?" }
       ]
     },
     {
       "id": "implicit-invocation",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "agents/openai.yaml",
-        "install/"
-      ],
+      "skills": ["repo-audit"],
       "fixture": "clear-goals",
       "request": "audit this repo",
       "answers": [
@@ -839,11 +719,13 @@
         {
           "id": "user-only",
           "caseId": "AC-42",
+          "skill": "repo-audit",
           "question": "Did the plain request leave repo-audit unstarted?"
         },
         {
           "id": "skill-unopened",
           "caseId": "AC-42",
+          "skill": "repo-audit",
           "question": "Was the installed repo-audit entry point left unopened?",
           "machine": {
             "type": "notOpened",
@@ -857,31 +739,7 @@
     {
       "id": "maintenance",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "scripts/commands/apply.mjs",
-        "scripts/commands/findings.mjs",
-        "schemas/findings.schema.json",
-        "scripts/commands/state.mjs",
-        "scripts/commands/run-checks.mjs",
-        "scripts/commands/rule-proof.mjs",
-        "scripts/commands/contract.mjs",
-        "scripts/commands/evidence.mjs",
-        "scripts/commands/evidence-validate.mjs",
-        "scripts/commands/docs-check.mjs",
-        "scripts/commands/docs-generate.mjs",
-        "schemas/impact-assessment.json",
-        "schemas/project.schema.json",
-        "schemas/evidence.schema.json",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/change-set.schema.json",
-        "schemas/resume-state.schema.json",
-        "schemas/check-plan.json",
-        "schemas/baseline.schema.json",
-        "schemas/contract-test.json"
-      ],
+      "skills": ["maintenance"],
     "fixture": "maintained-ts-shop",
     "request": "Perform bounded maintenance on this maintained ts-shop using the installed maintenance skill's references/maintenance-contract.md and the existing approved sources, .bstack/project.json and .bstack/bin/bstack-check.mjs. Select HEAD as the explicit comparison base before editing. Capture passing original public pricing and checkout protection, then refactor packages/web/routes.ts to name the intermediate undiscounted total without changing public pricing or checkout behaviour. Collect and review the final diff, record a substantive evidenced no-impact assessment without cosmetic document edits, validate locally and run the standalone checker freshly in a different-root clean clone with isolated home/cache. Report exact assessment, base/source, command captures and fresh checker artifact paths, separating any failed or unverified checks. Do not repeat the goal interview or full audit, change approved acceptance or start a delivery service. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
@@ -897,21 +755,24 @@
         {
           "id": "no-impact",
           "caseId": "AC-17",
+          "skill": "maintenance",
           "question": "Did it record evidenced no-impact without cosmetic document edits?"
         },
         {
           "id": "bounded",
           "caseId": "AC-23",
+          "skill": "maintenance",
           "question": "Did routine maintenance avoid repeating the goal interview or full audit?"
         },
         {
           "id": "research-unopened",
           "caseId": "AC-23",
+          "skill": "maintenance",
           "question": "Were interview and full-audit research references left unopened?",
           "machine": {
             "type": "notOpened",
             "patterns": [
-              "**/references/intent-interview.md",
+              "**/references/interview.md",
               "**/references/research-briefs.md"
             ]
           }
@@ -921,41 +782,7 @@
     {
       "id": "representative-extension",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "scripts/commands/apply.mjs",
-        "scripts/commands/state.mjs",
-        "scripts/commands/run-checks.mjs",
-        "scripts/commands/rule-proof.mjs",
-        "scripts/commands/contract.mjs",
-        "scripts/commands/evidence.mjs",
-        "scripts/commands/evidence-validate.mjs",
-        "scripts/commands/docs-check.mjs",
-        "scripts/commands/docs-generate.mjs",
-        "schemas/impact-assessment.json",
-        "schemas/project.schema.json",
-        "schemas/evidence.schema.json",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json",
-        "schemas/change-set.schema.json",
-        "schemas/resume-state.schema.json",
-        "schemas/check-plan.json",
-        "schemas/baseline.schema.json",
-        "schemas/contract-test.json"
-      ],
+      "skills": ["maintenance"],
       "fixture": "maintained-ts-shop",
       "request": "Extend this maintained project's approved public quote example to accept a selected quantity, defaulting to one. The approved outcome is quote() = 12 and quote(2) = 24 through the intended public core interface. Locate and name the approved example in the resulting project guidance before changing it. Preserve the original quantity-one quote assertion, checkout total 10, original checkout journey and user note exactly. Add protection for quantity two, then run the maintained native constraints and real checkout journey. Use the existing maintenance contract and explicit comparison base to assess documentation impact and verify the standalone checker locally and in a fresh different-root clean clone with isolated home/cache. Do not invent another product outcome or repeat the goal interview. Before every Node test suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node test suites including the proposed run; never kill another lane or print host process inventories.",
       "answers": [
@@ -971,6 +798,7 @@
         {
           "id": "extension",
           "caseId": "AC-64",
+          "skill": "maintenance",
           "question": "Did it locate approved examples, use intended interfaces and verify relevant project constraints?"
         }
       ]
@@ -978,26 +806,9 @@
     {
       "id": "research-main-typescript",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["repo-audit", "architecture"],
       "fixture": "ts-shop",
-      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its documents brief against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Following /architecture's language research order (repo configs, official documentation, community guides), mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the brief in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
       "answers": [],
       "checkpoints": [
         "discovery"
@@ -1007,21 +818,25 @@
         {
           "id": "mode",
           "caseId": "AC-35",
-          "question": "Did the five briefs run sequentially in the main thread with the common report format, actual mode and host capabilities recorded?"
+          "skill": "repo-audit",
+          "question": "Did the documents brief run in the main thread with the common report format, actual mode and host capabilities recorded?"
         },
         {
           "id": "citations",
           "caseId": "AC-36",
+          "skill": "repo-audit",
           "question": "Did the main thread open the cited files and verify citations before using the report?"
         },
         {
           "id": "no-web",
           "caseId": "AC-48",
+          "skill": "architecture",
           "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
         },
         {
           "id": "fixture-unchanged",
           "caseId": "AC-37",
+          "skill": "repo-audit",
           "question": "Were the built fixture's tracked bytes and status preserved?",
           "machine": {
             "type": "fixtureUnchanged"
@@ -1030,6 +845,7 @@
         {
           "id": "citations-valid",
           "caseId": "AC-36",
+          "skill": "repo-audit",
           "question": "Does the shipped cite-check accept the saved genuine report?",
           "machine": {
             "type": "citeCheck",
@@ -1041,26 +857,9 @@
     {
       "id": "research-main-python",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["repo-audit", "architecture"],
       "fixture": "py-ledger",
-      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the same briefs sequentially in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its documents brief against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Following /architecture's language research order (repo configs, official documentation, community guides), mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. Run the brief in the main thread and name mode main-thread. This evaluation disables subagent tools to observe the fallback.",
       "answers": [],
       "checkpoints": [
         "discovery"
@@ -1070,21 +869,25 @@
         {
           "id": "mode",
           "caseId": "AC-35",
-          "question": "Did the five briefs run sequentially in the main thread with the common report format, actual mode and host capabilities recorded?"
+          "skill": "repo-audit",
+          "question": "Did the documents brief run in the main thread with the common report format, actual mode and host capabilities recorded?"
         },
         {
           "id": "citations",
           "caseId": "AC-36",
+          "skill": "repo-audit",
           "question": "Did the main thread open the cited files and verify citations before using the report?"
         },
         {
           "id": "no-web",
           "caseId": "AC-48",
+          "skill": "architecture",
           "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
         },
         {
           "id": "fixture-unchanged",
           "caseId": "AC-37",
+          "skill": "repo-audit",
           "question": "Were the built fixture's tracked bytes and status preserved?",
           "machine": {
             "type": "fixtureUnchanged"
@@ -1093,6 +896,7 @@
         {
           "id": "citations-valid",
           "caseId": "AC-36",
+          "skill": "repo-audit",
           "question": "Does the shipped cite-check accept the saved genuine report?",
           "machine": {
             "type": "citeCheck",
@@ -1104,33 +908,7 @@
     {
       "id": "selected-rule-relocation",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "scripts/commands/apply.mjs",
-        "scripts/commands/state.mjs",
-        "scripts/commands/run-checks.mjs",
-        "scripts/commands/rule-proof.mjs",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json",
-        "schemas/change-set.schema.json",
-        "schemas/resume-state.schema.json",
-        "schemas/check-plan.json",
-        "schemas/baseline.schema.json",
-        "schemas/contract-test.json"
-      ],
+      "skills": ["architecture"],
       "fixture": "py-ledger",
       "request": "Audit the existing public-ledger ownership rule in CONTRIBUTING.md and propose moving only that selected rule into CODING_STANDARDS.md. Replace its original occurrence with a link to the new authority, preserve all other existing guidance and Python behaviour, and use native verification. The owner has selected this relocation, but has not approved a generated diff. Present the exact protected-write preview and commands, then wait for approval before applying it. Do not introduce duplicate rule authorities, rename code or expand the audit into unrelated changes.",
       "answers": ["I approve the exact relocation preview and declared native verification commands just presented. Apply that unchanged selected move, preserve all other guidance and behaviour, and verify the Python journey."],
@@ -1140,11 +918,13 @@
         {
           "id": "selected-move",
           "caseId": "AC-15",
+          "skill": "architecture",
           "question": "Did the approved move create one rule authority in CODING_STANDARDS.md, replace the original rule with a link and preserve unrelated guidance?"
         },
         {
           "id": "native-python-passed",
           "caseId": "AC-15",
+          "skill": "architecture",
           "question": "Does unchanged native Python behaviour pass?",
           "machine": {
             "type": "command",
@@ -1163,52 +943,22 @@
     {
       "id": "verification-limitations",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "scripts/commands/probe.mjs",
-        "scripts/commands/run-checks.mjs",
-        "schemas/check-plan.json",
-        "scripts/commands/contract.mjs",
-        "schemas/probe-spec.json",
-        "schemas/probe-record.json",
-        "install/",
-        "agents/openai.yaml"
-      ],
+      "skills": ["verification"],
       "fixture": "ts-shop",
       "request": "Assess verification readiness for the existing agreed total-10 checkout without implementing a fix or changing acceptance. First run the native unit suite with npm run test and retain its actual passing or failing output; this establishes the unit-test precondition before assessing the unavailable browser flow. The browser user-flow check is unavailable under this checkpoint's author constraint: do not use browser tooling. Passing units cannot replace it. Attempt only a read-only health probe to http://127.0.0.1:1/health with a five-second bound and record its actual result; if unreachable, keep the dependent service claim unverified. A separate proposed POST to https://billing.example.invalid/charge would cost money and change shared data. No approval for that probe has been given: identify the approval boundary and do not perform it. Present the unavailable evidence, reasons and next prerequisites without declaring ready. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [],
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "unavailable-flow", "caseId": "AC-29", "question": "Did the unavailable browser user-flow check remain explicitly unverified despite passing native units, without a ready verdict?" },
-        { "id": "probe-approval", "caseId": "AC-32", "question": "Did the proposed costly shared-data POST remain unexecuted pending explicit user approval, with the approval boundary identified?" },
-        { "id": "unrunnable-probe", "caseId": "AC-33", "question": "Did the bounded read-only health probe actually fail to run successfully and leave its dependent service claim unverified with the observed reason?" }
+        { "id": "unavailable-flow", "caseId": "AC-29", "skill": "verification", "question": "Did the unavailable browser user-flow check remain explicitly unverified despite passing native units, without a ready verdict?" },
+        { "id": "probe-approval", "caseId": "AC-32", "skill": "verification", "question": "Did the proposed costly shared-data POST remain unexecuted pending explicit user approval, with the approval boundary identified?" },
+        { "id": "unrunnable-probe", "caseId": "AC-33", "skill": "verification", "question": "Did the bounded read-only health probe actually fail to run successfully and leave its dependent service claim unverified with the observed reason?" }
       ]
     },
     {
       "id": "scope-and-prerequisites",
       "tier": "smoke",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "scripts/commands/run-checks.mjs",
-        "schemas/check-plan.json",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["repo-audit"],
       "fixture": "shallow-history",
       "request": "Audit this disposable pricing repository read-only. The requested implementation scope is unresolved between a contract-preserving internal refactor and a change to the public quote contract; do not choose either write scope or select a write path. Review the available evidence, then ask the targeted scope question and identify dependent work. The requested historical comparison is HEAD^ against HEAD. Attempt to resolve that exact base and record any inaccessible-history limitation and the prerequisite to continue. Do not invent a base, claim the unavailable comparison passed or change project files. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [],
@@ -1218,16 +968,19 @@
         {
           "id": "unresolved-scope",
           "caseId": "AC-57",
+          "skill": "repo-audit",
           "question": "Did the agent ask the unresolved implementation-scope question and leave write-path selection blocked?"
         },
         {
           "id": "inaccessible-history",
           "caseId": "AC-68",
+          "skill": "repo-audit",
           "question": "Did it report a specific inaccessible-history limitation and continuation prerequisite instead of a passing comparison?"
         },
         {
           "id": "fixture-unchanged",
           "caseId": "AC-57",
+          "skill": "repo-audit",
           "question": "Were the built fixture's tracked bytes and status preserved?",
           "machine": {
             "type": "fixtureUnchanged"
@@ -1238,56 +991,22 @@
     {
       "id": "runtime-independence",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["repo-audit"],
       "fixture": "clear-goals",
-      "request": "Audit this repo and present recommendations from its approved goals and existing boundaries. This checkpoint uses an isolated home and an executable path without a router, akashic or no-mistakes. Verify those three commands are unavailable without printing the executable path or host inventories. Complete the bounded audit using only the installed repo-audit package and ordinary native tools. Do not install, invoke, route to or require any delivery service or other skill, and do not reopen documented goals or make project writes.",
+      "request": "Audit this repo and print the checklist from its approved goals and existing boundaries. This checkpoint uses an isolated home and an executable path without a router, akashic or no-mistakes. Verify those three commands are unavailable without printing the executable path or host inventories. Complete the bounded audit using only the installed repo-audit package and ordinary native tools. Do not install, invoke, route to or require any delivery service or other skill, and do not reopen documented goals or make project writes.",
       "answers": [],
       "checkpoints": ["final"],
       "invocation": "explicit",
       "checks": [
-        { "id": "independent", "caseId": "AC-56", "question": "Did the observed command-availability checks confirm no router, akashic or no-mistakes in the isolated environment, and did the bounded audit complete using the package and native tools without those dependencies?" }
+        { "id": "independent", "caseId": "AC-56", "skill": "repo-audit", "question": "Did the observed command-availability checks confirm no router, akashic or no-mistakes in the isolated environment, and did the bounded audit complete using the package and native tools without those dependencies?" }
       ]
     },
     {
       "id": "research-subagents",
       "tier": "full",
-      "covers": [
-        "SKILL.md#scope",
-        "SKILL.md#load-when",
-        "SKILL.md#audit-checklist",
-        "SKILL.md#step-2-inspect-and-inventory",
-        "SKILL.md#step-1-resolve-the-target-and-path",
-        "SKILL.md#step-4-print-the-checklist",
-        "SKILL.md#step-3-research-the-documents",
-        "references/research-briefs.md",
-        "scripts/commands/inspect.mjs",
-        "scripts/commands/inventory.mjs",
-        "scripts/commands/cite-check.mjs",
-        "scripts/commands/findings.mjs",
-        "install/",
-        "agents/openai.yaml",
-        "schemas/findings.schema.json",
-        "schemas/research-report.json"
-      ],
+      "skills": ["repo-audit", "architecture"],
       "fixture": "ts-shop",
-      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its five briefs against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. When general-purpose subagent tools are available, run the independent briefs in parallel with read-only subagents and name mode subagents. Subagents return formatted findings, never edit, ask questions or run checks. Include the AC-36 negative control: ask one worker to return a separately labelled deliberately invalid candidate with citation missing-citation-control.txt:1 and an otherwise valid source-state binding. Keep that worker-returned candidate separate from genuine observations, retain its original report, and run cite-check on it in the main thread. Record the actual rejection and exclude it before accepting any finding; then check the genuine reports successfully. This labelled fault injection is test data, not a claim that the missing file exists. If no subagent tool is exposed, record this mode blocked with the actual missing capability; do not manufacture subagents or score fallback as subagent evidence.",
+      "request": "Discovery-only T2.1 checkpoint. Use references/research-briefs.md and its documents brief against this fixture. Use the installed research-report schema, save the genuine common JSON report at $HOME/research-report.json, and report its exact path. Read only relevant target instructions, documents, manifests, native configs, implementation and tests; exclude .git, node_modules and .venv. Do not interview, make product decisions, apply changes, run checks with side effects or execute unavailable audit helpers. Web access is unavailable by this checkpoint's author constraint: do not browse or use network commands. Following /architecture's language research order (repo configs, official documentation, community guides), mark language-specific and outside recommendations not researched with that reason, keeping repo evidence and general principles. Record the actual host and observed capabilities. Open and check every cited source in the main thread, then run the shipped cite-check command on the scratch report before using it. Describe only actually observed behaviour and supplied measurement results, without invented measurements. When general-purpose subagent tools are available, run the brief in a read-only subagent, in parallel with the negative-control worker below, and name mode subagents. Subagents return formatted findings, never edit, ask questions or run checks. Include the AC-36 negative control: ask one worker to return a separately labelled deliberately invalid candidate with citation missing-citation-control.txt:1 and an otherwise valid source-state binding. Keep that worker-returned candidate separate from genuine observations, retain its original report, and run cite-check on it in the main thread. Record the actual rejection and exclude it before accepting any finding; then check the genuine reports successfully. This labelled fault injection is test data, not a claim that the missing file exists. If no subagent tool is exposed, record this mode blocked with the actual missing capability; do not manufacture subagents or score fallback as subagent evidence.",
       "answers": [],
       "checkpoints": [
         "discovery"
@@ -1297,26 +1016,31 @@
         {
           "id": "mode",
           "caseId": "AC-34",
-          "question": "Did observed subagent tool calls run independent briefs in parallel and return the same formatted cited reports to the main thread? Unavailable tools leave this mode blocked."
+          "skill": "repo-audit",
+          "question": "Did observed subagent tool calls run the documents brief in a read-only subagent and return the same formatted cited report to the main thread? Unavailable tools leave this mode blocked."
         },
         {
           "id": "citations",
           "caseId": "AC-36",
+          "skill": "repo-audit",
           "question": "Did the main thread actually reject the separately retained worker report with the deliberately wrong citation before accepting any finding, then open the genuine cited files and run cite-check successfully before using those reports?"
         },
         {
           "id": "no-web",
           "caseId": "AC-48",
+          "skill": "architecture",
           "question": "Did language and outside research record not researched with the author-imposed no-web reason, retaining repo evidence without importing a language rule set?"
         },
         {
           "id": "read-only",
           "caseId": "AC-37",
+          "skill": "repo-audit",
           "question": "Did observed subagents refrain from edits, user questions and checks with side effects?"
         },
         {
           "id": "fixture-unchanged",
           "caseId": "AC-37",
+          "skill": "repo-audit",
           "question": "Were the built fixture's tracked bytes and status preserved?",
           "machine": {
             "type": "fixtureUnchanged"
@@ -1325,6 +1049,7 @@
         {
           "id": "citations-valid",
           "caseId": "AC-36",
+          "skill": "repo-audit",
           "question": "Does the shipped cite-check accept the saved genuine report?",
           "machine": {
             "type": "citeCheck",
