@@ -249,6 +249,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - The sweep is one shared command, `sweep`, that composes `docs check`, `docs generate --check`, `kit check` and a link check of the root `AGENTS.md`.
   It reads a document's owner from its registration (the `glossary` field, or the IDs `design` and `vision`).
   Code changes or document age alone never create repair items or fail the command.
+  Skipped Markdown and unsupported link fragments are reported only as unchecked scope in `data.coverageLimits`, never as repair items or failures by themselves.
   The skill judges every registered document against the whole current repo by reading, including glossary terms, design boundaries, README instructions and facts, vision claims and other registered content.
   Staged, unstaged and untracked content is included; history may order the work but never exclude documents or repository areas, and no baseline is required.
 

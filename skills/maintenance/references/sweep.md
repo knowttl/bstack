@@ -5,8 +5,10 @@ It reads and reports; it writes nothing and starts no other skill.
 
 ## What the command returns
 
-`sweep` fails when anything drifted and passes when nothing did.
+`sweep` fails on evidence-backed drift and passes when no drift is demonstrated in the checked scope.
 Each problem's `fix` field names who repairs it.
+Skipped Markdown and unsupported link fragments in registered content or `AGENTS.md` appear only in `data.coverageLimits`, with a `path` and `reason`.
+These are unchecked scope, never problems or repair items, and never fail the command by themselves.
 
 | Problem code | Meaning | Fix |
 |---|---|---|
@@ -43,3 +45,4 @@ No committed history or baseline is needed to review the current repo.
 Return one list.
 Each line names the file, what drifted, the evidence and the mode to run.
 End with what was checked, what could not be checked and the statement that nothing was written.
+Include unresolved `data.coverageLimits` as unchecked scope in that closing account, without a repair mode or a claim of drift.

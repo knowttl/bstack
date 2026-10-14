@@ -99,6 +99,7 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 Run `node scripts/maintenance.mjs sweep --repo <target> --json` and keep the output in scratch.
 It reads the registered documents, generated sections, verification kits and `AGENTS.md` links and writes nothing.
 Every problem it returns carries the skill mode in its `fix` field.
+Its `data.coverageLimits` records unchecked scope, including skipped Markdown and unsupported fragments; these are never repair items and do not fail the command by themselves.
 Load the [sweep guide](references/sweep.md) for what each problem code means and which mode owns it.
 
 Done when: The command result is saved in scratch, and a missing or invalid contract is reported as the first item instead of being worked around.
@@ -119,6 +120,7 @@ Done when: Every registered document is judged drifted with citations, or judged
 Merge the command's problems and the judged items into one list, one line per item, each naming the file, what drifted and the mode that fixes it, such as `3 new terms - run /glossary maintain`.
 Group items by mode in the order `/maintenance`, `/glossary maintain`, `/architecture maintain`, `/vision`, `/verification maintain` and `/agents-md`.
 State what the sweep checked, what it could not, and that nothing was written.
+Include unresolved coverage limits as unchecked scope in this account, without labelling them drift or assigning a repair mode.
 Start none of the named modes.
 
 Done when: The report is one list in which every item names its mode, with the checked scope and the limits, and the target is unchanged.

@@ -26,7 +26,7 @@ async function readIfPresent(root, path) {
   return readFile(await resolveFilePath(root, path), 'utf8').catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
 }
 
-async function contractItems(target, options) {
+async function contractItems(target, options, coverageLimits) {
   const path = options.contract ?? '.bstack/project.json'
   if (await readIfPresent(target.root, path) === null) {
     return [{ code: 'contract-missing', path, message: 'No maintenance contract is registered.', fix: 'Run /maintenance create.' }]
@@ -39,7 +39,7 @@ async function contractItems(target, options) {
   const owner = path => fixFor(policy.contract.documents.find(document => document.path === path))
   const docs = await checkDocuments({ ...options, coveragePolicy: policy })
   items.push(...docs.problems.map(problem => ({ ...problem, fix: owner(problem.path) })))
-  items.push(...docs.data.coverageLimits.map(limit => ({ code: 'document-coverage-limit', path: limit.path, message: limit.reason, fix: owner(limit.path) })))
+  coverageLimits.push(...docs.data.coverageLimits)
   const regenerate = 'Run /maintenance and its docs generate command, then apply the reviewed proposal.'
   try { items.push(...(await checkGeneratedSections({ ...options, check: true, coveragePolicy: policy })).problems.map(problem => ({ ...problem, fix: regenerate }))) } catch (error) {
     items.push(...problemsOf(error).map(problem => ({ ...problem, fix: regenerate })))
@@ -58,21 +58,27 @@ async function kitItems(target) {
   return items
 }
 
-async function pointerItems(target) {
+async function pointerItems(target, coverageLimits) {
   const text = await readIfPresent(target.root, 'AGENTS.md')
   if (text === null) return []
   const limit = text.includes('\0') ? 'Local links require supported Markdown text.' : markdownCoverageLimit(text)
-  if (limit) return [{ code: 'document-coverage-limit', path: 'AGENTS.md', message: limit, fix: 'Run /agents-md.' }]
+  if (limit) {
+    coverageLimits.push({ path: 'AGENTS.md', reason: limit })
+    return []
+  }
   const items = []
   for (const href of markdownLinks(text)) {
     const problem = await checkLocalLink(target.root, 'AGENTS.md', href)
-    if (problem) items.push({ ...problem, fix: 'Run /agents-md.' })
+    if (problem?.code === 'unsupported-link-fragment') coverageLimits.push({ path: 'AGENTS.md', reason: problem.message })
+    else if (problem) items.push({ ...problem, fix: 'Run /agents-md.' })
   }
   return items
 }
 
 export async function run(options) {
   const target = await resolveTarget(options)
-  const problems = [...await contractItems(target, options), ...await kitItems(target), ...await pointerItems(target)]
-  return { inputs: { repo: target.root, contract: options.contract ?? '.bstack/project.json' }, status: problems.length ? 'failed' : 'passed', problems }
+  const coverageLimits = []
+  const problems = [...await contractItems(target, options, coverageLimits), ...await kitItems(target), ...await pointerItems(target, coverageLimits)]
+  return { inputs: { repo: target.root, contract: options.contract ?? '.bstack/project.json' }, status: problems.length ? 'failed' : 'passed', problems,
+    data: { coverageLimits } }
 }
