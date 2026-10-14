@@ -252,7 +252,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - Creates and maintains one root `AGENTS.md` of pointers to the project's rules, evidence requirements and check commands.
 - Each other skill adds its own one-line pointer; `agents-md` owns the file, its structure, the `CLAUDE.md` merge and the pointer audit.
 - Boundary: keeps distinct nested instructions, reports `CLAUDE.local.md` as shadowing without editing it, touches nothing outside the repo, and rechecks the host's loading docs before removing a `CLAUDE.md`.
-- Pointer contract: the file is a `# Agent instructions` heading and one plain sentence per line, each with one relative link, so a producing skill adds its line with `append-line-once`, or creates the file only when the repo has no root instruction file. A repo with a root `CLAUDE.md` and no `AGENTS.md` gets no pointer edit and is sent to `/agents-md`, because Claude Code would read the `CLAUDE.md` instead. One shared reference, `runtime/references/agents-pointer.md`, holds this contract with a checked copy in each skill that adds or audits pointers.
+- The shared [pointer contract](../runtime/references/agents-pointer.md) owns the file's shape and the rules for adding a line, with a checked copy in each skill that adds or audits pointers.
 - The pointer audit is read-based: the skill opens each pointer's target and reports broken links, lines that copy a rule instead of pointing to it, and sources with no pointer. `inventory` supplies the instruction files, merge candidates and shadowing reports, and no new command checks links, since `/maintenance sweep` is where the design places the repo-wide pointer check.
 
 ### Not separate skills
@@ -1501,7 +1501,8 @@ Structure of `SKILL.md`:
 - Order: steps in the file first, reference in the file second, then the "load when" table to separate files.
 - Inline what every path needs. Move what only some paths need into reference files.
 - The description is one line for a human, because only the user starts the skill.
-- `SKILL.md` states that the skill may edit AGENTS.md after the user approves each change. Only the protected-write script makes those edits.
+- The [agents-md contract](../skills/agents-md/SKILL.md) owns instruction-file edits; other skills propose only their own pointer, and repo-audit lists `/agents-md` instead.
+  Only the protected-write script makes approved edits.
 - If the steps that every path needs cannot fit in 500 lines, the skill is doing too much. Review whether to split it before adding more.
 
 Writing:
