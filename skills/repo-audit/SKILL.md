@@ -10,7 +10,7 @@ Only the user starts repo-audit.
 Start this procedure only when the user's message explicitly invokes `$repo-audit`, `/repo-audit`, `/skill:repo-audit` or selects it through the host's skills menu.
 A plain request such as "audit this repo" does not invoke it.
 If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
-Establish a project-specific foundation for a new idea or audit an existing repo, then apply only the changes the user selects.
+Explore a new idea at overview level or audit an existing repo, then apply only the existing-repo changes the user selects.
 An empty repo can be a new idea, and an established repo can need only a scoped reassessment.
 Resolve the target, requested area and stated next change before proceeding.
 Resolve unclear scope before any write, and keep dependent work blocked while a consequential decision is open.
@@ -39,13 +39,13 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 
 Begin with the intent interview before recommending implementation, even when a brief already supplies goals and a stack.
 Summarise what the user already explained and ask only about gaps, rather than reopening approved choices.
-Establish the problem, intended users, success outcome, first useful journey, non-goals, data, interfaces, deployment environment, reliability and access constraints, compatible behaviour and consequential trade-offs.
+Establish the problem, intended users, success outcome and non-goals.
+The data, interfaces, deployment environment, reliability and access constraints, compatible behaviour and first useful journey belong to `/foundation`, which interviews for them: do not ask for them here.
 Resolve parent decisions before dependent questions.
 Give a recommendation and its trade-off with each decision question, group only independent questions into a small round, then wait for answers.
 Use available facts instead of asking the user to look them up.
 Finish with the agreed goal, boundaries, decisions and remaining uncertainties.
 New or changed intent needs user confirmation before dependent implementation.
-An unresolved choice such as offline access blocks a dependent stack recommendation.
 Load the intent interview from the table below for this step.
 
 Done when: The intent interview has established the required facts or named the gaps, the user has confirmed new or changed intent, and every dependent decision is resolved or explicitly blocked.
@@ -61,62 +61,32 @@ Done when: `/glossary` is listed as the next step with the reason it applies, an
 
 The vision, its review board and the approval of VISION.md belong to `/vision`: list it as a next step for the user to run, and do not draft, review or write the vision here.
 At this intent checkpoint, stop after the confirmed summary.
-Name protected creation in Step 5 as the later prerequisite without creating Git or project files.
+Name `/foundation` as the later prerequisite for protected creation without creating Git or project files.
 
 Done when: `/vision` is listed as the next step with the reason it applies, and the confirmed summary is kept for it.
 
 ### Step 4: Propose the foundation
 
-Use the vision approved through `/vision` to propose the smallest sound foundation.
-Tie stack choices and meaningful alternatives to requirements, keeping the target's language independent of this skill's Node helpers.
-Cover data flow, the first working journey and its acceptance check, needed errors, configuration and external interfaces and the terms confirmed through `/glossary`.
+The stack, scaffold, setup commands, native checks and first user journey belong to `/foundation`, which takes the vision approved through `/vision` and the terms confirmed through `/glossary`: list it as a next step for the user to run, after `/architecture`, and do not propose a stack or scaffold here.
 System boundaries, module responsibilities, dependency direction, decision records and the design standards belong to `/architecture`: list it as a next step for the user to run, after `/glossary` and before `/foundation`, and do not draft them here.
-Give each principle a reason, source, scope, enforcement method and exception policy.
-Prefer native checks and one source of truth over duplicated prose or a second verification engine.
-Distinguish automated rules from judgement rules.
-Include setup, formatting, lint, applicable type checks and tests.
 Testing rules and the verification kit belong to `/verification create`: list it as a next step for the user to run, and do not draft testing guidance here.
 The root `AGENTS.md` of pointers belongs to `/agents-md`: list it as the last next step for the user to run, and do not draft it here.
-CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
-Avoid speculative frameworks, service layers, integrations and empty document templates.
-Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
-Retain foundation findings in scratch using schemas/findings.schema.json with stage foundation and the planned destination as a workspace target.
-Declare selected command paths with each apply edit's `checkIntegration` according to the [enforcement reference](references/enforcement.md#integrate-the-maintained-command).
 
-Done when: Every proposed foundation change supports an approved outcome, has a bounded scope and verification method, and every decision affecting the proposal is resolved or marked blocked.
+Done when: `/foundation` is listed as the next step with the reason it applies, and no stack, scaffold or first journey has been proposed here.
 
 ### Step 5: Review and apply selected changes
 
-Present the exact changes and findings for selection using the shared review and write rules below.
-Prepare a create-only change set following schemas/change-set.schema.json, including the VISION.md approved through `/vision` and selected foundation with complete UTF-8 payloads and hashes.
-Use the resolved planned destination as the change set and findings target, with mode workspace and revision null.
-Prepare schemas/project-create.json in scratch, binding the creation plan to the change set digest and approved destination, stack, first journey, setup commands and prerequisites.
-Select an absent destination under an existing parent, or explicitly select an empty directory with allowEmpty true.
-Run project create --workspace <idea-workspace> --plan <file> --dry-run --json to build the scaffold in scratch.
-Before presenting the complete exact diff and declared commands, run the declared setup and journey commands in the returned scratch scaffold, with approval for any that download or write outside scratch, and repair failures in the proposed bytes.
-After repairs, refresh the payloads, hashes and plan digests and repeat the dry run and checks on those final bytes.
-Present the captured results with the diff; an unrun or failing journey keeps the proposal unverified.
-Only after approval of those exact bytes and commands, run the unchanged plan without --dry-run.
-Creation uses the same protected-write engine as apply and journals directory creation, files, Git initialisation and command results outside the project.
-Repeat the unchanged creation plan to resume interrupted directory, file or Git creation.
-Preserve unrelated files and user edits, inspecting retained journals before resolving any continuation conflict.
-Make the first user journey work end to end where practical, without expanding into unrelated product work.
-Never adopt an existing nonempty directory or change global Git config.
+Protected creation of the new project, the scratch verification of its scaffold and first journey, and the exact review of its files and commands belong to `/foundation`: it is the only skill that ships `project create`, so do not create the project, Git or project files here.
+Never adopt an existing nonempty directory as a new project.
 
-Done when: The proposal includes captured scratch setup and journey results or explicit verification limits, and only selected, reviewed changes have been applied with recoverable originals and current hash preconditions, otherwise writes remain blocked.
+Done when: `/foundation` is named as the later prerequisite for creation, and nothing has been created.
 
 ### Step 6: Verify the outcome
 
-Follow the shared verification rules and report selected changes, actual evidence, unresolved findings and limitations.
-Read the returned creation record for the captured setup and native first-journey results.
-Failed or interrupted setup and journey commands leave the created project unverified and available for recovery.
-Setup and journey commands already attempted are never rerun automatically, avoiding duplicate setup effects.
-Verify affected commands explicitly and retain fresh evidence before claiming readiness.
-Prove selected native rules using the enforcement reference's rule-proof command and preserve the scratch evidence.
-Prove selected maintained integration as described in the enforcement reference before claiming it is verified for the created project.
+The creation record, the first-journey evidence and the proof of selected native rules for the new project belong to `/foundation`, which reports them.
 The maintenance contract, its no-mistakes ownership map and docs gate, and change evidence belong to `/maintenance`: list it as a next step for the user to run, after `/verification create` and before `/agents-md`, and do not register documents or record change evidence here.
 
-Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
+Done when: `/maintenance` is listed as a next step with the reason it applies, and no document has been registered and no change evidence recorded here.
 
 ## Existing-repo path checklist
 
@@ -214,7 +184,7 @@ Distinguish ready for the stated next change, decisions needed and verification 
 A guessed debt score does not establish readiness.
 Validate the versioned findings with `findings validate --findings <file> --json` and render the proposed audit record using `findings render --findings <file>`, with the same explicit target.
 Render returns a scratch path and distinguishes documented, observed and inferred sources, selected changes and proposed new principles.
-Audit readiness requires current starting-check evidence, and foundation readiness requires current journey and foundation-review evidence, plus every additional required outcome.
+Audit readiness requires current starting-check evidence plus every additional required outcome.
 Capture evidence against the returned fingerprint and preserve its exact output artifact.
 Capture approved checks through the shared verification rules below.
 
