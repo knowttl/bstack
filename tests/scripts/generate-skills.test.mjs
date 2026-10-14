@@ -96,7 +96,8 @@ for (const [name, mutate, message] of [
   ['edited entry file', directory => writeFile(join(directory, 'skills/one/scripts/one.mjs'), 'local edit'), /skills\/one\/scripts\/one\.mjs is stale/],
   ['removed schema copy', directory => rm(join(directory, 'skills/two/schemas/plan.json')), /skills\/two\/schemas\/plan\.json is missing/],
   ['edited asset copy', directory => writeFile(join(directory, 'skills/two/assets/pic.txt'), 'local edit'), /skills\/two\/assets\/pic\.txt is stale/],
-  ['leftover schema', directory => writeFile(join(directory, 'skills/one/schemas/old.json'), '{}'), /skills\/one\/schemas\/old\.json is not listed for one/]
+  ['leftover schema', directory => writeFile(join(directory, 'skills/one/schemas/old.json'), '{}'), /skills\/one\/schemas\/old\.json is not listed for one/],
+  ['leftover asset', directory => writeFile(join(directory, 'skills/two/assets/old.txt'), 'old'), /skills\/two\/assets\/old\.txt is not listed for two/]
 ]) {
   test(`check fails for ${name} and a regeneration repairs it`, async t => {
     const directory = await sandbox(t)

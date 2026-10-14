@@ -43,7 +43,7 @@ export async function installLinks(context) {
         canonicalJSON(Object.fromEntries((await authored(source)).map(file => [file.path, file.hash]))) !== canonicalJSON(hashes)) blocked('journal-source-changed', 'Source identity or authored bytes changed during link installation.')
   }
   if (selected.replace?.length || selected['adopt-runtime']?.length) blocked('link-decision', 'Copy replacement and runtime adoption decisions do not apply to links.')
-  if (!context.copyRemoval && await stat(join(root, '.bstack-install-cleanup.json'))) blocked('pending-recovery', 'Complete pending copy cleanup before selecting link mode.')
+  if (!context.copyRemoval && context.pendingCleanup) blocked('pending-recovery', 'Complete pending copy cleanup before selecting link mode.')
   const parentUnchanged = async entry => {
     if (await resolvePath(root, `.${entry.host}/skills`) !== entry.parent) blocked('changed-destination', 'Link parent changed.')
     for (const path of [entry.ownership, entry.journal]) {
