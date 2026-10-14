@@ -246,7 +246,7 @@ bstack/
     SKILL.md
     agents/openai.yaml
     references/
-      intent-interview.md  grilling.md  domain-language.md
+      intent-interview.md  grilling.md  decisions.md
       enforcement.md  architecture.md  research-briefs.md  maintenance-contract.md
     schemas/                     JSON schemas for every structured file
     scripts/
@@ -257,6 +257,8 @@ bstack/
     package.json, package-lock.json   pins lavish-axi only
     references/                  interview.md  vision.md  grilling.md
     assets/vision/               board template and stylesheet
+  skills/glossary/               independently installable glossary skill folder
+    references/                  glossary.md  maintain.md  grilling.md
   tests/
     scripts/                     node:test suites for every command
     package-check/               seeded broken skill folders

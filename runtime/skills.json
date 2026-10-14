@@ -32,5 +32,14 @@
     ],
     "assets": ["vision/review-template.html", "vision/review.css"],
     "references": ["grilling.md"]
+  },
+  "glossary": {
+    "commands": ["docs check", "apply", "state show", "cite-check"],
+    "schemas": [
+      "change-set.schema.json", "evidence.schema.json", "findings.schema.json", "project.schema.json", "research-report.json",
+      "resume-state.schema.json"
+    ],
+    "assets": [],
+    "references": ["grilling.md"]
   }
 }
