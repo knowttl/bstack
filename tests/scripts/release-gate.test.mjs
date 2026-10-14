@@ -285,10 +285,10 @@ test('gating history includes compatible ledger measurements between releases', 
   assert.ok(!result.data.data.gatingSet.includes('ambiguous-idea/decision'))
 })
 
-// A skill change needs fresh measurements only for the smoke scenarios staging that skill: six of the ten stage repo-audit.
 for (const [name, path, expected, fullPasses, retained, pending = 10] of [
   ['unaffected ancestor measurements', 'note.txt', 0],
-  ['changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2, undefined, undefined, 6],
+  ['changed covered inputs need measurement', 'skills/repo-audit/new-guidance.md', 2],
+  ['final installed skill inputs need measurement', 'skills/vision/SKILL.md', 2, undefined, undefined, 9],
   ['changed scenario requests need measurement', 'tests/eval/scenarios/scenarios.json', 2],
   ['changed fixture bytes need measurement', 'tests/fixtures/build.mjs', 2],
   ['changed scope prefix needs measurement', 'scripts/lib/evaluation-scope.mjs', 2],
@@ -299,7 +299,7 @@ for (const [name, path, expected, fullPasses, retained, pending = 10] of [
   ['assertion-only repair retains captures', 'tests/eval/container/assertions.mjs', 0],
   ['full-tier passing ancestor measurements', 'note.txt', 0, 5, true],
   ['full-tier failed ancestor measurements', 'note.txt', 0, 2, true],
-  ['full-tier skill changes retain the skill-free extension measurements', 'skills/repo-audit/new-guidance.md', 2, 5, true, 6]
+  ['full-tier skill changes retain the skill-free extension measurements', 'skills/repo-audit/new-guidance.md', 2, 5, true]
 ]) {
   test(`release gate carryover: ${name}`, async t => {
     const repo = await releaseRepo(t)
@@ -370,7 +370,7 @@ for (const [name, path, expected, fullPasses, retained, pending = 10] of [
 }
 
 for (const [name, path, gated, regressionStatus] of [
-  ['covered skill changes exclude older measurements', 'skills/vision/references/interview.md', true, 1],
+  ['final installed skill changes exclude older measurements', 'skills/repo-audit/new-guidance.md', true, 1],
   ['unrelated changes retain older measurements', 'next-note.txt', false, 0]
 ]) {
   test(`release reliability compatibility: ${name}`, async t => {

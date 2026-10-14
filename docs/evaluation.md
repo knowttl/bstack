@@ -407,6 +407,7 @@ npm run eval -- compare --without <baseline-id> --with <with-skill-id>
 ### Impact selection and comparison
 
 A scenario covers what a with-skill run can depend on, derived from the skills it stages instead of declared: each staged skill's folder as the key prefix `<skill>/`, the shared runtime sources its generated bundle imports, and `install/`.
+Impact selection uses the scenario's last checkpoint: final checkpoints install every skill, while earlier checkpoints stage only the named skills.
 Those runtime sources are the modules of the commands listed for the skill in `runtime/skills.json`, the files they import, and its listed schemas, assets and references, keyed relative to `runtime/`.
 The map is derived from staging rather than inferred from file-open traces because SKILL.md is loaded whole and those traces cannot show which section influenced behaviour.
 A scenario with a `without` mode constraint stages no skill and covers nothing.
@@ -416,7 +417,7 @@ The command includes committed and uncommitted tracked changes and untracked fil
 A changed skill file takes the key `<skill>/<path>`, and SKILL.md hunks map to their enclosing `##` or `###` headings as `<skill>/SKILL.md#<heading>` in both the base and current version, preserving coverage for removed or renamed headings.
 A key covered by no scenario selects every scenario, such as a runtime file that no staged skill bundles.
 A new or changed file inside a skill folder selects only the scenarios that stage that skill.
-The deterministic test requires every skill to be staged by a scenario and every runtime schema, command, asset and shared reference to belong to a staged skill's bundle, and rejects nonexistent coverage keys.
+The deterministic tests change skill files and runtime schemas, commands, assets and shared references in disposable checkouts, then verify scenario selection and unmapped inputs through `eval affected`.
 Commands, schemas, assets and shared references are authored in `runtime/`, so a changed `runtime/` file takes the key it has under `runtime/`, and each skill's generated entry file, schemas, assets and references add no keys of their own.
 With-skill release evidence remains fresh only when its scenario is unaffected by changes under a skill it stages, the `runtime/` sources it bundles or `install/`, or to `scripts/generate-skills.mjs` or `scripts/lib/bundle.mjs`, since its source revision.
 Other execution and scoring bindings still apply.
