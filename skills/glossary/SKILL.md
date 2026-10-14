@@ -114,12 +114,12 @@ Done when: The glossary files, the baseline commit and the current revision are 
 
 ### Step M2: Collect the names since the baseline
 
-List the names that appear in docs and code changed since the baseline, using the changed files and the real commit messages and never memory of earlier work.
+Collect the union of docs and code changed in commits since the baseline, staged changes, unstaged changes and untracked files, using the changed files and the real commit messages and never memory of earlier work.
 Where the host supports subagents, give each independent area one read-only reader; otherwise read the areas one at a time.
 Each reader reports candidate names with file and line citations, without editing or asking the user.
-Record the citations in scratch following `schemas/research-report.json` and run `node scripts/glossary.mjs cite-check --repo <target> --report <file> --json`.
+Record the citations in scratch following `schemas/research-report.json`, binding every cited file to the SHA-256 of the exact working-tree bytes read with state kind `sha256`, and run `node scripts/glossary.mjs cite-check --repo <target> --report <file> --json`.
 
-Done when: Every candidate name has a cited location checked for freshness, or the report states that nothing changed in docs or code since the baseline and stops here as clean.
+Done when: Every candidate name has a cited location checked for exact-byte freshness, or the complete inventory has no committed changes since the baseline and no staged, unstaged or untracked changes in docs or code, and the report stops here as clean.
 
 ### Step M3: Classify and resolve
 
