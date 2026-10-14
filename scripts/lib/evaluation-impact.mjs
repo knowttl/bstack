@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join, posix } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
-import { fail } from './evaluation.mjs'
+import { evaluatedSkills, fail } from './evaluation.mjs'
 
 // Skill-owned keys are qualified by the skill folder; shared runtime and installer keys are not.
 function skillHeadings(source, skill) {
@@ -46,12 +46,11 @@ async function bundledSources(repo, entries) {
 
 // A with-skill run depends on each staged skill's folder, the runtime sources bundled into it and the installer.
 // Runs without the skill stage nothing, so no skill input can change them.
-export async function scenarioCovers(repo, definition, skills = null) {
+async function scenarioCovers(repo, definition, skills) {
   if (definition.mode === 'without') return []
-  skills ??= JSON.parse(await readFile(join(repo, 'runtime/skills.json'), 'utf8'))
   const { commands } = await import(pathToFileURL(join(repo, 'runtime/scripts/commands.mjs')).href)
   const covers = ['install/']
-  for (const skill of definition.skills) {
+  for (const skill of await evaluatedSkills(definition, definition.checkpoints.at(-1))) {
     const modules = skills[skill].commands.map(name => posix.join('scripts', commands[name].module))
     covers.push(`${skill}/`, ...bundleFiles(skills[skill]), ...await bundledSources(repo, ['scripts/dispatch.mjs', ...modules]))
   }
