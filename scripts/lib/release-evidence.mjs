@@ -4,8 +4,8 @@ import { spawnSync } from 'node:child_process'
 import { root, text, object, array, readJSON, scenario, fail, fixtureHash, verifiedExecution } from './evaluation.mjs'
 import { redactEvidence } from './evaluation-host.mjs'
 import { affectedScenarios } from './evaluation-impact.mjs'
-import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
-import { canonicalJSON, hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { validateData } from '../../runtime/scripts/lib/schema.mjs'
+import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
 
 // These candidate-bound checks cover hard breaks not represented by scored ledger rows.
 const hardChecks = ['deterministic-suite', 'package-check', 'registry', 'installer', 'fixture-unchanged',
@@ -36,7 +36,7 @@ async function compatibleEvidence(ledger, definitions, results, candidate) {
         'scripts/eval.mjs', 'scripts/lib/evaluation.mjs', 'scripts/lib/evaluation-host.mjs',
         'scripts/lib/evaluation-container.mjs', 'scripts/lib/evaluation-scope.mjs', 'tests/eval/container/Dockerfile',
         'package.json', 'package-lock.json', ...['run', 'paths', 'result', 'schema', 'fingerprint']
-          .map(name => `skills/repo-audit/scripts/lib/${name}.mjs`)], { cwd: root })
+          .map(name => `runtime/scripts/lib/${name}.mjs`)], { cwd: root })
       if (diff.status !== 0 && diff.status !== 1) fail(`Cannot verify evaluation runner inputs: ${row.candidate}`)
       runners.set(row.candidate, diff.status === 0)
     }

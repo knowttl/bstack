@@ -2,7 +2,7 @@
 
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
-The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime and the verification skill's `create` mode implemented; `maintain`, the no-mistakes wiring with its coverage gate, and installation remain pending.
+The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` mode implemented; `maintain` and the no-mistakes wiring with its coverage gate remain pending.
 The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); that split is approved but not yet built.
 The installation and usage below apply to the implemented repo-audit skill.
 
@@ -32,17 +32,21 @@ npm ci --ignore-scripts
 npm ci --omit=dev --prefix skills/repo-audit
 ```
 
-From this checkout, preview and then copy the complete skill into an existing project.
+From this checkout, preview and then copy every skill folder into an existing project.
+Each skill folder under `skills/` installs on its own, so repeat `--skill <name>` to install only some of them.
 Replace `<project-path>` with the target directory; quote paths containing spaces:
 
 ```sh
 node install/install.mjs --scope project --project <project-path> --host all --dry-run
 node install/install.mjs --scope project --project <project-path> --host all --json
+node install/install.mjs --scope project --project <project-path> --host all --skill verification
 node scripts/check-package.mjs --skill <project-path>/.agents/skills/repo-audit
 ```
 
 Use `--scope user --host agents` for the current home, or `--host claude` for Claude Code alone.
-`--host all` selects both `.agents/skills/repo-audit` and `.claude/skills/repo-audit` beneath the selected home or project.
+`--host all` selects both `.agents/skills/<skill>` and `.claude/skills/<skill>` beneath the selected home or project.
+Each skill keeps its own ownership and journal records beside the skill folders, so updating or uninstalling one skill leaves the others untouched.
+A skill without a `package.json` pins no runtime and installs without npm.
 Node 24 or later, Git and npm are prerequisites.
 The installer stages the authored package, installs the locked runtime with npm and validates it before activation.
 An occupied unowned destination blocks installation.
@@ -145,7 +149,7 @@ node scripts/acceptance.mjs --check-registry
 node scripts/check-package.mjs
 ```
 
-`check` first verifies the [shared runtime](runtime/) copies, then runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](docs/command-contract.md#standalone-checker-generation).
+`check` first verifies the generated files in each skill against the [shared runtime](runtime/), then runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](docs/command-contract.md#standalone-checker-generation).
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](docs/command-contract.md#package-check) for exact syntax and limits.
 Local validation installs both the root development lock and the nested skill runtime lock, then runs the package check and full tests.
@@ -400,18 +404,18 @@ This check requires Git, verifies hash coverage and local bytes, and rejects tra
 The fetch script and manifest are excluded from the copy inventory.
 The check also runs in `npm test` and `npm test -- --task T0.3`.
 
-The scripts and schemas behind `rule-proof`, `baseline check`, `run-checks`, `probe record`, `apply` and `state show`, with the `contract` and `findings` modules and shared libraries they import, have one source in [runtime/](runtime/).
-`apply` and its protected-write libraries are shared so the standalone verification skill writes only reviewed, hash-checked change sets.
-An installed skill cannot import outside its own folder, so [skills/repo-audit](skills/repo-audit/SKILL.md) and [skills/verification](skills/verification/SKILL.md) each commit a byte-for-byte copy at the same relative paths.
-Edit only `runtime/`, then refresh the copies or verify them without writes:
+Every command, shared library, schema and asset has one source in [runtime/](runtime/), and [runtime/skills.json](runtime/skills.json) lists the commands, schemas and assets each skill ships.
+An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas and assets beside it.
+[skills/repo-audit](skills/repo-audit/SKILL.md) and [skills/verification](skills/verification/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 
 ```sh
-node scripts/sync-runtime.mjs
-node scripts/sync-runtime.mjs --check
+node scripts/generate-skills.mjs
+node scripts/generate-skills.mjs --check
 ```
 
-`--check` exits 1 for a missing or modified copy, and both commands exit 1 if a runtime script imports a file outside `runtime/`.
-Removing a file from `runtime/` also requires removing its copies by hand.
+`--check` exits 1 for a missing, modified or unlisted generated file, and both commands exit 1 when a skill lists a command, schema or asset that `runtime/` lacks or when a bundle would include a file outside `runtime/`.
+To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
 
 The [verification skill](skills/verification/SKILL.md) is started by the user and currently provides `create`: it interviews a repo, renders a verification kit as a reviewable change set, applies it after exact-diff approval and proves it once.

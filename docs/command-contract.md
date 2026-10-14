@@ -781,15 +781,16 @@ Child execution and fingerprints are implemented in C4b.
 
 ## Installer copy and preview (C25a)
 
-`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]` installs, updates or removes the skill beside the installer.
+`node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--skill <name>]... [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]` installs, updates or removes the skill folders beside the installer.
+Without `--skill` it handles every folder under `skills/` that holds a `SKILL.md`, one skill at a time and each on its own records; repeated `--skill` selects some, and an unknown name is a usage error that lists the available skills.
 The scope and host are required, project scope requires an existing project directory, and user scope rejects `--project`.
-Unknown, repeated or missing arguments return usage error before dependency calls, except that `--replace` and `--adopt-runtime` can repeat for distinct decisions.
+Unknown, repeated or missing arguments return usage error before dependency calls, except that `--skill`, `--replace` and `--adopt-runtime` can repeat for distinct values.
 `--help` prints the supported interface.
 `--link` selects the developer-checkout link lifecycle described below.
 C25c and AC-74 use Linux-only installer acceptance under the owner's 2026-10-10 scope amendment.
 Windows and macOS execution remains unverified and is outside this acceptance scope.
 
-Claude uses `.claude/skills/repo-audit`, and agents uses `.agents/skills/repo-audit`, beneath the selected real home or project root.
+Claude uses `.claude/skills/<skill>`, and agents uses `.agents/skills/<skill>`, beneath the selected real home or project root.
 `all` selects both, deduplicates their canonical destinations and checks every destination before staging any copy.
 Escaping destination links are rejected through the shared path resolver.
 An occupied folder without matching external ownership is always blocked, including an empty folder or one containing files identical to source.
@@ -818,7 +819,9 @@ The package checker, authored hashes and installed lavish-axi version must pass 
 Dependency scripts that alter authored files cannot activate a copy.
 The source skill and its runtime are never changed by copy installation.
 
-Each host skills parent holds `.bstack-install.json` with schema version 1, copy mode, source version, absolute destination, exact authored `files` hashes and a separate `runtime` record with path, version and `created: true`.
+Each host skills parent holds one ownership file per skill: `.bstack-install.json` for repo-audit, which predates multi-skill installs, and `.bstack-install-<skill>.json` for every other skill.
+It records schema version 1, copy mode, source version, absolute destination, exact authored `files` hashes and a separate `runtime` record with path, version and `created: true`.
+A skill without a `package.json` pins no runtime, runs no npm install, and records `runtime: null`; a skill whose installed record has a runtime but whose source no longer pins one blocks with `runtime-dropped`.
 Mutable caches, backups and dependency contents are absent from `files`.
 Lifecycle records also retain `fileVersions`, preserving the source provenance of each owned hash.
 An incomplete update records `sourceVersion: "mixed"`, retains the last owned hashes of edited files, and reports actual installed hashes separately under `data.installations[].files`.
@@ -851,7 +854,7 @@ It prunes empty directories without following links and reports every retained p
 Retained owned files keep their original ownership hashes and versions for later explicit cleanup and return blocked.
 Unowned retained files alone do not block successful removal, and ownership is removed when no owned file or runtime remains.
 A later install into that remaining unowned folder blocks instead of adopting it.
-`.bstack-install-journal.json` holds the stage, intended ownership and activation state before the directory rename.
+The journal, `.bstack-install-journal.json` for repo-audit and `.bstack-install-<skill>-journal.json` for every other skill, holds the stage, intended ownership and activation state before the directory rename.
 The destination is rechecked after runtime installation, then the validated stage is renamed into place and ownership is durably saved through the existing recovery writer.
 Successful installation removes its journal.
 Multiple host destinations activate sequentially, so a later failure can leave an earlier host installed and owned.
@@ -1007,10 +1010,11 @@ Repeated IDs report `duplicate-id` with the repeated value.
 
 ## Command dispatch
 
-The entry point registers command metadata in `scripts/commands.mjs` and loads only the selected implementation from `scripts/commands/` after argument validation.
-`<command> --help` prints that command's options without importing its implementation or resolving a target.
-No arguments print the available and planned commands with exit 3, and global `--help` succeeds.
-Unknown and unbuilt commands are usage errors.
+`runtime/scripts/commands.mjs` registers every command's metadata, and `runtime/skills.json` lists the commands each skill ships.
+The generator bundles a skill's commands and their metadata into that skill's one entry file, `skills/<skill>/scripts/<skill>.mjs`, which validates arguments before it runs the selected command.
+`<command> --help` prints that command's options without resolving a target.
+No arguments print the skill's available commands with exit 3, and global `--help` succeeds.
+Unknown commands, and commands a skill does not ship, are usage errors.
 Command implementations return data and inputs, while the entry point owns result emission and error exit codes.
 Unbuilt production commands remain listed as planned until their owning task registers them.
 

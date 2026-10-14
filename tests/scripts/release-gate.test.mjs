@@ -25,13 +25,13 @@ function canonical(value) {
 
 async function releaseRepo(t) {
   const { repo } = await emptyRepo(t)
-  for (const path of ['scripts', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
+  for (const path of ['scripts', 'runtime', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
     await mkdir(resolve(repo, path, '..'), { recursive: true })
     await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
   }
   await symlink(join(root, 'node_modules'), join(repo, 'node_modules'), 'dir')
   await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
-  git(repo, 'add', 'scripts', 'skills', 'tests')
+  git(repo, 'add', 'scripts', 'runtime', 'skills', 'tests')
   git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Release base')
   return repo
 }

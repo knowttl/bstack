@@ -409,7 +409,8 @@ The command includes committed and uncommitted tracked changes and untracked fil
 SKILL.md hunks map to their enclosing `##` or `###` headings in both the base and current version, preserving coverage for removed or renamed headings.
 A key covered by no scenario selects every scenario, including new files and text outside the mapped headings.
 The deterministic map-completeness test requires coverage for every such heading and every file under `references/`, `schemas/`, `scripts/commands/` and `install/`, and rejects nonexistent coverage keys.
-With-skill release evidence remains fresh only when its scenario is unaffected by changes under `skills/repo-audit/` or `install/` since its source revision.
+Commands, schemas and assets are authored in `runtime/`, so a changed `runtime/` file takes the key it would have inside the skill, and the skill's generated entry file, schemas and assets add no keys of their own.
+With-skill release evidence remains fresh only when its scenario is unaffected by changes under `skills/repo-audit/`, `runtime/` or `install/` since its source revision.
 Other execution and scoring bindings still apply.
 
 Legacy single-run `eval compare` requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.

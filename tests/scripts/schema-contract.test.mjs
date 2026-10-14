@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdtemp, readdir, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -78,19 +78,19 @@ for (const [keyword, values, exit, code] of [
   })
 }
 
-test('command help succeeds with its implementation absent while execution reports blocked', async t => {
+test('command help succeeds with its resources absent while execution names the missing schema', async t => {
   const directory = await mkdtemp(join(tmpdir(), 'bstack help '))
   t.after(() => rm(directory, { recursive: true, force: true }))
-  await cp(join(root, 'skills', 'repo-audit', 'scripts'), join(directory, 'scripts'), { recursive: true })
-  await rm(join(directory, 'scripts', 'commands'), { recursive: true })
+  await mkdir(join(directory, 'scripts'))
   const copy = join(directory, 'scripts', 'repo-audit.mjs')
+  await cp(join(root, 'skills', 'repo-audit', 'scripts', 'repo-audit.mjs'), copy)
   const help = spawnSync(process.execPath, [copy, 'contract-test', '--help'], { encoding: 'utf8' })
   assert.equal(help.status, 0, help.stderr)
   assert.match(help.stdout, /--input <file>/)
   assert.match(help.stdout, /--schema <file>/)
   const execution = spawnSync(process.execPath, [copy, 'contract-test', '--workspace', directory, '--input', join(inputs, 'schema-valid.json'), '--json'], { encoding: 'utf8' })
-  assert.equal(execution.status, 2)
-  assert.equal(JSON.parse(execution.stdout).problems[0].code, 'command-unavailable')
+  assert.equal(execution.status, 1)
+  assert.match(JSON.parse(execution.stdout).problems[0].message, /schemas\/contract-test\.json/)
 })
 
 test('dispatch rejects unsupported arguments before loading the command', () => {

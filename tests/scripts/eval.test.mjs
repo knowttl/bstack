@@ -639,13 +639,13 @@ test('direct final extension enforces its skill-free scenario mode', async t => 
 for (const [name, file, replacement] of [
   ['assertions', 'tests/eval/container/assertions.mjs',
     'import { readFile } from "node:fs/promises"; const input = JSON.parse(await readFile(process.argv[1], "utf8")); console.log(JSON.stringify(input.action === "snapshot" ? {} : input.checks.map(check => ({ id: check.id, passed: true }))));\n'],
-  ['citation command', 'skills/repo-audit/scripts/commands/cite-check.mjs', 'export async function run() { return { data: {} } }\n'],
+  ['citation command', 'skills/repo-audit/scripts/repo-audit.mjs', 'console.log(JSON.stringify({ schemaVersion: 1, command: "cite-check", status: "passed", problems: [], data: {}, inputs: {} }))\n'],
   ['citation schema', 'skills/repo-audit/schemas/research-report.json', '{}\n']
 ]) {
   test(`batch grades with committed ${name} after the live implementation changes`, async t => {
     const directory = await temporary(t)
     const checkout = join(directory, 'checkout')
-    for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
+    for (const path of ['scripts', 'runtime', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
       'tests/fixtures', 'tests/eval/scenarios', 'tests/eval/container', 'tests/acceptance', 'node_modules/acorn']) {
       await cp(join(root, path), join(checkout, path), { recursive: true })
     }
@@ -722,7 +722,7 @@ test('batch default output identifies failed captures and explains continuation'
 test('batch blocks uncommitted candidate bytes before opening a host', async t => {
   const directory = await temporary(t)
   const checkout = join(directory, 'checkout')
-  for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas', 'skills/repo-audit/SKILL.md',
+  for (const path of ['scripts', 'runtime', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas', 'skills/repo-audit/SKILL.md',
     'tests/fixtures', 'tests/eval/scenarios', 'tests/eval/container', 'tests/acceptance', 'node_modules/acorn']) {
     await cp(join(root, path), join(checkout, path), { recursive: true })
   }
@@ -992,7 +992,7 @@ test('file-tool access requires success for opened and retains attempts for notO
 
 test('scenario fixture hashes bind selected source bytes and overlays without binding unrelated fixtures', async t => {
   const directory = await temporary(t)
-  for (const path of ['scripts', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
+  for (const path of ['scripts', 'runtime', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
     'tests/fixtures', 'tests/eval/scenarios', 'tests/acceptance', 'node_modules/acorn']) {
     await cp(join(root, path), join(directory, path), { recursive: true })
   }

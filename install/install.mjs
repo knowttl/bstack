@@ -2,20 +2,20 @@ import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rename, unlink, wri
 import { homedir } from 'node:os'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
-import { isInside, resolvePath } from '../skills/repo-audit/scripts/lib/paths.mjs'
-import { runCommand } from '../skills/repo-audit/scripts/lib/run.mjs'
-import { saveRecovery } from '../skills/repo-audit/scripts/lib/protected-write.mjs'
-import { CommandError, emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
+import { isInside, resolvePath } from '../runtime/scripts/lib/paths.mjs'
+import { runCommand } from '../runtime/scripts/lib/run.mjs'
+import { saveRecovery } from '../runtime/scripts/lib/protected-write.mjs'
+import { CommandError, emitResult } from '../runtime/scripts/lib/result.mjs'
 import { installLinks } from './links.mjs'
 import { planLifecycle, applyLifecycle, finishLifecycle, verifyCleanup, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision, matchesReplacement, matchesRuntimeAdoption, approveRecoveryReplacements } from './lifecycle.mjs'
 
-// Installation always selects the complete skill beside this installer.
+// Installation always selects complete skill folders beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
 // These directories contain runtime or scratch data rather than authored files.
 const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
 // Both human and machine output describe the same supported slice.
-const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]\nInstalls require Node 24+, Git, npm and root development dependencies (npm ci).\nUser scope uses the current home. Project scope requires an existing --project directory.\nRepeat --replace for specific conflicts after reviewing their diff. Use the displayed --adopt-runtime decision to confirm legacy runtime ownership. Interrupted runs resume automatically.\n--link prepares the pinned runtime in the source checkout before linking. Updates require --link; removal preserves the target.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --uninstall --json'
+const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--skill <name>]... [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]\nInstalls require Node 24+, Git, npm and root development dependencies (npm ci).\nEvery skill folder beside this installer installs on its own; repeat --skill to select some instead of all.\nUser scope uses the current home. Project scope requires an existing --project directory.\nRepeat --replace for specific conflicts after reviewing their diff. Use the displayed --adopt-runtime decision to confirm legacy runtime ownership. Interrupted runs resume automatically.\n--link prepares the pinned runtime in the source checkout before linking. Updates require --link; removal preserves the target.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --uninstall --json'
 
 function reject(status, code, message, fix) {
   throw new CommandError(status, [{ code, message, fix }])
@@ -25,13 +25,16 @@ function options(args) {
   const values = {}
   for (let index = 0; index < args.length; index++) {
     const key = args[index].replace(/^--/, '')
-    if (!args[index].startsWith('--') || !['scope', 'project', 'host', 'dry-run', 'json', 'link', 'uninstall', 'replace', 'adopt-runtime'].includes(key) || (!['replace', 'adopt-runtime'].includes(key) && Object.hasOwn(values, key))) {
+    if (!args[index].startsWith('--') || !['scope', 'project', 'host', 'skill', 'dry-run', 'json', 'link', 'uninstall', 'replace', 'adopt-runtime'].includes(key) || (!['skill', 'replace', 'adopt-runtime'].includes(key) && Object.hasOwn(values, key))) {
       reject('usage-error', 'invalid-arguments', `Unknown or repeated argument: ${args[index]}`, help)
     }
-    if (['scope', 'project', 'host', 'replace', 'adopt-runtime'].includes(key)) {
+    if (['scope', 'project', 'host', 'skill', 'replace', 'adopt-runtime'].includes(key)) {
       const value = args[++index]
       if (!value || value.startsWith('--')) reject('usage-error', 'missing-value', `--${key} requires a value.`, help)
-      if (['replace', 'adopt-runtime'].includes(key)) {
+      if (key === 'skill') {
+        values.skill ??= []
+        if (!values.skill.includes(value)) values.skill.push(value)
+      } else if (['replace', 'adopt-runtime'].includes(key)) {
         if (!(key === 'replace' ? /^(claude|agents):.+:(?:[a-f0-9]{64}|absent)$/ : /^(claude|agents):[a-f0-9]{64}$/).test(value)) reject('usage-error', 'invalid-replacement', 'Decision must match the displayed host and hash.', help)
         values[key] ??= []
         values[key].push(value)
@@ -69,6 +72,8 @@ async function child(root, executable, args, versionArgs = ['--version']) {
 }
 
 async function runtimeVersion(directory, expected) {
+  // A skill that pins no runtime has nothing to verify.
+  if (expected === null) return true
   try {
     const manifest = JSON.parse(await readFile(join(directory, 'node_modules/lavish-axi/package.json'), 'utf8'))
     if (manifest.version !== expected) return false
@@ -77,18 +82,38 @@ async function runtimeVersion(directory, expected) {
   } catch { return false }
 }
 
-async function install(selected) {
+// A skill without a package manifest ships no runtime; one with a manifest pins exactly one version in its lockfile.
+async function pinnedRuntime(source) {
+  if (!await exists(join(source, 'package.json'))) return null
+  const manifest = JSON.parse(await readFile(join(source, 'package.json'), 'utf8'))
+  const lock = JSON.parse(await readFile(join(source, 'package-lock.json'), 'utf8'))
+  const runtime = manifest.dependencies?.['lavish-axi']
+  if (!/^\d+\.\d+\.\d+$/.test(runtime ?? '') || lock.lockfileVersion !== 3 ||
+      canonicalJSON(manifest.dependencies) !== canonicalJSON(lock.packages?.['']?.dependencies ?? {}) ||
+      lock.packages?.['node_modules/lavish-axi']?.version !== runtime) reject('failed', 'runtime-lock', 'Runtime manifest and lock must agree on the exact pinned lavish-axi version.', 'Restore the pinned runtime manifest and lockfile.')
+  return runtime
+}
+
+// Skills share one parent folder, so each keeps its own ownership and journal records.
+// repo-audit predates multi-skill installs and keeps the original names so existing installations stay owned.
+function recordNames(skill) {
+  const stem = skill === 'repo-audit' ? '.bstack-install' : `.bstack-install-${skill}`
+  return { ownership: `${stem}.json`, journal: `${stem}-journal.json` }
+}
+
+async function installSkill(selected, skill, skills) {
   if (Number(process.versions.node.split('.')[0]) < 24) reject('blocked', 'node-version', 'Node 24 or later is required.', 'Install a supported Node release.')
   const root = await realpath(selected.scope === 'user' ? homedir() : resolve(selected.project))
   if (!(await lstat(root)).isDirectory()) reject('blocked', 'invalid-directory', 'Installation root must be an existing directory.', 'Select an existing home or project directory.')
-  const source = join(checkout, 'skills/repo-audit')
+  const source = join(checkout, 'skills', skill)
+  const records = recordNames(skill)
   const hosts = selected.host === 'all' ? ['claude', 'agents'] : [selected.host]
   let destinations = []
   for (const host of hosts) {
     const parent = await resolvePath(root, `.${host}/skills`)
-    const destination = join(parent, 'repo-audit')
+    const destination = join(parent, skill)
     if (destinations.some(entry => entry.destination === destination)) continue
-    destinations.push({ host, parent, destination, ownership: join(parent, '.bstack-install.json'), journal: join(parent, '.bstack-install-journal.json') })
+    destinations.push({ host, parent, destination, ownership: join(parent, records.ownership), journal: join(parent, records.journal) })
   }
   const linked = []
   const linkDestinations = []
@@ -128,12 +153,7 @@ async function install(selected) {
   const problems = await checkPackage(source, { sourcePreflight: true })
   if (problems.length) throw new CommandError('failed', problems)
   const files = await authored(source)
-  const manifest = JSON.parse(await readFile(join(source, 'package.json'), 'utf8'))
-  const lock = JSON.parse(await readFile(join(source, 'package-lock.json'), 'utf8'))
-  const runtime = manifest.dependencies?.['lavish-axi']
-  if (!/^\d+\.\d+\.\d+$/.test(runtime ?? '') || lock.lockfileVersion !== 3 ||
-      canonicalJSON(manifest.dependencies) !== canonicalJSON(lock.packages?.['']?.dependencies ?? {}) ||
-      lock.packages?.['node_modules/lavish-axi']?.version !== runtime) reject('failed', 'runtime-lock', 'Runtime manifest and lock must agree on the exact pinned lavish-axi version.', 'Restore the pinned runtime manifest and lockfile.')
+  const runtime = await pinnedRuntime(source)
   for (const tool of ['git', 'npm']) {
     const result = await child(checkout, tool, ['--version'])
     if (result.status !== 'passed') reject('blocked', 'missing-prerequisite', `${tool} is unavailable.`, `Install ${tool} and make it available on PATH.`)
@@ -150,9 +170,9 @@ async function install(selected) {
       if (['ENOENT', 'ENOTDIR'].includes(error.code)) continue
       throw error
     }
-    generatedPaths.push(join(parent, 'repo-audit'), join(parent, '.bstack-install.json'))
+    generatedPaths.push(join(parent, skill), join(parent, records.ownership))
     generatedParents.push(parent)
-    for (const path of [join(parent, '.bstack-install.json'), join(parent, '.bstack-install-journal.json')]) {
+    for (const path of [join(parent, records.ownership), join(parent, records.journal)]) {
       if (!await exists(path)) continue
       const saved = JSON.parse(await readFile(path, 'utf8'))
       if ((saved.mode ?? saved.record?.mode) === 'link') generatedPaths.push(...(saved.runtimeStages ?? saved.record?.runtimeStages ?? [])
@@ -163,8 +183,9 @@ async function install(selected) {
     let names
     try { names = await readdir(parent) } catch (error) { if (error.code === 'ENOENT') continue; throw error }
     for (const name of names) {
-      const match = /^\.bstack-recovery-(\.bstack-install(?:-journal|-cleanup)?\.json)-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.tmp$/.exec(name)
-      if (match && (match[1] === '.bstack-install-cleanup.json' ? parent === root : generatedParents.includes(parent)) &&
+      const match = /^\.bstack-recovery-(.+\.json)-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.tmp$/.exec(name)
+      if (match && [records.ownership, records.journal, '.bstack-install-cleanup.json'].includes(match[1]) &&
+          (match[1] === '.bstack-install-cleanup.json' ? parent === root : generatedParents.includes(parent)) &&
           (await lstat(join(parent, name))).isFile()) generatedPaths.push(join(parent, name))
     }
     for (const name of names.filter(name => /^\.bstack-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.tmp$/.test(name))) {
@@ -173,30 +194,29 @@ async function install(selected) {
       let value
       try { value = JSON.parse(await readFile(path, 'utf8')) } catch { continue }
       if (value?.schemaVersion !== 1) continue
-      const destination = join(parent, 'repo-audit')
-      const ownership = join(parent, '.bstack-install.json')
+      const destination = join(parent, skill)
+      const ownership = join(parent, records.ownership)
       const record = value.record ?? value
       const hostWrite = generatedParents.includes(parent) && record.mode === 'copy' && record.destination === destination &&
         record.files && record.sourceVersion && (!value.record || value.ownership === ownership &&
           ['staging', 'prepared', 'activated', 'completed', 'applying'].includes(value.state))
       const cleanupWrite = parent === root && /^[0-9a-f]{64}$/.test(value.binding ?? '') && Array.isArray(value.entries) &&
-        value.entries.length > 0 && value.entries.every(saved => generatedParents.some(parent => join(parent, 'repo-audit') === saved.destination))
+        value.entries.length > 0 && value.entries.every(saved => generatedParents.some(parent => join(parent, skill) === saved.destination))
       if (hostWrite || cleanupWrite) generatedPaths.push(path)
     }
   }
   const dirty = await child(checkout, 'git', ['status', '--porcelain', '--untracked-files=no'])
   const untracked = await child(checkout, 'git', ['ls-files', '--others', '--exclude-standard', '--', '.',
     ...['claude', 'agents'].flatMap(host => [
-      `:(glob,exclude)**/.${host}/skills/repo-audit/**`,
+      ...skills.flatMap(name => [`:(glob,exclude)**/.${host}/skills/${name}/**`,
+        ...Object.values(recordNames(name)).map(file => `:(glob,exclude)**/.${host}/skills/${file}`)]),
       `:(glob,exclude)**/.${host}/skills/.bstack-stage-*/**`,
-      `:(glob,exclude)**/.${host}/skills/.bstack-backup-*/**`,
-      `:(glob,exclude)**/.${host}/skills/.bstack-install-journal.json`,
-      `:(glob,exclude)**/.${host}/skills/.bstack-install.json`]),
+      `:(glob,exclude)**/.${host}/skills/.bstack-backup-*/**`]),
     ...generatedPaths.filter(path => isInside(checkout, path))
       .map(path => `:(literal,exclude)${relative(checkout, path).replaceAll('\\', '/')}`),
     ...generatedParents.filter(path => isInside(checkout, path)).flatMap(path => {
       const parent = relative(checkout, path).replaceAll('\\', '/').replace(/[*?\[\]]/g, '\\$&')
-      return ['.bstack-stage-*', '.bstack-stage-*/**', '.bstack-backup-*/**', '.bstack-install-journal.json']
+      return ['.bstack-stage-*', '.bstack-stage-*/**', '.bstack-backup-*/**', ...skills.map(name => recordNames(name).journal)]
         .map(pattern => `:(glob,exclude)${parent ? parent + '/' : ''}${pattern}`)
     })])
   const sourceDirty = Boolean(dirty.stdout.trim() || untracked.stdout.trim())
@@ -232,7 +252,7 @@ async function install(selected) {
       entry.recovery = JSON.parse(await readFile(journal, 'utf8'))
       if (Boolean(entry.recovery.plan?.uninstall) !== Boolean(selected.uninstall)) reject('blocked', 'pending-recovery', 'Resume the original operation before changing lifecycle mode.', help)
       const plan = entry.recovery.plan ?? entry.recovery.update?.plan
-      const target = plan ?? { version: entry.recovery.record.sourceVersion, desired: entry.recovery.record.files, runtime: entry.recovery.record.runtime.version }
+      const target = plan ?? { version: entry.recovery.record.sourceVersion, desired: entry.recovery.record.files, runtime: entry.recovery.record.runtime?.version ?? null }
       if (target.version !== version || canonicalJSON(target.desired) !== canonicalJSON(selected.uninstall ? {} : hashes) || target.runtime !== runtime) {
         reject('blocked', 'journal-source-changed', 'Resume requires the original source package and pinned runtime.', 'Restore the source version, authored files and pinned runtime recorded by the interrupted operation before retrying.')
       }
@@ -245,6 +265,7 @@ async function install(selected) {
     if (await exists(destination)) {
       if (!previous || previous.destination !== destination || previous.mode !== 'copy' || previous.schemaVersion !== 1) reject('blocked', 'unowned-collision', `Occupied unowned destination: ${destination}`, 'Preserve the existing folder and select an empty installation destination.')
       if ((await lstat(destination)).isSymbolicLink()) reject('blocked', 'unsupported-lifecycle', `Destination is a link: ${destination}`, 'Link lifecycle support is pending C25c.')
+      if (runtime === null && previous.runtime) reject('blocked', 'runtime-dropped', `The source no longer pins the runtime installed at ${destination}.`, 'Uninstall it with the release that installed it, then install this release.')
       entry.runtimeDecision = await legacyRuntimeDecision(entry, previous, runtimeVersion)
       if (entry.runtimeDecision && selected['adopt-runtime']?.includes(entry.runtimeDecision.value)) {
         entry.adoptRuntime = entry.runtimeDecision.value
@@ -261,10 +282,10 @@ async function install(selected) {
           }
         }
       }
-      if (!unchanged ||
+      if (!unchanged || runtime !== null && (
           previous.runtime?.path !== join(destination, 'node_modules') || !previous.runtime.created ||
           !await ownsRuntime(join(destination, 'node_modules'), previous.runtime) ||
-          !await runtimeVersion(destination, runtime)) {
+          !await runtimeVersion(destination, runtime))) {
         entry.previous = previous
         entry.plan = await planLifecycle(entry, files, version, runtime, selected)
         action = selected.uninstall ? 'uninstall' : 'update'
@@ -289,7 +310,7 @@ async function install(selected) {
       ...(entry.plan.runtimeAllowed ? [{ action: selected.uninstall ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }] : [])
     ] : [
       ...files.map(file => ({ action: 'copy', path: join(entry.destination, file.path), hash: file.hash })),
-      { action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime },
+      ...(runtime === null ? [] : [{ action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }]),
       { action: 'ownership', path: entry.ownership }, { action: 'journal', path: entry.journal }]))).flat()
     for (const decision of selected.replace ?? []) {
       if (!(await Promise.all(destinations.map(entry => matchesReplacement(entry, decision, runtimeVersion)))).some(Boolean)) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
@@ -349,7 +370,7 @@ async function install(selected) {
       const stage = await mkdtemp(join(entry.parent, '.bstack-stage-'))
       const record = { schemaVersion: 1, mode: 'copy', sourceVersion: version, destination: entry.destination, files: hashes,
         fileVersions: Object.fromEntries(Object.keys(hashes).map(path => [path, version])),
-        runtime: { path: join(entry.destination, 'node_modules'), created: true, version: runtime } }
+        runtime: runtime === null ? null : { path: join(entry.destination, 'node_modules'), created: true, version: runtime } }
       const journal = { schemaVersion: 1, state: 'staging', stage, ownership: entry.ownership, record,
         ...(entry.plan ? { update: { previous: entry.previous, plan: entry.plan } } : {}) }
       const limitations = await saveRecovery(entry.journal, journal)
@@ -359,10 +380,12 @@ async function install(selected) {
           await mkdir(dirname(path), { recursive: true })
           await writeFile(path, file.bytes, { flag: 'wx', mode: file.mode })
         }
-        const result = await child(stage, 'npm', ['ci', '--omit=dev', '--no-audit', '--no-fund'])
-        if (result.status !== 'passed') {
-          journal.runtimeResult = result
-          reject(result.status, 'runtime-install-failed', `Pinned runtime installation failed. Recovery: ${entry.journal}`, 'Inspect the staged package and journal. The destination has not been activated.')
+        if (runtime !== null) {
+          const result = await child(stage, 'npm', ['ci', '--omit=dev', '--no-audit', '--no-fund'])
+          if (result.status !== 'passed') {
+            journal.runtimeResult = result
+            reject(result.status, 'runtime-install-failed', `Pinned runtime installation failed. Recovery: ${entry.journal}`, 'Inspect the staged package and journal. The destination has not been activated.')
+          }
         }
         const stagedProblems = await checkPackage(stage)
         if (stagedProblems.length) throw new CommandError('failed', stagedProblems)
@@ -370,12 +393,12 @@ async function install(selected) {
           reject('failed', 'staged-package-changed', 'Staged authored files or pinned runtime do not match the validated source.', 'Inspect the preserved stage and runtime installation output.')
         }
         journal.state = 'prepared'
-        record.runtime.identity = await runtimeIdentity(join(stage, 'node_modules'))
+        if (record.runtime) record.runtime.identity = await runtimeIdentity(join(stage, 'node_modules'))
         await saveRecovery(entry.journal, journal)
         if (entry.action === 'update') {
           // The validated stage becomes the recoverable per-file update plan.
           entry.recovery = null
-          data.installations.push(await applyLifecycle(entry, entry.plan, stage, runtimeVersion, { ...record.runtime, path: join(stage, 'node_modules') }))
+          data.installations.push(await applyLifecycle(entry, entry.plan, stage, runtimeVersion, record.runtime && { ...record.runtime, path: join(stage, 'node_modules') }))
           continue
         }
         // Check the empty destination again after dependency scripts have finished.
@@ -432,6 +455,29 @@ async function install(selected) {
   }
   data.blocked = data.installations.some(installation => installation.conflicts?.length)
   return report()
+}
+
+// Each skill installs, updates and uninstalls independently, so one run is a sequence of single-skill runs.
+async function install(selected) {
+  const skills = []
+  for (const entry of await readdir(join(checkout, 'skills'), { withFileTypes: true })) {
+    // Hidden folders under skills/ are installer stages, which hold a copy of a skill's files.
+    if (entry.isDirectory() && /^[a-z0-9][a-z0-9-]*$/.test(entry.name) && await exists(join(checkout, 'skills', entry.name, 'SKILL.md'))) skills.push(entry.name)
+  }
+  skills.sort()
+  const unknown = (selected.skill ?? []).filter(name => !skills.includes(name))
+  if (unknown.length) reject('usage-error', 'unknown-skill', `Unknown skill: ${unknown.join(', ')}`, `Select from: ${skills.join(', ')}.`)
+  let total = { destinations: [], changes: [], installations: [], blocked: false }
+  const merge = part => ({ ...total, ...part, destinations: [...total.destinations, ...(part.destinations ?? [])],
+    changes: [...total.changes, ...(part.changes ?? [])], installations: [...total.installations, ...(part.installations ?? [])],
+    blocked: total.blocked || Boolean(part.blocked) })
+  for (const skill of selected.skill ?? skills) {
+    try { total = merge(await installSkill(selected, skill, skills)) } catch (error) {
+      if (error.data || total.installations.length) error.data = merge(error.data ?? {})
+      throw error
+    }
+  }
+  return total
 }
 
 function printInstallations(data) {

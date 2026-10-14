@@ -3,8 +3,8 @@ import { join, resolve } from 'node:path'
 import { root, options, readJSON, fail } from './lib/evaluation.mjs'
 import { correctedScore, validateScore } from './lib/evaluation-scoring.mjs'
 import { readJudge, judgeInput, judgeAnswers } from './lib/evaluation-judge.mjs'
-import { hashBytes, canonicalJSON } from '../skills/repo-audit/scripts/lib/fingerprint.mjs'
-import { emitResult } from '../skills/repo-audit/scripts/lib/result.mjs'
+import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
+import { emitResult } from '../runtime/scripts/lib/result.mjs'
 
 // Adoption uses the complete retained human-scored corpus, never a selected passing subset.
 const expectedRuns = 124

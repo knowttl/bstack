@@ -262,7 +262,8 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 
 Every command keeps one source in the bstack repo.
 A generator bundles each skill's commands into one file inside that skill, and a `--check` fails when a bundle is stale.
-This extends the checked-copy rule in ["Shared runtime and ownership transfer"](#shared-runtime-and-ownership-transfer-q10-q14) and replaces its byte-for-byte copies once the generator ships.
+This extends the checked-copy rule in ["Shared runtime and ownership transfer"](#shared-runtime-and-ownership-transfer-q10-q14) and replaces its byte-for-byte copies with these generated bundles.
+The same generator copies the schemas and assets each skill lists, and the installer installs each skill folder on its own.
 A shared runtime folder beside the skills is ruled out because installing one skill folder alone must not leave references to missing siblings.
 
 | Skill | Commands |
@@ -321,7 +322,7 @@ Each move removes the moved content from repo-audit and replaces it with a check
 
 - The split was designed from source and has no running implementation: no command ran against a test repo, and no no-mistakes pipeline ran with the proposed wiring.
 - Each skill starting with a short self-check of its own area on an existing repo, the `maintain` and `sweep` modes, the ownership map and the checker's docs-only mode are new behaviour, not present today.
-- The verification build may already cover piece 2, which is an inference to confirm before piece 2 starts.
+- The verification build supplied only the byte-for-byte checked copies of piece 2; the generator, the multi-skill installer and the move of every command to one source tree came with piece 2 itself.
 - The no-mistakes constraints above rest on the pinned reference at commit 93b4407, and the wiring has not run end to end.
 
 ## Standalone verification skill
@@ -473,9 +474,9 @@ Unavailable credentials or vendor access remain explicit verification limits, ne
 
 ### Shared runtime and ownership transfer (Q10, Q14)
 
-Keep `rule-proof`, `baseline check`, `run-checks` and `probe record` in one source module in bstack, with byte-for-byte checked copies in each skill that needs them.
+Keep `rule-proof`, `baseline check`, `run-checks` and `probe record` in one source module in bstack, with a generated bundle in each skill that needs them.
 The extraction preserves public command behaviour and portable installed execution.
-The freshness check rejects stale copies; generated checked copies do not become independent sources of knowledge.
+The freshness check rejects stale bundles; generated files do not become independent sources of knowledge.
 The shared module also carries `apply`, `state show` and the protected-write libraries they need, because the standalone skill may not depend on repo-audit to honour review before apply and protected writes.
 
 Verification takes ownership of all suite auditing, the eight wasteful-test patterns and prevention rules, test-recommendation findings, research-brief test questions and testing guidance written into agent instructions and review configuration.
