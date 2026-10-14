@@ -505,7 +505,7 @@ It is the only skill with a pinned runtime, so `npm ci --omit=dev` runs for `ski
 
 The [glossary skill](skills/glossary/SKILL.md) is started by the user in `create` or `maintain` mode.
 `create` finds, resolves and writes domain terms into `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per context, drafting a new idea on its first agreed term and flagging conflicts in an existing repo with citations.
-`maintain` compares the glossary with the names in code and docs since the commit that last changed it and proposes edits for missing terms, drifted meanings and returning synonyms.
+For an existing glossary, follow the skill's [maintain checklist](skills/glossary/SKILL.md#maintain-checklist) to review changed domain language.
 Both write only through `apply` after the user approves the exact bytes, never rename code, and run `docs check` on a registered glossary.
 
 To exercise the read-only shared contract test from this checkout:
