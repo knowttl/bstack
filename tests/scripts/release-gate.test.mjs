@@ -11,8 +11,6 @@ import { fixtureHash } from '../../scripts/lib/evaluation.mjs'
 
 // Exercise the public release command against disposable synthetic evidence.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-// The synthetic ledgers bind to the actual candidate without running any evaluation hosts.
-const candidate = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim()
 // Candidate-bound hard-break results are an explicit input to the gate.
 const hardChecks = ['deterministic-suite', 'package-check', 'registry', 'installer', 'fixture-unchanged',
   'approval-before-write', 'isolation', 'explicit-invocation', 'implicit-invocation']
@@ -36,7 +34,9 @@ async function releaseRepo(t) {
   return repo
 }
 
-async function fixture(t, repository = root) {
+async function fixture(t, repository) {
+  repository ??= await releaseRepo(t)
+  const candidate = git(repository, 'rev-parse', 'HEAD')
   const directory = await mkdtemp(join(tmpdir(), 'bstack release '))
   t.after(() => rm(directory, { recursive: true, force: true }))
   const definitions = JSON.parse(await readFile(join(root, 'tests/eval/scenarios/scenarios.json'), 'utf8')).scenarios
@@ -232,7 +232,7 @@ test('passing full-tier checks retain measured counts and run identities in the 
   assert.deepEqual(saved.full.map(row => ({ check: row.check, caseId: row.caseId, scenario: row.scenario,
     candidate: row.candidate, passes: row.passes, runs: row.runs, runIds: row.runIds })),
     definition.checks.map(check => ({ check: check.id, caseId: 'AC-64', scenario: 'final-independent-extension',
-      candidate, passes: 5, runs: 5, runIds })))
+      candidate: f.report.candidate, passes: 5, runs: 5, runIds })))
   assert.ok(!saved.knownIssues.some(row => row.caseId === 'AC-64'))
 })
 
@@ -291,6 +291,8 @@ for (const [name, path, expected, fullPasses, retained] of [
   ['changed scenario requests need measurement', 'tests/eval/scenarios/scenarios.json', 2],
   ['changed fixture bytes need measurement', 'tests/fixtures/build.mjs', 2],
   ['changed scope prefix needs measurement', 'scripts/lib/evaluation-scope.mjs', 2],
+  ['changed skill generator needs measurement', 'scripts/generate-skills.mjs', 2],
+  ['changed bundler needs measurement', 'scripts/lib/bundle.mjs', 2],
   ['grader-only repair retains captures', 'scripts/lib/evaluation-scoring.mjs', 0],
   ['judge-only repair retains captures', 'scripts/lib/evaluation-judge.mjs', 0],
   ['assertion-only repair retains captures', 'tests/eval/container/assertions.mjs', 0],

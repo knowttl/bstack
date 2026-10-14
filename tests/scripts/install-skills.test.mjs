@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { cp, lstat, readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { root, command, fixture, inventory } from './install-fixture.mjs'
+import { root, command, fixture, inventory, interrupt } from './install-fixture.mjs'
 
 // The fixture ships repo-audit with its pinned runtime; verification joins it as a skill that pins none.
 async function twoSkills(t) {
@@ -79,4 +79,59 @@ test('an installed runtime that the source no longer pins blocks the update', as
   const result = f.run(...f.args, '--skill', 'verification')
   assert.equal(result.status, 2, result.stdout)
   assert.equal(result.value.problems[0].code, 'runtime-dropped')
+})
+
+test('the default selection resumes cleanup belonging to its later skill', async t => {
+  const f = await twoSkills(t)
+  assert.equal(f.run(...f.args, '--skill', 'repo-audit').status, 0)
+  await interrupt(f, 'cleanup-saved')
+  assert.equal(f.run(...f.args).status, 86)
+  delete f.env.NODE_OPTIONS
+  const resumed = f.run(...f.args)
+  assert.equal(resumed.status, 0, resumed.stdout + resumed.stderr)
+  assert.equal(await lstat(join(f.project, '.bstack-install-cleanup.json')).catch(error => error.code), 'ENOENT')
+  assert.deepEqual((await readdir(f.parent)).sort(), ['.bstack-install-verification.json', '.bstack-install.json', 'repo-audit', 'verification'])
+})
+
+for (const skill of ['repo-audit', 'verification']) {
+  test(`the default selection routes a replacement to ${skill}`, async t => {
+    const f = await twoSkills(t)
+    assert.equal(f.run(...f.args).status, 0)
+    const path = join(f.parent, skill, 'SKILL.md')
+    await writeFile(path, (await readFile(path, 'utf8')) + '\nLocal edit\n')
+    const blocked = f.run(...f.args)
+    assert.equal(blocked.status, 2, blocked.stdout)
+    const conflict = blocked.value.data.installations.find(entry => entry.destination === join(f.parent, skill)).conflicts[0]
+    const replaced = f.run(...f.args, ...conflict.decision.split(' '))
+    assert.equal(replaced.status, 0, replaced.stdout + replaced.stderr)
+    assert.equal(await readFile(path, 'utf8'), await readFile(join(f.checkout, 'skills', skill, 'SKILL.md'), 'utf8'))
+  })
+}
+
+test('copy replacement decisions do not block removal of a sibling link', async t => {
+  const f = await twoSkills(t)
+  assert.equal(f.run(...f.args, '--skill', 'repo-audit', '--link').status, 0)
+  assert.equal(f.run(...f.args, '--skill', 'verification').status, 0)
+  const path = join(f.parent, 'verification', 'SKILL.md')
+  await writeFile(path, (await readFile(path, 'utf8')) + '\nLocal edit\n')
+  const blocked = f.run(...f.args, '--uninstall', '--dry-run')
+  const conflict = blocked.value.data.destinations.find(entry => entry.destination === join(f.parent, 'verification')).conflicts[0]
+  const removed = f.run(...f.args, '--uninstall', ...conflict.decision.split(' '))
+  assert.equal(removed.status, 0, removed.stdout + removed.stderr)
+  assert.equal(await lstat(join(f.parent, 'repo-audit')).catch(error => error.code), 'ENOENT')
+  assert.equal(await lstat(join(f.parent, 'verification')).catch(error => error.code), 'ENOENT')
+})
+
+for (const [args, ownershipRemains] of [[[], true], [['--uninstall', '--link'], false]]) test(`the default selection routes runtime adoption to its owning skill ${args.join(' ')}`, async t => {
+  const f = await twoSkills(t)
+  assert.equal(f.run(...f.args).status, 0)
+  const ownership = join(f.parent, '.bstack-install.json')
+  const record = JSON.parse(await readFile(ownership, 'utf8'))
+  delete record.runtime.identity
+  await writeFile(ownership, JSON.stringify(record))
+  const preview = f.run(...f.args, ...args, '--dry-run')
+  const decision = preview.value.data.destinations[0].conflicts.find(conflict => conflict.path === 'node_modules').decision
+  const adopted = f.run(...f.args, ...args, ...decision.split(' '))
+  assert.equal(adopted.status, 0, adopted.stdout + adopted.stderr)
+  assert.equal(Boolean(await lstat(ownership).catch(() => null)), ownershipRemains)
 })

@@ -85,7 +85,7 @@ try {
   }
   // schemas/ holds only generated copies, so a file no skill lists any more is a leftover.
   for (const skill of Object.keys(skills)) {
-    for (const path of (await listFiles(join(root, 'skills', skill, 'schemas'))).filter(path => !files.has(path))) {
+    for (const path of (await Promise.all(['schemas', 'assets'].map(folder => listFiles(join(root, 'skills', skill, folder))))).flat().filter(path => !files.has(path))) {
       if (check) stale.push(`${path} is not listed for ${skill} in runtime/skills.json`)
       else {
         await rm(join(root, path))

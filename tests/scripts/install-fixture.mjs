@@ -212,6 +212,7 @@ fs.rename = async (from, to) => {
   }
   const result = await rename(from, to)
   const path = String(to).replaceAll('\\\\', '/')
+  if (boundary === 'cleanup-saved' && path.endsWith('/.bstack-install-cleanup.json')) process.exit(86)
   if (path.endsWith('/.bstack-install.json') && boundary.startsWith('cleanup-receipt-') && path.includes('/.' + boundary.slice('cleanup-receipt-'.length) + '/')) {
     try {
       await fs.access(join(dirname(to), '../../.bstack-install-cleanup.json'))

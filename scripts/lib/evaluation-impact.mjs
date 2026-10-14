@@ -15,7 +15,8 @@ function coversKey(covers, key) {
 }
 
 // The shared runtime mirrors the skill layout, so a changed source is covered by the skill-relative key of the file it generates.
-const inPackage = path => path.startsWith('skills/repo-audit/') || path.startsWith('install/') || path.startsWith('runtime/')
+const inPackage = path => path.startsWith('skills/repo-audit/') || path.startsWith('install/') || path.startsWith('runtime/') ||
+  ['scripts/generate-skills.mjs', 'scripts/lib/bundle.mjs'].includes(path)
 
 // Generated copies change only when their source does, and the source already carries the coverage key.
 async function generatedFiles(repo) {
