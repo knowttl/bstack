@@ -29,7 +29,7 @@ function kindFor(path) {
 }
 
 export async function run(options) {
-  const target = await resolveTarget(options)
+  const target = await resolveTarget(options, { draftOnly: true })
   const files = []
   const candidates = []
   const shadowing = []

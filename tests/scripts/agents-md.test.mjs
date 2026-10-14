@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
@@ -26,9 +26,9 @@ function agentsMd(directory, args) {
 }
 
 // Writes the findings and change set an agent records in scratch after the author approves the exact bytes.
-async function approvedPlan(directory, repo, edits) {
+async function approvedPlan(directory, repo, edits, mode) {
   const paths = edits.map(edit => edit.path)
-  const target = { mode: 'repo', root: repo, revision: null }
+  const target = { mode, root: repo, revision: null }
   const findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-audit.json'), 'utf8'))
   Object.assign(findings, { target, reviewedScope: paths, requiredOutcomes: ['starting-checks'] })
   Object.assign(findings.findings[0], { scope: paths, files: paths })
@@ -54,34 +54,42 @@ test('the agents-md skill ships only the commands its procedure runs', () => {
   assert.deepEqual(result.stdout.match(/^ {2}\S.*$/gm).map(line => line.trim()).sort(), ['apply', 'inventory', 'state show'])
 })
 
-test('a selected merge folds the import stub into AGENTS.md and removes CLAUDE.md while scoped and local instructions stay untouched', async t => {
-  const { directory, repo } = await emptyRepo(t)
-  await mkdir(join(repo, 'packages/web'), { recursive: true })
-  const stub = '@AGENTS.md\n'
-  const agents = '# Agent instructions\n\nCheck product changes against the purpose and non-goals in [VISION.md](VISION.md).\n'
-  const files = { 'AGENTS.md': agents, 'CLAUDE.md': stub, 'VISION.md': '# Vision\n', 'packages/web/CLAUDE.md': 'Distinct web guidance\n', 'CLAUDE.local.md': 'Local guidance\n' }
-  for (const [path, content] of Object.entries(files)) await writeFile(join(repo, path), content)
+for (const mode of ['repo', 'workspace']) {
+  test(`a selected merge in a ${mode} folds the import stub into AGENTS.md and removes CLAUDE.md while scoped and local instructions stay untouched`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    if (mode === 'workspace') await rm(join(repo, '.git'), { recursive: true })
+    const targetFlag = `--${mode}`
+    await mkdir(join(repo, 'packages/web'), { recursive: true })
+    const stub = '@AGENTS.md\n'
+    const agents = '# Agent instructions\n\nCheck product changes against the purpose and non-goals in [VISION.md](VISION.md).\n'
+    const files = { 'AGENTS.md': agents, 'CLAUDE.md': stub, 'VISION.md': '# Vision\n', 'packages/web/CLAUDE.md': 'Distinct web guidance\n', 'CLAUDE.local.md': 'Local guidance\n' }
+    for (const [path, content] of Object.entries(files)) await writeFile(join(repo, path), content)
 
-  const inventory = agentsMd(directory, ['inventory', '--repo', repo])
-  assert.equal(inventory.exit, 0, JSON.stringify(inventory))
-  assert.deepEqual(inventory.data.candidates.map(candidate => candidate.path), ['CLAUDE.md'])
-  assert.deepEqual(inventory.data.shadowing.map(file => file.path), ['CLAUDE.local.md'])
+    const beforeInventory = await snapshot(repo)
+    const inventory = agentsMd(directory, ['inventory', targetFlag, repo])
+    assert.equal(inventory.exit, 0, JSON.stringify(inventory))
+    assert.equal(inventory.data.root, repo)
+    assert.deepEqual(await snapshot(repo), beforeInventory)
+    assert.deepEqual(inventory.data.candidates.map(candidate => candidate.path), ['CLAUDE.md'])
+    assert.deepEqual(inventory.data.shadowing.map(file => file.path), ['CLAUDE.local.md'])
 
-  const merged = agents + 'Run the maintained check with `npm run check`.\n'
-  const plan = await approvedPlan(directory, repo, [{ path: 'AGENTS.md', original: agents, proposed: merged }, { path: 'CLAUDE.md', original: stub, proposed: null }])
-  const before = await snapshot(repo)
-  const preview = agentsMd(directory, ['apply', '--repo', repo, '--plan', plan, '--dry-run'])
-  assert.equal(preview.exit, 0, JSON.stringify(preview))
-  assert.deepEqual(await snapshot(repo), before)
+    const merged = agents + 'Run the maintained check with `npm run check`.\n'
+    const plan = await approvedPlan(directory, repo, [{ path: 'AGENTS.md', original: agents, proposed: merged }, { path: 'CLAUDE.md', original: stub, proposed: null }], mode)
+    const before = await snapshot(repo)
+    const preview = agentsMd(directory, ['apply', targetFlag, repo, '--plan', plan, '--dry-run'])
+    assert.equal(preview.exit, 0, JSON.stringify(preview))
+    assert.deepEqual(await snapshot(repo), before)
 
-  const applied = agentsMd(directory, ['apply', '--repo', repo, '--plan', plan])
-  assert.equal(applied.exit, 0, JSON.stringify(applied))
-  assert.equal(await readFile(join(repo, 'AGENTS.md'), 'utf8'), merged)
-  const { 'CLAUDE.md': removed, ...expected } = before
-  assert.deepEqual(await snapshot(repo), { ...expected, 'AGENTS.md': hash(merged) })
-  assert.equal(agentsMd(directory, ['state', 'show', '--repo', repo, '--run', applied.data.runId]).exit, 0)
+    const applied = agentsMd(directory, ['apply', targetFlag, repo, '--plan', plan])
+    assert.equal(applied.exit, 0, JSON.stringify(applied))
+    assert.equal(await readFile(join(repo, 'AGENTS.md'), 'utf8'), merged)
+    const { 'CLAUDE.md': removed, ...expected } = before
+    assert.deepEqual(await snapshot(repo), { ...expected, 'AGENTS.md': hash(merged) })
+    assert.equal(agentsMd(directory, ['state', 'show', targetFlag, repo, '--run', applied.data.runId]).exit, 0)
 
-  const rechecked = agentsMd(directory, ['inventory', '--repo', repo])
-  assert.deepEqual(rechecked.data.candidates, [])
-  assert.deepEqual(rechecked.data.shadowing.map(file => file.path), ['CLAUDE.local.md'])
-})
+    const rechecked = agentsMd(directory, ['inventory', targetFlag, repo])
+    assert.equal(rechecked.exit, 0, JSON.stringify(rechecked))
+    assert.deepEqual(rechecked.data.candidates, [])
+    assert.deepEqual(rechecked.data.shadowing.map(file => file.path), ['CLAUDE.local.md'])
+  })
+}

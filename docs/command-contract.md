@@ -474,9 +474,10 @@ node skills/repo-audit/scripts/repo-audit.mjs inspect --repo <path> --json
 node skills/repo-audit/scripts/repo-audit.mjs inventory --repo <path> --json
 ```
 
-Both commands accept only `--repo` and optional `--json`, with the shared argument and result contracts.
-They resolve the Git root even when the selected directory is nested, and do not create scratch or write target files.
-Non-Git targets are blocked, and `--workspace` is a usage error.
+Both commands accept `--repo` and optional `--json`, with the shared argument and result contracts.
+With `--repo`, they resolve the Git root even when the selected directory is nested, and do not create scratch or write target files.
+`inventory` also accepts `--workspace` instead of `--repo` to inspect an existing directory without Git discovery.
+For `inspect`, non-Git targets are blocked and `--workspace` is a usage error.
 They recursively discover regular files, excluding `.git`, `node_modules`, `.venv`, `venv`, `__pycache__`, `dist`, `build` and `.cache` directories.
 Directory and file symlinks are not followed during recursive discovery.
 Unreadable filesystem sources block the command.
