@@ -57,7 +57,7 @@ test('activated copy replacement preserves original source binding', async t => 
   const destination = join(f.project, '.agents/skills/repo-audit')
   await writeFile(join(destination, 'SKILL.md'), 'User edit\n')
   const conflict = f.run(...args).value.data.installations[0].conflicts.find(conflict => conflict.path === 'SKILL.md')
-  const sourcePath = join(f.source, 'references/architecture.md')
+  const sourcePath = join(f.source, 'references/research-briefs.md')
   const original = await readFile(sourcePath)
   await writeFile(sourcePath, Buffer.concat([original, Buffer.from('\nChanged source\n')]))
   const before = await inventory(f.project)
