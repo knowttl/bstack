@@ -324,6 +324,10 @@ async function installSkill(selected, skill, skills, decisions) {
       if (decisions) { if (matches) decisions['adopt-runtime'].push(decision) }
       else if (!matches) reject('usage-error', 'stale-runtime-decision', 'Runtime decision does not match current verified legacy ownership.', 'Review the current runtime and use its displayed decision.')
     }
+    if (decisions) {
+      for (const entry of destinations) data.installations.push(await inspectInstallation(entry, runtimeVersion))
+      return report()
+    }
     for (const entry of destinations) await approveRecoveryReplacements(entry, selected, runtimeVersion)
     for (const entry of destinations.filter(entry => entry.adoptRuntime)) data.changes.push({ action: 'runtime-adopt', path: entry.previous.runtime.path }, { action: 'ownership', path: entry.ownership })
     if (selected['dry-run']) {
@@ -483,21 +487,31 @@ async function install(selected) {
     selection.splice(selection.indexOf(owner), 1)
     selection.unshift(owner)
   }
+  let total = { destinations: [], changes: [], installations: [], blocked: false }
+  const merge = part => ({ ...total, ...part, destinations: [...total.destinations, ...(part.destinations ?? [])],
+    changes: [...total.changes, ...(part.changes ?? [])], installations: [...total.installations, ...(part.installations ?? [])],
+    mode: total.mode && part.mode && total.mode !== part.mode ? 'mixed' : part.mode ?? total.mode,
+    blocked: total.blocked || Boolean(part.blocked) })
   const decisions = new Map()
   if (selected.replace?.length || selected['adopt-runtime']?.length) {
     for (const skill of selection) {
       const matches = { replace: [], 'adopt-runtime': [] }
-      await installSkill({ ...selected, 'dry-run': true }, skill, skills, matches)
+      try { total = merge(await installSkill({ ...selected, 'dry-run': true }, skill, skills, matches)) } catch (error) {
+        error.data = merge(error.data ?? {})
+        throw error
+      }
       decisions.set(skill, matches)
     }
-    for (const key of ['replace', 'adopt-runtime']) {
-      if ((selected[key] ?? []).some(value => ![...decisions.values()].some(matches => matches[key].includes(value)))) reject('usage-error', key === 'replace' ? 'stale-replacement' : 'stale-runtime-decision', 'Decision does not match any selected skill.', 'Review the current conflicts and use their exact displayed decisions.')
+    try {
+      for (const key of ['replace', 'adopt-runtime']) {
+        if ((selected[key] ?? []).some(value => ![...decisions.values()].some(matches => matches[key].includes(value)))) reject('usage-error', key === 'replace' ? 'stale-replacement' : 'stale-runtime-decision', 'Decision does not match any selected skill.', 'Review the current conflicts and use their exact displayed decisions.')
+      }
+    } catch (error) {
+      error.data = total
+      throw error
     }
+    total = { destinations: [], changes: [], installations: [], blocked: false }
   }
-  let total = { destinations: [], changes: [], installations: [], blocked: false }
-  const merge = part => ({ ...total, ...part, destinations: [...total.destinations, ...(part.destinations ?? [])],
-    changes: [...total.changes, ...(part.changes ?? [])], installations: [...total.installations, ...(part.installations ?? [])],
-    blocked: total.blocked || Boolean(part.blocked) })
   for (const skill of selection) {
     try { total = merge(await installSkill({ ...selected, ...decisions.get(skill) }, skill, skills)) } catch (error) {
       if (error.data || total.installations.length) error.data = merge(error.data ?? {})
