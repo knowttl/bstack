@@ -252,6 +252,21 @@ test('a launch whose readiness output arrives after the launcher exited successf
   assert.equal(record.doctor.exit, 0)
 })
 
+test('proof rejects a failed launcher whose descendant holds its pipes open', async t => {
+  const f = await setup(t, value => {
+    value.launch.command = ['python3', '-c', 'import subprocess, sys; subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"]); print("ready", flush=True); sys.exit(3)']
+    value.launch.ready = { output: 'ready' }
+    value.doctor.command = ['python3', '-c', 'print("healthy")']
+    value.features[0].steps = [{ label: 'Drive', command: ['python3', '-c', 'print("Hello, Ada!")'], expect: 'Hello, Ada!', match: 'Hello, Ada!' }]
+  })
+  await createKit(f)
+  const result = prove(f)
+  assert.equal(result.status, 'failed', JSON.stringify(result))
+  assert.ok(result.problems.some(problem => problem.code === 'launch-exited'))
+  const { record } = await evidenceRecord(f.repo)
+  assert.equal(record.launch.exit, 3)
+})
+
 test('the generated feature recipe retains cwd, environment and required artifacts used by proof', async t => {
   const f = await setup(t, value => {
     value.features[0].steps = [{ label: 'Drive', cwd: 'greeter', env: { GREETING: 'Hello, Ada!' },
@@ -577,6 +592,27 @@ test('an update restores only the drifted file and proposes nothing once the kit
   assert.deepEqual({ exit: clean.exit, path: clean.data.path, files: clean.data.files }, { exit: 0, path: null, files: [] })
 })
 
+test('an update deletes dropped helpers and the disabled coverage gate', async t => {
+  const f = await setup(t, value => { value.coverageGate = true })
+  await createKit(f)
+  const value = plan()
+  value.helpers[0].path = 'scripts/health.py'
+  value.helpers.pop()
+  await writeFile(f.file, JSON.stringify(value))
+  const update = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.equal(update.exit, 0, JSON.stringify(update))
+  const changes = JSON.parse(await readFile(update.data.path, 'utf8'))
+  assert.deepEqual(changes.edits.filter(edit => edit.operation === 'delete').map(edit => edit.path), [
+    `${kit}/scripts/doctor.py`, `${kit}/scripts/greet.py`, `${kit}/scripts/map-coverage.mjs`
+  ])
+  assert.equal(f.call('apply', ['--plan', update.data.path]).exit, 0)
+  for (const name of ['doctor.py', 'greet.py', 'map-coverage.mjs']) {
+    assert.equal(await stat(join(f.repo, kit, 'scripts', name)).then(() => true, () => false), false)
+  }
+  assert.equal(await readFile(join(f.repo, kit, 'scripts/health.py'), 'utf8'), doctorHelper)
+  assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+})
+
 const author = ['-c', 'user.name=Test', '-c', 'user.email=test@example.com']
 
 function commit(f, message) {
@@ -624,6 +660,43 @@ test('the coverage gate counts a mapped source change that is not committed yet'
   await changeSource(f)
   assert.equal(coverage(f).exit, 1)
 })
+
+for (const layer of ['committed', 'staged']) {
+  test(`the coverage gate retains ${layer} changes reversed in another layer`, async t => {
+    const f = await gatedBranch(t)
+    await changeSource(f)
+    git(f.repo, 'add', 'greeter/greeting.py')
+    if (layer === 'committed') commit(f, 'Change greeting')
+    git(f.repo, 'restore', '--source=main', '--worktree', 'greeter/greeting.py')
+    if (layer === 'committed') git(f.repo, 'add', 'greeter/greeting.py')
+    assert.equal(coverage(f).exit, 1)
+  })
+}
+
+test('the coverage gate retains a staged feature update reversed in the worktree', async t => {
+  const f = await gatedBranch(t)
+  await changeSource(f)
+  await changeFeatureFile(f)
+  git(f.repo, 'add', `${kit}/features/greeting.md`)
+  git(f.repo, 'restore', '--source=HEAD', '--worktree', `${kit}/features/greeting.md`)
+  assert.equal(coverage(f).exit, 0)
+})
+
+for (const sourcePath of ['./greeter', 'greeter/', '/greeter', 'greeter\\greeting.py', 'greeter/**x', 'greeter/[ab]']) {
+  test(`scaffold and coverage reject the noncanonical source path ${sourcePath}`, async t => {
+    const f = await gatedBranch(t)
+    const value = plan()
+    value.features[0].sourcePaths = [sourcePath]
+    await writeFile(f.file, JSON.stringify(value))
+    const result = f.call('kit scaffold', ['--plan', f.file, '--update'])
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'invalid-glob')
+    await writeFile(join(f.repo, kit, 'features/greeting.md'), `Source paths: \`${sourcePath}\`\n`)
+    const gate = coverage(f)
+    assert.equal(gate.exit, 2, JSON.stringify(gate))
+    assert.match(gate.stderr, /Invalid source path:/)
+  })
+}
 
 test('the gate command in the proposed wiring runs the generated script and fails an uncovered change', async t => {
   const reference = await readFile(new URL('../../skills/verification/references/no-mistakes.md', import.meta.url), 'utf8')
