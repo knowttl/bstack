@@ -18,7 +18,7 @@ Use `create` when the project has no glossary or map and `maintain` when it has 
 Create finds, resolves and writes the project's domain terms.
 Maintain compares the glossary with the names in code and docs since its last review and proposes edits for what drifted.
 The glossary holds domain concepts only: no storage choices, frameworks, feature requirements, coding rules or implementation details.
-It writes `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per real context; Step 4 also permits selected registration in an existing contract.
+It writes `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per real context; Step 4 also permits selected registration in an existing contract and one pointer line in the root `AGENTS.md`.
 Decision records, design sections and the vision belong to other skills, and a conflict with one is reported with its source.
 Neither mode renames code, edits product code or opens pull requests: a rename to match the glossary is a separate change the user selects and runs elsewhere.
 Return the written glossary to the project's chosen workflow instead of starting another skill.
@@ -78,8 +78,9 @@ A new idea uses mode `workspace` with a null revision, and an existing repo uses
 Run `node scripts/glossary.mjs apply --repo <target> --plan <file> --dry-run --json`, with `--workspace` for a new idea, present the exact diff, then run the unchanged plan without `--dry-run` only after the user approves those bytes.
 Use `state show` with the returned run ID to inspect an interrupted apply, and repeat the unchanged plan to resume.
 When the repo already has `.bstack/project.json`, propose registering each new glossary document there as a separate selected edit in the same plan, as the guide describes; otherwise do not create a contract.
+Propose one pointer line to the written glossary as a separate selected edit in the same plan, following the [pointer guide](references/agents-pointer.md): `Use the domain terms in GLOSSARY.md when naming things.` with the file name as the link, or the same sentence linking `GLOSSARY-MAP.md` for a map.
 
-Done when: Only the approved glossary files, and any selected registration, have been written with unchanged hash preconditions and recoverable originals, or the write remains blocked with its reason.
+Done when: Only the approved glossary files, and any selected registration or pointer, have been written with unchanged hash preconditions and recoverable originals, or the write remains blocked with its reason.
 
 ### Step 5: Check and report
 
@@ -178,3 +179,4 @@ Never recursively search bundled reference or schema directories to discover gui
 | Recording citations for evidence | `schemas/research-report.json` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
 | Registering a glossary in an existing contract | `schemas/project.schema.json` |
+| Adding the glossary's `AGENTS.md` pointer | `references/agents-pointer.md` |

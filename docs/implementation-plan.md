@@ -255,10 +255,12 @@ bstack/
   skills/verification/           independently installable verification skill folder
   skills/vision/                 independently installable vision skill folder
     package.json, package-lock.json   pins lavish-axi only
-    references/                  interview.md  vision.md  grilling.md
+    references/                  interview.md  vision.md  grilling.md  agents-pointer.md
     assets/vision/               board template and stylesheet
   skills/glossary/               independently installable glossary skill folder
-    references/                  glossary.md  maintain.md  grilling.md
+    references/                  glossary.md  maintain.md  grilling.md  agents-pointer.md
+  skills/agents-md/              independently installable agents-md skill folder
+    references/                  agents-md.md  agents-pointer.md
   tests/
     scripts/                     node:test suites for every command
     package-check/               seeded broken skill folders
