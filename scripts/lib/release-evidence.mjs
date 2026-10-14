@@ -35,7 +35,7 @@ async function compatibleEvidence(ledger, definitions, results, candidate) {
       const diff = spawnSync('git', ['diff', '--quiet', '--no-ext-diff', '--no-textconv', row.candidate, '--',
         'scripts/eval.mjs', 'scripts/lib/evaluation.mjs', 'scripts/lib/evaluation-host.mjs',
         'scripts/lib/evaluation-container.mjs', 'scripts/lib/evaluation-scope.mjs', 'tests/eval/container/Dockerfile',
-        'package.json', 'package-lock.json', ...['run', 'paths', 'result', 'schema', 'fingerprint']
+        'package.json', 'package-lock.json', 'scripts/generate-skills.mjs', 'scripts/lib/bundle.mjs', ...['run', 'paths', 'result', 'schema', 'fingerprint']
           .map(name => `runtime/scripts/lib/${name}.mjs`)], { cwd: root })
       if (diff.status !== 0 && diff.status !== 1) fail(`Cannot verify evaluation runner inputs: ${row.candidate}`)
       runners.set(row.candidate, diff.status === 0)

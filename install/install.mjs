@@ -1,6 +1,6 @@
 import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rename, unlink, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
-import { dirname, join, relative, resolve } from 'node:path'
+import { basename, dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
 import { isInside, resolvePath } from '../runtime/scripts/lib/paths.mjs'
@@ -101,7 +101,7 @@ function recordNames(skill) {
   return { ownership: `${stem}.json`, journal: `${stem}-journal.json` }
 }
 
-async function installSkill(selected, skill, skills) {
+async function installSkill(selected, skill, skills, decisions) {
   if (Number(process.versions.node.split('.')[0]) < 24) reject('blocked', 'node-version', 'Node 24 or later is required.', 'Install a supported Node release.')
   const root = await realpath(selected.scope === 'user' ? homedir() : resolve(selected.project))
   if (!(await lstat(root)).isDirectory()) reject('blocked', 'invalid-directory', 'Installation root must be an existing directory.', 'Select an existing home or project directory.')
@@ -118,7 +118,8 @@ async function installSkill(selected, skill, skills) {
   const linked = []
   const linkDestinations = []
   const cleanupPath = join(root, '.bstack-install-cleanup.json')
-  const pendingCleanup = await exists(cleanupPath) ? JSON.parse(await readFile(cleanupPath, 'utf8')) : null
+  const savedCleanup = await exists(cleanupPath) ? JSON.parse(await readFile(cleanupPath, 'utf8')) : null
+  const pendingCleanup = savedCleanup?.entries?.every(entry => basename(entry.destination) === skill) ? savedCleanup : null
   const linkStages = [...(pendingCleanup?.runtimeStages ?? [])]
   for (const entry of destinations) {
     const modes = []
@@ -134,16 +135,17 @@ async function installSkill(selected, skill, skills) {
   }
   let linkRemoval
   let linkPreview
+  if (decisions && (!selected.uninstall && selected.link || linked.includes('link') && !linked.includes('copy'))) selected = { ...selected, replace: [], 'adopt-runtime': [] }
   if (selected.uninstall && linkDestinations.length) {
-    if (!linked.includes('copy') && !pendingCleanup) return installLinks({ root, source, destinations, selected, version: 'not-requested' })
+    if (!linked.includes('copy') && !pendingCleanup) return installLinks({ root, source, destinations, selected, version: 'not-requested', pendingCleanup })
     destinations = destinations.filter(entry => !linkDestinations.includes(entry))
     const linkSelected = { ...selected,
       replace: selected.replace?.filter(value => linkDestinations.some(entry => value.startsWith(entry.host + ':'))),
       'adopt-runtime': selected['adopt-runtime']?.filter(value => linkDestinations.some(entry => value.startsWith(entry.host + ':'))) }
     linkRemoval = { root, source, destinations: linkDestinations, selected: linkSelected, version: 'not-requested', copyRemoval: true }
-    linkPreview = await installLinks({ ...linkRemoval, selected: { ...linkSelected, 'dry-run': true } })
+    linkPreview = await installLinks({ ...linkRemoval, selected: { ...linkSelected, ...(decisions ? { replace: [], 'adopt-runtime': [] } : {}), 'dry-run': true } })
   } else if (selected.uninstall && selected.link && !linked.includes('copy') && !pendingCleanup) {
-    return installLinks({ root, source, destinations, selected, version: 'not-requested' })
+    return installLinks({ root, source, destinations, selected, version: 'not-requested', pendingCleanup })
   }
   let checkPackage
   try { ({ checkPackage } = await import('../scripts/check-package.mjs')) } catch (error) {
@@ -225,11 +227,11 @@ async function installSkill(selected, skill, skills) {
   const hashes = Object.fromEntries(files.map(file => [file.path, file.hash]))
   if (!selected.uninstall && (selected.link || linked.includes('link'))) {
     if (!selected.link) reject('blocked', 'link-mode-required', 'Updating a linked checkout requires --link.', 'Review the source checkout and rerun with --link.')
-    return installLinks({ root, source, files, hashes, version, runtime, destinations, selected, child, runtimeVersion, checkPackage, authored })
+    return installLinks({ root, source, files, hashes, version, runtime, destinations, selected, child, runtimeVersion, checkPackage, authored, pendingCleanup })
   }
   const cleanupBinding = hashBytes(Buffer.from(canonicalJSON({ destinations: destinations.map(entry => entry.destination), uninstall: Boolean(selected.uninstall), version, hashes, runtime })))
   let cleanup
-  if (await exists(cleanupPath)) {
+  if (pendingCleanup) {
     if (await resolvePath(root, '.bstack-install-cleanup.json') !== cleanupPath) reject('blocked', 'changed-destination', 'Cleanup record canonical path changed.', help)
     cleanup = JSON.parse(await readFile(cleanupPath, 'utf8'))
     if (cleanup.schemaVersion !== 1 || cleanup.binding !== cleanupBinding) reject('blocked', 'pending-recovery', 'Resume the original command before changing cleanup inputs or hosts.', help)
@@ -313,10 +315,14 @@ async function installSkill(selected, skill, skills) {
       ...(runtime === null ? [] : [{ action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }]),
       { action: 'ownership', path: entry.ownership }, { action: 'journal', path: entry.journal }]))).flat()
     for (const decision of selected.replace ?? []) {
-      if (!(await Promise.all(destinations.map(entry => matchesReplacement(entry, decision, runtimeVersion)))).some(Boolean)) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
+      const matches = (await Promise.all(destinations.map(entry => matchesReplacement(entry, decision, runtimeVersion)))).some(Boolean)
+      if (decisions) { if (matches) decisions.replace.push(decision) }
+      else if (!matches) reject('usage-error', 'stale-replacement', 'Replacement does not match a current conflict hash.', 'Review the current conflict and use its exact --replace value.')
     }
     for (const decision of selected['adopt-runtime'] ?? []) {
-      if (!(await Promise.all(destinations.map(entry => matchesRuntimeAdoption(entry, decision, runtimeVersion)))).some(Boolean)) reject('usage-error', 'stale-runtime-decision', 'Runtime decision does not match current verified legacy ownership.', 'Review the current runtime and use its displayed decision.')
+      const matches = (await Promise.all(destinations.map(entry => matchesRuntimeAdoption(entry, decision, runtimeVersion)))).some(Boolean)
+      if (decisions) { if (matches) decisions['adopt-runtime'].push(decision) }
+      else if (!matches) reject('usage-error', 'stale-runtime-decision', 'Runtime decision does not match current verified legacy ownership.', 'Review the current runtime and use its displayed decision.')
     }
     for (const entry of destinations) await approveRecoveryReplacements(entry, selected, runtimeVersion)
     for (const entry of destinations.filter(entry => entry.adoptRuntime)) data.changes.push({ action: 'runtime-adopt', path: entry.previous.runtime.path }, { action: 'ownership', path: entry.ownership })
@@ -467,12 +473,33 @@ async function install(selected) {
   skills.sort()
   const unknown = (selected.skill ?? []).filter(name => !skills.includes(name))
   if (unknown.length) reject('usage-error', 'unknown-skill', `Unknown skill: ${unknown.join(', ')}`, `Select from: ${skills.join(', ')}.`)
+  const selection = [...(selected.skill ?? skills)]
+  const root = await realpath(selected.scope === 'user' ? homedir() : resolve(selected.project))
+  const cleanupPath = join(root, '.bstack-install-cleanup.json')
+  if (await exists(cleanupPath)) {
+    const cleanup = JSON.parse(await readFile(cleanupPath, 'utf8'))
+    const owner = cleanup.entries?.length ? basename(cleanup.entries[0].destination) : null
+    if (!selection.includes(owner) || !cleanup.entries.every(entry => basename(entry.destination) === owner)) reject('blocked', 'pending-recovery', 'Resume the original command before changing cleanup inputs or skills.', help)
+    selection.splice(selection.indexOf(owner), 1)
+    selection.unshift(owner)
+  }
+  const decisions = new Map()
+  if (selected.replace?.length || selected['adopt-runtime']?.length) {
+    for (const skill of selection) {
+      const matches = { replace: [], 'adopt-runtime': [] }
+      await installSkill({ ...selected, 'dry-run': true }, skill, skills, matches)
+      decisions.set(skill, matches)
+    }
+    for (const key of ['replace', 'adopt-runtime']) {
+      if ((selected[key] ?? []).some(value => ![...decisions.values()].some(matches => matches[key].includes(value)))) reject('usage-error', key === 'replace' ? 'stale-replacement' : 'stale-runtime-decision', 'Decision does not match any selected skill.', 'Review the current conflicts and use their exact displayed decisions.')
+    }
+  }
   let total = { destinations: [], changes: [], installations: [], blocked: false }
   const merge = part => ({ ...total, ...part, destinations: [...total.destinations, ...(part.destinations ?? [])],
     changes: [...total.changes, ...(part.changes ?? [])], installations: [...total.installations, ...(part.installations ?? [])],
     blocked: total.blocked || Boolean(part.blocked) })
-  for (const skill of selected.skill ?? skills) {
-    try { total = merge(await installSkill(selected, skill, skills)) } catch (error) {
+  for (const skill of selection) {
+    try { total = merge(await installSkill({ ...selected, ...decisions.get(skill) }, skill, skills)) } catch (error) {
       if (error.data || total.installations.length) error.data = merge(error.data ?? {})
       throw error
     }
