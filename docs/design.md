@@ -305,8 +305,8 @@ The pinned no-mistakes reference cited under ["Independent verification and auto
 - The Document step sees only the change's diff, and treats `AGENTS.md` as correction-only, so it can never add a pointer. That is why `agents-md` owns the file, and why a full sweep cannot run inside no-mistakes.
 - `document.instructions` and `gates` are honoured only from the default branch, so the wiring takes effect after it merges.
 
-The ownership map and gate are new behaviour.
-The repo checker's docs checks already exist, but the checker refuses to run without a per-change assessment file, so the gate needs a small docs-only mode.
+The [maintenance create guide](../skills/maintenance/references/create.md) owns the ownership map and gate setup.
+The [docs-only command contract](command-contract.md#docs-only-mode) defines checker execution without a per-change assessment.
 The full per-change assessment uses the skill's own scripts and its committed form waits for the project owner's approval each time, which is why the no-mistakes route carries everyday upkeep.
 
 ### Split build order
@@ -329,8 +329,7 @@ Each move removes the moved content from repo-audit and replaces it with a check
 
 ### Split limitations
 
-- The remaining skill boundaries and no-mistakes wiring are not implemented; [README.md](../README.md) owns current implementation status.
-- Each skill starting with a short self-check of its own area on an existing repo, the `maintain` and `sweep` modes, the ownership map and the checker's docs-only mode are new behaviour, not present today.
+- [README.md](../README.md) owns current implementation status for the split skills and their wiring.
 - The verification build supplied only the byte-for-byte checked copies of piece 2; the generator, the multi-skill installer and the move of every command to one source tree came with piece 2 itself.
 - The no-mistakes constraints above rest on the pinned reference at commit 93b4407, and the wiring has not run end to end.
 
