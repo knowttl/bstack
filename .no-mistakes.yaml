@@ -18,8 +18,8 @@ review:
         Tests must exercise behaviour through the public command, installer or evaluation interface and take expected results from the design, plan or acceptance case. Flag tests that import private helpers to assert internals or that only restate current implementation output.
         Repair each reported invariant across all sibling cases and shared call sites in the same round.
         Enumerate the relevant boundary and failure cases, fix their shared cause, and verify through the public interface.
-        Before focused repair verification, install dependencies with npm ci --ignore-scripts and
-        npm ci --omit=dev --prefix skills/repo-audit. Review the whole diff again after repairs;
+        Before focused repair verification, install dependencies using the setup instructions in README.md.
+        Review the whole diff again after repairs;
         do not limit valid findings or omit style, simplification or design-principle review.
     - path: "skills/**"
       instructions: |
