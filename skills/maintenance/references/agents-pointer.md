@@ -24,13 +24,14 @@ In the real file, `GLOSSARY.md` and `VISION.md` are each the text and the destin
 
 ## Adding a pointer
 
-A skill proposes its pointer as a separate edit in the same reviewed plan that writes its document, and only when the user selects it.
+A skill proposes each pointer independently for selection in the same review that writes its document, and includes only selected pointers in the plan.
+Consolidate all selected pointers into one complete edit per resolved `AGENTS.md` before preview and apply.
 Read the target's root instruction files first, then use the first case that applies:
 
 | Root state | Edit |
 |---|---|
-| `AGENTS.md` exists | `append-line-once` on `AGENTS.md` with the pointer line, which leaves the file unchanged when the line is already there |
-| No `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` | `create` `AGENTS.md` with the heading, a blank line and the pointer line |
+| `AGENTS.md` exists | `append-line-once` for one selected pointer, or `replace-file` with the complete original content plus all missing selected pointer lines for multiple pointers; omit an edit when all selected lines are already there |
+| No `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` | One `create` edit of `AGENTS.md` with the heading, a blank line and all selected pointer lines |
 | No `AGENTS.md`, but a root `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` | No edit: Claude Code reads those files instead of `AGENTS.md`, so name `/agents-md` as the next step for the user to run |
 
 Never rewrite other lines of the file, and never add a pointer for a document that was not written.

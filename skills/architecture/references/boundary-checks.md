@@ -77,10 +77,14 @@ It rejects failure-masking operators, pipelines, background execution, shell dis
 
 Fix selected findings and keep the rest visible.
 Prefer the native tool's own baseline or suppression mechanism where one exists.
-Where none does, record known violations in a baseline following `schemas/baseline.schema.json` and run `baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --json`, with the complete current violations as rule, path and key objects whose keys stay stable when lines move.
+Where none does, prepare known violations in a scratch baseline following `schemas/baseline.schema.json`.
+Check an existing target baseline read-only with `baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --json`, with the complete current violations as rule, path and key objects whose keys stay stable when lines move.
 Keep native execution failures out of the violation list, because unavailable analysis cannot establish an empty one.
 The checker rejects new violations and entries whose violations were fixed.
-`--refresh` removes fixed entries but cannot accept new debt; adding one entry needs `--refresh --finding <id> --findings <file> --entry <file>` for a selected unresolved debt finding covering that path.
+Prepare baseline changes in scratch and validate them in a disposable repo copy containing the proposed rules and baseline, never by refreshing the target baseline.
+Remove fixed entries from the candidate and add only entries covered by selected unresolved debt findings with matching rule, path and key identities.
+Run the native check or `baseline check` without `--refresh` against that copy with the complete current violations, then include the complete baseline content as one edit in the reviewed `apply` plan.
+Use the same reviewed-write path for a new baseline and for native baseline or suppression configuration.
 Every entry records a reason, narrow scope and removal condition.
 Never silently refresh a baseline to accept new failures, and never disable a whole rule or exclude a whole directory to obtain green.
 A changed-file-only check cannot establish a constraint that depends on the complete import graph or generated outputs.
