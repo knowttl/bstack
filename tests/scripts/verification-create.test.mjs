@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { connect } from 'node:net'
-import { appendFile, mkdtemp, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, mkdtemp, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { parse } from 'yaml'
@@ -235,9 +235,9 @@ for (const [exit, status] of [[0, 'passed'], [3, 'failed']]) {
   })
 }
 
-test('a launch whose readiness output arrives after the launcher exited successfully still reaches doctor', async t => {
+test('a launch whose readiness output arrives more than a second after the launcher exited successfully still reaches doctor', async t => {
   const f = await setup(t, value => {
-    const late = 'import time; time.sleep(0.5); print("ready", flush=True)'
+    const late = 'import time; time.sleep(2); print("ready", flush=True)'
     value.launch.command = ['python3', '-c', `import subprocess, sys; subprocess.Popen([sys.executable, "-c", '${late}'])`]
     value.launch.ready = { output: 'ready' }
     value.doctor.command = ['python3', '-c', 'print("healthy")']
@@ -250,6 +250,19 @@ test('a launch whose readiness output arrives after the launcher exited successf
   assert.equal(record.launch.exit, 0)
   assert.equal(record.launch.stdout, 'ready\n')
   assert.equal(record.doctor.exit, 0)
+})
+
+test('a successful launcher with closed pipes still waits for URL readiness', async t => {
+  const f = await setup(t, value => {
+    value.launch.command = ['python3', '-c', 'import subprocess, sys; subprocess.Popen([sys.executable, "-m", "greeter.server", sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)', '{port}']
+  })
+  await createKit(f)
+  const result = prove(f)
+  assert.equal(result.status, 'passed', JSON.stringify(result))
+  const { record } = await evidenceRecord(f.repo)
+  assert.equal(record.launch.exit, 0)
+  assert.equal(record.doctor.exit, 0)
+  assert.equal(await closed(Number(record.doctor.command.at(-1).split(':').at(-1))), true)
 })
 
 test('proof rejects a failed launcher whose descendant holds its pipes open', async t => {
@@ -613,6 +626,40 @@ test('an update deletes dropped helpers and the disabled coverage gate', async t
   assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
 })
 
+for (const sourcePath of ['./greeter', 'greeter/']) {
+  test(`an update repairs a previously accepted source declaration ${sourcePath}`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    const old = plan()
+    old.features[0].sourcePaths = [sourcePath]
+    await writeFile(join(f.repo, kit, 'kit.json'), JSON.stringify(old))
+    const value = plan()
+    value.features[0].sourcePaths = ['greeter']
+    value.helpers[0].path = 'scripts/health.py'
+    value.helpers[0].invocation = `python3 ${kit}/scripts/health.py <url>`
+    value.doctor.command[1] = `${kit}/scripts/health.py`
+    await writeFile(f.file, JSON.stringify(value))
+    const update = f.call('kit scaffold', ['--plan', f.file, '--update'])
+    assert.equal(update.exit, 0, JSON.stringify(update))
+    assert.equal(f.call('apply', ['--plan', update.data.path]).exit, 0)
+    assert.equal(await stat(join(f.repo, kit, 'scripts/doctor.py')).then(() => true, () => false), false)
+    assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+    assert.equal(prove(f).status, 'passed')
+  })
+}
+
+test('an update rejects unsafe managed paths in the previous plan', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  const old = plan()
+  old.helpers[0].path = '../escape.py'
+  await writeFile(join(f.repo, kit, 'kit.json'), JSON.stringify(old))
+  const result = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.equal(result.problems[0].code, 'unsafe-path')
+  assert.equal(result.data.path, undefined)
+})
+
 const author = ['-c', 'user.name=Test', '-c', 'user.email=test@example.com']
 
 function commit(f, message) {
@@ -659,6 +706,35 @@ test('the coverage gate counts a mapped source change that is not committed yet'
   const f = await gatedBranch(t)
   await changeSource(f)
   assert.equal(coverage(f).exit, 1)
+})
+
+for (const sourcePath of ['greeter/?.py', 'greeter/🧪.py', 'greeter/*/?.py', 'greeter/**/?.py']) {
+  test(`kit check and coverage agree on Unicode source path ${sourcePath}`, async t => {
+    const f = await setup(t, value => {
+      value.coverageGate = true
+      value.features[0].sourcePaths = [sourcePath]
+    })
+    const directory = join(f.repo, 'greeter', '🧪')
+    await mkdir(directory)
+    await writeFile(join(f.repo, 'greeter/🧪.py'), 'value = 1\n')
+    await writeFile(join(directory, '🧪.py'), 'value = 1\n')
+    await createKit(f)
+    assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+    commit(f, 'Add Unicode source and kit')
+    git(f.repo, 'checkout', '-q', '-b', 'change')
+    await appendFile(join(f.repo, 'greeter/🧪.py'), 'value = 2\n')
+    await appendFile(join(directory, '🧪.py'), 'value = 2\n')
+    const result = coverage(f)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+  })
+}
+
+test('coverage matches Unicode line separators within recursive source globs', async t => {
+  const f = await gatedBranch(t)
+  const path = join(f.repo, 'greeter', '\u2028.py')
+  await writeFile(path, 'value = 1\n')
+  const result = coverage(f)
+  assert.equal(result.exit, 1, JSON.stringify(result))
 })
 
 for (const layer of ['committed', 'staged']) {
