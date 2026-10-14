@@ -5,6 +5,64 @@ import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { fixture, inventory, lifecycle, interrupt } from './install-fixture.mjs'
 
+for (const operation of ['update', 'uninstall', 'interrupted update']) {
+  test(`runtime retirement removes owned runtime during ${operation}`, async t => {
+    const f = await lifecycle(t)
+    await rm(join(f.source, 'package.json'))
+    await rm(join(f.source, 'package-lock.json'))
+    f.git('add', '.')
+    f.git('commit', '-m', 'retire runtime')
+    f.git('tag', 'v0.0.3')
+    const args = [...f.args, ...(operation === 'uninstall' ? ['--uninstall'] : [])]
+    const before = await inventory(f.project)
+    const preview = f.run(...args, '--dry-run')
+    assert.equal(preview.status, 0, preview.stdout)
+    assert.ok(preview.value.data.changes.some(change => change.action === 'runtime-remove'))
+    assert.deepEqual(await inventory(f.project), before)
+    if (operation === 'interrupted update') {
+      await interrupt(f, 'applying')
+      assert.equal(f.run(...args).status, 86)
+      delete f.env.NODE_OPTIONS
+      const recovery = f.run(...args, '--dry-run')
+      assert.equal(recovery.status, 0, recovery.stdout)
+      assert.ok(recovery.value.data.changes.some(change => change.action === 'runtime-remove'))
+    }
+    const result = f.run(...args)
+    assert.equal(result.status, 0, result.stdout)
+    await assert.rejects(lstat(join(f.destination, 'node_modules')), { code: 'ENOENT' })
+    await assert.rejects(lstat(f.journal), { code: 'ENOENT' })
+    if (operation === 'uninstall') {
+      await assert.rejects(lstat(f.ownership), { code: 'ENOENT' })
+    } else {
+      assert.equal(result.value.data.installations[0].sourceVersion, 'v0.0.3')
+      assert.equal(JSON.parse(await readFile(f.ownership, 'utf8')).runtime, null)
+      assert.equal(f.run(...args).status, 0)
+      assert.equal(f.run(...args, '--uninstall').status, 0)
+      await assert.rejects(lstat(f.ownership), { code: 'ENOENT' })
+    }
+  })
+}
+
+for (const uninstall of [false, true]) {
+  test(`runtime retirement preserves an unowned replacement during ${uninstall ? 'uninstall' : 'update'}`, async t => {
+    const f = await lifecycle(t)
+    await rm(join(f.source, 'package.json'))
+    await rm(join(f.source, 'package-lock.json'))
+    f.git('add', '.')
+    f.git('commit', '-m', 'retire runtime')
+    await rename(join(f.destination, 'node_modules'), join(f.project, 'owned-runtime'))
+    await mkdir(join(f.destination, 'node_modules'))
+    await writeFile(join(f.destination, 'node_modules/keep.txt'), 'User runtime\n')
+    const before = await inventory(join(f.destination, 'node_modules'))
+    const owned = JSON.parse(await readFile(f.ownership, 'utf8')).runtime
+    const result = f.run(...f.args, ...(uninstall ? ['--uninstall'] : []))
+    assert.equal(result.status, 2, result.stdout)
+    assert.ok(result.value.data.installations[0].conflicts.some(conflict => conflict.path === 'node_modules'))
+    assert.deepEqual(await inventory(join(f.destination, 'node_modules')), before)
+    assert.deepEqual(JSON.parse(await readFile(f.ownership, 'utf8')).runtime, owned)
+  })
+}
+
 for (const scope of ['user', 'project']) {
   test(`clean ${scope} update removes obsolete ownership and clean uninstall removes only installer content`, async t => {
     const f = await lifecycle(t, scope)
