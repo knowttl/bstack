@@ -4,7 +4,7 @@ import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
 import { readGit } from '../lib/discovery.mjs'
 import { matchesPath, pathGlob } from '../lib/glob.mjs'
-import { markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
+import { markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { loadContract } from './contract.mjs'
 import { run as checkDocuments } from './docs-check.mjs'
@@ -41,6 +41,7 @@ async function contractItems(target, options) {
   const owner = path => fixFor(policy.contract.documents.find(document => document.path === path))
   const docs = await checkDocuments({ ...options, coveragePolicy: policy })
   items.push(...docs.problems.map(problem => ({ ...problem, fix: owner(problem.path) })))
+  items.push(...docs.data.coverageLimits.map(limit => ({ code: 'document-coverage-limit', path: limit.path, message: limit.reason, fix: owner(limit.path) })))
   const regenerate = 'Run /maintenance and its docs generate command, then apply the reviewed proposal.'
   try { items.push(...(await checkGeneratedSections({ ...options, check: true, coveragePolicy: policy })).problems.map(problem => ({ ...problem, fix: regenerate }))) } catch (error) {
     items.push(...problemsOf(error).map(problem => ({ ...problem, fix: regenerate })))
@@ -79,10 +80,13 @@ async function kitItems(target) {
 
 async function pointerItems(target) {
   const text = await readIfPresent(target.root, 'AGENTS.md')
+  if (text === null) return []
+  const limit = text.includes('\0') ? 'Local links require supported Markdown text.' : markdownCoverageLimit(text)
+  if (limit) return [{ code: 'document-coverage-limit', path: 'AGENTS.md', message: limit, fix: 'Run /agents-md.' }]
   const items = []
-  for (const href of text === null ? [] : markdownLinks(text)) {
+  for (const href of markdownLinks(text)) {
     const problem = await checkLocalLink(target.root, 'AGENTS.md', href)
-    if (problem && problem.code !== 'unsupported-link-fragment') items.push({ ...problem, fix: 'Run /agents-md.' })
+    if (problem) items.push({ ...problem, fix: 'Run /agents-md.' })
   }
   return items
 }
