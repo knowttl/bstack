@@ -1676,7 +1676,7 @@ function kindFor(path) {
   return Object.entries(documentNames).find(([, pattern]) => pattern.test(stem))?.[0] ?? null;
 }
 async function run3(options) {
-  const target = await resolveTarget(options);
+  const target = await resolveTarget(options, { draftOnly: true });
   const files = [];
   const candidates = [];
   const shadowing = [];
@@ -1732,5 +1732,5 @@ async function run3(options) {
 await dispatch(process.argv.slice(2), "agents-md", {
   "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: agents-md.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run },
   "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: agents-md.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run2 },
-  "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: agents-md.mjs inventory --repo <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run3 }
+  "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: agents-md.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run3 }
 });

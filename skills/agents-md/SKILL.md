@@ -36,7 +36,7 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 
 ### Step 1: Inventory the instruction files
 
-Run `node scripts/agents-md.mjs inventory --repo <target> --json` and keep the output in scratch.
+Run `node scripts/agents-md.mjs inventory --repo <target> --json`, with `--workspace` for a directory that is not a Git repo, and keep the output in scratch.
 Read every instruction file it lists, and read the sources the project already has for rules, evidence requirements and check commands.
 Classify each instruction file as the root `AGENTS.md`, a scoped file that governs a nested directory, a repo-owned `CLAUDE.md`, or a local variant.
 Load the [AGENTS.md guide](references/agents-md.md) for the classes, equivalence and what counts as a source.
@@ -86,7 +86,7 @@ Done when: Only the approved instruction files have been written or deleted, wit
 
 ### Step 6: Check and report
 
-Run `inventory` again and confirm that the file kinds and candidates match what the plan intended.
+Run `inventory` again with the same target flag and confirm that the file kinds and candidates match what the plan intended.
 Open each pointer target in the written file to confirm it resolves.
 State the target, the instruction files found and their classes, each pointer's result, the merge decisions with the host check and its limits, and the written and deleted paths.
 Name every shadowing report, every unpointed source left for its skill or the author, and any step left blocked with its missing prerequisite.
