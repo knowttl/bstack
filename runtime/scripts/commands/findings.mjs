@@ -1,10 +1,9 @@
-import { readFile, writeFile } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { readFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
 import { inspectJSON } from '../lib/json.mjs'
-import { createScratch } from '../lib/scratch.mjs'
 import { fingerprint, hashBytes } from '../lib/fingerprint.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
 import { CommandError } from '../lib/result.mjs'
@@ -15,33 +14,6 @@ const stageOutcomes = { audit: ['starting-checks'], foundation: ['journey', 'fou
 
 function invalid(code, message, path) {
   throw new CommandError('failed', [{ code, message, path, fix: 'Regenerate findings for the reviewed target, scope and selections.' }])
-}
-
-function render(findings, assessment) {
-  const lines = ['# Proposed repo audit record', '', `Result: ${assessment.result}`, '',
-    `Stage: ${findings.stage}`, `Target: ${findings.target.root}`, `Revision: ${findings.target.revision ?? 'no commit'}`,
-    `Stated next change: ${findings.nextChange}`, `Reviewed scope: ${findings.reviewedScope.join(', ')}`,
-    `Current fingerprint: ${assessment.fingerprint}`, '', '## Readiness evidence', '']
-  for (const reason of assessment.reasons) lines.push(`- ${reason}`)
-  for (const record of findings.execution) lines.push(`- ${record.outcome}: ${record.status}. Method: ${record.method}. Artifact: ${record.artifact}. Fingerprint: ${record.fingerprint}.`)
-  for (const [intent, title] of [['documented', 'Documented intent'], ['observed', 'Observed behaviour'], ['inferred', 'Inferred intent']]) {
-    lines.push('', `## ${title}`, '')
-    for (const source of findings.sources.filter(source => source.intent === intent)) lines.push(`- ${source.id}: ${source.summary} (${source.pointer})`)
-  }
-  for (const [category, title] of [['debt', 'Observed debt'], ['missing-protection', 'Missing protections'], ['decision', 'Design decisions']]) {
-    lines.push('', `## ${title}`, '')
-    for (const finding of findings.findings.filter(finding => finding.category === category)) {
-      lines.push(`### ${finding.id}: ${finding.problem}`, '',
-        `Status: ${finding.status}. Resolved: ${finding.resolved}. Blocks next change: ${finding.blocksNextChange}.`,
-        `Files: ${finding.files.join(', ') || 'none'}. Command: ${finding.command ?? 'none'}.`,
-        `Principle${finding.newPrinciple ? ' (proposed new principle)' : ''}: ${finding.principle}`,
-        `Consequence: ${finding.consequence}`, `Fix: ${finding.fix}`, `Scope: ${finding.scope.join(', ')}`,
-        `Verification: ${finding.verification}`, `Sources: ${finding.sourceIds.join(', ')}`, '')
-    }
-  }
-  lines.push('', '## Proposed new principles', '', ...findings.findings.filter(finding => finding.newPrinciple).map(finding => `- ${finding.id}: ${finding.principle} (${finding.status})`),
-    '', '## Selected findings', '', ...findings.selectedFindingIds.map(id => `- ${id}`), '', '## Limitations', '', ...findings.limitations.map(limit => `- ${limit}`))
-  return `${lines.join('\n')}\n`
 }
 
 export async function validateFindings(findings, target, deletionScope = []) {
@@ -70,7 +42,7 @@ export async function validateFindings(findings, target, deletionScope = []) {
   if (new Set(findings.execution.map(record => record.outcome)).size !== findings.execution.length) invalid('duplicate-outcome', 'Use one current record per outcome.', '$/execution')
 }
 
-export async function run(options, command) {
+export async function run(options) {
   if (!options.findings) throw new CommandError('usage-error', [{ code: 'missing-findings', message: '--findings is required.', fix: 'Supply --findings <file>.' }])
   const target = await resolveTarget(options, { draftOnly: true })
   let findings
@@ -100,10 +72,5 @@ export async function run(options, command) {
   const result = reasons.length ? 'verification blocked' : decisions.length ? 'decisions needed' : 'ready for the stated next change'
   reasons.push(...decisions.map(finding => `Unresolved finding: ${finding.id}.`))
   const assessment = { result, reasons, fingerprint: current.fingerprint }
-  if (command === 'findings render') {
-    const path = join(await createScratch(target), 'repo-audit.md')
-    await writeFile(path, render(findings, assessment))
-    assessment.path = path
-  }
   return { inputs: { target, findings: options.findings }, data: assessment }
 }

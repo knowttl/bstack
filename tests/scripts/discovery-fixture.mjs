@@ -43,6 +43,10 @@ export function run(command, repo, env = process.env, extra = [], platform) {
   return runSkill('repo-audit', command, repo, env, extra, platform)
 }
 
+export function runMaintenance(command, repo, env = process.env, extra = [], platform) {
+  return runSkill('maintenance', command, repo, env, extra, platform)
+}
+
 export function runArchitecture(command, repo, env = process.env, extra = [], platform) {
   return runSkill('architecture', command, repo, env, extra, platform)
 }

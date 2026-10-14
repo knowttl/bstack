@@ -1260,28 +1260,6 @@ function exactDiff(path, original, proposed) {
   return output.join("\n") + "\n";
 }
 
-// runtime/scripts/lib/scratch.mjs
-import { createHash as createHash2, randomUUID } from "node:crypto";
-import { homedir } from "node:os";
-import { join as join4, isAbsolute as isAbsolute2 } from "node:path";
-async function scratchDirectory(target, runId) {
-  if (!/^[a-zA-Z0-9-]+$/.test(runId)) throw new CommandError("usage-error", [{ code: "invalid-run", message: "Run ID must contain only letters, digits and hyphens.", fix: "Use the run ID returned by the command." }]);
-  const cache = process.platform === "win32" ? process.env.LOCALAPPDATA : process.platform === "darwin" ? join4(homedir(), "Library", "Caches") : process.env.XDG_CACHE_HOME || join4(homedir(), ".cache");
-  if (!cache || !isAbsolute2(cache)) {
-    throw new CommandError("blocked", [{ code: "cache-unavailable", message: "The OS cache directory must be absolute.", fix: "Configure an absolute OS cache directory." }]);
-  }
-  const base = await resolveLinks(join4(cache, "bstack"));
-  if (isInside(target.root, base)) {
-    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch would be written inside the target.", fix: "Select an OS cache directory outside the target.", path: base }]);
-  }
-  const key = createHash2("sha256").update(target.root).digest("hex");
-  const directory = await resolveLinks(join4(base, key, runId));
-  if (isInside(target.root, directory)) {
-    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch links resolve inside the target.", fix: "Repair the cache link or select a different cache directory.", path: directory }]);
-  }
-  return directory;
-}
-
 // runtime/schemas/findings.schema.json
 var findings_schema_default = {
   type: "object",
@@ -1619,6 +1597,30 @@ async function validateFindings(findings, target, deletionScope = []) {
 import { readFile as readFile4, open, mkdir, rename, unlink, stat as stat5 } from "node:fs/promises";
 import { basename as basename2, dirname as dirname4, join as join5 } from "node:path";
 import { randomUUID as randomUUID2 } from "node:crypto";
+
+// runtime/scripts/lib/scratch.mjs
+import { createHash as createHash2, randomUUID } from "node:crypto";
+import { homedir } from "node:os";
+import { join as join4, isAbsolute as isAbsolute2 } from "node:path";
+async function scratchDirectory(target, runId) {
+  if (!/^[a-zA-Z0-9-]+$/.test(runId)) throw new CommandError("usage-error", [{ code: "invalid-run", message: "Run ID must contain only letters, digits and hyphens.", fix: "Use the run ID returned by the command." }]);
+  const cache = process.platform === "win32" ? process.env.LOCALAPPDATA : process.platform === "darwin" ? join4(homedir(), "Library", "Caches") : process.env.XDG_CACHE_HOME || join4(homedir(), ".cache");
+  if (!cache || !isAbsolute2(cache)) {
+    throw new CommandError("blocked", [{ code: "cache-unavailable", message: "The OS cache directory must be absolute.", fix: "Configure an absolute OS cache directory." }]);
+  }
+  const base = await resolveLinks(join4(cache, "bstack"));
+  if (isInside(target.root, base)) {
+    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch would be written inside the target.", fix: "Select an OS cache directory outside the target.", path: base }]);
+  }
+  const key = createHash2("sha256").update(target.root).digest("hex");
+  const directory = await resolveLinks(join4(base, key, runId));
+  if (isInside(target.root, directory)) {
+    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch links resolve inside the target.", fix: "Repair the cache link or select a different cache directory.", path: directory }]);
+  }
+  return directory;
+}
+
+// runtime/scripts/lib/protected-write.mjs
 async function fileBytes(path) {
   try {
     return await readFile4(path);

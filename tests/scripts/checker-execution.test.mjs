@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
-import { git, run } from './discovery-fixture.mjs'
+import { git, runMaintenance as run } from './discovery-fixture.mjs'
 import { selectCommand } from '../../runtime/scripts/lib/run.mjs'
 import { fingerprint } from '../../runtime/scripts/lib/fingerprint.mjs'
 
