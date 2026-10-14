@@ -5,7 +5,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { selectCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
+import { selectCommand } from '../../runtime/scripts/lib/run.mjs'
 
 // Every installer invocation selects a disposable snapshot and isolated home.
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -35,7 +35,7 @@ export async function fixture(t, failRuntime = false) {
     npm_config_cache: join(home, 'npm-cache'), npm_config_userconfig: join(home, 'npmrc'), npm_config_offline: 'true',
     GIT_CONFIG_GLOBAL: devNull, GIT_CONFIG_NOSYSTEM: '1', GIT_AUTHOR_NAME: 'Fixture', GIT_AUTHOR_EMAIL: 'fixture@example.invalid',
     GIT_COMMITTER_NAME: 'Fixture', GIT_COMMITTER_EMAIL: 'fixture@example.invalid' }
-  for (const name of ['install', 'skills/repo-audit']) await cp(join(root, name), join(checkout, name), { recursive: true,
+  for (const name of ['install', 'runtime', 'skills/repo-audit']) await cp(join(root, name), join(checkout, name), { recursive: true,
     filter: path => !path.split(/[\\/]/).includes('node_modules') })
   await mkdir(join(checkout, 'scripts'))
   await cp(join(root, 'scripts/check-package.mjs'), join(checkout, 'scripts/check-package.mjs'))
@@ -113,7 +113,8 @@ export async function legacyInstallation(t, host = 'agents') {
   f.git('update-index', '--assume-unchanged', 'install/install.mjs')
   const installer = command('git', ['show', '98b9ab1d8de5f9a238dde2383295c2c04450d852:install/install.mjs'], root, f.env)
   assert.equal(installer.status, 0, installer.stderr)
-  await writeFile(join(f.checkout, 'install/install.mjs'), installer.stdout)
+  // The recorded installer predates the shared runtime folder, so point its libraries at the current source tree.
+  await writeFile(join(f.checkout, 'install/install.mjs'), installer.stdout.replaceAll('../skills/repo-audit/scripts/lib/', '../runtime/scripts/lib/'))
   const args = ['--scope', 'project', '--project', f.project, '--host', host]
   assert.equal(f.run(...args).status, 0)
   await cp(join(root, 'install/install.mjs'), join(f.checkout, 'install/install.mjs'))
@@ -211,6 +212,7 @@ fs.rename = async (from, to) => {
   }
   const result = await rename(from, to)
   const path = String(to).replaceAll('\\\\', '/')
+  if (boundary === 'cleanup-saved' && path.endsWith('/.bstack-install-cleanup.json')) process.exit(86)
   if (path.endsWith('/.bstack-install.json') && boundary.startsWith('cleanup-receipt-') && path.includes('/.' + boundary.slice('cleanup-receipt-'.length) + '/')) {
     try {
       await fs.access(join(dirname(to), '../../.bstack-install-cleanup.json'))

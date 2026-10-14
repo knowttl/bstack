@@ -6,8 +6,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { git, run } from './discovery-fixture.mjs'
-import { selectCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
-import { fingerprint } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { selectCommand } from '../../runtime/scripts/lib/run.mjs'
+import { fingerprint } from '../../runtime/scripts/lib/fingerprint.mjs'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const assessmentPath = '.bstack/assessment.json'

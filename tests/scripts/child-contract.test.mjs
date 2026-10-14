@@ -10,7 +10,7 @@ import childProcess from 'node:child_process'
 import { EventEmitter } from 'node:events'
 import { syncBuiltinESMExports } from 'node:module'
 import { PassThrough } from 'node:stream'
-import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
+import { runCommand } from '../../runtime/scripts/lib/run.mjs'
 
 // Public fixture commands run from a target outside the checkout.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')

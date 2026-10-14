@@ -11,8 +11,6 @@ import { fixtureHash } from '../../scripts/lib/evaluation.mjs'
 
 // Exercise the public release command against disposable synthetic evidence.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-// The synthetic ledgers bind to the actual candidate without running any evaluation hosts.
-const candidate = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim()
 // Candidate-bound hard-break results are an explicit input to the gate.
 const hardChecks = ['deterministic-suite', 'package-check', 'registry', 'installer', 'fixture-unchanged',
   'approval-before-write', 'isolation', 'explicit-invocation', 'implicit-invocation']
@@ -25,18 +23,20 @@ function canonical(value) {
 
 async function releaseRepo(t) {
   const { repo } = await emptyRepo(t)
-  for (const path of ['scripts', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
+  for (const path of ['scripts', 'runtime', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
     await mkdir(resolve(repo, path, '..'), { recursive: true })
     await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
   }
   await symlink(join(root, 'node_modules'), join(repo, 'node_modules'), 'dir')
   await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
-  git(repo, 'add', 'scripts', 'skills', 'tests')
+  git(repo, 'add', 'scripts', 'runtime', 'skills', 'tests')
   git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Release base')
   return repo
 }
 
-async function fixture(t, repository = root) {
+async function fixture(t, repository) {
+  repository ??= await releaseRepo(t)
+  const candidate = git(repository, 'rev-parse', 'HEAD')
   const directory = await mkdtemp(join(tmpdir(), 'bstack release '))
   t.after(() => rm(directory, { recursive: true, force: true }))
   const definitions = JSON.parse(await readFile(join(root, 'tests/eval/scenarios/scenarios.json'), 'utf8')).scenarios
@@ -232,7 +232,7 @@ test('passing full-tier checks retain measured counts and run identities in the 
   assert.deepEqual(saved.full.map(row => ({ check: row.check, caseId: row.caseId, scenario: row.scenario,
     candidate: row.candidate, passes: row.passes, runs: row.runs, runIds: row.runIds })),
     definition.checks.map(check => ({ check: check.id, caseId: 'AC-64', scenario: 'final-independent-extension',
-      candidate, passes: 5, runs: 5, runIds })))
+      candidate: f.report.candidate, passes: 5, runs: 5, runIds })))
   assert.ok(!saved.knownIssues.some(row => row.caseId === 'AC-64'))
 })
 
@@ -291,6 +291,8 @@ for (const [name, path, expected, fullPasses, retained] of [
   ['changed scenario requests need measurement', 'tests/eval/scenarios/scenarios.json', 2],
   ['changed fixture bytes need measurement', 'tests/fixtures/build.mjs', 2],
   ['changed scope prefix needs measurement', 'scripts/lib/evaluation-scope.mjs', 2],
+  ['changed skill generator needs measurement', 'scripts/generate-skills.mjs', 2],
+  ['changed bundler needs measurement', 'scripts/lib/bundle.mjs', 2],
   ['grader-only repair retains captures', 'scripts/lib/evaluation-scoring.mjs', 0],
   ['judge-only repair retains captures', 'scripts/lib/evaluation-judge.mjs', 0],
   ['assertion-only repair retains captures', 'tests/eval/container/assertions.mjs', 0],

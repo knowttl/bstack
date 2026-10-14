@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { readFile } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
-import { selectCommand } from '../../../skills/repo-audit/scripts/lib/run.mjs'
+import { selectCommand } from '../../../runtime/scripts/lib/run.mjs'
 const [path] = process.argv.slice(2)
 const name = basename(dirname(process.argv[1]))
 async function run(executable, args, expected = 0) {

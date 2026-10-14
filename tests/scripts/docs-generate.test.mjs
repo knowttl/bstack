@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { run, snapshot } from './discovery-fixture.mjs'
-import { canonicalJSON, hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
 
 const start = '<!-- bstack:generated render -->'
 const end = '<!-- bstack:end -->'
