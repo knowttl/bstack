@@ -126,8 +126,13 @@ export const commands = {
   },
   'kit scaffold': {
     module: './commands/kit-scaffold.mjs',
-    options: ['plan'],
-    help: 'Render the selected verification kit as a reviewable change set in scratch.\nUsage: {entry} kit scaffold --repo <path> --plan <file> [--json]\nPlan follows schemas/kit-plan.json. Returns the change set path, its planDigest and the exact diff. Existing kit files are never overwritten. Review with apply --dry-run, then apply the unchanged change set.'
+    options: ['plan', 'update'],
+    help: 'Render the selected verification kit as a reviewable change set in scratch.\nUsage: {entry} kit scaffold --repo <path> --plan <file> [--update] [--json]\nPlan follows schemas/kit-plan.json. Returns the change set path, its planDigest and the exact diff. Without --update, existing kit files are never overwritten. With --update, the change set also replaces kit files that differ from the plan, creates missing ones and deletes feature files the plan no longer lists; when nothing differs it returns no change set. Review with apply --dry-run, then apply the unchanged change set.'
+  },
+  'kit check': {
+    module: './commands/kit-check.mjs',
+    options: ['app'],
+    help: 'Check an applied verification kit for drift without running the product or writing.\nUsage: {entry} kit check --repo <path> --app <name> [--json]\nFails with one problem per drifted file, missing file, orphan feature file, missing AGENTS.md pointer or feature source path that matches no file: file-drift, file-missing, orphan-feature-file, pointer-missing, source-path-missing. It compares the kit with what kit.json renders and with the repo, and does not judge whether the feature files are true; drive them with kit prove.'
   },
   'kit prove': {
     module: './commands/kit-prove.mjs',

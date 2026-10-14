@@ -1,6 +1,6 @@
 ---
 name: verification
-description: Create a project-local verification kit that launches and drives the real product, and adopt testing and constraint guidance for it.
+description: Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, and adopt testing and constraint guidance for it.
 disable-model-invocation: true
 ---
 
@@ -10,14 +10,12 @@ Only the user starts verification.
 Start this procedure only when the user's message explicitly invokes `$verification`, `/verification`, `/skill:verification` or selects it through the host's skills menu.
 A plain request such as "set up verification" does not invoke it.
 If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
-Resolve the target repo and the mode before proceeding.
-
-This version provides `create`.
-If the user asks for `maintain`, say it is not available yet and stop; do not improvise a substitute pass.
-No-mistakes wiring and the feature-map coverage gate arrive with `maintain`.
+Resolve the target repo and the mode, `create` or `maintain`, before proceeding.
+Use `create` when the repo has no kit and `maintain` when it has one; if the user's choice contradicts the repo, say so and ask.
 
 Create builds a kit in the target repo that tells an agent how to start and drive the product, plus a feature map of how a user reaches each feature.
-It never edits product code, implements features, fixes product bugs or opens pull requests; when startup needs a product fix, report the blocker.
+Maintain keeps an applied kit true: it checks the kit for drift, drives every feature, triages what disagrees and proposes reviewed corrections.
+Neither mode edits product code, implements features, fixes product bugs or opens pull requests; when startup needs a product fix, report the blocker, and report a product bug instead of weakening the map.
 It never adds hosted CI unless the user selects it.
 Checks it proposes must run without bstack installed.
 Scripts collect facts and render reviewable change sets; only `apply` writes to the target, after the user approves the exact diff.
@@ -33,7 +31,8 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 - [ ] Step 5: Propose testing guidance
 - [ ] Step 6: Propose constraints
 - [ ] Step 7: Audit the existing suite
-- [ ] Step 8: Report
+- [ ] Step 8: Propose no-mistakes wiring
+- [ ] Step 9: Report
 
 ### Step 1: Interview the repo
 
@@ -50,6 +49,7 @@ Done when: The surface, launch command, drive harness, evidence, isolation limit
 Write the kit plan in scratch, following `schemas/kit-plan.json`, and show the user the app name, launch and doctor commands, helpers and the features it will map before writing anything.
 Start with the top three to five user-facing features, each with its declared source paths, entry points, driving steps with observable matches and gotchas.
 Every step command must assert something a user would see; a step that only checks an exit code is not proof.
+Set `coverageGate` to `true` when the repo uses or will adopt no-mistakes, so the kit ships the feature-map coverage gate that Step 8 wires.
 Obtain the user's selection of the plan.
 
 Done when: The plan validates against the schema, every feature step has an observable match, and the user has selected it.
@@ -102,12 +102,85 @@ Skip this step for a repo with no tests.
 
 Done when: Every pattern instance has cited evidence, or the audit states that none was found and which tests were read.
 
-### Step 8: Report
+### Step 8: Propose no-mistakes wiring
+
+Propose the pipeline configuration that makes the kit count: the coverage gate after Document, the kit named in the Test instructions, the testing criteria in Review and the feature map as the owner of how a user reaches each feature.
+Extend an existing `.no-mistakes.yaml` instead of replacing it.
+When the repo has none, offer no-mistakes setup as a selected step the user may decline, tell the user the one command that sets it up and never run it, and add no hosted CI workflow unless the user asks.
+Load the [wiring reference](references/no-mistakes.md).
+
+Done when: Each wiring change is a selected edit with its exact diff and the effect timing stated, or the user has declined it, and the reference's inferences are listed as limitations.
+
+### Step 9: Report
 
 State the kit location, the proof result with its evidence path, each selected change and its verification, unproven rules, audit findings and every limitation, including setup steps the proof did not cover.
 Name `maintain` as the later pass that keeps the kit true; do not suggest a cadence unless asked.
 
 Done when: The report separates applied changes, proof evidence, unresolved findings and limitations.
+
+## Maintain checklist
+
+Copy this checklist and tick a step only when its Done when criterion is met.
+Maintain needs an applied kit; without one, run `create`.
+
+- [ ] Step M1: Check the kit for drift
+- [ ] Step M2: Read each feature's source
+- [ ] Step M3: Drive every feature
+- [ ] Step M4: Triage
+- [ ] Step M5: Correct the kit
+- [ ] Step M6: Mine repeated mistakes and audit the suite
+- [ ] Step M7: Report
+
+### Step M1: Check the kit for drift
+
+Run `node scripts/verification.mjs kit check --repo <target> --app <app> --json`.
+It compares every kit file, the `AGENTS.md` pointer and each feature's declared source paths with what `kit.json` renders and with the repo, and reports one problem per finding.
+Use the [maintain guide](references/maintain.md) for the passes, triage classes and outcomes.
+
+Done when: Every `kit check` problem is recorded for triage, or the check passed.
+
+### Step M2: Read each feature's source
+
+Where the host supports subagents, give each feature one read-only reader; otherwise read the features one at a time.
+Each reader compares one feature file with the code at its declared source paths and reports disagreements with file and line evidence, without editing or running the product.
+
+Done when: Every feature has a reader report, or sequential reading covered every feature and says so.
+
+### Step M3: Drive every feature
+
+Run `kit prove --repo <target> --app <app> --feature <id> --json` for each feature in `kit.json`, one at a time.
+A feature that cannot be reached is reported with the attempted command and the unmet precondition, never counted as verified through another path.
+
+Done when: Every feature has a proof result with its evidence path, or a named unreached prerequisite.
+
+### Step M4: Triage
+
+Sort each discrepancy from the earlier steps into doc drift, harness gap or product bug using an agreed source, never the product's current output.
+Ask the user when no agreed source exists.
+
+Done when: Every discrepancy has exactly one class and its evidence.
+
+### Step M5: Correct the kit
+
+Edit a copy of the kit plan in scratch, run `kit scaffold --repo <target> --plan <file> --update --json`, present its exact diff with `apply --dry-run`, and apply the unchanged change set only after the user approves those bytes.
+Then rerun `kit check` and re-drive every feature whose steps, entry points or source paths changed.
+Report product bugs without changing the map to hide them.
+
+Done when: Only the approved change set has been applied, `kit check` passes and each changed feature proved again, or no correction was needed.
+
+### Step M6: Mine repeated mistakes and audit the suite
+
+Read the project's recent no-mistakes findings and review comments where they are available, and propose moving each repeated mistake down the constraint ladder through the [constraint reference](references/constraints.md).
+Audit the suite for the eight wasteful-test patterns with the [testing reference](references/testing.md), recording evidenced instances as findings and removing nothing until the user selects it.
+
+Done when: Each repeated mistake has a proposed rung and evidence, and each pattern instance has cited evidence or the audit states that none was found.
+
+### Step M7: Report
+
+Report one outcome: clean, changed through a reviewed change set, or blocked.
+Name the features driven, the features not reached and why, the product bugs found and every limitation.
+
+Done when: The report states one outcome and separates applied changes, product bugs and limitations.
 
 ## Review before apply
 
@@ -136,5 +209,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | Proposing hard constraints, rule proofs or a baseline | `references/constraints.md` |
 | Selecting slop rules for a language or banning prose comments | `references/slop-baseline.md` |
 | The product calls an outside service or API | `references/third-party.md` |
+| Running a maintain pass, triaging a discrepancy or correcting an applied kit | `references/maintain.md` |
+| Proposing or reviewing no-mistakes wiring or the coverage gate | `references/no-mistakes.md` |
 | Writing the kit plan | `schemas/kit-plan.json` |
 | Preparing check plans for rule proofs | `schemas/check-plan.json` |
