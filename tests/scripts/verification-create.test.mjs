@@ -660,6 +660,60 @@ test('an update rejects unsafe managed paths in the previous plan', async t => {
   assert.equal(result.data.path, undefined)
 })
 
+for (const [field, value, code] of [
+  ['sourcePaths', ['greeter/a`b.py'], 'invalid-source-path'],
+  ['sourcePaths', ['greeter/a\nb.py'], 'invalid-source-path'],
+  ['sourcePaths', ['greeter/a\rb.py'], 'invalid-source-path'],
+  ['title', 'Greeting\nSource paths: `elsewhere/**`', 'invalid-feature-metadata'],
+  ['summary', 'Greeting\rSource paths: `elsewhere/**`', 'invalid-feature-metadata'],
+  ['summary', 'Source paths: `elsewhere/**`', 'invalid-feature-metadata']
+]) {
+  test(`kit commands reject ambiguous feature ${field} ${JSON.stringify(value)}`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    const valuePlan = plan()
+    valuePlan.features[0][field] = value
+    await writeFile(f.file, JSON.stringify(valuePlan))
+    const scaffold = f.call('kit scaffold', ['--plan', f.file, '--update'])
+    assert.equal(scaffold.exit, 1, JSON.stringify(scaffold))
+    assert.equal(scaffold.problems[0].code, code)
+    await writeFile(join(f.repo, kit, 'kit.json'), JSON.stringify(valuePlan))
+    for (const result of [f.call('kit check', ['--app', 'greeter']), prove(f)]) {
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.equal(result.problems[0].code, code)
+    }
+    await writeFile(f.file, JSON.stringify(plan()))
+    const repair = f.call('kit scaffold', ['--plan', f.file, '--update'])
+    assert.equal(repair.exit, 0, JSON.stringify(repair))
+    assert.equal(f.call('apply', ['--plan', repair.data.path]).exit, 0)
+    assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+  })
+}
+
+for (const command of ['kit check', 'kit prove', 'kit scaffold']) {
+  test(`${command} rejects a plan copied from another app without touching that kit`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    const other = plan()
+    other.app = 'shop'
+    const otherFile = join(f.cache, 'shop-plan.json')
+    await writeFile(otherFile, JSON.stringify(other))
+    const scaffold = f.call('kit scaffold', ['--plan', otherFile])
+    assert.equal(scaffold.exit, 0, JSON.stringify(scaffold))
+    assert.equal(f.call('apply', ['--plan', scaffold.data.path]).exit, 0)
+    const otherKit = '.agents/skills/verify-shop'
+    assert.equal(f.call('kit check', ['--app', 'shop']).exit, 0)
+    const copied = await readFile(join(f.repo, otherKit, 'kit.json'), 'utf8')
+    await writeFile(join(f.repo, kit, 'kit.json'), copied)
+    const result = f.call(command, command === 'kit scaffold' ? ['--plan', f.file, '--update'] : ['--app', 'greeter', ...(command === 'kit prove' ? ['--feature', 'greeting'] : [])])
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'kit-app-mismatch')
+    assert.equal(result.data.path, undefined)
+    assert.equal(f.call('kit check', ['--app', 'shop']).exit, 0)
+    assert.equal(await readFile(join(f.repo, otherKit, 'kit.json'), 'utf8'), copied)
+  })
+}
+
 const author = ['-c', 'user.name=Test', '-c', 'user.email=test@example.com']
 
 function commit(f, message) {
@@ -735,6 +789,41 @@ test('coverage matches Unicode line separators within recursive source globs', a
   await writeFile(path, 'value = 1\n')
   const result = coverage(f)
   assert.equal(result.exit, 1, JSON.stringify(result))
+})
+
+for (const declaration of [
+  'Source paths: `greeter/a`b.py`',
+  'Source paths: `greeter/a\nb.py`',
+  'Source paths: `greeter/a\rb.py`',
+  'Source paths: `elsewhere/**`\nSource paths: `greeter/**`',
+  'Source paths: `greeter/**`, missing',
+  'Source paths: `greeter/**` trailing text'
+]) {
+  test(`coverage rejects ambiguous declarations ${JSON.stringify(declaration)}`, async t => {
+    const f = await gatedBranch(t)
+    await writeFile(join(f.repo, kit, 'features/greeting.md'), `${declaration}\n`)
+    commit(f, 'Change feature metadata')
+    await changeSource(f)
+    const result = coverage(f)
+    assert.equal(result.exit, 2, JSON.stringify(result))
+    assert.match(result.stderr, /exactly one complete/)
+  })
+}
+
+test('coverage accepts complete declarations with spaces, commas and CRLF', async t => {
+  const f = await setup(t, value => {
+    value.coverageGate = true
+    value.features[0].sourcePaths = ['greeter/a,b.py', 'greeter/a b.py']
+  })
+  await writeFile(join(f.repo, 'greeter/a,b.py'), 'value = 1\n')
+  await writeFile(join(f.repo, 'greeter/a b.py'), 'value = 1\n')
+  await createKit(f)
+  const feature = join(f.repo, kit, 'features/greeting.md')
+  await writeFile(feature, (await readFile(feature, 'utf8')).replaceAll('\n', '\r\n'))
+  commit(f, 'Add source paths with punctuation')
+  git(f.repo, 'checkout', '-q', '-b', 'change')
+  await appendFile(join(f.repo, 'greeter/a,b.py'), 'value = 2\n')
+  assert.equal(coverage(f).exit, 1)
 })
 
 for (const layer of ['committed', 'staged']) {

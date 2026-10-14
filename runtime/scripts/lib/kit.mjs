@@ -38,7 +38,7 @@ export function kitDirectory(app) {
   return `.agents/skills/verify-${app}`
 }
 
-export function validateKitPlan(plan, { sourcePaths = true } = {}) {
+export function validateKitPlan(plan, { forUpdate = false } = {}) {
   validateData(schema, plan)
   const { launch, evidence, helpers, features } = plan
   if (Object.keys(launch.ready).length !== 1 || !(launch.ready.url ?? launch.ready.output)) invalid('invalid-ready', 'Declare exactly one of ready.url or ready.output.', '$/launch/ready')
@@ -63,9 +63,17 @@ export function validateKitPlan(plan, { sourcePaths = true } = {}) {
   for (const [index, feature] of features.entries()) {
     if (ids.has(feature.id)) invalid('duplicate-feature', `Duplicate feature ID: ${feature.id}`, `$/features/${index}/id`)
     ids.add(feature.id)
+    if (!forUpdate) {
+      for (const field of ['title', 'summary']) {
+        if (/[\r\n]/u.test(feature[field]) || (field === 'summary' && feature[field].startsWith('Source paths:'))) invalid('invalid-feature-metadata', `Feature ${field} must be one line and cannot shadow the source declaration.`, `$/features/${index}/${field}`)
+      }
+    }
     for (const path of feature.sourcePaths) {
-      if (sourcePaths) pathGlob(path)
-      else relativePath(path, `$/features/${index}/sourcePaths`)
+      if (forUpdate) relativePath(path, `$/features/${index}/sourcePaths`)
+      else {
+        if (/[`\r\n]/u.test(path)) invalid('invalid-source-path', 'Source paths cannot contain backticks or line breaks.', `$/features/${index}/sourcePaths`)
+        pathGlob(path)
+      }
     }
     for (const step of feature.steps) {
       for (const artifact of step.artifacts ?? []) {
@@ -86,7 +94,9 @@ export async function readKitPlan(root, app, options) {
     if (error instanceof CommandError) throw error
     throw new CommandError('blocked', [{ code: 'kit-unavailable', message: `No readable kit at ${kitDirectory(app)}/kit.json.`, fix: 'Apply the scaffolded kit first.' }])
   }
-  return validateKitPlan(plan, options)
+  validateKitPlan(plan, options)
+  if (plan.app !== app) throw new CommandError('failed', [{ code: 'kit-app-mismatch', path: `${kitDirectory(app)}/kit.json`, message: `Requested kit ${app} contains a plan for ${plan.app}.`, fix: `Restore kit.json for ${app} before checking, proving or updating this kit.` }])
+  return plan
 }
 
 export function readySeconds(plan) {

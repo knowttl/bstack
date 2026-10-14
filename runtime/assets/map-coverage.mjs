@@ -4,7 +4,7 @@ import { dirname, join, posix, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 function pattern(glob) {
-  if (!glob || glob.includes('\0') || glob.includes('\\') || /^[A-Za-z]:/.test(glob) || glob.split('/').some(part => !part || part === '.' || part === '..') || /[\[\]{}()!]/u.test(glob) || glob.split('/').some(part => part.includes('**') && part !== '**')) {
+  if (!glob || /[`\r\n\0]/u.test(glob) || glob.includes('\\') || /^[A-Za-z]:/.test(glob) || glob.split('/').some(part => !part || part === '.' || part === '..') || /[\[\]{}()!]/u.test(glob) || glob.split('/').some(part => part.includes('**') && part !== '**')) {
     throw new Error(`Invalid source path: ${glob}. Use relative forward-slash paths with * and ? within segments, or ** as a whole segment.`)
   }
   let source = ''
@@ -54,9 +54,9 @@ function main(args) {
     for (const name of names) {
       const id = name.slice(0, -3)
       const file = posix.join(kit, 'features', name)
-      const line = readFileSync(join(directory, name), 'utf8').split('\n').find(candidate => candidate.startsWith('Source paths: '))
-      const patterns = [...(line ?? '').matchAll(/`([^`]+)`/g)].map(match => pattern(match[1]))
-      if (!patterns.length) stop(`${file} has no "Source paths:" line listing backticked paths`)
+      const declarations = readFileSync(join(directory, name), 'utf8').split(/\r?\n/).filter(candidate => candidate.startsWith('Source paths:'))
+      if (declarations.length !== 1 || !/^Source paths: `[^`\r\n]+`(?:, `[^`\r\n]+`)*$/u.test(declarations[0])) stop(`${file} must contain exactly one complete "Source paths:" line listing backticked paths`)
+      const patterns = [...declarations[0].matchAll(/`([^`]+)`/g)].map(match => pattern(match[1]))
       const touched = changed.filter(path => touches(patterns, path))
       const explained = new RegExp(`^No-map-impact: ${id}: \\S`, 'm').test(commitMessages)
       if (touched.length && !updated.has(file) && !explained) {
