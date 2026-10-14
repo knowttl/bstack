@@ -4180,7 +4180,7 @@ function kindFor(path) {
   return Object.entries(documentNames).find(([, pattern]) => pattern.test(stem))?.[0] ?? null;
 }
 async function run15(options) {
-  const target = await resolveTarget(options);
+  const target = await resolveTarget(options, { draftOnly: true });
   const files = [];
   const candidates = [];
   const shadowing = [];
@@ -4528,7 +4528,7 @@ await dispatch(process.argv.slice(2), "repo-audit", {
   "findings validate": { options: ["findings"], help: "Validate findings and assess current readiness without writes.\nUsage: repo-audit.mjs findings validate --repo <path>|--workspace <path> --findings <file> [--json]", run: run6 },
   "findings render": { options: ["findings"], help: "Render a proposed audit record only in scratch and return its path.\nUsage: repo-audit.mjs findings render --repo <path>|--workspace <path> --findings <file> [--json]", run: run6 },
   "inspect": { options: [], help: "Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]", run: run14 },
-  "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run15 },
+  "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run15 },
   "measure": { options: ["range", "exclusions"], help: "Collect endpoint file sizes and current-lifetime history signals without writes.\nUsage: repo-audit.mjs measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision selects its reachable history. Only files present at the endpoint are measured, following renames back to their addition. Exclusions follow schemas/measure-exclusions.json. Signals do not establish violations or merge conflicts.", run: run16 },
   "overlap": { options: ["plans"], help: "Compare declared write paths and changing contracts without writes.\nUsage: repo-audit.mjs overlap --repo <path> --plans <file> <file> [--json]\nPlans follow schemas/overlap-plan.json. Paths are case-sensitive and repo-relative, using /, * and ? within segments, and ** for zero or more segments. Unsupported glob syntax fails. Intersections include planned new files. Disjoint paths do not prove independence.", run: run17 },
   "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run18 },

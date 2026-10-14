@@ -31,7 +31,7 @@
       "vision-proposals.json", "vision-verdicts.json"
     ],
     "assets": ["vision/review-template.html", "vision/review.css"],
-    "references": ["grilling.md"]
+    "references": ["grilling.md", "agents-pointer.md"]
   },
   "glossary": {
     "commands": ["docs check", "apply", "state show", "cite-check"],
@@ -40,6 +40,12 @@
       "resume-state.schema.json"
     ],
     "assets": [],
-    "references": ["grilling.md"]
+    "references": ["grilling.md", "agents-pointer.md"]
+  },
+  "agents-md": {
+    "commands": ["inventory", "apply", "state show"],
+    "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "resume-state.schema.json"],
+    "assets": [],
+    "references": ["agents-pointer.md"]
   }
 }
