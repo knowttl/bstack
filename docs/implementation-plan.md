@@ -265,6 +265,8 @@ bstack/
     references/                  glossary.md  maintain.md  grilling.md  agents-pointer.md
   skills/architecture/           independently installable architecture skill folder
     references/                  architecture.md  decisions.md  design-standards.md  boundary-checks.md  maintain.md  grilling.md  agents-pointer.md
+  skills/foundation/             independently installable foundation skill folder
+    references/                  interview.md  foundation.md  checks.md  grilling.md  agents-pointer.md
   skills/agents-md/              independently installable agents-md skill folder
     references/                  agents-md.md  agents-pointer.md
   tests/
@@ -1328,7 +1330,8 @@ T3.1 supplies the enforcement and architecture references that recommendations l
 2. Add `project create --workspace <path> --plan <file> --dry-run` and its versioned input schema.
    The plan contains the approved destination, selected findings, complete generated file payloads and declared setup commands.
    Resolve the existing parent and require an absent destination, or an explicitly selected empty directory.
-3. Build the proposed scaffold in scratch, then follow [Step 5](../skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for verification, repair and review before the approved creation call.
+3. Build the proposed scaffold in scratch, then follow [Step 4](../skills/foundation/SKILL.md#step-4-verify-the-proposal-in-scratch) of the foundation skill for verification, repair and review before the approved creation call.
+   Since R38 `project create` ships in the `foundation` skill, and repo-audit lists `/foundation` instead of proposing or creating the project.
    Validate links, payloads and required prerequisites before creating any destination files.
 4. `project create --workspace <path> --plan <file>` uses the protected-write engine from T2.6.
    Journal directory creation and files, then run `git init` only at the reviewed destination.
