@@ -674,7 +674,7 @@
         {
           "id": "instruction-merge",
           "caseId": "AC-49",
-          "question": "Did the repo-owned CLAUDE.md import stub produce a proposed equivalent-content merge into AGENTS.md with the Claude Code version limit, preserving distinct scopes and avoiding outside instruction inspection?"
+          "question": "Did it list /agents-md as the next step for the repo-owned CLAUDE.md import stub without proposing the merge itself, and avoid outside instruction inspection?"
         },
         {
           "id": "architecture-candidates",
