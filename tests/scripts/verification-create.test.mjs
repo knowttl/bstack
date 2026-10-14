@@ -3,9 +3,10 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { connect } from 'node:net'
-import { mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { appendFile, mkdtemp, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { parse } from 'yaml'
 import { build, git, runVerification } from './discovery-fixture.mjs'
 
 // The kit's helpers run inside the target, so they obey the target's own lint and format constraints.
@@ -230,8 +231,26 @@ for (const [exit, status] of [[0, 'passed'], [3, 'failed']]) {
     assert.equal(record.launch.stdout, 'ready\n')
     assert.equal(record.cleanup.exit, 0)
     assert.equal(record.cleanup.stdout, 'cleaned\n')
+    assert.equal(record.doctor?.exit ?? null, exit === 0 ? 0 : null)
   })
 }
+
+test('a launch whose readiness output arrives after the launcher exited successfully still reaches doctor', async t => {
+  const f = await setup(t, value => {
+    const late = 'import time; time.sleep(0.5); print("ready", flush=True)'
+    value.launch.command = ['python3', '-c', `import subprocess, sys; subprocess.Popen([sys.executable, "-c", '${late}'])`]
+    value.launch.ready = { output: 'ready' }
+    value.doctor.command = ['python3', '-c', 'print("healthy")']
+    value.features[0].steps = [{ label: 'Drive', command: ['python3', '-c', 'print("Hello, Ada!")'], expect: 'Hello, Ada!', match: 'Hello, Ada!' }]
+    value.cleanup.command = ['python3', '-c', 'print("cleaned")']
+  })
+  await createKit(f)
+  assert.equal(prove(f).status, 'passed')
+  const { record } = await evidenceRecord(f.repo)
+  assert.equal(record.launch.exit, 0)
+  assert.equal(record.launch.stdout, 'ready\n')
+  assert.equal(record.doctor.exit, 0)
+})
 
 test('the generated feature recipe retains cwd, environment and required artifacts used by proof', async t => {
   const f = await setup(t, value => {
@@ -495,3 +514,132 @@ for (const fault of ['write', 'hash', 'cleanup']) {
     if (fault !== 'cleanup') assert.equal(await readFile(join(f.repo, 'cleanup-attempted'), 'utf8'), 'yes')
   })
 }
+
+test('maintain finds an unchanged kit clean and every mapped feature still passes', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  const checked = f.call('kit check', ['--app', 'greeter'])
+  assert.equal(checked.exit, 0, JSON.stringify(checked))
+  assert.deepEqual(checked.data.features, ['greeting'])
+  assert.equal(prove(f).status, 'passed')
+})
+
+for (const [name, drift, code, path] of [
+  ['a hand-edited feature file', f => writeFile(join(f.repo, kit, 'features/greeting.md'), 'Source paths: `elsewhere/**`\n'), 'file-drift', `${kit}/features/greeting.md`],
+  ['a deleted feature file', f => rm(join(f.repo, kit, 'features/greeting.md')), 'file-missing', `${kit}/features/greeting.md`],
+  ['a feature file the kit does not list', f => writeFile(join(f.repo, kit, 'features/stale.md'), '# Stale\n'), 'orphan-feature-file', `${kit}/features/stale.md`],
+  ['a helper changed by hand', f => writeFile(join(f.repo, kit, 'scripts/greet.py'), 'print("changed")\n'), 'file-drift', `${kit}/scripts/greet.py`],
+  ['a removed AGENTS.md pointer', f => writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n'), 'pointer-missing', 'AGENTS.md'],
+  ['a feature whose source moved', f => rename(join(f.repo, 'greeter'), join(f.repo, 'app')), 'source-path-missing', `${kit}/features/greeting.md`]
+]) {
+  test(`maintain flags ${name} as ${code}`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    await drift(f)
+    const checked = f.call('kit check', ['--app', 'greeter'])
+    assert.equal(checked.exit, 1, JSON.stringify(checked))
+    assert.deepEqual(checked.problems.map(({ code, path }) => ({ code, path })), [{ code, path }])
+  })
+}
+
+test('maintain locates the first differing line of a drifted feature file', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  const path = join(f.repo, kit, 'features/greeting.md')
+  await writeFile(path, (await readFile(path, 'utf8')).replace('A client requests', 'A client demands'))
+  assert.match(f.call('kit check', ['--app', 'greeter']).problems[0].message, /first at line 3\./)
+})
+
+test('a corrected plan updates the kit, removes the feature file it dropped and leaves maintain clean', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  const value = plan()
+  Object.assign(value.features[0], { id: 'hello', title: 'Hello', summary: 'A client requests a personal hello by name.' })
+  await writeFile(f.file, JSON.stringify(value))
+  const update = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.equal(update.exit, 0, JSON.stringify(update))
+  assert.deepEqual(update.data.files.toSorted(), [`${kit}/SKILL.md`, `${kit}/features/README.md`, `${kit}/features/greeting.md`, `${kit}/features/hello.md`, `${kit}/kit.json`].toSorted())
+  assert.equal(f.call('apply', ['--plan', update.data.path]).exit, 0)
+  assert.equal(await stat(join(f.repo, kit, 'features/greeting.md')).then(() => true, () => false), false)
+  assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+  assert.equal(f.call('kit prove', ['--app', 'greeter', '--feature', 'hello']).status, 'passed')
+})
+
+test('an update restores only the drifted file and proposes nothing once the kit is clean', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  await rm(join(f.repo, kit, 'features/greeting.md'))
+  const update = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.deepEqual(update.data.files, [`${kit}/features/greeting.md`])
+  const applied = f.call('apply', ['--plan', update.data.path])
+  assert.equal(applied.exit, 0, JSON.stringify(applied))
+  const clean = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.deepEqual({ exit: clean.exit, path: clean.data.path, files: clean.data.files }, { exit: 0, path: null, files: [] })
+})
+
+const author = ['-c', 'user.name=Test', '-c', 'user.email=test@example.com']
+
+function commit(f, message) {
+  git(f.repo, 'add', '-A')
+  git(f.repo, ...author, 'commit', '-q', '-m', message)
+}
+
+function coverage(f, base = 'main') {
+  const result = spawnSync(process.execPath, [join(f.repo, kit, 'scripts/map-coverage.mjs'), '--base', base], { cwd: f.repo, encoding: 'utf8' })
+  return { exit: result.status, stdout: result.stdout, stderr: result.stderr }
+}
+
+async function gatedBranch(t) {
+  const f = await setup(t, value => { value.coverageGate = true })
+  await createKit(f)
+  commit(f, 'add kit')
+  git(f.repo, 'checkout', '-q', '-b', 'change')
+  return f
+}
+
+const changeSource = f => appendFile(join(f.repo, 'greeter/greeting.py'), '\n')
+const changeFeatureFile = f => appendFile(join(f.repo, kit, 'features/greeting.md'), '\n')
+
+for (const [name, change, message, exit] of [
+  ['a mapped source change with no map update', changeSource, 'Change greeting', 1],
+  ['a mapped source change with its feature file updated', async f => { await changeSource(f); await changeFeatureFile(f) }, 'Change greeting', 0],
+  ['a mapped source change with a no-impact reason for that feature', changeSource, 'Change greeting\n\nNo-map-impact: greeting: internal rename only', 0],
+  ['a mapped source change with a no-impact reason for another feature', changeSource, 'Change greeting\n\nNo-map-impact: checkout: not this one', 1],
+  ['a mapped source change with an empty no-impact reason', changeSource, 'Change greeting\n\nNo-map-impact: greeting:', 1],
+  ['a deleted mapped source file', f => rm(join(f.repo, 'greeter/greeting.py')), 'Remove greeting', 1],
+  ['a change outside every feature', f => appendFile(join(f.repo, 'pyproject.toml'), '\n'), 'Tidy project metadata', 0]
+]) {
+  test(`the coverage gate exits ${exit} for ${name}`, async t => {
+    const f = await gatedBranch(t)
+    await change(f)
+    commit(f, message)
+    const result = coverage(f)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+    if (exit === 1) assert.match(result.stdout, new RegExp(`^${kit}/features/greeting\\.md: feature-map-coverage: greeter/greeting\\.py changed without updating this feature file`))
+  })
+}
+
+test('the coverage gate counts a mapped source change that is not committed yet', async t => {
+  const f = await gatedBranch(t)
+  await changeSource(f)
+  assert.equal(coverage(f).exit, 1)
+})
+
+test('the gate command in the proposed wiring runs the generated script and fails an uncovered change', async t => {
+  const reference = await readFile(new URL('../../skills/verification/references/no-mistakes.md', import.meta.url), 'utf8')
+  const [gate] = parse(/```yaml\n([\s\S]*?)```/.exec(reference)[1]).gates
+  assert.equal(gate.after, 'document')
+  const f = await gatedBranch(t)
+  const command = gate.command.replaceAll('verify-shop', 'verify-greeter').replaceAll('origin/main', 'main')
+  const run = () => spawnSync('sh', ['-c', command], { cwd: f.repo, encoding: 'utf8' }).status
+  assert.equal(run(), 0)
+  await changeSource(f)
+  assert.equal(run(), 1)
+})
+
+test('the coverage gate reports an unresolvable base as an error, not a pass', async t => {
+  const f = await gatedBranch(t)
+  const result = coverage(f, 'origin/missing')
+  assert.equal(result.exit, 2)
+  assert.match(result.stderr, /^feature-map-coverage: /)
+})

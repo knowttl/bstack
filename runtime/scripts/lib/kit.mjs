@@ -1,9 +1,13 @@
-import { isAbsolute, posix } from 'node:path'
+import { readFileSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
+import { isAbsolute, join, posix } from 'node:path'
 import { validateData } from './schema.mjs'
+import { inspectJSON } from './json.mjs'
 import { CommandError } from './result.mjs'
 import schema from '../../schemas/kit-plan.json' with { type: 'json' }
 
 // Every generated file other than helpers lives at one of these kit-relative paths.
+const gatePath = posix.join('scripts', 'map-coverage.mjs')
 const reservedPaths = ['SKILL.md', 'kit.json', 'features/README.md']
 // Launch waits at most this long for readiness unless the plan declares another limit.
 const defaultReadySeconds = 30
@@ -51,7 +55,7 @@ export function validateKitPlan(plan) {
   for (const [index, helper] of helpers.entries()) {
     relativePath(helper.path, `$/helpers/${index}/path`)
     const normalized = posix.normalize(helper.path)
-    if (reservedPaths.includes(normalized) || normalized.startsWith('features/') || helperPaths.has(normalized)) invalid('helper-collision', `Helper path collides with another kit file: ${helper.path}`, `$/helpers/${index}/path`)
+    if (reservedPaths.includes(normalized) || normalized.startsWith('features/') || helperPaths.has(normalized) || (plan.coverageGate && normalized === gatePath)) invalid('helper-collision', `Helper path collides with another kit file: ${helper.path}`, `$/helpers/${index}/path`)
     helperPaths.add(normalized)
   }
   const ids = new Set()
@@ -70,6 +74,15 @@ export function validateKitPlan(plan) {
     }
   }
   return plan
+}
+
+export async function readKitPlan(root, app) {
+  let plan
+  try { plan = inspectJSON(await readFile(join(root, kitDirectory(app), 'kit.json'), 'utf8')).value } catch (error) {
+    if (error instanceof CommandError) throw error
+    throw new CommandError('blocked', [{ code: 'kit-unavailable', message: `No readable kit at ${kitDirectory(app)}/kit.json.`, fix: 'Apply the scaffolded kit first.' }])
+  }
+  return validateKitPlan(plan)
 }
 
 export function readySeconds(plan) {
@@ -95,8 +108,15 @@ function commandLines(label, spec) {
     ...(spec.env ? [`Environment: ${Object.entries(spec.env).map(([key, value]) => `\`${key}=${value}\``).join(', ')}.`] : [])]
 }
 
+function documentedHelpers(plan) {
+  const gate = { path: gatePath, purpose: 'Fail when a change touches a feature\'s source paths without updating its feature file or recording a no-impact reason.',
+    invocation: `node ${kitDirectory(plan.app)}/${gatePath} --base origin/<default branch>` }
+  return plan.coverageGate ? [...plan.helpers, gate] : plan.helpers
+}
+
 function skillDocument(plan) {
-  const { app, launch, doctor, drive, evidence, cleanup, helpers, features } = plan
+  const { app, launch, doctor, drive, evidence, cleanup, features } = plan
+  const helpers = documentedHelpers(plan)
   const ready = launch.ready.url ? `a request to \`${launch.ready.url}\` succeeds` : `output matching \`${launch.ready.output}\` appears`
   return [
     '---', `name: verify-${app}`, `description: ${JSON.stringify(plan.description)}`, '---', '',
@@ -169,6 +189,11 @@ export function kitFiles(plan) {
     { path: `${kit}/kit.json`, content: `${JSON.stringify(plan, null, 2)}\n` },
     { path: `${kit}/features/README.md`, content: indexDocument(plan) },
     ...plan.features.map(feature => ({ path: `${kit}/features/${feature.id}.md`, content: featureDocument(plan, feature) })),
-    ...plan.helpers.map(helper => ({ path: `${kit}/${posix.normalize(helper.path)}`, content: helper.content }))
+    ...plan.helpers.map(helper => ({ path: `${kit}/${posix.normalize(helper.path)}`, content: helper.content })),
+    ...(plan.coverageGate ? [{ path: `${kit}/${gatePath}`, content: readFileSync(new URL('../../assets/map-coverage.mjs', import.meta.url), 'utf8') }] : [])
   ]
+}
+
+export function managedFiles(plan) {
+  return [...kitFiles(plan), { path: `.claude/skills/verify-${plan.app}/SKILL.md`, content: pointerDocument(plan) }]
 }

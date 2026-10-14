@@ -1,7 +1,7 @@
 # bstack: repo-audit implementation plan
 
 This plan tells a build agent how to build the `repo-audit` skill in order.
-The design is [design.md](design.md), revision 28.
+The design is [design.md](design.md), revision 29.
 Its 2026-10-13 verification amendment adds a standalone skill and transfers test auditing out of repo-audit.
 The design's [skill split](design.md#the-skill-split) then divides repo-audit into eight user-started skills and gives its own [build order](design.md#split-build-order).
 The tasks below describe the original repo-audit build; they do not schedule the verification amendment or the split.

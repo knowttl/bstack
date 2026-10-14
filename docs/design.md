@@ -1,6 +1,6 @@
 ---
 title: "bstack: First Release"
-eyebrow: Personal project · Foundation design · Revision 28
+eyebrow: Personal project · Foundation design · Revision 29
 subtitle: Establish project-specific guidelines, rules and checks that give agents a sound foundation to extend.
 theme: slate-dark
 logo: false
@@ -13,7 +13,7 @@ meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
   - Scope: eight skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md) and their complete dependency set
-  - Revision: 28, maintainer-approved repo-audit split design, split build pending, verification create mode implemented, verification maintain mode pending
+  - Revision: 29, maintainer-approved repo-audit split design, split build pending, verification create and maintain modes implemented
 ---
 
 ## Summary
@@ -309,7 +309,7 @@ Each move removes the moved content from repo-audit and replaces it with a check
 |---|---|---|
 | 1 | This design update | The design names every skill, its boundary and the run order, and the decision history records R31 |
 | 2 | Shared runtime, generator and multi-skill install | Each skill folder installs alone, its bundle passes `--check`, and existing tests pass |
-| 3 | `verification` (under way), and the removal of test auditing from repo-audit | Set when the piece is commissioned |
+| 3 | `verification` with `create` and `maintain`, and the removal of test auditing from repo-audit | Create, maintain and the coverage gate pass the acceptance cases above on the fixture, and repo-audit holds no test auditing and names `/verification` in its place |
 | 4 | `vision`, with the board scripts, assets, two schemas and the `lavish-axi` dependency | A draft goes through build, launch and verdicts from the new folder, and other skills need no npm install |
 | 5 | `glossary` with `create` and `maintain` | Set when the piece is commissioned |
 | 6 | `agents-md`; other skills add their own pointer line | Set when the piece is commissioned |
@@ -366,6 +366,12 @@ Mine no-mistakes findings and review comments for repeated mistakes and move the
 Audit the suite for all eight wasteful-test patterns.
 Report clean, changed through a reviewed change set, or blocked, with coverage and unreachable prerequisites explicit.
 The full pass remains user-invoked; automatic per-change upkeep does not replace it.
+
+Scripts supply the deterministic part and the agent supplies the judgement.
+`kit check` reports index hygiene and drift: a kit file that differs from what `kit.json` renders, a missing or unlisted feature file, a missing `AGENTS.md` pointer and a declared source path that matches no file.
+`kit prove` drives each feature live, one at a time.
+Source readers and triage stay with the agent, because whether a feature file is true needs reading the code.
+`kit scaffold --update` turns an edited copy of the plan into the reviewed correction, so the plan stays the single source for every rendered file and a hand-edited rendered file is drift.
 
 This adapts pstack's [maintain-verification-skill](https://github.com/cursor/plugins/blob/dbf49813a39c1a5389c5e28cb8e4c1c2379e2454/pstack/skills/maintain-verification-skill/SKILL.md), retaining source and live coverage while replacing its PR delivery with bstack's reviewed apply boundary.
 
@@ -459,6 +465,10 @@ A maintenance-contract row connects feature changes to map upkeep.
 Review judges the map's meaning; Test drives changed features; the deterministic gate checks coverage only.
 The full maintain pass stays manual because Test covers only the change.
 
+The gate is a dependency-free, comment-free Node file that a kit carries when its plan sets `coverageGate`.
+The report left two details open: a no-impact reason is a commit message line `No-map-impact: <feature-id>: <reason>`, one per affected feature, because a gate cannot read a pull request description and the line travels with the branch (approved by the maintainer); and the gate needs Node and Git on the host that runs it.
+The [command contract](command-contract.md#verification-skill-commands) owns its behaviour and the skill's wiring reference owns the proposed `.no-mistakes.yaml`.
+
 The pinned [no-mistakes configuration reference](https://github.com/kunchenguid/no-mistakes/blob/93b4407137efde476e6588fca809884afa543b9c/docs/src/content/docs/reference/repo-config.md) supports command gates and the review, test and document instruction fields.
 These trusted fields take effect after merging to the default branch.
 It does not support agent gates.
@@ -490,14 +500,14 @@ On a disposable fixture app, create must produce a kit that launches, passes doc
 Every enabled constraint must accept valid code and reject a seeded violation with its diagnostic.
 A change touching a mapped source path without a map update or no-impact reason must fail coverage.
 Maintain must report clean on an unchanged fixture and flag a deliberately drifted feature file.
-These are acceptance requirements for the later implementation, not evidence supplied by this documentation amendment.
-The create-kit and enabled-constraint cases run against the `py-greeter` fixture in `tests/scripts/verification-create.test.mjs` and `tests/scripts/verification-constraints.test.mjs`; the coverage-gate and maintain cases remain with the maintain implementation.
+The create-kit, enabled-constraint, coverage-gate and maintain cases run against the `py-greeter` fixture in `tests/scripts/verification-create.test.mjs` and `tests/scripts/verification-constraints.test.mjs`.
 
 The report inferred that some Claude Code hosts may not discover `.agents/skills/` alone; Q17's pointer is required regardless, and discovery remains a runtime verification question.
-It also inferred that trusted no-mistakes instructions read kit files from the branch under test; that behaviour still needs direct verification, and Review must assess kit changes.
+It also inferred that trusted no-mistakes instructions read kit files from the branch under test.
+The pinned no-mistakes documentation confirms this for gates: a gate runs in the run worktree at the pushed head, so its script and the feature files it reads come from the branch under test.
+It does not say that the Test evidence agent reads the kit from the same place, and no pipeline run has exercised the wiring, so that part stays inference and Review must assess kit changes.
 Per-language lint equivalence remains unproven until project-specific rule proofs pass.
 The talk summary was not checked against its recording and is not independent enforcement evidence.
-The coverage gate and comment checker are new implementation work.
 
 ## Project-specific foundation
 
@@ -1891,3 +1901,4 @@ Historical entries keep their original decisions and name their current applicat
 | R29, 2026-10-13 | The maintainer commissioned the test-principles report: standalone verification with create and maintain, its kit, testing and constraints, shared runtime and selected no-mistakes integration | Extends R1; transfers all test auditing from repo-audit. The maintainer's subsequent clarification held repo-audit's slimming and split for a separate design, which suspended that part of Q10, Q15 and Q16; R31 records that design |
 | R30, 2026-10-13 | The maintainer split the verification skill build: `create` with its references, kit scaffold and proof, comment-ban generation and slop baseline first; `maintain`, the drift check, the no-mistakes wiring reference and the feature-map coverage gate second; installation of the skill as its own piece | The package check covers every skill folder and exempts only `skills/verification/references/slop-baseline.md` from the tool-name scan |
 | R31, 2026-10-13 | "yes commission the build." The maintainer approved splitting repo-audit into eight skills: `repo-audit`, `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance` and `agents-md`; only the user starts each skill, and no skill starts another | Amends R1 and D5/D6 and resolves R29's deferred split. The slim repo-audit audits at overview level and lists which skill to run next with one evidenced reason per line. New ideas run `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification create`, `/maintenance`, `/agents-md`; existing repos run `/repo-audit`, then `/vision` only for a gap, `/glossary` only if terms are unclear, `/architecture`, `/verification create`, `/maintenance`, `/agents-md`. Per-change upkeep uses a no-mistakes ownership map in `document.instructions` and a docs gate after `document`; user-started `/maintenance sweep` reports drift and which `maintain` mode to run. Skill boundaries, shared scripts and the ten-piece build order are recorded under "The skill split" |
+| R32, 2026-10-13 | "please commission the build." and "yes commission the build." The maintainer commissioned the second verification piece, which is also piece 3 of the split build: `maintain`, the drift check, the no-mistakes wiring reference with its `.no-mistakes.yaml` proposal, the generated feature-map coverage gate and the removal of test auditing from repo-audit | Completes R30's second half. The maintainer approved recording a no-impact reason as a `No-map-impact: <feature-id>: <reason>` commit message line; the gate needing Node and Git was the build's choice |

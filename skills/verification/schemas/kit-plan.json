@@ -64,6 +64,7 @@
         "notes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1, "pattern": "\\S" } }
       }
     },
+    "coverageGate": { "type": "boolean" },
     "helpers": {
       "type": "array",
       "items": {
