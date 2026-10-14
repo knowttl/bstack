@@ -701,11 +701,12 @@ No board command changes the target or initialises Git, and a successful verdict
 ## Protected project creation
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <existing-idea-directory> --plan <file> --dry-run --json
-node skills/repo-audit/scripts/repo-audit.mjs project create --workspace <existing-idea-directory> --plan <file> --json
+node skills/foundation/scripts/foundation.mjs project create --workspace <existing-idea-directory> --plan <file> --dry-run --json
+node skills/foundation/scripts/foundation.mjs project create --workspace <existing-idea-directory> --plan <file> --json
 ```
 
-The owner approves intent and the exact scratch vision first, then selects the destination, stack, minimal scaffold and first journey.
+The command ships in the [foundation skill](../skills/foundation/SKILL.md), which also runs `apply`, `run-checks` and `rule-proof` from the shared runtime with the contracts documented elsewhere in this file.
+The owner approves the exact vision first, then selects the destination, stack, minimal scaffold and first journey.
 The versioned [creation schema source](../runtime/schemas/project-create.json) owns the plan's fields and command objects.
 `workspace` identifies the real idea directory.
 The destination path is workspace-relative and its resolvedPath binds the reviewed absolute location.
@@ -714,7 +715,7 @@ The referenced change set follows the existing apply schema and owns complete ge
 Its findings use stage foundation and both targets identify the planned destination as `{ mode: "workspace", root: <resolved-destination>, revision: null }`.
 Every scaffold edit uses create with originalHash null and complete UTF-8 payloads.
 See the [apply operation table](#apply-dry-run) for supported file formats.
-Follow the [repo-audit creation procedure](../skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for the documents included in its scaffold.
+Follow the [foundation procedure](../skills/foundation/SKILL.md#step-3-propose-the-foundation) for the documents included in its scaffold.
 The creation digest uses the existing canonical JSON hash algorithm on every field except planDigest.
 
 Commands have unique IDs across prerequisites, setup and journey, and a positive safe-integer timeoutMs.
@@ -729,7 +730,7 @@ Scaffold paths use canonical forward slashes and cannot contain .git components 
 
 Dry run builds the scaffold only in external scratch and returns its path, destination, complete diff and declared commands.
 Plain output also prints the complete diff.
-Follow the skill's [Step 5](../skills/repo-audit/SKILL.md#step-5-review-and-apply-selected-changes) for scratch verification, repair and review before obtaining approval of the final plan.
+Follow the foundation skill's [Step 4](../skills/foundation/SKILL.md#step-4-verify-the-proposal-in-scratch) for scratch verification, repair and review before obtaining approval of the final plan.
 After that approval, omit --dry-run with the unchanged plan.
 The directory and Git journal is creation.json in destination-keyed scratch, with directory intentions saved before mkdir and Git intention saved before git init.
 The T2.6 engine owns the file journal, atomic writes, actual-hash recovery and user-edit conflicts.
