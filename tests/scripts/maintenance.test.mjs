@@ -146,12 +146,25 @@ test('sweep names the mode that fixes each seeded drift, and writes nothing', as
   assert.deepEqual(await snapshot(f.repo), before)
   const fix = (code, path) => swept.problems.filter(problem => problem.code === code && problem.path === path).map(problem => problem.fix)
   assert.deepEqual(fix('broken-local-link', 'GLOSSARY.md'), ['Run /glossary maintain.'])
-  assert.deepEqual(fix('lagging-document', 'docs/design.md'), ['Run /architecture maintain.'])
   assert.deepEqual(fix('broken-local-link', 'AGENTS.md'), ['Run /agents-md.'])
-  assert.deepEqual(fix('lagging-document', 'GLOSSARY.md'), [])
   const kit = swept.problems.filter(problem => problem.fix === 'Run /verification maintain.')
   assert.ok(kit.length > 0, JSON.stringify(swept.problems))
-  assert.equal(swept.problems.length, 3 + kit.length)
+  assert.equal(swept.problems.length, 2 + kit.length)
+})
+
+test('sweep passes after a code refactor with current documents and writes nothing', async t => {
+  const f = await documentedRepo(t)
+  await mkdir(join(f.repo, '.bstack'))
+  await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(contract))
+  f.commit('baseline')
+  await writeFile(join(f.repo, 'src/a.mjs'), 'const value = 1\nexport { value as a }\n')
+  f.commit('refactor implementation')
+  const before = await snapshot(f.repo)
+  const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
+  assert.equal(swept.exit, 0, JSON.stringify(swept))
+  assert.equal(swept.status, 'passed')
+  assert.deepEqual(swept.problems, [])
+  assert.deepEqual(await snapshot(f.repo), before)
 })
 
 test('sweep reports a repo with no contract as the first item for create', async t => {
