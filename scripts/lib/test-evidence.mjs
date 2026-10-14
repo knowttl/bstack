@@ -3,7 +3,7 @@ import { lstat, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { platform, release, arch } from 'node:os'
-import { selectCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
+import { selectCommand } from '../../runtime/scripts/lib/run.mjs'
 
 export function git(root, ...args) {
   return execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim()

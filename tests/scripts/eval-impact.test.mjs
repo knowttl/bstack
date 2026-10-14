@@ -13,16 +13,19 @@ const maintenance = ['final-maintained-maintenance', 'final-new-project', 'final
 
 async function checkout(t) {
   const { repo } = await emptyRepo(t)
-  for (const path of ['scripts', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/fixtures', 'tests/acceptance/cases.json']) {
+  for (const path of ['scripts', 'runtime', 'skills/repo-audit', 'tests/eval/scenarios', 'tests/fixtures', 'tests/acceptance/cases.json']) {
     await mkdir(resolve(repo, path, '..'), { recursive: true })
     await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
   }
   await symlink(join(root, 'node_modules'), join(repo, 'node_modules'), 'dir')
   await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
-  git(repo, 'add', 'scripts', 'skills', 'tests')
+  git(repo, 'add', 'scripts', 'runtime', 'skills', 'tests')
   git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Impact base')
   return repo
 }
+
+// Commands, schemas and assets are authored in the shared runtime; everything else a key names lives in the skill folder.
+const sourceFile = key => key.startsWith('install/') ? key : /^(?:scripts\/(?:commands|lib)|schemas|assets)\//.test(key) ? `runtime/${key}` : `skills/repo-audit/${key}`
 
 function affected(repo, base = 'HEAD') {
   const result = spawnSync(process.execPath, [join(repo, 'scripts/eval.mjs'), 'affected', '--base', base, '--json'], { encoding: 'utf8', cwd: repo })
@@ -43,13 +46,13 @@ test('impact map covers every skill heading and required file with valid keys', 
     if (key.startsWith('SKILL.md#')) assert.ok(headings.includes(key), key)
     else {
       assert.ok(!key.startsWith('/') && !key.split('/').includes('..'), key)
-      const info = await stat(join(root, key.startsWith('install/') ? key : `skills/repo-audit/${key}`))
+      const info = await stat(join(root, sourceFile(key)))
       assert.equal(info.isDirectory(), key.endsWith('/'), key)
     }
   }
   for (const heading of headings) assert.ok(keys.includes(heading), heading)
   for (const directory of ['references', 'schemas', 'scripts/commands', 'install']) {
-    const prefix = directory === 'install' ? '' : 'skills/repo-audit/'
+    const prefix = directory === 'install' ? '' : directory === 'references' ? 'skills/repo-audit/' : 'runtime/'
     for (const file of await readdir(join(root, prefix, directory), { recursive: true, withFileTypes: true })) {
       if (!file.isFile()) continue
       const path = resolve(file.parentPath, file.name).slice(resolve(root, prefix).length + 1).replaceAll('\\', '/')
@@ -152,7 +155,7 @@ for (const [key, scenarios] of [
 ]) {
   test(`exercised input selects its dependent scenarios: ${key}`, async t => {
     const repo = await checkout(t)
-    const path = join(repo, 'skills/repo-audit', key.startsWith('SKILL.md#') ? 'SKILL.md' : key)
+    const path = join(repo, key.startsWith('SKILL.md#') ? 'skills/repo-audit/SKILL.md' : sourceFile(key))
     const source = await readFile(path, 'utf8')
     const headings = {
       'review-before-apply': '## Review before apply',
@@ -189,7 +192,7 @@ for (const key of [
 ]) {
   test(`required maintenance input selects all maintenance flows: ${key}`, async t => {
     const repo = await checkout(t)
-    const path = join(repo, 'skills/repo-audit', key)
+    const path = join(repo, sourceFile(key))
     await writeFile(path, (await readFile(path, 'utf8')) + '\n')
     const result = affected(repo)
     assert.equal(result.exit, 0, JSON.stringify(result))
@@ -198,6 +201,17 @@ for (const key of [
     assert.ok(maintenance.every(id => result.data.scenarios.includes(id)), JSON.stringify(result.data.scenarios))
   })
 }
+
+test('a regenerated skill file adds no key of its own to the change in its shared source', async t => {
+  const repo = await checkout(t)
+  for (const path of ['runtime/scripts/commands/apply.mjs', 'skills/repo-audit/scripts/repo-audit.mjs', 'runtime/schemas/change-set.schema.json', 'skills/repo-audit/schemas/change-set.schema.json']) {
+    await writeFile(join(repo, path), (await readFile(join(repo, path), 'utf8')) + '\n')
+  }
+  const result = affected(repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.keys, ['schemas/change-set.schema.json', 'scripts/commands/apply.mjs'])
+  assert.deepEqual(result.data.unmapped, [])
+})
 
 test('an unchanged checkout selects no scenarios and an inaccessible base is blocked', async t => {
   const repo = await checkout(t)

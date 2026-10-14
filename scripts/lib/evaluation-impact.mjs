@@ -14,6 +14,16 @@ function coversKey(covers, key) {
   return covers.some(cover => cover === key || (cover.endsWith('/') && key.startsWith(cover)))
 }
 
+// The shared runtime mirrors the skill layout, so a changed source is covered by the skill-relative key of the file it generates.
+const inPackage = path => path.startsWith('skills/repo-audit/') || path.startsWith('install/') || path.startsWith('runtime/')
+
+// Generated copies change only when their source does, and the source already carries the coverage key.
+async function generatedFiles(repo) {
+  const skill = JSON.parse(await readFile(join(repo, 'runtime/skills.json'), 'utf8'))['repo-audit']
+  return new Set(['scripts/repo-audit.mjs', ...skill.schemas.map(name => `schemas/${name}`), ...skill.assets.map(name => `assets/${name}`)]
+    .map(file => `skills/repo-audit/${file}`))
+}
+
 export async function affectedScenarios(repo, base, definitions, packageOnly = false) {
   function git(...args) {
     const result = spawnSync('git', args, { cwd: repo, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 })
@@ -24,11 +34,13 @@ export async function affectedScenarios(repo, base, definitions, packageOnly = f
   const revision = git('rev-parse', '--verify', `${base}^{commit}`).trim()
   const paths = [...new Set((git('diff', '--name-only', '-z', '--no-renames', revision, '--') +
     git('ls-files', '--others', '--exclude-standard', '-z')).split('\0').filter(Boolean))].sort()
-    .filter(path => !packageOnly || path.startsWith('skills/repo-audit/') || path.startsWith('install/'))
+    .filter(path => !packageOnly || inPackage(path))
+  const generated = await generatedFiles(repo)
   const keys = []
   for (const path of paths) {
+    if (generated.has(path)) continue
     if (path !== 'skills/repo-audit/SKILL.md') {
-      keys.push(path.startsWith('skills/repo-audit/') ? path.slice('skills/repo-audit/'.length) : path)
+      keys.push(path.startsWith('skills/repo-audit/') ? path.slice('skills/repo-audit/'.length) : path.startsWith('runtime/') ? path.slice('runtime/'.length) : path)
       continue
     }
     const previous = spawnSync('git', ['show', `${revision}:${path}`], { cwd: repo, encoding: 'utf8' })
@@ -53,7 +65,7 @@ export async function affectedScenarios(repo, base, definitions, packageOnly = f
   const changedKeys = [...new Set(keys)].sort()
   // Repository paths outside the package cannot alias skill-relative coverage keys.
   const unmapped = [...new Set([
-    ...paths.filter(path => !path.startsWith('skills/repo-audit/') && !path.startsWith('install/')),
+    ...paths.filter(path => !inPackage(path)),
     ...changedKeys.filter(key => !definitions.some(item => coversKey(item.covers, key)))
   ])].sort()
   return { status: 'passed', base: revision, paths, keys: changedKeys, unmapped,

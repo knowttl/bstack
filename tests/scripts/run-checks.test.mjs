@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { emptyRepo, build, run, snapshot, git } from './discovery-fixture.mjs'
-import { checkInputState } from '../../skills/repo-audit/scripts/commands/run-checks.mjs'
+import { checkInputState } from '../../runtime/scripts/commands/run-checks.mjs'
 
 // Exercise the installed CLI from an unrelated directory with isolated cache evidence.
 const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
