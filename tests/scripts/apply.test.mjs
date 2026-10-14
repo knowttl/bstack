@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { parse } from 'yaml'
-import { emptyRepo, run, snapshot, git } from './discovery-fixture.mjs'
+import { emptyRepo, run, runMaintenance, snapshot, git } from './discovery-fixture.mjs'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -65,7 +65,7 @@ async function integration(t, path, content, original = path === 'package.json' 
 
 async function assessmentPlan(t, operation = 'create') {
   const fixture = await maintenanceRepo(t)
-  const collected = run('evidence collect', fixture.repo, process.env, ['--base', 'empty'])
+  const collected = runMaintenance('evidence collect', fixture.repo, process.env, ['--base', 'empty'])
   assert.equal(collected.exit, 0, JSON.stringify(collected))
   const content = await readFile(collected.data.path, 'utf8')
   return operation === 'delete' ? setup(t, 'delete', content, {}, null, 'review.json') :
@@ -79,7 +79,7 @@ test('assessment preview ends with the exact approval instruction without writin
   assert.equal(preview.exit, 0, JSON.stringify(preview))
   assert.equal(preview.data.planDigest, context.plan.planDigest)
   assert.equal(preview.data.approvalRequired, `Approval required: show this preview to the owner and end your turn; do not run assessment apply until the owner approves this exact fingerprint: ${context.plan.planDigest}.`)
-  const text = spawnSync(process.execPath, [join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'apply',
+  const text = spawnSync(process.execPath, [join(root, 'skills/maintenance/scripts/maintenance.mjs'), 'apply',
     '--repo', context.repo, '--plan', context.file, '--dry-run'], { encoding: 'utf8', env: context.env })
   assert.equal(text.status, 0, text.stdout + text.stderr)
   assert.ok(text.stdout.trimEnd().endsWith(preview.data.approvalRequired))
@@ -570,7 +570,7 @@ for (const [name, original] of [
 
 function execute(context, fault, command = 'apply', extra = ['--plan', context.file]) {
   const result = spawnSync(process.execPath, [...(fault ? ['--import', join(root, 'tests/inputs/write-fault.mjs')] : []),
-    join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), ...command.split(' '), '--repo', context.repo, '--json', ...extra],
+    join(root, 'skills/maintenance/scripts/maintenance.mjs'), ...command.split(' '), '--repo', context.repo, '--json', ...extra],
   { encoding: 'utf8', cwd: context.directory, env: { ...context.env, BSTACK_TEST_FAULT: fault,
     BSTACK_TEST_DESTINATION: fault === 'resolution-user-change' ? join(context.repo, context.plan.edits[0].path) : context.plan.reviewedScope[0].resolvedPath } })
   assert.equal(result.stderr, '')
@@ -590,7 +590,7 @@ async function secondEdit(context) {
 
 async function preview(context) {
   const before = await snapshot(context.repo)
-  const result = run('apply', context.repo, process.env, ['--plan', context.file, '--dry-run'])
+  const result = runMaintenance('apply', context.repo, process.env, ['--plan', context.file, '--dry-run'])
   assert.deepEqual(await snapshot(context.repo), before)
   if (result.exit !== 0) {
     const applied = execute(context)
@@ -951,7 +951,7 @@ test('apply prints the exact selected-delete diff in plain and JSON output', asy
   const expected = '--- a/README.md\n+++ /dev/null\n@@ -1,1 +0,0 @@\n-old\n\\ No newline at end of file\n'
   assert.equal((await preview(context)).data.diff, expected)
   const before = await snapshot(context.repo)
-  const result = spawnSync(process.execPath, [join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'apply', '--repo', context.repo, '--plan', context.file, '--dry-run'], { encoding: 'utf8', cwd: context.directory })
+  const result = spawnSync(process.execPath, [join(root, 'skills/maintenance/scripts/maintenance.mjs'), 'apply', '--repo', context.repo, '--plan', context.file, '--dry-run'], { encoding: 'utf8', cwd: context.directory })
   assert.equal(result.status, 0)
   assert.equal(result.stdout, `apply: passed\n${expected}\n`)
   assert.deepEqual(await snapshot(context.repo), before)
@@ -1191,7 +1191,7 @@ test('Git revision changes invalidate a reviewed dry run', async t => {
 test('apply refuses a missing plan and malformed plans', async t => {
   const context = await setup(t)
   const before = await snapshot(context.repo)
-  assert.equal(run('apply', context.repo).exit, 3)
+  assert.equal(runMaintenance('apply', context.repo).exit, 3)
   await writeFile(context.file, '{broken')
   assert.equal((await preview(context)).problems[0].code, 'invalid-input')
   assert.deepEqual(await snapshot(context.repo), before)
@@ -1213,7 +1213,7 @@ test('workspace dry run uses the same scope and payload protections', async t =>
   context.findings.target.mode = 'workspace'
   await save(context)
   const before = await snapshot(context.repo)
-  const result = spawnSync(process.execPath, [join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'apply', '--workspace', context.repo, '--plan', context.file, '--dry-run', '--json'], { encoding: 'utf8', cwd: context.directory })
+  const result = spawnSync(process.execPath, [join(root, 'skills/maintenance/scripts/maintenance.mjs'), 'apply', '--workspace', context.repo, '--plan', context.file, '--dry-run', '--json'], { encoding: 'utf8', cwd: context.directory })
   assert.equal(result.status, 0, result.stdout)
   assert.equal(JSON.parse(result.stdout).data.edits[0].proposedContent, 'new\n')
   assert.deepEqual(await snapshot(context.repo), before)
@@ -1236,7 +1236,7 @@ for (const [name, mutate, expected] of [
     mutate(state)
     await writeFile(context.file, JSON.stringify(state))
     const before = await snapshot(context.repo)
-    const result = run('contract-test', context.repo, process.env, ['--input', context.file, '--schema', join(root, 'skills/repo-audit/schemas/resume-state.schema.json')])
+    const result = run('contract-test', context.repo, process.env, ['--input', context.file, '--schema', join(root, 'runtime/schemas/resume-state.schema.json')])
     assert.equal(result.exit, expected, JSON.stringify(result))
     assert.deepEqual(await snapshot(context.repo), before)
   })
@@ -1394,18 +1394,6 @@ test('unrelated uncommitted journey and selected file permissions survive writes
   assert.equal(spawnSync(process.execPath, [journey]).status, 0)
 })
 
-test('rendered T2.5 audit record applies through reviewed whole-file replacement', async t => {
-  const context = await setup(t)
-  const rendered = execute(context, undefined, 'findings render', ['--findings', context.findingsFile])
-  assert.equal(rendered.exit, 0, JSON.stringify(rendered))
-  const content = await readFile(rendered.data.path, 'utf8')
-  context.plan.edits[0] = { ...context.plan.edits[0], operation: 'replace-file', payload: { content }, proposedHash: hash(content), proposedContent: content }
-  await save(context)
-  assert.equal((await preview(context)).data.edits[0].proposedContent, content)
-  assert.equal(execute(context).exit, 0)
-  assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), content)
-})
-
 for (const [operation, original, payload, proposed] of [
   ['replace', 'old\n', { search: 'old', replacement: 'new' }, 'new\n'],
   ['replace-file', 'old\n', { content: 'new\n' }, 'new\n'],
@@ -1446,7 +1434,7 @@ test('workspace apply writes and repeats through the same protected boundary', a
   const context = await setup(t)
   context.findings.target.mode = 'workspace'
   await save(context)
-  const invoke = () => spawnSync(process.execPath, [join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), 'apply',
+  const invoke = () => spawnSync(process.execPath, [join(root, 'skills/maintenance/scripts/maintenance.mjs'), 'apply',
     '--workspace', context.repo, '--plan', context.file, '--json'], { encoding: 'utf8', cwd: context.directory, env: context.env })
   const applied = invoke()
   assert.equal(applied.status, 0, applied.stdout)

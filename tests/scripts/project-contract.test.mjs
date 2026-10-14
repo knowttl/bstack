@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { copyFile, mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
-import { run, snapshot } from './discovery-fixture.mjs'
+import { runMaintenance as run, snapshot } from './discovery-fixture.mjs'
 
 for (const collection of ['checks', 'generators']) {
   for (const field of ['args', 'versionArgs']) {

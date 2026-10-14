@@ -79,11 +79,6 @@ export const commands = {
     options: ['findings'],
     help: 'Validate findings and assess current readiness without writes.\nUsage: {entry} findings validate --repo <path>|--workspace <path> --findings <file> [--json]'
   },
-  'findings render': {
-    module: './commands/findings.mjs',
-    options: ['findings'],
-    help: 'Render a proposed audit record only in scratch and return its path.\nUsage: {entry} findings render --repo <path>|--workspace <path> --findings <file> [--json]'
-  },
   inspect: {
     module: './commands/inspect.mjs',
     options: [],

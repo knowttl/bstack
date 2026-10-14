@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdir, writeFile, symlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
-import { run, snapshot } from './discovery-fixture.mjs'
+import { runMaintenance as run, snapshot } from './discovery-fixture.mjs'
 
 async function glossary(t, text, format = 'markdown-bold', context = 'ordering') {
   const f = await maintenanceRepo(t)

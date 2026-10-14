@@ -77,10 +77,10 @@ for (const path of ['skills/repo-audit/new-guidance.md', 'references/maintenance
 test('skill hunks select their enclosing heading instead of invalidating the whole skill', async t => {
   const repo = await checkout(t)
   const path = join(repo, 'skills/repo-audit/SKILL.md')
-  await writeFile(path, (await readFile(path, 'utf8')).replace('## Research rules\n', '## Research rules\nClarified research guidance.\n'))
+  await writeFile(path, (await readFile(path, 'utf8')).replace('### Step 3: Research the documents\n', '### Step 3: Research the documents\nClarified research guidance.\n'))
   const result = affected(repo)
   assert.equal(result.exit, 0, JSON.stringify(result))
-  assert.deepEqual(result.data.keys, ['SKILL.md#research-rules'])
+  assert.deepEqual(result.data.keys, ['SKILL.md#step-3-research-the-documents'])
   assert.ok(result.data.scenarios.includes('research-main-typescript'))
   assert.ok(!result.data.scenarios.includes('maintenance'))
 })
@@ -88,19 +88,19 @@ test('skill hunks select their enclosing heading instead of invalidating the who
 test('deleted headings retain their old impact key and unknown replacement headings select all', async t => {
   const repo = await checkout(t)
   const path = join(repo, 'skills/repo-audit/SKILL.md')
-  await writeFile(path, (await readFile(path, 'utf8')).replace('## Research rules', '## Different research rules'))
+  await writeFile(path, (await readFile(path, 'utf8')).replace('### Step 3: Research the documents', '### Step 3: Different research'))
   const result = affected(repo)
   assert.equal(result.exit, 0, JSON.stringify(result))
-  assert.deepEqual(result.data.keys, ['SKILL.md#different-research-rules', 'SKILL.md#research-rules'])
-  assert.deepEqual(result.data.unmapped, ['SKILL.md#different-research-rules'])
+  assert.deepEqual(result.data.keys, ['SKILL.md#step-3-different-research', 'SKILL.md#step-3-research-the-documents'])
+  assert.deepEqual(result.data.unmapped, ['SKILL.md#step-3-different-research'])
   assert.equal(result.data.scenarios.length, 22)
 })
 
 for (const [direction, heading, keys, scenarios] of [
-  ['deletion', '## Research rules', ['SKILL.md#research-rules', 'SKILL.md#write-rules'], ['maintenance', 'final-maintained-maintenance']],
-  ['insertion', '## Research rules', ['SKILL.md#research-rules', 'SKILL.md#write-rules'], ['maintenance', 'final-maintained-maintenance']],
-  ['deletion', '### Step 2: Resolve project terms', ['SKILL.md#step-1-confirm-intent', 'SKILL.md#step-2-resolve-project-terms'], ['new-idea']],
-  ['insertion', '### Step 2: Resolve project terms', ['SKILL.md#step-1-confirm-intent', 'SKILL.md#step-2-resolve-project-terms'], ['new-idea']]
+  ['deletion', '## Load when', ['SKILL.md#load-when', 'SKILL.md#step-4-print-the-checklist'], ['maintenance', 'final-maintained-maintenance']],
+  ['insertion', '## Load when', ['SKILL.md#load-when', 'SKILL.md#step-4-print-the-checklist'], ['maintenance', 'final-maintained-maintenance']],
+  ['deletion', '### Step 2: Inspect and inventory', ['SKILL.md#step-1-resolve-the-target-and-path', 'SKILL.md#step-2-inspect-and-inventory'], ['new-idea']],
+  ['insertion', '### Step 2: Inspect and inventory', ['SKILL.md#step-1-resolve-the-target-and-path', 'SKILL.md#step-2-inspect-and-inventory'], ['new-idea']]
 ]) {
   test(`heading ${direction} selects the section containing surviving text: ${heading}`, async t => {
     const repo = await checkout(t)
@@ -126,13 +126,11 @@ for (const [key, scenarios] of [
   ['schemas/findings.schema.json', ['new-idea', 'maintenance', 'final-maintained-maintenance']],
   ['schemas/change-set.schema.json', ['new-idea']],
   ['schemas/resume-state.schema.json', ['new-idea']],
-  ['SKILL.md#review-before-apply', ['new-idea']],
-  ['SKILL.md#write-rules', ['new-idea']],
-  ['SKILL.md#verification-rules', ['new-idea', 'existing-repo', 'existing-repo-python']],
+  ['SKILL.md#step-4-print-the-checklist', ['new-idea', 'existing-repo', 'existing-repo-python']],
+  ['SKILL.md#step-3-research-the-documents', ['research-main-typescript', 'existing-repo']],
   ['scripts/commands/run-checks.mjs', ['final-repeat-audit', 'existing-repo', 'existing-repo-python', 'verification-limitations', 'scope-and-prerequisites']],
   ['schemas/check-plan.json', ['final-repeat-audit', 'existing-repo', 'existing-repo-python', 'verification-limitations', 'scope-and-prerequisites']],
   ['scripts/commands/contract.mjs', ['final-repeat-audit', 'existing-repo', 'verification-limitations']],
-  ['SKILL.md#step-3-review-the-vision', ['existing-vision-delta']],
   ['scripts/commands/vision-board-build.mjs', ['existing-vision-delta']],
   ['scripts/commands/vision-board-launch.mjs', ['existing-vision-delta']],
   ['scripts/commands/vision-board-verdicts.mjs', ['existing-vision-delta']],
@@ -146,10 +144,8 @@ for (const [key, scenarios] of [
     const path = join(repo, key.startsWith('SKILL.md#') ? 'skills/repo-audit/SKILL.md' : sourceFile(key))
     const source = await readFile(path, 'utf8')
     const headings = {
-      'review-before-apply': '## Review before apply',
-      'write-rules': '## Write rules',
-      'verification-rules': '## Verification rules',
-      'step-3-review-the-vision': '### Step 3: Review the vision'
+      'step-4-print-the-checklist': '### Step 4: Print the checklist',
+      'step-3-research-the-documents': '### Step 3: Research the documents'
     }
     const heading = headings[key.slice('SKILL.md#'.length)]
     await writeFile(path, heading ? source.replace(`${heading}\n`, `${heading}\nClarified guidance.\n`) : source + '\n')
@@ -192,12 +188,12 @@ for (const key of [
 
 test('a regenerated skill file adds no key of its own to the change in its shared source', async t => {
   const repo = await checkout(t)
-  for (const path of ['runtime/scripts/commands/apply.mjs', 'skills/repo-audit/scripts/repo-audit.mjs', 'runtime/schemas/change-set.schema.json', 'skills/repo-audit/schemas/change-set.schema.json']) {
+  for (const path of ['runtime/scripts/commands/cite-check.mjs', 'skills/repo-audit/scripts/repo-audit.mjs', 'runtime/schemas/research-report.json', 'skills/repo-audit/schemas/research-report.json']) {
     await writeFile(join(repo, path), (await readFile(join(repo, path), 'utf8')) + '\n')
   }
   const result = affected(repo)
   assert.equal(result.exit, 0, JSON.stringify(result))
-  assert.deepEqual(result.data.keys, ['schemas/change-set.schema.json', 'scripts/commands/apply.mjs'])
+  assert.deepEqual(result.data.keys, ['schemas/research-report.json', 'scripts/commands/cite-check.mjs'])
   assert.deepEqual(result.data.unmapped, [])
 })
 
