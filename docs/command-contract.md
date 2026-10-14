@@ -1464,12 +1464,19 @@ The change set creates `.agents/skills/verify-<app>/` with `SKILL.md`, `kit.json
 The result carries `data.path` (the change set), `data.planDigest`, `data.files` and the exact `data.diff`.
 Declared captured artifacts must use paths inside `{evidenceDir}/`; validation rejects other destinations with `artifact-outside-evidence` before commands run.
 The path `{evidenceDir}/<feature id>.json` is reserved for the proof record; a declared artifact using that path, including a normalized equivalent, fails plan validation with `evidence-collision`.
-Plan validation fails with a stable code before any change set exists: `invalid-ready`, `invalid-timeout`, `invalid-match`, `unsafe-path`, `evidence-inside-kit`, `artifact-outside-evidence`, `evidence-collision`, `helper-collision`, `duplicate-feature` or the schema codes.
+Every feature's `sourcePaths` entry must be a nonempty repo-relative forward-slash path, with `*` and `?` within segments or `**` as a whole segment.
+Absolute paths, drive prefixes, backslashes, NUL characters, empty, `.` or `..` segments, and the unsupported glob characters `[]{}()!` fail with `invalid-glob`.
+Backticks and line breaks fail with `invalid-source-path`, because declarations must fit the generated backticked `Source paths:` line.
+Feature titles and summaries must each be one line, and a summary cannot start with `Source paths:`; violations fail with `invalid-feature-metadata`.
+Other plan validation failures use `invalid-ready`, `invalid-timeout`, `invalid-match`, `unsafe-path`, `evidence-inside-kit`, `artifact-outside-evidence`, `evidence-collision`, `helper-collision`, `duplicate-feature` or the schema codes before any change set exists.
 An existing file the change set would create blocks with `kit-exists`.
 A plan with `"coverageGate": true` also renders `scripts/map-coverage.mjs` into the kit and lists it under Helpers; a helper at that path then fails with `helper-collision`.
 
 `kit scaffold --update` corrects an applied kit from an edited plan.
-It replaces each kit file whose bytes differ from the plan's rendering, creates each missing file, deletes each file under `features/` that the plan no longer lists and appends the `AGENTS.md` pointer when absent, and proposes nothing for a file that already matches.
+It replaces each kit file whose bytes differ from the plan's rendering, creates each missing file, deletes previously managed files the new plan no longer renders (including dropped helpers and a disabled coverage gate), deletes unlisted files under `features/` and appends the `AGENTS.md` pointer when absent.
+It proposes nothing for a file that already matches and preserves unlisted files elsewhere in the kit.
+When the applied `kit.json` exists, it supplies the previous managed-file inventory; an update can repair its legacy source-path or feature-metadata declarations, but the new plan must pass current validation.
+Checking, proving or updating an existing kit fails with `kit-app-mismatch` if its plan's `app` differs from the requested app, before deriving managed files or running commands.
 When nothing differs it exits 0 with `data.path` and `data.planDigest` null and an empty `data.files`.
 The result is otherwise the same reviewable change set, applied only through `apply`.
 
@@ -1478,7 +1485,7 @@ It fails with exit 1 and one problem per finding, each carrying the affected `pa
 A source path matches a file that equals it, lies under it or matches its `*`, `?` or `**` glob.
 A passing check returns `data.app`, `data.features` and the number of files compared.
 An unreadable kit blocks with `kit-unavailable`.
-It compares the kit with its own plan and the repo; it does not judge whether a feature file is true, which `kit prove` does.
+It compares the kit with its own plan and the repo; source reading and live proof establish whether a feature file is true.
 
 `kit prove --repo <path> --app <name> --feature <id>` runs the applied kit's `kit.json` once, replacing `{port}`, `{runDir}` and `{evidenceDir}` in commands.
 It launches without a shell in its own process group, waits for the declared readiness, runs doctor and then each step of the feature, writing `<evidence directory>/<run id>/<feature>.json` with every command, exit code and output.
@@ -1501,9 +1508,11 @@ Python uses the standard library tokenizer, Go its scanner package, and TypeScri
 
 `node .agents/skills/verify-<app>/scripts/map-coverage.mjs --base <ref>` is the feature-map coverage gate that a kit rendered with `coverageGate` carries.
 It is not a bstack command: it is one comment-free file that needs only Node and Git, runs from the target's worktree and does not need bstack installed.
-It takes the merge base of `<ref>` and `HEAD`, collects every changed file since then, committed, staged, unstaged or untracked, and drops files inside the kit directory.
+It takes the merge base of `<ref>` and `HEAD`, unions the committed, staged, unstaged and untracked path inventories, and drops files inside the kit directory from source-impact matching.
+Changes in one inventory remain counted even when reversed in another, including feature-file updates used to satisfy coverage.
 For each `features/*.md` file other than `README.md`, it reads the `Source paths:` line and requires, when a changed file matches one of those paths, that the feature file changed too or that a commit message since the merge base has a line `No-map-impact: <feature-id>: <reason>` with a non-empty reason.
 Exit 0 prints `feature-map-coverage: ok (<n> features checked)`.
 Exit 1 prints one `<feature file>: feature-map-coverage: <first changed path> [and <n> more] changed without updating this feature file; ...` line per uncovered feature on stdout.
-Exit 2 prints a `feature-map-coverage:` diagnostic on stderr for a missing `--base`, a base that does not resolve, a missing features directory or a feature file with no backticked paths on its `Source paths:` line.
-A path matches when it equals a declared path, lies under it or matches its `*`, `?` or `**` glob.
+Exit 2 prints a `feature-map-coverage:` diagnostic on stderr for invalid arguments, an unusable base or kit, an empty feature inventory, invalid source paths or a feature file without exactly one complete `Source paths:` line listing comma-separated backticked paths.
+The gate uses the source-path grammar above.
+A path matches when it equals a declared path, lies under it or matches its `*`, `?` or `**` glob; matching uses Unicode code points, so `?` matches one non-slash code point.
