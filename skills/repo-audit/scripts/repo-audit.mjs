@@ -60,7 +60,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -1030,7 +1030,7 @@ async function leafCommand(root, command, stack = [], discovery = false) {
   async function visit(executable, args) {
     const names = [executable, ...args].map((word) => word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, ""));
     const [name] = names;
-    if (names.includes("bstack-check.mjs") || names.includes("repo-audit.mjs") && args.some((arg, i) => arg === "evidence" && args[i + 1] === "validate" || arg === "docs" && ["check", "generate"].includes(args[i + 1]))) {
+    if (names.includes("bstack-check.mjs") || ["repo-audit.mjs", "maintenance.mjs"].some((entry) => names.includes(entry)) && args.some((arg, i) => arg === "evidence" && args[i + 1] === "validate" || arg === "docs" && ["check", "generate"].includes(args[i + 1]))) {
       reject2("recursive-check", command.cwd, "Leaf commands cannot invoke aggregate maintenance validation.");
     }
     if (isIndirectExecutable(executable)) reject2("unsupported-leaf", executable, "Shell programs and command wrappers cannot declare a verifiable leaf command.");

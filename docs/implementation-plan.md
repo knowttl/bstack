@@ -247,10 +247,14 @@ bstack/
     agents/openai.yaml
     references/
       intent-interview.md  grilling.md  decisions.md
-      enforcement.md  architecture.md  research-briefs.md  maintenance-contract.md
+      enforcement.md  architecture.md  research-briefs.md
     schemas/                     JSON schemas for every structured file
     scripts/
       repo-audit.mjs             generated command bundle
+  skills/maintenance/            independently installable maintenance skill folder
+    references/                  create.md  sweep.md  maintenance-contract.md  agents-pointer.md
+    scripts/
+      maintenance.mjs            generated command bundle
       bstack-check.mjs           the dependency-free validator copied into target repos
   skills/verification/           independently installable verification skill folder
   skills/vision/                 independently installable vision skill folder
@@ -516,7 +520,7 @@ Tick each task when its "Done when" commands pass.
         Full-suite evidence attaches to `tests/eval/results/tasks/C24b.json`.
         Hosted CI behavior remains unverified; maintenance guidance is documented in C24c below.
   - [x] T3a.7 Write the maintenance reference
-    - C24c supplies the [maintenance procedure](../skills/repo-audit/references/maintenance-contract.md) for final change collection, substantive document and unmapped-path assessments, owner decisions, local captures and standalone clean-checkout validation.
+    - C24c supplies the [maintenance procedure](../skills/maintenance/references/maintenance-contract.md) for final change collection, substantive document and unmapped-path assessments, owner decisions, local captures and standalone clean-checkout validation.
       Routine maintenance reuses approved sources without repeating the interview or full audit, and returns evidence to the project's selected delivery gate without assuming hosted CI.
       The `ts-shop` with-mode fake host executes the collection, review binding and local/clean standalone flows while preserving and reporting the existing failed checkout journey.
       `npm test -- --task T3a.7` includes that isolated procedure and the standalone checker controls; [C24c evidence](../tests/eval/results/tasks/C24c.json) records the full Phase 3a fake-only suite.
@@ -1623,7 +1627,7 @@ Phase evidence from the design: unreviewed or stale input states fail, and relev
 
 **Steps**
 
-1. Build `skills/repo-audit/scripts/bstack-check.mjs` as one dependency-free file from the same validator sources used by the command interface.
+1. Build `skills/maintenance/scripts/bstack-check.mjs` (moved from repo-audit in R36) as one dependency-free file from the same validator sources used by the command interface.
    Include its needed schemas and build version so the installed checker needs no skill folder.
    A freshness check compares the generated file with its source modules and embedded schemas.
 2. Install it through a selected `apply` plan at `.bstack/bin/bstack-check.mjs`.
@@ -1695,7 +1699,7 @@ For bstack itself, the chosen delivery gate is the no-mistakes pipeline describe
 
 **Steps**
 
-1. Write `references/maintenance-contract.md`: when to collect evidence, how to assess each candidate document, what counts as a no-impact reason, and when a decision is needed.
+1. Write `references/maintenance-contract.md` (in the `maintenance` skill since R36): when to collect evidence, how to assess each candidate document, what counts as a no-impact reason, and when a decision is needed.
 2. State that routine maintenance does not repeat the goal interview or the full audit.
 3. Describe local and standalone checker validation, and how to supply its evidence to the project's selected delivery gate, without assuming a CI.
 

@@ -90,7 +90,7 @@ Run `inventory` again with the same target flag and confirm that the file kinds 
 Open each pointer target in the written file to confirm it resolves.
 State the target, the instruction files found and their classes, each pointer's result, the merge decisions with the host check and its limits, and the written and deleted paths.
 Name every shadowing report, every unpointed source left for its skill or the author, and any step left blocked with its missing prerequisite.
-Name the skills that add pointers, `/glossary`, `/vision` and `/verification`, as the way later pointers arrive, and start none of them.
+Name the skills that add pointers, `/glossary`, `/vision`, `/verification` and `/maintenance`, as the way later pointers arrive, and start none of them.
 
 Done when: The report names what was written or why nothing was, the host check behind any removal, and every open decision.
 
