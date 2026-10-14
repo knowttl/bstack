@@ -241,7 +241,8 @@ bstack/
     eval.mjs                     the evaluation runner
     test.mjs                     explicit test discovery, excluding fixture sources
     acceptance.mjs               validates case registry and completed release evidence
-  skills/repo-audit/             the only installed folder
+  runtime/                       shared authored commands, helpers, schemas and assets
+  skills/repo-audit/             independently installable skill folder
     SKILL.md
     agents/openai.yaml
     package.json, package-lock.json   pins lavish-axi only
@@ -251,9 +252,9 @@ bstack/
     assets/vision/               board template and stylesheet
     schemas/                     JSON schemas for every structured file
     scripts/
-      repo-audit.mjs             the one command entry point
-      lib/                       shared helpers
+      repo-audit.mjs             generated command bundle
       bstack-check.mjs           the dependency-free validator copied into target repos
+  skills/verification/           independently installable verification skill folder
   tests/
     scripts/                     node:test suites for every command
     package-check/               seeded broken skill folders
@@ -263,6 +264,8 @@ bstack/
     eval/scenarios/              evaluation scenarios
     eval/results/                recorded runs
 ```
+
+See [README.md](../README.md) for the authoritative shared-runtime generation workflow and per-skill resource manifest.
 
 ### Delivery gate
 
@@ -665,13 +668,13 @@ Use the explicit-file runner above rather than passing a directory as a test fil
 **Steps**
 
 1. Write `docs/command-contract.md`, defining the shared contracts without repeating command help in `SKILL.md`.
-2. Build `args.mjs`, `result.mjs`, `repo.mjs`, `paths.mjs`, `run.mjs`, `fingerprint.mjs` and `scratch.mjs` in `scripts/lib/`.
+2. Build `args.mjs`, `result.mjs`, `repo.mjs`, `paths.mjs`, `run.mjs`, `fingerprint.mjs` and `scratch.mjs` in `runtime/scripts/lib/`.
 3. Implement target resolution for Git repos and draft-only workspaces as separate modes.
    Resolve the nearest existing parent when validating a new file path, then reject resolved links outside the target.
 4. Build `schema.mjs` with the explicitly supported JSON Schema keywords used by the package.
    Validate schema definitions as well as data, and reject unsupported keywords instead of ignoring them.
 5. Implement the shared child-command contract, including the Windows npm adapter, timeouts and cancellation.
-6. Wire the command entry point to `scripts/commands/` and provide command-specific help without loading source files.
+6. Wire commands from `runtime/scripts/commands/` through the [command dispatch contract](command-contract.md#command-dispatch), including command-specific help without resolving a target.
 7. Test helpers through a small public test command, using valid and invalid input files in `tests/inputs/`.
 
 **Done when**
