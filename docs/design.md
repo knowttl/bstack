@@ -1482,7 +1482,7 @@ No skill requires another installed skill to run.
 
 | Component | Kind | What it does | Source |
 |---|---|---|---|
-| `repo-audit` | Skill, started by the user only | Today runs the new-idea and existing-repo paths, recommends a foundation and applies the changes the user chooses; after the split, audits at overview level and lists which skill to run next | bstack |
+| `repo-audit` | Skill, started by the user only | Its [procedure](../skills/repo-audit/SKILL.md) defines the current new-idea handoffs and existing-repo audit; the [skill split](#the-skill-split) defines its final overview-only scope | bstack |
 | `grill-me` and `grilling` | Bundled reference modules | Decision-tree interview for intent and decisions the evidence does not settle | Matt Pocock, adapted |
 | Domain language and glossary | Bundled reference modules in `glossary` and `repo-audit` | `glossary` resolves project terms and defines the glossary format; decision-record guidance lives in `architecture` | Matt Pocock, adapted |
 | VISION procedure, review template and stylesheet | Bundled module and assets | Drafts `VISION.md` and stress-tests it on the review board | [kunchenguid/vision](https://github.com/kunchenguid/vision), adapted |
