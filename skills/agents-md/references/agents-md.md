@@ -2,7 +2,8 @@
 
 ## Instruction file classes
 
-`inventory` lists every file named `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` inside the repo, with its scope, and nothing outside it.
+`inventory` lists discovered regular files named `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` inside the target, with their scope.
+It follows no file or directory symlinks and inspects nothing outside the target.
 
 | Class | Files | Treatment |
 |---|---|---|
@@ -11,8 +12,8 @@
 | Repo-owned `CLAUDE.md` | `CLAUDE.md` or `.claude/CLAUDE.md` | A merge candidate only when its content is equivalent to the `AGENTS.md` in its scope |
 | Local variant | `CLAUDE.local.md` | Reported as possible shadowing, preserved and never edited |
 
-A `CLAUDE.md` is equivalent when its bytes equal the `AGENTS.md` in its scope or it only imports that file with `@AGENTS.md`.
-`inventory` reports exactly those cases as candidates.
+A `CLAUDE.md` is mechanically equivalent when its bytes equal the existing `AGENTS.md` in its scope or its trimmed content is a lone import of that file, using the relative path from the `CLAUDE.md` directory, optionally prefixed with `./`.
+`inventory` reports every root-scope `CLAUDE.md` as a review candidate, even without an existing `AGENTS.md`; it reports a nested candidate only for those mechanically equivalent cases.
 A `CLAUDE.md` with other content is distinct: its extra content is repo-owned guidance for the author to place, so compare it line by line with `AGENTS.md` and propose a merge only for what the author confirms is the same guidance.
 A nested file is a candidate only for the `AGENTS.md` in its own scope.
 
