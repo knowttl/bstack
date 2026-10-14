@@ -396,9 +396,10 @@ A missing contract is a `contract-missing` problem fixed by `/maintenance create
 It then runs `docs check` and `docs generate --check` over the registered documents.
 A broken link or invalid glossary entry in a document is fixed by that document's owner: `/glossary maintain` for a registered glossary, `/architecture maintain` for the document with ID `design`, `/vision` for the one with ID `vision`, and by hand for any other.
 A stale generated section is fixed by running `docs generate` in `/maintenance`.
-A `lagging-document` problem names a registered document that has not changed since files in a scope listing it changed in committed Git history, and is fixed by the document's owner; it prompts a review and is not proof of drift.
+Code changes or document age alone never produce a repair item or fail the command.
 Each applied verification kit under `.agents/skills/verify-*/` is checked with the `kit check` rules and fixed by `/verification maintain`, and a link in the root `AGENTS.md` that does not resolve is fixed by `/agents-md`.
-Names and boundaries missing from the glossary or design are judged by reading, as the skill's sweep guide describes, because no command can establish them.
+The skill judges every registered document against the whole current repo by reading, including glossary terms, design boundaries, README instructions and facts, vision claims and other registered content, as its sweep guide describes.
+Staged, unstaged and untracked content is included; history may order the review but never exclude a document or repository area, and no baseline is required.
 
 ## Measure and overlap
 

@@ -105,12 +105,14 @@ Done when: The command result is saved in scratch, and a missing or invalid cont
 
 ### Step 7: Judge the drift the command cannot see
 
-For each registered glossary and design document, compare its terms and boundaries with the names and modules that changed in the repo since the document last changed, as the guide describes.
+For every registered document, compare its claims with the whole current repo, including staged, unstaged and untracked content, as the guide describes.
+Check glossary terms, design boundaries, README instructions and facts, vision purpose and user claims, and the claims of any other registered document.
+History may order the work but never exclude a document or repository area; no history baseline is required.
 Open every file the judgement rests on, and cite repo-relative `path:line` for each item.
 Add an item only when the evidence supports it, name the mode that owns it, and leave the decision to that mode.
 Report a document that cannot be judged as unchecked, with the reason.
 
-Done when: Every registered glossary and design document is judged drifted with citations, or judged current, or listed as unchecked.
+Done when: Every registered document is judged drifted with citations, or judged current against the whole current repo, or listed as unchecked with a concrete reason and the unreviewed scope.
 
 ### Step 8: Report one list
 
