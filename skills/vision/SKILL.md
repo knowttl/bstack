@@ -87,6 +87,7 @@ Done when: The author has explicitly approved one revision, and every proposal v
 
 Apply only the approved revision, through the review and write rules below.
 Record one finding in scratch following `schemas/findings.schema.json` with stage `audit`, the target and `VISION.md` as its reviewed scope, and a change set following `schemas/change-set.schema.json` that creates or replaces the file with the exact approved UTF-8 bytes and their hashes.
+Include `starting-checks` in the findings' `requiredOutcomes`, as required by stage `audit` for both workspace creation and existing-repo replacement.
 A new idea uses mode `workspace` with a null revision, and an existing repo uses mode `repo` with its current revision.
 Run `node scripts/vision.mjs apply --repo <target> --plan <file> --dry-run --json`, with `--workspace` for a new idea, present the exact diff, then run the unchanged plan without `--dry-run` only after the author approves those bytes.
 Use `state show` with the returned run ID to inspect an interrupted apply, and repeat the unchanged plan to resume.
