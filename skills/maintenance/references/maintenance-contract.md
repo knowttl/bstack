@@ -1,6 +1,7 @@
 # Maintenance contract
 
 Record change evidence against the project's maintained contract.
+This is the full signed-off assessment of one change, and it is separate from the `create` and `sweep` modes and from the docs gate that checks every change.
 Routine maintenance uses the approved project sources and the current diff; it does not repeat the goal interview or the full repo audit.
 Resolve the target, authorised change, explicit comparison base, contract path and selected review or delivery process first.
 Read only affected sources and implementation, widening that scope when the evidence exposes a dependency or unresolved decision.
@@ -22,8 +23,8 @@ Use Node 24 or later and Git.
 Run these commands from the installed skill, passing the target explicitly.
 
 ```sh
-node scripts/repo-audit.mjs contract validate --repo <target> --contract .bstack/project.json --json
-node scripts/repo-audit.mjs evidence collect --repo <target> --base <ancestor-commit> --json
+node scripts/maintenance.mjs contract validate --repo <target> --contract .bstack/project.json --json
+node scripts/maintenance.mjs evidence collect --repo <target> --base <ancestor-commit> --json
 ```
 
 Collect early to identify affected sources, then recollect after implementation so the assessment covers the final committed, staged, unstaged and new paths, including both sides of renames and deleted paths.
@@ -78,9 +79,9 @@ Passing checks cannot resolve a pending decision or authenticate approval.
 ## Validate locally
 
 ```sh
-node scripts/repo-audit.mjs docs check --repo <target> --json
-node scripts/repo-audit.mjs docs generate --repo <target> --check --json
-node scripts/repo-audit.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <assessment.json> --json
+node scripts/maintenance.mjs docs check --repo <target> --json
+node scripts/maintenance.mjs docs generate --repo <target> --check --json
+node scripts/maintenance.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <assessment.json> --json
 ```
 
 Use the same selected `--contract` throughout.
@@ -113,7 +114,7 @@ Do not supply that flag from your own review or an earlier maintenance request.
 Changed record bytes, execution references or plan inputs require a new preview and owner approval before writing again.
 
 ```sh
-node scripts/repo-audit.mjs apply --repo <target> --plan <assessment-plan.json> --approved-fingerprint <approved-planDigest> --json
+node scripts/maintenance.mjs apply --repo <target> --plan <assessment-plan.json> --approved-fingerprint <approved-planDigest> --json
 ```
 
 ## Validate a standalone checkout
@@ -123,6 +124,7 @@ node .bstack/bin/bstack-check.mjs --repo <target> --base <ancestor-commit> --ass
 ```
 
 The installed dependency-free checker needs Node and Git, with no skill or agent session.
+Its `--docs-only` mode skips the base, assessment and leaf execution and checks only the current tree's document links, glossary structure and generated sections, which is what the no-mistakes docs gate runs.
 Run it in the working checkout and a different-root clean clone with isolated home and cache, the same explicit base and the unchanged committed assessment.
 It validates structure, executes each distinct required leaf once with fresh results, then validates the results and review inputs again without editing the assessment.
 Earlier saved successes cannot replace that invocation's checks.

@@ -29,6 +29,11 @@ export const commands = {
     options: ['contract', 'base', 'assessment', 'previous-contract'],
     help: 'Validate live change coverage, substantive review freshness and captured required checks.\nUsage: {entry} evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Assessment follows schemas/evidence.schema.json. Returns the current review fingerprint; review must bind it explicitly. Missing prior policy, decisions or checks block completion. Structural validation cannot prove semantic correctness.'
   },
+  sweep: {
+    module: './commands/sweep.mjs',
+    options: ['contract'],
+    help: 'List what drifted across registered documents, generated sections, verification kits and AGENTS.md pointers without writes.\nUsage: {entry} sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document\'s owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, broken AGENTS.md links by /agents-md. A document is lagging when files in its scope changed in Git history since the document last did. Fails when anything drifted; fixes nothing.'
+  },
   'rule-proof': {
     module: './commands/rule-proof.mjs',
     options: ['check-plan', 'check-id', 'valid', 'violation', 'expect'],

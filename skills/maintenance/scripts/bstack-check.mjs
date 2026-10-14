@@ -65,7 +65,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -900,7 +900,7 @@ async function leafCommand(root, command, stack = [], discovery = false) {
   async function visit(executable, args) {
     const names = [executable, ...args].map((word) => word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, ""));
     const [name] = names;
-    if (names.includes("bstack-check.mjs") || names.includes("repo-audit.mjs") && args.some((arg, i) => arg === "evidence" && args[i + 1] === "validate" || arg === "docs" && ["check", "generate"].includes(args[i + 1]))) {
+    if (names.includes("bstack-check.mjs") || ["repo-audit.mjs", "maintenance.mjs"].some((entry) => names.includes(entry)) && args.some((arg, i) => arg === "evidence" && args[i + 1] === "validate" || arg === "docs" && ["check", "generate"].includes(args[i + 1]))) {
       reject2("recursive-check", command.cwd, "Leaf commands cannot invoke aggregate maintenance validation.");
     }
     if (isIndirectExecutable(executable)) reject2("unsupported-leaf", executable, "Shell programs and command wrappers cannot declare a verifiable leaf command.");
@@ -2657,6 +2657,17 @@ function checkGeneratedFacts(options) {
 function blocked(code, message, fix) {
   throw new CommandError("blocked", [{ code, message, fix }]);
 }
+async function runDocsOnly(options) {
+  if (options.workspace || options.base || options.assessment) throw new CommandError("usage-error", [{
+    code: "docs-only-input",
+    message: "--docs-only checks the current tree and takes no base or assessment.",
+    fix: "Supply --repo <path> --docs-only [--contract <path>]."
+  }]);
+  const docs = await run2(options);
+  if (docs.status !== "passed") return docs;
+  const facts = await checkGeneratedFacts(options);
+  return { ...facts, data: { ...facts.data, coverageLimits: [...docs.data.coverageLimits, ...facts.data.coverageLimits ?? []] } };
+}
 async function runChecker(options, { comparisonPolicy = false } = {}) {
   if (!options.repo || !options.base || !options.assessment || options.workspace) throw new CommandError("usage-error", [{
     code: "missing-checker-input",
@@ -2767,10 +2778,11 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
 }
 if (process.argv[1] && await resolveLinks(resolve8(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2);
-  if (argv.length === 1 && argv[0] === "--help") console.log("Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]");
+  if (argv.length === 1 && argv[0] === "--help") console.log("Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]\n       node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <path>] [--json]\nWith --docs-only, check registered document links, glossary structure and generated sections in the current tree without a base or assessment.");
   else {
     try {
-      emitResult({ command: "bstack check", ...await runChecker(parseArgs(argv, ["base", "assessment", "contract"])) }, argv.includes("--json"));
+      const options = parseArgs(argv, ["base", "assessment", "contract", "docs-only"]);
+      emitResult({ command: options["docs-only"] ? "bstack docs check" : "bstack check", ...await (options["docs-only"] ? runDocsOnly : runChecker)(options) }, argv.includes("--json"));
     } catch (error) {
       emitResult({
         command: "bstack check",
@@ -2788,10 +2800,11 @@ export {
   run2 as checkDocuments,
   checkGeneratedFacts,
   runChecker,
+  runDocsOnly,
   run as validateContract,
   validateData,
   run3 as validateEvidence
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"ed711557b8bccba7c6e4cc11011ba6e109174e3029405d927c5b1ed9ccf1dfe9"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"e0fcaf043ee92c4ef1b7b47fddb4e269cd6a7259c798c84e4e7ca45e60966df7"}
