@@ -29,7 +29,9 @@ Clone the source and install its dependencies using Node 24 or later, Git and np
 git clone https://github.com/knowttl/bstack.git
 cd bstack
 npm ci --ignore-scripts
-npm ci --omit=dev --prefix skills/repo-audit
+for p in skills/*/package.json; do
+  npm ci --omit=dev --prefix "$(dirname "$p")" || exit "$?"
+done
 ```
 
 From this checkout, preview and then copy every skill folder into an existing project.
@@ -114,11 +116,9 @@ Hosted CI behaviour, CI adapter execution and forge enforcement are unverified.
 This repository has no hosted CI workflow; local clean-checkout results do not establish hosted execution.
 Repeated-run release qualification and release approval remain separate work.
 
-Use Node 24 or later:
+After installing dependencies as described above, validate with Node 24 or later:
 
 ```sh
-npm ci --ignore-scripts
-npm ci --omit=dev --prefix skills/repo-audit
 npm run check
 npm test
 npm test -- --task T0.1
@@ -152,9 +152,9 @@ node scripts/check-package.mjs
 `check` first verifies the generated files in each skill against the [shared runtime](runtime/), then runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](docs/command-contract.md#standalone-checker-generation).
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](docs/command-contract.md#package-check) for exact syntax and limits.
-Local validation installs both the root development lock and the nested skill runtime lock, then runs the package check and full tests.
+Local validation runs the package check and full tests after dependency setup.
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
-The no-mistakes gate installs both locks, runs tests and runs the distinct package check through `commands.lint`.
+See the [delivery gate](docs/implementation-plan.md#delivery-gate) for gate preparation and validation.
 Recorded runs on Linux do not prove support on Windows or macOS.
 Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation, vision review and final verification requirements.
 See the [C27 final-path evidence](tests/eval/results/full-path-C27/summary.md) for completed installed paths, repeated audit, independent extension, bounded maintenance and observed limitations.
