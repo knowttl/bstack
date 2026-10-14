@@ -2,8 +2,6 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
-import { readGit } from '../lib/discovery.mjs'
-import { matchesPath, pathGlob } from '../lib/glob.mjs'
 import { markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { loadContract } from './contract.mjs'
@@ -45,24 +43,6 @@ async function contractItems(target, options) {
   const regenerate = 'Run /maintenance and its docs generate command, then apply the reviewed proposal.'
   try { items.push(...(await checkGeneratedSections({ ...options, check: true, coveragePolicy: policy })).problems.map(problem => ({ ...problem, fix: regenerate }))) } catch (error) {
     items.push(...problemsOf(error).map(problem => ({ ...problem, fix: regenerate })))
-  }
-  items.push(...lagging(target, policy.contract, owner))
-  return items
-}
-
-// A document that no longer moves with the code its scope covers is a candidate for its owner's maintain pass.
-function lagging(target, contract, owner) {
-  const items = []
-  for (const scope of contract.scopes) {
-    const globs = scope.paths.map(pathGlob)
-    for (const document of contract.documents.filter(document => scope.documentIds.includes(document.id))) {
-      const baseline = readGit(target.root, ['log', '-1', '--format=%H', '--', document.path]).stdout.trim()
-      if (!baseline) continue
-      const changed = readGit(target.root, ['diff', '--name-only', '-z', baseline, 'HEAD']).stdout.split('\0')
-        .filter(file => file && globs.some(glob => matchesPath(glob, file)))
-      if (changed.length) items.push({ code: 'lagging-document', path: document.path,
-        message: `${changed.length} file(s) in scope ${scope.id} changed since ${document.path} last did, at ${baseline.slice(0, 12)}: ${changed.slice(0, 5).join(', ')}.`, fix: owner(document.path) })
-    }
   }
   return items
 }

@@ -3583,25 +3583,6 @@ async function contractItems(target, options) {
   } catch (error) {
     items.push(...problemsOf(error).map((problem2) => ({ ...problem2, fix: regenerate })));
   }
-  items.push(...lagging(target, policy.contract, owner));
-  return items;
-}
-function lagging(target, contract, owner) {
-  const items = [];
-  for (const scope of contract.scopes) {
-    const globs = scope.paths.map(pathGlob);
-    for (const document of contract.documents.filter((document2) => scope.documentIds.includes(document2.id))) {
-      const baseline = readGit(target.root, ["log", "-1", "--format=%H", "--", document.path]).stdout.trim();
-      if (!baseline) continue;
-      const changed = readGit(target.root, ["diff", "--name-only", "-z", baseline, "HEAD"]).stdout.split("\0").filter((file) => file && globs.some((glob) => matchesPath(glob, file)));
-      if (changed.length) items.push({
-        code: "lagging-document",
-        path: document.path,
-        message: `${changed.length} file(s) in scope ${scope.id} changed since ${document.path} last did, at ${baseline.slice(0, 12)}: ${changed.slice(0, 5).join(", ")}.`,
-        fix: owner(document.path)
-      });
-    }
-  }
   return items;
 }
 async function kitItems(target) {
@@ -4225,7 +4206,7 @@ await dispatch(process.argv.slice(2), "maintenance", {
   "contract validate": { options: ["contract"], help: "Validate project source pointers, scopes and leaf commands without execution.\nUsage: maintenance.mjs contract validate --repo <path> [--contract <repo-relative-file>] [--json]\nDefaults to .bstack/project.json; input follows schemas/project.schema.json. Unsupported config formats need a reviewed standalone contract.", run },
   "evidence collect": { options: ["contract", "base", "previous-contract", "portable"], help: "Collect the live Git change inventory and save a document assessment skeleton to scratch.\nUsage: maintenance.mjs evidence collect --repo <path> --base <ref> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--portable <repo-relative-assessment>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Portable review requires committed implementation and excludes only the selected record from inventory. Use --base empty before the first commit. An unavailable base blocks comparison. Renames map both paths through case-sensitive scopes. Collection is not semantic assessment or readiness validation.", run: run4 },
   "evidence validate": { options: ["contract", "base", "assessment", "previous-contract"], help: "Validate live change coverage, substantive review freshness and captured required checks.\nUsage: maintenance.mjs evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Assessment follows schemas/evidence.schema.json. Returns the current review fingerprint; review must bind it explicitly. Missing prior policy, decisions or checks block completion. Structural validation cannot prove semantic correctness.", run: run6 },
-  "sweep": { options: ["contract"], help: "List what drifted across registered documents, generated sections, verification kits and AGENTS.md pointers without writes.\nUsage: maintenance.mjs sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document's owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, broken AGENTS.md links by /agents-md. A document is lagging when files in its scope changed in Git history since the document last did. Fails when anything drifted; fixes nothing.", run: run8 },
+  "sweep": { options: ["contract"], help: "List what drifted across registered documents, generated sections, verification kits and AGENTS.md pointers without writes.\nUsage: maintenance.mjs sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document's owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, broken AGENTS.md links by /agents-md. Code changes or document age alone never fail sweep. The skill also reviews every registered document against the whole current repo. Fails on reported problems; fixes nothing.", run: run8 },
   "probe record": { options: ["name", "phase", "spec", "approved-by-user", "command"], help: "Capture a live call in scratch.\nUsage: maintenance.mjs probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]\nDescriptor follows schemas/probe-spec.json. Side effects require approval for each call. Unavailable calls remain unverified.", run: run9 },
   "probe compare": { options: ["name", "before", "after"], help: "Require a successful matching live probe pair for an outside dependency.\nUsage: maintenance.mjs probe compare --repo <path> --name <n> --before <run-id> --after <run-id> [--json]\nMissing, mismatched, unsuccessful or stale evidence cannot pass.", run: run9 },
   "run-checks": { options: ["plan", "phase", "prior-run"], help: "Capture declared checks and user outcome coverage in scratch.\nUsage: maintenance.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]\nPhase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Outside dependencies also require probe record and probe compare.", run: run5 },
