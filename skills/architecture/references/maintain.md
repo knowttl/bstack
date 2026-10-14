@@ -1,15 +1,16 @@
 # Maintain guide
 
 Maintain keeps an existing design true as the project grows.
-It reviews only what changed since the last review, checks new modules against the design, proposes new boundaries and proves their rules.
+It reviews only what changed since the last confirmed architectural review, checks new modules against the design, proposes new boundaries and proves their rules.
 It never moves code and never rewrites a decision record.
 
 ## The baseline
 
 The design is the registered `design` document in `.bstack/project.json` when the project has a contract, otherwise the existing design or architecture document, or `DESIGN.md`.
-The last review is the commit that last changed the design document or a decision record: run `git log -1 --format=%H -- <design path> <decision record paths>`.
-The user may name another baseline, such as a release tag, and then it replaces the default.
-A design with no committed history has no baseline, so ask the user for one instead of reviewing the whole repo silently.
+The baseline is the commit of the last confirmed architectural review.
+Design or decision-record edits alone do not establish that a review happened.
+The user may name another baseline, such as a release tag, and then it replaces the review commit.
+When the evidence does not establish a baseline, including a design with no committed history, ask the user for one and wait before collecting changes or reporting clean.
 Record the baseline, the current revision and the working-tree state, and preserve uncommitted user work.
 
 ## What to collect
@@ -42,7 +43,7 @@ A conflict with the vision or a glossary meaning goes to `/vision` or `/glossary
 
 Report exactly one outcome.
 
-- Clean: the complete inventory has no committed changes since the baseline and no staged, unstaged or untracked changes in code, or every changed module is described and within the design's boundaries. Name the baseline and the files read.
+- Clean: a baseline from the last confirmed architectural review or explicitly supplied by the user is established, and the complete inventory has no committed changes since it and no staged, unstaged or untracked changes in code, or every changed module inventoried from that established baseline is described and within the design's boundaries. Name the baseline and the files read.
 - Changed: the user selected edits, `apply` wrote them from a reviewed change set, and every proposed rule has its proof.
 - Blocked: a prerequisite is missing, such as a baseline, an answer the edit depends on, an unavailable native tool or a working tree that changed under the plan. Name it and its fix.
 
