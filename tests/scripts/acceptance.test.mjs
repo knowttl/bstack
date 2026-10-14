@@ -47,6 +47,8 @@ for (const [name, mutate] of [
   ['empty planned procedure', data => { data.cases[0].procedure.description = '' }],
   ['invalid criterion source', data => { data.cases[0].criterionSource = 'README.md' }],
   ['unknown registry field', data => { data.cases[0].extra = true }],
+  ['missing skill', data => { delete data.cases[0].skill }],
+  ['unknown skill', data => { data.cases[0].skill = 'unknown-skill' }],
   ['missing completed evidence', data => { data.cases[0].procedure = { status: 'completed', path: 'tests/eval/scenarios/scenarios.json', name: 'new-idea', artifacts: ['missing.txt'] } }],
   ['unregistered completed test', data => { data.cases[40].procedure = { status: 'completed', path: 'missing.test.mjs', name: 'missing', artifacts: ['README.md'] } }]
 ]) {

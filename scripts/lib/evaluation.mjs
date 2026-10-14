@@ -89,23 +89,41 @@ export function options(args, values, flags = []) {
   return result
 }
 
+// Every skill folder has one runtime/skills.json entry, and the installer installs exactly these.
+export async function skillNames() { return Object.keys(await readJSON(join(root, 'runtime', 'skills.json'))) }
+
+// The final checkpoint installs the complete package; earlier ones stage only the skills the scenario names.
+export async function evaluatedSkills(definition, stage) { return stage === 'final' ? await skillNames() : definition.skills }
+
+// The scenario's first skill is the one its opening request invokes.
+export const explicitInvocation = (adapter, definition) => adapter.invocation.explicit.replace('{skill}', definition.skills[0])
+
+// A case owned by no single skill (shared runtime, packaging, installer) is checked by tests, never by a scenario.
+const sharedOwner = 'shared'
+
 export async function scenario(id) {
   const scenarios = await readJSON(join(root, 'tests', 'eval', 'scenarios', 'scenarios.json'))
   const schema = object({ schemaVersion: { const: 1 }, scenarios: array({ ...object({
-    id: text, tier: { enum: ['smoke', 'full'] }, fixture: text, covers: { ...array(text), minItems: 1 }, request: text, answers: array(text), checkpoints: array(text),
+    id: text, tier: { enum: ['smoke', 'full'] }, fixture: text, skills: { ...array(text), minItems: 1 }, request: text, answers: array(text), checkpoints: array(text),
     mode: { enum: ['without', 'with'] },
-    invocation: { enum: ['explicit', 'implicit'] }, checks: array({ ...object({ id: text, caseId: text, question: text,
-      machine: { type: 'object' } }), required: ['id', 'caseId', 'question'] })
-  }), required: ['id', 'tier', 'fixture', 'covers', 'request', 'answers', 'checkpoints', 'invocation', 'checks'] }) })
+    invocation: { enum: ['explicit', 'implicit'] }, checks: array({ ...object({ id: text, caseId: text, skill: text, question: text,
+      machine: { type: 'object' } }), required: ['id', 'caseId', 'skill', 'question'] })
+  }), required: ['id', 'tier', 'fixture', 'skills', 'request', 'answers', 'checkpoints', 'invocation', 'checks'] }) })
   validateData(schema, scenarios)
   validateIds(scenarios.scenarios, '$/scenarios')
   const fixtures = await readJSON(join(root, 'tests', 'fixtures', 'fixtures.json'))
   const registry = await readJSON(join(root, 'tests', 'acceptance', 'cases.json'))
+  const names = await skillNames()
   for (const item of scenarios.scenarios) {
     validateIds(item.checks, '$/checks')
     if (!Object.hasOwn(fixtures, item.fixture) || !item.checks.length || !item.checkpoints.length || new Set(item.checkpoints).size !== item.checkpoints.length) fail(`Invalid scenario: ${item.id}`)
+    // The first skill is the one the opening request invokes, so a repeated or unknown name has no meaning.
+    if (new Set(item.skills).size !== item.skills.length || item.skills.some(skill => !names.includes(skill))) fail(`Invalid scenario skills: ${item.id}`)
     for (const check of item.checks) {
-      if (!registry.cases.some(entry => entry.id === check.caseId)) fail(`Unknown acceptance ID: ${check.caseId}`)
+      const owner = registry.cases.find(entry => entry.id === check.caseId)
+      if (!owner) fail(`Unknown acceptance ID: ${check.caseId}`)
+      if (!item.skills.includes(check.skill)) fail(`Check ${check.id} tests ${check.skill}, which scenario ${item.id} does not stage.`)
+      if (owner.skill !== check.skill) fail(`Check ${check.id} tests ${check.skill}, but ${check.caseId} belongs to ${owner.skill}.`)
       if (check.machine) validateMachine(check.machine)
     }
   }
@@ -117,10 +135,12 @@ export async function scenario(id) {
 export async function checkRegistry(path) {
   const registry = await readJSON(path)
   validateData(object({ schemaVersion: { const: 1 }, cases: array(object({
-    id: text, ownerTask: { ...array(text), minItems: 1 }, criterionSource: text, evidenceType: { enum: ['automated', 'agent', 'manual'] },
+    id: text, skill: text, ownerTask: { ...array(text), minItems: 1 }, criterionSource: text, evidenceType: { enum: ['automated', 'agent', 'manual'] },
     procedure: { type: 'object' }
   })) }), registry)
   validateIds(registry.cases, '$/cases')
+  const names = await skillNames()
+  for (const item of registry.cases) if (item.skill !== sharedOwner && !names.includes(item.skill)) fail(`Unknown skill for ${item.id}: ${item.skill}`)
   const design = await readFile(join(root, 'docs', 'design.md'), 'utf8')
   const section = design.split('### Acceptance cases\n')[1].split('## Evidence and limitations')[0]
   const ids = [...section.matchAll(/^(\d+)\. /gm)].map(match => `AC-${match[1]}`)

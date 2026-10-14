@@ -81,15 +81,19 @@ export async function containerTurn(record, args, env, capture) {
       // Captured traces can exceed OS argument limits, so use the existing home mount.
       try {
         // Baselines also receive citation grading, after the subject has finished.
-        if (input.action === 'evaluate' && checks.some(check => check.machine.type === 'citeCheck')) {
-          const paths = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', record.sourceRevision, '--',
-            'skills/repo-audit/scripts', 'skills/repo-audit/schemas'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean)
-          for (const path of paths) {
-            const destination = join(grader, ...path.slice('skills/repo-audit/'.length).split('/'))
-            await mkdir(dirname(destination), { recursive: true })
-            await writeFile(destination, committed(path), { mode: 0o600 })
+        // Each citation check runs the cite-check of the skill it tests.
+        if (input.action === 'evaluate') {
+          input.skills = {}
+          for (const skill of new Set(checks.filter(check => check.machine.type === 'citeCheck').map(check => check.skill))) {
+            const paths = execFileSync('git', ['ls-tree', '-r', '--name-only', '-z', record.sourceRevision, '--',
+              `skills/${skill}/scripts`, `skills/${skill}/schemas`], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean)
+            for (const path of paths) {
+              const destination = join(grader, skill, ...path.slice(`skills/${skill}/`.length).split('/'))
+              await mkdir(dirname(destination), { recursive: true })
+              await writeFile(destination, committed(path), { mode: 0o600 })
+            }
+            input.skills[skill] = join(grader, skill, 'scripts', `${skill}.mjs`)
           }
-          input.skill = join(grader, 'scripts/repo-audit.mjs')
         }
         await writeFile(path, JSON.stringify({ kind: record.fixture.kind, ...input }), { mode: 0o600 })
         const result = await docker(['exec', name,

@@ -1,7 +1,7 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { root, text, object, array, readJSON, scenario, fail, fixtureHash, verifiedExecution } from './evaluation.mjs'
+import { root, text, object, array, readJSON, scenario, fail, fixtureHash, verifiedExecution, explicitInvocation } from './evaluation.mjs'
 import { redactEvidence } from './evaluation-host.mjs'
 import { affectedScenarios } from './evaluation-impact.mjs'
 import { validateData } from '../../runtime/scripts/lib/schema.mjs'
@@ -60,9 +60,9 @@ async function compatibleEvidence(ledger, definitions, results, candidate) {
           run.agent !== run.adapter?.invocation?.agent || run.model !== run.adapter?.invocation?.model) fail(`Invalid contributing run: ${id}`)
       const current = JSON.parse(redactEvidence(JSON.stringify(definition), run))
       const stage = definition.checkpoints.at(-1)
-      const request = (row.mode === 'with' && definition.invocation === 'explicit' ? `${run.adapter.invocation.explicit}\n` : '') +
+      const request = (row.mode === 'with' && definition.invocation === 'explicit' ? `${explicitInvocation(run.adapter, definition)}\n` : '') +
         (['foundation', 'final'].includes(stage) ? `Active checkpoint: ${stage}.\n` : '') + current.request
-      const inputs = ['fixture', 'request', 'answers', 'checkpoints', 'invocation', 'mode', 'checks']
+      const inputs = ['fixture', 'skills', 'request', 'answers', 'checkpoints', 'invocation', 'mode', 'checks']
       if (run.fixture.name !== definition.fixture || row.fixtureHash !== fixtures.get(definition.fixture) || run.execution.recipeHash !== recipeHash ||
           row.criteriaHash !== hashBytes(canonicalJSON(definition.checks)) || run.stage !== stage || run.request !== request ||
           inputs.some(name => canonicalJSON(run.scenario[name] ?? null) !== canonicalJSON(current[name] ?? null)) ||
@@ -147,7 +147,7 @@ export async function releaseGate(opts, results) {
     const snapshot = spawnSync('git', ['show', `${source}:tests/eval/scenarios/scenarios.json`], { cwd: root, encoding: 'utf8' })
     if (snapshot.status !== 0) fail('Cannot verify the carried scenario definition.')
     const prior = JSON.parse(snapshot.stdout).scenarios.find(item => item.id === definition.id)
-    const inputs = ['fixture', 'request', 'answers', 'checkpoints', 'invocation', 'mode', 'checks']
+    const inputs = ['fixture', 'skills', 'request', 'answers', 'checkpoints', 'invocation', 'mode', 'checks']
     if (!prior || inputs.some(name => canonicalJSON(prior[name] ?? null) !== canonicalJSON(definition[name] ?? null))) {
       return 'Changed scenario inputs require a fresh measurement.'
     }
