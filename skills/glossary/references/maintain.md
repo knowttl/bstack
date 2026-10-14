@@ -12,10 +12,11 @@ Record the baseline, the current revision and the working-tree state, and preser
 
 ## What to collect
 
-List the files changed between the baseline and the current revision, and read the commit messages for the names the team used.
+Collect the union of files changed between the baseline and the current revision, staged changes, unstaged changes and untracked files, and read the commit messages for the names the team used.
+Use `git diff --name-only -z <baseline> HEAD`, `git diff --cached --name-only -z`, `git diff --name-only -z` and `git ls-files --others --exclude-standard -z` to build that inventory, preserving paths from the NUL-delimited output.
 Collect domain nouns from documentation headings and prose, public type, module and entity names, enumerated values, user-facing labels and API resource names in the changed files.
 Leave out frameworks, storage choices, helper names, build vocabulary and other implementation detail, and say why when a borderline name is dropped.
-Every candidate cites repo-relative `path:line` bound to the revision read, so `cite-check` can establish freshness.
+Every candidate cites repo-relative `path:line` with state kind `sha256` and the SHA-256 of the exact working-tree file bytes read, including uncommitted files, so `cite-check` can establish freshness.
 
 ## The three classes
 
@@ -36,7 +37,7 @@ A decision record that fixes the meaning is cited, and a conflict with it goes t
 
 Report exactly one outcome.
 
-- Clean: nothing changed in docs or code since the baseline, or every changed name is covered and consistent. Name the baseline and the files read.
+- Clean: the complete inventory has no committed changes since the baseline and no staged, unstaged or untracked changes in docs or code, or every changed name across that inventory is covered and consistent. Name the baseline and the files read.
 - Changed: the user selected edits, `apply` wrote them from a reviewed change set, and `docs check` was run again when the glossary is registered.
 - Blocked: a prerequisite is missing, such as a baseline, an answer the edit depends on or a working tree that changed under the plan. Name it and its fix.
 

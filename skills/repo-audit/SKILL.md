@@ -86,7 +86,7 @@ Done when: Every proposed foundation change supports an approved outcome, has a 
 ### Step 5: Review and apply selected changes
 
 Present the exact changes and findings for selection using the shared review and write rules below.
-Prepare a create-only change set following schemas/change-set.schema.json, including the VISION.md approved through `/vision`, the glossary confirmed through `/glossary` when useful and selected foundation with complete UTF-8 payloads and hashes.
+Prepare a create-only change set following schemas/change-set.schema.json, including the VISION.md approved through `/vision` and selected foundation with complete UTF-8 payloads and hashes.
 Use the resolved planned destination as the change set and findings target, with mode workspace and revision null.
 Prepare schemas/project-create.json in scratch, binding the creation plan to the change set digest and approved destination, stack, first journey, setup commands and prerequisites.
 Select an absent destination under an existing parent, or explicitly select an empty directory with allowEmpty true.
