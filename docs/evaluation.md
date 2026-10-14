@@ -13,12 +13,12 @@ See the [C26 current-agent checkpoint](../tests/eval/results/invocation-C26/summ
 
 `tests/eval/scenarios/scenarios.json` is version 1.
 Each scenario names a fixture registered by the existing builder, the skills it stages, an outcome request, an ordered answer script, allowed checkpoints, invocation mode and yes-or-no checks.
-The first listed skill is the one the opening request invokes, and a scenario can list more because a session follows one skill's checklist into the next.
+For explicit with-skill runs, the first listed skill is the one the opening request invokes, and a scenario can list more because a session follows one skill's checklist into the next.
 Each check has a unique ID, design acceptance ID, the skill it tests and a scoring question.
-The tested skill must be one the scenario stages and the skill that owns the acceptance case.
+The tested skill must be in the scenario's skill list and own the acceptance case, including in without-skill runs that stage none of them.
 The initial scenarios cover new ideas, ambiguous ideas, a seeded existing repo, clear goals and implicit invocation.
 Maintenance and representative-extension scenarios are defined before their later owning tasks use them.
-The maintenance checkpoint uses `ts-shop` and the [maintenance reference](../skills/maintenance/references/maintenance-contract.md), with no goal interview or full audit.
+The maintenance checkpoint uses the [maintenance reference](../skills/maintenance/references/maintenance-contract.md), with no goal interview or full audit; the [scenario registry](../tests/eval/scenarios/scenarios.json) names its maintained starting fixture.
 The T3a.7 fake-host procedure executes real collection, review binding, local standalone validation and a different-root clone with an empty home and cache.
 It preserves the seeded checkout failure and reports that limitation independently of passing maintained unit checks.
 Run `npm test -- --task T3a.7` for that procedure and the standalone checker controls.
@@ -149,7 +149,7 @@ npm run eval -- batch --batch <id>
 An optional comma-separated `--scenario` subset must stay within the selected tier.
 Each scenario owns its `tier` value, `smoke` or `full`; the full batch tier includes both values.
 The long `final-existing-repo`, `final-new-project` and `representative-extension` paths stay in the full tier only.
-The full tier also includes `selected-apply-verify`, the bounded apply half of the existing-repo path; `existing-repo` already covers its audit half.
+The full tier also includes `selected-apply-verify`, the bounded apply half of the existing-repo path; `existing-repo` covers the overview and selected downstream skill reviews.
 The smoke gate uses the release-model [final adapter](../tests/eval/adapters/codex-final.json).
 The [bulk adapter](../tests/eval/adapters/codex-bulk.json) configures cheaper full-tier repetitions.
 These adapter files own the model and effort for both opening and resumed turns; record the actual release model in the release notes.
@@ -240,7 +240,7 @@ Final requests explicitly name the active final checkpoint.
 `selected-apply-verify` starts from `selected-ts-shop`; the [fixture construction contract](fixtures.md) owns its seeded state.
 Its single scripted answer approves the exact generated protected-write diff; plan approval alone never approves those bytes.
 It covers AC-16, AC-28, AC-30, AC-54 and AC-61 without repeating the audit or claiming full-path evidence.
-Re-audit, extension and maintenance use separate fresh conversations on the resulting maintained fixture.
+Maintenance sweep, extension and per-change maintenance use separate fresh conversations on the resulting maintained fixture.
 Their declared `maintained-ts-shop` starting state follows the [fixture construction contract](fixtures.md), built afresh per run.
 The original intent and foundation scenarios retain their narrower approval scripts and are not full-path evidence.
 Final adapter follow-ups can pass `--repo <disposable-maintained-root>` to reuse an explicit fixture rather than rebuild its original defects.
@@ -449,7 +449,7 @@ node scripts/acceptance.mjs --check-registry
 
 `tests/acceptance/cases.json` registers every numbered design acceptance case with the skill it tests, an owner task, criterion source, evidence type and procedure.
 The skill is a `runtime/skills.json` entry, or `shared` for a case about the shared runtime, packaging or installer that automated tests prove and no scenario checks.
-A scenario check must name the skill that owns its case, so each case is graded in sessions that run its own skill.
+A scenario check must name the skill that owns its case; without-skill baselines grade the same checks without staging that skill.
 `docs/design.md#AC-N` is a logical locator for numbered case N under the design's Acceptance cases heading.
 `ownerTask` is a nonempty array of task IDs matching every assignment for that case in the implementation plan's procedure table.
 Evidence types are `automated`, `agent` or `manual`.
