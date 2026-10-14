@@ -1,7 +1,7 @@
 no_ci: true
 commands:
-  prepare: 'npm ci --prefer-offline --ignore-scripts && for p in skills/*/package.json; do npm ci --omit=dev --prefix "$(dirname "$p")" || exit "$?"; done && uv pip install --python python3 --no-python-downloads --prefix .cache/test-tools "ruff==0.14.0"'
-  test: 'PATH="$PWD/.cache/test-tools/bin:$PATH" node scripts/gate-test.mjs'
+  prepare: 'npm ci --prefer-offline --ignore-scripts && for p in skills/*/package.json; do npm ci --omit=dev --prefix "$(dirname "$p")" || exit "$?"; done'
+  test: 'node scripts/gate-test.mjs'
   lint: 'npm run check'
 document:
   instructions: |
