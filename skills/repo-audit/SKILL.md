@@ -75,6 +75,7 @@ Prefer native checks and one source of truth over duplicated prose or a second v
 Distinguish automated rules from judgement rules.
 Include setup, formatting, lint, applicable type checks and tests.
 Testing rules and the verification kit belong to `/verification create`: list it as a next step for the user to run, and do not draft testing guidance here.
+The root `AGENTS.md` of pointers belongs to `/agents-md`: list it as the last next step for the user to run, and do not draft it here.
 CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
 Avoid speculative frameworks, service layers, integrations and empty document templates.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
@@ -142,8 +143,8 @@ Get approval before checks that affect external systems or shared data.
 Record unavailable checks and inaccessible history as limitations, rather than inventing evidence.
 Use the shared research rules below for read-heavy work.
 Read the discovered sources before treating them as authoritative.
-Inspect instruction files only inside the selected repo, preserving distinct nested guidance and local variants.
-Instruction consolidation candidates require content review, a current host loading check and author approval before protected edits.
+Inspect instruction files only inside the selected repo, and do not inspect or report those outside it, including ancestor directories and user profiles.
+The root `AGENTS.md`, the merge of equivalent `CLAUDE.md` content into it and the audit of its pointers belong to `/agents-md`: list it as the last next step for the user to run, after the skills that write what it points at, and do not propose instruction-file edits here.
 Load the research briefs, run the relevant briefs, open each cited source and run `cite-check --repo <target> --report <file> --json` before relying on the report.
 Summarise documented intent, observed behaviour and inferred intent with checked citations and actual starting-check results before any question.
 Run `node scripts/repo-audit.mjs measure --repo <target> --range <base>..<head> --json` for revision-bound sizes, change frequency and co-change signals with supporting commits.
@@ -195,14 +196,10 @@ Done when: Every recommendation has a project-specific reason, evidence, princip
 
 Use the shared review and write rules, preserving existing runtime behaviour and uncommitted user work.
 Reuse authoritative documents and native configs instead of duplicating vision, vocabulary, design or standards.
-AGENTS.md holds pointers to the project's rules, evidence requirements and maintained check commands, not full copies of those sources.
 Apply only selected findings.
 Retain the user's selection and exact reviewed scope in scratch, then update the findings selections and prepare a change set following `schemas/change-set.schema.json`.
 Include original and proposed exact-byte hashes, resolved scope, findings digest and plan digest.
 Run `apply --repo <target> --plan <file> --dry-run` and present its complete diff before applying the unchanged approved plan without `--dry-run`.
-A selected root instruction merge retains equivalent repo-owned CLAUDE.md content in AGENTS.md and removes CLAUDE.md with a selected `delete` edit in that same plan.
-Report scoped and local repo instructions as inventory classified them and never modify them in this path.
-Retain the current host loading check and compatibility limits with the instruction proposal.
 Use `state show --repo <target> --run <run-id> --json` to inspect actual states after interruption, then resume the unchanged plan and rerun affected checks.
 
 Done when: Only the user's selected findings have been applied to the reviewed target and scope, with unchanged hash preconditions and recoverable originals, otherwise writes remain blocked.
@@ -282,7 +279,7 @@ If so, obtain stronger outcome evidence, keeping unavailable flows unverified.
 ## Write rules
 
 Plan, validate, then execute.
-Only apply makes project edits, including AGENTS.md, after the user approves each change.
+Only apply makes project edits after the user approves each change.
 Records outside the approved edit plan, including historical snapshots, assessments and portable records, must be proposed with their exact content and written only after their own exact approval; approval to complete verification or maintenance does not approve those additional edits.
 Do not bypass missing apply tooling with direct writes.
 Use the installed scripts/repo-audit.mjs entry point, run documented commands and read their output rather than script source.
@@ -299,13 +296,6 @@ For unsupported mechanical edits, propose a reviewed patch, validate it through 
 Use `replace-file` with complete reviewed UTF-8 content for unsupported mechanical edits, or `create` for an absent audit record.
 Repeat the unchanged plan to resume, and use `state show --run <returned-run-id>` with the explicit target to inspect actual file states and affected checks.
 User changes block remaining writes, and replacement is atomic per file where supported, never across the whole set.
-
-Preserve distinct scoped instructions.
-Propose consolidating equivalent repo-owned CLAUDE.md content, including an import stub, into the corresponding AGENTS.md only through reviewed protected edits.
-Report local variants inside the repo as possible shadowing, without modifying them.
-Do not inspect or report instruction files outside the selected repo, including ancestor directories and user profiles.
-Before proposing removal, check the current host's official loading documentation and available runtime, and state compatibility limits for sessions that read only CLAUDE.md.
-Do not flatten distinct nested guidance into root instructions.
 
 ## Research rules
 

@@ -367,6 +367,9 @@ An unrecognized glossary format reports a coverage limit while supported local l
 `node skills/glossary/scripts/glossary.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone glossary skill.
 It runs `docs check`, `apply`, `state show` and `cite-check` from the [shared runtime](../runtime/), with the same arguments, target, scratch and result contracts as repo-audit.
 
+`node skills/agents-md/scripts/agents-md.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone agents-md skill.
+It runs `inventory`, `apply` and `state show` from the shared runtime with those same contracts, and writes `AGENTS.md` and deletes a merged `CLAUDE.md` through one reviewed `apply` plan.
+
 ## Measure and overlap
 
 ```sh
@@ -523,7 +526,7 @@ Discovered sources require content review to establish authority.
 
 Root repo-owned `CLAUDE.md` yields a `merge-claude-instructions` candidate, including import-only stubs.
 Candidates carry `path`, `destination`, `scope`, `requiresEquivalentContent`, a review message and the design's Claude Code version limit.
-They require equivalent-content review, a fresh official documentation and runtime check, author approval and protected edits before removal.
+They require equivalent-content review, a fresh official documentation and runtime check, author approval and protected edits before removal, which the [agents-md skill](../skills/agents-md/SKILL.md#step-3-decide-the-merge) owns.
 Distinct nested guidance stays scoped and produces no root consolidation candidate.
 An exact-byte equivalent nested file or a lone import of the same scope's existing `AGENTS.md` yields only a candidate targeting that scope's `AGENTS.md`.
 Local variants inside the repo are possible shadowing reports with `modifiable: false`, never consolidation candidates.

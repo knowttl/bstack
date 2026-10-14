@@ -3,8 +3,8 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate; the remaining split pieces are pending.
-The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md) and [glossary](skills/glossary/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
-The installation below covers repo-audit, verification, vision and glossary; audit usage applies to repo-audit.
+The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md) and [agents-md](skills/agents-md/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
+The installation below covers repo-audit, verification, vision, glossary and agents-md; audit usage applies to repo-audit.
 
 This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, decisions, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
@@ -99,7 +99,7 @@ They cannot prove that an interview captured the user's goal, that a citation su
 Measurements cannot prove semantic independence or predict every merge conflict, and passing native checks prove only their defined constraints.
 Review and observed user journeys remain necessary; see the [design's machine-check limits](docs/design.md#what-machines-can-check).
 
-The [recorded instruction-loading limit](docs/design.md#reusable-guidance-for-future-changes) matters before consolidating repo-owned guidance into `AGENTS.md`.
+The [recorded instruction-loading limit](docs/design.md#reusable-guidance-for-future-changes) matters before the [agents-md skill](skills/agents-md/SKILL.md) consolidates repo-owned guidance into `AGENTS.md`.
 Claude Code reads it only when no `CLAUDE.md` or `CLAUDE.local.md` exists in the working directory or above it.
 Versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled can read only `CLAUDE.md`.
 Removing that file can therefore hide project instructions in those sessions.
@@ -407,7 +407,7 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Every command, shared library, schema, asset and shared reference has one source in [runtime/](runtime/), and [runtime/skills.json](runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
-[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md) and [skills/glossary](skills/glossary/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md), [skills/glossary](skills/glossary/SKILL.md) and [skills/agents-md](skills/agents-md/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 
 ```sh
@@ -479,7 +479,7 @@ Unavailable tools or unreadable history return blocked with named problems.
 Equivalent names such as `CONTRIBUTING.md` and `architecture.md` are recognised.
 Read the discovered files to establish which source is authoritative.
 Root `CLAUDE.md`, including import-only stubs, yields a consolidation candidate requiring content review and author approval.
-See the [existing-repo apply procedure](skills/repo-audit/SKILL.md#step-10-review-and-apply-selected-findings) for which instruction candidates this path can apply.
+repo-audit only reports it and lists `/agents-md`, which owns the [merge](skills/agents-md/SKILL.md#step-3-decide-the-merge).
 Local instruction variants inside the repo are possible shadowing sources and are never proposed for modification.
 Instruction files outside the repo, including ancestor directories and user profiles, are neither inspected nor reported.
 Claude Code versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in `AGENTS.md` plugin disabled may read only `CLAUDE.md`.
@@ -507,6 +507,10 @@ The [glossary skill](skills/glossary/SKILL.md) is started by the user in `create
 `create` finds, resolves and writes domain terms into `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per context, drafting a new idea on its first agreed term and flagging conflicts in an existing repo with citations.
 For an existing glossary, follow the skill's [maintain checklist](skills/glossary/SKILL.md#maintain-checklist) to review changed domain language.
 Both write only through `apply` after the user approves the exact bytes, never rename code, and run `docs check` on a registered glossary.
+
+The [agents-md skill](skills/agents-md/SKILL.md) is started by the user and creates or maintains one root `AGENTS.md` of one-line pointers to the project's rules, evidence requirements and check commands.
+It audits each pointer against the repo, merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked, keeps distinct nested instruction files, reports `CLAUDE.local.md` as possible shadowing without editing it, and reads nothing outside the repo.
+The glossary and vision skills each propose their own pointer line, following the shared [pointer contract](runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
 
 To exercise the read-only shared contract test from this checkout:
 
