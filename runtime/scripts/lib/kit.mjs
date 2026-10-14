@@ -4,6 +4,7 @@ import { isAbsolute, join, posix } from 'node:path'
 import { validateData } from './schema.mjs'
 import { inspectJSON } from './json.mjs'
 import { CommandError } from './result.mjs'
+import { pathGlob } from './glob.mjs'
 import schema from '../../schemas/kit-plan.json' with { type: 'json' }
 
 // Every generated file other than helpers lives at one of these kit-relative paths.
@@ -62,7 +63,7 @@ export function validateKitPlan(plan) {
   for (const [index, feature] of features.entries()) {
     if (ids.has(feature.id)) invalid('duplicate-feature', `Duplicate feature ID: ${feature.id}`, `$/features/${index}/id`)
     ids.add(feature.id)
-    for (const path of feature.sourcePaths) relativePath(path, `$/features/${index}/sourcePaths`)
+    for (const path of feature.sourcePaths) pathGlob(path)
     for (const step of feature.steps) {
       for (const artifact of step.artifacts ?? []) {
         relativePath(artifact, `$/features/${index}/steps`)

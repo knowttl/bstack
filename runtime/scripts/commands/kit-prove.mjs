@@ -105,7 +105,7 @@ async function launch(run, plan, values) {
   while (Date.now() < deadline) {
     const ready = output ? new RegExp(output).test(run.output.stdout + run.output.stderr)
       : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1000) }).then(response => response.ok, () => false)
-    if (run.finished && (run.exit !== 0 || !ready)) return failure('launch-exited', `The launch command exited before it was ready: ${(run.output.error ?? run.output.stderr).slice(-500)}`, 'Fix the launch command or its prerequisites; report a product blocker instead of editing product code.')
+    if ((run.exit !== null && run.exit !== 0) || (run.finished && !ready) || run.output.error) return failure('launch-exited', `The launch command exited before it was ready: ${(run.output.error ?? run.output.stderr).slice(-500)}`, 'Fix the launch command or its prerequisites; report a product blocker instead of editing product code.')
     if (ready) return
     await new Promise(done => setTimeout(done, 100))
   }
@@ -182,7 +182,7 @@ export async function run(options) {
     } finally {
       try {
         if (launched) {
-          if (launched.finished && launched.exit !== 0 && !problems.some(problem => problem.code === 'launch-exited')) problems.push(failure('launch-exited', `The launch command exited unsuccessfully: ${launched.exit}.`, 'Fix the launch command or report a product blocker.'))
+          if (((launched.exit !== null && launched.exit !== 0) || launched.output.error) && !problems.some(problem => problem.code === 'launch-exited')) problems.push(failure('launch-exited', `The launch command exited unsuccessfully: ${launched.exit}.`, 'Fix the launch command or report a product blocker.'))
           await terminate(launched)
         }
       } finally {
