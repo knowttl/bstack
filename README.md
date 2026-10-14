@@ -10,7 +10,7 @@ This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), i
 The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea or grilling for a material unresolved decision.
-These establish confirmed intent while keeping technical decisions in their existing sources, and repo-audit lists `/glossary` as a next step for unclear terms `/architecture` for boundaries, recorded decisions and design standards, and `/foundation` for the stack, scaffold and first journey instead of resolving them.
+These establish confirmed intent while keeping technical decisions in their existing sources; see the [repo-audit checklist](skills/repo-audit/SKILL.md#new-idea-path-checklist) for the skills the user runs next.
 Follow the [load-when table](skills/repo-audit/SKILL.md#load-when) for the enforcement reference when recommending checks.
 It provides project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
