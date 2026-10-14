@@ -1,14 +1,14 @@
-# Domain language
+# Glossary guide
 
-Resolve project terms alongside the intent interview or audit only where shared language needs clarification.
-Keep proposals in scratch until confirmed or selected, then use the main procedure's review-before-apply and protected write boundary for project edits.
+Resolve project terms only where shared language needs clarification.
+Keep proposals in scratch until confirmed or selected, then write through the review and write rules in the skill.
 
-## Discover the existing language and decisions
+## Discover the existing language
 
 Read the project's vocabulary source and relevant documents before asking naming questions.
 If a root GLOSSARY-MAP.md exists, use it to find only the context glossaries relevant to the topic.
 Otherwise read the root GLOSSARY.md when present, respecting an existing source with another name or location.
-Read relevant architecture decision records, or ADRs, including context-scoped decisions and the design's decision history.
+Read relevant architecture decision records, or ADRs, including context-scoped decisions and the design's decision history, only to find a decision that fixes a term's meaning.
 Missing glossary or ADR filenames are not readiness failures.
 Do not create empty documents or directories upfront.
 
@@ -28,12 +28,14 @@ Use concrete scenarios to test relationships and boundaries where unclear.
 Resolve prerequisites first, giving a recommendation and trade-off with each decision question.
 Group only independent questions into a small round and wait for answers.
 
-Capture resolved terms in the draft during the selected foundation session, without waiting for a second interview.
+Capture resolved terms in the draft as they are agreed, without waiting for a second interview.
 Glossary proposals remain drafts until confirmed or selected.
 Do not infer approval from silence or an interrupted session.
-Use confirmed vocabulary in module names, interfaces, findings and proposed changes.
 Do not rename code automatically to match a draft.
-Naming migrations are separate selected changes with their own scope and verification.
+Naming migrations are separate selected changes with their own scope and verification, and this skill does not make them.
+
+A conflict with an existing ADR or design decision is reported with its source and the reason for proposing reconsideration.
+The decision itself belongs to `/architecture`, so name it as a next step instead of writing or editing a decision record.
 
 ## Glossary format and contexts
 
@@ -53,12 +55,14 @@ The context that receives and tracks customer orders.
 
 **Order**:
 A customer's request for a set of products.
-_Avoid_: Purchase, transaction
+Avoid: Purchase, transaction
 
 **Customer**:
 A person or organisation that places orders.
-_Avoid_: Client, buyer
+Avoid: Client, buyer
 ```
+
+Write the avoided names as plain text, as above.
 
 A domain context is an area with its own meanings and responsibilities, such as ordering or billing.
 Use one root glossary for one context.
@@ -68,19 +72,13 @@ If the relevant context is unclear, ask before defining the term.
 A map lists each context, links to its glossary and explains the relationships between contexts using domain language.
 Keep technical integration choices in the design or decision records.
 
-## Keep decisions separate
+## Register the glossary for checks
 
-Surface a conflict with an existing ADR or design decision explicitly, with its source and the reason for proposing reconsideration.
-Use the project's established decision location and format.
-An existing design decision history can suffice.
-Offer a separate ADR only when the choice is hard to reverse, surprising without context and the result of a real trade-off.
-Do not create a record for every setup choice.
+`docs check` reads the project's contract, `.bstack/project.json` unless `--contract` names another repo-relative file, and checks only documents registered there.
+Register a glossary on its document record as `"glossary": { "context": "ordering", "format": "markdown-bold" }`, using `markdown-table` for a `| Term | Definition |` table.
+Give each context its own `context` value, because duplicate terms fail only within one context.
+A glossary in another format is a coverage limit, not a failure, and its existing bytes stay as they are.
+Only propose registration when the project already has a contract, as a separate selected `replace-file` edit of that file with its complete reviewed content, and follow `schemas/project.schema.json`.
+A project without a contract gets no new one from this skill, because registering documents and checks belongs to `/maintenance`.
 
-When no format exists and a separate ADR is selected, use docs/adr/ with sequential names such as 0001-slug.md.
-Inspect existing numbering and use the next number.
-Create the directory only through a selected write when a real decision needs recording.
-The minimal format is a short title followed by one to three sentences explaining the context, decision and why it was chosen.
-Add status, considered options or consequences only when they add useful context.
-Keep proposed decisions separate from accepted ones.
-
-Done when: Relevant terms have confirmed meanings or named unresolved decisions, drafts contain only domain concepts, and meaningful technical decisions remain in their appropriate sources with no unselected project writes.
+Done when: Relevant terms have confirmed meanings or named unresolved decisions, drafts contain only domain concepts, and no project write was made without selection.

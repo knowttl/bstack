@@ -3,14 +3,14 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate; the remaining split pieces are pending.
-The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification and [vision](skills/vision/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
-The installation below covers repo-audit, verification and vision; audit usage applies to repo-audit.
+The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md) and [glossary](skills/glossary/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
+The installation below covers repo-audit, verification, vision and glossary; audit usage applies to repo-audit.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, decisions, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
-Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
-These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
+Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or decisions guidance for a recorded decision.
+These establish confirmed intent while keeping technical decisions in their existing sources, and repo-audit lists `/glossary` as a next step for unclear terms instead of resolving them.
 Follow the [load-when table](skills/repo-audit/SKILL.md#load-when) for the enforcement and architecture references when recommending design principles, checks or module boundaries.
 These provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 The existing-repo audit and selected apply path are available.
@@ -407,7 +407,7 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Every command, shared library, schema, asset and shared reference has one source in [runtime/](runtime/), and [runtime/skills.json](runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
-[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md) and [skills/vision](skills/vision/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md) and [skills/glossary](skills/glossary/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 
 ```sh
@@ -501,7 +501,12 @@ Without web access, mark language and outside recommendations "not researched" w
 The [T2.1 discovery checkpoint](tests/eval/results/discovery-C11a/summary.md) records real main-thread and parallel subagent runs, citation checks, no-web limits and unchanged fixtures.
 
 The [vision skill](skills/vision/SKILL.md) is started by the user, interviews for purpose, users, success and non-goals, drafts `VISION.md` or a reviewed delta from evidence, stress-tests it on the review board, and writes it with `apply` only after the author approves the exact draft.
-It is the only skill with a pinned runtime, so `npm ci --omit=dev` runs for `skills/vision` alone and repo-audit and verification install without npm.
+It is the only skill with a pinned runtime, so `npm ci --omit=dev` runs for `skills/vision` alone and the other skills install without npm.
+
+The [glossary skill](skills/glossary/SKILL.md) is started by the user in `create` or `maintain` mode.
+`create` finds, resolves and writes domain terms into `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per context, drafting a new idea on its first agreed term and flagging conflicts in an existing repo with citations.
+For an existing glossary, follow the skill's [maintain checklist](skills/glossary/SKILL.md#maintain-checklist) to review changed domain language.
+Both write only through `apply` after the user approves the exact bytes, never rename code, and run `docs check` on a registered glossary.
 
 To exercise the read-only shared contract test from this checkout:
 
