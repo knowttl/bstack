@@ -267,14 +267,14 @@ async function installSkill(selected, skill, skills, decisions) {
     if (await exists(destination)) {
       if (!previous || previous.destination !== destination || previous.mode !== 'copy' || previous.schemaVersion !== 1) reject('blocked', 'unowned-collision', `Occupied unowned destination: ${destination}`, 'Preserve the existing folder and select an empty installation destination.')
       if ((await lstat(destination)).isSymbolicLink()) reject('blocked', 'unsupported-lifecycle', `Destination is a link: ${destination}`, 'Link lifecycle support is pending C25c.')
-      if (runtime === null && previous.runtime) reject('blocked', 'runtime-dropped', `The source no longer pins the runtime installed at ${destination}.`, 'Uninstall it with the release that installed it, then install this release.')
       entry.runtimeDecision = await legacyRuntimeDecision(entry, previous, runtimeVersion)
       if (entry.runtimeDecision && selected['adopt-runtime']?.includes(entry.runtimeDecision.value)) {
         entry.adoptRuntime = entry.runtimeDecision.value
         previous.runtime = entry.runtimeDecision.runtime
       }
       entry.previous = previous
-      let unchanged = !selected.uninstall && previous.sourceVersion === version && canonicalJSON(previous.files) === canonicalJSON(hashes)
+      let unchanged = !selected.uninstall && previous.sourceVersion === version && canonicalJSON(previous.files) === canonicalJSON(hashes) &&
+        (previous.runtime?.version ?? null) === runtime
       if (unchanged) {
         for (const [path, hash] of Object.entries(previous.files)) {
           const installedPath = join(destination, path)
@@ -309,7 +309,7 @@ async function installSkill(selected, skill, skills, decisions) {
     data.changes = (await Promise.all(destinations.map(async entry => entry.action === 'cleanup' || entry.action === 'no-op' ? [] : entry.action === 'resume' && entry.recovery.plan ? await previewRecovery(entry, runtimeVersion) : entry.plan ? [
       ...entry.plan.operations.map(operation => ({ action: operation.proposedHash === null ? 'remove' : 'replace', path: join(entry.destination, operation.path), hash: operation.proposedHash })),
       ...entry.plan.conflicts.map(conflict => ({ action: 'preserve', path: join(entry.destination, conflict.path) })),
-      ...(entry.plan.runtimeAllowed ? [{ action: selected.uninstall ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }] : [])
+      ...(entry.plan.runtimeAllowed ? [{ action: selected.uninstall || runtime === null ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }] : [])
     ] : [
       ...files.map(file => ({ action: 'copy', path: join(entry.destination, file.path), hash: file.hash })),
       ...(runtime === null ? [] : [{ action: 'runtime-install', path: join(entry.destination, 'node_modules'), version: runtime }]),

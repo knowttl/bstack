@@ -247,7 +247,7 @@ export async function previewRecovery(entry, runtimeVersion) {
       path: join(entry.destination, operation.path), hash: operation.proposedHash })
   }
   for (const conflict of journal.plan.conflicts) changes.push({ action: 'preserve', path: join(entry.destination, conflict.path) })
-  if (journal.plan.runtimeAllowed && (journal.plan.uninstall ? await exists(join(entry.destination, 'node_modules')) : !await runtimeVersion(entry.destination, journal.plan.runtime))) changes.push({ action: journal.plan.uninstall ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules') })
+  if (journal.plan.runtimeAllowed && (journal.plan.uninstall || journal.plan.runtime === null ? await exists(join(entry.destination, 'node_modules')) : !await runtimeVersion(entry.destination, journal.plan.runtime))) changes.push({ action: journal.plan.uninstall || journal.plan.runtime === null ? 'runtime-remove' : 'runtime-install', path: join(entry.destination, 'node_modules') })
   changes.push({ action: 'ownership', path: entry.ownership }, { action: 'journal-remove', path: entry.journal })
   return changes
 }
@@ -398,9 +398,9 @@ export async function planLifecycle(entry, files, version, runtime, selected) {
   const runtimePath = join(entry.destination, 'node_modules')
   let runtimeStat
   try { runtimeStat = await lstat(runtimePath) } catch (error) { if (error.code !== 'ENOENT') throw error }
-  // A skill that pins no runtime never touches the runtime directory.
-  const runtimeAllowed = runtime !== null && (!runtimeStat || await ownsRuntime(runtimePath, previous.runtime))
-  if (runtime !== null && !runtimeAllowed && (!selected.uninstall || previous.runtime?.created)) conflicts.push({ path: 'node_modules', actualHash: 'unowned-runtime', diff: 'Preserve runtime directory whose ownership or type cannot be verified.', decision: entry.runtimeDecision?.decision ?? 'Review runtime ownership before retrying.' })
+  const runtimeRequired = runtime !== null || Boolean(previous.runtime?.created)
+  const runtimeAllowed = runtimeRequired && (!runtimeStat || await ownsRuntime(runtimePath, previous.runtime))
+  if (runtimeRequired && !runtimeAllowed && (!selected.uninstall || previous.runtime?.created)) conflicts.push({ path: 'node_modules', actualHash: 'unowned-runtime', diff: 'Preserve runtime directory whose ownership or type cannot be verified.', decision: entry.runtimeDecision?.decision ?? 'Review runtime ownership before retrying.' })
   return { operations, conflicts, desired, version, runtime, uninstall: Boolean(selected.uninstall),
     runtimeAllowed }
 }
@@ -531,7 +531,7 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
     await verifyDestination(entry)
     const activatedRuntime = journal.stagedRuntime && { ...journal.stagedRuntime, path: target }
     if (current && !await ownsRuntime(target, runtime) && !(await ownsRuntime(target, activatedRuntime) && await runtimeVersion(entry.destination, journal.plan.runtime))) blocked('runtime-conflict', 'Runtime directory identity changed before activation.')
-    if (journal.plan.uninstall) {
+    if (journal.plan.uninstall || journal.plan.runtime === null) {
       if (current) await removeRuntime(entry, target, runtime, journal, 'runtimeRemoval', () => saveRecovery(entry.journal, journal))
       runtime = null
     } else if (!await runtimeVersion(entry.destination, journal.plan.runtime)) {

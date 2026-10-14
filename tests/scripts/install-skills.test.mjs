@@ -70,15 +70,16 @@ test('an unknown skill is a usage error that lists the available skills', async 
   assert.equal(await readdir(f.parent).catch(error => error.code), 'ENOENT')
 })
 
-test('an installed runtime that the source no longer pins blocks the update', async t => {
+test('an absent retired runtime clears its stale ownership on update', async t => {
   const f = await twoSkills(t)
   assert.equal(f.run(...f.args, '--skill', 'verification').status, 0)
   const ownership = join(f.parent, '.bstack-install-verification.json')
   const record = JSON.parse(await readFile(ownership, 'utf8'))
   await writeFile(ownership, JSON.stringify({ ...record, runtime: { path: join(f.parent, 'verification/node_modules'), created: true, version: '0.1.78' } }))
   const result = f.run(...f.args, '--skill', 'verification')
-  assert.equal(result.status, 2, result.stdout)
-  assert.equal(result.value.problems[0].code, 'runtime-dropped')
+  assert.equal(result.status, 0, result.stdout)
+  assert.equal(JSON.parse(await readFile(ownership, 'utf8')).runtime, null)
+  assert.equal(await lstat(join(f.parent, 'verification/node_modules')).catch(error => error.code), 'ENOENT')
 })
 
 test('the default selection resumes cleanup belonging to its later skill', async t => {
