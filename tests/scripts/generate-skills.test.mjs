@@ -16,7 +16,7 @@ const registry = `export const commands = {
 `
 const skills = {
   one: { commands: ['alpha'], schemas: ['plan.json'], assets: [] },
-  two: { commands: ['alpha', 'beta'], schemas: ['plan.json'], assets: ['pic.txt'] }
+  two: { commands: ['alpha', 'beta'], schemas: ['plan.json'], assets: ['pic.txt'], references: ['guide.md'] }
 }
 
 async function sandbox(t, files = {}) {
@@ -31,6 +31,7 @@ async function sandbox(t, files = {}) {
     'scripts/commands/beta.mjs': "export async function run() { return { data: { beta: true } } }\n",
     'schemas/plan.json': '{"title":"plan"}\n',
     'assets/pic.txt': 'picture\n',
+    'references/guide.md': '# Guide\n',
     'skills.json': JSON.stringify(skills),
     ...files
   }
@@ -88,13 +89,14 @@ test('check passes after generation and writes nothing', async t => {
   assert.equal(generate(directory).status, 0)
   const checked = generate(directory, '--check')
   assert.equal(checked.status, 0, checked.stderr)
-  assert.match(checked.stdout, /Checked 5 files in 2 skills/)
+  assert.match(checked.stdout, /Checked 6 files in 2 skills/)
 })
 
 for (const [name, mutate, message] of [
   ['edited entry file', directory => writeFile(join(directory, 'skills/one/scripts/one.mjs'), 'local edit'), /skills\/one\/scripts\/one\.mjs is stale/],
   ['removed schema copy', directory => rm(join(directory, 'skills/two/schemas/plan.json')), /skills\/two\/schemas\/plan\.json is missing/],
   ['edited asset copy', directory => writeFile(join(directory, 'skills/two/assets/pic.txt'), 'local edit'), /skills\/two\/assets\/pic\.txt is stale/],
+  ['edited reference copy', directory => writeFile(join(directory, 'skills/two/references/guide.md'), 'local edit'), /skills\/two\/references\/guide\.md is stale/],
   ['leftover schema', directory => writeFile(join(directory, 'skills/one/schemas/old.json'), '{}'), /skills\/one\/schemas\/old\.json is not listed for one/],
   ['leftover asset', directory => writeFile(join(directory, 'skills/two/assets/old.txt'), 'old'), /skills\/two\/assets\/old\.txt is not listed for two/]
 ]) {
@@ -109,6 +111,15 @@ for (const [name, mutate, message] of [
     assert.equal(generate(directory, '--check').status, 0)
   })
 }
+
+test('a skill keeps its own authored references beside the shared copies', async t => {
+  const directory = await sandbox(t)
+  assert.equal(generate(directory).status, 0)
+  await writeFile(join(directory, 'skills/two/references/own.md'), '# Own\n')
+  assert.equal(generate(directory, '--check').status, 0)
+  assert.equal(generate(directory).status, 0)
+  assert.equal(await readFile(join(directory, 'skills/two/references/own.md'), 'utf8'), '# Own\n')
+})
 
 test('editing one command makes only the skills that ship it stale', async t => {
   const directory = await sandbox(t)
