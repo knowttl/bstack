@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { copyFile, cp, mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises'
+import { copyFile, cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -9,6 +9,32 @@ import { parse } from 'yaml'
 
 // Install only the declared closure into a fresh checkout with an empty host home.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+
+test('gate prepare fails when an earlier skill runtime has no lockfile', async t => {
+  const directory = await mkdtemp(join(root, '.prepare-failure-'))
+  t.after(() => rm(directory, { recursive: true, force: true }))
+  const home = join(directory, 'home')
+  await mkdir(home)
+  const packageJson = { name: 'prepare-fixture', version: '1.0.0' }
+  const lock = { ...packageJson, lockfileVersion: 3, requires: true, packages: { '': packageJson } }
+  for (const folder of ['', 'skills/first', 'skills/last']) {
+    const path = join(directory, folder)
+    await mkdir(path, { recursive: true })
+    await writeFile(join(path, 'package.json'), JSON.stringify(packageJson))
+    await writeFile(join(path, 'package-lock.json'), JSON.stringify(lock))
+  }
+  const { NODE_TEST_CONTEXT, ...env } = process.env
+  const isolated = { ...env, HOME: home, USERPROFILE: home, XDG_CACHE_HOME: join(home, 'cache'), LOCALAPPDATA: join(home, 'cache'),
+    npm_config_cache: join(home, 'npm-cache'), npm_config_userconfig: join(home, 'npmrc') }
+  const config = parse(await readFile(join(root, '.no-mistakes.yaml'), 'utf8'))
+  const valid = spawnSync(config.commands.prepare, { cwd: directory, env: isolated, shell: true, encoding: 'utf8', timeout: 120000 })
+  assert.equal(valid.status, 0, valid.stderr + valid.stdout)
+  await rm(join(directory, 'skills/first/package-lock.json'))
+  const install = spawnSync(config.commands.prepare, { cwd: directory, env: isolated, shell: true, encoding: 'utf8', timeout: 120000 })
+  assert.equal(install.error, undefined)
+  assert.match(install.stderr, /EUSAGE/)
+  assert.notEqual(install.status, 0, install.stderr + install.stdout)
+})
 
 test('gate prepare installs both locks and runs the pinned runtime without global support skills', async t => {
   const directory = await mkdtemp(join(tmpdir(), 'bstack runtime '))
