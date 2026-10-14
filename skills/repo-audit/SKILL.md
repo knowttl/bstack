@@ -163,7 +163,7 @@ Done when: Every relevant evidence source is inventoried or listed as unavailabl
 Summarise the evidence and ask the owner about missing facts, conflicting intent or policy, and recorded decisions that conflict with a recommendation, only when they would change it.
 Each targeted question must cite the conflicting or insufficient sources, name the affected recommendation, offer the plausible readings and recommend one with its trade-off.
 Resolve parent decisions first, group only independent questions into a small round and wait for answers before dependent recommendations.
-Recording an unresolved decision or drafting definitions for later approval does not replace asking the question.
+Recording an unresolved decision does not replace asking the question.
 When the repo already answers the questions, proceed directly to recommendations without asking the user to repeat or reconfirm approved goals.
 Load interview or decisions guidance only for a corresponding gap.
 Keep the existing vision and design as the baseline.

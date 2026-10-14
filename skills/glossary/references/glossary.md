@@ -63,7 +63,6 @@ Avoid: Client, buyer
 ```
 
 Write the avoided names as plain text, as above.
-Emphasis, inline code and HTML anywhere in a document make `docs check` report a coverage limit and skip the whole document, so its terms and links go unchecked.
 
 A domain context is an area with its own meanings and responsibilities, such as ordering or billing.
 Use one root glossary for one context.

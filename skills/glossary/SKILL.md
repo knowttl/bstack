@@ -18,7 +18,7 @@ Use `create` when the project has no glossary or map and `maintain` when it has 
 Create finds, resolves and writes the project's domain terms.
 Maintain compares the glossary with the names in code and docs since its last review and proposes edits for what drifted.
 The glossary holds domain concepts only: no storage choices, frameworks, feature requirements, coding rules or implementation details.
-It writes `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per real context, and nothing else.
+It writes `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per real context; Step 4 also permits selected registration in an existing contract.
 Decision records, design sections and the vision belong to other skills, and a conflict with one is reported with its source.
 Neither mode renames code, edits product code or opens pull requests: a rename to match the glossary is a separate change the user selects and runs elsewhere.
 Return the written glossary to the project's chosen workflow instead of starting another skill.
