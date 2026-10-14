@@ -92,8 +92,9 @@ A new idea uses mode `workspace` with a null revision, and an existing repo uses
 Run `node scripts/vision.mjs apply --repo <target> --plan <file> --dry-run --json`, with `--workspace` for a new idea, present the exact diff, then run the unchanged plan without `--dry-run` only after the author approves those bytes.
 Use `state show` with the returned run ID to inspect an interrupted apply, and repeat the unchanged plan to resume.
 If an existing companion answers file holds approved reasoning, propose folding it into the vision and removing the file and its pointers as separate selected edits in the same plan.
+Propose one pointer line to the written vision as a separate selected edit in the same plan, following the [pointer guide](references/agents-pointer.md): `Check product changes against the purpose and non-goals in VISION.md.` with the file name as the link.
 
-Done when: Only the approved VISION.md has been written, with unchanged hash preconditions and a recoverable original, or the write remains blocked with its reason.
+Done when: Only the approved VISION.md, and any selected pointer, has been written, with unchanged hash preconditions and a recoverable original, or the write remains blocked with its reason.
 
 ### Step 6: Report
 
@@ -133,3 +134,4 @@ Never recursively search bundled reference or schema directories to discover gui
 | Recording citations for existing-repo evidence | `schemas/research-report.json` |
 | Preparing the board's proposals | `schemas/vision-proposals.json` |
 | Writing the approved vision | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
+| Adding the vision's `AGENTS.md` pointer | `references/agents-pointer.md` |

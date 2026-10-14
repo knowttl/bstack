@@ -87,7 +87,7 @@ export const commands = {
   inventory: {
     module: './commands/inventory.mjs',
     options: [],
-    help: 'Discover document sources and scoped instructions without writes.\nUsage: {entry} inventory --repo <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.'
+    help: 'Discover document sources and scoped instructions without writes.\nUsage: {entry} inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.'
   },
   measure: {
     module: './commands/measure.mjs',
