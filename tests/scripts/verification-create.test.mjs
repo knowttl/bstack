@@ -3,9 +3,10 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { connect } from 'node:net'
-import { mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, mkdtemp, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { parse } from 'yaml'
 import { build, git, runVerification } from './discovery-fixture.mjs'
 
 // The kit's helpers run inside the target, so they obey the target's own lint and format constraints.
@@ -230,8 +231,54 @@ for (const [exit, status] of [[0, 'passed'], [3, 'failed']]) {
     assert.equal(record.launch.stdout, 'ready\n')
     assert.equal(record.cleanup.exit, 0)
     assert.equal(record.cleanup.stdout, 'cleaned\n')
+    assert.equal(record.doctor?.exit ?? null, exit === 0 ? 0 : null)
   })
 }
+
+test('a launch whose readiness output arrives more than a second after the launcher exited successfully still reaches doctor', async t => {
+  const f = await setup(t, value => {
+    const late = 'import time; time.sleep(2); print("ready", flush=True)'
+    value.launch.command = ['python3', '-c', `import subprocess, sys; subprocess.Popen([sys.executable, "-c", '${late}'])`]
+    value.launch.ready = { output: 'ready' }
+    value.doctor.command = ['python3', '-c', 'print("healthy")']
+    value.features[0].steps = [{ label: 'Drive', command: ['python3', '-c', 'print("Hello, Ada!")'], expect: 'Hello, Ada!', match: 'Hello, Ada!' }]
+    value.cleanup.command = ['python3', '-c', 'print("cleaned")']
+  })
+  await createKit(f)
+  assert.equal(prove(f).status, 'passed')
+  const { record } = await evidenceRecord(f.repo)
+  assert.equal(record.launch.exit, 0)
+  assert.equal(record.launch.stdout, 'ready\n')
+  assert.equal(record.doctor.exit, 0)
+})
+
+test('a successful launcher with closed pipes still waits for URL readiness', async t => {
+  const f = await setup(t, value => {
+    value.launch.command = ['python3', '-c', 'import subprocess, sys; subprocess.Popen([sys.executable, "-m", "greeter.server", sys.argv[1]], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)', '{port}']
+  })
+  await createKit(f)
+  const result = prove(f)
+  assert.equal(result.status, 'passed', JSON.stringify(result))
+  const { record } = await evidenceRecord(f.repo)
+  assert.equal(record.launch.exit, 0)
+  assert.equal(record.doctor.exit, 0)
+  assert.equal(await closed(Number(record.doctor.command.at(-1).split(':').at(-1))), true)
+})
+
+test('proof rejects a failed launcher whose descendant holds its pipes open', async t => {
+  const f = await setup(t, value => {
+    value.launch.command = ['python3', '-c', 'import subprocess, sys; subprocess.Popen([sys.executable, "-c", "import signal; signal.pause()"]); print("ready", flush=True); sys.exit(3)']
+    value.launch.ready = { output: 'ready' }
+    value.doctor.command = ['python3', '-c', 'print("healthy")']
+    value.features[0].steps = [{ label: 'Drive', command: ['python3', '-c', 'print("Hello, Ada!")'], expect: 'Hello, Ada!', match: 'Hello, Ada!' }]
+  })
+  await createKit(f)
+  const result = prove(f)
+  assert.equal(result.status, 'failed', JSON.stringify(result))
+  assert.ok(result.problems.some(problem => problem.code === 'launch-exited'))
+  const { record } = await evidenceRecord(f.repo)
+  assert.equal(record.launch.exit, 3)
+})
 
 test('the generated feature recipe retains cwd, environment and required artifacts used by proof', async t => {
   const f = await setup(t, value => {
@@ -495,3 +542,342 @@ for (const fault of ['write', 'hash', 'cleanup']) {
     if (fault !== 'cleanup') assert.equal(await readFile(join(f.repo, 'cleanup-attempted'), 'utf8'), 'yes')
   })
 }
+
+test('maintain finds an unchanged kit clean and every mapped feature still passes', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  const checked = f.call('kit check', ['--app', 'greeter'])
+  assert.equal(checked.exit, 0, JSON.stringify(checked))
+  assert.deepEqual(checked.data.features, ['greeting'])
+  assert.equal(prove(f).status, 'passed')
+})
+
+for (const [name, drift, code, path] of [
+  ['a hand-edited feature file', f => writeFile(join(f.repo, kit, 'features/greeting.md'), 'Source paths: `elsewhere/**`\n'), 'file-drift', `${kit}/features/greeting.md`],
+  ['a deleted feature file', f => rm(join(f.repo, kit, 'features/greeting.md')), 'file-missing', `${kit}/features/greeting.md`],
+  ['a feature file the kit does not list', f => writeFile(join(f.repo, kit, 'features/stale.md'), '# Stale\n'), 'orphan-feature-file', `${kit}/features/stale.md`],
+  ['a helper changed by hand', f => writeFile(join(f.repo, kit, 'scripts/greet.py'), 'print("changed")\n'), 'file-drift', `${kit}/scripts/greet.py`],
+  ['a removed AGENTS.md pointer', f => writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n'), 'pointer-missing', 'AGENTS.md'],
+  ['a feature whose source moved', f => rename(join(f.repo, 'greeter'), join(f.repo, 'app')), 'source-path-missing', `${kit}/features/greeting.md`]
+]) {
+  test(`maintain flags ${name} as ${code}`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    await drift(f)
+    const checked = f.call('kit check', ['--app', 'greeter'])
+    assert.equal(checked.exit, 1, JSON.stringify(checked))
+    assert.deepEqual(checked.problems.map(({ code, path }) => ({ code, path })), [{ code, path }])
+  })
+}
+
+test('maintain locates the first differing line of a drifted feature file', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  const path = join(f.repo, kit, 'features/greeting.md')
+  await writeFile(path, (await readFile(path, 'utf8')).replace('A client requests', 'A client demands'))
+  assert.match(f.call('kit check', ['--app', 'greeter']).problems[0].message, /first at line 3\./)
+})
+
+test('a corrected plan updates the kit, removes the feature file it dropped and leaves maintain clean', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  const value = plan()
+  Object.assign(value.features[0], { id: 'hello', title: 'Hello', summary: 'A client requests a personal hello by name.' })
+  await writeFile(f.file, JSON.stringify(value))
+  const update = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.equal(update.exit, 0, JSON.stringify(update))
+  assert.deepEqual(update.data.files.toSorted(), [`${kit}/SKILL.md`, `${kit}/features/README.md`, `${kit}/features/greeting.md`, `${kit}/features/hello.md`, `${kit}/kit.json`].toSorted())
+  assert.equal(f.call('apply', ['--plan', update.data.path]).exit, 0)
+  assert.equal(await stat(join(f.repo, kit, 'features/greeting.md')).then(() => true, () => false), false)
+  assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+  assert.equal(f.call('kit prove', ['--app', 'greeter', '--feature', 'hello']).status, 'passed')
+})
+
+test('an update restores only the drifted file and proposes nothing once the kit is clean', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  await rm(join(f.repo, kit, 'features/greeting.md'))
+  const update = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.deepEqual(update.data.files, [`${kit}/features/greeting.md`])
+  const applied = f.call('apply', ['--plan', update.data.path])
+  assert.equal(applied.exit, 0, JSON.stringify(applied))
+  const clean = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.deepEqual({ exit: clean.exit, path: clean.data.path, files: clean.data.files }, { exit: 0, path: null, files: [] })
+})
+
+test('an update deletes dropped helpers and the disabled coverage gate', async t => {
+  const f = await setup(t, value => { value.coverageGate = true })
+  await createKit(f)
+  const value = plan()
+  value.helpers[0].path = 'scripts/health.py'
+  value.helpers.pop()
+  await writeFile(f.file, JSON.stringify(value))
+  const update = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.equal(update.exit, 0, JSON.stringify(update))
+  const changes = JSON.parse(await readFile(update.data.path, 'utf8'))
+  assert.deepEqual(changes.edits.filter(edit => edit.operation === 'delete').map(edit => edit.path), [
+    `${kit}/scripts/doctor.py`, `${kit}/scripts/greet.py`, `${kit}/scripts/map-coverage.mjs`
+  ])
+  assert.equal(f.call('apply', ['--plan', update.data.path]).exit, 0)
+  for (const name of ['doctor.py', 'greet.py', 'map-coverage.mjs']) {
+    assert.equal(await stat(join(f.repo, kit, 'scripts', name)).then(() => true, () => false), false)
+  }
+  assert.equal(await readFile(join(f.repo, kit, 'scripts/health.py'), 'utf8'), doctorHelper)
+  assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+})
+
+for (const sourcePath of ['./greeter', 'greeter/']) {
+  test(`an update repairs a previously accepted source declaration ${sourcePath}`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    const old = plan()
+    old.features[0].sourcePaths = [sourcePath]
+    await writeFile(join(f.repo, kit, 'kit.json'), JSON.stringify(old))
+    const value = plan()
+    value.features[0].sourcePaths = ['greeter']
+    value.helpers[0].path = 'scripts/health.py'
+    value.helpers[0].invocation = `python3 ${kit}/scripts/health.py <url>`
+    value.doctor.command[1] = `${kit}/scripts/health.py`
+    await writeFile(f.file, JSON.stringify(value))
+    const update = f.call('kit scaffold', ['--plan', f.file, '--update'])
+    assert.equal(update.exit, 0, JSON.stringify(update))
+    assert.equal(f.call('apply', ['--plan', update.data.path]).exit, 0)
+    assert.equal(await stat(join(f.repo, kit, 'scripts/doctor.py')).then(() => true, () => false), false)
+    assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+    assert.equal(prove(f).status, 'passed')
+  })
+}
+
+test('an update rejects unsafe managed paths in the previous plan', async t => {
+  const f = await setup(t)
+  await createKit(f)
+  const old = plan()
+  old.helpers[0].path = '../escape.py'
+  await writeFile(join(f.repo, kit, 'kit.json'), JSON.stringify(old))
+  const result = f.call('kit scaffold', ['--plan', f.file, '--update'])
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.equal(result.problems[0].code, 'unsafe-path')
+  assert.equal(result.data.path, undefined)
+})
+
+for (const [field, value, code] of [
+  ['sourcePaths', ['greeter/a`b.py'], 'invalid-source-path'],
+  ['sourcePaths', ['greeter/a\nb.py'], 'invalid-source-path'],
+  ['sourcePaths', ['greeter/a\rb.py'], 'invalid-source-path'],
+  ['title', 'Greeting\nSource paths: `elsewhere/**`', 'invalid-feature-metadata'],
+  ['summary', 'Greeting\rSource paths: `elsewhere/**`', 'invalid-feature-metadata'],
+  ['summary', 'Source paths: `elsewhere/**`', 'invalid-feature-metadata']
+]) {
+  test(`kit commands reject ambiguous feature ${field} ${JSON.stringify(value)}`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    const valuePlan = plan()
+    valuePlan.features[0][field] = value
+    await writeFile(f.file, JSON.stringify(valuePlan))
+    const scaffold = f.call('kit scaffold', ['--plan', f.file, '--update'])
+    assert.equal(scaffold.exit, 1, JSON.stringify(scaffold))
+    assert.equal(scaffold.problems[0].code, code)
+    await writeFile(join(f.repo, kit, 'kit.json'), JSON.stringify(valuePlan))
+    for (const result of [f.call('kit check', ['--app', 'greeter']), prove(f)]) {
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.equal(result.problems[0].code, code)
+    }
+    await writeFile(f.file, JSON.stringify(plan()))
+    const repair = f.call('kit scaffold', ['--plan', f.file, '--update'])
+    assert.equal(repair.exit, 0, JSON.stringify(repair))
+    assert.equal(f.call('apply', ['--plan', repair.data.path]).exit, 0)
+    assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+  })
+}
+
+for (const command of ['kit check', 'kit prove', 'kit scaffold']) {
+  test(`${command} rejects a plan copied from another app without touching that kit`, async t => {
+    const f = await setup(t)
+    await createKit(f)
+    const other = plan()
+    other.app = 'shop'
+    const otherFile = join(f.cache, 'shop-plan.json')
+    await writeFile(otherFile, JSON.stringify(other))
+    const scaffold = f.call('kit scaffold', ['--plan', otherFile])
+    assert.equal(scaffold.exit, 0, JSON.stringify(scaffold))
+    assert.equal(f.call('apply', ['--plan', scaffold.data.path]).exit, 0)
+    const otherKit = '.agents/skills/verify-shop'
+    assert.equal(f.call('kit check', ['--app', 'shop']).exit, 0)
+    const copied = await readFile(join(f.repo, otherKit, 'kit.json'), 'utf8')
+    await writeFile(join(f.repo, kit, 'kit.json'), copied)
+    const result = f.call(command, command === 'kit scaffold' ? ['--plan', f.file, '--update'] : ['--app', 'greeter', ...(command === 'kit prove' ? ['--feature', 'greeting'] : [])])
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'kit-app-mismatch')
+    assert.equal(result.data.path, undefined)
+    assert.equal(f.call('kit check', ['--app', 'shop']).exit, 0)
+    assert.equal(await readFile(join(f.repo, otherKit, 'kit.json'), 'utf8'), copied)
+  })
+}
+
+const author = ['-c', 'user.name=Test', '-c', 'user.email=test@example.com']
+
+function commit(f, message) {
+  git(f.repo, 'add', '-A')
+  git(f.repo, ...author, 'commit', '-q', '-m', message)
+}
+
+function coverage(f, base = 'main') {
+  const result = spawnSync(process.execPath, [join(f.repo, kit, 'scripts/map-coverage.mjs'), '--base', base], { cwd: f.repo, encoding: 'utf8' })
+  return { exit: result.status, stdout: result.stdout, stderr: result.stderr }
+}
+
+async function gatedBranch(t) {
+  const f = await setup(t, value => { value.coverageGate = true })
+  await createKit(f)
+  commit(f, 'add kit')
+  git(f.repo, 'checkout', '-q', '-b', 'change')
+  return f
+}
+
+const changeSource = f => appendFile(join(f.repo, 'greeter/greeting.py'), '\n')
+const changeFeatureFile = f => appendFile(join(f.repo, kit, 'features/greeting.md'), '\n')
+
+for (const [name, change, message, exit] of [
+  ['a mapped source change with no map update', changeSource, 'Change greeting', 1],
+  ['a mapped source change with its feature file updated', async f => { await changeSource(f); await changeFeatureFile(f) }, 'Change greeting', 0],
+  ['a mapped source change with a no-impact reason for that feature', changeSource, 'Change greeting\n\nNo-map-impact: greeting: internal rename only', 0],
+  ['a mapped source change with a no-impact reason for another feature', changeSource, 'Change greeting\n\nNo-map-impact: checkout: not this one', 1],
+  ['a mapped source change with an empty no-impact reason', changeSource, 'Change greeting\n\nNo-map-impact: greeting:', 1],
+  ['a deleted mapped source file', f => rm(join(f.repo, 'greeter/greeting.py')), 'Remove greeting', 1],
+  ['a change outside every feature', f => appendFile(join(f.repo, 'pyproject.toml'), '\n'), 'Tidy project metadata', 0]
+]) {
+  test(`the coverage gate exits ${exit} for ${name}`, async t => {
+    const f = await gatedBranch(t)
+    await change(f)
+    commit(f, message)
+    const result = coverage(f)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+    if (exit === 1) assert.match(result.stdout, new RegExp(`^${kit}/features/greeting\\.md: feature-map-coverage: greeter/greeting\\.py changed without updating this feature file`))
+  })
+}
+
+test('the coverage gate counts a mapped source change that is not committed yet', async t => {
+  const f = await gatedBranch(t)
+  await changeSource(f)
+  assert.equal(coverage(f).exit, 1)
+})
+
+for (const sourcePath of ['greeter/?.py', 'greeter/🧪.py', 'greeter/*/?.py', 'greeter/**/?.py']) {
+  test(`kit check and coverage agree on Unicode source path ${sourcePath}`, async t => {
+    const f = await setup(t, value => {
+      value.coverageGate = true
+      value.features[0].sourcePaths = [sourcePath]
+    })
+    const directory = join(f.repo, 'greeter', '🧪')
+    await mkdir(directory)
+    await writeFile(join(f.repo, 'greeter/🧪.py'), 'value = 1\n')
+    await writeFile(join(directory, '🧪.py'), 'value = 1\n')
+    await createKit(f)
+    assert.equal(f.call('kit check', ['--app', 'greeter']).exit, 0)
+    commit(f, 'Add Unicode source and kit')
+    git(f.repo, 'checkout', '-q', '-b', 'change')
+    await appendFile(join(f.repo, 'greeter/🧪.py'), 'value = 2\n')
+    await appendFile(join(directory, '🧪.py'), 'value = 2\n')
+    const result = coverage(f)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+  })
+}
+
+test('coverage matches Unicode line separators within recursive source globs', async t => {
+  const f = await gatedBranch(t)
+  const path = join(f.repo, 'greeter', '\u2028.py')
+  await writeFile(path, 'value = 1\n')
+  const result = coverage(f)
+  assert.equal(result.exit, 1, JSON.stringify(result))
+})
+
+for (const declaration of [
+  'Source paths: `greeter/a`b.py`',
+  'Source paths: `greeter/a\nb.py`',
+  'Source paths: `greeter/a\rb.py`',
+  'Source paths: `elsewhere/**`\nSource paths: `greeter/**`',
+  'Source paths: `greeter/**`, missing',
+  'Source paths: `greeter/**` trailing text'
+]) {
+  test(`coverage rejects ambiguous declarations ${JSON.stringify(declaration)}`, async t => {
+    const f = await gatedBranch(t)
+    await writeFile(join(f.repo, kit, 'features/greeting.md'), `${declaration}\n`)
+    commit(f, 'Change feature metadata')
+    await changeSource(f)
+    const result = coverage(f)
+    assert.equal(result.exit, 2, JSON.stringify(result))
+    assert.match(result.stderr, /exactly one complete/)
+  })
+}
+
+test('coverage accepts complete declarations with spaces, commas and CRLF', async t => {
+  const f = await setup(t, value => {
+    value.coverageGate = true
+    value.features[0].sourcePaths = ['greeter/a,b.py', 'greeter/a b.py']
+  })
+  await writeFile(join(f.repo, 'greeter/a,b.py'), 'value = 1\n')
+  await writeFile(join(f.repo, 'greeter/a b.py'), 'value = 1\n')
+  await createKit(f)
+  const feature = join(f.repo, kit, 'features/greeting.md')
+  await writeFile(feature, (await readFile(feature, 'utf8')).replaceAll('\n', '\r\n'))
+  commit(f, 'Add source paths with punctuation')
+  git(f.repo, 'checkout', '-q', '-b', 'change')
+  await appendFile(join(f.repo, 'greeter/a,b.py'), 'value = 2\n')
+  assert.equal(coverage(f).exit, 1)
+})
+
+for (const layer of ['committed', 'staged']) {
+  test(`the coverage gate retains ${layer} changes reversed in another layer`, async t => {
+    const f = await gatedBranch(t)
+    await changeSource(f)
+    git(f.repo, 'add', 'greeter/greeting.py')
+    if (layer === 'committed') commit(f, 'Change greeting')
+    git(f.repo, 'restore', '--source=main', '--worktree', 'greeter/greeting.py')
+    if (layer === 'committed') git(f.repo, 'add', 'greeter/greeting.py')
+    assert.equal(coverage(f).exit, 1)
+  })
+}
+
+test('the coverage gate retains a staged feature update reversed in the worktree', async t => {
+  const f = await gatedBranch(t)
+  await changeSource(f)
+  await changeFeatureFile(f)
+  git(f.repo, 'add', `${kit}/features/greeting.md`)
+  git(f.repo, 'restore', '--source=HEAD', '--worktree', `${kit}/features/greeting.md`)
+  assert.equal(coverage(f).exit, 0)
+})
+
+for (const sourcePath of ['./greeter', 'greeter/', '/greeter', 'greeter\\greeting.py', 'greeter/**x', 'greeter/[ab]']) {
+  test(`scaffold and coverage reject the noncanonical source path ${sourcePath}`, async t => {
+    const f = await gatedBranch(t)
+    const value = plan()
+    value.features[0].sourcePaths = [sourcePath]
+    await writeFile(f.file, JSON.stringify(value))
+    const result = f.call('kit scaffold', ['--plan', f.file, '--update'])
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'invalid-glob')
+    await writeFile(join(f.repo, kit, 'features/greeting.md'), `Source paths: \`${sourcePath}\`\n`)
+    const gate = coverage(f)
+    assert.equal(gate.exit, 2, JSON.stringify(gate))
+    assert.match(gate.stderr, /Invalid source path:/)
+  })
+}
+
+test('the gate command in the proposed wiring runs the generated script and fails an uncovered change', async t => {
+  const reference = await readFile(new URL('../../skills/verification/references/no-mistakes.md', import.meta.url), 'utf8')
+  const [gate] = parse(/```yaml\n([\s\S]*?)```/.exec(reference)[1]).gates
+  assert.equal(gate.after, 'document')
+  const f = await gatedBranch(t)
+  const command = gate.command.replaceAll('verify-shop', 'verify-greeter').replaceAll('origin/main', 'main')
+  const run = () => spawnSync('sh', ['-c', command], { cwd: f.repo, encoding: 'utf8' }).status
+  assert.equal(run(), 0)
+  await changeSource(f)
+  assert.equal(run(), 1)
+})
+
+test('the coverage gate reports an unresolvable base as an error, not a pass', async t => {
+  const f = await gatedBranch(t)
+  const result = coverage(f, 'origin/missing')
+  assert.equal(result.exit, 2)
+  assert.match(result.stderr, /^feature-map-coverage: /)
+})

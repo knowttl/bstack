@@ -60,7 +60,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -2668,12 +2668,14 @@ async function run7(options) {
 }
 
 // runtime/scripts/commands/kit-scaffold.mjs
-import { readFile as readFile11, writeFile as writeFile6 } from "node:fs/promises";
-import { join as join12 } from "node:path";
+import { readdir as readdir4, readFile as readFile12, writeFile as writeFile6 } from "node:fs/promises";
+import { join as join13 } from "node:path";
 import { spawnSync as spawnSync5 } from "node:child_process";
 
 // runtime/scripts/lib/kit.mjs
-import { isAbsolute as isAbsolute3, posix as posix2 } from "node:path";
+import { readFileSync } from "node:fs";
+import { readFile as readFile11 } from "node:fs/promises";
+import { isAbsolute as isAbsolute3, join as join12, posix as posix2 } from "node:path";
 
 // runtime/schemas/kit-plan.json
 var kit_plan_default = {
@@ -2749,6 +2751,7 @@ var kit_plan_default = {
         notes: { type: "array", minItems: 1, items: { type: "string", minLength: 1, pattern: "\\S" } }
       }
     },
+    coverageGate: { type: "boolean" },
     helpers: {
       type: "array",
       items: {
@@ -2816,6 +2819,7 @@ var kit_plan_default = {
 };
 
 // runtime/scripts/lib/kit.mjs
+var gatePath = posix2.join("scripts", "map-coverage.mjs");
 var reservedPaths = ["SKILL.md", "kit.json", "features/README.md"];
 var defaultReadySeconds = 30;
 var entryContract = [
@@ -2839,7 +2843,7 @@ function relativePath(value, path) {
 function kitDirectory(app) {
   return `.agents/skills/verify-${app}`;
 }
-function validateKitPlan(plan) {
+function validateKitPlan(plan, { forUpdate = false } = {}) {
   validateData(kit_plan_default, plan);
   const { launch: launch2, evidence, helpers, features } = plan;
   if (Object.keys(launch2.ready).length !== 1 || !(launch2.ready.url ?? launch2.ready.output)) invalid2("invalid-ready", "Declare exactly one of ready.url or ready.output.", "$/launch/ready");
@@ -2861,14 +2865,25 @@ function validateKitPlan(plan) {
   for (const [index, helper] of helpers.entries()) {
     relativePath(helper.path, `$/helpers/${index}/path`);
     const normalized = posix2.normalize(helper.path);
-    if (reservedPaths.includes(normalized) || normalized.startsWith("features/") || helperPaths.has(normalized)) invalid2("helper-collision", `Helper path collides with another kit file: ${helper.path}`, `$/helpers/${index}/path`);
+    if (reservedPaths.includes(normalized) || normalized.startsWith("features/") || helperPaths.has(normalized) || plan.coverageGate && normalized === gatePath) invalid2("helper-collision", `Helper path collides with another kit file: ${helper.path}`, `$/helpers/${index}/path`);
     helperPaths.add(normalized);
   }
   const ids = /* @__PURE__ */ new Set();
   for (const [index, feature] of features.entries()) {
     if (ids.has(feature.id)) invalid2("duplicate-feature", `Duplicate feature ID: ${feature.id}`, `$/features/${index}/id`);
     ids.add(feature.id);
-    for (const path of feature.sourcePaths) relativePath(path, `$/features/${index}/sourcePaths`);
+    if (!forUpdate) {
+      for (const field of ["title", "summary"]) {
+        if (/[\r\n]/u.test(feature[field]) || field === "summary" && feature[field].startsWith("Source paths:")) invalid2("invalid-feature-metadata", `Feature ${field} must be one line and cannot shadow the source declaration.`, `$/features/${index}/${field}`);
+      }
+    }
+    for (const path of feature.sourcePaths) {
+      if (forUpdate) relativePath(path, `$/features/${index}/sourcePaths`);
+      else {
+        if (/[`\r\n]/u.test(path)) invalid2("invalid-source-path", "Source paths cannot contain backticks or line breaks.", `$/features/${index}/sourcePaths`);
+        pathGlob(path);
+      }
+    }
     for (const step of feature.steps) {
       for (const artifact of step.artifacts ?? []) {
         relativePath(artifact, `$/features/${index}/steps`);
@@ -2885,6 +2900,18 @@ function validateKitPlan(plan) {
   }
   return plan;
 }
+async function readKitPlan(root, app, options) {
+  let plan;
+  try {
+    plan = inspectJSON(await readFile11(join12(root, kitDirectory(app), "kit.json"), "utf8")).value;
+  } catch (error) {
+    if (error instanceof CommandError) throw error;
+    throw new CommandError("blocked", [{ code: "kit-unavailable", message: `No readable kit at ${kitDirectory(app)}/kit.json.`, fix: "Apply the scaffolded kit first." }]);
+  }
+  validateKitPlan(plan, options);
+  if (plan.app !== app) throw new CommandError("failed", [{ code: "kit-app-mismatch", path: `${kitDirectory(app)}/kit.json`, message: `Requested kit ${app} contains a plan for ${plan.app}.`, fix: `Restore kit.json for ${app} before checking, proving or updating this kit.` }]);
+  return plan;
+}
 function readySeconds(plan) {
   return plan.launch.timeoutSeconds ?? defaultReadySeconds;
 }
@@ -2899,7 +2926,7 @@ function bullets(items) {
 }
 function commandLines(label, spec) {
   const command = shown(spec.command);
-  const fence = "~".repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map((run11) => run11.length + 1)));
+  const fence = "~".repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map((run12) => run12.length + 1)));
   return [
     `${label}${spec.cwd ? ` from \`${spec.cwd}\`` : ""}:`,
     "",
@@ -2909,8 +2936,17 @@ function commandLines(label, spec) {
     ...spec.env ? [`Environment: ${Object.entries(spec.env).map(([key, value]) => `\`${key}=${value}\``).join(", ")}.`] : []
   ];
 }
+function documentedHelpers(plan) {
+  const gate = {
+    path: gatePath,
+    purpose: "Fail when a change touches a feature's source paths without updating its feature file or recording a no-impact reason.",
+    invocation: `node ${kitDirectory(plan.app)}/${gatePath} --base origin/<default branch>`
+  };
+  return plan.coverageGate ? [...plan.helpers, gate] : plan.helpers;
+}
 function skillDocument(plan) {
-  const { app, launch: launch2, doctor, drive, evidence, cleanup, helpers, features } = plan;
+  const { app, launch: launch2, doctor, drive, evidence, cleanup, features } = plan;
+  const helpers = documentedHelpers(plan);
   const ready = launch2.ready.url ? `a request to \`${launch2.ready.url}\` succeeds` : `output matching \`${launch2.ready.output}\` appears`;
   return [
     "---",
@@ -3051,8 +3087,12 @@ function kitFiles(plan) {
 ` },
     { path: `${kit}/features/README.md`, content: indexDocument(plan) },
     ...plan.features.map((feature) => ({ path: `${kit}/features/${feature.id}.md`, content: featureDocument(plan, feature) })),
-    ...plan.helpers.map((helper) => ({ path: `${kit}/${posix2.normalize(helper.path)}`, content: helper.content }))
+    ...plan.helpers.map((helper) => ({ path: `${kit}/${posix2.normalize(helper.path)}`, content: helper.content })),
+    ...plan.coverageGate ? [{ path: `${kit}/${gatePath}`, content: readFileSync(new URL("../assets/map-coverage.mjs", import.meta.url), "utf8") }] : []
   ];
+}
+function managedFiles(plan) {
+  return [...kitFiles(plan), { path: `.claude/skills/verify-${plan.app}/SKILL.md`, content: pointerDocument(plan) }];
 }
 
 // runtime/scripts/commands/kit-scaffold.mjs
@@ -3060,83 +3100,116 @@ async function original(path) {
   const bytes = await fileBytes(path);
   return bytes === null ? null : bytes.toString("utf8");
 }
+function createFinding(plan, kit, scope) {
+  return {
+    id: "F-001",
+    problem: "The project has no scripted way to launch and drive the real product and prove a change on it.",
+    files: [`${kit}/kit.json`],
+    command: null,
+    principle: "P2 Every project keeps one verification kit: a stable driver plus a feature map of how a user reaches each feature.",
+    consequence: "Agents cannot show that a change works for a user, so completion rests on unit tests and summaries.",
+    fix: `Add the kit at ${kit}/, with thin pointers for Claude Code and AGENTS.md.`,
+    scope,
+    verification: "Prove the applied kit once with kit prove: launch, doctor, drive one feature, keep the evidence through cleanup.",
+    blocksNextChange: false,
+    category: "missing-protection",
+    status: "selected",
+    newPrinciple: false,
+    resolved: false,
+    sourceIds: ["kit-plan"]
+  };
+}
+function updateFinding(plan, kit, scope) {
+  return {
+    id: "F-001",
+    problem: `The verify-${plan.app} kit files disagree with kit.json or lack files the plan requires.`,
+    files: [scope[0]],
+    command: null,
+    principle: "P2 Every project keeps one verification kit: a stable driver plus a feature map of how a user reaches each feature.",
+    consequence: "Agents following the kit would drive the product from stale or hand-edited instructions and miss features.",
+    fix: `Regenerate the differing kit files at ${kit}/ from the reviewed plan.`,
+    scope,
+    verification: "Run kit check to confirm no drift remains, then kit prove for every changed feature.",
+    blocksNextChange: false,
+    category: "debt",
+    status: "selected",
+    newPrinciple: false,
+    resolved: false,
+    sourceIds: ["kit-plan"]
+  };
+}
 async function run8(options) {
   if (!options.plan) throw new CommandError("usage-error", [{ code: "missing-plan", message: "--plan is required.", fix: "Supply a kit plan following schemas/kit-plan.json." }]);
   const target = await resolveTarget(options);
   let plan;
   try {
-    plan = inspectJSON(await readFile11(options.plan, "utf8")).value;
+    plan = inspectJSON(await readFile12(options.plan, "utf8")).value;
   } catch (error) {
     if (error instanceof CommandError) throw error;
     throw new CommandError("failed", [{ code: "invalid-input", message: "The kit plan must be readable JSON.", path: options.plan, fix: "Supply a kit plan following schemas/kit-plan.json." }]);
   }
   validateKitPlan(plan);
+  const update = options.update === true;
   const kit = kitDirectory(plan.app);
-  const pointerPath = `.claude/skills/verify-${plan.app}/SKILL.md`;
-  const proposals = [...kitFiles(plan), { path: pointerPath, content: pointerDocument(plan) }].map((file) => ({
-    path: file.path,
-    operation: "create",
-    payload: { content: file.content }
-  }));
-  const pointer = agentsPointer(plan);
-  const agents = await original(join12(target.root, "AGENTS.md"));
-  proposals.push(agents === null ? { path: "AGENTS.md", operation: "create", payload: { content: `# Agent instructions
-
-${pointer}
-` } } : { path: "AGENTS.md", operation: "append-line-once", payload: { line: pointer } });
+  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app, { forUpdate: true }) : null;
   const edits = [];
   const reviewedScope = [];
-  for (const [index, proposal] of proposals.entries()) {
-    const resolvedPath = await resolveFilePath(target.root, proposal.path);
+  async function stage(path2, operation, payload) {
+    const resolvedPath = await resolveFilePath(target.root, path2);
     const before = await original(resolvedPath);
-    if (proposal.operation === "create" && before !== null) {
+    if (operation === "create" && before !== null && !update) {
       throw new CommandError("blocked", [{
         code: "kit-exists",
-        message: `${proposal.path} already exists.`,
-        path: proposal.path,
-        fix: proposal.path.startsWith(kit) ? "Run maintain on the existing kit instead of creating another." : "Move the existing file aside or choose another app name."
+        message: `${path2} already exists.`,
+        path: path2,
+        fix: path2.startsWith(kit) ? "Run maintain on the existing kit instead of creating another, or pass --update to correct it." : "Move the existing file aside or choose another app name."
       }]);
     }
-    const proposedContent = proposedEdit(proposal, before);
+    const proposedContent = proposedEdit({ path: path2, operation, payload }, before);
+    if (update && proposedContent === before) return;
     edits.push({
-      id: `E-${String(index + 1).padStart(3, "0")}`,
+      id: `E-${String(edits.length + 1).padStart(3, "0")}`,
       findingId: "F-001",
-      path: proposal.path,
+      path: path2,
       originalHash: before === null ? null : hashBytes(Buffer.from(before)),
-      proposedHash: hashBytes(Buffer.from(proposedContent)),
-      operation: proposal.operation,
-      payload: proposal.payload,
+      proposedHash: proposedContent === null ? null : hashBytes(Buffer.from(proposedContent)),
+      operation,
+      payload,
       proposedContent,
-      diff: exactDiff(proposal.path, before, proposedContent)
+      diff: exactDiff(path2, before, proposedContent)
     });
-    reviewedScope.push({ path: proposal.path, resolvedPath });
+    reviewedScope.push({ path: path2, resolvedPath });
   }
+  const managed = managedFiles(plan);
+  for (const file of managed) {
+    const exists = await original(await resolveFilePath(target.root, file.path)) !== null;
+    await stage(file.path, update && exists ? "replace-file" : "create", { content: file.content });
+  }
+  const pointer = agentsPointer(plan);
+  const agents = await original(join13(target.root, "AGENTS.md"));
+  if (agents === null) await stage("AGENTS.md", "create", { content: `# Agent instructions
+
+${pointer}
+` });
+  else await stage("AGENTS.md", "append-line-once", { line: pointer });
+  if (update) {
+    const known = new Set(managed.map((file) => file.path));
+    const present = await readdir4(join13(target.root, kit, "features")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+    const obsolete = /* @__PURE__ */ new Set([...previous ? managedFiles(previous).map((file) => file.path) : [], ...present.map((name) => `${kit}/features/${name}`)]);
+    for (const path2 of [...obsolete].sort()) if (!known.has(path2) && await original(await resolveFilePath(target.root, path2)) !== null) await stage(path2, "delete", {});
+  }
+  if (!edits.length) return { inputs: { target, plan: options.plan }, data: { path: null, planDigest: null, files: [], diff: "" } };
   const head = spawnSync5("git", ["-C", target.root, "rev-parse", "--verify", "HEAD"], { encoding: "utf8", env: { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 } });
   const revision = head.status === 0 ? head.stdout.trim() : null;
+  const scope = reviewedScope.map((entry) => entry.path);
   const findings = {
     schemaVersion: 1,
     stage: "audit",
     target: { mode: "repo", root: target.root, revision },
-    nextChange: `Create the verify-${plan.app} verification kit`,
-    reviewedScope: reviewedScope.map((entry) => entry.path),
+    nextChange: `${update ? "Correct" : "Create"} the verify-${plan.app} verification kit`,
+    reviewedScope: scope,
     sources: [{ id: "kit-plan", pointer: `${kit}/kit.json:1`, intent: "observed", summary: plan.description }],
-    findings: [{
-      id: "F-001",
-      problem: "The project has no scripted way to launch and drive the real product and prove a change on it.",
-      files: [`${kit}/kit.json`],
-      command: null,
-      principle: "P2 Every project keeps one verification kit: a stable driver plus a feature map of how a user reaches each feature.",
-      consequence: "Agents cannot show that a change works for a user, so completion rests on unit tests and summaries.",
-      fix: `Add the kit at ${kit}/, with thin pointers for Claude Code and AGENTS.md.`,
-      scope: reviewedScope.map((entry) => entry.path),
-      verification: "Prove the applied kit once with kit prove: launch, doctor, drive one feature, keep the evidence through cleanup.",
-      blocksNextChange: false,
-      category: "missing-protection",
-      status: "selected",
-      newPrinciple: false,
-      resolved: false,
-      sourceIds: ["kit-plan"]
-    }],
+    findings: [(update ? updateFinding : createFinding)(plan, kit, scope)],
     selectedFindingIds: ["F-001"],
     requiredOutcomes: ["starting-checks", "kit-proof"],
     execution: [],
@@ -3153,21 +3226,75 @@ ${pointer}
   };
   changeSet.planDigest = hashBytes(canonicalJSON(changeSet));
   const directory = await createScratch(target);
-  await writeFile6(join12(directory, "findings.json"), `${JSON.stringify(findings, null, 2)}
+  await writeFile6(join13(directory, "findings.json"), `${JSON.stringify(findings, null, 2)}
 `);
-  const path = join12(directory, "change-set.json");
+  const path = join13(directory, "change-set.json");
   await writeFile6(path, `${JSON.stringify(changeSet, null, 2)}
 `);
   return { inputs: { target, plan: options.plan }, data: { path, planDigest: changeSet.planDigest, files: edits.map((edit) => edit.path), diff: edits.map((edit) => edit.diff).join("") } };
 }
 
+// runtime/scripts/commands/kit-check.mjs
+import { readdir as readdir5, readFile as readFile13 } from "node:fs/promises";
+import { join as join14 } from "node:path";
+var repair = "If the product changed, edit the kit plan and run kit scaffold --update; if the file was edited by hand, restore it the same way, then re-drive the feature with kit prove.";
+async function readIfPresent(root, path) {
+  return readFile13(await resolveFilePath(root, path), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
+}
+function firstDifference(expected, actual) {
+  const wanted = expected.split("\n");
+  const found = actual.split("\n");
+  return wanted.findIndex((line, index) => line !== found[index]) + 1 || wanted.length + 1;
+}
+async function run9(options) {
+  if (!options.app) throw new CommandError("usage-error", [{ code: "missing-option", message: "--app is required.", fix: "Supply --app <name>." }]);
+  const target = await resolveTarget(options);
+  const plan = await readKitPlan(target.root, options.app);
+  const kit = kitDirectory(plan.app);
+  const problems = [];
+  const managed = managedFiles(plan);
+  for (const file of managed) {
+    const actual = await readIfPresent(target.root, file.path);
+    if (actual === null) problems.push({ code: "file-missing", path: file.path, message: `${file.path} is missing from the applied kit.`, fix: repair });
+    else if (actual !== file.content) {
+      problems.push({ code: "file-drift", path: file.path, message: `${file.path} differs from what kit.json renders, first at line ${firstDifference(file.content, actual)}.`, fix: repair });
+    }
+  }
+  const known = new Set(managed.map((file) => file.path));
+  const listed = await readdir5(join14(target.root, kit, "features")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+  for (const name of listed.sort()) {
+    if (!known.has(`${kit}/features/${name}`)) problems.push({ code: "orphan-feature-file", path: `${kit}/features/${name}`, message: `${kit}/features/${name} describes no feature in kit.json.`, fix: repair });
+  }
+  const agents = await readIfPresent(target.root, "AGENTS.md");
+  if (!agents?.split(/\r?\n/).includes(agentsPointer(plan))) {
+    problems.push({ code: "pointer-missing", path: "AGENTS.md", message: "AGENTS.md lacks the line pointing agents at the kit.", fix: repair });
+  }
+  const files = await repoFiles(target.root);
+  for (const feature of plan.features) {
+    for (const path of feature.sourcePaths) {
+      const glob = pathGlob(path);
+      const present = files.some((file) => file.split("/").some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join("/"))));
+      if (!present) {
+        problems.push({
+          code: "source-path-missing",
+          path: `${kit}/features/${feature.id}.md`,
+          message: `Source path ${path} of feature ${feature.id} matches no file in the repo.`,
+          fix: "Find where the feature moved and correct its source paths in the kit plan with kit scaffold --update, or remove the feature if it no longer exists."
+        });
+      }
+    }
+  }
+  if (problems.length) throw new CommandError("failed", problems);
+  return { inputs: { target, app: plan.app }, data: { app: plan.app, features: plan.features.map((feature) => feature.id), files: managed.length } };
+}
+
 // runtime/scripts/commands/kit-prove.mjs
 import { spawn as spawn2 } from "node:child_process";
 import { createHash as createHash3, randomUUID as randomUUID4 } from "node:crypto";
-import { mkdtemp, mkdir as mkdir3, readdir as readdir4, readFile as readFile12, realpath as realpath6, rm as rm3, stat as stat11, writeFile as writeFile7 } from "node:fs/promises";
+import { mkdtemp, mkdir as mkdir3, readdir as readdir6, readFile as readFile14, realpath as realpath6, rm as rm3, stat as stat11, writeFile as writeFile7 } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
-import { join as join13, relative as relative8, resolve as resolve10 } from "node:path";
+import { join as join15, relative as relative8, resolve as resolve10 } from "node:path";
 var commandTimeoutMs = 12e4;
 var outputLimit2 = 65536;
 var terminationGraceMs = 5e3;
@@ -3201,17 +3328,17 @@ function prepare(spec, values, root) {
 function start({ argv, cwd, env }) {
   const output = { stdout: "", stderr: "" };
   const child = spawn2(argv[0], argv.slice(1), { cwd, env, shell: false, detached: true, stdio: ["ignore", "pipe", "pipe"] });
-  const run11 = { child, output, command: argv, exit: null, finished: false };
+  const run12 = { child, output, command: argv, exit: null, finished: false };
   for (const stream of ["stdout", "stderr"]) {
     child[stream].setEncoding("utf8");
     child[stream].on("data", (chunk) => {
       output[stream] += chunk;
     });
   }
-  run11.exited = new Promise((done) => {
+  run12.exited = new Promise((done) => {
     const finish = (code) => {
-      run11.exit = code;
-      run11.finished = true;
+      run12.exit = code;
+      run12.finished = true;
       done(code);
     };
     child.once("error", (error) => {
@@ -3221,10 +3348,9 @@ function start({ argv, cwd, env }) {
     child.once("close", (code) => finish(code ?? 1));
   });
   child.once("exit", (code) => {
-    run11.exit = code ?? 1;
-    run11.finished = true;
+    run12.exit = code ?? 1;
   });
-  return run11;
+  return run12;
 }
 function stop(child, signal = "SIGTERM") {
   if (!child.pid) return;
@@ -3234,22 +3360,22 @@ function stop(child, signal = "SIGTERM") {
     if (error.code !== "ESRCH") throw error;
   }
 }
-async function terminate(run11) {
-  const grace = setTimeout(() => stop(run11.child, "SIGKILL"), terminationGraceMs);
+async function terminate(run12) {
+  const grace = setTimeout(() => stop(run12.child, "SIGKILL"), terminationGraceMs);
   try {
-    stop(run11.child);
-    await run11.exited;
+    stop(run12.child);
+    await run12.exited;
   } finally {
     clearTimeout(grace);
-    stop(run11.child, "SIGKILL");
+    stop(run12.child, "SIGKILL");
   }
 }
 async function capture2(spec) {
-  const run11 = start(spec);
+  const run12 = start(spec);
   let timedOut = false;
   let timer;
   try {
-    await Promise.race([run11.exited, new Promise((done) => {
+    await Promise.race([run12.exited, new Promise((done) => {
       timer = setTimeout(() => {
         timedOut = true;
         done();
@@ -3257,16 +3383,16 @@ async function capture2(spec) {
     })]);
   } finally {
     clearTimeout(timer);
-    await terminate(run11);
+    await terminate(run12);
   }
-  return { command: spec.argv, exit: timedOut ? null : run11.exit, timedOut, ...run11.output };
+  return { command: spec.argv, exit: timedOut ? null : run12.exit, timedOut, ...run12.output };
 }
-async function launch(run11, plan, values) {
+async function launch(run12, plan, values) {
   const deadline = Date.now() + readySeconds(plan) * 1e3;
   const { url, output } = plan.launch.ready;
   while (Date.now() < deadline) {
-    const ready = output ? new RegExp(output).test(run11.output.stdout + run11.output.stderr) : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1e3) }).then((response) => response.ok, () => false);
-    if (run11.finished && (run11.exit !== 0 || !ready)) return failure("launch-exited", `The launch command exited before it was ready: ${(run11.output.error ?? run11.output.stderr).slice(-500)}`, "Fix the launch command or its prerequisites; report a product blocker instead of editing product code.");
+    const ready = output ? new RegExp(output).test(run12.output.stdout + run12.output.stderr) : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1e3) }).then((response) => response.ok, () => false);
+    if (run12.exit !== null && run12.exit !== 0 || run12.finished && output && !ready || run12.output.error) return failure("launch-exited", `The launch command exited before it was ready: ${(run12.output.error ?? run12.output.stderr).slice(-500)}`, "Fix the launch command or its prerequisites; report a product blocker instead of editing product code.");
     if (ready) return;
     await new Promise((done) => setTimeout(done, 100));
   }
@@ -3283,9 +3409,9 @@ async function evidenceHashes(directory) {
       const actual = await realpath6(path);
       if (ancestors.has(actual)) return;
       const parents = new Set(ancestors).add(actual);
-      for (const name of await readdir4(path)) await visit(join13(path, name), parents);
+      for (const name of await readdir6(path)) await visit(join15(path, name), parents);
     } else {
-      const bytes = await readFile12(path).catch((error) => {
+      const bytes = await readFile14(path).catch((error) => {
         if (error.code === "ENOENT") return null;
         throw error;
       });
@@ -3295,27 +3421,19 @@ async function evidenceHashes(directory) {
   await visit(directory, /* @__PURE__ */ new Set());
   return hashes.sort(([a], [b]) => a.localeCompare(b));
 }
-async function run9(options) {
+async function run10(options) {
   const target = await resolveTarget(options);
   if (!options.app || !options.feature) throw new CommandError("usage-error", [{ code: "missing-option", message: "--app and --feature are required.", fix: "Supply --app <name> --feature <id>." }]);
-  const kitFile = join13(target.root, kitDirectory(options.app), "kit.json");
-  let plan;
-  try {
-    plan = inspectJSON(await readFile12(kitFile, "utf8")).value;
-  } catch (error) {
-    if (error instanceof CommandError) throw error;
-    throw new CommandError("blocked", [{ code: "kit-unavailable", message: `No readable kit at ${kitDirectory(options.app)}/kit.json.`, fix: "Apply the scaffolded kit first." }]);
-  }
-  validateKitPlan(plan);
+  const plan = await readKitPlan(target.root, options.app);
   const feature = plan.features.find((item) => item.id === options.feature);
   if (!feature) throw new CommandError("usage-error", [{ code: "unknown-feature", message: `The kit has no feature ${options.feature}.`, fix: `Use one of: ${plan.features.map((item) => item.id).join(", ")}.` }]);
   const evidenceRoot = await resolvePath(target.root, plan.evidence.directory, void 0, true);
   const runId = randomUUID4().slice(0, 8);
-  const values = { port: await freePort(), runDir: await mkdtemp(join13(tmpdir(), `verify-${plan.app}-`)), evidenceDir: join13(evidenceRoot, runId) };
+  const values = { port: await freePort(), runDir: await mkdtemp(join15(tmpdir(), `verify-${plan.app}-`)), evidenceDir: join15(evidenceRoot, runId) };
   const record = { app: plan.app, feature: feature.id, runId, launch: null, doctor: null, steps: [], cleanup: null };
   const problems = [];
   let launched;
-  const recordPath = join13(values.evidenceDir, `${feature.id}.json`);
+  const recordPath = join15(values.evidenceDir, `${feature.id}.json`);
   const reservation = proofJSON(record);
   let reserved = false;
   const launchRecord = () => launched ? { command: launched.command, exit: launched.exit, ...launched.output } : null;
@@ -3348,14 +3466,14 @@ async function run9(options) {
     try {
       record.launch = launchRecord();
       if (reserved) {
-        if (await readFile12(recordPath, "utf8") !== reservation) problems.push(failure("evidence-collision", `A command replaced the reserved proof record: ${relative8(target.root, recordPath)}.`, "Write captured artifacts to a different path from the proof record."));
+        if (await readFile14(recordPath, "utf8") !== reservation) problems.push(failure("evidence-collision", `A command replaced the reserved proof record: ${relative8(target.root, recordPath)}.`, "Write captured artifacts to a different path from the proof record."));
         else await writeFile7(recordPath, proofJSON(record));
       }
       before = await evidenceHashes(values.evidenceDir);
     } finally {
       try {
         if (launched) {
-          if (launched.finished && launched.exit !== 0 && !problems.some((problem2) => problem2.code === "launch-exited")) problems.push(failure("launch-exited", `The launch command exited unsuccessfully: ${launched.exit}.`, "Fix the launch command or report a product blocker."));
+          if ((launched.exit !== null && launched.exit !== 0 || launched.output.error) && !problems.some((problem2) => problem2.code === "launch-exited")) problems.push(failure("launch-exited", `The launch command exited unsuccessfully: ${launched.exit}.`, "Fix the launch command or report a product blocker."));
           await terminate(launched);
         }
       } finally {
@@ -3389,7 +3507,7 @@ async function run9(options) {
 
 // runtime/scripts/commands/comment-check.mjs
 import { writeFile as writeFile8 } from "node:fs/promises";
-import { join as join14 } from "node:path";
+import { join as join16 } from "node:path";
 
 // runtime/scripts/lib/comment-checkers.mjs
 var exemptions = {
@@ -3920,7 +4038,7 @@ function generateChecker(language) {
 }
 
 // runtime/scripts/commands/comment-check.mjs
-async function run10(options) {
+async function run11(options) {
   if (!Object.hasOwn(checkers, options.language)) {
     throw new CommandError("usage-error", [{
       code: "unsupported-language",
@@ -3930,7 +4048,7 @@ async function run10(options) {
   }
   const target = await resolveTarget(options);
   const checker = generateChecker(options.language);
-  const path = join14(await createScratch(target), checkers[options.language].file);
+  const path = join16(await createScratch(target), checkers[options.language].file);
   await writeFile8(path, checker.content);
   return { inputs: { target, language: options.language }, data: { path, suggestedPath: checker.suggestedPath, run: checker.run } };
 }
@@ -3945,7 +4063,8 @@ await dispatch(process.argv.slice(2), "verification", {
   "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: verification.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run6 },
   "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: verification.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run7 },
   "findings validate": { options: ["findings"], help: "Validate findings and assess current readiness without writes.\nUsage: verification.mjs findings validate --repo <path>|--workspace <path> --findings <file> [--json]", run: run2 },
-  "kit scaffold": { options: ["plan"], help: "Render the selected verification kit as a reviewable change set in scratch.\nUsage: verification.mjs kit scaffold --repo <path> --plan <file> [--json]\nPlan follows schemas/kit-plan.json. Returns the change set path, its planDigest and the exact diff. Existing kit files are never overwritten. Review with apply --dry-run, then apply the unchanged change set.", run: run8 },
-  "kit prove": { options: ["app", "feature"], help: "Run the applied kit end to end once: launch, doctor, drive one feature, capture evidence, clean up and confirm the evidence survived.\nUsage: verification.mjs kit prove --repo <path> --app <name> --feature <id> [--json]\nReads .agents/skills/verify-<name>/kit.json. Cleanup stops only the process the proof started. A failed proof still cleans up and keeps its evidence.", run: run9 },
-  "comment-check generate": { options: ["language"], help: "Generate a comment-ban checker that uses the target language's own tokenizer, in scratch.\nUsage: verification.mjs comment-check generate --repo <path> --language python|go|typescript [--json]\nThe checker is self-contained, runs without bstack and fails on every prose comment. Rule-specific machine directives and license headers are exempt. --baseline <file> accepts temporary debt entries and --list prints the current violations as rule/path/key objects. Propose it as a selected create edit and wire it into the maintained check command.", run: run10 }
+  "kit scaffold": { options: ["plan", "update"], help: "Render the selected verification kit as a reviewable change set in scratch.\nUsage: verification.mjs kit scaffold --repo <path> --plan <file> [--update] [--json]\nPlan follows schemas/kit-plan.json. Returns the change set path, its planDigest and the exact diff. Without --update, existing kit files are never overwritten. With --update, the change set also replaces kit files that differ from the plan, creates missing ones and deletes feature files the plan no longer lists; when nothing differs it returns no change set. Review with apply --dry-run, then apply the unchanged change set.", run: run8 },
+  "kit check": { options: ["app"], help: "Check an applied verification kit for drift without running the product or writing.\nUsage: verification.mjs kit check --repo <path> --app <name> [--json]\nFails with one problem per drifted file, missing file, orphan feature file, missing AGENTS.md pointer or feature source path that matches no file: file-drift, file-missing, orphan-feature-file, pointer-missing, source-path-missing. It compares the kit with what kit.json renders and with the repo, and does not judge whether the feature files are true; drive them with kit prove.", run: run9 },
+  "kit prove": { options: ["app", "feature"], help: "Run the applied kit end to end once: launch, doctor, drive one feature, capture evidence, clean up and confirm the evidence survived.\nUsage: verification.mjs kit prove --repo <path> --app <name> --feature <id> [--json]\nReads .agents/skills/verify-<name>/kit.json. Cleanup stops only the process the proof started. A failed proof still cleans up and keeps its evidence.", run: run10 },
+  "comment-check generate": { options: ["language"], help: "Generate a comment-ban checker that uses the target language's own tokenizer, in scratch.\nUsage: verification.mjs comment-check generate --repo <path> --language python|go|typescript [--json]\nThe checker is self-contained, runs without bstack and fails on every prose comment. Rule-specific machine directives and license headers are exempt. --baseline <file> accepts temporary debt entries and --list prints the current violations as rule/path/key objects. Propose it as a selected create edit and wire it into the maintained check command.", run: run11 }
 });

@@ -9,7 +9,6 @@ Checks catch defined mistakes, not every unsound future design decision.
 
 - [Record each principle](#record-each-principle)
 - [Example mappings](#example-mappings)
-- [Test necessity and cost](#test-necessity-and-cost)
 - [Proof required before adopting an automated rule](#proof-required-before-adopting-an-automated-rule)
 - [Integrate the maintained command](#integrate-the-maintained-command)
 - [Control existing debt](#control-existing-debt)
@@ -53,32 +52,6 @@ Agent instructions point to the selected standards as described under [One autho
 Recommend a native duplication linter only when language research supports its syntax coverage and project-specific configuration, following [Proof required before adopting an automated rule](#proof-required-before-adopting-an-automated-rule).
 Clone detection supplies review candidates, not proof that similar code represents the same knowledge; neither duplication nor complexity scores establish DRY or KISS compliance.
 Use [Control existing debt](#control-existing-debt) for accepted exceptions rather than silently weakening either principle.
-
-## Test necessity and cost
-
-Use these patterns when reviewing existing tests and proposing testing guidance for implementing agents and reviewers.
-Trace each test to a supported production caller and an agreed behaviour before recommending removal or consolidation.
-Similar inputs alone do not establish duplicate coverage: different boundaries may protect distinct failures.
-
-| Pattern to flag | Guidance to prevent it |
-|---|---|
-| Duplicate coverage of the same scenario at unit and end-to-end levels or in sibling tests | Keep the fewest tests that protect distinct observable failures; consolidate redundant cases while retaining critical journey coverage. |
-| Tests of guards or paths with no production caller | Test supported production behaviour; do not add tests solely to preserve unused code paths. |
-| Oversized tables of combinations | Choose representative boundary and failure cases; add combinations only when they protect a distinct requirement or plausible failure. |
-| Tests that re-run tests already in the suite, such as a nested `go test` | Let the suite run each test once; invoke a test runner inside a test only when that runner's behaviour is the contract under test. |
-| Expensive setup repeated for every table case | Share expensive setup when cases can remain isolated and deterministic; retain per-case setup where isolation requires it. |
-| Cold rebuilds that build a binary per test | Reuse a binary built for the current source inputs across tests; rebuild only when a case changes build inputs or tests the build itself. |
-| Tautological tests that assert their own setup or cannot fail | Assert production outcomes against independent expectations; do not add assertions that only confirm test setup or cannot fail when production behaviour breaks. |
-| Tests of impossible scenarios no production path can reach | Use inputs and states reachable through supported production paths, including invalid external input at real boundaries; do not fabricate states that production cannot create. |
-
-For each existing instance, cite the tests, production callers, overlapping protection or repeated work, and the smallest change that preserves the acceptance criteria.
-Do not infer runtime savings from source inspection; distinguish observed timings from expected savings.
-These are human review judgements, not substring checks or universal limits on case counts.
-
-When selected, adapt all eight prevention rules into concise testing guidance in the target project's `AGENTS.md`, linking to any existing authoritative testing policy for rationale and exceptions rather than copying that policy.
-Apply this to new foundations and existing-repo guidance updates through the normal selection and exact-diff approval boundary.
-Where repo-audit configures review instructions, such as `.no-mistakes.yaml`, include all eight patterns as explicit review criteria so reviewers flag new instances with the same evidence and exceptions.
-Extend the existing review configuration and preserve unrelated instructions; do not introduce a review service solely for these rules.
 
 ## Proof required before adopting an automated rule
 
