@@ -5,7 +5,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
-import { run, snapshot } from './discovery-fixture.mjs'
+import { runMaintenance as run, snapshot } from './discovery-fixture.mjs'
 import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.mjs'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))

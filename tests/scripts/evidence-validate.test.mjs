@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile, writeFile, rename, rm, mkdir, symlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
-import { git, run } from './discovery-fixture.mjs'
+import { git, runMaintenance as run } from './discovery-fixture.mjs'
 import { hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
 import { baseText } from '../../runtime/scripts/lib/evidence-policy.mjs'
 

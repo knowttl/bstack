@@ -664,12 +664,12 @@ ${execution.stderr}`.includes(options.expect);
 }
 
 // runtime/scripts/commands/baseline.mjs
-import { readFile as readFile4, rename, rm as rm2, stat as stat5, writeFile as writeFile3 } from "node:fs/promises";
+import { readFile as readFile4, rename, rm as rm2, stat as stat5, writeFile as writeFile2 } from "node:fs/promises";
 import { randomUUID as randomUUID2 } from "node:crypto";
 
 // runtime/scripts/commands/findings.mjs
-import { readFile as readFile3, writeFile as writeFile2 } from "node:fs/promises";
-import { join as join6, resolve as resolve4 } from "node:path";
+import { readFile as readFile3 } from "node:fs/promises";
+import { resolve as resolve4 } from "node:path";
 import { spawnSync as spawnSync3 } from "node:child_process";
 
 // runtime/schemas/findings.schema.json
@@ -979,63 +979,6 @@ var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "found
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
 }
-function render(findings, assessment) {
-  const lines = [
-    "# Proposed repo audit record",
-    "",
-    `Result: ${assessment.result}`,
-    "",
-    `Stage: ${findings.stage}`,
-    `Target: ${findings.target.root}`,
-    `Revision: ${findings.target.revision ?? "no commit"}`,
-    `Stated next change: ${findings.nextChange}`,
-    `Reviewed scope: ${findings.reviewedScope.join(", ")}`,
-    `Current fingerprint: ${assessment.fingerprint}`,
-    "",
-    "## Readiness evidence",
-    ""
-  ];
-  for (const reason of assessment.reasons) lines.push(`- ${reason}`);
-  for (const record of findings.execution) lines.push(`- ${record.outcome}: ${record.status}. Method: ${record.method}. Artifact: ${record.artifact}. Fingerprint: ${record.fingerprint}.`);
-  for (const [intent, title] of [["documented", "Documented intent"], ["observed", "Observed behaviour"], ["inferred", "Inferred intent"]]) {
-    lines.push("", `## ${title}`, "");
-    for (const source of findings.sources.filter((source2) => source2.intent === intent)) lines.push(`- ${source.id}: ${source.summary} (${source.pointer})`);
-  }
-  for (const [category, title] of [["debt", "Observed debt"], ["missing-protection", "Missing protections"], ["decision", "Design decisions"]]) {
-    lines.push("", `## ${title}`, "");
-    for (const finding of findings.findings.filter((finding2) => finding2.category === category)) {
-      lines.push(
-        `### ${finding.id}: ${finding.problem}`,
-        "",
-        `Status: ${finding.status}. Resolved: ${finding.resolved}. Blocks next change: ${finding.blocksNextChange}.`,
-        `Files: ${finding.files.join(", ") || "none"}. Command: ${finding.command ?? "none"}.`,
-        `Principle${finding.newPrinciple ? " (proposed new principle)" : ""}: ${finding.principle}`,
-        `Consequence: ${finding.consequence}`,
-        `Fix: ${finding.fix}`,
-        `Scope: ${finding.scope.join(", ")}`,
-        `Verification: ${finding.verification}`,
-        `Sources: ${finding.sourceIds.join(", ")}`,
-        ""
-      );
-    }
-  }
-  lines.push(
-    "",
-    "## Proposed new principles",
-    "",
-    ...findings.findings.filter((finding) => finding.newPrinciple).map((finding) => `- ${finding.id}: ${finding.principle} (${finding.status})`),
-    "",
-    "## Selected findings",
-    "",
-    ...findings.selectedFindingIds.map((id) => `- ${id}`),
-    "",
-    "## Limitations",
-    "",
-    ...findings.limitations.map((limit) => `- ${limit}`)
-  );
-  return `${lines.join("\n")}
-`;
-}
 async function validateFindings(findings, target, deletionScope = []) {
   validateData(findings_schema_default, findings);
   for (const collection of ["sources", "findings", "execution"]) validateIds(findings[collection], `$/` + collection);
@@ -1061,7 +1004,7 @@ async function validateFindings(findings, target, deletionScope = []) {
   }
   if (new Set(findings.execution.map((record) => record.outcome)).size !== findings.execution.length) invalid("duplicate-outcome", "Use one current record per outcome.", "$/execution");
 }
-async function run2(options, command) {
+async function run2(options) {
   if (!options.findings) throw new CommandError("usage-error", [{ code: "missing-findings", message: "--findings is required.", fix: "Supply --findings <file>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let findings;
@@ -1095,11 +1038,6 @@ async function run2(options, command) {
   const result = reasons.length ? "verification blocked" : decisions.length ? "decisions needed" : "ready for the stated next change";
   reasons.push(...decisions.map((finding) => `Unresolved finding: ${finding.id}.`));
   const assessment = { result, reasons, fingerprint: current.fingerprint };
-  if (command === "findings render") {
-    const path = join6(await createScratch(target), "repo-audit.md");
-    await writeFile2(path, render(findings, assessment));
-    assessment.path = path;
-  }
   return { inputs: { target, findings: options.findings }, data: assessment };
 }
 
@@ -1146,7 +1084,7 @@ async function run3(options) {
   if (options.refresh && !problems.length) {
     const temporary = `${path}.${randomUUID2()}.tmp`;
     try {
-      await writeFile3(temporary, JSON.stringify({ schemaVersion: 1, entries: retained }, null, 2) + "\n", { flag: "wx", mode: (await stat5(path)).mode });
+      await writeFile2(temporary, JSON.stringify({ schemaVersion: 1, entries: retained }, null, 2) + "\n", { flag: "wx", mode: (await stat5(path)).mode });
       await rename(temporary, path);
     } finally {
       await rm2(temporary, { force: true });
@@ -1165,7 +1103,7 @@ import { extname as extname2 } from "node:path";
 
 // runtime/scripts/lib/document-references.mjs
 import { readFile as readFile5, readdir as readdir2, stat as stat6 } from "node:fs/promises";
-import { dirname as dirname4, extname, join as join7, relative as relative4, resolve as resolve5 } from "node:path";
+import { dirname as dirname4, extname, join as join6, relative as relative4, resolve as resolve5 } from "node:path";
 var quotes = /^(?: {0,3}>[ \t]?)+/;
 var listItem = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/;
 var atxStart = /^ {0,3}#{1,6}(?:[ \t]|$)/;
@@ -1357,7 +1295,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
       if (!(await readdir2(parent)).includes(segment)) {
         if (documents.has(resolved)) {
           try {
-            await stat6(join7(parent, segment));
+            await stat6(join6(parent, segment));
             return problem("Wrong-case destination");
           } catch (error) {
             if (error.code !== "ENOENT") throw error;
@@ -1366,7 +1304,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
         }
         return problem("Missing or wrong-case destination");
       }
-      parent = join7(parent, segment);
+      parent = join6(parent, segment);
     }
     if (!documents.has(resolved)) await stat6(resolved);
     if (fragment && [".md", ".markdown"].includes(extname(local).toLowerCase())) {
@@ -1547,7 +1485,7 @@ function exactDiff(path, original, proposed) {
 
 // runtime/scripts/lib/protected-write.mjs
 import { readFile as readFile6, open, mkdir as mkdir2, rename as rename2, unlink, stat as stat7 } from "node:fs/promises";
-import { basename, dirname as dirname5, join as join8 } from "node:path";
+import { basename, dirname as dirname5, join as join7 } from "node:path";
 import { randomUUID as randomUUID3 } from "node:crypto";
 async function fileBytes(path) {
   try {
@@ -1559,7 +1497,7 @@ async function fileBytes(path) {
 }
 async function loadJournal(target, runId) {
   const directory = await scratchDirectory(target, runId);
-  const bytes = await fileBytes(join8(directory, "journal.json"));
+  const bytes = await fileBytes(join7(directory, "journal.json"));
   if (bytes === null) return { directory, journal: null };
   const journal = inspectJSON(bytes.toString("utf8")).value;
   validateData(JSON.parse(await readFile6(new URL("../schemas/resume-state.schema.json", import.meta.url), "utf8")), journal);
@@ -1597,7 +1535,7 @@ async function journalOriginal(directory, journal, plan, edit, index) {
   if (journal.planDigest !== plan.planDigest || canonicalJSON(journal.target) !== canonicalJSON(plan.target) || journal.edits.length !== plan.edits.length || !recorded || ["id", "path", "originalHash", "proposedHash"].some((key) => recorded[key] !== edit[key]) || recorded.resolvedPath !== plan.reviewedScope.find((entry) => entry.path === edit.path)?.resolvedPath || recorded.backup !== (edit.originalHash === null ? null : `original-${index}`)) {
     throw new CommandError("blocked", [{ code: "journal-mismatch", message: "Journal does not match the reviewed plan.", fix: "Use the unchanged reviewed plan or review a new plan." }]);
   }
-  const bytes = recorded.backup === null ? null : await fileBytes(join8(directory, recorded.backup));
+  const bytes = recorded.backup === null ? null : await fileBytes(join7(directory, recorded.backup));
   if ((bytes === null ? null : hashBytes(bytes)) !== edit.originalHash) {
     throw new CommandError("blocked", [{ code: "backup-mismatch", message: "Recoverable original is missing or changed.", path: edit.path, fix: "Restore the original backup before resuming." }]);
   }
@@ -1633,7 +1571,7 @@ async function durableDirectory(directory, limitations) {
   }
 }
 async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary, prefix = ".bstack") {
-  const temporary = join8(dirname5(path), `${prefix}-${randomUUID3()}.tmp`);
+  const temporary = join7(dirname5(path), `${prefix}-${randomUUID3()}.tmp`);
   try {
     if (prepareTemporary) await prepareTemporary(temporary);
     await durableFile(temporary, bytes, mode);
@@ -1673,7 +1611,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     })),
     affectedChecks
   };
-  const journalPath = join8(directory, "journal.json");
+  const journalPath = join7(directory, "journal.json");
   const save = () => replaceFile(journalPath, Buffer.from(JSON.stringify(journal, null, 2) + "\n"), void 0, limitations);
   try {
     let state = await inspectJournal(journal);
@@ -1706,7 +1644,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
         if (edit.originalHash !== null) {
-          const backup = join8(directory, journal.edits[index].backup);
+          const backup = join7(directory, journal.edits[index].backup);
           const existing = await fileBytes(backup);
           if (existing !== null && hashBytes(existing) !== edit.originalHash) throw new Error("Prepared backup differs from the reviewed original.");
           if (existing === null) await replaceFile(backup, edit.originalBytes, void 0, limitations);
