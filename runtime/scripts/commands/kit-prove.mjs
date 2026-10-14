@@ -16,9 +16,6 @@ const outputLimit = 65536
 // A launched process that ignores the first termination signal is killed after this wait.
 const terminationGraceMs = 5000
 
-// A process can exit before its buffered output is read, and a descendant may keep the pipes open for good.
-const pipeDrainMs = 1000
-
 function failure(code, message, fix) {
   return { code, message, fix }
 }
@@ -60,11 +57,7 @@ function start({ argv, cwd, env }) {
     child.once('error', error => { output.error = error.message; finish(null) })
     child.once('close', code => finish(code ?? 1))
   })
-  child.once('exit', code => {
-    run.exit = code ?? 1
-    setTimeout(() => { run.finished = true }, pipeDrainMs).unref()
-  })
-  child.once('close', () => { run.finished = true })
+  child.once('exit', code => { run.exit = code ?? 1 })
   return run
 }
 
@@ -105,7 +98,7 @@ async function launch(run, plan, values) {
   while (Date.now() < deadline) {
     const ready = output ? new RegExp(output).test(run.output.stdout + run.output.stderr)
       : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1000) }).then(response => response.ok, () => false)
-    if ((run.exit !== null && run.exit !== 0) || (run.finished && !ready) || run.output.error) return failure('launch-exited', `The launch command exited before it was ready: ${(run.output.error ?? run.output.stderr).slice(-500)}`, 'Fix the launch command or its prerequisites; report a product blocker instead of editing product code.')
+    if ((run.exit !== null && run.exit !== 0) || (run.finished && output && !ready) || run.output.error) return failure('launch-exited', `The launch command exited before it was ready: ${(run.output.error ?? run.output.stderr).slice(-500)}`, 'Fix the launch command or its prerequisites; report a product blocker instead of editing product code.')
     if (ready) return
     await new Promise(done => setTimeout(done, 100))
   }

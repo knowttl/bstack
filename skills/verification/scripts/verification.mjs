@@ -2843,7 +2843,7 @@ function relativePath(value, path) {
 function kitDirectory(app) {
   return `.agents/skills/verify-${app}`;
 }
-function validateKitPlan(plan) {
+function validateKitPlan(plan, { sourcePaths = true } = {}) {
   validateData(kit_plan_default, plan);
   const { launch: launch2, evidence, helpers, features } = plan;
   if (Object.keys(launch2.ready).length !== 1 || !(launch2.ready.url ?? launch2.ready.output)) invalid2("invalid-ready", "Declare exactly one of ready.url or ready.output.", "$/launch/ready");
@@ -2872,7 +2872,10 @@ function validateKitPlan(plan) {
   for (const [index, feature] of features.entries()) {
     if (ids.has(feature.id)) invalid2("duplicate-feature", `Duplicate feature ID: ${feature.id}`, `$/features/${index}/id`);
     ids.add(feature.id);
-    for (const path of feature.sourcePaths) pathGlob(path);
+    for (const path of feature.sourcePaths) {
+      if (sourcePaths) pathGlob(path);
+      else relativePath(path, `$/features/${index}/sourcePaths`);
+    }
     for (const step of feature.steps) {
       for (const artifact of step.artifacts ?? []) {
         relativePath(artifact, `$/features/${index}/steps`);
@@ -2889,7 +2892,7 @@ function validateKitPlan(plan) {
   }
   return plan;
 }
-async function readKitPlan(root, app) {
+async function readKitPlan(root, app, options) {
   let plan;
   try {
     plan = inspectJSON(await readFile11(join12(root, kitDirectory(app), "kit.json"), "utf8")).value;
@@ -2897,7 +2900,7 @@ async function readKitPlan(root, app) {
     if (error instanceof CommandError) throw error;
     throw new CommandError("blocked", [{ code: "kit-unavailable", message: `No readable kit at ${kitDirectory(app)}/kit.json.`, fix: "Apply the scaffolded kit first." }]);
   }
-  return validateKitPlan(plan);
+  return validateKitPlan(plan, options);
 }
 function readySeconds(plan) {
   return plan.launch.timeoutSeconds ?? defaultReadySeconds;
@@ -3138,7 +3141,7 @@ async function run8(options) {
   validateKitPlan(plan);
   const update = options.update === true;
   const kit = kitDirectory(plan.app);
-  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app) : null;
+  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app, { sourcePaths: false }) : null;
   const edits = [];
   const reviewedScope = [];
   async function stage(path2, operation, payload) {
@@ -3285,7 +3288,6 @@ import { join as join15, relative as relative8, resolve as resolve10 } from "nod
 var commandTimeoutMs = 12e4;
 var outputLimit2 = 65536;
 var terminationGraceMs = 5e3;
-var pipeDrainMs = 1e3;
 function failure(code, message, fix) {
   return { code, message, fix };
 }
@@ -3337,12 +3339,6 @@ function start({ argv, cwd, env }) {
   });
   child.once("exit", (code) => {
     run12.exit = code ?? 1;
-    setTimeout(() => {
-      run12.finished = true;
-    }, pipeDrainMs).unref();
-  });
-  child.once("close", () => {
-    run12.finished = true;
   });
   return run12;
 }
@@ -3386,7 +3382,7 @@ async function launch(run12, plan, values) {
   const { url, output } = plan.launch.ready;
   while (Date.now() < deadline) {
     const ready = output ? new RegExp(output).test(run12.output.stdout + run12.output.stderr) : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1e3) }).then((response) => response.ok, () => false);
-    if (run12.exit !== null && run12.exit !== 0 || run12.finished && !ready || run12.output.error) return failure("launch-exited", `The launch command exited before it was ready: ${(run12.output.error ?? run12.output.stderr).slice(-500)}`, "Fix the launch command or its prerequisites; report a product blocker instead of editing product code.");
+    if (run12.exit !== null && run12.exit !== 0 || run12.finished && output && !ready || run12.output.error) return failure("launch-exited", `The launch command exited before it was ready: ${(run12.output.error ?? run12.output.stderr).slice(-500)}`, "Fix the launch command or its prerequisites; report a product blocker instead of editing product code.");
     if (ready) return;
     await new Promise((done) => setTimeout(done, 100));
   }
