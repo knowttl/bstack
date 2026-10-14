@@ -246,8 +246,8 @@ bstack/
     SKILL.md
     agents/openai.yaml
     references/
-      intent-interview.md  grilling.md  decisions.md
-      enforcement.md  architecture.md  research-briefs.md
+      intent-interview.md  grilling.md
+      enforcement.md  research-briefs.md
     schemas/                     JSON schemas for every structured file
     scripts/
       repo-audit.mjs             generated command bundle
@@ -263,6 +263,8 @@ bstack/
     assets/vision/               board template and stylesheet
   skills/glossary/               independently installable glossary skill folder
     references/                  glossary.md  maintain.md  grilling.md  agents-pointer.md
+  skills/architecture/           independently installable architecture skill folder
+    references/                  architecture.md  decisions.md  design-standards.md  boundary-checks.md  maintain.md  grilling.md  agents-pointer.md
   skills/agents-md/              independently installable agents-md skill folder
     references/                  agents-md.md  agents-pointer.md
   tests/
@@ -1127,6 +1129,7 @@ Phase evidence from the design: the existing repo is unchanged during review, fi
 **Depends on:** T2.3.
 
 **Inputs and outputs:** History range and planned path sets -> repeatable signals and overlap report.
+Since R37 the two commands ship in the `architecture` skill, and repo-audit lists `/architecture` instead of running them.
 
 **Verification:** `npm test -- --task T2.4`.
 
@@ -1368,6 +1371,7 @@ Native rule implementation stays in T3.2 to T3.4, and any reference revision tha
 2. Write `references/architecture.md`: the principles table, what the audit inspects, the signals that are not violations, and the boundary rules.
    Name no language tools.
    The language research brief selects them.
+   Since R37 this reference lives in the `architecture` skill, with the decision-record guidance, the design standards that moved out of `enforcement.md` and a condensed boundary-checks reference, and the language research order moved into that last reference.
 3. Keep verification guidance as evidence requirements.
    Nothing in the skill dispatches a TDD skill or a development playbook.
 
