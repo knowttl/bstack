@@ -12,7 +12,6 @@ Checks catch defined mistakes, not every unsound future design decision.
 - [Proof required before adopting an automated rule](#proof-required-before-adopting-an-automated-rule)
 - [Integrate the maintained command](#integrate-the-maintained-command)
 - [Control existing debt](#control-existing-debt)
-- [One authoritative source per rule](#one-authoritative-source-per-rule)
 
 ## Record each principle
 
@@ -36,22 +35,14 @@ Avoid arbitrary file, function or rule-count limits without a project-specific r
 
 | Principle | Concrete rule | Enforcement | Required evidence |
 |---|---|---|---|
-| DRY | Apply the architecture reference's DRY rule within the selected scope | Human review flags duplicated knowledge in code and docs; use [one authoritative source per rule](#one-authoritative-source-per-rule) for placement and links | Review names the duplicated rule, its authoritative owner and the coordinated change it risks, distinguishing incidental similarity |
-| KISS | Apply the architecture reference's KISS rule within the selected scope | Human review flags needless complexity against approved requirements | Review identifies an unnecessary abstraction, layer or option and a simpler alternative that preserves required behaviour |
-| Keep persistence behind one interface | UI modules cannot import the database adapter | Import boundary analysis resolving project paths and aliases | An allowed public interface import passes and a direct database import fails |
 | Write each rule once | Generated settings match the authoritative source | Deterministic regeneration and comparison | A stale generated value fails |
 | Validate external input | Reject invalid input at the actual public boundary | Behaviour tests and applicable schema or type checks | Invalid input is rejected and valid input succeeds |
 | Keep behaviour stable during cleanup | Existing supported journeys remain compatible | Relevant integration or end-to-end checks | The same supported journeys pass before and after the change |
 | Tests protect agreed behaviour | Tests call the public interface and take expected results from an approved source | Human review against the acceptance source | A test asserting private implementation, or an expectation copied from implementation output, is identified in review |
-| Keep dependencies purposeful | New abstractions serve a current use and a clear responsibility | Human design review against vision and technical design | Review identifies the requirement, responsibility and simpler alternative |
 
 Do not disguise a human design judgement as a deterministic violation.
 Give the reviewer the relevant authority, example and evidence instead.
-Recommend DRY and KISS as standards for agents changing the audited project only where its evidence supports them, following [Record each principle](#record-each-principle) and the skill's owner-selection boundary.
-Agent instructions point to the selected standards as described under [One authoritative source per rule](#one-authoritative-source-per-rule).
-Recommend a native duplication linter only when language research supports its syntax coverage and project-specific configuration, following [Proof required before adopting an automated rule](#proof-required-before-adopting-an-automated-rule).
-Clone detection supplies review candidates, not proof that similar code represents the same knowledge; neither duplication nor complexity scores establish DRY or KISS compliance.
-Use [Control existing debt](#control-existing-debt) for accepted exceptions rather than silently weakening either principle.
+Design judgement rules such as DRY and KISS, import-boundary rules and `CODING_STANDARDS.md` belong to `/architecture`: list it as a next step for the user to run, and do not recommend them here.
 
 ## Proof required before adopting an automated rule
 
@@ -137,19 +128,3 @@ Checking reports retained debt and rejects new violations or entries whose viola
 `--refresh` removes fixed entries but cannot accept new debt by itself.
 Adding one current violation requires `--refresh --finding <id> --findings <file> --entry <file>` for a selected unresolved debt finding covering that path, with a narrow reason and removal condition.
 A failed refresh changes no baseline bytes.
-
-## One authoritative source per rule
-
-Preserve an existing standards source that already serves reviewers.
-Missing `CODING_STANDARDS.md` is not a readiness failure.
-Create that document only when non-mechanical review rules need a distinct maintained home.
-An existing design section can suffice for a small project.
-Keep review standards actionable and scoped, with a reason, example and exception policy where needed.
-
-Tool configurations own formatting values and executable constraints.
-Standards link to those checks rather than copying settings.
-Agent instructions point to the project's rules, evidence requirements and maintained check commands while preserving distinct scopes.
-If a selected edit moves a review rule, replace its old text with a link to the new authority.
-Design documents may explain the structural decision without maintaining a second copy of the standard.
-Read relevant existing decisions before proposing a conflicting rule.
-Keep proposals as drafts until selected and preserve review before apply for documentation as well as code.

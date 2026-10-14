@@ -4232,203 +4232,19 @@ async function run15(options) {
   return { data: { root: target.root, files, absent, candidates, shadowing }, inputs: { repo: target.root } };
 }
 
-// runtime/scripts/commands/measure.mjs
-import { readFile as readFile17 } from "node:fs/promises";
-var lockfiles = ["package-lock.json", "npm-shrinkwrap.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb", "uv.lock", "poetry.lock", "Pipfile.lock", "Cargo.lock", "go.sum", "Gemfile.lock", "composer.lock"];
-function gitRecords(output) {
-  const records = [];
-  const tokens = output.split("\0");
-  for (let index = 0; index < tokens.length; index++) {
-    const token = tokens[index].trim();
-    if (!token) continue;
-    if (/^[a-f0-9]{40,64}(?: [a-f0-9]{40,64})*$/u.test(token)) {
-      const [commit, ...parents] = token.split(" ");
-      records.push({ commit, parents });
-      continue;
-    }
-    const [oldMode, newMode, , , status] = token.slice(1).split(" ");
-    const originalPath = tokens[++index];
-    const renamed = status.startsWith("R");
-    const path = renamed ? tokens[++index] : originalPath;
-    records.push({ oldMode, newMode, status: status[0], path, ...renamed ? { originalPath } : {} });
-  }
-  return records;
-}
-function blobMode(mode) {
-  return mode.startsWith("100") || mode === "120000";
-}
-async function run16(options) {
-  if (!options.range) throw new CommandError("usage-error", [{ code: "missing-range", message: "--range is required.", fix: "Supply --range <base>..<head> or --range <head> for all reachable history." }]);
-  const target = await resolveTarget(options);
-  function git(args) {
-    const result = readGit(target.root, args);
-    if (result.error || result.status !== 0) throw new CommandError("blocked", [{ code: "history-unreadable", message: "Requested Git history or objects could not be read.", fix: "Supply locally available commit revisions and complete history." }]);
-    return result.stdout;
-  }
-  function commit(value) {
-    if (!value || value.startsWith("-") || value.includes("..") || value.includes("\0")) throw new CommandError("usage-error", [{ code: "invalid-range", message: "Expected a commit or a two-dot commit range.", fix: "Use --range <base>..<head> or --range <head>." }]);
-    return git(["rev-parse", "--verify", "--end-of-options", `${value}^{commit}`]).trim();
-  }
-  const parts = options.range.split("..");
-  if (parts.length > 2 || parts.some((part) => !part || part.startsWith(".") || part.startsWith("-"))) throw new CommandError("usage-error", [{ code: "invalid-range", message: "Only single revisions and two-dot ranges are supported.", fix: "Use --range <base>..<head> or --range <head>." }]);
-  const base = parts.length === 2 ? commit(parts[0]) : null;
-  const head = commit(parts.at(-1));
-  const range = base ? `${base}..${head}` : head;
-  let policy = { schemaVersion: 1, generatedPaths: [], formattingCommits: [] };
-  if (options.exclusions) {
-    try {
-      policy = JSON.parse(await readFile17(options.exclusions, "utf8"));
-    } catch {
-      throw new CommandError("failed", [{ code: "invalid-exclusions", path: options.exclusions, message: "Exclusions must be readable JSON.", fix: "Supply data matching schemas/measure-exclusions.json." }]);
-    }
-    validateData(JSON.parse(await readFile17(new URL("../schemas/measure-exclusions.json", import.meta.url), "utf8")), policy);
-  }
-  const rules = [
-    ...lockfiles.map((name) => ({ reason: "lockfile", pattern: `**/${name}` })),
-    ...[...[...excludedDirectories].map((name) => `**/${name}/**`), ...policy.generatedPaths].map((pattern) => ({ reason: "generated", pattern }))
-  ].map((rule) => ({ ...rule, glob: pathGlob(rule.pattern) }));
-  const formatting = new Set(policy.formattingCommits.map(commit));
-  const excluded = /* @__PURE__ */ new Map();
-  function exclusion(path) {
-    const rule = rules.find((rule2) => matchesPath(rule2.glob, path));
-    if (rule) excluded.set(path, { path, reason: rule.reason, pattern: rule.pattern });
-    return Boolean(rule);
-  }
-  const files = /* @__PURE__ */ new Map();
-  const headNames = /* @__PURE__ */ new Map();
-  const shallow = git(["rev-parse", "--is-shallow-repository"]).trim() === "true";
-  for (const entry of git(["ls-tree", "-r", "-z", "-l", head]).split("\0").filter(Boolean)) {
-    const tab = entry.indexOf("	");
-    const [, type, , size] = entry.slice(0, tab).trim().split(/\s+/u);
-    const path = entry.slice(tab + 1);
-    if (exclusion(path)) continue;
-    if (type !== "blob") {
-      excluded.set(path, { path, reason: "non-blob" });
-      continue;
-    }
-    files.set(path, { path, bytes: Number(size), commits: [] });
-    headNames.set(path, /* @__PURE__ */ new Set([path]));
-  }
-  const log = git(["log", "--format=%x00%H %P%x00", "--raw", "-r", "-z", "--root", "--find-renames=50%", "--diff-merges=first-parent", "--topo-order", range, "--"]);
-  const commits = [];
-  let record;
-  for (const entry of gitRecords(log)) {
-    if (entry.commit) {
-      record = { ...entry, changes: [] };
-      commits.push(record);
-    } else record.changes.push(entry);
-  }
-  if ([...formatting].some((value) => !commits.some((record2) => record2.commit === value))) throw new CommandError("failed", [{ code: "exclusion-outside-range", message: "Every formatting commit must belong to the selected range.", fix: "Remove out-of-range exclusions or change the range." }]);
-  const selected = new Set(commits.map((record2) => record2.commit));
-  const lineage = /* @__PURE__ */ new Map([[head, headNames]]);
-  const pairs = /* @__PURE__ */ new Map();
-  const renames = [];
-  for (const record2 of commits) {
-    const names = lineage.get(record2.commit);
-    const touched = /* @__PURE__ */ new Map();
-    for (const change of record2.changes) {
-      const canonicalPaths = [...names.get(change.path) ?? []].sort();
-      const nonBlob = [change.oldMode, change.newMode].some((mode) => mode !== "000000" && !blobMode(mode));
-      if (nonBlob) excluded.set(change.path, { path: change.path, reason: "non-blob" });
-      const omitted = nonBlob || exclusion(change.path) || (change.originalPath ? exclusion(change.originalPath) : false);
-      for (const path of canonicalPaths) {
-        if (change.originalPath && !omitted) renames.push({ commit: record2.commit, path: change.path, originalPath: change.originalPath, canonicalPath: path });
-        if (formatting.has(record2.commit) || omitted) continue;
-        if (!touched.has(path)) touched.set(path, /* @__PURE__ */ new Set());
-        touched.get(path).add(change.path);
-      }
-    }
-    const paths = [...touched.keys()].sort();
-    for (const path of paths) files.get(path).commits.push(record2.commit);
-    for (let a = 0; a < paths.length; a++) for (let b = a + 1; b < paths.length; b++) {
-      const sources = touched.get(paths[b]);
-      if (![...touched.get(paths[a])].some((source) => sources.size > 1 || !sources.has(source))) continue;
-      const key = JSON.stringify([paths[a], paths[b]]);
-      if (!pairs.has(key)) pairs.set(key, { paths: [paths[a], paths[b]], commits: [] });
-      pairs.get(key).commits.push(record2.commit);
-    }
-    for (const parent of record2.parents.filter((parent2) => selected.has(parent2))) {
-      const changes = parent === record2.parents[0] ? record2.changes : gitRecords(git(["diff-tree", "-r", "--raw", "--no-commit-id", "-z", "--find-renames=50%", parent, record2.commit, "--"]));
-      const parentNames = new Map(names);
-      for (const change of changes) {
-        if (["A", "D", "R"].includes(change.status) || blobMode(change.oldMode) !== blobMode(change.newMode)) parentNames.delete(change.path);
-      }
-      for (const change of changes) {
-        if (change.originalPath && blobMode(change.oldMode) && names.has(change.path)) parentNames.set(change.originalPath, names.get(change.path));
-      }
-      const existing = lineage.get(parent);
-      if (!existing) lineage.set(parent, parentNames);
-      else for (const [path, canonicalPaths] of parentNames) existing.set(path, /* @__PURE__ */ new Set([...existing.get(path) ?? [], ...canonicalPaths]));
-    }
-    lineage.delete(record2.commit);
-  }
-  return { inputs: { repo: target.root, range: options.range, exclusions: options.exclusions ?? null }, data: {
-    range: { requested: options.range, base, head, resolved: range },
-    shallow,
-    renameHandling: "Git 50% similarity detection, endpoint files followed through commit ancestry within their current lifetime in the range",
-    renames,
-    exclusions: { rules: rules.map(({ reason, pattern }) => ({ reason, pattern })), files: [...excluded.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0), formattingCommits: [...formatting].sort() },
-    files: [...files.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map((file) => ({ ...file, changeCount: file.commits.length })),
-    coChangePairs: [...pairs.values()].map((pair) => ({ ...pair, changeCount: pair.commits.length })),
-    limitations: ["Only eligible blob files present at the resolved head are measured, with byte sizes from that revision. Detected lineage follows renames and stops at addition or blob/gitlink type boundaries. Deleted paths do not create rows; working-tree edits are not measured.", "History and co-change are advisory evidence, never violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.", "Merge signals use their first-parent diff; lineage follows every selected parent edge. Shared ancestry may support multiple surviving names, without inferring co-change from one historical path. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.", "If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, old-lifetime commits, rename evidence and co-change pairs can be attributed to the new file. This limitation does not change what counts as a file change."]
-  } };
-}
-
-// runtime/scripts/commands/overlap.mjs
-import { readFile as readFile18 } from "node:fs/promises";
-async function run17(options) {
-  if (!options.plans) throw new CommandError("usage-error", [{ code: "missing-plans", message: "--plans requires two files.", fix: "Supply --plans <file> <file>." }]);
-  const target = await resolveTarget(options);
-  const schema2 = JSON.parse(await readFile18(new URL("../schemas/overlap-plan.json", import.meta.url), "utf8"));
-  const plans = [];
-  for (const file of options.plans) {
-    let plan;
-    try {
-      plan = JSON.parse(await readFile18(file, "utf8"));
-    } catch {
-      throw new CommandError("failed", [{ code: "invalid-plan", path: file, message: "Plan must be readable JSON.", fix: "Supply a plan matching schemas/overlap-plan.json." }]);
-    }
-    validateData(schema2, plan);
-    validateIds(plan.contracts, "$/contracts");
-    plans.push(plan);
-  }
-  validateIds(plans, "$/plans");
-  const writes = plans.map((plan) => plan.writePaths.map(pathGlob));
-  const contracts = plans.map((plan) => plan.contracts.map((contract) => ({ ...contract, globs: contract.files.map(pathGlob) })));
-  function compare2(left, right) {
-    const intersections = [];
-    for (const a of left) for (const b of right) {
-      const path = sharedPath(a, b);
-      if (path !== null) intersections.push({ left: a.pattern, right: b.pattern, examplePath: path });
-    }
-    return intersections;
-  }
-  const sharedContracts = [];
-  for (const a of contracts[0]) for (const b of contracts[1]) {
-    const files = compare2(a.globs, b.globs);
-    if (a.id === b.id || files.length) sharedContracts.push({ leftId: a.id, rightId: b.id, sameId: a.id === b.id, files });
-  }
-  return { inputs: { repo: target.root, plans: options.plans }, data: {
-    planIds: plans.map((plan) => plan.id),
-    sharedPaths: compare2(writes[0], writes[1]),
-    sharedContracts,
-    limitations: ["Declared path intersections and changing contracts are signals. Disjoint declarations do not prove semantic independence or predict merge conflicts."]
-  } };
-}
-
 // runtime/scripts/commands/cite-check.mjs
-import { readFile as readFile19 } from "node:fs/promises";
+import { readFile as readFile17 } from "node:fs/promises";
 import { spawnSync as spawnSync8 } from "node:child_process";
-async function run18(options) {
+async function run16(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let report;
   try {
-    report = JSON.parse(await readFile19(options.report, "utf8"));
+    report = JSON.parse(await readFile17(options.report, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-report", message: "Report must be readable JSON.", path: options.report, fix: "Supply a readable research report." }]);
   }
-  const schema2 = JSON.parse(await readFile19(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
+  const schema2 = JSON.parse(await readFile17(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
   validateData(schema2, report);
   validateIds(report.briefs, "$/briefs");
   const problems = [];
@@ -4440,7 +4256,7 @@ async function run18(options) {
       const problem2 = (code, message) => problems.push({ code, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
       let bytes;
       try {
-        bytes = await readFile19(await resolvePath(target.root, path));
+        bytes = await readFile17(await resolvePath(target.root, path));
       } catch (error) {
         if (error instanceof CommandError) problems.push(...error.problems);
         else problem2("citation-file-unavailable", "Cited path must be a readable file.");
@@ -4478,15 +4294,15 @@ async function run18(options) {
 }
 
 // runtime/scripts/commands/contract-test.mjs
-import { readFile as readFile20 } from "node:fs/promises";
+import { readFile as readFile18 } from "node:fs/promises";
 async function readJSON(path) {
   try {
-    return JSON.parse(await readFile20(path, "utf8"));
+    return JSON.parse(await readFile18(path, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-input", message: `Input must be readable JSON: ${path}`, fix: "Supply a readable JSON file.", path: String(path) }]);
   }
 }
-async function run19(options) {
+async function run17(options) {
   if (!options.input) throw new CommandError("usage-error", [{ code: "missing-input", message: "--input is required.", fix: "Supply --input <file>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   const schema2 = await readJSON(options.schema ?? new URL("../schemas/contract-test.json", import.meta.url));
@@ -4529,8 +4345,6 @@ await dispatch(process.argv.slice(2), "repo-audit", {
   "findings render": { options: ["findings"], help: "Render a proposed audit record only in scratch and return its path.\nUsage: repo-audit.mjs findings render --repo <path>|--workspace <path> --findings <file> [--json]", run: run6 },
   "inspect": { options: [], help: "Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]", run: run14 },
   "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run15 },
-  "measure": { options: ["range", "exclusions"], help: "Collect endpoint file sizes and current-lifetime history signals without writes.\nUsage: repo-audit.mjs measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision selects its reachable history. Only files present at the endpoint are measured, following renames back to their addition. Exclusions follow schemas/measure-exclusions.json. Signals do not establish violations or merge conflicts.", run: run16 },
-  "overlap": { options: ["plans"], help: "Compare declared write paths and changing contracts without writes.\nUsage: repo-audit.mjs overlap --repo <path> --plans <file> <file> [--json]\nPlans follow schemas/overlap-plan.json. Paths are case-sensitive and repo-relative, using /, * and ? within segments, and ** for zero or more segments. Unsupported glob syntax fails. Intersections include planned new files. Disjoint paths do not prove independence.", run: run17 },
-  "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run18 },
-  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run19 }
+  "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run16 },
+  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run17 }
 });
