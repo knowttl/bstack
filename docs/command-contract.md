@@ -1466,6 +1466,19 @@ Declared captured artifacts must use paths inside `{evidenceDir}/`; validation r
 The path `{evidenceDir}/<feature id>.json` is reserved for the proof record; a declared artifact using that path, including a normalized equivalent, fails plan validation with `evidence-collision`.
 Plan validation fails with a stable code before any change set exists: `invalid-ready`, `invalid-timeout`, `invalid-match`, `unsafe-path`, `evidence-inside-kit`, `artifact-outside-evidence`, `evidence-collision`, `helper-collision`, `duplicate-feature` or the schema codes.
 An existing file the change set would create blocks with `kit-exists`.
+A plan with `"coverageGate": true` also renders `scripts/map-coverage.mjs` into the kit and lists it under Helpers; a helper at that path then fails with `helper-collision`.
+
+`kit scaffold --update` corrects an applied kit from an edited plan.
+It replaces each kit file whose bytes differ from the plan's rendering, creates each missing file, deletes each file under `features/` that the plan no longer lists and appends the `AGENTS.md` pointer when absent, and proposes nothing for a file that already matches.
+When nothing differs it exits 0 with `data.path` and `data.planDigest` null and an empty `data.files`.
+The result is otherwise the same reviewable change set, applied only through `apply`.
+
+`kit check --repo <path> --app <name>` reads the applied kit without running the product or writing.
+It fails with exit 1 and one problem per finding, each carrying the affected `path`: `file-drift` when a kit file differs from what `kit.json` renders (the message names the first differing line), `file-missing`, `orphan-feature-file` for a file under `features/` that `kit.json` does not list, `pointer-missing` when `AGENTS.md` lacks the kit's pointer line, and `source-path-missing` when a feature's declared source path matches no file in the working tree.
+A source path matches a file that equals it, lies under it or matches its `*`, `?` or `**` glob.
+A passing check returns `data.app`, `data.features` and the number of files compared.
+An unreadable kit blocks with `kit-unavailable`.
+It compares the kit with its own plan and the repo; it does not judge whether a feature file is true, which `kit prove` does.
 
 `kit prove --repo <path> --app <name> --feature <id>` runs the applied kit's `kit.json` once, replacing `{port}`, `{runDir}` and `{evidenceDir}` in commands.
 It launches without a shell in its own process group, waits for the declared readiness, runs doctor and then each step of the feature, writing `<evidence directory>/<run id>/<feature>.json` with every command, exit code and output.
@@ -1485,3 +1498,12 @@ The checker exits 1 and prints `path:line:column: no-prose-comments: prose comme
 `--baseline <file>` follows [the baseline schema](../runtime/schemas/baseline.schema.json), rejects duplicate rule/path/key identities and additionally fails on a listed entry that no longer matches a comment.
 An unreadable or invalid baseline prints `invalid-baseline:` and exits 2, including when combined with `--list`.
 Python uses the standard library tokenizer, Go its scanner package, and TypeScript the target project's `typescript` package.
+
+`node .agents/skills/verify-<app>/scripts/map-coverage.mjs --base <ref>` is the feature-map coverage gate that a kit rendered with `coverageGate` carries.
+It is not a bstack command: it is one comment-free file that needs only Node and Git, runs from the target's worktree and does not need bstack installed.
+It takes the merge base of `<ref>` and `HEAD`, collects every changed file since then, committed, staged, unstaged or untracked, and drops files inside the kit directory.
+For each `features/*.md` file other than `README.md`, it reads the `Source paths:` line and requires, when a changed file matches one of those paths, that the feature file changed too or that a commit message since the merge base has a line `No-map-impact: <feature-id>: <reason>` with a non-empty reason.
+Exit 0 prints `feature-map-coverage: ok (<n> features checked)`.
+Exit 1 prints one `<feature file>: feature-map-coverage: <first changed path> [and <n> more] changed without updating this feature file; ...` line per uncovered feature on stdout.
+Exit 2 prints a `feature-map-coverage:` diagnostic on stderr for a missing `--base`, a base that does not resolve, a missing features directory or a feature file with no backticked paths on its `Source paths:` line.
+A path matches when it equals a declared path, lies under it or matches its `*`, `?` or `**` glob.

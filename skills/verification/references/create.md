@@ -43,6 +43,7 @@ In any command, `{port}` is replaced by a free port, `{runDir}` by a disposable 
 | `evidence` | The directory outside the kit where proof lands, and the proof standards |
 | `cleanup` | An optional command and notes. Cleanup removes what the run started, never the evidence |
 | `helpers` | Scripts the kit ships, with the invocation shown |
+| `coverageGate` | Optional `true` renders the feature-map coverage gate into the kit's scripts; omit it when the repo does not use no-mistakes |
 | `features` | One entry per user-facing feature |
 
 Evidence standards to state: exercise the real user path, not internal setters or test-only endpoints; capture the action and the resulting state, not only the final screen; verify side effects such as files written, rows inserted or messages sent; use mocks only where a production boundary already isolates the external system.
@@ -83,11 +84,12 @@ Write them in the project's own language where it has one, so the kit needs no e
 | `.agents/skills/verify-<app>/features/README.md` | The index, baseline preconditions, driving conventions and the feature entry contract |
 | `.agents/skills/verify-<app>/features/<id>.md` | One file per feature with a title, summary, `Source paths:` line and four sections |
 | `.agents/skills/verify-<app>/<helper path>` | Each helper |
+| `.agents/skills/verify-<app>/scripts/map-coverage.mjs` | The coverage gate, only when the plan sets `coverageGate`; the helper path is reserved then |
 | `.claude/skills/verify-<app>/SKILL.md` | A thin pointer to the kit |
 | `AGENTS.md` | A one-line pointer, appended to an existing file or creating it |
 
 Before applying, edit the plan and scaffold again to refresh the proposed files.
-After applying, scaffold refuses existing kit files; propose repairs through a new hash-checked change set for `apply`, keeping `kit.json` and its rendered documents consistent.
+After applying, scaffold refuses existing kit files; correct the kit with `kit scaffold --update` and a plan edited from the applied `kit.json`, which keeps `kit.json` and its rendered documents consistent, and review its change set through `apply` as usual.
 
 ## Prove the kit
 

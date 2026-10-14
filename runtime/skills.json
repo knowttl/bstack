@@ -16,13 +16,13 @@
   },
   "verification": {
     "commands": [
-      "kit scaffold", "kit prove", "comment-check generate", "apply", "state show", "findings validate", "rule-proof",
+      "kit scaffold", "kit prove", "kit check", "comment-check generate", "apply", "state show", "findings validate", "rule-proof",
       "baseline check", "run-checks", "probe record", "probe compare"
     ],
     "schemas": [
       "baseline.schema.json", "change-set.schema.json", "check-plan.json", "evidence.schema.json", "findings.schema.json",
       "kit-plan.json", "probe-record.json", "probe-spec.json", "project.schema.json", "resume-state.schema.json"
     ],
-    "assets": []
+    "assets": ["map-coverage.mjs"]
   }
 }

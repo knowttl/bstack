@@ -98,7 +98,7 @@ Give each principle a reason, source, scope, enforcement method and exception po
 Prefer native checks and one source of truth over duplicated prose or a second verification engine.
 Distinguish automated rules from judgement rules.
 Include setup, formatting, lint, applicable type checks and tests.
-Use the enforcement reference's [test necessity and cost guidance](references/enforcement.md#test-necessity-and-cost) when proposing testing rules for AGENTS.md and any selected review configuration.
+Testing rules and the verification kit belong to `/verification create`: list it as a next step for the user to run, and do not draft testing guidance here.
 CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
 Avoid speculative frameworks, service layers, integrations and empty document templates.
 Obtain the owner's selection of the destination inside the existing idea workspace, stack, minimal scaffold and first journey before creation.
@@ -157,8 +157,8 @@ Resolve the selected repo and read its instructions and indexes.
 First run `node scripts/repo-audit.mjs inspect --repo <target> --json`, then `node scripts/repo-audit.mjs inventory --repo <target> --json`.
 Keep both outputs in scratch before researching discovered documents and implementation.
 Inventory the existing README, vision, requirements, goals, design, architecture, decisions, principles, vocabulary, standards, prior audits, debt and planned changes using their actual names and layout.
-Inspect relevant manifests, native configs, CI, entry points, module responsibilities, interfaces, data flow, code and tests, noting which important user journeys have direct executable checks and which tests assert private implementation rather than a public contract.
-Review existing tests for all eight [test necessity and cost patterns](references/enforcement.md#test-necessity-and-cost), recording evidenced instances as findings rather than automatically deleting tests.
+Inspect relevant manifests, native configs, CI, entry points, module responsibilities, interfaces, data flow, code and tests.
+Test and journey auditing, testing guidance, the verification kit and the lint and type constraints that guard them belong to `/verification`: list it as a next step for the user to run, and do not audit tests here.
 Record the revision and working-tree state and preserve uncommitted user work.
 Identify approved principles and their existing enforcement.
 Run safe native checks when prerequisites permit, recording commands and results directly.
@@ -203,11 +203,7 @@ Done when: Every material gap is resolved or explicitly blocks its dependent rec
 
 Judge the foundation against its approved principles and respect its stack and conventions unless evidence supports a specific change.
 Separate observed debt, missing protections, unresolved design decisions and proposed new principles.
-An important journey protected only by unit or mocked tests is a missing protection.
 For each material finding record an ID, observed problem, evidence files or failing command, principle, consequence, proposed fix, scope, verification method and whether it blocks the stated next change or can wait.
-For a test recommendation, name the acceptance source and the journey or public boundary it protects, and propose the fewest checks that would fail if that outcome broke.
-Do not propose tests that assert private implementation or copy expected values from current behaviour without an approved source.
-Report an instruction that mandates one development sequence for every change, such as writing a failing test before all work, as a proposed principle change citing the verification requirements, and keep it unless the user selects the change.
 Keep proposed principles separate for review instead of treating them as existing requirements.
 Avoid speculative findings, cosmetic rewrites and universal architecture prescriptions.
 Use native baselines where available, keeping known failures visible and preventing new failures from entering through a refreshed baseline.
@@ -225,8 +221,6 @@ Done when: Every recommendation has a project-specific reason, evidence, princip
 Use the shared review and write rules, preserving existing runtime behaviour and uncommitted user work.
 Reuse authoritative documents and native configs instead of duplicating vision, vocabulary, design or standards.
 AGENTS.md holds pointers to the project's rules, evidence requirements and maintained check commands, not full copies of those sources.
-For selected testing-guidance changes, include the enforcement reference's eight concise prevention rules in AGENTS.md and all eight review criteria in any review instructions being configured, retaining links to the project's authoritative testing policy.
-When no project source states what evidence completes a change, propose one short section in the existing design or contribution guide naming where acceptance cases and the journey check live, that a change is complete when its affected journeys pass on the final inputs, and that passing unit tests alone do not establish it.
 Apply only selected findings.
 Retain the user's selection and exact reviewed scope in scratch, then update the findings selections and prepare a change set following `schemas/change-set.schema.json`.
 Include original and proposed exact-byte hashes, resolved scope, findings digest and plan digest.
@@ -373,7 +367,7 @@ Load a schema only to prepare or validate input for a command required by the cu
 | An unresolved decision would change a recommendation | `references/grilling.md` |
 | Project terms are unclear or conflict | `references/domain-language.md` |
 | No `VISION.md`, or the audit found a vision gap | `references/vision.md` |
-| Reviewing test necessity and cost or recommending principles and their checks | `references/enforcement.md` |
+| Recommending principles and their checks | `references/enforcement.md` |
 | Recommending design principles or module boundaries | `references/architecture.md` |
 | Running research in the main thread or delegating it | `references/research-briefs.md` |
 | Preparing a research report for citation checking | `schemas/research-report.json` |
