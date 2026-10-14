@@ -514,7 +514,7 @@ Both write only through `apply` after the user approves the exact bytes, never r
 
 The [architecture skill](skills/architecture/SKILL.md) is started by the user in `create` or `maintain` mode.
 `create` proposes or audits module boundaries, dependency direction and shared edit targets from measured history, planned-change overlap and the project's own dependency analysis, then writes the selected design sections, decision records, `CODING_STANDARDS.md` when the project needs it, and import-boundary rules proven with `rule-proof` and a visible debt baseline.
-`maintain` takes the commit that last changed the design as its baseline, reruns `measure` and `overlap`, and sorts what changed into undescribed modules, broken boundaries, shared edit targets and decisions to record; follow its [maintain checklist](skills/architecture/SKILL.md#maintain-checklist).
+`maintain` uses the last confirmed architectural review as its baseline unless the user names another, asks the user for one when design or ADR document edits do not establish it, reruns `measure` and `overlap`, and sorts what changed into undescribed modules, broken boundaries, shared edit targets and decisions to record; follow its [maintain checklist](skills/architecture/SKILL.md#maintain-checklist).
 Both write only through `apply` after the user approves the exact bytes and never move product code.
 `measure`, `overlap`, `rule-proof` and `baseline check` need a Git repo, so a new idea in a non-Git workspace reviews planned changes by reading and leaves its rules unproven until code exists.
 
