@@ -77,7 +77,7 @@ To start an audit, open a fresh agent conversation in the target project and exp
 
 ```text
 $repo-audit
-Audit this repo's checkout boundary before adding quantity support.
+Audit this repo's checkout checks before adding quantity support.
 Use the existing design and acceptance cases; present findings for selection before editing.
 ```
 
@@ -300,7 +300,7 @@ npm test -- --task T3a.5
 The [document-reference contract](docs/command-contract.md#document-references) defines supported links and glossary registration.
 Duplicate terms fail only within one registered context; unsupported formats report coverage limits.
 Use paired reviewed [`move-rule` edits](docs/command-contract.md#apply-dry-run) to preserve one authoritative rule and replace its old location with an exact link.
-Prefer an existing standards source such as CONTRIBUTING.md or a design section before selecting a new file.
+For design standards and their placement, follow the architecture skill's [design standards reference](skills/architecture/references/design-standards.md).
 
 Capture a reviewed check plan with acceptance sources and input scopes:
 
