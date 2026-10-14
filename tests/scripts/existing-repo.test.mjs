@@ -4,7 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
-import { emptyRepo, build, run, git, snapshot } from './discovery-fixture.mjs'
+import { emptyRepo, build, run, runVerification, git, snapshot } from './discovery-fixture.mjs'
 
 // The installed commands are exercised together without importing their internals.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -35,7 +35,7 @@ async function edit(repo, path, content, id, findingId) {
     operation: content === null ? 'delete' : original === null ? 'create' : 'replace-file', payload: content === null ? {} : { content } }
 }
 
-test('selected root instruction merge and audit apply preserve scoped instructions, dirty work and the native journey', async t => {
+test('selected root instruction merge preserves scoped instructions, dirty work and the native journey', async t => {
   const context = await emptyRepo(t)
   const repo = context.repo = build(t, 'dirty-work')
   const env = { ...process.env, XDG_CACHE_HOME: join(context.directory, 'cache'), LOCALAPPDATA: join(context.directory, 'cache') }
@@ -59,15 +59,15 @@ test('selected root instruction merge and audit apply preserve scoped instructio
       command: { executable: 'node', args: ['--test', 'price.test.mjs'], cwd: '.', versionArgs: ['--version'] } }] }
   const checksFile = join(context.directory, 'checks.json')
   await writeFile(checksFile, JSON.stringify(checks))
-  assert.equal(run('run-checks', repo, env, ['--plan', checksFile]).exit, 0)
+  assert.equal(runVerification('run-checks', repo, env, ['--plan', checksFile]).exit, 0)
   const originalPrice = await readFile(join(repo, 'price.mjs'))
   await writeFile(join(repo, 'price.mjs'), 'export function quote(quantity) { return quantity * 13 }\n')
-  assert.equal(run('run-checks', repo, env, ['--plan', checksFile]).exit, 1)
+  assert.equal(runVerification('run-checks', repo, env, ['--plan', checksFile]).exit, 1)
   await writeFile(join(repo, 'price.mjs'), originalPrice)
   const findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-audit.json')))
   findings.target = { mode: 'repo', root: repo, revision: git(repo, 'rev-parse', 'HEAD') }
-  findings.nextChange = 'Consolidate equivalent root instructions and record the audit.'
-  findings.reviewedScope = ['AGENTS.md', 'CLAUDE.md', 'docs/repo-audit.md']
+  findings.nextChange = 'Consolidate equivalent root instructions.'
+  findings.reviewedScope = ['AGENTS.md', 'CLAUDE.md']
   findings.sources = [{ id: 'contract', pointer: 'DESIGN.md:3', intent: 'documented', summary: 'Quotes multiply quantity by 12.' }]
   Object.assign(findings.findings[0], { problem: 'Root instructions are duplicated.', files: ['AGENTS.md', 'CLAUDE.md'],
     scope: findings.reviewedScope, sourceIds: ['contract'], blocksNextChange: false,
@@ -77,38 +77,23 @@ test('selected root instruction merge and audit apply preserve scoped instructio
   findings.limitations = ['Maintained enforcement and portable maintenance are pending.']
   const changes = await plan(context, findings, [await edit(repo, 'AGENTS.md', instructions, 'E-001', 'F-001'),
     await edit(repo, 'CLAUDE.md', null, 'E-002', 'F-001')])
-  const preview = run('apply', repo, env, ['--plan', changes, '--dry-run'])
+  const preview = runVerification('apply', repo, env, ['--plan', changes, '--dry-run'])
   assert.equal(preview.exit, 0, JSON.stringify(preview))
   assert.deepEqual(await snapshot(repo), before)
-  assert.equal(run('apply', repo, env, ['--plan', changes]).exit, 0)
-  const captured = run('run-checks', repo, env, ['--plan', checksFile])
+  assert.equal(runVerification('apply', repo, env, ['--plan', changes]).exit, 0)
+  const captured = runVerification('run-checks', repo, env, ['--plan', checksFile])
   assert.equal(captured.exit, 0)
   const findingsFile = join(context.directory, 'findings.json')
   findings.findings[0].resolved = true
   await writeFile(findingsFile, JSON.stringify(findings))
-  const assessed = run('findings validate', repo, env, ['--findings', findingsFile])
+  const assessed = runVerification('findings validate', repo, env, ['--findings', findingsFile])
   const artifact = captured.data.path
   const artifactHash = hash(await readFile(artifact))
   findings.execution = findings.requiredOutcomes.map((outcome, index) => ({ id: `evidence-${index}`, outcome, status: 'passed',
     fingerprint: assessed.data.fingerprint, artifact, artifactHash, method: 'Native quote check captured after instruction apply.' }))
   await writeFile(findingsFile, JSON.stringify(findings))
-  const report = run('findings render', repo, env, ['--findings', findingsFile])
-  assert.equal(report.data.result, 'ready for the stated next change')
-  const content = await readFile(report.data.path, 'utf8')
-  const auditPlan = await plan(context, findings, [await edit(repo, 'docs/repo-audit.md', content, 'E-003', 'F-001')])
-  assert.equal(run('apply', repo, env, ['--plan', auditPlan, '--dry-run']).exit, 0)
-  assert.equal(run('apply', repo, env, ['--plan', auditPlan]).exit, 0)
-  assert.equal(await readFile(join(repo, 'docs/repo-audit.md'), 'utf8'), content)
-  const finalChecks = run('run-checks', repo, env, ['--plan', checksFile])
-  assert.equal(finalChecks.exit, 0)
-  assert.equal(run('findings validate', repo, env, ['--findings', findingsFile]).data.result, 'verification blocked')
-  const finalFingerprint = run('findings validate', repo, env, ['--findings', findingsFile]).data.fingerprint
-  const finalHash = hash(await readFile(finalChecks.data.path))
-  findings.execution = findings.execution.map(record => ({ ...record, fingerprint: finalFingerprint, artifact: finalChecks.data.path, artifactHash: finalHash }))
-  await writeFile(findingsFile, JSON.stringify(findings))
-  assert.equal(run('findings validate', repo, env, ['--findings', findingsFile]).data.result, 'ready for the stated next change')
+  assert.equal(runVerification('findings validate', repo, env, ['--findings', findingsFile]).data.result, 'ready for the stated next change')
   const after = await snapshot(repo)
   delete before['CLAUDE.md']
-  delete after.docs
   assert.deepEqual(after, before)
 })

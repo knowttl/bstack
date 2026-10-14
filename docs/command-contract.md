@@ -64,14 +64,14 @@ Opaque leaf programs retain the existing review boundary: only supported direct 
 Commit implementation changes before collecting portable review:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base <ancestor-commit> --portable .bstack/assessment.json --json
+node skills/maintenance/scripts/maintenance.mjs evidence collect --repo <target> --base <ancestor-commit> --portable .bstack/assessment.json --json
 ```
 
 Copy the returned skeleton to the explicitly selected repo-relative assessment path and complete its substantive claims through the selected review process.
 Then validate the completed record:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <target>/.bstack/assessment.json --json
+node skills/maintenance/scripts/maintenance.mjs evidence validate --repo <target> --base <ancestor-commit> --assessment <target>/.bstack/assessment.json --json
 ```
 
 Validation returns the fingerprint to record after review, even while leaf execution is still missing.
@@ -124,7 +124,7 @@ An absent or incompatible prior checker blocks for a recorded migration decision
 A selected first-installation foundation with no previous policy has no prior checker to execute.
 The delivery process must actually invoke these checks; changed scripts can omit their own checker, so forge enforcement and hosted CI behavior remain unverified.
 
-The planned production interface is `node skills/repo-audit/scripts/repo-audit.mjs <command> [options]`.
+The production interface is `node skills/<skill>/scripts/<skill>.mjs <command> [options]`; repo-audit ships only `inspect`, `inventory`, `cite-check` and the `contract-test` dispatch harness, and each other command ships with the skills that list it in `runtime/skills.json`.
 Resource paths are relative to the installed skill, never the caller's current directory.
 Command-specific options and input formats belong to their owning tasks and command help.
 C4a establishes arguments, targets, paths, scratch and results.
@@ -133,8 +133,8 @@ C4c adds command dispatch and the explicitly supported schema subset.
 ## Project contract and change collection
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs contract validate --repo <target> [--contract <repo-relative-file>] --json
-node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base <ref> [--contract <repo-relative-file>] --json
+node skills/maintenance/scripts/maintenance.mjs contract validate --repo <target> [--contract <repo-relative-file>] --json
+node skills/maintenance/scripts/maintenance.mjs evidence collect --repo <target> --base <ref> [--contract <repo-relative-file>] --json
 ```
 
 Both commands require a Git working tree and accept `--contract`, defaulting to `.bstack/project.json`.
@@ -179,11 +179,11 @@ Unknown document, rule or check references fail.
 
 Leaf checks and generators cannot invoke bstack's `evidence validate`, `docs check`, `docs generate` or the standalone `bstack-check.mjs` aggregate.
 Aggregate filenames are recognised in executable and argument positions by case-insensitive basename, using either path separator and ignoring `.exe`, `.cmd` and `.bat` suffixes.
-The `evidence validate`, `docs check` and `docs generate` argument pairs require those exact spellings and a `repo-audit.mjs` executable or argument; independent project tools may use those argument pairs.
+The `evidence validate`, `docs check` and `docs generate` argument pairs require those exact spellings and a `repo-audit.mjs` or `maintenance.mjs` executable or argument; independent project tools may use those argument pairs.
 Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
 For npm, script lookup uses the nearest ancestor within the repo containing `package.json` or `node_modules`, and script bodies are inspected from that directory.
 For Yarn, lookup uses the nearest ancestor within the repo containing `package.json`, without stopping at `node_modules`.
-Script bodies use the [selected integration grammar](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command), which owns token, quoting, whitespace and unsupported shell-transformation rules.
+Script bodies use the [selected integration grammar](../skills/foundation/references/checks.md#integrate-the-maintained-command), which owns token, quoting, whitespace and unsupported shell-transformation rules.
 That grammar applies to every command in pre/main/post and nested script bodies reached from checks, generators or their version probes; direct child-command arrays retain literal arguments under the [child-command contract](#child-commands).
 The validator follows script aliases and declared npm, pnpm and yarn pre/post lifecycle scripts, rejecting cycles, missing scripts and aggregate calls.
 Declared pnpm hooks are inspected even when local configuration disables them, so enabling hooks cannot introduce aggregate recursion.
@@ -222,7 +222,7 @@ Assessment validation and local freshness are implemented below; the standalone 
 ### Assessment validation
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] --json
+node skills/maintenance/scripts/maintenance.mjs evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] --json
 ```
 
 The caller-relative assessment follows `schemas/evidence.schema.json`.
@@ -308,8 +308,8 @@ This validates local captures only; prior-checker execution and portable results
 ## Generated facts
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --check --json
-node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --json
+node skills/maintenance/scripts/maintenance.mjs docs generate --repo <target> --check --json
+node skills/maintenance/scripts/maintenance.mjs docs generate --repo <target> --json
 ```
 
 Both forms load the project contract, with the same optional `--contract` override as `contract validate`.
@@ -338,7 +338,7 @@ Human summaries and JSON results report structural proof limits.
 ## Document references
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs docs check --repo <target> [--contract <repo-relative-file>] --json
+node skills/maintenance/scripts/maintenance.mjs docs check --repo <target> [--contract <repo-relative-file>] --json
 ```
 
 The command loads the project contract and verifies every registered document, rule and acceptance source path without executing checks or generators or writing files.
@@ -574,7 +574,7 @@ The report follows `skills/repo-audit/schemas/research-report.json`, version 1.
 It requires the actual mode, host, observed subagent and web capabilities and one or more uniquely identified briefs.
 Brief IDs are documents, architecture, checks, language and outside.
 Each brief records its actual scope, concise findings, limitations, file citations and web citations.
-The [research briefs](../skills/repo-audit/references/research-briefs.md#execution-and-report-contract) own brief selection and execution guidance.
+The [research briefs reference](../skills/repo-audit/references/research-briefs.md#execution-and-report-contract) owns the documents brief that repo-audit runs and its execution guidance; the schema keeps the other brief IDs for the skills that research them.
 
 Each file citation has a repo-relative `location` in `path:line` form and a `state` with kind sha256 or revision and its lowercase hex value.
 Use forward slashes for portable repo-relative paths.
@@ -1148,7 +1148,7 @@ Acorn and Marked are root development dependencies used by this checker, not dep
 
 ## Findings
 
-`findings validate --findings <file> --json` and `findings render --findings <file>` require an explicit `--repo` or draft-only `--workspace` target.
+`findings validate --findings <file> --json` requires an explicit `--repo` or draft-only `--workspace` target.
 The [findings schema source](../runtime/schemas/findings.schema.json) owns every field.
 Complete [audit](../tests/inputs/findings-audit.json) and [foundation](../tests/inputs/findings-foundation.json) examples deliberately lack execution evidence and therefore cannot claim ready.
 Replace their target placeholder with the resolved root and record the current full Git HEAD, or null for a repo without commits or a non-Git workspace.
@@ -1198,23 +1198,21 @@ Both stages use this verdict precedence:
 
 Nonblocking debt can remain visible without preventing readiness.
 A failed journey always blocks, including when units passed or the journey was omitted from requiredOutcomes.
-The report has one result and no score, and shows source intent, debt, missing protections, decisions, selected findings, proposed principles and limitations.
+The assessment has one result and no score.
 Malformed input fails with named problems and no writes.
 Missing evidence is a valid input with a verification-blocked assessment, rather than a schema failure.
 A completed readiness assessment uses command status `passed` with exit code 0 even when readiness is blocked or decisions are needed.
 Read `data.result` and `data.reasons` to determine readiness.
 `validate` writes nothing.
-`render` writes only `repo-audit.md` in a fresh OS-cache scratch run and returns `data.path` in JSON or the path in plain output.
-An inside-target cache blocks rendering.
-Write the reviewed report into the project's audit record through an `apply` create or whole-file replacement plan.
+The audit record `docs/repo-audit.md` and its `render` command are dropped, so no findings command writes a report.
 
 ## Apply dry run
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --dry-run [--json]
-node skills/repo-audit/scripts/repo-audit.mjs apply --workspace <path> --plan <file> --dry-run [--json]
-node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path>|--workspace <path> --plan <file> [--json]
-node skills/repo-audit/scripts/repo-audit.mjs state show --repo <path>|--workspace <path> --run <id> [--json]
+node skills/verification/scripts/verification.mjs apply --repo <path> --plan <file> --dry-run [--json]
+node skills/verification/scripts/verification.mjs apply --workspace <path> --plan <file> --dry-run [--json]
+node skills/verification/scripts/verification.mjs apply --repo <path>|--workspace <path> --plan <file> [--json]
+node skills/verification/scripts/verification.mjs state show --repo <path>|--workspace <path> --run <id> [--json]
 ```
 
 `--plan` is required, while `--dry-run` selects validation and preview only.
@@ -1255,7 +1253,7 @@ The helper derives the full proposed content from the operation and checks it ag
 For a fresh plan or dry run, current file bytes must match `originalHash`; a create must start absent and a delete must start present.
 Resume validates the saved originals against `originalHash` and derives current file states as described below.
 Complete bytes for every file are staged in memory before reporting success.
-The installed [enforcement reference](../skills/repo-audit/references/enforcement.md#integrate-the-maintained-command) owns selected `checkIntegration` paths, their bounded command grammar, supported CI format and disposable-proof requirements.
+The installed [checks reference](../skills/foundation/references/checks.md#integrate-the-maintained-command) owns selected `checkIntegration` paths, their bounded command grammar, supported CI format and disposable-proof requirements.
 If any file fails input validation or staging, no diff or proposed edits are returned and every project file remains unchanged.
 Filesystem access failures block the command; invalid plans fail with named problems and renewed-review guidance.
 
@@ -1300,7 +1298,6 @@ A leading UTF-8 BOM is ignored when matching headings, fences and existing lines
 Replacement searches with zero or multiple occurrences fail.
 For unsupported mechanical edits, review complete text with `replace-file`, using the same selected finding, scope, hashes and digest checks.
 That operation treats the reviewed content as opaque UTF-8 text rather than trying another parser.
-An absent audit record uses `create`, while an existing audit record uses `replace-file` with the exact T2.5 rendered bytes.
 
 For a selected replacement, an edit has this shape:
 
@@ -1501,7 +1498,7 @@ Apply the selected native tool's own baseline or suppression mechanism instead w
 ## Verification skill commands
 
 `node skills/verification/scripts/verification.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone verification skill, with the same argument, target, scratch and result contracts as repo-audit.
-It runs `apply`, `state show`, `findings validate`, `rule-proof`, `baseline check`, `run-checks`, `probe record` and `probe compare` from the [shared runtime](../runtime/), with the same behaviour as in repo-audit, and adds the commands below.
+It runs `apply`, `state show`, `findings validate`, `rule-proof`, `baseline check`, `run-checks`, `probe record` and `probe compare` from the [shared runtime](../runtime/), following their contracts above, and adds the commands below.
 `--help` lists the commands, and `<command> --help` prints that command's syntax.
 
 `kit scaffold --repo <path> --plan <file>` reads a kit plan following [the plan schema](../skills/verification/schemas/kit-plan.json) and writes a change set and findings file to scratch for review through `apply`.

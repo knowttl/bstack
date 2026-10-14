@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { emptyRepo, run, snapshot } from './discovery-fixture.mjs'
+import { emptyRepo, runVerification as run, snapshot } from './discovery-fixture.mjs'
 
 const entry = { rule: 'private-import', path: 'src/price.mjs', key: 'storage', reason: 'Keep existing debt visible until the selected cleanup.', removalCondition: 'Use the public pricing interface.' }
 const violation = { rule: entry.rule, path: entry.path, key: entry.key }
@@ -32,7 +32,7 @@ test('existing debt remains visible and checking leaves the target unchanged', a
   assert.equal(result.exit, 0)
   assert.deepEqual(result.data.debt, [entry])
   assert.deepEqual(await snapshot(f.repo), before)
-  const plain = spawnSync(process.execPath, [new URL('../../skills/repo-audit/scripts/repo-audit.mjs', import.meta.url).pathname,
+  const plain = spawnSync(process.execPath, [new URL('../../skills/verification/scripts/verification.mjs', import.meta.url).pathname,
     'baseline', 'check', '--repo', f.repo, '--baseline', 'baseline.json', '--violations', f.file], { encoding: 'utf8' })
   assert.equal(plain.status, 0)
   assert.match(plain.stdout, /debt: private-import src\/price.mjs storage/)
@@ -94,7 +94,7 @@ for (const adding of [false, true]) {
       await f.invoke()
       const before = await snapshot(f.repo)
       const result = spawnSync(process.execPath, ['--import', new URL('../inputs/baseline-fault.mjs', import.meta.url).pathname,
-        new URL('../../skills/repo-audit/scripts/repo-audit.mjs', import.meta.url).pathname,
+        new URL('../../skills/verification/scripts/verification.mjs', import.meta.url).pathname,
         'baseline', 'check', '--repo', f.repo, '--json', '--baseline', 'baseline.json', '--violations', f.file, ...args],
       { encoding: 'utf8', env: { ...process.env, BSTACK_TEST_FAULT: fault, BSTACK_TEST_DESTINATION: join(f.repo, 'baseline.json') } })
       assert.notEqual(result.status, 0)
