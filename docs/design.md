@@ -320,7 +320,7 @@ Each move removes the moved content from repo-audit and replaces it with a check
 
 ### Split limitations
 
-- The split was designed from source and has no running implementation: no command ran against a test repo, and no no-mistakes pipeline ran with the proposed wiring.
+- The remaining skill boundaries and no-mistakes wiring are not implemented; [README.md](../README.md) owns current implementation status.
 - Each skill starting with a short self-check of its own area on an existing repo, the `maintain` and `sweep` modes, the ownership map and the checker's docs-only mode are new behaviour, not present today.
 - The verification build supplied only the byte-for-byte checked copies of piece 2; the generator, the multi-skill installer and the move of every command to one source tree came with piece 2 itself.
 - The no-mistakes constraints above rest on the pinned reference at commit 93b4407, and the wiring has not run end to end.

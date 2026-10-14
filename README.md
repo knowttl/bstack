@@ -3,8 +3,8 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` mode implemented; `maintain` and the no-mistakes wiring with its coverage gate remain pending.
-The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); that split is approved but not yet built.
-The installation and usage below apply to the implemented repo-audit skill.
+The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, while the remaining skill boundaries and workflows are pending.
+The installation below covers repo-audit and verification; audit usage applies to repo-audit.
 
 This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
@@ -46,7 +46,7 @@ node scripts/check-package.mjs --skill <project-path>/.agents/skills/repo-audit
 Use `--scope user --host agents` for the current home, or `--host claude` for Claude Code alone.
 `--host all` selects both `.agents/skills/<skill>` and `.claude/skills/<skill>` beneath the selected home or project.
 Each skill keeps its own ownership and journal records beside the skill folders, so updating or uninstalling one skill leaves the others untouched.
-A skill without a `package.json` pins no runtime and installs without npm.
+A skill without a `package.json` pins no runtime and skips npm installation of skill dependencies.
 Node 24 or later, Git and npm are prerequisites.
 The installer stages the authored package, installs the locked runtime with npm and validates it before activation.
 An occupied unowned destination blocks installation.
@@ -414,7 +414,8 @@ node scripts/generate-skills.mjs
 node scripts/generate-skills.mjs --check
 ```
 
-`--check` exits 1 for a missing, modified or unlisted generated file, and both commands exit 1 when a skill lists a command, schema or asset that `runtime/` lacks or when a bundle would include a file outside `runtime/`.
+`--check` exits 1 for a missing or modified listed output or an unlisted file under a registered skill's `schemas/` or `assets/`; generation removes those unlisted schema and asset files.
+Both commands exit 1 when a skill lists a command, schema or asset that `runtime/` lacks or when a bundle would include a file outside `runtime/`.
 To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
 
@@ -450,7 +451,7 @@ node .bstack/bin/bstack-check.mjs --repo <target> --base <commit> --assessment <
 See the [execution contract](docs/command-contract.md#standalone-checker-execution) for portable review preparation, fresh leaf execution, previous-policy validation and the missing-base fetch prerequisite.
 Hosted CI behavior remains unverified.
 
-To view the available and planned commands:
+To view repo-audit's available commands:
 
 ```sh
 node skills/repo-audit/scripts/repo-audit.mjs --help
