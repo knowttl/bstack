@@ -4,8 +4,8 @@ import { readFile, writeFile, rename, rm, mkdir, symlink } from 'node:fs/promise
 import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.mjs'
 import { git, run } from './discovery-fixture.mjs'
-import { hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
-import { baseText } from '../../skills/repo-audit/scripts/lib/evidence-policy.mjs'
+import { hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
+import { baseText } from '../../runtime/scripts/lib/evidence-policy.mjs'
 
 function commit(repo) {
   git(repo, 'add', '.')

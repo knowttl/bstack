@@ -6,9 +6,9 @@ import { randomUUID } from 'node:crypto'
 import { root, text, object, array, readJSON, fail } from './evaluation.mjs'
 import { scoreChecks, validateScore, correctedScore } from './evaluation-scoring.mjs'
 import { createContainer, image } from './evaluation-container.mjs'
-import { validateData } from '../../skills/repo-audit/scripts/lib/schema.mjs'
-import { hashBytes, canonicalJSON } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
-import { runCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
+import { validateData } from '../../runtime/scripts/lib/schema.mjs'
+import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.mjs'
+import { runCommand } from '../../runtime/scripts/lib/run.mjs'
 
 // Stdin avoids OS argument limits; the wrapper forwards no provider diagnostics.
 const invoke = `const {readFileSync}=require('node:fs');const {spawnSync}=require('node:child_process');

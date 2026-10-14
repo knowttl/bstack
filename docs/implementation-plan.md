@@ -28,7 +28,7 @@ Read this section before your first task.
 It audits an existing repo, or interviews the user about a new idea.
 It then recommends project-specific principles, rules and checks, and applies the ones the user selects.
 Everything the original skill needs ships inside one folder, `skills/repo-audit/`.
-See the design's [standalone verification amendment](design.md#standalone-verification-skill) for the additional approved scope and [README.md](../README.md) for its current implementation status and shared-runtime copy workflow.
+See the design's [standalone verification amendment](design.md#standalone-verification-skill) for the additional approved scope and [README.md](../README.md) for its current implementation status and shared-runtime generation workflow.
 The bstack repo also holds a package check, an installer, test fixtures, an evaluation runner and the no-mistakes gate config.
 It has no hosted CI workflows (design "Commissioning decisions (2026-10-07)").
 

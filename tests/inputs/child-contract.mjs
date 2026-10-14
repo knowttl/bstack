@@ -1,10 +1,10 @@
 import { readFile, watch } from 'node:fs/promises'
 import { mock } from 'node:test'
-import { parseArgs } from '../../skills/repo-audit/scripts/lib/args.mjs'
-import { resolveTarget } from '../../skills/repo-audit/scripts/lib/repo.mjs'
-import { emitResult } from '../../skills/repo-audit/scripts/lib/result.mjs'
-import { runCommand, selectCommand } from '../../skills/repo-audit/scripts/lib/run.mjs'
-import { fingerprint } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { parseArgs } from '../../runtime/scripts/lib/args.mjs'
+import { resolveTarget } from '../../runtime/scripts/lib/repo.mjs'
+import { emitResult } from '../../runtime/scripts/lib/result.mjs'
+import { runCommand, selectCommand } from '../../runtime/scripts/lib/run.mjs'
+import { fingerprint } from '../../runtime/scripts/lib/fingerprint.mjs'
 
 try {
   const options = parseArgs(process.argv.slice(2), ['mode', 'input'])

@@ -3,9 +3,9 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { parse } from 'acorn'
-import { validateData, validateIds } from '../../skills/repo-audit/scripts/lib/schema.mjs'
-import { CommandError } from '../../skills/repo-audit/scripts/lib/result.mjs'
-import { canonicalJSON, hashBytes } from '../../skills/repo-audit/scripts/lib/fingerprint.mjs'
+import { validateData, validateIds } from '../../runtime/scripts/lib/schema.mjs'
+import { CommandError } from '../../runtime/scripts/lib/result.mjs'
+import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
 
 // Repository-owned formats are resolved independently of the invoking directory.
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
