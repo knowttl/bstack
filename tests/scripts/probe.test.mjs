@@ -5,7 +5,7 @@ import { join, resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawn, spawnSync } from 'node:child_process'
 import { once } from 'node:events'
-import { emptyRepo, build, run, snapshot } from './discovery-fixture.mjs'
+import { emptyRepo, build, runVerification as run, snapshot } from './discovery-fixture.mjs'
 
 const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 

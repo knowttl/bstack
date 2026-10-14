@@ -2,25 +2,22 @@
 
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
-The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate; the remaining split pieces are pending.
-The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [foundation](skills/foundation/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
+The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate.
+The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [foundation](skills/foundation/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
 The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md and maintenance; audit usage applies to repo-audit.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, research and enforcement references, read-only starting-state inspection, document inventory, findings validation and scratch reports, check-plan execution capture and live probe pairs, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the slim [repo-audit procedure](skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
-The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
-Use the load-when table to read the self-contained intent interview for a new idea or grilling for a material unresolved decision.
-These establish confirmed intent while keeping technical decisions in their existing sources; see the [repo-audit checklist](skills/repo-audit/SKILL.md#new-idea-path-checklist) for the skills the user runs next.
-Follow the [load-when table](skills/repo-audit/SKILL.md#load-when) for the enforcement reference when recommending checks.
-It provides project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
-The existing-repo audit and selected apply path are available.
+The procedure prints one checklist for a new idea and one for an existing repo; see the [repo-audit checklists](skills/repo-audit/SKILL.md#step-4-print-the-checklist) for the skills the user runs next.
+Review before apply, protected writes and outcome verification belong to the skill that makes each change.
+The verification, architecture and foundation skills provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
 Protected new-project creation is available through the [foundation skill](skills/foundation/SKILL.md) after the approved vision and exact foundation review.
 Use the [maintenance reference](skills/maintenance/references/maintenance-contract.md) for bounded change assessment and local or standalone validation without repeating the interview or full audit; repo-audit lists `/maintenance` as a next step instead of registering documents itself.
 The copy installer supports previews, verified no-op repeats, updates, uninstall and interrupted-run resume.
 Link installation, explicit developer-checkout updates and owned-link removal are available.
 The owner accepted Linux-only installer lifecycle evidence for C25c and AC-74 on 2026-10-10.
 Windows and macOS execution remains unverified and is outside this acceptance scope.
-Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
+Use repo-audit for overview discovery and follow its checklist by explicitly invoking the named skills, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
 
@@ -77,16 +74,16 @@ To start an audit, open a fresh agent conversation in the target project and exp
 
 ```text
 $repo-audit
-Audit this repo's checkout checks before adding quantity support.
-Use the existing design and acceptance cases; present findings for selection before editing.
+Review this repo at overview level before adding quantity support.
+Use the existing design and acceptance cases; print the checklist with a cited reason per skill.
 ```
 
 That is the Codex invocation; use `/repo-audit` in Claude Code or `/skill:repo-audit` in Pi.
 A plain request such as "audit this repo" does not start the skill.
 For a new idea, install into its existing workspace and invoke the skill with the idea and first useful journey instead.
-Answer unresolved intent questions, select findings, and approve the exact proposed changes before apply or creation; `/vision` runs the interactive vision board as its own skill.
-The skill keeps proposals in scratch and reports blocked verification explicitly.
-It does not select a delivery service for you.
+Repo-audit prints the checklist and leaves the target unchanged.
+Follow the [repo-audit procedure](skills/repo-audit/SKILL.md) for its scope and checklist contract.
+In the skills that make changes, answer unresolved intent questions, select findings, and approve the exact proposed changes before apply or creation; `/vision` runs the interactive vision board as its own skill.
 See the [worked examples](docs/examples/README.md) for requests, findings, selections, results and reproduction steps.
 
 The examples cover the six user-facing scenario fixtures: `new-idea`, `ambiguous-idea`, `clear-goals`, `existing-vision-delta`, `ts-shop` and `py-ledger`.
@@ -155,7 +152,7 @@ Local validation runs the package check and full tests after dependency setup.
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 See the [delivery gate](docs/implementation-plan.md#delivery-gate) for gate preparation and validation.
 Recorded runs on Linux do not prove support on Windows or macOS.
-Follow the [existing-repo path](skills/repo-audit/SKILL.md#existing-repo-path-checklist) for audit-before-interview, selected apply, instruction consolidation and final verification requirements.
+Follow the [repo-audit checklists](skills/repo-audit/SKILL.md#step-4-print-the-checklist) for the order of skills that own selected apply, instruction consolidation and final verification.
 See the [C27 final-path evidence](tests/eval/results/full-path-C27/summary.md) for completed installed paths, repeated audit, independent extension, bounded maintenance and observed limitations.
 
 Collect repeatable size and change-history signals, or compare two declared change plans:
@@ -172,27 +169,25 @@ Only eligible files present at the range endpoint are measured, following detect
 If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, the old lifetime's commits and co-change pairs can be attributed to the new file.
 Signals are advisory evidence, never violations, and do not establish semantic independence or observed conflicts.
 
-Validate cited findings and render a proposed audit record outside the target:
+Validate cited findings:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs findings validate --repo <path> --findings <file> --json
-node skills/repo-audit/scripts/repo-audit.mjs findings render --repo <path> --findings <file> --json
+node skills/verification/scripts/verification.mjs findings validate --repo <path> --findings <file> --json
 ```
 
 Use `--workspace` for a draft foundation without Git.
 The [findings contract](docs/command-contract.md#findings) defines the schema, complete input examples, stage outcomes and verdict precedence.
-Validation returns the current fingerprint for subsequent evidence capture.
-Rendering returns a scratch path and one readiness result with documented, observed and inferred sources, selected findings and remaining debt.
+Validation returns the current fingerprint for subsequent evidence capture and one readiness result.
 Missing or stale evidence blocks readiness, and unresolved decisions require review.
-These commands assess supplied evidence without executing checks or applying changes.
+The command assesses supplied evidence without executing checks or applying changes, and no audit record is rendered or written.
 
 Preview selected edits, then apply the reviewed plan or resume its interrupted run:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --dry-run
-node skills/repo-audit/scripts/repo-audit.mjs apply --workspace <path> --plan <file> --dry-run --json
-node skills/repo-audit/scripts/repo-audit.mjs apply --repo <path> --plan <file> --json
-node skills/repo-audit/scripts/repo-audit.mjs state show --repo <path> --run <returned-run-id> --json
+node skills/verification/scripts/verification.mjs apply --repo <path> --plan <file> --dry-run
+node skills/verification/scripts/verification.mjs apply --workspace <path> --plan <file> --dry-run --json
+node skills/verification/scripts/verification.mjs apply --repo <path> --plan <file> --json
+node skills/verification/scripts/verification.mjs state show --repo <path> --run <returned-run-id> --json
 npm test -- --task T2.6
 ```
 
@@ -200,7 +195,7 @@ The [apply contract](docs/command-contract.md#apply-dry-run) documents the revie
 Dry-run plain output prints the complete diff; dry-run JSON additionally returns complete proposed content and hashes.
 Omit `--dry-run` to apply after review.
 See the apply contract for resume and completed-plan behavior.
-Use `replace-file` with complete reviewed UTF-8 content when a mechanical edit is unsupported, including the audit record rendered by T2.5.
+Use `replace-file` with complete reviewed UTF-8 content when a mechanical edit is unsupported.
 `state show` reports actual applied, pending and conflicting files and affected checks to rerun.
 See the apply contract for preflight protection, backup and journal recovery, and filesystem limits.
 
@@ -224,7 +219,7 @@ Portable maintenance is available through the [standalone checker](docs/command-
 Prove a selected native rule against prepared clean and independently seeded fixtures:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json
+node skills/verification/scripts/verification.mjs rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json
 npm test -- --task T3.2
 ```
 
@@ -234,9 +229,9 @@ See the [enforcement command contract](docs/command-contract.md#rule-proof-and-t
 Check a temporary baseline when the native tool has no baseline feature:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --json
-node skills/repo-audit/scripts/repo-audit.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --refresh --json
-node skills/repo-audit/scripts/repo-audit.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --refresh --finding <id> --findings <file> --entry <file> --json
+node skills/verification/scripts/verification.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --json
+node skills/verification/scripts/verification.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --refresh --json
+node skills/verification/scripts/verification.mjs baseline check --repo <target> --baseline <repo-relative-file> --violations <file> --refresh --finding <id> --findings <file> --entry <file> --json
 npm test -- --task T3.3
 ```
 
@@ -246,7 +241,7 @@ Integrate selected native checks into the project's existing check command throu
 Keep package rules scoped to their owning package and prepare the complete documented initial debt baseline through selected findings before expecting an audited project to pass.
 Prove each rule independently on the clean fixture variants, then use `rule-proof` with the identical maintained command, such as `npm run check`, on separate valid and seeded disposable copies.
 The target owns the checker and its declared dependencies, so ordinary contributors can run it without an installed skill or agent session.
-Declare selected command paths in each edit's `checkIntegration` using the [enforcement reference](skills/repo-audit/references/enforcement.md#integrate-the-maintained-command), which owns the supported command grammar and CI format.
+Declare selected command paths in each edit's `checkIntegration` using the [checks reference](skills/foundation/references/checks.md#integrate-the-maintained-command), which owns the supported command grammar and CI format.
 The identical maintained-command disposable controls remain the enforcement proof.
 CI integration requires the project's selection and its adapter behaviour remains unverified until hosted execution is observed.
 Run `npm test -- --task T3.4` for the maintained-command, baseline and web/core scope controls.
@@ -254,13 +249,13 @@ Run `npm test -- --task T3.4` for the maintained-command, baseline and web/core 
 Validate the project's small maintenance contract and collect the final changed paths:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs contract validate --repo <target> --contract .bstack/project.json --json
-node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base <ref> --json
+node skills/maintenance/scripts/maintenance.mjs contract validate --repo <target> --contract .bstack/project.json --json
+node skills/maintenance/scripts/maintenance.mjs evidence collect --repo <target> --base <ref> --json
 # Before the first commit:
-node skills/repo-audit/scripts/repo-audit.mjs evidence collect --repo <target> --base empty --json
+node skills/maintenance/scripts/maintenance.mjs evidence collect --repo <target> --base empty --json
 npm test -- --task T3a.1
 npm test -- --task T3a.2
-node skills/repo-audit/scripts/repo-audit.mjs evidence validate --repo <target> --base <ref> --assessment <assessment.json> --contract .bstack/project.json --json
+node skills/maintenance/scripts/maintenance.mjs evidence validate --repo <target> --base <ref> --assessment <assessment.json> --contract .bstack/project.json --json
 npm test -- --task T3a.3
 ```
 
@@ -283,8 +278,8 @@ Structural validation cannot prove semantic correctness or authenticate an owner
 Check registered generated sections or prepare reviewed regeneration proposals:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --check --json
-node skills/repo-audit/scripts/repo-audit.mjs docs generate --repo <target> --json
+node skills/maintenance/scripts/maintenance.mjs docs generate --repo <target> --check --json
+node skills/maintenance/scripts/maintenance.mjs docs generate --repo <target> --json
 ```
 
 The [generated-facts contract](docs/command-contract.md#generated-facts) defines registration, markers, exact-byte output and write detection.
@@ -293,7 +288,7 @@ Review scratch proposals through a selected protected `apply` change set before 
 Check registered source paths, local Markdown links and context-specific glossary entries:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs docs check --repo <target> --json
+node skills/maintenance/scripts/maintenance.mjs docs check --repo <target> --json
 npm test -- --task T3a.5
 ```
 
@@ -305,10 +300,10 @@ For design standards and their placement, follow the architecture skill's [desig
 Capture a reviewed check plan with acceptance sources and input scopes:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --json
-node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --phase before --json
+node skills/verification/scripts/verification.mjs run-checks --repo <path> --plan <file> --json
+node skills/verification/scripts/verification.mjs run-checks --repo <path> --plan <file> --phase before --json
 # After the change, reuse the same plan and the returned before run ID:
-node skills/repo-audit/scripts/repo-audit.mjs run-checks --repo <path> --plan <file> --prior-run <before-run-id> --json
+node skills/verification/scripts/verification.mjs run-checks --repo <path> --plan <file> --prior-run <before-run-id> --json
 npm test -- --task T2.7
 ```
 
@@ -319,9 +314,9 @@ The [check-plan contract](docs/command-contract.md#check-plans-and-capture) owns
 For each outside dependency, record the same live call before and after the change:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs probe record --repo <path> --name <dependency> --phase before --spec <file> --json -- node scripts/probe.mjs <endpoint>
-node skills/repo-audit/scripts/repo-audit.mjs probe record --repo <path> --name <dependency> --phase after --spec <file> --json -- node scripts/probe.mjs <endpoint>
-node skills/repo-audit/scripts/repo-audit.mjs probe compare --repo <path> --name <dependency> --before <run-id> --after <run-id> --json
+node skills/verification/scripts/verification.mjs probe record --repo <path> --name <dependency> --phase before --spec <file> --json -- node scripts/probe.mjs <endpoint>
+node skills/verification/scripts/verification.mjs probe record --repo <path> --name <dependency> --phase after --spec <file> --json -- node scripts/probe.mjs <endpoint>
+node skills/verification/scripts/verification.mjs probe compare --repo <path> --name <dependency> --before <run-id> --after <run-id> --json
 ```
 
 The [probe contract](docs/command-contract.md#live-probe-pairs) defines the descriptor, environment binding, per-call `--approved-by-user` flag and unavailable results.
@@ -491,7 +486,7 @@ Follow the [host loading check](skills/agents-md/references/agents-md.md#host-lo
 Both commands are read-only and do not run native project checks.
 See the [discovery contract](docs/command-contract.md#inspect-and-inventory) for the supported name families and traversal limits.
 
-Run the five [research briefs](skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using independent subagents in parallel where available or the same briefs sequentially in the main thread.
+Run the documents [research brief](skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using a subagent where available or the main thread.
 Save the common [research report](skills/repo-audit/schemas/research-report.json) in scratch, open each cited source and check it before using the observations:
 
 ```sh
@@ -501,7 +496,6 @@ node skills/repo-audit/scripts/repo-audit.mjs cite-check --repo <target> --repor
 Use `--workspace` for a non-Git target.
 File citations record repo-relative `path:line` plus an exact-byte hash or full revision; missing paths, out-of-range lines and stale bytes fail the check.
 Web citations record URL, read date and verification status, while the checker validates metadata without fetching sources.
-Without web access, mark language and outside recommendations "not researched" with the reason.
 The [T2.1 discovery checkpoint](tests/eval/results/discovery-C11a/summary.md) records real main-thread and parallel subagent runs, citation checks, no-web limits and unchanged fixtures.
 
 The [vision skill](skills/vision/SKILL.md) is started by the user, interviews for purpose, users, success and non-goals, drafts `VISION.md` or a reviewed delta from evidence, stress-tests it on the review board, and writes it with `apply` only after the author approves the exact draft.
@@ -571,7 +565,7 @@ Read the saved revision back and obtain explicit author approval, preserving tha
 The previous draft and review decisions remain available for resume.
 Missing runtime or unavailable interaction leaves the draft intact and the review blocked.
 The [completed intent checkpoint](tests/eval/results/intent-C11a/full-capture/summary.md) records a real browser review, saved revision, glossary and explicit author approval with full adapter capture.
-See [build progress](docs/implementation-plan.md#progress) for later slices and the [intent checkpoint](skills/repo-audit/SKILL.md#step-3-review-the-vision) for its completion boundary.
+See [build progress](docs/implementation-plan.md#progress) for later slices and the [repo-audit checklist step](skills/repo-audit/SKILL.md#step-4-print-the-checklist) for its completion boundary.
 
 Task evidence follows [the versioned schema](tests/eval/task-evidence.schema.json), with records and output artifacts in `tests/eval/results/tasks/`.
 Shipping slices use no-mistakes and recorded local verification, with no hosted CI or release automation.

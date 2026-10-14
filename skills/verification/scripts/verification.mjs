@@ -664,12 +664,12 @@ ${execution.stderr}`.includes(options.expect);
 }
 
 // runtime/scripts/commands/baseline.mjs
-import { readFile as readFile4, rename, rm as rm2, stat as stat5, writeFile as writeFile3 } from "node:fs/promises";
+import { readFile as readFile4, rename, rm as rm2, stat as stat5, writeFile as writeFile2 } from "node:fs/promises";
 import { randomUUID as randomUUID2 } from "node:crypto";
 
 // runtime/scripts/commands/findings.mjs
-import { readFile as readFile3, writeFile as writeFile2 } from "node:fs/promises";
-import { join as join6, resolve as resolve4 } from "node:path";
+import { readFile as readFile3 } from "node:fs/promises";
+import { resolve as resolve4 } from "node:path";
 import { spawnSync as spawnSync3 } from "node:child_process";
 
 // runtime/schemas/findings.schema.json
@@ -979,63 +979,6 @@ var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "found
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
 }
-function render(findings, assessment) {
-  const lines = [
-    "# Proposed repo audit record",
-    "",
-    `Result: ${assessment.result}`,
-    "",
-    `Stage: ${findings.stage}`,
-    `Target: ${findings.target.root}`,
-    `Revision: ${findings.target.revision ?? "no commit"}`,
-    `Stated next change: ${findings.nextChange}`,
-    `Reviewed scope: ${findings.reviewedScope.join(", ")}`,
-    `Current fingerprint: ${assessment.fingerprint}`,
-    "",
-    "## Readiness evidence",
-    ""
-  ];
-  for (const reason of assessment.reasons) lines.push(`- ${reason}`);
-  for (const record of findings.execution) lines.push(`- ${record.outcome}: ${record.status}. Method: ${record.method}. Artifact: ${record.artifact}. Fingerprint: ${record.fingerprint}.`);
-  for (const [intent, title] of [["documented", "Documented intent"], ["observed", "Observed behaviour"], ["inferred", "Inferred intent"]]) {
-    lines.push("", `## ${title}`, "");
-    for (const source of findings.sources.filter((source2) => source2.intent === intent)) lines.push(`- ${source.id}: ${source.summary} (${source.pointer})`);
-  }
-  for (const [category, title] of [["debt", "Observed debt"], ["missing-protection", "Missing protections"], ["decision", "Design decisions"]]) {
-    lines.push("", `## ${title}`, "");
-    for (const finding of findings.findings.filter((finding2) => finding2.category === category)) {
-      lines.push(
-        `### ${finding.id}: ${finding.problem}`,
-        "",
-        `Status: ${finding.status}. Resolved: ${finding.resolved}. Blocks next change: ${finding.blocksNextChange}.`,
-        `Files: ${finding.files.join(", ") || "none"}. Command: ${finding.command ?? "none"}.`,
-        `Principle${finding.newPrinciple ? " (proposed new principle)" : ""}: ${finding.principle}`,
-        `Consequence: ${finding.consequence}`,
-        `Fix: ${finding.fix}`,
-        `Scope: ${finding.scope.join(", ")}`,
-        `Verification: ${finding.verification}`,
-        `Sources: ${finding.sourceIds.join(", ")}`,
-        ""
-      );
-    }
-  }
-  lines.push(
-    "",
-    "## Proposed new principles",
-    "",
-    ...findings.findings.filter((finding) => finding.newPrinciple).map((finding) => `- ${finding.id}: ${finding.principle} (${finding.status})`),
-    "",
-    "## Selected findings",
-    "",
-    ...findings.selectedFindingIds.map((id) => `- ${id}`),
-    "",
-    "## Limitations",
-    "",
-    ...findings.limitations.map((limit) => `- ${limit}`)
-  );
-  return `${lines.join("\n")}
-`;
-}
 async function validateFindings(findings, target, deletionScope = []) {
   validateData(findings_schema_default, findings);
   for (const collection of ["sources", "findings", "execution"]) validateIds(findings[collection], `$/` + collection);
@@ -1061,7 +1004,7 @@ async function validateFindings(findings, target, deletionScope = []) {
   }
   if (new Set(findings.execution.map((record) => record.outcome)).size !== findings.execution.length) invalid("duplicate-outcome", "Use one current record per outcome.", "$/execution");
 }
-async function run2(options, command) {
+async function run2(options) {
   if (!options.findings) throw new CommandError("usage-error", [{ code: "missing-findings", message: "--findings is required.", fix: "Supply --findings <file>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let findings;
@@ -1095,11 +1038,6 @@ async function run2(options, command) {
   const result = reasons.length ? "verification blocked" : decisions.length ? "decisions needed" : "ready for the stated next change";
   reasons.push(...decisions.map((finding) => `Unresolved finding: ${finding.id}.`));
   const assessment = { result, reasons, fingerprint: current.fingerprint };
-  if (command === "findings render") {
-    const path = join6(await createScratch(target), "repo-audit.md");
-    await writeFile2(path, render(findings, assessment));
-    assessment.path = path;
-  }
   return { inputs: { target, findings: options.findings }, data: assessment };
 }
 
@@ -1146,7 +1084,7 @@ async function run3(options) {
   if (options.refresh && !problems.length) {
     const temporary = `${path}.${randomUUID2()}.tmp`;
     try {
-      await writeFile3(temporary, JSON.stringify({ schemaVersion: 1, entries: retained }, null, 2) + "\n", { flag: "wx", mode: (await stat5(path)).mode });
+      await writeFile2(temporary, JSON.stringify({ schemaVersion: 1, entries: retained }, null, 2) + "\n", { flag: "wx", mode: (await stat5(path)).mode });
       await rename(temporary, path);
     } finally {
       await rm2(temporary, { force: true });
@@ -1156,8 +1094,8 @@ async function run3(options) {
 }
 
 // runtime/scripts/commands/probe.mjs
-import { readFile as readFile5, writeFile as writeFile4, stat as stat6 } from "node:fs/promises";
-import { basename, join as join7, resolve as resolve5 } from "node:path";
+import { readFile as readFile5, writeFile as writeFile3, stat as stat6 } from "node:fs/promises";
+import { basename, join as join6, resolve as resolve5 } from "node:path";
 
 // runtime/scripts/lib/glob.mjs
 import { posix, win32 as win322 } from "node:path";
@@ -1351,8 +1289,8 @@ async function run4(options, commandName) {
     reason
   };
   validateData(await schema("probe-record"), record);
-  const path = join7(directory, "probe.json");
-  await writeFile4(path, JSON.stringify(record, null, 2) + "\n", { flag: "wx" });
+  const path = join6(directory, "probe.json");
+  await writeFile3(path, JSON.stringify(record, null, 2) + "\n", { flag: "wx" });
   return { status: status === "unverified" ? "blocked" : status, problems: reason ? [problem("probe-not-verified", reason)] : [], data: { ...record, path } };
 }
 async function compare(target, options) {
@@ -1361,7 +1299,7 @@ async function compare(target, options) {
   for (const phase of ["before", "after"]) {
     try {
       if (!options[phase]) throw new Error("Missing run ID.");
-      const record = inspectJSON(await readFile5(join7(await scratchDirectory(target, options[phase]), "probe.json"), "utf8")).value;
+      const record = inspectJSON(await readFile5(join6(await scratchDirectory(target, options[phase]), "probe.json"), "utf8")).value;
       validateData(await schema("probe-record"), record);
       validateData(await schema("probe-spec"), record.spec);
       validateData((await schema("check-plan")).properties.checks.items.properties.command, record.command);
@@ -1405,12 +1343,12 @@ async function compare(target, options) {
 }
 
 // runtime/scripts/commands/run-checks.mjs
-import { readFile as readFile7, stat as stat8, writeFile as writeFile5 } from "node:fs/promises";
-import { basename as basename3, join as join9, relative as relative5, resolve as resolve7 } from "node:path";
+import { readFile as readFile7, stat as stat8, writeFile as writeFile4 } from "node:fs/promises";
+import { basename as basename3, join as join8, relative as relative5, resolve as resolve7 } from "node:path";
 
 // runtime/scripts/commands/contract.mjs
 import { readFile as readFile6, readdir as readdir2, stat as stat7 } from "node:fs/promises";
-import { dirname as dirname4, join as join8, relative as relative4, resolve as resolve6, sep as sep3 } from "node:path";
+import { dirname as dirname4, join as join7, relative as relative4, resolve as resolve6, sep as sep3 } from "node:path";
 
 // runtime/scripts/lib/check-integration.mjs
 import { basename as basename2 } from "node:path";
@@ -1573,7 +1511,7 @@ async function packageManifestPath(root, cwd, name) {
       directory = dirname4(directory);
     }
   }
-  return join8(directory, "package.json");
+  return join7(directory, "package.json");
 }
 async function leafCommand(root, command, stack = [], discovery = false) {
   const cwd = await resolvePath(root, command.cwd);
@@ -1639,7 +1577,7 @@ async function exactPathCase(root, input2, allowMissing = false) {
       if (allowMissing && !entries.some((entry) => entry.toLowerCase() === segment.toLowerCase())) return;
       reject2("missing-path", input2, "Path is absent or has different path case.");
     }
-    parent = join8(parent, segment);
+    parent = join7(parent, segment);
   }
 }
 
@@ -1770,7 +1708,7 @@ async function run5(options) {
   if (phase === "after" && ["bug-fix", "refactor"].includes(plan.changeKind)) {
     if (options["prior-run"]) {
       try {
-        prior = JSON.parse(await readFile7(join9(await scratchDirectory(target, options["prior-run"]), "checks.json"), "utf8"));
+        prior = JSON.parse(await readFile7(join8(await scratchDirectory(target, options["prior-run"]), "checks.json"), "utf8"));
       } catch {
       }
     }
@@ -1875,8 +1813,8 @@ async function run5(options) {
     journeyCoverage,
     limitations: ["Capture compares declared inputs only before and after the run; changes restored before completion are not detected. Outside dependencies require separate live probe record and compare evidence."]
   };
-  const path = join9(directory, "checks.json");
-  await writeFile5(path, JSON.stringify(data, null, 2) + "\n", { flag: "wx" });
+  const path = join8(directory, "checks.json");
+  await writeFile4(path, JSON.stringify(data, null, 2) + "\n", { flag: "wx" });
   return { status, problems, inputs: { repo: target.root, plan: options.plan, phase }, data: { ...data, path } };
 }
 
@@ -1890,7 +1828,7 @@ import { extname as extname2 } from "node:path";
 
 // runtime/scripts/lib/document-references.mjs
 import { readFile as readFile8, readdir as readdir3, stat as stat9 } from "node:fs/promises";
-import { dirname as dirname5, extname, join as join10, relative as relative6, resolve as resolve8 } from "node:path";
+import { dirname as dirname5, extname, join as join9, relative as relative6, resolve as resolve8 } from "node:path";
 var quotes = /^(?: {0,3}>[ \t]?)+/;
 var listItem = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/;
 var atxStart = /^ {0,3}#{1,6}(?:[ \t]|$)/;
@@ -2082,7 +2020,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
       if (!(await readdir3(parent)).includes(segment)) {
         if (documents.has(resolved)) {
           try {
-            await stat9(join10(parent, segment));
+            await stat9(join9(parent, segment));
             return problem2("Wrong-case destination");
           } catch (error) {
             if (error.code !== "ENOENT") throw error;
@@ -2091,7 +2029,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
         }
         return problem2("Missing or wrong-case destination");
       }
-      parent = join10(parent, segment);
+      parent = join9(parent, segment);
     }
     if (!documents.has(resolved)) await stat9(resolved);
     if (fragment && [".md", ".markdown"].includes(extname(local).toLowerCase())) {
@@ -2272,7 +2210,7 @@ function exactDiff(path, original2, proposed) {
 
 // runtime/scripts/lib/protected-write.mjs
 import { readFile as readFile9, open, mkdir as mkdir2, rename as rename2, unlink, stat as stat10 } from "node:fs/promises";
-import { basename as basename4, dirname as dirname6, join as join11 } from "node:path";
+import { basename as basename4, dirname as dirname6, join as join10 } from "node:path";
 import { randomUUID as randomUUID3 } from "node:crypto";
 async function fileBytes(path) {
   try {
@@ -2284,7 +2222,7 @@ async function fileBytes(path) {
 }
 async function loadJournal(target, runId) {
   const directory = await scratchDirectory(target, runId);
-  const bytes = await fileBytes(join11(directory, "journal.json"));
+  const bytes = await fileBytes(join10(directory, "journal.json"));
   if (bytes === null) return { directory, journal: null };
   const journal = inspectJSON(bytes.toString("utf8")).value;
   validateData(JSON.parse(await readFile9(new URL("../schemas/resume-state.schema.json", import.meta.url), "utf8")), journal);
@@ -2322,7 +2260,7 @@ async function journalOriginal(directory, journal, plan, edit, index) {
   if (journal.planDigest !== plan.planDigest || canonicalJSON(journal.target) !== canonicalJSON(plan.target) || journal.edits.length !== plan.edits.length || !recorded || ["id", "path", "originalHash", "proposedHash"].some((key) => recorded[key] !== edit[key]) || recorded.resolvedPath !== plan.reviewedScope.find((entry) => entry.path === edit.path)?.resolvedPath || recorded.backup !== (edit.originalHash === null ? null : `original-${index}`)) {
     throw new CommandError("blocked", [{ code: "journal-mismatch", message: "Journal does not match the reviewed plan.", fix: "Use the unchanged reviewed plan or review a new plan." }]);
   }
-  const bytes = recorded.backup === null ? null : await fileBytes(join11(directory, recorded.backup));
+  const bytes = recorded.backup === null ? null : await fileBytes(join10(directory, recorded.backup));
   if ((bytes === null ? null : hashBytes(bytes)) !== edit.originalHash) {
     throw new CommandError("blocked", [{ code: "backup-mismatch", message: "Recoverable original is missing or changed.", path: edit.path, fix: "Restore the original backup before resuming." }]);
   }
@@ -2358,7 +2296,7 @@ async function durableDirectory(directory, limitations) {
   }
 }
 async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary, prefix = ".bstack") {
-  const temporary = join11(dirname6(path), `${prefix}-${randomUUID3()}.tmp`);
+  const temporary = join10(dirname6(path), `${prefix}-${randomUUID3()}.tmp`);
   try {
     if (prepareTemporary) await prepareTemporary(temporary);
     await durableFile(temporary, bytes, mode);
@@ -2398,7 +2336,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     })),
     affectedChecks
   };
-  const journalPath = join11(directory, "journal.json");
+  const journalPath = join10(directory, "journal.json");
   const save = () => replaceFile(journalPath, Buffer.from(JSON.stringify(journal, null, 2) + "\n"), void 0, limitations);
   try {
     let state = await inspectJournal(journal);
@@ -2431,7 +2369,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
         if (edit.originalHash !== null) {
-          const backup = join11(directory, journal.edits[index].backup);
+          const backup = join10(directory, journal.edits[index].backup);
           const existing = await fileBytes(backup);
           if (existing !== null && hashBytes(existing) !== edit.originalHash) throw new Error("Prepared backup differs from the reviewed original.");
           if (existing === null) await replaceFile(backup, edit.originalBytes, void 0, limitations);
@@ -2668,14 +2606,14 @@ async function run7(options) {
 }
 
 // runtime/scripts/commands/kit-scaffold.mjs
-import { readdir as readdir4, readFile as readFile12, writeFile as writeFile6 } from "node:fs/promises";
-import { join as join13 } from "node:path";
+import { readdir as readdir4, readFile as readFile12, writeFile as writeFile5 } from "node:fs/promises";
+import { join as join12 } from "node:path";
 import { spawnSync as spawnSync5 } from "node:child_process";
 
 // runtime/scripts/lib/kit.mjs
 import { readFileSync } from "node:fs";
 import { readFile as readFile11 } from "node:fs/promises";
-import { isAbsolute as isAbsolute3, join as join12, posix as posix2 } from "node:path";
+import { isAbsolute as isAbsolute3, join as join11, posix as posix2 } from "node:path";
 
 // runtime/schemas/kit-plan.json
 var kit_plan_default = {
@@ -2903,7 +2841,7 @@ function validateKitPlan(plan, { forUpdate = false } = {}) {
 async function readKitPlan(root, app, options) {
   let plan;
   try {
-    plan = inspectJSON(await readFile11(join12(root, kitDirectory(app), "kit.json"), "utf8")).value;
+    plan = inspectJSON(await readFile11(join11(root, kitDirectory(app), "kit.json"), "utf8")).value;
   } catch (error) {
     if (error instanceof CommandError) throw error;
     throw new CommandError("blocked", [{ code: "kit-unavailable", message: `No readable kit at ${kitDirectory(app)}/kit.json.`, fix: "Apply the scaffolded kit first." }]);
@@ -3186,7 +3124,7 @@ async function run8(options) {
     await stage(file.path, update && exists ? "replace-file" : "create", { content: file.content });
   }
   const pointer = agentsPointer(plan);
-  const agents = await original(join13(target.root, "AGENTS.md"));
+  const agents = await original(join12(target.root, "AGENTS.md"));
   if (agents === null) await stage("AGENTS.md", "create", { content: `# Agent instructions
 
 ${pointer}
@@ -3194,7 +3132,7 @@ ${pointer}
   else await stage("AGENTS.md", "append-line-once", { line: pointer });
   if (update) {
     const known = new Set(managed.map((file) => file.path));
-    const present = await readdir4(join13(target.root, kit, "features")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+    const present = await readdir4(join12(target.root, kit, "features")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
     const obsolete = /* @__PURE__ */ new Set([...previous ? managedFiles(previous).map((file) => file.path) : [], ...present.map((name) => `${kit}/features/${name}`)]);
     for (const path2 of [...obsolete].sort()) if (!known.has(path2) && await original(await resolveFilePath(target.root, path2)) !== null) await stage(path2, "delete", {});
   }
@@ -3226,17 +3164,17 @@ ${pointer}
   };
   changeSet.planDigest = hashBytes(canonicalJSON(changeSet));
   const directory = await createScratch(target);
-  await writeFile6(join13(directory, "findings.json"), `${JSON.stringify(findings, null, 2)}
+  await writeFile5(join12(directory, "findings.json"), `${JSON.stringify(findings, null, 2)}
 `);
-  const path = join13(directory, "change-set.json");
-  await writeFile6(path, `${JSON.stringify(changeSet, null, 2)}
+  const path = join12(directory, "change-set.json");
+  await writeFile5(path, `${JSON.stringify(changeSet, null, 2)}
 `);
   return { inputs: { target, plan: options.plan }, data: { path, planDigest: changeSet.planDigest, files: edits.map((edit) => edit.path), diff: edits.map((edit) => edit.diff).join("") } };
 }
 
 // runtime/scripts/commands/kit-check.mjs
 import { readdir as readdir5, readFile as readFile13 } from "node:fs/promises";
-import { join as join14 } from "node:path";
+import { join as join13 } from "node:path";
 var repair = "If the product changed, edit the kit plan and run kit scaffold --update; if the file was edited by hand, restore it the same way, then re-drive the feature with kit prove.";
 async function readIfPresent(root, path) {
   return readFile13(await resolveFilePath(root, path), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
@@ -3261,7 +3199,7 @@ async function run9(options) {
     }
   }
   const known = new Set(managed.map((file) => file.path));
-  const listed = await readdir5(join14(target.root, kit, "features")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+  const listed = await readdir5(join13(target.root, kit, "features")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
   for (const name of listed.sort()) {
     if (!known.has(`${kit}/features/${name}`)) problems.push({ code: "orphan-feature-file", path: `${kit}/features/${name}`, message: `${kit}/features/${name} describes no feature in kit.json.`, fix: repair });
   }
@@ -3291,10 +3229,10 @@ async function run9(options) {
 // runtime/scripts/commands/kit-prove.mjs
 import { spawn as spawn2 } from "node:child_process";
 import { createHash as createHash3, randomUUID as randomUUID4 } from "node:crypto";
-import { mkdtemp, mkdir as mkdir3, readdir as readdir6, readFile as readFile14, realpath as realpath6, rm as rm3, stat as stat11, writeFile as writeFile7 } from "node:fs/promises";
+import { mkdtemp, mkdir as mkdir3, readdir as readdir6, readFile as readFile14, realpath as realpath6, rm as rm3, stat as stat11, writeFile as writeFile6 } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
-import { join as join15, relative as relative8, resolve as resolve10 } from "node:path";
+import { join as join14, relative as relative8, resolve as resolve10 } from "node:path";
 var commandTimeoutMs = 12e4;
 var outputLimit2 = 65536;
 var terminationGraceMs = 5e3;
@@ -3409,7 +3347,7 @@ async function evidenceHashes(directory) {
       const actual = await realpath6(path);
       if (ancestors.has(actual)) return;
       const parents = new Set(ancestors).add(actual);
-      for (const name of await readdir6(path)) await visit(join15(path, name), parents);
+      for (const name of await readdir6(path)) await visit(join14(path, name), parents);
     } else {
       const bytes = await readFile14(path).catch((error) => {
         if (error.code === "ENOENT") return null;
@@ -3429,17 +3367,17 @@ async function run10(options) {
   if (!feature) throw new CommandError("usage-error", [{ code: "unknown-feature", message: `The kit has no feature ${options.feature}.`, fix: `Use one of: ${plan.features.map((item) => item.id).join(", ")}.` }]);
   const evidenceRoot = await resolvePath(target.root, plan.evidence.directory, void 0, true);
   const runId = randomUUID4().slice(0, 8);
-  const values = { port: await freePort(), runDir: await mkdtemp(join15(tmpdir(), `verify-${plan.app}-`)), evidenceDir: join15(evidenceRoot, runId) };
+  const values = { port: await freePort(), runDir: await mkdtemp(join14(tmpdir(), `verify-${plan.app}-`)), evidenceDir: join14(evidenceRoot, runId) };
   const record = { app: plan.app, feature: feature.id, runId, launch: null, doctor: null, steps: [], cleanup: null };
   const problems = [];
   let launched;
-  const recordPath = join15(values.evidenceDir, `${feature.id}.json`);
+  const recordPath = join14(values.evidenceDir, `${feature.id}.json`);
   const reservation = proofJSON(record);
   let reserved = false;
   const launchRecord = () => launched ? { command: launched.command, exit: launched.exit, ...launched.output } : null;
   try {
     await mkdir3(values.evidenceDir, { recursive: true });
-    await writeFile7(recordPath, reservation, { flag: "wx" });
+    await writeFile6(recordPath, reservation, { flag: "wx" });
     reserved = true;
     launched = start(prepare(plan.launch, values, target.root));
     const problem2 = await launch(launched, plan, values);
@@ -3467,7 +3405,7 @@ async function run10(options) {
       record.launch = launchRecord();
       if (reserved) {
         if (await readFile14(recordPath, "utf8") !== reservation) problems.push(failure("evidence-collision", `A command replaced the reserved proof record: ${relative8(target.root, recordPath)}.`, "Write captured artifacts to a different path from the proof record."));
-        else await writeFile7(recordPath, proofJSON(record));
+        else await writeFile6(recordPath, proofJSON(record));
       }
       before = await evidenceHashes(values.evidenceDir);
     } finally {
@@ -3492,7 +3430,7 @@ async function run10(options) {
       problems.push(failure("evidence-lost", "Evidence changed or disappeared during cleanup.", "Make cleanup remove only what the run started, never the evidence directory."));
     } else if (reserved && !problems.some((problem2) => problem2.code === "evidence-collision")) {
       record.launch = launchRecord();
-      await writeFile7(recordPath, proofJSON(record));
+      await writeFile6(recordPath, proofJSON(record));
     }
   }
   const after = await evidenceHashes(values.evidenceDir);
@@ -3506,8 +3444,8 @@ async function run10(options) {
 }
 
 // runtime/scripts/commands/comment-check.mjs
-import { writeFile as writeFile8 } from "node:fs/promises";
-import { join as join16 } from "node:path";
+import { writeFile as writeFile7 } from "node:fs/promises";
+import { join as join15 } from "node:path";
 
 // runtime/scripts/lib/comment-checkers.mjs
 var exemptions = {
@@ -4048,8 +3986,8 @@ async function run11(options) {
   }
   const target = await resolveTarget(options);
   const checker = generateChecker(options.language);
-  const path = join16(await createScratch(target), checkers[options.language].file);
-  await writeFile8(path, checker.content);
+  const path = join15(await createScratch(target), checkers[options.language].file);
+  await writeFile7(path, checker.content);
   return { inputs: { target, language: options.language }, data: { path, suggestedPath: checker.suggestedPath, run: checker.run } };
 }
 
