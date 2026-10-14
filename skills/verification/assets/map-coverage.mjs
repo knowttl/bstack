@@ -4,6 +4,9 @@ import { dirname, join, posix, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 function pattern(glob) {
+  if (!glob || glob.includes('\0') || glob.includes('\\') || /^[A-Za-z]:/.test(glob) || glob.split('/').some(part => !part || part === '.' || part === '..') || /[\[\]{}()!]/u.test(glob) || glob.split('/').some(part => part.includes('**') && part !== '**')) {
+    throw new Error(`Invalid source path: ${glob}. Use relative forward-slash paths with * and ? within segments, or ** as a whole segment.`)
+  }
   let source = ''
   for (let index = 0; index < glob.length; index++) {
     if (glob.startsWith('**/', index)) {
@@ -37,7 +40,9 @@ function main(args) {
     const kit = relative(root, dirname(dirname(fileURLToPath(import.meta.url)))).split(sep).join('/')
     const mergeBase = git('merge-base', args[1], 'HEAD').trim()
     const updated = new Set([
-      ...git('-C', root, 'diff', '--name-only', '--no-renames', '-z', mergeBase).split('\0'),
+      ...git('-C', root, 'diff', '--name-only', '--no-renames', '-z', mergeBase, 'HEAD').split('\0'),
+      ...git('-C', root, 'diff', '--cached', '--name-only', '--no-renames', '-z', 'HEAD').split('\0'),
+      ...git('-C', root, 'diff', '--name-only', '--no-renames', '-z').split('\0'),
       ...git('-C', root, 'ls-files', '--others', '--exclude-standard', '-z').split('\0')
     ])
     const changed = [...updated].filter(path => path && !path.startsWith(`${kit}/`))

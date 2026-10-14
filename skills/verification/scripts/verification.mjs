@@ -2872,7 +2872,7 @@ function validateKitPlan(plan) {
   for (const [index, feature] of features.entries()) {
     if (ids.has(feature.id)) invalid2("duplicate-feature", `Duplicate feature ID: ${feature.id}`, `$/features/${index}/id`);
     ids.add(feature.id);
-    for (const path of feature.sourcePaths) relativePath(path, `$/features/${index}/sourcePaths`);
+    for (const path of feature.sourcePaths) pathGlob(path);
     for (const step of feature.steps) {
       for (const artifact of step.artifacts ?? []) {
         relativePath(artifact, `$/features/${index}/steps`);
@@ -3138,6 +3138,7 @@ async function run8(options) {
   validateKitPlan(plan);
   const update = options.update === true;
   const kit = kitDirectory(plan.app);
+  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app) : null;
   const edits = [];
   const reviewedScope = [];
   async function stage(path2, operation, payload) {
@@ -3181,7 +3182,8 @@ ${pointer}
   if (update) {
     const known = new Set(managed.map((file) => file.path));
     const present = await readdir4(join13(target.root, kit, "features")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
-    for (const name of present.sort()) if (!known.has(`${kit}/features/${name}`)) await stage(`${kit}/features/${name}`, "delete", {});
+    const obsolete = /* @__PURE__ */ new Set([...previous ? managedFiles(previous).map((file) => file.path) : [], ...present.map((name) => `${kit}/features/${name}`)]);
+    for (const path2 of [...obsolete].sort()) if (!known.has(path2) && await original(await resolveFilePath(target.root, path2)) !== null) await stage(path2, "delete", {});
   }
   if (!edits.length) return { inputs: { target, plan: options.plan }, data: { path: null, planDigest: null, files: [], diff: "" } };
   const head = spawnSync5("git", ["-C", target.root, "rev-parse", "--verify", "HEAD"], { encoding: "utf8", env: { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 } });
@@ -3384,7 +3386,7 @@ async function launch(run12, plan, values) {
   const { url, output } = plan.launch.ready;
   while (Date.now() < deadline) {
     const ready = output ? new RegExp(output).test(run12.output.stdout + run12.output.stderr) : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1e3) }).then((response) => response.ok, () => false);
-    if (run12.finished && (run12.exit !== 0 || !ready)) return failure("launch-exited", `The launch command exited before it was ready: ${(run12.output.error ?? run12.output.stderr).slice(-500)}`, "Fix the launch command or its prerequisites; report a product blocker instead of editing product code.");
+    if (run12.exit !== null && run12.exit !== 0 || run12.finished && !ready || run12.output.error) return failure("launch-exited", `The launch command exited before it was ready: ${(run12.output.error ?? run12.output.stderr).slice(-500)}`, "Fix the launch command or its prerequisites; report a product blocker instead of editing product code.");
     if (ready) return;
     await new Promise((done) => setTimeout(done, 100));
   }
@@ -3465,7 +3467,7 @@ async function run10(options) {
     } finally {
       try {
         if (launched) {
-          if (launched.finished && launched.exit !== 0 && !problems.some((problem2) => problem2.code === "launch-exited")) problems.push(failure("launch-exited", `The launch command exited unsuccessfully: ${launched.exit}.`, "Fix the launch command or report a product blocker."));
+          if ((launched.exit !== null && launched.exit !== 0 || launched.output.error) && !problems.some((problem2) => problem2.code === "launch-exited")) problems.push(failure("launch-exited", `The launch command exited unsuccessfully: ${launched.exit}.`, "Fix the launch command or report a product blocker."));
           await terminate(launched);
         }
       } finally {

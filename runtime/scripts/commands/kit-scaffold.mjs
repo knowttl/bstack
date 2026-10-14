@@ -9,7 +9,7 @@ import { canonicalJSON, hashBytes } from '../lib/fingerprint.mjs'
 import { fileBytes } from '../lib/protected-write.mjs'
 import { exactDiff, proposedEdit } from '../lib/proposed-edit.mjs'
 import { CommandError } from '../lib/result.mjs'
-import { agentsPointer, kitDirectory, managedFiles, validateKitPlan } from '../lib/kit.mjs'
+import { agentsPointer, kitDirectory, managedFiles, readKitPlan, validateKitPlan } from '../lib/kit.mjs'
 
 async function original(path) {
   const bytes = await fileBytes(path)
@@ -51,6 +51,7 @@ export async function run(options) {
   validateKitPlan(plan)
   const update = options.update === true
   const kit = kitDirectory(plan.app)
+  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app) : null
   const edits = []
   const reviewedScope = []
   async function stage(path, operation, payload) {
@@ -79,7 +80,8 @@ export async function run(options) {
   if (update) {
     const known = new Set(managed.map(file => file.path))
     const present = await readdir(join(target.root, kit, 'features')).catch(error => error.code === 'ENOENT' ? [] : Promise.reject(error))
-    for (const name of present.sort()) if (!known.has(`${kit}/features/${name}`)) await stage(`${kit}/features/${name}`, 'delete', {})
+    const obsolete = new Set([...(previous ? managedFiles(previous).map(file => file.path) : []), ...present.map(name => `${kit}/features/${name}`)])
+    for (const path of [...obsolete].sort()) if (!known.has(path) && await original(await resolveFilePath(target.root, path)) !== null) await stage(path, 'delete', {})
   }
   if (!edits.length) return { inputs: { target, plan: options.plan }, data: { path: null, planDigest: null, files: [], diff: '' } }
   const head = spawnSync('git', ['-C', target.root, 'rev-parse', '--verify', 'HEAD'], { encoding: 'utf8', env: { ...process.env, GIT_DIR: undefined, GIT_WORK_TREE: undefined, GIT_COMMON_DIR: undefined, GIT_INDEX_FILE: undefined } })
