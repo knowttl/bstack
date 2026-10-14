@@ -24,11 +24,9 @@ Read this section before your first task.
 
 ### What you are building
 
-`repo-audit` is one skill that only the user can start; the design's [skill split](design.md#the-skill-split) will divide it into eight such skills.
-It audits an existing repo, or interviews the user about a new idea.
-It then recommends project-specific principles, rules and checks, and applies the ones the user selects.
-Everything the original skill needs ships inside one folder, `skills/repo-audit/`.
-See the design's [standalone verification amendment](design.md#standalone-verification-skill) for the additional approved scope and [README.md](../README.md) for its current implementation status and shared-runtime generation workflow.
+The tasks below describe the original single-skill build, before the design's [skill split](design.md#the-skill-split).
+That original procedure audited an existing repo or interviewed the user about a new idea, then recommended project-specific principles, rules and checks and applied the ones the user selected.
+See the design's [standalone verification amendment](design.md#standalone-verification-skill) for the additional approved scope and [README.md](../README.md) for current skill availability, usage and the shared-runtime generation workflow.
 The bstack repo also holds a package check, an installer, test fixtures, an evaluation runner and the no-mistakes gate config.
 It has no hosted CI workflows (design "Commissioning decisions (2026-10-07)").
 
@@ -1453,7 +1451,7 @@ Native rule implementation stays in T3.2 to T3.4, and any reference revision tha
 1. Selected checks go into the project's existing check command through `apply`.
    Declare selected command paths in each edit's `checkIntegration` using the [checks reference](../skills/foundation/references/checks.md#integrate-the-maintained-command).
    When the project selects CI, the same command also goes into its CI config through `apply`, as an optional integration.
-   The enforcement reference owns the supported CI format and selected-command validation scope.
+   The checks reference owns the supported CI format and selected-command validation scope.
 2. `apply` rejects a command or CI edit that ignores a failure, such as `continue-on-error: true` or `|| true` on a check command.
 3. In a repo with several packages, rules are scoped to the package they apply to.
 4. Set up the initial documented debt baseline through selected findings before expecting an audited fixture to pass new rules.

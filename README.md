@@ -2,7 +2,7 @@
 
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
-The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate; the remaining split pieces are pending.
+The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate.
 The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [foundation](skills/foundation/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
 The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md and maintenance; audit usage applies to repo-audit.
 
@@ -11,14 +11,13 @@ The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the visi
 The procedure prints one checklist for a new idea and one for an existing repo; see the [repo-audit checklists](skills/repo-audit/SKILL.md#step-4-print-the-checklist) for the skills the user runs next.
 Review before apply, protected writes and outcome verification belong to the skill that makes each change.
 The verification, architecture and foundation skills provide project-specific guidance, native rule-proof, debt baseline checks and selected maintained local integration.
-The existing-repo audit and selected apply path are available.
 Protected new-project creation is available through the [foundation skill](skills/foundation/SKILL.md) after the approved vision and exact foundation review.
 Use the [maintenance reference](skills/maintenance/references/maintenance-contract.md) for bounded change assessment and local or standalone validation without repeating the interview or full audit; repo-audit lists `/maintenance` as a next step instead of registering documents itself.
 The copy installer supports previews, verified no-op repeats, updates, uninstall and interrupted-run resume.
 Link installation, explicit developer-checkout updates and owned-link removal are available.
 The owner accepted Linux-only installer lifecycle evidence for C25c and AC-74 on 2026-10-10.
 Windows and macOS execution remains unverified and is outside this acceptance scope.
-Use the procedure for bounded planning and selected protected writes, keeping blocked steps visible.
+Use repo-audit for overview discovery and follow its checklist by explicitly invoking the named skills, keeping blocked steps visible.
 Reviewed plans support protected writes, recoverable originals and hash-derived resume as described below.
 Nothing is published to npm.
 
@@ -75,16 +74,16 @@ To start an audit, open a fresh agent conversation in the target project and exp
 
 ```text
 $repo-audit
-Audit this repo's checkout checks before adding quantity support.
-Use the existing design and acceptance cases; present findings for selection before editing.
+Review this repo at overview level before adding quantity support.
+Use the existing design and acceptance cases; print the checklist with a cited reason per skill.
 ```
 
 That is the Codex invocation; use `/repo-audit` in Claude Code or `/skill:repo-audit` in Pi.
 A plain request such as "audit this repo" does not start the skill.
 For a new idea, install into its existing workspace and invoke the skill with the idea and first useful journey instead.
-Answer unresolved intent questions, select findings, and approve the exact proposed changes before apply or creation; `/vision` runs the interactive vision board as its own skill.
-The skill keeps proposals in scratch and reports blocked verification explicitly.
-It does not select a delivery service for you.
+Repo-audit prints the checklist and leaves the target unchanged.
+Follow the [repo-audit procedure](skills/repo-audit/SKILL.md) for its scope and checklist contract.
+In the skills that make changes, answer unresolved intent questions, select findings, and approve the exact proposed changes before apply or creation; `/vision` runs the interactive vision board as its own skill.
 See the [worked examples](docs/examples/README.md) for requests, findings, selections, results and reproduction steps.
 
 The examples cover the six user-facing scenario fixtures: `new-idea`, `ambiguous-idea`, `clear-goals`, `existing-vision-delta`, `ts-shop` and `py-ledger`.
@@ -153,7 +152,7 @@ Local validation runs the package check and full tests after dependency setup.
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 See the [delivery gate](docs/implementation-plan.md#delivery-gate) for gate preparation and validation.
 Recorded runs on Linux do not prove support on Windows or macOS.
-Follow the [audit checklist](skills/repo-audit/SKILL.md#audit-checklist) for the audit-before-interview order and the skills that own selected apply, instruction consolidation and final verification.
+Follow the [repo-audit checklists](skills/repo-audit/SKILL.md#step-4-print-the-checklist) for the order of skills that own selected apply, instruction consolidation and final verification.
 See the [C27 final-path evidence](tests/eval/results/full-path-C27/summary.md) for completed installed paths, repeated audit, independent extension, bounded maintenance and observed limitations.
 
 Collect repeatable size and change-history signals, or compare two declared change plans:
@@ -497,7 +496,6 @@ node skills/repo-audit/scripts/repo-audit.mjs cite-check --repo <target> --repor
 Use `--workspace` for a non-Git target.
 File citations record repo-relative `path:line` plus an exact-byte hash or full revision; missing paths, out-of-range lines and stale bytes fail the check.
 Web citations record URL, read date and verification status, while the checker validates metadata without fetching sources.
-Without web access, mark language and outside recommendations "not researched" with the reason.
 The [T2.1 discovery checkpoint](tests/eval/results/discovery-C11a/summary.md) records real main-thread and parallel subagent runs, citation checks, no-web limits and unchanged fixtures.
 
 The [vision skill](skills/vision/SKILL.md) is started by the user, interviews for purpose, users, success and non-goals, drafts `VISION.md` or a reviewed delta from evidence, stress-tests it on the review board, and writes it with `apply` only after the author approves the exact draft.
