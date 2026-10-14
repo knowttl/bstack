@@ -2843,7 +2843,7 @@ function relativePath(value, path) {
 function kitDirectory(app) {
   return `.agents/skills/verify-${app}`;
 }
-function validateKitPlan(plan, { sourcePaths = true } = {}) {
+function validateKitPlan(plan, { forUpdate = false } = {}) {
   validateData(kit_plan_default, plan);
   const { launch: launch2, evidence, helpers, features } = plan;
   if (Object.keys(launch2.ready).length !== 1 || !(launch2.ready.url ?? launch2.ready.output)) invalid2("invalid-ready", "Declare exactly one of ready.url or ready.output.", "$/launch/ready");
@@ -2872,9 +2872,17 @@ function validateKitPlan(plan, { sourcePaths = true } = {}) {
   for (const [index, feature] of features.entries()) {
     if (ids.has(feature.id)) invalid2("duplicate-feature", `Duplicate feature ID: ${feature.id}`, `$/features/${index}/id`);
     ids.add(feature.id);
+    if (!forUpdate) {
+      for (const field of ["title", "summary"]) {
+        if (/[\r\n]/u.test(feature[field]) || field === "summary" && feature[field].startsWith("Source paths:")) invalid2("invalid-feature-metadata", `Feature ${field} must be one line and cannot shadow the source declaration.`, `$/features/${index}/${field}`);
+      }
+    }
     for (const path of feature.sourcePaths) {
-      if (sourcePaths) pathGlob(path);
-      else relativePath(path, `$/features/${index}/sourcePaths`);
+      if (forUpdate) relativePath(path, `$/features/${index}/sourcePaths`);
+      else {
+        if (/[`\r\n]/u.test(path)) invalid2("invalid-source-path", "Source paths cannot contain backticks or line breaks.", `$/features/${index}/sourcePaths`);
+        pathGlob(path);
+      }
     }
     for (const step of feature.steps) {
       for (const artifact of step.artifacts ?? []) {
@@ -2900,7 +2908,9 @@ async function readKitPlan(root, app, options) {
     if (error instanceof CommandError) throw error;
     throw new CommandError("blocked", [{ code: "kit-unavailable", message: `No readable kit at ${kitDirectory(app)}/kit.json.`, fix: "Apply the scaffolded kit first." }]);
   }
-  return validateKitPlan(plan, options);
+  validateKitPlan(plan, options);
+  if (plan.app !== app) throw new CommandError("failed", [{ code: "kit-app-mismatch", path: `${kitDirectory(app)}/kit.json`, message: `Requested kit ${app} contains a plan for ${plan.app}.`, fix: `Restore kit.json for ${app} before checking, proving or updating this kit.` }]);
+  return plan;
 }
 function readySeconds(plan) {
   return plan.launch.timeoutSeconds ?? defaultReadySeconds;
@@ -3141,7 +3151,7 @@ async function run8(options) {
   validateKitPlan(plan);
   const update = options.update === true;
   const kit = kitDirectory(plan.app);
-  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app, { sourcePaths: false }) : null;
+  const previous = update && await original(await resolveFilePath(target.root, `${kit}/kit.json`)) !== null ? await readKitPlan(target.root, plan.app, { forUpdate: true }) : null;
   const edits = [];
   const reviewedScope = [];
   async function stage(path2, operation, payload) {
