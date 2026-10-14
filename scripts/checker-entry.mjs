@@ -26,6 +26,17 @@ function blocked(code, message, fix) {
   throw new CommandError('blocked', [{ code, message, fix }])
 }
 
+// The pipeline docs gate needs the structural checks on the current tree, with no base, assessment or leaf execution.
+export async function runDocsOnly(options) {
+  if (options.workspace || options.base || options.assessment) throw new CommandError('usage-error', [{
+    code: 'docs-only-input', message: '--docs-only checks the current tree and takes no base or assessment.',
+    fix: 'Supply --repo <path> --docs-only [--contract <path>].' }])
+  const docs = await checkDocuments(options)
+  if (docs.status !== 'passed') return docs
+  const facts = await checkGeneratedFacts(options)
+  return { ...facts, data: { ...facts.data, coverageLimits: [...docs.data.coverageLimits, ...facts.data.coverageLimits ?? []] } }
+}
+
 export async function runChecker(options, { comparisonPolicy = false } = {}) {
   if (!options.repo || !options.base || !options.assessment || options.workspace) throw new CommandError('usage-error', [{
     code: 'missing-checker-input', message: 'Explicit repo, base and assessment are required.',
@@ -119,10 +130,11 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
 // Importing the bundled validators never starts the aggregate.
 if (process.argv[1] && await resolveLinks(resolve(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2)
-  if (argv.length === 1 && argv[0] === '--help') console.log('Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]')
+  if (argv.length === 1 && argv[0] === '--help') console.log('Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]\n       node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <path>] [--json]\nWith --docs-only, check registered document links, glossary structure and generated sections in the current tree without a base or assessment.')
   else {
     try {
-      emitResult({ command: 'bstack check', ...await runChecker(parseArgs(argv, ['base', 'assessment', 'contract'])) }, argv.includes('--json'))
+      const options = parseArgs(argv, ['base', 'assessment', 'contract', 'docs-only'])
+      emitResult({ command: options['docs-only'] ? 'bstack docs check' : 'bstack check', ...await (options['docs-only'] ? runDocsOnly : runChecker)(options) }, argv.includes('--json'))
     } catch (error) {
       emitResult({ command: 'bstack check', status: error instanceof CommandError ? error.status : 'blocked',
         problems: error instanceof CommandError ? error.problems : [{ code: 'checker-unavailable', message: error.message,

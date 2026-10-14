@@ -37,7 +37,7 @@ export async function leafCommand(root, command, stack = [], discovery = false) 
     const names = [executable, ...args].map(word => word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, ''))
     const [name] = names
     if (names.includes('bstack-check.mjs') ||
-        (names.includes('repo-audit.mjs') && args.some((arg, i) => (arg === 'evidence' && args[i + 1] === 'validate') || (arg === 'docs' && ['check', 'generate'].includes(args[i + 1]))))) {
+        (['repo-audit.mjs', 'maintenance.mjs'].some(entry => names.includes(entry)) && args.some((arg, i) => (arg === 'evidence' && args[i + 1] === 'validate') || (arg === 'docs' && ['check', 'generate'].includes(args[i + 1]))))) {
       reject('recursive-check', command.cwd, 'Leaf commands cannot invoke aggregate maintenance validation.')
     }
     if (isIndirectExecutable(executable)) reject('unsupported-leaf', executable, 'Shell programs and command wrappers cannot declare a verifiable leaf command.')

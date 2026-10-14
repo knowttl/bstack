@@ -20,7 +20,7 @@ Unrelated product work, automatic routing, general development playbooks and del
 Return findings and evidence to the project's chosen workflow instead of starting another skill, opening a pull request or selecting a delivery service.
 Security hardening of created skills and licensing review are outside scope.
 
-Routine maintenance uses the maintenance-contract reference directly, without repeating either audit checklist or the goal interview.
+Routine maintenance, change evidence and the check that docs stay true belong to `/maintenance`, which the user runs without repeating either audit checklist or the goal interview.
 Use the checklist to track independent read-only work and report the missing prerequisite at a blocked step.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
 
@@ -113,7 +113,7 @@ Setup and journey commands already attempted are never rerun automatically, avoi
 Verify affected commands explicitly and retain fresh evidence before claiming readiness.
 Prove selected native rules using the enforcement reference's rule-proof command and preserve the scratch evidence.
 Prove selected maintained integration as described in the enforcement reference before claiming it is verified for the created project.
-Load the maintenance-contract reference from the table below when recording change evidence.
+The maintenance contract, its no-mistakes ownership map and docs gate, and change evidence belong to `/maintenance`: list it as a next step for the user to run, after `/verification create` and before `/agents-md`, and do not register documents or record change evidence here.
 
 Done when: Every required outcome and check has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
@@ -206,6 +206,7 @@ Done when: Only the user's selected findings have been applied to the reviewed t
 
 ### Step 11: Verify and report readiness
 
+The maintenance contract, the no-mistakes ownership map and docs gate, and the later sweep for drift belong to `/maintenance`: list it as a next step for the user to run, after `/verification create` and before `/agents-md`, and do not register documents here.
 After selected apply, run the approved native check plan through `run-checks --repo <target> --plan <file> --json` using the shared verification rules.
 Preserve the existing native user journey, including before/after protection for structural changes and matching live probes for outside dependencies.
 Refresh findings against the current target fingerprint and bind each outcome to actual captured artifacts and their hashes.
@@ -336,4 +337,3 @@ Load a schema only to prepare or validate input for a command required by the cu
 | Running research in the main thread or delegating it | `references/research-briefs.md` |
 | Preparing a research report for citation checking | `schemas/research-report.json` |
 | Recording or validating audit recommendations | `schemas/findings.schema.json` |
-| Recording change evidence | `references/maintenance-contract.md` |
