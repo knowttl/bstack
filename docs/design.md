@@ -245,7 +245,13 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - `create`: registers the docs, scopes and checks in `.bstack/project.json`, and writes the no-mistakes wiring described under "Upkeep".
 - `sweep`: user-started and read-only. It checks every registered doc, the verification kit and the `AGENTS.md` pointers against the whole repo, then returns one list naming which `maintain` mode fixes each item. It fixes nothing itself.
 - The full per-change assessment record from ["Change evidence contract"](#change-evidence-contract) stays available when signed-off evidence is wanted.
-- Owns the generated repo checker.
+- Owns the generated repo checker, whose committed home is `skills/maintenance/scripts/bstack-check.mjs`. The checker gains a `--docs-only` mode that runs `docs check` and `docs generate --check` on the current tree with no base, assessment or leaf execution, and the docs gate calls it.
+- The sweep is one shared command, `sweep`, that composes `docs check`, `docs generate --check`, `kit check` and a link check of the root `AGENTS.md`.
+  It reads a document's owner from its registration (the `glossary` field, or the IDs `design` and `vision`).
+  Code changes or document age alone never create repair items or fail the command.
+  Skipped Markdown and unsupported link fragments are reported only as unchecked scope in `data.coverageLimits`, never as repair items or failures by themselves.
+  The skill judges every registered document against the whole current repo by reading, including glossary terms, design boundaries, README instructions and facts, vision claims and other registered content.
+  Staged, unstaged and untracked content is included; history may order the work but never exclude documents or repository areas, and no baseline is required.
 
 ### agents-md
 
@@ -277,7 +283,7 @@ A shared runtime folder beside the skills is ruled out because installing one sk
 | `architecture` | `measure`, `overlap`, `rule-proof`, `baseline`, `findings`, `apply`, `state show`, `cite-check` |
 | `foundation` | `project create`, `apply`, `run-checks`, `rule-proof` |
 | `verification` | `rule-proof`, `baseline`, `run-checks`, `probe`, `findings`, `apply`, `state show` |
-| `maintenance` | `contract validate`, `evidence collect` and `validate`, `docs check` and `generate`, `run-checks`, `probe`, `apply`, `state show` |
+| `maintenance` | `contract validate`, `evidence collect` and `validate`, `docs check` and `generate`, `run-checks`, `probe`, `apply`, `state show`, `sweep` |
 | `agents-md` | `inventory`, `apply`, `state show` |
 
 The lists come from each command's imports and the steps that call it; the build may find one more shared helper.
@@ -299,8 +305,8 @@ The pinned no-mistakes reference cited under ["Independent verification and auto
 - The Document step sees only the change's diff, and treats `AGENTS.md` as correction-only, so it can never add a pointer. That is why `agents-md` owns the file, and why a full sweep cannot run inside no-mistakes.
 - `document.instructions` and `gates` are honoured only from the default branch, so the wiring takes effect after it merges.
 
-The ownership map and gate are new behaviour.
-The repo checker's docs checks already exist, but the checker refuses to run without a per-change assessment file, so the gate needs a small docs-only mode.
+The [maintenance create guide](../skills/maintenance/references/create.md) owns the ownership map and gate setup.
+The [docs-only command contract](command-contract.md#docs-only-mode) defines checker execution without a per-change assessment.
 The full per-change assessment uses the skill's own scripts and its committed form waits for the project owner's approval each time, which is why the no-mistakes route carries everyday upkeep.
 
 ### Split build order
@@ -316,15 +322,14 @@ Each move removes the moved content from repo-audit and replaces it with a check
 | 4 | `vision`, with the board scripts, assets, two schemas and the `lavish-axi` dependency | A draft goes through build, launch and verdicts from the new folder, and other skills need no npm install |
 | 5 | `glossary` with `create` and `maintain` | A new idea gets only its approved glossary, an existing repo registers, maintains and checks a glossary through the skill's own commands, and repo-audit lists `/glossary` instead of resolving terms |
 | 6 | `agents-md`; other skills add their own pointer line | The skill audits pointers and merges `CLAUDE.md` through one reviewed plan that can delete it, `glossary` and `vision` propose their own pointer line through the shared pointer contract, and repo-audit lists `/agents-md` instead of consolidating instructions |
-| 7 | `maintenance` with `create` and `sweep`; the checker's home moves and gains its docs-only mode | On a fixture repo, a change that adds a term without a glossary update is caught by the Document step or the gate, a broken doc link fails the gate, and `sweep` lists a seeded drift with the right `maintain` mode |
+| 7 | `maintenance` with `create` and `sweep`; the checker's home moves and gains its docs-only mode | On a fixture repo, a change that adds a term without a glossary update is caught by the Document step or the gate, a broken doc link fails the gate, and `sweep` lists a seeded drift with the right `maintain` mode. Built: a broken link fails the written gate command, `sweep` names the owning mode for a broken glossary link, a broken `AGENTS.md` link and a broken kit, and the Document-step half awaits a pipeline run with a model, which is deferred |
 | 8 | `architecture` with `create` and `maintain`, ADRs and design standards | Set when the piece is commissioned |
 | 9 | `foundation`, the new-project path and `project create` | Set when the piece is commissioned |
 | 10 | Final repo-audit slim: only scope, overview audit and the two checklists remain; its acceptance cases and the evaluation harness move to the skills they now test | `/repo-audit` on a fixture prints the checklist with a cited reason per skill and writes nothing |
 
 ### Split limitations
 
-- The remaining skill boundaries and no-mistakes wiring are not implemented; [README.md](../README.md) owns current implementation status.
-- Each skill starting with a short self-check of its own area on an existing repo, the `maintain` and `sweep` modes, the ownership map and the checker's docs-only mode are new behaviour, not present today.
+- [README.md](../README.md) owns current implementation status for the split skills and their wiring.
 - The verification build supplied only the byte-for-byte checked copies of piece 2; the generator, the multi-skill installer and the move of every command to one source tree came with piece 2 itself.
 - The no-mistakes constraints above rest on the pinned reference at commit 93b4407, and the wiring has not run end to end.
 
@@ -1909,3 +1914,4 @@ Historical entries keep their original decisions and name their current applicat
 | R33, 2026-10-13 | "yes commission the build." The maintainer commissioned piece 4 of the split build: the `vision` skill with the board scripts, assets, two schemas and the `lavish-axi` dependency, and the removal of the vision review from repo-audit | Applies R31. The generator gained a `references` list so the grilling guide keeps one source with a checked copy in repo-audit and `vision`, the build's choice to deliver the shared references R31 describes. `vision` writes through `apply` with an `audit`-stage findings file and keeps the purpose interview in its own reference, while repo-audit's intent interview stays whole until `foundation` takes its technical half |
 | R34, 2026-10-13 | "yes commission the build." The maintainer commissioned piece 5 of the split build: the `glossary` skill with `create` and `maintain`, and the removal of term resolution from repo-audit | Applies R31. repo-audit's Step 2 now lists `/glossary` as a next step, and its decision-record guidance stays in `references/decisions.md` until `architecture` takes it, since decision records are not glossary content (Q1). Build choices: `maintain` takes the commit that last changed a glossary file as its baseline unless the user names another; the glossary format writes avoided names as plain `Avoid:` lines following the [document-reference contract](command-contract.md#document-references); and the skill proposes registering a glossary only in a contract the project already has, since `maintenance` owns creating one |
 | R35, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 6 of the split build: the `agents-md` skill, with `glossary` and `vision` adding their own pointer line, and the removal of the `AGENTS.md` and `CLAUDE.md` merge from repo-audit | Applies R31 and Split Q2. repo-audit's Step 7 and the new-idea foundation step now list `/agents-md` as the last next step, and the merge, host loading check and shadowing rules moved with the file. Build choices: one shared pointer reference holds the file's shape and the rules for adding a line, with a checked copy in `glossary`, `vision` and `agents-md`; a skill adds no pointer when a root `CLAUDE.md` would hide a new `AGENTS.md`; `verification` keeps the pointer its kit scaffold already appends; and the pointer audit is read-based with no new command, which the maintainer's agreed `inventory`, `apply` and `state show` list allows |
+| R36, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 7 of the split build: the `maintenance` skill with `create` and `sweep`, the checker's move to `skills/maintenance/scripts/bstack-check.mjs` with its `--docs-only` mode, and the removal of the maintenance contract from repo-audit | Applies R31 and Split Q6, Q10 and Q14. repo-audit's Step 6 and Step 11 now list `/maintenance` before `/agents-md`, and the contract reference moved with its scripts renamed to `maintenance.mjs`. Build choices: the sweep is one new shared `sweep` command, the "one more shared helper" the command lists allowed for, because the proof that a seeded drift names the right `maintain` mode needs a deterministic report; a document's owner is read from its registration (the `glossary` field, or the IDs `design` and `vision`); every registered document is judged against the whole current repo by reading, as in the owning skills, with history allowed only to order work; code changes or document age alone never create repair items or fail sweep; and the gate command is `node .bstack/bin/bstack-check.mjs --repo . --docs-only`. The repo-audit eval scenarios for maintenance and the evaluation host still stage repo-audit only and are rehomed with the final slim |

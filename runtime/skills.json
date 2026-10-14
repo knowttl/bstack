@@ -42,6 +42,18 @@
     "assets": [],
     "references": ["grilling.md", "agents-pointer.md"]
   },
+  "maintenance": {
+    "commands": [
+      "contract validate", "evidence collect", "evidence validate", "docs check", "docs generate", "run-checks", "probe record",
+      "probe compare", "apply", "state show", "sweep"
+    ],
+    "schemas": [
+      "change-set.schema.json", "check-plan.json", "evidence.schema.json", "findings.schema.json", "impact-assessment.json",
+      "probe-record.json", "probe-spec.json", "project.schema.json", "resume-state.schema.json"
+    ],
+    "assets": ["map-coverage.mjs"],
+    "references": ["agents-pointer.md"]
+  },
   "agents-md": {
     "commands": ["inventory", "apply", "state show"],
     "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "resume-state.schema.json"],
