@@ -18,7 +18,8 @@ node scripts/check-package.mjs --skill <fixture-path>/.agents/skills/repo-audit
 Use the fixture name from the chosen example instead of `new-idea`.
 Open a fresh Codex conversation in the returned directory, invoke `$repo-audit`, and give the example's request.
 Use `--host claude` and `/repo-audit` for Claude Code, subject to the README's unverified-host and instruction-loading limits.
-Follow the [current skill boundaries and usage](../../README.md) when replaying these historical requests, including explicitly invoking the [vision skill](../../skills/vision/SKILL.md) for vision review.
+Follow the [current skill boundaries and usage](../../README.md) when replaying these historical requests.
+Repo-audit now stops after its overview checklist; explicitly invoke the skills it names to perform the remaining work in a historical example.
 Native target dependencies must be prepared before claiming native check results.
 Answer actual questions and approve only reviewed exact changes; the historical selections are examples, not authorization to apply changes to another project.
 Board review needs a reachable browser and actual feedback.

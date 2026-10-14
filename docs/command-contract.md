@@ -179,7 +179,7 @@ Unknown document, rule or check references fail.
 
 Leaf checks and generators cannot invoke bstack's `evidence validate`, `docs check`, `docs generate` or the standalone `bstack-check.mjs` aggregate.
 Aggregate filenames are recognised in executable and argument positions by case-insensitive basename, using either path separator and ignoring `.exe`, `.cmd` and `.bat` suffixes.
-The `evidence validate`, `docs check` and `docs generate` argument pairs require those exact spellings and a `repo-audit.mjs` executable or argument; independent project tools may use those argument pairs.
+The `evidence validate`, `docs check` and `docs generate` argument pairs require those exact spellings and a `repo-audit.mjs` or `maintenance.mjs` executable or argument; independent project tools may use those argument pairs.
 Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
 For npm, script lookup uses the nearest ancestor within the repo containing `package.json` or `node_modules`, and script bodies are inspected from that directory.
 For Yarn, lookup uses the nearest ancestor within the repo containing `package.json`, without stopping at `node_modules`.
@@ -1498,7 +1498,7 @@ Apply the selected native tool's own baseline or suppression mechanism instead w
 ## Verification skill commands
 
 `node skills/verification/scripts/verification.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone verification skill, with the same argument, target, scratch and result contracts as repo-audit.
-It runs `apply`, `state show`, `findings validate`, `rule-proof`, `baseline check`, `run-checks`, `probe record` and `probe compare` from the [shared runtime](../runtime/), with the same behaviour as in repo-audit, and adds the commands below.
+It runs `apply`, `state show`, `findings validate`, `rule-proof`, `baseline check`, `run-checks`, `probe record` and `probe compare` from the [shared runtime](../runtime/), following their contracts above, and adds the commands below.
 `--help` lists the commands, and `<command> --help` prints that command's syntax.
 
 `kit scaffold --repo <path> --plan <file>` reads a kit plan following [the plan schema](../skills/verification/schemas/kit-plan.json) and writes a change set and findings file to scratch for review through `apply`.
