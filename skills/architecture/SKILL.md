@@ -89,7 +89,10 @@ Done when: Every selected rule has a passing proof or is reported unproven with 
 
 ### Step 5: Review and apply
 
-Record the findings in scratch following `schemas/findings.schema.json` with stage `audit`, the target and the reviewed paths as its scope, and run `node scripts/architecture.mjs findings validate --repo <target> --findings <file> --json`, with `--workspace` for a new idea.
+Keep the full audit findings, including blocked decisions and their dependent proposals, in the scratch audit report.
+Prepare a separate apply findings record following `schemas/findings.schema.json` with stage `audit`, the target and only the independently selected proposals whose decisions are settled, their sources and reviewed paths; exclude blocked decisions and proposals that depend on them without marking those decisions resolved.
+Bind its execution evidence to that record's scope and inputs, and run `node scripts/architecture.mjs findings validate --repo <target> --findings <file> --json`, with `--workspace` for a new idea.
+Use this apply findings record, its selected IDs, matching reviewed scope and digest in the change set; if no independent proposal remains, report the blocked decisions without preparing an apply plan.
 Keep each design section, rule configuration, baseline, decision record and standards proposal independently selectable.
 After selection, consolidate all selected changes to the same resolved file into one complete edit following `schemas/change-set.schema.json`, with the exact reviewed UTF-8 bytes and their hashes; use `create` for a new file and `replace-file` for multiple changes to an existing file.
 Include `starting-checks` in the findings' `requiredOutcomes`, as required by stage `audit`.
@@ -152,7 +155,7 @@ Done when: Every candidate has one class with its evidence or a stated reason fo
 
 Propose each design edit and each new boundary rule independently with its evidence and obtain the user's selection.
 Prove every selected new rule as in Step 4 and keep existing violations in the baseline.
-Record the selection in scratch as a finding with stage `audit` and prepare the change set as in Step 5, consolidating all selected changes into one complete edit per resolved file, with the same target and `starting-checks` outcome as `create`.
+Keep blocked decisions in the scratch audit report and prepare the separate apply findings record and change set as in Step 5 for independently selected proposals whose decisions are settled, consolidating all selected changes into one complete edit per resolved file, with the same target and `starting-checks` outcome as `create`.
 Run `apply --repo <target> --plan <file> --dry-run --json`, present the exact diff, then run the unchanged plan without `--dry-run` only after the user approves those bytes.
 Use `state show` to inspect an interrupted apply, and repeat the unchanged plan to resume.
 
