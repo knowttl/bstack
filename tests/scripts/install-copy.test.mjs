@@ -176,17 +176,6 @@ test('tracked source changes remain dirty inside installation paths', async t =>
   assert.match(preview.value.data.sourceVersion, /^development:[0-9a-f]{40}:dirty$/)
 })
 
-test('installed package validation rejects a removed runtime launcher', async t => {
-  const f = await fixture(t)
-  const installed = f.run('--scope', 'project', '--project', f.project, '--host', 'agents')
-  assert.equal(installed.status, 0, installed.stdout + installed.stderr)
-  const destination = join(f.project, '.agents/skills/repo-audit')
-  await rm(join(destination, 'node_modules/lavish-axi/dist/cli.mjs'))
-  const checked = command(process.execPath, [join(root, 'scripts/check-package.mjs'), '--skill', destination], f.project, f.env)
-  assert.equal(checked.status, 1, checked.stdout + checked.stderr)
-  assert.match(checked.stdout, /local-path-missing:.*node_modules\/lavish-axi\/dist\/cli\.mjs/)
-})
-
 test('dry run lists every authored copy and runtime action without changing homes, project or source', async t => {
   const f = await fixture(t, true)
   const before = await Promise.all([inventory(f.home), inventory(f.project), inventory(f.source)])
@@ -212,7 +201,7 @@ test('all-host install preserves the existing installer collision fixture before
 for (const broken of ['missing-resource', 'outside-resource', 'unpinned-runtime', 'lock-mismatch', 'symlink-source']) {
   test(`source preflight rejects ${broken} without destination mutations`, async t => {
     const f = await fixture(t)
-    if (broken === 'missing-resource') await rm(join(f.source, 'references/vision.md'))
+    if (broken === 'missing-resource') await rm(join(f.source, 'references/domain-language.md'))
     if (broken === 'outside-resource') {
       await writeFile(join(f.checkout, 'outside.md'), 'Outside package\n')
       await writeFile(join(f.source, 'extra.md'), '[Outside](../../outside.md)\n')

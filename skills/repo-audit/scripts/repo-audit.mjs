@@ -4477,153 +4477,16 @@ async function run18(options) {
   return { inputs: { target, report: options.report }, data: { mode: report.mode, filesChecked, webRecorded, webVerifiedByChecker: false } };
 }
 
-// runtime/scripts/commands/vision-board-build.mjs
-import { readFile as readFile20, writeFile as writeFile9, copyFile } from "node:fs/promises";
-import { createHash as createHash3, randomUUID as randomUUID4 } from "node:crypto";
-import { join as join18 } from "node:path";
-function html(value) {
-  return value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
-}
-function scriptJSON(value) {
-  return JSON.stringify(value).replace(/[<>&\u2028\u2029]/g, (character) => `\\u${character.charCodeAt(0).toString(16).padStart(4, "0")}`);
-}
-async function run19(options) {
-  if (!options.draft || !options.proposals) {
-    throw new CommandError("usage-error", [{ code: "missing-input", message: "--draft and --proposals are required.", fix: "Supply a UTF-8 Markdown draft and a matching proposals JSON file." }]);
-  }
-  const target = await resolveTarget(options, { draftOnly: true });
-  let draft, proposals;
-  try {
-    draft = await readFile20(options.draft);
-    proposals = JSON.parse(await readFile20(options.proposals, "utf8"));
-  } catch {
-    throw new CommandError("failed", [{ code: "invalid-input", message: "Draft or proposals cannot be read, or proposals are not JSON.", fix: "Supply readable draft and proposals files." }]);
-  }
-  const schema2 = JSON.parse(await readFile20(new URL("../schemas/vision-proposals.json", import.meta.url), "utf8"));
-  validateData(schema2, proposals);
-  validateIds(proposals.cards, "$/cards");
-  const draftRevision = createHash3("sha256").update(draft).digest("hex");
-  if (proposals.draftRevision !== draftRevision) {
-    throw new CommandError("failed", [{ code: "stale-draft", message: "Proposals do not match the exact draft bytes.", fix: "Review proposals against the current draft and update draftRevision to its SHA-256." }]);
-  }
-  if (!draft.toString("utf8").trim() || !Buffer.from(draft.toString("utf8")).equals(draft)) {
-    throw new CommandError("failed", [{ code: "invalid-draft", message: "Draft must be nonempty UTF-8 Markdown.", fix: "Supply a nonempty UTF-8 draft." }]);
-  }
-  const review = { schemaVersion: 1, runId: randomUUID4(), draftRevision };
-  const template = await readFile20(new URL("../assets/vision/review-template.html", import.meta.url), "utf8");
-  const slots = { PROJECT: html(proposals.project), RUN_NOTE: html(proposals.runNote), DRAFT_MARKDOWN: scriptJSON(draft.toString("utf8")), REVIEW: scriptJSON(review) };
-  const board = template.replace(
-    /const CARDS = \[[\s\S]*?\];|\{\{(PROJECT|RUN_NOTE|DRAFT_MARKDOWN|REVIEW)\}\}/g,
-    (match, slot) => slot ? slots[slot] : `const CARDS = ${scriptJSON(proposals.cards)};`
-  );
-  const scratch = await createScratch(target);
-  const boardPath = join18(scratch, "board.html");
-  await writeFile9(join18(scratch, "draft.md"), draft);
-  await writeFile9(join18(scratch, "proposals.json"), JSON.stringify(proposals, null, 2) + "\n");
-  await writeFile9(join18(scratch, "board.json"), JSON.stringify({ ...review, target, cardIds: proposals.cards.map((card) => card.id) }, null, 2) + "\n");
-  await copyFile(new URL("../assets/vision/review.css", import.meta.url), join18(scratch, "review.css"));
-  await writeFile9(boardPath, board);
-  return { inputs: { target, draftRevision }, data: { scratch, board: boardPath, ...review, cardIds: proposals.cards.map((card) => card.id) } };
-}
-
-// runtime/scripts/commands/vision-board-launch.mjs
-import { writeFile as writeFile10 } from "node:fs/promises";
-import { join as join20 } from "node:path";
-import { fileURLToPath } from "node:url";
-
-// runtime/scripts/lib/vision-board.mjs
-import { readFile as readFile21, realpath as realpath7 } from "node:fs/promises";
-import { dirname as dirname10, join as join19 } from "node:path";
-async function readBoard(options) {
-  if (!options.board) throw new CommandError("usage-error", [{ code: "missing-input", message: "--board is required.", fix: "Supply the scratch board path returned by build." }]);
-  const target = await resolveTarget(options, { draftOnly: true });
-  const board = await realpath7(options.board);
-  const scratch = dirname10(board);
-  if (isInside(target.root, scratch)) throw new CommandError("failed", [{ code: "board-inside-target", message: "The board must remain outside the target.", fix: "Use the scratch board returned by build." }]);
-  const manifest = JSON.parse(await readFile21(join19(scratch, "board.json"), "utf8"));
-  const draft = await readFile21(join19(scratch, "draft.md"));
-  const proposals = JSON.parse(await readFile21(join19(scratch, "proposals.json"), "utf8"));
-  const schema2 = JSON.parse(await readFile21(new URL("../schemas/vision-proposals.json", import.meta.url), "utf8"));
-  validateData(schema2, proposals);
-  validateIds(proposals.cards, "$/cards");
-  if (manifest.schemaVersion !== 1 || typeof manifest.runId !== "string" || !manifest.runId || manifest.target?.root !== target.root || manifest.target?.mode !== target.mode || manifest.draftRevision !== hashBytes(draft) || proposals.draftRevision !== manifest.draftRevision || JSON.stringify(manifest.cardIds) !== JSON.stringify(proposals.cards.map((card) => card.id))) {
-    throw new CommandError("failed", [{ code: "incompatible-board", message: "Board metadata, target or draft no longer match.", fix: "Resume the original unchanged scratch run or build a reviewed new round." }]);
-  }
-  return { target, board, scratch, manifest };
-}
-
-// runtime/scripts/commands/vision-board-launch.mjs
-async function run20(options) {
-  const context = await readBoard(options);
-  const cli = fileURLToPath(new URL("../node_modules/lavish-axi/dist/cli.mjs", import.meta.url));
-  const result = await runCommand({ root: context.scratch }, {
-    executable: "node",
-    args: [cli, context.board],
-    cwd: ".",
-    versionArgs: [cli, "--version"]
-  });
-  await writeFile10(join20(context.scratch, "launch.json"), JSON.stringify(result, null, 2) + "\n");
-  if (result.status !== "passed" || result.outputTruncated) {
-    throw new CommandError("blocked", [{
-      code: "board-runtime-unavailable",
-      message: "The pinned board runtime could not open the review. The scratch draft is preserved.",
-      fix: `Run npm ci --omit=dev --prefix <installed-skill>, restore access to the Lavish server and a reachable browser, then retry. Inspect ${join20(context.scratch, "launch.json")}.`
-    }]);
-  }
-  return { inputs: { target: context.target }, data: {
-    board: context.board,
-    scratch: context.scratch,
-    runtimeOutput: result.stdout,
-    listener: { executable: process.execPath, args: [cli, "poll", context.board] }
-  } };
-}
-
-// runtime/scripts/commands/vision-board-verdicts.mjs
-import { readFile as readFile22, writeFile as writeFile11 } from "node:fs/promises";
-import { join as join21 } from "node:path";
-async function run21(options) {
-  if (!options.input || !options.draft) throw new CommandError("usage-error", [{ code: "missing-input", message: "--input and --draft are required.", fix: "Supply complete-round context JSON and the agent-revised UTF-8 draft." }]);
-  const context = await readBoard(options);
-  let input2, draft;
-  try {
-    input2 = JSON.parse(await readFile22(options.input, "utf8"));
-    draft = await readFile22(options.draft);
-  } catch {
-    throw new CommandError("failed", [{ code: "invalid-input", message: "Verdicts or revised draft cannot be read, or verdicts are not JSON.", fix: "Supply readable files in the documented format." }]);
-  }
-  const schema2 = JSON.parse(await readFile22(new URL("../schemas/vision-verdicts.json", import.meta.url), "utf8"));
-  validateData(schema2, input2);
-  validateIds(input2.verdicts, "$/verdicts");
-  if (input2.runId !== context.manifest.runId || input2.draftRevision !== context.manifest.draftRevision) {
-    throw new CommandError("failed", [{ code: "stale-verdicts", message: "Verdicts belong to a different run or draft revision.", fix: "Use the complete-round context from this board review." }]);
-  }
-  if (input2.verdicts.length !== context.manifest.cardIds.length || input2.verdicts.some((item) => !context.manifest.cardIds.includes(item.id))) {
-    throw new CommandError("failed", [{ code: "card-mismatch", message: "Verdicts must cover every known card exactly once.", fix: "Return the complete round, preserving all original card IDs." }]);
-  }
-  if (!draft.toString("utf8").trim() || !Buffer.from(draft.toString("utf8")).equals(draft)) {
-    throw new CommandError("failed", [{ code: "invalid-draft", message: "The revised draft must be nonempty UTF-8 Markdown.", fix: "Supply the semantic revision derived from author reasoning." }]);
-  }
-  const scratch = await createScratch(context.target);
-  const draftPath = join21(scratch, "draft.md");
-  const revision = { ...input2, previousBoard: context.board, previousDraft: join21(context.scratch, "draft.md"), draftRevision: hashBytes(draft), reviewedDraftRevision: input2.draftRevision };
-  await writeFile11(draftPath, draft);
-  await writeFile11(join21(scratch, "review.json"), JSON.stringify(revision, null, 2) + "\n");
-  return {
-    inputs: { target: context.target, runId: input2.runId, draftRevision: input2.draftRevision },
-    data: { scratch, draft: draftPath, draftRevision: revision.draftRevision, previousDraft: revision.previousDraft, review: join21(scratch, "review.json"), approval: "pending-author-review" }
-  };
-}
-
 // runtime/scripts/commands/contract-test.mjs
-import { readFile as readFile23 } from "node:fs/promises";
+import { readFile as readFile20 } from "node:fs/promises";
 async function readJSON(path) {
   try {
-    return JSON.parse(await readFile23(path, "utf8"));
+    return JSON.parse(await readFile20(path, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-input", message: `Input must be readable JSON: ${path}`, fix: "Supply a readable JSON file.", path: String(path) }]);
   }
 }
-async function run22(options) {
+async function run19(options) {
   if (!options.input) throw new CommandError("usage-error", [{ code: "missing-input", message: "--input is required.", fix: "Supply --input <file>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   const schema2 = await readJSON(options.schema ?? new URL("../schemas/contract-test.json", import.meta.url));
@@ -4669,8 +4532,5 @@ await dispatch(process.argv.slice(2), "repo-audit", {
   "measure": { options: ["range", "exclusions"], help: "Collect endpoint file sizes and current-lifetime history signals without writes.\nUsage: repo-audit.mjs measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision selects its reachable history. Only files present at the endpoint are measured, following renames back to their addition. Exclusions follow schemas/measure-exclusions.json. Signals do not establish violations or merge conflicts.", run: run16 },
   "overlap": { options: ["plans"], help: "Compare declared write paths and changing contracts without writes.\nUsage: repo-audit.mjs overlap --repo <path> --plans <file> <file> [--json]\nPlans follow schemas/overlap-plan.json. Paths are case-sensitive and repo-relative, using /, * and ? within segments, and ** for zero or more segments. Unsupported glob syntax fails. Intersections include planned new files. Disjoint paths do not prove independence.", run: run17 },
   "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run18 },
-  "vision-board build": { options: ["draft", "proposals"], help: "Build a revision-bound VISION review board in scratch.\nUsage: repo-audit.mjs vision-board build --repo <path>|--workspace <path> --draft <file> --proposals <file> [--json]\nDraft is UTF-8 Markdown. Proposals follow schemas/vision-proposals.json and name its exact SHA-256.", run: run19 },
-  "vision-board launch": { options: ["board"], help: "Open the pinned board runtime, preserving the scratch draft.\nUsage: repo-audit.mjs vision-board launch --repo <path>|--workspace <path> --board <scratch-board.html> [--json]\nRead runtimeOutput and run the returned listener in the terminal for author feedback.", run: run20 },
-  "vision-board verdicts": { options: ["board", "input", "draft"], help: "Validate a complete review round and save the agent-revised draft in new scratch.\nUsage: repo-audit.mjs vision-board verdicts --repo <path>|--workspace <path> --board <scratch-board.html> --input <round.json> --draft <revised.md> [--json]\nInput follows schemas/vision-verdicts.json. Previous draft and reasoning remain available. The resulting draft still needs explicit author approval.", run: run21 },
-  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run22 }
+  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run19 }
 });

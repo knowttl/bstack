@@ -3,10 +3,11 @@
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate; the remaining split pieces are pending.
-The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, while the remaining skill boundaries and workflows are pending.
-The installation below covers repo-audit and verification; audit usage applies to repo-audit.
+The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification and [vision](skills/vision/SKILL.md) skills, while the remaining skill boundaries and workflows are pending.
+The installation below covers repo-audit, verification and vision; audit usage applies to repo-audit.
 
-This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, vision, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, board build, launch and verdict ingestion with a pinned runtime, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+This checkout contains the [repo-audit procedure](skills/repo-audit/SKILL.md), interview, domain-language, research, enforcement and architecture references, read-only starting-state inspection, document inventory, history measurement and planned-path overlap, findings validation and scratch reports, check-plan execution capture and live probe pairs, citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
+The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
 The procedure defines both audit checklists, review before apply, protected writes and outcome verification.
 Use the load-when table to read the self-contained intent interview for a new idea, grilling for a material unresolved decision, or domain-language guidance for unclear terms.
 These establish confirmed intent and draft vocabulary while keeping technical decisions in their existing sources.
@@ -83,7 +84,7 @@ Use the existing design and acceptance cases; present findings for selection bef
 That is the Codex invocation; use `/repo-audit` in Claude Code or `/skill:repo-audit` in Pi.
 A plain request such as "audit this repo" does not start the skill.
 For a new idea, install into its existing workspace and invoke the skill with the idea and first useful journey instead.
-Answer unresolved intent questions, review the interactive vision board when needed, select findings, and approve the exact proposed changes before apply or creation.
+Answer unresolved intent questions, select findings, and approve the exact proposed changes before apply or creation; `/vision` runs the interactive vision board as its own skill.
 The skill keeps proposals in scratch and reports blocked verification explicitly.
 It does not select a delivery service for you.
 See the [worked examples](docs/examples/README.md) for requests, findings, selections, results and reproduction steps.
@@ -404,9 +405,9 @@ This check requires Git, verifies hash coverage and local bytes, and rejects tra
 The fetch script and manifest are excluded from the copy inventory.
 The check also runs in `npm test` and `npm test -- --task T0.3`.
 
-Every command, shared library, schema and asset has one source in [runtime/](runtime/), and [runtime/skills.json](runtime/skills.json) lists the commands, schemas and assets each skill ships.
-An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas and assets beside it.
-[skills/repo-audit](skills/repo-audit/SKILL.md) and [skills/verification](skills/verification/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+Every command, shared library, schema, asset and shared reference has one source in [runtime/](runtime/), and [runtime/skills.json](runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
+An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
+[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md) and [skills/vision](skills/vision/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 
 ```sh
@@ -415,7 +416,8 @@ node scripts/generate-skills.mjs --check
 ```
 
 `--check` exits 1 for a missing or modified listed output or an unlisted file under a registered skill's `schemas/` or `assets/`; generation removes those unlisted schema and asset files.
-Both commands exit 1 when a skill lists a command, schema or asset that `runtime/` lacks or when a bundle would include a file outside `runtime/`.
+A skill's `references/` also holds its own authored files, so only the listed shared copies are checked.
+Both commands exit 1 when a skill lists a command, schema, asset or reference that `runtime/` lacks or when a bundle would include a file outside `runtime/`.
 To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
 
@@ -498,6 +500,9 @@ Web citations record URL, read date and verification status, while the checker v
 Without web access, mark language and outside recommendations "not researched" with the reason.
 The [T2.1 discovery checkpoint](tests/eval/results/discovery-C11a/summary.md) records real main-thread and parallel subagent runs, citation checks, no-web limits and unchanged fixtures.
 
+The [vision skill](skills/vision/SKILL.md) is started by the user, interviews for purpose, users, success and non-goals, drafts `VISION.md` or a reviewed delta from evidence, stress-tests it on the review board, and writes it with `apply` only after the author approves the exact draft.
+It is the only skill with a pinned runtime, so `npm ci --omit=dev` runs for `skills/vision` alone and repo-audit and verification install without npm.
+
 To exercise the read-only shared contract test from this checkout:
 
 ```sh
@@ -510,19 +515,19 @@ See the [public test command contract](docs/command-contract.md#c4c-public-test-
 Build a synthetic VISION board in scratch outside the target:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs vision-board build --workspace . --draft tests/inputs/vision-draft.md --proposals tests/inputs/vision-proposals.json --json
-node skills/repo-audit/scripts/repo-audit.mjs vision-board build --help
+node skills/vision/scripts/vision.mjs vision-board build --workspace . --draft tests/inputs/vision-draft.md --proposals tests/inputs/vision-proposals.json --json
+node skills/vision/scripts/vision.mjs vision-board build --help
 ```
 
-For a real draft, supply nonempty UTF-8 Markdown and [versioned proposals](skills/repo-audit/schemas/vision-proposals.json) naming its exact-byte SHA-256 as `draftRevision`.
+For a real draft, supply nonempty UTF-8 Markdown and [versioned proposals](skills/vision/schemas/vision-proposals.json) naming its exact-byte SHA-256 as `draftRevision`.
 The JSON result returns the board path, run ID, revision and card IDs.
 Scratch preserves the draft, proposals, manifest and stylesheet without changing the target.
 The [board command contract](docs/command-contract.md#vision-board-build) documents inputs and failure behaviour.
 Launch the returned scratch board with the same target, then run the listener executable and arguments returned by --json:
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs vision-board launch --workspace . --board <returned-board.html> --json
-node skills/repo-audit/scripts/repo-audit.mjs vision-board verdicts --workspace . --board <returned-board.html> --input <complete-round.json> --draft <agent-revised.md> --json
+node skills/vision/scripts/vision.mjs vision-board launch --workspace . --board <returned-board.html> --json
+node skills/vision/scripts/vision.mjs vision-board verdicts --workspace . --board <returned-board.html> --input <complete-round.json> --draft <agent-revised.md> --json
 ```
 
 Open the runtime's printed URL in a reachable browser and use the pinned terminal listener to receive feedback.

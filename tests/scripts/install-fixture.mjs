@@ -51,8 +51,9 @@ export async function fixture(t, failRuntime = false) {
   assert.equal(packed.status, 0, packed.stderr)
   const tarball = join(dependency, JSON.parse(packed.stdout)[0].filename)
   const source = join(checkout, 'skills/repo-audit')
-  const manifest = JSON.parse(await readFile(join(source, 'package.json'), 'utf8'))
-  await rm(join(source, 'package-lock.json'))
+  // The installer tests need one skill that pins a runtime, and the legacy installer looks for it under repo-audit, so the fixture gives its repo-audit copy the manifest the real vision skill carries.
+  const manifest = JSON.parse(await readFile(join(root, 'skills/vision/package.json'), 'utf8'))
+  await writeFile(join(source, 'package.json'), JSON.stringify(manifest, null, 2) + '\n')
   const lockResult = command('npm', ['install', '--package-lock-only', '--ignore-scripts', '--no-audit', '--no-fund', tarball], source, env)
   assert.equal(lockResult.status, 0, lockResult.stdout + lockResult.stderr)
   const lock = JSON.parse(await readFile(join(source, 'package-lock.json'), 'utf8'))
