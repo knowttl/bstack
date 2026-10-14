@@ -50,8 +50,6 @@ Ask the user when no agreed source exists.
 Corrections go through the same reviewed boundary as creation.
 Edit a copy of the kit plan in scratch, starting from the applied `kit.json`, so the plan stays the single source for every rendered file.
 Run `kit scaffold --repo <target> --plan <file> --update --json`, present its exact diff with `apply --dry-run`, and apply the unchanged change set only after the user approves those bytes.
-`--update` replaces files that differ from the plan, creates missing ones and deletes feature files the plan no longer lists.
-It proposes nothing when the kit already matches the plan.
 Never edit a rendered file by hand: the next `kit check` reports it as drift.
 After applying, run `kit check` again and `kit prove` for every feature whose steps, entry points or source paths changed.
 
