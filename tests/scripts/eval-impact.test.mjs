@@ -1,18 +1,18 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, readFile, readdir, stat, symlink, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { emptyRepo, git } from './discovery-fixture.mjs'
-import { scenarioCovers } from '../../scripts/lib/evaluation-impact.mjs'
 
 // Impact tests use the real command in a disposable checkout, without agent hosts.
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const definitions = JSON.parse(await readFile(join(root, 'tests/eval/scenarios/scenarios.json'), 'utf8')).scenarios
 const skillNames = Object.keys(JSON.parse(await readFile(join(root, 'runtime/skills.json'), 'utf8')))
 // Scenarios that stage a skill, so a change to that skill selects exactly these.
-const staging = skill => definitions.filter(item => item.mode !== 'without' && item.skills.includes(skill)).map(item => item.id)
+const staging = skill => definitions.filter(item => item.mode !== 'without' &&
+  (item.checkpoints.at(-1) === 'final' || item.skills.includes(skill))).map(item => item.id)
 
 async function checkout(t) {
   const { repo } = await emptyRepo(t)
@@ -27,9 +27,6 @@ async function checkout(t) {
   return repo
 }
 
-// Commands, schemas, assets and shared references are authored in the shared runtime; everything else a key names lives in a skill folder.
-const sourceFile = key => key.startsWith('install/') ? key : /^(?:scripts|schemas|assets|references)\//.test(key) ? `runtime/${key}` : `skills/${key}`
-
 function affected(repo, base = 'HEAD') {
   const result = spawnSync(process.execPath, [join(repo, 'scripts/eval.mjs'), 'affected', '--base', base, '--json'], { encoding: 'utf8', cwd: repo })
   return { exit: result.status, ...JSON.parse(result.stdout) }
@@ -39,26 +36,53 @@ async function edit(repo, path, change) {
   await writeFile(join(repo, path), change(await readFile(join(repo, path), 'utf8')))
 }
 
-test('every skill is staged by a scenario and every runtime input belongs to a staged skill bundle', async () => {
-  for (const skill of skillNames) assert.ok(staging(skill).length, skill)
-  const covers = (await Promise.all(definitions.map(item => scenarioCovers(root, item)))).flat()
-  for (const key of covers) {
-    assert.ok(!key.startsWith('/') && !key.split('/').includes('..'), key)
-    assert.equal((await stat(join(root, sourceFile(key)))).isDirectory(), key.endsWith('/'), key)
-  }
+test('every runtime input selects scenarios without an unmapped fallback', async t => {
+  const repo = await checkout(t)
+  const keys = []
   for (const directory of ['schemas', 'scripts/commands', 'assets', 'references']) {
-    for (const file of await readdir(join(root, 'runtime', directory), { recursive: true, withFileTypes: true })) {
+    for (const file of await readdir(join(repo, 'runtime', directory), { recursive: true, withFileTypes: true })) {
       if (!file.isFile()) continue
-      const path = resolve(file.parentPath, file.name).slice(resolve(root, 'runtime').length + 1).replaceAll('\\', '/')
-      assert.ok(covers.includes(path), path)
+      const path = resolve(file.parentPath, file.name).slice(resolve(repo, 'runtime').length + 1).replaceAll('\\', '/')
+      keys.push(path)
+      await edit(repo, `runtime/${path}`, source => source + '\n')
     }
   }
+  const result = affected(repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.keys, keys.sort())
+  assert.deepEqual(result.data.unmapped, [])
+  assert.deepEqual(result.data.scenarios, definitions.filter(item => item.mode !== 'without').map(item => item.id))
 })
 
-test('a skill-free scenario depends on no skill input', async () => {
-  const skillFree = definitions.filter(item => item.mode === 'without')
-  assert.ok(skillFree.length)
-  for (const item of skillFree) assert.deepEqual(await scenarioCovers(root, item), [], item.id)
+test('skill changes select final runs and exclude skill-free runs', async t => {
+  const repo = await checkout(t)
+  for (const skill of skillNames) await edit(repo, `skills/${skill}/SKILL.md`, source => source + '\n')
+  const result = affected(repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.unmapped, [])
+  assert.deepEqual(result.data.scenarios, definitions.filter(item => item.mode !== 'without').map(item => item.id))
+})
+
+test('missing bundled runtime sources block impact selection', async t => {
+  const repo = await checkout(t)
+  await rm(join(repo, 'runtime/scripts/commands/vision-board-build.mjs'))
+  const result = affected(repo)
+  assert.equal(result.exit, 2, JSON.stringify(result))
+  assert.equal(result.status, 'blocked')
+})
+
+test('earlier checkpoints depend only on the named skills', async t => {
+  const repo = await checkout(t)
+  const registry = JSON.parse(await readFile(join(repo, 'tests/eval/scenarios/scenarios.json'), 'utf8'))
+  registry.scenarios.find(item => item.id === 'clear-goals').checkpoints = ['foundation']
+  await writeFile(join(repo, 'tests/eval/scenarios/scenarios.json'), JSON.stringify(registry))
+  git(repo, 'add', 'tests')
+  git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Earlier checkpoint')
+  await edit(repo, 'skills/vision/SKILL.md', source => source + '\n')
+  const result = affected(repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.unmapped, [])
+  assert.deepEqual(result.data.scenarios, staging('vision').filter(id => id !== 'clear-goals'))
 })
 
 for (const path of ['runtime/scripts/lib/new-helper.mjs', 'references/maintenance-contract.md']) {
@@ -90,7 +114,6 @@ test('skill hunks select their enclosing heading and the scenarios staging that 
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.deepEqual(result.data.keys, ['repo-audit/SKILL.md#step-3-research-the-documents'])
   assert.deepEqual(result.data.scenarios, staging('repo-audit'))
-  assert.ok(!result.data.scenarios.includes('maintenance'))
 })
 
 test('the same heading in two skills maps to separate keys', async t => {
@@ -98,7 +121,7 @@ test('the same heading in two skills maps to separate keys', async t => {
   for (const skill of ['vision', 'glossary']) await edit(repo, `skills/${skill}/SKILL.md`, source => source.replace('## Scope\n', '## Scope\nClarified scope.\n'))
   const result = affected(repo)
   assert.deepEqual(result.data.keys, ['glossary/SKILL.md#scope', 'vision/SKILL.md#scope'])
-  assert.deepEqual(result.data.scenarios, definitions.filter(item => ['vision', 'glossary'].some(skill => item.skills.includes(skill))).map(item => item.id))
+  assert.deepEqual(result.data.scenarios, definitions.filter(item => staging('vision').includes(item.id) || staging('glossary').includes(item.id)).map(item => item.id))
 })
 
 test('deleted headings retain their old impact key and replacement headings stay within the skill', async t => {
@@ -155,7 +178,7 @@ for (const [key, bundling] of [
     assert.equal(result.exit, 0, JSON.stringify(result))
     assert.deepEqual(result.data.keys, [key])
     assert.deepEqual(result.data.unmapped, [])
-    assert.deepEqual(result.data.scenarios, definitions.filter(item => bundling.some(skill => item.mode !== 'without' && item.skills.includes(skill))).map(item => item.id))
+    assert.deepEqual(result.data.scenarios, definitions.filter(item => bundling.some(skill => staging(skill).includes(item.id))).map(item => item.id))
   })
 }
 
