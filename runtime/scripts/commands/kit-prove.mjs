@@ -6,9 +6,8 @@ import { tmpdir } from 'node:os'
 import { join, relative, resolve } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolvePath } from '../lib/paths.mjs'
-import { inspectJSON } from '../lib/json.mjs'
 import { CommandError } from '../lib/result.mjs'
-import { kitDirectory, readySeconds, validateKitPlan } from '../lib/kit.mjs'
+import { readKitPlan, readySeconds } from '../lib/kit.mjs'
 
 // A single doctor or drive command that outlives this limit is stuck, not slow.
 const commandTimeoutMs = 120000
@@ -58,7 +57,7 @@ function start({ argv, cwd, env }) {
     child.once('error', error => { output.error = error.message; finish(null) })
     child.once('close', code => finish(code ?? 1))
   })
-  child.once('exit', code => { run.exit = code ?? 1; run.finished = true })
+  child.once('exit', code => { run.exit = code ?? 1 })
   return run
 }
 
@@ -99,7 +98,7 @@ async function launch(run, plan, values) {
   while (Date.now() < deadline) {
     const ready = output ? new RegExp(output).test(run.output.stdout + run.output.stderr)
       : await fetch(substitute(url, values), { signal: AbortSignal.timeout(1000) }).then(response => response.ok, () => false)
-    if (run.finished && (run.exit !== 0 || !ready)) return failure('launch-exited', `The launch command exited before it was ready: ${(run.output.error ?? run.output.stderr).slice(-500)}`, 'Fix the launch command or its prerequisites; report a product blocker instead of editing product code.')
+    if ((run.exit !== null && run.exit !== 0) || (run.finished && output && !ready) || run.output.error) return failure('launch-exited', `The launch command exited before it was ready: ${(run.output.error ?? run.output.stderr).slice(-500)}`, 'Fix the launch command or its prerequisites; report a product blocker instead of editing product code.')
     if (ready) return
     await new Promise(done => setTimeout(done, 100))
   }
@@ -127,13 +126,7 @@ async function evidenceHashes(directory) {
 export async function run(options) {
   const target = await resolveTarget(options)
   if (!options.app || !options.feature) throw new CommandError('usage-error', [{ code: 'missing-option', message: '--app and --feature are required.', fix: 'Supply --app <name> --feature <id>.' }])
-  const kitFile = join(target.root, kitDirectory(options.app), 'kit.json')
-  let plan
-  try { plan = inspectJSON(await readFile(kitFile, 'utf8')).value } catch (error) {
-    if (error instanceof CommandError) throw error
-    throw new CommandError('blocked', [{ code: 'kit-unavailable', message: `No readable kit at ${kitDirectory(options.app)}/kit.json.`, fix: 'Apply the scaffolded kit first.' }])
-  }
-  validateKitPlan(plan)
+  const plan = await readKitPlan(target.root, options.app)
   const feature = plan.features.find(item => item.id === options.feature)
   if (!feature) throw new CommandError('usage-error', [{ code: 'unknown-feature', message: `The kit has no feature ${options.feature}.`, fix: `Use one of: ${plan.features.map(item => item.id).join(', ')}.` }])
   const evidenceRoot = await resolvePath(target.root, plan.evidence.directory, undefined, true)
@@ -182,7 +175,7 @@ export async function run(options) {
     } finally {
       try {
         if (launched) {
-          if (launched.finished && launched.exit !== 0 && !problems.some(problem => problem.code === 'launch-exited')) problems.push(failure('launch-exited', `The launch command exited unsuccessfully: ${launched.exit}.`, 'Fix the launch command or report a product blocker.'))
+          if (((launched.exit !== null && launched.exit !== 0) || launched.output.error) && !problems.some(problem => problem.code === 'launch-exited')) problems.push(failure('launch-exited', `The launch command exited unsuccessfully: ${launched.exit}.`, 'Fix the launch command or report a product blocker.'))
           await terminate(launched)
         }
       } finally {

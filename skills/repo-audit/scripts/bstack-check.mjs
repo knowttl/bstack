@@ -65,7 +65,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -2794,4 +2794,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"710f38a56c421b03b8feb11dd67ab97d27b4e0e3286db937a41384efb4f14af2"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"ed711557b8bccba7c6e4cc11011ba6e109174e3029405d927c5b1ed9ccf1dfe9"}
