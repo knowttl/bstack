@@ -3,6 +3,7 @@
   "cases": [
     {
       "id": "AC-1",
+      "skill": "vision",
       "ownerTask": [
         "T2.9",
         "T4.3"
@@ -16,6 +17,7 @@
     },
     {
       "id": "AC-2",
+      "skill": "vision",
       "ownerTask": [
         "T1.7",
         "T2.9"
@@ -34,6 +36,7 @@
     },
     {
       "id": "AC-3",
+      "skill": "vision",
       "ownerTask": [
         "T1.6",
         "T4.3"
@@ -47,6 +50,7 @@
     },
     {
       "id": "AC-4",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.2"
       ],
@@ -64,6 +68,7 @@
     },
     {
       "id": "AC-5",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.8"
       ],
@@ -81,6 +86,7 @@
     },
     {
       "id": "AC-6",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.8"
       ],
@@ -98,6 +104,7 @@
     },
     {
       "id": "AC-7",
+      "skill": "vision",
       "ownerTask": [
         "T2.8"
       ],
@@ -115,6 +122,7 @@
     },
     {
       "id": "AC-8",
+      "skill": "architecture",
       "ownerTask": [
         "T2.5"
       ],
@@ -132,6 +140,7 @@
     },
     {
       "id": "AC-9",
+      "skill": "glossary",
       "ownerTask": [
         "T1.7",
         "T2.9"
@@ -145,6 +154,7 @@
     },
     {
       "id": "AC-10",
+      "skill": "glossary",
       "ownerTask": [
         "T2.3"
       ],
@@ -162,6 +172,7 @@
     },
     {
       "id": "AC-11",
+      "skill": "architecture",
       "ownerTask": [
         "T2.3"
       ],
@@ -179,6 +190,7 @@
     },
     {
       "id": "AC-12",
+      "skill": "glossary",
       "ownerTask": [
         "T1.7",
         "T2.9"
@@ -197,6 +209,7 @@
     },
     {
       "id": "AC-13",
+      "skill": "glossary",
       "ownerTask": [
         "T3a.5"
       ],
@@ -214,6 +227,7 @@
     },
     {
       "id": "AC-14",
+      "skill": "architecture",
       "ownerTask": [
         "T3.1"
       ],
@@ -231,6 +245,7 @@
     },
     {
       "id": "AC-15",
+      "skill": "architecture",
       "ownerTask": [
         "T3a.5"
       ],
@@ -248,6 +263,7 @@
     },
     {
       "id": "AC-16",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.3"
       ],
@@ -260,6 +276,7 @@
     },
     {
       "id": "AC-17",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.3"
       ],
@@ -277,6 +294,7 @@
     },
     {
       "id": "AC-18",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.4"
       ],
@@ -293,6 +311,7 @@
     },
     {
       "id": "AC-19",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.2",
         "T3a.3"
@@ -310,6 +329,7 @@
     },
     {
       "id": "AC-20",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.2"
       ],
@@ -326,6 +346,7 @@
     },
     {
       "id": "AC-21",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.3"
       ],
@@ -342,6 +363,7 @@
     },
     {
       "id": "AC-22",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.3"
       ],
@@ -358,6 +380,7 @@
     },
     {
       "id": "AC-23",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.7",
         "T4.3"
@@ -376,6 +399,7 @@
     },
     {
       "id": "AC-24",
+      "skill": "maintenance",
       "ownerTask": [
         "T3a.6"
       ],
@@ -392,6 +416,7 @@
     },
     {
       "id": "AC-25",
+      "skill": "verification",
       "ownerTask": [
         "T3.1"
       ],
@@ -409,6 +434,7 @@
     },
     {
       "id": "AC-26",
+      "skill": "verification",
       "ownerTask": [
         "T2.7"
       ],
@@ -421,6 +447,7 @@
     },
     {
       "id": "AC-27",
+      "skill": "verification",
       "ownerTask": [
         "T2.7"
       ],
@@ -438,6 +465,7 @@
     },
     {
       "id": "AC-28",
+      "skill": "verification",
       "ownerTask": [
         "T3a.3"
       ],
@@ -450,6 +478,7 @@
     },
     {
       "id": "AC-29",
+      "skill": "verification",
       "ownerTask": [
         "T2.7"
       ],
@@ -467,6 +496,7 @@
     },
     {
       "id": "AC-30",
+      "skill": "verification",
       "ownerTask": [
         "T2.7"
       ],
@@ -479,6 +509,7 @@
     },
     {
       "id": "AC-31",
+      "skill": "verification",
       "ownerTask": [
         "T2.7"
       ],
@@ -496,6 +527,7 @@
     },
     {
       "id": "AC-32",
+      "skill": "verification",
       "ownerTask": [
         "T2.7"
       ],
@@ -513,6 +545,7 @@
     },
     {
       "id": "AC-33",
+      "skill": "verification",
       "ownerTask": [
         "T2.7"
       ],
@@ -530,6 +563,7 @@
     },
     {
       "id": "AC-34",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.1"
       ],
@@ -542,6 +576,7 @@
     },
     {
       "id": "AC-35",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.1"
       ],
@@ -559,6 +594,7 @@
     },
     {
       "id": "AC-36",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.1"
       ],
@@ -576,6 +612,7 @@
     },
     {
       "id": "AC-37",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.1"
       ],
@@ -588,6 +625,7 @@
     },
     {
       "id": "AC-38",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.8"
       ],
@@ -605,6 +643,7 @@
     },
     {
       "id": "AC-39",
+      "skill": "repo-audit",
       "ownerTask": [
         "T4.2"
       ],
@@ -622,6 +661,7 @@
     },
     {
       "id": "AC-40",
+      "skill": "repo-audit",
       "ownerTask": [
         "T4.2"
       ],
@@ -639,6 +679,7 @@
     },
     {
       "id": "AC-41",
+      "skill": "shared",
       "ownerTask": [
         "T0.5"
       ],
@@ -655,6 +696,7 @@
     },
     {
       "id": "AC-42",
+      "skill": "repo-audit",
       "ownerTask": [
         "T4.2"
       ],
@@ -672,6 +714,7 @@
     },
     {
       "id": "AC-43",
+      "skill": "repo-audit",
       "ownerTask": [
         "T4.2"
       ],
@@ -689,6 +732,7 @@
     },
     {
       "id": "AC-44",
+      "skill": "shared",
       "ownerTask": [
         "T0.5"
       ],
@@ -705,6 +749,7 @@
     },
     {
       "id": "AC-45",
+      "skill": "shared",
       "ownerTask": [
         "T0.5"
       ],
@@ -721,6 +766,7 @@
     },
     {
       "id": "AC-46",
+      "skill": "shared",
       "ownerTask": [
         "T5.2"
       ],
@@ -733,6 +779,7 @@
     },
     {
       "id": "AC-47",
+      "skill": "shared",
       "ownerTask": [
         "T0.5",
         "T3.1"
@@ -750,6 +797,7 @@
     },
     {
       "id": "AC-48",
+      "skill": "architecture",
       "ownerTask": [
         "T2.1"
       ],
@@ -767,6 +815,7 @@
     },
     {
       "id": "AC-49",
+      "skill": "agents-md",
       "ownerTask": [
         "T2.3"
       ],
@@ -779,6 +828,7 @@
     },
     {
       "id": "AC-50",
+      "skill": "architecture",
       "ownerTask": [
         "T2.4"
       ],
@@ -791,6 +841,7 @@
     },
     {
       "id": "AC-51",
+      "skill": "architecture",
       "ownerTask": [
         "T2.4"
       ],
@@ -808,6 +859,7 @@
     },
     {
       "id": "AC-52",
+      "skill": "architecture",
       "ownerTask": [
         "T3.2"
       ],
@@ -824,6 +876,7 @@
     },
     {
       "id": "AC-53",
+      "skill": "architecture",
       "ownerTask": [
         "T2.4"
       ],
@@ -841,6 +894,7 @@
     },
     {
       "id": "AC-54",
+      "skill": "architecture",
       "ownerTask": [
         "T2.6",
         "T4.3"
@@ -854,6 +908,7 @@
     },
     {
       "id": "AC-55",
+      "skill": "vision",
       "ownerTask": [
         "T2.8"
       ],
@@ -866,6 +921,7 @@
     },
     {
       "id": "AC-56",
+      "skill": "repo-audit",
       "ownerTask": [
         "T4.2"
       ],
@@ -883,6 +939,7 @@
     },
     {
       "id": "AC-57",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.6"
       ],
@@ -900,6 +957,7 @@
     },
     {
       "id": "AC-58",
+      "skill": "maintenance",
       "ownerTask": [
         "T3.4",
         "T3a.6"
@@ -917,6 +975,7 @@
     },
     {
       "id": "AC-59",
+      "skill": "shared",
       "ownerTask": [
         "T3.1"
       ],
@@ -933,6 +992,7 @@
     },
     {
       "id": "AC-60",
+      "skill": "architecture",
       "ownerTask": [
         "T3.2"
       ],
@@ -950,6 +1010,7 @@
     },
     {
       "id": "AC-61",
+      "skill": "architecture",
       "ownerTask": [
         "T3.4"
       ],
@@ -962,6 +1023,7 @@
     },
     {
       "id": "AC-62",
+      "skill": "architecture",
       "ownerTask": [
         "T2.8"
       ],
@@ -979,6 +1041,7 @@
     },
     {
       "id": "AC-63",
+      "skill": "architecture",
       "ownerTask": [
         "T2.5"
       ],
@@ -996,6 +1059,7 @@
     },
     {
       "id": "AC-64",
+      "skill": "maintenance",
       "ownerTask": [
         "T4.3"
       ],
@@ -1013,6 +1077,7 @@
     },
     {
       "id": "AC-65",
+      "skill": "architecture",
       "ownerTask": [
         "T2.5"
       ],
@@ -1030,6 +1095,7 @@
     },
     {
       "id": "AC-66",
+      "skill": "architecture",
       "ownerTask": [
         "T3.2"
       ],
@@ -1046,6 +1112,7 @@
     },
     {
       "id": "AC-67",
+      "skill": "architecture",
       "ownerTask": [
         "T3.3"
       ],
@@ -1062,6 +1129,7 @@
     },
     {
       "id": "AC-68",
+      "skill": "repo-audit",
       "ownerTask": [
         "T2.2"
       ],
@@ -1079,6 +1147,7 @@
     },
     {
       "id": "AC-69",
+      "skill": "maintenance",
       "ownerTask": [
         "T2.6",
         "T4.3"
@@ -1092,6 +1161,7 @@
     },
     {
       "id": "AC-70",
+      "skill": "shared",
       "ownerTask": [
         "T2.6"
       ],
@@ -1108,6 +1178,7 @@
     },
     {
       "id": "AC-71",
+      "skill": "verification",
       "ownerTask": [
         "T2.7"
       ],
@@ -1124,6 +1195,7 @@
     },
     {
       "id": "AC-72",
+      "skill": "shared",
       "ownerTask": [
         "T2.6"
       ],
@@ -1140,6 +1212,7 @@
     },
     {
       "id": "AC-73",
+      "skill": "shared",
       "ownerTask": [
         "T4.1"
       ],
@@ -1156,6 +1229,7 @@
     },
     {
       "id": "AC-74",
+      "skill": "shared",
       "ownerTask": [
         "T4.1"
       ],
@@ -1172,6 +1246,7 @@
     },
     {
       "id": "AC-75",
+      "skill": "repo-audit",
       "ownerTask": [
         "T4.2",
         "T4.3"

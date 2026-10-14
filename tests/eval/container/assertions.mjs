@@ -68,12 +68,14 @@ function* shellCommands(source) {
   if (command.length) yield command
 }
 
-function opened(machine) {
+// The skill is the one the check tests: its folder name scopes the path patterns.
+function opened(machine, skill) {
   const paths = []
   let observed = false
+  // Every skill's entry helper is scripts/<skill>.mjs, and a session can run several of them.
   function helperExecution(command) {
     const [executable, script] = command.map(token => token.replaceAll('\\', '/'))
-    return !/\$\(|`|</.test(command.join(' ')) && /(?:^|\/)node(?:\.exe)?$/.test(executable ?? '') && /(?:^|\/)scripts\/repo-audit\.mjs$/.test(script ?? '')
+    return !/\$\(|`|</.test(command.join(' ')) && /(?:^|\/)node(?:\.exe)?$/.test(executable ?? '') && /(?:^|\/)scripts\/[a-z0-9-]+\.mjs$/.test(script ?? '')
   }
   for (const event of input.events) {
     if (event.type !== 'item.completed') continue
@@ -114,22 +116,22 @@ function opened(machine) {
   const matches = pattern => paths.some(path => {
     const normal = path.replaceAll('\\', '/')
     if (machine.type === 'notOpened') {
-      const relative = normal.replace(/^.*\/repo-audit(?=\/|$)/, 'repo-audit')
-      const scoped = relative === 'repo-audit' || relative.startsWith('repo-audit/')
-      const forbidden = scoped ? pattern.replace(/^\*\*\/(?:repo-audit\/)?/, 'repo-audit/') : pattern
+      const relative = normal.replace(new RegExp(`^.*/${skill}(?=/|$)`), skill)
+      const scoped = relative === skill || relative.startsWith(`${skill}/`)
+      const forbidden = scoped ? pattern.replace(new RegExp(`^\\*\\*/(?:${skill}/)?`), `${skill}/`) : pattern
       const parts = forbidden.split('/').filter(Boolean)
       const token = relative.split('/').filter(Boolean)
       return overlaps(parts, token) || parts.slice(0, -1).some((part, index) =>
         part !== '**' && overlaps(parts.slice(0, index + 1), token))
     }
-    return matchesGlob(normal, pattern) || matchesGlob(normal.replace(/^.*\/repo-audit\//, 'repo-audit/'), pattern)
+    return matchesGlob(normal, pattern) || matchesGlob(normal.replace(new RegExp(`^.*/${skill}/`), `${skill}/`), pattern)
   })
   return observed && (machine.type === 'opened' ? machine.patterns.every(matches) : !machine.patterns.some(matches))
 }
 
-async function assertion(machine) {
+async function assertion({ machine, skill }) {
   if (machine.type === 'fixtureUnchanged') return JSON.stringify(await snapshot()) === JSON.stringify(input.before)
-  if (machine.type === 'opened' || machine.type === 'notOpened') return opened(machine)
+  if (machine.type === 'opened' || machine.type === 'notOpened') return opened(machine, skill)
   if (machine.type === 'installerPassed') return input.installer?.status === 'passed' && !input.installer.outputTruncated
   if (machine.type === 'contains') return (await readFile(machine.path, 'utf8')).includes(machine.text)
   if (machine.type === 'filesEqual') {
@@ -137,7 +139,7 @@ async function assertion(machine) {
     return files.every(file => file.equals(files[0]))
   }
   const command = machine.type === 'citeCheck'
-    ? { executable: 'node', args: [input.skill, 'cite-check', '--repo', process.cwd(), '--report', machine.report.replace(/^\$HOME\//, `${process.env.HOME}/`), '--json'] }
+    ? { executable: 'node', args: [input.skills[skill], 'cite-check', '--repo', process.cwd(), '--report', machine.report.replace(/^\$HOME\//, `${process.env.HOME}/`), '--json'] }
     : machine
   const result = spawnSync(command.executable, command.args, { timeout: 120000, encoding: 'utf8', maxBuffer: 16777216 })
   return result.status === 0 && !result.error
@@ -147,7 +149,7 @@ if (input.action === 'snapshot') console.log(JSON.stringify(await snapshot()))
 else {
   const results = []
   for (const check of input.checks) {
-    try { results.push({ id: check.id, passed: await assertion(check.machine) }) }
+    try { results.push({ id: check.id, passed: await assertion(check) }) }
     catch (error) { results.push({ id: check.id, passed: false, reason: error.message }) }
   }
   console.log(JSON.stringify(results))

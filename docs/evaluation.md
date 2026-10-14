@@ -12,8 +12,10 @@ No C7a manual score proves host isolation or an acceptance case for the released
 See the [C26 current-agent checkpoint](../tests/eval/results/invocation-C26/summary.md#fresh-paired-validation-on-current-bytes) for fresh installer-backed plain and explicit invocation observations on the corrected loading rules, retained artifacts and telemetry limitations.
 
 `tests/eval/scenarios/scenarios.json` is version 1.
-Each scenario names a fixture registered by the existing builder, an outcome request, an ordered answer script, allowed checkpoints, invocation mode and yes-or-no checks.
-Each check has a unique ID, design acceptance ID and scoring question.
+Each scenario names a fixture registered by the existing builder, the skills it stages, an outcome request, an ordered answer script, allowed checkpoints, invocation mode and yes-or-no checks.
+The first listed skill is the one the opening request invokes, and a scenario can list more because a session follows one skill's checklist into the next.
+Each check has a unique ID, design acceptance ID, the skill it tests and a scoring question.
+The tested skill must be one the scenario stages and the skill that owns the acceptance case.
 The initial scenarios cover new ideas, ambiguous ideas, a seeded existing repo, clear goals and implicit invocation.
 Maintenance and representative-extension scenarios are defined before their later owning tasks use them.
 The maintenance checkpoint uses `ts-shop` and the [maintenance reference](../skills/maintenance/references/maintenance-contract.md), with no goal interview or full audit.
@@ -27,7 +29,7 @@ An approved scenario stays in the evaluation even when its baseline passes.
 
 ```sh
 npm run eval -- --manual --scenario ambiguous-idea --mode without --stage baseline --agent <agent> --model <model>
-npm run eval -- --manual --scenario ambiguous-idea --mode with --stage baseline --agent <agent> --model <model> --invocation /repo-audit
+npm run eval -- --manual --scenario ambiguous-idea --mode with --stage baseline --agent <agent> --model <model> --invocation /vision
 ```
 
 The runner calls the existing fixture builder and prints the fixture path, request, answer script and checklist in its run record.
@@ -68,6 +70,7 @@ Truncated evaluation output still blocks scoring and closes the isolated home.
 This evaluation-only bound does not change installed skill command defaults.
 Unknown fields and shell command strings are rejected.
 `invocation` names the agent, model, explicit command, `codex-exec-jsonl` protocol and string-array `resumeArgs`.
+The explicit command is a template containing `{skill}`, which the scenario's first skill replaces, so `${skill}` becomes `$vision` for the ambiguous-idea scenario.
 `{message}` and `{sessionId}` are replaced only when they occupy whole arguments.
 Both command forms require JSONL, the declared model, ignored user config and a separate process.
 For `research-main-typescript` and `research-main-python`, the runner adds `-c agents.enabled=false` and disables `multi_agent`, `multi_agent_v2` and `multi_agent_v2_dynamic_tools` in both opening and resume arguments, before their positional arguments.
@@ -160,6 +163,7 @@ Each scenario's `fixture` declares its starting state; an optional `mode` constr
 The runner checks free disk and available memory once before creating batch resources, requiring 20 GB free disk in total and 4 GiB available memory per concurrency slot.
 `--stage` defaults to each scenario's last checkpoint, including discovery for research scenarios, and an explicit checkpoint must be supported by every selected scenario.
 The batch records one candidate commit and rejects aggregation across changed candidate, fixture, criteria, adapter, model or checkpoint inputs.
+It hashes the committed bytes of the skills each scenario stages, so a scenario is bound to every one of them and uncommitted changes to any are rejected before a host opens.
 
 Each run starts with only its opening request, delivers scripted answer i after turn i completes, and closes after the last reply.
 Failed host turns stop that run and close its isolated home; other batch jobs continue.
@@ -223,13 +227,13 @@ Every adapter run creates a new temporary home with mode 0700, an empty `.codex`
 Child environment overrides set `HOME`, `USERPROFILE`, `CODEX_HOME`, `XDG_CONFIG_HOME`, `XDG_CACHE_HOME` and `LOCALAPPDATA` without changing the invoking process.
 The fixed Codex isolation format records `.agents/skills`, `.codex/skills`, `/etc/codex/skills` and the fixture's ancestor discovery paths.
 These include the documented [Codex discovery locations](https://developers.openai.com/codex/skills/) and the legacy state-directory skill path.
-Before execution and before closing or scoring, the runner inventories these paths and requires no skill named `repo-audit` in `without` mode.
-Before the final checkpoint, `with` mode copies the current skill folder, including any built runtime resources, into the isolated home's `.agents/skills/repo-audit`.
-Only that staged installation may be discoverable, and its authored-file snapshot must still match the staged bytes.
+Before execution and before closing or scoring, the runner inventories these paths and requires no skill named like a bstack skill (any `runtime/skills.json` entry) in `without` mode.
+Before the final checkpoint, `with` mode copies each skill folder the scenario stages, including any built runtime resources, into the isolated home's `.agents/skills/<skill>`.
+Only those staged installations may be discoverable, and their combined authored-file snapshot must still match the staged bytes.
 An inaccessible path or discovery through a symbolic link stays blocked for manual review.
 Before the final checkpoint this staging is an evaluation helper, not the release installer.
 At `--stage final`, with-skill adapter runs instead execute `install/install.mjs --scope user --host agents --json` with the isolated home and retain the completed result in `installer.json`.
-The installer validates the complete package and pinned runtime; discovery and subsequent authored-file snapshots exclude `node_modules`.
+The installer validates the complete package and pinned runtime, so the final checkpoint installs, discovers and hashes every skill rather than only the scenario's own; discovery and subsequent authored-file snapshots exclude `node_modules`.
 Installer failure blocks the run before any agent turn.
 Final requests explicitly name the active final checkpoint.
 `final-new-project` and `final-existing-repo` cover the complete new-project and existing-repo paths respectively.
@@ -241,12 +245,12 @@ Their declared `maintained-ts-shop` starting state follows the [fixture construc
 The original intent and foundation scenarios retain their narrower approval scripts and are not full-path evidence.
 Final adapter follow-ups can pass `--repo <disposable-maintained-root>` to reuse an explicit fixture rather than rebuild its original defects.
 The record retains its starting commit and working-tree state, and the caller owns preservation and cleanup.
-Use `final-independent-extension` in `without` mode for a fresh conversation with no discoverable repo-audit and only the resulting target guidance.
-Its scenario mode constraint keeps repo-audit undiscoverable even when a batch requests `--mode with`, and its ledger entries record the effective `without` mode.
+Use `final-independent-extension` in `without` mode for a fresh conversation with no discoverable bstack skill and only the resulting target guidance.
+Its scenario mode constraint keeps every bstack skill undiscoverable even when a batch requests `--mode with`, and its ledger entries record the effective `without` mode.
 Use `final-maintained-maintenance` in `with` mode for a separate installed, bounded maintenance-only conversation on that maintained fixture.
-Use `final-repeat-audit` for a fresh installed reassessment preserving the uncommitted user note.
+Use `final-repeat-audit` for a fresh installed maintenance sweep preserving the uncommitted user note.
 The [scenario registry](../tests/eval/scenarios/scenarios.json) owns the scripted fixture author answers and their supervisor-delegated provenance; these do not change bstack product scope.
-Bundled host system skills can remain available, but they cannot include repo-audit.
+Bundled host system skills can remain available, but they cannot include a bstack skill.
 
 The captain approved `authentication: "throwaway-codex-login"` for this adapter on 2026-10-08.
 Immediately before a host turn, the runner copies only the existing login file from the invoking user's `CODEX_HOME`, or its default home location, into the empty run state and sets the file mode to 0600.
@@ -348,13 +352,14 @@ An optional `machine` object names a deterministic assertion: `fixtureUnchanged`
 Opened-path assertions take `patterns` with Node path glob syntax over captured command and file-tool events; a missing access trace cannot pass.
 `opened` requires every pattern to match a successful recognised reader command or file-tool read.
 `notOpened` rejects any matching command operand or file-tool read attempt, including failed execution and directory or glob operands that overlap a forbidden pattern.
-Direct execution of the shipped `scripts/repo-audit.mjs` helper and its asset arguments does not count as opening their source; a separate source read still counts.
+Direct execution of a shipped skill helper, `scripts/<skill>.mjs`, and its asset arguments does not count as opening their source; a separate source read still counts.
+A check's `skill` scopes its patterns: inside that skill's folder a leading `**/` anchors a pattern to the folder, and elsewhere the pattern matches as written.
 `fixtureUnchanged` compares exact tracked bytes and Git status for repository fixtures, or all workspace files for idea fixtures, with the initial snapshot.
-Commands take `executable` and `args`; citation checks take `report`, with `$HOME/` resolved inside the isolated home.
+Commands take `executable` and `args`; citation checks take `report`, with `$HOME/` resolved inside the isolated home, and run the cite-check of the skill the check tests.
 File comparisons take `paths`; content checks take `path` and `text`.
 The runner captures fixture bytes and Git status before the conversation and evaluates assertions once after the last scripted answer, using `docker exec` in the live subject container before cleanup.
 Host turns, native commands and citation reruns execute inside that container with its configured mounts and limits.
-The citation grader is staged in private scratch only after the subject finishes and removed after grading, including for without-skill baselines.
+The citation graders, one committed copy per skill a citation check tests, are staged in private scratch only after the subject finishes and removed after grading, including for without-skill baselines.
 Reviewer answers may omit machine check IDs, and supplied machine verdicts are replaced by captured results.
 Manual hosts cannot supply machine evidence.
 Mixed checks keep their conversation judgement separate from deterministic outcomes.
@@ -401,16 +406,19 @@ npm run eval -- compare --without <baseline-id> --with <with-skill-id>
 
 ### Impact selection and comparison
 
-Each scenario declares `covers`: skill heading anchors such as `SKILL.md#write-rules`, file paths relative to `skills/repo-audit/`, or directory prefixes ending in `/`.
-The map is declared rather than inferred from file-open traces because SKILL.md is loaded whole and those traces cannot show which section influenced behaviour.
+A scenario covers what a with-skill run can depend on, derived from the skills it stages instead of declared: each staged skill's folder as the key prefix `<skill>/`, the shared runtime sources its generated bundle imports, and `install/`.
+Those runtime sources are the modules of the commands listed for the skill in `runtime/skills.json`, the files they import, and its listed schemas, assets and references, keyed relative to `runtime/`.
+The map is derived from staging rather than inferred from file-open traces because SKILL.md is loaded whole and those traces cannot show which section influenced behaviour.
+A scenario with a `without` mode constraint stages no skill and covers nothing.
 Installer keys begin with `install/` and are relative to the repository root.
 Run `npm run eval -- affected --base <commit>` to list changed paths, changed keys and affected scenario IDs; add `--json` for the result envelope.
 The command includes committed and uncommitted tracked changes and untracked files that Git does not ignore.
-SKILL.md hunks map to their enclosing `##` or `###` headings in both the base and current version, preserving coverage for removed or renamed headings.
-A key covered by no scenario selects every scenario, including new files and text outside the mapped headings.
-The deterministic map-completeness test requires coverage for every such heading and every file under `skills/repo-audit/references/`, `runtime/schemas/`, `runtime/scripts/commands/` and `install/`, and rejects nonexistent coverage keys.
-Commands, schemas and assets are authored in `runtime/`, so a changed `runtime/` file takes the key it would have inside the skill, and the skill's generated entry file, schemas and assets add no keys of their own.
-With-skill release evidence remains fresh only when its scenario is unaffected by changes under `skills/repo-audit/`, `runtime/` or `install/`, or to `scripts/generate-skills.mjs` or `scripts/lib/bundle.mjs`, since its source revision.
+A changed skill file takes the key `<skill>/<path>`, and SKILL.md hunks map to their enclosing `##` or `###` headings as `<skill>/SKILL.md#<heading>` in both the base and current version, preserving coverage for removed or renamed headings.
+A key covered by no scenario selects every scenario, such as a runtime file that no staged skill bundles.
+A new or changed file inside a skill folder selects only the scenarios that stage that skill.
+The deterministic test requires every skill to be staged by a scenario and every runtime schema, command, asset and shared reference to belong to a staged skill's bundle, and rejects nonexistent coverage keys.
+Commands, schemas, assets and shared references are authored in `runtime/`, so a changed `runtime/` file takes the key it has under `runtime/`, and each skill's generated entry file, schemas, assets and references add no keys of their own.
+With-skill release evidence remains fresh only when its scenario is unaffected by changes under a skill it stages, the `runtime/` sources it bundles or `install/`, or to `scripts/generate-skills.mjs` or `scripts/lib/bundle.mjs`, since its source revision.
 Other execution and scoring bindings still apply.
 
 Legacy single-run `eval compare` requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.
@@ -438,7 +446,9 @@ Manual scoring leaves the supplied source answers and transcript files unchanged
 node scripts/acceptance.mjs --check-registry
 ```
 
-`tests/acceptance/cases.json` registers every numbered design acceptance case with an owner task, criterion source, evidence type and procedure.
+`tests/acceptance/cases.json` registers every numbered design acceptance case with the skill it tests, an owner task, criterion source, evidence type and procedure.
+The skill is a `runtime/skills.json` entry, or `shared` for a case about the shared runtime, packaging or installer that automated tests prove and no scenario checks.
+A scenario check must name the skill that owns its case, so each case is graded in sessions that run its own skill.
 `docs/design.md#AC-N` is a logical locator for numbered case N under the design's Acceptance cases heading.
 `ownerTask` is a nonempty array of task IDs matching every assignment for that case in the implementation plan's procedure table.
 Evidence types are `automated`, `agent` or `manual`.
