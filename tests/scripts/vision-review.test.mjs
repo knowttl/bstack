@@ -28,7 +28,7 @@ async function setup(t) {
       { id: 'offline', title: 'Offline use', body: 'Work without network access.', tests: 'Keep planning local.', why: 'Reliable access adds storage responsibility.' }] }
   await writeFile(proposalsPath, JSON.stringify(proposals))
   const { NODE_TEST_CONTEXT, ...env } = process.env
-  function command(subcommand, args, entry = join(root, 'skills/repo-audit/scripts/repo-audit.mjs'), target = workspace) {
+  function command(subcommand, args, entry = join(root, 'skills/vision/scripts/vision.mjs'), target = workspace) {
     const result = spawnSync(process.execPath, [entry, 'vision-board', subcommand, '--workspace', target, '--json', ...args], {
       cwd: directory, encoding: 'utf8', env: { ...env, HOME: directory, USERPROFILE: directory, XDG_CACHE_HOME: cache, LOCALAPPDATA: cache }
     })
@@ -121,12 +121,47 @@ test('review refuses changed original draft bytes and another workspace', async 
 test('launch reports a missing pinned runtime and preserves the draft for resume', async t => {
   const box = await setup(t)
   const installed = join(box.directory, 'installed')
-  await cp(join(root, 'skills/repo-audit'), installed, { recursive: true, filter: path => !path.split(/[/\\]/).includes('node_modules') })
-  const result = box.command('launch', ['--board', box.board.board], join(installed, 'scripts/repo-audit.mjs'))
+  await cp(join(root, 'skills/vision'), installed, { recursive: true, filter: path => !path.split(/[/\\]/).includes('node_modules') })
+  const result = box.command('launch', ['--board', box.board.board], join(installed, 'scripts/vision.mjs'))
   assert.equal(result.status, 2, result.stdout)
   assert.equal(result.envelope.problems[0].code, 'board-runtime-unavailable')
   assert.ok(result.envelope.problems[0].fix.includes('npm ci --omit=dev'))
   assert.equal(await readFile(join(box.board.scratch, 'draft.md'), 'utf8'), box.draft)
   assert.equal(JSON.parse(await readFile(join(box.board.scratch, 'launch.json'), 'utf8')).status, 'failed')
   assert.deepEqual(await readdir(box.workspace), [])
+})
+
+// The documented digest algorithm is implemented here independently of production.
+function canonical(value) {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
+  if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`
+  return JSON.stringify(value)
+}
+const sha256 = value => createHash('sha256').update(value).digest('hex')
+
+test('the approved revision reaches the idea workspace only through apply', async t => {
+  const box = await setup(t)
+  const saved = (await box.ingest()).envelope.data
+  const approved = await readFile(saved.draft, 'utf8')
+  const findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-audit.json'), 'utf8'))
+  findings.target = { mode: 'workspace', root: box.workspace, revision: null }
+  findings.reviewedScope = ['VISION.md']
+  Object.assign(findings.findings[0], { files: ['VISION.md'], scope: ['VISION.md'] })
+  const plan = { schemaVersion: 1, target: findings.target, findings: 'findings.json', findingsDigest: sha256(canonical(findings)), selectedFindingIds: ['F-001'],
+    reviewedScope: [{ path: 'VISION.md', resolvedPath: join(box.workspace, 'VISION.md') }],
+    edits: [{ id: 'E-001', findingId: 'F-001', path: 'VISION.md', originalHash: null, proposedHash: sha256(approved), operation: 'create', payload: { content: approved }, proposedContent: approved }] }
+  plan.planDigest = sha256(canonical(plan))
+  const planFile = join(box.directory, 'plan.json')
+  await writeFile(join(box.directory, 'findings.json'), JSON.stringify(findings))
+  await writeFile(planFile, JSON.stringify(plan))
+  const { NODE_TEST_CONTEXT, ...env } = process.env
+  const apply = (...flags) => spawnSync(process.execPath, [join(root, 'skills/vision/scripts/vision.mjs'), 'apply', '--workspace', box.workspace, '--plan', planFile, '--json', ...flags], {
+    cwd: box.directory, encoding: 'utf8', env: { ...env, HOME: box.directory, USERPROFILE: box.directory, XDG_CACHE_HOME: box.cache, LOCALAPPDATA: box.cache }
+  })
+  const preview = apply('--dry-run')
+  assert.equal(preview.status, 0, preview.stdout)
+  assert.deepEqual(await readdir(box.workspace), [])
+  const written = apply()
+  assert.equal(written.status, 0, written.stdout)
+  assert.equal(await readFile(join(box.workspace, 'VISION.md'), 'utf8'), approved)
 })

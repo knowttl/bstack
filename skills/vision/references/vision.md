@@ -25,7 +25,7 @@ Separate documented intent, observed behaviour and inference, with citations.
 If needed evidence is unavailable, preserve the draft and name the limitation.
 
 An existing vision is the approved baseline.
-An audit with no material vision gap does not open a vision interview or board.
+A repo with no material vision gap does not open a vision interview or board.
 When a gap or requested direction change warrants review, propose a reviewed delta with evidence newer than the baseline.
 Never write a competing vision or silently replace the approved one.
 Contradictions need an author decision before dependent recommendations.
@@ -49,7 +49,7 @@ The draft contains:
 Aim for a page or two, rather than a ledger of decisions or marketing copy.
 In delta mode, keep the baseline and list candidate line edits independently, each with its evidence.
 Keep the draft, evidence sheet, board and transcript in scratch outside the target.
-Apply selected creation or replacement through the main procedure's shared review and write rules.
+Apply selected creation or replacement through the review and write rules in SKILL.md.
 
 ## Stress-test real fault lines
 
@@ -96,7 +96,7 @@ An ended review without approval remains incomplete.
 Deliver the approved draft or delta for selected protected apply.
 Confirm its purpose, commitments, boundaries and accept/resist tests stand alone.
 If an existing companion answers file contains approved reasoning, propose folding missing reasoning into the vision and removing the companion and its pointers as selected protected changes.
-Use the main procedure's shared review and write rules for those changes.
+Use the review and write rules in SKILL.md for those changes.
 Merge overlapping reasoning and keep the vision concise.
 Board transcripts remain in scratch and never become project documents.
 

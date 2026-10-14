@@ -557,13 +557,13 @@ An empty file-citation list is valid for a brief with only unavailable or outsid
 ## VISION board build
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs vision-board build --workspace <existing-directory> --draft <file> --proposals <file> --json
+node skills/vision/scripts/vision.mjs vision-board build --workspace <existing-directory> --draft <file> --proposals <file> --json
 ```
 
 Use `--repo <path>` for a Git target or `--workspace <path>` for a new-idea workspace.
 Both inputs are explicit readable files, resolved from the caller's directory.
 The draft is nonempty UTF-8 Markdown.
-Proposals conform to `skills/repo-audit/schemas/vision-proposals.json`:
+Proposals conform to `skills/vision/schemas/vision-proposals.json`:
 
 ```json
 {
@@ -609,8 +609,8 @@ The build command generates the board for the launch and verdict commands below.
 ## VISION board launch and verdicts
 
 ```sh
-node skills/repo-audit/scripts/repo-audit.mjs vision-board launch --workspace <existing-directory> --board <scratch-board.html> --json
-node skills/repo-audit/scripts/repo-audit.mjs vision-board verdicts --workspace <existing-directory> --board <scratch-board.html> --input <round.json> --draft <revised.md> --json
+node skills/vision/scripts/vision.mjs vision-board launch --workspace <existing-directory> --board <scratch-board.html> --json
+node skills/vision/scripts/vision.mjs vision-board verdicts --workspace <existing-directory> --board <scratch-board.html> --input <round.json> --draft <revised.md> --json
 ```
 
 Both commands also accept --repo for a Git target.
@@ -1010,7 +1010,8 @@ Repeated IDs report `duplicate-id` with the repeated value.
 
 ## Command dispatch
 
-`runtime/scripts/commands.mjs` registers every command's metadata, and `runtime/skills.json` lists the commands each skill ships.
+`runtime/scripts/commands.mjs` registers every command's metadata, and `runtime/skills.json` lists the commands, schemas, assets and shared references each skill ships.
+Only the `vision` skill carries the board commands, so it is the only skill with a pinned runtime.
 The generator bundles a skill's commands and their metadata into that skill's one entry file, `skills/<skill>/scripts/<skill>.mjs`, which validates arguments before it runs the selected command.
 `<command> --help` prints that command's options without resolving a target.
 No arguments print the skill's available commands with exit 3, and global `--help` succeeds.

@@ -3,16 +3,15 @@
     "commands": [
       "docs check", "docs generate", "contract validate", "evidence collect", "evidence validate", "rule-proof",
       "baseline check", "project create", "probe record", "probe compare", "run-checks", "apply", "state show",
-      "findings validate", "findings render", "inspect", "inventory", "measure", "overlap", "cite-check",
-      "vision-board build", "vision-board launch", "vision-board verdicts", "contract-test"
+      "findings validate", "findings render", "inspect", "inventory", "measure", "overlap", "cite-check", "contract-test"
     ],
     "schemas": [
       "baseline.schema.json", "change-set.schema.json", "check-plan.json", "contract-test.json", "evidence.schema.json",
       "findings.schema.json", "impact-assessment.json", "measure-exclusions.json", "overlap-plan.json", "probe-record.json",
-      "probe-spec.json", "project-create.json", "project.schema.json", "research-report.json", "resume-state.schema.json",
-      "vision-proposals.json", "vision-verdicts.json"
+      "probe-spec.json", "project-create.json", "project.schema.json", "research-report.json", "resume-state.schema.json"
     ],
-    "assets": ["vision/review-template.html", "vision/review.css"]
+    "assets": [],
+    "references": ["grilling.md"]
   },
   "verification": {
     "commands": [
@@ -24,5 +23,14 @@
       "kit-plan.json", "probe-record.json", "probe-spec.json", "project.schema.json", "resume-state.schema.json"
     ],
     "assets": ["map-coverage.mjs"]
+  },
+  "vision": {
+    "commands": ["vision-board build", "vision-board launch", "vision-board verdicts", "apply", "state show", "cite-check"],
+    "schemas": [
+      "change-set.schema.json", "evidence.schema.json", "findings.schema.json", "research-report.json", "resume-state.schema.json",
+      "vision-proposals.json", "vision-verdicts.json"
+    ],
+    "assets": ["vision/review-template.html", "vision/review.css"],
+    "references": ["grilling.md"]
   }
 }
