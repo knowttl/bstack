@@ -38,7 +38,7 @@ export function kitDirectory(app) {
   return `.agents/skills/verify-${app}`
 }
 
-export function validateKitPlan(plan) {
+export function validateKitPlan(plan, { sourcePaths = true } = {}) {
   validateData(schema, plan)
   const { launch, evidence, helpers, features } = plan
   if (Object.keys(launch.ready).length !== 1 || !(launch.ready.url ?? launch.ready.output)) invalid('invalid-ready', 'Declare exactly one of ready.url or ready.output.', '$/launch/ready')
@@ -63,7 +63,10 @@ export function validateKitPlan(plan) {
   for (const [index, feature] of features.entries()) {
     if (ids.has(feature.id)) invalid('duplicate-feature', `Duplicate feature ID: ${feature.id}`, `$/features/${index}/id`)
     ids.add(feature.id)
-    for (const path of feature.sourcePaths) pathGlob(path)
+    for (const path of feature.sourcePaths) {
+      if (sourcePaths) pathGlob(path)
+      else relativePath(path, `$/features/${index}/sourcePaths`)
+    }
     for (const step of feature.steps) {
       for (const artifact of step.artifacts ?? []) {
         relativePath(artifact, `$/features/${index}/steps`)
@@ -77,13 +80,13 @@ export function validateKitPlan(plan) {
   return plan
 }
 
-export async function readKitPlan(root, app) {
+export async function readKitPlan(root, app, options) {
   let plan
   try { plan = inspectJSON(await readFile(join(root, kitDirectory(app), 'kit.json'), 'utf8')).value } catch (error) {
     if (error instanceof CommandError) throw error
     throw new CommandError('blocked', [{ code: 'kit-unavailable', message: `No readable kit at ${kitDirectory(app)}/kit.json.`, fix: 'Apply the scaffolded kit first.' }])
   }
-  return validateKitPlan(plan)
+  return validateKitPlan(plan, options)
 }
 
 export function readySeconds(plan) {

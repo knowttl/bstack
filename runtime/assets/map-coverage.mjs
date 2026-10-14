@@ -19,7 +19,7 @@ function pattern(glob) {
     else if (glob[index] === '?') source += '[^/]'
     else source += glob[index].replace(/[.+^${}()|[\]\\]/g, '\\$&')
   }
-  return new RegExp(`^${source}$`)
+  return new RegExp(`^${source}$`, 'su')
 }
 
 function touches(patterns, path) {
