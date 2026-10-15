@@ -88,7 +88,7 @@ Follow the [repo-audit procedure](skills/repo-audit/SKILL.md) for its scope and 
 In the skills that make changes, answer unresolved intent questions, select findings, and approve the exact proposed changes before apply or creation; `/vision` runs the interactive vision board as its own skill.
 See the [worked examples](docs/examples/README.md) for requests, findings, selections, results and reproduction steps.
 
-The examples cover the six user-facing scenario fixtures: `new-idea`, `ambiguous-idea`, `clear-goals`, `existing-vision-delta`, `ts-shop` and `py-ledger`.
+The examples cover `new-idea`, `ambiguous-idea`, `clear-goals`, `existing-vision-delta`, `ts-shop` and `py-ledger`; the [scenario registry](tests/eval/scenarios/scenarios.json) owns the current scenario and fixture list.
 Rule-proof valid/violation controls, dirty-work and maintenance edge cases (`refactor`, `contract-removal`, `shallow-history`), and installer-collision fixtures are test infrastructure, not separate user skill runs.
 They remain covered by command tests rather than worked examples.
 Only `new-idea` and `ts-shop` have the completed installed final-path evidence from C27; the other four examples retain earlier checkpoint results and their limits.
@@ -325,7 +325,7 @@ The [probe contract](docs/command-contract.md#live-probe-pairs) defines the desc
 The probe command must assert the agreed outcome and exit nonzero on disagreement.
 Passing checks alone do not replace a successful probe comparison for an outside dependency.
 
-The evaluation runner includes scenarios, all 83 acceptance procedures and a current-host Codex adapter.
+The evaluation runner includes scenarios, the [registered acceptance procedures](tests/acceptance/cases.json) and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
 See the [evaluation contract](docs/evaluation.md) for ordered reply delivery, bounded runs, throwaway authentication, scoring and comparison, and [automatic batches](docs/evaluation.md#automatic-batches-and-ledger) for repeated scenarios and aggregate ledger results.
 Follow [evidence storage](docs/evaluation.md#evidence-storage-and-raw-run-archive) when publishing evaluation results and archiving raw runs.
