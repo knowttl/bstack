@@ -49,6 +49,21 @@
       }
     ]
   },
+  "design-only-idea": {
+    "kind": "idea",
+    "files": [
+      "design.md"
+    ]
+  },
+  "plan-existing-repo": {
+    "base": "clear-goals",
+    "overlay": "overlay",
+    "history": [
+      { "paths": ["VISION.md"], "message": "docs: approve project vision", "date": "2026-01-01T12:00:00Z" },
+      { "paths": ["DESIGN.md", "glossary.md"], "message": "docs: record design and vocabulary", "date": "2026-01-02T12:00:00Z" },
+      { "paths": ["docs"], "message": "docs: approve personal backup export design", "date": "2026-01-03T12:00:00Z" }
+    ]
+  },
   "ts-shop": {
     "kind": "repo",
     "files": [
