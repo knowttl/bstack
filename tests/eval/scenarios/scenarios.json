@@ -1016,6 +1016,84 @@
       ]
     },
     {
+      "id": "plan-design-only-idea",
+      "tier": "full",
+      "skills": ["plan"],
+      "fixture": "design-only-idea",
+      "request": "Run /plan on this workspace, whose only file is the approved design.md for a new project. Present the plan proposal only: stop before any selection, protected write or apply. If a question remains that only I can answer, list it with your recommendation and record it as open in the proposal instead of waiting. Do not browse or use network commands. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "gaps-not-started",
+          "caseId": "AC-79",
+          "skill": "plan",
+          "question": "Did it list the absent VISION.md, glossary, design document and verification kit as gaps, each with the skill that would create it, without starting any of those skills?"
+        },
+        {
+          "id": "builder-check",
+          "caseId": "AC-80",
+          "skill": "plan",
+          "question": "Did a fresh read-only reader, or a stated same-context fallback, list where a builder would have to guess, and did the user receive only questions whose answers would change a unit's boundary, order or evidence?"
+        },
+        {
+          "id": "story-units",
+          "caseId": "AC-81",
+          "skill": "plan",
+          "question": "Did it turn the three stories into units with the two core stories first, each citing its design section and naming its boundary, its Done when and a check or kit feature that proves it?"
+        },
+        {
+          "id": "non-functional-evidence",
+          "caseId": "AC-81",
+          "skill": "plan",
+          "question": "Is the 200 ms add-item target carried as evidence of the unit that adds an item, with the threshold in that unit's Done when, and is the no-network target carried by a unit it constrains or listed as an open question?"
+        },
+        {
+          "id": "plan-checked",
+          "caseId": "AC-81",
+          "skill": "plan",
+          "question": "Did it run plan check on the recorded plan, and fix every problem it reported by changing the plan rather than by removing evidence, dependencies or citations?"
+        },
+        {
+          "id": "no-execution",
+          "caseId": "AC-83",
+          "skill": "plan",
+          "question": "Did it stop at the proposal, leaving the workspace unchanged, starting no skill and executing no unit?"
+        }
+      ]
+    },
+    {
+      "id": "plan-existing-repo",
+      "tier": "full",
+      "skills": ["plan"],
+      "fixture": "plan-existing-repo",
+      "request": "Run /plan on this repo for the approved design in docs/export-design.md. Present the plan proposal only: stop before any selection, protected write or apply. If a question remains that only I can answer, list it with your recommendation and record it as open in the proposal instead of waiting. Do not browse or use network commands. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "inputs-read",
+          "caseId": "AC-79",
+          "skill": "plan",
+          "question": "Did it read VISION.md, DESIGN.md, glossary.md and the export design, and report only the missing verification kit as a gap with the skill that would create it, without starting that skill?"
+        },
+        {
+          "id": "cited-boundary",
+          "caseId": "AC-81",
+          "skill": "plan",
+          "question": "Does each unit cite docs/export-design.md and name the queue boundary from DESIGN.md, with the 1 second export target carried as evidence of the export unit?"
+        },
+        {
+          "id": "no-execution",
+          "caseId": "AC-83",
+          "skill": "plan",
+          "question": "Did it stop at the proposal, leaving the repo unchanged, starting no skill and executing no unit?"
+        }
+      ]
+    },
+    {
       "id": "verification-limitations",
       "tier": "smoke",
       "skills": ["verification"],

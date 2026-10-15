@@ -28,6 +28,7 @@
   "T2.8": ["tests/scripts/existing-repo.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/package-check.test.mjs"],
   "T2.9": ["tests/scripts/project.test.mjs", "tests/scripts/apply.test.mjs", "tests/scripts/eval.test.mjs"],
   "T2.10": ["tests/scripts/package-check.test.mjs", "tests/scripts/skill-skeleton.test.mjs", "tests/scripts/rule-proof.test.mjs", "tests/scripts/baseline.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/acceptance.test.mjs"],
+  "T2.11": ["tests/scripts/plan.test.mjs", "tests/scripts/cite-check.test.mjs", "tests/scripts/fixtures.test.mjs", "tests/scripts/package-check.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/acceptance.test.mjs"],
   "T3.1": ["tests/scripts/package-check.test.mjs", "tests/scripts/skill-skeleton.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/eval-judge.test.mjs", "tests/scripts/eval-impact.test.mjs", "tests/scripts/release-gate.test.mjs", "tests/scripts/acceptance.test.mjs"],
   "T3.2": ["tests/scripts/rule-proof.test.mjs"],
   "T3.3": ["tests/scripts/baseline.test.mjs"],

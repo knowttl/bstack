@@ -68,5 +68,14 @@
     "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "resume-state.schema.json"],
     "assets": [],
     "references": ["agents-pointer.md"]
+  },
+  "plan": {
+    "commands": ["plan check", "apply", "state show", "cite-check"],
+    "schemas": [
+      "change-set.schema.json", "evidence.schema.json", "findings.schema.json", "plan.json", "research-report.json",
+      "resume-state.schema.json"
+    ],
+    "assets": [],
+    "references": ["grilling.md", "agents-pointer.md"]
   }
 }
