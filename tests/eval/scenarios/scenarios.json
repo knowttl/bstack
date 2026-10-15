@@ -1064,6 +1064,42 @@
       ]
     },
     {
+      "id": "design-as-input",
+      "tier": "full",
+      "skills": ["vision", "glossary", "architecture", "foundation"],
+      "fixture": "design-only-idea",
+      "request": "I have no other notes: design.md in this workspace is my explanation of the idea. Start each of /vision, /glossary, /architecture and /foundation on it in turn, and stop each at the first question it would put to me or at its first proposal, before any board, selection, protected write or apply. Do not browse or use network commands. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "vision-summary",
+          "caseId": "AC-84",
+          "skill": "vision",
+          "question": "Did /vision summarise design.md as the user's explanation and ask only about what it leaves open, such as non-goals and refusals, rather than re-asking the problem, users or success outcome that the design states?"
+        },
+        {
+          "id": "glossary-terms",
+          "caseId": "AC-85",
+          "skill": "glossary",
+          "question": "Did /glossary take its candidate terms from design.md as the user's own statement and ask only about terms the design leaves unclear?"
+        },
+        {
+          "id": "architecture-changes",
+          "caseId": "AC-86",
+          "skill": "architecture",
+          "question": "Did /architecture list the expected changes from design.md and ask only about what the design leaves open?"
+        },
+        {
+          "id": "foundation-context",
+          "caseId": "AC-87",
+          "skill": "foundation",
+          "question": "Did /foundation summarise the TypeScript, browser and local-storage context from design.md and ask only about technical facts the design leaves open?"
+        }
+      ]
+    },
+    {
       "id": "plan-existing-repo",
       "tier": "full",
       "skills": ["plan"],
