@@ -58,10 +58,8 @@ Set `coverageGate` to `true` to render the gate script into the kit; the no-mist
 
 ## Repeated mistakes
 
-Read the project's recent no-mistakes findings and review comments, where the host and the user make them available.
-Group findings that recur, and for each group name the evidence and the rung of the constraint ladder it currently sits on.
-Propose moving each group down one rung of the constraint ladder, using the constraint reference: a type or schema first, then a proven lint rule, then an instruction, with review as the last resort.
-Propose the move as a selected change with its problem, consequence, fix, scope and verification; do not widen scope silently.
+Run Steps C1 and C2 of the Correct checklist in `SKILL.md` over the project's recent no-mistakes findings and review comments, where the host and the user make them available.
+Propose each resulting rung as a selected change with its problem, consequence, fix, scope and verification; do not widen scope silently.
 
 ## Outcomes
 

@@ -1257,6 +1257,45 @@
         "status": "planned",
         "description": "Run the final existing-project path through separate snapshot and assessment approvals and clean-clone completion."
       }
+    },
+    {
+      "id": "AC-76",
+      "skill": "verification",
+      "ownerTask": [
+        "T2.10"
+      ],
+      "criterionSource": "docs/design.md#AC-76",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the correct mode on a repo with no kit and two occurrences of one mistake, and score the cited evidence, the two-occurrence threshold and the absence of a kit requirement."
+      }
+    },
+    {
+      "id": "AC-77",
+      "skill": "verification",
+      "ownerTask": [
+        "T2.10"
+      ],
+      "criterionSource": "docs/design.md#AC-77",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the correct mode on a mistake that recurs against a written rule, and score the higher rung and the replacement-naming diagnostic."
+      }
+    },
+    {
+      "id": "AC-78",
+      "skill": "verification",
+      "ownerTask": [
+        "T2.10"
+      ],
+      "criterionSource": "docs/design.md#AC-78",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the correct mode through a proposed check, and score the proof against a seeded real occurrence and the pointer that replaces the enforced written rule."
+      }
     }
   ]
 }

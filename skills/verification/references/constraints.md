@@ -9,6 +9,7 @@ Checks catch defined mistakes, not every unsound future design decision.
 - [Principles L1-L8](#principles-l1-l8)
 - [Record each constraint](#record-each-constraint)
 - [Prove every rule](#prove-every-rule)
+- [Repeated corrections](#repeated-corrections)
 - [Wire the maintained command](#wire-the-maintained-command)
 - [Control existing violations](#control-existing-violations)
 
@@ -23,11 +24,11 @@ Start at the top rung and move down only when the rung above cannot express the 
 
 ## Principles L1-L8
 
-- **L1** Beyond the default slop baseline, start from a repeated, observed mistake with evidence, not a style wish.
+- **L1** Beyond the default slop baseline, start from a mistake with two cited occurrences, drawn from commits, reverts, review comments, agent instruction files, workaround comments or the user's correction, not a style wish.
 - **L2** Use the highest rung that works: make it unrepresentable before you lint it.
 - **L3** Implement each slop principle with the language's native linter first; write a custom syntax-tree check only where nothing native exists.
 - **L4** Semantic rules read the syntax tree or dependency graph, never raw text.
-- **L5** Prove every rule: a valid example passes and a seeded violation fails with the expected message.
+- **L5** Prove every rule: a valid example passes and a seeded violation fails with the expected message, which names the file, type or function to use instead.
 - **L6** The rule fails the one maintained check command; CI runs that same command, wired only when the owner selects it.
 - **L7** Existing violations go into a visible, shrinking baseline; new ones fail; exceptions are narrow, reasoned and have a removal condition.
 - **L8** No arbitrary size limits, and no design call disguised as a lint error.
@@ -40,10 +41,10 @@ A native duplication linter supplies review candidates, not proof that similar c
 
 | Field | Required evidence |
 |---|---|
-| Reason | The repeated, observed mistake or approved requirement, with a concrete example |
+| Reason | The mistake with its two cited occurrences, or the approved requirement, with a concrete example |
 | Scope | The packages, modules or public boundaries the rule governs |
 | Source | The existing authoritative document or executable configuration and its exact locator |
-| Enforcement | The rung, the concrete check and the expected outcome |
+| Enforcement | The rung, the concrete check, the expected outcome and the file, type or function its diagnostic names to use instead |
 | Exception policy | The reason, narrow scope and removal condition for an exception, or why none is allowed |
 
 Inventory design documents, contribution guidance, scoped agent instructions and native checks before proposing a rule.
@@ -53,6 +54,7 @@ Tool configuration owns the executable rule; documents link to it instead of cop
 ## Prove every rule
 
 Require a representative valid case and a deliberate violation in disposable fixtures.
+Where the history holds a real past occurrence of the mistake, reproduce it as the seeded violation and record its commit; otherwise record the violation as synthetic.
 After preparing native dependencies in the clean and independently seeded copies, run:
 
 `rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json`
@@ -65,6 +67,13 @@ Unavailable tools, interrupted execution and failed clean setup are blocked, nev
 
 Prove the one maintained command, not only the native tool, so the proof shows the constraint fails the command contributors run.
 Rule names alone never prove equivalent enforcement across languages; each enabled mapping needs its own project configuration and proof.
+
+## Repeated corrections
+
+A mistake that recurs despite a written rule is a repeat of its class: a written rule sits on the Encode rung and nothing fails when an agent skips it.
+Move the class up at least one rung in the same change instead of restating the rule.
+Once a check enforces a written rule, replace the rule with a pointer to the check, so the rule has one authoritative home.
+Keep prose only for a judgement call no check can express.
 
 ## Wire the maintained command
 
