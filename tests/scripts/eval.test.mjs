@@ -46,6 +46,25 @@ async function inputs(directory, record, passed = true) {
   return { answers, answersPath, transcriptPath }
 }
 
+for (const [scenario, cases, files] of [
+  ['design-as-input', ['AC-84', 'AC-85', 'AC-86'], ['design.md']],
+  ['foundation-design-as-input', ['AC-87'], ['VISION.md', 'design.md']],
+  ['repo-audit-checklist-new-idea', ['AC-88'], ['design.md']],
+  ['repo-audit-checklist-existing-repo', ['AC-88'], ['.git', 'DESIGN.md', 'VISION.md', 'glossary.md']]
+]) {
+  test(`deferred setup scenario ${scenario} prepares its inputs and scoring cases`, async t => {
+    const directory = await temporary(t)
+    const result = run(directory, '--manual', '--scenario', scenario, '--mode', 'without', '--stage', 'final', '--agent', 'test-host', '--model', 'test-model')
+    assert.equal(result.status, 2, result.stdout)
+    const record = result.data.data
+    t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
+    assert.deepEqual(record.scenario.checks.map(check => check.caseId), cases)
+    assert.deepEqual((await readdir(record.fixture.path)).sort(), files)
+    assert.equal(record.status, 'blocked')
+    assert.equal(record.isolation.verified, false)
+  })
+}
+
 test('manual run prints its fixture, request, scripted answers and checklist with unique history paths', async t => {
   const directory = await temporary(t)
   const first = start(t, directory)
