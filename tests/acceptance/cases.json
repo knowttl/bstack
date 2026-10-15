@@ -1425,10 +1425,12 @@
         "T2.12"
       ],
       "criterionSource": "docs/design.md#AC-88",
-      "evidenceType": "agent",
+      "evidenceType": "automated",
       "procedure": {
-        "status": "planned",
-        "description": "Run repo-audit-checklist-new-idea and repo-audit-checklist-existing-repo, and score the emitted checklists for the agreed order with /plan immediately after /agents-md and last."
+        "status": "completed",
+        "path": "tests/scripts/repo-audit-overview.test.mjs",
+        "name": "installed repo-audit prompt emits both checklist orders with plan last",
+        "artifacts": ["tests/scripts/repo-audit-overview.test.mjs"]
       }
     }
   ]
