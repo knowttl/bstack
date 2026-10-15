@@ -30,7 +30,7 @@ Give each candidate exactly one class.
 |---|---|---|
 | Undescribed module | A module added since the baseline that the design does not name, with its responsibility and public contract read from the code | A design section naming its responsibility, owned knowledge, public contract and dependency direction |
 | Broken boundary | An import or dependency in changed code that the design's allowed direction forbids, or a cycle across intended boundaries, found with the project's native analysis | A reviewed fix finding, an exception with reason and removal condition, or a boundary the user confirms should change |
-| Shared edit target | A file or registry that the measured history or the overlap result shows unrelated changes repeatedly edit, with the supporting commits | A narrower boundary or one writer, only after inspecting why the files change together |
+| Shared edit target | A file or registry that the measured history or the overlap result shows unrelated changes repeatedly edit, with the supporting commits, or hand-maintained parallel lists with no derivation or disagreement check, or more than one supported way to do one task, read from the code and naming the files one change would edit | A narrower boundary or one writer, only after inspecting why the files change together |
 | Decision to record | A change that is hard to reverse, surprising without context and the result of a real trade-off, with no decision record yet | A decision record, following the decisions guide |
 
 Size, import counts and change frequency indicate where to look and never establish a violation by themselves.
