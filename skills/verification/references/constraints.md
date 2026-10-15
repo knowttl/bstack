@@ -54,7 +54,8 @@ Tool configuration owns the executable rule; documents link to it instead of cop
 ## Prove every rule
 
 Require a representative valid case and a deliberate violation in disposable fixtures.
-Where the history holds a real past occurrence of the mistake, reproduce it as the seeded violation and record its commit; otherwise record the violation as synthetic.
+In correct mode, reproduce a cited real occurrence from a review comment, issue or commit as the seeded violation, and attach its commit when available.
+If a faithful reproduction is not possible, report the rule check as unproven.
 After preparing native dependencies in the clean and independently seeded copies, run:
 
 `rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json`
