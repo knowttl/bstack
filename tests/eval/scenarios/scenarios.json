@@ -1035,7 +1035,7 @@
           "id": "builder-check",
           "caseId": "AC-80",
           "skill": "plan",
-          "question": "Did a fresh read-only reader, or a stated same-context fallback, list where a builder would have to guess, and did the user receive only questions whose answers would change a unit's boundary, order or evidence?"
+          "question": "Did a fresh read-only reader list where a builder would have to guess, with the user receiving only questions whose answers would change a unit's boundary, order or evidence, or, if no fresh reader was available, did the skill report the missing prerequisite as blocked and stop without drafting or applying a plan?"
         },
         {
           "id": "story-units",
