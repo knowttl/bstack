@@ -215,10 +215,11 @@ Done when: Each class has one rung with the reason each higher rung fails, and e
 
 ### Step C3: Prove each check on a real past mistake
 
-Seed the violation from a real past occurrence of the class, with its commit, wherever the history holds one, and record a synthetic violation as synthetic.
+Seed the violation from a cited real occurrence of the class in a review comment, issue or commit, and attach its commit when available.
+If a faithful reproduction is not possible, report the rule check as unproven.
 Prove each rule with `rule-proof` and put existing violations in a shrinking baseline with `baseline check`, as Step 6 of the create checklist does.
 
-Done when: Each check has a passing proof whose seeded violation is a recorded occurrence or is recorded as synthetic, or is reported unproven.
+Done when: Each check has a passing proof whose seeded violation faithfully reproduces a cited real occurrence, with its commit when available, or is reported unproven.
 
 ### Step C4: Review and apply
 
