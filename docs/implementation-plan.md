@@ -448,7 +448,8 @@ Tick each task when its "Done when" commands pass.
     The correct-mode scenario is defined and its evaluation stays deferred, so AC-76 to AC-78 keep planned procedures.
   - [x] T2.11 Add the `/plan` skill (after T2.10) - a ninth user-started skill that writes and checks one implementation plan from an approved design and never executes it, with `plan check`, its schema and references.
     The plan scenarios are defined and their evaluations stay deferred, so AC-79, AC-80, AC-81 and AC-83 keep planned procedures; AC-82 is covered by `tests/scripts/plan.test.mjs`.
-  - [ ] T2.12 Take the design as input to the setup skills and wire `/plan` into the checklists (after T2.11) - one sentence in each of four new-idea skills and `/plan` last in both repo-audit checklists.
+  - [x] T2.12 Take the design as input to the setup skills and wire `/plan` into the checklists (after T2.11) - one sentence in each of four new-idea skills and `/plan` last in both repo-audit checklists.
+    The design-as-input scenario is defined and its evaluation stays deferred, so AC-84 to AC-87 keep planned procedures; AC-88 is covered by `tests/scripts/repo-audit-overview.test.mjs`.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -2025,6 +2026,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.9 | AC-1, AC-2, AC-9, AC-12 | Approved creation, unresolved decision and destination-collision controls | Passing current evidence: AC-2, AC-12 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-1, AC-9 ([release notes](releases/v0.1.0.md)). |
 | T2.10 | AC-76, AC-77, AC-78 | Repeated-mistake evidence and threshold, higher rung with a replacement-naming diagnostic, and proof on a real past occurrence | Procedures planned; the scenario evaluation is deferred. |
 | T2.11 | AC-79, AC-80, AC-81, AC-82, AC-83 | Inputs and gaps, builder check, story-map units with evidence, `plan check` rejections and acceptance, and the write boundary | AC-82 passes in `tests/scripts/plan.test.mjs`; the other procedures are planned and the scenario evaluations are deferred. |
+| T2.12 | AC-84, AC-85, AC-86, AC-87, AC-88 | A named design document taken as the explanation by each of the four setup skills, and `/plan` last in both checklists | AC-88 passes in `tests/scripts/repo-audit-overview.test.mjs`; the other procedures are planned and the scenario evaluation is deferred. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |

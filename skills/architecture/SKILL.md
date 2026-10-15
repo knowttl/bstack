@@ -45,6 +45,7 @@ Start with the reported area, the stated next change, the approved design and th
 Read the design or architecture document, decision records, contribution guidance, scoped agent instructions and the native checks before proposing anything.
 An existing repo gets the full boundary audit from the [architecture reference](references/architecture.md): inspect what it lists, collect dependency edges with the project's native analysis, and run `node scripts/architecture.mjs measure --repo <target> --range <base>..<head> --json` for revision-bound sizes, change frequency and co-change signals.
 A new idea has no history, so list the expected changes from the user's explanation and any approved `VISION.md`, and review them against the proposed boundaries.
+A design document the user names counts as the user's explanation, so summarise it and ask only about gaps.
 Choose two representative changes and record each as a declared plan following `schemas/overlap-plan.json`.
 In a Git repo, run `node scripts/architecture.mjs overlap --repo <target> --plans <file> <file> --json` on them; `measure`, `overlap`, `rule-proof` and `baseline check` accept only `--repo`, so a new idea in a non-Git workspace reviews the two plans by reading and reports that the commands did not run.
 Where the host supports subagents, give each independent area one read-only reader; otherwise read the areas one at a time.
