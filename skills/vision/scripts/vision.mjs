@@ -1643,18 +1643,52 @@ async function run2(options) {
 }
 
 // runtime/scripts/commands/cite-check.mjs
+import { readFile as readFile5 } from "node:fs/promises";
+
+// runtime/scripts/lib/citations.mjs
 import { readFile as readFile4 } from "node:fs/promises";
 import { spawnSync as spawnSync3 } from "node:child_process";
+async function fileCitationProblems(root, citation) {
+  const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u);
+  const problems = [];
+  const problem = (code, message) => problems.push({ code, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
+  let bytes;
+  try {
+    bytes = await readFile4(await resolvePath(root, path));
+  } catch (error) {
+    if (error instanceof CommandError) return error.problems;
+    problem("citation-file-unavailable", "Cited path must be a readable file.");
+    return problems;
+  }
+  const text = bytes.toString("utf8");
+  const lines = text ? text.split(/\r\n|\r|\n/u).length - (/[\r\n]$/u.test(text) ? 1 : 0) : 0;
+  if (!Number.isSafeInteger(Number(number)) || Number(number) > lines) problem("citation-line-out-of-range", `Cited line ${number} exceeds ${lines} file lines.`);
+  const { kind, value } = citation.state;
+  if (value.length !== (kind === "sha256" ? 64 : 40)) {
+    problem("invalid-citation-state", `Wrong digest length for ${kind}.`);
+  } else if (kind === "sha256") {
+    if (hashBytes(bytes) !== value) problem("stale-citation", "Cited exact file bytes have changed.");
+  } else {
+    const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
+    const recorded = spawnSync3("git", ["-C", root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
+    const current = spawnSync3("git", ["-C", root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
+    if (recorded.error || current.error || recorded.status !== 0 || current.status !== 0) problem("citation-revision-unavailable", "Cited revision or file object is unavailable.");
+    else if (recorded.stdout.trim() !== current.stdout.trim()) problem("stale-citation", "Current file bytes differ from the cited revision.");
+  }
+  return problems;
+}
+
+// runtime/scripts/commands/cite-check.mjs
 async function run3(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let report;
   try {
-    report = JSON.parse(await readFile4(options.report, "utf8"));
+    report = JSON.parse(await readFile5(options.report, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-report", message: "Report must be readable JSON.", path: options.report, fix: "Supply a readable research report." }]);
   }
-  const schema = JSON.parse(await readFile4(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
+  const schema = JSON.parse(await readFile5(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
   validateData(schema, report);
   validateIds(report.briefs, "$/briefs");
   const problems = [];
@@ -1662,31 +1696,7 @@ async function run3(options) {
   let webRecorded = 0;
   for (const brief of report.briefs) {
     for (const citation of brief.files) {
-      const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u);
-      const problem = (code, message) => problems.push({ code, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
-      let bytes;
-      try {
-        bytes = await readFile4(await resolvePath(target.root, path));
-      } catch (error) {
-        if (error instanceof CommandError) problems.push(...error.problems);
-        else problem("citation-file-unavailable", "Cited path must be a readable file.");
-        continue;
-      }
-      const text = bytes.toString("utf8");
-      const lines = text ? text.split(/\r\n|\r|\n/u).length - (/[\r\n]$/u.test(text) ? 1 : 0) : 0;
-      if (!Number.isSafeInteger(Number(number)) || Number(number) > lines) problem("citation-line-out-of-range", `Cited line ${number} exceeds ${lines} file lines.`);
-      const { kind, value } = citation.state;
-      if (value.length !== (kind === "sha256" ? 64 : 40)) {
-        problem("invalid-citation-state", `Wrong digest length for ${kind}.`);
-      } else if (kind === "sha256") {
-        if (hashBytes(bytes) !== value) problem("stale-citation", "Cited exact file bytes have changed.");
-      } else {
-        const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
-        const recorded = spawnSync3("git", ["-C", target.root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
-        const current = spawnSync3("git", ["-C", target.root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
-        if (recorded.error || current.error || recorded.status !== 0 || current.status !== 0) problem("citation-revision-unavailable", "Cited revision or file object is unavailable.");
-        else if (recorded.stdout.trim() !== current.stdout.trim()) problem("stale-citation", "Current file bytes differ from the cited revision.");
-      }
+      problems.push(...await fileCitationProblems(target.root, citation));
       filesChecked++;
     }
     for (const citation of brief.web) {
@@ -1704,7 +1714,7 @@ async function run3(options) {
 }
 
 // runtime/scripts/commands/vision-board-build.mjs
-import { readFile as readFile5, writeFile, copyFile } from "node:fs/promises";
+import { readFile as readFile6, writeFile, copyFile } from "node:fs/promises";
 import { createHash as createHash3, randomUUID as randomUUID3 } from "node:crypto";
 import { join as join5 } from "node:path";
 function html(value) {
@@ -1720,12 +1730,12 @@ async function run4(options) {
   const target = await resolveTarget(options, { draftOnly: true });
   let draft, proposals;
   try {
-    draft = await readFile5(options.draft);
-    proposals = JSON.parse(await readFile5(options.proposals, "utf8"));
+    draft = await readFile6(options.draft);
+    proposals = JSON.parse(await readFile6(options.proposals, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-input", message: "Draft or proposals cannot be read, or proposals are not JSON.", fix: "Supply readable draft and proposals files." }]);
   }
-  const schema = JSON.parse(await readFile5(new URL("../schemas/vision-proposals.json", import.meta.url), "utf8"));
+  const schema = JSON.parse(await readFile6(new URL("../schemas/vision-proposals.json", import.meta.url), "utf8"));
   validateData(schema, proposals);
   validateIds(proposals.cards, "$/cards");
   const draftRevision = createHash3("sha256").update(draft).digest("hex");
@@ -1736,7 +1746,7 @@ async function run4(options) {
     throw new CommandError("failed", [{ code: "invalid-draft", message: "Draft must be nonempty UTF-8 Markdown.", fix: "Supply a nonempty UTF-8 draft." }]);
   }
   const review = { schemaVersion: 1, runId: randomUUID3(), draftRevision };
-  const template = await readFile5(new URL("../assets/vision/review-template.html", import.meta.url), "utf8");
+  const template = await readFile6(new URL("../assets/vision/review-template.html", import.meta.url), "utf8");
   const slots = { PROJECT: html(proposals.project), RUN_NOTE: html(proposals.runNote), DRAFT_MARKDOWN: scriptJSON(draft.toString("utf8")), REVIEW: scriptJSON(review) };
   const board = template.replace(
     /const CARDS = \[[\s\S]*?\];|\{\{(PROJECT|RUN_NOTE|DRAFT_MARKDOWN|REVIEW)\}\}/g,
@@ -1758,7 +1768,7 @@ import { join as join8 } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // runtime/scripts/lib/vision-board.mjs
-import { readFile as readFile6, realpath as realpath4 } from "node:fs/promises";
+import { readFile as readFile7, realpath as realpath4 } from "node:fs/promises";
 import { dirname as dirname5, join as join6 } from "node:path";
 async function readBoard(options) {
   if (!options.board) throw new CommandError("usage-error", [{ code: "missing-input", message: "--board is required.", fix: "Supply the scratch board path returned by build." }]);
@@ -1766,10 +1776,10 @@ async function readBoard(options) {
   const board = await realpath4(options.board);
   const scratch = dirname5(board);
   if (isInside(target.root, scratch)) throw new CommandError("failed", [{ code: "board-inside-target", message: "The board must remain outside the target.", fix: "Use the scratch board returned by build." }]);
-  const manifest = JSON.parse(await readFile6(join6(scratch, "board.json"), "utf8"));
-  const draft = await readFile6(join6(scratch, "draft.md"));
-  const proposals = JSON.parse(await readFile6(join6(scratch, "proposals.json"), "utf8"));
-  const schema = JSON.parse(await readFile6(new URL("../schemas/vision-proposals.json", import.meta.url), "utf8"));
+  const manifest = JSON.parse(await readFile7(join6(scratch, "board.json"), "utf8"));
+  const draft = await readFile7(join6(scratch, "draft.md"));
+  const proposals = JSON.parse(await readFile7(join6(scratch, "proposals.json"), "utf8"));
+  const schema = JSON.parse(await readFile7(new URL("../schemas/vision-proposals.json", import.meta.url), "utf8"));
   validateData(schema, proposals);
   validateIds(proposals.cards, "$/cards");
   if (manifest.schemaVersion !== 1 || typeof manifest.runId !== "string" || !manifest.runId || manifest.target?.root !== target.root || manifest.target?.mode !== target.mode || manifest.draftRevision !== hashBytes(draft) || proposals.draftRevision !== manifest.draftRevision || JSON.stringify(manifest.cardIds) !== JSON.stringify(proposals.cards.map((card) => card.id))) {
@@ -1937,19 +1947,19 @@ async function run5(options) {
 }
 
 // runtime/scripts/commands/vision-board-verdicts.mjs
-import { readFile as readFile7, writeFile as writeFile3 } from "node:fs/promises";
+import { readFile as readFile8, writeFile as writeFile3 } from "node:fs/promises";
 import { join as join9 } from "node:path";
 async function run6(options) {
   if (!options.input || !options.draft) throw new CommandError("usage-error", [{ code: "missing-input", message: "--input and --draft are required.", fix: "Supply complete-round context JSON and the agent-revised UTF-8 draft." }]);
   const context = await readBoard(options);
   let input2, draft;
   try {
-    input2 = JSON.parse(await readFile7(options.input, "utf8"));
-    draft = await readFile7(options.draft);
+    input2 = JSON.parse(await readFile8(options.input, "utf8"));
+    draft = await readFile8(options.draft);
   } catch {
     throw new CommandError("failed", [{ code: "invalid-input", message: "Verdicts or revised draft cannot be read, or verdicts are not JSON.", fix: "Supply readable files in the documented format." }]);
   }
-  const schema = JSON.parse(await readFile7(new URL("../schemas/vision-verdicts.json", import.meta.url), "utf8"));
+  const schema = JSON.parse(await readFile8(new URL("../schemas/vision-verdicts.json", import.meta.url), "utf8"));
   validateData(schema, input2);
   validateIds(input2.verdicts, "$/verdicts");
   if (input2.runId !== context.manifest.runId || input2.draftRevision !== context.manifest.draftRevision) {
