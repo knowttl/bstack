@@ -653,7 +653,7 @@ Use the explicit-file runner above rather than passing a directory as a test fil
    Start with these pins from the design:
    - `mattpocock/skills` at `6fd947921b935b7e1e69293a200400f0fdd5c15f`: grill-me, grilling, grill-with-docs, domain-modeling (with GLOSSARY-FORMAT and ADR-FORMAT), setup-matt-pocock-skills/domain.md, codebase-design, improve-codebase-architecture, code-review, retro, writing-for-agents.
    - `kunchenguid/vision` at `7a20c38181151ec67efdf8fa2cb03a60123a7b83`: `skills/vision/SKILL.md` and `skills/vision/assets/`.
-   - `cursor/plugins` (pstack) at `9f451cf875ad1239912762f67741e8e5ba6ac0f1`: the architect design red flags and the five principle skills the design cites.
+   - `cursor/plugins` (pstack): use the reviewed pin and file inventory in [`upstream/sources.json`](../upstream/sources.json).
    - `kunchenguid/kun` at `1b2a9c7dd4b2b33eb7161399d7893c39048213be`: `ENTRY.md`.
 2. Write `upstream/fetch.mjs`.
    It downloads each listed file at its pinned commit from `raw.githubusercontent.com` into `upstream/<source>/`, and fails if a file is missing.
