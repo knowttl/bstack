@@ -1415,7 +1415,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "Run the foundation skill on a workspace holding only a design the user names, and score that it summarises the design's technical context and asks only about gaps."
+        "description": "Run the foundation-design-as-input scenario with an approved VISION.md and a design the user names, and score that foundation reaches the interview, summarises the design's technical context and asks only about gaps."
       }
     },
     {
@@ -1425,14 +1425,10 @@
         "T2.12"
       ],
       "criterionSource": "docs/design.md#AC-88",
-      "evidenceType": "automated",
+      "evidenceType": "agent",
       "procedure": {
-        "status": "completed",
-        "path": "tests/scripts/repo-audit-overview.test.mjs",
-        "name": "both checklists keep the agreed run order with plan last",
-        "artifacts": [
-          "tests/scripts/repo-audit-overview.test.mjs"
-        ]
+        "status": "planned",
+        "description": "Run repo-audit-checklist-new-idea and repo-audit-checklist-existing-repo, and score the emitted checklists for the agreed order with /plan immediately after /agents-md and last."
       }
     }
   ]
