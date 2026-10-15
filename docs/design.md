@@ -949,16 +949,17 @@ File length alone does not establish that a file has this problem.
 
 ### What the existing skills define
 
-The reviewed pstack source is at `9f451cf875ad1239912762f67741e8e5ba6ac0f1`.
+The reviewed pstack source is at `99743e9c151c8537cbbf1f98bb38f34ef3368453`.
 Matt Pocock's reviewed source remains at `6fd947921b935b7e1e69293a200400f0fdd5c15f`.
 The poteto-mode guide keeps its own separate pin.
 
 | Source | Relevant guidance | Application to repo-audit |
 |---|---|---|
-| [pstack design red flags](https://github.com/cursor/plugins/blob/9f451cf875ad1239912762f67741e8e5ba6ac0f1/pstack/skills/architect/references/design-red-flags.md) | Detect leaked representations, split ownership, importable internals, repeated lists and unnecessary forwarding layers | Find boundaries where one change forces coordinated edits |
-| [pstack Model the Domain](https://github.com/cursor/plugins/blob/9f451cf875ad1239912762f67741e8e5ba6ac0f1/pstack/skills/principle-model-the-domain/SKILL.md) | Organise a module around the knowledge it owns, rather than execution phases | Split unrelated responsibilities without scattering one rule across load, validate and save files |
-| [pstack Minimize Reader Load](https://github.com/cursor/plugins/blob/9f451cf875ad1239912762f67741e8e5ba6ac0f1/pstack/skills/principle-minimize-reader-load/SKILL.md) | Reduce unnecessary layers and hidden mutable state | Avoid replacing a god file with many wrappers that still require coordinated changes |
-| [pstack Separate Before Serializing Shared State](https://github.com/cursor/plugins/blob/9f451cf875ad1239912762f67741e8e5ba6ac0f1/pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md) | Remove unnecessary shared write targets, and enforce one writer when sharing is real | Give independent work separate files or state, and sequence unavoidable shared edits |
+| [pstack design red flags](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/architect/references/design-red-flags.md) | Detect leaked representations, split ownership, importable internals, repeated lists and unnecessary forwarding layers | Find boundaries where one change forces coordinated edits |
+| [pstack architect](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/architect/SKILL.md) | Assume the next contributor is an agent that sees only the files it opened, write the caller's usage before the contract, and require structurally distinct whole-shape candidates | Prefer boundaries that stay right when a contributor reads one file, and propose each public contract from real call sites with a distinct alternative |
+| [pstack Model the Domain](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/principle-model-the-domain/SKILL.md) | Organise a module around the knowledge it owns, rather than execution phases | Split unrelated responsibilities without scattering one rule across load, validate and save files |
+| [pstack Minimize Reader Load](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/principle-minimize-reader-load/SKILL.md) | Reduce unnecessary layers and hidden mutable state | Avoid replacing a god file with many wrappers that still require coordinated changes |
+| [pstack Separate Before Serializing Shared State](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md) | Remove unnecessary shared write targets, and enforce one writer when sharing is real | Give independent work separate files or state, and sequence unavoidable shared edits |
 | [Matt Pocock codebase-design](https://github.com/mattpocock/skills/blob/6fd947921b935b7e1e69293a200400f0fdd5c15f/skills/engineering/codebase-design/SKILL.md) | Hide useful behaviour behind a small interface, keep changes local and test through the interface | Design cohesive modules whose internal refactoring does not spread to callers |
 | [Matt Pocock improve-codebase-architecture](https://github.com/mattpocock/skills/blob/6fd947921b935b7e1e69293a200400f0fdd5c15f/skills/engineering/improve-codebase-architecture/SKILL.md) | Inspect relevant history, domain vocabulary and design decisions, then present evidenced candidates before exploring the selected one | Prioritise actual areas of friction and preserve existing project decisions |
 
@@ -1245,8 +1246,8 @@ bstack defines the required assessment and evidence, while contributors or akash
 This section proposes bstack's maintenance contract, rather than claiming that an upstream pack already implements it.
 The `maintenance` skill owns the contract, and ["Upkeep"](#upkeep) describes how everyday upkeep reaches the user.
 
-Pstack's [Encode Lessons in Structure](https://github.com/cursor/plugins/blob/9f451cf875ad1239912762f67741e8e5ba6ac0f1/pstack/skills/principle-encode-lessons-in-structure/SKILL.md) favours durable checks over repeated instructions.
-Its [Build the Lever](https://github.com/cursor/plugins/blob/9f451cf875ad1239912762f67741e8e5ba6ac0f1/pstack/skills/principle-build-the-lever/SKILL.md) favours rerunnable tools for mechanical work.
+Pstack's [Encode Lessons in Structure](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/principle-encode-lessons-in-structure/SKILL.md) favours durable checks over repeated instructions.
+Its [Build the Lever](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/principle-build-the-lever/SKILL.md) favours rerunnable tools for mechanical work.
 Matt's [writing-for-agents](https://github.com/mattpocock/skills/blob/6fd947921b935b7e1e69293a200400f0fdd5c15f/skills/productivity/writing-for-agents/SKILL.md) recommends clear context pointers and one source for each meaning.
 These principles support the following combination.
 

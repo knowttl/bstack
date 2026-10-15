@@ -32,6 +32,8 @@ Consolidate tightly related shallow modules when removing their layer concentrat
 Separate unrelated responsibilities when their changes currently require shared edits.
 Avoid forwarding layers that add navigation without hiding useful complexity.
 Organise ownership around domain knowledge rather than scattering one rule across load, validate and save phases.
+Assume the next contributor is an agent that sees only the files it opened, copies the nearest example and takes the shortest path that compiles.
+Prefer the boundary where a change that looks right from one file is right for the whole repository.
 These adaptations follow the pinned design and module guidance attributed in the package NOTICE.
 
 ## What the audit inspects
@@ -39,6 +41,8 @@ These adaptations follow the pinned design and module guidance attributed in the
 - Unrelated business responsibilities, or startup, UI, domain rules and persistence combined without clear internal boundaries.
 - Imports of private implementation, leaked representations and cycles across intended module boundaries.
 - Shared mutable state and multiple writers of canonical data.
+- More than one supported way to do one task, where callers copy whichever way they find first and every way keeps gaining callers.
+- Hand-maintained parallel lists of the same items with no derivation or check that fails when they disagree.
 - The same business rule, algorithm or documented policy maintained independently in several places, with a concrete change that would require coordinated updates.
 - Abstractions, forwarding layers and configuration options without a current requirement, compared with a simpler design that still meets the approved requirements.
 - Frequently changed files and pairs that repeatedly change together.
