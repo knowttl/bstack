@@ -13,7 +13,7 @@ meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
   - Scope: eight skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md) and their complete dependency set
-  - Revision: 29, maintainer-approved repo-audit split design, split build pending, verification create and maintain modes implemented
+  - Revision: 29, maintainer-approved repo-audit split design; current implementation status in README.md
 ---
 
 ## Summary
@@ -418,7 +418,7 @@ These are the report's ten agreed principles.
 - **P7** The default test command is offline, deterministic and fast; live network is blocked by configuration in every repo where the runner supports it (Q4).
 - **P8** Anything outside the codebase is proven by a small live probe before and after the change; mocks only at true boundaries, sanitized, testing the failures the product handles differently.
 - **P9** One paved path: one runner, one fixture builder, one command that runs everything; new tests extend it.
-- **P10** Every repeated correction moves down the ladder; wasteful tests are flagged with evidence and removed only when the owner selects them.
+- **P10** Every repeated correction follows [Correct mode](#correct-mode); wasteful tests are flagged with evidence and removed only when the owner selects them.
 
 Ask the four-question gate once per change after driving the affected features.
 Any no means no new test:
@@ -1641,7 +1641,7 @@ The package check confirms those settings are present. bstack does not run each 
 **Only the user can start any of the eight skills.**
 The agent must not start one on its own because a request looks like an audit, a glossary change or a scaffold.
 These skills read the repo, interview the user and can write files, so the user decides when each runs.
-The setting is per skill, not per mode, so `create`, `maintain` and `sweep` are user-started too.
+The setting is per skill and applies to every mode.
 No skill starts another; repo-audit lists the next skill and the user starts it.
 Each host has its own setting for this, and the package sets all of them in every skill folder.
 
