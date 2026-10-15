@@ -4,6 +4,7 @@ This plan tells a build agent how to build the `repo-audit` skill in order.
 The design is [design.md](design.md), revision 29.
 Its 2026-10-13 verification amendment adds a standalone skill and transfers test auditing out of repo-audit.
 The design's [skill split](design.md#the-skill-split) then divides repo-audit into eight user-started skills and gives its own [build order](design.md#split-build-order).
+The 2026-10-15 planning-workflow amendment adds a ninth skill, `plan`, which tasks T2.11 and T2.12 schedule.
 The tasks below describe the original repo-audit build; they do not schedule the verification amendment or the split.
 Implementation review applied on 2026-10-07, with owner approval to apply the recommendations.
 Commissioning review applied on 2026-10-07, with the owner's approval of its six recommendations.
@@ -445,6 +446,8 @@ Tick each task when its "Done when" commands pass.
     [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks and platform limitations; see [README](../README.md) for current enforcement and maintenance availability.
   - [x] T2.10 Add the `/verification correct` mode (after T3.3) - a five-step checklist and the constraint reference's evidence, diagnostic, proof and repeat rules, with no new script.
     The correct-mode scenario is defined and its evaluation stays deferred, so AC-76 to AC-78 keep planned procedures.
+  - [ ] T2.11 Add the `/plan` skill (after T2.10) - a ninth user-started skill that writes and checks one implementation plan from an approved design and never executes it, with `plan check`, its schema and references.
+  - [ ] T2.12 Take the design as input to the setup skills and wire `/plan` into the checklists (after T2.11) - one sentence in each of four new-idea skills and `/plan` last in both repo-audit checklists.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -1375,6 +1378,68 @@ It is numbered after the phase-2 tasks because it extends the verification skill
 - No new script, schema or command exists: the proof and baseline use `rule-proof` and `baseline check`.
 
 **Covers:** AC-76, AC-77, AC-78.
+
+### T2.11 Add the `/plan` skill
+
+**Depends on:** T2.1, T2.6 and T4.1, which supply `cite-check`, `apply` and the per-skill installer.
+It follows the design amendment of R41, which defines the skill's boundary.
+
+**Inputs and outputs:** An approved design document plus the project's `VISION.md`, glossary, design document and verification kit when present -> one reviewed implementation plan file.
+
+**Verification:** `npm run check`, then `npm test -- --task T2.11`.
+
+**Read:** design "Planning workflow commissioning decisions (2026-10-15)", "plan" under "The skill split" and "Product boundary".
+
+**Steps**
+
+1. Write `skills/plan/SKILL.md`, user-started only in every host, with a `create` mode and the shared review-before-apply and protected-write rules.
+   It accepts any approved design document, reports a missing bstack document as a gap without starting its skill (D1), runs the builder check (D2), turns the story map into units that each cite their design section, boundary, "Done when" and proving check or kit feature (D3), and carries non-functional targets as unit acceptance checks (D4).
+2. Add the plan-format and builder-check references.
+   Adapt the format from this plan and from pstack's `pstack/skills/poteto-mode/playbooks/multi-phase-plan.md` and `pstack/skills/principle-sequence-verifiable-units/SKILL.md`, and the builder check from `skills/brainstorming/builder-check-prompt.md` in obra's `superpowers`.
+   Pin each source in `upstream/sources.json` through `upstream/fetch.mjs` and add its `NOTICE` row; confirm the pstack paths exist at the pinned commit first, since an earlier read cited the playbook without its `skills/` segment.
+3. Add `schemas/plan.json`, a `plan check` command in the shared runtime and `runtime/skills.json`, and the `plan` entry in the bundle generator and the installer's skill list.
+   The command fails on a unit with no evidence, a dependency cycle, or a design citation that `cite-check` cannot resolve.
+4. Reuse `apply` and `state show`, and add the skill's one `AGENTS.md` pointer line through the pointer contract.
+5. Define the acceptance cases and add them to the design's list, this plan's coverage table and the registry.
+   Add fixtures for a design-only idea workspace and an existing repo, tests that drive `plan check` through its public command, the `tests/tasks.json` entry and unrun eval scenarios.
+   Update the README status and installation lists.
+
+**Done when**
+
+- `npm run check` and `npm test -- --task T2.11` pass.
+- `plan check` rejects a unit with no evidence, a dependency cycle and an unresolvable design citation, and accepts a valid plan, through the public command.
+- The skill folder installs alone, its bundle passes `--check`, and it starts no skill and executes no unit.
+- Every evaluation of the skill stays deferred and is listed as a follow-up.
+
+**Covers:** the acceptance cases this task adds, numbered after AC-78.
+
+If the task passes about 1,500 added lines, split it at the skill and references with their pins (T2.11a) and `plan check` with its schema, fixtures and tests (T2.11b).
+
+### T2.12 Take the design as input and wire `/plan` into the checklists
+
+**Depends on:** T2.11.
+
+**Inputs and outputs:** A design document the user names -> the new-idea skills summarise it and ask only about gaps; repo-audit lists `/plan` last.
+
+**Verification:** `npm run check`, then `npm test -- --task T2.12`.
+
+**Read:** design "Planning workflow commissioning decisions (2026-10-15)" and "Run order".
+
+**Steps**
+
+1. Add one sentence to each of the four places that read only "the user's explanation" for a new idea, saying a design document the user names counts as that explanation, so the skill summarises it and asks only about gaps (W1):
+   `skills/vision/references/interview.md`, `skills/foundation/references/interview.md`, `skills/glossary/SKILL.md` and `skills/architecture/SKILL.md`.
+   Locate each sentence in the current files, since line numbers move.
+2. Add `/plan` after `/agents-md` in the new-idea and existing-repo checklists of `skills/repo-audit/SKILL.md`, each with a cited reason (W3), and extend the checklist-order test.
+3. Define unrun eval scenarios for the design-as-input behaviour, and update the README status.
+
+**Done when**
+
+- `npm run check` and `npm test -- --task T2.12` pass.
+- The checklist-order test fails when `/plan` is missing or precedes `/agents-md` in either checklist.
+- The four skills adopt the sentence with no new interview step, script or command.
+
+**Covers:** the acceptance cases this task adds, numbered after those of T2.11.
 
 ## Phase 3: Enforcement
 
