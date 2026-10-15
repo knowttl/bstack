@@ -26,7 +26,7 @@ Start from the project's requirements, approved design and observed risks; these
 - **P7** The default test command is offline, deterministic and fast; live network is blocked by configuration in every repo where the runner supports it.
 - **P8** Anything outside the codebase is proven by a small live probe before and after the change; mocks only at true boundaries, sanitized, testing the failures the product handles differently.
 - **P9** One paved path: one runner, one fixture builder, one command that runs everything; new tests extend it.
-- **P10** Every repeated correction moves down the constraint ladder; wasteful tests are flagged with evidence and removed only when the owner selects them.
+- **P10** Every repeated correction follows the [Correct checklist](../SKILL.md#correct-checklist); wasteful tests are flagged with evidence and removed only when the owner selects them.
 
 Where principles seem to conflict, the axis is public versus private: a unit test through a public interface that sees the behaviour is valid, a test of private internals is not, and mocked coverage alone never establishes a live journey.
 No test-first workflow is imposed.
