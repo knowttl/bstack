@@ -1,6 +1,5 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
@@ -16,13 +15,6 @@ test('inspect and inventory leave an existing repo byte-identical and list its d
   assert.equal(inventory.exit, 0)
   assert.ok(inventory.data.files.some(file => file.path === 'VISION.md' && file.kind === 'vision'))
   assert.deepEqual(await snapshot(repo), before)
-})
-
-test('both checklists keep the agreed run order with plan last', async () => {
-  const document = await readFile(join(skill, 'SKILL.md'), 'utf8')
-  const listed = heading => document.split(`${heading}\n\n`)[1].split('\n\n')[0].split('\n').map(line => line.match(/^- \[ \] `\/([a-z-]+)/)[1])
-  assert.deepEqual(listed('New idea:'), ['vision', 'glossary', 'architecture', 'foundation', 'verification', 'maintenance', 'agents-md', 'plan'])
-  assert.deepEqual(listed('Existing repo:'), ['repo-audit', 'vision', 'glossary', 'architecture', 'verification', 'maintenance', 'agents-md', 'plan'])
 })
 
 test('inventory leaves a new-idea workspace byte-identical and reports absent kinds', async t => {

@@ -55,6 +55,12 @@
       "design.md"
     ]
   },
+  "foundation-design-idea": {
+    "base": "design-only-idea",
+    "seed": {
+      "VISION.md": "# Pantry list vision\n\nStatus: approved by the owner.\n\nHelp a household track pantry items and make a shopping list of what is missing.\nSuccess means a household member can record pantry items and quantities, mark missing items, and clear bought items without losing the pantry.\nKeep the first version local to one browser, without accounts, sharing or remote services.\n"
+    }
+  },
   "plan-existing-repo": {
     "base": "clear-goals",
     "overlay": "overlay",
