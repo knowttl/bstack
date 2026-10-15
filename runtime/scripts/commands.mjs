@@ -34,6 +34,11 @@ export const commands = {
     options: ['contract'],
     help: 'List what drifted across registered documents, generated sections, verification kits and AGENTS.md pointers without writes.\nUsage: {entry} sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document\'s owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, broken AGENTS.md links by /agents-md. Code changes or document age alone never fail sweep. The skill also reviews every registered document against the whole current repo. Fails on reported problems; fixes nothing.'
   },
+  'plan check': {
+    module: './commands/plan-check.mjs',
+    options: ['plan'],
+    help: 'Check a scratch plan record for units with no evidence, dependency cycles and design citations that no longer resolve, without writes.\nUsage: {entry} plan check --repo <path>|--workspace <path> --plan <file> [--json]\nPlan follows schemas/plan.json. Each unit lists the check or kit feature that proves it and its design citations, which use the location and exact-byte state of cite-check. Fails with unit-no-evidence, unknown-dependency, dependency-cycle or the cite-check citation codes. A passing check returns the units in dependency order. It does not judge whether a citation supports the unit or whether the evidence exists yet.'
+  },
   'rule-proof': {
     module: './commands/rule-proof.mjs',
     options: ['check-plan', 'check-id', 'valid', 'violation', 'expect'],

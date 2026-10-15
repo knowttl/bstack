@@ -4,9 +4,9 @@ bstack helps developers establish project-specific guidelines, rules and checks 
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create`, `maintain` and `correct` modes implemented, with its no-mistakes wiring reference and generated coverage gate.
 The design's [skill split](docs/design.md#the-skill-split) owns the approved skill boundaries.
-Its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [foundation](skills/foundation/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
-The `plan` skill and planning-workflow wiring are not yet available; [T2.11](docs/implementation-plan.md#t211-add-the-plan-skill) and [T2.12](docs/implementation-plan.md#t212-take-the-design-as-input-and-wire-plan-into-the-checklists) schedule their implementation.
-The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md and maintenance; audit usage applies to repo-audit.
+Its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [foundation](skills/foundation/SKILL.md), [agents-md](skills/agents-md/SKILL.md), [maintenance](skills/maintenance/SKILL.md) and [plan](skills/plan/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
+The setup skills do not yet take a named design document as input, and the repo-audit checklists do not yet list `/plan`; [T2.12](docs/implementation-plan.md#t212-take-the-design-as-input-and-wire-plan-into-the-checklists) schedules both.
+The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance and plan; audit usage applies to repo-audit.
 
 This checkout contains the slim [repo-audit procedure](skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](docs/command-contract.md).
 The [vision skill](skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
@@ -88,7 +88,7 @@ Follow the [repo-audit procedure](skills/repo-audit/SKILL.md) for its scope and 
 In the skills that make changes, answer unresolved intent questions, select findings, and approve the exact proposed changes before apply or creation; `/vision` runs the interactive vision board as its own skill.
 See the [worked examples](docs/examples/README.md) for requests, findings, selections, results and reproduction steps.
 
-The examples cover the six user-facing scenario fixtures: `new-idea`, `ambiguous-idea`, `clear-goals`, `existing-vision-delta`, `ts-shop` and `py-ledger`.
+The examples cover `new-idea`, `ambiguous-idea`, `clear-goals`, `existing-vision-delta`, `ts-shop` and `py-ledger`; the [scenario registry](tests/eval/scenarios/scenarios.json) owns the current scenario and fixture list.
 Rule-proof valid/violation controls, dirty-work and maintenance edge cases (`refactor`, `contract-removal`, `shallow-history`), and installer-collision fixtures are test infrastructure, not separate user skill runs.
 They remain covered by command tests rather than worked examples.
 Only `new-idea` and `ts-shop` have the completed installed final-path evidence from C27; the other four examples retain earlier checkpoint results and their limits.
@@ -325,7 +325,7 @@ The [probe contract](docs/command-contract.md#live-probe-pairs) defines the desc
 The probe command must assert the agreed outcome and exit nonzero on disagreement.
 Passing checks alone do not replace a successful probe comparison for an outside dependency.
 
-The evaluation runner includes scenarios, all 78 acceptance procedures and a current-host Codex adapter.
+The evaluation runner includes scenarios, the [registered acceptance procedures](tests/acceptance/cases.json) and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
 See the [evaluation contract](docs/evaluation.md) for ordered reply delivery, bounded runs, throwaway authentication, scoring and comparison, and [automatic batches](docs/evaluation.md#automatic-batches-and-ledger) for repeated scenarios and aggregate ledger results.
 Follow [evidence storage](docs/evaluation.md#evidence-storage-and-raw-run-archive) when publishing evaluation results and archiving raw runs.
@@ -402,7 +402,7 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Every command, shared library, schema, asset and shared reference has one source in [runtime/](runtime/), and [runtime/skills.json](runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
-[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md), [skills/glossary](skills/glossary/SKILL.md), [skills/architecture](skills/architecture/SKILL.md), [skills/foundation](skills/foundation/SKILL.md), [skills/agents-md](skills/agents-md/SKILL.md) and [skills/maintenance](skills/maintenance/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+[skills/repo-audit](skills/repo-audit/SKILL.md), [skills/verification](skills/verification/SKILL.md), [skills/vision](skills/vision/SKILL.md), [skills/glossary](skills/glossary/SKILL.md), [skills/architecture](skills/architecture/SKILL.md), [skills/foundation](skills/foundation/SKILL.md), [skills/agents-md](skills/agents-md/SKILL.md), [skills/maintenance](skills/maintenance/SKILL.md) and [skills/plan](skills/plan/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 
 ```sh
@@ -521,7 +521,18 @@ It never adopts a non-empty directory, and it writes the scaffold's `README.md` 
 
 The [agents-md skill](skills/agents-md/SKILL.md) is started by the user and creates or maintains one root `AGENTS.md` of one-line pointers to the project's rules, evidence requirements and check commands.
 It audits each pointer against the repo, merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked, keeps distinct nested instruction files, reports `CLAUDE.local.md` as possible shadowing without editing it, and reads nothing outside the repo.
-The glossary, vision, architecture, foundation and maintenance skills each propose their own pointer line, following the shared [pointer contract](runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
+The glossary, vision, architecture, foundation, maintenance and plan skills each propose their own pointer line, following the shared [pointer contract](runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
+
+The [plan skill](skills/plan/SKILL.md) is started by the user and writes one implementation plan from an approved design document.
+It reads the design you name plus `VISION.md`, the glossary, the design document and the verification kit when they exist, and reports a missing one as a gap without starting its skill.
+A fresh read-only reader runs the builder check and you answer only the questions that would change the plan.
+The plan's units come from the design's stories, core first, and each cites its design section, names the boundary it touches, its Done when and the check or kit feature that proves it, with non-functional targets carried as evidence.
+`plan check` fails a unit with no evidence, a dependency cycle or a design citation that no longer resolves, and the plan is written through `apply` after you approve the exact bytes.
+The skill never executes a unit, starts another skill or edits product code.
+
+```sh
+node skills/plan/scripts/plan.mjs plan check --repo <target>|--workspace <target> --plan <plan.json> --json
+```
 
 The [maintenance skill](skills/maintenance/SKILL.md) is started by the user in `create` or `sweep` mode and owns the maintenance contract and the standalone checker.
 `create` registers the project's documents, scopes, rules and checks in `.bstack/project.json`, installs the checker at `.bstack/bin/bstack-check.mjs`, and proposes the no-mistakes wiring: an ownership map in `document.instructions` that tells the Document step which file owns terms, boundaries and purpose, and a `docs` gate after `document` that runs the checker with `--docs-only`.

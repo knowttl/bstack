@@ -446,7 +446,8 @@ Tick each task when its "Done when" commands pass.
     [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks and platform limitations; see [README](../README.md) for current enforcement and maintenance availability.
   - [x] T2.10 Add the `/verification correct` mode (after T3.3) - a five-step checklist and the constraint reference's evidence, diagnostic, proof and repeat rules, with no new script.
     The correct-mode scenario is defined and its evaluation stays deferred, so AC-76 to AC-78 keep planned procedures.
-  - [ ] T2.11 Add the `/plan` skill (after T2.10) - a ninth user-started skill that writes and checks one implementation plan from an approved design and never executes it, with `plan check`, its schema and references.
+  - [x] T2.11 Add the `/plan` skill (after T2.10) - a ninth user-started skill that writes and checks one implementation plan from an approved design and never executes it, with `plan check`, its schema and references.
+    The plan scenarios are defined and their evaluations stay deferred, so AC-79, AC-80, AC-81 and AC-83 keep planned procedures; AC-82 is covered by `tests/scripts/plan.test.mjs`.
   - [ ] T2.12 Take the design as input to the setup skills and wire `/plan` into the checklists (after T2.11) - one sentence in each of four new-idea skills and `/plan` last in both repo-audit checklists.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
@@ -2023,6 +2024,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.8 | AC-5, AC-6, AC-7, AC-38, AC-55, AC-62 | Audit-before-interview and project-specific findings in both stacks | Passing current evidence: AC-5, AC-6, AC-7, AC-38, AC-62 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-55 ([release notes](releases/v0.1.0.md)). |
 | T2.9 | AC-1, AC-2, AC-9, AC-12 | Approved creation, unresolved decision and destination-collision controls | Passing current evidence: AC-2, AC-12 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-1, AC-9 ([release notes](releases/v0.1.0.md)). |
 | T2.10 | AC-76, AC-77, AC-78 | Repeated-mistake evidence and threshold, higher rung with a replacement-naming diagnostic, and proof on a real past occurrence | Procedures planned; the scenario evaluation is deferred. |
+| T2.11 | AC-79, AC-80, AC-81, AC-82, AC-83 | Inputs and gaps, builder check, story-map units with evidence, `plan check` rejections and acceptance, and the write boundary | AC-82 passes in `tests/scripts/plan.test.mjs`; the other procedures are planned and the scenario evaluations are deferred. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
