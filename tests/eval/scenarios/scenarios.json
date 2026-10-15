@@ -974,6 +974,48 @@
       ]
     },
     {
+      "id": "correct-recurring-rule",
+      "tier": "full",
+      "skills": ["verification"],
+      "fixture": "ts-shop",
+      "request": "Run /verification correct on this repo, which has no verification kit. I keep correcting agents for the same mistake: code in the web package reaches storage that the core package keeps internal, although DESIGN.md already says the UI never touches storage. Present the correction proposal only: stop before any selection, protected write or apply. Do not browse or use network commands. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "cited-occurrences",
+          "caseId": "AC-76",
+          "skill": "verification",
+          "question": "Did it group the web package's direct import of the core internal module and its storage alias import into one mistake class, citing each occurrence by file, and run without asking for or creating a verification kit?"
+        },
+        {
+          "id": "higher-rung",
+          "caseId": "AC-77",
+          "skill": "verification",
+          "question": "Did it count the mistake as a repeat of the written DESIGN.md rule and propose a rung above that rule, saying why any rung above its choice does not work?"
+        },
+        {
+          "id": "replacement-diagnostic",
+          "caseId": "AC-77",
+          "skill": "verification",
+          "question": "Does the proposed check's diagnostic name the public core interface to use instead of the internal module?"
+        },
+        {
+          "id": "real-occurrence-proof",
+          "caseId": "AC-78",
+          "skill": "verification",
+          "question": "Did the proposed proof seed its violation from one of the repo's real occurrences, naming the commit that holds it or stating that none does, rather than from an invented example?"
+        },
+        {
+          "id": "prose-to-pointer",
+          "caseId": "AC-78",
+          "skill": "verification",
+          "question": "Did it propose, without applying it, replacing the written rule that the proven check now enforces with a pointer to the check?"
+        }
+      ]
+    },
+    {
       "id": "verification-limitations",
       "tier": "smoke",
       "skills": ["verification"],
