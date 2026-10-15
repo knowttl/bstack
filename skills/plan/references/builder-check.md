@@ -6,7 +6,7 @@ The builder check puts a reader who has never talked to the author in front of t
 ## Run the check
 
 1. Use a fresh reader that sees only the prompt and the files below, such as a read-only subagent where the host supports one.
-   Without one, run the prompt yourself before drawing on anything the user said in this session, and report that the reader shared your context, so it may miss guesses you would also make.
+   Without one, report the builder check as blocked by the missing fresh-reader prerequisite and stop without drafting or applying a plan.
 2. Give the reader the approved design and each of `VISION.md`, the glossary, the project's design document and the verification kit that Step 1 found.
    It reads those files only, edits nothing and asks nobody.
 3. Fill in the prompt and send it:
