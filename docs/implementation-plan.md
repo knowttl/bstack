@@ -1301,7 +1301,7 @@ T3.1 supplies the enforcement and architecture references that recommendations l
 
 1. Complete the existing-repo steps in `SKILL.md` in this order: `inspect`, `inventory`, research briefs, `cite-check`, evidence summary, a targeted interview only for gaps that change a recommendation, findings, user selection, `apply`, `run-checks`, and the audit record.
 2. When the repo already has an approved vision, the steps propose a reviewed change to it only when the audit found a real gap.
-3. Since R35, repo-audit reports instruction candidates and lists `/agents-md` as the last next step instead of editing instruction files.
+3. Since R35, repo-audit reports instruction candidates and lists `/agents-md` instead of editing instruction files; the [repo-audit checklists](../skills/repo-audit/SKILL.md#step-4-print-the-checklist) own the current order.
    The [agents-md contract](../skills/agents-md/SKILL.md) owns the merge and scoped-instruction boundaries.
 4. Run the existing-repo and clear-goals scenarios in `with` mode.
 
