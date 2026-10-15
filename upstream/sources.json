@@ -63,6 +63,8 @@
       "pstack/skills/architect/SKILL.md",
       "pstack/skills/architect/references/design-red-flags.md",
       "pstack/skills/correct/SKILL.md",
+      "pstack/skills/poteto-mode/playbooks/multi-phase-plan.md",
+      "pstack/skills/principle-sequence-verifiable-units/SKILL.md",
       "pstack/skills/principle-model-the-domain/SKILL.md",
       "pstack/skills/principle-minimize-reader-load/SKILL.md",
       "pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md",
@@ -73,11 +75,24 @@
       "pstack/skills/architect/SKILL.md": "31f8e97a52bfa5432edd61f68ade2a8632ef0bacbc2d2a6802d7a0e6821944ac",
       "pstack/skills/architect/references/design-red-flags.md": "d0e639e4cc588ec865f930d3a4111faad60987ae36925917e319d7ceca7c69ce",
       "pstack/skills/correct/SKILL.md": "e347045d00c967a0b831ef883cc6ac79d21329aa10b5968637df95de7febf0ba",
+      "pstack/skills/poteto-mode/playbooks/multi-phase-plan.md": "5f239457bfdec3345c92caa06c59bf0257c662b89353f25a1c02ea942dcd00b1",
+      "pstack/skills/principle-sequence-verifiable-units/SKILL.md": "2ccbbacc56ace5afdfb8670cef19d7bd009fb2a0033b9a741cbdf2b6baf72187",
       "pstack/skills/principle-model-the-domain/SKILL.md": "52c0d85e0c3827c41c18299b642657d7b47eaf77b7b31609e42e0df42b84c75f",
       "pstack/skills/principle-minimize-reader-load/SKILL.md": "1ea2b7fef2391cae5844c4efdbd59031f775e8a52d06b7495d707229a200dcca",
       "pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb",
       "pstack/skills/principle-encode-lessons-in-structure/SKILL.md": "228963799189f481827d6f28065f278bc2008ffa37030b1234cbd5814d36b9e9",
       "pstack/skills/principle-build-the-lever/SKILL.md": "3434b0ad0c640c6f1d7960be7a8986c3bcdc14e26060360dec29903df60074ff"
+    }
+  },
+  {
+    "name": "superpowers",
+    "repoUrl": "https://github.com/obra/superpowers",
+    "commit": "bb92a77741419a4ab5f06e711a283343f1ada0c3",
+    "files": [
+      "skills/brainstorming/builder-check-prompt.md"
+    ],
+    "sha256": {
+      "skills/brainstorming/builder-check-prompt.md": "36d51a4723d6f0a3ce5811a0ea3b3a8424f07533947e1355f5d8cb8cce40c55e"
     }
   },
   {
