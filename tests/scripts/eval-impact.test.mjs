@@ -160,16 +160,16 @@ for (const [direction, heading, keys] of [
 
 // A runtime input selects the scenarios that stage a skill bundling it, however deeply a command imports it.
 for (const [key, bundling] of [
-  ['scripts/commands/apply.mjs', ['vision', 'glossary', 'architecture', 'foundation', 'maintenance', 'agents-md', 'verification']],
-  ['scripts/commands/cite-check.mjs', ['repo-audit', 'vision', 'glossary', 'architecture']],
+  ['scripts/commands/apply.mjs', ['vision', 'glossary', 'architecture', 'foundation', 'maintenance', 'agents-md', 'verification', 'plan']],
+  ['scripts/commands/cite-check.mjs', ['repo-audit', 'vision', 'glossary', 'architecture', 'plan']],
   ['scripts/commands/inspect.mjs', ['repo-audit']],
   ['scripts/commands/probe.mjs', ['verification', 'maintenance']],
   ['scripts/commands/vision-board-build.mjs', ['vision']],
   ['scripts/lib/vision-board.mjs', ['vision']],
-  ['schemas/findings.schema.json', ['vision', 'glossary', 'architecture', 'foundation', 'verification', 'maintenance', 'agents-md']],
+  ['schemas/findings.schema.json', ['vision', 'glossary', 'architecture', 'foundation', 'verification', 'maintenance', 'agents-md', 'plan']],
   ['schemas/vision-proposals.json', ['vision']],
   ['assets/vision/review-template.html', ['vision']],
-  ['references/grilling.md', ['vision', 'glossary', 'architecture', 'foundation']]
+  ['references/grilling.md', ['vision', 'glossary', 'architecture', 'foundation', 'plan']]
 ]) {
   test(`runtime input selects the scenarios staging a skill that bundles it: ${key}`, async t => {
     const repo = await checkout(t)

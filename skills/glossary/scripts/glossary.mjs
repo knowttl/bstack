@@ -2015,18 +2015,52 @@ async function run3(options) {
 }
 
 // runtime/scripts/commands/cite-check.mjs
+import { readFile as readFile7 } from "node:fs/promises";
+
+// runtime/scripts/lib/citations.mjs
 import { readFile as readFile6 } from "node:fs/promises";
 import { spawnSync as spawnSync3 } from "node:child_process";
+async function fileCitationProblems(root, citation) {
+  const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u);
+  const problems = [];
+  const problem = (code, message) => problems.push({ code, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
+  let bytes;
+  try {
+    bytes = await readFile6(await resolvePath(root, path));
+  } catch (error) {
+    if (error instanceof CommandError) return error.problems;
+    problem("citation-file-unavailable", "Cited path must be a readable file.");
+    return problems;
+  }
+  const text = bytes.toString("utf8");
+  const lines = text ? text.split(/\r\n|\r|\n/u).length - (/[\r\n]$/u.test(text) ? 1 : 0) : 0;
+  if (!Number.isSafeInteger(Number(number)) || Number(number) > lines) problem("citation-line-out-of-range", `Cited line ${number} exceeds ${lines} file lines.`);
+  const { kind, value } = citation.state;
+  if (value.length !== (kind === "sha256" ? 64 : 40)) {
+    problem("invalid-citation-state", `Wrong digest length for ${kind}.`);
+  } else if (kind === "sha256") {
+    if (hashBytes(bytes) !== value) problem("stale-citation", "Cited exact file bytes have changed.");
+  } else {
+    const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
+    const recorded = spawnSync3("git", ["-C", root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
+    const current = spawnSync3("git", ["-C", root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
+    if (recorded.error || current.error || recorded.status !== 0 || current.status !== 0) problem("citation-revision-unavailable", "Cited revision or file object is unavailable.");
+    else if (recorded.stdout.trim() !== current.stdout.trim()) problem("stale-citation", "Current file bytes differ from the cited revision.");
+  }
+  return problems;
+}
+
+// runtime/scripts/commands/cite-check.mjs
 async function run4(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let report;
   try {
-    report = JSON.parse(await readFile6(options.report, "utf8"));
+    report = JSON.parse(await readFile7(options.report, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-report", message: "Report must be readable JSON.", path: options.report, fix: "Supply a readable research report." }]);
   }
-  const schema = JSON.parse(await readFile6(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
+  const schema = JSON.parse(await readFile7(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
   validateData(schema, report);
   validateIds(report.briefs, "$/briefs");
   const problems = [];
@@ -2034,31 +2068,7 @@ async function run4(options) {
   let webRecorded = 0;
   for (const brief of report.briefs) {
     for (const citation of brief.files) {
-      const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u);
-      const problem = (code, message) => problems.push({ code, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
-      let bytes;
-      try {
-        bytes = await readFile6(await resolvePath(target.root, path));
-      } catch (error) {
-        if (error instanceof CommandError) problems.push(...error.problems);
-        else problem("citation-file-unavailable", "Cited path must be a readable file.");
-        continue;
-      }
-      const text = bytes.toString("utf8");
-      const lines = text ? text.split(/\r\n|\r|\n/u).length - (/[\r\n]$/u.test(text) ? 1 : 0) : 0;
-      if (!Number.isSafeInteger(Number(number)) || Number(number) > lines) problem("citation-line-out-of-range", `Cited line ${number} exceeds ${lines} file lines.`);
-      const { kind, value } = citation.state;
-      if (value.length !== (kind === "sha256" ? 64 : 40)) {
-        problem("invalid-citation-state", `Wrong digest length for ${kind}.`);
-      } else if (kind === "sha256") {
-        if (hashBytes(bytes) !== value) problem("stale-citation", "Cited exact file bytes have changed.");
-      } else {
-        const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
-        const recorded = spawnSync3("git", ["-C", target.root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
-        const current = spawnSync3("git", ["-C", target.root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
-        if (recorded.error || current.error || recorded.status !== 0 || current.status !== 0) problem("citation-revision-unavailable", "Cited revision or file object is unavailable.");
-        else if (recorded.stdout.trim() !== current.stdout.trim()) problem("stale-citation", "Current file bytes differ from the cited revision.");
-      }
+      problems.push(...await fileCitationProblems(target.root, citation));
       filesChecked++;
     }
     for (const citation of brief.web) {

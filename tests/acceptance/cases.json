@@ -1296,6 +1296,75 @@
         "status": "planned",
         "description": "Run the correct mode through a proposed check, and score the proof against a seeded real occurrence and the pointer that replaces the enforced written rule."
       }
+    },
+    {
+      "id": "AC-79",
+      "skill": "plan",
+      "ownerTask": [
+        "T2.11"
+      ],
+      "criterionSource": "docs/design.md#AC-79",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the plan skill on a design-only workspace and on an existing repo, and score the inputs read, each missing input reported as a gap with its skill, and that no other skill was started."
+      }
+    },
+    {
+      "id": "AC-80",
+      "skill": "plan",
+      "ownerTask": [
+        "T2.11"
+      ],
+      "criterionSource": "docs/design.md#AC-80",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the plan skill on a design with a seeded gap, and score the fresh reader's report and that the user receives only the questions that change a unit."
+      }
+    },
+    {
+      "id": "AC-81",
+      "skill": "plan",
+      "ownerTask": [
+        "T2.11"
+      ],
+      "criterionSource": "docs/design.md#AC-81",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the plan skill on a design with core stories and non-functional targets, and score the story-map units, their citations, boundaries, Done when and evidence, the targets carried as evidence and a passing plan check."
+      }
+    },
+    {
+      "id": "AC-82",
+      "skill": "plan",
+      "ownerTask": [
+        "T2.11"
+      ],
+      "criterionSource": "docs/design.md#AC-82",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/plan.test.mjs",
+        "name": "plan check rejects a unit with no evidence",
+        "artifacts": [
+          "tests/scripts/plan.test.mjs"
+        ]
+      }
+    },
+    {
+      "id": "AC-83",
+      "skill": "plan",
+      "ownerTask": [
+        "T2.11"
+      ],
+      "criterionSource": "docs/design.md#AC-83",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the plan skill through a proposal, and score that it writes only the approved plan and its pointer through apply, starts no skill and executes no unit."
+      }
     }
   ]
 }
