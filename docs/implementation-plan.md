@@ -876,7 +876,7 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
 
 - The runner's tests cover isolation, explicit versus implicit invocation, manual scoring and unique result paths.
 - At least three realistic comparable scenarios each have a baseline transcript and scored results, including any that already pass.
-- The acceptance registry names all 75 cases with their planned procedures, without claiming pending evidence is complete.
+- The acceptance registry names every design acceptance case with its planned procedure, without claiming pending evidence is complete.
 
 ### T1.3 Write the first `SKILL.md`
 
