@@ -16,7 +16,7 @@ An empty directory is a new idea, and an established repo can need only a scoped
 This skill reads the target at overview level and prints a checklist of the skills the user should run next.
 It writes nothing to the target and keeps no audit record: keep the research report and notes in scratch outside the target, and rerun the skill to see which steps now look done.
 It never starts another skill, interviews the user, drafts a vision, glossary, design, project, test guidance, contract or instruction file, opens a pull request or selects a delivery service.
-Each of those belongs to the skill the checklist names: `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification`, `/maintenance` and `/agents-md`.
+Each of those belongs to the skill the checklist names: `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification`, `/maintenance`, `/agents-md` and `/plan`.
 Security hardening of created skills and licensing review are outside scope.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
 
@@ -71,7 +71,8 @@ New idea:
 - [ ] `/foundation` - the stack, scaffold and first journey, which need the approved vision, glossary and design above
 - [ ] `/verification create` - the testing rules and checks the new project will need, citing the chosen stack
 - [ ] `/maintenance` - the docs the project will register so they stay true as code changes
-- [ ] `/agents-md` - the root `AGENTS.md` of pointers to everything above, last
+- [ ] `/agents-md` - the root `AGENTS.md` of pointers to everything above
+- [ ] `/plan` - the implementation plan that cites the documents and checks above, citing the user's design document or the absent design kind, last
 
 Existing repo:
 
@@ -81,7 +82,8 @@ Existing repo:
 - [ ] `/architecture` - the cited boundary, decision or design gap, or the design document found absent
 - [ ] `/verification create` - the cited test and check state from the manifests and standards
 - [ ] `/maintenance` - the cited documents that no registered contract covers
-- [ ] `/agents-md` - the cited instruction files, pointer gaps and `CLAUDE.md` merge candidates, last
+- [ ] `/agents-md` - the cited instruction files, pointer gaps and `CLAUDE.md` merge candidates
+- [ ] `/plan` - the cited approved design that has no implementation plan yet, or the design document found absent, last
 
 `/foundation` is for new projects only and never appears on the existing-repo checklist, because it refuses a non-empty directory.
 State the limitations and the decisions the audit could not make, then stop.
