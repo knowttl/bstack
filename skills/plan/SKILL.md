@@ -46,13 +46,13 @@ An existing repo also needs its real boundaries: where the host supports subagen
 Each reader reports findings with file and line citations, without editing or asking the user.
 Record the citations in scratch following `schemas/research-report.json`, binding each cited file to the SHA-256 of the exact bytes read with state kind `sha256`, and run `node scripts/plan.mjs cite-check --repo <target> --report <file> --json`, with `--workspace` for a new idea.
 Open each cited source to confirm it supports the claim, because the checker establishes only locations and byte freshness.
-A design that is one verifiable change needs no plan: say so and stop.
 
 Done when: The approved design is identified and confirmed by the user, each other input is read or listed as a gap with its skill, and every repo finding cites a source checked for exact-byte freshness.
 
 ### Step 2: Run the builder check
 
 Follow the [builder check](references/builder-check.md): a fresh read-only reader that cannot ask the author lists every place a builder would have to guess.
+If no fresh read-only reader is available, report the builder check as blocked by that missing prerequisite and stop without drafting or applying a plan.
 Filter its report against the inputs you read, and keep only the questions whose answers would change the plan.
 
 Done when: Each remaining question names the design section it concerns and why its answer changes the plan, or the reader found nothing important and that is stated.
