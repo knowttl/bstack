@@ -599,7 +599,7 @@ An empty file-citation list is valid for a brief with only unavailable or outsid
 ## Plan check
 
 `node skills/plan/scripts/plan.mjs plan check --repo <path>|--workspace <path> --plan <file> [--json]` checks a scratch plan record without target writes.
-The record follows `skills/plan/schemas/plan.json`, version 1: a title and one or more units, each with a unique ID, title, `core` flag, the IDs it depends on, one or more design citations, the boundary it touches, its Done when criteria and its evidence.
+The [plan schema source](../runtime/schemas/plan.json) owns the record's versioned fields and constraints; installed skills carry a generated copy at `schemas/plan.json`.
 Each design citation is a file citation of the [research citation check](#research-citation-check) and is resolved by the same code, so a missing or unreadable path, a line past the end, a wrong digest length, changed bytes and an unavailable revision fail with the same citation codes.
 Each evidence entry names a `check` or a `kit-feature` and may carry the `nonFunctionalTarget` it measures.
 
