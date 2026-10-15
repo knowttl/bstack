@@ -2,7 +2,7 @@
 
 bstack helps developers establish project-specific guidelines, rules and checks for agents.
 The approved [design](docs/design.md#summary) owns the release scope, and the [implementation plan](docs/implementation-plan.md) tracks the repo-audit build.
-The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create` and `maintain` modes implemented, with its no-mistakes wiring reference and generated coverage gate.
+The [standalone verification amendment](docs/design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create`, `maintain` and `correct` modes implemented, with its no-mistakes wiring reference and generated coverage gate.
 The design also splits repo-audit into eight user-started skills ([the skill split](docs/design.md#the-skill-split)); its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](skills/vision/SKILL.md), [glossary](skills/glossary/SKILL.md), [architecture](skills/architecture/SKILL.md), [foundation](skills/foundation/SKILL.md), [agents-md](skills/agents-md/SKILL.md) and [maintenance](skills/maintenance/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
 The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md and maintenance; audit usage applies to repo-audit.
 
@@ -323,7 +323,7 @@ The [probe contract](docs/command-contract.md#live-probe-pairs) defines the desc
 The probe command must assert the agreed outcome and exit nonzero on disagreement.
 Passing checks alone do not replace a successful probe comparison for an outside dependency.
 
-The evaluation runner includes scenarios, all 75 acceptance procedures and a current-host Codex adapter.
+The evaluation runner includes scenarios, all 78 acceptance procedures and a current-host Codex adapter.
 Adapter runs create a fresh fixture, home, host state and cache, verify discovery isolation, and capture JSONL conversation turns.
 See the [evaluation contract](docs/evaluation.md) for ordered reply delivery, bounded runs, throwaway authentication, scoring and comparison, and [automatic batches](docs/evaluation.md#automatic-batches-and-ledger) for repeated scenarios and aggregate ledger results.
 Follow [evidence storage](docs/evaluation.md#evidence-storage-and-raw-run-archive) when publishing evaluation results and archiving raw runs.
@@ -414,7 +414,7 @@ Both commands exit 1 when a skill lists a command, schema, asset or reference th
 To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
 
-The [verification skill](skills/verification/SKILL.md) is started by the user and provides `create` and `maintain`: `create` interviews a repo, renders a verification kit as a reviewable change set, applies it after exact-diff approval and proves it once, and `maintain` checks an applied kit for drift, drives every feature and proposes reviewed corrections.
+The [verification skill](skills/verification/SKILL.md) is started by the user and provides `create`, `maintain` and `correct`: `create` interviews a repo, renders a verification kit as a reviewable change set, applies it after exact-diff approval and proves it once, `maintain` checks an applied kit for drift, drives every feature and proposes reviewed corrections, and `correct` turns a mistake you keep correcting into the highest-rung check that makes it impossible, proven on a real past occurrence, with no kit needed.
 Test auditing and testing guidance live here and no longer in repo-audit, which now points the user to `/verification`.
 Its entry point and generators, documented in the [command contract](docs/command-contract.md#verification-skill-commands), run from a checkout like this:
 

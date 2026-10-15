@@ -184,7 +184,7 @@ repo-audit lists which skill to run next; the user decides whether to run it.
 | `glossary` | `create`, `maintain` | Find, resolve and write domain terms |
 | `architecture` | `create`, `maintain` | Propose or audit module boundaries, record decisions and own design rules |
 | `foundation` | none | Turn an approved idea into the smallest working project |
-| `verification` | `create`, `maintain` | Verification kit, testing guidance and lint and type constraints |
+| `verification` | `create`, `maintain`, `correct` | Verification kit, testing guidance, lint and type constraints and the correction of repeated mistakes |
 | `maintenance` | `create`, `sweep` | Keep project docs true as code changes |
 | `agents-md` | none | Create and maintain one root `AGENTS.md` of pointers |
 
@@ -343,9 +343,9 @@ Each move removes the moved content from repo-audit and replaces it with a check
 
 ## Standalone verification skill
 
-`skills/verification/` owns creation and maintenance of a project-local verification kit, testing guidance and constraint adoption.
-Only explicit user invocation starts either mode.
-Both modes preserve review before apply, exact-diff approval, protected writes and existing user work.
+`skills/verification/` owns creation and maintenance of a project-local verification kit, testing guidance, constraint adoption and the correction of repeated mistakes.
+Only explicit user invocation starts any mode.
+Every mode preserves review before apply, exact-diff approval, protected writes and existing user work.
 They never implement product features, fix product bugs or open pull requests.
 Checks remain host-agnostic and runnable without bstack installed.
 Hosted CI is never added by default; it remains an explicitly selected integration.
@@ -378,7 +378,7 @@ Run on demand, including before a release when requested.
 Check index hygiene, assign one read-only source reader per feature where the host supports subagents (otherwise read sequentially), reconcile source findings and drive every feature live.
 Triage discrepancies into doc drift, harness gaps or product bugs.
 Propose reviewed kit corrections for drift and harness gaps, re-drive harness fixes and report product bugs without weakening the map to hide them.
-Mine no-mistakes findings and review comments for repeated mistakes and move them down the constraint ladder.
+Hand no-mistakes findings and review comments to the evidence and rung steps of correct mode, which propose each repeated mistake's rung without applying it.
 Audit the suite for all eight wasteful-test patterns.
 Report clean, changed through a reviewed change set, or blocked, with coverage and unreachable prerequisites explicit.
 The full pass remains user-invoked; automatic per-change upkeep does not replace it.
@@ -390,6 +390,20 @@ Source readers and triage stay with the agent, because whether a feature file is
 `kit scaffold --update` turns an edited copy of the plan into the reviewed correction, so the plan stays the single source for every rendered file and a hand-edited rendered file is drift.
 
 This adapts pstack's [maintain-verification-skill](https://github.com/cursor/plugins/blob/dbf49813a39c1a5389c5e28cb8e4c1c2379e2454/pstack/skills/maintain-verification-skill/SKILL.md), retaining source and live coverage while replacing its PR delivery with bstack's reviewed apply boundary.
+
+### Correct mode
+
+Run on demand when the user keeps correcting agents for the same mistake.
+It needs no applied kit and never drives the product, so it runs after a single correction without the full `maintain` pass, and `maintain` hands its repeated mistakes to the same procedure so one document owns it.
+Collect the evidence, classify each mistake, give it the highest rung that works, prove each check on a real past mistake and propose the reviewed change.
+Evidence comes from the user's correction, commits, reverts and fix-ups, review comments, no-mistakes findings, agent instruction files and comments that explain a workaround, and a class counts once it has two cited occurrences.
+A mistake that recurs despite a written rule counts as a repeat and moves up at least one rung in the same change, and once a proven check enforces a written rule, the rule becomes a pointer to the check.
+A lint or CI diagnostic names the file, type or function to use instead, and each proof seeds the violation from a real past occurrence with its commit where the history holds one.
+It reuses `rule-proof` and `baseline check` and adds no script.
+Applied edits go through the same reviewed `apply` boundary; a change that needs product code, such as removing a second way to do one task, is reported with its files instead of made.
+pstack's per-class direct commits, its rule table in the instruction file and its inline exceptions with expiry dates are not adopted: the owner selects durable changes, the `agents-md` skill keeps the instruction file to pointers, and each L7 baseline entry already carries a removal condition.
+
+This adapts pstack's [correct](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/correct/SKILL.md), keeping its evidence sources, threshold, rung order, proof and repeat rules.
 
 ### Testing principles (P1-P10)
 
@@ -421,11 +435,11 @@ Public-interface unit tests remain valid when they see the behaviour; mocked cov
 
 Use this ladder: eliminate through types, schemas or architecture; detect through lint, type or dependency-graph checks in the maintained command; encode in instructions or skills; review.
 
-- **L1** Beyond the default slop baseline, start from a repeated, observed mistake with evidence, not a style wish.
+- **L1** Beyond the default slop baseline, start from a mistake with two cited occurrences, drawn from commits, reverts, review comments, agent instruction files, workaround comments or the user's correction, not a style wish.
 - **L2** Use the highest rung that works: make it unrepresentable before you lint it.
 - **L3** Implement each slop principle with the language's native linter first; write a custom syntax-tree check only where nothing native exists.
 - **L4** Semantic rules read the syntax tree or dependency graph, never raw text.
-- **L5** Prove every rule: a valid example passes and a seeded violation fails with the expected message.
+- **L5** Prove every rule: a valid example passes and a seeded violation fails with the expected message, which names the file, type or function to use instead.
 - **L6** The rule fails the one maintained check command; CI runs that same command, wired only when the owner selects it.
 - **L7** Existing violations go into a visible, shrinking baseline; new ones fail; exceptions are narrow, reasoned and have a removal condition.
 - **L8** No arbitrary size limits, and no design call disguised as a lint error.
@@ -1821,6 +1835,9 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 73. A clean installation includes every referenced resource and required runtime declaration.
 74. Install, update and removal work on Linux without losing unrelated files or user edits, under the owner's 2026-10-10 Linux-only acceptance amendment.
 75. The current agent discovers and executes the bounded audit skill successfully.
+76. `/verification correct` groups a repeated mistake from cited occurrences in commits, reverts, review comments, instruction files, workaround comments or the user's correction, counts a class only at two occurrences and runs without an applied kit.
+77. A mistake that recurs despite a written rule moves its class up at least one rung, and a proposed lint or CI check fails with a diagnostic that names the file, type or function to use instead.
+78. A proposed check is proven with a seeded violation that reproduces a real past occurrence with its commit where history holds one, and a written rule that a proven check now enforces becomes a pointer to the check.
 
 Use disposable test repos for changes, board fixtures and deliberate violations.
 Record the agent, model, operating system, dependency versions, commands and outcomes.
@@ -1927,3 +1944,4 @@ Historical entries keep their original decisions and name their current applicat
 | R37, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 8 of the split build: the `architecture` skill with `create` and `maintain`, ADRs and design standards, and the removal of the boundary audit, decision records and design standards from repo-audit | Applies R31 and Split Q4. repo-audit's Step 4, Step 7 and Step 8 now list `/architecture` as a next step, `measure` and `overlap` left repo-audit's command list with their two schemas, and the architecture and decisions references moved with the skill. Build choices: `enforcement.md` keeps the rule-proof, maintained-command and debt-baseline rules that `foundation` still uses until piece 9, and loses the DRY and KISS rows, the design-judgement paragraph and the one-authoritative-source section, which became `design-standards.md`; the skill carries its own condensed `boundary-checks.md` like `verification`'s constraints reference, because a skill folder installs without its siblings; `measure`, `overlap`, `rule-proof` and `baseline check` accept only `--repo` in the shared runtime, so a non-Git new-idea workspace reviews planned changes by reading and reports its rules as unproven; `maintain` uses the last confirmed architectural review as its baseline unless the user names another, asking the user for one when design or ADR document edits do not establish it; and `/maintenance sweep` already routes the registered `design` document to `/architecture maintain`, so the maintenance skill is unchanged. No eval scenario for `architecture` was added because evals are deferred |
 | R38, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 9 of the split build: the `foundation` skill, the new-project path and `project create`, and the removal of the new-project proposal, creation and verification steps from repo-audit | Applies R31 and Split Q3 and Q5. repo-audit's Steps 4 to 6 now list `/foundation` instead of proposing a stack, creating the project or verifying its journey, `project create` and its schema left repo-audit's command list, and the intent interview lost its technical half (data, interfaces, deployment, compatibility and the first journey), which R33 left there until now. Build choices: the skill takes the approved `VISION.md` as a required input and stops naming `/vision` without it, while the glossary and design are optional; its scaffold carries a `README.md` of the setup and check commands and a root `AGENTS.md` with the skill's one pointer line, created in the same plan because a new project has no instruction file; it carries its own condensed checks reference for `rule-proof` and the maintained command, since `enforcement.md` stays in repo-audit for the existing-repo path until the final slim; the command list is exactly the agreed four, so a created project's journal is inspected by repeating the unchanged plan rather than through `state show`; and the repo-audit scenarios that still describe the technical interview and project creation are rehomed with the final slim, so no eval scenario for `foundation` was added because evals are deferred |
 | R39, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 10 of the split build, the final repo-audit slim, and approved building it as two changes: 10a, the slim itself, then 10b, the rehoming of the acceptance cases and the evaluation harness | Applies R31 and Split Q7 and Q8. repo-audit now holds its scope, a four-step overview audit (resolve the target, `inspect` and `inventory`, the documents research brief with `cite-check`, print the checklist) and the two checklists, each line naming its skill with a cited reason, and writes nothing. Its command list is `inspect`, `inventory` and `cite-check` plus the `contract-test` dispatch harness, which no skill procedure uses and the command and schema contract tests still drive through it. The enforcement, intent-interview and grilling references, the findings, change-set, check-plan, evidence, impact-assessment, probe, project and resume-state schemas, and the research briefs other than `documents` left it, because the owning skills carry their content. `findings render` was removed with the audit record it wrote (Q8), so `findings validate` is the only findings command. Tests that drove moved commands through the repo-audit entry now drive the `verification` or `maintenance` entry that lists them. The scenario registry keeps all 22 scenarios and the case registry all 75 cases; only the scenarios' coverage keys changed, so the scenarios that still describe flows now owned by other skills are rehomed in 10b, and every evaluation stays deferred |
+| R40, 2026-10-15 | "Decision for correct: fold into /verification as a correct mode. Build items: C1, C2, C3, C4, C5." and "yes dispatch all 5 in your recommended order". The maintainer reviewed pstack's `correct` skill against the verification skill and chose a third `verification` mode over a standalone skill | Extends R29 and R30. `/verification correct` runs without an applied kit and has its own five-step checklist; the constraint reference gains the two-occurrence threshold and wider evidence (L1), the replacement-naming diagnostic (L5), the real-past-occurrence proof and the repeat rules; `maintain` step M6 and its reference point at the checklist instead of restating it. Not adopted, by the maintainer's selection: the explicit test rung, a rule table in the instruction file, per-class direct commits and inline exceptions with expiry dates. Build choices: no new script, since `rule-proof` and `baseline check` already prove a check and hold its baseline; the mode reports a change that needs product code instead of making it, which keeps the no-product-edit rule of every mode; and the acceptance cases AC-76 to AC-78 and their scenario stay unrun because evaluations are deferred |
