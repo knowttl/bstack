@@ -82,18 +82,23 @@ Done when: `plan check` passes on the record, every unit's evidence names a chec
 
 ### Step 5: Review and apply
 
-Record one finding in scratch following `schemas/findings.schema.json` with stage `audit`, the target and the plan path as its reviewed scope, and include `starting-checks` in its `requiredOutcomes`.
-Prepare a change set following `schemas/change-set.schema.json` that creates the plan with the exact approved UTF-8 bytes, or replaces an existing plan only after the user chooses to replace it.
-Propose the pointer line as a separate selection and consolidate the selected line into one edit of `AGENTS.md` in the same plan, following the [pointer guide](references/agents-pointer.md): `Use the implementation plan in docs/plan.md to see what each unit depends on and what proves it done.` linking the plan's real path.
+Propose the pointer line as a separate selection, following the [pointer guide](references/agents-pointer.md): `Use the implementation plan in docs/plan.md to see what each unit depends on and what proves it done.` linking the plan's real path.
+Record the plan and any proposed pointer as separate selectable findings in scratch following `schemas/findings.schema.json` with stage `audit`, the target and `starting-checks` in `requiredOutcomes`.
+Scope the plan finding to the plan path and the pointer finding to `AGENTS.md`, and include every finding's paths in the report's `reviewedScope`.
+Prepare a change set following `schemas/change-set.schema.json` with the same reviewed paths and their resolved paths in its `reviewedScope`, and include only selected findings and their edits.
+Create the plan with the exact approved UTF-8 bytes, or replace an existing plan only after the user chooses to replace it, linking that edit to the plan finding.
+Consolidate the selected pointer into one edit of `AGENTS.md` linked to the pointer finding in the same change set.
 A new idea uses mode `workspace` with a null revision, and an existing repo uses mode `repo` with its current revision.
-Run `node scripts/plan.mjs apply --repo <target> --plan <file> --dry-run --json`, with `--workspace` for a new idea, present the exact diff, then run the unchanged plan without `--dry-run` only after the user approves those bytes.
-Use `state show` with the returned run ID to inspect an interrupted apply, and repeat the unchanged plan to resume.
+Run `node scripts/plan.mjs apply --repo <target> --plan <file> --dry-run --json`, with `--workspace` for a new idea, present the exact diff, then run the unchanged change set without `--dry-run` only after the user approves those bytes and the freshness check below passes.
+Immediately before every non-dry-run apply, including a resume, run `plan check` on the unchanged Step 4 plan record against the same target.
+If it fails, block writes; stale design citations require rereading the changed design, updating and checking the record and draft, and renewed review of the exact change set before applying.
+Use `state show` with the returned run ID to inspect an interrupted apply, and repeat the unchanged change set to resume only after the same freshness check passes.
 
 Done when: Only the approved plan and any selected pointer have been written with unchanged hash preconditions and recoverable originals, or the write remains blocked with its reason.
 
 ### Step 6: Check and report
 
-Run `plan check` again on the unchanged record, because the design may have changed while the user reviewed.
+Run `plan check` again on the unchanged record to confirm the final report still reflects the current design.
 State the target, the design and the other inputs read, the gaps with the skills that fill them, the builder check's result, the questions asked and their answers, the units in dependency order with the evidence for each, and the written paths.
 Name every question left open and any step left blocked with its missing prerequisite.
 List the skills for any gap as next steps for the user to run, say that nothing here runs the plan, and start nothing.
