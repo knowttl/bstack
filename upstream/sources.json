@@ -58,8 +58,9 @@
   {
     "name": "pstack",
     "repoUrl": "https://github.com/cursor/plugins",
-    "commit": "9f451cf875ad1239912762f67741e8e5ba6ac0f1",
+    "commit": "99743e9c151c8537cbbf1f98bb38f34ef3368453",
     "files": [
+      "pstack/skills/architect/SKILL.md",
       "pstack/skills/architect/references/design-red-flags.md",
       "pstack/skills/principle-model-the-domain/SKILL.md",
       "pstack/skills/principle-minimize-reader-load/SKILL.md",
@@ -68,12 +69,13 @@
       "pstack/skills/principle-build-the-lever/SKILL.md"
     ],
     "sha256": {
+      "pstack/skills/architect/SKILL.md": "31f8e97a52bfa5432edd61f68ade2a8632ef0bacbc2d2a6802d7a0e6821944ac",
       "pstack/skills/architect/references/design-red-flags.md": "d0e639e4cc588ec865f930d3a4111faad60987ae36925917e319d7ceca7c69ce",
-      "pstack/skills/principle-model-the-domain/SKILL.md": "bbadbb9a723fac3f76e782ae45665eb94058ec10993e4bae36d4dc6b0e4eac07",
-      "pstack/skills/principle-minimize-reader-load/SKILL.md": "42551c5dc74cd578163c148da552db3ff67d29b78600ef216bfd311fb828fe69",
+      "pstack/skills/principle-model-the-domain/SKILL.md": "52c0d85e0c3827c41c18299b642657d7b47eaf77b7b31609e42e0df42b84c75f",
+      "pstack/skills/principle-minimize-reader-load/SKILL.md": "1ea2b7fef2391cae5844c4efdbd59031f775e8a52d06b7495d707229a200dcca",
       "pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb",
-      "pstack/skills/principle-encode-lessons-in-structure/SKILL.md": "77044c83a9ac6df78fc643887ea5f1f11f082adaf14b717c060cdaed03cce863",
-      "pstack/skills/principle-build-the-lever/SKILL.md": "458b269eab8e95a1573276955312f7d2a13ae8599879a9efc748248f6bc34b56"
+      "pstack/skills/principle-encode-lessons-in-structure/SKILL.md": "228963799189f481827d6f28065f278bc2008ffa37030b1234cbd5814d36b9e9",
+      "pstack/skills/principle-build-the-lever/SKILL.md": "3434b0ad0c640c6f1d7960be7a8986c3bcdc14e26060360dec29903df60074ff"
     }
   },
   {

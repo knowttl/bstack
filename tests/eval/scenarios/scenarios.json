@@ -941,6 +941,39 @@
       ]
     },
     {
+      "id": "boundary-proposal-call-sites",
+      "tier": "full",
+      "skills": ["architecture"],
+      "fixture": "ts-shop",
+      "request": "Run /architecture create on this repo and present a boundary proposal for the mixed route, pricing and persistence module. Present the proposal only: stop before any selection, protected write or apply. Do not browse or use network commands.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "call-sites-first",
+          "caseId": "AC-50",
+          "skill": "architecture",
+          "question": "Before each proposed public contract, did the proposal show two or three caller call sites taken from existing callers or the stated next changes, and derive the contract from them?"
+        },
+        {
+          "id": "distinct-candidates",
+          "caseId": "AC-50",
+          "skill": "architecture",
+          "question": "Did the proposal offer at least two structurally distinct whole-shape boundary candidates for the module, rather than point fixes inside one shape, and recommend one with its trade-off?"
+        },
+        {
+          "id": "fixture-unchanged",
+          "caseId": "AC-54",
+          "skill": "architecture",
+          "question": "Were the built fixture's tracked bytes and status preserved?",
+          "machine": {
+            "type": "fixtureUnchanged"
+          }
+        }
+      ]
+    },
+    {
       "id": "verification-limitations",
       "tier": "smoke",
       "skills": ["verification"],

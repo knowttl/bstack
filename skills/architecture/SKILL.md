@@ -70,13 +70,15 @@ Done when: Each boundary or decision to propose is confirmed or named as an open
 
 Present evidenced candidates and their alternatives for selection, and do not apply anything unselected.
 Name each module's responsibility, owned knowledge, public contract and private implementation, then the allowed dependency direction and the scope of forbidden imports and cycles.
+Write two or three caller call sites before each proposed public contract, taken from existing callers or the stated next changes, and derive the contract from them.
+Offer at least two structurally distinct boundary candidates, meaning different whole module shapes rather than point fixes inside one shape, and recommend the one that hides more complexity behind a smaller public contract.
 Record each boundary's project-specific reason, source, scope, enforcement and exception policy, and reuse existing decisions and standards instead of duplicating their rules.
 Draft the design sections in the project's existing design document, or `DESIGN.md` when it has none, and keep the design to structure and links to the enforcing checks.
 Offer a decision record only for a choice that is hard to reverse, surprising without context and the result of a real trade-off, following the decisions guide, and never one per setup choice.
 Load the [design standards reference](references/design-standards.md) to recommend DRY, KISS and other judgement rules only where evidence supports them, and to decide whether `CODING_STANDARDS.md` is needed.
 Keep proposed new principles separate from existing requirements and avoid universal architecture prescriptions, speculative layers and empty document templates.
 
-Done when: Every proposal has a project-specific reason, evidence, consequence, scope and verification method, each rule has exactly one authoritative home, and unresolved decisions are visible.
+Done when: Every proposal has a project-specific reason, evidence, consequence, scope and verification method, each public contract shows its call sites beside at least two structurally distinct candidates, each rule has exactly one authoritative home, and unresolved decisions are visible.
 
 ### Step 4: Prove the rules
 
