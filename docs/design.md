@@ -12,7 +12,7 @@ footer: Built from docs/design.md. Markdown is authoritative. The HTML is genera
 meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
-  - Scope: eight skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md) and their complete dependency set
+  - Scope: nine skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md, plan) and their complete dependency set
   - Revision: 29, maintainer-approved repo-audit split design; current implementation status in README.md
 ---
 
@@ -20,7 +20,7 @@ meta:
 
 **bstack helps developers design project-specific guidelines, rules and checks that give agents a sound foundation to extend.**
 Agent drift means changes that depart from the project's agreed purpose, design or behaviour.
-The first release ships eight skills and everything they need: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance` and `agents-md`.
+The first release ships nine skills and everything they need: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md` and `plan`.
 ["The skill split"](#the-skill-split) names each skill, its boundary and the order to run them.
 The sections below that describe `repo-audit` as one skill specify the foundation capabilities; the split assigns each capability to the skill that owns it.
 Together they help you establish a new project and strengthen an existing repo before more changes add technical debt.
@@ -49,7 +49,7 @@ The new-project path can implement the approved foundation, but it does not buil
 
 | Decision | Current direction |
 |---|---|
-| Release scope | Eight skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance` and `agents-md`, with their full dependency set (R29, R31) |
+| Release scope | Nine skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md` and `plan`, with their full dependency set (R29, R31, R41) |
 | Skill split | `repo-audit` audits at overview level and lists which skill to run next, with one evidenced reason per line; each other skill does one job and runs on its own (R31) |
 | Docs upkeep | Per-change upkeep rides the no-mistakes pipeline with no new user step, and the user runs `/maintenance sweep` now and then (R31) |
 | Existing repos | Audit the repo and relevant files first, then recommend improvements and apply the changes you choose |
@@ -59,11 +59,12 @@ The new-project path can implement the approved foundation, but it does not buil
 | Scripted safeguards | Script predictable audit, write and evidence operations to prevent agent mistakes |
 | Architecture audit | Assess coupling, files with unrelated responsibilities and shared edit targets that make parallel changes difficult |
 | Verification | Evidence must validate the original user outcome, without default autonomous TDD |
-| Product boundary | bstack owns project guidance and checks. akashic, a separate project, owns workflow routing and execution |
+| Product boundary | bstack owns project guidance and checks, and writes and checks a project's plan document. akashic, a separate project, owns workflow routing and the execution of that plan (R41) |
+| Planning workflow | The user writes the design once, each setup skill takes its answers from it, and `/plan` runs last to write an implementation plan it never executes (R41) |
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
-| Invocation | Only the user can start each of the eight skills, in every supported host. No skill starts another (R17, R31) |
+| Invocation | Only the user can start each of the nine skills, in every supported host. No skill starts another (R17, R31, R41) |
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
@@ -170,9 +171,47 @@ R31 records the scope amendment.
 | Split Q13 | Glossary and architecture stay current in both layers: a per-change contract assessment, plus `glossary maintain` and `architecture maintain` on demand. The maintainer's reason: "as we introduce new features there may be new terms ... and also architecture as new features are added there may be new boundaries" |
 | Split Q14 | Automatic upkeep per change through no-mistakes (a document ownership map and a docs gate), plus one user-started `maintenance sweep` that lists which `maintain` mode to run; all skills stay user-started |
 
+### Planning workflow commissioning decisions (2026-10-15)
+
+The maintainer reviewed pstack's `architect` and `correct` skills against bstack and asked in the same session how a design document for a new idea becomes an implementation plan.
+The `architect` outcome folded four design rules into `/architecture`, and R40 records the `correct` outcome.
+This section records the third outcome as release requirements, not claims of implemented behaviour.
+
+The maintainer chose workflow **W** with "Decision for workflow: W design once, bstack setup once, /plan last (W1-W3, D1-D4). Build items: none." and commissioned the build with "yes dispatch all 5 in your recommended order".
+The review form had no build-item checkboxes for this question, which is why it reads "none"; the chosen option names W1-W3 and D1-D4, so all of them are approved.
+
+Workflow W has four steps:
+
+1. The user writes the design once: requirements, stories and non-functional targets, by hand or in the owner's own design workflow.
+2. The setup skills run once, and each reads its answers from that design and asks only about gaps.
+3. `/plan` runs last, so each plan unit cites the real project documents and checks already proven by `rule-proof` and the verification kit.
+4. The project is built outside bstack, and no-mistakes plus `/maintenance sweep` keep it true, with no `/repo-audit` re-run.
+
+| ID | Approved requirement |
+|---|---|
+| W1 | A design document the user names counts as the user's explanation for the new-idea skills `vision`, `glossary`, `architecture` and `foundation`, so each summarises it and asks only about gaps |
+| W2 | A new skill, `plan`, writes and checks one implementation plan from an approved design and never executes it |
+| W3 | `/plan` comes after `/agents-md` in the run order of both checklists |
+| D1 | `/plan` accepts any approved design document plus the project's `VISION.md`, glossary, design document and verification kit when present, and reports a missing one as a gap without starting its skill |
+| D2 | A builder check has a fresh read-only reader list every place a builder would have to guess, and the agent brings back only the questions for the user |
+| D3 | The story map, meaning stories with acceptance cases and the core ones first, becomes the plan's units, each citing its design section, the boundary it touches, its "Done when" and the check or kit feature that proves it |
+| D4 | Non-functional targets become acceptance checks of the units they constrain |
+
+"Story map" is a new name because "feature map" already means the verification kit's map.
+
+Decisions that shaped W:
+
+- The owner's own design workflow, which turns an idea into the design document, stays in the owner's own repository and feeds `/plan`.
+  Moving it into bstack would add a second interview beside `/vision`, `/glossary`, `/architecture` and `/foundation`, which is the "more than one supported way to do one task" smell that `/architecture` now flags.
+- A plan-first alternative that wrote a separate spec and a plan before the setup skills ran was withdrawn, because the spec would duplicate `VISION.md`, the glossary and the design.
+- Writing and checking a plan is bstack's. Executing it is akashic's or the contributor's, and ["Product boundary"](#product-boundary) draws that line.
+
+Whether W keeps one copy of each document in practice, and how far W1 shortens the interviews, are inferences until the build is observed.
+The implementation plan schedules the work as T2.11 for the skill and T2.12 for W1 and the run-order wiring.
+
 ## The skill split
 
-The first release ships eight skills.
+The first release ships nine skills.
 Each does one job, runs on its own, and installs alone.
 Only the user starts any of them, and none starts another.
 repo-audit lists which skill to run next; the user decides whether to run it.
@@ -187,15 +226,16 @@ repo-audit lists which skill to run next; the user decides whether to run it.
 | `verification` | `create`, `maintain`, `correct` | Verification kit, testing guidance, lint and type constraints and the correction of repeated mistakes |
 | `maintenance` | `create`, `sweep` | Keep project docs true as code changes |
 | `agents-md` | none | Create and maintain one root `AGENTS.md` of pointers |
+| `plan` | `create` | Write and check one implementation plan from an approved design, and never execute it |
 
 ### Run order
 
-Each checklist is the order of dependency: an idea precedes its vocabulary, vocabulary and boundaries precede the scaffold, and `AGENTS.md` comes last because it points at what the earlier skills produce.
+Each checklist is the order of dependency: an idea precedes its vocabulary, vocabulary and boundaries precede the scaffold, `AGENTS.md` comes after them because it points at what the earlier skills produce, and `plan` comes last because each of its units cites the documents and proven checks those skills produce.
 
 | Repo | Order |
 |---|---|
-| New idea | `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification create`, `/maintenance`, `/agents-md` |
-| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification create`, `/maintenance`, `/agents-md` |
+| New idea | `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification create`, `/maintenance`, `/agents-md`, `/plan` |
+| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification create`, `/maintenance`, `/agents-md`, `/plan` |
 
 repo-audit prints the checklist for the repo's case with one reason per line, each citing the evidence that makes the skill relevant or its output already present.
 It computes status again on every run, writes nothing to the project and keeps no audit record, so `docs/repo-audit.md` is dropped.
@@ -269,6 +309,17 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - The shared [pointer contract](../runtime/references/agents-pointer.md) owns the file's shape and the rules for adding a line, with a checked copy in each skill that adds or audits pointers.
 - The pointer audit is read-based: the skill opens each pointer's target and reports broken links, lines that copy a rule instead of pointing to it, and sources with no pointer. `inventory` supplies the instruction files, merge candidates and shadowing reports, and no new command checks links, since `/maintenance sweep` is where the design places the repo-wide pointer check.
 
+### plan
+
+- `create`: writes one implementation plan for a project from an approved design, reviewed before it is written.
+- Takes any approved design document the user names, plus `VISION.md`, the glossary, the design document and the verification kit when they exist. A missing one is reported as a gap and its skill is never started (D1).
+- Runs a builder check before writing: a fresh read-only reader lists where a builder would have to guess, and the agent brings back only the questions the user must answer (D2).
+- Turns the story map into the plan's units, each citing its design section, the boundary it touches, its "Done when" and the check or kit feature that proves it (D3), and carries non-functional targets as unit acceptance checks (D4).
+- The plan format adapts bstack's own [implementation plan](implementation-plan.md) and pstack's multi-phase plan and sequence-verifiable-units guidance; the builder check adapts the `builder-check-prompt.md` of the `brainstorming` skill in obra's `superpowers`. The build pins each source and records it in `NOTICE`.
+- A `plan check` command fails on a unit with no evidence, a dependency cycle, or a design citation that `cite-check` cannot resolve.
+- Boundary: writes one plan document and checks it. It starts no skill and no work, never executes a unit, assigns no agent, tracks no progress and edits no product code. It writes only through `apply`, after the user approves the exact file.
+- It proposes one pointer line for the plan through the shared pointer contract.
+
 ### Not separate skills
 
 - Grilling and research briefs become shared references, with a checked copy in each skill that asks or researches.
@@ -293,6 +344,7 @@ A shared runtime folder beside the skills is ruled out because installing one sk
 | `verification` | `rule-proof`, `baseline`, `run-checks`, `probe`, `findings`, `apply`, `state show` |
 | `maintenance` | `contract validate`, `evidence collect` and `validate`, `docs check` and `generate`, `run-checks`, `probe`, `apply`, `state show`, `sweep` |
 | `agents-md` | `inventory`, `apply`, `state show` |
+| `plan` | `plan check`, `apply`, `state show`, `cite-check` |
 
 The lists come from each command's imports and the steps that call it; the build may find one more shared helper.
 
@@ -573,7 +625,8 @@ This requirement does not prescribe the steps the agent must use to implement th
 ## Product boundary
 
 bstack defines what a healthy project must preserve and how contributors can verify those requirements.
-akashic, a separate project, defines how work runs through playbooks.
+It also writes and checks a project's implementation plan as a document.
+akashic, a separate project, defines how work runs through playbooks, including executing that plan.
 Neither project requires an installation of the other.
 
 | Concern | bstack | akashic |
@@ -582,12 +635,17 @@ Neither project requires an installation of the other.
 | Design and standards | Recommend scoped principles, architecture constraints and judgement rules | Require relevant rules in work briefs and playbooks |
 | Verification | Establish native checks, evidence requirements and their coverage limits | Select and run checks, assess gates and record execution |
 | Documentation currency | Define required impact assessments and provide mechanical validators | Decide where assessment and review belong in a playbook |
+| Plan document | Write and check one plan from the approved design: units that each cite their design section and name the check that proves them | Execute the plan: order the work, assign agents, run each unit and record progress |
 | Work execution | Provide explicitly invoked foundation skills and bounded check tools | Route tasks, order steps, coordinate agents, recover runs and deliver changes |
 
 The linked [poteto-mode guide](https://github.com/backnotprop/pstack/blob/124f622bcaeac490e7e9dac6af83f3ef9611d554/docs/guide/02-poteto-mode.md) describes automatic playbook selection and sequencing.
 bstack does not adopt that responsibility.
 It contains no task router, sticky execution mode, general implementation playbooks or autonomous restart service.
 Those capabilities belong to akashic when wanted, rather than a later bstack release.
+
+Writing a plan document is not one of those capabilities.
+`/plan` records what each unit depends on and what proves it done, and it prescribes no development method, tool or agent.
+It starts nothing and never executes a unit, and nothing in bstack runs the plan it writes.
 
 Security of the skills bstack creates is also outside its scope.
 That covers attacks through skill files, scripts or web content the agent reads.
@@ -1410,6 +1468,7 @@ bstack can still adapt relevant design and verification principles with attribut
 
 Future bstack skills may establish or assess a bounded project property when a real need emerges.
 They must not become a general development router or an exact implementation playbook.
+`plan` is the one planning skill: it writes a document for one project and executes none of it.
 
 ## Scripts that prevent audit and evidence mistakes
 
@@ -1485,7 +1544,7 @@ New recurring agent mistakes should become a regression case or structural check
 
 ## Complete first-release package
 
-Each of the eight skills is a self-contained folder holding the resources, assets and script bundles it reads.
+Each of the nine skills is a self-contained folder holding the resources, assets and script bundles it reads.
 Installing one folder alone must not leave references to missing sibling skills.
 `repo-audit` is the entry point: it lists which skill to run next and requires none of them to run.
 
@@ -1638,7 +1697,7 @@ Every skill works in any host that supports skills, with explicit invocation and
 The package includes the documented settings for Claude Code, Codex and Pi in each skill folder, so the user-only rule holds in each.
 The package check confirms those settings are present. bstack does not run each host to test them.
 
-**Only the user can start any of the eight skills.**
+**Only the user can start any of the nine skills.**
 The agent must not start one on its own because a request looks like an audit, a glossary change or a scaffold.
 These skills read the repo, interview the user and can write files, so the user decides when each runs.
 The setting is per skill and applies to every mode.
@@ -1945,3 +2004,4 @@ Historical entries keep their original decisions and name their current applicat
 | R38, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 9 of the split build: the `foundation` skill, the new-project path and `project create`, and the removal of the new-project proposal, creation and verification steps from repo-audit | Applies R31 and Split Q3 and Q5. repo-audit's Steps 4 to 6 now list `/foundation` instead of proposing a stack, creating the project or verifying its journey, `project create` and its schema left repo-audit's command list, and the intent interview lost its technical half (data, interfaces, deployment, compatibility and the first journey), which R33 left there until now. Build choices: the skill takes the approved `VISION.md` as a required input and stops naming `/vision` without it, while the glossary and design are optional; its scaffold carries a `README.md` of the setup and check commands and a root `AGENTS.md` with the skill's one pointer line, created in the same plan because a new project has no instruction file; it carries its own condensed checks reference for `rule-proof` and the maintained command, since `enforcement.md` stays in repo-audit for the existing-repo path until the final slim; the command list is exactly the agreed four, so a created project's journal is inspected by repeating the unchanged plan rather than through `state show`; and the repo-audit scenarios that still describe the technical interview and project creation are rehomed with the final slim, so no eval scenario for `foundation` was added because evals are deferred |
 | R39, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 10 of the split build, the final repo-audit slim, and approved building it as two changes: 10a, the slim itself, then 10b, the rehoming of the acceptance cases and the evaluation harness | Applies R31 and Split Q7 and Q8. repo-audit now holds its scope, a four-step overview audit (resolve the target, `inspect` and `inventory`, the documents research brief with `cite-check`, print the checklist) and the two checklists, each line naming its skill with a cited reason, and writes nothing. Its command list is `inspect`, `inventory` and `cite-check` plus the `contract-test` dispatch harness, which no skill procedure uses and the command and schema contract tests still drive through it. The enforcement, intent-interview and grilling references, the findings, change-set, check-plan, evidence, impact-assessment, probe, project and resume-state schemas, and the research briefs other than `documents` left it, because the owning skills carry their content. `findings render` was removed with the audit record it wrote (Q8), so `findings validate` is the only findings command. Tests that drove moved commands through the repo-audit entry now drive the `verification` or `maintenance` entry that lists them. The scenario registry keeps all 22 scenarios and the case registry all 75 cases; only the scenarios' coverage keys changed, so the scenarios that still describe flows now owned by other skills are rehomed in 10b, and every evaluation stays deferred |
 | R40, 2026-10-15 | "Decision for correct: fold into /verification as a correct mode. Build items: C1, C2, C3, C4, C5." and "yes dispatch all 5 in your recommended order". The maintainer reviewed pstack's `correct` skill against the verification skill and chose a third `verification` mode over a standalone skill | Extends R29 and R30. `/verification correct` runs without an applied kit and has its own five-step checklist; the constraint reference gains the two-occurrence threshold and wider evidence (L1), the replacement-naming diagnostic (L5), the real-past-occurrence proof and the repeat rules; `maintain` step M6 and its reference point at the checklist instead of restating it. Not adopted, by the maintainer's selection: the explicit test rung, a rule table in the instruction file, per-class direct commits and inline exceptions with expiry dates. Build choices: no new script, since `rule-proof` and `baseline check` already prove a check and hold its baseline; the mode reports a change that needs product code instead of making it, which keeps the no-product-edit rule of every mode; and the acceptance cases AC-76 to AC-78 and their scenario stay unrun because evaluations are deferred |
+| R41, 2026-10-15 | "Decision for workflow: W design once, bstack setup once, /plan last (W1-W3, D1-D4). Build items: none." and "yes dispatch all 5 in your recommended order". The maintainer chose to write the design once, have each setup skill take its answers from it and add a `/plan` skill that writes and checks an implementation plan and never executes it | Extends R31 and refines R12's boundary. `plan` is a ninth user-started skill that runs after `/agents-md` in both checklists; the product boundary separates writing and checking a plan document, which bstack does, from executing it, which stays with akashic or the contributor; "Planning workflow commissioning decisions (2026-10-15)" records W1-W3 and D1-D4. The owner's own design workflow stays in the owner's own repository and feeds `/plan`. Build choices: this change amends the design and the implementation plan only; T2.11 builds the skill and T2.12 builds W1 and the checklist wiring, so no `plan` skill folder, command or acceptance case exists yet and every evaluation of the workflow stays deferred |
