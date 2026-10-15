@@ -443,6 +443,8 @@ Tick each task when its "Done when" commands pass.
     Skill-quality observation: the agent did not run and repair its own native tests before finishing the scaffold proposal.
     This slice adds no corrective skill guidance for that observation.
     [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks and platform limitations; see [README](../README.md) for current enforcement and maintenance availability.
+  - [x] T2.10 Add the `/verification correct` mode (after T3.3) - a five-step checklist and the constraint reference's evidence, diagnostic, proof and repeat rules, with no new script.
+    The correct-mode scenario is defined and its evaluation stays deferred, so AC-76 to AC-78 keep planned procedures.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -1347,6 +1349,33 @@ T3.1 supplies the enforcement and architecture references that recommendations l
 
 **Covers:** AC-1, AC-2, AC-9, AC-12.
 
+### T2.10 Add the `/verification correct` mode
+
+**Depends on:** T3.1, T3.2 and T3.3.
+It is numbered after the phase-2 tasks because it extends the verification skill that T2.7 started, and it reuses the commands that T3.2 and T3.3 build.
+
+**Inputs and outputs:** The user's correction and the repo's history -> a reviewed proposal of proven checks and pointers.
+
+**Verification:** `npm run check`, then `npm test -- --task T2.10`.
+
+**Read:** design "Correct mode" and "Constraint principles (L1-L8)".
+
+**Steps**
+
+1. Add the third mode to the verification skill's Scope and its Correct checklist: collect evidence, classify and pick a rung, prove each check, review and apply, report.
+   The mode needs no applied kit, and the maintain step that mines repeated mistakes runs the checklist's first two steps instead of restating them.
+2. Extend the constraint reference with the wider evidence and two-occurrence threshold, the replacement-naming diagnostic, the proof on a real past occurrence and the repeat rules.
+3. Add the pstack `correct` source to the pinned manifest and the NOTICE adaptation row.
+4. Define AC-76 to AC-78 and the `correct-recurring-rule` scenario; leave their procedures planned because evaluations are deferred.
+
+**Done when**
+
+- `npm run check` and `npm test -- --task T2.10` pass.
+- The scenario's checks resolve to verification cases, and the registry matches the design list and this plan.
+- No new script, schema or command exists: the proof and baseline use `rule-proof` and `baseline check`.
+
+**Covers:** AC-76, AC-77, AC-78.
+
 ## Phase 3: Enforcement
 
 Phase evidence from the design: valid cases pass, and seeded violations fail through the maintained command in disposable local copies.
@@ -1928,6 +1957,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.7 | AC-26, AC-27, AC-29, AC-30, AC-31, AC-32, AC-33, AC-71 | Bug reproduction, pre-refactor protection, user flows and probe pairs | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T2.8 | AC-5, AC-6, AC-7, AC-38, AC-55, AC-62 | Audit-before-interview and project-specific findings in both stacks | Passing current evidence: AC-5, AC-6, AC-7, AC-38, AC-62 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-55 ([release notes](releases/v0.1.0.md)). |
 | T2.9 | AC-1, AC-2, AC-9, AC-12 | Approved creation, unresolved decision and destination-collision controls | Passing current evidence: AC-2, AC-12 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-1, AC-9 ([release notes](releases/v0.1.0.md)). |
+| T2.10 | AC-76, AC-77, AC-78 | Repeated-mistake evidence and threshold, higher rung with a replacement-naming diagnostic, and proof on a real past occurrence | Procedures planned; the scenario evaluation is deferred. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |

@@ -1,6 +1,6 @@
 ---
 name: verification
-description: Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, and adopt testing and constraint guidance for it.
+description: Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, adopt testing and constraint guidance for it, and turn a repeated correction into a proven check.
 disable-model-invocation: true
 ---
 
@@ -10,12 +10,14 @@ Only the user starts verification.
 Start this procedure only when the user's message explicitly invokes `$verification`, `/verification`, `/skill:verification` or selects it through the host's skills menu.
 A plain request such as "set up verification" does not invoke it.
 If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
-Resolve the target repo and the mode, `create` or `maintain`, before proceeding.
+Resolve the target repo and the mode, `create`, `maintain` or `correct`, before proceeding.
 Use `create` when the repo has no kit and `maintain` when it has one; if the user's choice contradicts the repo, say so and ask.
+Use `correct` when the user keeps correcting agents for the same mistake; it needs no kit and works with or without one.
 
 Create builds a kit in the target repo that tells an agent how to start and drive the product, plus a feature map of how a user reaches each feature.
 Maintain keeps an applied kit true: it checks the kit for drift, drives every feature, triages what disagrees and proposes reviewed corrections.
-Neither mode edits product code, implements features, fixes product bugs or opens pull requests; when startup needs a product fix, report the blocker, and report a product bug instead of weakening the map.
+Correct turns a repeated mistake into the highest-rung check that makes it impossible, proves the check on a real past occurrence and proposes it for review, without driving the product.
+No mode edits product code, implements features, fixes product bugs or opens pull requests; when startup needs a product fix, report the blocker, and report a product bug instead of weakening the map.
 It never adds hosted CI unless the user selects it.
 Checks it proposes must run without bstack installed.
 Scripts collect facts and render reviewable change sets; only `apply` writes to the target, after the user approves the exact diff.
@@ -170,7 +172,7 @@ Done when: Only the approved change set has been applied, `kit check` passes and
 
 ### Step M6: Mine repeated mistakes and audit the suite
 
-Read the project's recent no-mistakes findings and review comments where they are available, and propose moving each repeated mistake down the constraint ladder through the [constraint reference](references/constraints.md).
+Run Steps C1 and C2 of the [Correct checklist](#correct-checklist) over the project's recent no-mistakes findings and review comments where they are available, and propose each repeated mistake's rung without applying it.
 Audit the suite for the eight wasteful-test patterns with the [testing reference](references/testing.md), recording evidenced instances as findings and removing nothing until the user selects it.
 
 Done when: Each repeated mistake has a proposed rung and evidence, and each pattern instance has cited evidence or the audit states that none was found.
@@ -181,6 +183,58 @@ Report one outcome: clean, changed through a reviewed change set, or blocked.
 Name the features driven, the features not reached and why, the product bugs found and every limitation.
 
 Done when: The report states one outcome and separates applied changes, product bugs and limitations.
+
+## Correct checklist
+
+Copy this checklist and tick a step only when its Done when criterion is met.
+Correct needs no applied kit and does not drive the product, so it runs after a single correction without the full `maintain` pass.
+Load the [constraint reference](references/constraints.md) for the ladder, the evidence sources, the proof and the repeat rules.
+
+- [ ] Step C1: Collect mistake evidence
+- [ ] Step C2: Classify each mistake and pick a rung
+- [ ] Step C3: Prove each check on a real past mistake
+- [ ] Step C4: Review and apply
+- [ ] Step C5: Report
+
+### Step C1: Collect mistake evidence
+
+Start from the user's correction, then read recent commits, reverts and fix-ups, review comments, no-mistakes findings where they are available, agent instruction files and comments that explain a workaround.
+Group the occurrences into classes and cite each one by commit, file or comment.
+A class counts once it has two cited occurrences; name a single occurrence as below the threshold and leave it alone.
+Count a mistake that recurs despite a written rule as a repeat of its class, and name that rule.
+
+Done when: Each class lists at least two cited occurrences and any written rule it recurred against, or is named as below the threshold.
+
+### Step C2: Classify each mistake and pick a rung
+
+Give each class the highest rung of the ladder that can express it, and say why each higher rung cannot.
+Move a class that recurs despite a written rule up at least one rung from the rung that rule sits on, in the same change.
+For a check, write the diagnostic so that it names the file, type or function to use instead.
+
+Done when: Each class has one rung with the reason each higher rung fails, and each check's diagnostic names its replacement.
+
+### Step C3: Prove each check on a real past mistake
+
+Seed the violation from a real past occurrence of the class, with its commit, wherever the history holds one, and record a synthetic violation as synthetic.
+Prove each rule with `rule-proof` and put existing violations in a shrinking baseline with `baseline check`, as Step 6 of the create checklist does.
+
+Done when: Each check has a passing proof whose seeded violation is a recorded occurrence or is recorded as synthetic, or is reported unproven.
+
+### Step C4: Review and apply
+
+Present each class as a selected change with its problem, consequence, fix, scope and verification, then the exact diff from `apply --dry-run`.
+Apply the unchanged change set only after the user approves those bytes.
+Once a proven check enforces a written rule, propose replacing the rule with a pointer to the check.
+Report a change that needs product code, such as removing a second way to do one task, with its files instead of making it.
+
+Done when: Only the approved change set has been applied, or the user has declined each change.
+
+### Step C5: Report
+
+State each class with its evidence, the rung chosen and why no higher rung worked, each proof result, each prose rule replaced by a pointer, the product changes reported and not made, and every unproven check or limitation.
+Commit nothing.
+
+Done when: The report separates applied changes, proof evidence, reported product changes and limitations.
 
 ## Review before apply
 
@@ -206,7 +260,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 |---|---|
 | Interviewing the repo, writing the kit plan or proving the kit | `references/create.md` |
 | Proposing testing guidance or auditing the suite | `references/testing.md` |
-| Proposing hard constraints, rule proofs or a baseline | `references/constraints.md` |
+| Proposing hard constraints, rule proofs or a baseline, or running a correct pass | `references/constraints.md` |
 | Selecting slop rules for a language or banning prose comments | `references/slop-baseline.md` |
 | The product calls an outside service or API | `references/third-party.md` |
 | Running a maintain pass, triaging a discrepancy or correcting an applied kit | `references/maintain.md` |
