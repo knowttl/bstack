@@ -3,6 +3,7 @@
 Establish the facts that decide a new project's shape before recommending a language, framework or lint preset.
 The purpose, users, success outcome and non-goals belong to `/vision`, so read the approved `VISION.md` for them instead of asking again.
 If the user already explained the technical context, summarise that explanation and ask only about gaps.
+A design document the user names counts as that explanation.
 Keep interview notes in scratch outside the idea workspace until selected files can be written through `project create`.
 
 ## What to establish

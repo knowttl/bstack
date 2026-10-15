@@ -1064,6 +1064,90 @@
       ]
     },
     {
+      "id": "design-as-input",
+      "tier": "full",
+      "skills": ["vision", "glossary", "architecture"],
+      "fixture": "design-only-idea",
+      "request": "I have no other notes: design.md in this workspace is my explanation of the idea. Start each of /vision, /glossary and /architecture on it in turn, and stop each at the first question it would put to me or at its first proposal, before any board, selection, protected write or apply. Do not browse or use network commands. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "vision-summary",
+          "caseId": "AC-84",
+          "skill": "vision",
+          "question": "Did /vision summarise design.md as the user's explanation and ask only about what it leaves open, such as non-goals and refusals, rather than re-asking the problem, users or success outcome that the design states?"
+        },
+        {
+          "id": "glossary-terms",
+          "caseId": "AC-85",
+          "skill": "glossary",
+          "question": "Did /glossary take its candidate terms from design.md as the user's own statement and ask only about terms the design leaves unclear?"
+        },
+        {
+          "id": "architecture-changes",
+          "caseId": "AC-86",
+          "skill": "architecture",
+          "question": "Did /architecture list the expected changes from design.md and ask only about what the design leaves open?"
+        }
+      ]
+    },
+    {
+      "id": "foundation-design-as-input",
+      "tier": "full",
+      "skills": ["foundation"],
+      "fixture": "foundation-design-idea",
+      "request": "The workspace's VISION.md is approved by me. design.md is my explanation of the technical context. Start /foundation using those inputs, with pantry-app as the absent project destination inside this workspace. Stop at the first interview question or proposal, before scratch scaffolding, command execution for a scaffold, protected writes or project creation. Do not browse or use network commands.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "foundation-context",
+          "caseId": "AC-87",
+          "skill": "foundation",
+          "question": "Did /foundation read the approved VISION.md, reach its technical interview, summarise the TypeScript, browser and local-storage context from design.md and ask only about technical facts the design leaves open?"
+        }
+      ]
+    },
+    {
+      "id": "repo-audit-checklist-new-idea",
+      "tier": "full",
+      "skills": ["repo-audit"],
+      "fixture": "design-only-idea",
+      "request": "Run /repo-audit on this new idea workspace and print its next-skills checklist with cited reasons. Do not start any listed skill or write to the target. Do not browse or use network commands.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "new-idea-checklist-order",
+          "caseId": "AC-88",
+          "skill": "repo-audit",
+          "question": "Did the emitted new-idea checklist list /vision, /glossary, /architecture, /foundation, /verification create, /maintenance, /agents-md and /plan in exactly that order, with /plan immediately after /agents-md and last, and a cited reason for /plan? Fail if any entry is missing or out of order."
+        }
+      ]
+    },
+    {
+      "id": "repo-audit-checklist-existing-repo",
+      "tier": "full",
+      "skills": ["repo-audit"],
+      "fixture": "clear-goals",
+      "request": "Run /repo-audit on this existing repo and print its next-skills checklist with cited reasons. Do not start any listed skill or write to the target. Do not browse or use network commands.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "existing-repo-checklist-order",
+          "caseId": "AC-88",
+          "skill": "repo-audit",
+          "question": "Did the emitted existing-repo checklist list /repo-audit, /vision, /glossary, /architecture, /verification create, /maintenance, /agents-md and /plan in exactly that order, with /plan immediately after /agents-md and last, and a cited reason for /plan? Fail if any entry is missing or out of order."
+        }
+      ]
+    },
+    {
       "id": "plan-existing-repo",
       "tier": "full",
       "skills": ["plan"],

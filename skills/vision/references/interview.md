@@ -2,6 +2,7 @@
 
 Establish the project's purpose before drafting, including for an empty repo or a new idea in a non-Git directory.
 If the user already explained the idea, summarise that explanation and ask only about gaps.
+A design document the user names counts as that explanation.
 Keep interview notes in scratch outside the target until the user approves the vision.
 
 ## What to establish

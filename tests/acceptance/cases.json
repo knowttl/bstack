@@ -1365,6 +1365,73 @@
         "status": "planned",
         "description": "Run the plan skill through a proposal, and score that it writes only the approved plan and its pointer through apply, starts no skill and executes no unit."
       }
+    },
+    {
+      "id": "AC-84",
+      "skill": "vision",
+      "ownerTask": [
+        "T2.12"
+      ],
+      "criterionSource": "docs/design.md#AC-84",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the vision skill on a workspace holding only a design the user names, and score that it summarises the design as the user's explanation and asks only about gaps."
+      }
+    },
+    {
+      "id": "AC-85",
+      "skill": "glossary",
+      "ownerTask": [
+        "T2.12"
+      ],
+      "criterionSource": "docs/design.md#AC-85",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the glossary skill on a workspace holding only a design the user names, and score that it takes terms from the design as the user's explanation and asks only about gaps."
+      }
+    },
+    {
+      "id": "AC-86",
+      "skill": "architecture",
+      "ownerTask": [
+        "T2.12"
+      ],
+      "criterionSource": "docs/design.md#AC-86",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the architecture skill on a workspace holding only a design the user names, and score that it lists the expected changes from the design and asks only about gaps."
+      }
+    },
+    {
+      "id": "AC-87",
+      "skill": "foundation",
+      "ownerTask": [
+        "T2.12"
+      ],
+      "criterionSource": "docs/design.md#AC-87",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the foundation-design-as-input scenario with an approved VISION.md and a design the user names, and score that foundation reaches the interview, summarises the design's technical context and asks only about gaps."
+      }
+    },
+    {
+      "id": "AC-88",
+      "skill": "repo-audit",
+      "ownerTask": [
+        "T2.12"
+      ],
+      "criterionSource": "docs/design.md#AC-88",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/repo-audit-overview.test.mjs",
+        "name": "installed repo-audit prompt emits both checklist orders with plan last",
+        "artifacts": ["tests/scripts/repo-audit-overview.test.mjs"]
+      }
     }
   ]
 }

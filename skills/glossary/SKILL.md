@@ -40,6 +40,7 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 
 Read the project's vocabulary source and the documents that describe its domain before asking any naming question.
 For a new idea, the sources are the user's explanation and any approved `VISION.md` in the workspace.
+A design document the user names counts as the user's explanation, so summarise it and ask only about gaps.
 For an existing repo, derive candidate terms from documented domain concepts and the code that implements them, and distinguish established definitions from inferred meanings.
 Code shows current behaviour, not the intended definition.
 Record repo citations in scratch following `schemas/research-report.json` and run `node scripts/glossary.mjs cite-check --repo <target> --report <file> --json`, with `--workspace` for a new idea.
