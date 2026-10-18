@@ -51,7 +51,7 @@ Plain prompts and hand-written `AGENTS.md` files leave the rules unchecked; bsta
 
 ## Quickstart
 
-Prerequisites: Node 24 or later and Git.
+Prerequisites: Node 24 or later, Git and jq (for the inventory example).
 
 1. Install every skill into the current project, or add `--skill repo-audit` to install one.
    Use `--agent codex` for Codex (installs to `.agents/skills`) and `--global` for your home directory instead of the project.
