@@ -180,7 +180,7 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
 
 | Capability | Skills | How it is unlocked |
 |---|---|---|
-| Apply reviewed target-file edits | `vision`, `glossary`, `architecture`, `verification`, `maintenance`, `agents-md`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
+| Apply reviewed target-file edits | `vision`, `glossary`, `architecture`, `verification`, `foundation`, `maintenance`, `agents-md`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
 | Replace the target debt baseline | `architecture`, `verification` | `baseline check --refresh` directly replaces the baseline when validation passes, removing fixed entries; adding an entry also requires `--finding`, `--findings` and `--entry` matching selected unresolved debt. There is no approval prompt or `apply` journal; the skill workflow instead prepares baseline edits in scratch for reviewed `apply` |
 | Create a new Git project | `foundation` | `project create` runs after you approve the exact files and commands, only in an empty destination |
 | Run project commands | `architecture`, `verification`, `foundation`, `maintenance` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture` and `verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch |

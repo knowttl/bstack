@@ -441,7 +441,8 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Every command, shared library, schema, asset and shared reference has one source in [runtime/](../runtime/), and [runtime/skills.json](../runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
-[skills/repo-audit](../skills/repo-audit/SKILL.md), [skills/verification](../skills/verification/SKILL.md), [skills/vision](../skills/vision/SKILL.md), [skills/glossary](../skills/glossary/SKILL.md), [skills/architecture](../skills/architecture/SKILL.md), [skills/foundation](../skills/foundation/SKILL.md), [skills/agents-md](../skills/agents-md/SKILL.md), [skills/maintenance](../skills/maintenance/SKILL.md) and [skills/plan](../skills/plan/SKILL.md) each commit those generated files, and share `apply` with its protected-write libraries for reviewed, hash-checked change sets.
+Each skill commits its generated files.
+The skills that ship `apply` share its protected-write libraries for reviewed, hash-checked change sets; the [manifest](../runtime/skills.json) owns each skill's command list.
 The architecture and verification runtimes also expose direct baseline replacement through `baseline check --refresh`, as described under [baseline commands](#rule-proof-baselines-and-maintained-checks).
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 

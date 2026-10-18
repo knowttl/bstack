@@ -13,7 +13,7 @@ meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
   - Scope: nine skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md, plan) and their complete dependency set
-  - Revision: 29, maintainer-approved repo-audit split design; current implementation status in README.md
+  - Revision: 29, maintainer-approved repo-audit split design; current implementation status in [development.md](development.md#status)
 ---
 
 ## Summary
