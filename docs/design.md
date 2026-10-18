@@ -391,7 +391,7 @@ Each move removes the moved content from repo-audit and replaces it with a check
 
 ### Split limitations
 
-- [README.md](../README.md) owns current implementation status for the split skills and their wiring.
+- [development.md](development.md#status) owns current implementation status for the split skills and their wiring.
 - The verification build supplied only the byte-for-byte checked copies of piece 2; the generator, the multi-skill installer and the move of every command to one source tree came with piece 2 itself.
 - The no-mistakes constraints above rest on the pinned reference at commit 93b4407, and the wiring has not run end to end.
 
@@ -1925,7 +1925,7 @@ The [discovery checkpoint](../tests/eval/results/discovery-C11a/summary.md) reco
 The [T1.6 evidence record](../tests/eval/results/tasks/T1.6.json) owns tested versions, setup results and probe limitations.
 Its [captured live probe](../tests/eval/results/tasks/T1.6.runtime-probe.md) records the observed CLI and feedback transport.
 The runtime dependency declaration and nested lockfile own the exact pin, chosen for its observed interface rather than assuming a newer version behaves identically.
-See [README setup](../README.md) for the nested installation and the [board command contract](command-contract.md#vision-board-build) for generation and feedback metadata.
+See [checkout installation](development.md#install-from-a-checkout) for the nested installation and the [board command contract](command-contract.md#vision-board-build) for generation and feedback metadata.
 
 A terminal-only agent can open the printed URL in a reachable browser, while its terminal runs the CLI's long-poll command.
 Browser sends deliver queued prompts once to that listener.

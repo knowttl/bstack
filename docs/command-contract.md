@@ -1083,7 +1083,7 @@ Command implementations return data and inputs, while the entry point owns resul
 Its input is `{ "schemaVersion": 1, "paths": [<relative path>], "scratch": <boolean> }` with no additional fields.
 It validates all paths before optionally writing `draft.txt` in a new scratch run.
 Valid and invalid fixtures in `tests/inputs/` cover refusal with no partial writes.
-See the [README](../README.md) for suite selection and the [implementation plan](implementation-plan.md#progress) for slice progress.
+See [development](development.md#validate) for suite selection and the [implementation plan](implementation-plan.md#progress) for slice progress.
 
 ## C4b public test command
 

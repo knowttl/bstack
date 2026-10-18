@@ -3,7 +3,7 @@
 T1.1 delivers idea fixtures, clear goals, both native stacks, clean boundary proofs and state variants.
 These sources serve later acceptance procedures, and their sanity checks do not claim those agent behaviours have passed.
 
-See [README usage](../README.md) for build commands, output and cleanup responsibilities.
+See [fixtures in development](development.md#fixtures) for build commands, output and cleanup responsibilities.
 The builder copies declared files into a fresh OS temporary folder and runs the named fixture's `sanity.mjs` with that folder as its only argument.
 Exit codes are 0 for success, 1 for a failed build or sanity check, 2 for a missing executable or input, and 3 for usage errors.
 
