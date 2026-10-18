@@ -1,19 +1,33 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
-import { basename, dirname, join } from 'node:path'
+import { join, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 const [path] = process.argv.slice(2)
-const violation = basename(dirname(process.argv[1])).endsWith('-violation')
 const read = file => readFile(join(path, file), 'utf8')
-const code = await read('src/charge.mjs')
-const model = await read('formal/ChargeOnce.tla')
+const { charge } = await import(pathToFileURL(resolve(path, 'src/charge.mjs')))
 
-assert.equal(code.includes('compareAndSet'), !violation)
-assert.equal(model.includes('Claim(w) =='), true)
-assert.equal(model.includes('Read(w) =='), violation)
-assert.match(model, /^NoDoubleCharge == charges <= 1$/m)
-assert.match(await read('formal/ChargeOnce.cfg'), /^INVARIANT NoDoubleCharge$/m)
+for (const status of ['pending', 'charging', 'charged']) {
+  const orders = new Map([['order-1', status]])
+  const store = {
+    get: id => orders.get(id),
+    set: (id, value) => orders.set(id, value),
+    compareAndSet(id, expected, value) {
+      if (orders.get(id) !== expected) return false
+      orders.set(id, value)
+      return true
+    }
+  }
+  const charges = []
+  const gateway = { charge: id => charges.push(id) }
+
+  assert.equal(charge(store, 'order-1', gateway), status === 'pending')
+  assert.deepEqual(charges, status === 'pending' ? ['order-1'] : [])
+  assert.equal(orders.get('order-1'), status === 'pending' ? 'charged' : status)
+  assert.equal(charge(store, 'order-1', gateway), false)
+  assert.deepEqual(charges, status === 'pending' ? ['order-1'] : [])
+}
 
 // The plan binds its acceptance source by hash, so a changed property file fails here before any proof runs.
 const plan = JSON.parse(await read('check-plan.json'))

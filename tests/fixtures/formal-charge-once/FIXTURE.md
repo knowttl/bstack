@@ -17,4 +17,5 @@ Put the pinned TLC jar at `tools/tla2tools.jar` in each built folder, which `.gi
 - On a violation TLC writes a `ChargeOnce_TTrace_*.tla` trace spec beside the model, which `.gitignore` keeps out of the repo.
 - `rule-proof` records the version of `java`, so nothing in its proof identifies TLC; the suite must check the jar hash itself.
 
-`node sanity.mjs <built-folder>` needs Node 24 or later only; it checks the files and the plan's hash and never runs TLC.
+`node sanity.mjs <built-folder>` needs Node 24 or later only; it executes sequential charge behaviour and checks the plan's acceptance-source hash and check metadata.
+It never runs TLC or verifies model behaviour.
