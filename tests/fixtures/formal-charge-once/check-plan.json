@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "changeKind": "feature",
+  "acceptanceSources": [
+    { "id": "property", "path": "PROPERTY.md", "contentHash": "8e44155144b3b45af13a24f3efe193bd3a4848b093f5529e03c5288a5d15444c" }
+  ],
+  "acceptanceCases": [
+    { "id": "charge-once", "sourceId": "property", "pointer": "charge-once", "outcome": "However two workers interleave, an order is charged at most once.", "userJourney": false }
+  ],
+  "checks": [
+    {
+      "id": "tlc-charge-once",
+      "role": "protection",
+      "command": {
+        "executable": "java",
+        "args": ["-cp", "../tools/tla2tools.jar", "tlc2.TLC", "-config", "ChargeOnce.cfg", "-workers", "1", "-metadir", "../states", "ChargeOnce.tla"],
+        "cwd": "formal",
+        "versionArgs": ["-version"],
+        "timeoutMs": 120000
+      },
+      "required": true,
+      "acceptanceCases": ["charge-once"],
+      "inputScopes": ["formal/**", "src/**"]
+    }
+  ]
+}

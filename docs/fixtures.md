@@ -42,6 +42,9 @@ Python's alias variant uses a relative-import re-export bridge.
 Its sanity needs Python 3 and Ruff on `PATH` rather than a lock, and the verification tests generate the kit and checker into disposable copies of it.
 Native command results go to stderr while the builder's stdout remains JSON lines.
 
+`formal-charge-once` and its `-violation` variant are the proof input for the `/formal-verification` skill: a worker claims an order once with an atomic `compareAndSet`, a TLA+ model of two workers checks that it is charged at most once, and the variant splits the claim into a `get` then a `set` so the model finds a double charge.
+Their sanity needs only Node and never runs the model checker, which the project pins and installs itself; see [the fixture notes](../tests/fixtures/formal-charge-once/FIXTURE.md) for the pinned jar and the expected `rule-proof` result.
+
 `dirty-work` contains staged and unstaged edits, new files, a deletion and a rename.
 `refactor` preserves the public quote through a structural change.
 `contract-removal` deletes design and coverage sources with the prior policy still accessible.

@@ -5,6 +5,7 @@ The design is [design.md](design.md), revision 29.
 Its 2026-10-13 verification amendment adds a standalone skill and transfers test auditing out of repo-audit.
 The design's [skill split](design.md#the-skill-split) then divides repo-audit into eight user-started skills and gives its own [build order](design.md#split-build-order).
 The 2026-10-15 planning-workflow amendment adds a ninth skill, `plan`, which tasks T2.11 and T2.12 schedule.
+The 2026-10-18 formal-verification amendment adds a tenth skill, `formal-verification`, which task T2.13 schedules.
 The tasks below describe the original repo-audit build; they do not schedule the verification amendment or the split.
 Implementation review applied on 2026-10-07, with owner approval to apply the recommendations.
 Commissioning review applied on 2026-10-07, with the owner's approval of its six recommendations.
@@ -451,6 +452,7 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.12 Take the design as input to the setup skills and wire `/plan` into the checklists (after T2.11) - one sentence in each of four new-idea skills and `/plan` last in both repo-audit checklists.
     Design-as-input and checklist-order scenarios are defined with the required prerequisites; evaluations stay deferred, so AC-84 to AC-87 keep planned procedures.
     AC-88 is covered by `tests/scripts/repo-audit-overview.test.mjs`, which installs the skill through the public installer and checks both checklist orders in the final host prompt.
+  - [ ] T2.13 Add the `/formal-verification` skill (after T2.12) - a tenth user-started skill that proves one stated property by model checking and leaves a `formal-<target>` suite, with `formal scaffold`, `formal check`, the generalised coverage gate, the `/maintenance sweep` and `/architecture` wiring, and the `formal-charge-once` fixture pair as its proof input.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -1444,6 +1446,53 @@ If the task passes about 1,500 added lines, split it at the skill and references
 
 **Covers:** the acceptance cases this task adds, numbered after those of T2.11.
 
+### T2.13 Add the `/formal-verification` skill
+
+**Depends on:** T2.12, and through it T2.1, T2.6 and T4.1, which supply `cite-check`, `apply` and the per-skill installer; and T3.2, which supplies `rule-proof`.
+The verification skill's existing `kit scaffold`, `kit check` and coverage gate are what this task mirrors and generalises.
+It follows the design amendment of R44, which defines the skill's boundary, and it starts only on the maintainer's separate word.
+
+**Inputs and outputs:** A repo with a named high-stakes spot, its design document when present and a project-pinned model-checking tool -> one reviewed `formal-<target>` suite that proves one stated property and can be rerun.
+
+**Verification:** `npm run check`, then `npm test -- --task T2.13`.
+
+**Read:** design "Formal verification commissioning decisions (2026-10-18)", "formal-verification" under "The skill split", "Standalone verification skill" for the kit it mirrors, and "Product boundary".
+
+**Steps**
+
+1. Write `skills/formal-verification/SKILL.md`, user-started only in every host and under 500 lines, with `create` and `maintain` modes, the scope rules and the honest scope limits of the design (D2, C10, C11).
+   Add `agents/openai.yaml` with `allow_implicit_invocation: false`, and the `create.md`, `tools.md` and `maintain.md` references.
+   `tools.md` holds the TLA+/TLC and Kani recipes and names the other tools as guidance only (D4).
+   It states that the project pins the tool file and its sha256 and that bstack installs nothing (D5).
+2. Add `runtime/schemas/formal-plan.json`, `runtime/scripts/lib/formal-suite.mjs` and the `formal scaffold` and `formal check` commands, mirroring `kit-scaffold.mjs` and `kit-check.mjs`, and the `formal-verification` entry in `runtime/skills.json` (D3).
+   The suite is `.agents/skills/formal-<target>/` with `SKILL.md`, `suite.json`, `properties/<id>.md`, `model/<Spec>.tla` with its `.cfg` and `scripts/map-coverage.mjs`.
+   `formal check` fails on a property file with no `Source paths:` line, a transition table that differs from the plan and a tool file that differs from its pin, and reports a missing tool as unproven (C6, C10, C12).
+3. Generalise `runtime/assets/map-coverage.mjs` to read `properties/` and to accept a `No-proof-impact: <id>: <reason>` commit line, then extend `sweep.mjs` to check `formal-*` suites next to `kitItems` (D3, D8, C12).
+   A suite folder has its own prefix, so a `verify-` kit is never read as a suite.
+4. Add the architecture wiring: the "explicit state model" standard in `skills/architecture/references/design-standards.md` and its inspection signal in `skills/architecture/references/architecture.md`, proposed only with cited evidence, with no universal rule (D7, C4, C5).
+   Add the `/repo-audit` checklist line that lists the skill only with cited risk evidence, and extend the checklist-order test (D8).
+5. Pin the sources in `upstream/sources.json` through `upstream/fetch.mjs` at `cursor/plugins` commit `0148b78c56c72a1b8412055913c79f767095b217`: `pstack/skills/create-formal-verification-skill/SKILL.md` and the state-model guidance in `pstack/skills/principle-model-the-domain/SKILL.md` and `pstack/skills/principle-type-system-discipline/SKILL.md`.
+   Confirm each path exists at the pin first, then replace the `NOTICE` row that records the read with the adapted destinations and what changed.
+6. Define the acceptance cases AC-89 to AC-100, add them to the design's numbered list, this plan's coverage table and the registry, and update the registry count in `tests/scripts/acceptance.test.mjs`.
+   Drive `formal scaffold`, `formal check` and the coverage gate through their public commands on disposable copies of the `formal-charge-once` fixture pair.
+   Run the `rule-proof` proof of AC-93 when Java and the pinned jar are present, and report it blocked when they are not, since a missing tool is never a pass.
+   Run the Kani recipe once on a small crate if the toolchain is available, and otherwise leave it marked as having no executed evidence.
+   Add the `tests/tasks.json` entry and unrun eval scenarios, and update the README status and installation lists.
+
+**Done when**
+
+- `npm run check` and `npm test -- --task T2.13` pass.
+- The skill folder installs alone, its bundle passes `--check`, it starts no skill and it edits no product code.
+- `formal scaffold` renders a suite from a plan, and `formal check` rejects each failure listed in step 2 through the public command.
+- The generalised gate fails a change to a declared source path when no model changed, and accepts it with a `No-proof-impact:` line.
+- `/maintenance sweep` lists a drifted `formal-*` suite with `/formal-verification maintain`.
+- The `formal-charge-once` pair passes the unchanged `rule-proof` command with the pinned jar, and the result is recorded with the jar's sha256.
+- Every evaluation of the skill stays deferred and is listed as a follow-up.
+
+**Covers:** AC-89 to AC-100.
+
+If the task passes about 1,500 added lines, split it at the skill, its references and the architecture and repo-audit wiring (T2.13a) and the commands, schema, gate generalisation and sweep (T2.13b).
+
 ## Phase 3: Enforcement
 
 Phase evidence from the design: valid cases pass, and seeded violations fail through the maintained command in disposable local copies.
@@ -2028,6 +2077,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.10 | AC-76, AC-77, AC-78 | Repeated-mistake evidence and threshold, higher rung with a replacement-naming diagnostic, and proof on a real past occurrence | Procedures planned; the scenario evaluation is deferred. |
 | T2.11 | AC-79, AC-80, AC-81, AC-82, AC-83 | Inputs and gaps, builder check, story-map units with evidence, `plan check` rejections and acceptance, and the write boundary | AC-82 passes in `tests/scripts/plan.test.mjs`; the other procedures are planned and the scenario evaluations are deferred. |
 | T2.12 | AC-84, AC-85, AC-86, AC-87, AC-88 | A named design document taken as the explanation by each of the four setup skills, and `/plan` last in both checklists | AC-88 passes in `tests/scripts/repo-audit-overview.test.mjs` against both checklist orders in the installed host prompt; AC-84 to AC-87 are planned and live scenario evaluations are deferred. |
+| T2.13 | AC-89, AC-90, AC-91, AC-92, AC-93, AC-94, AC-95, AC-96, AC-97, AC-98, AC-99, AC-100 | Explicit-only start, repo-first target and tool choice, suite rendering, `formal check` rejections, the `rule-proof` proof and the walkthrough, the generalised gate, `maintain` triage, sweep and repo-audit wiring, the write boundary and the architecture standard | Defined in the design's formal verification cases; registered and procedures planned when the task builds. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
