@@ -347,7 +347,8 @@ The skill must state these limits.
 
 #### Formal verification cases
 
-T2.13 adds these cases to the numbered ["Acceptance cases"](#acceptance-cases) list, the implementation plan's coverage table and the case registry when it builds the skill.
+T2.13 adds these cases to the numbered ["Acceptance cases"](#acceptance-cases) list and the case registry when it builds the skill.
+The implementation plan's [coverage table](implementation-plan.md#acceptance-case-coverage) already assigns them to T2.13.
 They are defined here and not yet registered, because the registry check requires every case to belong to an existing skill and every listed case to be registered once.
 
 - AC-89: `/formal-verification` starts only when the user invokes it, in every host, starts no other skill, and the package check fails when its frontmatter setting or `agents/openai.yaml` is missing (C11).
