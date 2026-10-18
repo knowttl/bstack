@@ -20,7 +20,7 @@ Correct turns a repeated mistake into the highest-rung check that makes it impos
 No mode edits product code, implements features, fixes product bugs or opens pull requests; when startup needs a product fix, report the blocker, and report a product bug instead of weakening the map.
 It never adds hosted CI unless the user selects it.
 Checks it proposes must run without bstack installed.
-Scripts collect facts and render reviewable change sets; only `apply` writes to the target, after the user approves the exact diff.
+Scripts collect facts and render reviewable change sets; this workflow writes target changes through `apply`, after the user approves the exact diff.
 
 ## Create checklist
 
