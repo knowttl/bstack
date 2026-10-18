@@ -60,11 +60,21 @@ Prerequisites: Node 24 or later and Git.
    npx skills add knowttl/bstack --agent claude-code --yes
    ```
 
+   Set the skills directory for the commands below in the same shell:
+
+   ```sh
+   BSTACK_SKILLS=".claude/skills"
+   ```
+
+   For a project-local Codex install, use `BSTACK_SKILLS=".agents/skills"`.
+   For either agent with `--global`, set `BSTACK_SKILLS` to the absolute skills directory printed by the installer, the parent of `repo-audit/`.
+   Keep quotes around paths so home directories containing spaces work.
+
 2. Check that an installed skill's bundled script runs.
    This read-only command (it pipes through `jq`) inventories the repo's documents and prints the document kinds it did and did not find, here for a repo containing only a `README.md`:
 
    ```sh
-   node .claude/skills/repo-audit/scripts/repo-audit.mjs inventory --repo . --json | jq '.data | {files, absent}'
+   node "$BSTACK_SKILLS/repo-audit/scripts/repo-audit.mjs" inventory --repo . --json | jq '.data | {files, absent}'
    ```
 
    ```json
@@ -100,7 +110,7 @@ Prerequisites: Node 24 or later and Git.
 `repo-audit` writes nothing.
 It prints a checklist of the skills to run next, in order, with one cited reason per line.
 
-To use the `/vision` review board, prepare its pinned runtime once: `npm ci --omit=dev --prefix .claude/skills/vision`.
+To use the `/vision` review board, prepare its pinned runtime once: `npm ci --omit=dev --prefix "$BSTACK_SKILLS/vision"`, using the skills directory selected in step 1.
 The [repo installer](#configuration) does this step for you.
 
 ## Use with your agent
@@ -203,9 +213,10 @@ See the [installer contract](docs/command-contract.md#installer-copy-and-preview
 ## Commands
 
 Each skill ships one entry file; `--help` lists its commands and exits 0:
+Use `BSTACK_SKILLS` from [Quickstart](#quickstart) for your agent and installation scope.
 
 ```sh
-node .claude/skills/repo-audit/scripts/repo-audit.mjs --help
+node "$BSTACK_SKILLS/repo-audit/scripts/repo-audit.mjs" --help
 ```
 
 ```text
