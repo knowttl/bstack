@@ -261,6 +261,10 @@ npm test -- --task T3.3
 ```
 
 Prepare an existing baseline file and normalized native violations as described in the [enforcement command contract](command-contract.md#rule-proof-and-temporary-debt), including the requirements for authorizing new entries.
+Both `architecture` and `verification` expose `baseline check --refresh`, which directly replaces the target baseline when validation passes, removing fixed entries.
+New debt still fails unless `--finding`, `--findings` and `--entry` authorize a matching selected unresolved debt entry.
+This command has no approval prompt and does not use `apply` or its recovery journal.
+The skill workflow instead prepares the complete baseline in scratch, validates it in a disposable repo copy without `--refresh`, and includes it in the exact diff approved for `apply`.
 
 Integrate selected native checks into the project's existing check command through a reviewed `apply` plan.
 Keep package rules scoped to their owning package and prepare the complete documented initial debt baseline through selected findings before expecting an audited project to pass.
@@ -437,7 +441,8 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Every command, shared library, schema, asset and shared reference has one source in [runtime/](../runtime/), and [runtime/skills.json](../runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
-[skills/repo-audit](../skills/repo-audit/SKILL.md), [skills/verification](../skills/verification/SKILL.md), [skills/vision](../skills/vision/SKILL.md), [skills/glossary](../skills/glossary/SKILL.md), [skills/architecture](../skills/architecture/SKILL.md), [skills/foundation](../skills/foundation/SKILL.md), [skills/agents-md](../skills/agents-md/SKILL.md), [skills/maintenance](../skills/maintenance/SKILL.md) and [skills/plan](../skills/plan/SKILL.md) each commit those generated files, and `apply` with its protected-write libraries is shared so the standalone verification skill writes only reviewed, hash-checked change sets.
+[skills/repo-audit](../skills/repo-audit/SKILL.md), [skills/verification](../skills/verification/SKILL.md), [skills/vision](../skills/vision/SKILL.md), [skills/glossary](../skills/glossary/SKILL.md), [skills/architecture](../skills/architecture/SKILL.md), [skills/foundation](../skills/foundation/SKILL.md), [skills/agents-md](../skills/agents-md/SKILL.md), [skills/maintenance](../skills/maintenance/SKILL.md) and [skills/plan](../skills/plan/SKILL.md) each commit those generated files, and share `apply` with its protected-write libraries for reviewed, hash-checked change sets.
+The architecture and verification runtimes also expose direct baseline replacement through `baseline check --refresh`, as described under [baseline commands](#rule-proof-baselines-and-maintained-checks).
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:
 
 ```sh
@@ -560,7 +565,9 @@ Both write only through `apply` after the user approves the exact bytes, never r
 The [architecture skill](../skills/architecture/SKILL.md) is started by the user in `create` or `maintain` mode.
 `create` proposes or audits module boundaries, dependency direction and shared edit targets from measured history, planned-change overlap and the project's own dependency analysis, then writes the selected design sections, decision records, `CODING_STANDARDS.md` when the project needs it, and import-boundary rules proven with `rule-proof` and a visible debt baseline.
 `maintain` uses the last confirmed architectural review as its baseline unless the user names another, asks the user for one when design or ADR document edits do not establish it, reruns `measure` and `overlap`, and sorts what changed into undescribed modules, broken boundaries, shared edit targets and decisions to record; follow its [maintain checklist](../skills/architecture/SKILL.md#maintain-checklist).
-Both write only through `apply` after the user approves the exact bytes and never move product code.
+Both modes use `apply` for reviewed edits after the user approves the exact bytes and never move product code.
+The runtime also exposes `baseline check --refresh` for direct baseline replacement without an approval prompt; the skill workflow requires baseline edits through reviewed `apply` instead.
+Architecture's `rule-proof` runs the native command selected by `--check-plan` and `--check-id` in separate disposable valid and violation copies, with no separate approval switch; the workflow requires approved commands.
 `measure`, `overlap`, `rule-proof` and `baseline check` need a Git repo, so a new idea in a non-Git workspace reviews planned changes by reading and leaves its rules unproven until code exists.
 
 ### foundation

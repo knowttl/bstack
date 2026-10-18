@@ -55,6 +55,16 @@ Prerequisites: Node 24 or later, Git and jq (for the inventory example).
 
 1. Install every skill into the current project, or add `--skill repo-audit` to install one.
    Use `--agent codex` for Codex (installs to `.agents/skills`) and `--global` for your home directory instead of the project.
+   To reproduce the output below, first prepare a scratch project with its own Git root and a one-line README:
+
+   ```sh
+   mkdir bstack-demo
+   cd bstack-demo
+   git init -q
+   printf '# Demo\n' > README.md
+   ```
+
+   Then install:
 
    ```sh
    npx skills add knowttl/bstack --agent claude-code --yes
@@ -71,7 +81,9 @@ Prerequisites: Node 24 or later, Git and jq (for the inventory example).
    Keep quotes around paths so home directories containing spaces work.
 
 2. Check that an installed skill's bundled script runs.
-   This read-only command (it pipes through `jq`) inventories the repo's documents and prints the document kinds it did and did not find, here for a repo containing only a `README.md`:
+   This read-only command (it pipes through `jq`) inventories the repo's documents and prints the document kinds it did and did not find.
+   The output below was captured after installing all nine skills for project-local Claude Code into the scratch project above.
+   Inventory includes installed references; a single-skill, Codex or global installation produces different paths and document kinds, and future reference edits change their hashes.
 
    ```sh
    node "$BSTACK_SKILLS/repo-audit/scripts/repo-audit.mjs" inventory --repo . --json | jq '.data | {files, absent}'
@@ -81,19 +93,35 @@ Prerequisites: Node 24 or later, Git and jq (for the inventory example).
    {
      "files": [
        {
+         "path": ".claude/skills/architecture/references/architecture.md",
+         "hash": "d9578b57da41831489dd1315101bf27ce09ee40798cae000d0a2bde60053059e",
+         "kind": "design"
+       },
+       {
+         "path": ".claude/skills/architecture/references/decisions.md",
+         "hash": "9fb20af7cac68f287023a059d375753bd18b14cb5893f17607c264d317d86508",
+         "kind": "decisions"
+       },
+       {
+         "path": ".claude/skills/glossary/references/glossary.md",
+         "hash": "31933d271b1a2d11cc7a1595daca7c82b2aa17f40bdf91696e1d017c26b80903",
+         "kind": "glossary"
+       },
+       {
+         "path": ".claude/skills/vision/references/vision.md",
+         "hash": "1f4f4b46648eb9d4b51a974d29a9ab58b2aaf16977962a5c58fb76272259040f",
+         "kind": "vision"
+       },
+       {
          "path": "README.md",
-         "hash": "9138d6aa03d1e7b72818b1a228cb2445cd35652555d5903db811f09865e4ce6f",
+         "hash": "31ca6c61ca3fcc54029a62bd082448b88718b913d24e195794969dd2d123b990",
          "kind": "context"
        }
      ],
      "absent": [
        "instructions",
-       "vision",
-       "design",
-       "glossary",
        "context-map",
        "standards",
-       "decisions",
        "audit"
      ]
    }
@@ -147,13 +175,15 @@ The [worked examples](docs/examples/README.md) show requests, findings, selectio
 
 ## Safety and permissions
 
-Every skill is read-only until you approve a specific change.
+The skill workflow requires approval of target changes and project commands.
+Bundled scripts enforce the controls below; `baseline check --refresh` can write directly without an approval prompt.
 
 | Capability | Skills | How it is unlocked |
 |---|---|---|
-| Write files in the target repo | `vision`, `glossary`, `architecture`, `verification`, `maintenance`, `agents-md`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
+| Apply reviewed target-file edits | `vision`, `glossary`, `architecture`, `verification`, `maintenance`, `agents-md`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
+| Replace the target debt baseline | `architecture`, `verification` | `baseline check --refresh` directly replaces the baseline when validation passes, removing fixed entries; adding an entry also requires `--finding`, `--findings` and `--entry` matching selected unresolved debt. There is no approval prompt or `apply` journal; the skill workflow instead prepares baseline edits in scratch for reviewed `apply` |
 | Create a new Git project | `foundation` | `project create` runs after you approve the exact files and commands, only in an empty destination |
-| Run project commands | `verification`, `foundation`, `maintenance` | Only the setup, journey and check commands listed in the plan you approved; live probes need `--approved-by-user` on each call |
+| Run project commands | `architecture`, `verification`, `foundation`, `maintenance` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture` and `verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch |
 | Remove a file | `agents-md` (`CLAUDE.md` merge) | Only after you approve and the host's current instruction-loading documentation has been rechecked |
 
 - **Scope**: skills read only the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.
