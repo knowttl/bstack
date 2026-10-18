@@ -12,7 +12,7 @@ footer: Built from docs/design.md. Markdown is authoritative. The HTML is genera
 meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
-  - Scope: nine skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md, plan) and their complete dependency set
+  - Scope: ten skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md, plan, formal-verification) and their complete dependency set
   - Revision: 29, maintainer-approved repo-audit split design; current implementation status in [development.md](development.md#status)
 ---
 
@@ -20,7 +20,7 @@ meta:
 
 **bstack helps developers design project-specific guidelines, rules and checks that give agents a sound foundation to extend.**
 Agent drift means changes that depart from the project's agreed purpose, design or behaviour.
-The first release ships nine skills and everything they need: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md` and `plan`.
+The first release ships ten skills and everything they need: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md`, `plan` and `formal-verification`.
 ["The skill split"](#the-skill-split) names each skill, its boundary and the order to run them.
 The sections below that describe `repo-audit` as one skill specify the foundation capabilities; the split assigns each capability to the skill that owns it.
 Together they help you establish a new project and strengthen an existing repo before more changes add technical debt.
@@ -49,7 +49,7 @@ The new-project path can implement the approved foundation, but it does not buil
 
 | Decision | Current direction |
 |---|---|
-| Release scope | Nine skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md` and `plan`, with their full dependency set (R29, R31, R41) |
+| Release scope | Ten skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md`, `plan` and `formal-verification`, with their full dependency set (R29, R31, R41, R44) |
 | Skill split | `repo-audit` audits at overview level and lists which skill to run next, with one evidenced reason per line; each other skill does one job and runs on its own (R31) |
 | Docs upkeep | Per-change upkeep rides the no-mistakes pipeline with no new user step, and the user runs `/maintenance sweep` now and then (R31) |
 | Existing repos | Audit the repo and relevant files first, then recommend improvements and apply the changes you choose |
@@ -61,10 +61,11 @@ The new-project path can implement the approved foundation, but it does not buil
 | Verification | Evidence must validate the original user outcome, without default autonomous TDD |
 | Product boundary | bstack owns project guidance and checks, and writes and checks a project's plan document. akashic, a separate project, owns workflow routing and the execution of that plan (R41) |
 | Planning workflow | The user writes the design once, each setup skill takes its answers from it, and `/plan` runs last to write an implementation plan it never executes (R41) |
+| Formal verification | See [formal verification commissioning decisions](#formal-verification-commissioning-decisions-2026-10-18) for the approved scope and automatic upkeep, including when slower property checks run (R44) |
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
-| Invocation | Only the user can start each of the nine skills, in every supported host. No skill starts another (R17, R31, R41) |
+| Invocation | Only the user can start each of the ten skills, in every supported host. No skill starts another (R17, R31, R41, R44) |
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
@@ -209,9 +210,163 @@ Decisions that shaped W:
 Whether W keeps one copy of each document in practice, and how far W1 shortens the interviews, are inferences until the build is observed.
 The implementation plan schedules the work as T2.11 for the skill and T2.12 for W1 and the run-order wiring.
 
+### Formal verification commissioning decisions (2026-10-18)
+
+The maintainer reviewed a prompt for a formal-verification skill against bstack.
+The prompt follows pstack's [`create-formal-verification-skill`](https://github.com/cursor/plugins/blob/0148b78c56c72a1b8412055913c79f767095b217/pstack/skills/create-formal-verification-skill/SKILL.md), a single 41-line `SKILL.md` with no references, scripts, templates or schemas.
+The review recommended nine decisions and twelve corrections to the prompt.
+The maintainer approved every recommended option and accepted every correction, and chose a design amendment as the next step so that the design precedes the build, as R41 then R42 did for `plan`.
+This section records them as release requirements, not claims of implemented behaviour.
+
+In this section D1 to D9 and C1 to C12 mean the formal verification decisions and corrections below, not the planning workflow's D1 to D4.
+Elsewhere in this document they are cited as "formal verification D3" and so on.
+
+| ID | Maintainer's selection | Requirement |
+|---|---|---|
+| D1 | `sibling-skill`: a new `/formal-verification` skill | A new sibling skill, because each skill "does one job, runs on its own, and installs alone" and `/verification` already has the longest `SKILL.md`. Shared commands are bundled per skill from `runtime/skills.json`, so a sibling copies no code. A `/verification formal` mode and an `/architecture` mode were the alternatives |
+| D2 | `create-maintain` | The modes are `create` and `maintain`. `maintain` runs the drift check, reruns every check, re-proves changed properties and triages each problem into one of four classes: model drift, modeling error, real bug or harness gap. `correct` is not added because `/verification correct` already owns turning repeated mistakes into checks |
+| D3 | `plan-rendered`: `suite.json`, `formal scaffold` and `formal check`, and the generalised coverage gate with a `No-proof-impact:` trailer | The suite is rendered from a plan the way the verification kit is. `suite.json` renders the suite's `SKILL.md`, its property files and its transition table. `formal scaffold` and `formal check` mirror `kit scaffold` and `kit check`. Each property file carries a `Source paths:` line. The coverage gate `map-coverage.mjs` is generalised to read `properties/` and to accept a `No-proof-impact: <id>: <reason>` commit line, so one gate covers kits and suites |
+| D4 | `question-first-two-recipes`: TLA+/TLC and Kani recipes, others guidance only, property-based testing excluded | The tool follows the kind of question. The first release carries two worked recipes: TLA+ with TLC, which the experiment below ran, and Kani, which has no executed evidence. Apalache, Quint, Dafny, Lean and CBMC are guidance only. Property-based testing is excluded because it samples inputs, so it is a test |
+| D5 | `project-pins-doctor`: exact file and sha256 pinned by the project, checked by the suite's doctor | The project pins the exact tool file and its sha256, and the suite's doctor command checks both. bstack never installs, fetches or commits a tool |
+| D6 | `rule-proof-plus-walkthrough` | The clean-versus-broken proof reuses `rule-proof` unchanged, as the experiment below shows. A walkthrough adds the code half: an agent follows the generated skill on a scratch break in the real code, then the code is restored and the check must return to its original result. This is the pattern of correct mode, which "reuses `rule-proof` and `baseline check` and adds no script". A new `formal prove` command and the mechanical proof alone were the alternatives |
+| D7 | `evidence-gated-standard` in /architecture | "Explicit state model" becomes a rule `/architecture` proposes only with cited evidence. It goes in `skills/architecture/references/design-standards.md`, enforced by human review, with an inspection signal in `skills/architecture/references/architecture.md` that never counts as a violation by itself. Refactors are reported for the user to select, and their models go to `/formal-verification` |
+| D8 | `sweep-routes-formal`, `property-cites-design`, `repo-audit-evidence-line` and `check-in-maintained-command` (added after the maintainer asked why upkeep was not automatic); `correct-names-formal-rung` left off | `/maintenance sweep` checks `formal-*` suites next to the kit. Each property cites the design section registered as `design` that it guards, checked by `cite-check`. `/repo-audit` lists the skill only with cited risk evidence. The property check runs inside the project's one maintained check command, and a check slower than about a minute runs only when a change touches its source paths while the coverage gate always runs. `/verification correct` does not name the formal rung |
+| D9 | `design-amendment-first` | This amendment is the next step. The build is T2.13 and waits for the maintainer's separate word |
+
+| ID | Disposition |
+|---|---|
+| C1 | accept: pstack names only TLA+ |
+| C2 | accept: pstack has no maintain counterpart |
+| C3 | accept: /architecture has no correct mode |
+| C4 | accept: formal verification is a Detect-rung check, and Eliminate stays above it |
+| C5 | accept: no universal state-machine prescription |
+| C6 | accept: no free-hand diagrams; a rendered transition table instead |
+| C7 | accept: Kani harnesses are an edit inside product paths |
+| C8 | accept: a TLA+ model cannot see code changes |
+| C9 | accept: a new skill needs a design amendment first |
+| C10 | accept: runnable without bstack, but not without the tool |
+| C11 | accept: explicit-only invocation also needs `agents/openai.yaml` |
+| C12 | accept: the generated suite needs its own `formal-<target>` prefix |
+
+What each correction means for the prompt:
+
+- C1: PlusCal and Kani are the prompt's additions to pstack, which names only TLA+.
+- C2: pstack's "kept in step with the code" is one sentence with no mechanism, so bstack designs upkeep itself (D2, D3).
+- C3: only `/verification` has `correct`, and `/architecture` has `create` and `maintain`, so the prompt's "same create/maintain/correct lifecycle" does not exist.
+- C4: the ladder runs Eliminate, Detect, Encode, then Review.
+  A model check is a Detect-rung check, and making the bad state impossible to represent stays preferred.
+- C5: "prefer state machines over scattered booleans" cannot be a universal rule, because "avoid universal architecture prescriptions" and "No single architecture style is required" already stand, and no skill rewrites product code.
+  D7 is the accepted form.
+- C6: the transition table is rendered from the suite plan, so the drift check covers it.
+- C7: a Kani harness normally lives in the crate under `#[cfg(kani)]`, which is an edit inside the product's source paths and needs its own explicit approval.
+  A TLA+ model lives entirely inside the suite folder.
+- C8: a scratch break in the real code does not change a TLA+ design model, so TLC alone never catches it.
+  What can be proven is the loop: the gate flags the change, the agent updates the model and the check fails.
+  The skill states this limit.
+  Kani runs on the code, so it catches a code break directly.
+- C9: this amendment adds the decisions, the R-number, T2.13, the acceptance cases, the NOTICE pin and the fixture, as R41 and R42 did for `plan`.
+- C10: the suite needs the project's own Java with TLC, or Rust with Kani.
+  The doctor check confirms the pinned tool, and a missing tool means unproven, never a pass.
+- C11: the skill ships `agents/openai.yaml` with `allow_implicit_invocation: false` beside `disable-model-invocation: true`.
+- C12: `sweep` finds kits by the `verify-` folder prefix, so a suite is `formal-<target>`.
+
+Decisions that shaped the skill:
+
+- Setting up a property happens once per spot and is judgement-heavy: choosing the target, writing the model, proving it can fail and installing a tool.
+  "Only the user starts any of them" and automatic routing belongs to akashic, so setup is started by hand, like `/verification create`.
+- Keeping the property true is automatic on every change, through the coverage gate, the property check inside the maintained check command and the `AGENTS.md` pointer.
+  This is the split the verification kit already makes, where the full maintain pass stays manual.
+- Choosing a separate skill or a `/verification` mode (D1) decides packaging only, because both are started by hand and both get automatic upkeep.
+- The maintained-command item of D8 follows L6, which already requires every check to fail the one maintained command, and the suite must be cheap to rerun.
+
+Run `create` for a spot where a mistake costs money or data and depends on timing or a rare input, such as payments, retries, job queues, locking, a multi-step sign-up or checkout, a parser or unsafe Rust.
+Run `maintain` before a release, after a large refactor of code with a proven property, or when `/maintenance sweep` says so.
+Day to day, run nothing.
+Do not use it for ordinary screens, forms or CRUD code, where tests and the verification kit do better.
+
+#### Feasibility evidence
+
+An experiment showed that `rule-proof` proves a model check can fail without a new script, using the TLA+ model checker TLC.
+The [`formal-charge-once` fixture](../tests/fixtures/formal-charge-once/FIXTURE.md) and its [violation variant](../tests/fixtures/formal-charge-once-violation/FIXTURE.md) recreate it.
+
+- A toy repo charges an order once, claiming it with an atomic `compareAndSet`, and models two workers with the invariant `NoDoubleCharge == charges <= 1`.
+  Each model action carries a comment naming the code line it models.
+- The violation variant splits the claim into a `get` followed by a `set` and updates the model to match, as a generated skill would instruct.
+- Direct TLC on the clean model reported no error after 12 distinct states and exited 0.
+  On the violation it reported "Invariant NoDoubleCharge is violated" and exited 12, with a counterexample in which both workers read `pending` and `charges` reached 2.
+- A model that leaves `charges` unassigned in one branch makes TLC exit 75, so a modeling error and a property violation are distinguishable signals.
+- The unchanged `rule-proof` command passed on the pair, with the valid case exiting 0 and the violation exiting 12 with the expected diagnostic.
+  The check plan is an ordinary `schemas/check-plan.json` plan with role `protection`, `timeoutMs` 120000 and cwd `formal`.
+- Kani was not run.
+  The Kani recipe has no executed evidence until the build runs it.
+
+Two limits came out of it:
+
+- `rule-proof` records the version output of the executable, here `java`, so the proof record names the Java runtime and nothing identifies TLC.
+  The suite must pin and check the jar's sha256 itself (D5).
+- The tlaplus `v1.8.0` release that supplied the jar is a prerelease that was republished on 2026-10-15, and the last stable release is `v1.7.4`.
+  A tag alone does not pin a version.
+
+#### Skill specification
+
+- Frontmatter: `name: formal-verification`, a one-sentence description and `disable-model-invocation: true`, plus `agents/openai.yaml` with `allow_implicit_invocation: false` (C11).
+- Scope rules: one property per `create` run; never edits product code, never weakens a property, never adds hosted CI; only `apply` writes, after the user approves the exact diff; a Kani harness in product source needs its own approval (C7); a missing tool means unproven (C10).
+- `create` checklist:
+  1. Interview the repo and choose the target, with citations that `cite-check` resolves, asking only what the codebase cannot show.
+  2. State the property and the harm, and choose the tool by the kind of question (D4).
+  3. Plan the suite: every model step cites one atomic code step, with bounds, assumptions and the tool hash.
+  4. Review and apply: `formal scaffold`, then `apply --dry-run`, then the user's approval.
+  5. Run on the current code. A finding stays a finding.
+  6. Prove it can fail: `rule-proof`, then the walkthrough, then restore (D6).
+  7. Propose the wiring (D8).
+  8. Report in plain language.
+- `maintain` checklist:
+  1. Run the drift check, `formal check`.
+  2. Have one reader per property compare it with the code.
+  3. Rerun every property.
+  4. Triage each problem as model drift, modeling error, real bug or harness gap.
+  5. Correct with `formal scaffold --update` and `apply`, then re-prove.
+  6. Report one outcome: clean, changed or blocked.
+- Generated suite: `.agents/skills/formal-<target>/` holding `SKILL.md`, `suite.json`, `properties/<id>.md`, `model/<Spec>.tla` with its `.cfg` and `scripts/map-coverage.mjs`, a `.claude/skills/formal-<target>/SKILL.md` pointer and one `AGENTS.md` pointer line.
+  For Kani, a `#[cfg(kani)]` harness in the crate is approved separately (C7).
+  TLC's `states/` output goes to the evidence directory, never into the suite.
+- New or changed files: `skills/formal-verification/` with `SKILL.md`, `agents/openai.yaml` and `references/create.md`, `tools.md` and `maintain.md`; `runtime/schemas/formal-plan.json`; `runtime/scripts/lib/formal-suite.mjs`; `runtime/scripts/commands/formal-scaffold.mjs` and `formal-check.mjs`; the generalised `runtime/assets/map-coverage.mjs`; `sweep.mjs`; a `runtime/skills.json` entry; the two architecture references of D7; and the repo-audit checklists.
+- Package rules to respect: a `SKILL.md` body under 500 lines and a table of contents in any reference over 100 lines.
+
+#### Honest scope limits
+
+The skill must state these limits.
+
+- A pass covers the model or the bound, not the whole system.
+- A TLA+ model stays true to the code only through the gate and review, because no tool connects the model to the code mechanically (C8).
+- The gate notices changes to declared source paths only.
+- Atomicity assumptions, such as an atomic `compareAndSet`, are trusted from documentation and not verified.
+- Whether a fresh agent follows the generated skill correctly is unproven until a model-run evaluation exists.
+- A team without Java or Rust gets an unproven result, not a pass (C10).
+- Choosing the strongest target is a judgement call that scripts cannot check.
+
+#### Formal verification cases
+
+T2.13 adds these cases to the numbered ["Acceptance cases"](#acceptance-cases) list and the case registry when it builds the skill.
+The implementation plan's [coverage table](implementation-plan.md#acceptance-case-coverage) already assigns them to T2.13.
+They are defined here and not yet registered, because the registry check requires every case to belong to an existing skill and every listed case to be registered once.
+
+- AC-89: `/formal-verification` starts only when the user invokes it, in every host, starts no other skill, and the package check fails when its frontmatter setting or `agents/openai.yaml` is missing (C11).
+- AC-90: `create` interviews the repo first and asks only what it cannot show, chooses one target with citations that `cite-check` resolves, states one property and its harm, and chooses the tool by the kind of question (D4).
+- AC-91: `formal scaffold` renders the suite's `SKILL.md`, property files, transition table and model files from the plan into a `formal-<target>` folder, and rejects a model step that cites no atomic code step (D3, C6, C12).
+- AC-92: `formal check` fails on a property file with no `Source paths:` line, a transition table that differs from the plan and a tool file whose sha256 differs from the pin, and reports a missing tool as unproven and never as a pass (D3, D5, C10).
+- AC-93: `rule-proof` passes unchanged on the `formal-charge-once` pair, with the clean fixture exiting 0 and the violation fixture exiting 12 with "Invariant NoDoubleCharge is violated", and the suite reports a modeling error (exit 75) as a modeling error and not as a finding (D6).
+- AC-94: In the walkthrough on a scratch break in the real code, the gate flags the changed source path, the agent updates the model and the check fails, and after the code and model are restored the result returns to the original; the skill states that TLC alone cannot see the code change (D6, C8).
+- AC-95: The generalised coverage gate fails a change to a declared source path of a property when no model changed, and accepts it with a `No-proof-impact: <id>: <reason>` commit line (D3).
+- AC-96: `maintain` runs `formal check`, has one reader compare each property with the code, reruns every property, triages each problem as model drift, modeling error, real bug or harness gap, and reports clean, changed or blocked (D2).
+- AC-97: `/maintenance sweep` checks a `formal-*` suite next to the kit and routes a drifted one to `/formal-verification maintain`, and it does not mistake a `verify-` kit for a suite (D8, C12).
+- AC-98: Each property cites the design section it guards and `cite-check` resolves it, the property check runs inside the project's maintained check command with the source-path condition for slower checks defined in D8, the coverage gate always runs, and `/repo-audit` lists the skill only with cited risk evidence (D8).
+- AC-99: `/formal-verification` edits no product code, writes only through `apply` after the user approves the exact diff, handles one property per `create` run and asks for separate approval before a Kani harness enters product source (C7).
+- AC-100: `/architecture` proposes an explicit state model only with cited evidence, as a standard and never as a universal rule, reports a refactor for the user to select, and sends its model to `/formal-verification` (D7, C5, C4).
+
 ## The skill split
 
-The first release ships nine skills.
+The first release ships ten skills.
 Each does one job, runs on its own, and installs alone.
 Only the user starts any of them, and none starts another.
 repo-audit lists which skill to run next; the user decides whether to run it.
@@ -227,15 +382,17 @@ repo-audit lists which skill to run next; the user decides whether to run it.
 | `maintenance` | `create`, `sweep` | Keep project docs true as code changes |
 | `agents-md` | none | Create and maintain one root `AGENTS.md` of pointers |
 | `plan` | `create` | Write and check one implementation plan from an approved design, and never execute it |
+| `formal-verification` | `create`, `maintain` | Prove one stated property of a high-stakes spot by model checking, and leave a suite the project reruns |
 
 ### Run order
 
 Each checklist is the order of dependency: an idea precedes its vocabulary, vocabulary and boundaries precede the scaffold, `AGENTS.md` comes after them because it points at what the earlier skills produce, and `plan` comes last because each of its units cites the documents and proven checks those skills produce.
+`/formal-verification create` follows `/verification create` and is listed only where cited risk evidence names a spot, so most repos run it for zero to a few spots (formal verification D8).
 
 | Repo | Order |
 |---|---|
-| New idea | `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification create`, `/maintenance`, `/agents-md`, `/plan` |
-| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification create`, `/maintenance`, `/agents-md`, `/plan` |
+| New idea | `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification create`, `/formal-verification create` (only with cited risk evidence), `/maintenance`, `/agents-md`, `/plan` |
+| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification create`, `/formal-verification create` (only with cited risk evidence), `/maintenance`, `/agents-md`, `/plan` |
 
 repo-audit prints the checklist for the repo's case with one reason per line, each citing the evidence that makes the skill relevant or its output already present.
 It computes status again on every run, writes nothing to the project and keeps no audit record, so `docs/repo-audit.md` is dropped.
@@ -322,6 +479,16 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - Boundary: writes one plan document and checks it. It starts no skill and no work, never executes a unit, assigns no agent, tracks no progress and edits no product code. It writes only through `apply`, after the user approves the exact file.
 - It proposes one pointer line for the plan through the shared pointer contract.
 
+### formal-verification
+
+- Contract: ["Formal verification commissioning decisions (2026-10-18)"](#formal-verification-commissioning-decisions-2026-10-18), whose decisions D1 to D9 and corrections C1 to C12 are the requirements.
+- `create`: proves one stated property of one high-stakes spot, with a model checker such as TLA+ with TLC or a prover such as Kani, and leaves a `formal-<target>` suite the project reruns. One property per run.
+- `maintain`: runs the suite's drift check, reruns every property, re-proves the changed ones and triages each problem as model drift, modeling error, real bug or harness gap.
+- Renders the suite from `suite.json` with `formal scaffold`, and checks it with `formal check`, which verifies the property files' `Source paths:` lines, the rendered transition table and the pinned tool's sha256. A missing tool is reported as unproven.
+- Proves a check can fail with the unchanged `rule-proof` command, then with a walkthrough on a scratch break in the real code. A TLA+ model cannot see a code change on its own, so the coverage gate flags the change and the agent updates the model.
+- Boundary: edits no product code, never weakens a property, adds no hosted CI and installs no tool. It writes only through `apply`, after the user approves the exact diff, and a Kani harness inside product source needs its own approval. It is a Detect-rung check, so making the bad state impossible to represent stays preferred.
+- It proposes one pointer line for the suite through the shared pointer contract.
+
 ### Not separate skills
 
 - Grilling and research briefs become shared references, with a checked copy in each skill that asks or researches.
@@ -347,6 +514,7 @@ A shared runtime folder beside the skills is ruled out because installing one sk
 | `maintenance` | `contract validate`, `evidence collect` and `validate`, `docs check` and `generate`, `run-checks`, `probe`, `apply`, `state show`, `sweep` |
 | `agents-md` | `inventory`, `apply`, `state show` |
 | `plan` | `plan check`, `apply`, `state show`, `cite-check` |
+| `formal-verification` | `formal scaffold`, `formal check`, `rule-proof`, `apply`, `state show`, `cite-check` |
 
 The lists come from each command's imports and the steps that call it; the build may find one more shared helper.
 
@@ -1471,6 +1639,7 @@ bstack can still adapt relevant design and verification principles with attribut
 Future bstack skills may establish or assess a bounded project property when a real need emerges.
 They must not become a general development router or an exact implementation playbook.
 `plan` is the one planning skill: it writes a document for one project and executes none of it.
+`formal-verification` is the one skill that proves a bounded property: it proves one stated property of one spot and edits no product code.
 
 ## Scripts that prevent audit and evidence mistakes
 
@@ -1546,7 +1715,7 @@ New recurring agent mistakes should become a regression case or structural check
 
 ## Complete first-release package
 
-Each of the nine skills is a self-contained folder holding the resources, assets and script bundles it reads.
+Each of the ten skills is a self-contained folder holding the resources, assets and script bundles it reads.
 Installing one folder alone must not leave references to missing sibling skills.
 `repo-audit` is the entry point: it lists which skill to run next and requires none of them to run.
 
@@ -1699,7 +1868,7 @@ Every skill works in any host that supports skills, with explicit invocation and
 The package includes the documented settings for Claude Code, Codex and Pi in each skill folder, so the user-only rule holds in each.
 The package check confirms those settings are present. bstack does not run each host to test them.
 
-**Only the user can start any of the nine skills.**
+**Only the user can start any of the ten skills.**
 The agent must not start one on its own because a request looks like an audit, a glossary change or a scaffold.
 These skills read the repo, interview the user and can write files, so the user decides when each runs.
 The setting is per skill and applies to every mode.
@@ -2019,3 +2188,4 @@ Historical entries keep their original decisions and name their current applicat
 | R41, 2026-10-15 | "Decision for workflow: W design once, bstack setup once, /plan last (W1-W3, D1-D4). Build items: none." and "yes dispatch all 5 in your recommended order". The maintainer chose to write the design once, have each setup skill take its answers from it and add a `/plan` skill that writes and checks an implementation plan and never executes it | Extends R31 and refines R12's boundary. `plan` is a ninth user-started skill that runs after `/agents-md` in both checklists; the product boundary separates writing and checking a plan document, which bstack does, from executing it, which stays with akashic or the contributor; "Planning workflow commissioning decisions (2026-10-15)" records W1-W3 and D1-D4. The owner's own design workflow stays in the owner's own repository and feeds `/plan`. Build choices: this change amends the design and the implementation plan only; T2.11 builds the skill and T2.12 builds W1 and the checklist wiring, so no `plan` skill folder, command or acceptance case exists yet and every evaluation of the workflow stays deferred |
 | R42, 2026-10-15 | "yes dispatch all 5 in your recommended order". The maintainer commissioned the build of the `plan` skill, piece 4 of 5 of the pstack intake | Applies R41. `skills/plan/` has its `create` mode with a six-step checklist, the plan-format and builder-check references, `schemas/plan.json` and the `plan check` command, and AC-79 to AC-83 record its acceptance cases. Build choices: the agent records the units in a scratch record that `plan check` reads, so the check repeats on the unchanged record and the document is drafted from it; `plan check` and `cite-check` share one citation library, so a design citation resolves the same way in both; evidence is a check or kit feature by name and the command checks that a unit names one, not that it exists; a non-functional target is an evidence entry on each unit it constrains, and the skill, not the command, checks that every target is carried; the builder check adopts the wording of `builder-check-prompt.md` in obra's `superpowers`, pinned in `upstream/sources.json`, and is blocked when no fresh read-only reader is available; the skill accepts any approved design with no minimum size; the pointer proposal is one line and no contract registration is proposed. T2.12 still schedules the setup skills' design-as-input sentences and the checklist wiring, and every evaluation of the skill stays deferred |
 | R43, 2026-10-15 | "yes dispatch all 5 in your recommended order". The maintainer commissioned the build of W1 and W3, piece 5 of 5 of the pstack intake | Applies R41 and R42. `/vision`, `/glossary`, `/architecture` and `/foundation` each gain one sentence saying a design document the user names counts as the user's explanation, so each summarises it and asks only about gaps; no interview step, script or command is added. Both repo-audit checklists list `/plan` after `/agents-md` with a cited reason, and AC-88 is the checklist-order test. AC-84 to AC-87 record the design-as-input behaviour of the four skills; their [scenario definitions](../tests/eval/scenarios/scenarios.json) remain unrun because evaluations are deferred |
+| R44, 2026-10-18 | "yes start the bstack design update." The maintainer approved every recommended option (D1 to D9) and accepted all twelve corrections (C1 to C12) from a design review of a formal-verification prompt modelled on pstack's `create-formal-verification-skill`, and chose a design amendment as the next step | Extends R31 and R41. `formal-verification` is a tenth user-started skill with `create` and `maintain` modes that proves one stated property by model checking and leaves a `formal-<target>` suite; "Formal verification commissioning decisions (2026-10-18)" records D1 to D9, C1 to C12, the feasibility evidence and the cases AC-89 to AC-100. Build choices: this change amends the design and the implementation plan, pins the pstack source read in `NOTICE` and adds the `formal-charge-once` fixture pair, so no `formal-verification` skill folder, command, schema or registered acceptance case exists yet; T2.13 builds the skill and registers the cases, and the maintainer's separate word starts that build. The reuse of `rule-proof` is the only part exercised by the experiment, Kani has no executed evidence, and every evaluation of the skill stays deferred |
