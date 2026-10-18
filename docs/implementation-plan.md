@@ -27,7 +27,7 @@ Read this section before your first task.
 
 The tasks below describe the original single-skill build, before the design's [skill split](design.md#the-skill-split).
 That original procedure audited an existing repo or interviewed the user about a new idea, then recommended project-specific principles, rules and checks and applied the ones the user selected.
-See the design's [standalone verification amendment](design.md#standalone-verification-skill) for the additional approved scope and [README.md](../README.md) for current skill availability, usage and the shared-runtime generation workflow.
+See the design's [standalone verification amendment](design.md#standalone-verification-skill) for the additional approved scope and [README.md](../README.md#use-with-your-agent) for current skill availability and usage and [development.md](development.md#shared-runtime-and-generation) for the shared-runtime generation workflow.
 The bstack repo also holds a package check, an installer, test fixtures, an evaluation runner and the no-mistakes gate config.
 It has no hosted CI workflows (design "Commissioning decisions (2026-10-07)").
 
@@ -278,7 +278,7 @@ bstack/
     eval/results/                recorded runs
 ```
 
-See [README.md](../README.md) for the authoritative shared-runtime generation workflow and per-skill resource manifest.
+See [development.md](development.md#shared-runtime-and-generation) for the authoritative shared-runtime generation workflow and per-skill resource manifest.
 
 ### Delivery gate
 
@@ -436,14 +436,14 @@ Tick each task when its "Done when" commands pass.
       Four real isolated Codex scenarios cover audit-before-interview, clear-goals loading, different TypeScript/Python recommendations and a reviewed two-line candidate delta against an existing approved vision.
       [Checkpoint evidence](../tests/eval/results/foundation-C17/summary.md) distinguishes the scripted candidate review from blocked board interaction and exact-revision approval.
       [Task evidence](../tests/eval/results/tasks/T2.8.json) records final local validation.
-      See [README](../README.md) for current enforcement and maintenance availability; T4.3 owns the completed-package extension proof.
+      See the [README skills table](../README.md#use-with-your-agent) for current enforcement and maintenance availability; T4.3 owns the completed-package extension proof.
   - [x] T2.9 Complete protected new-project creation - versioned reviewed destination/scaffold/command plans reuse the protected-write engine, with scratch exact diffs, no-write validation, directory/file/Git journals and interruption recovery.
     The registered command suite covers collisions, user edits, partial writes and interrupted commands.
     The [foundation checkpoint](../tests/eval/results/foundation-C18/summary.md) records real board verdicts, exact vision/scaffold approvals, the Chromium Rice/reload journey and an unchanged ambiguous-idea workspace.
     The generated full native check failed and remains unverified with the created project kept; its scratch-verified one-line test correction is diagnosis only.
     Skill-quality observation: the agent did not run and repair its own native tests before finishing the scaffold proposal.
     This slice adds no corrective skill guidance for that observation.
-    [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks and platform limitations; see [README](../README.md) for current enforcement and maintenance availability.
+    [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks and platform limitations; see the [README skills table](../README.md#use-with-your-agent) for current enforcement and maintenance availability.
   - [x] T2.10 Add the `/verification correct` mode (after T3.3) - a five-step checklist and the constraint reference's evidence, diagnostic, proof and repeat rules, with no new script.
     The correct-mode scenario is defined and its evaluation stays deferred, so AC-76 to AC-78 keep planned procedures.
   - [x] T2.11 Add the `/plan` skill (after T2.10) - a ninth user-started skill that writes and checks one implementation plan from an approved design and never executes it, with `plan check`, its schema and references.
