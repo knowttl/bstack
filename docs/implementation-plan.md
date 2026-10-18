@@ -1473,7 +1473,7 @@ It follows the design amendment of R44, which defines the skill's boundary, and 
    Add the `/repo-audit` checklist line that lists the skill only with cited risk evidence, and extend the checklist-order test (D8).
 5. Pin the sources in `upstream/sources.json` through `upstream/fetch.mjs` at `cursor/plugins` commit `0148b78c56c72a1b8412055913c79f767095b217`: `pstack/skills/create-formal-verification-skill/SKILL.md` and the state-model guidance in `pstack/skills/principle-model-the-domain/SKILL.md` and `pstack/skills/principle-type-system-discipline/SKILL.md`.
    Confirm each path exists at the pin first, then replace the `NOTICE` row that records the read with the adapted destinations and what changed.
-6. Define the acceptance cases AC-89 to AC-100, add them to the design's numbered list, this plan's coverage table and the registry, and update the registry count in `tests/scripts/acceptance.test.mjs`.
+6. Move the acceptance cases AC-89 to AC-100 from the design's "Formal verification cases" section into its numbered acceptance list, register them using this plan's existing coverage assignments, and update the registry count in `tests/scripts/acceptance.test.mjs`.
    Drive `formal scaffold`, `formal check` and the coverage gate through their public commands on disposable copies of the `formal-charge-once` fixture pair.
    Run the `rule-proof` proof of AC-93 when Java and the pinned jar are present, and report it blocked when they are not, since a missing tool is never a pass.
    Run the Kani recipe once on a small crate if the toolchain is available, and otherwise leave it marked as having no executed evidence.

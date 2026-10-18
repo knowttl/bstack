@@ -61,7 +61,7 @@ The new-project path can implement the approved foundation, but it does not buil
 | Verification | Evidence must validate the original user outcome, without default autonomous TDD |
 | Product boundary | bstack owns project guidance and checks, and writes and checks a project's plan document. akashic, a separate project, owns workflow routing and the execution of that plan (R41) |
 | Planning workflow | The user writes the design once, each setup skill takes its answers from it, and `/plan` runs last to write an implementation plan it never executes (R41) |
-| Formal verification | `/formal-verification` proves one stated property of a few high-stakes spots by model checking, leaves a suite the project reruns, and edits no product code. Only its setup is started by hand; the coverage gate and the property check then run on every change (R44) |
+| Formal verification | See [formal verification commissioning decisions](#formal-verification-commissioning-decisions-2026-10-18) for the approved scope and automatic upkeep, including when slower property checks run (R44) |
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
@@ -359,7 +359,7 @@ They are defined here and not yet registered, because the registry check require
 - AC-95: The generalised coverage gate fails a change to a declared source path of a property when no model changed, and accepts it with a `No-proof-impact: <id>: <reason>` commit line (D3).
 - AC-96: `maintain` runs `formal check`, has one reader compare each property with the code, reruns every property, triages each problem as model drift, modeling error, real bug or harness gap, and reports clean, changed or blocked (D2).
 - AC-97: `/maintenance sweep` checks a `formal-*` suite next to the kit and routes a drifted one to `/formal-verification maintain`, and it does not mistake a `verify-` kit for a suite (D8, C12).
-- AC-98: Each property cites the design section it guards and `cite-check` resolves it, the property check runs inside the project's maintained check command, or only when a change touches its source paths if it takes about a minute or more, and `/repo-audit` lists the skill only with cited risk evidence (D8).
+- AC-98: Each property cites the design section it guards and `cite-check` resolves it, the property check runs inside the project's maintained check command with the source-path condition for slower checks defined in D8, the coverage gate always runs, and `/repo-audit` lists the skill only with cited risk evidence (D8).
 - AC-99: `/formal-verification` edits no product code, writes only through `apply` after the user approves the exact diff, handles one property per `create` run and asks for separate approval before a Kani harness enters product source (C7).
 - AC-100: `/architecture` proposes an explicit state model only with cited evidence, as a standard and never as a universal rule, reports a refactor for the user to select, and sends its model to `/formal-verification` (D7, C5, C4).
 
