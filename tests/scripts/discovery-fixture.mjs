@@ -51,6 +51,10 @@ export function runArchitecture(command, repo, env = process.env, extra = [], pl
   return runSkill('architecture', command, repo, env, extra, platform)
 }
 
+export function runFormal(command, repo, env = process.env, extra = []) {
+  return runSkill('formal-verification', command, repo, env, extra)
+}
+
 export function runVerification(command, repo, env = process.env, extra = []) {
   const result = spawnSync(process.execPath, [join(checkout, 'skills', 'verification', 'scripts', 'verification.mjs'), ...command.split(' '), '--repo', repo, '--json', ...extra], { encoding: 'utf8', maxBuffer: Infinity, cwd: tmpdir(), env })
   assert.equal(result.stderr, '')

@@ -1178,6 +1178,36 @@
       ]
     },
     {
+      "id": "formal-verification-create",
+      "tier": "full",
+      "skills": ["formal-verification"],
+      "fixture": "formal-charge-once",
+      "request": "Run /formal-verification create on this repo for the order-charging code. Present the suite proposal only: stop before any selection, protected write or apply. If a question remains that only I can answer, list it with your recommendation and record it as open in the proposal instead of waiting. The model checker and its Java runtime are not installed, so report each step that needs them as unproven. Do not browse or use network commands. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "target-and-tool",
+          "caseId": "AC-90",
+          "skill": "formal-verification",
+          "question": "Did it read the repo before asking, choose the order-charging code as one target with citations that cite-check resolved, state one property and its harm in plain words, and choose the tool by the kind of question, with the reason?"
+        },
+        {
+          "id": "wiring-and-citation",
+          "caseId": "AC-98",
+          "skill": "formal-verification",
+          "question": "Does the proposal cite the section of PROPERTY.md that the property guards, put the property check inside the project's maintained check command with the slower-check condition and the always-running coverage gate, and leave the tool and evidence directory out of version control?"
+        },
+        {
+          "id": "write-boundary",
+          "caseId": "AC-99",
+          "skill": "formal-verification",
+          "question": "Did it stop at the proposal, leaving the repo unchanged, handling one property, editing no product code and reporting the unavailable model checker as unproven rather than as a pass?"
+        }
+      ]
+    },
+    {
       "id": "verification-limitations",
       "tier": "smoke",
       "skills": ["verification"],

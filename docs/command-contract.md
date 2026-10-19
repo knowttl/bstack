@@ -399,7 +399,9 @@ Coverage limits are never problems or repair items and never fail sweep by thems
 A broken link or invalid glossary entry in a document is fixed by that document's owner: `/glossary maintain` for a registered glossary, `/architecture maintain` for the document with ID `design`, `/vision` for the one with ID `vision`, and by hand for any other.
 A stale generated section is fixed by running `docs generate` in `/maintenance`.
 Code changes or document age alone never produce a repair item or fail the command.
-Each applied verification kit under `.agents/skills/verify-*/` is checked with the `kit check` rules and fixed by `/verification maintain`, and a link in the root `AGENTS.md` that does not resolve is fixed by `/agents-md`.
+Each applied verification kit under `.agents/skills/verify-*/` is checked with the `kit check` rules and fixed by `/verification maintain`, each applied formal verification suite under `.agents/skills/formal-*/` is checked with the `formal check` rules and fixed by `/formal-verification maintain`, and a link in the root `AGENTS.md` that does not resolve is fixed by `/agents-md`.
+A suite whose pinned tool file is missing is unproven and not drifted, so it appears in `data.coverageLimits` with the tool's path and never fails sweep by itself.
+The two prefixes are distinct, so a `verify-` kit is never read as a suite.
 The skill judges every registered document against the whole current repo by reading, including glossary terms, design boundaries, README instructions and facts, vision claims and other registered content, as its sweep guide describes.
 Staged, unstaged and untracked content is included; history may order the review but never exclude a document or repository area, and no baseline is required.
 
@@ -1572,3 +1574,34 @@ Exit 1 prints one `<feature file>: feature-map-coverage: <first changed path> [a
 Exit 2 prints a `feature-map-coverage:` diagnostic on stderr for invalid arguments, an unusable base or kit, an empty feature inventory, invalid source paths or a feature file without exactly one complete `Source paths:` line listing comma-separated backticked paths.
 The gate uses the source-path grammar above.
 A path matches when it equals a declared path, lies under it or matches its `*`, `?` or `**` glob; matching uses Unicode code points, so `?` matches one non-slash code point.
+
+The same file is the gate of a formal verification suite: when the script's folder holds a `properties/` directory it reads `properties/*.md` instead of `features/*.md`, and its rule, trailer and messages change as the next section describes.
+
+## Formal verification skill commands
+
+`node skills/formal-verification/scripts/formal-verification.mjs <command> --repo <path> [--json]` is the installed entry point of the formal-verification skill, with the same argument, target, scratch and result contracts as repo-audit.
+It runs `apply`, `state show`, `cite-check` and `rule-proof` from the [shared runtime](../runtime/), following their contracts above, and adds the commands below.
+`--help` lists the commands, and `<command> --help` prints that command's syntax.
+
+`formal scaffold --repo <path> --plan <file>` reads a suite plan following [the plan schema](../skills/formal-verification/schemas/formal-plan.json) and writes a change set and findings file to scratch for review through `apply`.
+It never writes to the target.
+The change set creates `.agents/skills/formal-<target>/` with `SKILL.md`, `suite.json`, one `properties/<id>.md` per property, each model file under `model/` and `scripts/map-coverage.mjs`, plus `.claude/skills/formal-<target>/SKILL.md`, and either creates `AGENTS.md` or appends one pointer line to it.
+The result carries `data.path` (the change set), `data.planDigest`, `data.files` and the exact `data.diff`.
+A property file renders its statement, then the `Harm:`, `Source paths:`, `Design:`, `Model files:` and `Violation diagnostic:` lines, its check command, bounds, assumptions and a `## Transition table` section with one row per model step.
+Every step's `code` must be a `path:line` location inside one of the property's `sourcePaths` whose file has that line; the schema rejects a step with none with `invalid-pattern`, and the plan fails with `step-outside-source-paths` or `step-code-missing` otherwise.
+Other plan validation failures use `evidence-inside-suite`, `duplicate-property`, `duplicate-model-file`, `module-name-mismatch` for a `.tla` model whose header does not name its file, `invalid-property-metadata`, `invalid-source-path`, `invalid-glob`, `unsafe-path` or the schema codes before any change set exists.
+An existing file the change set would create blocks with `suite-exists`.
+`--update` replaces each suite file whose bytes differ from the plan's rendering, creates each missing file, deletes previously managed files and unlisted files under `properties/` and `model/` that the new plan no longer renders, and appends the `AGENTS.md` pointer when absent; when nothing differs it exits 0 with `data.path` and `data.planDigest` null and an empty `data.files`.
+
+`formal check --repo <path> --suite <name>` reads the applied suite without running the model checker or writing.
+It fails with exit 1 and one problem per finding, each carrying the affected `path`: `file-drift` (the message names the first differing line), `file-missing`, `source-paths-missing` for a property file with no `Source paths:` line, `table-drift` for a transition table that differs from what `suite.json` renders, `orphan-property-file`, `orphan-model-file`, `pointer-missing`, `source-path-missing` for a declared source path that matches no file, `step-code-missing` for a cited code line that no longer exists, `design-` followed by a citation code such as `design-stale-citation` for a design location that no longer resolves or whose exact bytes changed, and `tool-hash-mismatch` when the pinned tool file's sha256 differs from the plan.
+When no other problem exists, a tool file that does not exist blocks with exit 2 and `tool-missing`, which means every property is unproven and never that the check passed; any other problem fails the command first.
+An unreadable suite blocks with `suite-unavailable`.
+A passing check returns `data.target`, `data.properties`, the number of files compared and the pinned tool's path and sha256.
+It compares the suite with its own plan, the repo and the pinned tool; rerunning each property's check command establishes whether a model is true.
+
+`node .agents/skills/formal-<target>/scripts/map-coverage.mjs --base <ref>` is the proof coverage gate that every suite carries, and it needs only Node and Git.
+It follows the [feature-map gate](#verification-skill-commands) in how it takes the merge base, unions the path inventories and drops files inside the suite directory from source-impact matching.
+For each `properties/*.md` file it reads the `Source paths:` and `Model files:` lines and requires, when a changed file matches a declared source path, that one of the listed model files changed too or that a commit message since the merge base has a line `No-proof-impact: <id>: <reason>` for that property.
+Exit 0 prints `formal-proof-coverage: ok (<n> properties checked)`, exit 1 prints one `<property file>: formal-proof-coverage: <first changed path> [and <n> more] changed without updating a model file of this property; ...` line per uncovered property on stdout, and exit 2 prints a `formal-proof-coverage:` diagnostic on stderr for invalid arguments, an unusable base or suite, an empty property inventory or a property file without exactly one complete `Source paths:` line and one complete `Model files:` line.
+A `No-map-impact` line never satisfies this gate, and a `No-proof-impact` line never satisfies the feature-map gate.

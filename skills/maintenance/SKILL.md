@@ -15,12 +15,12 @@ Use `create` when the repo has no `.bstack/project.json` or the user wants its r
 
 Create registers the project's documents, the code scopes that govern them, the rules they state and the checks that prove them in `.bstack/project.json`.
 It installs the dependency-free checker at `.bstack/bin/bstack-check.mjs` and wires no-mistakes with an ownership map for its Document step and a docs gate after it, so everyday upkeep needs nothing new from the user.
-Sweep is the user-started, read-only check of every registered document, the verification kit and the `AGENTS.md` pointers against the whole repo.
+Sweep is the user-started, read-only check of every registered document, the verification kit, each `formal-*` formal verification suite and the `AGENTS.md` pointers against the whole repo.
 It returns one list that names the mode that fixes each item and fixes nothing itself.
 A request for a signed-off assessment of one change uses the [contract reference](references/maintenance-contract.md) directly, without either mode.
 
 Neither mode edits product code, rewrites a document's content, resolves vocabulary or boundary questions, or opens pull requests.
-Terms belong to `/glossary`, boundaries to `/architecture`, purpose to `/vision`, the kit to `/verification` and the root pointer file to `/agents-md`; this skill only names them as the fix.
+Terms belong to `/glossary`, boundaries to `/architecture`, purpose to `/vision`, the kit to `/verification`, a formal verification suite to `/formal-verification` and the root pointer file to `/agents-md`; this skill only names them as the fix.
 Return the result to the project's chosen workflow instead of starting another skill.
 Keep drafts, previews and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
@@ -97,7 +97,7 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 ### Step 6: Run the sweep
 
 Run `node scripts/maintenance.mjs sweep --repo <target> --json` and keep the output in scratch.
-It reads the registered documents, generated sections, verification kits and `AGENTS.md` links and writes nothing.
+It reads the registered documents, generated sections, verification kits, formal verification suites and `AGENTS.md` links and writes nothing.
 Every problem it returns carries the skill mode in its `fix` field.
 Its `data.coverageLimits` records unchecked scope, including skipped Markdown and unsupported fragments; these are never repair items and do not fail the command by themselves.
 Load the [sweep guide](references/sweep.md) for what each problem code means and which mode owns it.

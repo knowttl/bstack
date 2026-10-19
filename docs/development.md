@@ -8,10 +8,11 @@ To install and use the skills, start with the [README](../README.md).
 The approved [design](design.md#summary) owns the release scope, and the [implementation plan](implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create`, `maintain` and `correct` modes implemented, with its no-mistakes wiring reference and generated coverage gate.
 The design's [skill split](design.md#the-skill-split) owns the approved skill boundaries.
-Its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](../skills/vision/SKILL.md), [glossary](../skills/glossary/SKILL.md), [architecture](../skills/architecture/SKILL.md), [foundation](../skills/foundation/SKILL.md), [agents-md](../skills/agents-md/SKILL.md), [maintenance](../skills/maintenance/SKILL.md) and [plan](../skills/plan/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
+Its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](../skills/vision/SKILL.md), [glossary](../skills/glossary/SKILL.md), [architecture](../skills/architecture/SKILL.md), [foundation](../skills/foundation/SKILL.md), [agents-md](../skills/agents-md/SKILL.md), [maintenance](../skills/maintenance/SKILL.md), [plan](../skills/plan/SKILL.md) and [formal-verification](../skills/formal-verification/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
 The vision, glossary, architecture and foundation skills take a design document the user names as the user's explanation and ask only about gaps, and both repo-audit checklists list `/plan` last ([T2.12](implementation-plan.md#t212-take-the-design-as-input-and-wire-plan-into-the-checklists)).
-The `formal-verification` skill is approved design only; [T2.13](implementation-plan.md#t213-add-the-formal-verification-skill) schedules its build, and the [`formal-charge-once` fixtures](../tests/fixtures/formal-charge-once/FIXTURE.md) are its proof input.
-The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance and plan; audit usage applies to repo-audit.
+The `formal-verification` skill proves one stated property of a high-stakes spot by model checking and leaves a `formal-<target>` suite ([T2.13](implementation-plan.md#t213-add-the-formal-verification-skill)); the [`formal-charge-once` fixtures](../tests/fixtures/formal-charge-once/FIXTURE.md) are its proof input, `/maintenance sweep` checks its suites, `/architecture` proposes the explicit state model standard that feeds it and both repo-audit checklists list it only with cited risk evidence.
+Its model-checker proof runs only where the pinned tool and Java are present: see [the skill's tests](#formal-verification).
+The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan and formal-verification; audit usage applies to repo-audit.
 
 This checkout contains the slim [repo-audit procedure](../skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](command-contract.md).
 The [vision skill](../skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
@@ -476,6 +477,23 @@ node skills/verification/scripts/verification.mjs comment-check generate --repo 
 ```
 
 Its fixture acceptance needs Git, Python 3, Ruff and Go on `PATH`, and the TypeScript comment-checker test needs the `ts-shop` fixture's npm install.
+
+### formal-verification
+
+The [formal-verification skill](../skills/formal-verification/SKILL.md) is started by the user and provides `create` and `maintain`: `create` proves one stated property of one spot, renders the suite as a reviewable change set and proves the check can fail, and `maintain` checks an applied suite for drift, reruns every property and triages each problem.
+Its commands are documented in the [command contract](command-contract.md#formal-verification-skill-commands), and run from a checkout like this:
+
+```sh
+node skills/formal-verification/scripts/formal-verification.mjs formal scaffold --repo <target> --plan <suite-plan.json>
+node skills/formal-verification/scripts/formal-verification.mjs apply --repo <target> --plan <change-set.json> --dry-run
+node skills/formal-verification/scripts/formal-verification.mjs formal check --repo <target> --suite <name>
+node skills/formal-verification/scripts/formal-verification.mjs formal scaffold --repo <target> --plan <suite-plan.json> --update
+```
+
+The skill installs no tool: the project pins the tool file and its sha256, and a missing tool is reported as unproven.
+`tests/scripts/formal.test.mjs` runs every check except the model-checker proof without a tool.
+Its `rule-proof` and walkthrough tests run only when `BSTACK_TLA2TOOLS_JAR` names the pinned `tla2tools.jar` and Java 11 or later is on `PATH`, and they skip, never pass, otherwise.
+The [fixture notes](../tests/fixtures/formal-charge-once/FIXTURE.md) record the pinned jar, its sha256 and the expected results.
 
 ### Standalone checker
 

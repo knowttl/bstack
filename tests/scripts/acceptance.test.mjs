@@ -26,10 +26,10 @@ async function plannedRegistry() {
   return data
 }
 
-test('registry validates all 88 owned cases without scoring procedures', async () => {
+test('registry validates all 100 owned cases without scoring procedures', async () => {
   const result = run('--check-registry')
   assert.equal(result.status, 0)
-  assert.equal(result.data.data.registered, 88)
+  assert.equal(result.data.data.registered, 100)
   assert.equal(result.data.data.passed, 0)
   const registry = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
   assert.equal(registry.cases.filter(item => item.evidenceType === 'automated' && item.procedure.status === 'planned').length, 0)
@@ -81,7 +81,7 @@ for (const evidenceType of ['agent', 'manual']) {
       const result = run('--check-registry', '--registry', path)
       assert.equal(result.status, expected, result.stdout)
       if (expected) assert.equal(result.data.problems[0].message, `Scenario ${name} does not check ${caseId}`)
-      else assert.deepEqual(result.data.data, { registered: 88, planned: 87, passed: 0 })
+      else assert.deepEqual(result.data.data, { registered: 100, planned: 99, passed: 0 })
     })
   }
 }
@@ -113,7 +113,7 @@ for (const name of ['valid skeleton passes from another working directory', 'unl
     await writeFile(path, JSON.stringify(data))
     const result = run('--check-registry', '--registry', path)
     assert.equal(result.status, 0, result.stdout)
-    assert.deepEqual(result.data.data, { registered: 88, planned: 87, passed: 0 })
+    assert.deepEqual(result.data.data, { registered: 100, planned: 99, passed: 0 })
     data.cases[40].procedure.name = 'nonexistent test'
     await writeFile(path, JSON.stringify(data))
     assert.equal(run('--check-registry', '--registry', path).status, 2)

@@ -8,6 +8,7 @@ import { loadContract } from './contract.mjs'
 import { run as checkDocuments } from './docs-check.mjs'
 import { run as checkGeneratedSections } from './docs-generate.mjs'
 import { run as checkKit } from './kit-check.mjs'
+import { run as checkFormal } from './formal-check.mjs'
 
 // A registered document's owning skill is read from its registration: the glossary field, or the conventional vision and design IDs.
 function fixFor(document) {
@@ -58,6 +59,21 @@ async function kitItems(target) {
   return items
 }
 
+// A suite folder has its own prefix, so a verify- kit is never read as a suite. A missing tool leaves a suite unproven, which is a limit and not drift.
+async function formalItems(target, coverageLimits) {
+  const items = []
+  const entries = await readdir(join(target.root, '.agents/skills')).catch(error => error.code === 'ENOENT' ? [] : Promise.reject(error))
+  for (const name of entries.filter(name => name.startsWith('formal-')).sort()) {
+    try { await checkFormal({ repo: target.root, suite: name.slice('formal-'.length) }) } catch (error) {
+      for (const problem of problemsOf(error)) {
+        if (problem.code === 'tool-missing') coverageLimits.push({ path: problem.path, reason: problem.message })
+        else items.push({ ...problem, fix: 'Run /formal-verification maintain.' })
+      }
+    }
+  }
+  return items
+}
+
 async function pointerItems(target, coverageLimits) {
   const text = await readIfPresent(target.root, 'AGENTS.md')
   if (text === null) return []
@@ -78,7 +94,8 @@ async function pointerItems(target, coverageLimits) {
 export async function run(options) {
   const target = await resolveTarget(options)
   const coverageLimits = []
-  const problems = [...await contractItems(target, options, coverageLimits), ...await kitItems(target), ...await pointerItems(target, coverageLimits)]
+  const problems = [...await contractItems(target, options, coverageLimits), ...await kitItems(target), ...await formalItems(target, coverageLimits),
+    ...await pointerItems(target, coverageLimits)]
   return { inputs: { repo: target.root, contract: options.contract ?? '.bstack/project.json' }, status: problems.length ? 'failed' : 'passed', problems,
     data: { coverageLimits } }
 }

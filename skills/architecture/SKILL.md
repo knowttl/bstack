@@ -112,7 +112,7 @@ Done when: Only the approved files, and any selected registration or pointer, ha
 Rerun the maintained check command and the proofs on the written tree, and report whether the design is registered in a contract, since its structure check belongs to `/maintenance`.
 State the target, the sources read, the boundaries and decisions proposed with their evidence, the rules proved or unproven with their coverage limits, the debt baseline and the written paths.
 Name the unresolved decisions and any step left blocked with its missing prerequisite.
-List `/foundation`, `/verification create`, `/maintenance` and `/agents-md` as next steps for the user to run when they apply, and start none of them.
+List `/foundation`, `/verification create`, `/formal-verification create` for an explicit state model whose steps guard money or data, `/maintenance` and `/agents-md` as next steps for the user to run when they apply, and start none of them.
 Name `maintain` as the later pass that keeps the design true.
 
 Done when: The report names what was written or why nothing was, which rules were proved, and every open decision.

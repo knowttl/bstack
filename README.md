@@ -8,28 +8,30 @@
 
 ```text
 $ npx skills add knowttl/bstack --agent claude-code --yes
-◇  Installed 9 skills ────────────────╮
-│                                     │
-│  ✓ agents-md (copied)               │
-│    → ./.claude/skills/agents-md     │
-│  ✓ architecture (copied)            │
-│    → ./.claude/skills/architecture  │
-│  ✓ foundation (copied)              │
-│    → ./.claude/skills/foundation    │
-│  ✓ glossary (copied)                │
-│    → ./.claude/skills/glossary      │
-│  ✓ maintenance (copied)             │
-│    → ./.claude/skills/maintenance   │
-│  ✓ plan (copied)                    │
-│    → ./.claude/skills/plan          │
-│  ✓ repo-audit (copied)              │
-│    → ./.claude/skills/repo-audit    │
-│  ✓ verification (copied)            │
-│    → ./.claude/skills/verification  │
-│  ✓ vision (copied)                  │
-│    → ./.claude/skills/vision        │
-│                                     │
-├─────────────────────────────────────╯
+◇  Installed 10 skills ──────────────────────╮
+│                                            │
+│  ✓ agents-md (copied)                      │
+│    → ./.claude/skills/agents-md            │
+│  ✓ architecture (copied)                   │
+│    → ./.claude/skills/architecture         │
+│  ✓ formal-verification (copied)            │
+│    → ./.claude/skills/formal-verification  │
+│  ✓ foundation (copied)                     │
+│    → ./.claude/skills/foundation           │
+│  ✓ glossary (copied)                       │
+│    → ./.claude/skills/glossary             │
+│  ✓ maintenance (copied)                    │
+│    → ./.claude/skills/maintenance          │
+│  ✓ plan (copied)                           │
+│    → ./.claude/skills/plan                 │
+│  ✓ repo-audit (copied)                     │
+│    → ./.claude/skills/repo-audit           │
+│  ✓ verification (copied)                   │
+│    → ./.claude/skills/verification         │
+│  ✓ vision (copied)                         │
+│    → ./.claude/skills/vision               │
+│                                            │
+├────────────────────────────────────────────╯
 ```
 
 [Quickstart](#quickstart) • [Use with your agent](#use-with-your-agent) • [Features](#features) • [Safety](#safety-and-permissions) • [Configuration](#configuration) • [Commands](#commands)
@@ -157,6 +159,7 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 |---|---|
 | [`agents-md`](skills/agents-md/SKILL.md) | Create and maintain one root AGENTS.md of pointers to a project's rules, evidence requirements and check commands, merging equivalent CLAUDE.md content into it. |
 | [`architecture`](skills/architecture/SKILL.md) | Propose or audit a project's module boundaries, dependency direction and shared edit targets, record real decisions and design standards, and keep them true as the project grows. |
+| [`formal-verification`](skills/formal-verification/SKILL.md) | Prove one stated property of a high-stakes spot by model checking, and leave a project-local suite that the project reruns and keeps true as the code changes. |
 | [`foundation`](skills/foundation/SKILL.md) | Turn an approved new idea into the smallest working project by choosing the stack, scaffold, setup commands and first user journey, then create it only after the owner approves the exact files and commands. |
 | [`glossary`](skills/glossary/SKILL.md) | Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes. |
 | [`maintenance`](skills/maintenance/SKILL.md) | Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift. |
@@ -167,7 +170,8 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 <!-- skills-table:end -->
 
 - `repo-audit` is the entry point: for a new idea or an existing repo it lists which of the other skills to run next, and `/plan` always comes last.
-- `/verification` runs in `create`, `maintain` or `correct` mode, `/glossary` and `/architecture` in `create` or `maintain`, and `/maintenance` in `create` or `sweep`.
+- `/verification` runs in `create`, `maintain` or `correct` mode, `/glossary`, `/architecture` and `/formal-verification` in `create` or `maintain`, and `/maintenance` in `create` or `sweep`.
+- `/formal-verification` proves one stated property of a high-stakes spot with a model checker such as TLA+ with TLC, and it is listed only where the repo shows cited risk evidence; the project pins the tool file and its sha256, bstack installs nothing, and a missing tool means unproven, never a pass.
 - Skills that write ask you to answer open intent questions, select findings and approve the exact diff before anything is applied.
 - `/foundation` is for a new, empty project only and refuses a non-empty directory.
 
@@ -180,10 +184,10 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
 
 | Capability | Skills | How it is unlocked |
 |---|---|---|
-| Apply reviewed target-file edits | `vision`, `glossary`, `architecture`, `verification`, `foundation`, `maintenance`, `agents-md`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
+| Apply reviewed target-file edits | `vision`, `glossary`, `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance`, `agents-md`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
 | Replace the target debt baseline | `architecture`, `verification` | `baseline check --refresh` directly replaces the baseline when validation passes, removing fixed entries; adding an entry also requires `--finding`, `--findings` and `--entry` matching selected unresolved debt. There is no approval prompt or `apply` journal; the skill workflow instead prepares baseline edits in scratch for reviewed `apply` |
 | Create a new Git project | `foundation` | `project create` runs after you approve the exact files and commands, only in an empty destination |
-| Run project commands | `architecture`, `verification`, `foundation`, `maintenance` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture` and `verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch |
+| Run project commands | `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture`, `verification` and `formal-verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch |
 | Remove a file | `agents-md` (`CLAUDE.md` merge) | Only after you approve and the host's current instruction-loading documentation has been rechecked |
 
 - **Scope**: skills read only the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.

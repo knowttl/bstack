@@ -77,5 +77,14 @@
     ],
     "assets": [],
     "references": ["grilling.md", "agents-pointer.md"]
+  },
+  "formal-verification": {
+    "commands": ["formal scaffold", "formal check", "rule-proof", "apply", "state show", "cite-check"],
+    "schemas": [
+      "change-set.schema.json", "check-plan.json", "evidence.schema.json", "findings.schema.json", "formal-plan.json",
+      "research-report.json", "resume-state.schema.json"
+    ],
+    "assets": ["map-coverage.mjs"],
+    "references": ["grilling.md"]
   }
 }

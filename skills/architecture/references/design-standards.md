@@ -21,6 +21,12 @@ Their practical rules are in the architecture reference's principles table; this
 | DRY | Human review flags duplicated knowledge in code and docs, using [one authoritative source per rule](#one-authoritative-source-per-rule) for placement and links | The duplicated rule, its authoritative owner and the coordinated change it risks, distinguishing incidental similarity |
 | KISS | Human review flags needless complexity against approved requirements | The unnecessary abstraction, layer or option and a simpler alternative that preserves required behaviour |
 | Keep dependencies purposeful | Human design review against the vision and the design | The requirement, the responsibility and the simpler alternative |
+| Explicit state model | Human design review, proposed only with cited evidence and never as a universal rule | The cited state held in scattered booleans, phases or lifecycle checks, the invalid combination or repeated branch it allows, and the state model that would remove it |
+
+An explicit state model is a candidate for state that must stay consistent, such as a lifecycle, a flow or a record with several writers, and not a prescription to rewrite every conditional.
+Prefer boring code when the current shape is clear, local and unlikely to grow, and be sceptical of a model that adds indirection without removing branches, duplicated rules or invalid states.
+Report the refactor it implies for the user to select, because no skill rewrites product code.
+Where the state's steps guard money or data and depend on timing or a rare input, send the model to `/formal-verification create`, which the user runs: a model check is a Detect-rung check, so making the bad state impossible to represent stays preferred.
 
 Do not disguise a human design judgement as a deterministic violation.
 Give the reviewer the relevant authority, example and evidence instead.

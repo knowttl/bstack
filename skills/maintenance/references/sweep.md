@@ -17,7 +17,11 @@ These are unchecked scope, never problems or repair items, and never fail the co
 | `broken-local-link`, `invalid-glossary`, `duplicate-term` in a registered document | Broken link, empty glossary or repeated term | The document's owner: `/glossary maintain` for a glossary, `/architecture maintain` for `design`, `/vision` for `vision` |
 | `stale-generated-section`, other generator codes | A generator's output differs from the section in its document | `/maintenance` with its `docs generate` command and a selected change set |
 | Kit codes such as `file-drift`, `file-missing`, `orphan-feature-file`, `pointer-missing`, `source-path-missing` | A verification kit no longer matches its plan or the repo | `/verification maintain` |
+| Suite codes such as `file-drift`, `table-drift`, `source-paths-missing`, `orphan-property-file`, `step-code-missing`, `tool-hash-mismatch` in a `formal-*` folder | A formal verification suite no longer matches its plan, the repo or its pinned tool | `/formal-verification maintain` |
 | `broken-local-link` in `AGENTS.md` | A pointer's target is gone | `/agents-md` |
+
+A `formal-*` suite is checked next to the kit, and a `verify-` kit is never read as a suite.
+A suite whose pinned tool file is missing is unproven and not drifted, so it appears in `data.coverageLimits` and never fails the command.
 
 A document registered under another ID has no owning skill, and its problems are corrected by hand.
 Code changes or document age alone are not evidence of drift and never create repair items or fail the command.
