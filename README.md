@@ -84,7 +84,7 @@ Prerequisites: Node 24 or later, Git and jq (for the inventory example).
 
 2. Check that an installed skill's bundled script runs.
    This read-only command (it pipes through `jq`) inventories the repo's documents and prints the document kinds it did and did not find.
-   The output below was captured after installing all nine skills for project-local Claude Code into the scratch project above.
+   The output below was captured with a project-local Claude Code installation before `formal-verification` was added; see [the skill list](#use-with-your-agent) for the current inventory.
    Inventory includes installed references; a single-skill, Codex or global installation produces different paths and document kinds, and future reference edits change their hashes.
 
    ```sh

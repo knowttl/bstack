@@ -1575,7 +1575,7 @@ Exit 2 prints a `feature-map-coverage:` diagnostic on stderr for invalid argumen
 The gate uses the source-path grammar above.
 A path matches when it equals a declared path, lies under it or matches its `*`, `?` or `**` glob; matching uses Unicode code points, so `?` matches one non-slash code point.
 
-The same file is the gate of a formal verification suite: when the script's folder holds a `properties/` directory it reads `properties/*.md` instead of `features/*.md`, and its rule, trailer and messages change as the next section describes.
+The same file is the gate of a formal verification suite: when the suite folder (the parent of `scripts/`) holds a `properties/` directory it reads `properties/*.md` instead of `features/*.md`, and its rule, trailer and messages change as the next section describes.
 
 ## Formal verification skill commands
 
@@ -1602,6 +1602,6 @@ It compares the suite with its own plan, the repo and the pinned tool; rerunning
 
 `node .agents/skills/formal-<target>/scripts/map-coverage.mjs --base <ref>` is the proof coverage gate that every suite carries, and it needs only Node and Git.
 It follows the [feature-map gate](#verification-skill-commands) in how it takes the merge base, unions the path inventories and drops files inside the suite directory from source-impact matching.
-For each `properties/*.md` file it reads the `Source paths:` and `Model files:` lines and requires, when a changed file matches a declared source path, that one of the listed model files changed too or that a commit message since the merge base has a line `No-proof-impact: <id>: <reason>` for that property.
+For each `properties/*.md` file other than `README.md` it reads the `Source paths:` and `Model files:` lines and requires, when a changed file matches a declared source path, that one of the listed model files changed too or that a commit message since the merge base has a line `No-proof-impact: <id>: <reason>` for that property.
 Exit 0 prints `formal-proof-coverage: ok (<n> properties checked)`, exit 1 prints one `<property file>: formal-proof-coverage: <first changed path> [and <n> more] changed without updating a model file of this property; ...` line per uncovered property on stdout, and exit 2 prints a `formal-proof-coverage:` diagnostic on stderr for invalid arguments, an unusable base or suite, an empty property inventory or a property file without exactly one complete `Source paths:` line and one complete `Model files:` line.
 A `No-map-impact` line never satisfies this gate, and a `No-proof-impact` line never satisfies the feature-map gate.
