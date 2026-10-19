@@ -2615,6 +2615,29 @@ import { readFileSync } from "node:fs";
 import { readFile as readFile11 } from "node:fs/promises";
 import { isAbsolute as isAbsolute3, join as join11, posix as posix2 } from "node:path";
 
+// runtime/scripts/lib/render.mjs
+function link(text, destination) {
+  return ["[", text, "]", "(", destination, ")"].join("");
+}
+function shown(command) {
+  return command.map((word) => `'${word.replaceAll("'", `'"'"'`)}'`).join(" ");
+}
+function bullets(items) {
+  return items.map((item) => `- ${item}`);
+}
+function commandLines(label, spec) {
+  const command = shown(spec.command);
+  const fence = "~".repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map((run12) => run12.length + 1)));
+  return [
+    `${label}${spec.cwd ? ` from \`${spec.cwd}\`` : ""}:`,
+    "",
+    `${fence}sh`,
+    ...command.split("\n"),
+    fence,
+    ...spec.env ? [`Environment: ${Object.entries(spec.env).map(([key, value]) => `\`${key}=${value}\``).join(", ")}.`] : []
+  ];
+}
+
 // runtime/schemas/kit-plan.json
 var kit_plan_default = {
   title: "Verification kit plan version 1",
@@ -2852,27 +2875,6 @@ async function readKitPlan(root, app, options) {
 }
 function readySeconds(plan) {
   return plan.launch.timeoutSeconds ?? defaultReadySeconds;
-}
-function link(text, destination) {
-  return ["[", text, "]", "(", destination, ")"].join("");
-}
-function shown(command) {
-  return command.map((word) => `'${word.replaceAll("'", `'"'"'`)}'`).join(" ");
-}
-function bullets(items) {
-  return items.map((item) => `- ${item}`);
-}
-function commandLines(label, spec) {
-  const command = shown(spec.command);
-  const fence = "~".repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map((run12) => run12.length + 1)));
-  return [
-    `${label}${spec.cwd ? ` from \`${spec.cwd}\`` : ""}:`,
-    "",
-    `${fence}sh`,
-    ...command.split("\n"),
-    fence,
-    ...spec.env ? [`Environment: ${Object.entries(spec.env).map(([key, value]) => `\`${key}=${value}\``).join(", ")}.`] : []
-  ];
 }
 function documentedHelpers(plan) {
   const gate = {

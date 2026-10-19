@@ -1432,6 +1432,146 @@
         "name": "installed repo-audit prompt emits both checklist orders with plan last",
         "artifacts": ["tests/scripts/repo-audit-overview.test.mjs"]
       }
+    },
+    {
+      "id": "AC-89",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-89",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Ask the formal-verification skill's task as a plain request without the explicit command and score that it does not start, run the explicit command and score that it starts and starts no other skill, and remove the frontmatter setting and the agents/openai.yaml policy in turn and score that the package check fails."
+      }
+    },
+    {
+      "id": "AC-90",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-90",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the formal-verification create mode on the formal-charge-once fixture, and score that it reads the repo before asking, chooses one target with citations that cite-check resolves, states one property and its harm, and names the tool by the kind of question."
+      }
+    },
+    {
+      "id": "AC-91",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-91",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/formal.test.mjs",
+        "name": "scaffold renders the suite, property files, transition table and model files from the plan and rejects a model step that cites no atomic code step",
+        "artifacts": ["tests/scripts/formal.test.mjs"]
+      }
+    },
+    {
+      "id": "AC-92",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-92",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/formal.test.mjs",
+        "name": "check fails on a property file with no Source paths line, a drifted transition table and a tool file that differs from its pin, and reports a missing tool as unproven",
+        "artifacts": ["tests/scripts/formal.test.mjs"]
+      }
+    },
+    {
+      "id": "AC-93",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-93",
+      "evidenceType": "manual",
+      "procedure": {
+        "status": "planned",
+        "description": "Run tests/scripts/formal.test.mjs with BSTACK_TLA2TOOLS_JAR set to the pinned tla2tools.jar and Java on PATH, and score that rule-proof passes unchanged on the formal-charge-once pair with exits 0 and 12 and the expected diagnostic, and that a model that leaves a variable unassigned exits 75 and fails the proof as a modeling error; the test skips when the tool is absent, so a missing tool is never recorded as a pass."
+      }
+    },
+    {
+      "id": "AC-94",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-94",
+      "evidenceType": "manual",
+      "procedure": {
+        "status": "planned",
+        "description": "Run tests/scripts/formal.test.mjs with BSTACK_TLA2TOOLS_JAR set to the pinned tla2tools.jar and Java on PATH, and score the walkthrough: the gate flags a scratch break in the real code while the unchanged model still passes, the updated model fails with the diagnostic, and the restored code and model return the original result."
+      }
+    },
+    {
+      "id": "AC-95",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-95",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/formal.test.mjs",
+        "name": "the generalised coverage gate fails a source change when no model changed and accepts it with a No-proof-impact line",
+        "artifacts": ["tests/scripts/formal.test.mjs"]
+      }
+    },
+    {
+      "id": "AC-96",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-96",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the formal-verification maintain mode on an applied suite with a seeded model drift and a seeded modeling error, and score that it runs formal check, uses one reader per property, reruns every property, assigns each problem exactly one class and reports one outcome."
+      }
+    },
+    {
+      "id": "AC-97",
+      "skill": "maintenance",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-97",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/formal.test.mjs",
+        "name": "sweep routes a drifted formal suite to its maintain mode, reports a missing tool as a limit and leaves a verify kit alone",
+        "artifacts": ["tests/scripts/formal.test.mjs"]
+      }
+    },
+    {
+      "id": "AC-98",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-98",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the formal-verification create mode through its wiring step, and score that each property cites its design section and cite-check resolves it, that the property check is proposed inside the maintained check command with the slower-check condition and the gate always running, and that repo-audit lists the skill only with cited risk evidence."
+      }
+    },
+    {
+      "id": "AC-99",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-99",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the formal-verification create mode through a proposal and apply, and score that product code is unchanged, that writes go only through apply after the exact diff is approved, that one property is handled and that a Kani harness in product source is held for its own approval."
+      }
+    },
+    {
+      "id": "AC-100",
+      "skill": "architecture",
+      "ownerTask": ["T2.13"],
+      "criterionSource": "docs/design.md#AC-100",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the architecture skill on a repo with state held in scattered booleans, and score that it proposes an explicit state model only with cited evidence as a standard and not a universal rule, reports the refactor for the user to select and sends the model to /formal-verification."
+      }
     }
   ]
 }

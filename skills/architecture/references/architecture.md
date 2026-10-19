@@ -40,7 +40,7 @@ These adaptations follow the pinned design and module guidance attributed in the
 
 - Unrelated business responsibilities, or startup, UI, domain rules and persistence combined without clear internal boundaries.
 - Imports of private implementation, leaked representations and cycles across intended module boundaries.
-- Shared mutable state and multiple writers of canonical data.
+- Shared mutable state, multiple writers of canonical data, and state held in scattered booleans, phases or lifecycle checks that must stay in sync.
 - More than one supported way to do one task, where callers copy whichever way they find first and every way keeps gaining callers.
 - Hand-maintained parallel lists of the same items with no derivation or check that fails when they disagree.
 - The same business rule, algorithm or documented policy maintained independently in several places, with a concrete change that would require coordinated updates.
@@ -63,7 +63,7 @@ History may omit abandoned rebases and conflict resolutions.
 
 ## Signals that are not violations
 
-Size, import counts and change frequency indicate where to investigate.
+Size, import counts, change frequency and scattered state indicate where to investigate, and the explicit state model standard in the design standards reference is proposed only with cited evidence.
 They do not prove a bad boundary.
 Similar-looking code is not necessarily duplicated knowledge: independently changing concepts should not be coupled merely to remove similar syntax.
 Generated copies derived from one authority are not independently maintained duplication; verify their freshness instead.

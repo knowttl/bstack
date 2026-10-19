@@ -585,39 +585,39 @@ function matchesType(value, type) {
 function validateSchema(schema2) {
   const problems = [];
   function visit(node, path) {
-    const invalid3 = (message) => problems.push({ code: "invalid-schema", message, path, fix: "Use the documented schema subset and keyword value types." });
+    const invalid4 = (message) => problems.push({ code: "invalid-schema", message, path, fix: "Use the documented schema subset and keyword value types." });
     if (!object(node)) {
-      invalid3("A schema must be an object.");
+      invalid4("A schema must be an object.");
       return;
     }
     for (const key of Object.keys(node)) {
       if (!keywords.includes(key)) problems.push({ code: "unsupported-keyword", message: `Unsupported schema keyword: ${key}`, path: `${path}/${key}`, fix: `Remove ${key} or extend the tested schema subset in its owning task.` });
     }
     for (const key of ["$schema", "title", "pattern"]) {
-      if (Object.hasOwn(node, key) && typeof node[key] !== "string") invalid3(`${key} must be a string.`);
+      if (Object.hasOwn(node, key) && typeof node[key] !== "string") invalid4(`${key} must be a string.`);
     }
     if (typeof node.pattern === "string") {
       try {
         new RegExp(node.pattern, "u");
       } catch {
-        invalid3(`Invalid pattern: ${node.pattern}`);
+        invalid4(`Invalid pattern: ${node.pattern}`);
       }
     }
     if (Object.hasOwn(node, "type")) {
       const selected = Array.isArray(node.type) ? node.type : [node.type];
-      if (!selected.length || selected.some((type) => !types.includes(type)) || new Set(selected).size !== selected.length) invalid3("type must name unique supported JSON types.");
+      if (!selected.length || selected.some((type) => !types.includes(type)) || new Set(selected).size !== selected.length) invalid4("type must name unique supported JSON types.");
     }
     for (const key of ["minItems", "minLength"]) {
-      if (Object.hasOwn(node, key) && (!Number.isSafeInteger(node[key]) || node[key] < 0)) invalid3(`${key} must be a nonnegative safe integer.`);
+      if (Object.hasOwn(node, key) && (!Number.isSafeInteger(node[key]) || node[key] < 0)) invalid4(`${key} must be a nonnegative safe integer.`);
     }
-    if (Object.hasOwn(node, "enum") && (!Array.isArray(node.enum) || !node.enum.length || new Set(node.enum.map(canonicalJSON)).size !== node.enum.length)) invalid3("enum must be a nonempty array of unique JSON values.");
-    if (Object.hasOwn(node, "required") && (!Array.isArray(node.required) || node.required.some((key) => typeof key !== "string") || new Set(node.required).size !== node.required.length)) invalid3("required must be an array of unique field names.");
+    if (Object.hasOwn(node, "enum") && (!Array.isArray(node.enum) || !node.enum.length || new Set(node.enum.map(canonicalJSON)).size !== node.enum.length)) invalid4("enum must be a nonempty array of unique JSON values.");
+    if (Object.hasOwn(node, "required") && (!Array.isArray(node.required) || node.required.some((key) => typeof key !== "string") || new Set(node.required).size !== node.required.length)) invalid4("required must be an array of unique field names.");
     if (Object.hasOwn(node, "properties")) {
-      if (!object(node.properties)) invalid3("properties must be an object of schemas.");
+      if (!object(node.properties)) invalid4("properties must be an object of schemas.");
       else for (const [key, child] of Object.entries(node.properties)) visit(child, `${path}/properties/${key}`);
     }
     if (Object.hasOwn(node, "items")) visit(node.items, `${path}/items`);
-    if (Object.hasOwn(node, "uniqueItems") && typeof node.uniqueItems !== "boolean") invalid3("uniqueItems must be a boolean.");
+    if (Object.hasOwn(node, "uniqueItems") && typeof node.uniqueItems !== "boolean") invalid4("uniqueItems must be a boolean.");
     if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") visit(node.additionalProperties, `${path}/additionalProperties`);
   }
   visit(schema2, "$");
@@ -627,7 +627,7 @@ function validateData(schema2, data) {
   validateSchema(schema2);
   const problems = [];
   function visit(node, value, path) {
-    const problem2 = (code, message, at = path) => problems.push({ code, message, path: at, fix: "Supply data matching the documented input schema." });
+    const problem2 = (code2, message, at = path) => problems.push({ code: code2, message, path: at, fix: "Supply data matching the documented input schema." });
     if (node.type && !(Array.isArray(node.type) ? node.type : [node.type]).some((type) => matchesType(value, type))) {
       problem2("invalid-type", `Expected ${JSON.stringify(node.type)}.`);
       return;
@@ -1006,8 +1006,8 @@ var project_schema_default = {
 };
 
 // runtime/scripts/commands/contract.mjs
-function reject2(code, path, message, status = "failed") {
-  throw new CommandError(status, [{ code, path, message, fix: "Review the version 1 project contract and its authoritative source pointers." }]);
+function reject2(code2, path, message, status = "failed") {
+  throw new CommandError(status, [{ code: code2, path, message, fix: "Review the version 1 project contract and its authoritative source pointers." }]);
 }
 async function packageManifestPath(root, cwd, name) {
   let directory = cwd;
@@ -1331,7 +1331,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   const completion = new Promise((resolve11) => {
     finish = resolve11;
   });
-  child.on("close", (code, exitSignal2) => finish([code, exitSignal2]));
+  child.on("close", (code2, exitSignal2) => finish([code2, exitSignal2]));
   const cleanupFailed = (message) => {
     error ??= message;
     if (child.exitCode === null && child.signalCode === null && !child.kill("SIGKILL")) child.unref();
@@ -1348,8 +1348,8 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
           cleanupFailed(failure.message);
           resolve11();
         });
-        killer.on("close", (code) => {
-          if (code !== 0) cleanupFailed("Process-tree cleanup failed.");
+        killer.on("close", (code2) => {
+          if (code2 !== 0) cleanupFailed("Process-tree cleanup failed.");
           resolve11();
         });
       });
@@ -1395,8 +1395,8 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
 
 // runtime/scripts/lib/proposed-edit.mjs
 import { extname as extname3 } from "node:path";
-function reject3(code, message) {
-  throw new CommandError("failed", [{ code, message, fix: "Review a supported, unambiguous mechanical edit and its complete proposed bytes." }]);
+function reject3(code2, message) {
+  throw new CommandError("failed", [{ code: code2, message, fix: "Review a supported, unambiguous mechanical edit and its complete proposed bytes." }]);
 }
 function jsonObject(text) {
   let parsed;
@@ -1542,8 +1542,8 @@ function exactDiff(path, original, proposed) {
 }
 
 // runtime/scripts/commands/docs-generate.mjs
-function reject4(code, path, message) {
-  throw new CommandError("failed", [{ code, path, message, fix: "Correct the registered generator or markers, then review regenerated bytes through a selected change set." }]);
+function reject4(code2, path, message) {
+  throw new CommandError("failed", [{ code: code2, path, message, fix: "Correct the registered generator or markers, then review regenerated bytes through a selected change set." }]);
 }
 async function projectState(root, watchDirectory = () => {
 }) {
@@ -1978,7 +1978,7 @@ async function checkCommandPaths(target, checks, paths = []) {
     return [check, [...new Set([...internal, ...actual].filter((path) => isInside(target.root, path)).map((path) => relative6(target.root, path).split("\\").join("/")).flatMap((path) => [...known].filter((file) => file === path || file.startsWith(path ? `${path}/` : ""))))]];
   })));
 }
-async function checkInputState(target, plan, planPath) {
+async function checkInputState(target, plan, planPath2) {
   const scopes = plan.checks.flatMap((check) => check.inputScopes);
   const globs = scopes.map(pathGlob);
   const files = await repoFiles(target.root);
@@ -1988,7 +1988,7 @@ async function checkInputState(target, plan, planPath) {
   const head = readGit(target.root, ["rev-parse", "--verify", "HEAD"]);
   let planContentHash = null;
   try {
-    planContentHash = hashBytes(await readFile6(planPath));
+    planContentHash = hashBytes(await readFile6(planPath2));
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
@@ -2021,7 +2021,7 @@ async function run5(options) {
   }
   for (const key of ["checks", "acceptanceCases", "acceptanceSources"]) validateIds(plan[key], `$/${key}`);
   const problems = [];
-  const problem2 = (code, message) => problems.push({ code, message, fix: "Review the check plan and capture the required evidence against the correct state." });
+  const problem2 = (code2, message) => problems.push({ code: code2, message, fix: "Review the check plan and capture the required evidence against the correct state." });
   for (const source of plan.acceptanceSources) {
     const path2 = await resolvePath(target.root, source.path);
     let bytes;
@@ -2488,8 +2488,8 @@ var findings_schema_default = {
 
 // runtime/scripts/commands/findings.mjs
 var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "foundation-review"] };
-function invalid(code, message, path) {
-  throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
+function invalid(code2, message, path) {
+  throw new CommandError("failed", [{ code: code2, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
 }
 async function validateFindings(findings, target, deletionScope = []) {
   validateData(findings_schema_default, findings);
@@ -2933,7 +2933,7 @@ async function run6(options) {
   const mapping = mapInventory(inventory, contracts);
   validateIds(assessment.decisions, "decisions");
   const problems = [];
-  const problem2 = (code, message) => problems.push({ code, message, fix: "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks." });
+  const problem2 = (code2, message) => problems.push({ code: code2, message, fix: "Review the live diff and prior policy, complete the assessment, bind its current fingerprint and recapture required checks." });
   const equal = (a, b) => canonicalJSON(a) === canonicalJSON(b);
   for (const key of ["base", "head", "changes", "paths"]) if (!equal(assessment[key], inventory[key])) problem2("inventory-mismatch", `Assessment ${key} does not match the complete live comparison.`);
   if (![".", target.root].includes(assessment.repo) || assessment.contract !== proposed.path) problem2("target-mismatch", "Assessment names a different repo or contract.");
@@ -3069,8 +3069,8 @@ async function run6(options) {
 }
 
 // runtime/scripts/commands/sweep.mjs
-import { readdir as readdir6, readFile as readFile10 } from "node:fs/promises";
-import { join as join13 } from "node:path";
+import { readdir as readdir7, readFile as readFile13 } from "node:fs/promises";
+import { join as join14 } from "node:path";
 
 // runtime/scripts/commands/kit-check.mjs
 import { readdir as readdir5, readFile as readFile9 } from "node:fs/promises";
@@ -3080,6 +3080,29 @@ import { join as join12 } from "node:path";
 import { readFileSync } from "node:fs";
 import { readFile as readFile8 } from "node:fs/promises";
 import { isAbsolute as isAbsolute3, join as join11, posix as posix3 } from "node:path";
+
+// runtime/scripts/lib/render.mjs
+function link(text, destination) {
+  return ["[", text, "]", "(", destination, ")"].join("");
+}
+function shown(command) {
+  return command.map((word) => `'${word.replaceAll("'", `'"'"'`)}'`).join(" ");
+}
+function bullets(items) {
+  return items.map((item) => `- ${item}`);
+}
+function commandLines(label, spec) {
+  const command = shown(spec.command);
+  const fence = "~".repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map((run13) => run13.length + 1)));
+  return [
+    `${label}${spec.cwd ? ` from \`${spec.cwd}\`` : ""}:`,
+    "",
+    `${fence}sh`,
+    ...command.split("\n"),
+    fence,
+    ...spec.env ? [`Environment: ${Object.entries(spec.env).map(([key, value]) => `\`${key}=${value}\``).join(", ")}.`] : []
+  ];
+}
 
 // runtime/schemas/kit-plan.json
 var kit_plan_default = {
@@ -3235,8 +3258,8 @@ var entryContract = [
   "3. `Driving it with <harness>` starts with `Preconditions:` and uses labeled bullets that pair each user action with an exact command and observable result.",
   "4. `Gotchas` lists traps that can waste or invalidate a verification run."
 ];
-function invalid2(code, message, path) {
-  throw new CommandError("failed", [{ code, message, path, fix: "Correct the kit plan and run kit scaffold again." }]);
+function invalid2(code2, message, path) {
+  throw new CommandError("failed", [{ code: code2, message, path, fix: "Correct the kit plan and run kit scaffold again." }]);
 }
 function relativePath(value, path) {
   if (isAbsolute3(value) || /^[A-Za-z]:/.test(value) || value.includes("\0") || value.split(/[\\/]/).includes("..")) {
@@ -3314,27 +3337,6 @@ async function readKitPlan(root, app, options) {
   validateKitPlan(plan, options);
   if (plan.app !== app) throw new CommandError("failed", [{ code: "kit-app-mismatch", path: `${kitDirectory(app)}/kit.json`, message: `Requested kit ${app} contains a plan for ${plan.app}.`, fix: `Restore kit.json for ${app} before checking, proving or updating this kit.` }]);
   return plan;
-}
-function link(text, destination) {
-  return ["[", text, "]", "(", destination, ")"].join("");
-}
-function shown(command) {
-  return command.map((word) => `'${word.replaceAll("'", `'"'"'`)}'`).join(" ");
-}
-function bullets(items) {
-  return items.map((item) => `- ${item}`);
-}
-function commandLines(label, spec) {
-  const command = shown(spec.command);
-  const fence = "~".repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map((run12) => run12.length + 1)));
-  return [
-    `${label}${spec.cwd ? ` from \`${spec.cwd}\`` : ""}:`,
-    "",
-    `${fence}sh`,
-    ...command.split("\n"),
-    fence,
-    ...spec.env ? [`Environment: ${Object.entries(spec.env).map(([key, value]) => `\`${key}=${value}\``).join(", ")}.`] : []
-  ];
 }
 function documentedHelpers(plan) {
   const gate = {
@@ -3547,6 +3549,469 @@ async function run7(options) {
   return { inputs: { target, app: plan.app }, data: { app: plan.app, features: plan.features.map((feature) => feature.id), files: managed.length } };
 }
 
+// runtime/scripts/commands/formal-check.mjs
+import { readdir as readdir6, readFile as readFile12 } from "node:fs/promises";
+import { join as join13 } from "node:path";
+
+// runtime/scripts/lib/citations.mjs
+import { readFile as readFile10 } from "node:fs/promises";
+import { spawnSync as spawnSync4 } from "node:child_process";
+async function fileCitationProblems(root, citation) {
+  const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u);
+  const problems = [];
+  const problem2 = (code2, message) => problems.push({ code: code2, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
+  let bytes;
+  try {
+    bytes = await readFile10(await resolvePath(root, path));
+  } catch (error) {
+    if (error instanceof CommandError) return error.problems;
+    problem2("citation-file-unavailable", "Cited path must be a readable file.");
+    return problems;
+  }
+  const text = bytes.toString("utf8");
+  const lines = text ? text.split(/\r\n|\r|\n/u).length - (/[\r\n]$/u.test(text) ? 1 : 0) : 0;
+  if (!Number.isSafeInteger(Number(number)) || Number(number) > lines) problem2("citation-line-out-of-range", `Cited line ${number} exceeds ${lines} file lines.`);
+  const { kind, value } = citation.state;
+  if (value.length !== (kind === "sha256" ? 64 : 40)) {
+    problem2("invalid-citation-state", `Wrong digest length for ${kind}.`);
+  } else if (kind === "sha256") {
+    if (hashBytes(bytes) !== value) problem2("stale-citation", "Cited exact file bytes have changed.");
+  } else {
+    const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
+    const recorded = spawnSync4("git", ["-C", root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
+    const current = spawnSync4("git", ["-C", root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
+    if (recorded.error || current.error || recorded.status !== 0 || current.status !== 0) problem2("citation-revision-unavailable", "Cited revision or file object is unavailable.");
+    else if (recorded.stdout.trim() !== current.stdout.trim()) problem2("stale-citation", "Current file bytes differ from the cited revision.");
+  }
+  return problems;
+}
+
+// runtime/scripts/lib/formal-suite.mjs
+import { readFileSync as readFileSync2 } from "node:fs";
+import { readFile as readFile11 } from "node:fs/promises";
+import { isAbsolute as isAbsolute4, posix as posix4 } from "node:path";
+
+// runtime/schemas/formal-plan.json
+var formal_plan_default = {
+  title: "Formal verification suite plan version 1",
+  type: "object",
+  additionalProperties: false,
+  required: ["schemaVersion", "target", "description", "tool", "evidenceDirectory", "properties"],
+  properties: {
+    schemaVersion: { const: 1 },
+    target: { type: "string", pattern: "^[a-z][a-z0-9-]*$" },
+    description: { type: "string", minLength: 1, pattern: "\\S" },
+    tool: {
+      type: "object",
+      additionalProperties: false,
+      required: ["name", "path", "sha256", "version"],
+      properties: {
+        name: { type: "string", minLength: 1, pattern: "\\S" },
+        path: { type: "string", minLength: 1 },
+        sha256: { type: "string", pattern: "^[0-9a-f]{64}$" },
+        version: { type: "string", minLength: 1, pattern: "\\S" }
+      }
+    },
+    evidenceDirectory: { type: "string", minLength: 1 },
+    properties: {
+      type: "array",
+      minItems: 1,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "title", "statement", "harm", "design", "sourcePaths", "bounds", "assumptions", "check", "modelFiles", "steps"],
+        properties: {
+          id: { type: "string", pattern: "^[a-z][a-z0-9-]*$" },
+          title: { type: "string", minLength: 1, pattern: "\\S" },
+          statement: { type: "string", minLength: 1, pattern: "\\S" },
+          harm: { type: "string", minLength: 1, pattern: "\\S" },
+          design: {
+            type: "object",
+            additionalProperties: false,
+            required: ["location", "state"],
+            properties: {
+              location: { type: "string", pattern: "^.+:[1-9][0-9]*$" },
+              state: {
+                type: "object",
+                additionalProperties: false,
+                required: ["kind", "value"],
+                properties: {
+                  kind: { enum: ["sha256", "revision"] },
+                  value: { type: "string", pattern: "^([0-9a-f]{40}|[0-9a-f]{64})$" }
+                }
+              }
+            }
+          },
+          sourcePaths: { type: "array", minItems: 1, items: { type: "string", minLength: 1 } },
+          bounds: { type: "array", minItems: 1, items: { type: "string", minLength: 1, pattern: "\\S" } },
+          assumptions: { type: "array", items: { type: "string", minLength: 1, pattern: "\\S" } },
+          check: {
+            type: "object",
+            additionalProperties: false,
+            required: ["command", "violation"],
+            properties: {
+              command: { type: "array", minItems: 1, items: { type: "string", minLength: 1 } },
+              cwd: { type: "string", minLength: 1 },
+              violation: { type: "string", minLength: 1, pattern: "\\S" }
+            }
+          },
+          modelFiles: {
+            type: "array",
+            minItems: 1,
+            items: {
+              type: "object",
+              additionalProperties: false,
+              required: ["name", "content"],
+              properties: {
+                name: { type: "string", pattern: "^[A-Za-z0-9][A-Za-z0-9._-]*$" },
+                content: { type: "string", minLength: 1, pattern: "\\S" }
+              }
+            }
+          },
+          steps: {
+            type: "array",
+            minItems: 1,
+            items: {
+              type: "object",
+              additionalProperties: false,
+              required: ["action", "code", "atomicBecause"],
+              properties: {
+                action: { type: "string", minLength: 1, pattern: "\\S" },
+                code: { type: "string", pattern: "^.+:[1-9][0-9]*$" },
+                atomicBecause: { type: "string", minLength: 1, pattern: "\\S" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+// runtime/scripts/lib/formal-suite.mjs
+var gatePath2 = posix4.join("scripts", "map-coverage.mjs");
+var planPath = "suite.json";
+var honestLimits = [
+  "A pass covers the model within its bounds, not the whole system.",
+  "No tool connects a model to the code, so the model stays true only through the coverage gate and review.",
+  "The coverage gate notices changes to the declared source paths only.",
+  "Atomicity assumptions are trusted from documentation and not verified.",
+  "A missing tool or runtime means unproven, never a pass."
+];
+function invalid3(code2, message, path) {
+  throw new CommandError("failed", [{ code: code2, message, path, fix: "Correct the suite plan and run formal scaffold again." }]);
+}
+function relativePath2(value, path) {
+  if (isAbsolute4(value) || /^[A-Za-z]:/.test(value) || value.includes("\0") || value.split(/[\\/]/).includes("..")) {
+    invalid3("unsafe-path", `Expected a repo-relative path without parent traversal: ${value}`, path);
+  }
+}
+function suiteDirectory(target) {
+  return `.agents/skills/formal-${target}`;
+}
+function modelPath(suite, name) {
+  return `${suite}/model/${name}`;
+}
+function splitLocation(location) {
+  const [, path, line] = location.match(/^(.*):([1-9][0-9]*)$/u);
+  return { path, line: Number(line) };
+}
+function validateFormalPlan(plan) {
+  validateData(formal_plan_default, plan);
+  const suite = suiteDirectory(plan.target);
+  relativePath2(plan.tool.path, "$/tool/path");
+  relativePath2(plan.evidenceDirectory, "$/evidenceDirectory");
+  const evidence = posix4.normalize(plan.evidenceDirectory);
+  if (evidence === suite || evidence.startsWith(`${suite}/`)) invalid3("evidence-inside-suite", "Evidence must not live inside the committed suite directory.", "$/evidenceDirectory");
+  const ids = /* @__PURE__ */ new Set();
+  const modelNames = /* @__PURE__ */ new Set();
+  for (const [index, property] of plan.properties.entries()) {
+    const at = `$/properties/${index}`;
+    if (ids.has(property.id)) invalid3("duplicate-property", `Duplicate property ID: ${property.id}`, `${at}/id`);
+    ids.add(property.id);
+    for (const field of ["title", "statement", "harm"]) {
+      if (/[\r\n]/u.test(property[field])) invalid3("invalid-property-metadata", `Property ${field} must be one line.`, `${at}/${field}`);
+    }
+    relativePath2(splitLocation(property.design.location).path, `${at}/design/location`);
+    if (property.check.cwd !== void 0) relativePath2(property.check.cwd, `${at}/check/cwd`);
+    const globs = property.sourcePaths.map((path) => {
+      if (/[`\r\n]/u.test(path)) invalid3("invalid-source-path", "Source paths cannot contain backticks or line breaks.", `${at}/sourcePaths`);
+      return pathGlob(path);
+    });
+    for (const file of property.modelFiles) {
+      const name = modelPath(suite, file.name);
+      if (modelNames.has(name)) invalid3("duplicate-model-file", `Model file ${file.name} is used by more than one entry.`, `${at}/modelFiles`);
+      modelNames.add(name);
+      if (file.name.endsWith(".tla") && !new RegExp(`^-{4,} MODULE ${file.name.slice(0, -4)} -{4,}\\s*$`, "mu").test(file.content)) {
+        invalid3("module-name-mismatch", `${file.name} has no module header naming ${file.name.slice(0, -4)}.`, `${at}/modelFiles`);
+      }
+    }
+    for (const step of property.steps) {
+      const { path } = splitLocation(step.code);
+      relativePath2(path, `${at}/steps`);
+      if (!path.split("/").some((_, index2, parts) => globs.some((glob) => matchesPath(glob, parts.slice(0, index2 + 1).join("/"))))) {
+        invalid3("step-outside-source-paths", `Step ${step.action} cites ${step.code}, which no declared source path of ${property.id} covers.`, `${at}/steps`);
+      }
+    }
+  }
+  return plan;
+}
+async function readFormalPlan(root, target) {
+  const suite = suiteDirectory(target);
+  let plan;
+  try {
+    plan = inspectJSON(await readFile11(await resolveFilePath(root, `${suite}/${planPath}`), "utf8")).value;
+  } catch (error) {
+    if (error instanceof CommandError) throw error;
+    throw new CommandError("blocked", [{ code: "suite-unavailable", message: `No readable suite at ${suite}/${planPath}.`, fix: "Apply the scaffolded suite first." }]);
+  }
+  validateFormalPlan(plan);
+  if (plan.target !== target) throw new CommandError("failed", [{ code: "suite-target-mismatch", path: `${suite}/${planPath}`, message: `Requested suite ${target} contains a plan for ${plan.target}.`, fix: `Restore suite.json for ${target} before checking or updating this suite.` }]);
+  return plan;
+}
+async function stepProblems(root, plan) {
+  const problems = [];
+  for (const property of plan.properties) {
+    for (const step of property.steps) {
+      const { path, line } = splitLocation(step.code);
+      let text = null;
+      try {
+        text = await readFile11(await resolveFilePath(root, path), "utf8");
+      } catch (error) {
+        if (error instanceof CommandError) throw error;
+        if (error.code !== "ENOENT") throw error;
+      }
+      const lines = text === null ? 0 : text.split(/\r\n|\r|\n/u).length - (/[\r\n]$/u.test(text) ? 1 : 0);
+      if (line > lines) {
+        problems.push({
+          code: "step-code-missing",
+          path: `${suiteDirectory(plan.target)}/properties/${property.id}.md`,
+          message: `Step ${step.action} of ${property.id} cites ${step.code}, but ${text === null ? "the file does not exist" : `the file has ${lines} lines`}.`,
+          fix: "Find the code step the model step stands for, correct its citation in the suite plan with formal scaffold --update, and check the model still matches it."
+        });
+      }
+    }
+  }
+  return problems;
+}
+var code = (text) => `\`${text}\``;
+function tableRows(property) {
+  return property.steps.map((step) => `| ${code(step.action)} | ${code(step.code)} | ${step.atomicBecause} |`);
+}
+var tableHeading = "## Transition table";
+function propertyDocument(property) {
+  return [
+    `# ${property.title}`,
+    "",
+    property.statement,
+    "",
+    `Harm: ${property.harm}`,
+    `Source paths: ${property.sourcePaths.map(code).join(", ")}`,
+    `Design: ${code(property.design.location)}`,
+    `Model files: ${property.modelFiles.map((file) => code(`model/${file.name}`)).join(", ")}`,
+    `Violation diagnostic: ${code(property.check.violation)}`,
+    "",
+    "## Check",
+    "",
+    ...commandLines("Command", property.check),
+    "",
+    "## Bounds",
+    "",
+    ...bullets(property.bounds),
+    "",
+    "## Assumptions",
+    "",
+    ...property.assumptions.length ? bullets(property.assumptions) : ["- None recorded."],
+    "",
+    tableHeading,
+    "",
+    "Each row is one action of the model, standing for one atomic step of the code.",
+    `Change a row and its model action together with the code at ${property.sourcePaths.map(code).join(", ")}.`,
+    "",
+    "| Model step | Code step | Atomic because |",
+    "|---|---|---|",
+    ...tableRows(property),
+    ""
+  ].join("\n");
+}
+function skillDocument2(plan) {
+  const suite = suiteDirectory(plan.target);
+  const { tool } = plan;
+  return [
+    "---",
+    `name: formal-${plan.target}`,
+    `description: ${JSON.stringify(plan.description)}`,
+    "---",
+    "",
+    `# Formal verification of ${plan.target}`,
+    "",
+    `${plan.description}`,
+    `Each property below is checked by a model that stands for the code at its source paths, and its property file lists the exact code steps the model assumes are atomic.`,
+    `Read a property file before changing code at its source paths.`,
+    `Commands here mirror ${link("suite.json", "suite.json")}, which holds the same commands in machine form.`,
+    "",
+    "## Properties",
+    "",
+    ...plan.properties.map((property) => `- ${link(property.title, `properties/${property.id}.md`)} ${property.statement}`),
+    "",
+    "## Tool",
+    "",
+    `Tool: ${tool.name} ${tool.version}, pinned at ${code(tool.path)} with sha256 ${code(tool.sha256)}.`,
+    `Confirm it before every run with \`sha256sum ${tool.path}\`; a missing file or a different hash means the property is unproven.`,
+    "The project owns the tool: this suite installs, fetches and commits nothing.",
+    "",
+    "## Run",
+    "",
+    ...plan.properties.flatMap((property) => [`${link(property.title, `properties/${property.id}.md`)}:`, "", ...commandLines("Command", property.check), ""]),
+    `Evidence and the tool's working files go to ${code(plan.evidenceDirectory)}, never into this suite.`,
+    "Read the output in this order.",
+    "",
+    ...bullets([
+      "The property's violation diagnostic with a nonzero exit is a finding: report it with the counterexample and never weaken the property to obtain a pass.",
+      "Any other nonzero exit is a modeling error or a harness problem: correct the model or the setup, and never report it as a finding.",
+      "Exit 0 means the property holds within its bounds and assumptions, which is a bounded result."
+    ]),
+    "",
+    "## Keep the model true",
+    "",
+    "When a change touches a property's source paths, reread that property's transition table against the new code.",
+    "Update the model files and the table together, then rerun the check; the check cannot see a code change on its own.",
+    `The coverage gate fails until a model file of the property changes or a commit message carries \`No-proof-impact: <id>: <reason>\`.`,
+    `Run \`node ${suite}/${gatePath2} --base origin/<default branch>\`.`,
+    "",
+    "## Limits",
+    "",
+    ...bullets(honestLimits),
+    ""
+  ].join("\n");
+}
+function pointerDocument2(plan) {
+  return [
+    "---",
+    `name: formal-${plan.target}`,
+    `description: ${JSON.stringify(plan.description)}`,
+    "---",
+    "",
+    `Use the formal verification suite in ${link(suiteDirectory(plan.target), `../../../${suiteDirectory(plan.target)}/SKILL.md`)}.`,
+    ""
+  ].join("\n");
+}
+function agentsPointer2(plan) {
+  return `Check the model of ${plan.target} against the code with the suite in ${link(suiteDirectory(plan.target), `${suiteDirectory(plan.target)}/SKILL.md`)} before changing its source paths.`;
+}
+function suiteFiles(plan) {
+  const suite = suiteDirectory(plan.target);
+  return [
+    { path: `${suite}/SKILL.md`, content: skillDocument2(plan) },
+    { path: `${suite}/${planPath}`, content: `${JSON.stringify(plan, null, 2)}
+` },
+    ...plan.properties.map((property) => ({ path: `${suite}/properties/${property.id}.md`, content: propertyDocument(property) })),
+    ...plan.properties.flatMap((property) => property.modelFiles.map((file) => ({ path: modelPath(suite, file.name), content: file.content }))),
+    { path: `${suite}/${gatePath2}`, content: readFileSync2(new URL("../assets/map-coverage.mjs", import.meta.url), "utf8") }
+  ];
+}
+function managedFiles2(plan) {
+  return [...suiteFiles(plan), { path: `.claude/skills/formal-${plan.target}/SKILL.md`, content: pointerDocument2(plan) }];
+}
+
+// runtime/scripts/commands/formal-check.mjs
+var repair2 = "If the code changed, update the model and the suite plan and run formal scaffold --update; if a file was edited by hand, restore it the same way, then rerun every property check.";
+async function readIfPresent2(root, path) {
+  return readFile12(await resolveFilePath(root, path), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
+}
+function firstDifference2(expected, actual) {
+  const wanted = expected.split("\n");
+  const found = actual.split("\n");
+  return wanted.findIndex((line, index) => line !== found[index]) + 1 || wanted.length + 1;
+}
+function tableOf(text) {
+  const start = text.indexOf(`${tableHeading}
+`);
+  return start < 0 ? "" : text.slice(start);
+}
+function managedProblems(files, actual, plan, suite) {
+  const problems = [];
+  const properties = new Map(plan.properties.map((property) => [`${suite}/properties/${property.id}.md`, property]));
+  for (const file of files) {
+    const text = actual.get(file.path);
+    if (text === null) {
+      problems.push({ code: "file-missing", path: file.path, message: `${file.path} is missing from the applied suite.`, fix: repair2 });
+    } else if (properties.has(file.path) && !text.split(/\r?\n/).some((line) => line.startsWith("Source paths:"))) {
+      problems.push({ code: "source-paths-missing", path: file.path, message: `${file.path} has no "Source paths:" line, so the coverage gate cannot tell when its code changes.`, fix: repair2 });
+    } else if (properties.has(file.path) && tableOf(text) !== tableOf(file.content)) {
+      problems.push({ code: "table-drift", path: file.path, message: `The transition table of ${file.path} differs from what suite.json renders, first at line ${firstDifference2(tableOf(file.content), tableOf(text))} of the table.`, fix: repair2 });
+    } else if (text !== file.content) {
+      problems.push({ code: "file-drift", path: file.path, message: `${file.path} differs from what suite.json renders, first at line ${firstDifference2(file.content, text)}.`, fix: repair2 });
+    }
+  }
+  return problems;
+}
+async function run8(options) {
+  if (!options.suite) throw new CommandError("usage-error", [{ code: "missing-option", message: "--suite is required.", fix: "Supply --suite <name>." }]);
+  const target = await resolveTarget(options);
+  const plan = await readFormalPlan(target.root, options.suite);
+  const suite = suiteDirectory(plan.target);
+  const managed = managedFiles2(plan);
+  const actual = new Map(await Promise.all(managed.map(async (file) => [file.path, await readIfPresent2(target.root, file.path)])));
+  const problems = managedProblems(managed, actual, plan, suite);
+  const known = new Set(managed.map((file) => file.path));
+  for (const folder of ["properties", "model"]) {
+    const listed = await readdir6(join13(target.root, suite, folder)).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+    for (const name of listed.sort()) {
+      if (!known.has(`${suite}/${folder}/${name}`)) problems.push({ code: `orphan-${folder === "model" ? "model" : "property"}-file`, path: `${suite}/${folder}/${name}`, message: `${suite}/${folder}/${name} belongs to no property in suite.json.`, fix: repair2 });
+    }
+  }
+  const agents = await readIfPresent2(target.root, "AGENTS.md");
+  if (!agents?.split(/\r?\n/).includes(agentsPointer2(plan))) {
+    problems.push({ code: "pointer-missing", path: "AGENTS.md", message: "AGENTS.md lacks the line pointing agents at the suite.", fix: repair2 });
+  }
+  const files = await repoFiles(target.root);
+  for (const property of plan.properties) {
+    const propertyFile = `${suite}/properties/${property.id}.md`;
+    for (const path of property.sourcePaths) {
+      const glob = pathGlob(path);
+      if (!files.some((file) => file.split("/").some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join("/"))))) {
+        problems.push({
+          code: "source-path-missing",
+          path: propertyFile,
+          message: `Source path ${path} of property ${property.id} matches no file in the repo.`,
+          fix: "Find where the code moved and correct its source paths in the suite plan with formal scaffold --update, or remove the property if it no longer exists."
+        });
+      }
+    }
+    for (const problem2 of await fileCitationProblems(target.root, property.design)) {
+      problems.push({
+        ...problem2,
+        code: `design-${problem2.code}`,
+        path: propertyFile,
+        message: `Design citation ${property.design.location} of property ${property.id}: ${problem2.message}`,
+        fix: "Reread the design section the property guards, confirm the property still states it, then correct the citation in the suite plan with formal scaffold --update."
+      });
+    }
+  }
+  problems.push(...await stepProblems(target.root, plan));
+  const pinned = plan.tool;
+  const bytes = await readFile12(await resolveFilePath(target.root, pinned.path)).catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
+  if (bytes !== null && hashBytes(bytes) !== pinned.sha256) {
+    problems.push({
+      code: "tool-hash-mismatch",
+      path: pinned.path,
+      message: `${pinned.path} has sha256 ${hashBytes(bytes)}, not the pinned ${pinned.sha256}.`,
+      fix: `Restore the pinned ${pinned.name} ${pinned.version} file, or review and repin it in the suite plan with formal scaffold --update.`
+    });
+  }
+  if (problems.length) throw new CommandError("failed", problems);
+  if (bytes === null) {
+    throw new CommandError("blocked", [{
+      code: "tool-missing",
+      path: pinned.path,
+      message: `${pinned.path} is missing, so every property of ${plan.target} is unproven, not passing.`,
+      fix: `Put the pinned ${pinned.name} ${pinned.version} file with sha256 ${pinned.sha256} at ${pinned.path} and run formal check again.`
+    }]);
+  }
+  return { inputs: { target, name: plan.target }, data: { target: plan.target, properties: plan.properties.map((property) => property.id), files: managed.length, tool: { path: pinned.path, sha256: pinned.sha256 } } };
+}
+
 // runtime/scripts/commands/sweep.mjs
 function fixFor(document) {
   if (document?.glossary) return "Run /glossary maintain.";
@@ -3558,12 +4023,12 @@ function problemsOf(error) {
   if (!(error instanceof CommandError)) throw error;
   return error.problems;
 }
-async function readIfPresent2(root, path) {
-  return readFile10(await resolveFilePath(root, path), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
+async function readIfPresent3(root, path) {
+  return readFile13(await resolveFilePath(root, path), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
 }
 async function contractItems(target, options, coverageLimits) {
   const path = options.contract ?? ".bstack/project.json";
-  if (await readIfPresent2(target.root, path) === null) {
+  if (await readIfPresent3(target.root, path) === null) {
     return [{ code: "contract-missing", path, message: "No maintenance contract is registered.", fix: "Run /maintenance create." }];
   }
   let policy;
@@ -3587,7 +4052,7 @@ async function contractItems(target, options, coverageLimits) {
 }
 async function kitItems(target) {
   const items = [];
-  const entries = await readdir6(join13(target.root, ".agents/skills")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+  const entries = await readdir7(join14(target.root, ".agents/skills")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
   for (const name of entries.filter((name2) => name2.startsWith("verify-")).sort()) {
     try {
       await run7({ repo: target.root, app: name.slice("verify-".length) });
@@ -3597,8 +4062,23 @@ async function kitItems(target) {
   }
   return items;
 }
+async function formalItems(target, coverageLimits) {
+  const items = [];
+  const entries = await readdir7(join14(target.root, ".agents/skills")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+  for (const name of entries.filter((name2) => name2.startsWith("formal-") && name2 !== "formal-verification").sort()) {
+    try {
+      await run8({ repo: target.root, suite: name.slice("formal-".length) });
+    } catch (error) {
+      for (const problem2 of problemsOf(error)) {
+        if (problem2.code === "tool-missing") coverageLimits.push({ path: problem2.path, reason: problem2.message });
+        else items.push({ ...problem2, fix: "Run /formal-verification maintain." });
+      }
+    }
+  }
+  return items;
+}
 async function pointerItems(target, coverageLimits) {
-  const text = await readIfPresent2(target.root, "AGENTS.md");
+  const text = await readIfPresent3(target.root, "AGENTS.md");
   if (text === null) return [];
   const limit = text.includes("\0") ? "Local links require supported Markdown text." : markdownCoverageLimit(text);
   if (limit) {
@@ -3613,10 +4093,15 @@ async function pointerItems(target, coverageLimits) {
   }
   return items;
 }
-async function run8(options) {
+async function run9(options) {
   const target = await resolveTarget(options);
   const coverageLimits = [];
-  const problems = [...await contractItems(target, options, coverageLimits), ...await kitItems(target), ...await pointerItems(target, coverageLimits)];
+  const problems = [
+    ...await contractItems(target, options, coverageLimits),
+    ...await kitItems(target),
+    ...await formalItems(target, coverageLimits),
+    ...await pointerItems(target, coverageLimits)
+  ];
   return {
     inputs: { repo: target.root, contract: options.contract ?? ".bstack/project.json" },
     status: problems.length ? "failed" : "passed",
@@ -3626,18 +4111,18 @@ async function run8(options) {
 }
 
 // runtime/scripts/commands/probe.mjs
-import { readFile as readFile11, writeFile as writeFile4, stat as stat7 } from "node:fs/promises";
-import { basename as basename3, join as join14, resolve as resolve9 } from "node:path";
+import { readFile as readFile14, writeFile as writeFile4, stat as stat7 } from "node:fs/promises";
+import { basename as basename3, join as join15, resolve as resolve9 } from "node:path";
 var schemas = {
   "probe-spec": new URL("../schemas/probe-spec.json", import.meta.url),
   "probe-record": new URL("../schemas/probe-record.json", import.meta.url),
   "check-plan": new URL("../schemas/check-plan.json", import.meta.url)
 };
 async function schema(name) {
-  return JSON.parse(await readFile11(schemas[name], "utf8"));
+  return JSON.parse(await readFile14(schemas[name], "utf8"));
 }
-function problem(code, message) {
-  return { code, message, fix: "Capture the required probe against the correct state, using the same call and explicit approval for any side effects." };
+function problem(code2, message) {
+  return { code: code2, message, fix: "Capture the required probe against the correct state, using the same call and explicit approval for any side effects." };
 }
 function callIdentity(record) {
   return hashBytes(canonicalJSON({
@@ -3658,7 +4143,7 @@ async function inputState(target, spec, callDigest, specPath) {
   const head = readGit(target.root, ["rev-parse", "--verify", "HEAD"]);
   let specContentHash = null;
   try {
-    specContentHash = hashBytes(await readFile11(specPath));
+    specContentHash = hashBytes(await readFile14(specPath));
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
@@ -3668,7 +4153,7 @@ async function inputState(target, spec, callDigest, specPath) {
     inputs: { spec, callDigest, specContentHash }
   });
 }
-async function run9(options, commandName) {
+async function run10(options, commandName) {
   if (!options.name?.trim()) throw new CommandError("usage-error", [problem("missing-probe-name", "Supply --name for the outside dependency requiring verification.")]);
   const target = await resolveTarget(options);
   if (commandName === "probe compare") return compare(target, options);
@@ -3679,7 +4164,7 @@ async function run9(options, commandName) {
   let validatedSpecHash;
   const specPath = resolve9(options.spec);
   try {
-    const bytes = await readFile11(specPath);
+    const bytes = await readFile14(specPath);
     spec = inspectJSON(bytes.toString("utf8")).value;
     validatedSpecHash = hashBytes(bytes);
   } catch (error) {
@@ -3754,7 +4239,7 @@ async function run9(options, commandName) {
     reason
   };
   validateData(await schema("probe-record"), record);
-  const path = join14(directory, "probe.json");
+  const path = join15(directory, "probe.json");
   await writeFile4(path, JSON.stringify(record, null, 2) + "\n", { flag: "wx" });
   return { status: status === "unverified" ? "blocked" : status, problems: reason ? [problem("probe-not-verified", reason)] : [], data: { ...record, path } };
 }
@@ -3764,7 +4249,7 @@ async function compare(target, options) {
   for (const phase of ["before", "after"]) {
     try {
       if (!options[phase]) throw new Error("Missing run ID.");
-      const record = inspectJSON(await readFile11(join14(await scratchDirectory(target, options[phase]), "probe.json"), "utf8")).value;
+      const record = inspectJSON(await readFile14(join15(await scratchDirectory(target, options[phase]), "probe.json"), "utf8")).value;
       validateData(await schema("probe-record"), record);
       validateData(await schema("probe-spec"), record.spec);
       validateData((await schema("check-plan")).properties.checks.items.properties.command, record.command);
@@ -3808,17 +4293,17 @@ async function compare(target, options) {
 }
 
 // runtime/scripts/commands/apply.mjs
-import { readFile as readFile13 } from "node:fs/promises";
+import { readFile as readFile16 } from "node:fs/promises";
 import { dirname as dirname6, relative as relative8, resolve as resolve10 } from "node:path";
-import { spawnSync as spawnSync4 } from "node:child_process";
+import { spawnSync as spawnSync5 } from "node:child_process";
 
 // runtime/scripts/lib/protected-write.mjs
-import { readFile as readFile12, open, mkdir as mkdir2, rename, unlink, stat as stat8 } from "node:fs/promises";
-import { basename as basename4, dirname as dirname5, join as join15 } from "node:path";
+import { readFile as readFile15, open, mkdir as mkdir2, rename, unlink, stat as stat8 } from "node:fs/promises";
+import { basename as basename4, dirname as dirname5, join as join16 } from "node:path";
 import { randomUUID as randomUUID2 } from "node:crypto";
 async function fileBytes(path) {
   try {
-    return await readFile12(path);
+    return await readFile15(path);
   } catch (error) {
     if (error.code === "ENOENT") return null;
     throw error;
@@ -3826,10 +4311,10 @@ async function fileBytes(path) {
 }
 async function loadJournal(target, runId) {
   const directory = await scratchDirectory(target, runId);
-  const bytes = await fileBytes(join15(directory, "journal.json"));
+  const bytes = await fileBytes(join16(directory, "journal.json"));
   if (bytes === null) return { directory, journal: null };
   const journal = inspectJSON(bytes.toString("utf8")).value;
-  validateData(JSON.parse(await readFile12(new URL("../schemas/resume-state.schema.json", import.meta.url), "utf8")), journal);
+  validateData(JSON.parse(await readFile15(new URL("../schemas/resume-state.schema.json", import.meta.url), "utf8")), journal);
   validateIds(journal.edits, "$/edits");
   if (journal.runId !== runId || journal.target.root !== target.root || journal.target.mode !== target.mode) {
     throw new CommandError("blocked", [{ code: "journal-mismatch", message: "Journal belongs to a different run or target.", fix: "Use the original reviewed target and run ID." }]);
@@ -3864,7 +4349,7 @@ async function journalOriginal(directory, journal, plan, edit, index) {
   if (journal.planDigest !== plan.planDigest || canonicalJSON(journal.target) !== canonicalJSON(plan.target) || journal.edits.length !== plan.edits.length || !recorded || ["id", "path", "originalHash", "proposedHash"].some((key) => recorded[key] !== edit[key]) || recorded.resolvedPath !== plan.reviewedScope.find((entry) => entry.path === edit.path)?.resolvedPath || recorded.backup !== (edit.originalHash === null ? null : `original-${index}`)) {
     throw new CommandError("blocked", [{ code: "journal-mismatch", message: "Journal does not match the reviewed plan.", fix: "Use the unchanged reviewed plan or review a new plan." }]);
   }
-  const bytes = recorded.backup === null ? null : await fileBytes(join15(directory, recorded.backup));
+  const bytes = recorded.backup === null ? null : await fileBytes(join16(directory, recorded.backup));
   if ((bytes === null ? null : hashBytes(bytes)) !== edit.originalHash) {
     throw new CommandError("blocked", [{ code: "backup-mismatch", message: "Recoverable original is missing or changed.", path: edit.path, fix: "Restore the original backup before resuming." }]);
   }
@@ -3900,7 +4385,7 @@ async function durableDirectory(directory, limitations) {
   }
 }
 async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary, prefix = ".bstack") {
-  const temporary = join15(dirname5(path), `${prefix}-${randomUUID2()}.tmp`);
+  const temporary = join16(dirname5(path), `${prefix}-${randomUUID2()}.tmp`);
   try {
     if (prepareTemporary) await prepareTemporary(temporary);
     await durableFile(temporary, bytes, mode);
@@ -3940,7 +4425,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     })),
     affectedChecks
   };
-  const journalPath = join15(directory, "journal.json");
+  const journalPath = join16(directory, "journal.json");
   const save = () => replaceFile(journalPath, Buffer.from(JSON.stringify(journal, null, 2) + "\n"), void 0, limitations);
   try {
     let state = await inspectJournal(journal);
@@ -3973,7 +4458,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
         if (edit.originalHash !== null) {
-          const backup = join15(directory, journal.edits[index].backup);
+          const backup = join16(directory, journal.edits[index].backup);
           const existing = await fileBytes(backup);
           if (existing !== null && hashBytes(existing) !== edit.originalHash) throw new Error("Prepared backup differs from the reviewed original.");
           if (existing === null) await replaceFile(backup, edit.originalBytes, void 0, limitations);
@@ -4035,12 +4520,12 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
 }
 
 // runtime/scripts/commands/apply.mjs
-function reject5(code, message, path) {
-  throw new CommandError("failed", [{ code, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
+function reject5(code2, message, path) {
+  throw new CommandError("failed", [{ code: code2, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
 }
 async function input(file) {
   try {
-    return inspectJSON(await readFile13(file, "utf8")).value;
+    return inspectJSON(await readFile16(file, "utf8")).value;
   } catch (error) {
     if (error instanceof CommandError) throw error;
     reject5("invalid-input", "Input must be readable JSON.", file);
@@ -4049,7 +4534,7 @@ async function input(file) {
 async function prepareChangeSet(options, target) {
   if (!options.plan) throw new CommandError("usage-error", [{ code: "missing-plan", message: "--plan is required.", fix: "Supply a reviewed change set." }]);
   const plan = await input(options.plan);
-  validateData(JSON.parse(await readFile13(new URL("../schemas/change-set.schema.json", import.meta.url), "utf8")), plan);
+  validateData(JSON.parse(await readFile16(new URL("../schemas/change-set.schema.json", import.meta.url), "utf8")), plan);
   const findings = await input(resolve10(dirname6(resolve10(options.plan)), plan.findings));
   const { directory, journal } = options["dry-run"] ? { directory: null, journal: null } : await loadJournal(target, plan.planDigest);
   const deletionScope = plan.reviewedScope.filter((entry) => journal?.edits.some((edit) => edit.originalHash !== null && edit.proposedHash === null && edit.resolvedPath === entry.resolvedPath));
@@ -4062,7 +4547,7 @@ async function prepareChangeSet(options, target) {
     if (plan.target.revision !== null) reject5("target-mismatch", "A workspace has no Git revision.");
   } else {
     const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
-    const head = spawnSync4("git", ["-C", target.root, "rev-parse", "--verify", "HEAD"], { encoding: "utf8", env });
+    const head = spawnSync5("git", ["-C", target.root, "rev-parse", "--verify", "HEAD"], { encoding: "utf8", env });
     if (head.error || head.status !== 0 && plan.target.revision !== null || head.status === 0 && head.stdout.trim() !== plan.target.revision) reject5("changed-revision", "The reviewed Git revision is no longer current.");
   }
   const selected = findings.findings.filter((finding) => finding.status === "selected").map((finding) => finding.id);
@@ -4158,11 +4643,11 @@ async function prepareChangeSet(options, target) {
   }
   return { inputs: { target, plan: options.plan }, plan, staged, directory, journal, findings, coverageLimits };
 }
-async function run10(options) {
+async function run11(options) {
   const target = await resolveTarget(options, { draftOnly: true });
   const { inputs, plan, staged, directory, journal, findings, coverageLimits } = await prepareChangeSet(options, target);
   const { planDigest } = plan;
-  const assessmentSchema = JSON.parse(await readFile13(new URL("../schemas/evidence.schema.json", import.meta.url), "utf8"));
+  const assessmentSchema = JSON.parse(await readFile16(new URL("../schemas/evidence.schema.json", import.meta.url), "utf8"));
   const assessment = staged.some((edit) => edit.path === ".bstack/assessment.json" || [edit.originalBytes?.toString("utf8"), edit.proposedContent].some((content) => {
     if (!content) return false;
     try {
@@ -4201,7 +4686,7 @@ async function run10(options) {
 }
 
 // runtime/scripts/commands/state.mjs
-async function run11(options) {
+async function run12(options) {
   if (!options.run) throw new CommandError("usage-error", [{ code: "missing-run", message: "--run is required.", fix: "Supply the run ID returned by apply." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   const { journal } = await loadJournal(target, options.run);
@@ -4216,10 +4701,10 @@ await dispatch(process.argv.slice(2), "maintenance", {
   "contract validate": { options: ["contract"], help: "Validate project source pointers, scopes and leaf commands without execution.\nUsage: maintenance.mjs contract validate --repo <path> [--contract <repo-relative-file>] [--json]\nDefaults to .bstack/project.json; input follows schemas/project.schema.json. Unsupported config formats need a reviewed standalone contract.", run },
   "evidence collect": { options: ["contract", "base", "previous-contract", "portable"], help: "Collect the live Git change inventory and save a document assessment skeleton to scratch.\nUsage: maintenance.mjs evidence collect --repo <path> --base <ref> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--portable <repo-relative-assessment>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Portable review requires committed implementation and excludes only the selected record from inventory. Use --base empty before the first commit. An unavailable base blocks comparison. Renames map both paths through case-sensitive scopes. Collection is not semantic assessment or readiness validation.", run: run4 },
   "evidence validate": { options: ["contract", "base", "assessment", "previous-contract"], help: "Validate live change coverage, substantive review freshness and captured required checks.\nUsage: maintenance.mjs evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Assessment follows schemas/evidence.schema.json. Returns the current review fingerprint; review must bind it explicitly. Missing prior policy, decisions or checks block completion. Structural validation cannot prove semantic correctness.", run: run6 },
-  "sweep": { options: ["contract"], help: "List what drifted across registered documents, generated sections, verification kits and AGENTS.md pointers without writes.\nUsage: maintenance.mjs sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document's owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, broken AGENTS.md links by /agents-md. Code changes or document age alone never fail sweep. The skill also reviews every registered document against the whole current repo. Fails on reported problems; fixes nothing.", run: run8 },
-  "probe record": { options: ["name", "phase", "spec", "approved-by-user", "command"], help: "Capture a live call in scratch.\nUsage: maintenance.mjs probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]\nDescriptor follows schemas/probe-spec.json. Side effects require approval for each call. Unavailable calls remain unverified.", run: run9 },
-  "probe compare": { options: ["name", "before", "after"], help: "Require a successful matching live probe pair for an outside dependency.\nUsage: maintenance.mjs probe compare --repo <path> --name <n> --before <run-id> --after <run-id> [--json]\nMissing, mismatched, unsuccessful or stale evidence cannot pass.", run: run9 },
+  "sweep": { options: ["contract"], help: "List what drifted across registered documents, generated sections, verification kits, formal verification suites and AGENTS.md pointers without writes.\nUsage: maintenance.mjs sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document's owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, formal-* suite drift by /formal-verification maintain, broken AGENTS.md links by /agents-md. A suite whose pinned tool file is missing is reported as a coverage limit, because it is unproven and not drifted. Code changes or document age alone never fail sweep. The skill also reviews every registered document against the whole current repo. Fails on reported problems; fixes nothing.", run: run9 },
+  "probe record": { options: ["name", "phase", "spec", "approved-by-user", "command"], help: "Capture a live call in scratch.\nUsage: maintenance.mjs probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]\nDescriptor follows schemas/probe-spec.json. Side effects require approval for each call. Unavailable calls remain unverified.", run: run10 },
+  "probe compare": { options: ["name", "before", "after"], help: "Require a successful matching live probe pair for an outside dependency.\nUsage: maintenance.mjs probe compare --repo <path> --name <n> --before <run-id> --after <run-id> [--json]\nMissing, mismatched, unsuccessful or stale evidence cannot pass.", run: run10 },
   "run-checks": { options: ["plan", "phase", "prior-run"], help: "Capture declared checks and user outcome coverage in scratch.\nUsage: maintenance.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]\nPhase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Outside dependencies also require probe record and probe compare.", run: run5 },
-  "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: maintenance.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run10 },
-  "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: maintenance.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run11 }
+  "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: maintenance.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run11 },
+  "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: maintenance.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run12 }
 });

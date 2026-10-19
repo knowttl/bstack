@@ -32,7 +32,7 @@ export const commands = {
   sweep: {
     module: './commands/sweep.mjs',
     options: ['contract'],
-    help: 'List what drifted across registered documents, generated sections, verification kits and AGENTS.md pointers without writes.\nUsage: {entry} sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document\'s owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, broken AGENTS.md links by /agents-md. Code changes or document age alone never fail sweep. The skill also reviews every registered document against the whole current repo. Fails on reported problems; fixes nothing.'
+    help: 'List what drifted across registered documents, generated sections, verification kits, formal verification suites and AGENTS.md pointers without writes.\nUsage: {entry} sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document\'s owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, formal-* suite drift by /formal-verification maintain, broken AGENTS.md links by /agents-md. A suite whose pinned tool file is missing is reported as a coverage limit, because it is unproven and not drifted. Code changes or document age alone never fail sweep. The skill also reviews every registered document against the whole current repo. Fails on reported problems; fixes nothing.'
   },
   'plan check': {
     module: './commands/plan-check.mjs',
@@ -143,6 +143,16 @@ export const commands = {
     module: './commands/kit-prove.mjs',
     options: ['app', 'feature'],
     help: 'Run the applied kit end to end once: launch, doctor, drive one feature, capture evidence, clean up and confirm the evidence survived.\nUsage: {entry} kit prove --repo <path> --app <name> --feature <id> [--json]\nReads .agents/skills/verify-<name>/kit.json. Cleanup stops only the process the proof started. A failed proof still cleans up and keeps its evidence.'
+  },
+  'formal scaffold': {
+    module: './commands/formal-scaffold.mjs',
+    options: ['plan', 'update'],
+    help: 'Render the selected formal verification suite as a reviewable change set in scratch.\nUsage: {entry} formal scaffold --repo <path> --plan <file> [--update] [--json]\nPlan follows schemas/formal-plan.json. Returns the change set path, its planDigest and the exact diff. Rejects a plan whose model step cites no atomic code step, cites code outside the property\'s source paths or cites a line that does not exist. Without --update, existing suite files are never overwritten. With --update, the change set also replaces suite files that differ from the plan, creates missing ones and deletes property and model files the plan no longer lists; when nothing differs it returns no change set. Review with apply --dry-run, then apply the unchanged change set.'
+  },
+  'formal check': {
+    module: './commands/formal-check.mjs',
+    options: ['suite'],
+    help: 'Check an applied formal verification suite for drift without running the model checker or writing.\nUsage: {entry} formal check --repo <path> --suite <name> [--json]\nFails with one problem per finding: file-drift, file-missing, source-paths-missing, table-drift, orphan-property-file, orphan-model-file, pointer-missing, source-path-missing, step-code-missing, design-citation problems and tool-hash-mismatch. A missing tool file is blocked as tool-missing: the properties are unproven, never passing. It compares the suite with what suite.json renders, with the repo and with the pinned tool file\'s sha256, and does not judge whether a model is true; rerun every property check for that.'
   },
   'comment-check generate': {
     module: './commands/comment-check.mjs',
