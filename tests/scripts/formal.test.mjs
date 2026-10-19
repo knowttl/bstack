@@ -97,6 +97,36 @@ async function setup(t, { jar } = {}) {
 
 const codes = result => result.problems.map(problem => problem.code)
 
+for (const sourcePath of ['src', 's*', 'src/charge.mjs', 'src/*.mjs', 'src/**']) {
+  test(`formal commands and the coverage gate agree that ${sourcePath} covers the charge code`, async t => {
+    const f = await setup(t)
+    const value = await f.plan()
+    value.properties[0].sourcePaths = [sourcePath]
+    await f.apply(value)
+    assert.equal(f.check().exit, 0)
+    const swept = runMaintenance('sweep', f.repo, f.env)
+    assert.deepEqual(swept.problems.filter(problem => problem.fix === 'Run /formal-verification maintain.'), [])
+    f.commit('Add the suite')
+    git(f.repo, 'checkout', '-q', '-b', 'change')
+    await changeSource(f)
+    f.commit('Change charge')
+    const gate = spawnSync(process.execPath, [join(f.repo, suite, 'scripts/map-coverage.mjs'), '--base', 'main'], { cwd: f.repo, encoding: 'utf8' })
+    assert.equal(gate.status, 1, gate.stdout + gate.stderr)
+    assert.match(gate.stdout, /formal-proof-coverage: src\/charge\.mjs changed without updating a model file/)
+  })
+}
+
+test('sweep excludes the installed authoring skill and still detects an incomplete formal suite', async t => {
+  const f = await setup(t)
+  await f.apply(await f.plan())
+  await cp(join(root, 'skills/formal-verification'), join(f.repo, '.agents/skills/formal-verification'), { recursive: true })
+  const swept = runMaintenance('sweep', f.repo, f.env)
+  assert.deepEqual(swept.problems.filter(problem => problem.fix === 'Run /formal-verification maintain.'), [])
+  await mkdir(join(f.repo, '.agents/skills/formal-incomplete'))
+  const broken = runMaintenance('sweep', f.repo, f.env)
+  assert.deepEqual(broken.problems.filter(problem => problem.fix === 'Run /formal-verification maintain.').map(problem => problem.code), ['suite-unavailable'])
+})
+
 test('the formal-verification skill ships only the commands its procedure runs', () => {
   const result = spawnSync(process.execPath, [entry, '--help'], { encoding: 'utf8' })
   assert.equal(result.status, 0, result.stderr)
@@ -147,6 +177,7 @@ test('an unchanged plan updates to nothing and a changed model replaces only its
 
 const rejections = [
   ['a model step that cites code outside the property source paths', plan => { plan.properties[0].steps[0].code = 'PROPERTY.md:1' }, 'step-outside-source-paths'],
+  ['a model step in a sibling directory with the same prefix', plan => { plan.properties[0].sourcePaths = ['src']; plan.properties[0].steps[0].code = 'src-other/charge.mjs:2' }, 'step-outside-source-paths'],
   ['a model step that cites a line the file does not have', plan => { plan.properties[0].steps[0].code = 'src/charge.mjs:99' }, 'step-code-missing'],
   ['a module header that does not name its file', plan => { plan.properties[0].modelFiles[0].content = plan.properties[0].modelFiles[0].content.replace('MODULE ChargeOnce', 'MODULE Other') }, 'module-name-mismatch'],
   ['evidence inside the suite', plan => { plan.evidenceDirectory = `${suite}/states` }, 'evidence-inside-suite'],

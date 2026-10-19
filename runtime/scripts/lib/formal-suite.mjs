@@ -79,7 +79,7 @@ export function validateFormalPlan(plan) {
     for (const step of property.steps) {
       const { path } = splitLocation(step.code)
       relativePath(path, `${at}/steps`)
-      if (!globs.some(glob => matchesPath(glob, path))) {
+      if (!path.split('/').some((_, index, parts) => globs.some(glob => matchesPath(glob, parts.slice(0, index + 1).join('/'))))) {
         invalid('step-outside-source-paths', `Step ${step.action} cites ${step.code}, which no declared source path of ${property.id} covers.`, `${at}/steps`)
       }
     }

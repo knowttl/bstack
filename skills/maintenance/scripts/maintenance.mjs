@@ -3749,7 +3749,7 @@ function validateFormalPlan(plan) {
     for (const step of property.steps) {
       const { path } = splitLocation(step.code);
       relativePath2(path, `${at}/steps`);
-      if (!globs.some((glob) => matchesPath(glob, path))) {
+      if (!path.split("/").some((_, index2, parts) => globs.some((glob) => matchesPath(glob, parts.slice(0, index2 + 1).join("/"))))) {
         invalid3("step-outside-source-paths", `Step ${step.action} cites ${step.code}, which no declared source path of ${property.id} covers.`, `${at}/steps`);
       }
     }
@@ -4065,7 +4065,7 @@ async function kitItems(target) {
 async function formalItems(target, coverageLimits) {
   const items = [];
   const entries = await readdir7(join14(target.root, ".agents/skills")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
-  for (const name of entries.filter((name2) => name2.startsWith("formal-")).sort()) {
+  for (const name of entries.filter((name2) => name2.startsWith("formal-") && name2 !== "formal-verification").sort()) {
     try {
       await run8({ repo: target.root, suite: name.slice("formal-".length) });
     } catch (error) {

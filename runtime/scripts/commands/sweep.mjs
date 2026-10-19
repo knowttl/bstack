@@ -63,7 +63,7 @@ async function kitItems(target) {
 async function formalItems(target, coverageLimits) {
   const items = []
   const entries = await readdir(join(target.root, '.agents/skills')).catch(error => error.code === 'ENOENT' ? [] : Promise.reject(error))
-  for (const name of entries.filter(name => name.startsWith('formal-')).sort()) {
+  for (const name of entries.filter(name => name.startsWith('formal-') && name !== 'formal-verification').sort()) {
     try { await checkFormal({ repo: target.root, suite: name.slice('formal-'.length) }) } catch (error) {
       for (const problem of problemsOf(error)) {
         if (problem.code === 'tool-missing') coverageLimits.push({ path: problem.path, reason: problem.message })
