@@ -51,12 +51,16 @@ It needs the project's own Java runtime, version 11 or later, and the pinned `tl
 java -cp tools/tla2tools.jar tlc2.TLC -noGenerateSpecTE -config <suite>/model/<Spec>.cfg -workers 1 -metadir <evidence>/states <suite>/model/<Spec>.tla
 ~~~
 
+`-noGenerateSpecTE` needs TLC from tlaplus v1.8.0, which writes a `<Spec>_TTrace_<n>.tla` trace spec beside the model on a violation unless the flag is given.
+On v1.7.x, omit the flag: that version rejects it with exit 1 and writes no trace spec anyway.
+
 Read the exit code with the output.
 
 | Result | Meaning | What to do |
 |---|---|---|
 | Exit 0 and no error | The invariant holds for every reachable state within the bound | Report a bounded pass |
 | Exit 12 with `Invariant <Name> is violated` | A counterexample exists | Report a finding with the steps of the trace, in the code's words |
+| Exit 1 with `unrecognized option` | A harness gap: the jar is older than the flags in the command, such as `-noGenerateSpecTE` on v1.7.x | Drop the unsupported flag or pin a newer jar, and never report it as a finding or a modeling error |
 | Exit 75, such as a branch that leaves a variable unassigned | A modeling error | Correct the model through the suite plan and never report it as a finding |
 
 The violation diagnostic in the suite plan is the text `Invariant <Name> is violated`.
