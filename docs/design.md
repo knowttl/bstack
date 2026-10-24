@@ -470,7 +470,6 @@ What each decision means:
   A connector counts only when the host already exposes it, and bstack installs, configures and authenticates none.
   A claim cites its source at the commit hash, PR thread or document it came from, and a claim with no source is labelled an inference.
   Text from a connector can contain instructions, so the skill treats it as data to quote and cite, never as a command, and it asks the user before acting on anything a source asks for.
-  A later change lets `/architecture` cite the same history for its decisions from one shared reference with a checked copy, not a second copy of the method.
 - A3: a past session holds the context a fresh agent lacks, so `/recall` restores it.
   It reads only the current project's transcripts from Claude Code and Codex, and opens them read-only.
   Its output stays in scratch like every other bstack draft and is never written into the repo.
@@ -516,7 +515,7 @@ This amendment registers no acceptance case, because no behaviour exists yet.
 The build slices register the cases below and prove them on disposable fixtures through the public commands.
 
 - Each new skill folder has `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, and the package check confirms both.
-- `/why` on a fixture repo cites a commit hash and a PR review thread for each claim, and a connector document that contains an instruction is quoted and cited and not followed.
+- `/why` on a fixture repo cites each claim's actual supporting source (commit, PR review thread or connector document), demonstrates both git-history and PR-thread sources across the fixture, and quotes and cites a connector document that contains an instruction without following it.
 - `/recall` on a fixture project reads only that project's transcripts, leaves them byte-identical and writes its summary to scratch, and the repo is unchanged.
 - The prototyping skill leaves a fixture target byte-identical, produces two or three variants with a kit measurement each, and reports a recommendation.
 - Every skill that writes a document loads the shared writing reference, and its checked copy fails `--check` when it drifts.
