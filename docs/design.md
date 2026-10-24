@@ -49,7 +49,7 @@ The new-project path can implement the approved foundation, but it does not buil
 
 | Decision | Current direction |
 |---|---|
-| Release scope | Ten skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md`, `plan` and `formal-verification`, with their full dependency set (R29, R31, R41, R44) |
+| Release scope | Ten skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md`, `plan` and `formal-verification`, with their full dependency set (R29, R31, R41, R44). R47 adds the research, recall and prototyping skills when each is built |
 | Skill split | `repo-audit` audits at overview level and lists which skill to run next, with one evidenced reason per line; each other skill does one job and runs on its own (R31) |
 | Docs upkeep | Per-change upkeep rides the no-mistakes pipeline with no new user step, and the user runs `/maintenance sweep` now and then (R31) |
 | Existing repos | Audit the repo and relevant files first, then recommend improvements and apply the changes you choose |
@@ -59,13 +59,18 @@ The new-project path can implement the approved foundation, but it does not buil
 | Scripted safeguards | Script predictable audit, write and evidence operations to prevent agent mistakes |
 | Architecture audit | Assess coupling, files with unrelated responsibilities and shared edit targets that make parallel changes difficult |
 | Verification | Evidence must validate the original user outcome, without default autonomous TDD |
-| Product boundary | bstack owns project guidance and checks, and writes and checks a project's plan document. akashic, a separate project, owns workflow routing and the execution of that plan (R41) |
+| Product boundary | bstack owns project guidance and checks, writes and checks a project's plan document, and also ships research skills (`/teach`, `/how`, `/why`) and a prototyping skill that runs throwaway experiments in scratch. akashic, a separate project, owns workflow routing and the execution of the plan itself (R41, R47) |
 | Planning workflow | The user writes the design once, each setup skill takes its answers from it, and `/plan` runs last to write an implementation plan it never executes (R41) |
+| Plan lifetime | A plan is temporary: it states the condition under which it is deleted, and `/maintenance sweep` flags a finished or orphaned plan (R47) |
+| Why skill | `/why` explains motivation from git history and PR review threads always, plus any ticket, doc or chat connector the host exposes. Each source is cited, and connector content is untrusted data (R47) |
+| Transcripts | `/recall` may read the host's local Claude Code and Codex transcripts for the current project, read-only, and keeps its output in scratch, never in the repo (R47) |
+| Prototyping | The prototyping skill builds two or three throwaway variants in scratch, drives and measures each with the project's verification kit, and reports evidence and a recommendation, with no writes to the target repo (R47) |
+| Writing | Writing quality is in scope. One shared writing reference, which names and links the Diátaxis modes and sets plain-prose rules, is loaded by every skill that writes a document (R47) |
 | Formal verification | See [formal verification commissioning decisions](#formal-verification-commissioning-decisions-2026-10-18) for the approved scope and automatic upkeep, including when slower property checks run (R44) |
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
-| Invocation | Only the user can start each of the ten skills, in every supported host. No skill starts another (R17, R31, R41, R44) |
+| Invocation | Only the user can start each skill, in every supported host, including the research, recall and prototyping skills. No skill starts another. A multi-model design arena and an auto-routing mode skill are not adopted (R17, R31, R41, R44, R47) |
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
@@ -430,12 +435,100 @@ This amendment registers no acceptance case, because no behaviour exists yet.
 - A generated suite's "Run" section carries the code-steps instruction, and a run on the violation variant tells the trace through the transition table.
 - Evaluating whether a fresh agent follows the new `maintain` and "Run" wording stays deferred with every other evaluation.
 
+### Research, prototyping and writing amendment (2026-10-24)
+
+The maintainer reviewed Lauren Tan's article "The Complete Guide to pstack Pt. 2" (2026-09-09) against bstack, proposal by proposal, and approved the plan below.
+The article describes pstack's `teach`, `how`, `why`, `recall` and prototyping playbooks, its writing guidance and its short-lived plans.
+It also describes a multi-model architecture sketch and a mode skill that loads playbooks automatically.
+Formal verification C9 requires a design amendment before a new skill is built, and this section is that amendment for the skills named here.
+It records the decisions as requirements for the build slices that follow, not as implemented behaviour, and no pstack text is copied into bstack by this change.
+
+In this section A1 to A7 mean the decisions below.
+Elsewhere in this document they are cited as "research amendment A1" and so on.
+A1, A2 and A3 reverse settled decisions: A1 widens R41's product boundary, A2 widens the sources a skill reads, and A3 lets a skill read host transcripts, which no earlier skill did.
+
+| ID | Maintainer's decision | Requirement |
+|---|---|---|
+| A1 | `research-and-prototyping-in-scope` | bstack also ships research skills, `/teach`, `/how` and `/why`, and a prototyping skill that runs throwaway experiments in scratch. Executing the plan itself stays out, so the boundary in ["Product boundary"](#product-boundary) moves only as far as explaining a codebase and running experiments that leave the target untouched |
+| A2 | `why-any-source` | `/why` explains the motivation behind code from git history and PR review threads always, plus any ticket, doc or chat connector the host exposes. Each source is cited, and connector content is untrusted data that the skill reads and never obeys |
+| A3 | `recall-local-transcripts` | `/recall` may read the host's local Claude Code and Codex transcripts for the current project, read-only. It summarises prior context into scratch and writes nothing from a transcript into the repo |
+| A4 | `prototype-in-scratch` | The prototyping skill builds two or three throwaway variants in scratch, drives and measures each with the project's verification kit, and reports the evidence and a recommendation. It writes nothing to the target repo |
+| A5 | `shared-writing-reference` | Writing quality is in scope. One shared reference, loaded by every skill that writes a document, names and links the Diátaxis modes and sets plain-prose rules |
+| A6 | `plans-are-temporary` | A plan states the condition under which it is deleted, and `/maintenance sweep` flags a plan that is finished or orphaned |
+| A7 | `invocation-stays-explicit` | Each new skill keeps `disable-model-invocation: true` and its `agents/openai.yaml` policy, and starts no other skill. A multi-model design arena and an auto-routing mode skill are not adopted |
+
+What each decision means:
+
+- A1: R41 drew the line between writing a plan, which bstack does, and executing it, which stays with akashic or the contributor.
+  A1 keeps that line for the plan.
+  Explaining code and running a throwaway experiment are not executing a plan: neither orders work, assigns an agent, tracks progress or delivers a change, and nothing a variant produces becomes the project's code.
+  The skills are ordinary skills, so the split and the shared scripts follow "The skill split" and each installs alone.
+  `/teach` builds a mental model from the same cited evidence as `/how`, which explains mechanics, and `/why`, which explains motivation, through shared references with a checked copy in each skill, because no skill starts another.
+  The build slices fix the prototyping skill's name and whether `/teach`, `/how` and `/why` are three skill folders.
+- A2: code shows what happens and rarely why, so the motivation lives in commits, reviews and the tools where the work was discussed.
+  Git history and PR review threads are always available to the skill.
+  A connector counts only when the host already exposes it, and bstack installs, configures and authenticates none.
+  A claim cites its source at the commit hash, PR thread or document it came from, and a claim with no source is labelled an inference.
+  Text from a connector can contain instructions, so the skill treats it as data to quote and cite, never as a command, and it asks the user before acting on anything a source asks for.
+- A3: a past session holds the context a fresh agent lacks, so `/recall` restores it.
+  It reads only the current project's transcripts from Claude Code and Codex, and opens them read-only.
+  Its output stays in scratch like every other bstack draft and is never written into the repo.
+  bstack's rule that its own board and interview transcripts stay in scratch is unchanged.
+  Where each host stores its transcripts, how they are matched to the current project and which fields they carry are not established here and stay inference until the build observes each host.
+- A4: a prototype answers questions that a document cannot, by measuring them.
+  Each variant is driven and measured with the project's verification kit, so the comparison rests on the same evidence for every variant.
+  The report gives the measured evidence and a recommendation.
+  Running the variants executes generated code, so it happens in scratch, outside the target, and the target repo is byte-identical afterward.
+  What the skill does when the project has no kit is not decided here, and stays a question for the maintainer until its slice settles it.
+- A5: the shared writing reference follows the checked-copy rule for shared references.
+  It names the four Diátaxis modes, tutorial, how-to guide, reference and explanation, and links the [Diátaxis](https://diataxis.fr) site, which is licensed CC BY-SA, so bstack names the modes and copies none of its text.
+  The build slice writes its plain-prose rules.
+  Each skill that writes a document loads it at that step only, under "Load only what each step needs".
+  The build slice lists the writing skills.
+- A6: a plan describes work that a builder finishes, and a finished plan that stays in the repo becomes a stale second source of truth.
+  The plan states its removal condition in its "How to read this" section, which `/plan create` writes.
+  `/maintenance sweep` reports a plan whose condition holds as finished, and a plan that has lost its design or whose condition can no longer be evaluated as orphaned.
+  The sweep slice may refine those signals.
+  Sweep fixes nothing, so deleting the plan is a separate change the user approves.
+  That change removes the plan's `AGENTS.md` pointer line with it, so the pointer never dangles.
+  This replaces the lasting plan and pointer that "plan" under "The skill split" assumed.
+- A7: the article's mode skill loads playbooks on the agent's own judgement, which R12 and the invocation decisions already rule out.
+  The multi-model arena, with its cross-judging and the implement and scrap phases, was removed from the `architecture` adaptation on purpose, and stays out.
+
+#### Not adopted
+
+- A mode skill that routes a request to a playbook is not adopted, because it reverses the explicit-invocation decisions and belongs to akashic if wanted.
+- A multi-model design arena, cross-judging between model families and the implement-then-scrap loop are not adopted, because they execute and deliver work and `/architecture` removed them already.
+- The builder check in `/plan` (D2) stays.
+  The article warns against feeding the agent a hypothesis, and D2 does not: a fresh reader only lists where a builder would have to guess, and the agent brings back only the questions the user must answer.
+
+#### Consistency with the formal-verification amendments
+
+Formal verification D1 to D9, C1 to C12 and U1 to U4 stand.
+`/formal-verification` stays a user-started skill, and its scratch reproduction in U2 stays evidence that is never committed to product code, which matches A4's scratch rule.
+U4 still routes a one-function-over-every-input question to `/verification`, and A4 adds no route from the formal skill to a prototype.
+The released-skill count stays ten until a build slice lands one of these skills, so sections that say "ten skills" describe the shipped set.
+
+#### Proof for the build
+
+This amendment registers no acceptance case, because no behaviour exists yet.
+The build slices register the cases below and prove them on disposable fixtures through the public commands.
+
+- Each new skill folder has `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, and the package check confirms both.
+- `/why` on a fixture repo cites each claim's actual supporting source (commit, PR review thread or connector document), demonstrates both git-history and PR-thread sources across the fixture, and quotes and cites a connector document that contains an instruction without following it.
+- `/recall` on a fixture project reads only that project's transcripts, leaves them byte-identical and writes its summary to scratch, and the repo is unchanged.
+- The prototyping skill leaves a fixture target byte-identical, produces two or three variants with a kit measurement each, and reports a recommendation.
+- Every skill that writes a document loads the shared writing reference, and its checked copy fails `--check` when it drifts.
+- A plan with a removal condition that holds appears in `/maintenance sweep` as finished, and a plan whose design is gone appears as orphaned.
+- Evaluating whether a fresh agent follows the new skills' wording stays deferred with every other evaluation.
+
 ## The skill split
 
 The first release ships ten skills.
 Each does one job, runs on its own, and installs alone.
 Only the user starts any of them, and none starts another.
 repo-audit lists which skill to run next; the user decides whether to run it.
+The [research amendment](#research-prototyping-and-writing-amendment-2026-10-24) adds `/teach`, `/how`, `/why`, `/recall` and a prototyping skill under the same rules, and this table lists the skills built so far.
 
 | Skill | Modes | Job |
 |---|---|---|
@@ -519,6 +612,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - Owns the generated repo checker, whose committed home is `skills/maintenance/scripts/bstack-check.mjs`. The checker gains a `--docs-only` mode that runs `docs check` and `docs generate --check` on the current tree with no base, assessment or leaf execution, and the docs gate calls it.
 - The sweep is one shared command, `sweep`, that composes `docs check`, `docs generate --check`, `kit check` and a link check of the root `AGENTS.md`.
   It reads a document's owner from its registration (the `glossary` field, or the IDs `design` and `vision`).
+  Pending plan-lifetime requirements are owned by A6 in the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24).
   Code changes or document age alone never create repair items or fail the command.
   Skipped Markdown and unsupported link fragments are reported only as unchecked scope in `data.coverageLimits`, never as repair items or failures by themselves.
   The skill judges every registered document against the whole current repo by reading, including glossary terms, design boundaries, README instructions and facts, vision claims and other registered content.
@@ -544,6 +638,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
   A citation uses `cite-check`'s location and exact-byte state, and evidence is a check or kit feature by name, so the command verifies that a unit names evidence and not that the evidence exists yet.
 - Boundary: writes one plan document and checks it. It starts no skill and no work, never executes a unit, assigns no agent, tracks no progress and edits no product code. It writes only through `apply`, after the user approves the exact file.
 - It proposes one pointer line for the plan through the shared pointer contract.
+- Pending plan-lifetime and pointer-removal requirements are owned by A6 in the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24).
 
 ### formal-verification
 
@@ -863,6 +958,7 @@ This requirement does not prescribe the steps the agent must use to implement th
 
 bstack defines what a healthy project must preserve and how contributors can verify those requirements.
 It also writes and checks a project's implementation plan as a document.
+Since R47 it also explains a codebase from cited evidence and runs throwaway experiments in scratch.
 akashic, a separate project, defines how work runs through playbooks, including executing that plan.
 Neither project requires an installation of the other.
 
@@ -872,8 +968,10 @@ Neither project requires an installation of the other.
 | Design and standards | Recommend scoped principles, architecture constraints and judgement rules | Require relevant rules in work briefs and playbooks |
 | Verification | Establish native checks, evidence requirements and their coverage limits | Select and run checks, assess gates and record execution |
 | Documentation currency | Define required impact assessments and provide mechanical validators | Decide where assessment and review belong in a playbook |
-| Plan document | Write and check one plan from the approved design: units that each cite their design section and name the check that proves them | Execute the plan: order the work, assign agents, run each unit and record progress |
-| Work execution | Provide explicitly invoked foundation skills and bounded check tools | Route tasks, order steps, coordinate agents, recover runs and deliver changes |
+| Plan document | Write and check one temporary plan from the approved design: units that each cite their design section and name the check that proves them, and a condition for deleting the plan | Execute the plan: order the work, assign agents, run each unit and record progress |
+| Research | Explain mechanics and motivation from cited evidence, and restore prior context from the project's local transcripts, with output in scratch | Use the explanation when briefing agents |
+| Prototyping | Run two or three throwaway variants in scratch, measure each with the project's verification kit and report evidence and a recommendation | Choose a design and run the real implementation |
+| Work execution | Provide explicitly invoked foundation, research and prototyping skills and bounded check tools | Route tasks, order steps, coordinate agents, recover runs and deliver changes |
 
 The linked [poteto-mode guide](https://github.com/backnotprop/pstack/blob/124f622bcaeac490e7e9dac6af83f3ef9611d554/docs/guide/02-poteto-mode.md) describes automatic playbook selection and sequencing.
 bstack does not adopt that responsibility.
@@ -884,7 +982,13 @@ Writing a plan document is not one of those capabilities.
 `/plan` records what each unit depends on and what proves it done, and it prescribes no development method, tool or agent.
 It starts nothing and never executes a unit, and nothing in bstack runs the plan it writes.
 
-Security of the skills bstack creates is also outside its scope.
+Research and prototyping are not those capabilities either (research amendment A1).
+The research skills explain existing code and history, and `/recall` restores context from the project's own transcripts, each citing its sources and writing to scratch.
+A prototype is an experiment that answers a design question with measured evidence.
+It runs only in scratch, writes nothing to the target and leaves the choice and the real implementation to the contributor or akashic.
+It is not a unit of the plan, and nothing it builds becomes project code.
+
+Beyond the connector-content rule in A2 of the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24), security of the skills bstack creates is outside its scope.
 That covers attacks through skill files, scripts or web content the agent reads.
 
 ### Requirements need enforcement
@@ -1935,8 +2039,8 @@ Every skill works in any host that supports skills, with explicit invocation and
 The package includes the documented settings for Claude Code, Codex and Pi in each skill folder, so the user-only rule holds in each.
 The package check confirms those settings are present. bstack does not run each host to test them.
 
-**Only the user can start any of the ten skills.**
-The agent must not start one on its own because a request looks like an audit, a glossary change or a scaffold.
+**Only the user can start any of the ten skills, and any skill the research amendment adds.**
+The agent must not start one on its own because a request looks like an audit, a glossary change, a scaffold, a question about why code exists or a design comparison.
 These skills read the repo, interview the user and can write files, so the user decides when each runs.
 The setting is per skill and applies to every mode.
 No skill starts another; repo-audit lists the next skill and the user starts it.
@@ -2264,9 +2368,10 @@ Historical entries keep their original decisions and name their current applicat
 | R38, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 9 of the split build: the `foundation` skill, the new-project path and `project create`, and the removal of the new-project proposal, creation and verification steps from repo-audit | Applies R31 and Split Q3 and Q5. repo-audit's Steps 4 to 6 now list `/foundation` instead of proposing a stack, creating the project or verifying its journey, `project create` and its schema left repo-audit's command list, and the intent interview lost its technical half (data, interfaces, deployment, compatibility and the first journey), which R33 left there until now. Build choices: the skill takes the approved `VISION.md` as a required input and stops naming `/vision` without it, while the glossary and design are optional; its scaffold carries a `README.md` of the setup and check commands and a root `AGENTS.md` with the skill's one pointer line, created in the same plan because a new project has no instruction file; it carries its own condensed checks reference for `rule-proof` and the maintained command, since `enforcement.md` stays in repo-audit for the existing-repo path until the final slim; the command list is exactly the agreed four, so a created project's journal is inspected by repeating the unchanged plan rather than through `state show`; and the repo-audit scenarios that still describe the technical interview and project creation are rehomed with the final slim, so no eval scenario for `foundation` was added because evals are deferred |
 | R39, 2026-10-14 | "yes commission the build." The maintainer commissioned piece 10 of the split build, the final repo-audit slim, and approved building it as two changes: 10a, the slim itself, then 10b, the rehoming of the acceptance cases and the evaluation harness | Applies R31 and Split Q7 and Q8. repo-audit now holds its scope, a four-step overview audit (resolve the target, `inspect` and `inventory`, the documents research brief with `cite-check`, print the checklist) and the two checklists, each line naming its skill with a cited reason, and writes nothing. Its command list is `inspect`, `inventory` and `cite-check` plus the `contract-test` dispatch harness, which no skill procedure uses and the command and schema contract tests still drive through it. The enforcement, intent-interview and grilling references, the findings, change-set, check-plan, evidence, impact-assessment, probe, project and resume-state schemas, and the research briefs other than `documents` left it, because the owning skills carry their content. `findings render` was removed with the audit record it wrote (Q8), so `findings validate` is the only findings command. Tests that drove moved commands through the repo-audit entry now drive the `verification` or `maintenance` entry that lists them. The scenario registry keeps all 22 scenarios and the case registry all 75 cases; only the scenarios' coverage keys changed, so the scenarios that still describe flows now owned by other skills are rehomed in 10b, and every evaluation stays deferred |
 | R40, 2026-10-15 | "Decision for correct: fold into /verification as a correct mode. Build items: C1, C2, C3, C4, C5." and "yes dispatch all 5 in your recommended order". The maintainer reviewed pstack's `correct` skill against the verification skill and chose a third `verification` mode over a standalone skill | Extends R29 and R30. `/verification correct` runs without an applied kit and has its own five-step checklist; the constraint reference gains the two-occurrence threshold and wider evidence (L1), the replacement-naming diagnostic (L5), the real-past-occurrence proof and the repeat rules; `maintain` step M6 and its reference point at the checklist instead of restating it. Not adopted, by the maintainer's selection: the explicit test rung, a rule table in the instruction file, per-class direct commits and inline exceptions with expiry dates. Build choices: no new script, since `rule-proof` and `baseline check` already prove a check and hold its baseline; the mode reports a change that needs product code instead of making it, which keeps the no-product-edit rule of every mode; and the acceptance cases AC-76 to AC-78 and their scenario stay unrun because evaluations are deferred |
-| R41, 2026-10-15 | "Decision for workflow: W design once, bstack setup once, /plan last (W1-W3, D1-D4). Build items: none." and "yes dispatch all 5 in your recommended order". The maintainer chose to write the design once, have each setup skill take its answers from it and add a `/plan` skill that writes and checks an implementation plan and never executes it | Extends R31 and refines R12's boundary. `plan` is a ninth user-started skill that runs after `/agents-md` in both checklists; the product boundary separates writing and checking a plan document, which bstack does, from executing it, which stays with akashic or the contributor; "Planning workflow commissioning decisions (2026-10-15)" records W1-W3 and D1-D4. The owner's own design workflow stays in the owner's own repository and feeds `/plan`. Build choices: this change amends the design and the implementation plan only; T2.11 builds the skill and T2.12 builds W1 and the checklist wiring, so no `plan` skill folder, command or acceptance case exists yet and every evaluation of the workflow stays deferred |
+| R41, 2026-10-15 | "Decision for workflow: W design once, bstack setup once, /plan last (W1-W3, D1-D4). Build items: none." and "yes dispatch all 5 in your recommended order". The maintainer chose to write the design once, have each setup skill take its answers from it and add a `/plan` skill that writes and checks an implementation plan and never executes it | Extends R31 and refines R12's boundary. `plan` is a ninth user-started skill that runs after `/agents-md` in both checklists; the product boundary separates writing and checking a plan document, which bstack does, from executing it, which stays with akashic or the contributor; "Planning workflow commissioning decisions (2026-10-15)" records W1-W3 and D1-D4. The owner's own design workflow stays in the owner's own repository and feeds `/plan`. Build choices: this change amends the design and the implementation plan only; T2.11 builds the skill and T2.12 builds W1 and the checklist wiring, so no `plan` skill folder, command or acceptance case exists yet and every evaluation of the workflow stays deferred. R47 later widens the boundary to research and prototyping skills, keeps plan execution out, and makes a plan temporary |
 | R42, 2026-10-15 | "yes dispatch all 5 in your recommended order". The maintainer commissioned the build of the `plan` skill, piece 4 of 5 of the pstack intake | Applies R41. `skills/plan/` has its `create` mode with a six-step checklist, the plan-format and builder-check references, `schemas/plan.json` and the `plan check` command, and AC-79 to AC-83 record its acceptance cases. Build choices: the agent records the units in a scratch record that `plan check` reads, so the check repeats on the unchanged record and the document is drafted from it; `plan check` and `cite-check` share one citation library, so a design citation resolves the same way in both; evidence is a check or kit feature by name and the command checks that a unit names one, not that it exists; a non-functional target is an evidence entry on each unit it constrains, and the skill, not the command, checks that every target is carried; the builder check adopts the wording of `builder-check-prompt.md` in obra's `superpowers`, pinned in `upstream/sources.json`, and is blocked when no fresh read-only reader is available; the skill accepts any approved design with no minimum size; the pointer proposal is one line and no contract registration is proposed. T2.12 still schedules the setup skills' design-as-input sentences and the checklist wiring, and every evaluation of the skill stays deferred |
 | R43, 2026-10-15 | "yes dispatch all 5 in your recommended order". The maintainer commissioned the build of W1 and W3, piece 5 of 5 of the pstack intake | Applies R41 and R42. `/vision`, `/glossary`, `/architecture` and `/foundation` each gain one sentence saying a design document the user names counts as the user's explanation, so each summarises it and asks only about gaps; no interview step, script or command is added. Both repo-audit checklists list `/plan` after `/agents-md` with a cited reason, and AC-88 is the checklist-order test. AC-84 to AC-87 record the design-as-input behaviour of the four skills; their [scenario definitions](../tests/eval/scenarios/scenarios.json) remain unrun because evaluations are deferred |
 | R44, 2026-10-18 | "yes start the bstack design update." The maintainer approved every recommended option (D1 to D9) and accepted all twelve corrections (C1 to C12) from a design review of a formal-verification prompt modelled on pstack's `create-formal-verification-skill`, and chose a design amendment as the next step | Extends R31 and R41. `formal-verification` is a tenth user-started skill with `create` and `maintain` modes that proves one stated property by model checking and leaves a `formal-<target>` suite; "Formal verification commissioning decisions (2026-10-18)" records D1 to D9, C1 to C12, the feasibility evidence and the cases AC-89 to AC-100. Build choices: this change amends the design and the implementation plan, pins the pstack source read in `NOTICE` and adds the `formal-charge-once` fixture pair, so no `formal-verification` skill folder, command, schema or registered acceptance case exists yet; T2.13 builds the skill and registers the cases, and the maintainer's separate word starts that build. The reuse of `rule-proof` is the only part exercised by the experiment, Kani has no executed evidence, and every evaluation of the skill stays deferred |
 | R45, 2026-10-18 | "2. yes". The maintainer commissioned the build of the `formal-verification` skill, task T2.13, once the R44 design amendment had merged | Applies R44. `skills/formal-verification/` has its `create` mode with an eight-step checklist and its `maintain` mode with a six-step one, the create, tools and maintain references, `schemas/formal-plan.json` and the `formal scaffold` and `formal check` commands; the coverage gate reads `properties/` and accepts `No-proof-impact`, `/maintenance sweep` checks `formal-*` suites, `/architecture` gains the explicit state model standard, both repo-audit checklists list the skill only with cited risk evidence, and AC-89 to AC-100 are registered. Build choices: a property file carries `Source paths:`, `Design:`, `Model files:` and the rendered transition table, and the gate treats a property as current when one of its listed model files changed; `formal check` takes `--suite <target>`, binds each design citation to exact bytes through the citation library `cite-check` uses, and requires each transition-table row to cite a code line that still exists inside the property's source paths; a missing tool file is `blocked` in `formal check` and a coverage limit in `sweep`, so it is unproven and never drift or a pass; the TLC recipe suppresses trace specs beside the model (correction, 2026-10-24: flag support is version-dependent; follow the [TLC recipe](../skills/formal-verification/references/tools.md#recipe-tla-with-tlc) for compatibility and harness-gap handling; the fixture pin stays on v1.8.0); the kit render helpers moved to `runtime/scripts/lib/render.mjs` so a kit and a suite share them. AC-91, AC-92, AC-95 and AC-97 pass in `tests/scripts/formal.test.mjs`; AC-93 and AC-94 run in the same file only when `BSTACK_TLA2TOOLS_JAR` names the pinned jar and Java is present, and are otherwise skipped and never recorded as passes; the Kani recipe has no executed evidence because the build environment has no Rust toolchain, and every evaluation of the skill stays deferred |
 | R46, 2026-10-24 | "yes go with your recommendation". The maintainer commissioned the recommended slices that adopt pstack's post-release formal-verification upkeep ideas, one change each and the design first | Applies R44 and extends R45. "Formal verification upkeep amendment (2026-10-24)" records U1 to U4: a per-property `syncCommit` with the `source-changed-since-sync` and `sync-commit-missing` problems, `maintain` replay, trailer audit and stale-pass reporting, a counterexample told as code steps in the generated suite, and the route to `/verification` with CrossHair as guidance only. It adds a dated note that C2 is stale as a fact and pins `cursor/plugins` at `9580c23696ac8d7abed0c166f2f9918800afb819` in `NOTICE` and `upstream/sources.json`. Build choices: this change amends the design only, so the plan schema, `formal check`, the suite templates, the references and `sweep` keep their current behaviour and no acceptance case is registered until the build slices land; a reachability witness for each property is not adopted; D4's exclusion of property-based testing stands, and every evaluation of the new wording stays deferred |
+| R47, 2026-10-24 | "yes start the build." The maintainer approved the plan agreed on the review of Lauren Tan's article "The Complete Guide to pstack Pt. 2" and commissioned its build, design update first | Reverses parts of R41 and extends R31. "Research, prototyping and writing amendment (2026-10-24)" records A1 to A7: research skills `/teach`, `/how` and `/why` and a prototyping skill that runs throwaway experiments in scratch, with plan execution still out of bstack; `/why` reading git history and PR review threads plus any connector the host exposes, each source cited and connector content untrusted; `/recall` reading the host's local Claude Code and Codex transcripts for the current project, read-only, with output in scratch; prototype variants driven and measured with the verification kit and no writes to the target; a shared writing reference that names and links the Diátaxis modes; temporary plans with a removal condition that `/maintenance sweep` checks; and explicit invocation for every new skill. Build choices: this change amends the design only, so no skill folder, command, schema, reference or acceptance case exists for them yet and the ten-skill count describes the shipped set. A multi-model design arena and an auto-routing mode skill are not adopted, and D2's builder check stays. No pstack text is copied, so `NOTICE` gains no row, and every evaluation of the new wording stays deferred |
