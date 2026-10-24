@@ -252,6 +252,9 @@ What each correction means for the prompt:
 
 - C1: PlusCal and Kani are the prompt's additions to pstack, which names only TLA+.
 - C2: pstack's "kept in step with the code" is one sentence with no mechanism, so bstack designs upkeep itself (D2, D3).
+  Dated note, 2026-10-24: "pstack has no maintain counterpart" is stale as a fact, though the decision stands.
+  pstack added `maintain-formal-verification-skill` ([`7b353f7`](https://github.com/cursor/plugins/commit/7b353f78f6ec193bdbe48ed8059444eb09b6878e)) the day after the commit read here, and later gave its create skill a sync commit.
+  That supports D2's `create` and `maintain` modes, and ["Formal verification upkeep amendment (2026-10-24)"](#formal-verification-upkeep-amendment-2026-10-24) adapts it, with a new `NOTICE` pin.
 - C3: only `/verification` has `correct`, and `/architecture` has `create` and `maintain`, so the prompt's "same create/maintain/correct lifecycle" does not exist.
 - C4: the ladder runs Eliminate, Detect, Encode, then Review.
   A model check is a Detect-rung check, and making the bad state impossible to represent stays preferred.
@@ -349,6 +352,72 @@ The skill must state these limits.
 
 T2.13 moved these cases into the numbered ["Acceptance cases"](#acceptance-cases) list as AC-89 to AC-100 and registered them.
 The implementation plan's [coverage table](implementation-plan.md#acceptance-case-coverage) assigns them to T2.13 and records which of them pass in an automated test.
+
+### Formal verification upkeep amendment (2026-10-24)
+
+The maintainer reviewed what pstack released after the commit that the formal-verification decisions read, against the built `/formal-verification` skill.
+pstack added `maintain-formal-verification-skill`, a per-check sync commit and a language fallback in the days after [`0148b78`](https://github.com/cursor/plugins/blob/0148b78c56c72a1b8412055913c79f767095b217/pstack/skills/create-formal-verification-skill/SKILL.md), and the review ran the skill's own commands against a scratch repo to see what the change would fix.
+The review recommended four changes and bstack adopted them as recommended.
+This section records them as requirements for the build slices that follow, not as implemented behaviour.
+
+In this section U1 to U4 mean the upkeep decisions below.
+Elsewhere in this document they are cited as "formal verification U1" and so on.
+The formal verification decisions D1 to D9 and corrections C1 to C12 stand, and this section refines D2, D3 and D4 without reversing them.
+
+| ID | Maintainer's selection | Requirement |
+|---|---|---|
+| U1 | `per-property-sync-commit` | The plan gains an optional `properties[].syncCommit`, a full 40-character lowercase commit hash, and each property file renders it as a `Synced at: <sha>` line beside `Source paths:`. It records the commit at which the property was last confirmed to describe the code at its source paths. `formal check` reports `source-changed-since-sync` for a property when its source paths differ between that commit and `HEAD`, and `sync-commit-missing` when the field is absent or names a commit the repo no longer has, as after a rebase or squash. For a missing commit it falls back to the last commit that changed the suite folder, still reports `source-changed-since-sync` against that commit, and says in the problem that it fell back. Both problems route to `maintain` and `/maintenance sweep` lists them next to the existing `formal-*` problems. Neither is a failure of the project's maintained check command, which runs the property check and the coverage gate with the gate's per-change meaning. `maintain` reads the diff since the sync commit, and moves the commit forward to the commit it checked only after `formal check` passes, every changed property is re-proved and no check is blocked. Moving it is a plan change that goes through `formal scaffold --update` and `apply`, so the user approves it like any other correction |
+| U2 | `maintain-replays-and-audits` | `maintain` replays each counterexample against the real code before it triages the failure: it walks the trace one step at a time, and a step that cannot happen in the code means model drift or a modeling error, while a trace whose every step can happen means a real bug and the report names the commit that introduced it. The agreed source of D2 stays the tie-breaker when the replay is unclear. A scratch reproduction is evidence for the report and is never committed to product code. It re-checks each `No-proof-impact: <id>: <reason>` trailer found since the sync commit against the model and the transition table, and does not accept the message as the evidence. It reports a property that passed before the update and fails after as an old pass on a stale description, and allows one report to list an applied correction and a real bug together. The reader checklist adds covered functions that were renamed, split or moved, and new writers of the state the property guards |
+| U3 | `counterexample-as-code-steps` | The generated suite's "Run" section tells a counterexample as code steps instead of only naming the trace. For TLC, each `State n: <Action ...>` line of the trace is looked up in the property's transition table and told as "the actor does the code step (`path:line`)", ending with the state that breaks the property; where the TLC version prints the actor beside the action, the story names it. For Kani, it gives the concrete failing inputs and the failing assertion. The instruction needs no new command |
+| U4 | `no-verifier-routes-to-verification` | When the question is about one function over every input and no code-level verifier runs on the language, `tools.md` tells the agent to say so, not to hand-model the function in TLA+, and to name `/verification` for a generated-input test of the real code. CrossHair, a Python SMT-backed checker, joins the guidance-only list without a recipe and without a pin. D4's exclusion of property-based testing from formal verification stands, because the route is to `/verification` and the test stays a test |
+
+What each decision means:
+
+- U1: the coverage gate diffs from the merge base of the branch it runs on and accepts a trailer, and `formal check` verifies only that a cited line exists, so a change that reached the base branch is invisible to both.
+  The sync commit gives a deterministic question that survives the merge: whether the source paths changed since the property was last confirmed.
+  It adds one field and two problem codes to the plan D3 already made the single source, and it adds no dependency, since the gate already needs git.
+  The field is optional so a suite applied before this amendment stays valid and reports `sync-commit-missing` until `maintain` records one.
+  The `Synced at:` line is not a source path and not a model file, so changing it alone never satisfies the gate.
+- U2: bstack's triage decides between a modeling error and a real bug only from an agreed source.
+  Replaying the trace is the cheaper first test, and the agreed source remains the final one.
+  The trailer is bstack's own escape hatch, so `maintain` is where it is re-checked.
+- U3: it makes the quality "readable without the tool" mechanical, because the transition table already maps each action to a cited code line.
+  A `formal trace` helper is not designed here, and stays a later option if agents map the steps wrongly in practice.
+- U4: pstack's fallback sentence is right that a hand model of a function is not a proof about the function.
+  bstack adds the route so an agent does not force the question into TLA+.
+
+#### Upkeep evidence
+
+The review's scratch repo had the shape of the [`formal-charge-once` fixture](../tests/fixtures/formal-charge-once/FIXTURE.md): a claim made with an atomic `compareAndSet`, two workers and `NoDoubleCharge == charges <= 1`.
+It was scaffolded and applied with the skill's own commands, and these results were observed in that review; this change reran none of them.
+
+- Drift on the base branch is invisible today.
+  A commit rewrote the cited atomic line as a non-atomic `get` followed by a `set`, keeping its line number.
+  `formal check` still passed, the model check still passed because the model was unchanged, and the gate failed against the suite commit but passed once the commit was on the base branch.
+  `git diff --stat <suite commit> HEAD -- <source paths>` named the file, which is the question U1 records.
+- TLC names the action in each trace step.
+  On the broken variant it printed `State 2: <Read line 10, ...>` through `State 7: <Charge line 20, ...>` and exited 12, and tlaplus v1.8.0 also prints the actor, as in `<Read(w1) ...>`.
+  Each action name is a row of the transition table, which is what U3 relies on.
+
+#### Not adopted
+
+- A reachability witness for each property, a second run expected to fail so that a model that cannot reach its goal is flagged, is not part of this amendment.
+  The walkthrough already catches a vacuous model once, at proof time, and a witness needs a schema change that its own decision row should justify.
+- pstack's `statechart` skill is not adopted.
+  It installs the model checker and Java on its first run, which conflicts with D5, and U3 supplies the plain-words counterexample from the table bstack already has.
+- pstack's instruction to break the updated code and confirm the check still catches it is not copied.
+  `maintain` already re-proves each changed property as the create guide describes.
+
+#### Proof for the build
+
+The build slices register the cases below and prove them through the public commands on disposable copies of the `formal-charge-once` fixture.
+This amendment registers no acceptance case, because no behaviour exists yet.
+
+- An applied suite followed by a commit to a cited line on the base branch makes `formal check` report `source-changed-since-sync`, and moving the sync commit after the re-proof clears it.
+- A suite with an absent or unreachable sync commit makes `formal check` report `sync-commit-missing`, name the fallback commit and still report drift against it.
+- Moving the sync commit is refused while `formal check` fails, a changed property was not re-proved or a check is blocked.
+- A generated suite's "Run" section carries the code-steps instruction, and a run on the violation variant tells the trace through the transition table.
+- Evaluating whether a fresh agent follows the new `maintain` and "Run" wording stays deferred with every other evaluation.
 
 ## The skill split
 
@@ -473,6 +542,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - Renders the suite from `suite.json` with `formal scaffold`, and checks it with `formal check`, which verifies the property files' `Source paths:` lines, the rendered transition table and the pinned tool's sha256. A missing tool is reported as unproven.
 - Proves a check can fail with the unchanged `rule-proof` command, then with a walkthrough on a scratch break in the real code. A TLA+ model cannot see a code change on its own, so the coverage gate flags the change and the agent updates the model.
 - Boundary: edits no product code, never weakens a property, adds no hosted CI and installs no tool. It writes only through `apply`, after the user approves the exact diff, and a Kani harness inside product source needs its own approval. It is a Detect-rung check, so making the bad state impossible to represent stays preferred.
+- Upkeep amendment (2026-10-24): ["Formal verification upkeep amendment (2026-10-24)"](#formal-verification-upkeep-amendment-2026-10-24) adds a per-property sync commit that `formal check` and `/maintenance sweep` report, a counterexample replay and trailer audit in `maintain`, a counterexample told as code steps in the generated suite, and a route to `/verification` when no verifier runs on the language.
 - It proposes one pointer line for the suite through the shared pointer contract.
 
 ### Not separate skills
@@ -2188,3 +2258,4 @@ Historical entries keep their original decisions and name their current applicat
 | R43, 2026-10-15 | "yes dispatch all 5 in your recommended order". The maintainer commissioned the build of W1 and W3, piece 5 of 5 of the pstack intake | Applies R41 and R42. `/vision`, `/glossary`, `/architecture` and `/foundation` each gain one sentence saying a design document the user names counts as the user's explanation, so each summarises it and asks only about gaps; no interview step, script or command is added. Both repo-audit checklists list `/plan` after `/agents-md` with a cited reason, and AC-88 is the checklist-order test. AC-84 to AC-87 record the design-as-input behaviour of the four skills; their [scenario definitions](../tests/eval/scenarios/scenarios.json) remain unrun because evaluations are deferred |
 | R44, 2026-10-18 | "yes start the bstack design update." The maintainer approved every recommended option (D1 to D9) and accepted all twelve corrections (C1 to C12) from a design review of a formal-verification prompt modelled on pstack's `create-formal-verification-skill`, and chose a design amendment as the next step | Extends R31 and R41. `formal-verification` is a tenth user-started skill with `create` and `maintain` modes that proves one stated property by model checking and leaves a `formal-<target>` suite; "Formal verification commissioning decisions (2026-10-18)" records D1 to D9, C1 to C12, the feasibility evidence and the cases AC-89 to AC-100. Build choices: this change amends the design and the implementation plan, pins the pstack source read in `NOTICE` and adds the `formal-charge-once` fixture pair, so no `formal-verification` skill folder, command, schema or registered acceptance case exists yet; T2.13 builds the skill and registers the cases, and the maintainer's separate word starts that build. The reuse of `rule-proof` is the only part exercised by the experiment, Kani has no executed evidence, and every evaluation of the skill stays deferred |
 | R45, 2026-10-18 | "2. yes". The maintainer commissioned the build of the `formal-verification` skill, task T2.13, once the R44 design amendment had merged | Applies R44. `skills/formal-verification/` has its `create` mode with an eight-step checklist and its `maintain` mode with a six-step one, the create, tools and maintain references, `schemas/formal-plan.json` and the `formal scaffold` and `formal check` commands; the coverage gate reads `properties/` and accepts `No-proof-impact`, `/maintenance sweep` checks `formal-*` suites, `/architecture` gains the explicit state model standard, both repo-audit checklists list the skill only with cited risk evidence, and AC-89 to AC-100 are registered. Build choices: a property file carries `Source paths:`, `Design:`, `Model files:` and the rendered transition table, and the gate treats a property as current when one of its listed model files changed; `formal check` takes `--suite <target>`, binds each design citation to exact bytes through the citation library `cite-check` uses, and requires each transition-table row to cite a code line that still exists inside the property's source paths; a missing tool file is `blocked` in `formal check` and a coverage limit in `sweep`, so it is unproven and never drift or a pass; the TLC recipe suppresses trace specs beside the model (correction, 2026-10-24: flag support is version-dependent; follow the [TLC recipe](../skills/formal-verification/references/tools.md#recipe-tla-with-tlc) for compatibility and harness-gap handling; the fixture pin stays on v1.8.0); the kit render helpers moved to `runtime/scripts/lib/render.mjs` so a kit and a suite share them. AC-91, AC-92, AC-95 and AC-97 pass in `tests/scripts/formal.test.mjs`; AC-93 and AC-94 run in the same file only when `BSTACK_TLA2TOOLS_JAR` names the pinned jar and Java is present, and are otherwise skipped and never recorded as passes; the Kani recipe has no executed evidence because the build environment has no Rust toolchain, and every evaluation of the skill stays deferred |
+| R46, 2026-10-24 | "yes go with your recommendation". The maintainer commissioned the recommended slices that adopt pstack's post-release formal-verification upkeep ideas, one change each and the design first | Applies R44 and extends R45. "Formal verification upkeep amendment (2026-10-24)" records U1 to U4: a per-property `syncCommit` with the `source-changed-since-sync` and `sync-commit-missing` problems, `maintain` replay, trailer audit and stale-pass reporting, a counterexample told as code steps in the generated suite, and the route to `/verification` with CrossHair as guidance only. It adds a dated note that C2 is stale as a fact and pins `cursor/plugins` at `9580c23696ac8d7abed0c166f2f9918800afb819` in `NOTICE` and `upstream/sources.json`. Build choices: this change amends the design only, so the plan schema, `formal check`, the suite templates, the references and `sweep` keep their current behaviour and no acceptance case is registered until the build slices land; a reachability witness for each property is not adopted; D4's exclusion of property-based testing stands, and every evaluation of the new wording stays deferred |
