@@ -93,6 +93,15 @@ for (const [name, kit, evidence, exit, codes] of [
   })
 }
 
+test('plan check accepts check-only evidence when a verify-prefixed regular file is present', async t => {
+  const { target, plan } = await pantryPlan(t)
+  await mkdir(join(target, '.agents/skills'), { recursive: true })
+  await writeFile(join(target, '.agents/skills/verify-notes.md'), '# Verification notes\n')
+  plan.units[2].userFacing = true
+  const result = await planCheck(t, '--workspace', target, plan)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+})
+
 test('plan check rejects a design citation after the design changes', async t => {
   const { target, plan } = await pantryPlan(t)
   await appendFile(join(target, 'design.md'), '- N3: Export finishes in under 1 second.\n')

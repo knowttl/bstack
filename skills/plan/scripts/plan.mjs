@@ -362,8 +362,8 @@ async function run(options) {
   validateData(JSON.parse(await readFile2(new URL("../schemas/plan.json", import.meta.url), "utf8")), plan);
   validateIds(plan.units, "$/units");
   const units = new Map(plan.units.map((unit) => [unit.id, unit]));
-  const skills = await readdir(join2(target.root, ".agents/skills")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
-  const hasKit = skills.some((name) => name.startsWith("verify-"));
+  const skills = await readdir(join2(target.root, ".agents/skills"), { withFileTypes: true }).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+  const hasKit = skills.some((entry) => entry.isDirectory() && entry.name.startsWith("verify-"));
   const problems = [];
   let citationsChecked = 0;
   for (const [index, unit] of plan.units.entries()) {
