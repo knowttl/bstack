@@ -485,7 +485,7 @@ What each decision means:
   The [writing reference](../runtime/references/writing.md) owns the plain-prose rules.
   Each skill that writes a document loads it at that step only, under "Load only what each step needs".
   The [runtime manifest](../runtime/skills.json) lists which skills ship the reference; each skill's `SKILL.md` owns when to load it.
-  `repo-audit` writes nothing, and `maintenance` writes only registrations and generated sections, so neither loads it.
+  `repo-audit` writes nothing, and steps that write only registrations and generated sections do not load it; `maintenance` loads it only when drafting ownership-map and `AGENTS.md` pointer prose in Step 3.
 - A6: a plan describes work that a builder finishes, and a finished plan that stays in the repo becomes a stale second source of truth.
   The plan states its removal condition in its "How to read this" section, which `/plan create` writes.
   `/maintenance sweep` reports a plan whose condition holds as finished, and a plan that has lost its design or whose condition can no longer be evaluated as orphaned.

@@ -62,7 +62,7 @@
       "probe-record.json", "probe-spec.json", "project.schema.json", "resume-state.schema.json"
     ],
     "assets": ["map-coverage.mjs"],
-    "references": ["agents-pointer.md"]
+    "references": ["agents-pointer.md", "writing.md"]
   },
   "agents-md": {
     "commands": ["inventory", "apply", "state show"],
