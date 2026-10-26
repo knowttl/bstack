@@ -18,6 +18,7 @@ These are unchecked scope, never problems or repair items, and never fail the co
 | `stale-generated-section`, other generator codes | A generator's output differs from the section in its document | `/maintenance` with its `docs generate` command and a selected change set |
 | Kit codes such as `file-drift`, `file-missing`, `orphan-feature-file`, `pointer-missing`, `source-path-missing` | A verification kit no longer matches its plan or the repo | `/verification maintain` |
 | Suite codes such as `file-drift`, `table-drift`, `source-paths-missing`, `orphan-property-file`, `step-code-missing`, `tool-hash-mismatch` in a `formal-*` folder | A formal verification suite no longer matches its plan, the repo or its pinned tool | `/formal-verification maintain` |
+| `source-changed-since-sync`, `sync-commit-missing` in a `formal-*` folder | A property's source paths changed since the commit it was last confirmed at, even if the change reached the base branch, or that commit is absent or gone after a rebase or squash | `/formal-verification maintain` |
 | `broken-local-link` in `AGENTS.md` | A pointer's target is gone | `/agents-md` |
 
 A `formal-*` suite is checked next to the kit, and a `verify-` kit is never read as a suite.

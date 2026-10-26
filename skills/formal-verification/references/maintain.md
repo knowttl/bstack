@@ -9,6 +9,7 @@ It is the full pass over every property; the upkeep that the coverage gate and t
 - [Passes](#passes)
 - [Triage](#triage)
 - [Correct the suite](#correct-the-suite)
+- [Move the sync commit](#move-the-sync-commit)
 - [Outcomes](#outcomes)
 
 ## Passes
@@ -17,7 +18,7 @@ Run the passes in this order; a later pass is meaningless on a suite the earlier
 
 | Pass | What it establishes | How |
 |---|---|---|
-| Drift check | The suite files are exactly what `suite.json` renders, each transition table matches the plan, every property file has its `Source paths:` line, no file lists a property the plan lacks, the `AGENTS.md` pointer exists, each source path still matches a file, each cited code step and design section still resolves and the pinned tool file has the pinned sha256 | `formal check --suite <name>`; one problem per finding |
+| Drift check | The suite files are exactly what `suite.json` renders, each transition table matches the plan, every property file has its `Source paths:` line, no file lists a property the plan lacks, the `AGENTS.md` pointer exists, each source path still matches a file, each cited code step and design section still resolves, the pinned tool file has the pinned sha256 and each property's source paths are unchanged since its sync commit | `formal check --suite <name>`; one problem per finding |
 | Source reading | Each property file and its table still describe what the code does | One read-only reader per property where the host supports subagents, otherwise one property at a time in the main thread |
 | Rerun | Every property still holds within its bounds, and its violation diagnostic appears only on a real violation | The property's check command, exactly as the suite shows it |
 
@@ -25,7 +26,8 @@ Run the passes in this order; a later pass is meaningless on a suite the earlier
 It does not judge whether a model is true; that is what the readers and the rerun are for.
 A missing tool is reported as unproven, and the passes that need it are blocked, never skipped as passing.
 
-Give each source reader only its property file, the transition table and the declared source paths.
+Give each source reader only its property file, the transition table, the declared source paths and the diff since the property's sync commit, `git diff <sync commit> HEAD -- <source paths>`.
+When the sync commit is absent or orphaned, `formal check` names the commit it fell back to, the last commit that changed the suite, and the reader takes the diff from that one.
 A reader reports, with file and line evidence, each place where the code and the table disagree: a split or merged step, a reordered step, a removed check, a new write to the shared state, or code that moved outside the declared source paths.
 A reader never edits and never runs the tool.
 
@@ -55,12 +57,38 @@ After applying, run `formal check` again and every changed property, then prove 
 Add or remove a property by editing the plan's `properties`, and keep each property's `sourcePaths` narrow and true, because the coverage gate reads them.
 A repin of the tool is a plan change: record the new file's sha256 and version only after the user has approved the new file.
 
+## Move the sync commit
+
+Each property records in `syncCommit` the commit at which it was last confirmed to describe the code at its source paths, and the property file shows it as `Synced at: <sha>`.
+`formal check` reports two problems about it, and both route here.
+
+| Problem | Meaning |
+|---|---|
+| `source-changed-since-sync` | The property's source paths differ between its sync commit and `HEAD`; a change that already reached the base branch causes it, and neither the coverage gate nor the model check notices it |
+| `sync-commit-missing` | The property records no sync commit, as in a suite applied before the field existed, or the commit is no longer in the repo, as after a rebase or squash; drift is then checked from the last commit that changed the suite, and the problem says so |
+
+Neither problem fails the project's maintained check command, which keeps the gate's per-change meaning.
+The sync commit records that someone confirmed the property, so moving it is never a way to clear drift: it moves only at the end of a pass that confirmed every property.
+
+Move it only when all of these hold.
+
+- Every problem other than `source-changed-since-sync` and `sync-commit-missing` is gone.
+- Every property the diff since its sync commit touched was re-proved.
+- No check is blocked, such as a missing tool or a property that cannot run.
+- The source paths have no uncommitted change, so `HEAD` is the code that was checked.
+
+Then propose `git rev-parse HEAD` as the new sync commit and run `formal check --suite <name> --sync-commit <sha>`, which checks every property against that commit in place of the recorded ones.
+Record it only when that rerun reports no problems at all; a commit from before a source change reports `source-changed-since-sync` again, so a stale or wrong commit cannot be recorded.
+Recording it is a plan change: set `syncCommit` on each property in the scratch copy of the plan, run `formal scaffold --update`, apply the unchanged change set after the user approves those bytes, and run `formal check` again without the flag.
+The `Synced at:` line is neither a source path nor a model file, so changing it alone never satisfies the coverage gate.
+When any condition fails, leave the recorded sync commit where it is and say why in the report.
+
 ## Outcomes
 
 Report exactly one outcome.
 
-- **Clean.** `formal check` passes, every property reran within its bounds and no reader found a disagreement.
-- **Changed.** A reviewed change set was applied and its verification passed; list the applied files, the class of each correction and every property re-proved.
+- **Clean.** `formal check` passes, every property reran within its bounds, no reader found a disagreement and no sync commit needed to move.
+- **Changed.** A reviewed change set was applied and its verification passed; list the applied files, the class of each correction, every property re-proved and whether the sync commit moved.
 - **Blocked.** A named prerequisite stopped a pass, such as a missing tool or runtime or a property that cannot run; state what was and was not covered.
 
 Report real bugs and unproven properties beside the outcome, never inside a "clean".

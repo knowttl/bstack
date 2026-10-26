@@ -3,11 +3,11 @@ import { join } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
 import { repoFiles } from '../lib/discovery.mjs'
-import { matchesPath, pathGlob } from '../lib/glob.mjs'
+import { pathGlob } from '../lib/glob.mjs'
 import { fileCitationProblems } from '../lib/citations.mjs'
 import { hashBytes } from '../lib/fingerprint.mjs'
 import { CommandError } from '../lib/result.mjs'
-import { agentsPointer, managedFiles, readFormalPlan, stepProblems, suiteDirectory, tableHeading } from '../lib/formal-suite.mjs'
+import { agentsPointer, coversFile, managedFiles, readFormalPlan, stepProblems, suiteDirectory, syncProblems, tableHeading } from '../lib/formal-suite.mjs'
 
 const repair = 'If the code changed, update the model and the suite plan and run formal scaffold --update; if a file was edited by hand, restore it the same way, then rerun every property check.'
 
@@ -68,7 +68,7 @@ export async function run(options) {
     const propertyFile = `${suite}/properties/${property.id}.md`
     for (const path of property.sourcePaths) {
       const glob = pathGlob(path)
-      if (!files.some(file => file.split('/').some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join('/'))))) {
+      if (!files.some(file => coversFile(glob, file))) {
         problems.push({ code: 'source-path-missing', path: propertyFile, message: `Source path ${path} of property ${property.id} matches no file in the repo.`,
           fix: 'Find where the code moved and correct its source paths in the suite plan with formal scaffold --update, or remove the property if it no longer exists.' })
       }
@@ -79,6 +79,7 @@ export async function run(options) {
     }
   }
   problems.push(...await stepProblems(target.root, plan))
+  problems.push(...syncProblems(target.root, plan, options['sync-commit']))
   const pinned = plan.tool
   const bytes = await readFile(await resolveFilePath(target.root, pinned.path)).catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
   if (bytes !== null && hashBytes(bytes) !== pinned.sha256) {

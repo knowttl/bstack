@@ -268,6 +268,7 @@ import { createHash as createHash2 } from "node:crypto";
 // runtime/scripts/lib/discovery.mjs
 import { readdir } from "node:fs/promises";
 import { join as join3, relative as relative2, sep as sep2 } from "node:path";
+import { spawnSync as spawnSync2 } from "node:child_process";
 var excludedDirectories = /* @__PURE__ */ new Set([".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build", ".cache"]);
 async function repoFiles(root) {
   const files = [];
@@ -280,6 +281,13 @@ async function repoFiles(root) {
   }
   await walk(root);
   return files.sort();
+}
+function readGit(root, args) {
+  return spawnSync2("git", ["-C", root, ...args], {
+    encoding: "utf8",
+    maxBuffer: Infinity,
+    env: { ...process.env, GIT_OPTIONAL_LOCKS: "0", GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 }
+  });
 }
 
 // runtime/scripts/lib/fingerprint.mjs
@@ -602,7 +610,7 @@ ${execution.stderr}`.includes(options.expect);
 // runtime/scripts/commands/apply.mjs
 import { readFile as readFile4 } from "node:fs/promises";
 import { dirname as dirname6, relative as relative5, resolve as resolve4 } from "node:path";
-import { spawnSync as spawnSync2 } from "node:child_process";
+import { spawnSync as spawnSync3 } from "node:child_process";
 
 // runtime/scripts/lib/proposed-edit.mjs
 import { extname as extname2 } from "node:path";
@@ -1720,7 +1728,7 @@ async function prepareChangeSet(options, target) {
     if (plan.target.revision !== null) reject3("target-mismatch", "A workspace has no Git revision.");
   } else {
     const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
-    const head = spawnSync2("git", ["-C", target.root, "rev-parse", "--verify", "HEAD"], { encoding: "utf8", env });
+    const head = spawnSync3("git", ["-C", target.root, "rev-parse", "--verify", "HEAD"], { encoding: "utf8", env });
     if (head.error || head.status !== 0 && plan.target.revision !== null || head.status === 0 && head.stdout.trim() !== plan.target.revision) reject3("changed-revision", "The reviewed Git revision is no longer current.");
   }
   const selected = findings.findings.filter((finding2) => finding2.status === "selected").map((finding2) => finding2.id);
@@ -1872,7 +1880,7 @@ import { readFile as readFile6 } from "node:fs/promises";
 
 // runtime/scripts/lib/citations.mjs
 import { readFile as readFile5 } from "node:fs/promises";
-import { spawnSync as spawnSync3 } from "node:child_process";
+import { spawnSync as spawnSync4 } from "node:child_process";
 async function fileCitationProblems(root, citation) {
   const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u);
   const problems = [];
@@ -1895,8 +1903,8 @@ async function fileCitationProblems(root, citation) {
     if (hashBytes(bytes) !== value) problem("stale-citation", "Cited exact file bytes have changed.");
   } else {
     const env = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
-    const recorded = spawnSync3("git", ["-C", root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
-    const current = spawnSync3("git", ["-C", root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
+    const recorded = spawnSync4("git", ["-C", root, "rev-parse", `${value}:${path}`], { encoding: "utf8", env });
+    const current = spawnSync4("git", ["-C", root, "hash-object", "--stdin"], { input: bytes, encoding: "utf8", env });
     if (recorded.error || current.error || recorded.status !== 0 || current.status !== 0) problem("citation-revision-unavailable", "Cited revision or file object is unavailable.");
     else if (recorded.stdout.trim() !== current.stdout.trim()) problem("stale-citation", "Current file bytes differ from the cited revision.");
   }
@@ -1941,7 +1949,7 @@ async function run4(options) {
 // runtime/scripts/commands/formal-scaffold.mjs
 import { readdir as readdir3, readFile as readFile8, writeFile as writeFile2 } from "node:fs/promises";
 import { join as join8 } from "node:path";
-import { spawnSync as spawnSync4 } from "node:child_process";
+import { spawnSync as spawnSync5 } from "node:child_process";
 
 // runtime/scripts/lib/formal-suite.mjs
 import { readFileSync } from "node:fs";
@@ -2088,6 +2096,7 @@ var formal_plan_default = {
             }
           },
           sourcePaths: { type: "array", minItems: 1, items: { type: "string", minLength: 1 } },
+          syncCommit: { type: "string", pattern: "^[0-9a-f]{40}$" },
           bounds: { type: "array", minItems: 1, items: { type: "string", minLength: 1, pattern: "\\S" } },
           assumptions: { type: "array", items: { type: "string", minLength: 1, pattern: "\\S" } },
           check: {
@@ -2157,6 +2166,9 @@ function suiteDirectory(target) {
 function modelPath(suite, name) {
   return `${suite}/model/${name}`;
 }
+function coversFile(glob, file) {
+  return file.split("/").some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join("/")));
+}
 function splitLocation(location) {
   const [, path, line] = location.match(/^(.*):([1-9][0-9]*)$/u);
   return { path, line: Number(line) };
@@ -2194,7 +2206,7 @@ function validateFormalPlan(plan) {
     for (const step of property.steps) {
       const { path } = splitLocation(step.code);
       relativePath(path, `${at}/steps`);
-      if (!path.split("/").some((_, index2, parts) => globs.some((glob) => matchesPath(glob, parts.slice(0, index2 + 1).join("/"))))) {
+      if (!globs.some((glob) => coversFile(glob, path))) {
         invalid2("step-outside-source-paths", `Step ${step.action} cites ${step.code}, which no declared source path of ${property.id} covers.`, `${at}/steps`);
       }
     }
@@ -2239,6 +2251,53 @@ async function stepProblems(root, plan) {
   }
   return problems;
 }
+function gitOutput(root, args) {
+  const result = readGit(root, args);
+  if (result.status !== 0) throw new CommandError("blocked", [{ code: "git-failed", message: `git ${args.join(" ")} failed: ${result.stderr.trim()}`, fix: "Run formal check in a Git working tree with a complete history." }]);
+  return result.stdout;
+}
+function syncProblems(root, plan, proposed) {
+  const suite = suiteDirectory(plan.target);
+  const hasCommit = (sha) => readGit(root, ["cat-file", "-e", `${sha}^{commit}`]).status === 0;
+  if (proposed !== void 0 && !(/^[0-9a-f]{40}$/u.test(proposed) && hasCommit(proposed))) {
+    throw new CommandError("usage-error", [{ code: "invalid-sync-commit", message: `${proposed} is not a full lowercase commit hash that this repo has.`, fix: "Supply --sync-commit with the 40-character hash of a commit in this repo." }]);
+  }
+  const log = readGit(root, ["log", "-1", "--format=%H", "--", suite]);
+  const fallback = log.status === 0 && log.stdout.trim() ? log.stdout.trim() : null;
+  const changedFiles = /* @__PURE__ */ new Map();
+  const changedSince = (base) => {
+    if (!changedFiles.has(base)) changedFiles.set(base, gitOutput(root, ["diff", "--name-only", "--no-renames", "-z", base, "HEAD"]).split("\0").filter(Boolean));
+    return changedFiles.get(base);
+  };
+  const problems = [];
+  for (const property of plan.properties) {
+    const path = `${suite}/properties/${property.id}.md`;
+    const recorded = proposed ?? property.syncCommit;
+    const known = recorded !== void 0 && hasCommit(recorded);
+    const base = known ? recorded : fallback;
+    const fellBack = known ? "" : base === null ? ` No commit has changed ${suite}, so drift cannot be checked.` : ` Drift is checked from ${base}, the last commit that changed ${suite}.`;
+    if (!known) {
+      problems.push({
+        code: "sync-commit-missing",
+        path,
+        message: `${recorded === void 0 ? `Property ${property.id} records no sync commit` : `Sync commit ${recorded} of property ${property.id} is not in this repo, as after a rebase or squash`}.${fellBack}`,
+        fix: "Run /formal-verification maintain: it re-proves the property against the current code and records a new sync commit."
+      });
+    }
+    if (base === null) continue;
+    const globs = property.sourcePaths.map(pathGlob);
+    const changed = changedSince(base).filter((file) => globs.some((glob) => coversFile(glob, file)));
+    if (changed.length) {
+      problems.push({
+        code: "source-changed-since-sync",
+        path,
+        message: `Source paths of property ${property.id} changed between ${base} and HEAD: ${changed[0]}${changed.length > 1 ? ` and ${changed.length - 1} more` : ""}.${fellBack}`,
+        fix: `Read git diff ${base} HEAD -- ${property.sourcePaths.join(" ")}, correct the model, table and source paths in the suite plan with formal scaffold --update where they no longer describe the code, then re-prove the property and record a new sync commit.`
+      });
+    }
+  }
+  return problems;
+}
 var code = (text) => `\`${text}\``;
 function tableRows(property) {
   return property.steps.map((step) => `| ${code(step.action)} | ${code(step.code)} | ${step.atomicBecause} |`);
@@ -2252,6 +2311,7 @@ function propertyDocument(property) {
     "",
     `Harm: ${property.harm}`,
     `Source paths: ${property.sourcePaths.map(code).join(", ")}`,
+    ...property.syncCommit ? [`Synced at: ${property.syncCommit}`] : [],
     `Design: ${code(property.design.location)}`,
     `Model files: ${property.modelFiles.map((file) => code(`model/${file.name}`)).join(", ")}`,
     `Violation diagnostic: ${code(property.check.violation)}`,
@@ -2462,7 +2522,7 @@ ${pointer}
     for (const path2 of [...obsolete].sort()) if (!known.has(path2) && await original(await resolveFilePath(target.root, path2)) !== null) await stage(path2, "delete", {});
   }
   if (!edits.length) return { inputs: { target, plan: options.plan }, data: { path: null, planDigest: null, files: [], diff: "" } };
-  const head = spawnSync4("git", ["-C", target.root, "rev-parse", "--verify", "HEAD"], { encoding: "utf8", env: { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 } });
+  const head = spawnSync5("git", ["-C", target.root, "rev-parse", "--verify", "HEAD"], { encoding: "utf8", env: { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 } });
   const revision = head.status === 0 ? head.stdout.trim() : null;
   const scope = reviewedScope.map((entry) => entry.path);
   const findings = {
@@ -2555,7 +2615,7 @@ async function run6(options) {
     const propertyFile = `${suite}/properties/${property.id}.md`;
     for (const path of property.sourcePaths) {
       const glob = pathGlob(path);
-      if (!files.some((file) => file.split("/").some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join("/"))))) {
+      if (!files.some((file) => coversFile(glob, file))) {
         problems.push({
           code: "source-path-missing",
           path: propertyFile,
@@ -2575,6 +2635,7 @@ async function run6(options) {
     }
   }
   problems.push(...await stepProblems(target.root, plan));
+  problems.push(...syncProblems(target.root, plan, options["sync-commit"]));
   const pinned = plan.tool;
   const bytes = await readFile9(await resolveFilePath(target.root, pinned.path)).catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
   if (bytes !== null && hashBytes(bytes) !== pinned.sha256) {
@@ -2604,5 +2665,5 @@ await dispatch(process.argv.slice(2), "formal-verification", {
   "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: formal-verification.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run3 },
   "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: formal-verification.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run4 },
   "formal scaffold": { options: ["plan", "update"], help: "Render the selected formal verification suite as a reviewable change set in scratch.\nUsage: formal-verification.mjs formal scaffold --repo <path> --plan <file> [--update] [--json]\nPlan follows schemas/formal-plan.json. Returns the change set path, its planDigest and the exact diff. Rejects a plan whose model step cites no atomic code step, cites code outside the property's source paths or cites a line that does not exist. Without --update, existing suite files are never overwritten. With --update, the change set also replaces suite files that differ from the plan, creates missing ones and deletes property and model files the plan no longer lists; when nothing differs it returns no change set. Review with apply --dry-run, then apply the unchanged change set.", run: run5 },
-  "formal check": { options: ["suite"], help: "Check an applied formal verification suite for drift without running the model checker or writing.\nUsage: formal-verification.mjs formal check --repo <path> --suite <name> [--json]\nFails with one problem per finding: file-drift, file-missing, source-paths-missing, table-drift, orphan-property-file, orphan-model-file, pointer-missing, source-path-missing, step-code-missing, design-citation problems and tool-hash-mismatch. A missing tool file is blocked as tool-missing: the properties are unproven, never passing. It compares the suite with what suite.json renders, with the repo and with the pinned tool file's sha256, and does not judge whether a model is true; rerun every property check for that.", run: run6 }
+  "formal check": { options: ["suite", "sync-commit"], help: "Check an applied formal verification suite for drift without running the model checker or writing.\nUsage: formal-verification.mjs formal check --repo <path> --suite <name> [--sync-commit <sha>] [--json]\nFails with one problem per finding: file-drift, file-missing, source-paths-missing, table-drift, orphan-property-file, orphan-model-file, pointer-missing, source-path-missing, step-code-missing, design-citation problems, source-changed-since-sync, sync-commit-missing and tool-hash-mismatch. A missing tool file is blocked as tool-missing: the properties are unproven, never passing. It compares the suite with what suite.json renders, with the repo and with the pinned tool file's sha256, and does not judge whether a model is true; rerun every property check for that.\nA property records the commit its model was last confirmed at as syncCommit. source-changed-since-sync means its source paths differ between that commit and HEAD, which a change already on the base branch causes without the gate or the model check noticing. sync-commit-missing means the commit is absent or no longer in the repo, as after a rebase or squash; drift is then checked from the last commit that changed the suite, and the problem says so. Both route to maintain and neither fails the maintained check command. --sync-commit <sha> checks every property against that commit in place of the recorded ones, so maintain can prove a commit passes before it records it.", run: run6 }
 });

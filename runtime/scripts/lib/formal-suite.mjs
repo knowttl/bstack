@@ -6,6 +6,7 @@ import { inspectJSON } from './json.mjs'
 import { CommandError } from './result.mjs'
 import { matchesPath, pathGlob } from './glob.mjs'
 import { resolveFilePath } from './paths.mjs'
+import { readGit } from './discovery.mjs'
 import { bullets, commandLines, link } from './render.mjs'
 import schema from '../../schemas/formal-plan.json' with { type: 'json' }
 
@@ -38,6 +39,11 @@ export function suiteDirectory(target) {
 
 export function modelPath(suite, name) {
   return `${suite}/model/${name}`
+}
+
+// A source path covers a file when it matches the file or any directory above it, as the coverage gate reads it.
+export function coversFile(glob, file) {
+  return file.split('/').some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join('/')))
 }
 
 function splitLocation(location) {
@@ -79,7 +85,7 @@ export function validateFormalPlan(plan) {
     for (const step of property.steps) {
       const { path } = splitLocation(step.code)
       relativePath(path, `${at}/steps`)
-      if (!path.split('/').some((_, index, parts) => globs.some(glob => matchesPath(glob, parts.slice(0, index + 1).join('/'))))) {
+      if (!globs.some(glob => coversFile(glob, path))) {
         invalid('step-outside-source-paths', `Step ${step.action} cites ${step.code}, which no declared source path of ${property.id} covers.`, `${at}/steps`)
       }
     }
@@ -121,6 +127,53 @@ export async function stepProblems(root, plan) {
   return problems
 }
 
+function gitOutput(root, args) {
+  const result = readGit(root, args)
+  if (result.status !== 0) throw new CommandError('blocked', [{ code: 'git-failed', message: `git ${args.join(' ')} failed: ${result.stderr.trim()}`, fix: 'Run formal check in a Git working tree with a complete history.' }])
+  return result.stdout
+}
+
+// The gate diffs from the merge base and the cited-line check reads only the current file, so a change that already reached the base branch is invisible to both.
+// A property records the commit its model was last confirmed at, and the question is whether its source paths differ between that commit and HEAD.
+// A proposed commit replaces every recorded one, so maintain can run the whole check against the commit it would record before it records it.
+export function syncProblems(root, plan, proposed) {
+  const suite = suiteDirectory(plan.target)
+  const hasCommit = sha => readGit(root, ['cat-file', '-e', `${sha}^{commit}`]).status === 0
+  if (proposed !== undefined && !(/^[0-9a-f]{40}$/u.test(proposed) && hasCommit(proposed))) {
+    throw new CommandError('usage-error', [{ code: 'invalid-sync-commit', message: `${proposed} is not a full lowercase commit hash that this repo has.`, fix: 'Supply --sync-commit with the 40-character hash of a commit in this repo.' }])
+  }
+  // The suite folder's last commit is the best stand-in for a missing sync commit, and its absence means nothing was committed yet.
+  const log = readGit(root, ['log', '-1', '--format=%H', '--', suite])
+  const fallback = log.status === 0 && log.stdout.trim() ? log.stdout.trim() : null
+  const changedFiles = new Map()
+  const changedSince = base => {
+    if (!changedFiles.has(base)) changedFiles.set(base, gitOutput(root, ['diff', '--name-only', '--no-renames', '-z', base, 'HEAD']).split('\0').filter(Boolean))
+    return changedFiles.get(base)
+  }
+  const problems = []
+  for (const property of plan.properties) {
+    const path = `${suite}/properties/${property.id}.md`
+    const recorded = proposed ?? property.syncCommit
+    const known = recorded !== undefined && hasCommit(recorded)
+    const base = known ? recorded : fallback
+    const fellBack = known ? '' : base === null ? ` No commit has changed ${suite}, so drift cannot be checked.` : ` Drift is checked from ${base}, the last commit that changed ${suite}.`
+    if (!known) {
+      problems.push({ code: 'sync-commit-missing', path,
+        message: `${recorded === undefined ? `Property ${property.id} records no sync commit` : `Sync commit ${recorded} of property ${property.id} is not in this repo, as after a rebase or squash`}.${fellBack}`,
+        fix: 'Run /formal-verification maintain: it re-proves the property against the current code and records a new sync commit.' })
+    }
+    if (base === null) continue
+    const globs = property.sourcePaths.map(pathGlob)
+    const changed = changedSince(base).filter(file => globs.some(glob => coversFile(glob, file)))
+    if (changed.length) {
+      problems.push({ code: 'source-changed-since-sync', path,
+        message: `Source paths of property ${property.id} changed between ${base} and HEAD: ${changed[0]}${changed.length > 1 ? ` and ${changed.length - 1} more` : ''}.${fellBack}`,
+        fix: `Read git diff ${base} HEAD -- ${property.sourcePaths.join(' ')}, correct the model, table and source paths in the suite plan with formal scaffold --update where they no longer describe the code, then re-prove the property and record a new sync commit.` })
+    }
+  }
+  return problems
+}
+
 // Backticks mark every path, command and diagnostic so a reader and the gate parse the same spans.
 const code = text => `\`${text}\``
 
@@ -136,6 +189,7 @@ export function propertyDocument(property) {
     `# ${property.title}`, '', property.statement, '',
     `Harm: ${property.harm}`,
     `Source paths: ${property.sourcePaths.map(code).join(', ')}`,
+    ...(property.syncCommit ? [`Synced at: ${property.syncCommit}`] : []),
     `Design: ${code(property.design.location)}`,
     `Model files: ${property.modelFiles.map(file => code(`model/${file.name}`)).join(', ')}`,
     `Violation diagnostic: ${code(property.check.violation)}`, '',

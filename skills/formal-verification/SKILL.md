@@ -75,7 +75,8 @@ Done when: The property, its harm and the tool are stated, the tool choice names
 
 ### Step 3: Plan the suite
 
-Write the suite plan in scratch following `schemas/formal-plan.json`: the pinned tool with its exact file path, sha256 and version, the evidence directory, and for the property its source paths, bounds, assumptions, check command, violation diagnostic, model files and transition table.
+Write the suite plan in scratch following `schemas/formal-plan.json`: the pinned tool with its exact file path, sha256 and version, the evidence directory, and for the property its source paths, sync commit, bounds, assumptions, check command, violation diagnostic, model files and transition table.
+The sync commit is `git rev-parse HEAD` once the source paths have no uncommitted change.
 Every model step names the one atomic code step it stands for as `path:line`, inside the property's source paths, and says why that step is atomic.
 Show the user the property, its bounds and assumptions, and the transition table before anything is written.
 The project pins the tool: if the tool file is not already in the project's agreed location, ask the user to put it there and give its sha256; never fetch, install or commit it.
@@ -142,12 +143,13 @@ Load the [maintain guide](references/maintain.md) for the passes, triage classes
 - [ ] Step M3: Rerun every property
 - [ ] Step M4: Triage
 - [ ] Step M5: Correct and re-prove
-- [ ] Step M6: Report
+- [ ] Step M6: Move the sync commit and report
 
 ### Step M1: Check the suite for drift
 
 Run `node scripts/formal-verification.mjs formal check --repo <target> --suite <target-name> --json`.
 It compares every suite file, the transition tables, the `AGENTS.md` pointer, each property's source paths, its design citation and the pinned tool's sha256 with what `suite.json` renders and with the repo, and reports one problem per finding.
+It also reports `source-changed-since-sync` when a property's source paths changed between its sync commit and `HEAD`, which the coverage gate cannot see once the change is on the base branch, and `sync-commit-missing` when the commit is absent or orphaned by a rebase or squash.
 A missing tool is reported as unproven and blocks the passes that need it.
 
 Done when: Every `formal check` problem is recorded for triage, or the check passed.
@@ -156,6 +158,7 @@ Done when: Every `formal check` problem is recorded for triage, or the check pas
 
 Where the host supports subagents, give each property one read-only reader; otherwise read the properties one at a time.
 Each reader compares one property file and its transition table with the code at its declared source paths and reports disagreements with file and line evidence, without editing or running anything.
+Its input includes the diff since the property's sync commit, from the fallback commit that `formal check` names when the sync commit is absent or orphaned.
 
 Done when: Every property has a reader report, or sequential reading covered every property and says so.
 
@@ -181,12 +184,15 @@ Report a real bug with its counterexample and change no product code.
 
 Done when: Only the approved change set has been applied, `formal check` passes and each changed property was re-proved, or no correction was needed.
 
-### Step M6: Report
+### Step M6: Move the sync commit and report
 
+When every problem other than `source-changed-since-sync` and `sync-commit-missing` is gone, every changed property is re-proved and no check is blocked, propose `git rev-parse HEAD` as the new sync commit and run `formal check --suite <target-name> --sync-commit <sha> --json`.
+Only when that rerun reports no problems at all, set `syncCommit` on each property in the plan copy, run `formal scaffold --update`, apply the unchanged change set after the user approves those bytes, and run `formal check` once more.
+Otherwise leave the recorded sync commit as it is and say why; the move is never a way to clear drift.
 Report one outcome: clean, changed through a reviewed change set, or blocked.
-Name the properties rerun, the properties not run and why, the real bugs found and every limitation.
+Name the properties rerun, the properties not run and why, whether the sync commit moved, the real bugs found and every limitation.
 
-Done when: The report states one outcome and separates applied changes, real bugs and limitations.
+Done when: The sync commit moved after a passing rerun or is left in place with the reason, and the report states one outcome and separates applied changes, real bugs and limitations.
 
 ## Review before apply
 
