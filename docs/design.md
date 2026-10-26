@@ -12,7 +12,7 @@ footer: Built from docs/design.md. Markdown is authoritative. The HTML is genera
 meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
-  - Scope: ten skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md, plan, formal-verification) and their complete dependency set
+  - Scope: independently installable skills and their complete dependency set, listed under "The skill split"
   - Revision: 29, maintainer-approved repo-audit split design; current implementation status in [development.md](development.md#status)
 ---
 
@@ -20,7 +20,7 @@ meta:
 
 **bstack helps developers design project-specific guidelines, rules and checks that give agents a sound foundation to extend.**
 Agent drift means changes that depart from the project's agreed purpose, design or behaviour.
-The first release ships ten skills and everything they need: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md`, `plan` and `formal-verification`.
+The first release ships independently installable skills and everything they need.
 ["The skill split"](#the-skill-split) names each skill, its boundary and the order to run them.
 The sections below that describe `repo-audit` as one skill specify the foundation capabilities; the split assigns each capability to the skill that owns it.
 Together they help you establish a new project and strengthen an existing repo before more changes add technical debt.
@@ -49,7 +49,7 @@ The new-project path can implement the approved foundation, but it does not buil
 
 | Decision | Current direction |
 |---|---|
-| Release scope | Ten skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md`, `plan` and `formal-verification`, with their full dependency set (R29, R31, R41, R44). R47 adds the research, recall and prototyping skills when each is built |
+| Release scope | [The skill split](#the-skill-split) lists the built skills, with their full dependency set (R29, R31, R41, R44, R49). R47 also commissions recall and prototyping |
 | Skill split | `repo-audit` audits at overview level and lists which skill to run next, with one evidenced reason per line; each other skill does one job and runs on its own (R31) |
 | Docs upkeep | Per-change upkeep rides the no-mistakes pipeline with no new user step, and the user runs `/maintenance sweep` now and then (R31) |
 | Existing repos | Audit the repo and relevant files first, then recommend improvements and apply the changes you choose |
@@ -464,12 +464,13 @@ What each decision means:
   Explaining code and running a throwaway experiment are not executing a plan: neither orders work, assigns an agent, tracks progress or delivers a change, and nothing a variant produces becomes the project's code.
   The skills are ordinary skills, so the split and the shared scripts follow "The skill split" and each installs alone.
   `/teach` builds a mental model from the same cited evidence as `/how`, which explains mechanics, and `/why`, which explains motivation, through shared references with a checked copy in each skill, because no skill starts another.
-  The build slices fix the prototyping skill's name and whether `/teach`, `/how` and `/why` are three skill folders.
+  `/teach`, `/how` and `/why` are three skill folders (R49), and the prototyping skill's slice fixes its name.
 - A2: code shows what happens and rarely why, so the motivation lives in commits, reviews and the tools where the work was discussed.
   Git history and PR review threads are always available to the skill.
   A connector counts only when the host already exposes it, and bstack installs, configures and authenticates none.
   A claim cites its source at the commit hash, PR thread or document it came from, and a claim with no source is labelled an inference.
   Text from a connector can contain instructions, so the skill treats it as data to quote and cite, never as a command, and it asks the user before acting on anything a source asks for.
+  The [why-evidence reference](../runtime/references/why-evidence.md) owns how history and review threads are read and cited, and `/architecture` ships the same reference so that a decision record's reasons rest on cited commits and review threads (R49).
 - A3: a past session holds the context a fresh agent lacks, so `/recall` restores it.
   It reads only the current project's transcripts from Claude Code and Codex, and opens them read-only.
   Its output stays in scratch like every other bstack draft and is never written into the repo.
@@ -485,6 +486,7 @@ What each decision means:
   The [writing reference](../runtime/references/writing.md) owns the plain-prose rules.
   Each skill that writes a document loads it at that step only, under "Load only what each step needs".
   The [runtime manifest](../runtime/skills.json) lists which skills ship the reference; each skill's `SKILL.md` owns when to load it.
+  `/how`, `/why` and `/teach` load it when they write their explanation, which they deliver to the user and never write into the repo.
   `repo-audit` writes nothing, and steps that write only registrations and generated sections do not load it; `maintenance` loads it only when drafting ownership-map and `AGENTS.md` pointer prose in Step 3.
 - A6: a plan describes work that a builder finishes, and a finished plan that stays in the repo becomes a stale second source of truth.
   The plan states its removal condition in its "How to read this" section, which `/plan create` writes.
@@ -508,12 +510,12 @@ What each decision means:
 Formal verification D1 to D9, C1 to C12 and U1 to U4 stand.
 `/formal-verification` stays a user-started skill, and its scratch reproduction in U2 stays evidence that is never committed to product code, which matches A4's scratch rule.
 U4 still routes a one-function-over-every-input question to `/verification`, and A4 adds no route from the formal skill to a prototype.
-The released-skill count stays ten until a build slice lands one of these skills, so sections that say "ten skills" describe the shipped set.
+The [skill split](#the-skill-split) lists the built skills, including the research skills added by R49.
 
 #### Proof for the build
 
-This amendment registers no acceptance case, because no behaviour exists yet.
-The build slices register the cases below and prove them on disposable fixtures through the public commands.
+R49 registers AC-101 to AC-105 for the research skills.
+The remaining build slices register their cases below and prove them on disposable fixtures through the public commands.
 
 - Each new skill folder has `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, and the package check confirms both.
 - `/why` on a fixture repo cites each claim's actual supporting source (commit, PR review thread or connector document), demonstrates both git-history and PR-thread sources across the fixture, and quotes and cites a connector document that contains an instruction without following it.
@@ -525,7 +527,7 @@ The build slices register the cases below and prove them on disposable fixtures 
 
 ## The skill split
 
-The first release ships ten skills.
+The table below lists the built skills and their boundaries.
 Each does one job, runs on its own, and installs alone.
 Only the user starts any of them, and none starts another.
 repo-audit lists which skill to run next; the user decides whether to run it.
@@ -543,6 +545,9 @@ The [research amendment](#research-prototyping-and-writing-amendment-2026-10-24)
 | `agents-md` | none | Create and maintain one root `AGENTS.md` of pointers |
 | `plan` | `create` | Write and check one implementation plan from an approved design, and never execute it |
 | `formal-verification` | `create`, `maintain` | Prove one stated property of a high-stakes spot by model checking, and leave a suite the project reruns |
+| `how` | none | Explain mechanics from cited code, tests and documents, without changing the repo |
+| `why` | none | Explain motivation from cited history, review threads and host-exposed connectors, without changing any source |
+| `teach` | none | Combine mechanics and motivation into one cited mental model, without starting another skill or changing the repo |
 
 ### Run order
 
@@ -1890,7 +1895,7 @@ New recurring agent mistakes should become a regression case or structural check
 
 ## Complete first-release package
 
-Each of the ten skills is a self-contained folder holding the resources, assets and script bundles it reads.
+Each skill is a self-contained folder holding the resources, assets and script bundles it reads.
 Installing one folder alone must not leave references to missing sibling skills.
 `repo-audit` is the entry point: it lists which skill to run next and requires none of them to run.
 
@@ -2043,9 +2048,9 @@ Every skill works in any host that supports skills, with explicit invocation and
 The package includes the documented settings for Claude Code, Codex and Pi in each skill folder, so the user-only rule holds in each.
 The package check confirms those settings are present. bstack does not run each host to test them.
 
-**Only the user can start any of the ten skills, and any skill the research amendment adds.**
+**Only the user can start any skill, including those the research amendment adds.**
 The agent must not start one on its own because a request looks like an audit, a glossary change, a scaffold, a question about why code exists or a design comparison.
-These skills read the repo, interview the user and can write files, so the user decides when each runs.
+Skills can read the repo and external evidence, interview the user or write files according to their scope, so the user decides when each runs.
 The setting is per skill and applies to every mode.
 No skill starts another; repo-audit lists the next skill and the user starts it.
 Each host has its own setting for this, and the package sets all of them in every skill folder.
@@ -2265,6 +2270,11 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 98. Each property cites the design section it guards and `cite-check` resolves it, the property check runs inside the project's maintained check command with the source-path condition for slower checks defined in formal verification D8, the coverage gate always runs, and `/repo-audit` lists the skill only with cited risk evidence (formal verification D8).
 99. `/formal-verification` edits no product code, writes only through `apply` after the user approves the exact diff, handles one property per `create` run and asks for separate approval before a Kani harness enters product source (formal verification C7).
 100. `/architecture` proposes an explicit state model only with cited evidence, as a standard and never as a universal rule, reports a refactor for the user to select, and sends its model to `/formal-verification` (formal verification D7, C5, C4).
+101. `/how`, `/why` and `/teach` each start only when the user names them, with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, and none starts another skill (research amendment A7).
+102. `/why` on a fixture repo cites each claim's actual supporting source, a commit or a pull request review thread or a connector document, uses git history and a review thread across the fixture, and quotes and cites a connector document that contains an instruction without following it (research amendment A2).
+103. `/how` on a fixture repo explains one flow from file and line citations that `cite-check` accepts, marks each claim observed, inferred or unread, and writes nothing to the repo (research amendment A1).
+104. `/teach` on a fixture repo explains how a module works and why it is built that way from the same cited evidence, labels a claim with no source as an inference, and starts neither `/how` nor `/why` (research amendment A1, A2).
+105. `/architecture`, `/why` and `/teach` each ship a byte-identical copy of the one why-evidence reference, `/architecture` lists it for the decision work that depends on why a choice exists, and a drifted copy fails `generate-skills.mjs --check` (research amendment A2).
 
 Use disposable test repos for changes, board fixtures and deliberate violations.
 Record the agent, model, operating system, dependency versions, commands and outcomes.
@@ -2380,3 +2390,4 @@ Historical entries keep their original decisions and name their current applicat
 | R46, 2026-10-24 | "yes go with your recommendation". The maintainer commissioned the recommended slices that adopt pstack's post-release formal-verification upkeep ideas, one change each and the design first | Applies R44 and extends R45. "Formal verification upkeep amendment (2026-10-24)" records U1 to U4: a per-property `syncCommit` with the `source-changed-since-sync` and `sync-commit-missing` problems, `maintain` replay, trailer audit and stale-pass reporting, a counterexample told as code steps in the generated suite, and the route to `/verification` with CrossHair as guidance only. It adds a dated note that C2 is stale as a fact and pins `cursor/plugins` at `9580c23696ac8d7abed0c166f2f9918800afb819` in `NOTICE` and `upstream/sources.json`. Build choices: this change amends the design only, so the plan schema, `formal check`, the suite templates, the references and `sweep` keep their current behaviour and no acceptance case is registered until the build slices land; a reachability witness for each property is not adopted; D4's exclusion of property-based testing stands, and every evaluation of the new wording stays deferred |
 | R47, 2026-10-24 | "yes start the build." The maintainer approved the plan agreed on the review of Lauren Tan's article "The Complete Guide to pstack Pt. 2" and commissioned its build, design update first | Reverses parts of R41 and extends R31. "Research, prototyping and writing amendment (2026-10-24)" records A1 to A7: research skills `/teach`, `/how` and `/why` and a prototyping skill that runs throwaway experiments in scratch, with plan execution still out of bstack; `/why` reading git history and PR review threads plus any connector the host exposes, each source cited and connector content untrusted; `/recall` reading the host's local Claude Code and Codex transcripts for the current project, read-only, with output in scratch; prototype variants driven and measured with the verification kit and no writes to the target; a shared writing reference that names and links the Diátaxis modes; temporary plans with a removal condition that `/maintenance sweep` checks; and explicit invocation for every new skill. Build choices: this change amends the design only, so no skill folder, command, schema, reference or acceptance case exists for them yet and the ten-skill count describes the shipped set. A multi-model design arena and an auto-routing mode skill are not adopted, and D2's builder check stays. No pstack text is copied, so `NOTICE` gains no row, and every evaluation of the new wording stays deferred |
 | R48, 2026-10-25 | "yes go with your recommendation". The maintainer's R46 commission covered the build slices, and this change builds U1 | Applies R46. `properties[].syncCommit` is in `schemas/formal-plan.json` and renders as a `Synced at:` line after `Source paths:`; `formal check` reports `source-changed-since-sync` and `sync-commit-missing`, falls back to the last commit that changed the suite and says so, and takes `--sync-commit <sha>` so `maintain` can run the whole check against the commit it would record; `/maintenance sweep` reports both beside the other `formal-*` problems; the maintain guide and M2 and M6 carry the diff-since-sync input and the rule for moving the commit. Build choices: a property with no `syncCommit` renders no `Synced at:` line, so a suite applied earlier stays free of `file-drift` and reports `sync-commit-missing` until `maintain` records one; the comparison is between commits, so uncommitted edits are not drift until committed; `--sync-commit` replaces every recorded commit for that run and is refused unless it is a full hash the repo has; a suite with no commit that touched it yet reports `sync-commit-missing` and cannot check drift. No acceptance case is registered yet, because the U2 to U4 slices add theirs and the numbers would collide; the proof is in `tests/scripts/formal.test.mjs`. Every evaluation of the new wording stays deferred |
+| R49, 2026-10-26 | "yes start the build." The maintainer's R47 approval covered the build slices, and this change builds the research skills `/teach`, `/how` and `/why` and the shared why-evidence reference | Applies R47. `skills/how/`, `skills/why/` and `skills/teach/` are three skill folders because no skill starts another, and each ships only `cite-check` and the research report schema, so none writes to the repo. `/how` and `/teach` ship the mechanics reference, `/why` and `/teach` ship the why-evidence reference, and `/architecture` ships the same why-evidence reference for the git log, blame and review-thread evidence behind a decision's reasons, each a generated copy of one source in `runtime/references/` that `generate-skills.mjs --check` verifies. All three load the shared writing reference when they write their explanation to the user. `cite-check` binds the cited code to exact bytes, while commit SHAs are confirmed with `git cat-file` and pull request threads and connector documents are opened and recorded as web citations, because the checker does not fetch URLs. AC-101 to AC-105 are registered: AC-101 and AC-105 are covered by `tests/scripts/research-skills.test.mjs`, and AC-102 to AC-104 keep planned procedures because every evaluation stays deferred. No pstack text is copied, so `NOTICE` gains no row, and the article's `teach`, `how` and `why` idea is credited in the commit message |

@@ -8,7 +8,7 @@
 
 ```text
 $ npx skills add knowttl/bstack --agent claude-code --yes
-◇  Installed 10 skills ──────────────────────╮
+◇  Installed 13 skills ──────────────────────╮
 │                                            │
 │  ✓ agents-md (copied)                      │
 │    → ./.claude/skills/agents-md            │
@@ -20,16 +20,22 @@ $ npx skills add knowttl/bstack --agent claude-code --yes
 │    → ./.claude/skills/foundation           │
 │  ✓ glossary (copied)                       │
 │    → ./.claude/skills/glossary             │
+│  ✓ how (copied)                            │
+│    → ./.claude/skills/how                  │
 │  ✓ maintenance (copied)                    │
 │    → ./.claude/skills/maintenance          │
 │  ✓ plan (copied)                           │
 │    → ./.claude/skills/plan                 │
 │  ✓ repo-audit (copied)                     │
 │    → ./.claude/skills/repo-audit           │
+│  ✓ teach (copied)                          │
+│    → ./.claude/skills/teach                │
 │  ✓ verification (copied)                   │
 │    → ./.claude/skills/verification         │
 │  ✓ vision (copied)                         │
 │    → ./.claude/skills/vision               │
+│  ✓ why (copied)                            │
+│    → ./.claude/skills/why                  │
 │                                            │
 ├────────────────────────────────────────────╯
 ```
@@ -39,14 +45,14 @@ $ npx skills add knowttl/bstack --agent claude-code --yes
 ## Why this exists
 
 A coding agent starts every conversation without your project's vision, vocabulary, module boundaries or the commands that prove a change works, so it guesses and the guesses are never reviewed.
-Each bstack skill interviews you about one of those areas, cites the repo files behind every finding and writes the result only after you approve the exact bytes.
+The skills that establish project guidance interview you about those areas, cite the repo files behind every finding and write the result only after you approve the exact bytes.
 Plain prompts and hand-written `AGENTS.md` files leave the rules unchecked; bstack also installs the checks that keep them true as the code changes.
 
 ### Features
 
 - **Explicit invocation** - every skill sets `disable-model-invocation: true`, so it runs only when you name it, never because a request resembles it.
 - **Cited findings** - `repo-audit` and the research reports tie each claim to `path:line` and `cite-check` rejects stale or out-of-range citations.
-- **Reviewed writes** - skills render a change set, show the exact diff, and `apply` writes it only after approval, with hash checks, backups of originals and a resumable journal.
+- **Reviewed writes** - skills that edit the target render a change set, show the exact diff, and `apply` writes it only after approval, with hash checks, backups of originals and a resumable journal.
 - **Proven checks** - `rule-proof` runs a proposed rule against a clean fixture and a seeded violation before it is trusted.
 - **Standalone output** - the checker installed by `maintenance` is one dependency-free file that runs without bstack present.
 - **Per-skill install** - each folder under `skills/` installs on its own, and only `vision` pins an npm runtime.
@@ -162,16 +168,21 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 | [`formal-verification`](skills/formal-verification/SKILL.md) | Prove one stated property of a high-stakes spot by model checking, and leave a project-local suite that the project reruns and keeps true as the code changes. |
 | [`foundation`](skills/foundation/SKILL.md) | Turn an approved new idea into the smallest working project by choosing the stack, scaffold, setup commands and first user journey, then create it only after the owner approves the exact files and commands. |
 | [`glossary`](skills/glossary/SKILL.md) | Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes. |
+| [`how`](skills/how/SKILL.md) | Explain how a part of a codebase works from its code, tests and documents, with every claim cited to a file and line. |
 | [`maintenance`](skills/maintenance/SKILL.md) | Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift. |
 | [`plan`](skills/plan/SKILL.md) | Write and check one implementation plan from an approved design document, with units that each cite their design, name the boundary they touch and say what proves them done. Never executes the plan. |
 | [`repo-audit`](skills/repo-audit/SKILL.md) | Audit a repo at overview level and print which bstack skill to run next, in order, with one cited reason per skill. |
+| [`teach`](skills/teach/SKILL.md) | Build a cited mental model of part of a codebase by explaining how it works and why it is built that way. |
 | [`verification`](skills/verification/SKILL.md) | Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, adopt testing and constraint guidance for it, and turn a repeated correction into a proven check. |
 | [`vision`](skills/vision/SKILL.md) | Draft or revise a project's VISION.md, stress-test it on a review board, and write it only after the author approves the exact draft. |
+| [`why`](skills/why/SKILL.md) | Explain why code, a rule or a decision exists from git history, pull request review threads and any ticket, document or chat connector the host exposes, with every claim cited to its source. |
 <!-- skills-table:end -->
 
 - `repo-audit` is the entry point: for a new idea or an existing repo it lists which of the other skills to run next, and `/plan` always comes last.
 - `/verification` runs in `create`, `maintain` or `correct` mode, `/glossary`, `/architecture` and `/formal-verification` in `create` or `maintain`, and `/maintenance` in `create` or `sweep`.
 - `/formal-verification` proves one stated property of a high-stakes spot with a model checker such as TLA+ with TLC, and it is listed only where the repo shows cited risk evidence; the project pins the tool file and its sha256, bstack installs nothing, and a missing tool means unproven, never a pass.
+- `/how`, `/why` and `/teach` explain code and write nothing: `/how` traces the mechanics, `/why` reads git history, pull request review threads and any ticket, document or chat connector your host already exposes for the motive, and `/teach` joins both.
+  Each claim cites its commit, thread, document or file and line, and text from a source is quoted and never obeyed.
 - Skills that write ask you to answer open intent questions, select findings and approve the exact diff before anything is applied.
 - `/foundation` is for a new, empty project only and refuses a non-empty directory.
 - For registering a temporary plan and handling its completion or orphaning, follow the [plan lifecycle guidance](skills/plan/references/plan.md#the-document).
@@ -191,7 +202,8 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
 | Run project commands | `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture`, `verification` and `formal-verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch |
 | Remove a file | `agents-md` (`CLAUDE.md` merge) | Only after you approve and the host's current instruction-loading documentation has been rechecked |
 
-- **Scope**: skills read only the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.
+- **Scope**: repository inspection stays within the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.
+  Motivation research also reads pull request discussions and host-exposed connectors, following the [why-evidence reference](runtime/references/why-evidence.md).
 - **Scratch**: drafts, evidence and previews stay in scratch outside the target until you approve.
 - **Recovery**: `apply` keeps backups of original bytes and a journal, so an interrupted run resumes from verified hashes.
 - **Credentials and network**: skills need no credentials or account, and bstack operates no service.

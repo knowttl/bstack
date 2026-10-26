@@ -62,6 +62,7 @@ Ask the user only about conflicting intent, missing facts and recorded decisions
 Each targeted question cites the sources, names the affected recommendation, offers the plausible readings and recommends one with its trade-off.
 Resolve parent decisions first, group only independent questions into a small round and wait for answers.
 Load the grilling guide when an unresolved choice would change a boundary, and the [decisions guide](references/decisions.md) when a recommendation conflicts with a recorded decision or needs a new one.
+When a recommendation or decision record depends on why a boundary or choice exists, load the [why-evidence reference](references/why-evidence.md) and cite the commits and pull request threads it names; a reason with no cited source stays an inference.
 When the repo already answers the questions, proceed to the proposal without asking the user to reconfirm approved choices.
 A choice the user has not confirmed stays a draft, and silence or an interrupted session is not confirmation.
 
@@ -201,6 +202,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Auditing boundaries, dependencies or planned changes | `references/architecture.md` |
 | Writing design sections, decision records or `CODING_STANDARDS.md` | `references/writing.md` |
 | A recommendation conflicts with a recorded decision or needs a new one | `references/decisions.md` |
+| A recommendation or decision record depends on why a boundary or choice exists | `references/why-evidence.md` |
 | Recommending DRY, KISS, other judgement rules or `CODING_STANDARDS.md` | `references/design-standards.md` |
 | Researching dependencies, proving rules or recording a debt baseline | `references/boundary-checks.md` |
 | Running a maintain pass or classifying a changed module | `references/maintain.md` |

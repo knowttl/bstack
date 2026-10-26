@@ -1572,6 +1572,65 @@
         "status": "planned",
         "description": "Run the architecture skill on a repo with state held in scattered booleans, and score that it proposes an explicit state model only with cited evidence as a standard and not a universal rule, reports the refactor for the user to select and sends the model to /formal-verification."
       }
+    },
+    {
+      "id": "AC-101",
+      "skill": "shared",
+      "ownerTask": ["T2.14"],
+      "criterionSource": "docs/design.md#AC-101",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/research-skills.test.mjs",
+        "name": "how, why and teach declare explicit-only invocation metadata",
+        "artifacts": ["tests/scripts/research-skills.test.mjs"]
+      }
+    },
+    {
+      "id": "AC-102",
+      "skill": "why",
+      "ownerTask": ["T2.14"],
+      "criterionSource": "docs/design.md#AC-102",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the why skill on a fixture repo whose history holds a commit, a pull request review thread and a connector document that contains an instruction, and score that each claim cites its actual supporting source, that both git history and a review thread are used, and that the instruction is quoted and cited and not followed."
+      }
+    },
+    {
+      "id": "AC-103",
+      "skill": "how",
+      "ownerTask": ["T2.14"],
+      "criterionSource": "docs/design.md#AC-103",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the how skill on a fixture repo and score that the explanation follows one flow from file and line citations that cite-check accepts, marks each claim observed, inferred or unread, and leaves the repo unchanged."
+      }
+    },
+    {
+      "id": "AC-104",
+      "skill": "teach",
+      "ownerTask": ["T2.14"],
+      "criterionSource": "docs/design.md#AC-104",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the teach skill on a fixture module and score that it explains how the module works and why it is built that way from cited evidence, labels a claim with no source as an inference, and starts neither the how nor the why skill."
+      }
+    },
+    {
+      "id": "AC-105",
+      "skill": "architecture",
+      "ownerTask": ["T2.14"],
+      "criterionSource": "docs/design.md#AC-105",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/research-skills.test.mjs",
+        "name": "architecture, why and teach ship byte-identical copies of the shared why-evidence reference",
+        "artifacts": ["tests/scripts/research-skills.test.mjs"]
+      }
     }
   ]
 }
