@@ -607,9 +607,10 @@ The glossary, vision, architecture, foundation, maintenance and plan skills each
 
 The [plan skill](../skills/plan/SKILL.md) is started by the user and writes one implementation plan from an approved design document.
 It reads the design you name plus `VISION.md`, the glossary, the design document and the verification kit when they exist, and reports a missing one as a gap without starting its skill.
-A fresh read-only reader runs the builder check and you answer only the questions that would change the plan.
+The [builder check](../skills/plan/references/builder-check.md#filter-the-report) defines which questions reach you and which become [spike units](../skills/plan/references/plan.md#spike-units).
 The plan's units come from the design's stories, core first, and each cites its design section, names the boundary it touches, its Done when and the check or kit feature that proves it, with non-functional targets carried as evidence.
-`plan check` fails a unit with no evidence, a dependency cycle or a design citation that no longer resolves, and the plan is written through `apply` after you approve the exact bytes.
+The [plan check contract](command-contract.md#plan-check) defines the validation rules, including required kit-feature evidence for user-facing units.
+The plan is written through `apply` after you approve the exact bytes.
 The skill never executes a unit, starts another skill or edits product code.
 
 ```sh

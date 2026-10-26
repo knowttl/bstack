@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { appendFile, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -28,7 +28,7 @@ async function planCheck(t, flag, target, plan) {
 const citation = (bytes, path, needle, state = { kind: 'sha256', value: sha256(bytes) }) =>
   ({ location: `${path}:${bytes.toString('utf8').split('\n').findIndex(line => line.includes(needle)) + 1}`, state })
 
-const unit = (id, title, dependsOn, design, evidence) => ({ id, title, core: true, dependsOn, design: [design], boundary: 'pantry storage', doneWhen: [`${title} works for the user`], evidence })
+const unit = (id, title, dependsOn, design, evidence) => ({ id, title, core: true, userFacing: false, dependsOn, design: [design], boundary: 'pantry storage', doneWhen: [`${title} works for the user`], evidence })
 
 async function pantryPlan(t) {
   const target = build(t, 'design-only-idea')
@@ -77,6 +77,30 @@ for (const [name, mutate, codes, message] of [
     if (message) assert.match(result.problems[0].message, message)
   })
 }
+
+for (const [name, kit, evidence, exit, codes] of [
+  ['rejects a user-facing unit that names no kit feature when the project has a kit', true, [{ kind: 'check', ref: 'clear-list unit test' }], 1, ['unit-no-kit-feature']],
+  ['accepts a user-facing unit that names a kit feature when the project has a kit', true, [{ kind: 'check', ref: 'clear-list unit test' }, { kind: 'kit-feature', ref: 'clear-bought-items' }], 0, undefined],
+  ['accepts a user-facing unit that names no kit feature when the project has no kit', false, [{ kind: 'check', ref: 'clear-list unit test' }], 0, undefined]
+]) {
+  test(`plan check ${name}`, async t => {
+    const { target, plan } = await pantryPlan(t)
+    if (kit) await mkdir(join(target, '.agents/skills/verify-pantry'), { recursive: true })
+    Object.assign(plan.units[2], { userFacing: true, evidence })
+    const result = await planCheck(t, '--workspace', target, plan)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+    if (codes) assert.deepEqual(result.problems.map(problem => problem.code), codes)
+  })
+}
+
+test('plan check accepts check-only evidence when a verify-prefixed regular file is present', async t => {
+  const { target, plan } = await pantryPlan(t)
+  await mkdir(join(target, '.agents/skills'), { recursive: true })
+  await writeFile(join(target, '.agents/skills/verify-notes.md'), '# Verification notes\n')
+  plan.units[2].userFacing = true
+  const result = await planCheck(t, '--workspace', target, plan)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+})
 
 test('plan check rejects a design citation after the design changes', async t => {
   const { target, plan } = await pantryPlan(t)
