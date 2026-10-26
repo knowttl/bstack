@@ -482,9 +482,9 @@ What each decision means:
   What the skill does when the project has no kit is not decided here, and stays a question for the maintainer until its slice settles it.
 - A5: the shared writing reference follows the checked-copy rule for shared references.
   It names the four Diátaxis modes, tutorial, how-to guide, reference and explanation, and links the [Diátaxis](https://diataxis.fr) site, which is licensed CC BY-SA, so bstack names the modes and copies none of its text.
-  The build slice writes its plain-prose rules.
+  The [writing reference](../runtime/references/writing.md) owns the plain-prose rules.
   Each skill that writes a document loads it at that step only, under "Load only what each step needs".
-  The writing skills are `vision`, `glossary`, `architecture`, `foundation`, `plan`, `agents-md`, `verification` and `formal-verification`.
+  The [runtime manifest](../runtime/skills.json) lists which skills ship the reference; each skill's `SKILL.md` owns when to load it.
   `repo-audit` writes nothing, and `maintenance` writes only registrations and generated sections, so neither loads it.
 - A6: a plan describes work that a builder finishes, and a finished plan that stays in the repo becomes a stale second source of truth.
   The plan states its removal condition in its "How to read this" section, which `/plan create` writes.
