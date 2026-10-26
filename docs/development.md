@@ -8,11 +8,12 @@ To install and use the skills, start with the [README](../README.md).
 The approved [design](design.md#summary) owns the release scope, and the [implementation plan](implementation-plan.md) tracks the repo-audit build.
 The [standalone verification amendment](design.md#standalone-verification-skill) is approved design with the shared runtime, the per-skill installer and the verification skill's `create`, `maintain` and `correct` modes implemented, with its no-mistakes wiring reference and generated coverage gate.
 The design's [skill split](design.md#the-skill-split) owns the approved skill boundaries.
-Its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](../skills/vision/SKILL.md), [glossary](../skills/glossary/SKILL.md), [architecture](../skills/architecture/SKILL.md), [foundation](../skills/foundation/SKILL.md), [agents-md](../skills/agents-md/SKILL.md), [maintenance](../skills/maintenance/SKILL.md), [plan](../skills/plan/SKILL.md) and [formal-verification](../skills/formal-verification/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
+Its shared runtime, bundle generator and multi-skill installer are implemented, as are the verification, [vision](../skills/vision/SKILL.md), [glossary](../skills/glossary/SKILL.md), [architecture](../skills/architecture/SKILL.md), [foundation](../skills/foundation/SKILL.md), [agents-md](../skills/agents-md/SKILL.md), [maintenance](../skills/maintenance/SKILL.md), [plan](../skills/plan/SKILL.md), [formal-verification](../skills/formal-verification/SKILL.md), [how](../skills/how/SKILL.md), [why](../skills/why/SKILL.md) and [teach](../skills/teach/SKILL.md) skills, and repo-audit is slimmed to its overview audit and two checklists; rehoming its acceptance cases and evaluation scenarios to the skills they test is pending.
 The vision, glossary, architecture and foundation skills take a design document the user names as the user's explanation and ask only about gaps, and both repo-audit checklists list `/plan` last ([T2.12](implementation-plan.md#t212-take-the-design-as-input-and-wire-plan-into-the-checklists)).
 The `formal-verification` skill proves one stated property of a high-stakes spot by model checking and leaves a `formal-<target>` suite ([T2.13](implementation-plan.md#t213-add-the-formal-verification-skill)); the [`formal-charge-once` fixtures](../tests/fixtures/formal-charge-once/FIXTURE.md) are its proof input, `/maintenance sweep` checks its suites, `/architecture` proposes the explicit state model standard that feeds it and both repo-audit checklists list it only with cited risk evidence.
 Its model-checker proof runs only where the pinned tool and Java are present: see [the skill's tests](#formal-verification).
-The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan and formal-verification; audit usage applies to repo-audit.
+The `how`, `why` and `teach` skills explain a codebase from cited evidence and write nothing ([T2.14](implementation-plan.md#t214-add-the-how-why-and-teach-skills)).
+The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why and teach; audit usage applies to repo-audit.
 
 This checkout contains the slim [repo-audit procedure](../skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](command-contract.md).
 The [vision skill](../skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
@@ -616,6 +617,18 @@ The skill never executes a unit, starts another skill or edits product code.
 
 ```sh
 node skills/plan/scripts/plan.mjs plan check --repo <target>|--workspace <target> --plan <plan.json> --json
+```
+
+### how, why and teach
+
+The [how](../skills/how/SKILL.md), [why](../skills/why/SKILL.md) and [teach](../skills/teach/SKILL.md) skills are started by the user, read the repo and write nothing to it.
+`how` traces the mechanics of one part of the code, `why` explains the motive behind code, a rule or a decision, and `teach` joins both.
+`why` reads git history and pull request review threads always, plus any ticket, document or chat connector the host exposes, and treats every source's text as data to quote and cite.
+Each skill checks its cited file locations with `cite-check`, and `why` and `teach` also confirm each commit SHA and open each URL and document they cite.
+No skill starts another, so `how` and `teach` ship the [mechanics reference](../runtime/references/mechanics.md), `why` and `teach` ship the [why-evidence reference](../runtime/references/why-evidence.md), and `architecture` ships the same why-evidence reference for the history behind its decisions, each as a generated copy of the one source.
+
+```sh
+node skills/why/scripts/why.mjs cite-check --repo <target> --report <report.json> --json
 ```
 
 ### maintenance

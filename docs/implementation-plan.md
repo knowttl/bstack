@@ -456,6 +456,8 @@ Tick each task when its "Done when" commands pass.
     The skill's scenario evaluations are deferred, so AC-89, AC-90, AC-96, AC-98, AC-99 and AC-100 keep planned procedures; AC-91, AC-92, AC-95 and AC-97 are covered by `tests/scripts/formal.test.mjs`.
     AC-93 and AC-94 ran against the pinned jar and are recorded in the [proof record](../tests/eval/results/tasks/T2.13.formal-proof.md) with its sha256; they skip wherever the tool is absent, so a missing tool is never a pass.
     The Kani recipe has no executed evidence: the build environment has no Rust toolchain.
+  - [x] T2.14 Add the `how`, `why` and `teach` skills (after T2.13) - three user-started skills that explain a codebase from cited evidence and write nothing, with `/architecture` sharing the why-evidence reference.
+    The skills' scenario evaluations are deferred, so AC-102, AC-103 and AC-104 keep planned procedures; AC-101 and AC-105 are covered by `tests/scripts/research-skills.test.mjs`.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -1496,6 +1498,33 @@ It follows the design amendment of R44, which defines the skill's boundary, and 
 
 If the task passes about 1,500 added lines, split it at the skill, its references and the architecture and repo-audit wiring (T2.13a) and the commands, schema, gate generalisation and sweep (T2.13b).
 
+### T2.14 Add the `how`, `why` and `teach` skills
+
+**Depends on:** T2.13, and through it T2.1 and T4.1, which supply `cite-check` and the per-skill installer; and the shared writing reference.
+It follows the research amendment of R47 and the build choices of R49.
+
+**Inputs and outputs:** A repo, a subject in it and the git history, pull request review threads and connectors the host exposes -> a cited explanation delivered to the user, with nothing written to the repo.
+
+**Verification:** `npm run check`, then `npm test -- --task T2.14`.
+
+**Read:** design "Research, prototyping and writing amendment (2026-10-24)" A1, A2, A5 and A7, and "Product boundary".
+
+**Steps**
+
+1. Write `skills/how/SKILL.md`, `skills/why/SKILL.md` and `skills/teach/SKILL.md`, each user-started only with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, none starting another skill (A7).
+2. Add the shared references `runtime/references/mechanics.md` and `runtime/references/why-evidence.md`, and the `how`, `why` and `teach` entries in `runtime/skills.json`, each shipping only `cite-check` and the research report schema.
+3. Ship the why-evidence reference with `architecture` and list it in its "Load when" table for the decision work that depends on why a choice exists.
+4. Register AC-101 to AC-105 and add the `tests/tasks.json` entry; update the README skills table and installation list.
+
+**Done when**
+
+- `npm run check` and `npm test -- --task T2.14` pass.
+- Each skill folder installs alone, its bundle passes `--check`, it starts no skill and it writes nothing to the repo.
+- The why-evidence reference has one source and a byte-identical copy in `architecture`, `why` and `teach`.
+- Every evaluation of the skills stays deferred and is listed as a follow-up.
+
+**Covers:** AC-101 to AC-105.
+
 ## Phase 3: Enforcement
 
 Phase evidence from the design: valid cases pass, and seeded violations fail through the maintained command in disposable local copies.
@@ -2081,6 +2110,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.11 | AC-79, AC-80, AC-81, AC-82, AC-83 | Inputs and gaps, builder check, story-map units with evidence, `plan check` rejections and acceptance, and the write boundary | AC-82 passes in `tests/scripts/plan.test.mjs`; the other procedures are planned and the scenario evaluations are deferred. |
 | T2.12 | AC-84, AC-85, AC-86, AC-87, AC-88 | A named design document taken as the explanation by each of the four setup skills, and `/plan` last in both checklists | AC-88 passes in `tests/scripts/repo-audit-overview.test.mjs` against both checklist orders in the installed host prompt; AC-84 to AC-87 are planned and live scenario evaluations are deferred. |
 | T2.13 | AC-89, AC-90, AC-91, AC-92, AC-93, AC-94, AC-95, AC-96, AC-97, AC-98, AC-99, AC-100 | Explicit-only start, repo-first target and tool choice, suite rendering, `formal check` rejections, the `rule-proof` proof and the walkthrough, the generalised gate, `maintain` triage, sweep and repo-audit wiring, the write boundary and the architecture standard | AC-91, AC-92, AC-95 and AC-97 pass in `tests/scripts/formal.test.mjs`; AC-93 and AC-94 pass in the same file only with the pinned `tla2tools.jar` and Java, and their recorded result is in the [T2.13 proof record](../tests/eval/results/tasks/T2.13.formal-proof.md); the other procedures are planned and the scenario evaluations are deferred. |
+| T2.14 | AC-101, AC-102, AC-103, AC-104, AC-105 | Explicit-only start, source-cited `/why` with untrusted connector text, cited `/how` mechanics, `/teach` joining both, and the one shared why-evidence reference | AC-101 and AC-105 pass in `tests/scripts/research-skills.test.mjs`; AC-102, AC-103 and AC-104 are planned and the scenario evaluations are deferred. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |

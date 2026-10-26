@@ -41,7 +41,7 @@
       "measure-exclusions.json", "overlap-plan.json", "project.schema.json", "research-report.json", "resume-state.schema.json"
     ],
     "assets": [],
-    "references": ["grilling.md", "agents-pointer.md", "writing.md"]
+    "references": ["grilling.md", "agents-pointer.md", "writing.md", "why-evidence.md"]
   },
   "foundation": {
     "commands": ["project create", "apply", "run-checks", "rule-proof"],
@@ -87,5 +87,23 @@
     ],
     "assets": ["map-coverage.mjs"],
     "references": ["grilling.md", "writing.md"]
+  },
+  "how": {
+    "commands": ["cite-check"],
+    "schemas": ["research-report.json"],
+    "assets": [],
+    "references": ["mechanics.md", "writing.md"]
+  },
+  "why": {
+    "commands": ["cite-check"],
+    "schemas": ["research-report.json"],
+    "assets": [],
+    "references": ["why-evidence.md", "writing.md"]
+  },
+  "teach": {
+    "commands": ["cite-check"],
+    "schemas": ["research-report.json"],
+    "assets": [],
+    "references": ["mechanics.md", "why-evidence.md", "writing.md"]
   }
 }
