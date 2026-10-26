@@ -19,6 +19,7 @@ The tool follows the kind of question, and the first release carries two worked 
 | Can these steps happen in a bad order, or can two callers interleave badly? | A model checker over a small model of the design | TLA+ with TLC |
 | Does this function behave for every input up to a bound, with no overflow, panic or out-of-bounds access? | A bounded verifier that runs on the code | Kani, for Rust |
 | Must this hold at every size, where a bound is not enough? | A proof assistant | Guidance only |
+| Does this one function behave for every input, in a language where no code-level verifier runs? | Nothing in formal verification; a generated-input test of the real code | None: say so, do not hand-model the function in TLA+, and name `/verification` |
 
 For concurrent and distributed designs, TLA+ is often the most useful place to start.
 Prefer a tool the project's developers can install and run, and tell the user why you chose it.
@@ -91,6 +92,7 @@ These tools are named so the user can choose them; the first release carries no 
 - Dafny: a verifier that proves a function against its contract for every input.
 - Lean: a proof assistant for a property that must hold at every size.
 - CBMC: a bounded model checker for C and C++.
+- CrossHair: an SMT-backed checker that runs on Python code, for a user who wants a solver check of a function instead of a generated-input test.
 
 Say that no recipe exists for the tool, and pin it in the plan the same way.
 
