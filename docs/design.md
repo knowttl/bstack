@@ -632,8 +632,10 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - `create`: writes one implementation plan for a project from an approved design, reviewed before it is written.
 - Takes any approved design document the user names, plus `VISION.md`, the glossary, the design document and the verification kit when they exist. A missing one is reported as a gap and its skill is never started (D1).
 - Runs a builder check before writing: a fresh read-only reader lists where a builder would have to guess, and the agent brings back only the questions the user must answer (D2).
+  A question that an experiment can answer is not one of them: it becomes a spike unit with a measured "Done when", and the prototyping skill is how a user settles it (A4).
 - Turns the story map into the plan's units, each citing its design section, the boundary it touches, its "Done when" and the check or kit feature that proves it (D3), and carries non-functional targets as unit acceptance checks (D4).
 - The plan format adapts bstack's own [implementation plan](implementation-plan.md) and pstack's multi-phase plan and sequence-verifiable-units guidance; the builder check adapts the `builder-check-prompt.md` of the `brainstorming` skill in obra's `superpowers`. The build pins each source and records it in `NOTICE`.
+- When the project has a verification kit, each user-facing unit names a kit feature, a real run of the product, as evidence, and `plan check` fails a user-facing unit that does not.
 - A `plan check` command fails on a unit with no evidence, a dependency cycle, or a design citation that `cite-check` cannot resolve.
   It reads a scratch plan record that follows `schemas/plan.json`, from which the agent drafts the reviewed document, and a passing check returns the units in dependency order.
   A citation uses `cite-check`'s location and exact-byte state, and evidence is a check or kit feature by name, so the command verifies that a unit names evidence and not that the evidence exists yet.

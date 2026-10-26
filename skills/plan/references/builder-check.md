@@ -34,6 +34,7 @@ If nothing important is left, say "nothing important left".
 Check each question against the inputs before the user sees it.
 Drop a question that another input answers, citing where, and a question about something the design leaves to the builder.
 Drop one that a sensible default settles without changing any unit's boundary, order or evidence, and record the default in the plan as a decision.
+Turn one that an experiment can answer into a spike unit as the plan format's spike units section describes, instead of asking the user, and record it in the plan as a decision that names the spike.
 Keep a question only when two plausible answers would produce different units, a different order, a different boundary or different evidence.
 Bring the user the questions that remain, ranked as the reader ranked them, and nothing else.
 

@@ -54,8 +54,9 @@ Done when: The approved design is identified and confirmed by the user, each oth
 Follow the [builder check](references/builder-check.md): a fresh read-only reader that cannot ask the author lists every place a builder would have to guess.
 If no fresh read-only reader is available, report the builder check as blocked by that missing prerequisite and stop without drafting or applying a plan.
 Filter its report against the inputs you read, and keep only the questions whose answers would change the plan.
+A question that an experiment can answer is not kept for the user: it becomes a spike unit with a measured Done when, as the plan format describes.
 
-Done when: Each remaining question names the design section it concerns and why its answer changes the plan, or the reader found nothing important and that is stated.
+Done when: Each remaining question names the design section it concerns and why its answer changes the plan, each question an experiment can answer is a spike unit instead, or the reader found nothing important and that is stated.
 
 ### Step 3: Resolve the questions
 
@@ -71,14 +72,14 @@ Done when: Each question has the user's answer or is recorded as open, and no an
 ### Step 4: Draft and check the plan
 
 Follow the [plan format](references/plan.md).
-Build the story map from the design, with each story's acceptance cases and the core stories first, then turn it into units that each end in a state a named check or kit feature can verify.
+Build the story map from the design, with each story's acceptance cases and the core stories first, then turn it into units that each end in a state a named check or kit feature can verify, marking each unit a user sees as user-facing.
 Carry each non-functional target as evidence on every unit it constrains.
 Record the units in scratch following `schemas/plan.json`, binding each design citation to the SHA-256 of the exact bytes read, and run `node scripts/plan.mjs plan check --repo <target> --plan <file> --json`, with `--workspace` for a new idea.
 Fix every reported problem by changing the plan, never by dropping the unit's evidence, dependency or citation to make the check pass.
 Open each cited design section to confirm it supports its unit, because the checker establishes only that the citation resolves and the unit names evidence.
 Then draft the plan document in scratch from the checked record.
 
-Done when: `plan check` passes on the record, every unit's evidence names a check or kit feature that exists or says which unit adds it, every non-functional target is carried by a unit or recorded as open, the document's units match the record's one for one, and its "How to read this" section states the removal condition.
+Done when: `plan check` passes on the record, every unit's evidence names a check or kit feature that exists or says which unit adds it, every user-facing unit names a kit feature when the project has a kit, every non-functional target is carried by a unit or recorded as open, the document's units match the record's one for one, and its "How to read this" section states the removal condition.
 
 ### Step 5: Review and apply
 

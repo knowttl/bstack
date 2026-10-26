@@ -37,7 +37,7 @@ export const commands = {
   'plan check': {
     module: './commands/plan-check.mjs',
     options: ['plan'],
-    help: 'Check a scratch plan record for units with no evidence, dependency cycles and design citations that no longer resolve, without writes.\nUsage: {entry} plan check --repo <path>|--workspace <path> --plan <file> [--json]\nPlan follows schemas/plan.json. Each unit lists the check or kit feature that proves it and its design citations, which use the location and exact-byte state of cite-check. Fails with unit-no-evidence, unknown-dependency, dependency-cycle or the cite-check citation codes. A passing check returns the units in dependency order. It does not judge whether a citation supports the unit or whether the evidence exists yet.'
+    help: 'Check a scratch plan record for units with no evidence, user-facing units with no kit feature when the project has a verification kit, dependency cycles and design citations that no longer resolve, without writes.\nUsage: {entry} plan check --repo <path>|--workspace <path> --plan <file> [--json]\nPlan follows schemas/plan.json. Each unit lists the check or kit feature that proves it and its design citations, which use the location and exact-byte state of cite-check. A unit marked userFacing must name a kit-feature evidence entry when .agents/skills holds a verify-<app> kit. Fails with unit-no-evidence, unit-no-kit-feature, unknown-dependency, dependency-cycle or the cite-check citation codes. A passing check returns the units in dependency order. It does not judge whether a citation supports the unit or whether the evidence exists yet.'
   },
   'rule-proof': {
     module: './commands/rule-proof.mjs',

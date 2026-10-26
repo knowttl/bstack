@@ -1,4 +1,5 @@
-import { readFile } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { fileCitationProblems } from '../lib/citations.mjs'
 import { validateData, validateIds } from '../lib/schema.mjs'
@@ -14,11 +15,17 @@ export async function run(options) {
   validateData(JSON.parse(await readFile(new URL('../../schemas/plan.json', import.meta.url), 'utf8')), plan)
   validateIds(plan.units, '$/units')
   const units = new Map(plan.units.map(unit => [unit.id, unit]))
+  const skills = await readdir(join(target.root, '.agents/skills')).catch(error => error.code === 'ENOENT' ? [] : Promise.reject(error))
+  const hasKit = skills.some(name => name.startsWith('verify-'))
   const problems = []
   let citationsChecked = 0
   for (const [index, unit] of plan.units.entries()) {
     const at = `$/units/${index}`
     if (!unit.evidence.length) problems.push({ code: 'unit-no-evidence', message: `Unit ${unit.id} names no check or kit feature that proves it.`, path: `${at}/evidence`, fix: 'Name the check or kit feature that proves the unit, or merge the unit into one that has evidence.' })
+    // A kit feature is a real run of the product, which a user-facing unit needs as evidence once the project has a kit.
+    if (hasKit && unit.userFacing && unit.evidence.length && !unit.evidence.some(entry => entry.kind === 'kit-feature')) {
+      problems.push({ code: 'unit-no-kit-feature', message: `Unit ${unit.id} is user-facing and the project has a verification kit, but no evidence names a kit feature.`, path: `${at}/evidence`, fix: 'Add a kit-feature evidence entry for the feature whose run proves the unit, including a feature the unit adds. Mark a unit that no user sees userFacing false.' })
+    }
     for (const dependency of unit.dependsOn.filter(id => !units.has(id))) {
       problems.push({ code: 'unknown-dependency', message: `Unit ${unit.id} depends on ${dependency}, which is not a unit.`, path: `${at}/dependsOn`, fix: 'Depend only on units in this plan.' })
     }

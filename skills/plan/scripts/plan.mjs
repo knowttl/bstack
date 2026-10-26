@@ -109,7 +109,8 @@ Missing or unsupported arguments are a usage error (exit 3).`);
 }
 
 // runtime/scripts/commands/plan-check.mjs
-import { readFile as readFile2 } from "node:fs/promises";
+import { readdir, readFile as readFile2 } from "node:fs/promises";
+import { join as join2 } from "node:path";
 
 // runtime/scripts/lib/repo.mjs
 import { realpath, stat } from "node:fs/promises";
@@ -361,11 +362,16 @@ async function run(options) {
   validateData(JSON.parse(await readFile2(new URL("../schemas/plan.json", import.meta.url), "utf8")), plan);
   validateIds(plan.units, "$/units");
   const units = new Map(plan.units.map((unit) => [unit.id, unit]));
+  const skills = await readdir(join2(target.root, ".agents/skills")).catch((error) => error.code === "ENOENT" ? [] : Promise.reject(error));
+  const hasKit = skills.some((name) => name.startsWith("verify-"));
   const problems = [];
   let citationsChecked = 0;
   for (const [index, unit] of plan.units.entries()) {
     const at = `$/units/${index}`;
     if (!unit.evidence.length) problems.push({ code: "unit-no-evidence", message: `Unit ${unit.id} names no check or kit feature that proves it.`, path: `${at}/evidence`, fix: "Name the check or kit feature that proves the unit, or merge the unit into one that has evidence." });
+    if (hasKit && unit.userFacing && unit.evidence.length && !unit.evidence.some((entry) => entry.kind === "kit-feature")) {
+      problems.push({ code: "unit-no-kit-feature", message: `Unit ${unit.id} is user-facing and the project has a verification kit, but no evidence names a kit feature.`, path: `${at}/evidence`, fix: "Add a kit-feature evidence entry for the feature whose run proves the unit, including a feature the unit adds. Mark a unit that no user sees userFacing false." });
+    }
     for (const dependency of unit.dependsOn.filter((id) => !units.has(id))) {
       problems.push({ code: "unknown-dependency", message: `Unit ${unit.id} depends on ${dependency}, which is not a unit.`, path: `${at}/dependsOn`, fix: "Depend only on units in this plan." });
     }
@@ -435,8 +441,8 @@ function inspectJSON(text) {
 import { extname as extname2 } from "node:path";
 
 // runtime/scripts/lib/document-references.mjs
-import { readFile as readFile3, readdir, stat as stat3 } from "node:fs/promises";
-import { dirname as dirname2, extname, join as join2, relative as relative2, resolve as resolve3 } from "node:path";
+import { readFile as readFile3, readdir as readdir2, stat as stat3 } from "node:fs/promises";
+import { dirname as dirname2, extname, join as join3, relative as relative2, resolve as resolve3 } from "node:path";
 var quotes = /^(?: {0,3}>[ \t]?)+/;
 var listItem = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/;
 var atxStart = /^ {0,3}#{1,6}(?:[ \t]|$)/;
@@ -625,10 +631,10 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
     if (documents.has(resolved) && documents.get(resolved) === null) return problem("Missing destination in proposed documents");
     let parent = root;
     for (const segment of local.split("/").filter(Boolean)) {
-      if (!(await readdir(parent)).includes(segment)) {
+      if (!(await readdir2(parent)).includes(segment)) {
         if (documents.has(resolved)) {
           try {
-            await stat3(join2(parent, segment));
+            await stat3(join3(parent, segment));
             return problem("Wrong-case destination");
           } catch (error) {
             if (error.code !== "ENOENT") throw error;
@@ -637,7 +643,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
         }
         return problem("Missing or wrong-case destination");
       }
-      parent = join2(parent, segment);
+      parent = join3(parent, segment);
     }
     if (!documents.has(resolved)) await stat3(resolved);
     if (fragment && [".md", ".markdown"].includes(extname(local).toLowerCase())) {
@@ -1151,25 +1157,25 @@ async function validateFindings(findings, target, deletionScope = []) {
 
 // runtime/scripts/lib/protected-write.mjs
 import { readFile as readFile4, open, mkdir, rename, unlink, stat as stat4 } from "node:fs/promises";
-import { basename, dirname as dirname3, join as join4 } from "node:path";
+import { basename, dirname as dirname3, join as join5 } from "node:path";
 import { randomUUID as randomUUID2 } from "node:crypto";
 
 // runtime/scripts/lib/scratch.mjs
 import { createHash as createHash2, randomUUID } from "node:crypto";
 import { homedir } from "node:os";
-import { join as join3, isAbsolute as isAbsolute2 } from "node:path";
+import { join as join4, isAbsolute as isAbsolute2 } from "node:path";
 async function scratchDirectory(target, runId) {
   if (!/^[a-zA-Z0-9-]+$/.test(runId)) throw new CommandError("usage-error", [{ code: "invalid-run", message: "Run ID must contain only letters, digits and hyphens.", fix: "Use the run ID returned by the command." }]);
-  const cache = process.platform === "win32" ? process.env.LOCALAPPDATA : process.platform === "darwin" ? join3(homedir(), "Library", "Caches") : process.env.XDG_CACHE_HOME || join3(homedir(), ".cache");
+  const cache = process.platform === "win32" ? process.env.LOCALAPPDATA : process.platform === "darwin" ? join4(homedir(), "Library", "Caches") : process.env.XDG_CACHE_HOME || join4(homedir(), ".cache");
   if (!cache || !isAbsolute2(cache)) {
     throw new CommandError("blocked", [{ code: "cache-unavailable", message: "The OS cache directory must be absolute.", fix: "Configure an absolute OS cache directory." }]);
   }
-  const base = await resolveLinks(join3(cache, "bstack"));
+  const base = await resolveLinks(join4(cache, "bstack"));
   if (isInside(target.root, base)) {
     throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch would be written inside the target.", fix: "Select an OS cache directory outside the target.", path: base }]);
   }
   const key = createHash2("sha256").update(target.root).digest("hex");
-  const directory = await resolveLinks(join3(base, key, runId));
+  const directory = await resolveLinks(join4(base, key, runId));
   if (isInside(target.root, directory)) {
     throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch links resolve inside the target.", fix: "Repair the cache link or select a different cache directory.", path: directory }]);
   }
@@ -1187,7 +1193,7 @@ async function fileBytes(path) {
 }
 async function loadJournal(target, runId) {
   const directory = await scratchDirectory(target, runId);
-  const bytes = await fileBytes(join4(directory, "journal.json"));
+  const bytes = await fileBytes(join5(directory, "journal.json"));
   if (bytes === null) return { directory, journal: null };
   const journal = inspectJSON(bytes.toString("utf8")).value;
   validateData(JSON.parse(await readFile4(new URL("../schemas/resume-state.schema.json", import.meta.url), "utf8")), journal);
@@ -1225,7 +1231,7 @@ async function journalOriginal(directory, journal, plan, edit, index) {
   if (journal.planDigest !== plan.planDigest || canonicalJSON(journal.target) !== canonicalJSON(plan.target) || journal.edits.length !== plan.edits.length || !recorded || ["id", "path", "originalHash", "proposedHash"].some((key) => recorded[key] !== edit[key]) || recorded.resolvedPath !== plan.reviewedScope.find((entry) => entry.path === edit.path)?.resolvedPath || recorded.backup !== (edit.originalHash === null ? null : `original-${index}`)) {
     throw new CommandError("blocked", [{ code: "journal-mismatch", message: "Journal does not match the reviewed plan.", fix: "Use the unchanged reviewed plan or review a new plan." }]);
   }
-  const bytes = recorded.backup === null ? null : await fileBytes(join4(directory, recorded.backup));
+  const bytes = recorded.backup === null ? null : await fileBytes(join5(directory, recorded.backup));
   if ((bytes === null ? null : hashBytes(bytes)) !== edit.originalHash) {
     throw new CommandError("blocked", [{ code: "backup-mismatch", message: "Recoverable original is missing or changed.", path: edit.path, fix: "Restore the original backup before resuming." }]);
   }
@@ -1261,7 +1267,7 @@ async function durableDirectory(directory, limitations) {
   }
 }
 async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary, prefix = ".bstack") {
-  const temporary = join4(dirname3(path), `${prefix}-${randomUUID2()}.tmp`);
+  const temporary = join5(dirname3(path), `${prefix}-${randomUUID2()}.tmp`);
   try {
     if (prepareTemporary) await prepareTemporary(temporary);
     await durableFile(temporary, bytes, mode);
@@ -1301,7 +1307,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     })),
     affectedChecks
   };
-  const journalPath = join4(directory, "journal.json");
+  const journalPath = join5(directory, "journal.json");
   const save = () => replaceFile(journalPath, Buffer.from(JSON.stringify(journal, null, 2) + "\n"), void 0, limitations);
   try {
     let state = await inspectJournal(journal);
@@ -1334,7 +1340,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
         if (edit.originalHash !== null) {
-          const backup = join4(directory, journal.edits[index].backup);
+          const backup = join5(directory, journal.edits[index].backup);
           const existing = await fileBytes(backup);
           if (existing !== null && hashBytes(existing) !== edit.originalHash) throw new Error("Prepared backup differs from the reviewed original.");
           if (existing === null) await replaceFile(backup, edit.originalBytes, void 0, limitations);
@@ -1756,7 +1762,7 @@ async function run4(options) {
 
 // runtime/scripts/runtime/scripts/plan.mjs
 await dispatch(process.argv.slice(2), "plan", {
-  "plan check": { options: ["plan"], help: "Check a scratch plan record for units with no evidence, dependency cycles and design citations that no longer resolve, without writes.\nUsage: plan.mjs plan check --repo <path>|--workspace <path> --plan <file> [--json]\nPlan follows schemas/plan.json. Each unit lists the check or kit feature that proves it and its design citations, which use the location and exact-byte state of cite-check. Fails with unit-no-evidence, unknown-dependency, dependency-cycle or the cite-check citation codes. A passing check returns the units in dependency order. It does not judge whether a citation supports the unit or whether the evidence exists yet.", run },
+  "plan check": { options: ["plan"], help: "Check a scratch plan record for units with no evidence, user-facing units with no kit feature when the project has a verification kit, dependency cycles and design citations that no longer resolve, without writes.\nUsage: plan.mjs plan check --repo <path>|--workspace <path> --plan <file> [--json]\nPlan follows schemas/plan.json. Each unit lists the check or kit feature that proves it and its design citations, which use the location and exact-byte state of cite-check. A unit marked userFacing must name a kit-feature evidence entry when .agents/skills holds a verify-<app> kit. Fails with unit-no-evidence, unit-no-kit-feature, unknown-dependency, dependency-cycle or the cite-check citation codes. A passing check returns the units in dependency order. It does not judge whether a citation supports the unit or whether the evidence exists yet.", run },
   "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: plan.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run2 },
   "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: plan.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run3 },
   "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: plan.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run4 }
