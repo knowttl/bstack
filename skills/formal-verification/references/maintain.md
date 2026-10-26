@@ -29,7 +29,7 @@ The drift check must report no problems other than `source-changed-since-sync` a
 It does not judge whether a model is true; that is what the readers and the rerun are for.
 A missing tool is reported as unproven, and the passes that need it are blocked, never skipped as passing.
 
-Give each source reader only its property file, the transition table, the declared source paths and the diff since the property's sync commit, `git diff <sync commit> HEAD -- <source paths>`.
+Give each source reader its property file, the transition table, the declared source paths and the diff since the property's sync commit, `git diff <sync commit> HEAD -- <source paths>`.
 When the sync commit is absent or orphaned, `formal check` names the commit it fell back to, the last commit that changed the suite, and the reader takes the diff from that one.
 A reader reports, with file and line evidence, each place where the code and the table disagree: a split or merged step, a reordered step, a removed check, a new write to the shared state, or code that moved outside the declared source paths.
 A reader also looks for code that moved: a covered function that was renamed, split or moved to another file is still covered code, even when its new place is outside the declared source paths.
@@ -43,8 +43,8 @@ The coverage gate lets a change to a source path through when its commit message
 The message is a claim, not evidence, so check each such trailer for the property it names against the model.
 
 1. List the trailers: `git log <sync commit>..HEAD --format=%H%n%B`, taking the commit from the fallback when the sync commit is absent or orphaned, and keep each commit whose message has a `No-proof-impact: <id>: <reason>` line for the property.
-2. Read that commit's diff of the property's source paths: `git show <commit> -- <source paths>`.
-3. For each edit, ask whether it changes the behaviour of a cited code step, a branch or check the model encodes, or a bound or assumption. Judge its meaning from the model and the table, not from the reason in the message; touching modeled code alone does not establish proof impact.
+2. Read that commit's repo-wide diff: `git show -M -C <commit>`. Follow covered functions and their helpers that were renamed, split or moved, and writers of the guarded state, including outside the declared source paths; inspect the relevant code at that commit and its parent.
+3. For each relevant edit found across those paths, ask whether it changes the behaviour of a cited code step, a branch or check the model encodes, or a bound or assumption. Judge its meaning from the model and the table, not from the reason in the message; touching modeled code alone does not establish proof impact.
 4. A commit that preserves all modeled behaviour, bounds and assumptions holds the claim, including whitespace or other edits that preserve their meaning: record it as audited with the commit and the evidence for that verdict.
 5. A commit that changes modeled behaviour, bounds or assumptions breaks the claim. The model no longer describes the code, so triage it as model drift with the commit and the semantic change as evidence, even if the rerun still passes.
 
@@ -74,7 +74,7 @@ Sort each problem from the passes, and each failure that the replay classed, int
 | Class | Evidence | Action |
 |---|---|---|
 | Model drift | The code changed on purpose and the model, table or source paths no longer describe it | Correct the suite through a reviewed change set, then re-prove |
-| Modeling error | The tool rejects the model itself, such as a branch that leaves a variable unassigned, with no violation diagnostic | Correct the model through a reviewed change set, never report it as a finding |
+| Modeling error | The tool rejects the model itself, such as a branch that leaves a variable unassigned, or replay finds a step impossible in the code both now and at sync (or the fallback commit), even with a violation diagnostic | Correct the model through a reviewed change set, never report it as a finding |
 | Real bug | The model matches the code and the property is violated against an agreed source | Report it with the counterexample in the code's words and the commit that made the complete failing sequence reachable, even before sync, and change no product code |
 | Harness gap | The check command, the tool pin or a path is wrong, flaky or missing a precondition while the model and the code agree | Correct the suite through a reviewed change set, then rerun |
 

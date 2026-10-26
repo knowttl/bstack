@@ -160,7 +160,8 @@ Where the host supports subagents, give each property one read-only reader; othe
 Each reader compares one property file and its transition table with the code at its declared source paths and reports disagreements with file and line evidence, without editing or running anything.
 Its input includes the diff since the property's sync commit, from the fallback commit that `formal check` names when the sync commit is absent or orphaned.
 Its checklist includes covered functions that were renamed, split or moved, even outside the declared source paths, and new writers of the state the property guards; give it the repo-wide `git diff -M -C --stat` since the sync commit as the maintain guide describes, because the source-path diff cannot show them.
-Also re-check each `No-proof-impact: <id>: <reason>` trailer in the commits since that sync commit against the model and the transition table, as the maintain guide's trailer audit describes; judge whether the edit changes modeled behaviour, bounds or assumptions, since touching modeled code alone does not break the claim, and the message is never the evidence.
+Also re-check each `No-proof-impact: <id>: <reason>` trailer in the commits since that sync commit against the model and the transition table, as the maintain guide's trailer audit describes; inspect each commit's repo-wide diff and relevant moved functions, helpers and guarded-state writers, including outside declared source paths, before judging whether the edit changes modeled behaviour, bounds or assumptions.
+Touching modeled code alone does not break the claim, and the message is never the evidence.
 
 Done when: Every property has a reader report, or sequential reading covered every property and says so, and every such trailer is recorded as holding or broken with its commit and evidence about modeled behaviour, bounds and assumptions.
 
@@ -175,6 +176,7 @@ Done when: Every property has a recorded result, or a named unmet prerequisite.
 
 First replay each failing property's counterexample against the real code, one step at a time, as the maintain guide's replay describes: a step that cannot happen in the code means model drift or a modeling error, and a trace whose every step can happen is a real bug, for which you name the commit that made the complete failing sequence reachable, searching before sync when necessary.
 Then sort each problem from the earlier steps, including a broken trailer claim, into exactly one class: model drift, modeling error, real bug or harness gap.
+A replayed step impossible both now and at sync (or the fallback commit) is a modeling error even with a violation diagnostic; a step possible then but impossible now is model drift.
 Use an agreed source such as the design section the property cites as the tie-breaker when the replay is unclear, never the code's current behaviour, and ask the user when no agreed source exists.
 A failure that first appears after the Step M5 correction returns here, and a broken trailer claim and a failure from the same commit are separate problems.
 Keep any scratch reproduction of a bug as report evidence, outside product code.
