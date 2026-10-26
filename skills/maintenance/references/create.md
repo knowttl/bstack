@@ -21,9 +21,10 @@ Register only documents the project already keeps, each with a stable `id` and i
 | Glossary or each context glossary | any `id`, with `glossary: {context, format}` | domain terms |
 | Design or architecture document | `id` `design` | module boundaries and responsibilities |
 | Vision | `id` `vision` | purpose, users and non-goals |
+| Implementation plan | `id` `plan` | its units, and the removal condition it states |
 | Anything else, such as the README | a descriptive `id` | its own facts, owned by no skill |
 
-The sweep reads these IDs to name the mode that fixes a document, so keep `design` and `vision` exact.
+The sweep reads these IDs to name the mode that fixes a document, so keep `design`, `vision` and `plan` exact.
 Map code to documents with `scopes`: each scope lists the code paths a document describes, in `paths`, and the `documentIds` and `ruleIds` that govern them.
 A rule names a literal sentence in an authoritative document as its `pointer`, and the checks that prove it.
 Use the project's own check command as a leaf check and never invoke the checker from a leaf.

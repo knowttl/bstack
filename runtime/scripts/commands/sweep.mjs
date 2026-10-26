@@ -1,7 +1,7 @@
-import { readdir, readFile } from 'node:fs/promises'
+import { readdir, readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
+import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
 import { markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { loadContract } from './contract.mjs'
@@ -27,6 +27,44 @@ async function readIfPresent(root, path) {
   return readFile(await resolveFilePath(root, path), 'utf8').catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
 }
 
+// A path that is unsafe or cannot be resolved is unreadable, which the caller treats like a missing file.
+async function pathExists(root, path) {
+  try { await stat(await resolvePath(root, path)) } catch (error) {
+    if (error instanceof CommandError || ['ENOENT', 'ENOTDIR'].includes(error.code)) return false
+    throw error
+  }
+  return true
+}
+
+function howToReadSection(text) {
+  const lines = text.split('\n')
+  const start = lines.findIndex(line => /^#{1,6}\s+How to read this\s*$/.test(line))
+  if (start < 0) return ''
+  const end = lines.findIndex((line, index) => index > start && /^#{1,6}\s/.test(line))
+  return lines.slice(start + 1, end < 0 ? undefined : end).join('\n')
+}
+
+// A plan is temporary: it is finished when the file its removal condition names exists, and orphaned when a design file it cites is gone or the condition cannot be read.
+async function planItems(target, policy) {
+  const document = policy.contract.documents.find(document => document.id === 'plan')
+  if (!document) return []
+  const text = await readFile(await resolveFilePath(target.root, document.path), 'utf8')
+  const items = []
+  const orphaned = message => items.push({ code: 'plan-orphaned', path: document.path, message, fix: 'Delete the plan and its AGENTS.md pointer line in a change the user approves, or restore what it depends on.' })
+  for (const [, line] of text.matchAll(/^Design: (.+)$/gm)) {
+    for (const [, path] of line.matchAll(/`([^`]+):[1-9][0-9]*`/g)) {
+      if (!await pathExists(target.root, path)) orphaned(`The plan cites design file ${path}, which is gone.`)
+    }
+  }
+  const condition = howToReadSection(text).match(/^Remove this plan when `([^`]+)` exists\.?\s*$/m)?.[1]
+  if (condition === undefined) orphaned('The "How to read this" section states no removal condition of the form "Remove this plan when `<path>` exists."')
+  else if (await pathExists(target.root, condition)) {
+    items.push({ code: 'plan-finished', path: document.path, message: `${condition} exists, so the plan's removal condition holds.`,
+      fix: 'Delete the plan and its AGENTS.md pointer line in a change the user approves.' })
+  }
+  return items
+}
+
 async function contractItems(target, options, coverageLimits) {
   const path = options.contract ?? '.bstack/project.json'
   if (await readIfPresent(target.root, path) === null) {
@@ -41,6 +79,7 @@ async function contractItems(target, options, coverageLimits) {
   const docs = await checkDocuments({ ...options, coveragePolicy: policy })
   items.push(...docs.problems.map(problem => ({ ...problem, fix: owner(problem.path) })))
   coverageLimits.push(...docs.data.coverageLimits)
+  items.push(...await planItems(target, policy))
   const regenerate = 'Run /maintenance and its docs generate command, then apply the reviewed proposal.'
   try { items.push(...(await checkGeneratedSections({ ...options, check: true, coveragePolicy: policy })).problems.map(problem => ({ ...problem, fix: regenerate }))) } catch (error) {
     items.push(...problemsOf(error).map(problem => ({ ...problem, fix: regenerate })))

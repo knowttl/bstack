@@ -6,11 +6,21 @@ Every choice below is a candidate tied to a requirement, never a default.
 
 ## Contents
 
+- [Draft the quickstart](#draft-the-quickstart)
 - [Choose the stack](#choose-the-stack)
 - [Choose the scaffold](#choose-the-scaffold)
 - [Choose the first journey](#choose-the-first-journey)
 - [Choose the native checks](#choose-the-native-checks)
 - [Record each proposal](#record-each-proposal)
+
+## Draft the quickstart
+
+Before proposing the stack, draft the README quickstart for the first user journey in scratch.
+Write it as the user would follow it: what they install or open, the commands or steps they take in order, and the outcome they see.
+Take the journey and its outcome from the approved vision or the confirmed context, in the glossary's words.
+A step you cannot write plainly is an unresolved choice, so name it and keep the stack that depends on it blocked.
+The stack must make this quickstart true, and a stack that needs steps the quickstart cannot state plainly is the weaker candidate.
+Once the stack is chosen, rewrite the quickstart's commands to match the setup and check commands the plan declares.
 
 ## Choose the stack
 

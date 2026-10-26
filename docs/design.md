@@ -612,7 +612,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - Owns the generated repo checker, whose committed home is `skills/maintenance/scripts/bstack-check.mjs`. The checker gains a `--docs-only` mode that runs `docs check` and `docs generate --check` on the current tree with no base, assessment or leaf execution, and the docs gate calls it.
 - The sweep is one shared command, `sweep`, whose checks follow the [sweep command contract](command-contract.md#sweep).
   It reads a document's owner from its registration (the `glossary` field, or the IDs `design` and `vision`).
-  Pending plan-lifetime requirements are owned by A6 in the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24).
+  Plan lifetime follows A6 in the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24): the sweep reports the document registered as `plan` as finished or orphaned, as the [sweep command contract](command-contract.md#sweep) describes.
   Code changes or document age alone never create repair items for registered documents or fail their checks.
   Formal-suite drift follows U1 in the [formal verification upkeep amendment](#formal-verification-upkeep-amendment-2026-10-24).
   Skipped Markdown and unsupported link fragments are reported only as unchecked scope in `data.coverageLimits`, never as repair items or failures by themselves.
@@ -639,7 +639,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
   A citation uses `cite-check`'s location and exact-byte state, and evidence is a check or kit feature by name, so the command verifies that a unit names evidence and not that the evidence exists yet.
 - Boundary: writes one plan document and checks it. It starts no skill and no work, never executes a unit, assigns no agent, tracks no progress and edits no product code. It writes only through `apply`, after the user approves the exact file.
 - It proposes one pointer line for the plan through the shared pointer contract.
-- Pending plan-lifetime and pointer-removal requirements are owned by A6 in the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24).
+- The plan states its removal condition in "How to read this", and plan lifetime and pointer removal follow A6 in the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24).
 
 ### formal-verification
 

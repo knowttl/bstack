@@ -78,7 +78,7 @@ Fix every reported problem by changing the plan, never by dropping the unit's ev
 Open each cited design section to confirm it supports its unit, because the checker establishes only that the citation resolves and the unit names evidence.
 Then draft the plan document in scratch from the checked record.
 
-Done when: `plan check` passes on the record, every unit's evidence names a check or kit feature that exists or says which unit adds it, every non-functional target is carried by a unit or recorded as open, and the document's units match the record's one for one.
+Done when: `plan check` passes on the record, every unit's evidence names a check or kit feature that exists or says which unit adds it, every non-functional target is carried by a unit or recorded as open, the document's units match the record's one for one, and its "How to read this" section states the removal condition.
 
 ### Step 5: Review and apply
 

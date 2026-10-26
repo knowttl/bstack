@@ -20,9 +20,14 @@ These are unchecked scope, never problems or repair items, and never fail the co
 | Suite codes such as `file-drift`, `table-drift`, `source-paths-missing`, `orphan-property-file`, `step-code-missing`, `tool-hash-mismatch` in a `formal-*` folder | A formal verification suite no longer matches its plan, the repo or its pinned tool | `/formal-verification maintain` |
 | `source-changed-since-sync`, `sync-commit-missing` in a `formal-*` folder | A property's source paths changed since the commit it was last confirmed at, even if the change reached the base branch, or that commit is absent or gone after a rebase or squash | `/formal-verification maintain` |
 | `broken-local-link` in `AGENTS.md` | A pointer's target is gone | `/agents-md` |
+| `plan-finished` | The file named in the plan's removal condition exists | The user approves deleting the plan and its `AGENTS.md` pointer line |
+| `plan-orphaned` | The plan cites a design file that is gone, or its "How to read this" section states no readable removal condition | The user approves deleting the plan and its pointer line, or restoring what it depends on |
 
 A `formal-*` suite is checked next to the kit, and a `verify-` kit is never read as a suite.
 A suite whose pinned tool file is missing is unproven and not drifted, so it appears in `data.coverageLimits` and never fails the command.
+
+Only the document registered with the ID `plan` is read as a plan.
+Its condition is the line ``Remove this plan when `<path>` exists.`` in its "How to read this" section, and its design files are the `path:line` citations in backticks on its `Design:` lines.
 
 A document registered under another ID has no owning skill, and its problems are corrected by hand.
 For registered documents, code changes or document age alone never produce a repair item or fail the command.

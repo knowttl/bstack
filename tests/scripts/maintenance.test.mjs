@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
@@ -166,6 +166,31 @@ test('sweep passes after a code refactor with current documents and writes nothi
   assert.deepEqual(swept.problems, [])
   assert.deepEqual(await snapshot(f.repo), before)
 })
+
+const planDocument = (design, condition) => `# Shop plan\n\n## How to read this\n\nA unit is done only when its evidence passes.\n${condition}\n\n### U1 Price an order\n\nDesign: \`${design}\`\n`
+
+// The design the plan cites is not a registered document, so removing it leaves the contract valid.
+for (const { name, plan, removeSpec, expected } of [
+  { name: 'passes a plan whose condition does not hold yet', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/done.mjs` exists.'), expected: [] },
+  { name: 'reports a plan whose condition holds as finished', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/a.mjs` exists.'), expected: ['plan-finished'] },
+  { name: 'reports a plan that cites a missing design as orphaned', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/done.mjs` exists.'), removeSpec: true, expected: ['plan-orphaned'] },
+  { name: 'reports a plan with no readable condition as orphaned', plan: planDocument('docs/spec.md:1', 'Remove it when the work is done.'), expected: ['plan-orphaned'] }
+]) {
+  test(`sweep ${name} and writes nothing`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    await writeFile(join(f.repo, 'docs/spec.md'), '# Spec\n')
+    await writeFile(join(f.repo, 'docs/plan.md'), plan)
+    await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract, documents: [...contract.documents, { id: 'plan', path: 'docs/plan.md' }] }))
+    f.commit('baseline')
+    if (removeSpec) await rm(join(f.repo, 'docs/spec.md'))
+    const before = await snapshot(f.repo)
+    const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
+    assert.deepEqual(swept.problems.map(problem => [problem.code, problem.path]), expected.map(code => [code, 'docs/plan.md']))
+    assert.equal(swept.exit, expected.length ? 1 : 0, JSON.stringify(swept))
+    assert.deepEqual(await snapshot(f.repo), before)
+  })
+}
 
 test('sweep reports a repo with no contract as the first item for create', async t => {
   const f = await emptyRepo(t)

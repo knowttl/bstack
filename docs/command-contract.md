@@ -398,6 +398,8 @@ Skipped Markdown and unsupported link fragments in registered content or `AGENTS
 Coverage limits are never problems or repair items and never fail sweep by themselves; `passed` means no drift was demonstrated in the checked scope.
 A broken link or invalid glossary entry in a document is fixed by that document's owner: `/glossary maintain` for a registered glossary, `/architecture maintain` for the document with ID `design`, `/vision` for the one with ID `vision`, and by hand for any other.
 A stale generated section is fixed by running `docs generate` in `/maintenance`.
+The document registered with the ID `plan` is read as a plan: `plan-finished` is reported when the repo-relative path in its line ``Remove this plan when `<path>` exists.`` (in the "How to read this" section) exists, and `plan-orphaned` when a `path:line` citation in backticks on one of its `Design:` lines names a path that is gone or the section has no such line or names an unresolvable path.
+Sweep fixes neither: the user approves deleting the plan together with its `AGENTS.md` pointer line.
 For registered documents, code changes or document age alone never produce a repair item or fail the command.
 Formal suites follow the [formal check contract](#formal-verification-skill-commands), including source drift since a property's sync commit.
 Each applied verification kit under `.agents/skills/verify-*/` is checked with the `kit check` rules and fixed by `/verification maintain`, each applied formal verification suite under `.agents/skills/formal-*/` is checked with the `formal check` rules and fixed by `/formal-verification maintain`, and a link in the root `AGENTS.md` that does not resolve is fixed by `/agents-md`.
