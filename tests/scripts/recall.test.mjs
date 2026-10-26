@@ -22,9 +22,9 @@ function claudeSession(cwd, turns) {
   ])
 }
 
-function codexSession(cwd, turns) {
+function codexSession(cwd, turns, source = 'cli') {
   return jsonl([
-    { type: 'session_meta', timestamp: '2026-10-02T10:00:00.000Z', payload: { id: 'c', cwd } },
+    { type: 'session_meta', timestamp: '2026-10-02T10:00:00.000Z', payload: { id: 'c', cwd, source } },
     ...turns.map(([role, type, text], index) => ({ type: 'response_item', timestamp: `2026-10-02T10:00:0${index + 1}.000Z`, payload: { type: 'message', role, content: [{ type, text }] } })),
     { type: 'response_item', timestamp: '2026-10-02T10:00:09.000Z', payload: { type: 'function_call', name: 'shell', arguments: 'CODEX-TOOL-CALL' } }
   ])
@@ -145,4 +145,47 @@ test('transcripts passes when neither host has a transcript folder', async t => 
   const result = transcripts(context)
   assert.equal(result.exit, 0)
   assert.deepEqual(result.data.sessions, [])
+})
+
+test('transcripts excludes Codex sub-agent sessions', async t => {
+  const context = await fixture(t)
+  const folder = join(context.codex, 'sessions/2026/10/02')
+  for (const [name, source] of [
+    ['spawn', { subagent: { thread_spawn: { parent_thread_id: 'parent', depth: 1 } } }],
+    ['review', { subagent: 'review' }],
+    ['compact', { subagent: 'compact' }]
+  ]) {
+    await writeFile(join(folder, `rollout-${name}.jsonl`), codexSession(context.repo, [['user', 'input_text', 'DELEGATED-PROMPT'], ['assistant', 'output_text', 'DELEGATED-RESPONSE']], source))
+  }
+  const result = transcripts(context)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.sessions.length, 3)
+  assert.doesNotMatch(JSON.stringify(result), /DELEGATED/)
+  assert.doesNotMatch(Object.values(await digests(result)).join('\n'), /DELEGATED/)
+})
+
+for (const host of ['claude', 'codex']) {
+  test(`transcripts blocks when the ${host} history root is not a directory`, async t => {
+    const context = await fixture(t)
+    const folder = join(context[host], host === 'claude' ? 'projects' : 'sessions')
+    await rm(folder, { recursive: true })
+    await writeFile(folder, 'not a directory')
+    const result = transcripts(context)
+    assert.equal(result.exit, 2)
+    assert.equal(result.status, 'blocked')
+    assert.match(result.problems[0].message, /ENOTDIR/)
+  })
+}
+
+test('transcripts releases early inspection streams across large host histories', { skip: process.platform === 'win32' }, async t => {
+  const context = await fixture(t)
+  for (const [folder, prefix, content] of [
+    [join(context.claude, 'projects', claudeFolder(context.repo)), '', claudeSession(context.repo, [['user', 'HISTORY-PROMPT', {}]])],
+    [join(context.codex, 'sessions/2026/10/02'), 'rollout-', codexSession(context.repo, [['user', 'input_text', 'HISTORY-PROMPT']])]
+  ]) {
+    for (let index = 0; index < 96; index++) await writeFile(join(folder, `${prefix}large-${index}.jsonl`), content + ' '.repeat(128 * 1024))
+  }
+  const result = spawnSync('sh', ['-c', 'ulimit -n 64; exec "$@"', 'sh', process.execPath, entry, 'transcripts', '--repo', context.repo, '--json'], { cwd: context.directory, env: context.env, encoding: 'utf8' })
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+  assert.equal(JSON.parse(result.stdout).data.sessions.length, 195)
 })

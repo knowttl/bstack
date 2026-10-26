@@ -204,7 +204,8 @@ async function createScratch(target) {
 var turnLimit = 2e3;
 var promptLimit = 120;
 async function* records(file) {
-  const lines = createInterface({ input: createReadStream(file, { encoding: "utf8" }), crlfDelay: Infinity });
+  const input = createReadStream(file, { encoding: "utf8" });
+  const lines = createInterface({ input, crlfDelay: Infinity });
   try {
     for await (const line of lines) {
       try {
@@ -215,17 +216,27 @@ async function* records(file) {
     }
   } finally {
     lines.close();
+    input.destroy();
   }
 }
 var cwdOf = (record) => record?.cwd ?? (record?.type === "session_meta" ? record.payload?.cwd : void 0);
 async function launchDirectory(file) {
   for await (const record of records(file)) {
+    if (record?.type === "session_meta" && record.payload?.source?.subagent) return void 0;
     const cwd = cwdOf(record);
     if (cwd) return cwd;
   }
   return void 0;
 }
 var textOf = (content) => typeof content === "string" ? content : (Array.isArray(content) ? content : []).filter((block) => ["text", "input_text", "output_text"].includes(block.type)).map((block) => block.text).join("\n");
+async function hostDirectory(directory, options) {
+  try {
+    return await readdir(directory, options);
+  } catch (error) {
+    if (error.code === "ENOENT" && error.path === directory) return [];
+    throw error;
+  }
+}
 var hosts = {
   "claude-code": {
     // Claude Code keeps one folder per launch directory under projects/, named by replacing every non-alphanumeric character with a hyphen.
@@ -233,7 +244,7 @@ var hosts = {
       const projects = join3(process.env.CLAUDE_CONFIG_DIR ?? join3(homedir2(), ".claude"), "projects");
       const name = root.replaceAll(/[^a-zA-Z0-9]/g, "-");
       const found = [];
-      for (const folder of await readdir(projects).catch(() => [])) {
+      for (const folder of await hostDirectory(projects)) {
         if (folder !== name && !folder.startsWith(`${name}-`)) continue;
         for (const file of await readdir(join3(projects, folder))) if (file.endsWith(".jsonl")) found.push(join3(projects, folder, file));
       }
@@ -245,7 +256,7 @@ var hosts = {
     // Codex keeps rollout files under sessions/YYYY/MM/DD/ and records the launch directory inside each.
     async files() {
       const sessions = join3(process.env.CODEX_HOME ?? join3(homedir2(), ".codex"), "sessions");
-      const names = await readdir(sessions, { recursive: true }).catch(() => []);
+      const names = await hostDirectory(sessions, { recursive: true });
       return names.filter((name) => /(?:^|[\\/])rollout-[^\\/]*\.jsonl$/.test(name)).map((name) => join3(sessions, name));
     },
     turn: (record) => record.type === "response_item" && record.payload?.type === "message" && ["user", "assistant"].includes(record.payload.role) ? { role: record.payload.role, text: textOf(record.payload.content) } : null
