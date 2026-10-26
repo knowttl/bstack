@@ -1095,7 +1095,7 @@ async function sourcePointer(root, input2, removed) {
   await exactPathCase(root, input2);
   if (!(await stat5(path)).isFile()) reject2("missing-path", input2, "Source pointers must identify existing files.");
 }
-async function loadContract(target, input2 = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set()) {
+async function loadContract(target, input2 = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), missingSources) {
   pathGlob(input2);
   const path = await resolveFilePath(target.root, input2);
   await exactPathCase(target.root, input2, true);
@@ -1111,7 +1111,14 @@ async function loadContract(target, input2 = ".bstack/project.json", removedPath
   const reference = (ids, collection, path2) => {
     for (const id of ids) if (!contract[collection].some((record) => record.id === id)) reject2("unknown-id", path2, `Unknown ${collection} ID: ${id}`);
   };
-  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) {
+    try {
+      await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+    } catch (error) {
+      if (!missingSources || !(error instanceof CommandError) || !error.problems.every((problem2) => problem2.code === "missing-path")) throw error;
+      missingSources.push(...error.problems);
+    }
+  }
   for (const scope of contract.scopes) {
     scope.paths.forEach(pathGlob);
     reference(scope.documentIds, "documents", scope.id);
@@ -4083,7 +4090,8 @@ async function pathExists(root, path) {
   try {
     await stat7(await resolvePath(root, path));
   } catch (error) {
-    if (error instanceof CommandError || ["ENOENT", "ENOTDIR"].includes(error.code)) return false;
+    if (error instanceof CommandError || error.code === "ENOTDIR") return null;
+    if (error.code === "ENOENT") return false;
     throw error;
   }
   return true;
@@ -4098,7 +4106,8 @@ function howToReadSection(text) {
 async function planItems(target, policy) {
   const document = policy.contract.documents.find((document2) => document2.id === "plan");
   if (!document) return [];
-  const text = await readFile13(await resolveFilePath(target.root, document.path), "utf8");
+  const text = await readIfPresent3(target.root, document.path);
+  if (text === null) return [];
   const items = [];
   const orphaned = (message) => items.push({ code: "plan-orphaned", path: document.path, message, fix: "Delete the plan and its AGENTS.md pointer line in a change the user approves, or restore what it depends on." });
   for (const [, line] of text.matchAll(/^Design: (.+)$/gm)) {
@@ -4108,8 +4117,10 @@ async function planItems(target, policy) {
   }
   const condition = howToReadSection(text).match(/^Remove this plan when `([^`]+)` exists\.?\s*$/m)?.[1];
   if (condition === void 0) orphaned('The "How to read this" section states no removal condition of the form "Remove this plan when `<path>` exists."');
-  else if (await pathExists(target.root, condition)) {
-    items.push({
+  else {
+    const exists = await pathExists(target.root, condition);
+    if (exists === null) orphaned(`The removal condition path ${condition} cannot be resolved.`);
+    else if (exists) items.push({
       code: "plan-finished",
       path: document.path,
       message: `${condition} exists, so the plan's removal condition holds.`,
@@ -4124,17 +4135,19 @@ async function contractItems(target, options, coverageLimits) {
     return [{ code: "contract-missing", path, message: "No maintenance contract is registered.", fix: "Run /maintenance create." }];
   }
   let policy;
+  const missingSources = [];
   try {
-    policy = await loadContract(target, options.contract);
+    policy = await loadContract(target, options.contract, /* @__PURE__ */ new Set(), missingSources);
   } catch (error) {
     return problemsOf(error).map((problem2) => ({ ...problem2, fix: "Run /maintenance create to correct the registration." }));
   }
-  const items = [];
+  const items = missingSources.map((problem2) => ({ ...problem2, fix: "Run /maintenance create to correct the registration." }));
+  items.push(...await planItems(target, policy));
+  if (missingSources.length) return items;
   const owner = (path2) => fixFor(policy.contract.documents.find((document) => document.path === path2));
   const docs = await run2({ ...options, coveragePolicy: policy });
   items.push(...docs.problems.map((problem2) => ({ ...problem2, fix: owner(problem2.path) })));
   coverageLimits.push(...docs.data.coverageLimits);
-  items.push(...await planItems(target, policy));
   const regenerate = "Run /maintenance and its docs generate command, then apply the reviewed proposal.";
   try {
     items.push(...(await run3({ ...options, check: true, coveragePolicy: policy })).problems.map((problem2) => ({ ...problem2, fix: regenerate })));

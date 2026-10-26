@@ -965,7 +965,7 @@ async function sourcePointer(root, input, removed) {
   await exactPathCase(root, input);
   if (!(await stat4(path)).isFile()) reject2("missing-path", input, "Source pointers must identify existing files.");
 }
-async function loadContract(target, input = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set()) {
+async function loadContract(target, input = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), missingSources) {
   pathGlob(input);
   const path = await resolveFilePath(target.root, input);
   await exactPathCase(target.root, input, true);
@@ -981,7 +981,14 @@ async function loadContract(target, input = ".bstack/project.json", removedPaths
   const reference = (ids, collection, path2) => {
     for (const id of ids) if (!contract[collection].some((record) => record.id === id)) reject2("unknown-id", path2, `Unknown ${collection} ID: ${id}`);
   };
-  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) {
+    try {
+      await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+    } catch (error) {
+      if (!missingSources || !(error instanceof CommandError) || !error.problems.every((problem) => problem.code === "missing-path")) throw error;
+      missingSources.push(...error.problems);
+    }
+  }
   for (const scope of contract.scopes) {
     scope.paths.forEach(pathGlob);
     reference(scope.documentIds, "documents", scope.id);
@@ -2807,4 +2814,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"38b40d3a7a71f63c01c6814c3a24c3d9c617cd6570b5fce2e9c1bc2b55b2913d"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"4fb74d18fab943ebcad4e5f91465c005f77cac6516aa590bf9d0f3023186c631"}
