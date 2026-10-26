@@ -100,6 +100,12 @@
     "assets": [],
     "references": ["why-evidence.md", "writing.md"]
   },
+  "prototype": {
+    "commands": ["kit check", "kit prove"],
+    "schemas": ["kit-plan.json"],
+    "assets": ["map-coverage.mjs"],
+    "references": ["writing.md"]
+  },
   "recall": {
     "commands": ["transcripts"],
     "schemas": [],

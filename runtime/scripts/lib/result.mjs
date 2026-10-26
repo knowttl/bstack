@@ -2,10 +2,11 @@
 const exitCodes = { passed: 0, failed: 1, blocked: 2, 'usage-error': 3 }
 
 export class CommandError extends Error {
-  constructor(status, problems) {
+  constructor(status, problems, data = {}) {
     super(problems.map(problem => problem.message).join('\n'))
     this.status = status
     this.problems = problems
+    this.data = data
   }
 }
 

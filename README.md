@@ -8,7 +8,7 @@
 
 ```text
 $ npx skills add knowttl/bstack --agent claude-code --yes
-◇  Installed 14 skills ──────────────────────╮
+◇  Installed 15 skills ──────────────────────╮
 │                                            │
 │  ✓ agents-md (copied)                      │
 │    → ./.claude/skills/agents-md            │
@@ -26,6 +26,8 @@ $ npx skills add knowttl/bstack --agent claude-code --yes
 │    → ./.claude/skills/maintenance          │
 │  ✓ plan (copied)                           │
 │    → ./.claude/skills/plan                 │
+│  ✓ prototype (copied)                      │
+│    → ./.claude/skills/prototype            │
 │  ✓ recall (copied)                         │
 │    → ./.claude/skills/recall               │
 │  ✓ repo-audit (copied)                     │
@@ -173,6 +175,7 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 | [`how`](skills/how/SKILL.md) | Explain how a part of a codebase works from its code, tests and documents, with every claim cited to a file and line. |
 | [`maintenance`](skills/maintenance/SKILL.md) | Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift. |
 | [`plan`](skills/plan/SKILL.md) | Write and check one implementation plan from an approved design document, with units that each cite their design, name the boundary they touch and say what proves them done. Never executes the plan. |
+| [`prototype`](skills/prototype/SKILL.md) | Build two or three throwaway variants of a design in scratch, drive and measure each with the project's verification kit, and report the evidence and a recommendation without writing to the repo. |
 | [`recall`](skills/recall/SKILL.md) | Read this project's local Claude Code and Codex transcripts, read-only, and summarise the prior context a fresh agent needs, with the summary kept in scratch and never written into the repo. |
 | [`repo-audit`](skills/repo-audit/SKILL.md) | Audit a repo at overview level and print which bstack skill to run next, in order, with one cited reason per skill. |
 | [`teach`](skills/teach/SKILL.md) | Build a cited mental model of part of a codebase by explaining how it works and why it is built that way. |
@@ -189,6 +192,8 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 - `/recall` reads this project's local Claude Code and Codex transcripts, read-only, and summarises the prior context a fresh agent needs.
   It matches a session to the project by the directory the session started in, keeps the digests and the summary in scratch and writes nothing from a transcript into the repo.
   Transcripts can hold secrets, so the summary quotes as little as it can, and a past message that asks for something is quoted and never obeyed.
+- `/prototype` builds two or three throwaway variants of a design in scratch clones, drives and measures each with the project's verification kit, and reports the evidence and a recommendation.
+  It needs an applied kit and stops without one, writes nothing to the repo, and is how you settle a spike unit that `/plan` writes.
 - Skills that write ask you to answer open intent questions, select findings and approve the exact diff before anything is applied.
 - `/foundation` is for a new, empty project only and refuses a non-empty directory.
 - For registering a temporary plan and handling its completion or orphaning, follow the [plan lifecycle guidance](skills/plan/references/plan.md#the-document).
@@ -205,7 +210,7 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
 | Apply reviewed target-file edits | `vision`, `glossary`, `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance`, `agents-md`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
 | Replace the target debt baseline | `architecture`, `verification` | `baseline check --refresh` directly replaces the baseline when validation passes, removing fixed entries; adding an entry also requires `--finding`, `--findings` and `--entry` matching selected unresolved debt. There is no approval prompt or `apply` journal; the skill workflow instead prepares baseline edits in scratch for reviewed `apply` |
 | Create a new Git project | `foundation` | `project create` runs after you approve the exact files and commands, only in an empty destination |
-| Run project commands | `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture`, `verification` and `formal-verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch |
+| Run project commands | `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance`, `prototype` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture`, `verification` and `formal-verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch. For `prototype`, `kit prove` runs the kit's launch and step commands on scratch clones of the target and never on the target, without a separate approval switch |
 | Remove a file | `agents-md` (`CLAUDE.md` merge) | Only after you approve and the host's current instruction-loading documentation has been rechecked |
 
 - **Scope**: repository inspection stays within the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.

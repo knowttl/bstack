@@ -1556,6 +1556,7 @@ An unreadable kit blocks with `kit-unavailable`.
 It compares the kit with its own plan and the repo; source reading and live proof establish whether a feature file is true.
 
 `kit prove --repo <path> --app <name> --feature <id>` runs the applied kit's `kit.json` once, replacing `{port}`, `{runDir}` and `{evidenceDir}` in commands.
+`{runDir}` is a fresh directory in the OS temporary folder; `{evidenceDir}` is a per-run directory under the kit's repo-relative evidence directory.
 It launches without a shell in its own process group, waits for the declared readiness, runs doctor and then each step of the feature, writing `<evidence directory>/<run id>/<feature>.json` with every command, exit code and output.
 A step passes when it exits 0, its complete stdout matches the step's `match` pattern and each declared artifact exists.
 Output readiness matches the complete launch stdout followed by stderr.
@@ -1565,7 +1566,7 @@ After confirming survival, it updates the proof record with the launch terminati
 The proof-record filename is reserved before commands run; colliding artifacts fail with `evidence-collision` and are never overwritten by the recorder.
 A failed proof exits 1 with the first failure code: `launch-exited`, `launch-not-ready`, `doctor-failed`, `step-failed`, `step-mismatch`, `artifact-missing`, `cleanup-failed` or `evidence-lost`; it still cleans up and keeps its evidence.
 An unreadable kit blocks with `kit-unavailable` and an unknown feature is a usage error naming the available features.
-The result carries `data.runId`, `data.evidenceDirectory`, each evidence file with its SHA-256 and each step's exit code.
+Passing and failed proof results carry `data.runId`, `data.evidenceDirectory`, each evidence file with its SHA-256 and each executed step's exit code.
 
 `comment-check generate --repo <path> --language python|go|typescript` writes a self-contained, comment-free checker to scratch and returns `data.path`, `data.suggestedPath` and `data.run`.
 The checker exits 1 and prints `path:line:column: no-prose-comments: prose comment: <text>` for each comment that is neither an exempt directive nor a license header.
@@ -1635,3 +1636,14 @@ A digest holds `[timestamp] user: text` and `[timestamp] assistant: text` entrie
 The result carries `data.root` (the resolved repo root), `data.path` (the scratch folder), `data.sessions` (ordered by transcript file modification time, newest first, each with `host`, `cwd`, `started`, `turns`, `firstPrompt` cut at 120 characters and `digest`), `data.skippedLines` and `data.limitations`.
 A line that is not JSON, such as the partial last line of a live session, is skipped and counted.
 No matched session is a pass with a limitation, and `--workspace` is a usage error because the command needs a Git repo.
+
+## Prototype skill commands
+
+`node skills/prototype/scripts/prototype.mjs <command> --repo <path> [--json]` is the installed entry point of the prototype skill, which ships only `kit check` and `kit prove`.
+Both run from the [shared runtime](../runtime/) with the contracts in the [verification skill commands](#verification-skill-commands), and the skill adds no command of its own.
+`--help` lists the commands, and `<command> --help` prints that command's syntax.
+
+The skill runs `kit check` on the target, which reads and never writes, and runs `kit prove` only on scratch clones of the target, because the proof writes its evidence into the repo it runs in.
+A clone holds the committed state of the target, so uncommitted target changes and untracked files are absent from it.
+`kit prove` replaces `{port}`, `{runDir}` and `{evidenceDir}` as it does for the verification skill, so two clones run side by side on different ports when the kit's isolation allows it.
+A variant's measurements are the proof record's step output and the failure code of a failed proof, read from `data.evidenceDirectory` inside the clone.

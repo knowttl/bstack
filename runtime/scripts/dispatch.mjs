@@ -17,6 +17,7 @@ export async function dispatch(argv, skill, commands) {
       emitResult({ command, status: 'passed', ...await commands[command].run(options, command) }, options.json)
     } catch (error) {
       emitResult({ command: command ?? argv[0], status: error instanceof CommandError ? error.status : 'blocked',
+        data: error instanceof CommandError ? error.data : {},
         problems: error instanceof CommandError ? error.problems : [{ code: 'command-unavailable', message: error.message, fix: 'Restore command resources and filesystem access.' }] }, argv.includes('--json'))
     }
   }

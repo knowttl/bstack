@@ -198,7 +198,8 @@ export async function run(options) {
     }
   }
   const after = await evidenceHashes(values.evidenceDir)
-  if (problems.length) throw new CommandError('failed', problems)
-  return { inputs: { target, app: plan.app, feature: feature.id }, data: { runId, evidenceDirectory: relative(target.root, values.evidenceDir),
-    evidence: after.map(([path, sha256]) => ({ path, sha256 })), steps: record.steps.map(step => ({ label: step.label, exit: step.exit })) } }
+  const data = { runId, evidenceDirectory: relative(target.root, values.evidenceDir),
+    evidence: after.map(([path, sha256]) => ({ path, sha256 })), steps: record.steps.map(step => ({ label: step.label, exit: step.exit })) }
+  if (problems.length) throw new CommandError('failed', problems, data)
+  return { inputs: { target, app: plan.app, feature: feature.id }, data }
 }
