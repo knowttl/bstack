@@ -29,7 +29,7 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 - [ ] Step 1: Settle the question and the measure
 - [ ] Step 2: Confirm the kit and the baseline
 - [ ] Step 3: Build the variants
-- [ ] Step 4: Drive and measure each variant
+- [ ] Step 4: Drive and measure the baseline and each variant
 - [ ] Step 5: Report
 
 ### Step 1: Settle the question and the measure
@@ -66,12 +66,12 @@ When the measure is a number that the feature steps do not print, add a measurin
 
 Done when: Each variant is a clone in scratch with its approach described in a sentence and its edits confined to the clone.
 
-### Step 4: Drive and measure each variant
+### Step 4: Drive and measure the baseline and each variant
 
-Run `kit prove` on every variant for every feature from Step 1, with the same command and order that the baseline used.
-Read each run's proof record at `<variant>/<data.evidenceDirectory>/<feature>.json` for the steps' output, and record the outcome, the failure code when it failed and the measured values.
+Run `kit prove` again on the baseline and on every variant for every feature from Step 1, using the final identical instrumentation and the same command and order in each clone.
+Read each run's proof record at `<clone>/<data.evidenceDirectory>/<feature>.json` for the steps' output, and record the outcome, the failure code when it failed and the measured values.
 A variant that fails a step because it does not deliver the behavior is a result, so report it with the observed output instead of changing the kit to make it pass.
-When the measure is a number that varies from run to run, run the proof at least three times and report every value, never a single run.
+When the measure is a number that varies from run to run, run the proof at least three times with the same repetition count for the baseline and every variant, and report every value, never a single run.
 Where a variant fails for a reason that is not about the variant, such as `launch-not-ready` from a missing dependency, fix the setup in the clone and say so.
 
 Done when: Every variant and the baseline have a proof result for every feature, with the evidence path and the measured values, or a named failure code.

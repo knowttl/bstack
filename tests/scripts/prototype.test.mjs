@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -96,8 +96,8 @@ test('two variants are driven and measured with the kit while the target stays b
 
   const record = JSON.parse(await readFile(join(kept, results.kept.data.evidenceDirectory, 'greeting.json'), 'utf8'))
   assert.equal(record.steps[0].stdout.trim(), 'Hello, Ada!')
-  const [run] = await readdir(join(broken, '.verification/greeter'))
-  const failed = JSON.parse(await readFile(join(broken, '.verification/greeter', run, 'greeting.json'), 'utf8'))
+  const failed = JSON.parse(await readFile(join(broken, results.broken.data.evidenceDirectory, 'greeting.json'), 'utf8'))
+  assert.equal(failed.runId, results.broken.data.runId)
   assert.equal(failed.steps[0].stdout.trim(), 'Hi, Ada!')
 
   assert.deepEqual({ files: await snapshot(f.target), head: git(f.target, 'rev-parse', 'HEAD'), status: git(f.target, 'status', '--porcelain', '--ignored') }, before)

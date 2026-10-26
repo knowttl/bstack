@@ -2,10 +2,11 @@
 // runtime/scripts/lib/result.mjs
 var exitCodes = { passed: 0, failed: 1, blocked: 2, "usage-error": 3 };
 var CommandError = class extends Error {
-  constructor(status, problems) {
+  constructor(status, problems, data = {}) {
     super(problems.map((problem) => problem.message).join("\n"));
     this.status = status;
     this.problems = problems;
+    this.data = data;
   }
 };
 function emitResult({ command, status, problems = [], data = {}, inputs = {} }, json) {
@@ -102,6 +103,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
       emitResult({
         command: command ?? argv[0],
         status: error instanceof CommandError ? error.status : "blocked",
+        data: error instanceof CommandError ? error.data : {},
         problems: error instanceof CommandError ? error.problems : [{ code: "command-unavailable", message: error.message, fix: "Restore command resources and filesystem access." }]
       }, argv.includes("--json"));
     }
@@ -1099,13 +1101,14 @@ async function run2(options) {
     }
   }
   const after = await evidenceHashes(values.evidenceDir);
-  if (problems.length) throw new CommandError("failed", problems);
-  return { inputs: { target, app: plan.app, feature: feature.id }, data: {
+  const data = {
     runId,
     evidenceDirectory: relative3(target.root, values.evidenceDir),
     evidence: after.map(([path, sha256]) => ({ path, sha256 })),
     steps: record.steps.map((step) => ({ label: step.label, exit: step.exit }))
-  } };
+  };
+  if (problems.length) throw new CommandError("failed", problems, data);
+  return { inputs: { target, app: plan.app, feature: feature.id }, data };
 }
 
 // runtime/scripts/runtime/scripts/prototype.mjs

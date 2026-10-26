@@ -2,10 +2,11 @@
 // runtime/scripts/lib/result.mjs
 var exitCodes = { passed: 0, failed: 1, blocked: 2, "usage-error": 3 };
 var CommandError = class extends Error {
-  constructor(status, problems) {
+  constructor(status, problems, data = {}) {
     super(problems.map((problem) => problem.message).join("\n"));
     this.status = status;
     this.problems = problems;
+    this.data = data;
   }
 };
 function emitResult({ command, status, problems = [], data = {}, inputs = {} }, json) {
@@ -102,6 +103,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
       emitResult({
         command: command ?? argv[0],
         status: error instanceof CommandError ? error.status : "blocked",
+        data: error instanceof CommandError ? error.data : {},
         problems: error instanceof CommandError ? error.problems : [{ code: "command-unavailable", message: error.message, fix: "Restore command resources and filesystem access." }]
       }, argv.includes("--json"));
     }

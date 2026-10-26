@@ -179,11 +179,13 @@ for (const [name, mutate, code] of [
 
 for (const [name, mutate, code] of [
   ['output that differs from the feature file', value => { value.features[0].steps[0].match = 'Goodbye' }, 'step-mismatch'],
+  ['a step that exits unsuccessfully', value => { value.features[0].steps[0].command = ['python3', '-c', 'import sys; sys.exit(3)'] }, 'step-failed'],
   ['a doctor that reports an unhealthy instance', value => { value.doctor.command = ['python3', '-c', 'import sys; sys.exit(3)'] }, 'doctor-failed'],
   ['a launch command that exits before it is ready', value => { value.launch.command = ['python3', '-c', 'import sys; sys.exit(1)'] }, 'launch-exited'],
   ['a launch executable that does not exist', value => { value.launch.command = ['bstack-missing-executable'] }, 'launch-exited'],
   ['a launch command that never becomes ready', value => { value.launch.command = ['python3', '-c', 'import time; time.sleep(30)']; value.launch.timeoutSeconds = 1 }, 'launch-not-ready'],
   ['a declared artifact the step never writes', value => { value.features[0].steps[0].artifacts = ['{evidenceDir}/missing.txt'] }, 'artifact-missing'],
+  ['a cleanup that exits unsuccessfully', value => { value.cleanup.command = ['python3', '-c', 'import sys; sys.exit(3)'] }, 'cleanup-failed'],
   ['a cleanup that deletes the evidence', value => { value.cleanup.command = ['python3', '-c', 'import shutil; shutil.rmtree(".verification")'] }, 'evidence-lost']
 ]) {
   test(`proof fails on ${name}`, async t => {
@@ -193,14 +195,19 @@ for (const [name, mutate, code] of [
     assert.equal(result.status, 'failed')
     assert.equal(result.exit, 1)
     assert.ok(result.problems.some(problem => problem.code === code), JSON.stringify(result.problems))
+    assert.match(result.data.runId, /^[0-9a-f]{8}$/)
+    assert.equal(result.data.evidenceDirectory, join('.verification', 'greeter', result.data.runId))
   })
 }
 
 test('a failed proof stops the service it started and keeps the evidence it captured', async t => {
   const f = await setup(t, value => { value.features[0].steps[0].match = 'Goodbye' })
   await createKit(f)
-  assert.equal(prove(f).status, 'failed')
-  const { directory, record } = await evidenceRecord(f.repo)
+  const result = prove(f)
+  assert.equal(result.status, 'failed')
+  const directory = join(f.repo, result.data.evidenceDirectory)
+  const record = JSON.parse(await readFile(join(directory, 'greeting.json'), 'utf8'))
+  assert.equal(record.runId, result.data.runId)
   assert.equal(record.steps[0].matched, false)
   assert.equal(await readFile(join(directory, 'greeting.txt'), 'utf8'), 'Hello, Ada!\n')
   assert.equal(await closed(Number(/:(\d+)$/.exec(record.doctor.command.at(-1))[1])), true)
