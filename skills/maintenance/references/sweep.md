@@ -25,7 +25,7 @@ A `formal-*` suite is checked next to the kit, and a `verify-` kit is never read
 A suite whose pinned tool file is missing is unproven and not drifted, so it appears in `data.coverageLimits` and never fails the command.
 
 A document registered under another ID has no owning skill, and its problems are corrected by hand.
-Code changes or document age alone are not evidence of drift and never create repair items or fail the command.
+The [sweep command contract](../../../docs/command-contract.md#sweep) defines when code changes produce repair items, including formal-suite sync drift.
 
 ## Drift the command cannot see
 

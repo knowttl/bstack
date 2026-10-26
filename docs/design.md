@@ -610,10 +610,11 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - `sweep`: user-started and read-only. It checks every registered doc, the verification kit and the `AGENTS.md` pointers against the whole repo, then returns one list naming which `maintain` mode fixes each item. It fixes nothing itself.
 - The full per-change assessment record from ["Change evidence contract"](#change-evidence-contract) stays available when signed-off evidence is wanted.
 - Owns the generated repo checker, whose committed home is `skills/maintenance/scripts/bstack-check.mjs`. The checker gains a `--docs-only` mode that runs `docs check` and `docs generate --check` on the current tree with no base, assessment or leaf execution, and the docs gate calls it.
-- The sweep is one shared command, `sweep`, that composes `docs check`, `docs generate --check`, `kit check` and a link check of the root `AGENTS.md`.
+- The sweep is one shared command, `sweep`, whose checks follow the [sweep command contract](command-contract.md#sweep).
   It reads a document's owner from its registration (the `glossary` field, or the IDs `design` and `vision`).
   Pending plan-lifetime requirements are owned by A6 in the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24).
-  Code changes or document age alone never create repair items or fail the command.
+  Code changes or document age alone never create repair items for registered documents or fail their checks.
+  Formal-suite drift follows U1 in the [formal verification upkeep amendment](#formal-verification-upkeep-amendment-2026-10-24).
   Skipped Markdown and unsupported link fragments are reported only as unchecked scope in `data.coverageLimits`, never as repair items or failures by themselves.
   The skill judges every registered document against the whole current repo by reading, including glossary terms, design boundaries, README instructions and facts, vision claims and other registered content.
   Staged, unstaged and untracked content is included; history may order the work but never exclude documents or repository areas, and no baseline is required.

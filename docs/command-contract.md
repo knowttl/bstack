@@ -398,7 +398,8 @@ Skipped Markdown and unsupported link fragments in registered content or `AGENTS
 Coverage limits are never problems or repair items and never fail sweep by themselves; `passed` means no drift was demonstrated in the checked scope.
 A broken link or invalid glossary entry in a document is fixed by that document's owner: `/glossary maintain` for a registered glossary, `/architecture maintain` for the document with ID `design`, `/vision` for the one with ID `vision`, and by hand for any other.
 A stale generated section is fixed by running `docs generate` in `/maintenance`.
-Code changes or document age alone never produce a repair item or fail the command.
+For registered documents, code changes or document age alone never produce a repair item or fail the command.
+Formal suites follow the [formal check contract](#formal-verification-skill-commands), including source drift since a property's sync commit.
 Each applied verification kit under `.agents/skills/verify-*/` is checked with the `kit check` rules and fixed by `/verification maintain`, each applied formal verification suite under `.agents/skills/formal-*/` is checked with the `formal check` rules and fixed by `/formal-verification maintain`, and a link in the root `AGENTS.md` that does not resolve is fixed by `/agents-md`.
 A suite whose pinned tool file is missing is unproven and not drifted, so it appears in `data.coverageLimits` with the tool's path and never fails sweep by itself.
 The two prefixes are distinct, so a `verify-` kit is never read as a suite.
@@ -1595,7 +1596,7 @@ An existing file the change set would create blocks with `suite-exists`.
 
 `formal check --repo <path> --suite <name> [--sync-commit <sha>]` reads the applied suite without running the model checker or writing.
 It fails with exit 1 and one problem per finding, each carrying the affected `path`: `file-drift` (the message names the first differing line), `file-missing`, `source-paths-missing` for a property file with no `Source paths:` line, `table-drift` for a transition table that differs from what `suite.json` renders, `orphan-property-file`, `orphan-model-file`, `pointer-missing`, `source-path-missing` for a declared source path that matches no file, `step-code-missing` for a cited code line that no longer exists, `design-` followed by a citation code such as `design-stale-citation` for a design location that no longer resolves or whose exact bytes changed, `tool-hash-mismatch` when the pinned tool file's sha256 differs from the plan, `source-changed-since-sync` when a property's source paths differ between its `syncCommit` and `HEAD` and `sync-commit-missing` when the property records none or records a commit the repo no longer has.
-Drift is checked between commits, so uncommitted edits are not reported until committed.
+Source drift since the sync commit is checked between commits, so uncommitted source edits do not produce `source-changed-since-sync` until committed.
 For a missing sync commit the check compares from the last commit that changed the suite directory and names that commit in both problems, and when no commit has changed the suite yet it reports only `sync-commit-missing`.
 Neither sync problem concerns the project's maintained check command or the coverage gate.
 `--sync-commit` replaces every recorded sync commit for that run, so a caller can prove a commit passes before recording it; it must be a full lowercase hash of a commit the repo has, or the command fails with `usage-error` and `invalid-sync-commit`.
