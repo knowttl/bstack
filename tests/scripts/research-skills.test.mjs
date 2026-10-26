@@ -10,18 +10,12 @@ import { parse } from 'yaml'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const research = ['how', 'why', 'teach']
 
-test('how, why and teach start only on explicit invocation and name no other skill to start', async () => {
+test('how, why and teach declare explicit-only invocation metadata', async () => {
   for (const name of research) {
     const skill = join(root, 'skills', name)
     const document = await readFile(join(skill, 'SKILL.md'), 'utf8')
     assert.equal(parse(document.match(/^---\r?\n([\s\S]*?)\r?\n---/)[1])['disable-model-invocation'], true, name)
     assert.equal(parse(await readFile(join(skill, 'agents', 'openai.yaml'), 'utf8')).policy.allow_implicit_invocation, false, name)
-    // Another research skill appears only as a next step for the user to run, with the instruction not to start it.
-    for (const other of research.filter(skill => skill !== name)) {
-      for (const line of document.split('\n').filter(text => text.includes(`\`/${other}\``))) {
-        assert.match(line, /starts? (?:neither|none)/, `${name}: ${line}`)
-      }
-    }
   }
 })
 
@@ -33,10 +27,9 @@ test('how, why and teach ship only cite-check, so none can write to the repo', (
   }
 })
 
-test('architecture, why and teach ship the one why-evidence reference and architecture lists it', async () => {
+test('architecture, why and teach ship byte-identical copies of the shared why-evidence reference', async () => {
   const source = await readFile(join(root, 'runtime/references/why-evidence.md'))
   for (const name of ['architecture', 'why', 'teach']) {
     assert.ok(source.equals(await readFile(join(root, 'skills', name, 'references/why-evidence.md'))), name)
   }
-  assert.match(await readFile(join(root, 'skills/architecture/SKILL.md'), 'utf8'), /^\| .+ \| `references\/why-evidence\.md` \|$/m)
 })

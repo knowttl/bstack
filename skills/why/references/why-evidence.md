@@ -9,7 +9,8 @@ Read the sources below, cite each claim at the source it came from, and label ev
 Git history and pull request review threads are always available.
 Read them first, and read only.
 
-- Line history: `git log --follow -L <start>,<end>:<path>` lists every commit that changed a line range, and `git log -S<text> -- <path>` finds the commit that added or removed a piece of text.
+- Line history: `git log -L <start>,<end>:<path>` lists every commit that changed a line range, and `git log -S<text> -- <path>` finds the commit that added or removed a piece of text.
+  Use `git log --follow -- <path>` separately to follow a file through renames.
 - Blame: `git blame -w -C -C --porcelain -L <start>,<end> -- <path>` names the commit that last wrote each line while ignoring whitespace and detecting moved lines.
   Blame shows the last change to a line, not its origin, so follow the line back through each reformat, move and rename with `git log` until the commit that introduced the idea.
 - Commit: `git show --no-patch --format=%H%n%s%n%b <sha>` gives the full message.
