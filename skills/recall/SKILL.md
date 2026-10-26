@@ -67,7 +67,7 @@ Give the reader what a fresh agent needs to continue:
 - the questions still open
 - the commands, files and constraints that mattered, as the sessions named them
 
-Label each point with its session as host, date and the first eight characters of the session file name, and mark a point the sessions do not state as an inference.
+Label each point with its session as host, date and the complete digest basename, and mark a point the sessions do not state as an inference.
 Name what the transcripts cannot answer, such as work done outside a session or changes since the last session, and say that the repo's current state is the authority where the summary disagrees with it.
 Present the summary to the user, give the path of `summary.md`, and tell the user that the folder holds copies of transcript text to delete when done.
 
