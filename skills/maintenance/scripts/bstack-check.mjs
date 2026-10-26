@@ -7,10 +7,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 // runtime/scripts/lib/result.mjs
 var exitCodes = { passed: 0, failed: 1, blocked: 2, "usage-error": 3 };
 var CommandError = class extends Error {
-  constructor(status, problems) {
+  constructor(status, problems, data = {}) {
     super(problems.map((problem) => problem.message).join("\n"));
     this.status = status;
     this.problems = problems;
+    this.data = data;
   }
 };
 function emitResult({ command, status, problems = [], data = {}, inputs = {} }, json) {
@@ -2814,4 +2815,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"922526dfc1fa0b607a10e32dbc9bac92ba0d1d15ec1c6e89e4878fe3e233a592"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"8b7e964a5f1f27189b608ed8128f1bb32d6cba00bb951e5bf867d66ddce65af8"}
