@@ -74,13 +74,14 @@ async function contractItems(target, options, coverageLimits) {
     return [{ code: 'contract-missing', path, message: 'No maintenance contract is registered.', fix: 'Run /maintenance create.' }]
   }
   let policy
-  const missingSources = []
-  try { policy = await loadContract(target, options.contract, new Set(), missingSources) } catch (error) {
+  const sourceProblems = []
+  try { policy = await loadContract(target, options.contract, new Set(), sourceProblems) } catch (error) {
     return problemsOf(error).map(problem => ({ ...problem, fix: 'Run /maintenance create to correct the registration.' }))
   }
-  const items = missingSources.map(problem => ({ ...problem, fix: 'Run /maintenance create to correct the registration.' }))
-  items.push(...await planItems(target, policy))
-  if (missingSources.length) return items
+  const items = sourceProblems.map(problem => ({ ...problem, fix: 'Run /maintenance create to correct the registration.' }))
+  const plan = policy.contract.documents.find(document => document.id === 'plan')
+  if (!sourceProblems.some(problem => problem.path === plan?.path)) items.push(...await planItems(target, policy))
+  if (sourceProblems.length) return items
   const owner = path => fixFor(policy.contract.documents.find(document => document.path === path))
   const docs = await checkDocuments({ ...options, coveragePolicy: policy })
   items.push(...docs.problems.map(problem => ({ ...problem, fix: owner(problem.path) })))

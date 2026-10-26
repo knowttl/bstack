@@ -201,26 +201,55 @@ for (const { name, plan, removeSpec, removeDesign, brokenCondition, expected } o
   })
 }
 
-for (const collection of ['documents', 'rules', 'acceptanceSources']) {
-  test(`sweep inspects a plan despite a missing ${collection} source`, async t => {
+for (const collection of ['documents', 'rules', 'acceptanceSources']) for (const { state, path, code } of [
+  { state: 'missing', path: 'docs/missing.md', code: 'missing-path' },
+  { state: 'broken link', path: 'docs/missing.md', code: 'unresolved-path' },
+  { state: 'escaping link', path: 'docs/missing.md', code: 'escaping-path' },
+  { state: 'non-file', path: 'docs', code: 'invalid-scope' },
+  { state: 'unsafe', path: '../missing.md', code: 'invalid-glob' },
+  { state: 'beneath a file', path: 'src/a.mjs/missing.md', code: 'unresolved-path' }
+]) {
+  test(`sweep inspects a plan despite a ${state} ${collection} source`, async t => {
     const f = await documentedRepo(t)
     await mkdir(join(f.repo, '.bstack'))
     const policy = { ...contract, documents: [...contract.documents, { id: 'plan', path: 'docs/plan.md' }] }
-    policy[collection] = [...policy[collection], { id: 'missing', path: 'docs/missing.md',
+    policy[collection] = [...policy[collection], { id: 'missing', path,
       ...(collection === 'documents' ? {} : { pointer: 'Missing' }), ...(collection === 'rules' ? { checkIds: [] } : {}) }]
-    await writeFile(join(f.repo, 'docs/plan.md'), planDocument('docs/design.md:1', 'Remove this plan when `src/a.mjs` exists.'))
+    if (state === 'broken link') {
+      await writeFile(join(f.repo, 'docs/dependency.md'), '# Design\n')
+      await symlink('dependency.md', join(f.repo, path))
+      await rm(join(f.repo, 'docs/dependency.md'))
+    }
+    if (state === 'escaping link') await symlink('../..', join(f.repo, path))
+    await writeFile(join(f.repo, 'docs/plan.md'), planDocument(`${path}:1`, 'Remove this plan when `src/done.mjs` exists.'))
     await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(policy))
     const before = await snapshot(f.repo)
     const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
     assert.equal(swept.exit, 1, JSON.stringify(swept))
     assert.deepEqual(swept.problems.map(problem => [problem.code, problem.path]), [
-      ['missing-path', 'docs/missing.md'], ['plan-finished', 'docs/plan.md']
+      [code, path], ...(state === 'non-file' ? [] : [['plan-orphaned', 'docs/plan.md']])
     ])
     assert.equal(swept.problems[0].fix, 'Run /maintenance create to correct the registration.')
-    assert.match(swept.problems[1].fix, /Delete the plan and its AGENTS.md pointer line/)
+    if (state !== 'non-file') assert.match(swept.problems[1].fix, /Delete the plan and its AGENTS.md pointer line/)
+    const strict = maintenance(f.directory, ['docs', 'check', '--repo', f.repo])
+    assert.notEqual(strict.exit, 0)
+    assert.deepEqual(strict.problems.map(problem => [problem.code, problem.path]), [[code, path]])
     assert.deepEqual(await snapshot(f.repo), before)
   })
 }
+
+test('sweep retains the diagnostic for an unresolvable plan without reading it', async t => {
+  const f = await documentedRepo(t)
+  await mkdir(join(f.repo, '.bstack'))
+  await symlink('missing.md', join(f.repo, 'docs/plan.md'))
+  await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract,
+    documents: [...contract.documents, { id: 'plan', path: 'docs/plan.md' }] }))
+  const before = await snapshot(f.repo)
+  const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
+  assert.equal(swept.exit, 1, JSON.stringify(swept))
+  assert.deepEqual(swept.problems.map(problem => [problem.code, problem.path]), [['unresolved-path', 'docs/plan.md']])
+  assert.deepEqual(await snapshot(f.repo), before)
+})
 
 test('sweep reports a repo with no contract as the first item for create', async t => {
   const f = await emptyRepo(t)

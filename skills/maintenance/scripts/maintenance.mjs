@@ -1095,7 +1095,7 @@ async function sourcePointer(root, input2, removed) {
   await exactPathCase(root, input2);
   if (!(await stat5(path)).isFile()) reject2("missing-path", input2, "Source pointers must identify existing files.");
 }
-async function loadContract(target, input2 = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), missingSources) {
+async function loadContract(target, input2 = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), sourceProblems) {
   pathGlob(input2);
   const path = await resolveFilePath(target.root, input2);
   await exactPathCase(target.root, input2, true);
@@ -1115,8 +1115,8 @@ async function loadContract(target, input2 = ".bstack/project.json", removedPath
     try {
       await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
     } catch (error) {
-      if (!missingSources || !(error instanceof CommandError) || !error.problems.every((problem2) => problem2.code === "missing-path")) throw error;
-      missingSources.push(...error.problems);
+      if (!sourceProblems || !(error instanceof CommandError)) throw error;
+      sourceProblems.push(...error.problems);
     }
   }
   for (const scope of contract.scopes) {
@@ -4135,15 +4135,16 @@ async function contractItems(target, options, coverageLimits) {
     return [{ code: "contract-missing", path, message: "No maintenance contract is registered.", fix: "Run /maintenance create." }];
   }
   let policy;
-  const missingSources = [];
+  const sourceProblems = [];
   try {
-    policy = await loadContract(target, options.contract, /* @__PURE__ */ new Set(), missingSources);
+    policy = await loadContract(target, options.contract, /* @__PURE__ */ new Set(), sourceProblems);
   } catch (error) {
     return problemsOf(error).map((problem2) => ({ ...problem2, fix: "Run /maintenance create to correct the registration." }));
   }
-  const items = missingSources.map((problem2) => ({ ...problem2, fix: "Run /maintenance create to correct the registration." }));
-  items.push(...await planItems(target, policy));
-  if (missingSources.length) return items;
+  const items = sourceProblems.map((problem2) => ({ ...problem2, fix: "Run /maintenance create to correct the registration." }));
+  const plan = policy.contract.documents.find((document) => document.id === "plan");
+  if (!sourceProblems.some((problem2) => problem2.path === plan?.path)) items.push(...await planItems(target, policy));
+  if (sourceProblems.length) return items;
   const owner = (path2) => fixFor(policy.contract.documents.find((document) => document.path === path2));
   const docs = await run2({ ...options, coveragePolicy: policy });
   items.push(...docs.problems.map((problem2) => ({ ...problem2, fix: owner(problem2.path) })));

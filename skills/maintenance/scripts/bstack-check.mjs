@@ -965,7 +965,7 @@ async function sourcePointer(root, input, removed) {
   await exactPathCase(root, input);
   if (!(await stat4(path)).isFile()) reject2("missing-path", input, "Source pointers must identify existing files.");
 }
-async function loadContract(target, input = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), missingSources) {
+async function loadContract(target, input = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), sourceProblems) {
   pathGlob(input);
   const path = await resolveFilePath(target.root, input);
   await exactPathCase(target.root, input, true);
@@ -985,8 +985,8 @@ async function loadContract(target, input = ".bstack/project.json", removedPaths
     try {
       await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
     } catch (error) {
-      if (!missingSources || !(error instanceof CommandError) || !error.problems.every((problem) => problem.code === "missing-path")) throw error;
-      missingSources.push(...error.problems);
+      if (!sourceProblems || !(error instanceof CommandError)) throw error;
+      sourceProblems.push(...error.problems);
     }
   }
   for (const scope of contract.scopes) {
@@ -2814,4 +2814,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"4fb74d18fab943ebcad4e5f91465c005f77cac6516aa590bf9d0f3023186c631"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"922526dfc1fa0b607a10e32dbc9bac92ba0d1d15ec1c6e89e4878fe3e233a592"}
