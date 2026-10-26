@@ -635,7 +635,7 @@ node skills/why/scripts/why.mjs cite-check --repo <target> --report <report.json
 ### recall
 
 The [recall](../skills/recall/SKILL.md) skill is started by the user and writes nothing to the repo.
-Its one command, `transcripts`, opens the Claude Code transcripts in `CLAUDE_CONFIG_DIR` (default `~/.claude`) and the Codex transcripts in `CODEX_HOME` (default `~/.codex`) read-only, keeps the sessions that started in the repo or inside it, and writes one text digest per session into scratch.
+Its one command, `transcripts`, follows the [recall command contract](command-contract.md#recall-skill-command) for host discovery, session selection and scratch digests.
 The agent reads the digests and writes the summary into the same scratch folder.
 Transcript layouts are undocumented by the hosts and were observed on Claude Code 2.1.310 and Codex 0.157.1 ([R50](design.md#scope-and-decision-history)), so a session in an unrecognised layout is missed.
 

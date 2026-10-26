@@ -210,7 +210,7 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
 
 - **Scope**: repository inspection stays within the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.
   Motivation research also reads pull request discussions and host-exposed connectors, following the [why-evidence reference](runtime/references/why-evidence.md).
-  `/recall` also opens this project's Claude Code and Codex transcripts in their host folders, read-only, and nothing else there.
+  `/recall` also reads host session launch metadata to select this project's Claude Code and Codex transcripts for read-only digestion; see the [recall command contract](docs/command-contract.md#recall-skill-command).
 - **Scratch**: drafts, evidence and previews stay in scratch outside the target until you approve.
 - **Recovery**: `apply` keeps backups of original bytes and a journal, so an interrupted run resumes from verified hashes.
 - **Credentials and network**: skills need no credentials or account, and bstack operates no service.
