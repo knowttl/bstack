@@ -614,7 +614,8 @@ Each unit records whether it is `userFacing`.
 
 Unknown fields, malformed JSON, a unit with no design citation or Done when, and duplicate unit IDs fail with exit 1 and named problems.
 A unit with an empty evidence list fails with `unit-no-evidence`.
-A `userFacing` unit with no `kit-feature` evidence entry fails with `unit-no-kit-feature` when `.agents/skills` of the target holds a `verify-<app>` directory, and passes whenever the project has no verification kit.
+A `userFacing` unit with non-empty evidence but no `kit-feature` entry fails with `unit-no-kit-feature` when `.agents/skills` of the target holds a `verify-<app>` directory.
+This kit-feature requirement does not apply when the project has no verification kit; the other checks still apply.
 A dependency on an ID that is not a unit fails with `unknown-dependency`, and a dependency cycle, including a unit that depends on itself, fails with `dependency-cycle` naming the units in the cycle.
 Missing `--plan` is a usage error, exit 3.
 Successful JSON output records `units`, `citationsChecked` and `order`, which lists the units with every unit after the units it depends on.
