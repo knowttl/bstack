@@ -32,6 +32,7 @@
   "T2.12": ["tests/scripts/repo-audit-overview.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/acceptance.test.mjs"],
   "T2.13": ["tests/scripts/formal.test.mjs", "tests/scripts/verification-create.test.mjs", "tests/scripts/maintenance.test.mjs", "tests/scripts/repo-audit-overview.test.mjs", "tests/scripts/fixtures.test.mjs", "tests/scripts/upstream.test.mjs", "tests/scripts/package-check.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/eval-impact.test.mjs", "tests/scripts/acceptance.test.mjs"],
   "T2.14": ["tests/scripts/research-skills.test.mjs", "tests/scripts/package-check.test.mjs", "tests/scripts/acceptance.test.mjs"],
+  "T2.15": ["tests/scripts/recall.test.mjs", "tests/scripts/package-check.test.mjs", "tests/scripts/acceptance.test.mjs"],
   "T3.1": ["tests/scripts/package-check.test.mjs", "tests/scripts/skill-skeleton.test.mjs", "tests/scripts/eval.test.mjs", "tests/scripts/eval-judge.test.mjs", "tests/scripts/eval-impact.test.mjs", "tests/scripts/release-gate.test.mjs", "tests/scripts/acceptance.test.mjs"],
   "T3.2": ["tests/scripts/rule-proof.test.mjs"],
   "T3.3": ["tests/scripts/baseline.test.mjs"],

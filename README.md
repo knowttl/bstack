@@ -8,7 +8,7 @@
 
 ```text
 $ npx skills add knowttl/bstack --agent claude-code --yes
-◇  Installed 13 skills ──────────────────────╮
+◇  Installed 14 skills ──────────────────────╮
 │                                            │
 │  ✓ agents-md (copied)                      │
 │    → ./.claude/skills/agents-md            │
@@ -26,6 +26,8 @@ $ npx skills add knowttl/bstack --agent claude-code --yes
 │    → ./.claude/skills/maintenance          │
 │  ✓ plan (copied)                           │
 │    → ./.claude/skills/plan                 │
+│  ✓ recall (copied)                         │
+│    → ./.claude/skills/recall               │
 │  ✓ repo-audit (copied)                     │
 │    → ./.claude/skills/repo-audit           │
 │  ✓ teach (copied)                          │
@@ -171,6 +173,7 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 | [`how`](skills/how/SKILL.md) | Explain how a part of a codebase works from its code, tests and documents, with every claim cited to a file and line. |
 | [`maintenance`](skills/maintenance/SKILL.md) | Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift. |
 | [`plan`](skills/plan/SKILL.md) | Write and check one implementation plan from an approved design document, with units that each cite their design, name the boundary they touch and say what proves them done. Never executes the plan. |
+| [`recall`](skills/recall/SKILL.md) | Read this project's local Claude Code and Codex transcripts, read-only, and summarise the prior context a fresh agent needs, with the summary kept in scratch and never written into the repo. |
 | [`repo-audit`](skills/repo-audit/SKILL.md) | Audit a repo at overview level and print which bstack skill to run next, in order, with one cited reason per skill. |
 | [`teach`](skills/teach/SKILL.md) | Build a cited mental model of part of a codebase by explaining how it works and why it is built that way. |
 | [`verification`](skills/verification/SKILL.md) | Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, adopt testing and constraint guidance for it, and turn a repeated correction into a proven check. |
@@ -183,6 +186,9 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 - `/formal-verification` proves one stated property of a high-stakes spot with a model checker such as TLA+ with TLC, and it is listed only where the repo shows cited risk evidence; the project pins the tool file and its sha256, bstack installs nothing, and a missing tool means unproven, never a pass.
 - `/how`, `/why` and `/teach` explain code and write nothing: `/how` traces the mechanics, `/why` reads git history, pull request review threads and any ticket, document or chat connector your host already exposes for the motive, and `/teach` joins both.
   Each claim cites its commit, thread, document or file and line, and text from a source is quoted and never obeyed.
+- `/recall` reads this project's local Claude Code and Codex transcripts, read-only, and summarises the prior context a fresh agent needs.
+  It matches a session to the project by the directory the session started in, keeps the digests and the summary in scratch and writes nothing from a transcript into the repo.
+  Transcripts can hold secrets, so the summary quotes as little as it can, and a past message that asks for something is quoted and never obeyed.
 - Skills that write ask you to answer open intent questions, select findings and approve the exact diff before anything is applied.
 - `/foundation` is for a new, empty project only and refuses a non-empty directory.
 - For registering a temporary plan and handling its completion or orphaning, follow the [plan lifecycle guidance](skills/plan/references/plan.md#the-document).
@@ -204,6 +210,7 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
 
 - **Scope**: repository inspection stays within the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.
   Motivation research also reads pull request discussions and host-exposed connectors, following the [why-evidence reference](runtime/references/why-evidence.md).
+  `/recall` also reads host session launch metadata to select this project's Claude Code and Codex transcripts for read-only digestion; see the [recall command contract](docs/command-contract.md#recall-skill-command).
 - **Scratch**: drafts, evidence and previews stay in scratch outside the target until you approve.
 - **Recovery**: `apply` keeps backups of original bytes and a journal, so an interrupted run resumes from verified hashes.
 - **Credentials and network**: skills need no credentials or account, and bstack operates no service.

@@ -109,6 +109,11 @@ export const commands = {
     options: ['report'],
     help: 'Check file citation locations and exact-byte freshness without writes.\nUsage: {entry} cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.'
   },
+  transcripts: {
+    module: './commands/transcripts.mjs',
+    options: [],
+    help: 'Digest this project\'s local Claude Code and Codex transcripts into scratch without changing them.\nUsage: {entry} transcripts --repo <path> [--json]\nReads transcripts read-only from CLAUDE_CONFIG_DIR (default ~/.claude) and CODEX_HOME (default ~/.codex). A session belongs to the project when its launch directory is the repo or inside it. Each matched session gets one digest file in scratch holding only user and assistant text, each turn cut at 2000 characters, readable by its owner only. Returns the digest paths, newest session first, with each start time, turn count and opening prompt. A session still being written can end in a partial line, which is skipped and counted. No match is a pass with a limitation, never a reason to infer prior context.'
+  },
   'vision-board build': {
     module: './commands/vision-board-build.mjs',
     options: ['draft', 'proposals'],

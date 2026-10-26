@@ -100,6 +100,12 @@
     "assets": [],
     "references": ["why-evidence.md", "writing.md"]
   },
+  "recall": {
+    "commands": ["transcripts"],
+    "schemas": [],
+    "assets": [],
+    "references": ["writing.md"]
+  },
   "teach": {
     "commands": ["cite-check"],
     "schemas": ["research-report.json"],
