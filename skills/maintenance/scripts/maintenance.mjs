@@ -1095,7 +1095,7 @@ async function sourcePointer(root, input2, removed) {
   await exactPathCase(root, input2);
   if (!(await stat5(path)).isFile()) reject2("missing-path", input2, "Source pointers must identify existing files.");
 }
-async function loadContract(target, input2 = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set()) {
+async function loadContract(target, input2 = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), sourceProblems) {
   pathGlob(input2);
   const path = await resolveFilePath(target.root, input2);
   await exactPathCase(target.root, input2, true);
@@ -1111,7 +1111,14 @@ async function loadContract(target, input2 = ".bstack/project.json", removedPath
   const reference = (ids, collection, path2) => {
     for (const id of ids) if (!contract[collection].some((record) => record.id === id)) reject2("unknown-id", path2, `Unknown ${collection} ID: ${id}`);
   };
-  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) {
+    try {
+      await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+    } catch (error) {
+      if (!sourceProblems || !(error instanceof CommandError)) throw error;
+      sourceProblems.push(...error.problems);
+    }
+  }
   for (const scope of contract.scopes) {
     scope.paths.forEach(pathGlob);
     reference(scope.documentIds, "documents", scope.id);
@@ -3069,7 +3076,7 @@ async function run6(options) {
 }
 
 // runtime/scripts/commands/sweep.mjs
-import { readdir as readdir7, readFile as readFile13 } from "node:fs/promises";
+import { readdir as readdir7, readFile as readFile13, stat as stat7 } from "node:fs/promises";
 import { join as join14 } from "node:path";
 
 // runtime/scripts/commands/kit-check.mjs
@@ -4079,18 +4086,65 @@ function problemsOf(error) {
 async function readIfPresent3(root, path) {
   return readFile13(await resolveFilePath(root, path), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
 }
+async function pathExists(root, path) {
+  try {
+    await stat7(await resolvePath(root, path));
+  } catch (error) {
+    if (error instanceof CommandError || error.code === "ENOTDIR") return null;
+    if (error.code === "ENOENT") return false;
+    throw error;
+  }
+  return true;
+}
+function howToReadSection(text) {
+  const lines = text.split("\n");
+  const start = lines.findIndex((line) => /^#{1,6}\s+How to read this\s*$/.test(line));
+  if (start < 0) return "";
+  const end = lines.findIndex((line, index) => index > start && /^#{1,6}\s/.test(line));
+  return lines.slice(start + 1, end < 0 ? void 0 : end).join("\n");
+}
+async function planItems(target, policy) {
+  const document = policy.contract.documents.find((document2) => document2.id === "plan");
+  if (!document) return [];
+  const text = await readIfPresent3(target.root, document.path);
+  if (text === null) return [];
+  const items = [];
+  const orphaned = (message) => items.push({ code: "plan-orphaned", path: document.path, message, fix: "Delete the plan and its AGENTS.md pointer line in a change the user approves, or restore what it depends on." });
+  for (const [, line] of text.matchAll(/^Design: (.+)$/gm)) {
+    for (const [, path] of line.matchAll(/`([^`]+):[1-9][0-9]*`/g)) {
+      if (!await pathExists(target.root, path)) orphaned(`The plan cites design file ${path}, which is gone.`);
+    }
+  }
+  const condition = howToReadSection(text).match(/^Remove this plan when `([^`]+)` exists\.?\s*$/m)?.[1];
+  if (condition === void 0) orphaned('The "How to read this" section states no removal condition of the form "Remove this plan when `<path>` exists."');
+  else {
+    const exists = await pathExists(target.root, condition);
+    if (exists === null) orphaned(`The removal condition path ${condition} cannot be resolved.`);
+    else if (exists) items.push({
+      code: "plan-finished",
+      path: document.path,
+      message: `${condition} exists, so the plan's removal condition holds.`,
+      fix: "Delete the plan and its AGENTS.md pointer line in a change the user approves."
+    });
+  }
+  return items;
+}
 async function contractItems(target, options, coverageLimits) {
   const path = options.contract ?? ".bstack/project.json";
   if (await readIfPresent3(target.root, path) === null) {
     return [{ code: "contract-missing", path, message: "No maintenance contract is registered.", fix: "Run /maintenance create." }];
   }
   let policy;
+  const sourceProblems = [];
   try {
-    policy = await loadContract(target, options.contract);
+    policy = await loadContract(target, options.contract, /* @__PURE__ */ new Set(), sourceProblems);
   } catch (error) {
     return problemsOf(error).map((problem2) => ({ ...problem2, fix: "Run /maintenance create to correct the registration." }));
   }
-  const items = [];
+  const items = sourceProblems.map((problem2) => ({ ...problem2, fix: "Run /maintenance create to correct the registration." }));
+  const plan = policy.contract.documents.find((document) => document.id === "plan");
+  if (!sourceProblems.some((problem2) => problem2.path === plan?.path)) items.push(...await planItems(target, policy));
+  if (sourceProblems.length) return items;
   const owner = (path2) => fixFor(policy.contract.documents.find((document) => document.path === path2));
   const docs = await run2({ ...options, coveragePolicy: policy });
   items.push(...docs.problems.map((problem2) => ({ ...problem2, fix: owner(problem2.path) })));
@@ -4164,7 +4218,7 @@ async function run9(options) {
 }
 
 // runtime/scripts/commands/probe.mjs
-import { readFile as readFile14, writeFile as writeFile4, stat as stat7 } from "node:fs/promises";
+import { readFile as readFile14, writeFile as writeFile4, stat as stat8 } from "node:fs/promises";
 import { basename as basename3, join as join15, resolve as resolve9 } from "node:path";
 var schemas = {
   "probe-spec": new URL("../schemas/probe-spec.json", import.meta.url),
@@ -4236,7 +4290,7 @@ async function run10(options, commandName) {
   if (spec.timeoutMs !== void 0 && (!Number.isSafeInteger(spec.timeoutMs) || spec.timeoutMs <= 0)) {
     throw new CommandError("usage-error", [problem("invalid-timeout", "Probe timeout must be a positive safe integer.")]);
   }
-  if (!(await stat7(await resolvePath(target.root, spec.cwd))).isDirectory()) {
+  if (!(await stat8(await resolvePath(target.root, spec.cwd))).isDirectory()) {
     throw new CommandError("failed", [problem("invalid-cwd", "Probe working directory must be a directory.")]);
   }
   if (spec.sideEffects && !options["approved-by-user"]) {
@@ -4351,7 +4405,7 @@ import { dirname as dirname6, relative as relative8, resolve as resolve10 } from
 import { spawnSync as spawnSync5 } from "node:child_process";
 
 // runtime/scripts/lib/protected-write.mjs
-import { readFile as readFile15, open, mkdir as mkdir2, rename, unlink, stat as stat8 } from "node:fs/promises";
+import { readFile as readFile15, open, mkdir as mkdir2, rename, unlink, stat as stat9 } from "node:fs/promises";
 import { basename as basename4, dirname as dirname5, join as join16 } from "node:path";
 import { randomUUID as randomUUID2 } from "node:crypto";
 async function fileBytes(path) {
@@ -4542,7 +4596,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
         await syncDirectory(dirname5(path), limitations);
       } else {
         await durableDirectory(dirname5(path), limitations);
-        const mode = edit.originalHash === null ? void 0 : (await stat8(path)).mode;
+        const mode = edit.originalHash === null ? void 0 : (await stat9(path)).mode;
         await replaceFile(path, Buffer.from(edit.proposedContent), mode, limitations, beforeWrite, async (temporary) => {
           journal.edits[index].temporary = temporary;
           await save();

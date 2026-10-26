@@ -61,11 +61,15 @@ Write the plan to `docs/plan.md` unless the user names another path, and replace
 Use these sections in this order, each heading stating the task or the finding:
 
 1. A title and a purpose of under ten lines: what is built, for whom, and the units in order.
-2. "How to read this": a unit is done only when its evidence exists and passes, and the plan is a description of the work, not an instruction to start it.
+2. "How to read this": a unit is done only when its evidence exists and passes, the plan is a description of the work, not an instruction to start it, and the plan is temporary, so it ends with the line ``Remove this plan when `<path>` exists.`` naming one repo-relative file that exists once the last unit is done.
 3. "Build order": the units in dependency order from `plan check`, each with the units it depends on.
-4. One section per unit, headed `### <id> <title>`, with Depends on, Design, Boundary, Done when and Evidence in that order.
+4. One section per unit, headed `### <id> <title>`, with Depends on, Design, Boundary, Done when and Evidence in that order, where Design is the line `Design:` followed by each citation's `path:line` in backticks.
 5. "Decisions": each answer from the builder check and each default taken, with its source.
 6. "Open questions" and "Gaps": questions the user left open, and each missing input with the skill that would create it.
+
+A finished plan left in the repo becomes a stale second source of truth, so the user deletes it once its condition holds, together with its `AGENTS.md` pointer line.
+`/maintenance sweep` reads a plan registered with the ID `plan`, reports it as finished when the file named in its removal condition exists, and reports it as orphaned when a design file it cites is gone or its condition cannot be read.
+Name `/maintenance create` as the next step for registering the plan, and start nothing.
 
 ## What the plan leaves out
 

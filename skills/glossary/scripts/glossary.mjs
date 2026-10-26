@@ -980,7 +980,7 @@ async function sourcePointer(root, input2, removed) {
   await exactPathCase(root, input2);
   if (!(await stat4(path)).isFile()) reject2("missing-path", input2, "Source pointers must identify existing files.");
 }
-async function loadContract(target, input2 = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set()) {
+async function loadContract(target, input2 = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), sourceProblems) {
   pathGlob(input2);
   const path = await resolveFilePath(target.root, input2);
   await exactPathCase(target.root, input2, true);
@@ -996,7 +996,14 @@ async function loadContract(target, input2 = ".bstack/project.json", removedPath
   const reference = (ids, collection, path2) => {
     for (const id of ids) if (!contract[collection].some((record) => record.id === id)) reject2("unknown-id", path2, `Unknown ${collection} ID: ${id}`);
   };
-  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) {
+    try {
+      await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+    } catch (error) {
+      if (!sourceProblems || !(error instanceof CommandError)) throw error;
+      sourceProblems.push(...error.problems);
+    }
+  }
   for (const scope of contract.scopes) {
     scope.paths.forEach(pathGlob);
     reference(scope.documentIds, "documents", scope.id);

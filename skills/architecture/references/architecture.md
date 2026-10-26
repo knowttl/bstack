@@ -11,6 +11,13 @@ A module is a logical unit with an interface and implementation, which may span 
 A god file mixes unrelated responsibilities and becomes a shared target for different changes.
 Length alone does not establish that problem.
 
+## Contents
+
+- [Principles to consider](#principles-to-consider)
+- [What the audit inspects](#what-the-audit-inspects)
+- [Signals that are not violations](#signals-that-are-not-violations)
+- [Boundary rules](#boundary-rules)
+
 ## Principles to consider
 
 Choose principles only where project evidence supports them.
@@ -40,6 +47,10 @@ These adaptations follow the pinned design and module guidance attributed in the
 
 - Unrelated business responsibilities, or startup, UI, domain rules and persistence combined without clear internal boundaries.
 - Imports of private implementation, leaked representations and cycles across intended module boundaries.
+- The same workaround, such as a guard, cast, retry or defensive copy, repeated at unrelated call sites to cope with one module's contract.
+  Cite the sites and name the module they work around: that is evidence the boundary is broken.
+- A rising count of type escape hatches, such as `any`, unchecked casts, type-ignore comments and `unsafe` blocks, at the callers of one module.
+  Count them with the language's own markers at the baseline and now, cite the sites, and treat the rise as evidence the module's types do not describe how it is used.
 - Shared mutable state, multiple writers of canonical data, and state held in scattered booleans, phases or lifecycle checks that must stay in sync.
 - More than one supported way to do one task, where callers copy whichever way they find first and every way keeps gaining callers.
 - Hand-maintained parallel lists of the same items with no derivation or check that fails when they disagree.

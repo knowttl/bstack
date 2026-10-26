@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
@@ -164,6 +164,90 @@ test('sweep passes after a code refactor with current documents and writes nothi
   assert.equal(swept.exit, 0, JSON.stringify(swept))
   assert.equal(swept.status, 'passed')
   assert.deepEqual(swept.problems, [])
+  assert.deepEqual(await snapshot(f.repo), before)
+})
+
+const planDocument = (design, condition) => `# Shop plan\n\n## How to read this\n\nA unit is done only when its evidence passes.\n${condition}\n\n### U1 Price an order\n\nDesign: \`${design}\`\n`
+
+for (const { name, plan, removeSpec, removeDesign, brokenCondition, expected } of [
+  { name: 'passes a plan whose condition does not hold yet', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/done.mjs` exists.'), expected: [] },
+  { name: 'reports a plan whose condition holds as finished', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/a.mjs` exists.'), expected: ['plan-finished'] },
+  { name: 'reports a plan that cites a missing design as orphaned', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/done.mjs` exists.'), removeSpec: true, expected: ['plan-orphaned'] },
+  { name: 'reports a plan that cites a missing registered design as orphaned', plan: planDocument('docs/design.md:1', 'Remove this plan when `src/done.mjs` exists.'), removeDesign: true, expected: ['plan-orphaned'] },
+  { name: 'reports a finished plan despite a missing registered source', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/a.mjs` exists.'), removeDesign: true, expected: ['plan-finished'] },
+  { name: 'reports a broken condition link as orphaned', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/done.mjs` exists.'), brokenCondition: true, expected: ['plan-orphaned'] },
+  { name: 'reports an unsafe condition as orphaned', plan: planDocument('docs/spec.md:1', 'Remove this plan when `../done.mjs` exists.'), expected: ['plan-orphaned'] },
+  { name: 'reports a condition beneath a file as orphaned', plan: planDocument('docs/spec.md:1', 'Remove this plan when `src/a.mjs/done` exists.'), expected: ['plan-orphaned'] },
+  { name: 'reports a plan with no readable condition as orphaned', plan: planDocument('docs/spec.md:1', 'Remove it when the work is done.'), expected: ['plan-orphaned'] }
+]) {
+  test(`sweep ${name} and writes nothing`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    await writeFile(join(f.repo, 'docs/spec.md'), '# Spec\n')
+    await writeFile(join(f.repo, 'docs/plan.md'), plan)
+    await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract, documents: [...contract.documents, { id: 'plan', path: 'docs/plan.md' }] }))
+    f.commit('baseline')
+    if (removeSpec) await rm(join(f.repo, 'docs/spec.md'))
+    if (removeDesign) await rm(join(f.repo, 'docs/design.md'))
+    if (brokenCondition) await symlink('missing.mjs', join(f.repo, 'src/done.mjs'))
+    const before = await snapshot(f.repo)
+    const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
+    assert.deepEqual(swept.problems.map(problem => [problem.code, problem.path]), [
+      ...(removeDesign ? [['missing-path', 'docs/design.md']] : []),
+      ...expected.map(code => [code, 'docs/plan.md'])
+    ])
+    assert.equal(swept.exit, expected.length ? 1 : 0, JSON.stringify(swept))
+    assert.deepEqual(await snapshot(f.repo), before)
+  })
+}
+
+for (const collection of ['documents', 'rules', 'acceptanceSources']) for (const { state, path, code } of [
+  { state: 'missing', path: 'docs/missing.md', code: 'missing-path' },
+  { state: 'broken link', path: 'docs/missing.md', code: 'unresolved-path' },
+  { state: 'escaping link', path: 'docs/missing.md', code: 'escaping-path' },
+  { state: 'non-file', path: 'docs', code: 'invalid-scope' },
+  { state: 'unsafe', path: '../missing.md', code: 'invalid-glob' },
+  { state: 'beneath a file', path: 'src/a.mjs/missing.md', code: 'unresolved-path' }
+]) {
+  test(`sweep inspects a plan despite a ${state} ${collection} source`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    const policy = { ...contract, documents: [...contract.documents, { id: 'plan', path: 'docs/plan.md' }] }
+    policy[collection] = [...policy[collection], { id: 'missing', path,
+      ...(collection === 'documents' ? {} : { pointer: 'Missing' }), ...(collection === 'rules' ? { checkIds: [] } : {}) }]
+    if (state === 'broken link') {
+      await writeFile(join(f.repo, 'docs/dependency.md'), '# Design\n')
+      await symlink('dependency.md', join(f.repo, path))
+      await rm(join(f.repo, 'docs/dependency.md'))
+    }
+    if (state === 'escaping link') await symlink('../..', join(f.repo, path))
+    await writeFile(join(f.repo, 'docs/plan.md'), planDocument(`${path}:1`, 'Remove this plan when `src/done.mjs` exists.'))
+    await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(policy))
+    const before = await snapshot(f.repo)
+    const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
+    assert.equal(swept.exit, 1, JSON.stringify(swept))
+    assert.deepEqual(swept.problems.map(problem => [problem.code, problem.path]), [
+      [code, path], ...(state === 'non-file' ? [] : [['plan-orphaned', 'docs/plan.md']])
+    ])
+    assert.equal(swept.problems[0].fix, 'Run /maintenance create to correct the registration.')
+    if (state !== 'non-file') assert.match(swept.problems[1].fix, /Delete the plan and its AGENTS.md pointer line/)
+    const strict = maintenance(f.directory, ['docs', 'check', '--repo', f.repo])
+    assert.notEqual(strict.exit, 0)
+    assert.deepEqual(strict.problems.map(problem => [problem.code, problem.path]), [[code, path]])
+    assert.deepEqual(await snapshot(f.repo), before)
+  })
+}
+
+test('sweep retains the diagnostic for an unresolvable plan without reading it', async t => {
+  const f = await documentedRepo(t)
+  await mkdir(join(f.repo, '.bstack'))
+  await symlink('missing.md', join(f.repo, 'docs/plan.md'))
+  await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract,
+    documents: [...contract.documents, { id: 'plan', path: 'docs/plan.md' }] }))
+  const before = await snapshot(f.repo)
+  const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
+  assert.equal(swept.exit, 1, JSON.stringify(swept))
+  assert.deepEqual(swept.problems.map(problem => [problem.code, problem.path]), [['unresolved-path', 'docs/plan.md']])
   assert.deepEqual(await snapshot(f.repo), before)
 })
 

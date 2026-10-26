@@ -174,6 +174,7 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 - `/formal-verification` proves one stated property of a high-stakes spot with a model checker such as TLA+ with TLC, and it is listed only where the repo shows cited risk evidence; the project pins the tool file and its sha256, bstack installs nothing, and a missing tool means unproven, never a pass.
 - Skills that write ask you to answer open intent questions, select findings and approve the exact diff before anything is applied.
 - `/foundation` is for a new, empty project only and refuses a non-empty directory.
+- For registering a temporary plan and handling its completion or orphaning, follow the [plan lifecycle guidance](skills/plan/references/plan.md#the-document).
 
 The [worked examples](docs/examples/README.md) show requests, findings, selections and results from recorded runs.
 

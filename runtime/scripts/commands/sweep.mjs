@@ -1,7 +1,7 @@
-import { readdir, readFile } from 'node:fs/promises'
+import { readdir, readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
+import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
 import { markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { loadContract } from './contract.mjs'
@@ -27,16 +27,61 @@ async function readIfPresent(root, path) {
   return readFile(await resolveFilePath(root, path), 'utf8').catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
 }
 
+async function pathExists(root, path) {
+  try { await stat(await resolvePath(root, path)) } catch (error) {
+    if (error instanceof CommandError || error.code === 'ENOTDIR') return null
+    if (error.code === 'ENOENT') return false
+    throw error
+  }
+  return true
+}
+
+function howToReadSection(text) {
+  const lines = text.split('\n')
+  const start = lines.findIndex(line => /^#{1,6}\s+How to read this\s*$/.test(line))
+  if (start < 0) return ''
+  const end = lines.findIndex((line, index) => index > start && /^#{1,6}\s/.test(line))
+  return lines.slice(start + 1, end < 0 ? undefined : end).join('\n')
+}
+
+// A plan is temporary: it is finished when the file its removal condition names exists, and orphaned when a design file it cites is gone or the condition cannot be read.
+async function planItems(target, policy) {
+  const document = policy.contract.documents.find(document => document.id === 'plan')
+  if (!document) return []
+  const text = await readIfPresent(target.root, document.path)
+  if (text === null) return []
+  const items = []
+  const orphaned = message => items.push({ code: 'plan-orphaned', path: document.path, message, fix: 'Delete the plan and its AGENTS.md pointer line in a change the user approves, or restore what it depends on.' })
+  for (const [, line] of text.matchAll(/^Design: (.+)$/gm)) {
+    for (const [, path] of line.matchAll(/`([^`]+):[1-9][0-9]*`/g)) {
+      if (!await pathExists(target.root, path)) orphaned(`The plan cites design file ${path}, which is gone.`)
+    }
+  }
+  const condition = howToReadSection(text).match(/^Remove this plan when `([^`]+)` exists\.?\s*$/m)?.[1]
+  if (condition === undefined) orphaned('The "How to read this" section states no removal condition of the form "Remove this plan when `<path>` exists."')
+  else {
+    const exists = await pathExists(target.root, condition)
+    if (exists === null) orphaned(`The removal condition path ${condition} cannot be resolved.`)
+    else if (exists) items.push({ code: 'plan-finished', path: document.path, message: `${condition} exists, so the plan's removal condition holds.`,
+      fix: 'Delete the plan and its AGENTS.md pointer line in a change the user approves.' })
+  }
+  return items
+}
+
 async function contractItems(target, options, coverageLimits) {
   const path = options.contract ?? '.bstack/project.json'
   if (await readIfPresent(target.root, path) === null) {
     return [{ code: 'contract-missing', path, message: 'No maintenance contract is registered.', fix: 'Run /maintenance create.' }]
   }
   let policy
-  try { policy = await loadContract(target, options.contract) } catch (error) {
+  const sourceProblems = []
+  try { policy = await loadContract(target, options.contract, new Set(), sourceProblems) } catch (error) {
     return problemsOf(error).map(problem => ({ ...problem, fix: 'Run /maintenance create to correct the registration.' }))
   }
-  const items = []
+  const items = sourceProblems.map(problem => ({ ...problem, fix: 'Run /maintenance create to correct the registration.' }))
+  const plan = policy.contract.documents.find(document => document.id === 'plan')
+  if (!sourceProblems.some(problem => problem.path === plan?.path)) items.push(...await planItems(target, policy))
+  if (sourceProblems.length) return items
   const owner = path => fixFor(policy.contract.documents.find(document => document.path === path))
   const docs = await checkDocuments({ ...options, coveragePolicy: policy })
   items.push(...docs.problems.map(problem => ({ ...problem, fix: owner(problem.path) })))

@@ -4,6 +4,16 @@ Resolve only decisions that would change the requested recommendation.
 Use the user's explanation and, for an existing project, the initial audit as the starting point.
 Retain settled decisions and distinguish documented goals, observed behaviour and inferred intent.
 
+## Restate the intent
+
+Before the first round of questions, restate the intent in three labelled parts:
+
+- What the user said: their own words, condensed, with nothing added.
+- What the cited repo shows: observed facts, each with a `path:line` citation, or a note that the project has no repo yet.
+- What is inferred: each point neither source states, named as an inference the user can correct.
+
+Ask the first round only after the user has had the chance to correct the restatement, and ask only about what it leaves unresolved.
+
 ## Decision rounds
 
 Map the unresolved choices as a decision tree, with each parent above the decisions that depend on it.
