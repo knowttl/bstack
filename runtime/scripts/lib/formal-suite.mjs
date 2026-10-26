@@ -229,6 +229,11 @@ function skillDocument(plan) {
       'Any other nonzero exit is a modeling error or a harness problem: correct the model or the setup, and never report it as a finding.',
       'Exit 0 means the property holds within its bounds and assumptions, which is a bounded result.'
     ]), '',
+    'Tell a finding\'s counterexample as the code steps that break the property, never as the raw tool output.',
+    'For TLC, read each `State n: <Action ...>` line of the trace, find the action in the transition table of the property file, and write one line per state as "the actor does the code step (`path:line`)".',
+    'Take the actor from the action\'s arguments where the TLC version prints them, as in `<Read(w1) ...>`, and otherwise from the state\'s variables.',
+    'End with the state that breaks the property, naming the variable values that violate it.',
+    'For Kani, give the concrete failing inputs and the failing assertion.', '',
     '## Keep the model true', '',
     'When a change touches a property\'s source paths, reread that property\'s transition table against the new code.',
     'Update the model files and the table together, then rerun the check; the check cannot see a code change on its own.',

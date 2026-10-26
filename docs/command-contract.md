@@ -1596,6 +1596,7 @@ It runs `apply`, `state show`, `cite-check` and `rule-proof` from the [shared ru
 `formal scaffold --repo <path> --plan <file>` reads a suite plan following [the plan schema](../skills/formal-verification/schemas/formal-plan.json) and writes a change set and findings file to scratch for review through `apply`.
 It never writes to the target.
 The change set creates `.agents/skills/formal-<target>/` with `SKILL.md`, `suite.json`, one `properties/<id>.md` per property, each model file under `model/` and `scripts/map-coverage.mjs`, plus `.claude/skills/formal-<target>/SKILL.md`, and either creates `AGENTS.md` or appends one pointer line to it.
+The generated `SKILL.md`'s Run section includes the [U3 counterexample-as-code-steps instruction](design.md#formal-verification-upkeep-amendment-2026-10-24).
 The result carries `data.path` (the change set), `data.planDigest`, `data.files` and the exact `data.diff`.
 A property file renders its statement, then the `Harm:`, `Source paths:`, `Synced at:` (only when the property has a `syncCommit`), `Design:`, `Model files:` and `Violation diagnostic:` lines, its check command, bounds, assumptions and a `## Transition table` section with one row per model step.
 Every step's `code` must be a `path:line` location inside one of the property's `sourcePaths` whose file has that line; the schema rejects a step with none with `invalid-pattern`, and the plan fails with `step-outside-source-paths` or `step-code-missing` otherwise.

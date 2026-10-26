@@ -159,6 +159,7 @@ test('scaffold renders the suite, property files, transition table and model fil
   assert.match(skill, /^---\nname: formal-charge-once\ndescription: /)
   assert.match(skill, new RegExp(`sha256 \`${f.tool}\``))
   assert.match(skill, /Any other nonzero exit is a modeling error or a harness problem/)
+  assert.match(skill, /find the action in the transition table of the property file, and write one line per state as "the actor does the code step \(`path:line`\)"\.\nTake the actor from the action's arguments .*\nEnd with the state that breaks the property.*\nFor Kani, give the concrete failing inputs and the failing assertion\./)
   assert.match(await readFile(join(f.repo, '.claude/skills/formal-charge-once/SKILL.md'), 'utf8'), /\.\.\/\.\.\/\.\.\/\.agents\/skills\/formal-charge-once\/SKILL\.md/)
   assert.match(await readFile(join(f.repo, 'AGENTS.md'), 'utf8'), /\.agents\/skills\/formal-charge-once\/SKILL\.md/)
   assert.deepEqual(git(f.repo, 'status', '--porcelain', '--', 'src', 'formal', 'PROPERTY.md'), '')
