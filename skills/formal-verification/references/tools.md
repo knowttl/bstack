@@ -59,7 +59,7 @@ Read the exit code with the output.
 | Result | Meaning | What to do |
 |---|---|---|
 | Exit 0 and no error | The invariant holds for every reachable state within the bound | Report a bounded pass |
-| Exit 12 with `Invariant <Name> is violated` | A counterexample exists | Report a finding with the steps of the trace, in the code's words |
+| Exit 12 with `Invariant <Name> is violated` | A counterexample exists | In create, report the finding as [Step 5](../SKILL.md#step-5-run-on-the-current-code) describes; in maintain, [replay before triage](maintain.md#replay-before-triage) |
 | Exit 1 with `unrecognized option` | A harness gap: the jar is older than the flags in the command, such as `-noGenerateSpecTE` on v1.7.x | Drop the unsupported flag or pin a newer jar, and never report it as a finding or a modeling error |
 | Exit 75, such as a branch that leaves a variable unassigned | A modeling error | Correct the model through the suite plan and never report it as a finding |
 

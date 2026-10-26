@@ -125,7 +125,7 @@ When any condition fails, leave the recorded sync commit where it is and say why
 Report exactly one outcome.
 
 - **Clean.** `formal check` passes, every property reran within its bounds, no reader found a disagreement and no sync commit needed to move.
-- **Changed.** A reviewed change set was applied and its verification passed; list the applied files, the class of each correction, every property re-proved and whether the sync commit moved.
+- **Changed.** A reviewed change set was applied and its verification passed or exposed a real bug confirmed by replay; list the applied files, the class of each correction, every property re-proved and whether the sync commit moved.
 - **Blocked.** A named prerequisite stopped a pass, such as a missing tool or runtime or a property that cannot run; state what was and was not covered.
 
 A correction can bring a real bug to light: the corrected model describes the code again and then the property fails on it.
