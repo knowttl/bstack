@@ -1582,7 +1582,7 @@
       "procedure": {
         "status": "completed",
         "path": "tests/scripts/research-skills.test.mjs",
-        "name": "how, why and teach start only on explicit invocation and name no other skill to start",
+        "name": "how, why and teach declare explicit-only invocation metadata",
         "artifacts": ["tests/scripts/research-skills.test.mjs"]
       }
     },
@@ -1628,7 +1628,7 @@
       "procedure": {
         "status": "completed",
         "path": "tests/scripts/research-skills.test.mjs",
-        "name": "architecture, why and teach ship the one why-evidence reference and architecture lists it",
+        "name": "architecture, why and teach ship byte-identical copies of the shared why-evidence reference",
         "artifacts": ["tests/scripts/research-skills.test.mjs"]
       }
     }
