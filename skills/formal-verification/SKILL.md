@@ -160,9 +160,9 @@ Where the host supports subagents, give each property one read-only reader; othe
 Each reader compares one property file and its transition table with the code at its declared source paths and reports disagreements with file and line evidence, without editing or running anything.
 Its input includes the diff since the property's sync commit, from the fallback commit that `formal check` names when the sync commit is absent or orphaned.
 Its checklist includes covered functions that were renamed, split or moved, even outside the declared source paths, and new writers of the state the property guards; give it the repo-wide `git diff -M -C --stat` since the sync commit as the maintain guide describes, because the source-path diff cannot show them.
-Also re-check each `No-proof-impact: <id>: <reason>` trailer in the commits since that sync commit against the model and the transition table, as the maintain guide's trailer audit describes; the message is a claim and never the evidence.
+Also re-check each `No-proof-impact: <id>: <reason>` trailer in the commits since that sync commit against the model and the transition table, as the maintain guide's trailer audit describes; judge whether the edit changes modeled behaviour, bounds or assumptions, since touching modeled code alone does not break the claim, and the message is never the evidence.
 
-Done when: Every property has a reader report, or sequential reading covered every property and says so, and every such trailer is recorded as holding or broken with its commit.
+Done when: Every property has a reader report, or sequential reading covered every property and says so, and every such trailer is recorded as holding or broken with its commit and evidence about modeled behaviour, bounds and assumptions.
 
 ### Step M3: Rerun every property
 
@@ -173,13 +173,13 @@ Done when: Every property has a recorded result, or a named unmet prerequisite.
 
 ### Step M4: Triage
 
-First replay each failing property's counterexample against the real code, one step at a time, as the maintain guide's replay describes: a step that cannot happen in the code means model drift or a modeling error, and a trace whose every step can happen is a real bug, for which you name the commit that introduced it.
+First replay each failing property's counterexample against the real code, one step at a time, as the maintain guide's replay describes: a step that cannot happen in the code means model drift or a modeling error, and a trace whose every step can happen is a real bug, for which you name the commit that made the complete failing sequence reachable, searching before sync when necessary.
 Then sort each problem from the earlier steps, including a broken trailer claim, into exactly one class: model drift, modeling error, real bug or harness gap.
 Use an agreed source such as the design section the property cites as the tie-breaker when the replay is unclear, never the code's current behaviour, and ask the user when no agreed source exists.
 A failure that first appears after the Step M5 correction returns here, and a broken trailer claim and a failure from the same commit are separate problems.
 Keep any scratch reproduction of a bug as report evidence, outside product code.
 
-Done when: Every problem has exactly one class and its evidence, and every real bug names its introducing commit and carries a replayed counterexample.
+Done when: Every problem has exactly one class and its evidence, and every real bug names its introducing commit, even when it predates sync, and carries a replayed counterexample.
 
 ### Step M5: Correct and re-prove
 
@@ -196,7 +196,7 @@ Only when that rerun reports no problems at all, set `syncCommit` on each proper
 Otherwise leave the recorded sync commit as it is and say why; the move is never a way to clear drift.
 Report one outcome: clean, changed through a reviewed change set, or blocked.
 A changed report can list an applied correction and a real bug together.
-Name the properties rerun, the properties not run and why, whether the sync commit moved, the audited trailers with their commits, the real bugs found and every limitation.
+Name the properties rerun, the properties not run and why, whether the sync commit moved, the audited trailers with their commits and evidence about modeled behaviour, bounds and assumptions, the real bugs with their introducing commits even when they predate sync, and every limitation.
 For a property that passed in Step M3 and fails after a correction, say the old pass was on a stale description.
 
 Done when: The sync commit moved after a passing rerun or is left in place with the reason, and the report states one outcome and separates applied changes, real bugs and limitations.
