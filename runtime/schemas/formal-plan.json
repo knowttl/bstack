@@ -43,6 +43,7 @@
             }
           },
           "sourcePaths": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+          "syncCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
           "bounds": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1, "pattern": "\\S" } },
           "assumptions": { "type": "array", "items": { "type": "string", "minLength": 1, "pattern": "\\S" } },
           "check": {

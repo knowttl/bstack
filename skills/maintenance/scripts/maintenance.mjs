@@ -3643,6 +3643,7 @@ var formal_plan_default = {
             }
           },
           sourcePaths: { type: "array", minItems: 1, items: { type: "string", minLength: 1 } },
+          syncCommit: { type: "string", pattern: "^[0-9a-f]{40}$" },
           bounds: { type: "array", minItems: 1, items: { type: "string", minLength: 1, pattern: "\\S" } },
           assumptions: { type: "array", items: { type: "string", minLength: 1, pattern: "\\S" } },
           check: {
@@ -3712,6 +3713,9 @@ function suiteDirectory(target) {
 function modelPath(suite, name) {
   return `${suite}/model/${name}`;
 }
+function coversFile(glob, file) {
+  return file.split("/").some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join("/")));
+}
 function splitLocation(location) {
   const [, path, line] = location.match(/^(.*):([1-9][0-9]*)$/u);
   return { path, line: Number(line) };
@@ -3749,7 +3753,7 @@ function validateFormalPlan(plan) {
     for (const step of property.steps) {
       const { path } = splitLocation(step.code);
       relativePath2(path, `${at}/steps`);
-      if (!path.split("/").some((_, index2, parts) => globs.some((glob) => matchesPath(glob, parts.slice(0, index2 + 1).join("/"))))) {
+      if (!globs.some((glob) => coversFile(glob, path))) {
         invalid3("step-outside-source-paths", `Step ${step.action} cites ${step.code}, which no declared source path of ${property.id} covers.`, `${at}/steps`);
       }
     }
@@ -3794,6 +3798,53 @@ async function stepProblems(root, plan) {
   }
   return problems;
 }
+function gitOutput(root, args) {
+  const result = readGit(root, args);
+  if (result.status !== 0) throw new CommandError("blocked", [{ code: "git-failed", message: `git ${args.join(" ")} failed: ${result.stderr.trim()}`, fix: "Run formal check in a Git working tree with a complete history." }]);
+  return result.stdout;
+}
+function syncProblems(root, plan, proposed) {
+  const suite = suiteDirectory(plan.target);
+  const hasCommit = (sha) => readGit(root, ["cat-file", "-e", `${sha}^{commit}`]).status === 0;
+  if (proposed !== void 0 && !(/^[0-9a-f]{40}$/u.test(proposed) && hasCommit(proposed))) {
+    throw new CommandError("usage-error", [{ code: "invalid-sync-commit", message: `${proposed} is not a full lowercase commit hash that this repo has.`, fix: "Supply --sync-commit with the 40-character hash of a commit in this repo." }]);
+  }
+  const log = readGit(root, ["log", "-1", "--format=%H", "--", suite]);
+  const fallback = log.status === 0 && log.stdout.trim() ? log.stdout.trim() : null;
+  const changedFiles = /* @__PURE__ */ new Map();
+  const changedSince = (base) => {
+    if (!changedFiles.has(base)) changedFiles.set(base, gitOutput(root, ["diff", "--name-only", "--no-renames", "-z", base, "HEAD"]).split("\0").filter(Boolean));
+    return changedFiles.get(base);
+  };
+  const problems = [];
+  for (const property of plan.properties) {
+    const path = `${suite}/properties/${property.id}.md`;
+    const recorded = proposed ?? property.syncCommit;
+    const known = recorded !== void 0 && hasCommit(recorded);
+    const base = known ? recorded : fallback;
+    const fellBack = known ? "" : base === null ? ` No commit has changed ${suite}, so drift cannot be checked.` : ` Drift is checked from ${base}, the last commit that changed ${suite}.`;
+    if (!known) {
+      problems.push({
+        code: "sync-commit-missing",
+        path,
+        message: `${recorded === void 0 ? `Property ${property.id} records no sync commit` : `Sync commit ${recorded} of property ${property.id} is not in this repo, as after a rebase or squash`}.${fellBack}`,
+        fix: "Run /formal-verification maintain: it re-proves the property against the current code and records a new sync commit."
+      });
+    }
+    if (base === null) continue;
+    const globs = property.sourcePaths.map(pathGlob);
+    const changed = changedSince(base).filter((file) => globs.some((glob) => coversFile(glob, file)));
+    if (changed.length) {
+      problems.push({
+        code: "source-changed-since-sync",
+        path,
+        message: `Source paths of property ${property.id} changed between ${base} and HEAD: ${changed[0]}${changed.length > 1 ? ` and ${changed.length - 1} more` : ""}.${fellBack}`,
+        fix: `Read git diff ${base} HEAD -- ${property.sourcePaths.join(" ")}, correct the model, table and source paths in the suite plan with formal scaffold --update where they no longer describe the code, then re-prove the property and record a new sync commit.`
+      });
+    }
+  }
+  return problems;
+}
 var code = (text) => `\`${text}\``;
 function tableRows(property) {
   return property.steps.map((step) => `| ${code(step.action)} | ${code(step.code)} | ${step.atomicBecause} |`);
@@ -3807,6 +3858,7 @@ function propertyDocument(property) {
     "",
     `Harm: ${property.harm}`,
     `Source paths: ${property.sourcePaths.map(code).join(", ")}`,
+    ...property.syncCommit ? [`Synced at: ${property.syncCommit}`] : [],
     `Design: ${code(property.design.location)}`,
     `Model files: ${property.modelFiles.map((file) => code(`model/${file.name}`)).join(", ")}`,
     `Violation diagnostic: ${code(property.check.violation)}`,
@@ -3970,7 +4022,7 @@ async function run8(options) {
     const propertyFile = `${suite}/properties/${property.id}.md`;
     for (const path of property.sourcePaths) {
       const glob = pathGlob(path);
-      if (!files.some((file) => file.split("/").some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join("/"))))) {
+      if (!files.some((file) => coversFile(glob, file))) {
         problems.push({
           code: "source-path-missing",
           path: propertyFile,
@@ -3990,6 +4042,7 @@ async function run8(options) {
     }
   }
   problems.push(...await stepProblems(target.root, plan));
+  problems.push(...syncProblems(target.root, plan, options["sync-commit"]));
   const pinned = plan.tool;
   const bytes = await readFile12(await resolveFilePath(target.root, pinned.path)).catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
   if (bytes !== null && hashBytes(bytes) !== pinned.sha256) {
@@ -4701,7 +4754,7 @@ await dispatch(process.argv.slice(2), "maintenance", {
   "contract validate": { options: ["contract"], help: "Validate project source pointers, scopes and leaf commands without execution.\nUsage: maintenance.mjs contract validate --repo <path> [--contract <repo-relative-file>] [--json]\nDefaults to .bstack/project.json; input follows schemas/project.schema.json. Unsupported config formats need a reviewed standalone contract.", run },
   "evidence collect": { options: ["contract", "base", "previous-contract", "portable"], help: "Collect the live Git change inventory and save a document assessment skeleton to scratch.\nUsage: maintenance.mjs evidence collect --repo <path> --base <ref> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--portable <repo-relative-assessment>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Portable review requires committed implementation and excludes only the selected record from inventory. Use --base empty before the first commit. An unavailable base blocks comparison. Renames map both paths through case-sensitive scopes. Collection is not semantic assessment or readiness validation.", run: run4 },
   "evidence validate": { options: ["contract", "base", "assessment", "previous-contract"], help: "Validate live change coverage, substantive review freshness and captured required checks.\nUsage: maintenance.mjs evidence validate --repo <path> --base <ref> --assessment <file> [--contract <repo-relative-file>] [--previous-contract <base-policy-path>] [--json]\nPrevious policy defaults to .bstack/project.json at the base; custom prior authority requires --previous-contract. Assessment follows schemas/evidence.schema.json. Returns the current review fingerprint; review must bind it explicitly. Missing prior policy, decisions or checks block completion. Structural validation cannot prove semantic correctness.", run: run6 },
-  "sweep": { options: ["contract"], help: "List what drifted across registered documents, generated sections, verification kits, formal verification suites and AGENTS.md pointers without writes.\nUsage: maintenance.mjs sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document's owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, formal-* suite drift by /formal-verification maintain, broken AGENTS.md links by /agents-md. A suite whose pinned tool file is missing is reported as a coverage limit, because it is unproven and not drifted. Code changes or document age alone never fail sweep. The skill also reviews every registered document against the whole current repo. Fails on reported problems; fixes nothing.", run: run9 },
+  "sweep": { options: ["contract"], help: "List what drifted across registered documents, generated sections, verification kits, formal verification suites and AGENTS.md pointers without writes.\nUsage: maintenance.mjs sweep --repo <path> [--contract <repo-relative-file>] [--json]\nEach problem names the skill mode that fixes it in its fix field: broken links and glossary structure by the document's owner, generated sections by /maintenance, registration by /maintenance create, kit drift by /verification maintain, formal-* suite drift by /formal-verification maintain (including source paths changed since a property's sync commit and a sync commit the repo no longer has), broken AGENTS.md links by /agents-md. A suite whose pinned tool file is missing is reported as a coverage limit, because it is unproven and not drifted. Code changes or document age alone never fail sweep. The skill also reviews every registered document against the whole current repo. Fails on reported problems; fixes nothing.", run: run9 },
   "probe record": { options: ["name", "phase", "spec", "approved-by-user", "command"], help: "Capture a live call in scratch.\nUsage: maintenance.mjs probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]\nDescriptor follows schemas/probe-spec.json. Side effects require approval for each call. Unavailable calls remain unverified.", run: run10 },
   "probe compare": { options: ["name", "before", "after"], help: "Require a successful matching live probe pair for an outside dependency.\nUsage: maintenance.mjs probe compare --repo <path> --name <n> --before <run-id> --after <run-id> [--json]\nMissing, mismatched, unsuccessful or stale evidence cannot pass.", run: run10 },
   "run-checks": { options: ["plan", "phase", "prior-run"], help: "Capture declared checks and user outcome coverage in scratch.\nUsage: maintenance.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]\nPhase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Outside dependencies also require probe record and probe compare.", run: run5 },

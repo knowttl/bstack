@@ -34,7 +34,8 @@ async function modelFiles(tla) {
 }
 
 // The plan is what a create run writes after interviewing the fixture repo, with the model the fixture documents.
-async function plan(repo, { model, steps, tool } = {}) {
+// A create run records the commit it proved the property against, so the plan carries HEAD unless a test sets another.
+async function plan(repo, { model, steps, tool, syncCommit = git(repo, 'rev-parse', 'HEAD') } = {}) {
   return {
     schemaVersion: 1, target: 'charge-once', description: 'Prove that an order is charged at most once however two workers interleave.',
     tool: { name: 'TLC', path: 'tools/tla2tools.jar', sha256: tool, version: '2026.10.15.145915 (rev: 932d35e)' },
@@ -42,7 +43,7 @@ async function plan(repo, { model, steps, tool } = {}) {
     properties: [{
       id: 'charge-once', title: 'Charge once', statement: 'However two workers interleave, an order is charged at most once.', harm: 'A customer is charged twice for one order.',
       design: { location: 'PROPERTY.md:5', state: { kind: 'sha256', value: sha256(await readFile(join(repo, 'PROPERTY.md'))) } },
-      sourcePaths: ['src/charge.mjs'], bounds: ['Two workers and one order.'], assumptions: ['store.compareAndSet is atomic, trusted from the store documentation.'],
+      sourcePaths: ['src/charge.mjs'], ...(syncCommit && { syncCommit }), bounds: ['Two workers and one order.'], assumptions: ['store.compareAndSet is atomic, trusted from the store documentation.'],
       check: { command: ['java', '-cp', 'tools/tla2tools.jar', 'tlc2.TLC', '-noGenerateSpecTE', '-config', `${suite}/model/ChargeOnce.cfg`, '-workers', '1',
         '-metadir', '.formal-evidence/charge-once/states', `${suite}/model/ChargeOnce.tla`], violation },
       modelFiles: model ?? await modelFiles('formal-charge-once/formal/ChargeOnce.tla'),
@@ -150,6 +151,7 @@ test('scaffold renders the suite, property files, transition table and model fil
   assert.equal(applied.exit, 0, JSON.stringify(applied))
   const property = await readFile(join(f.repo, suite, 'properties/charge-once.md'), 'utf8')
   assert.match(property, /^Source paths: `src\/charge\.mjs`$/m)
+  assert.match(property, new RegExp(`^Source paths: \`src/charge\\.mjs\`\\nSynced at: ${git(f.repo, 'rev-parse', 'HEAD')}$`, 'm'))
   assert.match(property, /^Model files: `model\/ChargeOnce\.tla`, `model\/ChargeOnce\.cfg`$/m)
   assert.match(property, /^\| `Claim\(w\)` \| `src\/charge\.mjs:2` \| compareAndSet reads and writes the status in one atomic store call \|$/m)
   assert.equal(await readFile(join(f.repo, suite, 'model/ChargeOnce.tla'), 'utf8'), await readFile(join(fixtures, 'formal-charge-once/formal/ChargeOnce.tla'), 'utf8'))
@@ -266,6 +268,81 @@ test('check blocks on a suite that was never applied', async t => {
   assert.equal(result.exit, 2)
   assert.equal(result.problems[0].code, 'suite-unavailable')
 })
+
+// The cited line keeps its number while its meaning changes, as after a direct push or a wrong No-proof-impact claim.
+async function splitClaimInPlace(f) {
+  const file = join(f.repo, 'src/charge.mjs')
+  await writeFile(file, (await readFile(file, 'utf8')).replace("!store.compareAndSet(orderId, 'pending', 'charging')", "!(store.get(orderId) === 'pending' && store.set(orderId, 'charging'))"))
+}
+
+test('check reports a change to a cited line that reached main, and moving the sync commit after the re-proof clears it', async t => {
+  const f = await setup(t)
+  const synced = git(f.repo, 'rev-parse', 'HEAD')
+  await f.apply(await f.plan())
+  f.commit('feat: add the charge-once suite')
+  assert.equal(f.check().exit, 0)
+  await splitClaimInPlace(f)
+  f.commit('refactor: read the status before claiming')
+  const head = git(f.repo, 'rev-parse', 'HEAD')
+
+  const gate = spawnSync(process.execPath, [join(f.repo, suite, 'scripts/map-coverage.mjs'), '--base', 'main'], { cwd: f.repo, encoding: 'utf8' })
+  assert.equal(gate.status, 0, gate.stdout + gate.stderr)
+  const drifted = f.check()
+  assert.equal(drifted.exit, 1, JSON.stringify(drifted))
+  assert.deepEqual(codes(drifted), ['source-changed-since-sync'])
+  assert.equal(drifted.problems[0].path, `${suite}/properties/charge-once.md`)
+  assert.match(drifted.problems[0].message, new RegExp(`changed between ${synced} and HEAD: src/charge\\.mjs`))
+  const swept = runMaintenance('sweep', f.repo, f.env)
+  assert.deepEqual(swept.problems.filter(problem => problem.fix === 'Run /formal-verification maintain.').map(problem => problem.code), ['source-changed-since-sync'])
+
+  // Maintain proves a commit passes before it records it, and a commit from before the change proves nothing.
+  assert.equal(f.call('formal check', ['--suite', 'charge-once', '--sync-commit', synced]).exit, 1)
+  assert.equal(f.call('formal check', ['--suite', 'charge-once', '--sync-commit', head]).exit, 0)
+  await f.apply(await f.plan({ syncCommit: head }), ['--update'])
+  assert.match(await readFile(join(f.repo, suite, 'properties/charge-once.md'), 'utf8'), new RegExp(`^Synced at: ${head}$`, 'm'))
+  f.commit('chore: record the new sync commit')
+  assert.equal(f.check().exit, 0)
+  assert.deepEqual(runMaintenance('sweep', f.repo, f.env).problems.filter(problem => problem.fix === 'Run /formal-verification maintain.'), [])
+})
+
+for (const [name, syncCommit, message] of [
+  ['records none', null, /records no sync commit/],
+  ['names a commit the repo does not have', '1'.repeat(40), /Sync commit 1{40} of property charge-once is not in this repo/]
+]) {
+  test(`check reports sync-commit-missing when a property ${name}, falls back to the last commit that changed the suite and recovers through a proposed commit`, async t => {
+    const f = await setup(t)
+    await f.apply(await f.plan({ syncCommit }))
+    const uncommitted = f.check()
+    assert.deepEqual(codes(uncommitted), ['sync-commit-missing'])
+    assert.match(uncommitted.problems[0].message, message)
+    assert.match(uncommitted.problems[0].message, /No commit has changed \.agents\/skills\/formal-charge-once, so drift cannot be checked/)
+    f.commit('feat: add the charge-once suite')
+    const fallback = git(f.repo, 'rev-parse', 'HEAD')
+    const missing = f.check()
+    assert.deepEqual(codes(missing), ['sync-commit-missing'])
+    assert.match(missing.problems[0].message, new RegExp(`Drift is checked from ${fallback}, the last commit that changed`))
+    await splitClaimInPlace(f)
+    f.commit('refactor: read the status before claiming')
+    const drifted = f.check()
+    assert.deepEqual(codes(drifted), ['sync-commit-missing', 'source-changed-since-sync'])
+    assert.match(drifted.problems[1].message, new RegExp(`changed between ${fallback} and HEAD: src/charge\\.mjs\\. Drift is checked from ${fallback}`))
+    const head = git(f.repo, 'rev-parse', 'HEAD')
+    assert.equal(f.call('formal check', ['--suite', 'charge-once', '--sync-commit', head]).exit, 0)
+    await f.apply(await f.plan({ syncCommit: head }), ['--update'])
+    f.commit('chore: record the sync commit')
+    assert.equal(f.check().exit, 0)
+  })
+}
+
+for (const [name, value] of [['a short hash', 'abc1234'], ['a hash the repo does not have', '1'.repeat(40)]]) {
+  test(`check refuses ${name} as the proposed sync commit`, async t => {
+    const f = await setup(t)
+    await f.apply(await f.plan())
+    const result = f.call('formal check', ['--suite', 'charge-once', '--sync-commit', value])
+    assert.equal(result.status, 'usage-error', JSON.stringify(result))
+    assert.deepEqual(codes(result), ['invalid-sync-commit'])
+  })
+}
 
 // A gated branch holds the applied suite on main and one change to the declared source path on top.
 async function gatedBranch(t, options) {

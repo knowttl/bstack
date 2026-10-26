@@ -66,6 +66,7 @@ Every command is an argument array run without a shell, so quote nothing and exp
 | `evidenceDirectory` | A directory outside the suite for the tool's working files and results, ignored by version control |
 | `properties[].design` | The design section the property guards, as a `path:line` location with the SHA-256 of the exact bytes read |
 | `properties[].sourcePaths` | The repo paths whose change can invalidate the model, as paths or `**` globs; the coverage gate reads them, so keep them narrow and true |
+| `properties[].syncCommit` | The full 40-character hash of the commit the property was confirmed at; write `git rev-parse HEAD` once the source paths have no uncommitted change, and `formal check` reports a change to the source paths since it |
 | `properties[].bounds` and `assumptions` | The size the check covers, such as two workers and one order, and each fact trusted without proof, such as an atomic store call |
 | `properties[].check` | The command that runs the model check from the repo root, and the diagnostic text that proves a violation |
 | `properties[].modelFiles` | The model and its configuration, each written under the suite's `model/` folder |
@@ -86,7 +87,7 @@ Direct the tool's working files to the evidence directory, never into the suite,
 |---|---|
 | `SKILL.md` | The properties, the pinned tool and how to confirm it, the run commands, how to read the result, how to keep the model true and the honest limits |
 | `suite.json` | The plan, so the next maintain pass starts from it |
-| `properties/<id>.md` | The property, harm, source paths, design citation, model files, check, bounds, assumptions and the rendered transition table |
+| `properties/<id>.md` | The property, harm, source paths, sync commit, design citation, model files, check, bounds, assumptions and the rendered transition table |
 | `model/` | The model files |
 | `map-coverage.mjs` under `scripts/` | The coverage gate, which needs no bstack |
 
@@ -128,5 +129,6 @@ Upkeep is automatic on every change and setup is manual, as the verification kit
 
 A commit that changes a property's source paths without changing its model passes the gate only with a line `No-proof-impact: <id>: <reason>` in its message, for example a rename the model does not depend on.
 The gate reads the property files' `Source paths:` and `Model files:` lines, so keep them accurate.
+The gate and the maintained check command judge each change; a change that already reached the base branch is seen only by `formal check`, through the sync commit, and it routes to `maintain`.
 
 `/repo-audit` lists this skill only where cited risk evidence names a spot, and `/maintenance sweep` checks every `formal-*` suite next to the verification kit and routes a drifted one to `/formal-verification maintain`.
