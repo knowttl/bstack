@@ -647,7 +647,7 @@ node skills/recall/scripts/recall.mjs transcripts --repo <target> --json
 ### prototype
 
 The [prototype](../skills/prototype/SKILL.md) skill is started by the user and writes nothing to the target.
-It ships the verification skill's `kit check` and `kit prove` commands, which follow the [verification skill commands](command-contract.md#verification-skill-commands) and are run on the target and on scratch clones of it ([R51](design.md#scope-and-decision-history)).
+See the [prototype command contract](command-contract.md#prototype-skill-commands) for its shared verification commands and which may run on the target.
 The agent clones the target for a baseline and for each variant, edits only the clones and writes the report into the same scratch folder.
 
 ```sh

@@ -481,8 +481,7 @@ What each decision means:
   Each variant is driven and measured with the project's verification kit, so the comparison rests on the same evidence for every variant.
   The report gives the measured evidence and a recommendation.
   Running the variants executes generated code, so it happens in scratch, outside the target, and the target repo is byte-identical afterward.
-  What the skill does when the project has no kit is not decided here, and stays a question for the maintainer until its slice settles it.
-  R51 records the slice's choice: without a kit the skill stops and names `/verification` as the skill that creates one.
+  See R51 for the settled behaviour when the project has no kit.
 - A5: the shared writing reference follows the checked-copy rule for shared references.
   It names the four Diátaxis modes, tutorial, how-to guide, reference and explanation, and links the [Diátaxis](https://diataxis.fr) site, which is licensed CC BY-SA, so bstack names the modes and copies none of its text.
   The [writing reference](../runtime/references/writing.md) owns the plain-prose rules.
