@@ -1,7 +1,8 @@
 # Writing the document
 
 Use this reference when you draft or revise prose that a change set writes into the target: a vision, a glossary, a decision record, a design section, a README, a plan or an instruction file.
-It does not apply to generated tables, schema fields or code.
+It applies to free-text schema fields that become reader-facing prose.
+It does not apply to generated tables, schema keys and identifiers or code.
 Read it once at the drafting step, and apply it again when you revise after review.
 
 ## Pick the reader's need first

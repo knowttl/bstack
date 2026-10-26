@@ -80,7 +80,7 @@ Done when: A proof run passed on the applied kit with its evidence present at th
 ### Step 5: Propose testing guidance
 
 Propose the testing principles, the four-question gate and the offline default test command as selected changes in the target's existing authoritative documents and agent instructions, with pointers instead of copies.
-Load the [testing reference](references/testing.md) for the principles and the exact text to adapt.
+Load the [testing reference](references/testing.md) for the principles and the exact text to adapt, and use the [writing reference](references/writing.md) to draft the guidance.
 Prefer extending an existing policy to creating a new document.
 
 Done when: Each selected testing change names its destination, the principle it states and why the destination is authoritative, or the user has declined it.
