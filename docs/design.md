@@ -12,7 +12,7 @@ footer: Built from docs/design.md. Markdown is authoritative. The HTML is genera
 meta:
   - Owner: Brytton Tsai
   - Status: Commissioned on 2026-10-07, build progress in docs/implementation-plan.md
-  - Scope: ten skills (repo-audit, vision, glossary, architecture, foundation, verification, maintenance, agents-md, plan, formal-verification) and their complete dependency set
+  - Scope: independently installable skills and their complete dependency set, listed under "The skill split"
   - Revision: 29, maintainer-approved repo-audit split design; current implementation status in [development.md](development.md#status)
 ---
 
@@ -20,7 +20,7 @@ meta:
 
 **bstack helps developers design project-specific guidelines, rules and checks that give agents a sound foundation to extend.**
 Agent drift means changes that depart from the project's agreed purpose, design or behaviour.
-The first release ships ten skills and everything they need: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md`, `plan` and `formal-verification`.
+The first release ships independently installable skills and everything they need.
 ["The skill split"](#the-skill-split) names each skill, its boundary and the order to run them.
 The sections below that describe `repo-audit` as one skill specify the foundation capabilities; the split assigns each capability to the skill that owns it.
 Together they help you establish a new project and strengthen an existing repo before more changes add technical debt.
@@ -49,7 +49,7 @@ The new-project path can implement the approved foundation, but it does not buil
 
 | Decision | Current direction |
 |---|---|
-| Release scope | Ten skills: a slim `repo-audit` plus `vision`, `glossary`, `architecture`, `foundation`, `verification`, `maintenance`, `agents-md`, `plan` and `formal-verification`, with their full dependency set (R29, R31, R41, R44). R47 adds the research, recall and prototyping skills when each is built, and R49 builds `how`, `why` and `teach` |
+| Release scope | [The skill split](#the-skill-split) lists the built skills, with their full dependency set (R29, R31, R41, R44, R49). R47 also commissions recall and prototyping |
 | Skill split | `repo-audit` audits at overview level and lists which skill to run next, with one evidenced reason per line; each other skill does one job and runs on its own (R31) |
 | Docs upkeep | Per-change upkeep rides the no-mistakes pipeline with no new user step, and the user runs `/maintenance sweep` now and then (R31) |
 | Existing repos | Audit the repo and relevant files first, then recommend improvements and apply the changes you choose |
@@ -510,12 +510,12 @@ What each decision means:
 Formal verification D1 to D9, C1 to C12 and U1 to U4 stand.
 `/formal-verification` stays a user-started skill, and its scratch reproduction in U2 stays evidence that is never committed to product code, which matches A4's scratch rule.
 U4 still routes a one-function-over-every-input question to `/verification`, and A4 adds no route from the formal skill to a prototype.
-The released-skill count stays ten until a build slice lands one of these skills, so sections that say "ten skills" describe the shipped set.
+The [skill split](#the-skill-split) lists the built skills, including the research skills added by R49.
 
 #### Proof for the build
 
-This amendment registers no acceptance case, because no behaviour exists yet.
-The build slices register the cases below and prove them on disposable fixtures through the public commands.
+R49 registers AC-101 to AC-105 for the research skills.
+The remaining build slices register their cases below and prove them on disposable fixtures through the public commands.
 
 - Each new skill folder has `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, and the package check confirms both.
 - `/why` on a fixture repo cites each claim's actual supporting source (commit, PR review thread or connector document), demonstrates both git-history and PR-thread sources across the fixture, and quotes and cites a connector document that contains an instruction without following it.
@@ -527,7 +527,7 @@ The build slices register the cases below and prove them on disposable fixtures 
 
 ## The skill split
 
-The first release ships ten skills.
+The table below lists the built skills and their boundaries.
 Each does one job, runs on its own, and installs alone.
 Only the user starts any of them, and none starts another.
 repo-audit lists which skill to run next; the user decides whether to run it.
@@ -545,6 +545,9 @@ The [research amendment](#research-prototyping-and-writing-amendment-2026-10-24)
 | `agents-md` | none | Create and maintain one root `AGENTS.md` of pointers |
 | `plan` | `create` | Write and check one implementation plan from an approved design, and never execute it |
 | `formal-verification` | `create`, `maintain` | Prove one stated property of a high-stakes spot by model checking, and leave a suite the project reruns |
+| `how` | none | Explain mechanics from cited code, tests and documents, without changing the repo |
+| `why` | none | Explain motivation from cited history, review threads and host-exposed connectors, without changing any source |
+| `teach` | none | Combine mechanics and motivation into one cited mental model, without starting another skill or changing the repo |
 
 ### Run order
 
@@ -1892,7 +1895,7 @@ New recurring agent mistakes should become a regression case or structural check
 
 ## Complete first-release package
 
-Each of the ten skills is a self-contained folder holding the resources, assets and script bundles it reads.
+Each skill is a self-contained folder holding the resources, assets and script bundles it reads.
 Installing one folder alone must not leave references to missing sibling skills.
 `repo-audit` is the entry point: it lists which skill to run next and requires none of them to run.
 
@@ -2045,9 +2048,9 @@ Every skill works in any host that supports skills, with explicit invocation and
 The package includes the documented settings for Claude Code, Codex and Pi in each skill folder, so the user-only rule holds in each.
 The package check confirms those settings are present. bstack does not run each host to test them.
 
-**Only the user can start any of the ten skills, and any skill the research amendment adds.**
+**Only the user can start any skill, including those the research amendment adds.**
 The agent must not start one on its own because a request looks like an audit, a glossary change, a scaffold, a question about why code exists or a design comparison.
-These skills read the repo, interview the user and can write files, so the user decides when each runs.
+Skills can read the repo and external evidence, interview the user or write files according to their scope, so the user decides when each runs.
 The setting is per skill and applies to every mode.
 No skill starts another; repo-audit lists the next skill and the user starts it.
 Each host has its own setting for this, and the package sets all of them in every skill folder.

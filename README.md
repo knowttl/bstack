@@ -45,14 +45,14 @@ $ npx skills add knowttl/bstack --agent claude-code --yes
 ## Why this exists
 
 A coding agent starts every conversation without your project's vision, vocabulary, module boundaries or the commands that prove a change works, so it guesses and the guesses are never reviewed.
-Each bstack skill interviews you about one of those areas, cites the repo files behind every finding and writes the result only after you approve the exact bytes.
+The skills that establish project guidance interview you about those areas, cite the repo files behind every finding and write the result only after you approve the exact bytes.
 Plain prompts and hand-written `AGENTS.md` files leave the rules unchecked; bstack also installs the checks that keep them true as the code changes.
 
 ### Features
 
 - **Explicit invocation** - every skill sets `disable-model-invocation: true`, so it runs only when you name it, never because a request resembles it.
 - **Cited findings** - `repo-audit` and the research reports tie each claim to `path:line` and `cite-check` rejects stale or out-of-range citations.
-- **Reviewed writes** - skills render a change set, show the exact diff, and `apply` writes it only after approval, with hash checks, backups of originals and a resumable journal.
+- **Reviewed writes** - skills that edit the target render a change set, show the exact diff, and `apply` writes it only after approval, with hash checks, backups of originals and a resumable journal.
 - **Proven checks** - `rule-proof` runs a proposed rule against a clean fixture and a seeded violation before it is trusted.
 - **Standalone output** - the checker installed by `maintenance` is one dependency-free file that runs without bstack present.
 - **Per-skill install** - each folder under `skills/` installs on its own, and only `vision` pins an npm runtime.
@@ -202,7 +202,8 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
 | Run project commands | `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture`, `verification` and `formal-verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch |
 | Remove a file | `agents-md` (`CLAUDE.md` merge) | Only after you approve and the host's current instruction-loading documentation has been rechecked |
 
-- **Scope**: skills read only the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.
+- **Scope**: repository inspection stays within the selected repo; instruction files outside it, including ancestor directories and user profiles, are neither inspected nor reported.
+  Motivation research also reads pull request discussions and host-exposed connectors, following the [why-evidence reference](runtime/references/why-evidence.md).
 - **Scratch**: drafts, evidence and previews stay in scratch outside the target until you approve.
 - **Recovery**: `apply` keeps backups of original bytes and a journal, so an interrupted run resumes from verified hashes.
 - **Credentials and network**: skills need no credentials or account, and bstack operates no service.
