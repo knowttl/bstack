@@ -182,7 +182,7 @@ Edit a copy of the suite plan in scratch, run `formal scaffold --repo <target> -
 Then rerun `formal check` and every changed property, and prove each changed property can still fail as Step 6 of the create checklist does.
 Report a real bug with its counterexample and change no product code.
 
-Done when: Only the approved change set has been applied, `formal check` passes and each changed property was re-proved, or no correction was needed.
+Done when: Only the approved change set has been applied, `formal check` reports no problems other than `source-changed-since-sync` and `sync-commit-missing` and each changed property was re-proved, or no correction was needed.
 
 ### Step M6: Move the sync commit and report
 

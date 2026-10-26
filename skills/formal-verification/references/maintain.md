@@ -14,7 +14,8 @@ It is the full pass over every property; the upkeep that the coverage gate and t
 
 ## Passes
 
-Run the passes in this order; a later pass is meaningless on a suite the earlier one has flagged.
+Run the passes in this order.
+The drift check must report no problems other than `source-changed-since-sync` and `sync-commit-missing` before source reading and rerun can proceed; those two problems remain for the final sync commit step.
 
 | Pass | What it establishes | How |
 |---|---|---|
@@ -53,6 +54,7 @@ Edit a copy of the suite plan in scratch, starting from the applied `suite.json`
 Run `formal scaffold --repo <target> --plan <file> --update --json`, present its exact diff with `apply --dry-run`, and apply the unchanged change set only after the user approves those bytes.
 Never edit a rendered file by hand: the next `formal check` reports it as drift.
 After applying, run `formal check` again and every changed property, then prove each changed property can still fail as the create guide describes.
+This intermediate check must report no problems other than `source-changed-since-sync` and `sync-commit-missing`; resolve any other problem before proceeding to the final sync commit step, whose proposed-commit check must report no problems at all.
 
 Add or remove a property by editing the plan's `properties`, and keep each property's `sourcePaths` narrow and true, because the coverage gate reads them.
 A repin of the tool is a plan change: record the new file's sha256 and version only after the user has approved the new file.
