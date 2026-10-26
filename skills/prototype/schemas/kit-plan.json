@@ -1,0 +1,125 @@
+{
+  "title": "Verification kit plan version 1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "app", "description", "surface", "isolation", "baseline", "launch", "doctor", "drive", "evidence", "cleanup", "helpers", "features"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "app": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "description": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "surface": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "isolation": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "baseline": { "type": "array", "items": { "type": "string", "minLength": 1, "pattern": "\\S" } },
+    "launch": {
+      "type": "object", "additionalProperties": false,
+      "required": ["command", "ready", "readiness", "teardown"],
+      "properties": {
+        "command": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "cwd": { "type": "string", "minLength": 1 },
+        "env": { "type": "object", "additionalProperties": { "type": "string" } },
+        "ready": {
+          "type": "object", "additionalProperties": false,
+          "properties": {
+            "url": { "type": "string", "pattern": "^https?://" },
+            "output": { "type": "string", "minLength": 1 }
+          }
+        },
+        "readiness": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "teardown": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "timeoutSeconds": { "type": "integer" }
+      }
+    },
+    "doctor": {
+      "type": "object", "additionalProperties": false,
+      "required": ["command", "asserts"],
+      "properties": {
+        "command": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "cwd": { "type": "string", "minLength": 1 },
+        "env": { "type": "object", "additionalProperties": { "type": "string" } },
+        "asserts": { "type": "string", "minLength": 1, "pattern": "\\S" }
+      }
+    },
+    "drive": {
+      "type": "object", "additionalProperties": false,
+      "required": ["harness", "conventions"],
+      "properties": {
+        "harness": { "type": "string", "minLength": 1, "pattern": "\\S" },
+        "conventions": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1, "pattern": "\\S" } }
+      }
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["directory", "standards"],
+      "properties": {
+        "directory": { "type": "string", "minLength": 1 },
+        "standards": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1, "pattern": "\\S" } }
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["notes"],
+      "properties": {
+        "command": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "cwd": { "type": "string", "minLength": 1 },
+        "env": { "type": "object", "additionalProperties": { "type": "string" } },
+        "notes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1, "pattern": "\\S" } }
+      }
+    },
+    "coverageGate": { "type": "boolean" },
+    "helpers": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "purpose", "invocation", "content"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "purpose": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "invocation": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "content": { "type": "string" }
+        }
+      }
+    },
+    "features": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "title", "summary", "sourcePaths", "subFeatures", "entryPoints", "preconditions", "steps", "gotchas"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "title": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "summary": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "sourcePaths": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+          "subFeatures": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["id", "description"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+                "description": { "type": "string", "minLength": 1, "pattern": "\\S" }
+              }
+            }
+          },
+          "entryPoints": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1, "pattern": "\\S" } },
+          "preconditions": { "type": "array", "items": { "type": "string", "minLength": 1, "pattern": "\\S" } },
+          "steps": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["label", "command", "expect", "match"],
+              "properties": {
+                "label": { "type": "string", "minLength": 1, "pattern": "\\S" },
+                "command": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+                "cwd": { "type": "string", "minLength": 1 },
+                "env": { "type": "object", "additionalProperties": { "type": "string" } },
+                "expect": { "type": "string", "minLength": 1, "pattern": "\\S" },
+                "match": { "type": "string", "minLength": 1 },
+                "artifacts": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+              }
+            }
+          },
+          "gotchas": { "type": "array", "items": { "type": "string", "minLength": 1, "pattern": "\\S" } }
+        }
+      }
+    }
+  }
+}

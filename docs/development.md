@@ -14,7 +14,8 @@ The `formal-verification` skill proves one stated property of a high-stakes spot
 Its model-checker proof runs only where the pinned tool and Java are present: see [the skill's tests](#formal-verification).
 The `how`, `why` and `teach` skills explain a codebase from cited evidence and write nothing ([T2.14](implementation-plan.md#t214-add-the-how-why-and-teach-skills)).
 The `recall` skill summarises prior context from the project's local Claude Code and Codex transcripts, read-only, and keeps its output in scratch ([T2.15](implementation-plan.md#t215-add-the-recall-skill)).
-The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why, teach and recall; audit usage applies to repo-audit.
+The `prototype` skill builds throwaway variants in scratch clones, measures each with the project's verification kit and recommends one, writing nothing to the repo ([T2.16](implementation-plan.md#t216-add-the-prototype-skill)).
+The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why, teach, recall and prototype; audit usage applies to repo-audit.
 
 This checkout contains the slim [repo-audit procedure](../skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](command-contract.md).
 The [vision skill](../skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
@@ -641,6 +642,17 @@ Transcript layouts are undocumented by the hosts and were observed on Claude Cod
 
 ```sh
 node skills/recall/scripts/recall.mjs transcripts --repo <target> --json
+```
+
+### prototype
+
+The [prototype](../skills/prototype/SKILL.md) skill is started by the user and writes nothing to the target.
+It ships the verification skill's `kit check` and `kit prove` commands, which follow the [verification skill commands](command-contract.md#verification-skill-commands) and are run on the target and on scratch clones of it ([R51](design.md#scope-and-decision-history)).
+The agent clones the target for a baseline and for each variant, edits only the clones and writes the report into the same scratch folder.
+
+```sh
+node skills/prototype/scripts/prototype.mjs kit check --repo <target> --app <app> --json
+node skills/prototype/scripts/prototype.mjs kit prove --repo <clone> --app <app> --feature <id> --json
 ```
 
 ### maintenance
