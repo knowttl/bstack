@@ -70,6 +70,7 @@ Draft the complete root file in scratch following the pointer shape in the [poin
 Add pointers only for sources that exist, and word each as one sentence saying when an agent should use the source.
 Fold in repo-owned `CLAUDE.md` content that the author chose to merge, as pointers where a source already holds it and as kept text where none does.
 Leave out vocabulary, vision, design and standards text.
+Write the sentences by the [writing reference](references/writing.md).
 
 Done when: The draft is in scratch, every line is a pointer or merged text the author chose to keep, and every link resolves.
 
@@ -120,5 +121,6 @@ Never recursively search bundled reference or schema directories to discover gui
 | When | Open |
 |---|---|
 | Classifying instruction files, judging equivalence or checking the host before a removal | `references/agents-md.md` |
+| Writing the sentences of the file | `references/writing.md` |
 | Drafting the file or auditing its pointers | `references/agents-pointer.md` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |

@@ -70,6 +70,7 @@ Done when: Each boundary or decision to propose is confirmed or named as an open
 ### Step 3: Propose the boundaries and standards
 
 Present evidenced candidates and their alternatives for selection, and do not apply anything unselected.
+Write the proposed design sections, decision records and standards by the [writing reference](references/writing.md).
 Name each module's responsibility, owned knowledge, public contract and private implementation, then the allowed dependency direction and the scope of forbidden imports and cycles.
 Write two or three caller call sites before each proposed public contract, taken from existing callers or the stated next changes, and derive the contract from them.
 Offer at least two structurally distinct boundary candidates, meaning different whole module shapes rather than point fixes inside one shape, and recommend the one that hides more complexity behind a smaller public contract.
@@ -198,6 +199,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | When | Open |
 |---|---|
 | Auditing boundaries, dependencies or planned changes | `references/architecture.md` |
+| Writing design sections, decision records or `CODING_STANDARDS.md` | `references/writing.md` |
 | A recommendation conflicts with a recorded decision or needs a new one | `references/decisions.md` |
 | Recommending DRY, KISS, other judgement rules or `CODING_STANDARDS.md` | `references/design-standards.md` |
 | Researching dependencies, proving rules or recording a debt baseline | `references/boundary-checks.md` |

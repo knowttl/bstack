@@ -57,6 +57,7 @@ Done when: The draft is in scratch, every entry points at an existing source, an
 
 ### Step 3: Draft the wiring
 
+Write the ownership map and `AGENTS.md` pointer prose by the [writing reference](references/writing.md).
 Draft the `.no-mistakes.yaml` change as the complete file: the existing keys unchanged, plus the ownership map in `document.instructions` and a `docs` gate after the `document` step that runs the installed checker in docs-only mode.
 Draft `.bstack/bin/bstack-check.mjs` as the exact bytes of this skill's `scripts/bstack-check.mjs`.
 Draft one pointer line for the root `AGENTS.md` following the [pointer guide](references/agents-pointer.md): `Before finishing a change, review the documents it affects against the contract in .bstack/project.json.` with the contract path as the link.
@@ -153,6 +154,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | When | Open |
 |---|---|
 | Registering documents or drafting the no-mistakes wiring | `references/create.md` |
+| Drafting the ownership map and `AGENTS.md` pointer prose in Step 3 | `references/writing.md` |
 | Adding the maintenance `AGENTS.md` pointer | `references/agents-pointer.md` |
 | Reading sweep problems or judging the drift the command cannot see | `references/sweep.md` |
 | Recording a signed-off assessment of one change | `references/maintenance-contract.md` |

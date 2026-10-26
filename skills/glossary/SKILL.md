@@ -68,6 +68,7 @@ Recommend a `GLOSSARY-MAP.md` with one glossary per context only when genuinely 
 A new idea drafts only the agreed terms and never an empty template, and an existing repo drafts only terms with a confirmed meaning.
 Each entry defines one concept in one or two sentences, with its canonical name and the conflicting synonyms to avoid where useful.
 Use the confirmed vocabulary in the draft's own wording, and leave out every implementation detail.
+Write each definition by the [writing reference](references/writing.md).
 
 Done when: The draft is in scratch, every entry is a confirmed domain concept with no implementation detail, and every term traces to a cited source or a confirmed user decision.
 
@@ -175,6 +176,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | When | Open |
 |---|---|
 | Discovering terms, resolving meanings or drafting a glossary | `references/glossary.md` |
+| Writing the glossary entries | `references/writing.md` |
 | An unresolved decision would change a definition | `references/grilling.md` |
 | Running a maintain pass or classifying a changed name | `references/maintain.md` |
 | Recording citations for evidence | `schemas/research-report.json` |

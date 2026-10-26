@@ -57,6 +57,7 @@ Map each commitment to a source or confirmed author decision in a private eviden
 For a new idea, draft the whole acceptance policy, identifying author decisions as such instead of claiming nonexistent history.
 For an existing repo, keep the baseline and list each candidate line edit independently with its evidence and the commitments it preserves.
 Never write a competing vision or silently replace the approved one.
+Write the sentences by the [writing reference](references/writing.md).
 
 Done when: The draft or delta is in scratch, every line traces to the evidence sheet, and it keeps backlog and design out.
 
@@ -129,6 +130,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | When | Open |
 |---|---|
 | A new idea with no VISION.md | `references/interview.md` |
+| Writing the sentences of the vision or a delta | `references/writing.md` |
 | An unresolved decision would change the draft | `references/grilling.md` |
 | Drafting, stress-testing or revising the vision | `references/vision.md` |
 | Recording citations for existing-repo evidence | `schemas/research-report.json` |

@@ -77,7 +77,7 @@ Carry each non-functional target as evidence on every unit it constrains.
 Record the units in scratch following `schemas/plan.json`, binding each design citation to the SHA-256 of the exact bytes read, and run `node scripts/plan.mjs plan check --repo <target> --plan <file> --json`, with `--workspace` for a new idea.
 Fix every reported problem by changing the plan, never by dropping the unit's evidence, dependency or citation to make the check pass.
 Open each cited design section to confirm it supports its unit, because the checker establishes only that the citation resolves and the unit names evidence.
-Then draft the plan document in scratch from the checked record.
+Then draft the plan document in scratch from the checked record, writing its prose by the [writing reference](references/writing.md).
 
 Done when: `plan check` passes on the record, every unit's evidence names a check or kit feature that exists or says which unit adds it, every user-facing unit names a kit feature when the project has a kit, every non-functional target is carried by a unit or recorded as open, the document's units match the record's one for one, and its "How to read this" section states the removal condition.
 
@@ -132,6 +132,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | When | Open |
 |---|---|
 | Running the builder check | `references/builder-check.md` |
+| Writing the plan document | `references/writing.md` |
 | Drafting the story map, the units or the document | `references/plan.md` |
 | Asking the user the builder check's questions | `references/grilling.md` |
 | Adding the plan's `AGENTS.md` pointer | `references/agents-pointer.md` |

@@ -13,7 +13,8 @@
       "baseline.schema.json", "change-set.schema.json", "check-plan.json", "evidence.schema.json", "findings.schema.json",
       "kit-plan.json", "probe-record.json", "probe-spec.json", "project.schema.json", "resume-state.schema.json"
     ],
-    "assets": ["map-coverage.mjs"]
+    "assets": ["map-coverage.mjs"],
+    "references": ["writing.md"]
   },
   "vision": {
     "commands": ["vision-board build", "vision-board launch", "vision-board verdicts", "apply", "state show", "cite-check"],
@@ -22,7 +23,7 @@
       "vision-proposals.json", "vision-verdicts.json"
     ],
     "assets": ["vision/review-template.html", "vision/review.css"],
-    "references": ["grilling.md", "agents-pointer.md"]
+    "references": ["grilling.md", "agents-pointer.md", "writing.md"]
   },
   "glossary": {
     "commands": ["docs check", "apply", "state show", "cite-check"],
@@ -31,7 +32,7 @@
       "resume-state.schema.json"
     ],
     "assets": [],
-    "references": ["grilling.md", "agents-pointer.md"]
+    "references": ["grilling.md", "agents-pointer.md", "writing.md"]
   },
   "architecture": {
     "commands": ["measure", "overlap", "rule-proof", "baseline check", "findings validate", "apply", "state show", "cite-check"],
@@ -40,7 +41,7 @@
       "measure-exclusions.json", "overlap-plan.json", "project.schema.json", "research-report.json", "resume-state.schema.json"
     ],
     "assets": [],
-    "references": ["grilling.md", "agents-pointer.md"]
+    "references": ["grilling.md", "agents-pointer.md", "writing.md"]
   },
   "foundation": {
     "commands": ["project create", "apply", "run-checks", "rule-proof"],
@@ -49,7 +50,7 @@
       "resume-state.schema.json"
     ],
     "assets": [],
-    "references": ["grilling.md", "agents-pointer.md"]
+    "references": ["grilling.md", "agents-pointer.md", "writing.md"]
   },
   "maintenance": {
     "commands": [
@@ -61,13 +62,13 @@
       "probe-record.json", "probe-spec.json", "project.schema.json", "resume-state.schema.json"
     ],
     "assets": ["map-coverage.mjs"],
-    "references": ["agents-pointer.md"]
+    "references": ["agents-pointer.md", "writing.md"]
   },
   "agents-md": {
     "commands": ["inventory", "apply", "state show"],
     "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "resume-state.schema.json"],
     "assets": [],
-    "references": ["agents-pointer.md"]
+    "references": ["agents-pointer.md", "writing.md"]
   },
   "plan": {
     "commands": ["plan check", "apply", "state show", "cite-check"],
@@ -76,7 +77,7 @@
       "resume-state.schema.json"
     ],
     "assets": [],
-    "references": ["grilling.md", "agents-pointer.md"]
+    "references": ["grilling.md", "agents-pointer.md", "writing.md"]
   },
   "formal-verification": {
     "commands": ["formal scaffold", "formal check", "rule-proof", "apply", "state show", "cite-check"],
@@ -85,6 +86,6 @@
       "research-report.json", "resume-state.schema.json"
     ],
     "assets": ["map-coverage.mjs"],
-    "references": ["grilling.md"]
+    "references": ["grilling.md", "writing.md"]
   }
 }
