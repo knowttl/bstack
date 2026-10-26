@@ -75,7 +75,7 @@ Done when: The property, its harm and the tool are stated, the tool choice names
 
 ### Step 3: Plan the suite
 
-Write the suite plan in scratch following `schemas/formal-plan.json`: the pinned tool with its exact file path, sha256 and version, the evidence directory, and for the property its source paths, sync commit, bounds, assumptions, check command, violation diagnostic, model files and transition table.
+Write the suite plan in scratch following `schemas/formal-plan.json` and writing its prose by the [writing reference](references/writing.md): the pinned tool with its exact file path, sha256 and version, the evidence directory, and for the property its source paths, sync commit, bounds, assumptions, check command, violation diagnostic, model files and transition table.
 The sync commit is `git rev-parse HEAD` once the source paths have no uncommitted change.
 Every model step names the one atomic code step it stands for as `path:line`, inside the property's source paths, and says why that step is atomic.
 Show the user the property, its bounds and assumptions, and the transition table before anything is written.
@@ -225,6 +225,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | When | Open |
 |---|---|
 | Interviewing the repo, choosing the target, writing the plan, proving the suite or proposing the wiring | `references/create.md` |
+| Writing the suite plan's prose | `references/writing.md` |
 | Choosing a tool or running a tool recipe | `references/tools.md` |
 | Running a maintain pass, triaging a problem or correcting an applied suite | `references/maintain.md` |
 | Asking the user a decision round | `references/grilling.md` |

@@ -444,6 +444,7 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 Every command, shared library, schema, asset and shared reference has one source in [runtime/](../runtime/), and [runtime/skills.json](../runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
 Each skill commits its generated files.
+The vision, glossary, architecture, foundation, plan, agents-md, verification and formal-verification skills load the shared [writing reference](../runtime/references/writing.md) when they draft prose; it names the four Diátaxis modes and sets plain-prose rules.
 The skills that ship `apply` share its protected-write libraries for reviewed, hash-checked change sets; the [manifest](../runtime/skills.json) owns each skill's command list.
 The architecture and verification runtimes also expose direct baseline replacement through `baseline check --refresh`, as described under [baseline commands](#rule-proof-baselines-and-maintained-checks).
 Edit only `runtime/`, then regenerate the skill files or verify them without writes:

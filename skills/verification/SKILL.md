@@ -48,7 +48,7 @@ Done when: The surface, launch command, drive harness, evidence, isolation limit
 
 ### Step 2: Plan the kit
 
-Write the kit plan in scratch, following `schemas/kit-plan.json`, and show the user the app name, launch and doctor commands, helpers and the features it will map before writing anything.
+Write the kit plan in scratch, following `schemas/kit-plan.json` and writing its prose by the [writing reference](references/writing.md), and show the user the app name, launch and doctor commands, helpers and the features it will map before writing anything.
 Start with the top three to five user-facing features, each with its declared source paths, entry points, driving steps with observable matches and gotchas.
 Every step command must assert something a user would see; a step that only checks an exit code is not proof.
 Set `coverageGate` to `true` when the repo uses or will adopt no-mistakes, so the kit ships the feature-map coverage gate that Step 8 wires.
@@ -260,6 +260,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | When | Open |
 |---|---|
 | Interviewing the repo, writing the kit plan or proving the kit | `references/create.md` |
+| Writing the kit plan's prose or the testing guidance | `references/writing.md` |
 | Proposing testing guidance or auditing the suite | `references/testing.md` |
 | Proposing hard constraints, rule proofs or a baseline, or running a correct pass | `references/constraints.md` |
 | Selecting slop rules for a language or banning prose comments | `references/slop-baseline.md` |

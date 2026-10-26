@@ -484,7 +484,8 @@ What each decision means:
   It names the four Diátaxis modes, tutorial, how-to guide, reference and explanation, and links the [Diátaxis](https://diataxis.fr) site, which is licensed CC BY-SA, so bstack names the modes and copies none of its text.
   The build slice writes its plain-prose rules.
   Each skill that writes a document loads it at that step only, under "Load only what each step needs".
-  The build slice lists the writing skills.
+  The writing skills are `vision`, `glossary`, `architecture`, `foundation`, `plan`, `agents-md`, `verification` and `formal-verification`.
+  `repo-audit` writes nothing, and `maintenance` writes only registrations and generated sections, so neither loads it.
 - A6: a plan describes work that a builder finishes, and a finished plan that stays in the repo becomes a stale second source of truth.
   The plan states its removal condition in its "How to read this" section, which `/plan create` writes.
   `/maintenance sweep` reports a plan whose condition holds as finished, and a plan that has lost its design or whose condition can no longer be evaluated as orphaned.
