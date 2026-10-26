@@ -1620,3 +1620,16 @@ It follows the [feature-map gate](#verification-skill-commands) in how it takes 
 For each `properties/*.md` file other than `README.md` it reads the `Source paths:` and `Model files:` lines and requires, when a changed file matches a declared source path, that one of the listed model files changed too or that a commit message since the merge base has a line `No-proof-impact: <id>: <reason>` for that property.
 Exit 0 prints `formal-proof-coverage: ok (<n> properties checked)`, exit 1 prints one `<property file>: formal-proof-coverage: <first changed path> [and <n> more] changed without updating a model file of this property; ...` line per uncovered property on stdout, and exit 2 prints a `formal-proof-coverage:` diagnostic on stderr for invalid arguments, an unusable base or suite, an empty property inventory or a property file without exactly one complete `Source paths:` line and one complete `Model files:` line.
 A `No-map-impact` line never satisfies this gate, and a `No-proof-impact` line never satisfies the feature-map gate.
+
+## Recall skill command
+
+`node skills/recall/scripts/recall.mjs transcripts --repo <path> [--json]` is the installed entry point of the recall skill, which ships only this command.
+`--help` lists the command, and `transcripts --help` prints its syntax.
+
+`transcripts` opens the transcripts of Claude Code under `CLAUDE_CONFIG_DIR` (default `~/.claude`) and of Codex under `CODEX_HOME` (default `~/.codex`) read-only and never writes to the target or to either host folder.
+A session belongs to the project when the launch directory it records is the repo or inside it.
+It writes one `<host>-<session file name>.txt` digest per matched session into a new scratch folder, readable by its owner only.
+A digest holds `[timestamp] user: text` and `[timestamp] assistant: text` entries only: sub-agent turns, tool calls, tool results and reasoning are left out, and each turn is cut at 2000 characters.
+The result carries `data.path` (the scratch folder), `data.sessions` (newest first, each with `host`, `cwd`, `started`, `turns`, `firstPrompt` cut at 120 characters and `digest`), `data.skippedLines` and `data.limitations`.
+A line that is not JSON, such as the partial last line of a live session, is skipped and counted.
+No matched session is a pass with a limitation, and `--workspace` is a usage error because the command needs a Git repo.

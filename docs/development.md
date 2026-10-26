@@ -13,7 +13,8 @@ The vision, glossary, architecture and foundation skills take a design document 
 The `formal-verification` skill proves one stated property of a high-stakes spot by model checking and leaves a `formal-<target>` suite ([T2.13](implementation-plan.md#t213-add-the-formal-verification-skill)); the [`formal-charge-once` fixtures](../tests/fixtures/formal-charge-once/FIXTURE.md) are its proof input, `/maintenance sweep` checks its suites, `/architecture` proposes the explicit state model standard that feeds it and both repo-audit checklists list it only with cited risk evidence.
 Its model-checker proof runs only where the pinned tool and Java are present: see [the skill's tests](#formal-verification).
 The `how`, `why` and `teach` skills explain a codebase from cited evidence and write nothing ([T2.14](implementation-plan.md#t214-add-the-how-why-and-teach-skills)).
-The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why and teach; audit usage applies to repo-audit.
+The `recall` skill summarises prior context from the project's local Claude Code and Codex transcripts, read-only, and keeps its output in scratch ([T2.15](implementation-plan.md#t215-add-the-recall-skill)).
+The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why, teach and recall; audit usage applies to repo-audit.
 
 This checkout contains the slim [repo-audit procedure](../skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](command-contract.md).
 The [vision skill](../skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
@@ -629,6 +630,17 @@ No skill starts another, so `how` and `teach` ship the [mechanics reference](../
 
 ```sh
 node skills/why/scripts/why.mjs cite-check --repo <target> --report <report.json> --json
+```
+
+### recall
+
+The [recall](../skills/recall/SKILL.md) skill is started by the user and writes nothing to the repo.
+Its one command, `transcripts`, opens the Claude Code transcripts in `CLAUDE_CONFIG_DIR` (default `~/.claude`) and the Codex transcripts in `CODEX_HOME` (default `~/.codex`) read-only, keeps the sessions that started in the repo or inside it, and writes one text digest per session into scratch.
+The agent reads the digests and writes the summary into the same scratch folder.
+Transcript layouts are undocumented by the hosts and were observed on Claude Code 2.1.310 and Codex 0.157.1 ([R50](design.md#scope-and-decision-history)), so a session in an unrecognised layout is missed.
+
+```sh
+node skills/recall/scripts/recall.mjs transcripts --repo <target> --json
 ```
 
 ### maintenance

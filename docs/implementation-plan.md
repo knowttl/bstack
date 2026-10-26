@@ -458,6 +458,8 @@ Tick each task when its "Done when" commands pass.
     The Kani recipe has no executed evidence: the build environment has no Rust toolchain.
   - [x] T2.14 Add the `how`, `why` and `teach` skills (after T2.13) - three user-started skills that explain a codebase from cited evidence and write nothing, with `/architecture` sharing the why-evidence reference.
     The skills' scenario evaluations are deferred, so AC-102, AC-103 and AC-104 keep planned procedures; AC-101 and AC-105 are covered by `tests/scripts/research-skills.test.mjs`.
+  - [x] T2.15 Add the `recall` skill (after T2.14) - a user-started skill that summarises prior context from the project's local Claude Code and Codex transcripts, read-only, with its output in scratch.
+    The skill's scenario evaluation is deferred, so AC-108 keeps a planned procedure; AC-106 and AC-107 are covered by `tests/scripts/recall.test.mjs`.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -1525,6 +1527,32 @@ It follows the research amendment of R47 and the build choices of R49.
 
 **Covers:** AC-101 to AC-105.
 
+### T2.15 Add the `recall` skill
+
+**Depends on:** T2.14, and through it the per-skill installer and the shared writing reference.
+It follows the research amendment of R47 and the build choices of R50.
+
+**Inputs and outputs:** A repo and the Claude Code and Codex transcripts of sessions that started in it -> a summary of the prior context a fresh agent needs, kept in scratch, with nothing written to the repo and every transcript unchanged.
+
+**Verification:** `npm run check`, then `npm test -- --task T2.15`.
+
+**Read:** design "Research, prototyping and writing amendment (2026-10-24)" A3, A5 and A7, and R50.
+
+**Steps**
+
+1. Add the `transcripts` command, which matches sessions to the repo by launch directory and writes one digest per session into scratch.
+2. Write `skills/recall/SKILL.md`, user-started only with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, starting no other skill (A7), and add the `recall` entry in `runtime/skills.json`, shipping only `transcripts` and the writing reference.
+3. Register AC-106 to AC-108 and add the `tests/tasks.json` entry; update the README skills table, installation list and safety notes.
+
+**Done when**
+
+- `npm run check` and `npm test -- --task T2.15` pass.
+- `transcripts` on synthetic Claude Code and Codex transcripts digests only this project's sessions, leaves the transcripts byte-identical and writes only to scratch outside the repo.
+- The skill folder installs alone, its bundle passes `--check`, it starts no skill and it writes nothing to the repo.
+- The scenario evaluation of the skill stays deferred and is listed as a follow-up.
+
+**Covers:** AC-106 to AC-108.
+
 ## Phase 3: Enforcement
 
 Phase evidence from the design: valid cases pass, and seeded violations fail through the maintained command in disposable local copies.
@@ -2111,6 +2139,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.12 | AC-84, AC-85, AC-86, AC-87, AC-88 | A named design document taken as the explanation by each of the four setup skills, and `/plan` last in both checklists | AC-88 passes in `tests/scripts/repo-audit-overview.test.mjs` against both checklist orders in the installed host prompt; AC-84 to AC-87 are planned and live scenario evaluations are deferred. |
 | T2.13 | AC-89, AC-90, AC-91, AC-92, AC-93, AC-94, AC-95, AC-96, AC-97, AC-98, AC-99, AC-100 | Explicit-only start, repo-first target and tool choice, suite rendering, `formal check` rejections, the `rule-proof` proof and the walkthrough, the generalised gate, `maintain` triage, sweep and repo-audit wiring, the write boundary and the architecture standard | AC-91, AC-92, AC-95 and AC-97 pass in `tests/scripts/formal.test.mjs`; AC-93 and AC-94 pass in the same file only with the pinned `tla2tools.jar` and Java, and their recorded result is in the [T2.13 proof record](../tests/eval/results/tasks/T2.13.formal-proof.md); the other procedures are planned and the scenario evaluations are deferred. |
 | T2.14 | AC-101, AC-102, AC-103, AC-104, AC-105 | Explicit-only start, source-cited `/why` with untrusted connector text, cited `/how` mechanics, `/teach` joining both, and the one shared why-evidence reference | AC-101 and AC-105 pass in `tests/scripts/research-skills.test.mjs`; AC-102, AC-103 and AC-104 are planned and the scenario evaluations are deferred. |
+| T2.15 | AC-106, AC-107, AC-108 | Explicit-only start, the `transcripts` digest limited to this project's sessions with transcripts and repo unchanged, and the cited, secret-free summary in scratch | AC-106 and AC-107 pass in `tests/scripts/recall.test.mjs`; AC-108 is planned and the scenario evaluation is deferred. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
