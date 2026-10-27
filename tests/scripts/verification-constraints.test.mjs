@@ -288,6 +288,49 @@ for (const [name, source, expected, file = 'contract.ts'] of [
   })
 }
 
+test('typescript destructuring documentation visibility', async t => {
+  const f = await scratch(t)
+  const repo = build(t, 'ts-shop')
+  const [command, ...args] = await install(f, repo, 'typescript')
+  args.pop()
+  for (const [name, source, expected] of [
+    ['object initializer', 'const { api, internal } = { api: 1,\n/** Private helper. */\ninternal: 2 }\nexport { api }\n', 1],
+    ['array initializer', 'const [api, internal] = [1, {\n/** Private detail. */\ndetail: 2 }]\nexport { api }\n', 1],
+    ['nested object initializer', 'export const { nested: { api } } = { nested: {\n/** Private detail. */\napi: 1 } }\n', 1],
+    ['nested array initializer', 'export const [[api]] = [[{\n/** Private detail. */\ndetail: 1 }]]\n', 1],
+    ['aliased initializer', 'const { value: api } = {\n/** Private detail. */\nvalue: 1 }\nexport { api as publicAPI }\n', 1],
+    ['object rest initializer', 'const { internal, ...api } = { internal: 1,\n/** Private detail. */\ndetail: 2 }\nexport { api }\n', 1],
+    ['array rest initializer', 'export const [internal, ...api] = [1, {\n/** Private detail. */\ndetail: 2 }]\n', 1],
+    ['object type annotation', 'export const { api }: {\n/** Private detail. */\napi: number } = source\n', 1],
+    ['array type annotation', 'const [api]: [{\n/** Private detail. */\ndetail: number }] = source\nexport { api }\n', 1],
+    ['defaulted binding', 'export const { api = {\n/** Private detail. */\ndetail: 1 } } = source\n', 1],
+    ['separate default object export', 'const { api } = {\n/** Private detail. */\napi: 1 }\nexport default api\n', 1],
+    ['separate default array export', 'const [api]: [{\n/** Private detail. */\ndetail: number }] = source\nexport default api\n', 1],
+    ['namespace object initializer', 'export namespace API {\nexport const { api } = {\n/** Private detail. */\napi: 1 }\n}\n', 1],
+    ['namespace array initializer', 'export namespace API {\nexport const [api] = [{\n/** Private detail. */\ndetail: 1 }]\n}\n', 1],
+    ['namespace nested initializer', 'export namespace API {\nexport const { nested: [api] } = { nested: [{\n/** Private detail. */\ndetail: 1 }] }\n}\n', 1],
+    ['namespace aliased initializer', 'export namespace API {\nexport const { value: api } = {\n/** Private detail. */\nvalue: 1 }\n}\n', 1],
+    ['namespace object rest initializer', 'export namespace API {\nexport const { internal, ...api } = { internal: 1,\n/** Private detail. */\ndetail: 2 }\n}\n', 1],
+    ['namespace array rest initializer', 'export namespace API {\nexport const [internal, ...api] = [1, {\n/** Private detail. */\ndetail: 2 }]\n}\n', 1],
+    ['namespace type annotation', 'export namespace API {\nexport const { api }: {\n/** Private detail. */\napi: number } = source\n}\n', 1],
+    ['ambient namespace type annotation', 'export declare namespace API {\nconst { api }: {\n/** Private detail. */\napi: number }\n}\n', 1],
+    ['direct identifier export', 'export const api: {\n/** Public detail. */\ndetail: number } = {\n/** Public value. */\ndetail: 1 }\n', 0],
+    ['separate identifier export', 'const api = {\n/** Public detail. */\ndetail: 1 }\nexport { api }\n', 0],
+    ['separate identifier default export', 'const api = {\n/** Public detail. */\ndetail: 1 }\nexport default api\n', 0],
+    ['namespace identifier export', 'export namespace API {\nexport const api = {\n/** Public detail. */\ndetail: 1 }\n}\n', 0],
+    ['declaration documentation', '/** Public binding. */\nexport const { api } = source\n', 0]
+  ]) {
+    await t.test(name, async () => {
+      await writeFile(join(repo, 'destructuring.ts'), source)
+      const result = execute(repo, command, [...args, 'destructuring.ts'])
+      assert.equal(result.exit, expected, result.output)
+      const listed = execute(repo, command, [...args, '--list', 'destructuring.ts'])
+      assert.equal(listed.exit, 0, listed.output)
+      assert.equal(JSON.parse(listed.output).length, expected)
+    })
+  }
+})
+
 test('python comment keep-list preserves docstrings and linked constraints but rejects unlinked comments', async t => {
   const f = await scratch(t)
   const repo = await repository(t, { 'app.py': 'def run():\n    """Public contract."""\n    return 1  # Vendor limit: https://example.invalid/limits\n' })

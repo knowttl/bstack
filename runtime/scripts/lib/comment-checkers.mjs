@@ -566,6 +566,7 @@ function violations(path) {
   }
   const inspectPublic = node => {
     keep(node)
+    if (ts.isVariableDeclaration(node) && !ts.isIdentifier(node.name)) return
     inspectType(node.type)
     for (const parameter of node.typeParameters ?? []) inspectType(parameter)
     for (const parameter of node.parameters ?? []) inspectType(parameter.type)
