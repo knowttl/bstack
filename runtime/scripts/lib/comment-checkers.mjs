@@ -1,4 +1,4 @@
-// Machine-read directives that name a specific rule or code stay legal; every other comment is prose.
+// Machine-read directives that name a specific rule or code stay legal alongside the public-doc and link keep-list.
 const exemptions = {
   python: ['^#\\s*[a-z]+:\\s*ignore\\[\\s*([A-Za-z][A-Za-z0-9_-]*(?:\\s*,\\s*[A-Za-z][A-Za-z0-9_-]*)*)\\s*\\]\\s*$', '^#\\s*(?:[a-z]+:\\s*)?noqa:\\s*([A-Z]+[0-9]+(?:\\s*,\\s*[A-Z]+[0-9]+)*)\\s*$',
     '^#\\s*[a-z]+:\\s*(?:disable(?:-next)?|enable)\\s*=\\s*(?P<messages>[A-Za-z][A-Za-z0-9-]*(?:\\s*,\\s*[A-Za-z][A-Za-z0-9-]*)*)\\s*$'],
@@ -27,6 +27,9 @@ __EXEMPT__
 ]
 LICENSE = re.compile(
     __LICENSE__
+)
+SUPPRESSION = re.compile(
+    r"^#\\s*(?:(?:[a-z]+:\\s*)?noqa\\b|[a-z]+:\\s*(?:ignore|disable|enable)\\b)"
 )
 LEADING = {tokenize.ENCODING, tokenize.COMMENT, tokenize.NL, tokenize.NEWLINE}
 
@@ -82,7 +85,12 @@ def violations(path):
             continue
         line, column = token.start
         text = token.string
-        if (line == 1 and text.startswith("#!")) or line in licensed or is_exempt(text):
+        if (
+            (line == 1 and text.startswith("#!"))
+            or line in licensed
+            or is_exempt(text)
+            or (not SUPPRESSION.search(text) and re.search(r"https?://[^\\s<>]+", text))
+        ):
             continue
         digest = hashlib.sha256(text.strip().encode()).hexdigest()[:12]
         seen[digest] = seen.get(digest, 0) + 1
@@ -199,6 +207,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"go/ast"
+	"go/parser"
 	"go/scanner"
 	"go/token"
 	"os"
@@ -213,6 +223,8 @@ const rule = "no-prose-comments"
 
 var exempt = []*regexp.Regexp{__EXEMPT__}
 var license = regexp.MustCompile(__LICENSE__)
+var link = regexp.MustCompile("https?://[^[:space:]<>]+")
+var suppression = regexp.MustCompile("^//(?:nolint|lint:ignore)(?:[:[:space:]]|$)")
 
 type comment struct {
 	path    string
@@ -222,6 +234,7 @@ type comment struct {
 	text    string
 	key     string
 	leading bool
+	documented bool
 }
 
 func scan(path string) ([]comment, error) {
@@ -230,6 +243,95 @@ func scan(path string) ([]comment, error) {
 		return nil, err
 	}
 	set := token.NewFileSet()
+	tree, err := parser.ParseFile(set, path, source, parser.ParseComments)
+	if err != nil {
+		return nil, err
+	}
+	documented := map[int]bool{}
+	keep := func(group *ast.CommentGroup) {
+		if group != nil {
+			for _, item := range group.List {
+				documented[set.Position(item.Pos()).Offset] = true
+			}
+		}
+	}
+	keep(tree.Doc)
+	var inspectType func(ast.Expr)
+	inspectType = func(expression ast.Expr) {
+		if expression == nil { return }
+		ast.Inspect(expression, func(node ast.Node) bool {
+			var fields *ast.FieldList
+			switch body := node.(type) {
+			case *ast.StructType: fields = body.Fields
+			case *ast.InterfaceType: fields = body.Methods
+			default: return true
+			}
+			for _, field := range fields.List {
+				public := true
+				for _, name := range field.Names { public = public && name.IsExported() }
+				if len(field.Names) == 0 {
+					typeName := field.Type
+					if pointer, ok := typeName.(*ast.StarExpr); ok { typeName = pointer.X }
+					switch generic := typeName.(type) {
+					case *ast.IndexExpr: typeName = generic.X
+					case *ast.IndexListExpr: typeName = generic.X
+					}
+					if selector, ok := typeName.(*ast.SelectorExpr); ok { typeName = selector.Sel }
+					if name, ok := typeName.(*ast.Ident); ok { public = name.IsExported() }
+				}
+				if public {
+					keep(field.Doc)
+					inspectType(field.Type)
+				}
+			}
+			return false
+		})
+	}
+	for _, declaration := range tree.Decls {
+		switch declaration := declaration.(type) {
+		case *ast.FuncDecl:
+			public := declaration.Name.IsExported()
+			if declaration.Recv != nil {
+				receiver := declaration.Recv.List[0].Type
+				if pointer, ok := receiver.(*ast.StarExpr); ok { receiver = pointer.X }
+				switch generic := receiver.(type) {
+				case *ast.IndexExpr: receiver = generic.X
+				case *ast.IndexListExpr: receiver = generic.X
+				}
+				name, ok := receiver.(*ast.Ident)
+				public = public && ok && name.IsExported()
+			}
+			if public {
+				keep(declaration.Doc)
+				inspectType(declaration.Type)
+			}
+		case *ast.GenDecl:
+			allPublic := true
+			for _, spec := range declaration.Specs {
+				public := false
+				switch spec := spec.(type) {
+				case *ast.TypeSpec:
+					public = spec.Name.IsExported()
+					if public {
+						keep(spec.Doc)
+						inspectType(spec.Type)
+						if spec.TypeParams != nil {
+							for _, parameter := range spec.TypeParams.List { inspectType(parameter.Type) }
+						}
+					}
+				case *ast.ValueSpec:
+					public = true
+					for _, name := range spec.Names { public = public && name.IsExported() }
+					if public {
+						keep(spec.Doc)
+						inspectType(spec.Type)
+					}
+				}
+				allPublic = allPublic && public
+			}
+			if allPublic { keep(declaration.Doc) }
+		}
+	}
 	file := set.AddFile(path, set.Base(), len(source))
 	var s scanner.Scanner
 	s.Init(file, source, nil, scanner.ScanComments)
@@ -245,7 +347,7 @@ func scan(path string) ([]comment, error) {
 			continue
 		}
 		position := set.Position(pos)
-		found = append(found, comment{path: path, line: position.Line, last: position.Line + strings.Count(lit, "\\n"), column: position.Column, text: lit, leading: leading})
+		found = append(found, comment{path: path, line: position.Line, last: position.Line + strings.Count(lit, "\\n"), column: position.Column, text: lit, leading: leading, documented: documented[position.Offset]})
 	}
 	licensed := map[int]bool{}
 	for start := 0; start < len(found); {
@@ -268,7 +370,7 @@ func scan(path string) ([]comment, error) {
 	seen := map[string]int{}
 	var kept []comment
 	for index, item := range found {
-		skip := licensed[index]
+		skip := licensed[index] || (!suppression.MatchString(item.text) && (item.documented || link.MatchString(item.text)))
 		for _, pattern := range exempt {
 			match := pattern.FindStringSubmatch(item.text)
 			if match == nil {
@@ -425,10 +527,90 @@ import ts from 'typescript'
 const rule = 'no-prose-comments'
 const exempt = __EXEMPT__.map(pattern => new RegExp(pattern))
 const license = new RegExp(__LICENSE__)
+const suppression = new RegExp('^(/[/]\\\\s*|/[*]+\\\\s*)([a-z]+-(disable|enable)|@ts-(ignore|expect-error|nocheck))')
 
 function violations(path) {
   const text = readFileSync(path, 'utf8')
   const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true)
+  const documented = new Set()
+  const publicMember = node => !(node.name && ts.isPrivateIdentifier(node.name))
+    && !node.modifiers?.some(item => item.kind === ts.SyntaxKind.PrivateKeyword || item.kind === ts.SyntaxKind.ProtectedKeyword)
+  const keep = node => { for (const doc of node.jsDoc ?? []) documented.add(doc.pos) }
+  const bindingNames = name => ts.isIdentifier(name) ? [name.text]
+    : name.elements.filter(ts.isBindingElement).flatMap(element => bindingNames(element.name))
+  const inspectType = node => {
+    if (!node) return
+    if (ts.isTypeLiteralNode(node)) {
+      for (const member of node.members) if (publicMember(member)) inspectPublic(member)
+    } else {
+      ts.forEachChild(node, child => {
+        if (ts.isTypeNode(child) || ts.isTypeParameterDeclaration(child) || ts.isParameter(child)) inspectType(child)
+      })
+    }
+  }
+  const inspectExpression = node => {
+    if (!node) return
+    if (ts.isArrowFunction(node) || ts.isFunctionExpression(node) || ts.isClassExpression(node)) inspectPublic(node)
+    else if (ts.isObjectLiteralExpression(node)) {
+      for (const property of node.properties) {
+        if (ts.isSpreadAssignment(property)) inspectExpression(property.expression)
+        else inspectPublic(property)
+      }
+    } else if (ts.isArrayLiteralExpression(node)) {
+      for (const element of node.elements) inspectExpression(ts.isSpreadElement(element) ? element.expression : element)
+    } else if (ts.isParenthesizedExpression(node) || ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)
+      || ts.isSatisfiesExpression(node) || ts.isNonNullExpression(node)) {
+      inspectType(node.type)
+      inspectExpression(node.expression)
+    }
+  }
+  const inspectPublic = node => {
+    keep(node)
+    if (ts.isVariableDeclaration(node) && !ts.isIdentifier(node.name)) return
+    inspectType(node.type)
+    for (const parameter of node.typeParameters ?? []) inspectType(parameter)
+    for (const parameter of node.parameters ?? []) inspectType(parameter.type)
+    for (const clause of node.heritageClauses ?? []) {
+      for (const type of clause.types) for (const argument of type.typeArguments ?? []) inspectType(argument)
+    }
+    inspectExpression(node.initializer)
+    if (ts.isExportAssignment(node)) inspectExpression(node.expression)
+    for (const member of node.members ?? []) {
+      if (publicMember(member)) inspectPublic(member)
+      if (ts.isConstructorDeclaration(member)) {
+        for (const parameter of member.parameters) {
+          if (ts.isParameterPropertyDeclaration(parameter, member) && publicMember(parameter)) inspectPublic(parameter)
+        }
+      }
+    }
+  }
+  const inspect = (statements, exported = false, ambient = source.isDeclarationFile) => {
+    const exportedNames = new Set(statements.filter(ts.isExportDeclaration).flatMap(node =>
+      node.exportClause && ts.isNamedExports(node.exportClause) && !node.moduleSpecifier
+        ? node.exportClause.elements.map(item => (item.propertyName ?? item.name).text) : []))
+    for (const node of statements) {
+      if (ts.isExportAssignment(node) && ts.isIdentifier(node.expression)) exportedNames.add(node.expression.text)
+    }
+    for (const node of statements) {
+      const augmentation = ts.isModuleDeclaration(node) && (!!(node.flags & ts.NodeFlags.GlobalAugmentation) || ts.isStringLiteral(node.name))
+      const visible = exported || augmentation || ts.isExportAssignment(node) || node.modifiers?.some(item => item.kind === ts.SyntaxKind.ExportKeyword || item.kind === ts.SyntaxKind.DefaultKeyword)
+        || (node.name && ts.isIdentifier(node.name) && exportedNames.has(node.name.text))
+      if (ts.isVariableStatement(node)) {
+        const declarations = node.declarationList.declarations.filter(item => visible || bindingNames(item.name).some(name => exportedNames.has(name)))
+        if (declarations.length) keep(node)
+        for (const declaration of declarations) inspectPublic(declaration)
+        continue
+      }
+      if (!visible) continue
+      inspectPublic(node)
+      if (ts.isModuleDeclaration(node) && node.body) {
+        const context = ambient || augmentation || !!node.modifiers?.some(item => item.kind === ts.SyntaxKind.DeclareKeyword)
+        if (ts.isModuleBlock(node.body)) inspect(node.body.statements, context, context)
+        else if (ts.isModuleDeclaration(node.body)) inspect([node.body], true, context)
+      }
+    }
+  }
+  inspect(source.statements, source.isDeclarationFile && !ts.isExternalModule(source))
   const ranges = new Map()
   let first = true
   const visit = node => {
@@ -444,7 +626,7 @@ function violations(path) {
   const found = [...ranges.values()].sort((a, b) => a.pos - b.pos).map(range => {
     const start = source.getLineAndCharacterOfPosition(range.pos)
     const last = source.getLineAndCharacterOfPosition(range.end)
-    return { text: text.slice(range.pos, range.end), line: start.line + 1, column: start.character + 1, last: last.line + 1, leading: range.leading }
+    return { text: text.slice(range.pos, range.end), documented: documented.has(range.pos), line: start.line + 1, column: start.character + 1, last: last.line + 1, leading: range.leading }
   })
   const licensed = new Set()
   for (let start = 0; start < found.length;) {
@@ -462,7 +644,8 @@ function violations(path) {
       const match = pattern.exec(item.text)
       return match && (!match[1] || match[1].split(',').every(selector => selector.trim().toLowerCase() !== 'all'))
     })
-    if (licensed.has(index) || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
+    const documentation = !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\\\s<>]+').test(item.text))
+    if (licensed.has(index) || documentation || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
     kept.push({ rule, path, key: digest + ':' + seen.get(digest), line: item.line, column: item.column, text: item.text })

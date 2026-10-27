@@ -137,6 +137,213 @@ for (const [language, spec] of Object.entries(languages)) {
   })
 }
 
+for (const [name, source, expected] of [
+  ['exported function', '// Run returns the result.\nfunc Run() {}\n', 0],
+  ['local function', '// Run describes a local helper.\nfunc run() {}\n', 1],
+  ['function body', 'func Run() {\n// Run narrates its body.\n}\n', 1],
+  ['detached comment', '// Run is detached.\n\nfunc Run() {}\n', 1],
+  ['exported type and field', '// Item is public.\ntype Item struct {\n// Name is public.\nName string\n}\n', 0],
+  ['private field', 'type Item struct {\n// Name describes a private field.\nname string\n}\n', 1],
+  ['nested public field', 'type Config struct {\nNested struct {\n// Limit bounds work.\nLimit int\n}\n}\n', 0],
+  ['nested private field', 'type Config struct {\nNested struct {\n// limit bounds work.\nlimit int\n}\n}\n', 1],
+  ['nested type behind private field', 'type Config struct {\nnested struct {\n// Limit bounds work.\nLimit int\n}\n}\n', 1],
+  ['nested container field', 'type Config struct {\nNested map[string][]*struct {\n// Limit bounds work.\nLimit int\n}\n}\n', 0],
+  ['nested interface method', 'type Config interface {\nRun() interface {\n// Limit bounds work.\nLimit() int\n}\n}\n', 0],
+  ['public function result type', 'func Run() struct {\n// Limit bounds work.\nLimit int\n} { return struct { Limit int }{} }\n', 0],
+  ['public variable type', 'var Config struct {\n// Limit bounds work.\nLimit int\n}\n', 0],
+  ['local nested type', 'func Run() {\nvar config struct {\n// Limit bounds work.\nLimit int\n}\n_ = config\n}\n', 1],
+  ['exported embedded field', 'type Detail struct {}\ntype Item struct {\n// Detail embeds the public contract.\n*Detail\n}\n', 0],
+  ['exported method', 'type Item struct {}\n// Run executes.\nfunc (item *Item) Run() {}\n', 0],
+  ['method on private receiver', 'type item struct {}\n// Run executes.\nfunc (value *item) Run() {}\n', 1],
+  ['generic receiver', 'type Item[T any] struct {}\n// Run executes.\nfunc (item *Item[T]) Run() {}\n', 0],
+  ['exported grouped declaration', 'const (\n// Limit bounds work.\nLimit = 1\n)\n', 0],
+  ['local capitalised variable', 'func Run() {\n// Limit is local.\nvar Limit = 1\n_ = Limit\n}\n', 1],
+  ['linked constraint', '// Vendor limit: https://example.invalid/limits\nfunc run() {}\n', 0],
+  ['unlinked constraint', '// Vendor requires a limit.\nfunc run() {}\n', 1],
+  ['blanket suppression on export', '//nolint:all\nfunc Run() {}\n', 1],
+  ['linked blanket suppression', '//nolint:all https://example.invalid/reason\nfunc Run() {}\n', 1]
+]) {
+  test(`go comment keep-list: ${name}`, async t => {
+    const f = await scratch(t)
+    const repo = await repository(t, { 'main.go': `package main\n${source}`, 'go.mod': languages.go.extra['go.mod'] })
+    const [command, ...args] = await install(f, repo, 'go')
+    args.pop()
+    const result = execute(repo, command, args)
+    assert.equal(result.exit, expected, result.output)
+    const listed = execute(repo, command, [...args, '--list'])
+    assert.equal(JSON.parse(listed.output).length, expected)
+  })
+}
+
+for (const [name, source, expected, file = 'contract.ts'] of [
+  ['exported function', '/** Runs the operation. */\nexport function run() {}\n', 0],
+  ['local function', '/** export function run is private. */\nfunction run() {}\n', 1],
+  ['function body', 'export function run() {\n/** Explains a local operation. */\nconst value = 1\n}\n', 1],
+  ['ordinary comment on export', '// Runs the operation.\nexport function run() {}\n', 1],
+  ['default export', '/** Public contract. */\nexport default class Item {}\n', 0],
+  ['separate named export', '/** Public contract. */\nfunction run() {}\nexport { run as execute }\n', 0],
+  ['separate default export', '/** Public contract. */\nfunction run() {}\nexport default run\n', 0],
+  ['public expression arrow signature', 'export const run = (config: {\n/** Public limit. */\nlimit: number\n}) => config.limit\n', 0],
+  ['public expression function signature', 'export const run = function(config: {\n/** Public limit. */\nlimit: number\n}) { return config.limit }\n', 0],
+  ['public expression object members', 'export const api = {\n/** Public operation. */\nrun(config: {\n/** Public limit. */\nlimit: number\n}) { return config.limit },\nnested: {\n/** Public value. */\nvalue: 1\n}\n}\n', 0],
+  ['public expression property arrow', 'export class API {\nrun = (config: {\n/** Public limit. */\nlimit: number\n}) => config.limit\n}\n', 0],
+  ['public expression property object', 'export class API {\nconfig = {\n/** Public limit. */\nlimit: 1\n}\n}\n', 0],
+  ['public expression class members', 'export const API = class {\n/** Public operation. */\nrun() {}\n}\n', 0],
+  ['public expression nested class', 'export const api = { Item: class {\n/** Public value. */\nvalue = 1\n} }\n', 0],
+  ['public expression default arrow', 'export default (config: {\n/** Public limit. */\nlimit: number\n}) => config.limit\n', 0],
+  ['public expression default object', 'export default {\n/** Public operation. */\nrun() {}\n}\n', 0],
+  ['public expression default class', 'export default (class {\n/** Public operation. */\nrun() {}\n})\n', 0],
+  ['public expression export assignment', 'export = {\n/** Public operation. */\nrun() {}\n}\n', 0],
+  ['public expression named export', 'const api = {\n/** Public operation. */\nrun() {}\n}\nexport { api }\n', 0],
+  ['public expression separate default export', 'const api = {\n/** Public operation. */\nrun() {}\n}\nexport default api\n', 0],
+  ['public expression wrappers', 'export const api = (({\n/** Public operation. */\nrun() {}\n} as const) satisfies Contract)!\n', 0],
+  ['public expression assertion', 'export const api = <{\n/** Public value. */\nvalue: number\n}>({ value: 1 })\n', 0],
+  ['public expression array and spread members', 'export const api = [{ ...{\n/** Public operation. */\nrun() {}\n} }, ...[{\n/** Public value. */\nvalue: 1\n}]]\n', 0],
+  ['private expression arrow body', 'export const run = () => {\n/** Local value. */\nconst value = 1\nreturn value\n}\n', 1],
+  ['private expression arrow result', 'export const run = () => ({\n/** Body value. */\nvalue: 1\n})\n', 1],
+  ['private expression function body', 'export const run = function() {\n/** Local value. */\nconst value = 1\nreturn value\n}\n', 1],
+  ['private expression object method body', 'export const api = { run() {\n/** Local value. */\nconst value = 1\n} }\n', 1],
+  ['private expression class member', 'export const API = class {\n/** Private operation. */\nprivate run() {}\n}\n', 1],
+  ['private expression property initializer', 'export class API {\nprivate config = {\n/** Private limit. */\nlimit: 1\n}\n}\n', 1],
+  ['private expression protected initializer', 'export class API {\nprotected config = {\n/** Protected limit. */\nlimit: 1\n}\n}\n', 1],
+  ['private expression private identifier initializer', 'export class API {\n#config = {\n/** Private limit. */\nlimit: 1\n}\n}\n', 1],
+  ['private expression call argument', 'export const api = create({\n/** Internal option. */\nvalue: 1\n})\n', 1],
+  ['mixed declaration private type', 'const api = 1, internal: {\n/** Private detail. */\ndetail: number\n} = { detail: 1 }\nexport { api }\n', 1],
+  ['mixed declaration private initializer', 'const api = 1, internal = {\n/** Private detail. */\ndetail: 1\n}\nexport { api }\n', 1],
+  ['mixed declaration private first sibling', 'const internal = {\n/** Private detail. */\ndetail: 1\n}, api = 1\nexport { api }\n', 1],
+  ['mixed declaration public sibling', 'const internal = 1, api = {\n/** Public detail. */\ndetail: 1\n}\nexport { api }\n', 0],
+  ['mixed declaration direct exports', 'export const api = 1, other = {\n/** Public detail. */\ndetail: 1\n}\n', 0],
+  ['mixed declaration default export', 'const api = 1, internal = {\n/** Private detail. */\ndetail: 1\n}\nexport default api\n', 1],
+  ['mixed declaration object binding export', 'const { api } = source, internal = {\n/** Private detail. */\ndetail: 1\n}\nexport { api }\n', 1],
+  ['mixed declaration array binding export', 'const [api] = source, internal = {\n/** Private detail. */\ndetail: 1\n}\nexport { api }\n', 1],
+  ['mixed declaration private namespace sibling', 'export namespace API {\nconst api = 1, internal = {\n/** Private detail. */\ndetail: 1\n}\nexport { api }\n}\n', 1],
+  ['mixed declaration namespace object binding', 'export namespace API {\nconst { api } = source, internal: {\n/** Private detail. */\ndetail: number\n} = value\nexport { api }\n}\n', 1],
+  ['mixed declaration namespace array binding', 'export namespace API {\nconst [api] = source, internal = {\n/** Private detail. */\ndetail: 1\n}\nexport { api }\n}\n', 1],
+  ['exported object binding', '/** Public operation. */\nconst { run } = operations\nexport { run }\n', 0],
+  ['exported nested aliased object binding', '/** Public operation. */\nconst { api: { execute: run = fallback } } = operations\nexport { run as execute }\n', 0],
+  ['exported array binding', '/** Public operation. */\nconst [, [run = fallback]] = operations\nexport { run }\n', 0],
+  ['exported object rest binding', '/** Public operations. */\nconst { internal, ...operations } = api\nexport { operations }\n', 0],
+  ['exported array rest binding', '/** Public operations. */\nconst [internal, ...operations] = api\nexport { operations }\n', 0],
+  ['unexported object binding', '/** Private operation. */\nconst { run } = operations\nexport { operations }\n', 1],
+  ['unexported object property name', '/** Private operation. */\nconst { run: internal } = operations\nexport { run } from "./other"\n', 1],
+  ['re-export does not expose local', '/** Private contract. */\nfunction run() {}\nexport { run } from "./other"\n', 1],
+  ['namespace private function shadows root export', 'function helper() {}\nexport { helper }\nexport namespace API {\n/** Internal helper. */\nfunction helper() {}\nexport function run() { helper() }\n}\n', 1],
+  ['namespace private variable shadows root export', 'const value = 1\nexport { value }\nexport namespace API {\n/** Internal value. */\nconst value = 2\nexport function run() { return value }\n}\n', 1],
+  ['namespace private function shadows root default export', 'function helper() {}\nexport default helper\nexport namespace API {\n/** Internal helper. */\nfunction helper() {}\n}\n', 1],
+  ['nested namespace private function shadows parent export', 'export namespace API {\nexport function helper() {}\nexport namespace Nested {\n/** Internal helper. */\nfunction helper() {}\n}\n}\n', 1],
+  ['exported namespace members', 'export namespace API {\n/** Public helper. */\nexport function helper() {}\n/** Public value. */\nexport const value = 1\n}\n', 0],
+  ['dotted namespace members', 'export namespace API.Inner {\n/** Public helper. */\nexport function helper() {}\n}\n', 0],
+  ['dotted namespace private member', 'export namespace API.Inner {\n/** Internal helper. */\nfunction helper() {}\n}\n', 1],
+  ['ambient namespace in source file', 'export declare namespace API {\n/** Public helper. */\nfunction helper(): void\n}\n', 0],
+  ['nested ambient namespace in source file', 'export declare namespace API.Inner {\nnamespace Nested {\n/** Public helper. */\nfunction helper(): void\n}\n}\n', 0],
+  ['global augmentation', 'export {}\ndeclare global {\n/** Public contract. */\ninterface App {\n/** Public value. */\nvalue: number\n}\n}\n', 0],
+  ['global augmentation declaration file', 'export {}\ndeclare global {\n/** Public contract. */\ninterface App {}\n}\n', 0, 'contract.d.ts'],
+  ['external module augmentation', 'export {}\ndeclare module "external" {\n/** Public contract. */\ninterface App {}\n}\n', 0],
+  ['namespace binding shadows root export', 'const run = () => {}\nexport { run }\nexport namespace API {\n/** Private operation. */\nconst { run } = operations\n}\n', 1],
+  ['private namespace members', 'namespace API {\n/** Internal helper. */\nexport function helper() {}\n}\n', 1],
+  ['ambient namespace public members', 'declare namespace API {\n/** Public helper. */\nfunction helper(): void\n/** Public value. */\nconst value: number\n}\n', 0, 'contract.d.ts'],
+  ['external declaration file private root', 'export {}\n/** Internal helper. */\ndeclare function helper(): void\n', 1, 'contract.d.ts'],
+  ['public class members', '/** Item contract. */\nexport class Item {\n/** Public method. */\nrun() {}\n}\n', 0],
+  ['private class member', 'export class Item {\n/** Private method. */\nprivate run() {}\n}\n', 1],
+  ['protected class member', 'export class Item {\n/** Protected method. */\nprotected run() {}\n}\n', 1],
+  ['private identifier', 'export class Item {\n/** Private field. */\n#value = 1\n}\n', 1],
+  ['private class public member', 'class Item {\n/** Local method. */\nrun() {}\n}\n', 1],
+  ['interface member', 'export interface Item {\n/** Public method. */\nrun(): void\n}\n', 0],
+  ['enum member', 'export enum Item {\n/** Public value. */\nFirst\n}\n', 0],
+  ['type literal member', 'export type Item = {\n/** Public value. */\nvalue: string\n}\n', 0],
+  ['nested interface type member', 'export interface Config {\nnested: {\n/** Public limit. */\nlimit: number\n}\n}\n', 0],
+  ['nested class type member', 'export class Config {\nnested: {\n/** Public limit. */\nlimit: number\n}\n}\n', 0],
+  ['nested alias container type member', 'export type Config = Array<{\n/** Public limit. */\nlimit: number\n}> | null\n', 0],
+  ['nested heritage type argument', 'export interface Config extends Base<{\n/** Public limit. */\nlimit: number\n}> {}\n', 0],
+  ['nested method result type member', 'export interface Config {\nrun(): {\n/** Public limit. */\nlimit: number\n}\n}\n', 0],
+  ['nested exported function parameter type', 'export function run(config: {\n/** Public limit. */\nlimit: number\n}) {}\n', 0],
+  ['nested exported variable type', 'export const config: {\n/** Public limit. */\nlimit: number\n} = value\n', 0],
+  ['nested private member type', 'export class Config {\nprivate nested: {\n/** Private limit. */\nlimit: number\n}\n}\n', 1],
+  ['nested local type', 'export function run() {\ntype Config = {\n/** Private limit. */\nlimit: number\n}\n}\n', 1],
+  ['public constructor parameter property', 'export class Config {\nconstructor(\n/** Public limit. */\npublic limit: number\n) {}\n}\n', 0],
+  ['readonly constructor parameter property', 'export class Config {\nconstructor(\n/** Public limit. */\nreadonly limit: number\n) {}\n}\n', 0],
+  ['public parameter property of private constructor', 'export class Config {\nprivate constructor(\n/** Public limit. */\npublic limit: number\n) {}\n}\n', 0],
+  ['private constructor parameter property', 'export class Config {\nconstructor(\n/** Private limit. */\nprivate limit: number\n) {}\n}\n', 1],
+  ['protected constructor parameter property', 'export class Config {\nconstructor(\n/** Protected limit. */\nprotected limit: number\n) {}\n}\n', 1],
+  ['ordinary constructor parameter', 'export class Config {\nconstructor(\n/** Local limit. */\nlimit: number\n) {}\n}\n', 1],
+  ['linked constraint', '// Platform requires this: https://example.invalid/platform\nconst value = 1\n', 0],
+  ['unlinked constraint', '// Platform requires this.\nconst value = 1\n', 1],
+  ['URL in string does not exempt comment', 'const url = "https://example.invalid" // narration\n', 1],
+  ['JSDoc blanket suppression', '/** eslint-disable all */\nexport function run() {}\n', 1],
+  ['linked blanket suppression', '// eslint-disable-next-line all https://example.invalid/reason\nexport function run() {}\n', 1],
+  ['linked file-wide type suppression', '// @ts-nocheck https://example.invalid/reason\nexport const value = 1\n', 1],
+  ['linked block file-wide type suppression', '/* @ts-nocheck https://example.invalid/reason */\nexport const value = 1\n', 1],
+  ['JSDoc file-wide type suppression', '/** @ts-nocheck */\nexport function run() {}\n', 1]
+]) {
+  test(`typescript comment keep-list: ${name}`, async t => {
+    const f = await scratch(t)
+    const repo = build(t, 'ts-shop')
+    const [command, ...args] = await install(f, repo, 'typescript')
+    args.pop()
+    await writeFile(join(repo, file), source)
+    const result = execute(repo, command, [...args, file])
+    assert.equal(result.exit, expected, result.output)
+    const listed = execute(repo, command, [...args, '--list', file])
+    assert.equal(JSON.parse(listed.output).length, expected)
+  })
+}
+
+test('typescript destructuring documentation visibility', async t => {
+  const f = await scratch(t)
+  const repo = build(t, 'ts-shop')
+  const [command, ...args] = await install(f, repo, 'typescript')
+  args.pop()
+  for (const [name, source, expected] of [
+    ['object initializer', 'const { api, internal } = { api: 1,\n/** Private helper. */\ninternal: 2 }\nexport { api }\n', 1],
+    ['array initializer', 'const [api, internal] = [1, {\n/** Private detail. */\ndetail: 2 }]\nexport { api }\n', 1],
+    ['nested object initializer', 'export const { nested: { api } } = { nested: {\n/** Private detail. */\napi: 1 } }\n', 1],
+    ['nested array initializer', 'export const [[api]] = [[{\n/** Private detail. */\ndetail: 1 }]]\n', 1],
+    ['aliased initializer', 'const { value: api } = {\n/** Private detail. */\nvalue: 1 }\nexport { api as publicAPI }\n', 1],
+    ['object rest initializer', 'const { internal, ...api } = { internal: 1,\n/** Private detail. */\ndetail: 2 }\nexport { api }\n', 1],
+    ['array rest initializer', 'export const [internal, ...api] = [1, {\n/** Private detail. */\ndetail: 2 }]\n', 1],
+    ['object type annotation', 'export const { api }: {\n/** Private detail. */\napi: number } = source\n', 1],
+    ['array type annotation', 'const [api]: [{\n/** Private detail. */\ndetail: number }] = source\nexport { api }\n', 1],
+    ['defaulted binding', 'export const { api = {\n/** Private detail. */\ndetail: 1 } } = source\n', 1],
+    ['separate default object export', 'const { api } = {\n/** Private detail. */\napi: 1 }\nexport default api\n', 1],
+    ['separate default array export', 'const [api]: [{\n/** Private detail. */\ndetail: number }] = source\nexport default api\n', 1],
+    ['namespace object initializer', 'export namespace API {\nexport const { api } = {\n/** Private detail. */\napi: 1 }\n}\n', 1],
+    ['namespace array initializer', 'export namespace API {\nexport const [api] = [{\n/** Private detail. */\ndetail: 1 }]\n}\n', 1],
+    ['namespace nested initializer', 'export namespace API {\nexport const { nested: [api] } = { nested: [{\n/** Private detail. */\ndetail: 1 }] }\n}\n', 1],
+    ['namespace aliased initializer', 'export namespace API {\nexport const { value: api } = {\n/** Private detail. */\nvalue: 1 }\n}\n', 1],
+    ['namespace object rest initializer', 'export namespace API {\nexport const { internal, ...api } = { internal: 1,\n/** Private detail. */\ndetail: 2 }\n}\n', 1],
+    ['namespace array rest initializer', 'export namespace API {\nexport const [internal, ...api] = [1, {\n/** Private detail. */\ndetail: 2 }]\n}\n', 1],
+    ['namespace type annotation', 'export namespace API {\nexport const { api }: {\n/** Private detail. */\napi: number } = source\n}\n', 1],
+    ['ambient namespace type annotation', 'export declare namespace API {\nconst { api }: {\n/** Private detail. */\napi: number }\n}\n', 1],
+    ['direct identifier export', 'export const api: {\n/** Public detail. */\ndetail: number } = {\n/** Public value. */\ndetail: 1 }\n', 0],
+    ['separate identifier export', 'const api = {\n/** Public detail. */\ndetail: 1 }\nexport { api }\n', 0],
+    ['separate identifier default export', 'const api = {\n/** Public detail. */\ndetail: 1 }\nexport default api\n', 0],
+    ['namespace identifier export', 'export namespace API {\nexport const api = {\n/** Public detail. */\ndetail: 1 }\n}\n', 0],
+    ['declaration documentation', '/** Public binding. */\nexport const { api } = source\n', 0]
+  ]) {
+    await t.test(name, async () => {
+      await writeFile(join(repo, 'destructuring.ts'), source)
+      const result = execute(repo, command, [...args, 'destructuring.ts'])
+      assert.equal(result.exit, expected, result.output)
+      const listed = execute(repo, command, [...args, '--list', 'destructuring.ts'])
+      assert.equal(listed.exit, 0, listed.output)
+      assert.equal(JSON.parse(listed.output).length, expected)
+    })
+  }
+})
+
+test('python comment keep-list preserves docstrings and linked constraints but rejects unlinked comments', async t => {
+  const f = await scratch(t)
+  const repo = await repository(t, { 'app.py': 'def run():\n    """Public contract."""\n    return 1  # Vendor limit: https://example.invalid/limits\n' })
+  const [command, ...args] = await install(f, repo, 'python')
+  args.pop()
+  const clean = execute(repo, command, args)
+  assert.equal(clean.exit, 0, clean.output)
+  await appendFile(join(repo, 'app.py'), '# Vendor requires a limit.\n')
+  const failed = execute(repo, command, args)
+  assert.equal(failed.exit, 1, failed.output)
+  assert.match(failed.output, /prose comment: # Vendor requires a limit/)
+})
+
 test('typescript comment ban uses the compiler scanner, ignoring comment-like text in strings, regexes and templates', async t => {
   const f = await scratch(t)
   const repo = build(t, 'ts-shop')
@@ -234,6 +441,8 @@ for (const [language, cases] of Object.entries({
     ['# pylint: disable=unused-import, all', 1],
     ['# pylint: disable=*', 1],
     ['# type: ignore[all]', 1],
+    ['# type: ignore[all] https://example.invalid/reason', 1],
+    ['# noqa https://example.invalid/reason', 1],
     ['# type: ignore[assignment, all]', 1]
   ],
   go: [

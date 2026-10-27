@@ -1569,7 +1569,7 @@ An unreadable kit blocks with `kit-unavailable` and an unknown feature is a usag
 Passing and failed proof results carry `data.runId`, `data.evidenceDirectory`, each evidence file with its SHA-256 and each executed step's exit code.
 
 `comment-check generate --repo <path> --language python|go|typescript` writes a self-contained, comment-free checker to scratch and returns `data.path`, `data.suggestedPath` and `data.run`.
-The checker exits 1 and prints `path:line:column: no-prose-comments: prose comment: <text>` for each comment that is neither an exempt directive nor a license header.
+The checker exits 1 and prints `path:line:column: no-prose-comments: prose comment: <text>` for each comment outside [the comment-ban keep-list and its syntax limits](../skills/verification/references/slop-baseline.md#the-comment-ban).
 `--list` prints the current violations as an array of rule, path and key objects and exits 0.
 `--baseline <file>` follows [the baseline schema](../runtime/schemas/baseline.schema.json), rejects duplicate rule/path/key identities and additionally fails on a listed entry that no longer matches a comment.
 An unreadable or invalid baseline prints `invalid-baseline:` and exits 2, including when combined with `--list`.

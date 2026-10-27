@@ -24,7 +24,7 @@ Start at the top rung and move down only when the rung above cannot express the 
 
 ## Principles L1-L8
 
-- **L1** Beyond the default slop baseline, start from a mistake with two cited occurrences, drawn from commits, reverts, review comments, agent instruction files, workaround comments or the user's correction, not a style wish.
+- **L1** Beyond the default slop baseline, start from a mistake with two cited occurrences, drawn from commits, reverts, review comments, agent instruction files, workaround comments, bypassed dependency wrappers or the user's correction, including session-cited corrections through `/recall`'s `transcripts` command, not a style wish.
 - **L2** Use the highest rung that works: make it unrepresentable before you lint it.
 - **L3** Implement each slop principle with the language's native linter first; write a custom syntax-tree check only where nothing native exists.
 - **L4** Semantic rules read the syntax tree or dependency graph, never raw text.
@@ -75,6 +75,11 @@ A mistake that recurs despite a written rule is a repeat of its class: a written
 Move the class up at least one rung in the same change instead of restating the rule.
 Once a check enforces a written rule, replace the rule with a pointer to the check, so the rule has one authoritative home.
 Keep prose only for a judgement call no check can express.
+
+A dependency called directly outside its sanctioned wrapper is an evidence class, subject to the same two-occurrence threshold.
+For example, two bypasses of a project's safe resource wrapper may justify a native restricted-API rule permitting that dependency only in the wrapper, with a diagnostic naming the wrapper to use.
+Prefer eliminating the footgun when possible; if the wrapper is missing, report the Eliminate-rung product change instead of implementing it.
+Past transcript corrections follow Correct Step C1: current-project sessions only, read-only, cited by session, untrusted and kept in scratch without copying transcript content into the repo.
 
 ## Wire the maintained command
 
