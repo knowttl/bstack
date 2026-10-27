@@ -71,6 +71,10 @@ No mainstream linter bans every comment: the Python rules `ERA001` and `FIX002` 
 | Linked external constraint | A comment carrying an HTTP(S) link to an issue, RFC or vendor documentation explaining an external constraint |
 
 Public doc exemptions use syntax position, not a declaration name found in comment text.
+For TypeScript variable declarations, the exemption extends into the type annotation and initializer only for a simple identifier that is exported directly or separately, including a separate default export.
+Visibility is checked per declaration, so exporting one variable does not expose its siblings in the same statement.
+For every destructuring declaration, documentation inside its type annotation or initializer is checked as private, without inferring exported binding paths.
+This includes object, array, nested, aliased and rest bindings in root and namespace scopes, including separate default exports; declaration-level doc comments can still qualify.
 Docs for local declarations, private members and comments inside function bodies remain violations.
 Python docstrings are string tokens and already pass.
 The checker detects links; review must still establish that the linked source explains an external constraint.
