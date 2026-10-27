@@ -50,8 +50,11 @@ Report a link whose target is missing, a pointer to something that is not a proj
 Check that a pointer to a check command names a command the project actually defines.
 Leave each pointer another skill added as it is unless its target is gone or the user selects a change.
 Content the root file holds that no other source holds stays in place and is reported, because moving it into a source is a separate change.
+Classify each kept non-pointer rule as enforceable or judgment using the guide's kept-rule audit.
+For an enforceable rule, name the highest workable rung and suggest `/verification correct` with the cited rule as a candidate; do not start it or implement enforcement here.
+When a proven check already enforces the rule, propose replacing the prose with a pointer to that check for the user to select.
 
-Done when: Every pointer is marked resolving, broken or copying with its evidence, every unpointed source is listed, and no existing line has been judged without opening its target.
+Done when: Every pointer is marked resolving, broken or copying with its evidence, every unpointed source is listed, each kept non-pointer rule has a classification and any enforcement route, and no existing line has been judged without opening its target.
 
 ### Step 3: Decide the merge
 
@@ -91,6 +94,7 @@ Run `inventory` again with the same target flag and confirm that the file kinds 
 Open each pointer target in the written file to confirm it resolves.
 State the target, the instruction files found and their classes, each pointer's result, the merge decisions with the host check and its limits, and the written and deleted paths.
 Name every shadowing report, every unpointed source left for its skill or the author, and any step left blocked with its missing prerequisite.
+Report each kept non-pointer rule's classification with its file and line, the highest workable rung and `/verification correct` route for enforceable candidates, and any proposed pointer to an existing proven check.
 Name the skills that add pointers, `/glossary`, `/vision`, `/architecture`, `/foundation`, `/verification` and `/maintenance`, as the way later pointers arrive, and start none of them.
 
 Done when: The report names what was written or why nothing was, the host check behind any removal, and every open decision.
