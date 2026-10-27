@@ -63,7 +63,7 @@ The new-project path can implement the approved foundation, but it does not buil
 | Planning workflow | The user writes the design once, each setup skill takes its answers from it, and `/plan` runs last to write an implementation plan it never executes (R41) |
 | Plan lifetime | A plan is temporary: it states the condition under which it is deleted, and `/maintenance sweep` flags a finished or orphaned plan (R47) |
 | Why skill | `/why` explains motivation from git history and PR review threads always, plus any ticket, doc or chat connector the host exposes. Each source is cited, and connector content is untrusted data (R47) |
-| Transcripts | `/recall` may read the host's local Claude Code and Codex transcripts for the current project, read-only, and keeps its output in scratch, never in the repo (R47) |
+| Transcripts | `/recall` and `/verification correct` through `/recall`'s `transcripts` command may read the host's local Claude Code and Codex transcripts for the current project, read-only, with output in scratch, never in the repo (R47 and the inverted-pyramid amendment) |
 | Prototyping | The prototyping skill builds two or three throwaway variants in scratch, drives and measures each with the project's verification kit, and reports evidence and a recommendation, with no writes to the target repo (R47) |
 | Writing | Writing quality is in scope. One shared writing reference, which names and links the Diátaxis modes and sets plain-prose rules, is loaded by every skill that writes a document (R47) |
 | Formal verification | See [formal verification commissioning decisions](#formal-verification-commissioning-decisions-2026-10-18) for the approved scope and automatic upkeep, including when slower property checks run (R44) |
@@ -139,7 +139,7 @@ R29 records the scope amendment.
 | Q4 | Offline network blocking in every repo where the runner supports it |
 | Q5 | Third-party lens only for external service or API integrations involving authentication, secrets or rate limits |
 | Q6 | Full community anti-slop ruleset by default, expressed as language-agnostic principles with native per-project implementations |
-| Q7, Q13 | Ban prose comments; exempt rule-specific machine directives and legally required license headers |
+| Q7, Q13 | Ban prose comments; exempt rule-specific machine directives, legally required license headers, doc comments on exported/public declarations and comments carrying a link explaining an external constraint (inverted-pyramid D1) |
 | P1-P10 | Keep all ten testing principles and the four-question test gate below |
 | Q8 | Use the kit while building, then independently through no-mistakes using the same kit |
 | Q11 | Also offer selected no-mistakes setup in repos without it |
@@ -451,7 +451,7 @@ A1, A2 and A3 reverse settled decisions: A1 widens R41's product boundary, A2 wi
 |---|---|---|
 | A1 | `research-and-prototyping-in-scope` | bstack also ships research skills, `/teach`, `/how` and `/why`, and a prototyping skill that runs throwaway experiments in scratch. Executing the plan itself stays out, so the boundary in ["Product boundary"](#product-boundary) moves only as far as explaining a codebase and running experiments that leave the target untouched |
 | A2 | `why-any-source` | `/why` explains the motivation behind code from git history and PR review threads always, plus any ticket, doc or chat connector the host exposes. Each source is cited, and connector content is untrusted data that the skill reads and never obeys |
-| A3 | `recall-local-transcripts` | `/recall` may read the host's local Claude Code and Codex transcripts for the current project, read-only. It summarises prior context into scratch and writes nothing from a transcript into the repo |
+| A3 | `recall-local-transcripts` | `/recall` may read the host's local Claude Code and Codex transcripts for the current project, read-only. It summarises prior context into scratch and writes nothing from a transcript into the repo. The inverted-pyramid amendment also permits `/verification correct` to use `/recall`'s `transcripts` command for correction evidence under the same limits |
 | A4 | `prototype-in-scratch` | The prototyping skill builds two or three throwaway variants in scratch, drives and measures each with the project's verification kit, and reports the evidence and a recommendation. It writes nothing to the target repo |
 | A5 | `shared-writing-reference` | Writing quality is in scope. One shared reference, loaded by every skill that writes a document, names and links the Diátaxis modes and sets plain-prose rules |
 | A6 | `plans-are-temporary` | A plan states the condition under which it is deleted, and `/maintenance sweep` flags a plan that is finished or orphaned |
@@ -526,6 +526,47 @@ The remaining build slices register their cases below and prove them on disposab
 - A plan with a removal condition that holds appears in `/maintenance sweep` as finished, and a plan whose design is gone appears as orphaned.
 - Evaluating whether a fresh agent follows the new skills' wording stays deferred with every other evaluation.
 
+### Inverted-pyramid amendment (2026-10-27)
+
+The maintainer approved generalising the inverted pyramid of agent corrections: codebase design before static analysis, then prose, then human review.
+bstack already expresses this as Eliminate > Detect > Encode > Review in [Correct mode](#correct-mode) and the constraint principles.
+This amendment improves discovery and routes repeated prose corrections up that ladder; it adds no rung or automatically invoked skill.
+The IDs in this section belong to this review, not the earlier testing principles or commissioning decisions.
+
+| Decision | Approved requirement |
+|---|---|
+| D1 | Amend Q7: retain the comment ban and its machine-directive and legal-header exemptions, plus a checker-verifiable keep-list of doc comments on exported/public declarations and comments carrying a link explaining an external constraint |
+| D2 | Retain L6 and L7: new violations fail the one maintained command, existing violations ratchet in a shrinking baseline, and hosted CI is wired only when selected |
+| D3 | `/agents-md` classifies kept non-pointer rules by rung and routes enforceable rules to `/verification correct`; judgment remains prose |
+
+- **P1: comment triage before baseline.** Classify listed comments as delete, reshape, encode or keep-exempt before baselining unresolved debt.
+  Delete narration; for reshape, name the symbol to rename, extract or type; for encode, identify the type, test or lint constraint that preserves the requirement; keep-exempt names the D1 exemption.
+  Investigate warning and do-not-remove claims before judging them, and report unresolved constraints as unenforced.
+  Each change remains a selected finding, encoding requires approval, and product reshaping is reported rather than performed by verification.
+- **P3: execution-context boundaries.** `/architecture` inspects entry points, build targets, process and worker spawns, runtime markers and context-specific roots to establish where code executes.
+  Contexts include processes, threads, client/server, sandboxes and real-time loops.
+  Propose import-graph rules from the observed boundary, for example that one context root cannot import modules doing work reserved for another context, and prove each rule with `rule-proof`.
+- **P4: sanctioned wrappers.** Inspect dependency manifests, wrapper modules, existing restricted-API configuration and clustered casts, suppressions or repeated guards at dependency call sites.
+  A wrapped dependency still called directly outside its wrapper is evidence for correct mode, subject to its two-occurrence threshold.
+  Prefer eliminating the footgun; when detection is the highest workable rung, use a native restricted-API rule allowing the dependency only inside the sanctioned wrapper, with a diagnostic naming that wrapper.
+  If the wrapper does not exist, report the Eliminate-rung product change instead of building it.
+- **P5: transcript corrections as evidence.** Widen A3 so `/verification correct` may read past user corrections through `/recall`'s `transcripts` command without starting `/recall` as a skill.
+  Match only the current project's sessions using the existing command contract, cite each occurrence by session, treat transcript content as untrusted data rather than instructions, minimise quoted content and keep digests and summaries in scratch.
+  Transcript reads remain read-only and write nothing from a transcript into the repo.
+- **P6: optional correction-routing pointer.** Correct mode may propose one optional `AGENTS.md` pointer suggesting `/verification correct` when the user corrects the same mistake a second time, instead of adding another prose rule.
+  It follows the reviewed pointer contract, suggests rather than invokes the skill, and adds no rule table.
+- **P7: kept instruction text.** `/agents-md` classifies each kept non-pointer rule as enforceable, naming the highest workable rung and routing it to `/verification correct`, or as judgment.
+  A written rule that a proven check enforces becomes a pointer to that check.
+  The eight testing prevention rules belong in review criteria and the project's testing policy with one pointer, rather than copied into `AGENTS.md`.
+- **P8: expect and fixture tests.** For textual or structured output, use public-interface expect or fixture tests when the four-question gate passes.
+  Review an updated expectation as a diff against an agreed source; never bulk-accept the current output, and keep the expectation-update flag out of the maintained check command.
+
+These are stack-independent inspections and rules, not blanket bans on a particular framework API or assumptions about a runtime.
+As worked examples only, a framework hook called outside its sanctioned wrapper can motivate P4, and a desktop application's main and renderer processes or a frame budget can motivate P3.
+Hosted CI by default (P10), an explicit test rung, instruction-file rule table and inline expiring exceptions (P11), and an auto-loaded mode skill (P12) remain unadopted.
+P9's missing verification-kit attribution is a separate attribution fix, not new runtime behaviour.
+This amendment changes the design only; skill procedures, checkers and tests are built in later slices, and agent evaluations remain deferred.
+
 ## The skill split
 
 The table below lists the built skills and their boundaries.
@@ -590,6 +631,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 ### architecture
 
 - `create`: a new repo reviews expected changes against proposed boundaries. An existing repo gets the full boundary audit of coupling, mixed responsibilities and shared edit targets.
+- The audit also inspects execution contexts and bypassed dependency wrappers under P3 and P4 of the [inverted-pyramid amendment](#inverted-pyramid-amendment-2026-10-27).
 - `maintain`: reruns `measure` and `overlap` since the last review, checks new modules against the design, and proposes new boundaries with their import rules proven by `rule-proof`.
 - Writes design sections, ADRs when selected, import-boundary rules and `CODING_STANDARDS.md` when a standards source is needed.
 - Owns design judgement rules such as DRY, KISS and boundaries. Lint and type constraints belong to `verification`.
@@ -635,6 +677,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - Boundary: keeps distinct nested instructions, reports `CLAUDE.local.md` as shadowing without editing it, touches nothing outside the repo, and rechecks the host's loading docs before removing a `CLAUDE.md`.
 - The shared [pointer contract](../runtime/references/agents-pointer.md) owns the file's shape and the rules for adding a line, with a checked copy in each skill that adds or audits pointers.
 - The pointer audit is read-based: the skill opens each pointer's target and reports broken links, lines that copy a rule instead of pointing to it, and sources with no pointer. `inventory` supplies the instruction files, merge candidates and shadowing reports, and no new command checks links, since `/maintenance sweep` is where the design places the repo-wide pointer check.
+- Classify kept non-pointer rules by rung and route enforceable ones to `/verification correct`, preserving judgment as prose (inverted-pyramid D3 and P7).
 
 ### plan
 
@@ -792,11 +835,13 @@ This adapts pstack's [maintain-verification-skill](https://github.com/cursor/plu
 Run on demand when the user keeps correcting agents for the same mistake.
 It needs no applied kit and never drives the product, so it runs after a single correction without the full `maintain` pass, and `maintain` hands its repeated mistakes to the same procedure so one document owns it.
 Collect the evidence, classify each mistake, give it the highest rung that works, prove each check on a real past mistake and propose the reviewed change.
-Evidence comes from the user's correction, commits, reverts and fix-ups, review comments, no-mistakes findings, agent instruction files and comments that explain a workaround, and a class counts once it has two cited occurrences.
+Evidence comes from the user's correction, commits, reverts and fix-ups, review comments, no-mistakes findings, agent instruction files, comments that explain a workaround and bypassed dependency wrappers, and a class counts once it has two cited occurrences.
+Past user corrections may also come through `/recall`'s `transcripts` command, cited by session and handled under A3 and inverted-pyramid P5.
 A mistake that recurs despite a written rule counts as a repeat and moves up at least one rung in the same change, and once a proven check enforces a written rule, the rule becomes a pointer to the check.
 A lint or CI diagnostic names the file, type or function to use instead, and each proof seeds the violation from a real past occurrence with its commit where the history holds one.
 It reuses `rule-proof` and `baseline check` and adds no script.
 Applied edits go through the same reviewed `apply` boundary; a change that needs product code, such as removing a second way to do one task, is reported with its files instead of made.
+The optional correction-routing pointer follows inverted-pyramid P6; it suggests the user invoke correct mode after a second correction and never invokes it automatically.
 pstack's per-class direct commits, its rule table in the instruction file and its inline exceptions with expiry dates are not adopted: the owner selects durable changes, the `agents-md` skill keeps the instruction file to pointers, and each L7 baseline entry already carries a removal condition.
 
 This adapts pstack's [correct](https://github.com/cursor/plugins/blob/99743e9c151c8537cbbf1f98bb38f34ef3368453/pstack/skills/correct/SKILL.md), keeping its evidence sources, threshold, rung order, proof and repeat rules.
@@ -826,12 +871,14 @@ Any no means no new test:
 
 The eight audit patterns move with their evidence and owner-selection requirements: duplicate scenario coverage, guards without production callers, oversized combination tables, tests re-running tests, repeated expensive setup, cold rebuilds per test, tautological tests and impossible production scenarios.
 Public-interface unit tests remain valid when they see the behaviour; mocked coverage alone never establishes a live journey.
+Expect and fixture tests for textual or structured public output follow inverted-pyramid P8: expected results come from an agreed source, expectation changes are reviewed as diffs and the maintained command cannot update them.
+Keep the eight prevention rules in review criteria and the project's testing policy, with one instruction-file pointer instead of eight copied rules (inverted-pyramid P7).
 
 ### Constraint principles (L1-L8)
 
 Use this ladder: eliminate through types, schemas or architecture; detect through lint, type or dependency-graph checks in the maintained command; encode in instructions or skills; review.
 
-- **L1** Beyond the default slop baseline, start from a mistake with two cited occurrences, drawn from commits, reverts, review comments, agent instruction files, workaround comments or the user's correction, not a style wish.
+- **L1** Beyond the default slop baseline, start from a mistake with two cited occurrences, drawn from commits, reverts, review comments, agent instruction files, workaround comments, bypassed dependency wrappers or the user's correction, including session-cited corrections through `/recall`'s `transcripts` command, not a style wish.
 - **L2** Use the highest rung that works: make it unrepresentable before you lint it.
 - **L3** Implement each slop principle with the language's native linter first; write a custom syntax-tree check only where nothing native exists.
 - **L4** Semantic rules read the syntax tree or dependency graph, never raw text.
@@ -863,11 +910,13 @@ Python and Go mappings in the report are research candidates verified by name on
 The package check allows tool names in the verification skill's slop-baseline reference only, because that reference is where per-language tools are mapped.
 Every enabled mapping needs project-specific configuration and `rule-proof` evidence; use a custom syntax-tree check only for a demonstrated native-tool gap.
 
-Ban all prose comments, exempting rule-specific machine directives and legally required license headers.
+Ban prose comments, exempting rule-specific machine directives, legally required license headers, doc comments on exported/public declarations and comments carrying a link explaining an external constraint (inverted-pyramid D1 amends Q7).
 Examples of exempt directives include build/generate directives, shebangs, named-rule lint suppressions and coded type ignores.
-Generate a language-tokenizer-based check for comment tokens; partial native comment rules do not establish the complete ban.
+Generate a language-tokenizer-based check for comment tokens, using syntax-position detection for exported/public doc comments; partial native comment rules do not establish the complete ban.
+The keep-list must be checker-verifiable; review still judges whether a linked source explains an external constraint.
 Before removing a warning such as a do-not-remove comment, encode its protected requirement as a type, test or lint constraint.
-Existing prose comments enter the L7 baseline and are removed only through selected fixes.
+Before baselining existing comments, triage each listed comment into delete, reshape, encode or keep-exempt under inverted-pyramid P1.
+Only unresolved violations enter the L7 baseline; product reshaping is reported, and removal or encoding requires selected fixes rather than silently dropping a constraint.
 
 ### Independent verification and automatic map upkeep (Q3, Q8, Q11)
 
@@ -2402,3 +2451,4 @@ Historical entries keep their original decisions and name their current applicat
 | R49, 2026-10-26 | "yes start the build." The maintainer's R47 approval covered the build slices, and this change builds the research skills `/teach`, `/how` and `/why` and the shared why-evidence reference | Applies R47. `skills/how/`, `skills/why/` and `skills/teach/` are three skill folders because no skill starts another, and each ships only `cite-check` and the research report schema, so none writes to the repo. `/how` and `/teach` ship the mechanics reference, `/why` and `/teach` ship the why-evidence reference, and `/architecture` ships the same why-evidence reference for the git log, blame and review-thread evidence behind a decision's reasons, each a generated copy of one source in `runtime/references/` that `generate-skills.mjs --check` verifies. All three load the shared writing reference when they write their explanation to the user. `cite-check` binds the cited code to exact bytes, while commit SHAs are confirmed with `git cat-file` and pull request threads and connector documents are opened and recorded as web citations, because the checker does not fetch URLs. AC-101 to AC-105 are registered: AC-101 and AC-105 are covered by `tests/scripts/research-skills.test.mjs`, and AC-102 to AC-104 keep planned procedures because every evaluation stays deferred. No pstack text is copied, so `NOTICE` gains no row, and the article's `teach`, `how` and `why` idea is credited in the commit message |
 | R50, 2026-10-26 | "yes start the build." The maintainer's R47 approval covered the build slices, and this change builds `/recall` | Applies R47 and records what A3 left as inference. `skills/recall/` ships only the new `transcripts` command and the shared writing reference, so the skill cannot write to the repo. Observed on Claude Code 2.1.310 and Codex 0.157.1: Claude Code keeps one JSONL file per session under `projects/<launch directory with every non-alphanumeric character replaced by a hyphen>/` in `CLAUDE_CONFIG_DIR` (default `~/.claude`), stamps `cwd` on its records and holds the text in `user` and `assistant` records, whose content is a string or blocks of `text`, `tool_use` and `tool_result`; Codex keeps `rollout-*.jsonl` files under `sessions/YYYY/MM/DD/` in `CODEX_HOME` (default `~/.codex`), records the launch directory in the first `session_meta` record and holds the text in `response_item` records of payload type `message`, whose blocks are `input_text` or `output_text`. Both formats are undocumented by the hosts and may change, so a session whose layout is not recognised is missed and never guessed at. Build choices: a session belongs to the project when its launch directory is the repo or inside it, so a session from another checkout or linked worktree of the same repository is not read; the digest keeps only user and assistant text, drops sub-agent turns, tool calls, tool results and reasoning, and cuts each turn at 2000 characters; the digest folder and files are readable by their owner only and the skill tells the user to delete them; a partial last line of a live session is skipped and counted. AC-106 and AC-107 are covered by `tests/scripts/recall.test.mjs`, and AC-108 keeps a planned procedure because every evaluation stays deferred. No pstack text is copied, so `NOTICE` gains no row, and the article's `recall` idea is credited in the commit message |
 | R51, 2026-10-26 | "yes start the build." The maintainer's R47 approval covered the build slices, and this change builds the prototyping skill, `/prototype` | Applies R47 and settles what A4 left open. `skills/prototype/` ships only the verification skill's `kit check` and `kit prove` commands, its kit plan schema and the writing reference, so the skill has no command of its own and cannot write to the repo through one. The skill clones the target into scratch for a baseline and for each of two or three variants and runs `kit prove` only on the clones, because the proof writes its evidence into the repo it runs in; each clone loses its `origin` so nothing reaches the target, and the skill compares the target's HEAD and `git status --porcelain --ignored` before and after. Build choices: without an applied kit the skill stops and names `/verification` as the skill that creates one, because the maintainer's words are "the project's verification kit" and no other way to measure was commissioned; a baseline clone that fails its proof stops the run before any variant is blamed; a clone holds the committed state, so uncommitted target changes are absent from every variant; a measure the feature steps do not print is added as one identical step in every clone's `kit.json` and listed in the report, and an existing step is never edited to suit a variant; a measure that varies is run at least three times and every value reported; the recommendation is made only when the measure separates the variants, and otherwise the report says the evidence does not decide. AC-109 and AC-110 are covered by `tests/scripts/prototype.test.mjs`, and AC-111 keeps a planned procedure because every evaluation stays deferred. No pstack text is copied, so `NOTICE` gains no row, and the article's prototyping idea is credited in the commit message |
+| R52, 2026-10-27 | The maintainer approved the inverted-pyramid review and asked to generalise the learnings | The inverted-pyramid amendment records D1-D3 and P1, P3-P8: comment triage and checkable exemptions amend Q7; execution-context and sanctioned-wrapper discovery extend the architecture audit; session-cited transcript corrections through `/recall`'s `transcripts` command widen A3; an optional correction-routing pointer, kept-rule classification and expect/fixture tests move recurring corrections up the existing ladder. D2 retains the maintained-command ratchet and selected-only hosted CI. P9 attribution ships separately; P10-P12 remain unadopted. This slice amends the design only, implementation follows in later slices and agent evaluations remain deferred |
