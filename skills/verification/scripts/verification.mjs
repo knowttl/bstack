@@ -3998,6 +3998,22 @@ function violations(path) {
       })
     }
   }
+  const inspectExpression = node => {
+    if (!node) return
+    if (ts.isArrowFunction(node) || ts.isFunctionExpression(node) || ts.isClassExpression(node)) inspectPublic(node)
+    else if (ts.isObjectLiteralExpression(node)) {
+      for (const property of node.properties) {
+        if (ts.isSpreadAssignment(property)) inspectExpression(property.expression)
+        else inspectPublic(property)
+      }
+    } else if (ts.isArrayLiteralExpression(node)) {
+      for (const element of node.elements) inspectExpression(ts.isSpreadElement(element) ? element.expression : element)
+    } else if (ts.isParenthesizedExpression(node) || ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)
+      || ts.isSatisfiesExpression(node) || ts.isNonNullExpression(node)) {
+      inspectType(node.type)
+      inspectExpression(node.expression)
+    }
+  }
   const inspectPublic = node => {
     keep(node)
     inspectType(node.type)
@@ -4006,9 +4022,8 @@ function violations(path) {
     for (const clause of node.heritageClauses ?? []) {
       for (const type of clause.types) for (const argument of type.typeArguments ?? []) inspectType(argument)
     }
-    if (ts.isVariableStatement(node)) {
-      for (const declaration of node.declarationList.declarations) inspectType(declaration.type)
-    }
+    inspectExpression(node.initializer)
+    if (ts.isExportAssignment(node)) inspectExpression(node.expression)
     for (const member of node.members ?? []) {
       if (publicMember(member)) inspectPublic(member)
       if (ts.isConstructorDeclaration(member)) {
@@ -4027,9 +4042,14 @@ function violations(path) {
     }
     for (const node of statements) {
       const augmentation = ts.isModuleDeclaration(node) && (!!(node.flags & ts.NodeFlags.GlobalAugmentation) || ts.isStringLiteral(node.name))
-      const visible = exported || augmentation || node.modifiers?.some(item => item.kind === ts.SyntaxKind.ExportKeyword || item.kind === ts.SyntaxKind.DefaultKeyword)
+      const visible = exported || augmentation || ts.isExportAssignment(node) || node.modifiers?.some(item => item.kind === ts.SyntaxKind.ExportKeyword || item.kind === ts.SyntaxKind.DefaultKeyword)
         || (node.name && ts.isIdentifier(node.name) && exportedNames.has(node.name.text))
-        || (ts.isVariableStatement(node) && node.declarationList.declarations.some(item => bindingNames(item.name).some(name => exportedNames.has(name))))
+      if (ts.isVariableStatement(node)) {
+        const declarations = node.declarationList.declarations.filter(item => visible || bindingNames(item.name).some(name => exportedNames.has(name)))
+        if (declarations.length) keep(node)
+        for (const declaration of declarations) inspectPublic(declaration)
+        continue
+      }
       if (!visible) continue
       inspectPublic(node)
       if (ts.isModuleDeclaration(node) && node.body) {
