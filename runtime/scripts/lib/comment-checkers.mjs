@@ -256,6 +256,37 @@ func scan(path string) ([]comment, error) {
 		}
 	}
 	keep(tree.Doc)
+	var inspectType func(ast.Expr)
+	inspectType = func(expression ast.Expr) {
+		if expression == nil { return }
+		ast.Inspect(expression, func(node ast.Node) bool {
+			var fields *ast.FieldList
+			switch body := node.(type) {
+			case *ast.StructType: fields = body.Fields
+			case *ast.InterfaceType: fields = body.Methods
+			default: return true
+			}
+			for _, field := range fields.List {
+				public := true
+				for _, name := range field.Names { public = public && name.IsExported() }
+				if len(field.Names) == 0 {
+					typeName := field.Type
+					if pointer, ok := typeName.(*ast.StarExpr); ok { typeName = pointer.X }
+					switch generic := typeName.(type) {
+					case *ast.IndexExpr: typeName = generic.X
+					case *ast.IndexListExpr: typeName = generic.X
+					}
+					if selector, ok := typeName.(*ast.SelectorExpr); ok { typeName = selector.Sel }
+					if name, ok := typeName.(*ast.Ident); ok { public = name.IsExported() }
+				}
+				if public {
+					keep(field.Doc)
+					inspectType(field.Type)
+				}
+			}
+			return false
+		})
+	}
 	for _, declaration := range tree.Decls {
 		switch declaration := declaration.(type) {
 		case *ast.FuncDecl:
@@ -270,7 +301,10 @@ func scan(path string) ([]comment, error) {
 				name, ok := receiver.(*ast.Ident)
 				public = public && ok && name.IsExported()
 			}
-			if public { keep(declaration.Doc) }
+			if public {
+				keep(declaration.Doc)
+				inspectType(declaration.Type)
+			}
 		case *ast.GenDecl:
 			allPublic := true
 			for _, spec := range declaration.Specs {
@@ -280,34 +314,18 @@ func scan(path string) ([]comment, error) {
 					public = spec.Name.IsExported()
 					if public {
 						keep(spec.Doc)
-						var fields *ast.FieldList
-						switch body := spec.Type.(type) {
-						case *ast.StructType: fields = body.Fields
-						case *ast.InterfaceType: fields = body.Methods
-						}
-						if fields != nil {
-							for _, field := range fields.List {
-								if len(field.Names) > 0 {
-									exported := true
-									for _, name := range field.Names { exported = exported && name.IsExported() }
-									if exported { keep(field.Doc) }
-								} else {
-									typeName := field.Type
-									if pointer, ok := typeName.(*ast.StarExpr); ok { typeName = pointer.X }
-									switch generic := typeName.(type) {
-									case *ast.IndexExpr: typeName = generic.X
-									case *ast.IndexListExpr: typeName = generic.X
-									}
-									if selector, ok := typeName.(*ast.SelectorExpr); ok { typeName = selector.Sel }
-									if name, ok := typeName.(*ast.Ident); ok && name.IsExported() { keep(field.Doc) }
-								}
-							}
+						inspectType(spec.Type)
+						if spec.TypeParams != nil {
+							for _, parameter := range spec.TypeParams.List { inspectType(parameter.Type) }
 						}
 					}
 				case *ast.ValueSpec:
 					public = true
 					for _, name := range spec.Names { public = public && name.IsExported() }
-					if public { keep(spec.Doc) }
+					if public {
+						keep(spec.Doc)
+						inspectType(spec.Type)
+					}
 				}
 				allPublic = allPublic && public
 			}
@@ -518,7 +536,39 @@ function violations(path) {
   const publicMember = node => !(node.name && ts.isPrivateIdentifier(node.name))
     && !node.modifiers?.some(item => item.kind === ts.SyntaxKind.PrivateKeyword || item.kind === ts.SyntaxKind.ProtectedKeyword)
   const keep = node => { for (const doc of node.jsDoc ?? []) documented.add(doc.pos) }
-  const inspect = (statements, exported = false) => {
+  const bindingNames = name => ts.isIdentifier(name) ? [name.text]
+    : name.elements.filter(ts.isBindingElement).flatMap(element => bindingNames(element.name))
+  const inspectType = node => {
+    if (!node) return
+    if (ts.isTypeLiteralNode(node)) {
+      for (const member of node.members) if (publicMember(member)) inspectPublic(member)
+    } else {
+      ts.forEachChild(node, child => {
+        if (ts.isTypeNode(child) || ts.isTypeParameterDeclaration(child) || ts.isParameter(child)) inspectType(child)
+      })
+    }
+  }
+  const inspectPublic = node => {
+    keep(node)
+    inspectType(node.type)
+    for (const parameter of node.typeParameters ?? []) inspectType(parameter)
+    for (const parameter of node.parameters ?? []) inspectType(parameter.type)
+    for (const clause of node.heritageClauses ?? []) {
+      for (const type of clause.types) for (const argument of type.typeArguments ?? []) inspectType(argument)
+    }
+    if (ts.isVariableStatement(node)) {
+      for (const declaration of node.declarationList.declarations) inspectType(declaration.type)
+    }
+    for (const member of node.members ?? []) {
+      if (publicMember(member)) inspectPublic(member)
+      if (ts.isConstructorDeclaration(member)) {
+        for (const parameter of member.parameters) {
+          if (ts.isParameterPropertyDeclaration(parameter, member) && publicMember(parameter)) inspectPublic(parameter)
+        }
+      }
+    }
+  }
+  const inspect = (statements, exported = false, ambient = source.isDeclarationFile) => {
     const exportedNames = new Set(statements.filter(ts.isExportDeclaration).flatMap(node =>
       node.exportClause && ts.isNamedExports(node.exportClause) && !node.moduleSpecifier
         ? node.exportClause.elements.map(item => (item.propertyName ?? item.name).text) : []))
@@ -526,19 +576,16 @@ function violations(path) {
       if (ts.isExportAssignment(node) && ts.isIdentifier(node.expression)) exportedNames.add(node.expression.text)
     }
     for (const node of statements) {
-      const visible = exported || node.modifiers?.some(item => item.kind === ts.SyntaxKind.ExportKeyword || item.kind === ts.SyntaxKind.DefaultKeyword)
+      const augmentation = ts.isModuleDeclaration(node) && (!!(node.flags & ts.NodeFlags.GlobalAugmentation) || ts.isStringLiteral(node.name))
+      const visible = exported || augmentation || node.modifiers?.some(item => item.kind === ts.SyntaxKind.ExportKeyword || item.kind === ts.SyntaxKind.DefaultKeyword)
         || (node.name && ts.isIdentifier(node.name) && exportedNames.has(node.name.text))
-        || (ts.isVariableStatement(node) && node.declarationList.declarations.some(item => ts.isIdentifier(item.name) && exportedNames.has(item.name.text)))
+        || (ts.isVariableStatement(node) && node.declarationList.declarations.some(item => bindingNames(item.name).some(name => exportedNames.has(name))))
       if (!visible) continue
-      keep(node)
-      if (ts.isClassDeclaration(node) || ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node)) {
-        for (const member of node.members) if (publicMember(member)) keep(member)
-      }
-      if (ts.isTypeAliasDeclaration(node) && ts.isTypeLiteralNode(node.type)) {
-        for (const member of node.type.members) keep(member)
-      }
-      if (ts.isModuleDeclaration(node) && node.body && ts.isModuleBlock(node.body)) {
-        inspect(node.body.statements, !!source.isDeclarationFile)
+      inspectPublic(node)
+      if (ts.isModuleDeclaration(node) && node.body) {
+        const context = ambient || augmentation || !!node.modifiers?.some(item => item.kind === ts.SyntaxKind.DeclareKeyword)
+        if (ts.isModuleBlock(node.body)) inspect(node.body.statements, context, context)
+        else if (ts.isModuleDeclaration(node.body)) inspect([node.body], true, context)
       }
     }
   }
