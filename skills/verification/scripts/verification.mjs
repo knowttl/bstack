@@ -3536,7 +3536,12 @@ def violations(path):
             continue
         line, column = token.start
         text = token.string
-        if (line == 1 and text.startswith("#!")) or line in licensed or is_exempt(text):
+        if (
+            (line == 1 and text.startswith("#!"))
+            or line in licensed
+            or is_exempt(text)
+            or re.search(r"https?://[^\\s<>]+", text)
+        ):
             continue
         digest = hashlib.sha256(text.strip().encode()).hexdigest()[:12]
         seen[digest] = seen.get(digest, 0) + 1
@@ -3651,6 +3656,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"go/ast"
+	"go/parser"
 	"go/scanner"
 	"go/token"
 	"os"
@@ -3665,6 +3672,7 @@ const rule = "no-prose-comments"
 
 var exempt = []*regexp.Regexp{__EXEMPT__}
 var license = regexp.MustCompile(__LICENSE__)
+var link = regexp.MustCompile("https?://[^[:space:]<>]+")
 
 type comment struct {
 	path    string
@@ -3674,6 +3682,7 @@ type comment struct {
 	text    string
 	key     string
 	leading bool
+	documented bool
 }
 
 func scan(path string) ([]comment, error) {
@@ -3682,6 +3691,77 @@ func scan(path string) ([]comment, error) {
 		return nil, err
 	}
 	set := token.NewFileSet()
+	tree, err := parser.ParseFile(set, path, source, parser.ParseComments)
+	if err != nil {
+		return nil, err
+	}
+	documented := map[int]bool{}
+	keep := func(group *ast.CommentGroup) {
+		if group != nil {
+			for _, item := range group.List {
+				documented[set.Position(item.Pos()).Offset] = true
+			}
+		}
+	}
+	keep(tree.Doc)
+	for _, declaration := range tree.Decls {
+		switch declaration := declaration.(type) {
+		case *ast.FuncDecl:
+			public := declaration.Name.IsExported()
+			if declaration.Recv != nil {
+				receiver := declaration.Recv.List[0].Type
+				if pointer, ok := receiver.(*ast.StarExpr); ok { receiver = pointer.X }
+				switch generic := receiver.(type) {
+				case *ast.IndexExpr: receiver = generic.X
+				case *ast.IndexListExpr: receiver = generic.X
+				}
+				name, ok := receiver.(*ast.Ident)
+				public = public && ok && name.IsExported()
+			}
+			if public { keep(declaration.Doc) }
+		case *ast.GenDecl:
+			allPublic := true
+			for _, spec := range declaration.Specs {
+				public := false
+				switch spec := spec.(type) {
+				case *ast.TypeSpec:
+					public = spec.Name.IsExported()
+					if public {
+						keep(spec.Doc)
+						var fields *ast.FieldList
+						switch body := spec.Type.(type) {
+						case *ast.StructType: fields = body.Fields
+						case *ast.InterfaceType: fields = body.Methods
+						}
+						if fields != nil {
+							for _, field := range fields.List {
+								if len(field.Names) > 0 {
+									exported := true
+									for _, name := range field.Names { exported = exported && name.IsExported() }
+									if exported { keep(field.Doc) }
+								} else {
+									typeName := field.Type
+									if pointer, ok := typeName.(*ast.StarExpr); ok { typeName = pointer.X }
+									switch generic := typeName.(type) {
+									case *ast.IndexExpr: typeName = generic.X
+									case *ast.IndexListExpr: typeName = generic.X
+									}
+									if selector, ok := typeName.(*ast.SelectorExpr); ok { typeName = selector.Sel }
+									if name, ok := typeName.(*ast.Ident); ok && name.IsExported() { keep(field.Doc) }
+								}
+							}
+						}
+					}
+				case *ast.ValueSpec:
+					public = true
+					for _, name := range spec.Names { public = public && name.IsExported() }
+					if public { keep(spec.Doc) }
+				}
+				allPublic = allPublic && public
+			}
+			if allPublic { keep(declaration.Doc) }
+		}
+	}
 	file := set.AddFile(path, set.Base(), len(source))
 	var s scanner.Scanner
 	s.Init(file, source, nil, scanner.ScanComments)
@@ -3697,7 +3777,7 @@ func scan(path string) ([]comment, error) {
 			continue
 		}
 		position := set.Position(pos)
-		found = append(found, comment{path: path, line: position.Line, last: position.Line + strings.Count(lit, "\\n"), column: position.Column, text: lit, leading: leading})
+		found = append(found, comment{path: path, line: position.Line, last: position.Line + strings.Count(lit, "\\n"), column: position.Column, text: lit, leading: leading, documented: documented[position.Offset]})
 	}
 	licensed := map[int]bool{}
 	for start := 0; start < len(found); {
@@ -3720,7 +3800,7 @@ func scan(path string) ([]comment, error) {
 	seen := map[string]int{}
 	var kept []comment
 	for index, item := range found {
-		skip := licensed[index]
+		skip := licensed[index] || item.documented || link.MatchString(item.text)
 		for _, pattern := range exempt {
 			match := pattern.FindStringSubmatch(item.text)
 			if match == nil {
@@ -3879,6 +3959,33 @@ const license = new RegExp(__LICENSE__)
 function violations(path) {
   const text = readFileSync(path, 'utf8')
   const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true)
+  const documented = new Set()
+  const exportedNames = new Set(source.statements.filter(ts.isExportDeclaration).flatMap(node =>
+    node.exportClause && ts.isNamedExports(node.exportClause) && !node.moduleSpecifier
+      ? node.exportClause.elements.map(item => (item.propertyName ?? item.name).text) : []))
+  for (const node of source.statements) {
+    if (ts.isExportAssignment(node) && ts.isIdentifier(node.expression)) exportedNames.add(node.expression.text)
+  }
+  const publicMember = node => !(node.name && ts.isPrivateIdentifier(node.name))
+    && !node.modifiers?.some(item => item.kind === ts.SyntaxKind.PrivateKeyword || item.kind === ts.SyntaxKind.ProtectedKeyword)
+  const keep = node => { for (const doc of node.jsDoc ?? []) documented.add(doc.pos) }
+  const inspect = (node, exported = false) => {
+    const visible = exported || node.modifiers?.some(item => item.kind === ts.SyntaxKind.ExportKeyword || item.kind === ts.SyntaxKind.DefaultKeyword)
+      || (node.name && ts.isIdentifier(node.name) && exportedNames.has(node.name.text))
+      || (ts.isVariableStatement(node) && node.declarationList.declarations.some(item => ts.isIdentifier(item.name) && exportedNames.has(item.name.text)))
+    if (!visible) return
+    keep(node)
+    if (ts.isClassDeclaration(node) || ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node)) {
+      for (const member of node.members) if (publicMember(member)) keep(member)
+    }
+    if (ts.isTypeAliasDeclaration(node) && ts.isTypeLiteralNode(node.type)) {
+      for (const member of node.type.members) keep(member)
+    }
+    if (ts.isModuleDeclaration(node) && node.body && ts.isModuleBlock(node.body)) {
+      for (const member of node.body.statements) inspect(member, !!source.isDeclarationFile)
+    }
+  }
+  for (const node of source.statements) inspect(node, source.isDeclarationFile && !ts.isExternalModule(source))
   const ranges = new Map()
   let first = true
   const visit = node => {
@@ -3894,7 +4001,7 @@ function violations(path) {
   const found = [...ranges.values()].sort((a, b) => a.pos - b.pos).map(range => {
     const start = source.getLineAndCharacterOfPosition(range.pos)
     const last = source.getLineAndCharacterOfPosition(range.end)
-    return { text: text.slice(range.pos, range.end), line: start.line + 1, column: start.character + 1, last: last.line + 1, leading: range.leading }
+    return { text: text.slice(range.pos, range.end), documented: documented.has(range.pos), line: start.line + 1, column: start.character + 1, last: last.line + 1, leading: range.leading }
   })
   const licensed = new Set()
   for (let start = 0; start < found.length;) {
@@ -3912,7 +4019,7 @@ function violations(path) {
       const match = pattern.exec(item.text)
       return match && (!match[1] || match[1].split(',').every(selector => selector.trim().toLowerCase() !== 'all'))
     })
-    if (licensed.has(index) || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
+    if (licensed.has(index) || item.documented || new RegExp('https?://[^\\\\s<>]+').test(item.text) || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
     kept.push({ rule, path, key: digest + ':' + seen.get(digest), line: item.line, column: item.column, text: item.text })

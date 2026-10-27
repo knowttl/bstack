@@ -137,6 +137,81 @@ for (const [language, spec] of Object.entries(languages)) {
   })
 }
 
+for (const [name, source, expected] of [
+  ['exported function', '// Run returns the result.\nfunc Run() {}\n', 0],
+  ['local function', '// Run describes a local helper.\nfunc run() {}\n', 1],
+  ['function body', 'func Run() {\n// Run narrates its body.\n}\n', 1],
+  ['detached comment', '// Run is detached.\n\nfunc Run() {}\n', 1],
+  ['exported type and field', '// Item is public.\ntype Item struct {\n// Name is public.\nName string\n}\n', 0],
+  ['private field', 'type Item struct {\n// Name describes a private field.\nname string\n}\n', 1],
+  ['exported embedded field', 'type Detail struct {}\ntype Item struct {\n// Detail embeds the public contract.\n*Detail\n}\n', 0],
+  ['exported method', 'type Item struct {}\n// Run executes.\nfunc (item *Item) Run() {}\n', 0],
+  ['method on private receiver', 'type item struct {}\n// Run executes.\nfunc (value *item) Run() {}\n', 1],
+  ['generic receiver', 'type Item[T any] struct {}\n// Run executes.\nfunc (item *Item[T]) Run() {}\n', 0],
+  ['exported grouped declaration', 'const (\n// Limit bounds work.\nLimit = 1\n)\n', 0],
+  ['local capitalised variable', 'func Run() {\n// Limit is local.\nvar Limit = 1\n_ = Limit\n}\n', 1],
+  ['linked constraint', '// Vendor limit: https://example.invalid/limits\nfunc run() {}\n', 0],
+  ['unlinked constraint', '// Vendor requires a limit.\nfunc run() {}\n', 1]
+]) {
+  test(`go comment keep-list: ${name}`, async t => {
+    const f = await scratch(t)
+    const repo = await repository(t, { 'main.go': `package main\n${source}`, 'go.mod': languages.go.extra['go.mod'] })
+    const [command, ...args] = await install(f, repo, 'go')
+    args.pop()
+    const result = execute(repo, command, args)
+    assert.equal(result.exit, expected, result.output)
+    const listed = execute(repo, command, [...args, '--list'])
+    assert.equal(JSON.parse(listed.output).length, expected)
+  })
+}
+
+for (const [name, source, expected] of [
+  ['exported function', '/** Runs the operation. */\nexport function run() {}\n', 0],
+  ['local function', '/** export function run is private. */\nfunction run() {}\n', 1],
+  ['function body', 'export function run() {\n/** Explains a local operation. */\nconst value = 1\n}\n', 1],
+  ['ordinary comment on export', '// Runs the operation.\nexport function run() {}\n', 1],
+  ['default export', '/** Public contract. */\nexport default class Item {}\n', 0],
+  ['separate named export', '/** Public contract. */\nfunction run() {}\nexport { run as execute }\n', 0],
+  ['separate default export', '/** Public contract. */\nfunction run() {}\nexport default run\n', 0],
+  ['re-export does not expose local', '/** Private contract. */\nfunction run() {}\nexport { run } from "./other"\n', 1],
+  ['public class members', '/** Item contract. */\nexport class Item {\n/** Public method. */\nrun() {}\n}\n', 0],
+  ['private class member', 'export class Item {\n/** Private method. */\nprivate run() {}\n}\n', 1],
+  ['protected class member', 'export class Item {\n/** Protected method. */\nprotected run() {}\n}\n', 1],
+  ['private identifier', 'export class Item {\n/** Private field. */\n#value = 1\n}\n', 1],
+  ['private class public member', 'class Item {\n/** Local method. */\nrun() {}\n}\n', 1],
+  ['interface member', 'export interface Item {\n/** Public method. */\nrun(): void\n}\n', 0],
+  ['enum member', 'export enum Item {\n/** Public value. */\nFirst\n}\n', 0],
+  ['type literal member', 'export type Item = {\n/** Public value. */\nvalue: string\n}\n', 0],
+  ['linked constraint', '// Platform requires this: https://example.invalid/platform\nconst value = 1\n', 0],
+  ['unlinked constraint', '// Platform requires this.\nconst value = 1\n', 1],
+  ['URL in string does not exempt comment', 'const url = "https://example.invalid" // narration\n', 1]
+]) {
+  test(`typescript comment keep-list: ${name}`, async t => {
+    const f = await scratch(t)
+    const repo = build(t, 'ts-shop')
+    const [command, ...args] = await install(f, repo, 'typescript')
+    args.pop()
+    await writeFile(join(repo, 'contract.ts'), source)
+    const result = execute(repo, command, [...args, 'contract.ts'])
+    assert.equal(result.exit, expected, result.output)
+    const listed = execute(repo, command, [...args, '--list', 'contract.ts'])
+    assert.equal(JSON.parse(listed.output).length, expected)
+  })
+}
+
+test('python comment keep-list preserves docstrings and linked constraints but rejects unlinked comments', async t => {
+  const f = await scratch(t)
+  const repo = await repository(t, { 'app.py': 'def run():\n    """Public contract."""\n    return 1  # Vendor limit: https://example.invalid/limits\n' })
+  const [command, ...args] = await install(f, repo, 'python')
+  args.pop()
+  const clean = execute(repo, command, args)
+  assert.equal(clean.exit, 0, clean.output)
+  await appendFile(join(repo, 'app.py'), '# Vendor requires a limit.\n')
+  const failed = execute(repo, command, args)
+  assert.equal(failed.exit, 1, failed.output)
+  assert.match(failed.output, /prose comment: # Vendor requires a limit/)
+})
+
 test('typescript comment ban uses the compiler scanner, ignoring comment-like text in strings, regexes and templates', async t => {
   const f = await scratch(t)
   const repo = build(t, 'ts-shop')

@@ -58,8 +58,7 @@ Dropped: `require-safety-comment-for-type-assertion`, which conflicts with the c
 
 ## The comment ban
 
-Ban all prose comments.
-Exempt only machine-read directives that name a specific rule or code, and legally required license headers.
+Ban prose comments except the checker-verifiable keep-list below.
 No mainstream linter bans every comment: the Python rules `ERA001` and `FIX002` and the Go linter `godox` cover parts only, so they do not establish the ban.
 
 | Exempt | Examples |
@@ -68,6 +67,13 @@ No mainstream linter bans every comment: the Python rules `ERA001` and `FIX002` 
 | Build and generate directives | `//go:build linux`, `//go:generate`, `/// <reference types="node" />` |
 | Suppressions that name a rule or code | `# type: ignore[assignment]`, `# noqa: E501`, `# pylint: disable=E1101`, `# pylint: disable-next=no-member`, `# pylint: enable=no-member`, `//nolint:unused`, `// eslint-disable-next-line no-var` |
 | License header | A comment group at the top of a file carrying `SPDX-License-Identifier`, `Copyright`, `Licensed under` or `All rights reserved` |
+| Public API doc comments | TypeScript JSDoc attached to exported declarations or their public members; Go doc groups attached to exported declarations or exported members of exported types |
+| Linked external constraint | A comment carrying an HTTP(S) link to an issue, RFC or vendor documentation explaining an external constraint |
+
+Public doc exemptions use syntax position, not a declaration name found in comment text.
+Docs for local declarations, private members and comments inside function bodies remain violations.
+Python docstrings are string tokens and already pass.
+The checker detects links; review must still establish that the linked source explains an external constraint.
 
 A bare `# type: ignore`, `# noqa` or a suppression without a rule name is a prose comment; SL-6 requires suppressions to be narrow.
 Blanket selectors such as `all` and Pylint group or category selectors such as `typecheck` or `C` are not exemptions.
@@ -80,12 +86,25 @@ Propose it as a selected `create` edit at the returned suggested path and wire i
 The TypeScript checker imports the project's `typescript` package; add that development dependency as a selected edit when the project lacks it.
 For another language, write the same check with that language's tokenizer and prove it the same way.
 
-Existing prose comments go into the shrinking baseline and are removed only through selected fixes:
+Before baselining, inspect `--list` identities alongside the source comments and classify each as a selected finding:
+
+| Class | Action |
+|---|---|
+| Delete | Propose removing narration or stale text |
+| Reshape | Name the symbol to rename, extract or type so the code expresses the knowledge; report the product change without performing it |
+| Encode | Identify the type, test or lint constraint preserving the requirement; obtain approval before encoding and removal |
+| Keep-exempt | Name the keep-list exemption and verify its syntax position or linked external constraint |
+
+Investigate warning and do-not-remove claims against the code and history before judging them.
+Only unresolved violations enter the shrinking baseline; each removal or encoding requires a selected, reviewed fix.
+Report constraints left without enforcement as unenforced.
+
+The generated command supports the shrinking baseline:
 
 - `--list` prints the current violations as rule, path and key objects. Keys hash the comment text and include a per-file occurrence number, so they survive moved lines but not a move to another file.
 - List output contains identities only; add the reason and removal condition required by `schemas/baseline.schema.json` before adopting entries as a baseline.
 - `--baseline <file>` accepts entries following `schemas/baseline.schema.json`, fails on any violation not listed, and fails on any listed entry that no longer matches a comment so the baseline shrinks.
 
 Before removing a warning comment such as "do not remove", encode the requirement it protects as a type, test or lint constraint, then delete the comment.
-If the user declines an encoding, delete the comment and report the constraint as unenforced.
+If the user declines an encoding, report the constraint as unenforced and leave any unselected removal in unresolved debt.
 The user's own global agent rules may allow rationale comments; inside a repo that adopts this ban, the repo's lint wins.
