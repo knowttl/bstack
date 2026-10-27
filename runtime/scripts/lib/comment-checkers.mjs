@@ -509,38 +509,40 @@ import ts from 'typescript'
 const rule = 'no-prose-comments'
 const exempt = __EXEMPT__.map(pattern => new RegExp(pattern))
 const license = new RegExp(__LICENSE__)
-const suppression = new RegExp('^(/[/]\\\\s*|/[*]+\\\\s*)([a-z]+-(disable|enable)|@ts-(ignore|expect-error))')
+const suppression = new RegExp('^(/[/]\\\\s*|/[*]+\\\\s*)([a-z]+-(disable|enable)|@ts-(ignore|expect-error|nocheck))')
 
 function violations(path) {
   const text = readFileSync(path, 'utf8')
   const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true)
   const documented = new Set()
-  const exportedNames = new Set(source.statements.filter(ts.isExportDeclaration).flatMap(node =>
-    node.exportClause && ts.isNamedExports(node.exportClause) && !node.moduleSpecifier
-      ? node.exportClause.elements.map(item => (item.propertyName ?? item.name).text) : []))
-  for (const node of source.statements) {
-    if (ts.isExportAssignment(node) && ts.isIdentifier(node.expression)) exportedNames.add(node.expression.text)
-  }
   const publicMember = node => !(node.name && ts.isPrivateIdentifier(node.name))
     && !node.modifiers?.some(item => item.kind === ts.SyntaxKind.PrivateKeyword || item.kind === ts.SyntaxKind.ProtectedKeyword)
   const keep = node => { for (const doc of node.jsDoc ?? []) documented.add(doc.pos) }
-  const inspect = (node, exported = false) => {
-    const visible = exported || node.modifiers?.some(item => item.kind === ts.SyntaxKind.ExportKeyword || item.kind === ts.SyntaxKind.DefaultKeyword)
-      || (node.name && ts.isIdentifier(node.name) && exportedNames.has(node.name.text))
-      || (ts.isVariableStatement(node) && node.declarationList.declarations.some(item => ts.isIdentifier(item.name) && exportedNames.has(item.name.text)))
-    if (!visible) return
-    keep(node)
-    if (ts.isClassDeclaration(node) || ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node)) {
-      for (const member of node.members) if (publicMember(member)) keep(member)
+  const inspect = (statements, exported = false) => {
+    const exportedNames = new Set(statements.filter(ts.isExportDeclaration).flatMap(node =>
+      node.exportClause && ts.isNamedExports(node.exportClause) && !node.moduleSpecifier
+        ? node.exportClause.elements.map(item => (item.propertyName ?? item.name).text) : []))
+    for (const node of statements) {
+      if (ts.isExportAssignment(node) && ts.isIdentifier(node.expression)) exportedNames.add(node.expression.text)
     }
-    if (ts.isTypeAliasDeclaration(node) && ts.isTypeLiteralNode(node.type)) {
-      for (const member of node.type.members) keep(member)
-    }
-    if (ts.isModuleDeclaration(node) && node.body && ts.isModuleBlock(node.body)) {
-      for (const member of node.body.statements) inspect(member, !!source.isDeclarationFile)
+    for (const node of statements) {
+      const visible = exported || node.modifiers?.some(item => item.kind === ts.SyntaxKind.ExportKeyword || item.kind === ts.SyntaxKind.DefaultKeyword)
+        || (node.name && ts.isIdentifier(node.name) && exportedNames.has(node.name.text))
+        || (ts.isVariableStatement(node) && node.declarationList.declarations.some(item => ts.isIdentifier(item.name) && exportedNames.has(item.name.text)))
+      if (!visible) continue
+      keep(node)
+      if (ts.isClassDeclaration(node) || ts.isInterfaceDeclaration(node) || ts.isEnumDeclaration(node)) {
+        for (const member of node.members) if (publicMember(member)) keep(member)
+      }
+      if (ts.isTypeAliasDeclaration(node) && ts.isTypeLiteralNode(node.type)) {
+        for (const member of node.type.members) keep(member)
+      }
+      if (ts.isModuleDeclaration(node) && node.body && ts.isModuleBlock(node.body)) {
+        inspect(node.body.statements, !!source.isDeclarationFile)
+      }
     }
   }
-  for (const node of source.statements) inspect(node, source.isDeclarationFile && !ts.isExternalModule(source))
+  inspect(source.statements, source.isDeclarationFile && !ts.isExternalModule(source))
   const ranges = new Map()
   let first = true
   const visit = node => {

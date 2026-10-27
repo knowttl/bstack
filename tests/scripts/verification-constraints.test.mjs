@@ -167,7 +167,7 @@ for (const [name, source, expected] of [
   })
 }
 
-for (const [name, source, expected] of [
+for (const [name, source, expected, file = 'contract.ts'] of [
   ['exported function', '/** Runs the operation. */\nexport function run() {}\n', 0],
   ['local function', '/** export function run is private. */\nfunction run() {}\n', 1],
   ['function body', 'export function run() {\n/** Explains a local operation. */\nconst value = 1\n}\n', 1],
@@ -176,6 +176,14 @@ for (const [name, source, expected] of [
   ['separate named export', '/** Public contract. */\nfunction run() {}\nexport { run as execute }\n', 0],
   ['separate default export', '/** Public contract. */\nfunction run() {}\nexport default run\n', 0],
   ['re-export does not expose local', '/** Private contract. */\nfunction run() {}\nexport { run } from "./other"\n', 1],
+  ['namespace private function shadows root export', 'function helper() {}\nexport { helper }\nexport namespace API {\n/** Internal helper. */\nfunction helper() {}\nexport function run() { helper() }\n}\n', 1],
+  ['namespace private variable shadows root export', 'const value = 1\nexport { value }\nexport namespace API {\n/** Internal value. */\nconst value = 2\nexport function run() { return value }\n}\n', 1],
+  ['namespace private function shadows root default export', 'function helper() {}\nexport default helper\nexport namespace API {\n/** Internal helper. */\nfunction helper() {}\n}\n', 1],
+  ['nested namespace private function shadows parent export', 'export namespace API {\nexport function helper() {}\nexport namespace Nested {\n/** Internal helper. */\nfunction helper() {}\n}\n}\n', 1],
+  ['exported namespace members', 'export namespace API {\n/** Public helper. */\nexport function helper() {}\n/** Public value. */\nexport const value = 1\n}\n', 0],
+  ['private namespace members', 'namespace API {\n/** Internal helper. */\nexport function helper() {}\n}\n', 1],
+  ['ambient namespace public members', 'declare namespace API {\n/** Public helper. */\nfunction helper(): void\n/** Public value. */\nconst value: number\n}\n', 0, 'contract.d.ts'],
+  ['external declaration file private root', 'export {}\n/** Internal helper. */\ndeclare function helper(): void\n', 1, 'contract.d.ts'],
   ['public class members', '/** Item contract. */\nexport class Item {\n/** Public method. */\nrun() {}\n}\n', 0],
   ['private class member', 'export class Item {\n/** Private method. */\nprivate run() {}\n}\n', 1],
   ['protected class member', 'export class Item {\n/** Protected method. */\nprotected run() {}\n}\n', 1],
@@ -188,17 +196,20 @@ for (const [name, source, expected] of [
   ['unlinked constraint', '// Platform requires this.\nconst value = 1\n', 1],
   ['URL in string does not exempt comment', 'const url = "https://example.invalid" // narration\n', 1],
   ['JSDoc blanket suppression', '/** eslint-disable all */\nexport function run() {}\n', 1],
-  ['linked blanket suppression', '// eslint-disable-next-line all https://example.invalid/reason\nexport function run() {}\n', 1]
+  ['linked blanket suppression', '// eslint-disable-next-line all https://example.invalid/reason\nexport function run() {}\n', 1],
+  ['linked file-wide type suppression', '// @ts-nocheck https://example.invalid/reason\nexport const value = 1\n', 1],
+  ['linked block file-wide type suppression', '/* @ts-nocheck https://example.invalid/reason */\nexport const value = 1\n', 1],
+  ['JSDoc file-wide type suppression', '/** @ts-nocheck */\nexport function run() {}\n', 1]
 ]) {
   test(`typescript comment keep-list: ${name}`, async t => {
     const f = await scratch(t)
     const repo = build(t, 'ts-shop')
     const [command, ...args] = await install(f, repo, 'typescript')
     args.pop()
-    await writeFile(join(repo, 'contract.ts'), source)
-    const result = execute(repo, command, [...args, 'contract.ts'])
+    await writeFile(join(repo, file), source)
+    const result = execute(repo, command, [...args, file])
     assert.equal(result.exit, expected, result.output)
-    const listed = execute(repo, command, [...args, '--list', 'contract.ts'])
+    const listed = execute(repo, command, [...args, '--list', file])
     assert.equal(JSON.parse(listed.output).length, expected)
   })
 }
