@@ -964,7 +964,7 @@ The extraction preserves public command behaviour and portable installed executi
 The freshness check rejects stale bundles; generated files do not become independent sources of knowledge.
 The shared module also carries `apply`, `state show` and the protected-write libraries they need, because the standalone skill may not depend on repo-audit to honour review before apply and protected writes.
 
-Verification takes ownership of all suite auditing, the eight wasteful-test patterns and prevention rules, test-recommendation findings, research-brief test questions and testing guidance written into agent instructions and review configuration.
+Verification takes ownership of all suite auditing, the eight wasteful-test patterns and prevention rules, test-recommendation findings, research-brief test questions and testing guidance governed by [Testing principles](#testing-principles-p1-p10).
 Remove repo-audit's corresponding test-necessity load row when that transfer ships.
 repo-audit retains verification of its own outcomes.
 ["The skill split"](#the-skill-split) records its wider slimming.
