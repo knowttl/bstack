@@ -77,6 +77,7 @@ The checker detects links; review must still establish that the linked source ex
 
 A bare `# type: ignore`, `# noqa` or a suppression without a rule name is a prose comment; SL-6 requires suppressions to be narrow.
 Blanket selectors such as `all` and Pylint group or category selectors such as `typecheck` or `C` are not exemptions.
+Documentation position or a link cannot exempt an otherwise invalid suppression.
 An explanation after `--` does not replace the required rule name.
 
 Generate the checker with `comment-check generate --repo <target> --language python|go|typescript --json`.

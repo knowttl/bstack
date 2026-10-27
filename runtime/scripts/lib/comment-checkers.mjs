@@ -28,6 +28,9 @@ __EXEMPT__
 LICENSE = re.compile(
     __LICENSE__
 )
+SUPPRESSION = re.compile(
+    r"^#\\s*(?:(?:[a-z]+:\\s*)?noqa\\b|[a-z]+:\\s*(?:ignore|disable|enable)\\b)"
+)
 LEADING = {tokenize.ENCODING, tokenize.COMMENT, tokenize.NL, tokenize.NEWLINE}
 
 
@@ -86,7 +89,7 @@ def violations(path):
             (line == 1 and text.startswith("#!"))
             or line in licensed
             or is_exempt(text)
-            or re.search(r"https?://[^\\s<>]+", text)
+            or (not SUPPRESSION.search(text) and re.search(r"https?://[^\\s<>]+", text))
         ):
             continue
         digest = hashlib.sha256(text.strip().encode()).hexdigest()[:12]
@@ -221,6 +224,7 @@ const rule = "no-prose-comments"
 var exempt = []*regexp.Regexp{__EXEMPT__}
 var license = regexp.MustCompile(__LICENSE__)
 var link = regexp.MustCompile("https?://[^[:space:]<>]+")
+var suppression = regexp.MustCompile("^//(?:nolint|lint:ignore)(?:[:[:space:]]|$)")
 
 type comment struct {
 	path    string
@@ -348,7 +352,7 @@ func scan(path string) ([]comment, error) {
 	seen := map[string]int{}
 	var kept []comment
 	for index, item := range found {
-		skip := licensed[index] || item.documented || link.MatchString(item.text)
+		skip := licensed[index] || (!suppression.MatchString(item.text) && (item.documented || link.MatchString(item.text)))
 		for _, pattern := range exempt {
 			match := pattern.FindStringSubmatch(item.text)
 			if match == nil {
@@ -505,6 +509,7 @@ import ts from 'typescript'
 const rule = 'no-prose-comments'
 const exempt = __EXEMPT__.map(pattern => new RegExp(pattern))
 const license = new RegExp(__LICENSE__)
+const suppression = new RegExp('^(/[/]\\\\s*|/[*]+\\\\s*)([a-z]+-(disable|enable)|@ts-(ignore|expect-error))')
 
 function violations(path) {
   const text = readFileSync(path, 'utf8')
@@ -569,7 +574,8 @@ function violations(path) {
       const match = pattern.exec(item.text)
       return match && (!match[1] || match[1].split(',').every(selector => selector.trim().toLowerCase() !== 'all'))
     })
-    if (licensed.has(index) || item.documented || new RegExp('https?://[^\\\\s<>]+').test(item.text) || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
+    const documentation = !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\\\s<>]+').test(item.text))
+    if (licensed.has(index) || documentation || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
     kept.push({ rule, path, key: digest + ':' + seen.get(digest), line: item.line, column: item.column, text: item.text })

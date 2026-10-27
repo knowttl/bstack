@@ -151,7 +151,9 @@ for (const [name, source, expected] of [
   ['exported grouped declaration', 'const (\n// Limit bounds work.\nLimit = 1\n)\n', 0],
   ['local capitalised variable', 'func Run() {\n// Limit is local.\nvar Limit = 1\n_ = Limit\n}\n', 1],
   ['linked constraint', '// Vendor limit: https://example.invalid/limits\nfunc run() {}\n', 0],
-  ['unlinked constraint', '// Vendor requires a limit.\nfunc run() {}\n', 1]
+  ['unlinked constraint', '// Vendor requires a limit.\nfunc run() {}\n', 1],
+  ['blanket suppression on export', '//nolint:all\nfunc Run() {}\n', 1],
+  ['linked blanket suppression', '//nolint:all https://example.invalid/reason\nfunc Run() {}\n', 1]
 ]) {
   test(`go comment keep-list: ${name}`, async t => {
     const f = await scratch(t)
@@ -184,7 +186,9 @@ for (const [name, source, expected] of [
   ['type literal member', 'export type Item = {\n/** Public value. */\nvalue: string\n}\n', 0],
   ['linked constraint', '// Platform requires this: https://example.invalid/platform\nconst value = 1\n', 0],
   ['unlinked constraint', '// Platform requires this.\nconst value = 1\n', 1],
-  ['URL in string does not exempt comment', 'const url = "https://example.invalid" // narration\n', 1]
+  ['URL in string does not exempt comment', 'const url = "https://example.invalid" // narration\n', 1],
+  ['JSDoc blanket suppression', '/** eslint-disable all */\nexport function run() {}\n', 1],
+  ['linked blanket suppression', '// eslint-disable-next-line all https://example.invalid/reason\nexport function run() {}\n', 1]
 ]) {
   test(`typescript comment keep-list: ${name}`, async t => {
     const f = await scratch(t)
@@ -309,6 +313,8 @@ for (const [language, cases] of Object.entries({
     ['# pylint: disable=unused-import, all', 1],
     ['# pylint: disable=*', 1],
     ['# type: ignore[all]', 1],
+    ['# type: ignore[all] https://example.invalid/reason', 1],
+    ['# noqa https://example.invalid/reason', 1],
     ['# type: ignore[assignment, all]', 1]
   ],
   go: [
