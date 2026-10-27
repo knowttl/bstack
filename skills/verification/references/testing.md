@@ -7,6 +7,7 @@ Start from the project's requirements, approved design and observed risks; these
 
 - [Principles P1-P10](#principles-p1-p10)
 - [The four-question gate](#the-four-question-gate)
+- [Expect and fixture tests](#expect-and-fixture-tests)
 - [Offline by default](#offline-by-default)
 - [Outside the codebase](#outside-the-codebase)
 - [Wasteful-test patterns](#wasteful-test-patterns)
@@ -45,6 +46,13 @@ Any no means no new test.
 
 Name the acceptance source and the journey or public boundary a proposed test protects, and propose the fewest checks that would fail if that outcome broke.
 Do not propose tests that assert private implementation or copy expected values from current behaviour without an approved source.
+
+## Expect and fixture tests
+
+For textual or structured output, propose expect or fixture tests through the public interface when the four-question gate passes.
+Extend the project's existing runner and fixture builder, and compare the observed output with an expectation derived from the named agreed source.
+Review every expectation update as a diff against that source; never bulk-accept the current output.
+Keep any expectation-update flag out of the maintained check command so verification fails on a mismatch instead of rewriting the expectation.
 
 ## Offline by default
 
@@ -98,7 +106,7 @@ Flagged tests are removed only through a change the owner selects.
 
 When the owner selects testing guidance, adapt the principles into the project's existing authoritative surfaces and link to them instead of copying them.
 
-- Put concise guidance in `AGENTS.md`, including all eight prevention rules from the table above, linking to any existing testing policy for rationale and exceptions rather than copying that policy.
+- Put all eight prevention rules from the table above in the project's testing policy, including their evidence requirements and exceptions, and propose one `AGENTS.md` pointer to that policy instead of copying the rules.
 - Where review instructions are configured, such as a review step in the project's delivery tool, include all eight patterns as explicit review criteria so reviewers flag new instances with the same evidence and exceptions. Extend the existing configuration, preserve unrelated instructions, and do not introduce a review service for these rules.
 - When no project source states what evidence completes a change, propose one short section in the existing design or contribution guide naming where acceptance cases and the journey check live, that a change is complete when its affected journeys pass on the final inputs, and that passing unit tests alone do not establish it.
 - Report an instruction that mandates one development sequence for every change, such as writing a failing test before all work, as a proposed principle change, and keep it unless the user selects the change.
