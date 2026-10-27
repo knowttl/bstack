@@ -45,6 +45,22 @@ For each line of the root file, open its target and record one result:
 A line with no link is either merged text the author chose to keep or a copy, so ask which.
 A pointer to a command is resolving only when the project defines that command.
 
+## Kept-rule audit
+
+Classify each non-pointer rule kept in the root file, including text selected for a merge, with its file and line as evidence.
+Keep the classification in scratch and the report, not in an instruction-file rule table.
+
+- Enforceable: name the highest workable rung, starting with Eliminate (types or architecture), then Detect (lint, types or dependency-graph checks).
+  For example, a rule forbidding one module from importing another is a candidate for a dependency boundary or import check.
+  Suggest `/verification correct` with the cited rule as a candidate; that skill establishes repeated-mistake evidence and proves the enforcement.
+  Do not invoke it, change product code or add checks during this audit.
+- Judgment: explain why the rule needs contextual judgment and remains at Encode (prose) or Review (human judgment).
+  For example, choosing a useful abstraction can remain a judgment rule when no type or check can decide it.
+
+A rule does not move up merely because a check has a promising name.
+Open the check and its proof evidence before proposing to replace already-enforced prose with one pointer to it.
+Preserve kept text until the user selects that replacement; a candidate without proven enforcement stays reported as unenforced.
+
 ## Host loading check
 
 Before proposing to remove a `CLAUDE.md`, read the current official Claude Code memory documentation at https://code.claude.com/docs/en/memory, section "AGENTS.md", and run the host's version command where it is available.
