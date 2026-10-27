@@ -24,6 +24,16 @@ Separate formatting from design checks so a cosmetic change cannot conceal an ar
 | Exception policy | The reason, narrow scope and removal condition for an exception, or why none is allowed |
 
 Example rules: UI modules cannot import the database adapter, a package cannot import another package's private files, and a forbidden dependency cycle between layers fails the check.
+Execution-context example: a context root cannot import modules that perform work reserved for another context.
+Discover those roots and responsibilities from entry points, build targets, process or worker spawns and runtime markers, not directory names alone.
+For example, a desktop application's renderer may be forbidden from importing modules that perform main-process-only I/O; a real-time loop may exclude blocking work under an approved timing requirement.
+An import rule proves only the selected dependency restriction, not a frame budget or the absence of every blocking call.
+
+Sanctioned-wrapper example: only the wrapper module may call a restricted dependency API; other callers must use the wrapper, and the diagnostic names it.
+Discover the intended wrapper through manifests, wrapper implementations, existing restricted-API configuration and repeated workarounds at call sites.
+A framework hook exposed only through a project wrapper is one worked example, not a blanket ban on that hook or framework.
+Prefer eliminating the footgun; use the native linter's restricted-import or restricted-API facility when detection is the highest workable rung.
+If the wrapper does not exist, report the product change rather than implementing it as a check.
 Inventory design documents, contribution guidance, scoped agent instructions and native checks before proposing a rule, and reuse the one already present when it expresses the constraint reliably.
 Propose a custom checker only when existing tools cannot.
 
@@ -55,6 +65,9 @@ The plan follows `schemas/check-plan.json`; its selected check supplies the nati
 The command runs separate disposable copies, records versions, exits and diagnostics in scratch, and removes the copies.
 The clean copy must pass and the violation must fail with the expected diagnostic.
 Repeat for each private import, alias or equivalent-resolution bypass and each forbidden cycle, keeping public imports and the permitted dependency direction in the clean control.
+For execution-context rules, keep permitted context imports in the clean control and seed a forbidden cross-context import independently.
+For sanctioned-wrapper rules, keep the wrapper's dependency access and callers' wrapper use valid, and seed a direct dependency bypass outside the wrapper.
+Exercise alias and re-export bypasses where supported by the selected analysis, and record unsupported paths as coverage limits.
 The Python equivalent-resolution fixture exercises an intermediate public-looking bridge to private implementation; proof does not establish every possible re-export or dynamic dependency, so keep these coverage limits next to the rule evidence.
 Unavailable tools, interrupted execution and failed clean setup are blocked, never proof.
 Rule names alone never prove equivalent enforcement across languages; each enabled mapping needs its own project configuration and proof.
