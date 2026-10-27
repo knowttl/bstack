@@ -47,12 +47,18 @@ These adaptations follow the pinned design and module guidance attributed in the
 
 - Unrelated business responsibilities, or startup, UI, domain rules and persistence combined without clear internal boundaries.
 - Imports of private implementation, leaked representations and cycles across intended module boundaries.
+- Execution-context boundaries across processes, threads, client/server, sandboxes and real-time loops.
+  Inspect entry points, build targets, process and worker spawns, runtime markers and context-specific roots to establish where code executes and which work belongs there.
+  Cite performance or crash fixes that moved work between contexts and review comments about work running in the wrong context.
 - The same workaround, such as a guard, cast, retry or defensive copy, repeated at unrelated call sites to cope with one module's contract.
   Cite the sites and name the module they work around: that is evidence the boundary is broken.
 - A rising count of type escape hatches, such as `any`, unchecked casts, type-ignore comments and `unsafe` blocks, at the callers of one module.
   Count them with the language's own markers at the baseline and now, cite the sites, and treat the rise as evidence the module's types do not describe how it is used.
 - Shared mutable state, multiple writers of canonical data, and state held in scattered booleans, phases or lifecycle checks that must stay in sync.
 - More than one supported way to do one task, where callers copy whichever way they find first and every way keeps gaining callers.
+- Direct dependency calls outside an existing sanctioned wrapper.
+  Inspect dependency manifests, wrapper modules and existing restricted-API configuration to establish the intended interface, then trace callers and clustered casts, suppressions or repeated guards around that dependency.
+  Cite the wrapper and bypass sites, and look for fix-up or revert commits, review comments or user corrections identifying the footgun.
 - Hand-maintained parallel lists of the same items with no derivation or check that fails when they disagree.
 - The same business rule, algorithm or documented policy maintained independently in several places, with a concrete change that would require coordinated updates.
 - Abstractions, forwarding layers and configuration options without a current requirement, compared with a simpler design that still meets the approved requirements.
@@ -103,6 +109,10 @@ A script reports overlap evidence but cannot prove independence or predict every
 Fewer unrelated shared edits are an expected benefit, not a measured reduction until actual evidence exists.
 
 Record each proposed boundary's project-specific reason, source, scope, enforcement and exception policy.
+For an execution context, identify its roots and the work reserved for it before proposing an import-graph restriction.
+For a bypassed wrapper, prefer eliminating the footgun; when detection is the highest workable rung, propose a native restricted-API rule whose diagnostic names the sanctioned wrapper.
+If no wrapper exists, report the Eliminate-rung product change instead of building it.
+Route repeated mistake evidence to `/verification correct`, subject to its two-occurrence threshold; suggest the skill rather than invoking it automatically.
 Reuse existing design decisions and the design standards reference's sources rather than duplicating their rules.
 Present evidenced candidates and alternatives for selection before applying changes.
 Verification requires representative allowed and forbidden imports and compatible public behaviour, not file-count targets.
