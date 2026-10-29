@@ -99,7 +99,7 @@ Done when: Every enabled rule has a passing proof or is reported unproven, exist
 
 ### Step 7: Audit the existing suite
 
-On an existing repo, review the current tests for the eight wasteful-test patterns and for journeys protected only by unit or mocked tests.
+On an existing repo, review the current tests for the wasteful-test patterns, the test-quality rules with their exemptions, and journeys protected only by unit or mocked tests.
 Record evidenced instances as findings with the tests, callers and smallest change; remove nothing until the user selects it.
 Use the [testing reference](references/testing.md).
 Skip this step for a repo with no tests.
@@ -110,6 +110,7 @@ Done when: Every pattern instance has cited evidence, or the audit states that n
 
 Propose the pipeline configuration that makes the kit count: the coverage gate after Document, the kit named in the Test instructions, the testing criteria in Review and the feature map as the owner of how a user reaches each feature.
 Extend an existing `.no-mistakes.yaml` instead of replacing it.
+For slow validation, propose and prove a changed-area selector from the architecture's module and protocol declarations, including dependent validation, a safe full offline fallback and ongoing selection-miss tuning as the wiring reference describes.
 When the repo has none, offer no-mistakes setup as a selected step the user may decline, tell the user the one command that sets it up and never run it, and add no hosted CI workflow unless the user asks.
 Load the [wiring reference](references/no-mistakes.md).
 
@@ -175,7 +176,8 @@ Done when: Only the approved change set has been applied, `kit check` passes and
 ### Step M6: Mine repeated mistakes and audit the suite
 
 Run Steps C1 and C2 of the [Correct checklist](#correct-checklist) over the project's recent no-mistakes findings and review comments where they are available, and propose each repeated mistake's rung without applying it.
-Audit the suite for the eight wasteful-test patterns with the [testing reference](references/testing.md), recording evidenced instances as findings and removing nothing until the user selects it.
+Audit the suite for the wasteful-test patterns and test-quality rules with the [testing reference](references/testing.md), recording evidenced instances as findings and removing nothing until the user selects it.
+Where the project uses changed-area selection, compare it with a full offline run and propose mapping fixes and selector regression cases for misses, following the [no-mistakes wiring reference](references/no-mistakes.md#change-scoped-test-command).
 
 Done when: Each repeated mistake has a proposed rung and evidence, and each pattern instance has cited evidence or the audit states that none was found.
 

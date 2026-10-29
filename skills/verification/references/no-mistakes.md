@@ -8,6 +8,7 @@ Everything here is a selected change that goes through the exact-diff review and
 
 - [What the wiring does](#what-the-wiring-does)
 - [Propose the configuration](#propose-the-configuration)
+- [Change-scoped Test command](#change-scoped-test-command)
 - [Offer setup where there is none](#offer-setup-where-there-is-none)
 - [The coverage gate](#the-coverage-gate)
 - [What is verified and what is inference](#what-is-verified-and-what-is-inference)
@@ -17,7 +18,7 @@ Everything here is a selected change that goes through the exact-diff review and
 | Pipeline step | Responsibility under this wiring |
 |---|---|
 | Review | Judge the diff and its tests against the testing criteria, including whether a changed feature file still says what the code does; never drives the product |
-| Test | Run the targeted offline test command, then drive the changed scenarios live through the kit named in `test.instructions` |
+| Test | Run the configured offline command under the [selection and fallback contract](#change-scoped-test-command), then drive the changed scenarios live through the kit named in `test.instructions` |
 | Document | Update the feature file of a changed user-facing feature, because `document.instructions` names the feature map as the owner of how a user reaches each feature |
 | Gate after Document | Fail when a change touches a feature's source paths without updating its feature file or recording a no-impact reason; the gate decides coverage only and never judges design |
 | Lint | Run the maintained check command through `commands.lint` |
@@ -56,7 +57,7 @@ review:
     - path: "**"
       instructions: |
         Apply the project's testing guidance: the four-question gate, public-interface tests,
-        exact assertions and the eight wasteful-test patterns.
+        exact assertions, the wasteful-test patterns and the test-quality rules with their exemptions.
 
 document:
   instructions: |
@@ -66,10 +67,52 @@ document:
 
 Adapt it to the repo:
 
-- Use the project's own maintained check command for `commands.lint` and its offline default test command for `commands.test`; Test runs the configured test command as written, so set it only to a command that is targeted or quick, and otherwise leave it for the user to decide.
+- Use the project's own maintained check command for `commands.lint` and its offline default test command for `commands.test`; Test runs the configured test command as written.
+  When full validation is slow, follow [Change-scoped Test command](#change-scoped-test-command) before proposing a narrower command.
 - Replace `origin/main` with `origin/` plus the repo's default branch; the gate compares against it.
 - Point `review.path_instructions` at the project's existing testing document, linking rather than copying, and merge with any entries already present.
 - Add the gate only when the kit was rendered with `coverageGate` set in its plan.
+
+## Change-scoped Test command
+
+When full validation is slow, propose a changed-area selector for `commands.test` using the module declarations in the project's existing design document.
+Reuse an existing selector and runner before adding a script; keep one path-to-module map and one full offline validation command.
+This is a selected configuration change, not permission to narrow the suite silently.
+The selector runs locally in the no-mistakes Test step and needs no hosted CI.
+
+1. Resolve the merge base of `HEAD` and `origin/<default-branch>`.
+   Include committed, staged, unstaged, deleted and untracked paths, retaining both sides of renames.
+2. Map every changed path to the architecture's declared source paths and collect touched modules plus their reverse dependents.
+   Include affected test and fixture paths; unresolved dependency edges do not prove independence.
+3. Run the affected modules' build, lint and test commands through the maintained runner, propagating any failure.
+   Keep required repository-wide checks in `commands.lint`; scoped validation does not silently weaken them.
+4. When a protocol module changes, include every declared dependent's tests, following reverse dependencies transitively.
+   A shared schema, message, API or fixture contract change can affect callers without touching their source paths.
+5. Fall back to full offline validation on any unmapped path, empty diff, unresolvable base, incomplete dependency map, or selector, dependency, build or test-infrastructure change.
+   Failure of the selected command is a failure, not a reason to retry a smaller set.
+
+Print the resolved base, changed paths, selected modules and commands, and the reason for any full fallback.
+Keep enough evidence to distinguish a successful selected run from a full run and a selection error.
+The full fallback is an explicit exception to the targeted-command preference; it must run the complete baseline rather than report a false success.
+
+For a large cohesive module, research the stack's native related-test tooling before recommending within-module selection.
+Confirm its handling of imports, dynamic loading, shared fixtures and configuration changes for this project; do not assume file proximity establishes coverage.
+Keep the full module suite when the related-test tool cannot establish the affected set.
+Selection saves time only when it keeps detecting real failures, so measure it rather than promising savings from source inspection.
+
+Prove the selector through its public command in disposable fixtures with a clean control and independent seeded changes: a module bug, a protocol change affecting a dependent, and each full-fallback condition.
+Show that each selected set includes the test that fails for the seeded bug, and that a selected failure reaches the command's exit status.
+Use the project's existing fixtures and runner; do not add source-string tests that merely recognize the selector's implementation.
+Record the selection, failure and fallback evidence beside the selected configuration.
+During `/verification maintain`, compare selected validation with a full offline run to detect misses, or use a scheduled local full run only when the owner selects it.
+Each miss needs a mapping or dependency fix and a regression case through the selector's real interface.
+Keep the fallback until the corrected selection is proven, and tune the map as protocols and modules evolve.
+
+An existing project's worked example pairs a Python script named test-selection.py in its scripts directory with a validation-runner.md contract in its architecture documentation.
+Its selector owns the path-to-segment map, follows reverse static imports with a documented depth limit, maps shared fixture contracts to dependent suites, and uses full validation for unknown paths or uncertain scope.
+Its frontend uses native related-test selection, and periodic full local runs expose misses for mapping fixes.
+These are observed design choices from that example, not a portable dependency-depth guarantee or a requirement to use its tools.
+The source is private; this anonymized example supplies the pattern, and project-specific research and seeded proof remain required.
 
 ## Offer setup where there is none
 
@@ -108,7 +151,8 @@ Verified against the pinned no-mistakes documentation (commit 93b4407) and re-re
 - The worktree is checked out at the pushed head, so a gate script and the kit files it reads come from the branch under test, not from the default branch.
 - Gates, `test.instructions`, `document.instructions` and `review.path_instructions` are honored only from the default branch's copy of the file.
 - The Rebase step fetches `origin/<base branch>` into the worktree, so the gate's `--base` ref resolves there.
-- Test runs the targeted command and then an evidence agent that stands the product up; it must not run the complete repository suite.
+- Test runs the configured command and then an evidence agent that stands the product up; the evidence agent must not independently rerun the complete repository suite.
+  The configured selector may run its full offline fallback when scope is uncertain.
 - A failing gate parks the run for a decision instead of auto-fixing.
 
 Verified by running: the gate script on a disposable fixture repo, for a covered change, an uncovered change, a recorded no-impact reason, an uncommitted change, a deleted source file and an unresolvable base.

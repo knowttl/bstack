@@ -94,6 +94,14 @@ Do not infer conflicts or prescribe services from these signals.
 ## Boundary rules
 
 Name each module's responsibility, owned knowledge, public contract and private implementation.
+Record each module's source paths, dependencies and reverse dependents in the existing design document.
+Include its build, lint and test commands, linking to their existing authoritative definitions rather than duplicating them.
+Identify cross-module protocols such as shared schemas, message types, API contracts and fixture contracts.
+Recommend a separately owned protocol module when the contract changes independently of its producers and consumers; do not split merely to create another layer.
+Declare each protocol module's paths and all dependent modules, including indirect consumers whose behaviour depends on the contract.
+Keep these declarations authoritative for validation selection, with unresolved or dynamic edges recorded as limits rather than assumed independence.
+Review two representative changes for validation scope as well as write scope: a local implementation change should build, lint and test its affected module and dependents; a protocol change must include every dependent's tests.
+Hand the declarations to `/verification` for a changed-area selector and proof, without starting that skill or adding a second dependency map.
 Define allowed dependency direction and the scope of forbidden imports and cycles.
 Callers use the public interface and do not depend on private storage or representation.
 Private implementation may span files without exposing additional public entry points.

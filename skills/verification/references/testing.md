@@ -11,6 +11,7 @@ Start from the project's requirements, approved design and observed risks; these
 - [Offline by default](#offline-by-default)
 - [Outside the codebase](#outside-the-codebase)
 - [Wasteful-test patterns](#wasteful-test-patterns)
+- [Test-quality rules](#test-quality-rules)
 - [Audit an existing suite](#audit-an-existing-suite)
 - [Write testing guidance](#write-testing-guidance)
 - [Findings for test recommendations](#findings-for-test-recommendations)
@@ -85,18 +86,69 @@ Similar inputs alone do not establish duplicate coverage: different boundaries m
 | Tests that re-run tests already in the suite, such as a nested `go test` | Let the suite run each test once; invoke a test runner inside a test only when that runner's behaviour is the contract under test. |
 | Expensive setup repeated for every table case | Share expensive setup when cases can remain isolated and deterministic; retain per-case setup where isolation requires it. |
 | Cold rebuilds that build a binary per test | Reuse a binary built for the current source inputs across tests; rebuild only when a case changes build inputs or tests the build itself. |
-| Tautological tests that assert their own setup or cannot fail | Assert production outcomes against independent expectations; do not add assertions that only confirm test setup or cannot fail when production behaviour breaks. |
-| Tests of impossible scenarios no production path can reach | Use inputs and states reachable through supported production paths, including invalid external input at real boundaries; do not fabricate states that production cannot create. |
+| Tautological tests that assert their own setup, cannot fail, or copy the expected value from the current output (bug-locking) | Assert production outcomes against independent expectations; do not add assertions that only confirm test setup or cannot fail when production behaviour breaks. |
+| Tests of impossible scenarios no production path can reach, including states that types, schemas or database constraints already rule out | Use inputs and states reachable through supported production paths, including invalid external input at real boundaries; do not fabricate states that production cannot create. |
+| Mocking fiction: mock payloads no real dependency can return, mocks of in-process code, or tests that only assert how a mock was configured or called | Mock only true external boundaries with schema-valid or recorded payloads; test the product's handling of the response; delete mock-configuration checks unless that interaction is the requirement. |
+| Private implementation spying: tests that reach private helpers, internal state or internal call counts | Test through the public interface at the lowest level that still sees the behaviour (P4). |
+| Trivial assertions: assertions that only check existence, type, a constant or "does not throw", or tests whose only failure mode is a compile or import error | Assert the exact result the caller sees (P5), or delete the test. |
 
 For each existing instance, cite the tests, production callers, overlapping protection or repeated work, and the smallest change that preserves the acceptance criteria.
 Do not infer runtime savings from source inspection; distinguish observed timings from expected savings.
 These are human review judgements, not substring checks or universal limits on case counts.
 
+## Test-quality rules
+
+The delimited block is the canonical copyable unit for test-writing guidance and review.
+When copying it into another repo, preserve its bytes and add a provenance line outside the delimiters naming `knowttl/bstack`, this path and the source revision.
+
+<!-- BEGIN canonical test-quality rules -->
+**Test quality.** Write and review every test against these rules.
+Tests are never required first; a change is verified end to end against the behaviour the user expects.
+
+1. Trust upstream invariants: do not test states that types, schemas or database constraints already rule out.
+   Test invalid input only at the boundary that validates it.
+2. Assert outcomes from an agreed source (spec, domain rule, ground-truth fixture), never values copied from what the code returns today.
+3. Mock only true external boundaries, with schema-valid or recorded payloads.
+   Never mock in-process code.
+   Delete tests that only check how a mock was set up or called, unless that call is the requirement.
+4. Test through the public interface: no private helpers, internal state or internal call counts.
+5. Every assertion must be able to fail when the behaviour breaks: no existence-, type- or constant-only assertions.
+
+Exempt: validation-boundary tests, contract tests against an agreed schema or recording, and regression tests that cite the bug they reproduce.
+<!-- END canonical test-quality rules -->
+
+Apply the following remedies only after checking the exemptions against evidence.
+
+| Category | Evidence and smallest remedy |
+|---|---|
+| TQ1: impossible invariants and defensive noise | Cite the type, schema or database constraint that excludes the state; delete the test unless it tests the boundary that creates the invariant. |
+| TQ2: tautological mirroring and bug-locking | Name the expectation's independent source or its absence; rewrite against a domain outcome or ground-truth fixture from an agreed source, and ask for one if none exists. |
+| TQ3: mocking fiction | Compare the payload with the real schema or recording; use a schema-valid or recorded fixture at the external boundary and the real in-process collaborator; delete mock-configuration-only tests unless the interaction is required. |
+| TQ4: private implementation spying | Name the private symbol, state or internal call count; rewrite through the public interface, or delete if public tests already protect the behaviour. |
+| TQ5: syntactic red and trivial assertions | Show why the assertion cannot detect broken behaviour; upgrade `toBeDefined()`, type checks or `not.toThrow()` alone to an exact observable result, or delete the test. |
+
+Check these false-positive guards before flagging a test:
+
+- **Validation boundary (TQ1):** HTTP, CLI arguments, files, environment, queue messages and rows written by older code can supply invalid input.
+  Rejection at the parser or validator is supported behaviour, even when downstream types exclude that state.
+- **Contract tests (TQ2, TQ5):** Schema, protocol shape or consumer-provider agreement against an agreed spec or recording is itself observable behaviour.
+  Exact equality or a type assertion there can be the requirement.
+- **Real regressions (TQ1, TQ2):** Check the cited issue, incident or fix commit, test name, blame or `git log -S` before calling a strange case unreachable or bug-locking.
+  The regression must still assert the intended outcome from an agreed source.
+- **Required interactions (TQ3, TQ4):** Sending exactly one email or never charging twice is a legitimate boundary-interaction requirement.
+  Assert it through the boundary, with realistic inputs.
+- **Lowest level that sees it (TQ4):** Directly testing an exported function is valid when it is the caller's public interface and the cheapest level that observes the behaviour (P4).
+- **Startup smoke (TQ5):** Starting a process and observing its health-check response is a journey assertion.
+  Merely importing code or checking that a value exists does not establish that journey.
+
+Exemptions apply to the evidenced behaviour, not to every assertion in a test labelled contract or regression.
+Keep deletion and rewriting owner-selected under P10.
+
 ## Audit an existing suite
 
 Inspect the manifests, test configuration, tests and production callers.
 Note which important user journeys have direct executable checks and which tests assert private implementation rather than a public contract.
-Review every test file you read against all eight patterns, recording evidenced instances as findings rather than deleting tests.
+Review every test file you read against the wasteful-test patterns and test-quality rules, recording evidenced instances as findings rather than deleting tests.
 An important journey protected only by unit or mocked tests is a missing protection.
 Run the project's own test command when its prerequisites permit, and record the result and tool versions actually used; unavailable checks are limitations, not evidence.
 Get approval before any check that affects external systems or shared data.
@@ -106,8 +158,9 @@ Flagged tests are removed only through a change the owner selects.
 
 When the owner selects testing guidance, adapt the principles into the project's existing authoritative surfaces and link to them instead of copying them.
 
-- Put all eight prevention rules from the table above in the project's testing policy, including their evidence requirements and exceptions, and propose one `AGENTS.md` pointer to that policy instead of copying the rules.
-- Where review instructions are configured, such as a review step in the project's delivery tool, include all eight patterns as explicit review criteria so reviewers flag new instances with the same evidence and exceptions. Extend the existing configuration, preserve unrelated instructions, and do not introduce a review service for these rules.
+- Put the prevention guidance from the wasteful-test patterns and the canonical test-quality block in the project's testing policy, including their evidence requirements and exceptions, and propose one `AGENTS.md` pointer to that policy instead of copying the rules.
+- Where review instructions are configured, such as a review step in the project's delivery tool, include the wasteful-test patterns and test-quality rules as explicit review criteria so reviewers flag new instances with the same evidence and exceptions.
+  Extend the existing configuration, preserve unrelated instructions, and do not introduce a review service for these rules.
 - When no project source states what evidence completes a change, propose one short section in the existing design or contribution guide naming where acceptance cases and the journey check live, that a change is complete when its affected journeys pass on the final inputs, and that passing unit tests alone do not establish it.
 - Report an instruction that mandates one development sequence for every change, such as writing a failing test before all work, as a proposed principle change, and keep it unless the user selects the change.
 - State the offline default, the gate and the paved path as separate short rules, each with its enforcement: the one test command, the review criteria or the kit.
@@ -117,6 +170,7 @@ Every selected change goes through the exact-diff review and apply boundary.
 ## Findings for test recommendations
 
 Record each material test finding with an ID, the observed problem, evidence files or the failing command, the principle, the consequence, the proposed fix, scope, verification method and whether it blocks the stated next change.
+For a test-quality finding, also record TQ1-TQ5, the test `path:line`, the category-specific evidence above, measured or inferred status, and a verdict of delete, rewrite or keep (exempt, reason), with the smallest change.
 For a test recommendation, name the acceptance source and the journey or public boundary it protects.
 Keep proposed new principles separate from existing requirements.
 Avoid speculative findings, cosmetic rewrites and universal prescriptions.

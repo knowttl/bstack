@@ -73,6 +73,7 @@ Done when: Each boundary or decision to propose is confirmed or named as an open
 Present evidenced candidates and their alternatives for selection, and do not apply anything unselected.
 Write the proposed design sections, decision records and standards by the [writing reference](references/writing.md).
 Name each module's responsibility, owned knowledge, public contract and private implementation, then the allowed dependency direction and the scope of forbidden imports and cycles.
+Declare source paths, protocol modules and reverse dependents with links to module build, lint and test commands as the architecture reference describes, so `/verification` can select affected validation.
 Write two or three caller call sites before each proposed public contract, taken from existing callers or the stated next changes, and derive the contract from them.
 Offer at least two structurally distinct boundary candidates, meaning different whole module shapes rather than point fixes inside one shape, and recommend the one that hides more complexity behind a smaller public contract.
 Record each boundary's project-specific reason, source, scope, enforcement and exception policy, and reuse existing decisions and standards instead of duplicating their rules.
