@@ -557,7 +557,7 @@ The IDs in this section belong to this review, not the earlier testing principle
   It follows the reviewed pointer contract, suggests rather than invokes the skill, and adds no rule table.
 - **P7: kept instruction text.** `/agents-md` classifies each kept non-pointer rule as enforceable, naming the highest workable rung and routing it to `/verification correct`, or as judgment.
   A written rule that a proven check enforces becomes a pointer to that check.
-  The eight testing prevention rules belong in review criteria and the project's testing policy with one pointer, rather than copied into `AGENTS.md`.
+  The wasteful-test prevention guidance belongs in review criteria and the project's testing policy with one pointer, rather than copied into `AGENTS.md`.
 - **P8: expect and fixture tests.** For textual or structured output, use public-interface expect or fixture tests when the four-question gate passes.
   Review an updated expectation as a diff against an agreed source; never bulk-accept the current output, and keep the expectation-update flag out of the maintained check command.
 
@@ -566,6 +566,22 @@ As worked examples only, a framework hook called outside its sanctioned wrapper 
 Hosted CI by default (P10), an explicit test rung, instruction-file rule table and inline expiring exceptions (P11), and an auto-loaded mode skill (P12) remain unadopted.
 P9's missing verification-kit attribution is a separate attribution fix, not new runtime behaviour.
 This amendment changes the design only; skill procedures, checkers and tests are built in later slices, and agent evaluations remain deferred.
+
+### Test quality and change-scoped validation amendment (2026-10-29)
+
+The maintainer approved strengthening the existing verification guidance and review criteria, with no test-first requirement.
+`skills/verification/references/testing.md` owns the canonical copyable test-quality block, remedies, category evidence and false-positive guards.
+The suite audit uses the wasteful-test patterns without hardcoding their count.
+Q10 remains: `/verification` owns the full suite audit, while `/repo-audit` adds a documents-level test-policy signal to its existing `/verification create` checklist line, with at most one incidental cited instance and no test-sampling pass.
+For this rollout, bstack keeps the delimited block in its existing testing home, `AGENTS.md`, and points review instructions at it; copies in other repos carry a provenance line naming the source revision.
+This selected canonical block is an exception to the general preference for instruction-file pointers, not permission to copy unrelated policy into agent instructions.
+
+`/architecture` records module source paths, protocol modules, dependencies and reverse dependents in the existing design document, with links to module validation commands.
+`/verification` proposes a selector for the no-mistakes Test command that builds, lints and tests touched modules and affected dependents; protocol changes include every dependent's tests.
+Selection compares against the default branch's merge base and includes uncommitted paths, deletions and renames.
+Unmapped paths, empty diffs, unusable bases, uncertain dependencies and selector or infrastructure changes fall back to full offline validation.
+Large modules may use project-researched native related-test tooling, proven with seeded failures and tuned against full offline runs during maintain or owner-selected scheduled local runs.
+No new skill, hosted workflow or selector implementation is added to bstack by this guidance change.
 
 ## The skill split
 
@@ -806,7 +822,7 @@ When startup requires a product fix, report the blocker rather than edit product
 
 Propose the testing policy, test gate, constraint principles, slop baseline and comment ban as selected changes in the target's existing authoritative surfaces.
 Prove each enabled lint rule with `rule-proof` and place existing violations in the shrinking baseline.
-On existing repos, audit the suite for all eight wasteful-test patterns and journeys protected only by unit or mocked tests.
+On existing repos, audit the suite for the wasteful-test patterns and journeys protected only by unit or mocked tests.
 Offer no-mistakes wiring and, where absent, setup as a selected step (Q11), without generating GitHub workflows unless explicitly requested.
 
 The kit shape adapts pstack's [create-verification-skill](https://github.com/cursor/plugins/blob/dbf49813a39c1a5389c5e28cb8e4c1c2379e2454/pstack/skills/create-verification-skill/SKILL.md), with the report's host-neutral location and pointer decisions replacing its host-specific path.
@@ -818,7 +834,7 @@ Check index hygiene, assign one read-only source reader per feature where the ho
 Triage discrepancies into doc drift, harness gaps or product bugs.
 Propose reviewed kit corrections for drift and harness gaps, re-drive harness fixes and report product bugs without weakening the map to hide them.
 Hand no-mistakes findings and review comments to the evidence and rung steps of correct mode, which propose each repeated mistake's rung without applying it.
-Audit the suite for all eight wasteful-test patterns.
+Audit the suite for the wasteful-test patterns.
 Report clean, changed through a reviewed change set, or blocked, with coverage and unreachable prerequisites explicit.
 The full pass remains user-invoked; automatic per-change upkeep does not replace it.
 
@@ -869,10 +885,14 @@ Any no means no new test:
 3. Is that break unprotected today?
 4. Is the expected result from an agreed source, not the code's current output?
 
-The eight audit patterns move with their evidence and owner-selection requirements: duplicate scenario coverage, guards without production callers, oversized combination tables, tests re-running tests, repeated expensive setup, cold rebuilds per test, tautological tests and impossible production scenarios.
+The wasteful-test patterns move with their evidence and owner-selection requirements: duplicate scenario coverage, guards without production callers, oversized combination tables, tests re-running tests, repeated expensive setup, cold rebuilds per test, tautological tests, impossible production scenarios, mocking fiction, private implementation spying and trivial assertions.
 Public-interface unit tests remain valid when they see the behaviour; mocked coverage alone never establishes a live journey.
 Expect and fixture tests for textual or structured public output follow inverted-pyramid P8: expected results come from an agreed source, expectation changes are reviewed as diffs and the maintained command cannot update them.
-Keep the eight prevention rules in review criteria and the project's testing policy, with one instruction-file pointer instead of eight copied rules (inverted-pyramid P7).
+Keep the wasteful-test prevention guidance in review criteria and the project's testing policy, with one instruction-file pointer instead of copied rules (inverted-pyramid P7).
+The canonical test-quality block, remedies and false-positive guards live in `skills/verification/references/testing.md`.
+Trust upstream types, schemas and database constraints, derive expectations from agreed sources, mock only real external boundaries with realistic payloads, test public behaviour and require assertions that detect broken outcomes.
+Preserve evidenced validation-boundary, contract, real-regression, required-interaction, public-export and startup-journey tests under the reference's guards.
+Findings name TQ1-TQ5, the test location, category-specific evidence, measured or inferred status, a delete, rewrite or keep-exempt verdict and the smallest change; removal remains owner-selected.
 
 ### Constraint principles (L1-L8)
 
@@ -927,7 +947,7 @@ Selected no-mistakes integration uses the same kit with a fresh evidence agent a
 | Phase | Responsibility |
 |---|---|
 | Review | Judge diff, intent and tests using testing criteria in `review.path_instructions`; do not drive the product |
-| Test | Run targeted offline `commands.test`, then independently drive changed scenarios live through the kit named in `test.instructions`; do not run the complete repository suite |
+| Test | Run the configured offline command, including its safe full fallback when scope is uncertain, then independently drive changed scenarios through the kit named in `test.instructions`; the evidence agent does not independently rerun the complete repository suite |
 | Document | Use `document.instructions` to maintain feature files as the authority for how users reach features |
 | Gate after Document | Deterministically check feature-map coverage; do not make design judgements |
 | Lint | Run the maintained check command through `commands.lint` |
@@ -964,7 +984,7 @@ The extraction preserves public command behaviour and portable installed executi
 The freshness check rejects stale bundles; generated files do not become independent sources of knowledge.
 The shared module also carries `apply`, `state show` and the protected-write libraries they need, because the standalone skill may not depend on repo-audit to honour review before apply and protected writes.
 
-Verification takes ownership of all suite auditing, the eight wasteful-test patterns and prevention rules, test-recommendation findings, research-brief test questions and testing guidance governed by [Testing principles](#testing-principles-p1-p10).
+Verification takes ownership of all suite auditing, the wasteful-test patterns and prevention rules, test-recommendation findings, research-brief test questions and testing guidance governed by [Testing principles](#testing-principles-p1-p10).
 Remove repo-audit's corresponding test-necessity load row when that transfer ships.
 repo-audit retains verification of its own outcomes.
 ["The skill split"](#the-skill-split) records its wider slimming.
@@ -2400,6 +2420,7 @@ Historical entries keep their original decisions and name their current applicat
 | S1 | Hand-off intent carries Problem, Consequence, Fix and Scope | Historical interface guidance for a separately chosen integration |
 | S2 | Machine config changes need confirmation per change | Retained |
 | S3 | Do not file the no-mistakes documentation issues | Retained |
+| R53, 2026-10-29 | The maintainer approved the test-quality audit recommendations and module-scoped validation guidance | The test-quality and change-scoped validation amendment keeps Q10, extends verification's patterns, canonical rules and exemptions, adds repo-audit's documents-level signal, and pairs architecture's module and protocol declarations with verification's proven selector, full fallback and selection-miss tuning. The bstack rule copy and review instruction ship first; other repositories receive separately reviewed copies with source-revision provenance. No test-first workflow is required. |
 | R1, 2026-10-06 | First release contains repo-audit and everything it needs | Amended by R29 to include standalone verification and by R31 to split repo-audit into eight skills |
 | R2, 2026-10-06 | Review an existing repo, then apply chosen changes | Defines the existing-repo workflow |
 | R3, 2026-10-06 | Understand the intended project with grill-me before recommending principles | New ideas interview first, R7 makes existing projects audit first |

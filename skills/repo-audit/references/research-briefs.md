@@ -61,6 +61,11 @@ Use --workspace instead of --repo for non-Git discovery.
 
 ID: documents.
 Question: Which authoritative documents establish purpose, goals, vocabulary, decisions and standards in this scope, and where do they agree or conflict?
+Also ask: Which test-policy files and review instructions exist, and do they state the test-quality rules?
+Report whether they address impossible states, copied expectations, unrealistic mocks, private spying and trivial assertions, citing the policy or stating its absence.
+If a test instance was incidentally read within the selected scope, report at most one `path:line` with the rule and uncertainty.
+Do not expand into test sampling or a suite audit; `/verification` owns that work.
+No incidental instance means test quality was not sampled, not that the suite is clean.
 Paths in scope: The main thread's selected instructions, indexes and linked README, vision, design, requirements, glossary, standards, decision and prior audit files under the target, and the user's brief for a new idea.
 Report format: State each observed file's purpose, explicit goals and principles, conflicts and absent sources using the common entry format with path:line citations.
 Word limit: 250 words.

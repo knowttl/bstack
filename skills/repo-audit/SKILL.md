@@ -53,6 +53,8 @@ Run the one documents research brief from the [research briefs reference](refere
 Record the report in scratch following `schemas/research-report.json`, then open every cited source and run `node scripts/repo-audit.mjs cite-check --repo <target> --report <file> --json` before relying on it, with `--workspace` for a directory that is not a Git repo.
 State whether the brief ran in the main thread or through subagents.
 Do not audit boundaries, tests, terms, instruction files or checks in depth: that is the work of the skills the checklist names.
+Include the documents brief's test-policy and review-instruction signal without starting a suite audit.
+If the brief happened to read a test-quality instance, retain one checked `path:line` and rule for the existing `/verification create` checklist line; otherwise state that test quality was not sampled.
 
 Done when: The report passes `cite-check` against the current bytes, or the missing source is named, and each finding says whether it is documented, observed or inferred.
 
@@ -81,7 +83,7 @@ Existing repo:
 - [ ] `/vision` (only for a gap) - the vision is missing, or conflicts with a cited design or newer work
 - [ ] `/glossary` (only if terms are unclear) - the cited terms that are missing or compete
 - [ ] `/architecture` - the cited boundary, decision or design gap, or the design document found absent
-- [ ] `/verification create` - the cited test and check state from the manifests and standards
+- [ ] `/verification create` - the cited test and check state from the manifests and standards, including the test-quality policy signal and one cited instance with its rule if encountered
 - [ ] `/formal-verification create` (only with cited risk evidence) - the cited spot where a mistake costs money or data and depends on timing or a rare input
 - [ ] `/maintenance` - the cited documents that no registered contract covers
 - [ ] `/agents-md` - the cited instruction files, pointer gaps and `CLAUDE.md` merge candidates
