@@ -18,7 +18,7 @@ Everything here is a selected change that goes through the exact-diff review and
 | Pipeline step | Responsibility under this wiring |
 |---|---|
 | Review | Judge the diff and its tests against the testing criteria, including whether a changed feature file still says what the code does; never drives the product |
-| Test | Run the targeted offline test command, then drive the changed scenarios live through the kit named in `test.instructions` |
+| Test | Run the configured offline command under the [selection and fallback contract](#change-scoped-test-command), then drive the changed scenarios live through the kit named in `test.instructions` |
 | Document | Update the feature file of a changed user-facing feature, because `document.instructions` names the feature map as the owner of how a user reaches each feature |
 | Gate after Document | Fail when a change touches a feature's source paths without updating its feature file or recording a no-impact reason; the gate decides coverage only and never judges design |
 | Lint | Run the maintained check command through `commands.lint` |
@@ -67,7 +67,8 @@ document:
 
 Adapt it to the repo:
 
-- Use the project's own maintained check command for `commands.lint` and its offline default test command for `commands.test`; Test runs the configured test command as written, so set it only to a command that is targeted or quick, and otherwise leave it for the user to decide.
+- Use the project's own maintained check command for `commands.lint` and its offline default test command for `commands.test`; Test runs the configured test command as written.
+  When full validation is slow, follow [Change-scoped Test command](#change-scoped-test-command) before proposing a narrower command.
 - Replace `origin/main` with `origin/` plus the repo's default branch; the gate compares against it.
 - Point `review.path_instructions` at the project's existing testing document, linking rather than copying, and merge with any entries already present.
 - Add the gate only when the kit was rendered with `coverageGate` set in its plan.
