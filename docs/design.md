@@ -266,6 +266,7 @@ What each correction means for the prompt:
 - C5: "prefer state machines over scattered booleans" cannot be a universal rule, because "avoid universal architecture prescriptions" and "No single architecture style is required" already stand, and no skill rewrites product code.
   D7 is the accepted form.
 - C6: the transition table is rendered from the suite plan, so the drift check covers it.
+  A chart generated from TLC's reachable states and counterexamples is not a free-hand diagram; the [statechart amendment](#statechart-amendment-2026-10-29) permits it as an optional reading aid, while the rendered transition table stays authoritative.
 - C7: a Kani harness normally lives in the crate under `#[cfg(kani)]`, which is an edit inside the product's source paths and needs its own explicit approval.
   A TLA+ model lives entirely inside the suite folder.
 - C8: a scratch break in the real code does not change a TLA+ design model, so TLC alone never catches it.
@@ -421,6 +422,7 @@ It was scaffolded and applied with the skill's own commands, and these results w
   The walkthrough already catches a vacuous model once, at proof time, and a witness needs a schema change that its own decision row should justify.
 - pstack's `statechart` skill is not adopted.
   It installs the model checker and Java on its first run, which conflicts with D5, and U3 supplies the plain-words counterexample from the table bstack already has.
+  Dated note, 2026-10-29: this rejection stands for the skill as shipped; [statechart S3](#statechart-amendment-2026-10-29) avoids the installer by supplying the suite's pinned jar and the project's Java, so the compiler is adapted under `/formal-verification` instead.
 - pstack's instruction to break the updated code and confirm the check still catches it is not copied.
   `maintain` already re-proves each changed property as the create guide describes.
 
@@ -434,6 +436,70 @@ This amendment registers no acceptance case, because no behaviour exists yet.
 - Moving the sync commit follows the U1 proposal and full-check rerun contract above, including recovery from absent, orphaned and stale sync commits and refusal when any rerun problem remains, a changed property was not re-proved or a check is blocked.
 - A generated suite's "Run" section carries the code-steps instruction, and a run on the violation variant tells the trace through the transition table.
 - Evaluating whether a fresh agent follows the new `maintain` and "Run" wording stays deferred with every other evaluation.
+
+### Statechart amendment (2026-10-29)
+
+The maintainer selected "Decision for statechart: adapt" after reviewing pstack's [`statechart`](https://github.com/cursor/plugins/tree/c742dd61706fbacc1b95f1a20b7b988cf096ce6c/pstack/skills/statechart) at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c` in `cursor/plugins`.
+S1 to S6 below stand as recommended.
+This amendment records requirements for a later build, not implemented behaviour.
+It changes only this design; the implementation-plan task, task registry, acceptance registration, source copies and attribution follow in the build change.
+No compiler, command, skill reference or runtime dependency is added here.
+
+The compiler runs the real TLC model checker, reads its state graph and messages, and produces Mermaid and a Markdown report.
+It does not reimplement TLC or prove that the model matches the code.
+The chart adds reader-word labels, rule marks and shortest bug paths to U3's code-step explanation.
+The existing reviewed-apply boundary and D5's exact tool pin stand.
+
+| ID | Maintainer's selection | Requirement |
+|---|---|---|
+| S1 | `optional-formal-chart` | Fold charting into `/formal-verification`, optionally in create Step 8 (report) and maintain M4 (triage). Add no standalone `/statechart` skill or independent invocation path |
+| S2 | `unchanged-vendored-compiler` | Vendor the compiler at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c`, with raw copies under `upstream/pstack-statechart/` and the 25 runtime TypeScript files plus the `scripts/statechart` launcher under `skills/formal-verification/scripts/statechart/`. Keep upstream tests upstream and every copied runtime byte unchanged. Record the MIT source and adaptations in `NOTICE` and per-file SHA-256 hashes in `upstream/sources.json` |
+| S3 | `project-pins-before-chart` | Add `formal chart --repo <path> --suite <target> --property <id> [--view <path>]`. Run `formal check` first and refuse to chart on any problem. Invoke the compiler with `TLA2TOOLS` set to the suite's exact hash-checked jar and `JAVA` to the project's Java. A missing jar returns `blocked`, meaning unproven, and never reaches mise or installs or fetches a tool. Write output under the suite's evidence directory |
+| S4 | `local-mermaid-default` | Show Mermaid text by default, as a local `mermaid` block or on a local board. Use Pele for SVG only when the user asks, with the project's own exact-pinned package and offline rendering. Never paste a model or chart into a website, including pele.run, and keep model constants abstract |
+| S5 | `reader-word-guidance-in-evidence` | Adapt the authoring guidance into `skills/formal-verification/references/chart.md`: reader-word state and step labels, about 20 arrows, the hide rules, the meaning of `breaks`, `mayBreak` and `bugPath`, and a hand-off line per bug. Keep view modules and charts in scratch or evidence, outside the suite's maintained files |
+| S6 | `mechanical-resync-and-proof` | Refresh the raw copy with `upstream/fetch.mjs`, recopy the installed tree byte-for-byte and rerun the chart acceptance case on the `formal-charge-once` fixture. Gate real-TLC cases on `BSTACK_TLA2TOOLS_JAR` and Java, as AC-93 and AC-94 do, and report unavailable runs as skipped, never passed |
+
+#### Integration and limits
+
+The build reuses `formal check`'s suite and pin reading rather than adding a second tool-selection rule.
+The supplied `TLA2TOOLS` and `JAVA` bypass the unchanged compiler's installer; the installer remains in the vendored source but is never reached through `formal chart`.
+`NOTICE` records that bypass, the opt-in renderer and the removal of standalone invocation from the adapted workflow.
+The installed compiler remains an unbundled file tree because its launcher spawns a worker by path and dynamically imports the view module.
+The skill manifest, generator and package checker must declare, copy and allow that tree without modifying third-party source.
+
+The optional chart reads a TLA+ suite and adds no Kani chart recipe.
+The view module is executable author-written code and stays in scratch or evidence, not in the generated suite or its check command.
+The suite still runs without bstack, and its transition table remains the action-to-code authority for replay.
+A red state marks a rule violation in the model; maintain still replays the path against the real code and uses the agreed source to distinguish model drift, modeling error, real bug and harness gap.
+Each reported bug has a hand-off line naming the broken rule, the path and the code steps to investigate.
+
+The compiler draws the reachable graph up to 500 states.
+Above that it draws bug paths only, and a passing large model may produce no chart.
+Its all-rules loop drops each broken rule and reruns TLC, with later runs capped at 100,000 states; the report must retain "Rules not checked" rather than imply every rule was proven.
+Hiding states or transitions is a reading aid and never additional proof.
+Mermaid text requires no renderer installation, and a large chart alone is not permission to fetch Pele or send data to a rendering service.
+
+#### Review evidence
+
+The intake review ran the compiler on a synthetic approval-lifecycle model with explicit jar and Java paths while mise was absent.
+It found a three-step violation path and generated a chart of eight states and eight arrows.
+Repeating the run with a different TLC release produced a byte-identical `chart.mmd`; that observation does not replace the project's exact jar hash check.
+The review also rendered the synthetic chart with `pele@1.9.0` with networking disabled.
+These are review observations, not acceptance results for the bstack command, which does not exist yet.
+
+#### Proof for the build
+
+The build adds an implementation-plan task and task-registry row, then registers the cases below and records task evidence through bstack's delivery gate.
+This design-only amendment registers no acceptance case and claims no executed chart-command proof.
+Use public commands on disposable copies of the `formal-charge-once` fixture and its violation variant.
+
+- On the broken variant, `formal chart` writes `chart.mmd` with a `breaks` state and a report containing a shortest bug path whose steps map to transition-table actions.
+- With the jar missing, the command returns `blocked` and reports unproven without invoking mise or any installer.
+- With the wrong jar hash, the `formal check` precondition refuses charting before the compiler runs.
+
+The broken-variant and wrong-hash cases require `BSTACK_TLA2TOOLS_JAR` and Java; otherwise they are skipped and the real-tool proof remains unavailable.
+Agent evaluation of reader-word labels and triage remains deferred until an executed evaluation exists.
+Applying charts to real project suites, creating new suites and correcting the fixture's historical release-hash note are separate follow-up decisions.
 
 ### Research, prototyping and writing amendment (2026-10-24)
 
