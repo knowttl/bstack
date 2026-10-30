@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { chmod, cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -131,7 +131,26 @@ test('sweep excludes the installed authoring skill and still detects an incomple
 test('the formal-verification skill ships only the commands its procedure runs', () => {
   const result = spawnSync(process.execPath, [entry, '--help'], { encoding: 'utf8' })
   assert.equal(result.status, 0, result.stderr)
-  assert.deepEqual(result.stdout.match(/^ {2}\S.*$/gm).map(line => line.trim()).sort(), ['apply', 'cite-check', 'formal check', 'formal scaffold', 'rule-proof', 'state show'])
+  assert.deepEqual(result.stdout.match(/^ {2}\S.*$/gm).map(line => line.trim()).sort(), ['apply', 'cite-check', 'formal chart', 'formal check', 'formal scaffold', 'rule-proof', 'state show'])
+})
+
+test('formal chart reports a missing jar as unproven without invoking mise or writing evidence', async t => {
+  const f = await setup(t)
+  await f.apply(await f.plan())
+  await rm(join(f.repo, 'tools/tla2tools.jar'))
+  const marker = join(f.cache, 'installer-called')
+  const mise = join(f.cache, 'mise')
+  await writeFile(mise, `#!${process.execPath}\nimport { writeFileSync } from 'node:fs'; writeFileSync(${JSON.stringify(marker)}, 'called');\n`)
+  await chmod(mise, 0o755)
+  f.env.PATH = `${f.cache}${process.platform === 'win32' ? ';' : ':'}${process.env.PATH}`
+  const before = await snapshot(f.repo)
+  const result = f.call('formal chart', ['--suite', 'charge-once', '--property', 'charge-once'])
+  assert.equal(result.exit, 2, JSON.stringify(result))
+  assert.equal(result.status, 'blocked')
+  assert.deepEqual(codes(result), ['tool-missing'])
+  assert.match(result.problems[0].message, /unproven, not passing/)
+  await assert.rejects(readFile(marker), { code: 'ENOENT' })
+  assert.deepEqual(await snapshot(f.repo), before)
 })
 
 test('scaffold renders the suite, property files, transition table and model files from the plan and rejects a model step that cites no atomic code step', async t => {
@@ -423,6 +442,35 @@ test('sweep routes a drifted formal suite to its maintain mode, reports a missin
 
 // The remaining tests run the pinned model checker, so a missing tool skips them rather than passing them.
 const checker = await modelChecker()
+
+test('formal chart refuses a wrong jar hash before running the compiler', checker, async t => {
+  const f = await setup(t, { jar: checker.path })
+  await f.apply(await f.plan())
+  await writeFile(join(f.repo, 'tools/tla2tools.jar'), 'wrong jar')
+  const before = await snapshot(f.repo)
+  const result = f.call('formal chart', ['--suite', 'charge-once', '--property', 'charge-once'])
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.deepEqual(codes(result), ['tool-hash-mismatch'])
+  assert.deepEqual(await snapshot(f.repo), before)
+})
+
+test('formal chart draws the charge-once violation and reports its shortest transition-table path', checker, async t => {
+  const f = await setup(t, { jar: checker.path })
+  await cp(join(fixtures, 'formal-charge-once-violation/overlay/src/charge.mjs'), join(f.repo, 'src/charge.mjs'))
+  f.commit('Split the claim')
+  await f.apply(await f.plan({ model: await modelFiles('formal-charge-once-violation/overlay/formal/ChargeOnce.tla'), steps: brokenSteps }))
+  const result = f.call('formal chart', ['--suite', 'charge-once', '--property', 'charge-once'])
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.equal(result.status, 'failed')
+  assert.equal(dirname(result.data.path), join(f.repo, '.formal-evidence/charge-once'))
+  const chart = await readFile(result.data.chart, 'utf8')
+  assert.match(chart, /stateDiagram-v2/)
+  assert.match(chart, /class \S+ breaks/)
+  const report = await readFile(result.data.report, 'utf8')
+  assert.match(report, /## NoDoubleCharge breaks\nThe shortest path has 6 steps:/)
+  assert.deepEqual([...report.matchAll(/^\d+\. (Read|Claim|Charge|Finish):/gm)].map(match => match[1]).sort(), ['Charge', 'Charge', 'Claim', 'Claim', 'Read', 'Read'])
+  assert.equal(f.check().exit, 0)
+})
 
 test('rule-proof passes unchanged on the charge-once pair with the pinned tool', checker, async t => {
   const clean = build(t, 'formal-charge-once')

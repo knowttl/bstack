@@ -126,6 +126,7 @@ Done when: Each wiring change is a selected edit with its exact diff and its eff
 
 ### Step 8: Report
 
+Optionally read a TLA+ result with `formal chart`, following the [chart guide](references/chart.md) for local Mermaid output and reader-word labels.
 State the target, the property and its harm in plain words, the tool and why it fits, the bounds and assumptions, what the check found, how to run it, and what it does not cover.
 Separate applied changes, proof evidence, findings, unproven checks and limitations, and include the honest limits above.
 Name `maintain` as the later pass that keeps the suite true, and suggest a second target only when a close one was found.
@@ -174,6 +175,7 @@ Done when: Every property has a recorded result, or a named unmet prerequisite.
 
 ### Step M4: Triage
 
+Optionally use `formal chart` and the [chart guide](references/chart.md) to read a TLA+ counterexample before replaying it against the real code.
 First replay each failing property's counterexample against the real code, one step at a time, as the maintain guide's replay describes: a step that cannot happen in the code means model drift or a modeling error, and a trace whose every step can happen is a real bug, for which you name the commit that made the complete failing sequence reachable, searching before sync when necessary.
 Then sort each problem from the earlier steps, including a broken trailer claim, into exactly one class: model drift, modeling error, real bug or harness gap.
 A replayed step impossible both now and at sync (or the fallback commit) is a modeling error even with a violation diagnostic; a step possible then but impossible now is model drift.
@@ -227,6 +229,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | Interviewing the repo, choosing the target, writing the plan, proving the suite or proposing the wiring | `references/create.md` |
 | Writing the suite plan's prose | `references/writing.md` |
 | Choosing a tool or running a tool recipe | `references/tools.md` |
+| Reading a TLA+ result as a local chart or writing its view module | `references/chart.md` |
 | Running a maintain pass, triaging a problem or correcting an applied suite | `references/maintain.md` |
 | Asking the user a decision round | `references/grilling.md` |
 | Recording citations for evidence | `schemas/research-report.json` |

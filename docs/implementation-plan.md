@@ -461,6 +461,9 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.15 Add the `recall` skill (after T2.14) - a user-started skill that summarises prior context from the project's local Claude Code and Codex transcripts, read-only, with its output in scratch.
     The skill's scenario evaluation is deferred, so AC-108 keeps a planned procedure; AC-106 and AC-107 are covered by `tests/scripts/recall.test.mjs`.
   - [x] T2.16 Add the `prototype` skill (after T2.15) - a user-started skill that builds two or three throwaway variants in scratch clones, drives and measures each with the project's verification kit, and reports the evidence and a recommendation without writing to the repo.
+  - [x] T2.17 Add optional TLC charts to formal verification - unchanged pinned compiler, local Mermaid output and reader-word guidance, gated by the suite and tool checks.
+    Package and task checks pass; the missing-jar proof runs offline, while AC-112 and AC-114 remain unavailable without the supplied pinned jar and Java.
+    Evidence is recorded in `tests/eval/results/tasks/T2.17.json`.
     The skill's scenario evaluation is deferred, so AC-111 keeps a planned procedure; AC-109 and AC-110 are covered by `tests/scripts/prototype.test.mjs`.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
@@ -1581,6 +1584,26 @@ It follows the research amendment of R47 and the build choices of R51.
 
 **Covers:** AC-109 to AC-111.
 
+### T2.17 Add optional TLC charts to formal verification
+
+**Depends on:** T2.13 and the merged statechart design amendment.
+**Read:** Design "Statechart amendment (2026-10-29)", S1 to S6.
+**Inputs:** The applied TLA+ suite and pstack statechart at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c`.
+**Outputs:** Unchanged raw and installed compiler trees, `formal chart`, the chart reference, source hashes, attribution and acceptance evidence.
+**Verification:** `npm run check`, then `npm test -- --task T2.17`.
+
+1. Pin and fetch the raw compiler, recording each copied file's SHA-256, and declare its unbundled installed tree in the skill manifest.
+2. Run `formal check` before charting, then supply the checked jar and the property's Java to the unchanged compiler.
+   A missing jar is blocked and unproven and never invokes an installer.
+3. Write each chart run beneath the suite's evidence directory, keep views outside maintained suite files, and show Mermaid locally by default.
+4. Adapt reader-word labels, hide rules, marks and bug-path hand-off into the optional create Step 8 and maintain M4 guidance.
+5. Prove the missing-jar boundary offline and the violation and wrong-hash cases only when `BSTACK_TLA2TOOLS_JAR` and Java supply the pinned tool.
+   Record unavailable real-tool cases as skipped, never passed.
+
+Done when: The package and task checks pass, every installed compiler byte matches the upstream manifest, and AC-112 to AC-114 have recorded outcomes or explicit missing-tool limitations.
+Reader-word authoring and replay evaluations remain deferred.
+Re-sync with `node upstream/fetch.mjs`, regenerate the installed tree and rerun this task's acceptance cases.
+
 ## Phase 3: Enforcement
 
 Phase evidence from the design: valid cases pass, and seeded violations fail through the maintained command in disposable local copies.
@@ -2169,6 +2192,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.14 | AC-101, AC-102, AC-103, AC-104, AC-105 | Explicit-only start, source-cited `/why` with untrusted connector text, cited `/how` mechanics, `/teach` joining both, and the one shared why-evidence reference | AC-101 and AC-105 pass in `tests/scripts/research-skills.test.mjs`; AC-102, AC-103 and AC-104 are planned and the scenario evaluations are deferred. |
 | T2.15 | AC-106, AC-107, AC-108 | Explicit-only start, the `transcripts` digest limited to this project's sessions with transcripts and repo unchanged, and the cited, secret-free summary in scratch | AC-106 and AC-107 pass in `tests/scripts/recall.test.mjs`; AC-108 is planned and the scenario evaluation is deferred. |
 | T2.16 | AC-109, AC-110, AC-111 | Explicit-only start, the kit measurement of a passing and a failing variant in scratch clones with the target unchanged, and the report that recommends from the measured evidence | AC-109 and AC-110 pass in `tests/scripts/prototype.test.mjs`; AC-111 is planned and the scenario evaluation is deferred. |
+| T2.17 | AC-112, AC-113, AC-114 | Local TLC charts with a checked project pin, missing-tool blocking and wrong-hash refusal | AC-113 runs offline in `tests/scripts/formal.test.mjs`; AC-112 and AC-114 require `BSTACK_TLA2TOOLS_JAR` and Java and skip otherwise. Reader-word and triage evaluations remain deferred. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |

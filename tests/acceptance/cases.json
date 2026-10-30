@@ -1705,6 +1705,41 @@
         "status": "planned",
         "description": "Run the prototype skill on a fixture project with an applied kit and a design question the kit can measure, and on a fixture project with no kit, and score that the first run builds two or three variants in scratch clones, reports each variant's kit outcome and a recommendation the measures support or says the evidence does not decide, and leaves the repo's HEAD and status unchanged, and that the second run stops and names the verification skill."
       }
+    },
+    {
+      "id": "AC-112",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.17"],
+      "criterionSource": "docs/design.md#AC-112",
+      "evidenceType": "manual",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the test 'formal chart draws the charge-once violation and reports its shortest transition-table path' in tests/scripts/formal.test.mjs with BSTACK_TLA2TOOLS_JAR and Java available. Confirm the broken fixture writes chart.mmd with a breaks mark and a six-step report mapping to Read, Claim and Charge actions. Missing tools skip this proof and never count as a pass."
+      }
+    },
+    {
+      "id": "AC-113",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.17"],
+      "criterionSource": "docs/design.md#AC-113",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/formal.test.mjs",
+        "name": "formal chart reports a missing jar as unproven without invoking mise or writing evidence",
+        "artifacts": ["tests/scripts/formal.test.mjs"]
+      }
+    },
+    {
+      "id": "AC-114",
+      "skill": "formal-verification",
+      "ownerTask": ["T2.17"],
+      "criterionSource": "docs/design.md#AC-114",
+      "evidenceType": "manual",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the test 'formal chart refuses a wrong jar hash before running the compiler' in tests/scripts/formal.test.mjs with BSTACK_TLA2TOOLS_JAR and Java available. Confirm the public command fails with tool-hash-mismatch and leaves the fixture unchanged. Missing tools skip this proof and never count as a pass."
+      }
     }
   ]
 }

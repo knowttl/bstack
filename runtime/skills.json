@@ -80,7 +80,8 @@
     "references": ["grilling.md", "agents-pointer.md", "writing.md"]
   },
   "formal-verification": {
-    "commands": ["formal scaffold", "formal check", "rule-proof", "apply", "state show", "cite-check"],
+    "commands": ["formal scaffold", "formal check", "formal chart", "rule-proof", "apply", "state show", "cite-check"],
+    "vendored": [{ "source": "pstack-statechart/pstack/skills/statechart/scripts", "destination": "scripts/statechart", "license": "pstack-statechart/pstack/LICENSE" }],
     "schemas": [
       "change-set.schema.json", "check-plan.json", "evidence.schema.json", "findings.schema.json", "formal-plan.json",
       "research-report.json", "resume-state.schema.json"

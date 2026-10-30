@@ -154,6 +154,11 @@ export const commands = {
     options: ['plan', 'update'],
     help: 'Render the selected formal verification suite as a reviewable change set in scratch.\nUsage: {entry} formal scaffold --repo <path> --plan <file> [--update] [--json]\nPlan follows schemas/formal-plan.json. Returns the change set path, its planDigest and the exact diff. Rejects a plan whose model step cites no atomic code step, cites code outside the property\'s source paths or cites a line that does not exist. Without --update, existing suite files are never overwritten. With --update, the change set also replaces suite files that differ from the plan, creates missing ones and deletes property and model files the plan no longer lists; when nothing differs it returns no change set. Review with apply --dry-run, then apply the unchanged change set.'
   },
+  'formal chart': {
+    module: './commands/formal-chart.mjs',
+    options: ['suite', 'property', 'view'],
+    help: 'Check suite drift and its pinned tool, then run TLC and write a local Mermaid chart and Markdown report under the suite evidence directory.\nUsage: {entry} formal chart --repo <path> --suite <target> --property <id> [--view <path>] [--json]\nRequires the direct Java TLC recipe with one suite .tla file and explicit -config .cfg file. Uses that command\'s Java and the suite\'s exact hash-checked jar; never installs tools. A missing jar is blocked and unproven. --view is an executable local module outside the maintained suite. Model violations return failed with evidence paths; harness errors return blocked. Large passing models may produce no chart. Default output is Mermaid text, never a remote renderer.\nExample: {entry} formal chart --repo . --suite charge-once --property charge-once\nExample: {entry} formal chart --repo . --suite charge-once --property charge-once --view /tmp/view.mjs --json'
+  },
   'formal check': {
     module: './commands/formal-check.mjs',
     options: ['suite', 'sync-commit'],

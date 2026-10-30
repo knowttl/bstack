@@ -472,8 +472,8 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
     error = failure.message;
   });
   let finish;
-  const completion = new Promise((resolve5) => {
-    finish = resolve5;
+  const completion = new Promise((resolve6) => {
+    finish = resolve6;
   });
   child.on("close", (code2, exitSignal2) => finish([code2, exitSignal2]));
   const cleanupFailed = (message) => {
@@ -486,15 +486,15 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   const stop = () => {
     if (!child.pid) return;
     if (process.platform === "win32") {
-      cleanup = new Promise((resolve5) => {
+      cleanup = new Promise((resolve6) => {
         const killer = spawn("taskkill", ["/pid", String(child.pid), "/T", "/F"], { shell: false, stdio: "ignore" });
         killer.on("error", (failure) => {
           cleanupFailed(failure.message);
-          resolve5();
+          resolve6();
         });
         killer.on("close", (code2) => {
           if (code2 !== 0) cleanupFailed("Process-tree cleanup failed.");
-          resolve5();
+          resolve6();
         });
       });
     } else {
@@ -2035,7 +2035,7 @@ function bullets(items) {
 }
 function commandLines(label, spec) {
   const command = shown(spec.command);
-  const fence = "~".repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map((run7) => run7.length + 1)));
+  const fence = "~".repeat(Math.max(3, ...(command.match(/~+/g) ?? []).map((run8) => run8.length + 1)));
   return [
     `${label}${spec.cwd ? ` from \`${spec.cwd}\`` : ""}:`,
     "",
@@ -2565,6 +2565,11 @@ ${pointer}
   return { inputs: { target, plan: options.plan }, data: { path, planDigest: changeSet.planDigest, files: edits.map((edit) => edit.path), diff: edits.map((edit) => edit.diff).join("") } };
 }
 
+// runtime/scripts/commands/formal-chart.mjs
+import { mkdir as mkdir3, mkdtemp, readFile as readFile10, realpath as realpath5 } from "node:fs/promises";
+import { isAbsolute as isAbsolute4, join as join10, relative as relative6, resolve as resolve5 } from "node:path";
+import { fileURLToPath } from "node:url";
+
 // runtime/scripts/commands/formal-check.mjs
 import { readdir as readdir4, readFile as readFile9 } from "node:fs/promises";
 import { join as join9 } from "node:path";
@@ -2666,6 +2671,68 @@ async function run6(options) {
   return { inputs: { target, name: plan.target }, data: { target: plan.target, properties: plan.properties.map((property) => property.id), files: managed.length, tool: { path: pinned.path, sha256: pinned.sha256 } } };
 }
 
+// runtime/scripts/commands/formal-chart.mjs
+async function run7(options) {
+  if (!options.property) throw new CommandError("usage-error", [{ code: "missing-option", message: "--property is required.", fix: "Supply --property <id> from the suite." }]);
+  const checked = await run6(options);
+  const target = checked.inputs.target;
+  const plan = await readFormalPlan(target.root, options.suite);
+  const property = plan.properties.find((item) => item.id === options.property);
+  if (!property) throw new CommandError("usage-error", [{ code: "property-unknown", message: `Unknown property ${options.property}.`, fix: `Choose one of: ${plan.properties.map((item) => item.id).join(", ")}.` }]);
+  const cwd = await resolvePath(target.root, property.check.cwd ?? ".");
+  const command = property.check.command;
+  const specs = command.filter((arg) => arg.endsWith(".tla"));
+  const configIndex = command.indexOf("-config");
+  const config = command[configIndex + 1];
+  const models = property.modelFiles.map((file) => resolve5(target.root, modelPath(suiteDirectory(plan.target), file.name)));
+  if (!command.includes("tlc2.TLC") || specs.length !== 1 || configIndex < 0 || !config?.endsWith(".cfg") || ![specs[0], config].every((path) => models.includes(resolve5(cwd, path)))) {
+    throw new CommandError("blocked", [{
+      code: "chart-recipe-unsupported",
+      message: "Charting needs a direct Java TLC check with one suite .tla file and an explicit -config suite .cfg file.",
+      fix: "Use the documented TLA+ TLC recipe in the reviewed suite plan; Kani and wrapper commands have no chart recipe."
+    }]);
+  }
+  const suite = await resolvePath(target.root, suiteDirectory(plan.target));
+  const view = options.view ? await realpath5(resolve5(options.view)) : null;
+  if (view && isInside(suite, view)) throw new CommandError("usage-error", [{ code: "view-inside-suite", message: "The view module must stay outside the maintained suite.", fix: "Keep the view in scratch or evidence and pass its path with --view." }]);
+  const evidence = await resolvePath(target.root, plan.evidenceDirectory);
+  await mkdir3(evidence, { recursive: true });
+  const out = await mkdtemp(join10(evidence, `chart-${property.id}-`));
+  const java = isAbsolute4(command[0]) || !/[\\/]/.test(command[0]) ? command[0] : resolve5(cwd, command[0]);
+  const execution = await runCommand(target, {
+    executable: process.execPath,
+    args: [
+      fileURLToPath(new URL("../scripts/statechart/statechart.ts", import.meta.url)),
+      resolve5(cwd, specs[0]),
+      "--config",
+      resolve5(cwd, config),
+      "--out",
+      out,
+      ...view ? ["--view", view] : []
+    ],
+    cwd: relative6(target.root, cwd) || ".",
+    versionArgs: ["--version"],
+    timeoutMs: 3e5
+  }, { env: { ...process.env, TLA2TOOLS: await resolveFilePath(target.root, plan.tool.path), JAVA: java } });
+  if (execution.error || execution.timedOut || execution.cancelled || ![0, 1].includes(execution.exitCode)) {
+    throw new CommandError("blocked", [{ code: "chart-unproven", message: "The chart run did not complete, so the property is unproven.", fix: "Read the local execution diagnostics, repair the Java or model harness and rerun formal chart." }], { path: out, execution });
+  }
+  const chart = await readFile10(join10(out, "chart.mmd"), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
+  return {
+    status: execution.exitCode === 1 ? "failed" : "passed",
+    inputs: checked.inputs,
+    data: {
+      path: out,
+      report: join10(out, "report.md"),
+      chart: chart === null ? null : join10(out, "chart.mmd"),
+      outcome: execution.exitCode === 1 ? "A model rule breaks; replay the report path against the transition table and real code." : "The checked model rules hold within their bounds.",
+      diff: chart === null ? "No chart: a large passing model exceeds the chart budget. Read report.md." : `\`\`\`mermaid
+${chart}\`\`\``,
+      execution
+    }
+  };
+}
+
 // runtime/scripts/runtime/scripts/formal-verification.mjs
 await dispatch(process.argv.slice(2), "formal-verification", {
   "rule-proof": { options: ["check-plan", "check-id", "valid", "violation", "expect"], help: "Prove a selected native check against disposable valid and violation copies.\nUsage: formal-verification.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]\nUses schemas/check-plan.json. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.", run },
@@ -2673,5 +2740,6 @@ await dispatch(process.argv.slice(2), "formal-verification", {
   "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: formal-verification.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run3 },
   "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: formal-verification.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run4 },
   "formal scaffold": { options: ["plan", "update"], help: "Render the selected formal verification suite as a reviewable change set in scratch.\nUsage: formal-verification.mjs formal scaffold --repo <path> --plan <file> [--update] [--json]\nPlan follows schemas/formal-plan.json. Returns the change set path, its planDigest and the exact diff. Rejects a plan whose model step cites no atomic code step, cites code outside the property's source paths or cites a line that does not exist. Without --update, existing suite files are never overwritten. With --update, the change set also replaces suite files that differ from the plan, creates missing ones and deletes property and model files the plan no longer lists; when nothing differs it returns no change set. Review with apply --dry-run, then apply the unchanged change set.", run: run5 },
+  "formal chart": { options: ["suite", "property", "view"], help: "Check suite drift and its pinned tool, then run TLC and write a local Mermaid chart and Markdown report under the suite evidence directory.\nUsage: formal-verification.mjs formal chart --repo <path> --suite <target> --property <id> [--view <path>] [--json]\nRequires the direct Java TLC recipe with one suite .tla file and explicit -config .cfg file. Uses that command's Java and the suite's exact hash-checked jar; never installs tools. A missing jar is blocked and unproven. --view is an executable local module outside the maintained suite. Model violations return failed with evidence paths; harness errors return blocked. Large passing models may produce no chart. Default output is Mermaid text, never a remote renderer.\nExample: formal-verification.mjs formal chart --repo . --suite charge-once --property charge-once\nExample: formal-verification.mjs formal chart --repo . --suite charge-once --property charge-once --view /tmp/view.mjs --json", run: run7 },
   "formal check": { options: ["suite", "sync-commit"], help: "Check an applied formal verification suite for drift without running the model checker or writing.\nUsage: formal-verification.mjs formal check --repo <path> --suite <name> [--sync-commit <sha>] [--json]\nFails with one problem per finding: file-drift, file-missing, source-paths-missing, table-drift, orphan-property-file, orphan-model-file, pointer-missing, source-path-missing, step-code-missing, design-citation problems, source-changed-since-sync, sync-commit-missing and tool-hash-mismatch. A missing tool file is blocked as tool-missing: the properties are unproven, never passing. It compares the suite with what suite.json renders, with the repo and with the pinned tool file's sha256, and does not judge whether a model is true; rerun every property check for that.\nA property records the commit its model was last confirmed at as syncCommit. source-changed-since-sync means its source paths differ between that commit and HEAD, which a change already on the base branch causes without the gate or the model check noticing. sync-commit-missing means the commit is absent or no longer in the repo, as after a rebase or squash; drift is then checked from the last commit that changed the suite, and the problem says so. Both route to maintain and neither fails the maintained check command. --sync-commit <sha> checks every property against that commit in place of the recorded ones, so maintain can prove a commit passes before it records it.", run: run6 }
 });

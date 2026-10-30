@@ -2,6 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises'
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { isBuiltin } from 'node:module'
+import { createHash } from 'node:crypto'
 import { parse } from 'acorn'
 import { lexer } from 'marked'
 import { emitResult } from '../runtime/scripts/lib/result.mjs'
@@ -108,6 +109,24 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
   const frontmatter = document.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)
   const body = frontmatter ? document.slice(frontmatter[0].length) : document
   const skillName = frontmatter?.[1].match(/^name:\s*(\S+)\s*$/m)?.[1]
+  // This compiler is third-party source, so validate pinned bytes rather than bstack's authored-code policies.
+  const vendorPrefix = 'scripts/statechart/'
+  if (skillName === 'formal-verification') {
+    const sources = JSON.parse(await readFile(new URL('../upstream/sources.json', import.meta.url), 'utf8'))
+    const source = sources.find(item => item.name === 'pstack-statechart')
+    const prefix = 'pstack/skills/statechart/scripts/'
+    const expected = new Map(source.files.filter(file => file.startsWith(prefix)).map(file => [vendorPrefix + file.slice(prefix.length), source.sha256[file]]))
+    expected.set(`${vendorPrefix}LICENSE`, source.sha256['pstack/LICENSE'])
+    for (const [file, hash] of expected) {
+      const bytes = await readFile(join(skill, file)).catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
+      if (bytes === null || createHash('sha256').update(bytes).digest('hex') !== hash) add('vendor-bytes', file, 'Vendored compiler differs from its pin.', 'Run node scripts/generate-skills.mjs to restore the unchanged copy.')
+    }
+    for (const file of files.keys()) {
+      if (!file.startsWith(vendorPrefix)) continue
+      if (!expected.has(file)) add('vendor-extra', file, 'Unlisted file in vendored compiler.', 'Remove the unlisted file or review an upstream re-sync.')
+      files.delete(file)
+    }
+  }
   const dependencies = new Set()
   if (files.has('package.json')) {
     try {

@@ -2420,6 +2420,10 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 110. `kit prove` run through `/prototype` on scratch clones of a fixture target that has a kit measures a passing variant and a failing variant, each with a proof record, and leaves the target's files, HEAD and status unchanged (research amendment A4).
 111. `/prototype` on a fixture project with a kit builds two or three variants in scratch, reports the measured outcome of each and a recommendation that the measures support, says so when they do not decide, stops without a kit, and leaves the repo unchanged (research amendment A4).
 
+112. `formal chart` on the broken `formal-charge-once` fixture writes `chart.mmd` with a `breaks` state and a report whose shortest bug path maps to transition-table actions (statechart S3, S5, S6).
+113. `formal chart` with a missing pinned jar returns `blocked`, reports unproven and never invokes mise or writes chart evidence (statechart S3).
+114. `formal chart` refuses a wrong jar hash through its `formal check` precondition before running the compiler (statechart S3).
+
 Use disposable test repos for changes, board fixtures and deliberate violations.
 Record the agent, model, operating system, dependency versions, commands and outcomes.
 Documentation research alone does not satisfy an execution check.
