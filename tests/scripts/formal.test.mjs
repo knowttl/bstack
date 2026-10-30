@@ -468,7 +468,7 @@ test('formal chart draws the charge-once violation and reports its shortest tran
   assert.match(chart, /class \S+ breaks/)
   const report = await readFile(result.data.report, 'utf8')
   assert.match(report, /## NoDoubleCharge breaks\nThe shortest path has 6 steps:/)
-  assert.deepEqual([...report.matchAll(/^\d+\. (Read|Claim|Charge|Finish):/gm)].map(match => match[1]).sort(), ['Charge', 'Charge', 'Claim', 'Claim', 'Read', 'Read'])
+  assert.deepEqual([...report.matchAll(/^\d+\. (Read|Claim|Charge|Finish)(?:\([^\n)]*\))?:/gm)].map(match => match[1]).sort(), ['Charge', 'Charge', 'Claim', 'Claim', 'Read', 'Read'])
   assert.equal(f.check().exit, 0)
 })
 
