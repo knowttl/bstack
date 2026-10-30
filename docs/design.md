@@ -441,9 +441,7 @@ This amendment registers no acceptance case, because no behaviour exists yet.
 
 The maintainer selected "Decision for statechart: adapt" after reviewing pstack's [`statechart`](https://github.com/cursor/plugins/tree/c742dd61706fbacc1b95f1a20b7b988cf096ce6c/pstack/skills/statechart) at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c` in `cursor/plugins`.
 S1 to S6 below stand as recommended.
-This amendment records requirements for a later build, not implemented behaviour.
-It changes only this design; the implementation-plan task, task registry, acceptance registration, source copies and attribution follow in the build change.
-No compiler, command, skill reference or runtime dependency is added here.
+This amendment owns the chart requirements; [T2.17](implementation-plan.md#t217-add-optional-tlc-charts-to-formal-verification) records implementation status and build evidence.
 
 The compiler runs the real TLC model checker, reads its state graph and messages, and produces Mermaid and a Markdown report.
 It does not reimplement TLC or prove that the model matches the code.
@@ -453,7 +451,7 @@ The existing reviewed-apply boundary and D5's exact tool pin stand.
 | ID | Maintainer's selection | Requirement |
 |---|---|---|
 | S1 | `optional-formal-chart` | Fold charting into `/formal-verification`, optionally in create Step 8 (report) and maintain M4 (triage). Add no standalone `/statechart` skill or independent invocation path |
-| S2 | `unchanged-vendored-compiler` | Vendor the compiler at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c`, with raw copies under `upstream/pstack-statechart/` and the 25 runtime TypeScript files plus the `scripts/statechart` launcher under `skills/formal-verification/scripts/statechart/`. Keep upstream tests upstream and every copied runtime byte unchanged. Record the MIT source and adaptations in `NOTICE` and per-file SHA-256 hashes in `upstream/sources.json` |
+| S2 | `unchanged-vendored-compiler` | Vendor the compiler at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c`, with raw copies under `upstream/pstack-statechart/` and the runtime TypeScript files plus the `scripts/statechart` launcher under `skills/formal-verification/scripts/statechart/`. Keep upstream tests upstream and every copied runtime byte unchanged. Record the MIT source and adaptations in `NOTICE` and the copied file inventory and per-file SHA-256 hashes in `upstream/sources.json` |
 | S3 | `project-pins-before-chart` | Add `formal chart --repo <path> --suite <target> --property <id> [--view <path>]`. Run `formal check` first and refuse to chart on any problem. Invoke the compiler with `TLA2TOOLS` set to the suite's exact hash-checked jar and `JAVA` to the project's Java. A missing jar returns `blocked`, meaning unproven, and never reaches mise or installs or fetches a tool. Write output under the suite's evidence directory |
 | S4 | `local-mermaid-default` | Show Mermaid text by default, as a local `mermaid` block or on a local board. Use Pele for SVG only when the user asks, with the project's own exact-pinned package and offline rendering. Never paste a model or chart into a website, including pele.run, and keep model constants abstract |
 | S5 | `reader-word-guidance-in-evidence` | Adapt the authoring guidance into `skills/formal-verification/references/chart.md`: reader-word state and step labels, about 20 arrows, the hide rules, the meaning of `breaks`, `mayBreak` and `bugPath`, and a hand-off line per bug. Keep view modules and charts in scratch or evidence, outside the suite's maintained files |
