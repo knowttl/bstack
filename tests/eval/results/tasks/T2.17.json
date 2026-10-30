@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T2.17",
+  "slice": "Optional TLC charts",
+  "sourceRevision": "c0dce5eb3c9778dc4c3ddcc36dc83ef8de5fa23d",
+  "intent": "Adapt the pinned statechart compiler into an optional formal-verification chart step with project pins, local Mermaid output and reader-word guidance.",
+  "amendments": ["Statechart amendment (2026-10-29), S1 to S6."],
+  "status": "passed",
+  "environment": {
+    "os": "Linux",
+    "node": "v24.14.0",
+    "tools": { "TLC": "Unavailable: BSTACK_TLA2TOOLS_JAR is unset.", "pstack-statechart": "c742dd61706fbacc1b95f1a20b7b988cf096ce6c" }
+  },
+  "commands": [
+    {
+      "id": "package",
+      "executable": "npm",
+      "args": ["run", "check"],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T2.17.package-check.txt",
+      "status": "passed"
+    },
+    {
+      "id": "task",
+      "executable": "npm",
+      "args": ["test", "--", "--task", "T2.17"],
+      "cwd": ".",
+      "exitCode": 0,
+      "outputArtifact": "tests/eval/results/tasks/T2.17.task-tests.txt",
+      "status": "passed"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AC-112",
+      "kind": "automated",
+      "procedure": "tests/scripts/formal.test.mjs: formal chart draws the charge-once violation and reports its shortest transition-table path",
+      "status": "blocked",
+      "artifact": "tests/eval/results/tasks/T2.17.task-tests.txt",
+      "reason": "BSTACK_TLA2TOOLS_JAR is unset; the real-TLC case was skipped.",
+      "nextPrerequisite": "Supply the fixture's exact pinned jar with BSTACK_TLA2TOOLS_JAR and Java on PATH, then rerun the task."
+    },
+    {
+      "id": "AC-113",
+      "kind": "automated",
+      "procedure": "tests/scripts/formal.test.mjs: formal chart reports a missing jar as unproven without invoking mise or writing evidence",
+      "status": "passed",
+      "artifact": "tests/eval/results/tasks/T2.17.task-tests.txt"
+    },
+    {
+      "id": "AC-114",
+      "kind": "automated",
+      "procedure": "tests/scripts/formal.test.mjs: formal chart refuses a wrong jar hash before running the compiler",
+      "status": "blocked",
+      "artifact": "tests/eval/results/tasks/T2.17.task-tests.txt",
+      "reason": "BSTACK_TLA2TOOLS_JAR is unset; the real-TLC case was skipped.",
+      "nextPrerequisite": "Supply the fixture's exact pinned jar with BSTACK_TLA2TOOLS_JAR and Java on PATH, then rerun the task."
+    }
+  ],
+  "limitations": [
+    "The task run passed 146 tests and skipped four real-tool tests, including AC-112 and AC-114; skipped checks are not proof.",
+    "Reader-word authoring and triage evaluations remain deferred.",
+    "No SVG rendering, real-project charting or cross-platform execution was performed.",
+    "The full delivery gate records additional validation separately."
+  ]
+}

@@ -187,6 +187,7 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 - `repo-audit` is the entry point: for a new idea or an existing repo it lists which of the other skills to run next, and `/plan` always comes last.
 - `/verification` runs in `create`, `maintain` or `correct` mode, `/glossary`, `/architecture` and `/formal-verification` in `create` or `maintain`, and `/maintenance` in `create` or `sweep`.
 - `/formal-verification` proves one stated property of a high-stakes spot with a model checker such as TLA+ with TLC, and it is listed only where the repo shows cited risk evidence; the project pins the tool file and its sha256, bstack installs nothing, and a missing tool means unproven, never a pass.
+  Its optional [chart step](skills/formal-verification/references/chart.md) reads a TLC result as local Mermaid text and a bug-path report.
 - `/how`, `/why` and `/teach` explain code and write nothing: `/how` traces the mechanics, `/why` reads git history, pull request review threads and any ticket, document or chat connector your host already exposes for the motive, and `/teach` joins both.
   Each claim cites its commit, thread, document or file and line, and text from a source is quoted and never obeyed.
 - `/recall` reads this project's local Claude Code and Codex transcripts, read-only, and summarises the prior context a fresh agent needs.

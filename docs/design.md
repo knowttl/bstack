@@ -441,9 +441,7 @@ This amendment registers no acceptance case, because no behaviour exists yet.
 
 The maintainer selected "Decision for statechart: adapt" after reviewing pstack's [`statechart`](https://github.com/cursor/plugins/tree/c742dd61706fbacc1b95f1a20b7b988cf096ce6c/pstack/skills/statechart) at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c` in `cursor/plugins`.
 S1 to S6 below stand as recommended.
-This amendment records requirements for a later build, not implemented behaviour.
-It changes only this design; the implementation-plan task, task registry, acceptance registration, source copies and attribution follow in the build change.
-No compiler, command, skill reference or runtime dependency is added here.
+This amendment owns the chart requirements; [T2.17](implementation-plan.md#t217-add-optional-tlc-charts-to-formal-verification) records implementation status and build evidence.
 
 The compiler runs the real TLC model checker, reads its state graph and messages, and produces Mermaid and a Markdown report.
 It does not reimplement TLC or prove that the model matches the code.
@@ -453,7 +451,7 @@ The existing reviewed-apply boundary and D5's exact tool pin stand.
 | ID | Maintainer's selection | Requirement |
 |---|---|---|
 | S1 | `optional-formal-chart` | Fold charting into `/formal-verification`, optionally in create Step 8 (report) and maintain M4 (triage). Add no standalone `/statechart` skill or independent invocation path |
-| S2 | `unchanged-vendored-compiler` | Vendor the compiler at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c`, with raw copies under `upstream/pstack-statechart/` and the 25 runtime TypeScript files plus the `scripts/statechart` launcher under `skills/formal-verification/scripts/statechart/`. Keep upstream tests upstream and every copied runtime byte unchanged. Record the MIT source and adaptations in `NOTICE` and per-file SHA-256 hashes in `upstream/sources.json` |
+| S2 | `unchanged-vendored-compiler` | Vendor the compiler at `c742dd61706fbacc1b95f1a20b7b988cf096ce6c`, with raw copies under `upstream/pstack-statechart/` and the runtime TypeScript files plus the `scripts/statechart` launcher under `skills/formal-verification/scripts/statechart/`. Keep upstream tests upstream and every copied runtime byte unchanged. Record the MIT source and adaptations in `NOTICE` and the copied file inventory and per-file SHA-256 hashes in `upstream/sources.json` |
 | S3 | `project-pins-before-chart` | Add `formal chart --repo <path> --suite <target> --property <id> [--view <path>]`. Run `formal check` first and refuse to chart on any problem. Invoke the compiler with `TLA2TOOLS` set to the suite's exact hash-checked jar and `JAVA` to the project's Java. A missing jar returns `blocked`, meaning unproven, and never reaches mise or installs or fetches a tool. Write output under the suite's evidence directory |
 | S4 | `local-mermaid-default` | Show Mermaid text by default, as a local `mermaid` block or on a local board. Use Pele for SVG only when the user asks, with the project's own exact-pinned package and offline rendering. Never paste a model or chart into a website, including pele.run, and keep model constants abstract |
 | S5 | `reader-word-guidance-in-evidence` | Adapt the authoring guidance into `skills/formal-verification/references/chart.md`: reader-word state and step labels, about 20 arrows, the hide rules, the meaning of `breaks`, `mayBreak` and `bugPath`, and a hand-off line per bug. Keep view modules and charts in scratch or evidence, outside the suite's maintained files |
@@ -485,12 +483,11 @@ The intake review ran the compiler on a synthetic approval-lifecycle model with 
 It found a three-step violation path and generated a chart of eight states and eight arrows.
 Repeating the run with a different TLC release produced a byte-identical `chart.mmd`; that observation does not replace the project's exact jar hash check.
 The review also rendered the synthetic chart with `pele@1.9.0` with networking disabled.
-These are review observations, not acceptance results for the bstack command, which does not exist yet.
+These are intake review observations, not acceptance results for the bstack command; build evidence is owned by [T2.17](implementation-plan.md#t217-add-optional-tlc-charts-to-formal-verification).
 
 #### Proof for the build
 
-The build adds an implementation-plan task and task-registry row, then registers the cases below and records task evidence through bstack's delivery gate.
-This design-only amendment registers no acceptance case and claims no executed chart-command proof.
+The build registers AC-112 to AC-114 and records task evidence through bstack's delivery gate under [T2.17](implementation-plan.md#t217-add-optional-tlc-charts-to-formal-verification).
 Use public commands on disposable copies of the `formal-charge-once` fixture and its violation variant.
 
 - On the broken variant, `formal chart` writes `chart.mmd` with a `breaks` state and a report containing a shortest bug path whose steps map to transition-table actions.
@@ -813,7 +810,7 @@ A shared runtime folder beside the skills is ruled out because installing one sk
 | `maintenance` | `contract validate`, `evidence collect` and `validate`, `docs check` and `generate`, `run-checks`, `probe`, `apply`, `state show`, `sweep` |
 | `agents-md` | `inventory`, `apply`, `state show` |
 | `plan` | `plan check`, `apply`, `state show`, `cite-check` |
-| `formal-verification` | `formal scaffold`, `formal check`, `rule-proof`, `apply`, `state show`, `cite-check` |
+| `formal-verification` | See its command list in the [runtime manifest](../runtime/skills.json) |
 
 The lists come from each command's imports and the steps that call it; the build may find one more shared helper.
 
@@ -2419,6 +2416,10 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 109. `/prototype` starts only when the user names it, with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, ships only `kit check` and `kit prove`, and starts no other skill (research amendment A4, A7).
 110. `kit prove` run through `/prototype` on scratch clones of a fixture target that has a kit measures a passing variant and a failing variant, each with a proof record, and leaves the target's files, HEAD and status unchanged (research amendment A4).
 111. `/prototype` on a fixture project with a kit builds two or three variants in scratch, reports the measured outcome of each and a recommendation that the measures support, says so when they do not decide, stops without a kit, and leaves the repo unchanged (research amendment A4).
+
+112. `formal chart` on the broken `formal-charge-once` fixture writes `chart.mmd` with a `breaks` state and a report whose shortest bug path maps to transition-table actions (statechart S3, S5, S6).
+113. `formal chart` with a missing pinned jar returns `blocked`, reports unproven and never invokes mise or writes chart evidence (statechart S3).
+114. `formal chart` refuses a wrong jar hash through its `formal check` precondition before running the compiler (statechart S3).
 
 Use disposable test repos for changes, board fixtures and deliberate violations.
 Record the agent, model, operating system, dependency versions, commands and outcomes.

@@ -1,0 +1,916 @@
+
+> bstack@0.0.0 test
+> node scripts/test.mjs --task T2.17
+
+Selected 4 suite(s): tests/scripts/acceptance.test.mjs, tests/scripts/formal.test.mjs, tests/scripts/package-check.test.mjs, tests/scripts/upstream.test.mjs
+TAP version 13
+# Subtest: registry validates all 114 owned cases without scoring procedures
+ok 1 - registry validates all 114 owned cases without scoring procedures
+  ---
+  duration_ms: 39750.868085
+  type: 'test'
+  ...
+# Subtest: registry blocks missing acceptance ID
+ok 2 - registry blocks missing acceptance ID
+  ---
+  duration_ms: 46.242803
+  type: 'test'
+  ...
+# Subtest: registry blocks duplicate acceptance ID
+ok 3 - registry blocks duplicate acceptance ID
+  ---
+  duration_ms: 48.64426
+  type: 'test'
+  ...
+# Subtest: registry blocks unknown owner task
+ok 4 - registry blocks unknown owner task
+  ---
+  duration_ms: 43.290108
+  type: 'test'
+  ...
+# Subtest: registry blocks wrong existing owner task
+ok 5 - registry blocks wrong existing owner task
+  ---
+  duration_ms: 48.916156
+  type: 'test'
+  ...
+# Subtest: registry blocks missing shared owner
+ok 6 - registry blocks missing shared owner
+  ---
+  duration_ms: 45.916128
+  type: 'test'
+  ...
+# Subtest: registry blocks extra shared owner
+ok 7 - registry blocks extra shared owner
+  ---
+  duration_ms: 45.731674
+  type: 'test'
+  ...
+# Subtest: registry blocks duplicate owner
+ok 8 - registry blocks duplicate owner
+  ---
+  duration_ms: 44.914589
+  type: 'test'
+  ...
+# Subtest: registry blocks invalid procedure status
+ok 9 - registry blocks invalid procedure status
+  ---
+  duration_ms: 45.104082
+  type: 'test'
+  ...
+# Subtest: registry blocks empty planned procedure
+ok 10 - registry blocks empty planned procedure
+  ---
+  duration_ms: 47.00737
+  type: 'test'
+  ...
+# Subtest: registry blocks invalid criterion source
+ok 11 - registry blocks invalid criterion source
+  ---
+  duration_ms: 46.443169
+  type: 'test'
+  ...
+# Subtest: registry blocks unknown registry field
+ok 12 - registry blocks unknown registry field
+  ---
+  duration_ms: 43.694648
+  type: 'test'
+  ...
+# Subtest: registry blocks missing skill
+ok 13 - registry blocks missing skill
+  ---
+  duration_ms: 42.466965
+  type: 'test'
+  ...
+# Subtest: registry blocks unknown skill
+ok 14 - registry blocks unknown skill
+  ---
+  duration_ms: 45.801091
+  type: 'test'
+  ...
+# Subtest: registry blocks missing completed evidence
+ok 15 - registry blocks missing completed evidence
+  ---
+  duration_ms: 51.643648
+  type: 'test'
+  ...
+# Subtest: registry blocks unregistered completed test
+ok 16 - registry blocks unregistered completed test
+  ---
+  duration_ms: 50.543126
+  type: 'test'
+  ...
+# Subtest: completed agent procedure blocks ambiguous-idea for AC-1
+ok 17 - completed agent procedure blocks ambiguous-idea for AC-1
+  ---
+  duration_ms: 50.44625
+  type: 'test'
+  ...
+# Subtest: completed agent procedure accepts ambiguous-idea for AC-2
+ok 18 - completed agent procedure accepts ambiguous-idea for AC-2
+  ---
+  duration_ms: 58.560812
+  type: 'test'
+  ...
+# Subtest: completed agent procedure accepts new-idea for AC-9
+ok 19 - completed agent procedure accepts new-idea for AC-9
+  ---
+  duration_ms: 51.975358
+  type: 'test'
+  ...
+# Subtest: completed agent procedure accepts all-scenario-comparisons for AC-46
+ok 20 - completed agent procedure accepts all-scenario-comparisons for AC-46
+  ---
+  duration_ms: 44.56648
+  type: 'test'
+  ...
+# Subtest: completed manual procedure blocks ambiguous-idea for AC-1
+ok 21 - completed manual procedure blocks ambiguous-idea for AC-1
+  ---
+  duration_ms: 54.477668
+  type: 'test'
+  ...
+# Subtest: completed manual procedure accepts ambiguous-idea for AC-2
+ok 22 - completed manual procedure accepts ambiguous-idea for AC-2
+  ---
+  duration_ms: 53.430224
+  type: 'test'
+  ...
+# Subtest: completed manual procedure accepts new-idea for AC-9
+ok 23 - completed manual procedure accepts new-idea for AC-9
+  ---
+  duration_ms: 56.682348
+  type: 'test'
+  ...
+# Subtest: completed manual procedure accepts all-scenario-comparisons for AC-46
+ok 24 - completed manual procedure accepts all-scenario-comparisons for AC-46
+  ---
+  duration_ms: 46.342393
+  type: 'test'
+  ...
+# Subtest: removed all-case release flag points to the release gate
+ok 25 - removed all-case release flag points to the release gate
+  ---
+  duration_ms: 38.575755
+  type: 'test'
+  ...
+# Subtest: duplicate final selections are blocked independently of run history
+ok 26 - duplicate final selections are blocked independently of run history
+  ---
+  duration_ms: 40.55052
+  type: 'test'
+  ...
+# Subtest: completed procedure definitions execute valid skeleton passes from another working directory without scoring it
+ok 27 - completed procedure definitions execute valid skeleton passes from another working directory without scoring it
+  ---
+  duration_ms: 780.169489
+  type: 'test'
+  ...
+# Subtest: completed procedure definitions execute unlisted-reference fails with reference-unlisted without scoring it
+ok 28 - completed procedure definitions execute unlisted-reference fails with reference-unlisted without scoring it
+  ---
+  duration_ms: 276.119578
+  type: 'test'
+  ...
+# Subtest: formal commands and the coverage gate agree that src covers the charge code
+ok 29 - formal commands and the coverage gate agree that src covers the charge code
+  ---
+  duration_ms: 1602.134779
+  type: 'test'
+  ...
+# Subtest: formal commands and the coverage gate agree that s* covers the charge code
+ok 30 - formal commands and the coverage gate agree that s* covers the charge code
+  ---
+  duration_ms: 1432.921942
+  type: 'test'
+  ...
+# Subtest: formal commands and the coverage gate agree that src/charge.mjs covers the charge code
+ok 31 - formal commands and the coverage gate agree that src/charge.mjs covers the charge code
+  ---
+  duration_ms: 1506.540487
+  type: 'test'
+  ...
+# Subtest: formal commands and the coverage gate agree that src/*.mjs covers the charge code
+ok 32 - formal commands and the coverage gate agree that src/*.mjs covers the charge code
+  ---
+  duration_ms: 1186.684598
+  type: 'test'
+  ...
+# Subtest: formal commands and the coverage gate agree that src/** covers the charge code
+ok 33 - formal commands and the coverage gate agree that src/** covers the charge code
+  ---
+  duration_ms: 1060.451175
+  type: 'test'
+  ...
+# Subtest: sweep excludes the installed authoring skill and still detects an incomplete formal suite
+ok 34 - sweep excludes the installed authoring skill and still detects an incomplete formal suite
+  ---
+  duration_ms: 1197.366258
+  type: 'test'
+  ...
+# Subtest: the formal-verification skill ships only the commands its procedure runs
+ok 35 - the formal-verification skill ships only the commands its procedure runs
+  ---
+  duration_ms: 27.569734
+  type: 'test'
+  ...
+# Subtest: formal chart reports a missing jar as unproven without invoking mise or writing evidence
+ok 36 - formal chart reports a missing jar as unproven without invoking mise or writing evidence
+  ---
+  duration_ms: 1152.896814
+  type: 'test'
+  ...
+# Subtest: scaffold renders the suite, property files, transition table and model files from the plan and rejects a model step that cites no atomic code step
+ok 37 - scaffold renders the suite, property files, transition table and model files from the plan and rejects a model step that cites no atomic code step
+  ---
+  duration_ms: 1320.975018
+  type: 'test'
+  ...
+# Subtest: an unchanged plan updates to nothing and a changed model replaces only its file
+ok 38 - an unchanged plan updates to nothing and a changed model replaces only its file
+  ---
+  duration_ms: 1136.610856
+  type: 'test'
+  ...
+# Subtest: scaffold rejects a model step that cites code outside the property source paths and writes nothing
+ok 39 - scaffold rejects a model step that cites code outside the property source paths and writes nothing
+  ---
+  duration_ms: 185.816508
+  type: 'test'
+  ...
+# Subtest: scaffold rejects a model step in a sibling directory with the same prefix and writes nothing
+ok 40 - scaffold rejects a model step in a sibling directory with the same prefix and writes nothing
+  ---
+  duration_ms: 175.26995
+  type: 'test'
+  ...
+# Subtest: scaffold rejects a model step that cites a line the file does not have and writes nothing
+ok 41 - scaffold rejects a model step that cites a line the file does not have and writes nothing
+  ---
+  duration_ms: 188.630866
+  type: 'test'
+  ...
+# Subtest: scaffold rejects a module header that does not name its file and writes nothing
+ok 42 - scaffold rejects a module header that does not name its file and writes nothing
+  ---
+  duration_ms: 177.678846
+  type: 'test'
+  ...
+# Subtest: scaffold rejects evidence inside the suite and writes nothing
+ok 43 - scaffold rejects evidence inside the suite and writes nothing
+  ---
+  duration_ms: 178.13931
+  type: 'test'
+  ...
+# Subtest: scaffold rejects a model file used by two entries and writes nothing
+ok 44 - scaffold rejects a model file used by two entries and writes nothing
+  ---
+  duration_ms: 183.964967
+  type: 'test'
+  ...
+# Subtest: scaffold refuses to overwrite an applied suite without --update
+ok 45 - scaffold refuses to overwrite an applied suite without --update
+  ---
+  duration_ms: 960.12155
+  type: 'test'
+  ...
+# Subtest: check fails on a hand-edited suite file
+ok 46 - check fails on a hand-edited suite file
+  ---
+  duration_ms: 974.606199
+  type: 'test'
+  ...
+# Subtest: check fails on a deleted model file
+ok 47 - check fails on a deleted model file
+  ---
+  duration_ms: 1442.975255
+  type: 'test'
+  ...
+# Subtest: check fails on a property file the plan does not list
+ok 48 - check fails on a property file the plan does not list
+  ---
+  duration_ms: 1440.725698
+  type: 'test'
+  ...
+# Subtest: check fails on a model file the plan does not list
+ok 49 - check fails on a model file the plan does not list
+  ---
+  duration_ms: 1353.557889
+  type: 'test'
+  ...
+# Subtest: check fails on a missing AGENTS.md pointer
+ok 50 - check fails on a missing AGENTS.md pointer
+  ---
+  duration_ms: 1661.38535
+  type: 'test'
+  ...
+# Subtest: check fails on a source path that matches no file
+ok 51 - check fails on a source path that matches no file
+  ---
+  duration_ms: 1462.089707
+  type: 'test'
+  ...
+# Subtest: check fails on a cited code line that no longer exists
+ok 52 - check fails on a cited code line that no longer exists
+  ---
+  duration_ms: 973.87903
+  type: 'test'
+  ...
+# Subtest: check fails on a design section whose bytes changed
+ok 53 - check fails on a design section whose bytes changed
+  ---
+  duration_ms: 987.767323
+  type: 'test'
+  ...
+# Subtest: check fails on a property file with no Source paths line, a drifted transition table and a tool file that differs from its pin, and reports a missing tool as unproven
+ok 54 - check fails on a property file with no Source paths line, a drifted transition table and a tool file that differs from its pin, and reports a missing tool as unproven
+  ---
+  duration_ms: 1249.316194
+  type: 'test'
+  ...
+# Subtest: check blocks on a suite that was never applied
+ok 55 - check blocks on a suite that was never applied
+  ---
+  duration_ms: 147.857904
+  type: 'test'
+  ...
+# Subtest: check reports a change to a cited line that reached main, and moving the sync commit after the re-proof clears it
+ok 56 - check reports a change to a cited line that reached main, and moving the sync commit after the re-proof clears it
+  ---
+  duration_ms: 2045.358659
+  type: 'test'
+  ...
+# Subtest: check reports sync-commit-missing when a property records none, falls back to the last commit that changed the suite and recovers through a proposed commit
+ok 57 - check reports sync-commit-missing when a property records none, falls back to the last commit that changed the suite and recovers through a proposed commit
+  ---
+  duration_ms: 1932.132889
+  type: 'test'
+  ...
+# Subtest: check reports sync-commit-missing when a property names a commit the repo does not have, falls back to the last commit that changed the suite and recovers through a proposed commit
+ok 58 - check reports sync-commit-missing when a property names a commit the repo does not have, falls back to the last commit that changed the suite and recovers through a proposed commit
+  ---
+  duration_ms: 1990.687852
+  type: 'test'
+  ...
+# Subtest: check refuses a short hash as the proposed sync commit
+ok 59 - check refuses a short hash as the proposed sync commit
+  ---
+  duration_ms: 1071.431465
+  type: 'test'
+  ...
+# Subtest: check refuses a hash the repo does not have as the proposed sync commit
+ok 60 - check refuses a hash the repo does not have as the proposed sync commit
+  ---
+  duration_ms: 861.499814
+  type: 'test'
+  ...
+# Subtest: the generalised coverage gate exits 1 for a source change with no model change
+ok 61 - the generalised coverage gate exits 1 for a source change with no model change
+  ---
+  duration_ms: 1381.401138
+  type: 'test'
+  ...
+# Subtest: the generalised coverage gate exits 0 for a source change with a no-impact reason for the property
+ok 62 - the generalised coverage gate exits 0 for a source change with a no-impact reason for the property
+  ---
+  duration_ms: 1182.696168
+  type: 'test'
+  ...
+# Subtest: the generalised coverage gate exits 1 for a source change with a no-impact reason for another property
+ok 63 - the generalised coverage gate exits 1 for a source change with a no-impact reason for another property
+  ---
+  duration_ms: 1310.734123
+  type: 'test'
+  ...
+# Subtest: the generalised coverage gate exits 1 for a source change with an empty no-impact reason
+ok 64 - the generalised coverage gate exits 1 for a source change with an empty no-impact reason
+  ---
+  duration_ms: 1170.064047
+  type: 'test'
+  ...
+# Subtest: the generalised coverage gate exits 1 for a source change with the kit trailer instead
+ok 65 - the generalised coverage gate exits 1 for a source change with the kit trailer instead
+  ---
+  duration_ms: 1239.795201
+  type: 'test'
+  ...
+# Subtest: the generalised coverage gate fails a source change when no model changed and accepts it with a No-proof-impact line
+ok 66 - the generalised coverage gate fails a source change when no model changed and accepts it with a No-proof-impact line
+  ---
+  duration_ms: 1050.18863
+  type: 'test'
+  ...
+# Subtest: the generalised coverage gate accepts a source change that comes with a model change
+ok 67 - the generalised coverage gate accepts a source change that comes with a model change
+  ---
+  duration_ms: 910.639951
+  type: 'test'
+  ...
+# Subtest: the coverage gate rejects a property file without its Model files line
+ok 68 - the coverage gate rejects a property file without its Model files line
+  ---
+  duration_ms: 1210.181738
+  type: 'test'
+  ...
+# Subtest: sweep routes a drifted formal suite to its maintain mode, reports a missing tool as a limit and leaves a verify kit alone
+ok 69 - sweep routes a drifted formal suite to its maintain mode, reports a missing tool as a limit and leaves a verify kit alone
+  ---
+  duration_ms: 1182.32392
+  type: 'test'
+  ...
+# Subtest: formal chart refuses a wrong jar hash before running the compiler
+ok 70 - formal chart refuses a wrong jar hash before running the compiler # SKIP Set BSTACK_TLA2TOOLS_JAR to the pinned tla2tools.jar to run the model checker.
+  ---
+  duration_ms: 0.085021
+  type: 'test'
+  ...
+# Subtest: formal chart draws the charge-once violation and reports its shortest transition-table path
+ok 71 - formal chart draws the charge-once violation and reports its shortest transition-table path # SKIP Set BSTACK_TLA2TOOLS_JAR to the pinned tla2tools.jar to run the model checker.
+  ---
+  duration_ms: 0.022278
+  type: 'test'
+  ...
+# Subtest: rule-proof passes unchanged on the charge-once pair with the pinned tool
+ok 72 - rule-proof passes unchanged on the charge-once pair with the pinned tool # SKIP Set BSTACK_TLA2TOOLS_JAR to the pinned tla2tools.jar to run the model checker.
+  ---
+  duration_ms: 0.017388
+  type: 'test'
+  ...
+# Subtest: the walkthrough on a scratch break in the real code is flagged, fails the updated model and returns to the original result
+ok 73 - the walkthrough on a scratch break in the real code is flagged, fails the updated model and returns to the original result # SKIP Set BSTACK_TLA2TOOLS_JAR to the pinned tla2tools.jar to run the model checker.
+  ---
+  duration_ms: 0.011468
+  type: 'test'
+  ...
+# Subtest: valid skeleton passes from another working directory
+ok 74 - valid skeleton passes from another working directory
+  ---
+  duration_ms: 606.655268
+  type: 'test'
+  ...
+# Subtest: missing-path fails with local-path-missing
+ok 75 - missing-path fails with local-path-missing
+  ---
+  duration_ms: 58.866531
+  type: 'test'
+  ...
+# Subtest: unlisted-reference fails with reference-unlisted
+ok 76 - unlisted-reference fails with reference-unlisted
+  ---
+  duration_ms: 59.087822
+  type: 'test'
+  ...
+# Subtest: nested-reference fails with reference-nested
+ok 77 - nested-reference fails with reference-nested
+  ---
+  duration_ms: 62.513871
+  type: 'test'
+  ...
+# Subtest: oversized-skill fails with skill-too-long
+ok 78 - oversized-skill fails with skill-too-long
+  ---
+  duration_ms: 59.780778
+  type: 'test'
+  ...
+# Subtest: long-reference fails with reference-toc
+ok 79 - long-reference fails with reference-toc
+  ---
+  duration_ms: 56.731158
+  type: 'test'
+  ...
+# Subtest: host-metadata fails with host-metadata
+ok 80 - host-metadata fails with host-metadata
+  ---
+  duration_ms: 57.682811
+  type: 'test'
+  ...
+# Subtest: undeclared-import fails with script-import
+ok 81 - undeclared-import fails with script-import
+  ---
+  duration_ms: 61.724303
+  type: 'test'
+  ...
+# Subtest: unexplained-constant fails with constant-comment
+ok 82 - unexplained-constant fails with constant-comment
+  ---
+  duration_ms: 68.859707
+  type: 'test'
+  ...
+# Subtest: unfinished-step fails with step-done
+ok 83 - unfinished-step fails with step-done
+  ---
+  duration_ms: 67.232833
+  type: 'test'
+  ...
+# Subtest: language-policy fails with language-policy
+ok 84 - language-policy fails with language-policy
+  ---
+  duration_ms: 63.912966
+  type: 'test'
+  ...
+# Subtest: package resources reject implementation playbook routing
+    # Subtest: SKILL.md
+    ok 1 - SKILL.md
+      ---
+      duration_ms: 88.143491
+      type: 'test'
+      ...
+    # Subtest: references/guide.md
+    ok 2 - references/guide.md
+      ---
+      duration_ms: 65.140523
+      type: 'test'
+      ...
+    # Subtest: scripts/router.mjs
+    ok 3 - scripts/router.mjs
+      ---
+      duration_ms: 63.644561
+      type: 'test'
+      ...
+    1..3
+ok 85 - package resources reject implementation playbook routing
+  ---
+  duration_ms: 217.607301
+  type: 'test'
+  ...
+# Subtest: bounded audit instructions and product boundary statements pass routing checks
+ok 86 - bounded audit instructions and product boundary statements pass routing checks
+  ---
+  duration_ms: 65.731289
+  type: 'test'
+  ...
+# Subtest: every independent problem is reported together
+ok 87 - every independent problem is reported together
+  ---
+  duration_ms: 65.81693
+  type: 'test'
+  ...
+# Subtest: line limits include their boundary and exclude frontmatter
+ok 88 - line limits include their boundary and exclude frontmatter
+  ---
+  duration_ms: 74.113527
+  type: 'test'
+  ...
+# Subtest: contents heading at line twenty permits a long reference
+ok 89 - contents heading at line twenty permits a long reference
+  ---
+  duration_ms: 118.296521
+  type: 'test'
+  ...
+# Subtest: local paths in source and nested resources resolve from their file
+ok 90 - local paths in source and nested resources resolve from their file
+  ---
+  duration_ms: 133.618919
+  type: 'test'
+  ...
+# Subtest: inline link location suffix preserves missing and nested reference checks
+ok 91 - inline link location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 62.529672
+  type: 'test'
+  ...
+# Subtest: image location suffix preserves missing and nested reference checks
+ok 92 - image location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 64.895715
+  type: 'test'
+  ...
+# Subtest: reference definition location suffix preserves missing and nested reference checks
+ok 93 - reference definition location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 68.14697
+  type: 'test'
+  ...
+# Subtest: angle destination location suffix preserves missing and nested reference checks
+ok 94 - angle destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 63.482051
+  type: 'test'
+  ...
+# Subtest: encoded destination location suffix preserves missing and nested reference checks
+ok 95 - encoded destination location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 59.464991
+  type: 'test'
+  ...
+# Subtest: quoted resource location suffix preserves missing and nested reference checks
+ok 96 - quoted resource location suffix preserves missing and nested reference checks
+  ---
+  duration_ms: 66.709516
+  type: 'test'
+  ...
+# Subtest: location suffix accepts existing resources and excludes URLs
+ok 97 - location suffix accepts existing resources and excludes URLs
+  ---
+  duration_ms: 60.501939
+  type: 'test'
+  ...
+# Subtest: unlisted reference diagnostics identify each source file
+ok 98 - unlisted reference diagnostics identify each source file
+  ---
+  duration_ms: 58.750768
+  type: 'test'
+  ...
+# Subtest: dependency and cache contents are excluded
+ok 99 - dependency and cache contents are excluded
+  ---
+  duration_ms: 62.351524
+  type: 'test'
+  ...
+# Subtest: help and invalid arguments have explicit exits
+ok 100 - help and invalid arguments have explicit exits
+  ---
+  duration_ms: 193.790441
+  type: 'test'
+  ...
+# Subtest: referenced dependencies resources must exist
+ok 101 - referenced dependencies resources must exist
+  ---
+  duration_ms: 114.499057
+  type: 'test'
+  ...
+# Subtest: referenced optionalDependencies resources must exist
+ok 102 - referenced optionalDependencies resources must exist
+  ---
+  duration_ms: 125.040902
+  type: 'test'
+  ...
+# Subtest: imports accept built-ins, local files and declared runtime package subpaths
+ok 103 - imports accept built-ins, local files and declared runtime package subpaths
+  ---
+  duration_ms: 74.729569
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'undeclared'
+ok 104 - import policy refuses import 'undeclared'
+  ---
+  duration_ms: 66.320875
+  type: 'test'
+  ...
+# Subtest: import policy refuses export * from 'undeclared'
+ok 105 - import policy refuses export * from 'undeclared'
+  ---
+  duration_ms: 62.483926
+  type: 'test'
+  ...
+# Subtest: import policy refuses await import('undeclared')
+ok 106 - import policy refuses await import('undeclared')
+  ---
+  duration_ms: 70.593523
+  type: 'test'
+  ...
+# Subtest: import policy refuses require('undeclared')
+ok 107 - import policy refuses require('undeclared')
+  ---
+  duration_ms: 57.779555
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'node:not-a-builtin'
+ok 108 - import policy refuses import 'node:not-a-builtin'
+  ---
+  duration_ms: 66.169859
+  type: 'test'
+  ...
+# Subtest: import policy refuses import 'dev-only'
+ok 109 - import policy refuses import 'dev-only'
+  ---
+  duration_ms: 59.73311
+  type: 'test'
+  ...
+# Subtest: strings, comments, regexes and nested constants do not impersonate script policy
+ok 110 - strings, comments, regexes and nested constants do not impersonate script policy
+  ---
+  duration_ms: 60.964689
+  type: 'test'
+  ...
+# Subtest: computed dispatch imports remain outside the literal import control
+ok 111 - computed dispatch imports remain outside the literal import control
+  ---
+  duration_ms: 63.643095
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return passes
+ok 112 - CommonJS top-level return passes
+  ---
+  duration_ms: 66.038166
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return preserves script-import
+ok 113 - CommonJS top-level return preserves script-import
+  ---
+  duration_ms: 73.448397
+  type: 'test'
+  ...
+# Subtest: CommonJS top-level return preserves constant-comment
+ok 114 - CommonJS top-level return preserves constant-comment
+  ---
+  duration_ms: 70.98507
+  type: 'test'
+  ...
+# Subtest: js module rejects top-level return
+ok 115 - js module rejects top-level return
+  ---
+  duration_ms: 66.585564
+  type: 'test'
+  ...
+# Subtest: mjs module rejects top-level return
+ok 116 - mjs module rejects top-level return
+  ---
+  duration_ms: 68.659236
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+ok 117 - constant comment boundary "// Reason.\\nexport const { first, second } = values\\n"
+  ---
+  duration_ms: 64.951757
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+ok 118 - constant comment boundary "/* Reason. */\\r\\nconst first = 1, second = 2\\r\\n"
+  ---
+  duration_ms: 61.97156
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+ok 119 - constant comment boundary "/* Multi-line\\nreason. */\\nconst first = 1\\n"
+  ---
+  duration_ms: 65.100429
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+ok 120 - constant comment boundary "// Too far away.\\n\\nconst first = 1\\n"
+  ---
+  duration_ms: 65.888329
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "export const first = 1 // Too late.\\n"
+ok 121 - constant comment boundary "export const first = 1 // Too late.\\n"
+  ---
+  duration_ms: 65.059492
+  type: 'test'
+  ...
+# Subtest: constant comment boundary "if (true) { const nested = 1 }\\n"
+ok 122 - constant comment boundary "if (true) { const nested = 1 }\\n"
+  ---
+  duration_ms: 63.250639
+  type: 'test'
+  ...
+# Subtest: invalid script and manifest refuse unverified imports while other problems collect
+ok 123 - invalid script and manifest refuse unverified imports while other problems collect
+  ---
+  duration_ms: 68.919181
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+ok 124 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n"
+  ---
+  duration_ms: 66.49991
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+ok 125 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n```text\\nDone when: example only.\\n```\\n"
+  ---
+  duration_ms: 71.221872
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+ok 126 - step completion boundary "\#\#\# Step 1: Inspect\\n\\n\#\#\#\# Details\\n\\nDone when: too late.\\n"
+  ---
+  duration_ms: 68.44279
+  type: 'test'
+  ...
+# Subtest: step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+ok 127 - step completion boundary "```text\\n\#\#\# Step 1: Example\\n```\\n"
+  ---
+  duration_ms: 57.93387
+  type: 'test'
+  ...
+# Subtest: step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+ok 128 - step completion boundary "\#\#\# Step 1: Inspect\\n\\nDone when: inspected.\\n\\n\#\#\# Step 2: Apply\\n"
+  ---
+  duration_ms: 68.324307
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+ok 129 - language policy boundary references/guide.md "- ESLint\\n- Ruff\\n"
+  ---
+  duration_ms: 67.352239
+  type: 'test'
+  ...
+# Subtest: language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+ok 130 - language policy boundary package.json "{\\"dependencies\\":{\\"eslint-config-project\\":\\"1.0.0\\"}}\\n"
+  ---
+  duration_ms: 70.271129
+  type: 'test'
+  ...
+# Subtest: language policy boundary .ruff.toml ""
+ok 131 - language policy boundary .ruff.toml ""
+  ---
+  duration_ms: 62.706769
+  type: 'test'
+  ...
+# Subtest: language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+ok 132 - language policy boundary references/guide.md "Research project tooling. A truffle is unrelated.\\n"
+  ---
+  duration_ms: 61.958038
+  type: 'test'
+  ...
+# Subtest: only the source verification slop baseline reference may name language tools
+ok 133 - only the source verification slop baseline reference may name language tools
+  ---
+  duration_ms: 256.030503
+  type: 'test'
+  ...
+# Subtest: fetch copies exact pinned bytes and check verifies them without writing
+ok 134 - fetch copies exact pinned bytes and check verifies them without writing
+  ---
+  duration_ms: 109.497951
+  type: 'test'
+  ...
+# Subtest: fetch refuses a listed file absent at its pin
+ok 135 - fetch refuses a listed file absent at its pin
+  ---
+  duration_ms: 59.035764
+  type: 'test'
+  ...
+# Subtest: check refuses a listed file absent at its pin
+ok 136 - check refuses a listed file absent at its pin
+  ---
+  duration_ms: 54.926056
+  type: 'test'
+  ...
+# Subtest: check refuses an absent local copy without repairing it
+ok 137 - check refuses an absent local copy without repairing it
+  ---
+  duration_ms: 48.945328
+  type: 'test'
+  ...
+# Subtest: check refuses modified local bytes and preserves them
+ok 138 - check refuses modified local bytes and preserves them
+  ---
+  duration_ms: 94.718021
+  type: 'test'
+  ...
+# Subtest: fetch rejects traversal before copying files
+ok 139 - fetch rejects traversal before copying files
+  ---
+  duration_ms: 33.767307
+  type: 'test'
+  ...
+# Subtest: committed upstream copies exactly match the offline hash manifest
+ok 140 - committed upstream copies exactly match the offline hash manifest
+  ---
+  duration_ms: 33.572377
+  type: 'test'
+  ...
+# Subtest: offline inventory rejects a modified byte in a pinned copy
+ok 141 - offline inventory rejects a modified byte in a pinned copy
+  ---
+  duration_ms: 382.851504
+  type: 'test'
+  ...
+# Subtest: offline inventory rejects an unlisted tracked upstream copy
+ok 142 - offline inventory rejects an unlisted tracked upstream copy
+  ---
+  duration_ms: 426.427332
+  type: 'test'
+  ...
+# Subtest: check refuses a hash that differs from the pinned bytes without rewriting it
+ok 143 - check refuses a hash that differs from the pinned bytes without rewriting it
+  ---
+  duration_ms: 109.873726
+  type: 'test'
+  ...
+# Subtest: check refuses missing map without rewriting the manifest
+ok 144 - check refuses missing map without rewriting the manifest
+  ---
+  duration_ms: 33.276611
+  type: 'test'
+  ...
+# Subtest: check refuses missing hash without rewriting the manifest
+ok 145 - check refuses missing hash without rewriting the manifest
+  ---
+  duration_ms: 34.793482
+  type: 'test'
+  ...
+# Subtest: check refuses extra hash without rewriting the manifest
+ok 146 - check refuses extra hash without rewriting the manifest
+  ---
+  duration_ms: 36.669717
+  type: 'test'
+  ...
+# Subtest: check refuses malformed hash without rewriting the manifest
+ok 147 - check refuses malformed hash without rewriting the manifest
+  ---
+  duration_ms: 44.179429
+  type: 'test'
+  ...
+1..147
+# tests 150
+# suites 0
+# pass 146
+# fail 0
+# cancelled 0
+# skipped 4
+# todo 0
+# duration_ms 43963.780462

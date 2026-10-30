@@ -444,20 +444,20 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 ## Shared runtime and generation
 
-Every command, shared library, schema, asset and shared reference has one source in [runtime/](../runtime/), and [runtime/skills.json](../runtime/skills.json) lists the commands, schemas, assets and shared references each skill ships.
+Authored commands, shared libraries, schemas, assets and shared references have one source in [runtime/](../runtime/), and [runtime/skills.json](../runtime/skills.json) lists the resources each skill ships, including vendored trees copied unchanged from `upstream/`.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
 Each skill commits its generated files.
 See the shared [writing reference](../runtime/references/writing.md) for drafting guidance and the [runtime manifest](../runtime/skills.json) for the skills that ship it.
 The skills that ship `apply` share its protected-write libraries for reviewed, hash-checked change sets; the [manifest](../runtime/skills.json) owns each skill's command list.
 The architecture and verification runtimes also expose direct baseline replacement through `baseline check --refresh`, as described under [baseline commands](#rule-proof-baselines-and-maintained-checks).
-Edit only `runtime/`, then regenerate the skill files or verify them without writes:
+Edit authored runtime sources only in `runtime/`; refresh vendored sources through the [upstream workflow](#upstream-sources), then regenerate the skill files or verify them without writes:
 
 ```sh
 node scripts/generate-skills.mjs
 node scripts/generate-skills.mjs --check
 ```
 
-`--check` exits 1 for a missing or modified listed output or an unlisted file under a registered skill's `schemas/` or `assets/`; generation removes those unlisted schema and asset files.
+`--check` exits 1 for a missing or modified listed output or an unlisted file under a registered skill's `schemas/`, `assets/` or declared vendored destinations; generation removes those unlisted files.
 A skill's `references/` also holds its own authored files, so only the listed shared copies are checked.
 Both commands exit 1 when a skill lists a command, schema, asset or reference that `runtime/` lacks or when a bundle would include a file outside `runtime/`.
 To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
@@ -495,8 +495,8 @@ node skills/formal-verification/scripts/formal-verification.mjs formal scaffold 
 ```
 
 The skill installs no tool: the project pins the tool file and its sha256, and a missing tool is reported as unproven.
-`tests/scripts/formal.test.mjs` runs every check except the model-checker proof without a tool.
-Its `rule-proof` and walkthrough tests run only when `BSTACK_TLA2TOOLS_JAR` names the pinned `tla2tools.jar` and Java 11 or later is on `PATH`, and they skip, never pass, otherwise.
+`tests/scripts/formal.test.mjs` runs its tool-independent checks, including the missing-jar chart boundary, without a tool.
+Its `rule-proof`, walkthrough, chart-violation and chart wrong-hash tests run only when `BSTACK_TLA2TOOLS_JAR` names the pinned `tla2tools.jar` and Java 11 or later is on `PATH`, and they skip, never pass, otherwise.
 The [fixture notes](../tests/fixtures/formal-charge-once/FIXTURE.md) record the pinned jar, its sha256 and the expected results.
 
 ### Standalone checker
