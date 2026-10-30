@@ -461,10 +461,10 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.15 Add the `recall` skill (after T2.14) - a user-started skill that summarises prior context from the project's local Claude Code and Codex transcripts, read-only, with its output in scratch.
     The skill's scenario evaluation is deferred, so AC-108 keeps a planned procedure; AC-106 and AC-107 are covered by `tests/scripts/recall.test.mjs`.
   - [x] T2.16 Add the `prototype` skill (after T2.15) - a user-started skill that builds two or three throwaway variants in scratch clones, drives and measures each with the project's verification kit, and reports the evidence and a recommendation without writing to the repo.
+    The skill's scenario evaluation is deferred, so AC-111 keeps a planned procedure; AC-109 and AC-110 are covered by `tests/scripts/prototype.test.mjs`.
   - [x] T2.17 Add optional TLC charts to formal verification - unchanged pinned compiler, local Mermaid output and reader-word guidance, gated by the suite and tool checks.
     Package and task checks pass; the missing-jar proof runs offline, while AC-112 and AC-114 remain unavailable without the supplied pinned jar and Java.
     Evidence is recorded in `tests/eval/results/tasks/T2.17.json`.
-    The skill's scenario evaluation is deferred, so AC-111 keeps a planned procedure; AC-109 and AC-110 are covered by `tests/scripts/prototype.test.mjs`.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).

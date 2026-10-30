@@ -5,7 +5,7 @@ import { bundle } from './lib/bundle.mjs'
 
 // The source and every generated file resolve from this checkout, independent of the caller's directory.
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-// An installed skill cannot import outside its own folder, so runtime/ is the only source and each skill carries generated files.
+// An installed skill cannot import outside its own folder, so authored commands are bundled from runtime/ into each skill.
 const source = join(root, 'runtime')
 
 // Bundling moves command files from scripts/commands/ up to scripts/, so resource URLs written for the source tree gain one level.

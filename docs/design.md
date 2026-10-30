@@ -485,12 +485,11 @@ The intake review ran the compiler on a synthetic approval-lifecycle model with 
 It found a three-step violation path and generated a chart of eight states and eight arrows.
 Repeating the run with a different TLC release produced a byte-identical `chart.mmd`; that observation does not replace the project's exact jar hash check.
 The review also rendered the synthetic chart with `pele@1.9.0` with networking disabled.
-These are review observations, not acceptance results for the bstack command, which does not exist yet.
+These are intake review observations, not acceptance results for the bstack command; build evidence is owned by [T2.17](implementation-plan.md#t217-add-optional-tlc-charts-to-formal-verification).
 
 #### Proof for the build
 
-The build adds an implementation-plan task and task-registry row, then registers the cases below and records task evidence through bstack's delivery gate.
-This design-only amendment registers no acceptance case and claims no executed chart-command proof.
+The build registers AC-112 to AC-114 and records task evidence through bstack's delivery gate under [T2.17](implementation-plan.md#t217-add-optional-tlc-charts-to-formal-verification).
 Use public commands on disposable copies of the `formal-charge-once` fixture and its violation variant.
 
 - On the broken variant, `formal chart` writes `chart.mmd` with a `breaks` state and a report containing a shortest bug path whose steps map to transition-table actions.
@@ -813,7 +812,7 @@ A shared runtime folder beside the skills is ruled out because installing one sk
 | `maintenance` | `contract validate`, `evidence collect` and `validate`, `docs check` and `generate`, `run-checks`, `probe`, `apply`, `state show`, `sweep` |
 | `agents-md` | `inventory`, `apply`, `state show` |
 | `plan` | `plan check`, `apply`, `state show`, `cite-check` |
-| `formal-verification` | `formal scaffold`, `formal check`, `rule-proof`, `apply`, `state show`, `cite-check` |
+| `formal-verification` | See its command list in the [runtime manifest](../runtime/skills.json) |
 
 The lists come from each command's imports and the steps that call it; the build may find one more shared helper.
 
