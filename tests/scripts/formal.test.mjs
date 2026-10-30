@@ -466,6 +466,15 @@ test('formal chart draws the charge-once violation and reports its shortest tran
   const chart = await readFile(result.data.chart, 'utf8')
   assert.match(chart, /stateDiagram-v2/)
   assert.match(chart, /class \S+ breaks/)
+  assert.match(chart, /class \S+ bugPath/)
+  assert.equal(result.data.diff, `\u0060\u0060\u0060mermaid\n${chart}\u0060\u0060\u0060`)
+  const definitions = new Set([...chart.matchAll(/^\s*classDef (\S+) /gm)].map(match => match[1]))
+  for (const [, names] of chart.matchAll(/^\s*class \S+ (\S+)\s*$/gm)) {
+    for (const name of names.split(',')) assert.ok(definitions.has(name), `Missing Mermaid definition for ${name}`)
+  }
+  for (const name of ['bugPath', 'repeats', 'blue', 'orange', 'purple', 'yellow', 'teal', 'tan', 'pink']) {
+    assert.ok(definitions.has(name), `Missing local Mermaid definition for ${name}`)
+  }
   const report = await readFile(result.data.report, 'utf8')
   assert.match(report, /## NoDoubleCharge breaks\nThe shortest path has 6 steps:/)
   assert.deepEqual([...report.matchAll(/^\d+\. (Read|Claim|Charge|Finish)(?:\([^\n)]*\))?:/gm)].map(match => match[1]).sort(), ['Charge', 'Charge', 'Claim', 'Claim', 'Read', 'Read'])

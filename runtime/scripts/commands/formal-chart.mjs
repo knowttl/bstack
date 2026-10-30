@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, realpath } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { run as check } from './formal-check.mjs'
@@ -6,6 +6,18 @@ import { modelPath, readFormalPlan, suiteDirectory } from '../lib/formal-suite.m
 import { isInside, resolveFilePath, resolvePath } from '../lib/paths.mjs'
 import { CommandError } from '../lib/result.mjs'
 import { runCommand } from '../lib/run.mjs'
+
+const chartStyles = [
+  '  classDef blue fill:#dbeafe,stroke:#2563eb,color:#1e3a8a',
+  '  classDef orange fill:#ffedd5,stroke:#ea580c,color:#7c2d12',
+  '  classDef purple fill:#f3e8ff,stroke:#9333ea,color:#581c87',
+  '  classDef yellow fill:#fef9c3,stroke:#ca8a04,color:#713f12',
+  '  classDef teal fill:#ccfbf1,stroke:#0d9488,color:#134e4a',
+  '  classDef tan fill:#f5e6d3,stroke:#a16207,color:#713f12',
+  '  classDef pink fill:#fce7f3,stroke:#db2777,color:#831843',
+  '  classDef bugPath stroke:#1f2937,stroke-width:4px',
+  '  classDef repeats stroke-dasharray:5 5'
+].join('\n')
 
 export async function run(options) {
   if (!options.property) throw new CommandError('usage-error', [{ code: 'missing-option', message: '--property is required.', fix: 'Supply --property <id> from the suite.' }])
@@ -41,7 +53,11 @@ export async function run(options) {
   if (execution.error || execution.timedOut || execution.cancelled || ![0, 1].includes(execution.exitCode)) {
     throw new CommandError('blocked', [{ code: 'chart-unproven', message: 'The chart run did not complete, so the property is unproven.', fix: 'Read the local execution diagnostics, repair the Java or model harness and rerun formal chart.' }], { path: out, execution })
   }
-  const chart = await readFile(join(out, 'chart.mmd'), 'utf8').catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
+  let chart = await readFile(join(out, 'chart.mmd'), 'utf8').catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
+  if (chart !== null) {
+    chart = `${chart}\n${chartStyles}\n`
+    await writeFile(join(out, 'chart.mmd'), chart)
+  }
   return { status: execution.exitCode === 1 ? 'failed' : 'passed', inputs: checked.inputs,
     data: { path: out, report: join(out, 'report.md'), chart: chart === null ? null : join(out, 'chart.mmd'),
       outcome: execution.exitCode === 1 ? 'A model rule breaks; replay the report path against the transition table and real code.' : 'The checked model rules hold within their bounds.',

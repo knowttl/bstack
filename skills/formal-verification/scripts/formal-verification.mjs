@@ -2566,7 +2566,7 @@ ${pointer}
 }
 
 // runtime/scripts/commands/formal-chart.mjs
-import { mkdir as mkdir3, mkdtemp, readFile as readFile10, realpath as realpath5 } from "node:fs/promises";
+import { mkdir as mkdir3, mkdtemp, readFile as readFile10, realpath as realpath5, writeFile as writeFile3 } from "node:fs/promises";
 import { isAbsolute as isAbsolute4, join as join10, relative as relative6, resolve as resolve5 } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -2672,6 +2672,17 @@ async function run6(options) {
 }
 
 // runtime/scripts/commands/formal-chart.mjs
+var chartStyles = [
+  "  classDef blue fill:#dbeafe,stroke:#2563eb,color:#1e3a8a",
+  "  classDef orange fill:#ffedd5,stroke:#ea580c,color:#7c2d12",
+  "  classDef purple fill:#f3e8ff,stroke:#9333ea,color:#581c87",
+  "  classDef yellow fill:#fef9c3,stroke:#ca8a04,color:#713f12",
+  "  classDef teal fill:#ccfbf1,stroke:#0d9488,color:#134e4a",
+  "  classDef tan fill:#f5e6d3,stroke:#a16207,color:#713f12",
+  "  classDef pink fill:#fce7f3,stroke:#db2777,color:#831843",
+  "  classDef bugPath stroke:#1f2937,stroke-width:4px",
+  "  classDef repeats stroke-dasharray:5 5"
+].join("\n");
 async function run7(options) {
   if (!options.property) throw new CommandError("usage-error", [{ code: "missing-option", message: "--property is required.", fix: "Supply --property <id> from the suite." }]);
   const checked = await run6(options);
@@ -2717,7 +2728,13 @@ async function run7(options) {
   if (execution.error || execution.timedOut || execution.cancelled || ![0, 1].includes(execution.exitCode)) {
     throw new CommandError("blocked", [{ code: "chart-unproven", message: "The chart run did not complete, so the property is unproven.", fix: "Read the local execution diagnostics, repair the Java or model harness and rerun formal chart." }], { path: out, execution });
   }
-  const chart = await readFile10(join10(out, "chart.mmd"), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
+  let chart = await readFile10(join10(out, "chart.mmd"), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
+  if (chart !== null) {
+    chart = `${chart}
+${chartStyles}
+`;
+    await writeFile3(join10(out, "chart.mmd"), chart);
+  }
   return {
     status: execution.exitCode === 1 ? "failed" : "passed",
     inputs: checked.inputs,
