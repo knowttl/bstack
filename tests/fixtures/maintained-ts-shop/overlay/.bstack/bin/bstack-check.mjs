@@ -1076,7 +1076,8 @@ function markdownBody(text) {
     if (lists.length && quotePrefix.startsWith(" ".repeat(lists.at(-1)))) quotePrefix = "";
     expanded = expanded.slice(quotePrefix.length);
     const indent = /^ */.exec(expanded)[0].length;
-    if (expanded.trim()) {
+    const lazy = paragraph && !!expanded.trim() && depth <= bodyDepth && !listItem.test(current) && !atxStart.test(semantic) && !setextUnderline.test(semantic) && !thematicBreak.test(semantic) && !opening && !/^ {0,3}<!--/.test(semantic);
+    if (expanded.trim() && !lazy) {
       while (lists.length && indent < lists.at(-1)) lists.pop();
     }
     const base = lists.at(-1) ?? 0;
@@ -1092,8 +1093,8 @@ function markdownBody(text) {
     let content = line;
     while (quotes.test(content) || listItem.test(content)) content = content.replace(quotes, "").replace(listItem, "");
     if (depth || item || base) content = content.replace(/^ {0,3}/, "");
-    const boundary = item || depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0);
-    bodyDepth = depth;
+    const boundary = item || !lazy && (depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0));
+    if (!lazy) bodyDepth = depth;
     paragraph = !!content.trim() && !atxStart.test(content) && !setextUnderline.test(content) && !thematicBreak.test(content);
     return (boundary ? "\n" : "") + content;
   }).join("\n");
@@ -2877,4 +2878,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"f8d305e085ef38feaab53f22bc7ba5f0f16b0191b3ca38224dc67b547e5c6d78"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"33c0df996779452935a4c58e77fcfe76f51d142577f608d4f964bb520921ca9e"}

@@ -433,3 +433,42 @@ test('block comments interrupt unmatched code spans', async t => {
   assert.equal(result.data.documents[0].links, 1)
   assert.deepEqual(result.data.coverageLimits, [])
 })
+
+for (const [prefix, continuation] of [
+  ['> ', ''],
+  ['- ', ''],
+  ['1. ', ''],
+  ['> > ', ''],
+  ['- > ', ''],
+  ['> - ', ''],
+  ['> ', '> '],
+  ['- ', '  '],
+  ['- Outer\n  - ', '    ']
+]) {
+  test('lazy container continuations preserve code spans and real links: ' + JSON.stringify([prefix, continuation]), async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), prefix + 'Use `example\n[Example](missing-example.md)\n' + continuation + 'end`\n[Guide](guide.md)\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.deepEqual(broken.data.coverageLimits, [])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const fixed = run('docs check', f.repo)
+    assert.equal(fixed.exit, 0, JSON.stringify(fixed))
+    assert.equal(fixed.data.documents[0].links, 1)
+    assert.deepEqual(fixed.data.coverageLimits, [])
+  })
+}
+
+for (const prefix of ['> ', '- ']) {
+  for (const boundary of ['# Heading', '===', '***', '', '- Next', '> > Next', '```md\nignored\n```', '<!-- block -->']) {
+    test('block interruptions end container code spans: ' + JSON.stringify([prefix, boundary]), async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), prefix + 'Use `example\n' + boundary + '\n[Guide](missing.md)\nend`\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+      assert.deepEqual(result.data.coverageLimits, [])
+    })
+  }
+}
