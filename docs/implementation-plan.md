@@ -288,10 +288,14 @@ Every shipping slice goes through the no-mistakes pipeline configured in `.no-mi
 Green work merges unattended.
 [The gate configuration](../.no-mistakes.yaml) owns automatic repair budgets and the build's review focus.
 Its Prepare command installs the root development lock and each skill runtime declared by `skills/*/package.json`, stopping if any install fails.
-Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs): a change that touches only `.md` files at `README.md`, under `docs/**` or under `skills/**` (including references) runs `npm run check` and `npm test -- --task T3.1`.
-The [task registry](../tests/tasks.json) owns T3.1's suite selection, which retains the evaluation-harness tests in every per-piece gate; the existing test runner executes each selected suite once.
-Any other change, including non-Markdown files under docs or references and changes to `.no-mistakes.yaml`, runs the full suite with capture.
-The script checks tracked changes against the merge base with `origin/main` and includes untracked files; an unavailable base or no changed files also selects the full suite.
+Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs), which always runs `npm run check`, then selects affected tasks and transitive protocol dependents from the [source-to-suite map](../tests/affected.json).
+The [task registry](../tests/tasks.json) owns suite membership; repeated `--task` arguments run one union with each shared suite executed once.
+T3.1 supplies packaging contracts; the complete evaluation harness is retained for evaluator, contract and shared-runtime changes and every full fallback, rather than every per-piece gate.
+The script prints its merge base with `origin/main`, committed, staged, unstaged and untracked paths, including both sides of renames and deleted paths, selected modules and commands, and any fallback reason.
+Unknown paths, shared libraries or schemas, evaluator or fixture inputs (including the evaluation contract in `docs/evaluation.md`), generator/build inputs, dependencies and locks, `.no-mistakes.yaml`, selector/runner/map changes, incomplete dependencies, unmatched generated artifacts, an unavailable base or an empty diff select the full offline suite through ordinary `npm test`.
+Its capture availability and evidence attachment rules follow the [task evidence contract](#task-evidence-contract), so missing metadata or uncommitted inputs do not prevent fallback execution.
+Generated bundles and copied resources follow their authored inputs and `runtime/skills.json`; an isolated generated edit cannot establish scope.
+The [development guide](development.md#affected-validation) records the selection proof and the selected-versus-full comparison required during local verification maintenance.
 Required validation after a change still runs, and no further autonomous repair round follows once the configured budget is spent.
 Recorded local runs and clean-checkout runs, as each task defines, supply the execution evidence that hosted CI would otherwise provide.
 These runs do not prove support on an operating system they did not run on.

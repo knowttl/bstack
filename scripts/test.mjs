@@ -29,8 +29,9 @@ async function discover(directory) {
 
 try {
   const args = process.argv.slice(2)
-  if (args.length && (args.length !== 2 || !['--task', '--capture'].includes(args[0]))) {
-    throw new Error('Usage: npm test -- [--task <id> | --capture <run.json>]')
+  if (args.length && (args.length % 2 || !args.every((arg, index) => index % 2 ? arg && !arg.startsWith('--') :
+    arg === '--task' || arg === '--capture' && args.length === 2))) {
+    throw new Error('Usage: npm test -- [--task <id> ... | --capture <run.json>]')
   }
   // Ordinary gate runs retain evidence too; standalone discovery fixtures have no Git checkout.
   let capture = args[0] === '--capture' ? resolve(root, args[1]) :
@@ -44,10 +45,13 @@ try {
   let files = (await Promise.all(suiteRoots.map(discover))).flat().sort()
   if (args[0] === '--task') {
     const tasks = JSON.parse(await readFile(join(root, 'tests', 'tasks.json'), 'utf8'))
-    const suites = Object.hasOwn(tasks, args[1]) ? tasks[args[1]] : undefined
-    if (!Array.isArray(suites)) throw new Error(`Unknown task: ${args[1]}`)
-    const selected = suites.map(path => resolve(root, path))
-    if (selected.some(path => !files.includes(path))) throw new Error(`Task ${args[1]} registers an undiscovered suite`)
+    const selected = args.filter((_, index) => index % 2).flatMap(id => {
+      const suites = Object.hasOwn(tasks, id) ? tasks[id] : undefined
+      if (!Array.isArray(suites)) throw new Error(`Unknown task: ${id}`)
+      const paths = suites.map(path => resolve(root, path))
+      if (paths.some(path => !files.includes(path))) throw new Error(`Task ${id} registers an undiscovered suite`)
+      return paths
+    })
     files = files.filter(path => selected.includes(path))
   }
   if (!files.length) throw new Error('No test suites selected')
@@ -72,7 +76,7 @@ try {
     }
   }
   const runnerArgs = ['--test', '--test-reporter=tap', ...(capture ? ['--test-reporter-destination=stdout',
-    `--test-reporter=${join(root, 'scripts', 'test-reporter.mjs')}`, `--test-reporter-destination=${capture}.events`] : []), ...files]
+    `--test-reporter=${join(root, 'scripts', 'test-reporter.mjs')}`, `--test-reporter-destination=${capture}.events`] : []), ...files.map(path => relative(root, path))]
   const child = spawn(process.execPath, runnerArgs, { cwd: root, stdio: capture ? ['ignore', 'pipe', 'pipe'] : 'inherit' })
   const transcript = capture ? createWriteStream(`${capture}.tap`) : null
   if (transcript) {

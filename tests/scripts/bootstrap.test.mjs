@@ -44,19 +44,32 @@ test('discovery sorts explicit suites and excludes fixture, dependency and evalu
   assert.match(result.stdout, /package suite executed/)
 })
 
-test('task selection executes only registered suites and rejects unknown tasks', async t => {
+test('task selection executes a deduplicated union and rejects unknown tasks', async t => {
   const directory = await sandbox(t)
   await mkdir(join(directory, 'tests', 'scripts'), { recursive: true })
-  await writeFile(join(directory, 'tests', 'tasks.json'), JSON.stringify({ 'T0.1': ['tests/scripts/selected.test.mjs'] }))
+  await writeFile(join(directory, 'tests', 'tasks.json'), JSON.stringify({
+    'T0.1': ['tests/scripts/selected.test.mjs'], 'other': ['tests/scripts/selected.test.mjs', 'tests/scripts/second.test.mjs']
+  }))
   await writeFile(join(directory, 'tests', 'scripts', 'selected.test.mjs'), "import test from 'node:test'\ntest('registered suite executed', () => {})\n")
+  await writeFile(join(directory, 'tests', 'scripts', 'second.test.mjs'), "import test from 'node:test'\ntest('second suite executed', () => {})\n")
   await cp(join(root, 'tests', 'fixtures', 'excluded', 'failing.test.mjs'), join(directory, 'tests', 'scripts', 'other.test.mjs'))
-  const selected = run(directory, '--task', 'T0.1')
+  const selected = run(directory, '--task', 'T0.1', '--task', 'other', '--task', 'T0.1')
   assert.equal(selected.status, 0, selected.stderr + selected.stdout)
   assert.match(selected.stdout, /registered suite executed/)
-  const unknown = run(directory, '--task', 'T99')
+  assert.match(selected.stdout, /# tests 2\n/)
+  assert.match(selected.stdout, /second suite executed/)
+  const unknown = run(directory, '--task', 'T0.1', '--task', 'T99')
   assert.equal(unknown.status, 1)
   assert.match(unknown.stderr, /Unknown task: T99/)
 })
+
+for (const args of [['--task'], ['--task', 'T0.1', '--typo', 'other'], ['--capture', '.cache/run.json', '--task', 'T0.1']]) {
+  test(`invalid runner arguments fail: ${args.join(' ')}`, async t => {
+    const result = run(await sandbox(t), ...args)
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /Usage: npm test/)
+  })
+}
 
 test('an empty selected suite fails', async t => {
   const directory = await sandbox(t)
