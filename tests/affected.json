@@ -3,7 +3,7 @@
   "full": ["(^|/)(package(-lock)?\\.json|npm-shrinkwrap\\.json|pnpm-lock\\.yaml|yarn\\.lock|bun\\.lockb?)$"],
   "paths": [
     { "pattern": "^install/", "tasks": ["C25a", "C25b", "C25c", "T0.4", "T0.5", "T1.2"] },
-    { "pattern": "^(README\\.md|docs/(?!design\\.md$|implementation-plan\\.md$|command-contract\\.md$).+\\.md)$", "tasks": ["T3.1", "generate-readme"] }
+    { "pattern": "^(README\\.md|docs/(?!design\\.md$|implementation-plan\\.md$|command-contract\\.md$|evaluation\\.md$).+\\.md)$", "tasks": ["T3.1", "generate-readme"] }
   ],
   "commands": {
     "cite-check": { "tasks": ["T2.1"], "dependents": ["plan-check", "formal-check", "formal-scaffold", "findings", "vision-board-build", "evaluation"] },

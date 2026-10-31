@@ -128,5 +128,5 @@ async function run(executable, args) {
 }
 
 await run('npm', ['run', 'check'])
-await run('npm', reason ? ['test', '--', '--capture', '.cache/full-suite.json'] :
+await run('npm', reason ? ['test'] :
   ['test', '--', ...[...tasks].sort().flatMap(id => ['--task', id])])

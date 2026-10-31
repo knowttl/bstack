@@ -8,7 +8,7 @@ import { spawnSync } from 'node:child_process'
 import { emptyRepo, git } from './discovery-fixture.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-const full = ['CHECK ', 'TEST --capture .cache/full-suite.json']
+const full = ['CHECK ', 'TEST ']
 const registry = JSON.parse(await readFile(join(root, 'tests/tasks.json'), 'utf8'))
 
 async function put(repo, path, contents) {
@@ -23,6 +23,14 @@ async function fixture(t, { remote = true, realRunner = false } = {}) {
     await mkdir(dirname(join(repo, path)), { recursive: true })
     await cp(join(root, path), join(repo, path), { recursive: true })
   }
+  if (realRunner) {
+    for (const path of ['scripts/lib', 'scripts/test-reporter.mjs', 'node_modules/acorn']) {
+      await mkdir(dirname(join(repo, path)), { recursive: true })
+      await cp(join(root, path), join(repo, path), { recursive: true })
+    }
+  }
+  await put(repo, '.gitignore', '.cache/\nnode_modules/\n')
+  await put(repo, '.no-mistakes.yaml', '{}\n')
   await put(repo, 'record.mjs', "console.log(process.argv[2].toUpperCase(), process.argv.slice(3).join(' '))\n")
   await put(repo, 'package.json', JSON.stringify({ type: 'module', scripts: {
     check: 'node record.mjs check', test: realRunner ? 'node scripts/test.mjs' : 'node record.mjs test'
@@ -64,6 +72,7 @@ for (const [path, reason] of [
   ['tests/eval/scenarios/new.json', 'shared infrastructure'], ['tests/scripts/discovery-fixture.mjs', 'shared infrastructure'],
   ['runtime/scripts/lib/result.mjs', 'shared infrastructure'], ['runtime/skills.json', 'shared infrastructure'],
   ['runtime/schemas/findings.schema.json', 'shared infrastructure'],
+  ['docs/evaluation.md', 'shared infrastructure'],
   ['tests/fixtures/example/new.mjs', 'shared infrastructure'], ['package.json', 'shared infrastructure'],
   ['package-lock.json', 'shared infrastructure'], ['.no-mistakes.yaml', 'shared infrastructure'],
   ['install/package-lock.json', 'shared infrastructure'],
@@ -91,6 +100,51 @@ test('an unresolved base runs the full gate', async t => {
   const result = gate(await fixture(t, { remote: false }))
   assert.deepEqual(records(result), full)
   assert.match(result.stdout, /Base: unresolved/)
+})
+
+for (const state of ['missing base', 'empty', 'committed', 'staged', 'unstaged', 'untracked', 'renamed', 'deleted', 'staged then restored']) {
+  test(`the real runner executes every suite for a ${state} full fallback`, async t => {
+    const repo = await fixture(t, { remote: state !== 'missing base', realRunner: true })
+    const path = '.no-mistakes.yaml'
+    if (state === 'deleted') await rm(join(repo, path))
+    else if (state === 'renamed') await rename(join(repo, path), join(repo, 'unknown.yaml'))
+    else if (!['missing base', 'empty'].includes(state)) await put(repo, state === 'untracked' ? 'unknown.yaml' : path, '{}\n\n')
+    if (['committed', 'staged', 'renamed', 'staged then restored'].includes(state)) git(repo, 'add', '.')
+    if (state === 'staged then restored') await put(repo, path, '{}\n')
+    if (state === 'committed') git(repo, '-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'change')
+    const result = gate(repo)
+    assert.equal(result.status, 0, result.stdout + result.stderr)
+    assert.match(result.stdout, /Gate: full suite /)
+    const suites = [...new Set(Object.values(registry).flat())].sort()
+    assert.ok(result.stdout.includes(`Selected ${suites.length} suite(s): ${suites.join(', ')}\n`), result.stdout)
+    assert.match(result.stdout, /# fail 0\n/)
+    if (state === 'missing base') assert.match(result.stderr, /Evidence capture unavailable: .*origin\/main/)
+    else {
+      const evidence = JSON.parse(await readFile(join(repo, '.cache/full-suite.json'), 'utf8'))
+      assert.deepEqual(evidence.suites, suites)
+      assert.equal(evidence.command.exitCode, 0)
+    }
+  })
+}
+
+test('evaluation-contract prose runs the full evaluation harness through the real runner', async t => {
+  const repo = await fixture(t, { realRunner: true })
+  await put(repo, 'docs/evaluation.md', '# Changed evaluation contract\n')
+  const result = gate(repo)
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+  assert.match(result.stdout, /Gate: full suite /)
+  assert.match(result.stdout, /SUITE eval\n/)
+  assert.match(result.stdout, /SUITE eval-impact\n/)
+  assert.match(result.stdout, /SUITE eval-judge\n/)
+})
+
+test('a full fallback without a base propagates a failing suite', async t => {
+  const repo = await fixture(t, { remote: false, realRunner: true })
+  await put(repo, 'runtime/scripts/commands/measure.mjs', 'console.log(5)\n')
+  const result = gate(repo)
+  assert.equal(result.status, 1, result.stdout + result.stderr)
+  assert.match(result.stdout, /Gate: full suite /)
+  assert.match(result.stdout, /not ok .*measure public result/)
 })
 
 for (const state of ['committed', 'staged', 'unstaged', 'untracked', 'renamed', 'deleted', 'staged then restored']) {
