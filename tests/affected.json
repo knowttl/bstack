@@ -30,14 +30,14 @@
     "vision-board-launch": { "tasks": ["T1.6"], "dependents": ["evaluation"] },
     "vision-board-verdicts": { "tasks": ["T1.7"], "dependents": ["evaluation"] },
     "rule-proof": { "tasks": ["T3.2", "T3.4", "architecture", "verification-constraints"], "dependents": [] },
-    "baseline": { "tasks": ["T3.3", "architecture"], "dependents": [] },
+    "baseline": { "tasks": ["T3.3", "T3.4", "architecture"], "dependents": [] },
     "plan-check": { "tasks": ["T2.11"], "dependents": [] },
     "transcripts": { "tasks": ["T2.15"], "dependents": [] },
     "kit-scaffold": { "tasks": ["T2.10", "T2.13", "verification-constraints", "C24a"], "dependents": ["kit-check", "kit-prove"] },
     "kit-check": { "tasks": ["T2.10", "T2.13", "T2.16"], "dependents": ["sweep", "kit-prove"] },
     "kit-prove": { "tasks": ["T2.10", "T2.13", "T2.16", "C24b"], "dependents": [] },
     "comment-check": { "tasks": ["C24a", "C24b", "verification-constraints"], "dependents": [] },
-    "contract-test": { "tasks": ["T0.4"], "dependents": ["evaluation"] },
+    "contract-test": { "tasks": ["T0.4", "T2.6"], "dependents": ["evaluation"] },
     "evaluation": { "tasks": ["T1.2", "T5.2"], "dependents": [] }
   },
   "schemas": {

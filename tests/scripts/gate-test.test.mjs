@@ -139,7 +139,9 @@ for (const [command, bundles, suite] of [
   ['run-checks', ['verification'], 'existing-repo'],
   ['kit-scaffold', ['verification'], 'verification-create'],
   ['kit-check', ['verification', 'prototype'], 'verification-create'],
-  ['kit-prove', ['verification', 'prototype'], 'verification-create']
+  ['kit-prove', ['verification', 'prototype'], 'verification-create'],
+  ['baseline', ['verification', 'architecture'], 'maintained-checks'],
+  ['contract-test', ['repo-audit'], 'apply']
 ]) {
   test(`${command} and its regenerated bundles run the ${suite} journey`, async t => {
     const repo = await fixture(t, { realRunner: true })
