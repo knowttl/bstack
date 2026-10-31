@@ -64,6 +64,7 @@ export async function run(options) {
       else if (problem) problems.push(problem)
     }
     documents.push({ path, links: links.length })
+    if (limit) continue
     for (const document of contract.documents.filter(document => document.path === path && document.glossary)) {
       const { context, format } = document.glossary
       const entries = glossaryEntries(text, format)

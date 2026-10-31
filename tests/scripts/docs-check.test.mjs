@@ -149,6 +149,25 @@ for (const text of [
   })
 }
 
+for (const [format, example] of [
+  ['markdown-bold', '**Order**: One.\n**order**: Two.'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | One. |\n| order | Two. |'],
+  ['markdown-bold', 'An example without glossary entries.']
+]) {
+  test('raw HTML skips glossary validation while checking ordinary links: ' + example, async t => {
+    const f = await glossary(t, '<pre>\n' + example + '\n</pre>\n\n[Guide](guide.md)\n', format)
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.deepEqual(broken.data.coverageLimits.map(limit => limit.path), ['GLOSSARY.md'])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const repaired = run('docs check', f.repo)
+    assert.equal(repaired.exit, 0, JSON.stringify(repaired))
+    assert.deepEqual(repaired.problems, [])
+    assert.deepEqual(repaired.data.coverageLimits.map(limit => limit.path), ['GLOSSARY.md'])
+  })
+}
+
 test('duplicate glossary terms fail within one context', async t => {
   const f = await glossary(t, '# Ordering\n\n**Order**:\nA request.\n\n**order**:\nAnother request.\n')
   const before = await snapshot(f.repo)

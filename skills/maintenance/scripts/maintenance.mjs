@@ -1295,6 +1295,7 @@ async function run2(options) {
       else if (problem2) problems.push(problem2);
     }
     documents.push({ path, links: links.length });
+    if (limit) continue;
     for (const document of contract.documents.filter((document2) => document2.path === path && document2.glossary)) {
       const { context, format } = document.glossary;
       const entries = glossaryEntries(text, format);

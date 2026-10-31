@@ -1400,6 +1400,7 @@ async function run2(options) {
       else if (problem) problems.push(problem);
     }
     documents.push({ path, links: links.length });
+    if (limit) continue;
     for (const document of contract.documents.filter((document2) => document2.path === path && document2.glossary)) {
       const { context, format } = document.glossary;
       const entries = glossaryEntries(text, format);
@@ -2904,4 +2905,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"7ada0394f1dd1e742d848a22c68f252432efdef530136f8f3282efeed4216ce6"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"b5330009fd4d244436b06c87e1de03ba49af88a965567151f1e006b052d62de8"}
