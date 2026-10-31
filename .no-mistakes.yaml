@@ -9,6 +9,23 @@ document:
     and evidence; each task's evidence contract decides what a change must record.
     README.md owns installation and current usage. skills/*/SKILL.md owns each skill's agent-facing contract.
     Never run the test command again just to attach or refresh evidence, and never start another pipeline for it.
+    Reuse the existing capture through scripts/task-evidence.mjs under the task evidence contract;
+    documentation wording is reusable only within that contract's post-capture documentation exclusions.
+    Changes to bound inputs require fresh validation in the current pipeline, never a relabelled earlier result.
+test:
+  instructions: |
+    Use the configured scripts/gate-test.mjs baseline for the resulting input state once.
+    It runs the package check and one affected task union, or the full offline suite when scope is uncertain.
+    Consume its passing output instead of repeating the same command for evidence or an unchanged state.
+    Record the actual command, base, changed paths, selected tasks/suites and fallback reason with the result.
+    Reuse captured evidence only when its source ancestry, base, environment and authored input bindings
+    remain valid under docs/implementation-plan.md's task evidence contract; do not infer validity from exit zero alone.
+    Preserve scripts/task-evidence.mjs's attachment checks and documentation exclusions.
+    A focused task run is evidence only for its selected suites, never a full-suite capture.
+    After a behaviour-changing Test repair, validate the affected resulting inputs with scripts/gate-test.mjs;
+    use its full fallback when scope is uncertain, and never claim the old result covers changed inputs.
+    Keep task-specific public-command and acceptance checks, including unavailable-tool limitations.
+    These instructions do not bypass commands the pipeline requires or change the shared daemon's rerun policy.
 review:
   ignore_patterns: ["upstream/**"]
   path_instructions:
@@ -19,6 +36,11 @@ review:
         Repair each reported invariant across all sibling cases and shared call sites in the same round.
         Enumerate the relevant boundary and failure cases, fix their shared cause, and verify through the public interface.
         Before focused repair verification, install dependencies using the setup instructions in README.md.
+        Verify Review repairs with focused public-command checks for the edited area and its dependents.
+        Use one npm test invocation with repeated --task IDs to deduplicate shared suites.
+        Leave validation of the resulting whole change to the configured Test gate;
+        do not run a full suite in Review merely to duplicate that gate or refresh evidence.
+        If repair scope is uncertain, use the full fallback rather than guessing independence.
         Review the whole diff again after repairs;
         do not limit valid findings or omit style, simplification or design-principle review.
     - path: "**"
