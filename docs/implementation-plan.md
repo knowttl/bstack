@@ -297,6 +297,14 @@ Its capture availability and evidence attachment rules follow the [task evidence
 Generated bundles and copied resources follow their authored inputs and `runtime/skills.json`; an isolated generated edit cannot establish scope.
 The [development guide](development.md#affected-validation) records the selection proof and the selected-versus-full comparison required during local verification maintenance.
 Required validation after a change still runs, and no further autonomous repair round follows once the configured budget is spent.
+Review repairs use focused public-command checks for the edited area and its dependents, deduplicating shared suites in one task union.
+The Test gate validates the resulting input state once through affected selection or full fallback when scope is uncertain.
+Its agent consumes the passing configured baseline instead of repeating it for evidence or unchanged inputs.
+Behaviour-changing Test repairs require validation of the new affected state; an earlier passing result never covers changed bound inputs.
+Record the command, base, changed paths, selected tasks and suites, fallback reason and result actually checked.
+Captured evidence reuse follows the source ancestry, base, environment, authored input bindings and documentation exclusions in the [task evidence contract](#task-evidence-contract).
+Focused task output proves only the selected suites and cannot be attached as a full-suite capture.
+This repo-local discipline does not suppress mandatory daemon commands or alter the shared daemon's rerun policy.
 Recorded local runs and clean-checkout runs, as each task defines, supply the execution evidence that hosted CI would otherwise provide.
 These runs do not prove support on an operating system they did not run on.
 
