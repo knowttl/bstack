@@ -150,6 +150,8 @@ export async function checkRegistry(path) {
   for (const row of plan.split('## Acceptance case coverage\n')[1].matchAll(/^\| (T[\da.]+) \| ([^|]+) \|/gm)) {
     for (const id of row[2].match(/AC-\d+/g)) assignments.set(id, [...(assignments.get(id) ?? []), row[1]])
   }
+  const suites = Object.values(await readJSON(join(root, 'tests', 'tasks.json'))).flat()
+  const automated = new Map()
   for (const item of registry.cases) {
     if (JSON.stringify([...item.ownerTask].sort()) !== JSON.stringify(assignments.get(item.id)?.sort())) fail(`Owner tasks must match the implementation plan for ${item.id}`)
     if (item.criterionSource !== `docs/design.md#${item.id}`) fail(`Invalid criterion source for ${item.id}`)
@@ -160,23 +162,9 @@ export async function checkRegistry(path) {
     } else {
       validateData(object({ status: { const: 'completed' }, path: text, name: text, artifacts: { ...array(text), minItems: 1 } }), procedure)
       if (item.evidenceType === 'automated') {
-        const suites = Object.values(await readJSON(join(root, 'tests', 'tasks.json'))).flat()
         if (!suites.includes(procedure.path)) fail(`Unregistered test: ${procedure.path}`)
-        const result = spawnSync(process.execPath, ['-', resolve(root, procedure.path), procedure.name], {
-          cwd: root, encoding: 'utf8', timeout: 120000, env: { ...process.env, NODE_TEST_CONTEXT: undefined },
-          input: `
-            const { run } = require('node:test')
-            const [file, name] = process.argv.slice(2)
-            ;(async () => {
-              let executed = false
-              for await (const event of run({ files: [file], testNamePatterns: [new RegExp('^' + RegExp.escape(name) + '$')] })) {
-                if (event.type === 'test:pass' && event.data.name === name && !event.data.skip && !event.data.todo) executed = true
-              }
-              console.log(JSON.stringify({ executed }))
-            })()
-          `
-        })
-        if (result.status !== 0 || !JSON.parse(result.stdout).executed) fail(`Completed procedure must name a successfully executed test: ${procedure.name}`)
+        if (!automated.has(procedure.path)) automated.set(procedure.path, new Set())
+        automated.get(procedure.path).add(procedure.name)
       } else {
         if (procedure.path !== 'tests/eval/scenarios/scenarios.json') fail('Agent and manual procedures must name a scenario.')
         if (item.id !== 'AC-46' || procedure.name !== 'all-scenario-comparisons') {
@@ -188,6 +176,27 @@ export async function checkRegistry(path) {
         if (!(await stat(resolve(root, file))).isFile() || !(await readFile(resolve(root, file))).length) fail(`Evidence is missing or empty: ${file}`)
       }
     }
+  }
+  for (const [path, names] of automated) {
+    const result = spawnSync(process.execPath, ['-', resolve(root, path), JSON.stringify([...names])], {
+      cwd: root, encoding: 'utf8', timeout: 120000, env: { ...process.env, NODE_TEST_CONTEXT: undefined },
+      input: `
+        const { run } = require('node:test')
+        const [file, encodedNames] = process.argv.slice(2)
+        const names = JSON.parse(encodedNames)
+        ;(async () => {
+          const passed = new Set()
+          const failed = new Set()
+          for await (const event of run({ files: [file], testNamePatterns: names.map(name => new RegExp('^' + RegExp.escape(name) + '$')) })) {
+            if (event.type === 'test:pass' && !event.data.skip && !event.data.todo) passed.add(event.data.name)
+            if (event.type === 'test:fail') failed.add(event.data.name)
+          }
+          console.log(JSON.stringify({ executed: names.filter(name => passed.has(name) && !failed.has(name)) }))
+        })()
+      `
+    })
+    const executed = result.status === 0 ? JSON.parse(result.stdout).executed : []
+    for (const name of names) if (!executed.includes(name)) fail(`Completed procedure must name a successfully executed test: ${name}`)
   }
   return { registered: registry.cases.length, planned: registry.cases.filter(item => item.procedure.status === 'planned').length, passed: 0 }
 }

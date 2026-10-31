@@ -5,6 +5,38 @@ import { join, sep } from 'node:path'
 import { createHash } from 'node:crypto'
 import { root, command, fixture, inventory } from './install-fixture.mjs'
 
+test('seeded installer fixtures keep source edits, Git indexes and installed trees private', async t => {
+  const first = await fixture(t)
+  const second = await fixture(t)
+  for (const [f, contents] of [[first, 'First fixture\n'], [second, 'Second fixture\n']]) {
+    await writeFile(join(f.source, 'isolation.md'), contents)
+    f.git('add', '.')
+  }
+  first.git('commit', '-m', 'First fixture edit')
+  assert.equal(second.git('diff', '--cached', '--name-only'), 'skills/repo-audit/isolation.md')
+  second.git('commit', '-m', 'Second fixture edit')
+  for (const f of [first, second]) {
+    const result = f.run('--scope', 'project', '--project', f.project, '--host', 'agents')
+    assert.equal(result.status, 0, result.stdout + result.stderr)
+  }
+  const firstInstalled = join(first.project, '.agents/skills/repo-audit')
+  const secondInstalled = join(second.project, '.agents/skills/repo-audit')
+  await writeFile(join(firstInstalled, 'isolation.md'), 'User edit\n')
+  await writeFile(join(firstInstalled, 'node_modules/lavish-axi/dist/cli.mjs'), "console.log('private runtime')\n")
+  assert.equal(await readFile(join(secondInstalled, 'isolation.md'), 'utf8'), 'Second fixture\n')
+  const runtime = command(process.execPath, [join(secondInstalled, 'node_modules/lavish-axi/dist/cli.mjs')], second.project, second.env)
+  assert.equal(runtime.status, 0, runtime.stderr)
+  assert.equal(runtime.stdout, '0.1.78\n')
+  const repeated = second.run('--scope', 'project', '--project', second.project, '--host', 'agents')
+  assert.equal(repeated.status, 0, repeated.stdout)
+  assert.deepEqual(repeated.value.data.changes, [])
+  const fresh = await fixture(t)
+  assert.equal(fresh.git('status', '--porcelain'), '')
+  assert.equal(await lstat(join(fresh.source, 'isolation.md')).catch(error => error.code), 'ENOENT')
+  assert.deepEqual(await readdir(fresh.home), [])
+  assert.deepEqual(await readdir(fresh.project), [])
+})
+
 for (const scope of ['user', 'project']) {
   test(`copy install validates the complete package and exact ownership in isolated ${scope} scope`, async t => {
     const f = await fixture(t)

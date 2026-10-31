@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
-import { cp, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
-import { tmpdir, devNull } from 'node:os'
+import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
+import { devNull } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { selectCommand } from '../../runtime/scripts/lib/run.mjs'
+import { cloneRepository, cloneSeed } from './fixture-seed.mjs'
 
 // Every installer invocation selects a disposable snapshot and isolated home.
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -24,17 +25,45 @@ export function command(executable, args, cwd, env) {
 }
 
 export async function fixture(t, failRuntime = false) {
-  const directory = await mkdtemp(join(tmpdir(), 'bstack install ü & '))
-  t.after(() => rm(directory, { recursive: true, force: true }))
+  const inputs = ['install', 'runtime', 'skills/repo-audit', 'scripts/check-package.mjs', 'skills/vision/package.json']
+  const directory = await cloneSeed(t, inputs.map(path => join(root, path)), ['installer', failRuntime], async seed => {
+    await prepareFixture(seed, failRuntime)
+    for (const name of ['home', 'project']) await rm(join(seed, name), { recursive: true, force: true })
+  }, async (seed, directory) => {
+    const { checkout, env, git } = fixtureContext(directory)
+    cloneRepository(join(seed, 'source'), checkout, env)
+    git('config', 'commit.gpgsign', 'false')
+    git('config', 'core.autocrlf', 'false')
+    await cp(join(seed, 'dependency'), join(directory, 'dependency'), { recursive: true })
+  })
+  for (const name of ['home', 'project']) await mkdir(join(directory, name))
+  return fixtureContext(directory)
+}
+
+function fixtureContext(directory) {
   const checkout = join(directory, 'source')
   const home = join(directory, 'home')
   const project = join(directory, 'project')
-  for (const path of [checkout, home, project]) await mkdir(path)
   const { NODE_TEST_CONTEXT, ...inherited } = process.env
   const env = { ...inherited, HOME: home, USERPROFILE: home, XDG_CACHE_HOME: join(home, 'cache'), LOCALAPPDATA: join(home, 'cache'),
     npm_config_cache: join(home, 'npm-cache'), npm_config_userconfig: join(home, 'npmrc'), npm_config_offline: 'true',
     GIT_CONFIG_GLOBAL: devNull, GIT_CONFIG_NOSYSTEM: '1', GIT_AUTHOR_NAME: 'Fixture', GIT_AUTHOR_EMAIL: 'fixture@example.invalid',
     GIT_COMMITTER_NAME: 'Fixture', GIT_COMMITTER_EMAIL: 'fixture@example.invalid' }
+  const git = (...args) => {
+    const result = command('git', args, checkout, env)
+    assert.equal(result.status, 0, result.stderr)
+    return result.stdout.trim()
+  }
+  const run = (...args) => {
+    const result = command(process.execPath, [join(checkout, 'install/install.mjs'), ...args, '--json'], project, env)
+    return { ...result, value: result.stdout ? JSON.parse(result.stdout) : null }
+  }
+  return { directory, checkout, source: join(checkout, 'skills/repo-audit'), home, project, env, git, run }
+}
+
+async function prepareFixture(directory, failRuntime) {
+  const { checkout, home, project, env, git } = fixtureContext(directory)
+  for (const path of [checkout, home, project]) await mkdir(path)
   for (const name of ['install', 'runtime', 'skills/repo-audit']) await cp(join(root, name), join(checkout, name), { recursive: true,
     filter: path => !path.split(/[\\/]/).includes('node_modules') })
   await mkdir(join(checkout, 'scripts'))
@@ -50,6 +79,7 @@ export async function fixture(t, failRuntime = false) {
   const packed = npm('pack', '--json', '--ignore-scripts')
   assert.equal(packed.status, 0, packed.stderr)
   const tarball = join(dependency, JSON.parse(packed.stdout)[0].filename)
+  // Lockfiles refer to this immutable seed tarball; upgrades pack into each clone's private dependency directory.
   const source = join(checkout, 'skills/repo-audit')
   // The installer tests need one skill that pins a runtime, and the legacy installer looks for it under repo-audit, so the fixture gives its repo-audit copy the manifest the real vision skill carries.
   const manifest = JSON.parse(await readFile(join(root, 'skills/vision/package.json'), 'utf8'))
@@ -58,24 +88,15 @@ export async function fixture(t, failRuntime = false) {
   assert.equal(lockResult.status, 0, lockResult.stdout + lockResult.stderr)
   const lock = JSON.parse(await readFile(join(source, 'package-lock.json'), 'utf8'))
   lock.packages[''].dependencies = manifest.dependencies
+  lock.packages['node_modules/lavish-axi'].resolved = `file:${tarball}`
   await writeFile(join(source, 'package.json'), JSON.stringify(manifest, null, 2) + '\n')
   await writeFile(join(source, 'package-lock.json'), JSON.stringify(lock, null, 2) + '\n')
   await writeFile(join(checkout, '.gitignore'), 'node_modules/\n')
-  const git = (...args) => {
-    const result = command('git', args, checkout, env)
-    assert.equal(result.status, 0, result.stderr)
-    return result.stdout.trim()
-  }
   git('init', '--initial-branch=main', '--template=')
   git('config', 'commit.gpgsign', 'false')
   git('config', 'core.autocrlf', 'false')
   git('add', '.')
   git('commit', '-m', 'fixture release snapshot')
-  const run = (...args) => {
-    const result = command(process.execPath, [join(checkout, 'install/install.mjs'), ...args, '--json'], project, env)
-    return { ...result, value: result.stdout ? JSON.parse(result.stdout) : null }
-  }
-  return { directory, checkout, source, home, project, env, git, run }
 }
 
 export async function inventory(directory) {

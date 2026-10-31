@@ -1,12 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, mkdtemp, readFile, symlink, writeFile, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { emptyRepo, git } from './discovery-fixture.mjs'
+import { repositoryFixture, git } from './discovery-fixture.mjs'
 import { fixtureHash } from '../../scripts/lib/evaluation.mjs'
 
 // Exercise the public release command against disposable synthetic evidence.
@@ -22,16 +22,7 @@ function canonical(value) {
 }
 
 async function releaseRepo(t) {
-  const { repo } = await emptyRepo(t)
-  for (const path of ['scripts', 'runtime', 'skills', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json']) {
-    await mkdir(resolve(repo, path, '..'), { recursive: true })
-    await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
-  }
-  await symlink(join(root, 'node_modules'), join(repo, 'node_modules'), 'dir')
-  await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
-  git(repo, 'add', 'scripts', 'runtime', 'skills', 'tests')
-  git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Release base')
-  return repo
+  return repositoryFixture(t, ['scripts', 'runtime', 'skills', 'tests/eval/scenarios', 'tests/eval/container', 'tests/fixtures', 'tests/acceptance/cases.json'])
 }
 
 async function fixture(t, repository) {
@@ -41,7 +32,7 @@ async function fixture(t, repository) {
   t.after(() => rm(directory, { recursive: true, force: true }))
   const definitions = JSON.parse(await readFile(join(root, 'tests/eval/scenarios/scenarios.json'), 'utf8')).scenarios
   const smoke = definitions.filter(item => item.tier === 'smoke')
-  const hashes = new Map(await Promise.all(definitions.map(async item => [item.fixture, await fixtureHash(item.fixture)])))
+  const hashes = new Map(await Promise.all([...new Set(definitions.map(item => item.fixture))].map(async name => [name, await fixtureHash(name)])))
   const recipeHash = createHash('sha256').update(await readFile(join(root, 'tests/eval/container/Dockerfile'))).digest('hex')
   const report = { schemaVersion: 1, candidate, model: 'synthetic-model',
     checks: hardChecks.map(id => ({ id, passed: true })),

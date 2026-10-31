@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
-import { mkdtemp, readdir, readFile, readlink, rm, mkdir } from 'node:fs/promises'
+import { cp, mkdtemp, readdir, readFile, readlink, rm, mkdir, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
+import { cloneRepository, cloneSeed } from './fixture-seed.mjs'
 
 // Tests execute the installed interface from a disposable cwd.
 const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -30,6 +31,29 @@ export async function emptyRepo(t) {
   await mkdir(repo)
   git(repo, 'init', '-q')
   return { directory, repo }
+}
+
+export async function repositoryFixture(t, paths) {
+  const directory = await cloneSeed(t, paths.map(path => join(checkout, path)), 'repository', async seed => {
+    const repo = join(seed, 'target')
+    await mkdir(repo)
+    git(repo, 'init', '-q')
+    for (const path of paths) {
+      await mkdir(dirname(join(repo, path)), { recursive: true })
+      await cp(join(checkout, path), join(repo, path), { recursive: true,
+        filter: source => !source.split(/[\\/]/).includes('node_modules') })
+    }
+    await symlink(join(checkout, 'node_modules'), join(repo, 'node_modules'), 'dir')
+    await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
+    git(repo, 'add', '.')
+    git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Fixture base')
+  }, async (seed, directory) => {
+    const repo = join(directory, 'target')
+    cloneRepository(join(seed, 'target'), repo)
+    await symlink(join(checkout, 'node_modules'), join(repo, 'node_modules'), 'dir')
+    await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
+  })
+  return join(directory, 'target')
 }
 
 function runSkill(skill, command, repo, env, extra, platform) {

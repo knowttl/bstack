@@ -1,10 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
+import { repositoryFixture } from './discovery-fixture.mjs'
 
 // Commands run from the checkout while inputs remain in disposable directories.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -117,5 +118,31 @@ for (const name of ['valid skeleton passes from another working directory', 'unl
     data.cases[40].procedure.name = 'nonexistent test'
     await writeFile(path, JSON.stringify(data))
     assert.equal(run('--check-registry', '--registry', path).status, 2)
+  })
+}
+
+for (const [state, declaration, expected] of [
+  ['passed', "test('required (two)+', () => {})", 0],
+  ['skipped', "test('required (two)+', { skip: true }, () => {})", 2],
+  ['todo', "test('required (two)+', { todo: true }, () => {})", 2],
+  ['failed', "test('required (two)+', () => { throw new Error('fixture failure') })", 2],
+  ['missing', "test('unrelated', () => {})", 2]
+]) {
+  test(`registry requires every procedure in the same suite to pass: ${state}`, async t => {
+    const repo = await repositoryFixture(t, ['scripts', 'runtime', 'docs/design.md', 'docs/implementation-plan.md', 'tests/tasks.json'])
+    const suite = 'tests/scripts/package-check.test.mjs'
+    await mkdir(join(repo, 'tests/scripts'), { recursive: true })
+    await writeFile(join(repo, suite), `import test from 'node:test'\ntest('passes [one].*', () => {})\n${declaration}\ntest('unselected failure', () => { throw new Error('not selected') })\n`)
+    const data = await plannedRegistry()
+    for (const [index, name] of [[40, 'passes [one].*'], [43, 'required (two)+']]) {
+      data.cases[index].evidenceType = 'automated'
+      data.cases[index].procedure = { status: 'completed', path: suite, name, artifacts: [suite] }
+    }
+    const path = join(repo, 'cases.json')
+    await writeFile(path, JSON.stringify(data))
+    const result = spawnSync(process.execPath, [join(repo, 'scripts/acceptance.mjs'), '--check-registry', '--registry', path, '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, expected, result.stdout + result.stderr)
+    if (expected) assert.equal(JSON.parse(result.stdout).problems[0].message, 'Completed procedure must name a successfully executed test: required (two)+')
+    else assert.deepEqual(JSON.parse(result.stdout).data, { registered: 114, planned: 112, passed: 0 })
   })
 }
