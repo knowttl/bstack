@@ -609,6 +609,9 @@ function markdownCoverageLimit(text) {
 function markdownDefinitions(body) {
   const definitions = /* @__PURE__ */ new Map();
   for (const match of body.matchAll(/^ {0,3}\[([^\]\n]+)\]:[ \t]*(.+)$/gm)) {
+    if (!/^(?:<(?:\\.|[^<>\\])*>|(?:\\[^\s]|[^\s<>\\])+)(?:[ \t]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^()\\])*\)))?[ \t]*$/.test(match[2])) continue;
+    const wrapped = `(${match[2]})`;
+    if (markdownInlineDestination(wrapped, 0, wrapped.length)?.end !== wrapped.length) continue;
     const path = linkDestination(match[2]);
     if (!/[`\\]/.test(match[1]) && !definitions.has(referenceLabel(match[1]))) definitions.set(referenceLabel(match[1]), path);
   }
@@ -642,8 +645,9 @@ function markdownReferences(body, definitions) {
       const start = brackets.pop();
       if (prose.slice(start + 1, index).includes("[")) {
         const inline = markdownInlineDestination(prose, index + 1, boundaries.find((boundary) => boundary > index) ?? prose.length);
-        const reference = /^\[[^\]\n]*\]/.exec(prose.slice(index + 1));
-        if (inline || reference || definitions.has(referenceLabel(prose.slice(start + 1, index)))) {
+        const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(index + 1));
+        const label = reference?.[1] || prose.slice(start + 1, index);
+        if (inline || definitions.has(referenceLabel(label))) {
           nested.push({ start, end: inline?.end ?? index + 1 + (reference?.[0].length ?? 0) });
         }
       }
@@ -657,7 +661,7 @@ function markdownReferences(body, definitions) {
     const end = inline?.end ?? start + (reference?.[0].length ?? 0);
     const label = reference?.[1] || body.slice(match.index + (match[0].startsWith("!") ? 2 : 1), start - 1);
     const path = inline ? linkDestination(inline.destination) : definitions.get(referenceLabel(label));
-    consumed = end;
+    if (inline || definitions.has(referenceLabel(label))) consumed = end;
     if (path) {
       links.push({ href: path, label: match[1], start: match.index, end });
     }

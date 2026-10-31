@@ -335,6 +335,8 @@ test('sweep fails on a broken link while retaining unchecked scope as data', asy
 })
 
 for (const text of [
+  '[optional][Guide](guide.md)',
+  '[Guide]: README.md unexpected\n\n[Guide]: guide.md\n\n[Guide]',
   'Open [\n\n[Guide](guide.md)\n\nClose ]',
   '<pre>\n```\n</pre> [Example](missing-example.md)\n\n[Guide](guide.md)',
   '[Example](README.md "[Title](missing-example.md)")\n\n[Guide](guide.md)',

@@ -216,6 +216,27 @@ for (const reference of ['[Example][guide]', '[Guide][]', '[Guide]', '![Example]
   })
 }
 
+for (const text of [
+  '[optional][Guide](missing.md)',
+  '![optional][Guide](missing.md)',
+  '[optional]![Guide](missing.md)',
+  '[optional [Guide](missing.md)][undefined]',
+  '[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n[Guide]',
+  '[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n![Guide][]',
+  '[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n[Label][Guide]',
+  '[Guide]: unbalanced(\n\n[Guide]: missing.md\n\n[Guide]'
+]) {
+  test('unresolved references and invalid definitions cannot hide links: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: missing.md'])
+    await writeFile(join(f.repo, 'missing.md'), '# Guide\n')
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
 for (const [format, example] of [
   ['markdown-bold', '**Order**: One.\n**order**: Two.'],
   ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | One. |\n| order | Two. |'],
