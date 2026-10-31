@@ -1120,8 +1120,9 @@ function markdownHeadings(body) {
 function markdownAnchors(text) {
   const anchors = /* @__PURE__ */ new Set();
   const counts = /* @__PURE__ */ new Map();
-  const definitions = markdownDefinitions(markdownBody(text));
-  for (const heading of markdownHeadings(markdownBody(text))) {
+  const body = markdownProse(markdownBody(text));
+  const definitions = markdownDefinitions(body);
+  for (const heading of markdownHeadings(body)) {
     let title = "";
     let start = 0;
     for (const link of markdownReferences(heading.text, definitions)) {
@@ -1141,18 +1142,55 @@ function markdownAnchors(text) {
 }
 var referenceLabel = (value) => value.trim().replace(/\s+/g, " ").toLowerCase();
 var linkDestination = (value) => /^[^\s()[\]<>\\`]+$/.test(value.trim()) ? value.trim() : null;
+function markdownProse(body) {
+  let prose = "";
+  for (let index = 0; index < body.length; ) {
+    const rest = body.slice(index);
+    const definition = (index === 0 || body[index - 1] === "\n") && /^ {0,3}\[[^\]\n]+\]:[^\n]*/.exec(rest);
+    if (definition) {
+      prose += definition[0];
+      index += definition[0].length;
+      continue;
+    }
+    const escape = /^\\[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.exec(rest);
+    if (escape) {
+      prose += "  ";
+      index += 2;
+      continue;
+    }
+    const ticks = /^`+/.exec(rest)?.[0];
+    if (ticks) {
+      const paragraph = body.slice(index + ticks.length).split(/\n[ \t]*\n/, 1)[0];
+      const closing = [...paragraph.matchAll(/`+/g)].find((match) => match[0].length === ticks.length);
+      if (closing) {
+        const end = index + ticks.length + closing.index + ticks.length;
+        prose += body.slice(index, end).replace(/[^\n]/g, " ");
+        index = end;
+        continue;
+      }
+      prose += ticks;
+      index += ticks.length;
+      continue;
+    }
+    prose += body[index++];
+  }
+  return prose;
+}
 function markdownCoverageLimit(text) {
-  const body = markdownBody(text);
-  if (/[`\\]/.test(body)) return "Inline code and escaped Markdown require renderer review.";
+  const source = markdownBody(text);
+  const body = markdownProse(source);
+  if (/^ {0,3}\[[^\]\n]*[`\\][^\]\n]*\]:/m.test(body)) return "Code spans and escapes in reference labels require renderer review.";
   if (/<[^>]+>|&[\w#]+;|\{#[^}]+\}/.test(body)) return "HTML, entities and custom anchors require renderer review.";
   if (/\[[^\]\n]*\[/.test(body)) return "Nested links require renderer review.";
   const prose = body.replace(/(!?\[[^\]\n]*\]\()([^)\n]*)(\))/g, (match, label, destination, end) => linkDestination(destination) ? label + " ".repeat(destination.length) + end : match).replace(/(^ {0,3}\[[^\]\n]+\]:[ \t]*)(.*)$/gm, (match, label, destination) => linkDestination(destination) ? label + " ".repeat(destination.length) : match).replace(/^\*\*[^*\n]+\*\*:[ \t]*/gm, "").split("\n").filter((line) => !thematicBreak.test(line)).join("\n");
   if (/(?:^|[^\p{L}\p{N}_])_+\S[\s\S]*?\S_+(?![\p{L}\p{N}_])|\*+\S/u.test(prose)) return "Inline emphasis requires renderer review.";
   for (const match of body.matchAll(/!?\[[^\]\n]*\]\(([^)\n]*)\)/g)) {
-    if (!linkDestination(match[1])) return "Only ordinary destinations without titles are checked.";
+    const original = source.slice(match.index, match.index + match[0].length);
+    if (!linkDestination(match[1]) || /[`\\]/.test(original.slice(original.indexOf("](") + 2, -1))) return "Only ordinary destinations without titles are checked.";
   }
   for (const match of body.matchAll(/^ {0,3}\[[^\]\n]+\]:[ \t]*(.*)$/gm)) {
-    if (!linkDestination(match[1])) return "Only ordinary reference destinations without titles are checked.";
+    const original = source.slice(match.index, match.index + match[0].length);
+    if (!linkDestination(match[1]) || /[`\\]/.test(original.slice(original.indexOf("]:") + 2))) return "Only ordinary reference destinations without titles are checked.";
   }
   return null;
 }
@@ -1183,7 +1221,7 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
   return links;
 }
 function markdownLinks(text) {
-  return markdownCoverageLimit(text) ? [] : markdownReferences(markdownBody(text)).map((link) => link.href);
+  return markdownCoverageLimit(text) ? [] : markdownReferences(markdownProse(markdownBody(text))).map((link) => link.href);
 }
 async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ new Map()) {
   if (/^[A-Za-z][A-Za-z0-9+.-]*:|^\/\//.test(href)) return null;
@@ -1236,7 +1274,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
           throw error;
         }
       }
-      if (markdownCoverageLimit(text)) return unsupported();
+      if (markdownCoverageLimit(text) || markdownHeadings(markdownBody(text)).some((heading) => /[`\\]/.test(heading.text))) return unsupported();
       if (!markdownAnchors(text).has(fragment)) {
         if (text.includes("\0")) return unsupported();
         return problem("Missing heading fragment");
@@ -1252,6 +1290,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
 // runtime/scripts/commands/docs-check.mjs
 function glossaryEntries(text, format) {
   const body = markdownBody(text);
+  if (/[`\\]/.test(body)) return null;
   if (format === "markdown-bold") {
     const headings = markdownHeadings(body);
     const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)].filter((match) => !headings.some((heading) => heading.start <= match.index && match.index < heading.end));
@@ -1309,7 +1348,6 @@ async function run2(options) {
       if (problem?.code === "unsupported-link-fragment") coverageLimits.push({ path, reason: problem.message });
       else if (problem) problems.push(problem);
     }
-    if (/<(?:a|img)\b/i.test(markdownBody(text))) coverageLimits.push({ path, reason: "HTML links and explicit HTML anchors are not checked." });
     documents.push({ path, links: links.length });
     for (const document of contract.documents.filter((document2) => document2.path === path && document2.glossary)) {
       const { context, format } = document.glossary;
@@ -2815,4 +2853,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"8b7e964a5f1f27189b608ed8128f1bb32d6cba00bb951e5bf867d66ddce65af8"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"49583a58df105d6b8726b41f621eb6f9b09376c02efd74c4f88aa64a2d3796ea"}

@@ -27,6 +27,39 @@ function maintenance(directory, args) {
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
+for (const context of [
+  '`npm start`',
+  '`<a href="missing-inline.md">example</a>`',
+  '# Using `node`',
+  'An unmatched ` delimiter',
+  'An escaped \\` delimiter',
+  '``sample ` [ignored](missing-inline.md)``',
+  '`multi\n[ignored](missing-inline.md)`',
+  '``example\n[label`]: missing-inline.md\nend``',
+  String.raw`Escaped \* punctuation and \[ignored](missing-escaped.md)`,
+  '```md\n[ignored](missing-fenced.md)\n```\n`[ignored](missing-inline.md)`'
+]) {
+  test('docs-only checker verifies local links beside code and escapes: ' + context, async t => {
+    const f = await emptyRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract,
+      documents: [{ id: 'readme', path: 'README.md' }], scopes: [] }))
+    await writeFile(join(f.repo, 'README.md'), context + '\n\n[Guide](guide.md)\n')
+    const check = () => {
+      const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+      return { exit: result.status, ...JSON.parse(result.stdout) }
+    }
+    const broken = check()
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.code), ['broken-local-link'])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const fixed = check()
+    assert.equal(fixed.exit, 0, JSON.stringify(fixed))
+    assert.deepEqual(fixed.problems, [])
+    assert.deepEqual(fixed.data.coverageLimits, [])
+  })
+}
+
 // Writes the findings and change set an agent records in scratch after the user approves the exact bytes.
 async function approvedPlan(directory, target, edits) {
   const paths = edits.map(edit => edit.path)
@@ -259,9 +292,7 @@ test('sweep reports a repo with no contract as the first item for create', async
 })
 
 for (const { name, path, text } of [
-  { name: 'registered README inline code', path: 'README.md', text: '`npm start`\n' },
   { name: 'registered design fragment', path: 'docs/design.md', text: '[reference](../reference.md#heading)\n' },
-  { name: 'agent pointer inline code', path: 'AGENTS.md', text: '`command` and [missing](missing.md)\n' },
   { name: 'agent pointer HTML', path: 'AGENTS.md', text: '<a href="missing.md">Missing</a>\n' },
   { name: 'agent pointer fragment', path: 'AGENTS.md', text: '[reference](reference.md#heading)\n' }
 ]) {
@@ -292,11 +323,11 @@ test('sweep fails on a broken link while retaining unchecked scope as data', asy
   await mkdir(join(f.repo, '.bstack'))
   await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(contract))
   await writeFile(join(f.repo, 'docs/design.md'), '[missing](missing.md)\n')
-  await writeFile(join(f.repo, 'AGENTS.md'), '`command`\n')
+  await writeFile(join(f.repo, 'AGENTS.md'), '<a href="guide.md">Guide</a>\n')
   const swept = maintenance(f.directory, ['sweep', '--repo', f.repo])
   assert.equal(swept.exit, 1, JSON.stringify(swept))
   assert.equal(swept.status, 'failed')
   assert.deepEqual(swept.problems.map(problem => [problem.code, problem.path, problem.fix]),
     [['broken-local-link', 'docs/design.md', 'Run /architecture maintain.']])
-  assert.deepEqual(swept.data.coverageLimits, [{ path: 'AGENTS.md', reason: 'Inline code and escaped Markdown require renderer review.' }])
+  assert.deepEqual(swept.data.coverageLimits, [{ path: 'AGENTS.md', reason: 'HTML, entities and custom anchors require renderer review.' }])
 })

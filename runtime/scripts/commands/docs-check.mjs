@@ -7,6 +7,7 @@ import { loadContract } from './contract.mjs'
 
 function glossaryEntries(text, format) {
   const body = markdownBody(text)
+  if (/[`\\]/.test(body)) return null
   if (format === 'markdown-bold') {
     const headings = markdownHeadings(body)
     const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)]
@@ -64,7 +65,6 @@ export async function run(options) {
       if (problem?.code === 'unsupported-link-fragment') coverageLimits.push({ path, reason: problem.message })
       else if (problem) problems.push(problem)
     }
-    if (/<(?:a|img)\b/i.test(markdownBody(text))) coverageLimits.push({ path, reason: 'HTML links and explicit HTML anchors are not checked.' })
     documents.push({ path, links: links.length })
     for (const document of contract.documents.filter(document => document.path === path && document.glossary)) {
       const { context, format } = document.glossary

@@ -319,7 +319,11 @@ for (const [link, exit] of [
   })
 }
 
-for (const text of ['[Guide](_missing_.md)\n', '![Guide](*missing*.md)\n', '[Guide][target]\n[target]: _missing_.md\n']) {
+for (const text of [
+  '[Guide](_missing_.md)\n', '![Guide](*missing*.md)\n', '[Guide][target]\n[target]: _missing_.md\n',
+  String.raw`[A \] B](missing.md)` + '\n',
+  'A literal `\n\n[Guide](missing.md)\n\nUse `value`.\n'
+]) {
   for (const path of ['README.md', 'CONTRIBUTING.md']) {
     test('move-rule rejects ordinary broken destinations in staged ' + path + ': ' + text, async t => {
       const rule = '## One source\n\n' + (path === 'CONTRIBUTING.md' ? text : 'Move this rule.\n')
@@ -345,11 +349,8 @@ for (const text of ['[Guide](_missing_.md)\n', '![Guide](*missing*.md)\n', '[Gui
 for (const text of [
   '[`a]: README.md\n[b`]: missing.md\n\n[First][`a] [Second][b`]\n',
   '[`a`]: https://example.invalid\n[`b`]: missing.md\n\n[Guide][`b`]\n',
-  String.raw`[A \] B](missing.md)` + '\n',
-  '`[Guide](missing.md)`\n',
   '## _Rule_\n\n[Rule](#rule)\n',
-  '## [![Logo](logo.svg)](guide.md)\n',
-  'A literal `\n\n[Guide](missing.md)\n\nUse `value`.\n'
+  '## [![Logo](logo.svg)](guide.md)\n'
 ]) {
   for (const path of ['README.md', 'CONTRIBUTING.md']) {
     test('move-rule reports coverage without writes for unusual staged ' + path + ': ' + text, async t => {
@@ -401,6 +402,7 @@ for (const headings of ['## Rule\n## Rule-1\n## Rule\n', 'Rule\n---\nRule-1\n===
 }
 
 for (const rule of [
+  '## One source\n\n`[Example](missing.md)`\n\n[Design](README.md#design)\n',
   '## One source\n\n- ```md\n  [Example](missing.md)\n  ```\n\n[Design](README.md#design)\n',
   '## One source\n\n> ~~~md\n> [Example](missing.md)\n> ~~~\n\n[Design](README.md#design)\n',
   '## One source\n\nIntroduction\n***\nDetails\n---\n\n[Details](#details)\n'

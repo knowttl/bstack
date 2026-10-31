@@ -119,10 +119,6 @@ test('glossary samples inside code do not create duplicate entries', async t => 
 for (const text of [
   '[`a]: README.md\n[b`]: missing.md\n\n[First][`a] [Second][b`]',
   '[`a`]: https://example.invalid\n[`b`]: missing.md\n[Guide][`b`]',
-  '`[Guide](missing.md)`',
-  '# ` Array<T> `\n[Heading](#arrayt)',
-  String.raw`[A \] B](missing.md)`,
-  String.raw`\\[Guide](missing.md)`,
   '# _Rule_\n[Heading](#rule)',
   '# __Rule__\n[Heading](#rule)',
   '# [![Logo](logo.svg)](guide.md)\n[Heading](#logo)',
@@ -146,7 +142,7 @@ for (const text of [
   })
 }
 
-for (const heading of ['# _Rule_', '# `Rule`', '# [![Logo](logo.svg)](guide.md)']) {
+for (const heading of ['# _Rule_', '# `Rule`', '# ` Array<T> `', '# [![Logo](logo.svg)](guide.md)']) {
   for (const fragment of ['rule', 'absent']) {
     test('unusual fragment targets report coverage: ' + heading + ' #' + fragment, async t => {
       const f = await maintenanceRepo(t)
@@ -280,3 +276,22 @@ for (const text of ['[_Guide_](_missing_.md)\n', '# _Rule_\n[Guide](_missing_.md
     assert.ok(result.data.coverageLimits.some(limit => limit.path === 'README.md'))
   })
 }
+
+for (const text of [String.raw`[A \] B](missing.md)`, String.raw`\\[Guide](missing.md)`]) {
+  test('escaped label punctuation leaves a real local link checked: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1)
+    assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+test('heading-looking text inside inline code cannot satisfy a fragment', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '`example\n# Sample\nend`\n\n[Heading](#sample)\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 1)
+  assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+})
