@@ -2280,7 +2280,7 @@ function markdownCoverageLimit(text) {
   let limited = false;
   mn(markdownTokens(text), (token) => {
     if (token.type === "html" && !token.text.startsWith("<!--")) limited = true;
-    const value = ["link", "image", "def"].includes(token.type) ? token.href : ["text", "escape"].includes(token.type) && !token.tokens ? token.text : "";
+    const value = ["link", "image", "def"].includes(token.type) ? token.href : ["text", "escape"].includes(token.type) && !token.tokens ? token.raw : "";
     if (/&[\w#]+;|\{#[^}]+\}/.test(value)) limited = true;
   });
   return limited ? "HTML, entities and custom anchors require renderer review." : null;

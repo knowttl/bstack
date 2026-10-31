@@ -2399,7 +2399,7 @@ function markdownCoverageLimit(text) {
   let limited = false;
   mn(markdownTokens(text), (token) => {
     if (token.type === "html" && !token.text.startsWith("<!--")) limited = true;
-    const value = ["link", "image", "def"].includes(token.type) ? token.href : ["text", "escape"].includes(token.type) && !token.tokens ? token.text : "";
+    const value = ["link", "image", "def"].includes(token.type) ? token.href : ["text", "escape"].includes(token.type) && !token.tokens ? token.raw : "";
     if (/&[\w#]+;|\{#[^}]+\}/.test(value)) limited = true;
   });
   return limited ? "HTML, entities and custom anchors require renderer review." : null;
@@ -4067,4 +4067,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"bd250b9674fdf3e3c3ba6ca8512f31be80d29cc5ef70c93aa9ce042846a13ac6"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"6f72dfaeaaad3a2bbf2710eee466c9ddcda2d9a130c9fe3b8bbdeda810bda407"}

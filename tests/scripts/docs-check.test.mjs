@@ -15,6 +15,7 @@ async function glossary(t, text, format = 'markdown-bold', context = 'ordering')
 
 for (const text of [
   '# *Guide*\n\nUse **strong** and _emphasis_.\n\n[Guide](guide.md)\n',
+  '# Guide\n\nUse `&#32;` and `&amp;` as literal examples.\n\n[Guide](guide.md)\n',
   '# __Guide__\n\nUse **strong**, `example [Ignored](missing-example.md)` and \\*literal\\*.\n\n- *[Guide][target]*\n\n| Link |\n| --- |\n| **[Guide](guide.md)** |\n\n[target]: guide.md\n\n<https://example.invalid>\n'
 ]) {
   test('README emphasis checks missing links and passes after repair: ' + text, async t => {
@@ -238,6 +239,42 @@ for (const reference of ['[Example][guide]', '[Guide][]', '[Guide]', '![Example]
     assert.deepEqual(broken.data.coverageLimits, [])
     await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
     assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+for (const [format, text] of [
+  ['markdown-bold', '**Order**: &#32;'],
+  ['markdown-bold', '**&#x41;**: A concept.'],
+  ['markdown-bold', '**&amp;**: An ampersand.'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | &#32; |'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| &#x41; | A concept. |']
+]) {
+  test('raw glossary entities require review while ordinary links remain checked: ' + text, async t => {
+    const f = await glossary(t, text + '\n\n[Guide](guide.md)\n', format)
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.deepEqual(broken.data.coverageLimits.map(limit => limit.path), ['GLOSSARY.md'])
+    assert.match(broken.data.coverageLimits[0].reason, /entities/)
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const repaired = run('docs check', f.repo)
+    assert.equal(repaired.exit, 0, JSON.stringify(repaired))
+    assert.deepEqual(repaired.problems, [])
+    assert.deepEqual(repaired.data.coverageLimits.map(limit => limit.path), ['GLOSSARY.md'])
+    assert.match(repaired.data.coverageLimits[0].reason, /entities/)
+  })
+}
+
+for (const heading of ['# &#x41;', '# &#65;', '# ![&#x41;](logo.png)']) {
+  test('numeric entities in heading text require fragment review: ' + heading, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'guide.md'), heading + '\n')
+    await writeFile(join(f.repo, 'README.md'), '[Guide](guide.md#a)\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.problems, [])
+    assert.deepEqual(result.data.coverageLimits.map(limit => limit.path), ['README.md'])
+    assert.match(result.data.coverageLimits[0].reason, /Heading fragment coverage is limited/)
   })
 }
 
