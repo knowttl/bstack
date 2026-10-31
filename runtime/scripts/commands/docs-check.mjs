@@ -2,22 +2,48 @@ import { readFile } from 'node:fs/promises'
 import { extname } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
-import { markdownBody, markdownCoverageLimit, markdownHeadings, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
+import { markdownTokens, markdownBlocks, markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { loadContract } from './contract.mjs'
 
+function glossaryInline(tokens) {
+  return tokens.map(token => {
+    if (token.type === 'html' && token.text.startsWith('<!--')) return ''
+    if (!token.tokens || token.type === 'image') return token.raw
+    const content = glossaryInline(token.tokens)
+    return content ? token.raw.replace(token.tokens.map(child => child.raw).join(''), () => content) : ''
+  }).join('')
+}
+
 function glossaryEntries(text, format) {
-  const body = markdownBody(text)
+  const blocks = [...markdownBlocks(markdownTokens(text))].filter(token => !['code', 'html', 'def'].includes(token.type))
+  const content = blocks.map(token => {
+    if (token.tokens) return glossaryInline([token])
+    if (token.type !== 'table') return token.raw
+    const rows = [token.header, ...token.rows].map(row => `|${row.map(cell => glossaryInline(cell.tokens)).join('|')}|`)
+    rows.splice(1, 0, `|${token.header.map(() => '---').join('|')}|`)
+    return rows.join('\n')
+  })
+  const body = content.join('\n')
   if (/[`\\]/.test(body)) return null
   if (format === 'markdown-bold') {
-    const headings = markdownHeadings(body)
-    const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)]
-      .filter(match => !headings.some(heading => heading.start <= match.index && match.index < heading.end))
-    return entries.map((match, index) => {
-      const end = Math.min(entries[index + 1]?.index ?? body.length, headings.find(heading => heading.start > match.index)?.start ?? body.length)
-      return { term: match[1].trim(), definition: body.slice(match.index + match[0].length, end).trim() }
+    const sections = [[]]
+    for (const [index, token] of blocks.entries()) {
+      if (token.type === 'heading') sections.push([])
+      else sections.at(-1).push(content[index])
+    }
+    return sections.flatMap(section => {
+      const body = section.join('\n')
+      const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)]
+      return entries.map((match, index) => ({ term: match[1].trim(),
+        definition: body.slice(match.index + match[0].length, entries[index + 1]?.index ?? body.length).trim() }))
     })
   }
   if (format === 'markdown-table') {
+    for (const token of blocks.filter(token => token.type === 'table')) {
+      if (token.header.length !== 2 || glossaryInline(token.header[0].tokens).trim().toLowerCase() !== 'term' ||
+          glossaryInline(token.header[1].tokens).trim().toLowerCase() !== 'definition') continue
+      if (token.raw.trimEnd().split('\n').slice(2).some(line => !/^\|([^|]*)\|([^|]*)\|[ \t]*$/.test(line))) return null
+    }
     const lines = body.split('\n')
     const entries = []
     for (let i = 0; i < lines.length - 1; i++) {
@@ -56,8 +82,6 @@ export async function run(options) {
     const limit = markdownCoverageLimit(text)
     if (limit) {
       coverageLimits.push({ path, reason: limit })
-      documents.push({ path, links: 0 })
-      continue
     }
     const links = markdownLinks(text)
     for (const href of links) {
@@ -66,6 +90,7 @@ export async function run(options) {
       else if (problem) problems.push(problem)
     }
     documents.push({ path, links: links.length })
+    if (limit) continue
     for (const document of contract.documents.filter(document => document.path === path && document.glossary)) {
       const { context, format } = document.glossary
       const entries = glossaryEntries(text, format)

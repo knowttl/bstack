@@ -468,6 +468,8 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 ## Shared runtime and generation
 
 Authored commands, shared libraries, schemas, assets and shared references have one source in [runtime/](../runtime/), and [runtime/skills.json](../runtime/skills.json) lists the resources each skill ships, including vendored trees copied unchanged from `upstream/`.
+Markdown parsing uses `marked` at the exact version pinned in `package.json` and `package-lock.json`.
+The generator bundles its ESM entry into each consuming skill and the standalone checker, so installed scripts need no separate parser installation.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
 Each skill commits its generated files.
 See the shared [writing reference](../runtime/references/writing.md) for drafting guidance and the [runtime manifest](../runtime/skills.json) for the skills that ship it.
@@ -482,7 +484,7 @@ node scripts/generate-skills.mjs --check
 
 `--check` exits 1 for a missing or modified listed output or an unlisted file under a registered skill's `schemas/`, `assets/` or declared vendored destinations; generation removes those unlisted files.
 A skill's `references/` also holds its own authored files, so only the listed shared copies are checked.
-Both commands exit 1 when a skill lists a command, schema, asset or reference that `runtime/` lacks or when a bundle would include a file outside `runtime/`.
+Both commands exit 1 when a skill lists a command, schema, asset or reference that `runtime/` lacks or when a bundle would include a file outside `runtime/` other than the pinned `marked` ESM entry.
 To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
 

@@ -344,16 +344,21 @@ node skills/maintenance/scripts/maintenance.mjs docs check --repo <target> [--co
 The command loads the project contract and verifies every registered document, rule and acceptance source path without executing checks or generators or writing files.
 For UTF-8 `.md` and `.markdown` sources it checks local inline links, images and defined reference links, including collapsed and shortcut references.
 Relative destinations resolve from the source document, may traverse parents inside the selected target, must use exact path case and cannot escape through symlinks.
-Ordinary destinations contain no whitespace, backslashes, parentheses, brackets, angle brackets or backticks; paths can use percent encoding.
-Optional titles and other destination spellings are coverage limits.
+Markdown links and reference definitions are extracted from the token tree produced by the exactly pinned `marked` parser, with GFM tables enabled.
+Standard destinations, optional titles, escaped punctuation, nested image links, full, collapsed and shortcut references are supported; paths can use percent encoding.
 Heading fragments use lowercase ATX or setext heading slugs, with punctuation removed, whitespace changed to hyphens and repeated headings suffixed `-1`, `-2` and so on.
 External URLs are not fetched.
 Code fences, indented code and HTML comments do not contribute links or glossary entries.
 Inline code spans and backslash-escaped ASCII punctuation do not contribute link syntax; ordinary links elsewhere in the same document, including links with code in their rendered labels, remain checked.
 Code spans may continue across lines within a paragraph, including lazy blockquote and list continuations, but do not extend across block boundaries.
-Code spans or escapes in reference-definition labels, emphasis other than the supported `**Term**:` entry prefix, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
-When such markup occurs outside excluded blocks, the source document's links and glossary are left for renderer review; registered paths are still verified.
-A fragment target containing such unsupported markup, or code spans or backslashes in its headings, also reports a coverage limit rather than a missing heading.
+Emphasis, strong emphasis, headings, lists, tables and URI or email autolinks do not prevent ordinary local links from being checked.
+Raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
+Entity-containing destinations are left unchecked rather than treated as literal filesystem paths.
+Unsupported links and HTML spans are left for renderer review while ordinary links elsewhere in the document remain checked; registered paths are still verified.
+Coverage limits remain visible in the result and do not imply that unchecked references passed.
+A source document with these coverage limits is left for renderer review for glossary validation, while its supported local links remain checked.
+A fragment target containing such unsupported markup also reports a coverage limit rather than a missing heading.
+Heading text comes from inline tokens, so emphasis, code spans, escapes and link labels contribute their rendered text to the slug.
 Fragments in non-Markdown targets are not validated.
 Unsupported document encodings and formats produce `data.coverageLimits`, also visible in plain output, rather than a readiness failure or a forced rewrite.
 Broken supported local references fail with `broken-local-link`.
@@ -1137,7 +1142,7 @@ Unreadable files or folders report `package-unreadable` and do not stop checks o
 
 | Rule code | Exact syntactic check |
 |---|---|
-| `local-path-missing` | In every scanned text file, collect Markdown inline link/image destinations, Markdown reference-definition destinations, and single-line strings enclosed in backticks, single quotes or double quotes that start with `./`, `../`, `references/`, `scripts/`, `schemas/`, `assets/` or `agents/`. Ignore URI schemes, `//` URLs and fragment-only destinations. Remove query/fragment suffixes, decode percent escapes and remove a trailing `:line` or `:line:column`. The five named resource prefixes resolve from the skill root, all other paths from the containing file's directory. The destination must exist according to filesystem stat, as a file or directory. Invalid percent escapes also fail. |
+| `local-path-missing` | In scanned `.md` files, collect Markdown inline link/image destinations and Markdown reference-definition destinations. In every scanned text file, collect single-line strings enclosed in backticks, single quotes or double quotes that start with `./`, `../`, `references/`, `scripts/`, `schemas/`, `assets/` or `agents/`. Ignore URI schemes, `//` URLs and fragment-only destinations. Remove query/fragment suffixes, decode percent escapes and remove a trailing `:line` or `:line:column`. The five named resource prefixes resolve from the skill root, all other paths from the containing file's directory. The destination must exist according to filesystem stat, as a file or directory. Invalid percent escapes also fail. |
 | `reference-unlisted` | Every scanned file under `references/`, including subdirectories and binary files, must appear with its exact skill-relative path among the recognised destinations in pipe-delimited rows under a heading named exactly `Load when`. That section ends at the next Markdown ATX heading. |
 | `reference-nested` | A recognised destination in a reference text file resolves to a path under the same skill's `references/` directory. It fails independently of whether the target exists. |
 | `skill-too-long` | After stripping a leading `---` frontmatter block terminated by another `---` line, the `SKILL.md` body has more than 500 lines. CRLF is normalised for counting and a final newline does not add a line. |
@@ -1302,7 +1307,7 @@ The source rule is a nonempty newline-terminated literal block occurring exactly
 An existing destination needs a unique nonempty newline-terminated insertion anchor and must not already contain the rule.
 For an explicitly selected new destination, use an empty anchor; its complete content is the rule block.
 The replacement is one exact newline-terminated ordinary inline link line pointing to the selected destination, with any heading fragment verified against the final proposed bytes.
-Replacement labels contain no brackets, backslashes, backticks or emphasis markers; destinations follow the ordinary contract above and cannot include titles or trailing text.
+Replacement labels contain no brackets, backslashes, backticks or emphasis markers; destinations contain no whitespace, backslashes, parentheses, brackets, angle brackets or backticks and cannot include titles or trailing text.
 The final source must contain no copy of the rule and exactly one replacement link; the final destination must contain exactly one copy of the unchanged rule.
 Apply validates the paired edits and all other file changes before writing either file, then uses the existing recoverable protected-write journal.
 If either proposed document or a fragment target exceeds reference coverage, apply returns `blocked` with `data.coverageLimits` and writes neither file, including in dry runs.

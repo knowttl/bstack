@@ -62,10 +62,10 @@ function lines(text) {
   return text.replace(/\r\n/g, '\n').replace(/\n$/, '').split('\n').length
 }
 
-function paths(text) {
+function paths(text, markdown) {
   const found = new Set()
   // Markdown destinations include inline links, images and reference definitions.
-  for (const match of text.matchAll(/!?\[[^\]\n]*\]\(\s*(<[^>\n]+>|[^\s)]+)|^\s*\[[^\]\n]+\]:\s*(<[^>\n]+>|\S+)/gm)) {
+  for (const match of markdown ? text.matchAll(/!?\[[^\]\n]*\]\(\s*(<[^>\n]+>|[^\s)]+)|^\s*\[[^\]\n]+\]:\s*(<[^>\n]+>|\S+)/gm) : []) {
     found.add((match[1] ?? match[2]).replace(/^<|>$/g, ''))
   }
   // Quoted explicit relative paths cover prose, source imports and resource strings.
@@ -158,7 +158,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
   }
   if (lines(body) > 500) add('skill-too-long', 'SKILL.md', 'SKILL.md body exceeds 500 lines.', 'Keep the body at most 500 lines.')
   const loadSection = body.match(/^#{1,6} Load when\s*\r?\n([\s\S]*?)(?=^#{1,6} |$(?![\s\S]))/m)?.[1] ?? ''
-  const listed = new Set(paths(loadSection.split('\n').filter(line => /^\s*\|.*\|\s*$/.test(line)).join('\n')))
+  const listed = new Set(paths(loadSection.split('\n').filter(line => /^\s*\|.*\|\s*$/.test(line)).join('\n'), true))
   for (const [file, text] of files) {
     if (lintFiles.test(file.split('/').at(-1))) add('language-policy', file, 'Bundled lint configuration is prohibited.', 'Remove bundled language policy and select tools through project research.')
     const reference = file.startsWith('references/')
@@ -171,7 +171,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     if (reference && lines(text) > 100 && !/^#{1,6} (?:Table of contents|Contents|TOC)\s*$/im.test(text.split(/\r?\n/).slice(0, 20).join('\n'))) {
       add('reference-toc', file, 'Reference exceeds 100 lines without an early contents heading.', 'Add a contents heading in its first 20 lines.')
     }
-    for (const raw of paths(text)) {
+    for (const raw of paths(text, file.endsWith('.md'))) {
       let path
       try { path = decodeURIComponent(raw.split(/[?#]/)[0]).replace(/:\d+(?::\d+)?$/, '') } catch {
         add('local-path-missing', file, `Invalid encoded local path: ${raw}`, 'Use a valid local path.')
