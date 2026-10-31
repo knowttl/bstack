@@ -167,7 +167,30 @@ node scripts/check-package.mjs
 `check` first verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.mjs` rewrites that table), then runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](command-contract.md#package-check) for exact syntax and limits.
-Local validation runs the package check and full tests after dependency setup.
+Local validation runs the package check and the [affected gate](#affected-validation) after dependency setup.
+
+### Affected validation
+
+Run `node scripts/gate-test.mjs` for the delivery gate, or `npm run check` followed by `npm test` for the full offline baseline.
+For a manual union, repeat task IDs in one invocation, for example `npm test -- --task T2.4 --task architecture`.
+The runner sorts and deduplicates suite files before execution and rejects unknown tasks, missing suites and malformed arguments.
+It passes suite paths relative to its checkout so Node's test-path globbing cannot interpret brackets in the checkout's parent path.
+
+[`tests/affected.json`](../tests/affected.json) is the source-to-suite and protocol-dependency map.
+Command entries name task IDs and reverse dependents, including file imports and callers that exchange serialized protocols without imports.
+The gate validates direct command imports against those declarations and refuses selection if a discovered suite is unregistered.
+Owned schemas select their command and its dependents; shared schemas and libraries take the full fallback because their broader independence is not established.
+The runtime skill manifest supplies generated bundle and resource ownership, using the same authored-input distinction as evaluation scenario impact selection.
+The evaluator's `affected` command still selects agent scenarios, not deterministic test suites.
+An unpaired generated artifact, unknown input or uncertain infrastructure scope falls back to the full offline baseline.
+Skill prose selects its packaging and procedure contracts without unrelated installer suites.
+Changes to evaluation scenarios, staging requirements or evaluation infrastructure require the full gate.
+
+The public gate regression suite, `npm test -- --task gate-test`, proves a clean module control, an independent seeded module failure, a changed protocol that breaks a dependent command, failure propagation, every fallback category, and committed/staged/unstaged/untracked/renamed/deleted input handling.
+Its disposable Git fixtures execute the maintained runner and independently specified public-command results; record-only fixtures check the npm boundary for full fallback without nesting the entire repository suite.
+The runner's bootstrap suite separately proves overlapping tasks execute a shared suite once and reject an unknown task in a union.
+During a user-started `/verification maintain`, compare selected results with `npm run check` and `npm test` on the same inputs, record any miss, correct its mapping or dependency, and add a public-gate regression before narrowing it again.
+No scheduled full run is installed.
 T0.6 recorded Node 24 and Node 26, while each later task records the versions it actually tested.
 See the [delivery gate](implementation-plan.md#delivery-gate) for gate preparation and validation.
 Recorded runs on Linux do not prove support on Windows or macOS.
