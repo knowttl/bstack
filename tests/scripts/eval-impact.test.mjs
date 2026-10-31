@@ -1,10 +1,10 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
-import { emptyRepo, git } from './discovery-fixture.mjs'
+import { repositoryFixture, git } from './discovery-fixture.mjs'
 
 // Impact tests use the real command in a disposable checkout, without agent hosts.
 const root = fileURLToPath(new URL('../..', import.meta.url))
@@ -15,16 +15,7 @@ const staging = skill => definitions.filter(item => item.mode !== 'without' &&
   (item.checkpoints.at(-1) === 'final' || item.skills.includes(skill))).map(item => item.id)
 
 async function checkout(t) {
-  const { repo } = await emptyRepo(t)
-  for (const path of ['scripts', 'runtime', 'skills', 'tests/eval/scenarios', 'tests/fixtures', 'tests/acceptance/cases.json']) {
-    await mkdir(resolve(repo, path, '..'), { recursive: true })
-    await cp(join(root, path), join(repo, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') })
-  }
-  await symlink(join(root, 'node_modules'), join(repo, 'node_modules'), 'dir')
-  await writeFile(join(repo, '.git/info/exclude'), 'node_modules\n')
-  git(repo, 'add', 'scripts', 'runtime', 'skills', 'tests')
-  git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'Impact base')
-  return repo
+  return repositoryFixture(t, ['scripts', 'runtime', 'skills', 'tests/eval/scenarios', 'tests/fixtures', 'tests/acceptance/cases.json'])
 }
 
 function affected(repo, base = 'HEAD') {
@@ -200,4 +191,21 @@ test('an unchanged checkout selects no scenarios and an inaccessible base is blo
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.deepEqual(result.data.scenarios, [])
   assert.equal(affected(repo, 'missing-base').exit, 2)
+})
+
+test('seeded impact checkouts keep independently staged edits private', async t => {
+  const first = await checkout(t)
+  const second = await checkout(t)
+  await edit(first, 'skills/glossary/SKILL.md', source => source + '\nFirst fixture\n')
+  await edit(second, 'skills/vision/SKILL.md', source => source + '\nSecond fixture\n')
+  git(first, 'add', 'skills')
+  assert.equal(git(second, 'diff', '--cached', '--name-only'), '')
+  for (const [repo, skill] of [[first, 'glossary'], [second, 'vision']]) {
+    const result = affected(repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.scenarios, staging(skill))
+  }
+  const fresh = affected(await checkout(t))
+  assert.equal(fresh.exit, 0, JSON.stringify(fresh))
+  assert.deepEqual(fresh.data.scenarios, [])
 })

@@ -456,7 +456,8 @@ Evidence types are `automated`, `agent` or `manual`.
 A planned procedure has `status: planned` and a nonempty `description`.
 A completed procedure has `status: completed`, `path`, `name` and nonempty `artifacts`.
 Automated procedures name a registered suite and an exact test name, including table-driven names.
-Registry validation executes that test through Node's test runner and rejects missing, skipped, todo or failing tests.
+Registry validation groups the exact names by suite file and executes each group freshly through Node's test runner, rejecting every missing, skipped, todo or failing named test.
+It does not reuse saved TAP output.
 Agent and manual procedures name `tests/eval/scenarios/scenarios.json` and an existing scenario ID.
 That scenario must contain a check for the registered acceptance case.
 Completed procedure and artifact paths must exist as nonempty files.
