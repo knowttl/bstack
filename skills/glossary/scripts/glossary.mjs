@@ -321,7 +321,7 @@ function markdownAnchors(text) {
     let previous;
     do {
       previous = title;
-      title = title.replace(/(?<![\p{L}\p{N}_])(_{1,3})(?=\S)(.+?\S|\S)\1(?![\p{L}\p{N}_])/gu, "$2");
+      title = title.replace(/(?<![\p{L}\p{N}_])(_{1,3})(?=\S)(.+?\S|\S)\1(?![\p{L}\p{N}_])/gsu, "$2");
     } while (title !== previous);
     title = title.replace(/[ \t]*\n[ \t]*/g, "\n");
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, "").replace(/\s/g, "-");
@@ -334,7 +334,7 @@ function markdownAnchors(text) {
   return anchors;
 }
 var referenceLabel = (value) => value.trim().replace(/\s+/g, " ").toLowerCase();
-var linkDestination = (value) => /^[^\s()[\]<>\\`]+$/.test(value.trim()) ? value.trim() : null;
+var linkDestination = (value) => /^[^\s()[\]<>\\`]+$/.test(value.trim()) && !/&[\w#]+;/.test(value) ? value.trim() : null;
 function markdownProse(body, maskInline = true) {
   const boundaries = markdownHeadings(body).flatMap((heading) => [heading.start, heading.end]);
   let offset = 0;
@@ -415,7 +415,18 @@ function markdownDefinitions(body) {
   return definitions;
 }
 function markdownReferences(body, definitions) {
-  body = body.replace(/^ {0,3}<(pre|script|style|textarea)(?=[\s>])[\s\S]*?(?:<\/\1\s*>|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " ")).replace(/^ {0,3}(?:<\/?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?=[\s/>])[^\n]*|<\/?[A-Za-z][A-Za-z0-9-]*(?:\s+[A-Za-z_:][A-Za-z0-9_.:-]*(?:\s*=\s*(?:[^\s"'=<>`]+|'[^']*'|"[^"]*"))?)*\s*\/?>[ \t]*(?=\n|$))[\s\S]*?(?=\n[ \t]*\n|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " "));
+  body = body.replace(/^ {0,3}<(pre|script|style|textarea)(?=[\s>])[\s\S]*?(?:<\/\1\s*>|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " ")).replace(/^ {0,3}<\/?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?=[\s/>])[^\n]*[\s\S]*?(?=\n[ \t]*\n|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " "));
+  const headingEnds = new Set(markdownHeadings(body).map((heading) => heading.end));
+  for (const match of body.matchAll(/^ {0,3}<\/?[A-Za-z][A-Za-z0-9-]*(?:\s+[A-Za-z_:][A-Za-z0-9_.:-]*(?:\s*=\s*(?:[^\s"'=<>`]+|'[^']*'|"[^"]*"))?)*\s*\/?>[ \t]*(?=\n|$)/gim)) {
+    const lines = body.slice(0, match.index).split("\n");
+    lines.pop();
+    while (referenceDefinition.test(lines.at(-1) ?? "")) lines.pop();
+    const preceding = lines.at(-1) ?? "";
+    if (preceding.trim() && !headingEnds.has(lines.join("\n").length + 1) && !thematicBreak.test(preceding)) continue;
+    const blank = body.slice(match.index).search(/\n[ \t]*\n/);
+    const end = blank < 0 ? body.length : match.index + blank;
+    body = body.slice(0, match.index) + body.slice(match.index, end).replace(/[^\n]/g, " ") + body.slice(end);
+  }
   definitions ??= markdownDefinitions(markdownProse(body));
   const links = [];
   const prose = markdownProse(body).replace(/<[^>\n]*>/g, (value) => " ".repeat(value.length)).replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));

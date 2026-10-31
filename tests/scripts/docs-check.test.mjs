@@ -58,6 +58,22 @@ for (const [heading, fragment] of [['*Rule*', 'rule'], ['**Rule**', 'rule'], ['_
   })
 }
 
+for (const [heading, fragment, unrendered] of [
+  ['_A\nB_\n===', 'a-b', '_a-b_'],
+  ['__A\nB__\n---', 'a-b', '__a-b__'],
+  ['__A _B\nC_ D__\n===', 'a-b-c-d', 'a-_b-c_-d']
+]) {
+  test('multiline emphasized headings resolve rendered fragments: ' + heading, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), '[Valid](guide.md#' + fragment + ')\n[Invalid](guide.md#' + unrendered + ')\n')
+    await writeFile(join(f.repo, 'guide.md'), heading + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.message), ['Missing heading fragment: guide.md#' + unrendered])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
 test('nested emphasis rejects the unrendered fragment', async t => {
   const f = await maintenanceRepo(t)
   await writeFile(join(f.repo, 'README.md'), '[Invalid](guide.md#a-_b_-c)\n')
@@ -74,6 +90,8 @@ for (const html of [
   '<textarea>\n[Example](missing-example.md)\n</textarea>',
   '<div>Example\n[Example](missing-example.md)\n</div>',
   '<custom-example>\n[Example](missing-example.md)\n</custom-example>',
+  '[example]: missing-example.md\n<span>\n[example]\n</span>',
+  'Ordinary paragraph\n<span>\n# Heading\n<span>\n[Example](missing-example.md)\n</span>',
   '<pre>\n[example]: missing-example.md\n</pre>\n\n[example]'
 ]) {
   test('HTML blocks exclude examples while retaining ordinary links: ' + html, async t => {
@@ -87,6 +105,47 @@ for (const html of [
     const repaired = run('docs check', f.repo)
     assert.equal(repaired.exit, 0, JSON.stringify(repaired))
     assert.equal(repaired.data.coverageLimits[0].path, 'README.md')
+  })
+}
+
+for (const text of [
+  'Use `example\n<span>\nend` [Guide](guide.md)\n',
+  'Use ``example\n<custom-example attribute="value">\nend`` ![Guide](guide.md)\n',
+  'Use `example\n[ignored]: ignored.md\n<span>\nend` [Guide](guide.md)\n',
+  'Ordinary paragraph\n<span>\n[Guide][target]\n\n[target]: guide.md\n',
+  'Ordinary paragraph\n</span>\n[Guide](guide.md)\n'
+]) {
+  test('inline tags in paragraphs retain ordinary link checks: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text)
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+for (const text of [
+  '[Example](guide&amp;notes.md)',
+  '![Example](guide&#38;notes.md)',
+  '[Example][target]\n\n[target]: guide&#x26;notes.md',
+  '[Example](guide.md#a&amp;b)',
+  '![Example](guide.md#a&#38;b)',
+  '[Example][target]\n\n[target]: guide.md#a&#x26;b'
+]) {
+  test('entity destinations retain coverage without literal checks: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'guide&notes.md'), '# Guide\n')
+    await writeFile(join(f.repo, 'README.md'), text + '\n\n[Literal ampersand](guide&notes.md)\n[Guide](guide.md)\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.match(broken.data.coverageLimits[0].reason, /entities/)
+    await writeFile(join(f.repo, 'guide.md'), '# A&B\n')
+    const repaired = run('docs check', f.repo)
+    assert.equal(repaired.exit, 0, JSON.stringify(repaired))
+    assert.match(repaired.data.coverageLimits[0].reason, /entities/)
   })
 }
 
