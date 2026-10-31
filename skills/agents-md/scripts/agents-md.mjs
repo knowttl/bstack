@@ -394,7 +394,7 @@ function markdownBody(text) {
   let bodyDepth = 0;
   const lists = [];
   const source = text.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
-  return source.split("\n").map((raw) => {
+  const body = source.split("\n").map((raw) => {
     const previousBase = lists.at(-1) ?? 0;
     let expanded = raw.replace(/^\t+/, (tabs) => "    ".repeat(tabs.length));
     let prefix = quotes.exec(expanded)?.[0] ?? "";
@@ -414,12 +414,13 @@ function markdownBody(text) {
     if (!comment && /^ {4}/.test(current) && !paragraph) return "";
     const opening = comment ? null : fenceMarker(semantic);
     if (!opening) {
-      raw = raw.replace(/<!--|-->|./g, (token) => {
+      const blockComment = /^ {0,3}<!--/.test(semantic);
+      raw = raw.replace(/<!--|-->|./g, (token, offset) => {
         if (comment) {
           if (token === "-->") comment = false;
           return " ".repeat(token.length);
         }
-        if (token === "<!--") {
+        if (token === "<!--" && blockComment && offset === raw.indexOf("<!--")) {
           comment = true;
           return " ".repeat(token.length);
         }
@@ -452,6 +453,7 @@ function markdownBody(text) {
     paragraph = !!content.trim() && !atxStart.test(content) && !setextUnderline.test(content) && !thematicBreak.test(content);
     return (boundary ? "\n" : "") + content;
   }).join("\n");
+  return markdownProse(body, false);
 }
 function markdownHeadings(body) {
   const headings = [];
@@ -498,7 +500,7 @@ function markdownAnchors(text) {
 }
 var referenceLabel = (value) => value.trim().replace(/\s+/g, " ").toLowerCase();
 var linkDestination = (value) => /^[^\s()[\]<>\\`]+$/.test(value.trim()) ? value.trim() : null;
-function markdownProse(body) {
+function markdownProse(body, maskInline = true) {
   const boundaries = markdownHeadings(body).flatMap((heading) => [heading.start, heading.end]);
   let offset = 0;
   for (const line of body.split("\n")) {
@@ -507,6 +509,7 @@ function markdownProse(body) {
   }
   boundaries.sort((a, b) => a - b);
   let prose = "";
+  let label = false;
   for (let index = 0; index < body.length; ) {
     const rest = body.slice(index);
     const definition = (index === 0 || body[index - 1] === "\n") && /^ {0,3}\[[^\]\n]+\]:[^\n]*/.exec(rest);
@@ -515,16 +518,23 @@ function markdownProse(body) {
       index += definition[0].length;
       continue;
     }
-    const destination = /^\](?:\([^)\n]*\)|\[[^\]\n]*\])/.exec(rest);
+    const destination = label && /^\](?:\([^)\n]*\)|\[[^\]\n]*\])/.exec(rest);
     if (destination) {
       prose += destination[0];
       index += destination[0].length;
+      label = false;
       continue;
     }
     const escape = /^\\[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.exec(rest);
     if (escape) {
-      prose += "  ";
+      prose += maskInline ? "  " : escape[0];
       index += 2;
+      continue;
+    }
+    const comment = rest.startsWith("<!--") && /^<!--[\s\S]*?-->/.exec(body.slice(index, boundaries.find((boundary) => boundary > index) ?? body.length));
+    if (comment) {
+      prose += comment[0].replace(/[^\n]/g, " ");
+      index += comment[0].length;
       continue;
     }
     const ticks = /^`+/.exec(rest)?.[0];
@@ -533,7 +543,8 @@ function markdownProse(body) {
       const closing = [...paragraph.matchAll(/`+/g)].find((match) => match[0].length === ticks.length);
       if (closing) {
         const end = index + ticks.length + closing.index + ticks.length;
-        prose += body.slice(index, end).replace(/[^\n]/g, " ");
+        const span = body.slice(index, end);
+        prose += maskInline ? span.replace(/[^\n]/g, " ") : span;
         index = end;
         continue;
       }
@@ -541,6 +552,8 @@ function markdownProse(body) {
       index += ticks.length;
       continue;
     }
+    if (body[index] === "[") label = true;
+    else if (body[index] === "]" || body[index] === "\n") label = false;
     prose += body[index++];
   }
   return prose;

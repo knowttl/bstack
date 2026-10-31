@@ -354,3 +354,82 @@ test('reference definitions inside multiline inline code do not define links', a
   assert.equal(result.data.documents[0].links, 0)
   assert.deepEqual(result.data.coverageLimits, [])
 })
+
+for (const context of [
+  '`<!--`',
+  '``<!-- ` example``',
+  '`multi\ntext <!--\nline`',
+  '\\<!--',
+  '> `<!--`',
+  '- `<!--`',
+  '<!-- ` comment -->\n`<!--`',
+  '```md\n<!--\n```',
+  '```md\n# Heading\n<!--\n```\n`<!--`'
+]) {
+  test('literal comment openers cannot hide subsequent links: ' + context, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), context + '\n\n[Guide](guide.md)\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.code), ['broken-local-link'])
+    assert.deepEqual(broken.data.coverageLimits, [])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const fixed = run('docs check', f.repo)
+    assert.equal(fixed.exit, 0, JSON.stringify(fixed))
+    assert.deepEqual(fixed.data.coverageLimits, [])
+  })
+}
+
+for (const text of [
+  '\\[text](`command [Example](missing.md)`)',
+  '!\\[text](`command [Example](missing.md)`)',
+  '\\[text][`command [Example](missing.md)`]',
+  'text](`command [Example](missing.md)`)',
+  '[text]\n](`command [Example](missing.md)`)'
+]) {
+  test('suffixes without real labels do not expose code examples: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(result.data.documents[0].links, 0)
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+test('real comments ignore backticks and links while retaining subsequent prose', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '<!-- `\n[Example](missing.md)\n-->\n<!-- another ` [Example](missing.md) -->\n\n[Guide](#guide)\n\n# Guide\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 1)
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+test('literal comment openers preserve fragment target headings', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '[Guide](target.md#guide)\n[Missing](target.md#absent)\n')
+  await writeFile(join(f.repo, 'target.md'), '`<!--`\n\n# Guide\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.deepEqual(result.problems.map(problem => problem.message), ['Missing heading fragment: target.md#absent'])
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+test('inline comments hide example links without hiding ordinary links', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), 'Intro <!-- `\n[Example](missing.md)\n--> and [Guide](#guide)\n\n# Guide\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 1)
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+test('block comments interrupt unmatched code spans', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), 'Intro `\n<!--\n[Example](missing.md)\n-->\n\n[Guide](#guide)\n\n# Guide\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 1)
+  assert.deepEqual(result.data.coverageLimits, [])
+})
