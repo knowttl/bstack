@@ -304,7 +304,7 @@ for (const { name, path, text } of [
     await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract,
       documents: [...contract.documents, { id: 'readme', path: 'README.md' }] }))
     await writeFile(join(f.repo, 'README.md'), '# Shop\n')
-    await writeFile(join(f.repo, 'reference.md'), '# Heading with `code`\n')
+    await writeFile(join(f.repo, 'reference.md'), '# Heading with <span>HTML</span>\n')
     await writeFile(join(f.repo, path), text)
     f.commit('baseline')
     const before = await snapshot(f.repo)
@@ -334,24 +334,29 @@ test('sweep fails on a broken link while retaining unchecked scope as data', asy
   assert.deepEqual(swept.data.coverageLimits, [{ path: 'AGENTS.md', reason: 'HTML, entities and custom anchors require renderer review.' }])
 })
 
-for (const text of [
-  '[optional][Guide](guide.md)',
-  '[Guide]: README.md unexpected\n\n[Guide]: guide.md\n\n[Guide]',
-  'Open [\n\n[Guide](guide.md)\n\nClose ]',
-  '<pre>\n```\n</pre> [Example](missing-example.md)\n\n[Guide](guide.md)',
-  '[Example](README.md "[Title](missing-example.md)")\n\n[Guide](guide.md)',
-  'Text <span title="> [Example](missing-example.md)">label</span>\n\n[Guide](guide.md)',
-  '[Example]: README.md "Title"\n[Example]: missing-example.md\n\n[Example]\n\n[Guide](guide.md)'
+for (const [text, references] of [
+  ['[optional][Guide](guide.md)', 1],
+  ['[optional](see [Guide](guide.md))', 1],
+  ['[Note]: see [Guide](guide.md)', 1],
+  ['<div>\n```\n</div>\n\n[Guide](guide.md)', 1],
+  ["<https://example.invalid/it's/[Example](missing-example.md)>\n\n[Guide](guide.md)", 1],
+  ['[Guide]: README.md unexpected\n\n[Guide]: guide.md\n\n[Guide]', 2],
+  ['Open [\n\n[Guide](guide.md)\n\nClose ]', 1],
+  ['<pre>\n```\n</pre> [Example](missing-example.md)\n\n[Guide](guide.md)', 1],
+  ['[Example](README.md "[Title](missing-example.md)")\n\n[Guide](guide.md)', 1],
+  ['Text <span title="> [Example](missing-example.md)">label</span>\n\n[Guide](guide.md)', 1],
+  ['[Example]: README.md "Title"\n[Example]: missing-example.md\n\n[Example]\n\n[Guide](guide.md)', 1]
 ]) {
   test('sweep preserves pointer link boundaries: ' + text, async t => {
     const f = await documentedRepo(t)
     await mkdir(join(f.repo, '.bstack'))
     await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(contract))
+    await writeFile(join(f.repo, 'README.md'), '# Guide\n')
     await writeFile(join(f.repo, 'AGENTS.md'), text + '\n')
     const broken = maintenance(f.directory, ['sweep', '--repo', f.repo])
     assert.equal(broken.exit, 1, JSON.stringify(broken))
     assert.deepEqual(broken.problems.map(problem => [problem.path, problem.message]),
-      [['AGENTS.md', 'Missing or wrong-case destination: guide.md']])
+      Array.from({ length: references }, () => ['AGENTS.md', 'Missing or wrong-case destination: guide.md']))
     await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
     const repaired = maintenance(f.directory, ['sweep', '--repo', f.repo])
     assert.equal(repaired.exit, 0, JSON.stringify(repaired))

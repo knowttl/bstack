@@ -2,19 +2,24 @@ import { readFile } from 'node:fs/promises'
 import { extname } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
 import { resolveFilePath } from '../lib/paths.mjs'
-import { markdownBody, markdownCoverageLimit, markdownHeadings, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
+import { markdownTokens, markdownBlocks, markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { loadContract } from './contract.mjs'
 
 function glossaryEntries(text, format) {
-  const body = markdownBody(text)
+  const blocks = [...markdownBlocks(markdownTokens(text))].filter(token => !['code', 'html', 'def'].includes(token.type))
+  const body = blocks.map(token => token.raw).join('\n')
   if (/[`\\]/.test(body)) return null
   if (format === 'markdown-bold') {
-    const headings = markdownHeadings(body)
-    const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)]
-      .filter(match => !headings.some(heading => heading.start <= match.index && match.index < heading.end))
-    return entries.map((match, index) => {
-      const end = Math.min(entries[index + 1]?.index ?? body.length, headings.find(heading => heading.start > match.index)?.start ?? body.length)
-      return { term: match[1].trim(), definition: body.slice(match.index + match[0].length, end).trim() }
+    const sections = [[]]
+    for (const token of blocks) {
+      if (token.type === 'heading') sections.push([])
+      else sections.at(-1).push(token.raw)
+    }
+    return sections.flatMap(section => {
+      const body = section.join('\n')
+      const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)]
+      return entries.map((match, index) => ({ term: match[1].trim(),
+        definition: body.slice(match.index + match[0].length, entries[index + 1]?.index ?? body.length).trim() }))
     })
   }
   if (format === 'markdown-table') {

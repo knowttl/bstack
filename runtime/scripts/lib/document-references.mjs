@@ -1,315 +1,58 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { dirname, extname, join, relative, resolve } from 'node:path'
+import { lexer, walkTokens } from 'marked'
 import { isInside, resolvePath } from './paths.mjs'
 import { CommandError } from './result.mjs'
 
-// Strip quote containers before checking their rendered block content.
-const quotes = /^(?: {0,3}>[ \t]?)+/
-// List markers determine the indentation of their continuation blocks.
-const listItem = /^ {0,3}(?:[-+*]|\d+[.)])[ \t]+/
-// Empty ATX headings still interrupt paragraphs.
-const atxStart = /^ {0,3}#{1,6}(?:[ \t]|$)/
-// Extract ATX titles without their optional closing markers.
-const atxHeading = /^ {0,3}#{1,6}[ \t]+(.+?)[ \t]*#*[ \t]*$/
-// Setext underlines turn the preceding paragraph into a heading.
-const setextUnderline = /^ {0,3}(?:=+|-+)[ \t]*$/
-// Reference definitions are excluded from heading paragraphs.
-const referenceDefinition = /^ {0,3}\[([^\]\n]+)\]:/
-// Thematic breaks end paragraphs and are excluded from prose emphasis checks.
-const thematicBreak = /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})$/
-
-function fenceMarker(line) {
-  const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
-  return marker && (marker[1][0] !== '`' || !marker[2].includes('`')) ? marker : null
+export function markdownTokens(text) {
+  return lexer(text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n'), { gfm: true })
 }
 
-export function markdownBody(text) {
-  let fence
-  let html
-  let comment = false
-  let paragraph = false
-  let bodyDepth = 0
-  const lists = []
-  const source = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n')
-  const body = source.split('\n').map(raw => {
-    const previousBase = lists.at(-1) ?? 0
-    let expanded = raw.replace(/^\t+/, tabs => '    '.repeat(tabs.length))
-    let prefix = quotes.exec(expanded)?.[0] ?? ''
-    if (lists.length && prefix.startsWith(' '.repeat(lists.at(-1)))) prefix = ''
-    const quoted = expanded.slice(prefix.length)
-    const rawIndent = /^ */.exec(quoted)[0].length
-    const currentBase = lists.filter(base => base <= rawIndent).at(-1) ?? 0
-    const current = quoted.slice(currentBase)
-    const semantic = current.replace(listItem, '').replace(quotes, '')
-    const depth = (prefix + (quotes.exec(current.replace(listItem, ''))?.[0] ?? '')).split('>').length - 1
-    if (fence && raw.trim() && (rawIndent < fence.indent || depth < fence.depth)) fence = undefined
-    if (fence) {
-      const marker = fenceMarker(semantic)
-      if (marker && marker[1][0] === fence.marker[0] && marker[1].length >= fence.marker.length && !marker[2].trim()) fence = undefined
-      return ''
-    }
-    if (html && raw.trim() && (rawIndent < html.indent || depth < html.depth)) html = undefined
-    if (html) {
-      if (new RegExp(`</${html.tag}\\s*>`, 'i').test(semantic)) html = undefined
-      return ''
-    }
-    if (!comment && /^ {4}/.test(current) && !paragraph) return ''
-    const opening = comment ? null : fenceMarker(semantic)
-    if (!opening) {
-      const blockComment = /^ {0,3}<!--/.test(semantic)
-      raw = raw.replace(/<!--|-->|./g, (token, offset) => {
-        if (comment) {
-          if (token === '-->') comment = false
-          return ' '.repeat(token.length)
-        }
-        if (token === '<!--' && blockComment && offset === raw.indexOf('<!--')) { comment = true; return ' '.repeat(token.length) }
-        return token
-      })
-      expanded = raw.replace(/^\t+/, tabs => '    '.repeat(tabs.length))
-    }
-    let quotePrefix = quotes.exec(expanded)?.[0] ?? ''
-    if (lists.length && quotePrefix.startsWith(' '.repeat(lists.at(-1)))) quotePrefix = ''
-    expanded = expanded.slice(quotePrefix.length)
-    const indent = /^ */.exec(expanded)[0].length
-    const lazy = paragraph && !!expanded.trim() && depth <= bodyDepth && !listItem.test(current) &&
-      !atxStart.test(semantic) && !setextUnderline.test(semantic) && !thematicBreak.test(semantic) &&
-      !opening && !/^ {0,3}<!--/.test(semantic)
-    if (expanded.trim() && !lazy) {
-      while (lists.length && indent < lists.at(-1)) lists.pop()
-    }
-    const base = lists.at(-1) ?? 0
-    const line = expanded.slice(Math.min(indent, base))
-    const item = listItem.exec(line)
-    if (item) lists.push(base + item[0].length)
-    if (opening) { fence = { marker: opening[1], indent: lists.at(-1) ?? 0, depth }; paragraph = false; return '' }
-    if (/^ {4}/.test(line) && !paragraph) return ''
-    let content = line
-    while (quotes.test(content) || listItem.test(content)) content = content.replace(quotes, '').replace(listItem, '')
-    if (depth || item || base) content = content.replace(/^ {0,3}/, '')
-    const boundary = item || !lazy && (depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0))
-    if (!lazy) bodyDepth = depth
-    const rawHTML = !comment && /^ {0,3}<(pre|script|style|textarea)(?=[\s>])/i.exec(content)
-    if (rawHTML) {
-      const tag = rawHTML[1].toLowerCase()
-      if (!new RegExp(`</${tag}\\s*>`, 'i').test(content)) html = { tag, indent: lists.at(-1) ?? 0, depth }
-      paragraph = false
-      return (boundary ? '\n' : '') + `<${tag}>\n`
-    }
-    paragraph = !!content.trim() && !atxStart.test(content) && !setextUnderline.test(content) && !thematicBreak.test(content)
-    return (boundary ? '\n' : '') + content
-  }).join('\n')
-  return markdownProse(body, false)
-}
-
-export function markdownHeadings(body) {
-  const headings = []
-  let paragraph = []
-  let offset = 0
-  for (const line of body.split('\n')) {
-    const start = offset
-    offset += line.length + 1
-    const atx = atxHeading.exec(line)
-    const isATX = atxStart.test(line)
-    const setext = setextUnderline.test(line)
-    if (!isATX && (!setext || !paragraph.length)) {
-      if (!line.trim() || referenceDefinition.test(line) || thematicBreak.test(line) || setext) paragraph = []
-      else paragraph.push({ text: line, start })
-      continue
-    }
-    headings.push({ text: isATX ? atx?.[1] ?? '' : paragraph.map(line => line.text).join('\n').trim(), start: isATX ? start : paragraph[0].start, end: offset })
-    paragraph = []
+export function* markdownBlocks(tokens) {
+  for (const token of tokens) {
+    if (token.type === 'blockquote') yield* markdownBlocks(token.tokens)
+    else if (token.type === 'list') {
+      for (const item of token.items) yield* markdownBlocks(item.tokens)
+    } else yield token
   }
-  return headings
+}
+
+function inlineText(tokens) {
+  return tokens.map(token => token.tokens ? inlineText(token.tokens) : token.type === 'html' ? '' : token.type === 'br' ? '\n' : token.text ?? '').join('')
 }
 
 export function markdownAnchors(text) {
   const anchors = new Set()
   const counts = new Map()
-  const body = markdownBody(text)
-  const definitions = markdownDefinitions(markdownProse(body))
-  for (const heading of markdownHeadings(body)) {
-    let title = ''
-    let start = 0
-    for (const link of markdownReferences(heading.text, definitions)) {
-      title += heading.text.slice(start, link.start) + link.label
-      start = link.end
-    }
-    title += heading.text.slice(start)
-    let previous
-    do {
-      previous = title
-      title = title.replace(/(?<![\p{L}\p{N}_])(_{1,3})(?=\S)(.+?\S|\S)\1(?![\p{L}\p{N}_])/gsu, '$2')
-    } while (title !== previous)
-    title = title.replace(/[ \t]*\n[ \t]*/g, '\n')
+  walkTokens(markdownTokens(text), token => {
+    if (token.type !== 'heading') return
+    const title = inlineText(token.tokens).replace(/[ \t]*\n[ \t]*/g, '\n')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
     let count = counts.get(slug) ?? 0
     let anchor = slug + (count ? `-${count}` : '')
     while (anchors.has(anchor)) anchor = `${slug}-${++count}`
     counts.set(slug, count + 1)
     anchors.add(anchor)
-  }
+  })
   return anchors
 }
 
-// Reference labels match regardless of case or repeated whitespace.
-const referenceLabel = value => value.trim().replace(/\s+/g, ' ').toLowerCase()
-// Keep destination parsing bounded to ordinary tokens without markup or titles.
-const linkDestination = value => /^[^\s()[\]<>\\`]+$/.test(value.trim()) && !/&[\w#]+;/.test(value) ? value.trim() : null
-
-function markdownBoundaries(body) {
-  const boundaries = markdownHeadings(body).flatMap(heading => [heading.start, heading.end])
-  let offset = 0
-  for (const line of body.split('\n')) {
-    if (!line.trim() || thematicBreak.test(line)) boundaries.push(offset, offset + line.length + 1)
-    offset += line.length + 1
-  }
-  return boundaries.sort((a, b) => a - b)
-}
-
-function markdownInlineDestination(body, start, end) {
-  if (body[start] !== '(') return null
-  let depth = 1
-  let quote
-  for (let index = start + 1; index < end; index++) {
-    const character = body[index]
-    if (character === '\\') { index++; continue }
-    if (quote) {
-      if (character === quote) quote = undefined
-      continue
-    }
-    if (character === '<') quote = '>'
-    else if ((character === '"' || character === "'") && /\s/.test(body[index - 1])) quote = character
-    else if (character === '(') depth++
-    else if (character === ')' && --depth === 0) return { destination: body.slice(start + 1, index), end: index + 1 }
-  }
-  return null
-}
-
-function markdownProse(body, maskInline = true) {
-  const boundaries = markdownBoundaries(body)
-  let prose = ''
-  let label = false
-  for (let index = 0; index < body.length;) {
-    const rest = body.slice(index)
-    const definition = (index === 0 || body[index - 1] === '\n') && /^ {0,3}\[[^\]\n]+\]:[^\n]*/.exec(rest)
-    if (definition) { prose += definition[0]; index += definition[0].length; continue }
-    if (label && body[index] === ']') {
-      const inline = markdownInlineDestination(body, index + 1, boundaries.find(boundary => boundary > index) ?? body.length)
-      const reference = /^\]\[[^\]\n]*\]/.exec(rest)
-      const end = inline?.end ?? (reference ? index + reference[0].length : null)
-      if (end !== null) { prose += body.slice(index, end); index = end; label = false; continue }
-    }
-    const escape = /^\\[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.exec(rest)
-    if (escape) { prose += maskInline ? '  ' : escape[0]; index += 2; continue }
-    const comment = rest.startsWith('<!--') && /^<!--[\s\S]*?-->/.exec(body.slice(index, boundaries.find(boundary => boundary > index) ?? body.length))
-    if (comment) { prose += comment[0].replace(/[^\n]/g, ' '); index += comment[0].length; continue }
-    const tag = /^<(?:[^<>"']|"[^"]*"|'[^']*')*>/.exec(rest)
-    if (tag) { prose += tag[0]; index += tag[0].length; continue }
-    const ticks = /^`+/.exec(rest)?.[0]
-    if (ticks) {
-      const paragraph = body.slice(index + ticks.length, boundaries.find(boundary => boundary > index) ?? body.length)
-      const closing = [...paragraph.matchAll(/`+/g)].find(match => match[0].length === ticks.length)
-      if (closing) {
-        const end = index + ticks.length + closing.index + ticks.length
-        const span = body.slice(index, end)
-        prose += maskInline ? span.replace(/[^\n]/g, ' ') : span
-        index = end
-        continue
-      }
-      prose += ticks
-      index += ticks.length
-      continue
-    }
-    if (body[index] === '[') label = true
-    else if (body[index] === ']' || body[index] === '\n') label = false
-    prose += body[index++]
-  }
-  return prose
-}
-
 export function markdownCoverageLimit(text) {
-  const body = markdownProse(markdownBody(text))
-  if (/^ {0,3}\[[^\]\n]*[`\\][^\]\n]*\]:/m.test(body)) return 'Code spans and escapes in reference labels require renderer review.'
-  if (/<[^>]+>|&[\w#]+;|\{#[^}]+\}/.test(body.replace(/<[A-Za-z][A-Za-z0-9+.-]{1,31}:[^<>\s]*>|<[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+>/g, ''))) return 'HTML, entities and custom anchors require renderer review.'
-  if (/\[[^\]\n]*\[/.test(body)) return 'Nested links require renderer review.'
-  for (const match of body.matchAll(/!?\[[^\]\n]*\]\(([^)\n]*)\)/g)) {
-    if (!linkDestination(match[1])) return 'Only ordinary destinations without titles are checked.'
-  }
-  for (const match of body.matchAll(/^ {0,3}\[[^\]\n]+\]:[ \t]*(.*)$/gm)) {
-    if (!linkDestination(match[1])) return 'Only ordinary reference destinations without titles are checked.'
-  }
-  return null
-}
-
-function markdownDefinitions(body) {
-  const definitions = new Map()
-  for (const match of body.matchAll(/^ {0,3}\[([^\]\n]+)\]:[ \t]*(.+)$/gm)) {
-    if (!/^(?:<(?:\\.|[^<>\\])*>|(?:\\[^\s]|[^\s<>\\])+)(?:[ \t]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^()\\])*\)))?[ \t]*$/.test(match[2])) continue
-    const wrapped = `(${match[2]})`
-    if (markdownInlineDestination(wrapped, 0, wrapped.length)?.end !== wrapped.length) continue
-    const path = linkDestination(match[2])
-    if (!/[`\\]/.test(match[1]) && !definitions.has(referenceLabel(match[1]))) definitions.set(referenceLabel(match[1]), path)
-  }
-  return definitions
-}
-
-function markdownReferences(body, definitions) {
-  body = body
-    .replace(/^ {0,3}<\/?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?=[\s/>])[^\n]*[\s\S]*?(?=\n[ \t]*\n|(?![\s\S]))/gim, value => value.replace(/[^\n]/g, ' '))
-  const headingEnds = new Set(markdownHeadings(body).map(heading => heading.end))
-  for (const match of body.matchAll(/^ {0,3}<\/?[A-Za-z][A-Za-z0-9-]*(?:\s+[A-Za-z_:][A-Za-z0-9_.:-]*(?:\s*=\s*(?:[^\s"'=<>`]+|'[^']*'|"[^"]*"))?)*\s*\/?>[ \t]*(?=\n|$)/gim)) {
-    const lines = body.slice(0, match.index).split('\n')
-    lines.pop()
-    while (referenceDefinition.test(lines.at(-1) ?? '')) lines.pop()
-    const preceding = lines.at(-1) ?? ''
-    if (preceding.trim() && !headingEnds.has(lines.join('\n').length + 1) && !thematicBreak.test(preceding)) continue
-    const blank = body.slice(match.index).search(/\n[ \t]*\n/)
-    const end = blank < 0 ? body.length : match.index + blank
-    body = body.slice(0, match.index) + body.slice(match.index, end).replace(/[^\n]/g, ' ') + body.slice(end)
-  }
-  definitions ??= markdownDefinitions(markdownProse(body))
-  const links = []
-  const prose = markdownProse(body)
-    .replace(/<(?:[^<>"']|"[^"]*"|'[^']*')*>/g, value => value.replace(/[^\n]/g, ' '))
-    .replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, value => ' '.repeat(value.length))
-  let consumed = 0
-  const brackets = []
-  const nested = []
-  const boundaries = markdownBoundaries(prose)
-  const blockStarts = new Set(boundaries)
-  for (let index = 0; index < prose.length; index++) {
-    if (blockStarts.has(index)) brackets.length = 0
-    if (prose[index] === '[') brackets.push(index)
-    if (prose[index] === ']' && brackets.length) {
-      const start = brackets.pop()
-      if (prose.slice(start + 1, index).includes('[')) {
-        const inline = markdownInlineDestination(prose, index + 1, boundaries.find(boundary => boundary > index) ?? prose.length)
-        const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(index + 1))
-        const label = reference?.[1] || prose.slice(start + 1, index)
-        if (inline || definitions.has(referenceLabel(label))) {
-          nested.push({ start, end: inline?.end ?? index + 1 + (reference?.[0].length ?? 0) })
-        }
-      }
-    }
-  }
-  for (const match of prose.matchAll(/!?\[([^\]\n]*)\]/g)) {
-    if (match.index < consumed || nested.some(span => span.start <= match.index && match.index < span.end)) continue
-    const start = match.index + match[0].length
-    const inline = markdownInlineDestination(prose, start, boundaries.find(boundary => boundary > start) ?? prose.length)
-    const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start))
-    const end = inline?.end ?? start + (reference?.[0].length ?? 0)
-    const label = reference?.[1] || body.slice(match.index + (match[0].startsWith('!') ? 2 : 1), start - 1)
-    const path = inline ? linkDestination(inline.destination) : definitions.get(referenceLabel(label))
-    if (inline || definitions.has(referenceLabel(label))) consumed = end
-    if (path) {
-      links.push({ href: path, label: match[1], start: match.index, end })
-    }
-  }
-  return links
+  let limited = false
+  walkTokens(markdownTokens(text), token => {
+    if (token.type === 'html' && !token.text.startsWith('<!--')) limited = true
+    const value = ['link', 'image', 'def'].includes(token.type) ? token.href : ['text', 'escape'].includes(token.type) && !token.tokens ? token.text : ''
+    if (/&[\w#]+;|\{#[^}]+\}/.test(value)) limited = true
+  })
+  return limited ? 'HTML, entities and custom anchors require renderer review.' : null
 }
 
 export function markdownLinks(text) {
-  return markdownReferences(markdownBody(text)).map(link => link.href)
+  const links = []
+  walkTokens(markdownTokens(text), token => {
+    if (['link', 'image'].includes(token.type) && !/&[\w#]+;/.test(token.href)) links.push(token.href)
+  })
+  return links
 }
 
 export function isMarkdownLinkLine(text) {
@@ -357,7 +100,7 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
           throw error
         }
       }
-      if (markdownCoverageLimit(text) || markdownHeadings(markdownBody(text)).some(heading => /[`\\]/.test(heading.text))) return unsupported()
+      if (markdownCoverageLimit(text)) return unsupported()
       if (!markdownAnchors(text).has(fragment)) {
         if (text.includes('\0')) return unsupported()
         return problem('Missing heading fragment')

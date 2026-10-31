@@ -320,7 +320,7 @@ for (const [link, exit] of [
 }
 
 for (const text of [
-  '[Guide](_missing_.md)\n', '![Guide](*missing*.md)\n', '[Guide][target]\n[target]: _missing_.md\n',
+  '[Guide](_missing_.md)\n', '![Guide](*missing*.md)\n', '[Guide][target]\n\n[target]: _missing_.md\n',
   String.raw`[A \] B](missing.md)` + '\n',
   'A literal `\n\n[Guide](missing.md)\n\nUse `value`.\n'
 ]) {
@@ -352,7 +352,7 @@ for (const text of [
   '## [![Logo](logo.svg)](guide.md)\n'
 ]) {
   for (const path of ['README.md', 'CONTRIBUTING.md']) {
-    test('move-rule reports coverage without writes for unusual staged ' + path + ': ' + text, async t => {
+    test('move-rule rejects parsed broken staged links without writes in ' + path + ': ' + text, async t => {
       const rule = '## One source\n\n' + (path === 'CONTRIBUTING.md' ? text : 'Move this rule.\n')
       const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
       const source = context.plan.edits[0]
@@ -365,15 +365,12 @@ for (const text of [
       await save(context)
       const before = await snapshot(context.repo)
       const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
-      assert.equal(preview.exit, 2, JSON.stringify(preview))
-      assert.equal(preview.status, 'blocked')
-      assert.deepEqual(preview.problems, [])
-      assert.ok(preview.data.coverageLimits.some(limit => limit.path === path))
+      assert.equal(preview.exit, 1, JSON.stringify(preview))
+      assert.ok(preview.problems.every(problem => problem.code === 'broken-local-link' && problem.path === path))
       assert.deepEqual(await snapshot(context.repo), before)
       const result = execute(context)
-      assert.equal(result.exit, 2, JSON.stringify(result))
-      assert.deepEqual(result.problems, [])
-      assert.ok(result.data.coverageLimits.some(limit => limit.path === path))
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.ok(result.problems.every(problem => problem.code === 'broken-local-link' && problem.path === path))
       assert.deepEqual(await snapshot(context.repo), before)
     })
   }
@@ -535,7 +532,7 @@ for (const rule of [
 }
 
 for (const heading of ['## [![Logo](logo.svg)](guide.md)', '[![Logo](logo.svg)](guide.md)\n---']) {
-  test(`move-rule reports staged heading coverage without writes: ${heading}`, async t => {
+  test(`move-rule resolves staged image heading fragments: ${heading}`, async t => {
     const context = await ruleMove(t, null, 'CONTRIBUTING.md', heading + '\n')
     await writeFile(join(context.repo, 'logo.svg'), '<svg/>\n')
     await writeFile(join(context.repo, 'guide.md'), '# Guide\n')
@@ -544,12 +541,10 @@ for (const heading of ['## [![Logo](logo.svg)](guide.md)', '[![Logo](logo.svg)](
     context.plan.edits[0].proposedContent = '# Design\n' + link
     context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
     await save(context)
-    const before = await snapshot(context.repo)
     const result = execute(context)
-    assert.equal(result.exit, 2, JSON.stringify(result))
+    assert.equal(result.exit, 0, JSON.stringify(result))
     assert.deepEqual(result.problems, [])
-    assert.ok(result.data.coverageLimits.length)
-    assert.deepEqual(await snapshot(context.repo), before)
+    assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
   })
 }
 

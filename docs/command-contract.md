@@ -344,18 +344,20 @@ node skills/maintenance/scripts/maintenance.mjs docs check --repo <target> [--co
 The command loads the project contract and verifies every registered document, rule and acceptance source path without executing checks or generators or writing files.
 For UTF-8 `.md` and `.markdown` sources it checks local inline links, images and defined reference links, including collapsed and shortcut references.
 Relative destinations resolve from the source document, may traverse parents inside the selected target, must use exact path case and cannot escape through symlinks.
-Ordinary destinations contain no whitespace, backslashes, parentheses, brackets, angle brackets or backticks; paths can use percent encoding.
-Optional titles and other destination spellings are coverage limits.
+Markdown links and reference definitions are extracted from the token tree produced by the exactly pinned `marked` parser, with GFM tables enabled.
+Standard destinations, optional titles, escaped punctuation, nested image links, full, collapsed and shortcut references are supported; paths can use percent encoding.
 Heading fragments use lowercase ATX or setext heading slugs, with punctuation removed, whitespace changed to hyphens and repeated headings suffixed `-1`, `-2` and so on.
 External URLs are not fetched.
 Code fences, indented code and HTML comments do not contribute links or glossary entries.
 Inline code spans and backslash-escaped ASCII punctuation do not contribute link syntax; ordinary links elsewhere in the same document, including links with code in their rendered labels, remain checked.
 Code spans may continue across lines within a paragraph, including lazy blockquote and list continuations, but do not extend across block boundaries.
 Emphasis, strong emphasis, headings, lists, tables and URI or email autolinks do not prevent ordinary local links from being checked.
-Code spans or escapes in reference-definition labels, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
+Raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
+Entity-containing destinations are left unchecked rather than treated as literal filesystem paths.
 Unsupported links and HTML spans are left for renderer review while ordinary links elsewhere in the document remain checked; registered paths are still verified.
 Coverage limits remain visible in the result and do not imply that unchecked references passed.
-A fragment target containing such unsupported markup, or code spans or backslashes in its headings, also reports a coverage limit rather than a missing heading.
+A fragment target containing such unsupported markup also reports a coverage limit rather than a missing heading.
+Heading text comes from inline tokens, so emphasis, code spans, escapes and link labels contribute their rendered text to the slug.
 Fragments in non-Markdown targets are not validated.
 Unsupported document encodings and formats produce `data.coverageLimits`, also visible in plain output, rather than a readiness failure or a forced rewrite.
 Broken supported local references fail with `broken-local-link`.

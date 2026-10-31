@@ -31,7 +31,32 @@ for (const text of [
   })
 }
 
-for (const markup of ['[![Logo](unchecked.svg)](unchecked.md)', '<a href="unchecked.md">Guide</a>', '[Fancy](unchecked.md "Title")']) {
+test('synthetic soci README negative probe catches a deliberately broken link', async t => {
+  const f = await maintenanceRepo(t)
+  const readme = '# soci\n\nA **social workspace** with _shared projects_.\n\nUse `soci start` and read the [guide](guide.md).\n'
+  await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+  await writeFile(join(f.repo, 'README.md'), readme)
+  const clean = run('docs check', f.repo)
+  assert.equal(clean.exit, 0, JSON.stringify(clean))
+  assert.deepEqual(clean.data.coverageLimits, [])
+  await writeFile(join(f.repo, 'README.md'), readme + '\n[Negative probe](deliberately-missing.md)\n')
+  const broken = run('docs check', f.repo)
+  assert.equal(broken.exit, 1, JSON.stringify(broken))
+  assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: deliberately-missing.md'])
+  assert.deepEqual(broken.data.coverageLimits, [])
+})
+
+test('apostrophes in URI autolinks cannot expose local example links', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), "<https://example.invalid/it's/[Example](missing.md)>\n\n# Guide\n[Guide](#guide)\n")
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.problems, [])
+  assert.deepEqual(result.data.coverageLimits, [])
+  assert.equal(result.data.documents[0].links, 2)
+})
+
+for (const markup of ['<a href="unchecked.md">Guide</a>']) {
   test('ambiguous spans leave unrelated README links checked: ' + markup, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), markup + '\n\n**Read** [Guide](guide.md).\n')
@@ -167,7 +192,7 @@ for (const text of [
   })
 }
 
-for (const tag of ['pre', 'script', 'style', 'textarea']) {
+for (const tag of ['pre', 'script', 'style', 'textarea', 'div', 'custom-example']) {
   for (const prefix of ['', '> ', '- ']) {
     test('raw HTML keeps fences and closing-line links literal: ' + prefix + tag, async t => {
       const f = await maintenanceRepo(t)
@@ -186,52 +211,54 @@ for (const tag of ['pre', 'script', 'style', 'textarea']) {
 for (const span of [
   '[Example](unchecked.md "[Title](missing-example.md)")',
   '![Example](unchecked.md \'[Title](missing-example.md)\')',
-  '[Example](unchecked.md ([Title](missing-example.md)))',
+  '[Example](unchecked.md (Example title))',
   'Text <span title="> [Example](missing-example.md)">label</span>',
   'Text <span title="` > [Example](missing-example.md)">label</span> `literal`',
   "Text <span title='> [Example](missing-example.md)'>label</span>"
 ]) {
-  test('unsupported spans cannot expose example links: ' + span, async t => {
+  test('parsed titles and HTML cannot expose example links: ' + span, async t => {
     const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'unchecked.md'), '# Example\n')
     await writeFile(join(f.repo, 'README.md'), span + '\n\n[Guide](guide.md)\n')
     const broken = run('docs check', f.repo)
     assert.equal(broken.exit, 1, JSON.stringify(broken))
     assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
-    assert.equal(broken.data.coverageLimits[0].path, 'README.md')
     await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
     assert.equal(run('docs check', f.repo).exit, 0)
   })
 }
 
 for (const reference of ['[Example][guide]', '[Guide][]', '[Guide]', '![Example][guide]', '![Guide][]', '![Guide]']) {
-  test('unsupported first definitions retain precedence: ' + reference, async t => {
+  test('titled first definitions retain precedence: ' + reference, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), '[Guide]: README.md "Title"\n[GUIDE]: missing-example.md\n\n' + reference + '\n\n[Ordinary](guide.md)\n')
     const broken = run('docs check', f.repo)
     assert.equal(broken.exit, 1, JSON.stringify(broken))
     assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
-    assert.match(broken.data.coverageLimits[0].reason, /reference destinations/)
+    assert.deepEqual(broken.data.coverageLimits, [])
     await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
     assert.equal(run('docs check', f.repo).exit, 0)
   })
 }
 
-for (const text of [
-  '[optional][Guide](missing.md)',
-  '![optional][Guide](missing.md)',
-  '[optional]![Guide](missing.md)',
-  '[optional [Guide](missing.md)][undefined]',
-  '[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n[Guide]',
-  '[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n![Guide][]',
-  '[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n[Label][Guide]',
-  '[Guide]: unbalanced(\n\n[Guide]: missing.md\n\n[Guide]'
+for (const [text, references] of [
+  ['[optional][Guide](missing.md)', 1],
+  ['[optional](see [Guide](missing.md))', 1],
+  ['[Note]: see [Guide](missing.md)', 1],
+  ['![optional][Guide](missing.md)', 1],
+  ['[optional]![Guide](missing.md)', 1],
+  ['[optional [Guide](missing.md)][undefined]', 1],
+  ['[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n[Guide]', 2],
+  ['[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n![Guide][]', 2],
+  ['[Guide]: guide.md unexpected\n\n[Guide]: missing.md\n\n[Label][Guide]', 2],
+  ['[Guide]: unbalanced(\n\n[Guide]: missing.md\n\n[Guide]', 2]
 ]) {
   test('unresolved references and invalid definitions cannot hide links: ' + text, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), text + '\n')
     const broken = run('docs check', f.repo)
     assert.equal(broken.exit, 1, JSON.stringify(broken))
-    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: missing.md'])
+    assert.deepEqual(broken.problems.map(problem => problem.message), Array(references).fill('Missing or wrong-case destination: missing.md'))
     await writeFile(join(f.repo, 'missing.md'), '# Guide\n')
     assert.equal(run('docs check', f.repo).exit, 0)
   })
@@ -359,42 +386,39 @@ test('glossary samples inside code do not create duplicate entries', async t => 
 })
 
 
-for (const text of [
-  '[`a]: README.md\n[b`]: missing.md\n\n[First][`a] [Second][b`]',
-  '[`a`]: https://example.invalid\n[`b`]: missing.md\n[Guide][`b`]',
-  '# [![Logo](logo.svg)](guide.md)',
-  '[Guide](guide.md "Title")',
-  '[Guide](guide.md unexpected)',
-  '[Guide](<guide.md>)',
-  '[Guide](guide(new).md)',
-  '<a href="missing.md">Guide</a>',
-  '# Title &amp; details'
+for (const [text, filename] of [
+  ['[`a]: README.md\n[b`]: guide.md\n\n[First][`a] [Second][b`]', 'guide.md'],
+  ['[`a`]: https://example.invalid\n[`b`]: guide.md\n[Guide][`b`]', 'guide.md'],
+  ['# [![Logo](guide.md)](guide.md)', 'guide.md'],
+  ['[Guide](guide.md "Title")', 'guide.md'],
+  ['[Guide](<guide.md>)', 'guide.md'],
+  ['[Guide](guide(new).md)', 'guide(new).md']
 ]) {
-  test('unusual Markdown reports source coverage without a missing-reference verdict: ' + text, async t => {
+  test('standard Markdown destinations remain checked: ' + text, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), text + '\n')
-    const before = await snapshot(f.repo)
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.ok(broken.problems.every(problem => problem.message === 'Missing or wrong-case destination: ' + filename))
+    assert.deepEqual(broken.data.coverageLimits, [])
+    await writeFile(join(f.repo, filename), '# Guide\n')
     const result = run('docs check', f.repo)
     assert.equal(result.exit, 0, JSON.stringify(result))
     assert.deepEqual(result.problems, [])
-    assert.equal(result.data.coverageLimits[0].path, 'README.md')
-    assert.equal(result.data.documents[0].links, 0)
-    assert.deepEqual(await snapshot(f.repo), before)
+    assert.deepEqual(result.data.coverageLimits, [])
   })
 }
 
-for (const heading of ['# `Rule`', '# ` Array<T> `', '# [![Logo](logo.svg)](guide.md)']) {
-  for (const fragment of ['rule', 'absent']) {
-    test('unusual fragment targets report coverage: ' + heading + ' #' + fragment, async t => {
-      const f = await maintenanceRepo(t)
-      await writeFile(join(f.repo, 'README.md'), '[Heading](other.md#' + fragment + ')\n')
-      await writeFile(join(f.repo, 'other.md'), heading + '\n')
-      const result = run('docs check', f.repo)
-      assert.equal(result.exit, 0, JSON.stringify(result))
-      assert.deepEqual(result.problems, [])
-      assert.equal(result.data.coverageLimits[0].path, 'README.md')
-    })
-  }
+for (const [heading, fragment] of [['# `Rule`', 'rule'], ['# ` Array<T> `', 'arrayt'], ['# [![Logo](logo.svg)](guide.md)', 'logo'], ['A  \nB\n===', 'a-b'], ['# Escaped \\*Rule\\*', 'escaped-rule']]) {
+  test('inline heading tokens determine fragments: ' + heading, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), '[Heading](other.md#' + fragment + ')\n[Missing](other.md#absent)\n')
+    await writeFile(join(f.repo, 'other.md'), heading + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.message), ['Missing heading fragment: other.md#absent'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
 }
 
 for (const [format, text] of [
@@ -481,7 +505,7 @@ test('ordinary linked headings and percent-encoded paths remain supported', asyn
 })
 
 for (const filename of ['_guide_.md', '*guide*.md']) {
-  for (const text of [`[Guide](${filename})\n`, `![Guide](${filename})\n`, `[Guide][target]\n[target]: ${filename}\n`]) {
+  for (const text of [`[Guide](${filename})\n`, `![Guide](${filename})\n`, `[Guide][target]\n\n[target]: ${filename}\n`]) {
     for (const exists of [false, true]) {
       test(`ordinary destination bytes retain path validation with exists=${exists}: ${text}`, async t => {
         const f = await maintenanceRepo(t)
@@ -548,19 +572,19 @@ for (const boundary of ['# Heading', '#', 'Heading\n===', '---', '- Item', '> Qu
   })
 }
 
-for (const text of [
-  '[Guide](missing`name.md)\n[Other](missing.md)\nUse `value`.\n',
-  '![Guide](missing`name.png)\n[Other](missing.md)\nUse `value`.\n',
-  '[Guide](missing\\`name.md)\n[Other](missing.md)\nUse `value`.\n',
-  '[Guide][target]\n[target]: missing`name.md\n[Other](missing.md)\nUse `value`.\n'
+for (const [text, filename] of [
+  ['[Guide](missing`name.md)\n[Other](missing.md)\nUse `value`.\n', 'missing`name.md'],
+  ['![Guide](missing`name.png)\n[Other](missing.md)\nUse `value`.\n', 'missing`name.png'],
+  ['[Guide](missing\\`name.md)\n[Other](missing.md)\nUse `value`.\n', 'missing`name.md'],
+  ['[Guide][target]\n\n[target]: missing`name.md\n\n[Other](missing.md)\nUse `value`.\n', 'missing`name.md']
 ]) {
-  test('unsupported destination bytes retain explicit coverage limits: ' + text, async t => {
+  test('parsed destination bytes retain local checks: ' + text, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), text)
     const result = run('docs check', f.repo)
     assert.equal(result.exit, 1, JSON.stringify(result))
-    assert.deepEqual(result.problems.map(problem => problem.message), ['Missing or wrong-case destination: missing.md'])
-    assert.match(result.data.coverageLimits.find(limit => limit.path === 'README.md').reason, /Only ordinary.*destinations without titles/)
+    assert.deepEqual(result.problems.map(problem => problem.message), ['Missing or wrong-case destination: ' + filename, 'Missing or wrong-case destination: missing.md'])
+    assert.deepEqual(result.data.coverageLimits, [])
   })
 }
 
@@ -576,7 +600,7 @@ for (const label of ['[Guide `example`]', '[Guide `example`][]', '![Guide `examp
   })
 }
 
-for (const link of ['[Guide `example`](missing.md)', '![Guide `example`](missing.png)', '[Guide `example`][target]\n[target]: missing.md']) {
+for (const link of ['[Guide `example`](missing.md)', '![Guide `example`](missing.png)', '[Guide `example`][target]\n\n[target]: missing.md']) {
   test('code in rendered labels preserves real destinations: ' + link, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), link + '\n')
@@ -701,8 +725,8 @@ for (const [prefix, continuation] of [
   })
 }
 
-for (const prefix of ['> ', '- ']) {
-  for (const boundary of ['# Heading', '===', '***', '', '- Next', '> > Next', '```md\nignored\n```', '<!-- block -->']) {
+for (const [prefix, setext] of [['> ', '> ==='], ['- ', '===']]) {
+  for (const boundary of ['# Heading', setext, '***', '', '- Next', '> > Next', '```md\nignored\n```', '<!-- block -->']) {
     test('block interruptions end container code spans: ' + JSON.stringify([prefix, boundary]), async t => {
       const f = await maintenanceRepo(t)
       await writeFile(join(f.repo, 'README.md'), prefix + 'Use `example\n' + boundary + '\n[Guide](missing.md)\nend`\n')
