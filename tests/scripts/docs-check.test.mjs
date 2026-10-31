@@ -46,7 +46,7 @@ for (const markup of ['[![Logo](unchecked.svg)](unchecked.md)', '<a href="unchec
   })
 }
 
-for (const [heading, fragment] of [['*Rule*', 'rule'], ['**Rule**', 'rule'], ['_Rule_', 'rule'], ['__Rule__', 'rule'], ['snake_case', 'snake_case']]) {
+for (const [heading, fragment] of [['*Rule*', 'rule'], ['**Rule**', 'rule'], ['_Rule_', 'rule'], ['__Rule__', 'rule'], ['__A _B_ C__', 'a-b-c'], ['_A __B__ C_', 'a-b-c'], ['__A _snake_case_ C__', 'a-snake_case-c'], ['snake_case', 'snake_case']]) {
   test('emphasized headings retain local fragment checks: ' + heading, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), '[Guide](guide.md#' + fragment + ')\n[Missing](guide.md#absent)\n')
@@ -55,6 +55,38 @@ for (const [heading, fragment] of [['*Rule*', 'rule'], ['**Rule**', 'rule'], ['_
     assert.equal(result.exit, 1, JSON.stringify(result))
     assert.deepEqual(result.problems.map(problem => problem.message), ['Missing heading fragment: guide.md#absent'])
     assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+test('nested emphasis rejects the unrendered fragment', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '[Invalid](guide.md#a-_b_-c)\n')
+  await writeFile(join(f.repo, 'guide.md'), '# __A _B_ C__\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.deepEqual(result.problems.map(problem => problem.message), ['Missing heading fragment: guide.md#a-_b_-c'])
+})
+
+for (const html of [
+  '<pre>\n\n[Example](missing-example.md)\n\n</pre>',
+  '<script>\n[Example](missing-example.md)\n</script>',
+  '<style>\n[Example](missing-example.md)\n</style>',
+  '<textarea>\n[Example](missing-example.md)\n</textarea>',
+  '<div>Example\n[Example](missing-example.md)\n</div>',
+  '<custom-example>\n[Example](missing-example.md)\n</custom-example>',
+  '<pre>\n[example]: missing-example.md\n</pre>\n\n[example]'
+]) {
+  test('HTML blocks exclude examples while retaining ordinary links: ' + html, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), html + '\n\n[Guide](guide.md)\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.equal(broken.data.coverageLimits[0].path, 'README.md')
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const repaired = run('docs check', f.repo)
+    assert.equal(repaired.exit, 0, JSON.stringify(repaired))
+    assert.equal(repaired.data.coverageLimits[0].path, 'README.md')
   })
 }
 

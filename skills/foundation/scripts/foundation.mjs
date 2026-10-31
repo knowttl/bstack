@@ -1022,7 +1022,12 @@ function markdownAnchors(text) {
       start = link.end;
     }
     title += heading.text.slice(start);
-    title = title.replace(/(?<![\p{L}\p{N}_])(_{1,3})(?=\S)(.+?\S|\S)\1(?![\p{L}\p{N}_])/gu, "$2").replace(/[ \t]*\n[ \t]*/g, "\n");
+    let previous;
+    do {
+      previous = title;
+      title = title.replace(/(?<![\p{L}\p{N}_])(_{1,3})(?=\S)(.+?\S|\S)\1(?![\p{L}\p{N}_])/gu, "$2");
+    } while (title !== previous);
+    title = title.replace(/[ \t]*\n[ \t]*/g, "\n");
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, "").replace(/\s/g, "-");
     let count = counts.get(slug) ?? 0;
     let anchor = slug + (count ? `-${count}` : "");
@@ -1113,7 +1118,9 @@ function markdownDefinitions(body) {
   }
   return definitions;
 }
-function markdownReferences(body, definitions = markdownDefinitions(markdownProse(body))) {
+function markdownReferences(body, definitions) {
+  body = body.replace(/^ {0,3}<(pre|script|style|textarea)(?=[\s>])[\s\S]*?(?:<\/\1\s*>|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " ")).replace(/^ {0,3}(?:<\/?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?=[\s/>])[^\n]*|<\/?[A-Za-z][A-Za-z0-9-]*(?:\s+[A-Za-z_:][A-Za-z0-9_.:-]*(?:\s*=\s*(?:[^\s"'=<>`]+|'[^']*'|"[^"]*"))?)*\s*\/?>[ \t]*(?=\n|$))[\s\S]*?(?=\n[ \t]*\n|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " "));
+  definitions ??= markdownDefinitions(markdownProse(body));
   const links = [];
   const prose = markdownProse(body).replace(/<[^>\n]*>/g, (value) => " ".repeat(value.length)).replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
   let consumed = 0;
