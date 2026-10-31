@@ -531,6 +531,14 @@ for (const rule of [
   })
 }
 
+test('move-rule checks image destinations without checking alt references', async t => {
+  const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n![See [Guide](missing.md)](logo.png)\n')
+  await writeFile(join(context.repo, 'logo.png'), 'image')
+  const result = execute(context)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+})
+
 for (const heading of ['## [![Logo](logo.svg)](guide.md)', '[![Logo](logo.svg)](guide.md)\n---']) {
   test(`move-rule resolves staged image heading fragments: ${heading}`, async t => {
     const context = await ruleMove(t, null, 'CONTRIBUTING.md', heading + '\n')

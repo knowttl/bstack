@@ -2448,6 +2448,16 @@ function markdownTokens(text) {
 function inlineText(tokens) {
   return tokens.map((token) => token.tokens ? inlineText(token.tokens) : token.type === "html" ? "" : token.type === "br" ? "\n" : token.text ?? "").join("");
 }
+function* referenceTokens(tokens) {
+  for (const token of tokens) {
+    yield token;
+    if (token.type === "image") continue;
+    if (token.type === "table") {
+      for (const cell of [...token.header, ...token.rows.flat()]) yield* referenceTokens(cell.tokens);
+    } else if (token.type === "list") yield* referenceTokens(token.items);
+    else if (token.tokens) yield* referenceTokens(token.tokens);
+  }
+}
 function markdownAnchors(text) {
   const anchors = /* @__PURE__ */ new Set();
   const counts = /* @__PURE__ */ new Map();
@@ -2465,18 +2475,18 @@ function markdownAnchors(text) {
 }
 function markdownCoverageLimit(text) {
   let limited = false;
-  mn(markdownTokens(text), (token) => {
+  for (const token of referenceTokens(markdownTokens(text))) {
     if (token.type === "html" && !token.text.startsWith("<!--")) limited = true;
     const value = ["link", "image", "def"].includes(token.type) ? token.href : ["text", "escape"].includes(token.type) && !token.tokens ? token.text : "";
     if (/&[\w#]+;|\{#[^}]+\}/.test(value)) limited = true;
-  });
+  }
   return limited ? "HTML, entities and custom anchors require renderer review." : null;
 }
 function markdownLinks(text) {
   const links = [];
-  mn(markdownTokens(text), (token) => {
+  for (const token of referenceTokens(markdownTokens(text))) {
     if (["link", "image"].includes(token.type) && !/&[\w#]+;/.test(token.href)) links.push(token.href);
-  });
+  }
   return links;
 }
 function isMarkdownLinkLine(text) {

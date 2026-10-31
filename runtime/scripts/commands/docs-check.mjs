@@ -5,15 +5,31 @@ import { resolveFilePath } from '../lib/paths.mjs'
 import { markdownTokens, markdownBlocks, markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
 import { loadContract } from './contract.mjs'
 
+function glossaryInline(tokens) {
+  return tokens.map(token => {
+    if (token.type === 'html' && token.text.startsWith('<!--')) return ''
+    if (!token.tokens || token.type === 'image') return token.raw
+    const content = glossaryInline(token.tokens)
+    return content ? token.raw.replace(token.tokens.map(child => child.raw).join(''), () => content) : ''
+  }).join('')
+}
+
 function glossaryEntries(text, format) {
   const blocks = [...markdownBlocks(markdownTokens(text))].filter(token => !['code', 'html', 'def'].includes(token.type))
-  const body = blocks.map(token => token.raw).join('\n')
+  const content = blocks.map(token => {
+    if (token.tokens) return glossaryInline([token])
+    if (token.type !== 'table') return token.raw
+    const rows = [token.header, ...token.rows].map(row => `|${row.map(cell => glossaryInline(cell.tokens)).join('|')}|`)
+    rows.splice(1, 0, `|${token.header.map(() => '---').join('|')}|`)
+    return rows.join('\n')
+  })
+  const body = content.join('\n')
   if (/[`\\]/.test(body)) return null
   if (format === 'markdown-bold') {
     const sections = [[]]
-    for (const token of blocks) {
+    for (const [index, token] of blocks.entries()) {
       if (token.type === 'heading') sections.push([])
-      else sections.at(-1).push(token.raw)
+      else sections.at(-1).push(content[index])
     }
     return sections.flatMap(section => {
       const body = section.join('\n')
@@ -23,6 +39,11 @@ function glossaryEntries(text, format) {
     })
   }
   if (format === 'markdown-table') {
+    for (const token of blocks.filter(token => token.type === 'table')) {
+      if (token.header.length !== 2 || glossaryInline(token.header[0].tokens).trim().toLowerCase() !== 'term' ||
+          glossaryInline(token.header[1].tokens).trim().toLowerCase() !== 'definition') continue
+      if (token.raw.trimEnd().split('\n').slice(2).some(line => !/^\|([^|]*)\|([^|]*)\|[ \t]*$/.test(line))) return null
+    }
     const lines = body.split('\n')
     const entries = []
     for (let i = 0; i < lines.length - 1; i++) {

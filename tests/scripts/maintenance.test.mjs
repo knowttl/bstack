@@ -336,6 +336,8 @@ test('sweep fails on a broken link while retaining unchecked scope as data', asy
 
 for (const [text, references] of [
   ['[optional][Guide](guide.md)', 1],
+  ['![See [Example](missing-example.md)](logo.png)\n\n[Guide](guide.md)', 1],
+  ['![See ![Example](missing-example.png)](logo.png)\n\n[Guide](guide.md)', 1],
   ['[optional](see [Guide](guide.md))', 1],
   ['[Note]: see [Guide](guide.md)', 1],
   ['<div>\n```\n</div>\n\n[Guide](guide.md)', 1],
@@ -352,6 +354,7 @@ for (const [text, references] of [
     await mkdir(join(f.repo, '.bstack'))
     await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(contract))
     await writeFile(join(f.repo, 'README.md'), '# Guide\n')
+    await writeFile(join(f.repo, 'logo.png'), 'image')
     await writeFile(join(f.repo, 'AGENTS.md'), text + '\n')
     const broken = maintenance(f.directory, ['sweep', '--repo', f.repo])
     assert.equal(broken.exit, 1, JSON.stringify(broken))

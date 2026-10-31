@@ -2370,6 +2370,16 @@ function* markdownBlocks(tokens) {
 function inlineText(tokens) {
   return tokens.map((token) => token.tokens ? inlineText(token.tokens) : token.type === "html" ? "" : token.type === "br" ? "\n" : token.text ?? "").join("");
 }
+function* referenceTokens(tokens) {
+  for (const token of tokens) {
+    yield token;
+    if (token.type === "image") continue;
+    if (token.type === "table") {
+      for (const cell of [...token.header, ...token.rows.flat()]) yield* referenceTokens(cell.tokens);
+    } else if (token.type === "list") yield* referenceTokens(token.items);
+    else if (token.tokens) yield* referenceTokens(token.tokens);
+  }
+}
 function markdownAnchors(text) {
   const anchors = /* @__PURE__ */ new Set();
   const counts = /* @__PURE__ */ new Map();
@@ -2387,18 +2397,18 @@ function markdownAnchors(text) {
 }
 function markdownCoverageLimit(text) {
   let limited = false;
-  mn(markdownTokens(text), (token) => {
+  for (const token of referenceTokens(markdownTokens(text))) {
     if (token.type === "html" && !token.text.startsWith("<!--")) limited = true;
     const value = ["link", "image", "def"].includes(token.type) ? token.href : ["text", "escape"].includes(token.type) && !token.tokens ? token.text : "";
     if (/&[\w#]+;|\{#[^}]+\}/.test(value)) limited = true;
-  });
+  }
   return limited ? "HTML, entities and custom anchors require renderer review." : null;
 }
 function markdownLinks(text) {
   const links = [];
-  mn(markdownTokens(text), (token) => {
+  for (const token of referenceTokens(markdownTokens(text))) {
     if (["link", "image"].includes(token.type) && !/&[\w#]+;/.test(token.href)) links.push(token.href);
-  });
+  }
   return links;
 }
 async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ new Map()) {
@@ -2466,15 +2476,30 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
 }
 
 // runtime/scripts/commands/docs-check.mjs
+function glossaryInline(tokens) {
+  return tokens.map((token) => {
+    if (token.type === "html" && token.text.startsWith("<!--")) return "";
+    if (!token.tokens || token.type === "image") return token.raw;
+    const content = glossaryInline(token.tokens);
+    return content ? token.raw.replace(token.tokens.map((child) => child.raw).join(""), () => content) : "";
+  }).join("");
+}
 function glossaryEntries(text, format) {
   const blocks = [...markdownBlocks(markdownTokens(text))].filter((token) => !["code", "html", "def"].includes(token.type));
-  const body = blocks.map((token) => token.raw).join("\n");
+  const content = blocks.map((token) => {
+    if (token.tokens) return glossaryInline([token]);
+    if (token.type !== "table") return token.raw;
+    const rows = [token.header, ...token.rows].map((row) => `|${row.map((cell) => glossaryInline(cell.tokens)).join("|")}|`);
+    rows.splice(1, 0, `|${token.header.map(() => "---").join("|")}|`);
+    return rows.join("\n");
+  });
+  const body = content.join("\n");
   if (/[`\\]/.test(body)) return null;
   if (format === "markdown-bold") {
     const sections2 = [[]];
-    for (const token of blocks) {
+    for (const [index, token] of blocks.entries()) {
       if (token.type === "heading") sections2.push([]);
-      else sections2.at(-1).push(token.raw);
+      else sections2.at(-1).push(content[index]);
     }
     return sections2.flatMap((section) => {
       const body2 = section.join("\n");
@@ -2486,6 +2511,10 @@ function glossaryEntries(text, format) {
     });
   }
   if (format === "markdown-table") {
+    for (const token of blocks.filter((token2) => token2.type === "table")) {
+      if (token.header.length !== 2 || glossaryInline(token.header[0].tokens).trim().toLowerCase() !== "term" || glossaryInline(token.header[1].tokens).trim().toLowerCase() !== "definition") continue;
+      if (token.raw.trimEnd().split("\n").slice(2).some((line) => !/^\|([^|]*)\|([^|]*)\|[ \t]*$/.test(line))) return null;
+    }
     const lines = body.split("\n");
     const entries = [];
     for (let i = 0; i < lines.length - 1; i++) {
@@ -4038,4 +4067,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"c184d68440a69ef716abaa57cd9e64153b8c88361c01ada84bc00e9f29c4e8ce"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"4e681bb6f9c94d4c7a4be1a3fe2aecfe165ec8083efeee41a92b619866403db0"}

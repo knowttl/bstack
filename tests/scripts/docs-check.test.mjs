@@ -283,6 +283,67 @@ for (const [format, example] of [
   })
 }
 
+for (const text of [
+  '![See [Guide](missing.md)](logo.png)',
+  '![See ![Hidden](missing.png)](logo.png)',
+  '![See [Guide][target]](logo.png)\n\n[target]: missing.md',
+  '![See <span>[Guide](missing.md)</span>](logo.png)'
+]) {
+  test('image alt tokens contribute no references: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: logo.png'])
+    await writeFile(join(f.repo, 'logo.png'), 'image')
+    const repaired = run('docs check', f.repo)
+    assert.equal(repaired.exit, 0, JSON.stringify(repaired))
+    assert.equal(repaired.data.documents[0].links, 1)
+    assert.deepEqual(repaired.data.coverageLimits, [])
+  })
+}
+
+test('ordinary link labels retain image references', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '[![Logo](missing.png)](README.md)\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.deepEqual(result.problems.map(problem => problem.message), ['Missing or wrong-case destination: missing.png'])
+  assert.equal(result.data.documents[0].links, 2)
+})
+
+for (const [format, text] of [
+  ['markdown-bold', '**Order**: A request.\n\nExample <!--\n**Order**: A sample.\n-->'],
+  ['markdown-bold', '**Order**: A <!-- hidden `code` and \\escape -->request.'],
+  ['markdown-bold', '**Order**: A request.\n\n| Examples |\n| --- |\n| **Order**: A sample. |'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | A <!-- **Order**: A sample. -->request. |'],
+  ['markdown-table', '| Term <!-- note --> | Definition |\n| --- | --- |\n| Order | A request. |']
+]) {
+  test('inline comments contribute no glossary entries: ' + format + ' ' + text, async t => {
+    const f = await glossary(t, text + '\n', format)
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.problems, [])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+for (const [format, text] of [
+  ['markdown-bold', '**Order**: <!-- explanation -->'],
+  ['markdown-bold', '**Order**: **<!-- explanation -->**'],
+  ['markdown-bold', '**<!-- hidden term -->**: A request.'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | <!-- explanation --> |'],
+  ['markdown-table', '| Term | Definition |\n| --- | --- |\n| <!-- hidden term --> | A request. |']
+]) {
+  test('comment-only glossary fields are empty: ' + format + ' ' + text, async t => {
+    const f = await glossary(t, text + '\n', format)
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.code), ['invalid-glossary'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
 test('duplicate glossary terms fail within one context', async t => {
   const f = await glossary(t, '# Ordering\n\n**Order**:\nA request.\n\n**order**:\nAnother request.\n')
   const before = await snapshot(f.repo)
