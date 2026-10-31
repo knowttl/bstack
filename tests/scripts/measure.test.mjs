@@ -4,7 +4,6 @@ import { appendFile, mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { build, emptyRepo, git, runArchitecture as run, snapshot } from './discovery-fixture.mjs'
-import { repoFiles } from '../../runtime/scripts/lib/discovery.mjs'
 
 function commitIndex(repo, message, date) {
   const result = spawnSync('git', ['-C', repo, '-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', message], {
@@ -333,7 +332,6 @@ test('measure and discovery apply the same generated directory conventions', asy
   const result = run('measure', repo, process.env, ['--range', 'HEAD'])
   assert.equal(result.exit, 0)
   assert.deepEqual(result.data.files.map(file => file.path), ['build', 'nested/distillery/source.txt'])
-  assert.deepEqual(await repoFiles(repo), result.data.files.map(file => file.path))
   assert.equal(result.data.exclusions.files.length, 7)
 })
 

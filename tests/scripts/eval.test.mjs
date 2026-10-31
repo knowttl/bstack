@@ -7,7 +7,6 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { execFileSync, spawn, spawnSync } from 'node:child_process'
 import { once } from 'node:events'
 import { createHash } from 'node:crypto'
-import { redactEvidence } from '../../scripts/lib/evaluation-host.mjs'
 import { emptyRepo, git } from './discovery-fixture.mjs'
 
 // Each test invokes the real command with disposable evaluation records.
@@ -1169,13 +1168,11 @@ test('reviewer publication preserves JSON keys and scalar types while rejecting 
       const files = await inputs(directory, record)
       files.answers.reviewer = reviewer
       await writeFile(files.answersPath, JSON.stringify(files.answers))
-      const document = { id: 'stable', [reviewer]: reviewer, text: reviewer, nested: [{ [reviewer]: reviewer }], number: 123, passed: true }
+      const document = { id: 'stable', [reviewer]: reviewer, text: reviewer, nested: [{ [reviewer]: reviewer }], number: 123, passed: true,
+        stdout: JSON.stringify({ reviewer, number: 123, passed: true }) + '\n' }
       const transcript = JSON.stringify(document, null, '\t') + '\n'
-      const redacted = redactEvidence(transcript, { caseResults: [{ reviewer }] })
-      const expected = { ...document, [reviewer]: '[redacted: user name]', text: '[redacted: user name]', nested: [{ [reviewer]: '[redacted: user name]' }] }
-      assert.deepEqual(JSON.parse(redacted), expected)
-      assert.equal(redacted.split('\n').length, transcript.split('\n').length)
-      assert.deepEqual(JSON.parse(JSON.parse(redactEvidence(JSON.stringify({ stdout: transcript }), { caseResults: [{ reviewer }] })).stdout), expected)
+      const expected = { ...document, [reviewer]: '[redacted: user name]', text: '[redacted: user name]', nested: [{ [reviewer]: '[redacted: user name]' }],
+        stdout: '{"reviewer":"[redacted: user name]","number":123,"passed":true}\n' }
       await writeFile(files.transcriptPath, transcript)
       const result = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath)
       assert.equal(result.status, status, result.stdout)
@@ -1189,7 +1186,9 @@ test('reviewer publication preserves JSON keys and scalar types while rejecting 
       } else {
         assert.equal(saved.caseResults[0].reviewer, '[redacted: user name]')
         assert.equal(saved.caseResults[0].id, 'decision')
-        assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, saved.transcript), 'utf8')), expected)
+        const published = await readFile(join(directory, record.id, saved.transcript), 'utf8')
+        assert.deepEqual(JSON.parse(published), expected)
+        assert.equal(published.split('\n').length, transcript.split('\n').length)
         assert.deepEqual(JSON.parse(await readFile(join(directory, record.id, saved.answers), 'utf8')),
           { ...files.answers, reviewer: '[redacted: user name]' })
       }
@@ -1364,24 +1363,40 @@ test('evaluation scope accepts a maintained repository whose root contains space
 })
 
 for (const separator of ['\n', '\r', '\t']) {
-  test(`evidence redacts names after ${JSON.stringify(separator)} across nested JSON strings`, () => {
-    const username = userInfo().username
-    const output = `header${separator}${username}${separator}prefix-${username}-suffix`
-    const expected = `header${separator}[redacted: user name]${separator}prefix-${username}-suffix`
-    assert.equal(redactEvidence(output), expected)
-    assert.equal(JSON.parse(redactEvidence(JSON.stringify({ output }))).output, expected)
-    const record = JSON.stringify({ stdout: JSON.stringify({ output }) + '\n' })
-    assert.equal(JSON.parse(JSON.parse(redactEvidence(record)).stdout).output, expected)
-  })
+  for (const [formatName, format] of [
+    ['plain text', output => output],
+    ['JSON', output => JSON.stringify({ output })],
+    ['nested JSON', output => JSON.stringify({ stdout: JSON.stringify({ output }) + '\n' })]
+  ]) {
+    test(`scoring redacts names after ${JSON.stringify(separator)} in ${formatName}`, async t => {
+      const directory = await temporary(t)
+      const record = start(t, directory)
+      const files = await inputs(directory, record)
+      const username = userInfo().username
+      files.answers.checks[0].endLine = 1
+      await writeFile(files.answersPath, JSON.stringify(files.answers))
+      const transcript = format(`header${separator}${username}${separator}prefix-${username}-suffix`) + '\n\n'
+      const expected = format(`header${separator}[redacted: user name]${separator}prefix-${username}-suffix`) + '\n\n'
+      await writeFile(files.transcriptPath, transcript)
+      const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath)
+      assert.equal(scored.status, 0, scored.stdout)
+      assert.equal(await readFile(join(directory, record.id, scored.data.data.transcript), 'utf8'), expected)
+    })
+  }
 }
 
-test('evidence redacts JSONL surrounded by plain text with unmatched quotes', () => {
+test('scoring redacts JSONL surrounded by plain text with unmatched quotes', async t => {
+  const directory = await temporary(t)
+  const record = start(t, directory)
+  const files = await inputs(directory, record)
   const username = userInfo().username
   const event = JSON.stringify({ output: `header\n${username}\n` })
   const transcript = `User: "unfinished\nHost JSONL:\n${event}\nHost stderr:\n"unfinished\n`
-  const redacted = redactEvidence(transcript)
-  assert.equal(JSON.parse(redacted.split('\n')[2]).output, 'header\n[redacted: user name]\n')
-  assert.equal(redacted.split('\n').length, transcript.split('\n').length)
+  await writeFile(files.transcriptPath, transcript)
+  const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', files.transcriptPath)
+  assert.equal(scored.status, 0, scored.stdout)
+  assert.equal(await readFile(join(directory, record.id, scored.data.data.transcript), 'utf8'),
+    'User: "unfinished\nHost JSONL:\n{"output":"header\\n[redacted: user name]\\n"}\nHost stderr:\n"unfinished\n')
 })
 
 test('captured listings and closed evidence redact host identities while retaining scoring and resume', async t => {
@@ -1584,10 +1599,26 @@ test('a resumed host turn cannot silently switch sessions', async t => {
   assert.equal(reply.nextAnswer, 1)
 })
 
-for (const mode of ['without', 'with']) {
+function assertPublishedTurns(turns, message) {
+  assert.deepEqual(turns.map(turn => ({ message: turn.message, sessionId: turn.sessionId, status: turn.result.status,
+    exitCode: turn.result.exitCode, stderr: turn.result.stderr,
+    events: turn.result.stdout.trim().split('\n').map(line => JSON.parse(line)) })), [{
+    message, sessionId: '[identifier]', status: 'passed', exitCode: 0, stderr: '', events: [
+      { type: 'thread.started', thread_id: '[identifier]' },
+      { type: 'item.completed', item: { type: 'agent_message', text: 'Which offline access option should we use?',
+        evidence: { reviewer: '[redacted: user name]', fixture: '[fixture]', home: '[isolated-home]' } } },
+      { type: 'turn.completed', usage: { input_tokens: 1, output_tokens: 1 } }
+    ]
+  }])
+}
+
+for (const [mode, message] of [
+  ['without', 'Read brief.md and establish the project intent before drafting the vision.'],
+  ['with', '$vision\nRead brief.md and establish the project intent before drafting the vision.']
+]) {
   test(`rejected ${mode}-skill citations can be corrected without another host turn`, async t => {
     const directory = await temporary(t)
-    const { path } = await adapterFile(directory)
+    const { path } = await adapterFile(directory, 'publication')
     const { record } = hostStart(t, directory, path, mode)
     const files = await inputs(directory, record)
     const transcriptPath = join(directory, record.id, record.conversation)
@@ -1600,7 +1631,7 @@ for (const mode of ['without', 'with']) {
     await writeFile(files.answersPath, JSON.stringify(files.answers))
     const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
     assert.equal(scored.status, 0, scored.stdout)
-    assert.deepEqual(scored.data.data.turns, JSON.parse(redactEvidence(JSON.stringify(record.turns), record)))
+    assertPublishedTurns(scored.data.data.turns, message)
     assert.equal(scored.data.data.sessionId, '[identifier]')
     assert.ok(scored.data.data.isolation.cleanedAt)
   })
@@ -1609,7 +1640,7 @@ for (const mode of ['without', 'with']) {
     skip: process.platform === 'win32' || process.getuid?.() === 0
   }, async t => {
     const directory = await temporary(t)
-    const { path } = await adapterFile(directory)
+    const { path } = await adapterFile(directory, 'publication')
     const { record } = hostStart(t, directory, path, mode)
     const files = await inputs(directory, record)
     const runDirectory = join(directory, record.id)
@@ -1628,7 +1659,7 @@ for (const mode of ['without', 'with']) {
     await assert.rejects(readFile(join(record.isolation.state, 'fake-session.json')), { code: 'ENOENT' })
     const scored = run(directory, 'score', '--run', record.id, '--answers', files.answersPath, '--transcript', transcriptPath)
     assert.equal(scored.status, 0, scored.stdout)
-    assert.deepEqual(scored.data.data.turns, JSON.parse(redactEvidence(JSON.stringify(record.turns), record)))
+    assertPublishedTurns(scored.data.data.turns, message)
   })
 }
 

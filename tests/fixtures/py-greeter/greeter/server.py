@@ -1,3 +1,4 @@
+import signal
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
@@ -29,6 +30,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main(port: int) -> None:
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     print(f"listening on {port}", flush=True)
     server.serve_forever()

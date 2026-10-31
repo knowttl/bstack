@@ -36,22 +36,25 @@ async function edit(repo, path, change) {
   await writeFile(join(repo, path), change(await readFile(join(repo, path), 'utf8')))
 }
 
-test('every runtime input selects scenarios without an unmapped fallback', async t => {
+test('each runtime input has its own impact key without an unmapped fallback', async t => {
   const repo = await checkout(t)
-  const keys = []
+  const selected = new Set()
   for (const directory of ['schemas', 'scripts/commands', 'assets', 'references']) {
     for (const file of await readdir(join(repo, 'runtime', directory), { recursive: true, withFileTypes: true })) {
       if (!file.isFile()) continue
-      const path = resolve(file.parentPath, file.name).slice(resolve(repo, 'runtime').length + 1).replaceAll('\\', '/')
-      keys.push(path)
-      await edit(repo, `runtime/${path}`, source => source + '\n')
+      const path = resolve(file.parentPath, file.name)
+      const key = path.slice(resolve(repo, 'runtime').length + 1).replaceAll('\\', '/')
+      const original = await readFile(path, 'utf8')
+      await writeFile(path, original + '\n')
+      const result = affected(repo)
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.deepEqual(result.data.keys, [key])
+      assert.deepEqual(result.data.unmapped, [], key)
+      for (const scenario of result.data.scenarios) selected.add(scenario)
+      await writeFile(path, original)
     }
   }
-  const result = affected(repo)
-  assert.equal(result.exit, 0, JSON.stringify(result))
-  assert.deepEqual(result.data.keys, keys.sort())
-  assert.deepEqual(result.data.unmapped, [])
-  assert.deepEqual(result.data.scenarios, definitions.filter(item => item.mode !== 'without').map(item => item.id))
+  assert.deepEqual([...selected].sort(), definitions.filter(item => item.mode !== 'without').map(item => item.id).sort())
 })
 
 test('skill changes select final runs and exclude skill-free runs', async t => {
@@ -158,8 +161,9 @@ for (const [direction, heading, keys] of [
   })
 }
 
-// A runtime input selects the scenarios that stage a skill bundling it, however deeply a command imports it.
+// Change one module or protocol at a time so another changed input cannot mask a missing dependency.
 for (const [key, bundling] of [
+  ['scripts/dispatch.mjs', skillNames],
   ['scripts/commands/apply.mjs', ['vision', 'glossary', 'architecture', 'foundation', 'maintenance', 'agents-md', 'verification', 'plan']],
   ['scripts/commands/cite-check.mjs', ['repo-audit', 'vision', 'glossary', 'architecture', 'plan']],
   ['scripts/commands/inspect.mjs', ['repo-audit']],
@@ -168,7 +172,9 @@ for (const [key, bundling] of [
   ['scripts/lib/vision-board.mjs', ['vision']],
   ['schemas/findings.schema.json', ['vision', 'glossary', 'architecture', 'foundation', 'verification', 'maintenance', 'agents-md', 'plan']],
   ['schemas/vision-proposals.json', ['vision']],
+  ['schemas/check-plan.json', ['verification', 'architecture', 'foundation', 'maintenance']],
   ['assets/vision/review-template.html', ['vision']],
+  ['assets/vision/review.css', ['vision']],
   ['references/grilling.md', ['vision', 'glossary', 'architecture', 'foundation', 'plan']]
 ]) {
   test(`runtime input selects the scenarios staging a skill that bundles it: ${key}`, async t => {

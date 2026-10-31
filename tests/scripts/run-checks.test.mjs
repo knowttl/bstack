@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { emptyRepo, build, runVerification as run, snapshot, git } from './discovery-fixture.mjs'
-import { checkInputState } from '../../runtime/scripts/commands/run-checks.mjs'
 
 // Exercise the installed CLI from an unrelated directory with isolated cache evidence.
 const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
@@ -34,6 +33,15 @@ async function setup(t, checks = [check('journey')], changeKind = 'feature') {
     return run('run-checks', repo, env, ['--plan', path, ...extra])
   }
   return { repo, directory, plan, path, env, invoke }
+}
+
+async function captureInputs(f) {
+  f.plan.checks[0].skipReason = 'Capture declared inputs without executing the tool.'
+  const result = await f.invoke()
+  assert.equal(result.exit, 2, JSON.stringify(result))
+  assert.equal(result.data.checks[0].execution, null)
+  assert.equal(result.data.originalState.fingerprint, result.data.finalState.fingerprint)
+  return result.data.originalState
 }
 
 test('capture records literal arguments, output tails, versions, fingerprint and acceptance coverage without target writes', async t => {
@@ -147,13 +155,13 @@ for (const command of [
     await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { verify: `${command.executable} run inner`, inner: 'node check.mjs checks' } }))
     git(f.repo, 'add', '.')
     f.plan.checks[0].command = command
-    const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+    const first = await captureInputs(f)
     assert.ok(first.state.files.some(file => file.path === 'checks/value' && file.present))
     await writeFile(join(f.repo, 'checks/value'), '1')
-    const edited = await checkInputState({ root: f.repo }, f.plan, f.path)
+    const edited = await captureInputs(f)
     assert.notEqual(edited.fingerprint, first.fingerprint)
     await rm(join(f.repo, 'checks'), { recursive: true })
-    const deleted = await checkInputState({ root: f.repo }, f.plan, f.path)
+    const deleted = await captureInputs(f)
     assert.ok(deleted.state.files.some(file => file.path === 'checks/value' && !file.present))
     assert.notEqual(deleted.fingerprint, edited.fingerprint)
   })
@@ -174,13 +182,13 @@ for (const command of [
     await writeFile(join(f.repo, 'package.json'), JSON.stringify({ scripts: { verify: 'node check.mjs checks' } }))
     git(f.repo, 'add', '.')
     f.plan.checks[0].command = command
-    const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+    const first = await captureInputs(f)
     assert.ok(first.state.files.some(file => file.path === 'rules/value' && file.present))
     await writeFile(join(f.repo, 'rules/value'), '1')
-    const edited = await checkInputState({ root: f.repo }, f.plan, f.path)
+    const edited = await captureInputs(f)
     assert.notEqual(edited.fingerprint, first.fingerprint)
     await rm(join(f.repo, 'rules/value'))
-    const deleted = await checkInputState({ root: f.repo }, f.plan, f.path)
+    const deleted = await captureInputs(f)
     assert.ok(deleted.state.files.some(file => file.path === 'rules/value' && !file.present))
     assert.notEqual(deleted.fingerprint, edited.fingerprint)
   })
@@ -205,15 +213,15 @@ for (const manager of ['npm', 'pnpm', 'yarn']) {
       await writeFile(join(f.repo, 'other.mjs'), 'process.exit(0)\n')
       await writeFile(join(f.repo, 'rules.json'), '{}\n')
       f.plan.checks[0].command = { executable: manager, args, cwd: '.', versionArgs }
-      const first = await checkInputState({ root: f.repo }, f.plan, f.path)
+      const first = await captureInputs(f)
       assert.ok(first.state.files.some(file => file.path === 'check.mjs'))
       assert.ok(first.state.files.some(file => file.path === 'rules.json'))
       assert.ok(first.state.files.some(file => file.path === 'package.json'))
       await writeFile(join(f.repo, 'check.mjs'), 'process.exit(1)\n')
-      const checkerChanged = await checkInputState({ root: f.repo }, f.plan, f.path)
+      const checkerChanged = await captureInputs(f)
       assert.notEqual(checkerChanged.fingerprint, first.fingerprint)
       await writeFile(join(f.repo, 'rules.json'), '{"enabled":true}\n')
-      const configChanged = await checkInputState({ root: f.repo }, f.plan, f.path)
+      const configChanged = await captureInputs(f)
       assert.notEqual(configChanged.fingerprint, checkerChanged.fingerprint)
     })
   }
