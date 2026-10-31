@@ -288,10 +288,69 @@ for (const text of [String.raw`[A \] B](missing.md)`, String.raw`\\[Guide](missi
   })
 }
 
-test('heading-looking text inside inline code cannot satisfy a fragment', async t => {
+test('ATX headings interrupt unmatched code spans and satisfy fragments', async t => {
   const f = await maintenanceRepo(t)
   await writeFile(join(f.repo, 'README.md'), '`example\n# Sample\nend`\n\n[Heading](#sample)\n')
   const result = run('docs check', f.repo)
-  assert.equal(result.exit, 1)
-  assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+for (const boundary of ['# Heading', '#', 'Heading\n===', '---', '- Item', '> Quote', '']) {
+  test('unmatched code spans cannot hide links across a block boundary: ' + boundary, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), 'Intro `\n' + boundary + '\n[Guide](missing.md)\nUse `value`.\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+for (const text of [
+  '[Guide](missing`name.md)\n[Other](missing.md)\nUse `value`.\n',
+  '![Guide](missing`name.png)\n[Other](missing.md)\nUse `value`.\n',
+  '[Guide](missing\\`name.md)\n[Other](missing.md)\nUse `value`.\n',
+  '[Guide][target]\n[target]: missing`name.md\nUse `value`.\n'
+]) {
+  test('unsupported destination bytes retain explicit coverage limits: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text)
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.problems, [])
+    assert.match(result.data.coverageLimits.find(limit => limit.path === 'README.md').reason, /Only ordinary.*destinations without titles/)
+  })
+}
+
+for (const label of ['[Guide `example`]', '[Guide `example`][]', '![Guide `example`]', '[Other][Guide `example`]']) {
+  test('code masking cannot fabricate a matching reference label: ' + label, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), label + '\n\n[Guide]: missing.md\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.problems, [])
+    assert.equal(result.data.documents[0].links, 0)
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+for (const link of ['[Guide `example`](missing.md)', '![Guide `example`](missing.png)', '[Guide `example`][target]\n[target]: missing.md']) {
+  test('code in rendered labels preserves real destinations: ' + link, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), link + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+test('reference definitions inside multiline inline code do not define links', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '`example\n[Guide]: missing.md\nend`\n\n[Guide]\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 0)
+  assert.deepEqual(result.data.coverageLimits, [])
 })

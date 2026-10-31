@@ -305,8 +305,8 @@ function markdownHeadings(body) {
 function markdownAnchors(text) {
   const anchors = /* @__PURE__ */ new Set();
   const counts = /* @__PURE__ */ new Map();
-  const body = markdownProse(markdownBody(text));
-  const definitions = markdownDefinitions(body);
+  const body = markdownBody(text);
+  const definitions = markdownDefinitions(markdownProse(body));
   for (const heading of markdownHeadings(body)) {
     let title = "";
     let start = 0;
@@ -328,6 +328,13 @@ function markdownAnchors(text) {
 var referenceLabel = (value) => value.trim().replace(/\s+/g, " ").toLowerCase();
 var linkDestination = (value) => /^[^\s()[\]<>\\`]+$/.test(value.trim()) ? value.trim() : null;
 function markdownProse(body) {
+  const boundaries = markdownHeadings(body).flatMap((heading) => [heading.start, heading.end]);
+  let offset = 0;
+  for (const line of body.split("\n")) {
+    if (!line.trim() || thematicBreak.test(line)) boundaries.push(offset, offset + line.length + 1);
+    offset += line.length + 1;
+  }
+  boundaries.sort((a, b) => a - b);
   let prose = "";
   for (let index = 0; index < body.length; ) {
     const rest = body.slice(index);
@@ -335,6 +342,12 @@ function markdownProse(body) {
     if (definition) {
       prose += definition[0];
       index += definition[0].length;
+      continue;
+    }
+    const destination = /^\](?:\([^)\n]*\)|\[[^\]\n]*\])/.exec(rest);
+    if (destination) {
+      prose += destination[0];
+      index += destination[0].length;
       continue;
     }
     const escape = /^\\[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.exec(rest);
@@ -345,7 +358,7 @@ function markdownProse(body) {
     }
     const ticks = /^`+/.exec(rest)?.[0];
     if (ticks) {
-      const paragraph = body.slice(index + ticks.length).split(/\n[ \t]*\n/, 1)[0];
+      const paragraph = body.slice(index + ticks.length, boundaries.find((boundary) => boundary > index) ?? body.length);
       const closing = [...paragraph.matchAll(/`+/g)].find((match) => match[0].length === ticks.length);
       if (closing) {
         const end = index + ticks.length + closing.index + ticks.length;
@@ -362,20 +375,17 @@ function markdownProse(body) {
   return prose;
 }
 function markdownCoverageLimit(text) {
-  const source = markdownBody(text);
-  const body = markdownProse(source);
+  const body = markdownProse(markdownBody(text));
   if (/^ {0,3}\[[^\]\n]*[`\\][^\]\n]*\]:/m.test(body)) return "Code spans and escapes in reference labels require renderer review.";
   if (/<[^>]+>|&[\w#]+;|\{#[^}]+\}/.test(body)) return "HTML, entities and custom anchors require renderer review.";
   if (/\[[^\]\n]*\[/.test(body)) return "Nested links require renderer review.";
   const prose = body.replace(/(!?\[[^\]\n]*\]\()([^)\n]*)(\))/g, (match, label, destination, end) => linkDestination(destination) ? label + " ".repeat(destination.length) + end : match).replace(/(^ {0,3}\[[^\]\n]+\]:[ \t]*)(.*)$/gm, (match, label, destination) => linkDestination(destination) ? label + " ".repeat(destination.length) : match).replace(/^\*\*[^*\n]+\*\*:[ \t]*/gm, "").split("\n").filter((line) => !thematicBreak.test(line)).join("\n");
   if (/(?:^|[^\p{L}\p{N}_])_+\S[\s\S]*?\S_+(?![\p{L}\p{N}_])|\*+\S/u.test(prose)) return "Inline emphasis requires renderer review.";
   for (const match of body.matchAll(/!?\[[^\]\n]*\]\(([^)\n]*)\)/g)) {
-    const original = source.slice(match.index, match.index + match[0].length);
-    if (!linkDestination(match[1]) || /[`\\]/.test(original.slice(original.indexOf("](") + 2, -1))) return "Only ordinary destinations without titles are checked.";
+    if (!linkDestination(match[1])) return "Only ordinary destinations without titles are checked.";
   }
   for (const match of body.matchAll(/^ {0,3}\[[^\]\n]+\]:[ \t]*(.*)$/gm)) {
-    const original = source.slice(match.index, match.index + match[0].length);
-    if (!linkDestination(match[1]) || /[`\\]/.test(original.slice(original.indexOf("]:") + 2))) return "Only ordinary reference destinations without titles are checked.";
+    if (!linkDestination(match[1])) return "Only ordinary reference destinations without titles are checked.";
   }
   return null;
 }
@@ -387,9 +397,9 @@ function markdownDefinitions(body) {
   }
   return definitions;
 }
-function markdownReferences(body, definitions = markdownDefinitions(body)) {
+function markdownReferences(body, definitions = markdownDefinitions(markdownProse(body))) {
   const links = [];
-  const prose = body.replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
+  const prose = markdownProse(body).replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
   let consumed = 0;
   for (const match of prose.matchAll(/!?\[([^\]\n]*)\]/g)) {
     if (match.index < consumed) continue;
@@ -397,7 +407,8 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
     const inline = /^\(([^)\n]*)\)/.exec(prose.slice(start));
     const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start));
     const end = start + (inline?.[0].length ?? reference?.[0].length ?? 0);
-    const path = inline ? linkDestination(inline[1]) : definitions.get(referenceLabel(reference?.[1] || match[1]));
+    const label = reference?.[1] || body.slice(match.index + (match[0].startsWith("!") ? 2 : 1), start - 1);
+    const path = inline ? linkDestination(inline[1]) : definitions.get(referenceLabel(label));
     if (path) {
       links.push({ href: path, label: match[1], start: match.index, end });
       consumed = end;
@@ -406,7 +417,7 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
   return links;
 }
 function markdownLinks(text) {
-  return markdownCoverageLimit(text) ? [] : markdownReferences(markdownProse(markdownBody(text))).map((link) => link.href);
+  return markdownCoverageLimit(text) ? [] : markdownReferences(markdownBody(text)).map((link) => link.href);
 }
 function isMarkdownLinkLine(text) {
   return /^\[[^\][\r\n\\`*_]+\]\([^\s()[\]<>\\`]+\)\r?\n$/.test(text) && !text.endsWith("\n\n");
