@@ -638,7 +638,7 @@ function markdownBody(text) {
   let bodyDepth = 0;
   const lists = [];
   const source = text.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
-  return source.split("\n").map((raw) => {
+  const body = source.split("\n").map((raw) => {
     const previousBase = lists.at(-1) ?? 0;
     let expanded = raw.replace(/^\t+/, (tabs) => "    ".repeat(tabs.length));
     let prefix = quotes.exec(expanded)?.[0] ?? "";
@@ -658,12 +658,13 @@ function markdownBody(text) {
     if (!comment && /^ {4}/.test(current) && !paragraph) return "";
     const opening = comment ? null : fenceMarker(semantic);
     if (!opening) {
-      raw = raw.replace(/<!--|-->|./g, (token) => {
+      const blockComment = /^ {0,3}<!--/.test(semantic);
+      raw = raw.replace(/<!--|-->|./g, (token, offset) => {
         if (comment) {
           if (token === "-->") comment = false;
           return " ".repeat(token.length);
         }
-        if (token === "<!--") {
+        if (token === "<!--" && blockComment && offset === raw.indexOf("<!--")) {
           comment = true;
           return " ".repeat(token.length);
         }
@@ -675,7 +676,8 @@ function markdownBody(text) {
     if (lists.length && quotePrefix.startsWith(" ".repeat(lists.at(-1)))) quotePrefix = "";
     expanded = expanded.slice(quotePrefix.length);
     const indent = /^ */.exec(expanded)[0].length;
-    if (expanded.trim()) {
+    const lazy = paragraph && !!expanded.trim() && depth <= bodyDepth && !listItem.test(current) && !atxStart.test(semantic) && !setextUnderline.test(semantic) && !thematicBreak.test(semantic) && !opening && !/^ {0,3}<!--/.test(semantic);
+    if (expanded.trim() && !lazy) {
       while (lists.length && indent < lists.at(-1)) lists.pop();
     }
     const base = lists.at(-1) ?? 0;
@@ -691,11 +693,12 @@ function markdownBody(text) {
     let content = line;
     while (quotes.test(content) || listItem.test(content)) content = content.replace(quotes, "").replace(listItem, "");
     if (depth || item || base) content = content.replace(/^ {0,3}/, "");
-    const boundary = item || depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0);
-    bodyDepth = depth;
+    const boundary = item || !lazy && (depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0));
+    if (!lazy) bodyDepth = depth;
     paragraph = !!content.trim() && !atxStart.test(content) && !setextUnderline.test(content) && !thematicBreak.test(content);
     return (boundary ? "\n" : "") + content;
   }).join("\n");
+  return markdownProse(body, false);
 }
 function markdownHeadings(body) {
   const headings = [];
@@ -720,8 +723,9 @@ function markdownHeadings(body) {
 function markdownAnchors(text) {
   const anchors = /* @__PURE__ */ new Set();
   const counts = /* @__PURE__ */ new Map();
-  const definitions = markdownDefinitions(markdownBody(text));
-  for (const heading of markdownHeadings(markdownBody(text))) {
+  const body = markdownBody(text);
+  const definitions = markdownDefinitions(markdownProse(body));
+  for (const heading of markdownHeadings(body)) {
     let title = "";
     let start = 0;
     for (const link2 of markdownReferences(heading.text, definitions)) {
@@ -741,9 +745,67 @@ function markdownAnchors(text) {
 }
 var referenceLabel = (value) => value.trim().replace(/\s+/g, " ").toLowerCase();
 var linkDestination = (value) => /^[^\s()[\]<>\\`]+$/.test(value.trim()) ? value.trim() : null;
+function markdownProse(body, maskInline = true) {
+  const boundaries = markdownHeadings(body).flatMap((heading) => [heading.start, heading.end]);
+  let offset = 0;
+  for (const line of body.split("\n")) {
+    if (!line.trim() || thematicBreak.test(line)) boundaries.push(offset, offset + line.length + 1);
+    offset += line.length + 1;
+  }
+  boundaries.sort((a, b) => a - b);
+  let prose = "";
+  let label = false;
+  for (let index = 0; index < body.length; ) {
+    const rest = body.slice(index);
+    const definition = (index === 0 || body[index - 1] === "\n") && /^ {0,3}\[[^\]\n]+\]:[^\n]*/.exec(rest);
+    if (definition) {
+      prose += definition[0];
+      index += definition[0].length;
+      continue;
+    }
+    const destination = label && /^\](?:\([^)\n]*\)|\[[^\]\n]*\])/.exec(rest);
+    if (destination) {
+      prose += destination[0];
+      index += destination[0].length;
+      label = false;
+      continue;
+    }
+    const escape = /^\\[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.exec(rest);
+    if (escape) {
+      prose += maskInline ? "  " : escape[0];
+      index += 2;
+      continue;
+    }
+    const comment = rest.startsWith("<!--") && /^<!--[\s\S]*?-->/.exec(body.slice(index, boundaries.find((boundary) => boundary > index) ?? body.length));
+    if (comment) {
+      prose += comment[0].replace(/[^\n]/g, " ");
+      index += comment[0].length;
+      continue;
+    }
+    const ticks = /^`+/.exec(rest)?.[0];
+    if (ticks) {
+      const paragraph = body.slice(index + ticks.length, boundaries.find((boundary) => boundary > index) ?? body.length);
+      const closing = [...paragraph.matchAll(/`+/g)].find((match) => match[0].length === ticks.length);
+      if (closing) {
+        const end = index + ticks.length + closing.index + ticks.length;
+        const span = body.slice(index, end);
+        prose += maskInline ? span.replace(/[^\n]/g, " ") : span;
+        index = end;
+        continue;
+      }
+      prose += ticks;
+      index += ticks.length;
+      continue;
+    }
+    if (body[index] === "[") label = true;
+    else if (body[index] === "]" || body[index] === "\n") label = false;
+    prose += body[index++];
+  }
+  return prose;
+}
 function markdownCoverageLimit(text) {
-  const body = markdownBody(text);
-  if (/[`\\]/.test(body)) return "Inline code and escaped Markdown require renderer review.";
+  const body = markdownProse(markdownBody(text));
+  if (/^ {0,3}\[[^\]\n]*[`\\][^\]\n]*\]:/m.test(body)) return "Code spans and escapes in reference labels require renderer review.";
   if (/<[^>]+>|&[\w#]+;|\{#[^}]+\}/.test(body)) return "HTML, entities and custom anchors require renderer review.";
   if (/\[[^\]\n]*\[/.test(body)) return "Nested links require renderer review.";
   const prose = body.replace(/(!?\[[^\]\n]*\]\()([^)\n]*)(\))/g, (match, label, destination, end) => linkDestination(destination) ? label + " ".repeat(destination.length) + end : match).replace(/(^ {0,3}\[[^\]\n]+\]:[ \t]*)(.*)$/gm, (match, label, destination) => linkDestination(destination) ? label + " ".repeat(destination.length) : match).replace(/^\*\*[^*\n]+\*\*:[ \t]*/gm, "").split("\n").filter((line) => !thematicBreak.test(line)).join("\n");
@@ -764,9 +826,9 @@ function markdownDefinitions(body) {
   }
   return definitions;
 }
-function markdownReferences(body, definitions = markdownDefinitions(body)) {
+function markdownReferences(body, definitions = markdownDefinitions(markdownProse(body))) {
   const links = [];
-  const prose = body.replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
+  const prose = markdownProse(body).replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
   let consumed = 0;
   for (const match of prose.matchAll(/!?\[([^\]\n]*)\]/g)) {
     if (match.index < consumed) continue;
@@ -774,7 +836,8 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
     const inline = /^\(([^)\n]*)\)/.exec(prose.slice(start));
     const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start));
     const end = start + (inline?.[0].length ?? reference?.[0].length ?? 0);
-    const path = inline ? linkDestination(inline[1]) : definitions.get(referenceLabel(reference?.[1] || match[1]));
+    const label = reference?.[1] || body.slice(match.index + (match[0].startsWith("!") ? 2 : 1), start - 1);
+    const path = inline ? linkDestination(inline[1]) : definitions.get(referenceLabel(label));
     if (path) {
       links.push({ href: path, label: match[1], start: match.index, end });
       consumed = end;
@@ -839,7 +902,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
           throw error;
         }
       }
-      if (markdownCoverageLimit(text)) return unsupported();
+      if (markdownCoverageLimit(text) || markdownHeadings(markdownBody(text)).some((heading) => /[`\\]/.test(heading.text))) return unsupported();
       if (!markdownAnchors(text).has(fragment)) {
         if (text.includes("\0")) return unsupported();
         return problem("Missing heading fragment");

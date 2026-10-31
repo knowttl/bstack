@@ -119,10 +119,6 @@ test('glossary samples inside code do not create duplicate entries', async t => 
 for (const text of [
   '[`a]: README.md\n[b`]: missing.md\n\n[First][`a] [Second][b`]',
   '[`a`]: https://example.invalid\n[`b`]: missing.md\n[Guide][`b`]',
-  '`[Guide](missing.md)`',
-  '# ` Array<T> `\n[Heading](#arrayt)',
-  String.raw`[A \] B](missing.md)`,
-  String.raw`\\[Guide](missing.md)`,
   '# _Rule_\n[Heading](#rule)',
   '# __Rule__\n[Heading](#rule)',
   '# [![Logo](logo.svg)](guide.md)\n[Heading](#logo)',
@@ -146,7 +142,7 @@ for (const text of [
   })
 }
 
-for (const heading of ['# _Rule_', '# `Rule`', '# [![Logo](logo.svg)](guide.md)']) {
+for (const heading of ['# _Rule_', '# `Rule`', '# ` Array<T> `', '# [![Logo](logo.svg)](guide.md)']) {
   for (const fragment of ['rule', 'absent']) {
     test('unusual fragment targets report coverage: ' + heading + ' #' + fragment, async t => {
       const f = await maintenanceRepo(t)
@@ -279,4 +275,200 @@ for (const text of ['[_Guide_](_missing_.md)\n', '# _Rule_\n[Guide](_missing_.md
     assert.deepEqual(result.problems, [])
     assert.ok(result.data.coverageLimits.some(limit => limit.path === 'README.md'))
   })
+}
+
+for (const text of [String.raw`[A \] B](missing.md)`, String.raw`\\[Guide](missing.md)`]) {
+  test('escaped label punctuation leaves a real local link checked: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1)
+    assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+test('ATX headings interrupt unmatched code spans and satisfy fragments', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '`example\n# Sample\nend`\n\n[Heading](#sample)\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+for (const boundary of ['# Heading', '#', 'Heading\n===', '---', '- Item', '> Quote', '']) {
+  test('unmatched code spans cannot hide links across a block boundary: ' + boundary, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), 'Intro `\n' + boundary + '\n[Guide](missing.md)\nUse `value`.\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+for (const text of [
+  '[Guide](missing`name.md)\n[Other](missing.md)\nUse `value`.\n',
+  '![Guide](missing`name.png)\n[Other](missing.md)\nUse `value`.\n',
+  '[Guide](missing\\`name.md)\n[Other](missing.md)\nUse `value`.\n',
+  '[Guide][target]\n[target]: missing`name.md\nUse `value`.\n'
+]) {
+  test('unsupported destination bytes retain explicit coverage limits: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text)
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.problems, [])
+    assert.match(result.data.coverageLimits.find(limit => limit.path === 'README.md').reason, /Only ordinary.*destinations without titles/)
+  })
+}
+
+for (const label of ['[Guide `example`]', '[Guide `example`][]', '![Guide `example`]', '[Other][Guide `example`]']) {
+  test('code masking cannot fabricate a matching reference label: ' + label, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), label + '\n\n[Guide]: missing.md\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.problems, [])
+    assert.equal(result.data.documents[0].links, 0)
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+for (const link of ['[Guide `example`](missing.md)', '![Guide `example`](missing.png)', '[Guide `example`][target]\n[target]: missing.md']) {
+  test('code in rendered labels preserves real destinations: ' + link, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), link + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+test('reference definitions inside multiline inline code do not define links', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '`example\n[Guide]: missing.md\nend`\n\n[Guide]\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 0)
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+for (const context of [
+  '`<!--`',
+  '``<!-- ` example``',
+  '`multi\ntext <!--\nline`',
+  '\\<!--',
+  '> `<!--`',
+  '- `<!--`',
+  '<!-- ` comment -->\n`<!--`',
+  '```md\n<!--\n```',
+  '```md\n# Heading\n<!--\n```\n`<!--`'
+]) {
+  test('literal comment openers cannot hide subsequent links: ' + context, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), context + '\n\n[Guide](guide.md)\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.code), ['broken-local-link'])
+    assert.deepEqual(broken.data.coverageLimits, [])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const fixed = run('docs check', f.repo)
+    assert.equal(fixed.exit, 0, JSON.stringify(fixed))
+    assert.deepEqual(fixed.data.coverageLimits, [])
+  })
+}
+
+for (const text of [
+  '\\[text](`command [Example](missing.md)`)',
+  '!\\[text](`command [Example](missing.md)`)',
+  '\\[text][`command [Example](missing.md)`]',
+  'text](`command [Example](missing.md)`)',
+  '[text]\n](`command [Example](missing.md)`)'
+]) {
+  test('suffixes without real labels do not expose code examples: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(result.data.documents[0].links, 0)
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
+test('real comments ignore backticks and links while retaining subsequent prose', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '<!-- `\n[Example](missing.md)\n-->\n<!-- another ` [Example](missing.md) -->\n\n[Guide](#guide)\n\n# Guide\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 1)
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+test('literal comment openers preserve fragment target headings', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), '[Guide](target.md#guide)\n[Missing](target.md#absent)\n')
+  await writeFile(join(f.repo, 'target.md'), '`<!--`\n\n# Guide\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 1, JSON.stringify(result))
+  assert.deepEqual(result.problems.map(problem => problem.message), ['Missing heading fragment: target.md#absent'])
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+test('inline comments hide example links without hiding ordinary links', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), 'Intro <!-- `\n[Example](missing.md)\n--> and [Guide](#guide)\n\n# Guide\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 1)
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+test('block comments interrupt unmatched code spans', async t => {
+  const f = await maintenanceRepo(t)
+  await writeFile(join(f.repo, 'README.md'), 'Intro `\n<!--\n[Example](missing.md)\n-->\n\n[Guide](#guide)\n\n# Guide\n')
+  const result = run('docs check', f.repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.documents[0].links, 1)
+  assert.deepEqual(result.data.coverageLimits, [])
+})
+
+for (const [prefix, continuation] of [
+  ['> ', ''],
+  ['- ', ''],
+  ['1. ', ''],
+  ['> > ', ''],
+  ['- > ', ''],
+  ['> - ', ''],
+  ['> ', '> '],
+  ['- ', '  '],
+  ['- Outer\n  - ', '    ']
+]) {
+  test('lazy container continuations preserve code spans and real links: ' + JSON.stringify([prefix, continuation]), async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), prefix + 'Use `example\n[Example](missing-example.md)\n' + continuation + 'end`\n[Guide](guide.md)\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.deepEqual(broken.data.coverageLimits, [])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const fixed = run('docs check', f.repo)
+    assert.equal(fixed.exit, 0, JSON.stringify(fixed))
+    assert.equal(fixed.data.documents[0].links, 1)
+    assert.deepEqual(fixed.data.coverageLimits, [])
+  })
+}
+
+for (const prefix of ['> ', '- ']) {
+  for (const boundary of ['# Heading', '===', '***', '', '- Next', '> > Next', '```md\nignored\n```', '<!-- block -->']) {
+    test('block interruptions end container code spans: ' + JSON.stringify([prefix, boundary]), async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'README.md'), prefix + 'Use `example\n' + boundary + '\n[Guide](missing.md)\nend`\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.deepEqual(result.problems.map(problem => problem.code), ['broken-local-link'])
+      assert.deepEqual(result.data.coverageLimits, [])
+    })
+  }
 }

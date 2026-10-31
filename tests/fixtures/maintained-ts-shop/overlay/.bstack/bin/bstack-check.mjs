@@ -4,13 +4,14 @@ import { readFile as readFile8, writeFile as writeFile3 } from "node:fs/promises
 import { resolve as resolve8, join as join10, relative as relative7 } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-// skills/repo-audit/scripts/lib/result.mjs
+// runtime/scripts/lib/result.mjs
 var exitCodes = { passed: 0, failed: 1, blocked: 2, "usage-error": 3 };
 var CommandError = class extends Error {
-  constructor(status, problems) {
+  constructor(status, problems, data = {}) {
     super(problems.map((problem) => problem.message).join("\n"));
     this.status = status;
     this.problems = problems;
+    this.data = data;
   }
 };
 function emitResult({ command, status, problems = [], data = {}, inputs = {} }, json) {
@@ -41,12 +42,13 @@ function emitResult({ command, status, problems = [], data = {}, inputs = {} }, 
     ] : [],
     ...data.diff ? [data.diff] : [],
     ...(data.coverageLimits ?? []).map((limit) => `coverage limit: ${limit.path}: ${limit.reason}`),
-    ...problems.map((problem) => `${problem.code}: ${problem.message} Fix: ${problem.fix}`)
+    ...problems.map((problem) => `${problem.code}: ${problem.message} Fix: ${problem.fix}`),
+    ...data.approvalRequired ? [data.approvalRequired] : []
   ].join("\n"));
   process.exitCode = exitCodes[status];
 }
 
-// skills/repo-audit/scripts/lib/args.mjs
+// runtime/scripts/lib/args.mjs
 function parseArgs(argv, valueOptions = []) {
   const options = {};
   const problems = [];
@@ -64,7 +66,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -83,7 +85,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// skills/repo-audit/scripts/lib/repo.mjs
+// runtime/scripts/lib/repo.mjs
 import { realpath, stat } from "node:fs/promises";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -108,7 +110,7 @@ async function resolveTarget(options, { draftOnly = false } = {}) {
   return { mode: "repo", root: await realpath(git.stdout.replace(/\n$/, "")) };
 }
 
-// skills/repo-audit/scripts/lib/discovery.mjs
+// runtime/scripts/lib/discovery.mjs
 import { readdir } from "node:fs/promises";
 import { join, relative, sep } from "node:path";
 import { spawnSync as spawnSync2 } from "node:child_process";
@@ -133,13 +135,13 @@ function readGit(root, args) {
   });
 }
 
-// skills/repo-audit/scripts/lib/scratch.mjs
+// runtime/scripts/lib/scratch.mjs
 import { mkdir, realpath as realpath3 } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import { join as join3, isAbsolute as isAbsolute2 } from "node:path";
 
-// skills/repo-audit/scripts/lib/paths.mjs
+// runtime/scripts/lib/paths.mjs
 import { lstat, readlink, realpath as realpath2, stat as stat2 } from "node:fs/promises";
 import { dirname, isAbsolute, join as join2, relative as relative2, resolve as resolve2, sep as sep2, win32 } from "node:path";
 function isInside(root, path) {
@@ -202,7 +204,7 @@ async function resolveFilePath(root, input, reviewedPath, allowMissingLinks = fa
   throw new CommandError("failed", [{ code: "invalid-scope", message: "Reviewed scope must identify a regular file or a planned absent file.", fix: "List concrete file paths, including planned absent files.", path: input }]);
 }
 
-// skills/repo-audit/scripts/lib/scratch.mjs
+// runtime/scripts/lib/scratch.mjs
 async function scratchDirectory(target, runId) {
   if (!/^[a-zA-Z0-9-]+$/.test(runId)) throw new CommandError("usage-error", [{ code: "invalid-run", message: "Run ID must contain only letters, digits and hyphens.", fix: "Use the run ID returned by the command." }]);
   const cache = process.platform === "win32" ? process.env.LOCALAPPDATA : process.platform === "darwin" ? join3(homedir(), "Library", "Caches") : process.env.XDG_CACHE_HOME || join3(homedir(), ".cache");
@@ -226,7 +228,7 @@ async function createScratch(target) {
   return await realpath3(directory);
 }
 
-// skills/repo-audit/scripts/lib/run.mjs
+// runtime/scripts/lib/run.mjs
 import { spawn } from "node:child_process";
 import { access } from "node:fs/promises";
 import { dirname as dirname2, join as join4 } from "node:path";
@@ -358,7 +360,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   }
 }
 
-// skills/repo-audit/scripts/lib/fingerprint.mjs
+// runtime/scripts/lib/fingerprint.mjs
 import { createHash as createHash2 } from "node:crypto";
 import { readFile, stat as stat3, realpath as realpath4, lstat as lstat2, readlink as readlink2 } from "node:fs/promises";
 import { resolve as resolve3 } from "node:path";
@@ -427,11 +429,11 @@ async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) 
   return { fingerprint: hashBytes(canonicalJSON(state)), state };
 }
 
-// skills/repo-audit/scripts/commands/contract.mjs
+// runtime/scripts/commands/contract.mjs
 import { readFile as readFile2, readdir as readdir2, stat as stat4 } from "node:fs/promises";
 import { dirname as dirname3, join as join5, relative as relative3, resolve as resolve4, sep as sep3 } from "node:path";
 
-// skills/repo-audit/scripts/lib/json.mjs
+// runtime/scripts/lib/json.mjs
 function inspectJSON(text) {
   const value = JSON.parse(text, (key, value2) => {
     if (typeof value2 === "number" && !Number.isFinite(value2)) throw new CommandError("failed", [{ code: "nonfinite-number", message: "JSON numbers must be finite.", fix: "Supply finite numbers in every JSON value." }]);
@@ -465,7 +467,7 @@ function inspectJSON(text) {
   return { value, entries, close: tokens[index - 1].index };
 }
 
-// skills/repo-audit/scripts/lib/schema.mjs
+// runtime/scripts/lib/schema.mjs
 var keywords = ["$schema", "title", "type", "const", "enum", "properties", "required", "additionalProperties", "items", "minItems", "minLength", "pattern", "uniqueItems"];
 var types = ["object", "array", "string", "number", "integer", "boolean", "null"];
 function object(value) {
@@ -566,7 +568,7 @@ function validateIds(records, path) {
   if (problems.length) throw new CommandError("failed", problems);
 }
 
-// skills/repo-audit/scripts/lib/glob.mjs
+// runtime/scripts/lib/glob.mjs
 import { posix, win32 as win322 } from "node:path";
 function pathGlob(pattern) {
   if (!pattern || pattern.includes("\0") || pattern.includes("\\") || posix.isAbsolute(pattern) || win322.isAbsolute(pattern) || /^[A-Za-z]:/.test(pattern) || pattern.split("/").some((part) => !part || part === "." || part === "..") || /[\[\]{}()!]/u.test(pattern) || pattern.split("/").some((part) => part.includes("**") && part !== "**")) {
@@ -631,7 +633,7 @@ function matchesPath(glob, path) {
   return sharedPath(glob, { states, end: states.length - 1 }) !== null;
 }
 
-// skills/repo-audit/scripts/lib/check-integration.mjs
+// runtime/scripts/lib/check-integration.mjs
 function reject(path) {
   throw new CommandError("failed", [{
     code: "ignored-check-failure",
@@ -752,7 +754,7 @@ function integrationCommand(text, path) {
   return words;
 }
 
-// skills/repo-audit/schemas/project.schema.json
+// runtime/schemas/project.schema.json
 var project_schema_default = {
   title: "Project maintenance contract version 1",
   type: "object",
@@ -874,7 +876,7 @@ var project_schema_default = {
   }
 };
 
-// skills/repo-audit/scripts/commands/contract.mjs
+// runtime/scripts/commands/contract.mjs
 function reject2(code, path, message, status = "failed") {
   throw new CommandError(status, [{ code, path, message, fix: "Review the version 1 project contract and its authoritative source pointers." }]);
 }
@@ -899,7 +901,7 @@ async function leafCommand(root, command, stack = [], discovery = false) {
   async function visit(executable, args) {
     const names = [executable, ...args].map((word) => word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, ""));
     const [name] = names;
-    if (names.includes("bstack-check.mjs") || names.includes("repo-audit.mjs") && args.some((arg, i) => arg === "evidence" && args[i + 1] === "validate" || arg === "docs" && ["check", "generate"].includes(args[i + 1]))) {
+    if (names.includes("bstack-check.mjs") || ["repo-audit.mjs", "maintenance.mjs"].some((entry) => names.includes(entry)) && args.some((arg, i) => arg === "evidence" && args[i + 1] === "validate" || arg === "docs" && ["check", "generate"].includes(args[i + 1]))) {
       reject2("recursive-check", command.cwd, "Leaf commands cannot invoke aggregate maintenance validation.");
     }
     if (isIndirectExecutable(executable)) reject2("unsupported-leaf", executable, "Shell programs and command wrappers cannot declare a verifiable leaf command.");
@@ -964,7 +966,7 @@ async function sourcePointer(root, input, removed) {
   await exactPathCase(root, input);
   if (!(await stat4(path)).isFile()) reject2("missing-path", input, "Source pointers must identify existing files.");
 }
-async function loadContract(target, input = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set()) {
+async function loadContract(target, input = ".bstack/project.json", removedPaths = /* @__PURE__ */ new Set(), sourceProblems) {
   pathGlob(input);
   const path = await resolveFilePath(target.root, input);
   await exactPathCase(target.root, input, true);
@@ -980,7 +982,14 @@ async function loadContract(target, input = ".bstack/project.json", removedPaths
   const reference = (ids, collection, path2) => {
     for (const id of ids) if (!contract[collection].some((record) => record.id === id)) reject2("unknown-id", path2, `Unknown ${collection} ID: ${id}`);
   };
-  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+  for (const entry of [...contract.documents, ...contract.rules, ...contract.acceptanceSources]) {
+    try {
+      await sourcePointer(target.root, entry.path, removedPaths.has(entry.path));
+    } catch (error) {
+      if (!sourceProblems || !(error instanceof CommandError)) throw error;
+      sourceProblems.push(...error.problems);
+    }
+  }
   for (const scope of contract.scopes) {
     scope.paths.forEach(pathGlob);
     reference(scope.documentIds, "documents", scope.id);
@@ -1004,11 +1013,11 @@ async function run(options) {
   return { inputs: { repo: target.root, contract: path }, data: { contract, coverageLimits: [] } };
 }
 
-// skills/repo-audit/scripts/commands/docs-check.mjs
+// runtime/scripts/commands/docs-check.mjs
 import { readFile as readFile4 } from "node:fs/promises";
 import { extname as extname2 } from "node:path";
 
-// skills/repo-audit/scripts/lib/document-references.mjs
+// runtime/scripts/lib/document-references.mjs
 import { readFile as readFile3, readdir as readdir3, stat as stat5 } from "node:fs/promises";
 import { dirname as dirname4, extname, join as join6, relative as relative4, resolve as resolve5 } from "node:path";
 var quotes = /^(?: {0,3}>[ \t]?)+/;
@@ -1029,7 +1038,7 @@ function markdownBody(text) {
   let bodyDepth = 0;
   const lists = [];
   const source = text.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n");
-  return source.split("\n").map((raw) => {
+  const body = source.split("\n").map((raw) => {
     const previousBase = lists.at(-1) ?? 0;
     let expanded = raw.replace(/^\t+/, (tabs) => "    ".repeat(tabs.length));
     let prefix = quotes.exec(expanded)?.[0] ?? "";
@@ -1049,12 +1058,13 @@ function markdownBody(text) {
     if (!comment && /^ {4}/.test(current) && !paragraph) return "";
     const opening = comment ? null : fenceMarker(semantic);
     if (!opening) {
-      raw = raw.replace(/<!--|-->|./g, (token) => {
+      const blockComment = /^ {0,3}<!--/.test(semantic);
+      raw = raw.replace(/<!--|-->|./g, (token, offset) => {
         if (comment) {
           if (token === "-->") comment = false;
           return " ".repeat(token.length);
         }
-        if (token === "<!--") {
+        if (token === "<!--" && blockComment && offset === raw.indexOf("<!--")) {
           comment = true;
           return " ".repeat(token.length);
         }
@@ -1066,7 +1076,8 @@ function markdownBody(text) {
     if (lists.length && quotePrefix.startsWith(" ".repeat(lists.at(-1)))) quotePrefix = "";
     expanded = expanded.slice(quotePrefix.length);
     const indent = /^ */.exec(expanded)[0].length;
-    if (expanded.trim()) {
+    const lazy = paragraph && !!expanded.trim() && depth <= bodyDepth && !listItem.test(current) && !atxStart.test(semantic) && !setextUnderline.test(semantic) && !thematicBreak.test(semantic) && !opening && !/^ {0,3}<!--/.test(semantic);
+    if (expanded.trim() && !lazy) {
       while (lists.length && indent < lists.at(-1)) lists.pop();
     }
     const base = lists.at(-1) ?? 0;
@@ -1082,11 +1093,12 @@ function markdownBody(text) {
     let content = line;
     while (quotes.test(content) || listItem.test(content)) content = content.replace(quotes, "").replace(listItem, "");
     if (depth || item || base) content = content.replace(/^ {0,3}/, "");
-    const boundary = item || depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0);
-    bodyDepth = depth;
+    const boundary = item || !lazy && (depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0));
+    if (!lazy) bodyDepth = depth;
     paragraph = !!content.trim() && !atxStart.test(content) && !setextUnderline.test(content) && !thematicBreak.test(content);
     return (boundary ? "\n" : "") + content;
   }).join("\n");
+  return markdownProse(body, false);
 }
 function markdownHeadings(body) {
   const headings = [];
@@ -1111,8 +1123,9 @@ function markdownHeadings(body) {
 function markdownAnchors(text) {
   const anchors = /* @__PURE__ */ new Set();
   const counts = /* @__PURE__ */ new Map();
-  const definitions = markdownDefinitions(markdownBody(text));
-  for (const heading of markdownHeadings(markdownBody(text))) {
+  const body = markdownBody(text);
+  const definitions = markdownDefinitions(markdownProse(body));
+  for (const heading of markdownHeadings(body)) {
     let title = "";
     let start = 0;
     for (const link of markdownReferences(heading.text, definitions)) {
@@ -1132,9 +1145,67 @@ function markdownAnchors(text) {
 }
 var referenceLabel = (value) => value.trim().replace(/\s+/g, " ").toLowerCase();
 var linkDestination = (value) => /^[^\s()[\]<>\\`]+$/.test(value.trim()) ? value.trim() : null;
+function markdownProse(body, maskInline = true) {
+  const boundaries = markdownHeadings(body).flatMap((heading) => [heading.start, heading.end]);
+  let offset = 0;
+  for (const line of body.split("\n")) {
+    if (!line.trim() || thematicBreak.test(line)) boundaries.push(offset, offset + line.length + 1);
+    offset += line.length + 1;
+  }
+  boundaries.sort((a, b) => a - b);
+  let prose = "";
+  let label = false;
+  for (let index = 0; index < body.length; ) {
+    const rest = body.slice(index);
+    const definition = (index === 0 || body[index - 1] === "\n") && /^ {0,3}\[[^\]\n]+\]:[^\n]*/.exec(rest);
+    if (definition) {
+      prose += definition[0];
+      index += definition[0].length;
+      continue;
+    }
+    const destination = label && /^\](?:\([^)\n]*\)|\[[^\]\n]*\])/.exec(rest);
+    if (destination) {
+      prose += destination[0];
+      index += destination[0].length;
+      label = false;
+      continue;
+    }
+    const escape = /^\\[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.exec(rest);
+    if (escape) {
+      prose += maskInline ? "  " : escape[0];
+      index += 2;
+      continue;
+    }
+    const comment = rest.startsWith("<!--") && /^<!--[\s\S]*?-->/.exec(body.slice(index, boundaries.find((boundary) => boundary > index) ?? body.length));
+    if (comment) {
+      prose += comment[0].replace(/[^\n]/g, " ");
+      index += comment[0].length;
+      continue;
+    }
+    const ticks = /^`+/.exec(rest)?.[0];
+    if (ticks) {
+      const paragraph = body.slice(index + ticks.length, boundaries.find((boundary) => boundary > index) ?? body.length);
+      const closing = [...paragraph.matchAll(/`+/g)].find((match) => match[0].length === ticks.length);
+      if (closing) {
+        const end = index + ticks.length + closing.index + ticks.length;
+        const span = body.slice(index, end);
+        prose += maskInline ? span.replace(/[^\n]/g, " ") : span;
+        index = end;
+        continue;
+      }
+      prose += ticks;
+      index += ticks.length;
+      continue;
+    }
+    if (body[index] === "[") label = true;
+    else if (body[index] === "]" || body[index] === "\n") label = false;
+    prose += body[index++];
+  }
+  return prose;
+}
 function markdownCoverageLimit(text) {
-  const body = markdownBody(text);
-  if (/[`\\]/.test(body)) return "Inline code and escaped Markdown require renderer review.";
+  const body = markdownProse(markdownBody(text));
+  if (/^ {0,3}\[[^\]\n]*[`\\][^\]\n]*\]:/m.test(body)) return "Code spans and escapes in reference labels require renderer review.";
   if (/<[^>]+>|&[\w#]+;|\{#[^}]+\}/.test(body)) return "HTML, entities and custom anchors require renderer review.";
   if (/\[[^\]\n]*\[/.test(body)) return "Nested links require renderer review.";
   const prose = body.replace(/(!?\[[^\]\n]*\]\()([^)\n]*)(\))/g, (match, label, destination, end) => linkDestination(destination) ? label + " ".repeat(destination.length) + end : match).replace(/(^ {0,3}\[[^\]\n]+\]:[ \t]*)(.*)$/gm, (match, label, destination) => linkDestination(destination) ? label + " ".repeat(destination.length) : match).replace(/^\*\*[^*\n]+\*\*:[ \t]*/gm, "").split("\n").filter((line) => !thematicBreak.test(line)).join("\n");
@@ -1155,9 +1226,9 @@ function markdownDefinitions(body) {
   }
   return definitions;
 }
-function markdownReferences(body, definitions = markdownDefinitions(body)) {
+function markdownReferences(body, definitions = markdownDefinitions(markdownProse(body))) {
   const links = [];
-  const prose = body.replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
+  const prose = markdownProse(body).replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
   let consumed = 0;
   for (const match of prose.matchAll(/!?\[([^\]\n]*)\]/g)) {
     if (match.index < consumed) continue;
@@ -1165,7 +1236,8 @@ function markdownReferences(body, definitions = markdownDefinitions(body)) {
     const inline = /^\(([^)\n]*)\)/.exec(prose.slice(start));
     const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start));
     const end = start + (inline?.[0].length ?? reference?.[0].length ?? 0);
-    const path = inline ? linkDestination(inline[1]) : definitions.get(referenceLabel(reference?.[1] || match[1]));
+    const label = reference?.[1] || body.slice(match.index + (match[0].startsWith("!") ? 2 : 1), start - 1);
+    const path = inline ? linkDestination(inline[1]) : definitions.get(referenceLabel(label));
     if (path) {
       links.push({ href: path, label: match[1], start: match.index, end });
       consumed = end;
@@ -1227,7 +1299,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
           throw error;
         }
       }
-      if (markdownCoverageLimit(text)) return unsupported();
+      if (markdownCoverageLimit(text) || markdownHeadings(markdownBody(text)).some((heading) => /[`\\]/.test(heading.text))) return unsupported();
       if (!markdownAnchors(text).has(fragment)) {
         if (text.includes("\0")) return unsupported();
         return problem("Missing heading fragment");
@@ -1240,9 +1312,10 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
   return null;
 }
 
-// skills/repo-audit/scripts/commands/docs-check.mjs
+// runtime/scripts/commands/docs-check.mjs
 function glossaryEntries(text, format) {
   const body = markdownBody(text);
+  if (/[`\\]/.test(body)) return null;
   if (format === "markdown-bold") {
     const headings = markdownHeadings(body);
     const entries = [...body.matchAll(/^\*\*([^*\n]+)\*\*:[ \t]*/gm)].filter((match) => !headings.some((heading) => heading.start <= match.index && match.index < heading.end));
@@ -1300,7 +1373,6 @@ async function run2(options) {
       if (problem?.code === "unsupported-link-fragment") coverageLimits.push({ path, reason: problem.message });
       else if (problem) problems.push(problem);
     }
-    if (/<(?:a|img)\b/i.test(markdownBody(text))) coverageLimits.push({ path, reason: "HTML links and explicit HTML anchors are not checked." });
     documents.push({ path, links: links.length });
     for (const document of contract.documents.filter((document2) => document2.path === path && document2.glossary)) {
       const { context, format } = document.glossary;
@@ -1332,11 +1404,11 @@ async function run2(options) {
   };
 }
 
-// skills/repo-audit/scripts/commands/evidence-validate.mjs
+// runtime/scripts/commands/evidence-validate.mjs
 import { readFile as readFile6 } from "node:fs/promises";
 import { join as join8, relative as relative6, resolve as resolve7 } from "node:path";
 
-// skills/repo-audit/scripts/lib/evidence-policy.mjs
+// runtime/scripts/lib/evidence-policy.mjs
 import { posix as posix2, win32 as win323 } from "node:path";
 function baseText(root, base, path) {
   if (base.kind === "empty-tree") return "";
@@ -1476,7 +1548,7 @@ function mapInventory(inventory, contracts) {
   return { mappings, candidateDocuments, unmappedPaths: mappings.filter((mapping) => !mapping.documentIds.length).map((mapping) => mapping.path) };
 }
 
-// skills/repo-audit/scripts/commands/evidence.mjs
+// runtime/scripts/commands/evidence.mjs
 import { spawnSync as spawnSync3 } from "node:child_process";
 var gitEnv = { ...process.env, GIT_DIR: void 0, GIT_WORK_TREE: void 0, GIT_COMMON_DIR: void 0, GIT_INDEX_FILE: void 0 };
 function collectInventory(root, base) {
@@ -1534,7 +1606,7 @@ function collectInventory(root, base) {
   return { base: resolvedBase, head, changes, paths };
 }
 
-// skills/repo-audit/scripts/commands/run-checks.mjs
+// runtime/scripts/commands/run-checks.mjs
 import { readFile as readFile5, stat as stat6, writeFile } from "node:fs/promises";
 import { basename, join as join7, relative as relative5, resolve as resolve6 } from "node:path";
 async function checkCommandPaths(target, checks, paths = []) {
@@ -1588,7 +1660,7 @@ async function checkInputState(target, plan, planPath) {
   });
 }
 
-// skills/repo-audit/schemas/findings.schema.json
+// runtime/schemas/findings.schema.json
 var findings_schema_default = {
   type: "object",
   additionalProperties: false,
@@ -1890,7 +1962,7 @@ var findings_schema_default = {
   }
 };
 
-// skills/repo-audit/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.mjs
 var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "foundation-review"] };
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
@@ -1921,7 +1993,7 @@ async function validateFindings(findings, target, deletionScope = []) {
   if (new Set(findings.execution.map((record) => record.outcome)).size !== findings.execution.length) invalid("duplicate-outcome", "Use one current record per outcome.", "$/execution");
 }
 
-// skills/repo-audit/schemas/evidence.schema.json
+// runtime/schemas/evidence.schema.json
 var evidence_schema_default = {
   title: "Change-specific maintenance assessment version 1",
   type: "object",
@@ -2023,7 +2095,7 @@ var evidence_schema_default = {
   }
 };
 
-// skills/repo-audit/schemas/impact-assessment.json
+// runtime/schemas/impact-assessment.json
 var impact_assessment_default = {
   type: "object",
   additionalProperties: false,
@@ -2057,7 +2129,7 @@ var impact_assessment_default = {
   }
 };
 
-// skills/repo-audit/schemas/check-plan.json
+// runtime/schemas/check-plan.json
 var check_plan_default = {
   title: "Verification check plan version 1",
   type: "object",
@@ -2128,7 +2200,7 @@ var check_plan_default = {
   }
 };
 
-// skills/repo-audit/scripts/commands/evidence-validate.mjs
+// runtime/scripts/commands/evidence-validate.mjs
 function meaningful(text, excerpt, path) {
   const screened = text.split("");
   const literals = /* @__PURE__ */ new Set();
@@ -2472,13 +2544,13 @@ async function run3(options) {
   };
 }
 
-// skills/repo-audit/scripts/commands/docs-generate.mjs
+// runtime/scripts/commands/docs-generate.mjs
 import { lstat as lstat3, readdir as readdir4, readFile as readFile7, readlink as readlink3, writeFile as writeFile2 } from "node:fs/promises";
 import { watch } from "node:fs";
 import { join as join9 } from "node:path";
 import { setImmediate } from "node:timers/promises";
 
-// skills/repo-audit/scripts/lib/proposed-edit.mjs
+// runtime/scripts/lib/proposed-edit.mjs
 function exactDiff(path, original, proposed) {
   if (original === proposed) return "";
   const lines = (text) => text === null ? [] : text.match(/[^\n]*\n|[^\n]+$/g) ?? [];
@@ -2498,7 +2570,7 @@ function exactDiff(path, original, proposed) {
   return output.join("\n") + "\n";
 }
 
-// skills/repo-audit/scripts/commands/docs-generate.mjs
+// runtime/scripts/commands/docs-generate.mjs
 function reject3(code, path, message) {
   throw new CommandError("failed", [{ code, path, message, fix: "Correct the registered generator or markers, then review regenerated bytes through a selected change set." }]);
 }
@@ -2656,6 +2728,17 @@ function checkGeneratedFacts(options) {
 function blocked(code, message, fix) {
   throw new CommandError("blocked", [{ code, message, fix }]);
 }
+async function runDocsOnly(options) {
+  if (options.workspace || options.base || options.assessment) throw new CommandError("usage-error", [{
+    code: "docs-only-input",
+    message: "--docs-only checks the current tree and takes no base or assessment.",
+    fix: "Supply --repo <path> --docs-only [--contract <path>]."
+  }]);
+  const docs = await run2(options);
+  if (docs.status !== "passed") return docs;
+  const facts = await checkGeneratedFacts(options);
+  return { ...facts, data: { ...facts.data, coverageLimits: [...docs.data.coverageLimits, ...facts.data.coverageLimits ?? []] } };
+}
 async function runChecker(options, { comparisonPolicy = false } = {}) {
   if (!options.repo || !options.base || !options.assessment || options.workspace) throw new CommandError("usage-error", [{
     code: "missing-checker-input",
@@ -2766,10 +2849,11 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
 }
 if (process.argv[1] && await resolveLinks(resolve8(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2);
-  if (argv.length === 1 && argv[0] === "--help") console.log("Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]");
+  if (argv.length === 1 && argv[0] === "--help") console.log("Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]\n       node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <path>] [--json]\nWith --docs-only, check registered document links, glossary structure and generated sections in the current tree without a base or assessment.");
   else {
     try {
-      emitResult({ command: "bstack check", ...await runChecker(parseArgs(argv, ["base", "assessment", "contract"])) }, argv.includes("--json"));
+      const options = parseArgs(argv, ["base", "assessment", "contract", "docs-only"]);
+      emitResult({ command: options["docs-only"] ? "bstack docs check" : "bstack check", ...await (options["docs-only"] ? runDocsOnly : runChecker)(options) }, argv.includes("--json"));
     } catch (error) {
       emitResult({
         command: "bstack check",
@@ -2787,10 +2871,11 @@ export {
   run2 as checkDocuments,
   checkGeneratedFacts,
   runChecker,
+  runDocsOnly,
   run as validateContract,
   validateData,
   run3 as validateEvidence
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"47468b103d962bd98c6778e28579970ff72e166dad085c84ae0775c6c1532a22"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"33c0df996779452935a4c58e77fcfe76f51d142577f608d4f964bb520921ca9e"}
