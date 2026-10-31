@@ -121,7 +121,7 @@ async function offlineSandbox(t) {
   const { repo } = await emptyRepo(t)
   await cp(join(root, 'upstream'), join(repo, 'upstream'), { recursive: true })
   await mkdir(join(repo, 'tests', 'scripts'), { recursive: true })
-  for (const file of ['upstream.test.mjs', 'discovery-fixture.mjs']) {
+  for (const file of ['upstream.test.mjs', 'discovery-fixture.mjs', 'fixture-seed.mjs']) {
     await cp(join(root, 'tests', 'scripts', file), join(repo, 'tests', 'scripts', file))
   }
   git(repo, 'add', 'upstream')
