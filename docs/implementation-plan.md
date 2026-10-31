@@ -292,7 +292,8 @@ Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs), which a
 The [task registry](../tests/tasks.json) owns suite membership; repeated `--task` arguments run one union with each shared suite executed once.
 T3.1 supplies packaging contracts; the complete evaluation harness is retained for evaluator, contract and shared-runtime changes and every full fallback, rather than every per-piece gate.
 The script prints its merge base with `origin/main`, committed, staged, unstaged and untracked paths, including both sides of renames and deleted paths, selected modules and commands, and any fallback reason.
-Unknown paths, shared libraries or schemas, evaluator or fixture inputs, generator/build inputs, dependencies and locks, `.no-mistakes.yaml`, selector/runner/map changes, incomplete dependencies, unmatched generated artifacts, an unavailable base or an empty diff select the full offline suite with capture.
+Unknown paths, shared libraries or schemas, evaluator or fixture inputs (including the evaluation contract in `docs/evaluation.md`), generator/build inputs, dependencies and locks, `.no-mistakes.yaml`, selector/runner/map changes, incomplete dependencies, unmatched generated artifacts, an unavailable base or an empty diff select the full offline suite through ordinary `npm test`.
+Its capture availability and evidence attachment rules follow the [task evidence contract](#task-evidence-contract), so missing metadata or uncommitted inputs do not prevent fallback execution.
 Generated bundles and copied resources follow their authored inputs and `runtime/skills.json`; an isolated generated edit cannot establish scope.
 The [development guide](development.md#affected-validation) records the selection proof and the selected-versus-full comparison required during local verification maintenance.
 Required validation after a change still runs, and no further autonomous repair round follows once the configured budget is spent.
