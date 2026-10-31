@@ -28,6 +28,8 @@ function maintenance(directory, args) {
 }
 
 for (const context of [
+  '# *Guide*\n\nUse **strong** and _emphasis_.',
+  '**Strong** and _emphasis_, `example [ignored](missing-example.md)`, \\*literal\\* and <https://example.invalid>.',
   '`npm start`',
   '`<a href="missing-inline.md">example</a>`',
   '# Using `node`',
@@ -39,7 +41,7 @@ for (const context of [
   String.raw`Escaped \* punctuation and \[ignored](missing-escaped.md)`,
   '```md\n[ignored](missing-fenced.md)\n```\n`[ignored](missing-inline.md)`'
 ]) {
-  test('docs-only checker verifies local links beside code and escapes: ' + context, async t => {
+  test('docs-only checker verifies local links beside ordinary Markdown: ' + context, async t => {
     const f = await emptyRepo(t)
     await mkdir(join(f.repo, '.bstack'))
     await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract,

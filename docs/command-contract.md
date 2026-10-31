@@ -351,8 +351,10 @@ External URLs are not fetched.
 Code fences, indented code and HTML comments do not contribute links or glossary entries.
 Inline code spans and backslash-escaped ASCII punctuation do not contribute link syntax; ordinary links elsewhere in the same document, including links with code in their rendered labels, remain checked.
 Code spans may continue across lines within a paragraph, including lazy blockquote and list continuations, but do not extend across block boundaries.
-Code spans or escapes in reference-definition labels, emphasis other than the supported `**Term**:` entry prefix, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
-When such markup occurs outside excluded blocks, the source document's links and glossary are left for renderer review; registered paths are still verified.
+Emphasis, strong emphasis, headings, lists, tables and URI or email autolinks do not prevent ordinary local links from being checked.
+Code spans or escapes in reference-definition labels, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
+Unsupported links and HTML spans are left for renderer review while ordinary links elsewhere in the document remain checked; registered paths are still verified.
+Coverage limits remain visible in the result and do not imply that unchecked references passed.
 A fragment target containing such unsupported markup, or code spans or backslashes in its headings, also reports a coverage limit rather than a missing heading.
 Fragments in non-Markdown targets are not validated.
 Unsupported document encodings and formats produce `data.coverageLimits`, also visible in plain output, rather than a readiness failure or a forced rewrite.

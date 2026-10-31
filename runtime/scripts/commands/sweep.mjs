@@ -125,8 +125,8 @@ async function pointerItems(target, coverageLimits) {
   const limit = text.includes('\0') ? 'Local links require supported Markdown text.' : markdownCoverageLimit(text)
   if (limit) {
     coverageLimits.push({ path: 'AGENTS.md', reason: limit })
-    return []
   }
+  if (text.includes('\0')) return []
   const items = []
   for (const href of markdownLinks(text)) {
     const problem = await checkLocalLink(target.root, 'AGENTS.md', href)

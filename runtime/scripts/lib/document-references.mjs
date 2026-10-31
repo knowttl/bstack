@@ -122,7 +122,8 @@ export function markdownAnchors(text) {
       start = link.end
     }
     title += heading.text.slice(start)
-    title = title.replace(/[ \t]*\n[ \t]*/g, '\n')
+    title = title.replace(/(?<![\p{L}\p{N}_])(_{1,3})(?=\S)(.+?\S|\S)\1(?![\p{L}\p{N}_])/gu, '$2')
+      .replace(/[ \t]*\n[ \t]*/g, '\n')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
     let count = counts.get(slug) ?? 0
     let anchor = slug + (count ? `-${count}` : '')
@@ -183,13 +184,8 @@ function markdownProse(body, maskInline = true) {
 export function markdownCoverageLimit(text) {
   const body = markdownProse(markdownBody(text))
   if (/^ {0,3}\[[^\]\n]*[`\\][^\]\n]*\]:/m.test(body)) return 'Code spans and escapes in reference labels require renderer review.'
-  if (/<[^>]+>|&[\w#]+;|\{#[^}]+\}/.test(body)) return 'HTML, entities and custom anchors require renderer review.'
+  if (/<[^>]+>|&[\w#]+;|\{#[^}]+\}/.test(body.replace(/<[A-Za-z][A-Za-z0-9+.-]{1,31}:[^<>\s]*>|<[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+>/g, ''))) return 'HTML, entities and custom anchors require renderer review.'
   if (/\[[^\]\n]*\[/.test(body)) return 'Nested links require renderer review.'
-  const prose = body
-    .replace(/(!?\[[^\]\n]*\]\()([^)\n]*)(\))/g, (match, label, destination, end) => linkDestination(destination) ? label + ' '.repeat(destination.length) + end : match)
-    .replace(/(^ {0,3}\[[^\]\n]+\]:[ \t]*)(.*)$/gm, (match, label, destination) => linkDestination(destination) ? label + ' '.repeat(destination.length) : match)
-    .replace(/^\*\*[^*\n]+\*\*:[ \t]*/gm, '').split('\n').filter(line => !thematicBreak.test(line)).join('\n')
-  if (/(?:^|[^\p{L}\p{N}_])_+\S[\s\S]*?\S_+(?![\p{L}\p{N}_])|\*+\S/u.test(prose)) return 'Inline emphasis requires renderer review.'
   for (const match of body.matchAll(/!?\[[^\]\n]*\]\(([^)\n]*)\)/g)) {
     if (!linkDestination(match[1])) return 'Only ordinary destinations without titles are checked.'
   }
@@ -203,17 +199,31 @@ function markdownDefinitions(body) {
   const definitions = new Map()
   for (const match of body.matchAll(/^ {0,3}\[([^\]\n]+)\]:[ \t]*(.+)$/gm)) {
     const path = linkDestination(match[2])
-    if (path && !definitions.has(referenceLabel(match[1]))) definitions.set(referenceLabel(match[1]), path)
+    if (path && !/[`\\]/.test(match[1]) && !definitions.has(referenceLabel(match[1]))) definitions.set(referenceLabel(match[1]), path)
   }
   return definitions
 }
 
 function markdownReferences(body, definitions = markdownDefinitions(markdownProse(body))) {
   const links = []
-  const prose = markdownProse(body).replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, value => ' '.repeat(value.length))
+  const prose = markdownProse(body)
+    .replace(/<[^>\n]*>/g, value => ' '.repeat(value.length))
+    .replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, value => ' '.repeat(value.length))
   let consumed = 0
+  const brackets = []
+  const nested = []
+  for (let index = 0; index < prose.length; index++) {
+    if (prose[index] === '[') brackets.push(index)
+    if (prose[index] === ']' && brackets.length) {
+      const start = brackets.pop()
+      if (prose.slice(start + 1, index).includes('[')) {
+        const suffix = /^(?:\([^\n]*?\)|\[[^\]\n]*\])/.exec(prose.slice(index + 1))
+        nested.push({ start, end: index + 1 + (suffix?.[0].length ?? 0) })
+      }
+    }
+  }
   for (const match of prose.matchAll(/!?\[([^\]\n]*)\]/g)) {
-    if (match.index < consumed) continue
+    if (match.index < consumed || nested.some(span => span.start <= match.index && match.index < span.end)) continue
     const start = match.index + match[0].length
     const inline = /^\(([^)\n]*)\)/.exec(prose.slice(start))
     const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start))
@@ -229,7 +239,7 @@ function markdownReferences(body, definitions = markdownDefinitions(markdownPros
 }
 
 export function markdownLinks(text) {
-  return markdownCoverageLimit(text) ? [] : markdownReferences(markdownBody(text)).map(link => link.href)
+  return markdownReferences(markdownBody(text)).map(link => link.href)
 }
 
 export function isMarkdownLinkLine(text) {

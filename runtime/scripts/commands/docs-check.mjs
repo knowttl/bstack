@@ -56,8 +56,6 @@ export async function run(options) {
     const limit = markdownCoverageLimit(text)
     if (limit) {
       coverageLimits.push({ path, reason: limit })
-      documents.push({ path, links: 0 })
-      continue
     }
     const links = markdownLinks(text)
     for (const href of links) {

@@ -13,6 +13,51 @@ async function glossary(t, text, format = 'markdown-bold', context = 'ordering')
   return f
 }
 
+for (const text of [
+  '# *Guide*\n\nUse **strong** and _emphasis_.\n\n[Guide](guide.md)\n',
+  '# __Guide__\n\nUse **strong**, `example [Ignored](missing-example.md)` and \\*literal\\*.\n\n- *[Guide][target]*\n\n| Link |\n| --- |\n| **[Guide](guide.md)** |\n\n[target]: guide.md\n\n<https://example.invalid>\n'
+]) {
+  test('README emphasis checks missing links and passes after repair: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text)
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.ok(broken.problems.every(problem => problem.code === 'broken-local-link' && problem.message.endsWith(': guide.md')))
+    assert.deepEqual(broken.data.coverageLimits, [])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const fixed = run('docs check', f.repo)
+    assert.equal(fixed.exit, 0, JSON.stringify(fixed))
+    assert.deepEqual(fixed.data.coverageLimits, [])
+  })
+}
+
+for (const markup of ['[![Logo](unchecked.svg)](unchecked.md)', '<a href="unchecked.md">Guide</a>', '[Fancy](unchecked.md "Title")']) {
+  test('ambiguous spans leave unrelated README links checked: ' + markup, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), markup + '\n\n**Read** [Guide](guide.md).\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.equal(broken.data.coverageLimits[0].path, 'README.md')
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const repaired = run('docs check', f.repo)
+    assert.equal(repaired.exit, 0, JSON.stringify(repaired))
+    assert.equal(repaired.data.coverageLimits[0].path, 'README.md')
+  })
+}
+
+for (const [heading, fragment] of [['*Rule*', 'rule'], ['**Rule**', 'rule'], ['_Rule_', 'rule'], ['__Rule__', 'rule'], ['snake_case', 'snake_case']]) {
+  test('emphasized headings retain local fragment checks: ' + heading, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), '[Guide](guide.md#' + fragment + ')\n[Missing](guide.md#absent)\n')
+    await writeFile(join(f.repo, 'guide.md'), '# ' + heading + '\n')
+    const result = run('docs check', f.repo)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.message), ['Missing heading fragment: guide.md#absent'])
+    assert.deepEqual(result.data.coverageLimits, [])
+  })
+}
+
 test('duplicate glossary terms fail within one context', async t => {
   const f = await glossary(t, '# Ordering\n\n**Order**:\nA request.\n\n**order**:\nAnother request.\n')
   const before = await snapshot(f.repo)
@@ -119,15 +164,13 @@ test('glossary samples inside code do not create duplicate entries', async t => 
 for (const text of [
   '[`a]: README.md\n[b`]: missing.md\n\n[First][`a] [Second][b`]',
   '[`a`]: https://example.invalid\n[`b`]: missing.md\n[Guide][`b`]',
-  '# _Rule_\n[Heading](#rule)',
-  '# __Rule__\n[Heading](#rule)',
-  '# [![Logo](logo.svg)](guide.md)\n[Heading](#logo)',
+  '# [![Logo](logo.svg)](guide.md)',
   '[Guide](guide.md "Title")',
   '[Guide](guide.md unexpected)',
   '[Guide](<guide.md>)',
   '[Guide](guide(new).md)',
   '<a href="missing.md">Guide</a>',
-  '# Title &amp; details\n[Heading](#title--details)'
+  '# Title &amp; details'
 ]) {
   test('unusual Markdown reports source coverage without a missing-reference verdict: ' + text, async t => {
     const f = await maintenanceRepo(t)
@@ -142,7 +185,7 @@ for (const text of [
   })
 }
 
-for (const heading of ['# _Rule_', '# `Rule`', '# ` Array<T> `', '# [![Logo](logo.svg)](guide.md)']) {
+for (const heading of ['# `Rule`', '# ` Array<T> `', '# [![Logo](logo.svg)](guide.md)']) {
   for (const fragment of ['rule', 'absent']) {
     test('unusual fragment targets report coverage: ' + heading + ' #' + fragment, async t => {
       const f = await maintenanceRepo(t)
@@ -267,13 +310,13 @@ test('ordinary destination bytes preserve fragment target checks', async t => {
 })
 
 for (const text of ['[_Guide_](_missing_.md)\n', '# _Rule_\n[Guide](_missing_.md)\n', '[*Guide*](*missing*.md)\n']) {
-  test('unusual emphasis remains coverage limited around ordinary destinations: ' + text, async t => {
+  test('emphasis retains ordinary destination checks: ' + text, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), text)
     const result = run('docs check', f.repo)
-    assert.equal(result.exit, 0)
-    assert.deepEqual(result.problems, [])
-    assert.ok(result.data.coverageLimits.some(limit => limit.path === 'README.md'))
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'broken-local-link')
+    assert.deepEqual(result.data.coverageLimits, [])
   })
 }
 
@@ -311,14 +354,14 @@ for (const text of [
   '[Guide](missing`name.md)\n[Other](missing.md)\nUse `value`.\n',
   '![Guide](missing`name.png)\n[Other](missing.md)\nUse `value`.\n',
   '[Guide](missing\\`name.md)\n[Other](missing.md)\nUse `value`.\n',
-  '[Guide][target]\n[target]: missing`name.md\nUse `value`.\n'
+  '[Guide][target]\n[target]: missing`name.md\n[Other](missing.md)\nUse `value`.\n'
 ]) {
   test('unsupported destination bytes retain explicit coverage limits: ' + text, async t => {
     const f = await maintenanceRepo(t)
     await writeFile(join(f.repo, 'README.md'), text)
     const result = run('docs check', f.repo)
-    assert.equal(result.exit, 0, JSON.stringify(result))
-    assert.deepEqual(result.problems, [])
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.deepEqual(result.problems.map(problem => problem.message), ['Missing or wrong-case destination: missing.md'])
     assert.match(result.data.coverageLimits.find(limit => limit.path === 'README.md').reason, /Only ordinary.*destinations without titles/)
   })
 }

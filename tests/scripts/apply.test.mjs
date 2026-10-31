@@ -349,7 +349,6 @@ for (const text of [
 for (const text of [
   '[`a]: README.md\n[b`]: missing.md\n\n[First][`a] [Second][b`]\n',
   '[`a`]: https://example.invalid\n[`b`]: missing.md\n\n[Guide][`b`]\n',
-  '## _Rule_\n\n[Rule](#rule)\n',
   '## [![Logo](logo.svg)](guide.md)\n'
 ]) {
   for (const path of ['README.md', 'CONTRIBUTING.md']) {
