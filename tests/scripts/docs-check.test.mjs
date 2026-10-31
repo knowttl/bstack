@@ -149,6 +149,73 @@ for (const text of [
   })
 }
 
+for (const text of [
+  'Open [\n\n[Guide](guide.md)\n\nClose ]',
+  'Open [\n# Heading\n[Guide](guide.md)\nClose ]',
+  'Open [\n***\n[Guide](guide.md)\nClose ]',
+  '[ordinary [Guide](guide.md) text]',
+  'Open [\n\n> [Guide](guide.md)\n\nClose ]'
+]) {
+  test('unrelated brackets retain ordinary links: ' + text, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), text + '\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+for (const tag of ['pre', 'script', 'style', 'textarea']) {
+  for (const prefix of ['', '> ', '- ']) {
+    test('raw HTML keeps fences and closing-line links literal: ' + prefix + tag, async t => {
+      const f = await maintenanceRepo(t)
+      const continuation = prefix === '- ' ? '  ' : prefix
+      await writeFile(join(f.repo, 'README.md'), prefix + '<' + tag + '>\n' + continuation + '```\n' + continuation + '</' + tag + '> [Example](missing-example.md)\n\n[Guide](guide.md)\n')
+      const broken = run('docs check', f.repo)
+      assert.equal(broken.exit, 1, JSON.stringify(broken))
+      assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+      assert.match(broken.data.coverageLimits[0].reason, /HTML/)
+      await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+      assert.equal(run('docs check', f.repo).exit, 0)
+    })
+  }
+}
+
+for (const span of [
+  '[Example](unchecked.md "[Title](missing-example.md)")',
+  '![Example](unchecked.md \'[Title](missing-example.md)\')',
+  '[Example](unchecked.md ([Title](missing-example.md)))',
+  'Text <span title="> [Example](missing-example.md)">label</span>',
+  'Text <span title="` > [Example](missing-example.md)">label</span> `literal`',
+  "Text <span title='> [Example](missing-example.md)'>label</span>"
+]) {
+  test('unsupported spans cannot expose example links: ' + span, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), span + '\n\n[Guide](guide.md)\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.equal(broken.data.coverageLimits[0].path, 'README.md')
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
+for (const reference of ['[Example][guide]', '[Guide][]', '[Guide]', '![Example][guide]', '![Guide][]', '![Guide]']) {
+  test('unsupported first definitions retain precedence: ' + reference, async t => {
+    const f = await maintenanceRepo(t)
+    await writeFile(join(f.repo, 'README.md'), '[Guide]: README.md "Title"\n[GUIDE]: missing-example.md\n\n' + reference + '\n\n[Ordinary](guide.md)\n')
+    const broken = run('docs check', f.repo)
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => problem.message), ['Missing or wrong-case destination: guide.md'])
+    assert.match(broken.data.coverageLimits[0].reason, /reference destinations/)
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    assert.equal(run('docs check', f.repo).exit, 0)
+  })
+}
+
 for (const [format, example] of [
   ['markdown-bold', '**Order**: One.\n**order**: Two.'],
   ['markdown-table', '| Term | Definition |\n| --- | --- |\n| Order | One. |\n| order | Two. |'],

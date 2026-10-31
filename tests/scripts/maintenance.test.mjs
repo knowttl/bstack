@@ -333,3 +333,26 @@ test('sweep fails on a broken link while retaining unchecked scope as data', asy
     [['broken-local-link', 'docs/design.md', 'Run /architecture maintain.']])
   assert.deepEqual(swept.data.coverageLimits, [{ path: 'AGENTS.md', reason: 'HTML, entities and custom anchors require renderer review.' }])
 })
+
+for (const text of [
+  'Open [\n\n[Guide](guide.md)\n\nClose ]',
+  '<pre>\n```\n</pre> [Example](missing-example.md)\n\n[Guide](guide.md)',
+  '[Example](README.md "[Title](missing-example.md)")\n\n[Guide](guide.md)',
+  'Text <span title="> [Example](missing-example.md)">label</span>\n\n[Guide](guide.md)',
+  '[Example]: README.md "Title"\n[Example]: missing-example.md\n\n[Example]\n\n[Guide](guide.md)'
+]) {
+  test('sweep preserves pointer link boundaries: ' + text, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(contract))
+    await writeFile(join(f.repo, 'AGENTS.md'), text + '\n')
+    const broken = maintenance(f.directory, ['sweep', '--repo', f.repo])
+    assert.equal(broken.exit, 1, JSON.stringify(broken))
+    assert.deepEqual(broken.problems.map(problem => [problem.path, problem.message]),
+      [['AGENTS.md', 'Missing or wrong-case destination: guide.md']])
+    await writeFile(join(f.repo, 'guide.md'), '# Guide\n')
+    const repaired = maintenance(f.directory, ['sweep', '--repo', f.repo])
+    assert.equal(repaired.exit, 0, JSON.stringify(repaired))
+    assert.deepEqual(repaired.problems, [])
+  })
+}

@@ -1033,6 +1033,7 @@ function fenceMarker(line) {
 }
 function markdownBody(text) {
   let fence;
+  let html;
   let comment = false;
   let paragraph = false;
   let bodyDepth = 0;
@@ -1053,6 +1054,11 @@ function markdownBody(text) {
     if (fence) {
       const marker = fenceMarker(semantic);
       if (marker && marker[1][0] === fence.marker[0] && marker[1].length >= fence.marker.length && !marker[2].trim()) fence = void 0;
+      return "";
+    }
+    if (html && raw.trim() && (rawIndent < html.indent || depth < html.depth)) html = void 0;
+    if (html) {
+      if (new RegExp(`</${html.tag}\\s*>`, "i").test(semantic)) html = void 0;
       return "";
     }
     if (!comment && /^ {4}/.test(current) && !paragraph) return "";
@@ -1095,6 +1101,14 @@ function markdownBody(text) {
     if (depth || item || base) content = content.replace(/^ {0,3}/, "");
     const boundary = item || !lazy && (depth !== bodyDepth || previousBase > (lists.at(-1) ?? 0));
     if (!lazy) bodyDepth = depth;
+    const rawHTML = !comment && /^ {0,3}<(pre|script|style|textarea)(?=[\s>])/i.exec(content);
+    if (rawHTML) {
+      const tag = rawHTML[1].toLowerCase();
+      if (!new RegExp(`</${tag}\\s*>`, "i").test(content)) html = { tag, indent: lists.at(-1) ?? 0, depth };
+      paragraph = false;
+      return (boundary ? "\n" : "") + `<${tag}>
+`;
+    }
     paragraph = !!content.trim() && !atxStart.test(content) && !setextUnderline.test(content) && !thematicBreak.test(content);
     return (boundary ? "\n" : "") + content;
   }).join("\n");
@@ -1150,14 +1164,38 @@ function markdownAnchors(text) {
 }
 var referenceLabel = (value) => value.trim().replace(/\s+/g, " ").toLowerCase();
 var linkDestination = (value) => /^[^\s()[\]<>\\`]+$/.test(value.trim()) && !/&[\w#]+;/.test(value) ? value.trim() : null;
-function markdownProse(body, maskInline = true) {
+function markdownBoundaries(body) {
   const boundaries = markdownHeadings(body).flatMap((heading) => [heading.start, heading.end]);
   let offset = 0;
   for (const line of body.split("\n")) {
     if (!line.trim() || thematicBreak.test(line)) boundaries.push(offset, offset + line.length + 1);
     offset += line.length + 1;
   }
-  boundaries.sort((a, b) => a - b);
+  return boundaries.sort((a, b) => a - b);
+}
+function markdownInlineDestination(body, start, end) {
+  if (body[start] !== "(") return null;
+  let depth = 1;
+  let quote;
+  for (let index = start + 1; index < end; index++) {
+    const character = body[index];
+    if (character === "\\") {
+      index++;
+      continue;
+    }
+    if (quote) {
+      if (character === quote) quote = void 0;
+      continue;
+    }
+    if (character === "<") quote = ">";
+    else if ((character === '"' || character === "'") && /\s/.test(body[index - 1])) quote = character;
+    else if (character === "(") depth++;
+    else if (character === ")" && --depth === 0) return { destination: body.slice(start + 1, index), end: index + 1 };
+  }
+  return null;
+}
+function markdownProse(body, maskInline = true) {
+  const boundaries = markdownBoundaries(body);
   let prose = "";
   let label = false;
   for (let index = 0; index < body.length; ) {
@@ -1168,12 +1206,16 @@ function markdownProse(body, maskInline = true) {
       index += definition[0].length;
       continue;
     }
-    const destination = label && /^\](?:\([^)\n]*\)|\[[^\]\n]*\])/.exec(rest);
-    if (destination) {
-      prose += destination[0];
-      index += destination[0].length;
-      label = false;
-      continue;
+    if (label && body[index] === "]") {
+      const inline = markdownInlineDestination(body, index + 1, boundaries.find((boundary) => boundary > index) ?? body.length);
+      const reference = /^\]\[[^\]\n]*\]/.exec(rest);
+      const end = inline?.end ?? (reference ? index + reference[0].length : null);
+      if (end !== null) {
+        prose += body.slice(index, end);
+        index = end;
+        label = false;
+        continue;
+      }
     }
     const escape = /^\\[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.exec(rest);
     if (escape) {
@@ -1185,6 +1227,12 @@ function markdownProse(body, maskInline = true) {
     if (comment) {
       prose += comment[0].replace(/[^\n]/g, " ");
       index += comment[0].length;
+      continue;
+    }
+    const tag = /^<(?:[^<>"']|"[^"]*"|'[^']*')*>/.exec(rest);
+    if (tag) {
+      prose += tag[0];
+      index += tag[0].length;
       continue;
     }
     const ticks = /^`+/.exec(rest)?.[0];
@@ -1225,12 +1273,12 @@ function markdownDefinitions(body) {
   const definitions = /* @__PURE__ */ new Map();
   for (const match of body.matchAll(/^ {0,3}\[([^\]\n]+)\]:[ \t]*(.+)$/gm)) {
     const path = linkDestination(match[2]);
-    if (path && !/[`\\]/.test(match[1]) && !definitions.has(referenceLabel(match[1]))) definitions.set(referenceLabel(match[1]), path);
+    if (!/[`\\]/.test(match[1]) && !definitions.has(referenceLabel(match[1]))) definitions.set(referenceLabel(match[1]), path);
   }
   return definitions;
 }
 function markdownReferences(body, definitions) {
-  body = body.replace(/^ {0,3}<(pre|script|style|textarea)(?=[\s>])[\s\S]*?(?:<\/\1\s*>|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " ")).replace(/^ {0,3}<\/?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?=[\s/>])[^\n]*[\s\S]*?(?=\n[ \t]*\n|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " "));
+  body = body.replace(/^ {0,3}<\/?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?=[\s/>])[^\n]*[\s\S]*?(?=\n[ \t]*\n|(?![\s\S]))/gim, (value) => value.replace(/[^\n]/g, " "));
   const headingEnds = new Set(markdownHeadings(body).map((heading) => heading.end));
   for (const match of body.matchAll(/^ {0,3}<\/?[A-Za-z][A-Za-z0-9-]*(?:\s+[A-Za-z_:][A-Za-z0-9_.:-]*(?:\s*=\s*(?:[^\s"'=<>`]+|'[^']*'|"[^"]*"))?)*\s*\/?>[ \t]*(?=\n|$)/gim)) {
     const lines = body.slice(0, match.index).split("\n");
@@ -1244,31 +1292,37 @@ function markdownReferences(body, definitions) {
   }
   definitions ??= markdownDefinitions(markdownProse(body));
   const links = [];
-  const prose = markdownProse(body).replace(/<[^>\n]*>/g, (value) => " ".repeat(value.length)).replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
+  const prose = markdownProse(body).replace(/<(?:[^<>"']|"[^"]*"|'[^']*')*>/g, (value) => value.replace(/[^\n]/g, " ")).replace(/^ {0,3}\[[^\]\n]+\]:.*$/gm, (value) => " ".repeat(value.length));
   let consumed = 0;
   const brackets = [];
   const nested = [];
+  const boundaries = markdownBoundaries(prose);
+  const blockStarts = new Set(boundaries);
   for (let index = 0; index < prose.length; index++) {
+    if (blockStarts.has(index)) brackets.length = 0;
     if (prose[index] === "[") brackets.push(index);
     if (prose[index] === "]" && brackets.length) {
       const start = brackets.pop();
       if (prose.slice(start + 1, index).includes("[")) {
-        const suffix = /^(?:\([^\n]*?\)|\[[^\]\n]*\])/.exec(prose.slice(index + 1));
-        nested.push({ start, end: index + 1 + (suffix?.[0].length ?? 0) });
+        const inline = markdownInlineDestination(prose, index + 1, boundaries.find((boundary) => boundary > index) ?? prose.length);
+        const reference = /^\[[^\]\n]*\]/.exec(prose.slice(index + 1));
+        if (inline || reference || definitions.has(referenceLabel(prose.slice(start + 1, index)))) {
+          nested.push({ start, end: inline?.end ?? index + 1 + (reference?.[0].length ?? 0) });
+        }
       }
     }
   }
   for (const match of prose.matchAll(/!?\[([^\]\n]*)\]/g)) {
     if (match.index < consumed || nested.some((span) => span.start <= match.index && match.index < span.end)) continue;
     const start = match.index + match[0].length;
-    const inline = /^\(([^)\n]*)\)/.exec(prose.slice(start));
+    const inline = markdownInlineDestination(prose, start, boundaries.find((boundary) => boundary > start) ?? prose.length);
     const reference = /^\[([^\]\n]*)\]/.exec(prose.slice(start));
-    const end = start + (inline?.[0].length ?? reference?.[0].length ?? 0);
+    const end = inline?.end ?? start + (reference?.[0].length ?? 0);
     const label = reference?.[1] || body.slice(match.index + (match[0].startsWith("!") ? 2 : 1), start - 1);
-    const path = inline ? linkDestination(inline[1]) : definitions.get(referenceLabel(label));
+    const path = inline ? linkDestination(inline.destination) : definitions.get(referenceLabel(label));
+    consumed = end;
     if (path) {
       links.push({ href: path, label: match[1], start: match.index, end });
-      consumed = end;
     }
   }
   return links;
@@ -2905,4 +2959,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"b5330009fd4d244436b06c87e1de03ba49af88a965567151f1e006b052d62de8"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"f79f896f74f0fdc74aa70fbe6827015b4bbf32906b4fd020dd538a3c4abd45fd"}
