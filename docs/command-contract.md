@@ -349,9 +349,11 @@ Optional titles and other destination spellings are coverage limits.
 Heading fragments use lowercase ATX or setext heading slugs, with punctuation removed, whitespace changed to hyphens and repeated headings suffixed `-1`, `-2` and so on.
 External URLs are not fetched.
 Code fences, indented code and HTML comments do not contribute links or glossary entries.
-Inline code, escaped labels, emphasis other than the supported `**Term**:` entry prefix, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
+Inline code spans and backslash-escaped ASCII punctuation do not contribute link syntax; ordinary links elsewhere in the same document, including links with code in their rendered labels, remain checked.
+Code spans may continue across lines within a paragraph, including lazy blockquote and list continuations, but do not extend across block boundaries.
+Code spans or escapes in reference-definition labels, emphasis other than the supported `**Term**:` entry prefix, nested links, raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are coverage limits.
 When such markup occurs outside excluded blocks, the source document's links and glossary are left for renderer review; registered paths are still verified.
-A fragment target containing such markup also reports a coverage limit rather than a missing heading.
+A fragment target containing such unsupported markup, or code spans or backslashes in its headings, also reports a coverage limit rather than a missing heading.
 Fragments in non-Markdown targets are not validated.
 Unsupported document encodings and formats produce `data.coverageLimits`, also visible in plain output, rather than a readiness failure or a forced rewrite.
 Broken supported local references fail with `broken-local-link`.
@@ -365,6 +367,7 @@ The supported formats are:
 - `markdown-table`: two-column tables with `Term` and `Definition` headers and a Markdown separator row, with one term and definition per row.
 
 Glossary fields use plain text; code spans, escaped pipes and other field markup are coverage limits.
+A glossary document containing backticks or backslashes outside excluded blocks is left for renderer review while its supported local links remain checked.
 Unusual table rows report coverage limits rather than invalid or empty fields.
 Trailing horizontal whitespace on ordinary table lines is accepted.
 
