@@ -131,6 +131,28 @@ test('a generated reference follows its authored shared reference', async t => {
   assert.deepEqual(records(gate(repo)), ['CHECK ', 'TEST --task T2.14 --task T3.1'])
 })
 
+for (const [command, bundles, suite] of [
+  ['inspect', ['repo-audit'], 'existing-repo'],
+  ['inventory', ['repo-audit', 'agents-md'], 'existing-repo'],
+  ['findings', ['verification'], 'existing-repo'],
+  ['apply', ['verification'], 'existing-repo'],
+  ['run-checks', ['verification'], 'existing-repo'],
+  ['kit-scaffold', ['verification'], 'verification-create'],
+  ['kit-check', ['verification', 'prototype'], 'verification-create'],
+  ['kit-prove', ['verification', 'prototype'], 'verification-create']
+]) {
+  test(`${command} and its regenerated bundles run the ${suite} journey`, async t => {
+    const repo = await fixture(t, { realRunner: true })
+    const path = `runtime/scripts/commands/${command}.mjs`
+    await put(repo, path, await readFile(join(repo, path), 'utf8') + '\n')
+    for (const skill of bundles) await put(repo, `skills/${skill}/scripts/${skill}.mjs`, '// generated consequence\n')
+    const result = gate(repo)
+    assert.equal(result.status, 0, result.stdout + result.stderr)
+    assert.match(result.stdout, /Gate: affected tasks /)
+    assert.ok(result.stdout.includes(`SUITE ${suite}\n`), result.stdout)
+  })
+}
+
 test('an owned schema selects its protocol users', async t => {
   const repo = await fixture(t)
   await put(repo, 'runtime/schemas/measure-exclusions.json', '{}\n')
