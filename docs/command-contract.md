@@ -356,6 +356,7 @@ Raw HTML, explicit HTML anchors, custom heading IDs and HTML entities are covera
 Entity-containing destinations are left unchecked rather than treated as literal filesystem paths.
 Unsupported links and HTML spans are left for renderer review while ordinary links elsewhere in the document remain checked; registered paths are still verified.
 Coverage limits remain visible in the result and do not imply that unchecked references passed.
+A source document with these coverage limits is left for renderer review for glossary validation, while its supported local links remain checked.
 A fragment target containing such unsupported markup also reports a coverage limit rather than a missing heading.
 Heading text comes from inline tokens, so emphasis, code spans, escapes and link labels contribute their rendered text to the slug.
 Fragments in non-Markdown targets are not validated.
@@ -1306,7 +1307,7 @@ The source rule is a nonempty newline-terminated literal block occurring exactly
 An existing destination needs a unique nonempty newline-terminated insertion anchor and must not already contain the rule.
 For an explicitly selected new destination, use an empty anchor; its complete content is the rule block.
 The replacement is one exact newline-terminated ordinary inline link line pointing to the selected destination, with any heading fragment verified against the final proposed bytes.
-Replacement labels contain no brackets, backslashes, backticks or emphasis markers; destinations follow the ordinary contract above and cannot include titles or trailing text.
+Replacement labels contain no brackets, backslashes, backticks or emphasis markers; destinations contain no whitespace, backslashes, parentheses, brackets, angle brackets or backticks and cannot include titles or trailing text.
 The final source must contain no copy of the rule and exactly one replacement link; the final destination must contain exactly one copy of the unchanged rule.
 Apply validates the paired edits and all other file changes before writing either file, then uses the existing recoverable protected-write journal.
 If either proposed document or a fragment target exceeds reference coverage, apply returns `blocked` with `data.coverageLimits` and writes neither file, including in dry runs.
