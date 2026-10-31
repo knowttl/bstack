@@ -50,11 +50,11 @@ export function markdownAnchors(text) {
 
 export function markdownCoverageLimit(text) {
   let limited = false
-  for (const token of referenceTokens(markdownTokens(text))) {
+  walkTokens(markdownTokens(text), token => {
     if (token.type === 'html' && !token.text.startsWith('<!--')) limited = true
     const value = ['link', 'image', 'def'].includes(token.type) ? token.href : ['text', 'escape'].includes(token.type) && !token.tokens ? token.text : ''
     if (/&[\w#]+;|\{#[^}]+\}/.test(value)) limited = true
-  }
+  })
   return limited ? 'HTML, entities and custom anchors require renderer review.' : null
 }
 

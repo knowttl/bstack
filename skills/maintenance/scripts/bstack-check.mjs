@@ -2397,11 +2397,11 @@ function markdownAnchors(text) {
 }
 function markdownCoverageLimit(text) {
   let limited = false;
-  for (const token of referenceTokens(markdownTokens(text))) {
+  mn(markdownTokens(text), (token) => {
     if (token.type === "html" && !token.text.startsWith("<!--")) limited = true;
     const value = ["link", "image", "def"].includes(token.type) ? token.href : ["text", "escape"].includes(token.type) && !token.tokens ? token.text : "";
     if (/&[\w#]+;|\{#[^}]+\}/.test(value)) limited = true;
-  }
+  });
   return limited ? "HTML, entities and custom anchors require renderer review." : null;
 }
 function markdownLinks(text) {
@@ -4067,4 +4067,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"4e681bb6f9c94d4c7a4be1a3fe2aecfe165ec8083efeee41a92b619866403db0"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"bd250b9674fdf3e3c3ba6ca8512f31be80d29cc5ef70c93aa9ce042846a13ac6"}

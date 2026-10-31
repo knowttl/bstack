@@ -259,6 +259,7 @@ for (const [text, references] of [
     const broken = run('docs check', f.repo)
     assert.equal(broken.exit, 1, JSON.stringify(broken))
     assert.deepEqual(broken.problems.map(problem => problem.message), Array(references).fill('Missing or wrong-case destination: missing.md'))
+    assert.equal(broken.data.documents[0].links, references)
     await writeFile(join(f.repo, 'missing.md'), '# Guide\n')
     assert.equal(run('docs check', f.repo).exit, 0)
   })
@@ -283,11 +284,11 @@ for (const [format, example] of [
   })
 }
 
-for (const text of [
-  '![See [Guide](missing.md)](logo.png)',
-  '![See ![Hidden](missing.png)](logo.png)',
-  '![See [Guide][target]](logo.png)\n\n[target]: missing.md',
-  '![See <span>[Guide](missing.md)</span>](logo.png)'
+for (const [text, coveragePaths] of [
+  ['![See [Guide](missing.md)](logo.png)', []],
+  ['![See ![Hidden](missing.png)](logo.png)', []],
+  ['![See [Guide][target]](logo.png)\n\n[target]: missing.md', []],
+  ['![See <span>[Guide](missing.md)</span>](logo.png)', ['README.md']]
 ]) {
   test('image alt tokens contribute no references: ' + text, async t => {
     const f = await maintenanceRepo(t)
@@ -299,8 +300,23 @@ for (const text of [
     const repaired = run('docs check', f.repo)
     assert.equal(repaired.exit, 0, JSON.stringify(repaired))
     assert.equal(repaired.data.documents[0].links, 1)
-    assert.deepEqual(repaired.data.coverageLimits, [])
+    assert.deepEqual(repaired.data.coverageLimits.map(limit => limit.path), coveragePaths)
   })
+}
+
+for (const heading of ['# ![A &amp; B](logo.png)', '# ![![A &amp; B](inner.png)](logo.png)']) {
+  for (const fragment of ['a--b', 'a-amp-b']) {
+    test('image heading entities require fragment review: ' + heading + ' #' + fragment, async t => {
+      const f = await maintenanceRepo(t)
+      await writeFile(join(f.repo, 'guide.md'), heading + '\n')
+      await writeFile(join(f.repo, 'README.md'), '[Guide](guide.md#' + fragment + ')\n')
+      const result = run('docs check', f.repo)
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.deepEqual(result.problems, [])
+      assert.deepEqual(result.data.coverageLimits.map(limit => limit.path), ['README.md'])
+      assert.match(result.data.coverageLimits[0].reason, /Heading fragment coverage is limited/)
+    })
+  }
 }
 
 test('ordinary link labels retain image references', async t => {
