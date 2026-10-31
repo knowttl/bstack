@@ -71,7 +71,10 @@ if (args.includes('--version')) {
     }
     if (mode === 'maintenance') {
       for (const event of await maintenanceSession()) console.log(JSON.stringify(event))
-    } else console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: args.includes('resume') ?
+    } else if (mode === 'publication') console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message',
+      text: 'Which offline access option should we use?',
+      evidence: { reviewer: userInfo().username, fixture: process.cwd(), home: process.env.HOME } } }))
+    else console.log(JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: args.includes('resume') ?
       'Offline access remains unresolved. I will stop without choosing a stack.' : 'Which offline access option should we use?' + (mode === 'large' ? 'x'.repeat(70000) : ''),
     observed: { message, home: process.env.HOME, state: process.env.CODEX_HOME, cache: process.env.XDG_CACHE_HOME, cwd: process.cwd(), sandboxPolicy,
       temporaryDirectory: process.env.TMPDIR, temporaryAlias: process.env.TMP, temporaryWindowsAlias: process.env.TEMP,
