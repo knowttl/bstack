@@ -100,11 +100,16 @@ Confirm its handling of imports, dynamic loading, shared fixtures and configurat
 Keep the full module suite when the related-test tool cannot establish the affected set.
 Selection saves time only when it keeps detecting real failures, so measure it rather than promising savings from source inspection.
 
+When the suite is split into sections, map each module to the section that tests it and let the selector run the sections of the touched modules and their reverse dependents.
+The per-stack section mechanisms, such as Vitest projects, pytest directories or markers, Go packages and Rust crates or nextest filters, are in the fast-feedback reference, section "Splitting the suite into sections".
+A module with no section, or a path that maps to none, takes the full fallback.
+
 Prove the selector through its public command in disposable fixtures with a clean control and independent seeded changes: a module bug, a protocol change affecting a dependent, and each full-fallback condition.
 Show that each selected set includes the test that fails for the seeded bug, and that a selected failure reaches the command's exit status.
 Use the project's existing fixtures and runner; do not add source-string tests that merely recognize the selector's implementation.
 Record the selection, failure and fallback evidence beside the selected configuration.
-During `/verification maintain`, compare selected validation with a full offline run to detect misses, or use a scheduled local full run only when the owner selects it.
+During `/verification maintain`, compare selected validation with a full offline run to detect misses.
+A scheduled full run, nightly or per release batch, is the default companion to the selector and the standing miss check; a project that already runs one only reports its result here.
 Each miss needs a mapping or dependency fix and a regression case through the selector's real interface.
 Keep the fallback until the corrected selection is proven, and tune the map as protocols and modules evolve.
 
