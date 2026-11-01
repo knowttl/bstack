@@ -1581,7 +1581,7 @@ The checker exits 1 and prints `path:line:column: no-prose-comments: prose comme
 `--list` prints the current violations as an array of rule, path and key objects and exits 0.
 `--baseline <file>` follows [the baseline schema](../runtime/schemas/baseline.schema.json), rejects duplicate rule/path/key identities and additionally fails on a listed entry that no longer matches a comment.
 An unreadable or invalid baseline prints `invalid-baseline:` and exits 2, including when combined with `--list`.
-Python uses the standard library tokenizer, Go its scanner package, and TypeScript the target project's `typescript` package.
+Python uses the standard library tokenizer and Go its scanner package; TypeScript follows the [compiler dependency requirements](../skills/verification/references/slop-baseline.md#the-comment-ban).
 
 `node .agents/skills/verify-<app>/scripts/map-coverage.mjs --base <ref>` is the feature-map coverage gate that a kit rendered with `coverageGate` carries.
 It is not a bstack command: it is one comment-free file that needs only Node and Git, runs from the target's worktree and does not need bstack installed.
