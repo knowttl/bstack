@@ -71,7 +71,7 @@ Affected commands by stack:
 | Go | `go test <affected-packages>` for the changed packages and their transitive reverse dependents | Pass every selected package explicitly; Go caches successful package results. |
 | Rust | `cargo nextest run -p <crate>`, repeating `-p` for every changed crate and transitive reverse dependent; after success, run `cargo test --doc -p <library-crate>` for applicable libraries in that set | Nextest does not run documentation tests; use the library-only scope described under [Tool choice](#tool-choice). |
 
-Derive the affected set using the [selection and fallback contract](no-mistakes.md#change-scoped-test-command), including transitive reverse dependents and a full run when paths or dependencies are unknown, even when the project does not use no-mistakes.
+Derive the affected set using the selection and fallback contract in the no-mistakes reference, section "Change-scoped Test command", including transitive reverse dependents and a full run when paths or dependencies are unknown, even when the project does not use no-mistakes.
 The affected command is for iteration only.
 A selected run never replaces the full run before the gate, and a project whose gate selects tests by change follows the change-scoped Test command section of the no-mistakes wiring reference for the proof the selector needs.
 
