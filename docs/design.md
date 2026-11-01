@@ -710,7 +710,7 @@ Each checklist is the order of dependency: an idea precedes its vocabulary, voca
 | Repo | Order |
 |---|---|
 | New idea | `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification create`, `/formal-verification create` (only with cited risk evidence), `/maintenance`, `/agents-md`, `/plan` |
-| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification create`, `/formal-verification create` (only with cited risk evidence), `/maintenance`, `/agents-md`, `/plan` |
+| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification` (mode from the [repo-audit checklist](../skills/repo-audit/SKILL.md#step-4-print-the-checklist)), `/formal-verification create` (only with cited risk evidence), `/maintenance`, `/agents-md`, `/plan` |
 
 repo-audit prints the checklist for the repo's case with one reason per line, each citing the evidence that makes the skill relevant or its output already present.
 It computes status again on every run, writes nothing to the project and keeps no audit record, so `docs/repo-audit.md` is dropped.
