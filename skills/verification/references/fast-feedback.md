@@ -69,7 +69,7 @@ Affected commands by stack:
 | Node/TypeScript with Vitest | `vitest run --since-last-run` | Compares each loaded file with the time of that test's last run, so it still selects tests right after a commit; `vitest run --changed` compares with a Git reference and is empty right after a commit. The first run is a full run, and `vitest run --clearCache` resets the record. |
 | Python with pytest | `pytest --testmon` | Selects by recorded dependencies; the first run is a full run. |
 | Go | `go test <affected-packages>` for the changed packages and their transitive reverse dependents | Pass every selected package explicitly; Go caches successful package results. |
-| Rust | `cargo nextest run -p <crate> && cargo test --doc -p <crate>`, repeating `-p` for every changed crate and transitive reverse dependent in both commands | Nextest does not run documentation tests; retain them with `cargo test --doc`. |
+| Rust | `cargo nextest run -p <crate>`, repeating `-p` for every changed crate and transitive reverse dependent; after success, run `cargo test --doc -p <library-crate>` for applicable libraries in that set | Nextest does not run documentation tests; use the library-only scope described under [Tool choice](#tool-choice). |
 
 Derive the affected set using the [selection and fallback contract](no-mistakes.md#change-scoped-test-command), including transitive reverse dependents and a full run when paths or dependencies are unknown, even when the project does not use no-mistakes.
 The affected command is for iteration only.
@@ -147,7 +147,11 @@ Check that no script imports an API the faster tool does not ship; for example T
 | Lint, Node/TypeScript | Oxlint |
 | Lint and format, Python | Astral's Rust-based linter and formatter; its type checker `ty` is a candidate while it is in beta |
 | Lint, Go | golangci-lint with its cache |
-| Test runner, Rust | `cargo nextest run && cargo test --doc`, preserving the old command's package, feature and target scope in both commands |
+| Test runner, Rust | `cargo nextest run`, followed after success by `cargo test --doc -p <library-crate>` only for applicable libraries in the original scope |
+
+For Rust, preserve the old command's package, feature and compilation-target scope in nextest, and retain documentation tests only for library targets whose doctests the old command would run.
+Repeat `-p <library-crate>` for those packages in the documentation-test command, preserving their feature and compilation-target settings; skip that command when none qualify, including binary-only scopes.
+Propagate failure from either command; `--doc` cannot be combined with other target-selection flags such as `--bins`.
 
 ## Splitting the suite into sections
 
@@ -160,7 +164,7 @@ Keep one command that runs every section; the full suite is the sections togethe
 | Vitest | `test.projects` in the config, run with `vitest run --project <name>` |
 | pytest | Directories (`pytest tests/<section>`) or markers (`pytest -m <marker>`, with markers registered in the config) |
 | Go | Packages (`go test ./<section>/...`) |
-| Rust | Crates (`cargo nextest run -p <crate> && cargo test --doc -p <crate>`); nextest filter expressions narrow only its tests, so retain the section's documentation tests separately |
+| Rust | Crates (`cargo nextest run -p <crate>`); nextest filter expressions narrow only its tests, so retain applicable library documentation tests in the section using the [Tool choice](#tool-choice) scope rule, skipping the documentation-test command when none qualify |
 
 Name each section after the module it covers, and map each module's source paths to its section so the change-scoped selector in the no-mistakes wiring reference and the iterate layer use one map.
 Both select the sections for touched modules and all transitive reverse dependents, with the same full fallback when paths, sections or dependencies are unknown.
@@ -173,6 +177,7 @@ After a split, run the sections together against the old full suite and confirm 
 - [pytest-testmon](https://www.testmon.org/), [pytest-xdist distribution](https://pytest-xdist.readthedocs.io/en/stable/distribution.html) and [pytest-timeout](https://github.com/pytest-dev/pytest-timeout).
 - Go, [the `go` command](https://pkg.go.dev/cmd/go) for test caching, `-p`, `-parallel` and `-timeout`.
 - cargo-nextest: [running tests and the documentation-test limitation](https://nexte.st/docs/running/), [benchmarks](https://nexte.st/docs/benchmarks/), [why process-per-test](https://nexte.st/docs/design/why-process-per-test/) and [slow tests](https://nexte.st/docs/features/slow-tests/).
+- Cargo: [`cargo test` target selection](https://doc.rust-lang.org/cargo/commands/cargo-test.html#target-selection).
 - [Announcing TypeScript 7.0](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/), [Oxlint](https://oxc.rs/docs/guide/usage/linter), [Astral Python tools](https://docs.astral.sh/) and [ty](https://docs.astral.sh/ty/).
 - Martin Fowler, [Continuous Integration](https://martinfowler.com/articles/continuousIntegration.html).
 - Meta, [Predictive Test Selection](https://arxiv.org/abs/1810.05286).
