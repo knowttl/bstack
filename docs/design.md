@@ -635,7 +635,8 @@ This amendment changes the design only; skill procedures, checkers and tests are
 The maintainer approved strengthening the existing verification guidance and review criteria, with no test-first requirement.
 `skills/verification/references/testing.md` owns the canonical copyable test-quality block, remedies, category evidence and false-positive guards.
 The suite audit uses the wasteful-test patterns without hardcoding their count.
-Q10 remains: `/verification` owns the full suite audit, while `/repo-audit` adds a documents-level test-policy signal to its existing `/verification create` checklist line, with at most one incidental cited instance and no test-sampling pass.
+Q10 remains: `/verification` owns the full suite audit, while `/repo-audit` adds a documents-level test-policy signal to its verification checklist line, with at most one incidental cited instance and no test-sampling pass.
+The [fast-feedback amendment](#fast-feedback-amendment-2026-11-01) owns the slow-suite routing exception.
 For this rollout, bstack keeps the delimited block in its existing testing home, `AGENTS.md`, and points review instructions at it; copies in other repos carry a provenance line naming the source revision.
 This selected canonical block is an exception to the general preference for instruction-file pointers, not permission to copy unrelated policy into agent instructions.
 
