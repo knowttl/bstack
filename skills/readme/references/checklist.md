@@ -17,8 +17,8 @@ Search engines and the host's repository search read the same few places, so put
 
 | Item | Pass when | Why |
 |---|---|---|
-| File name and place | The file is `README.md` in the top-level directory of the project | The host renders it with the directory; the file name is case sensitive for some tools |
-| Title | There is one H1 and it is the exact project name, matching the repository, package and command | The first prominent heading is a source for the title a search engine shows |
+| File name and place | The selected README path is recorded; for GitHub, the displayed file is identified using `.github/`, then root, then `docs/` precedence, and any shadowed README is named; a differing target has an explicit user decision | Visitors see the displayed file; the file name is case sensitive for some tools |
+| Title | There is one H1 and it uses the project or package name from its authoritative source | The first prominent heading is a source for the title a search engine shows |
 | Value statement | The first paragraph says what it is, for whom and the outcome, in one or two sentences | The first paragraph is what a visitor, a snippet and an agent read first |
 | Keywords | The first paragraph names the category, the technology and the task in the words a searcher types, once each and in natural sentences | Repository search matches words in the name, description, topics and README; repeating words reads as spam |
 | Repository description | The host's About description repeats the value statement | One sentence is reused in search results, link previews and package pages |
@@ -27,7 +27,7 @@ Search engines and the host's repository search read the same few places, so put
 | Headings | Headings are descriptive nouns or short phrases, nest without skipping a level and are unique | The host builds an outline and section links from them, and a search engine reads them |
 | Link text | Each link says what is behind it; none reads "click here" or "link" | Anchor text is a signal for search and for a reader scanning |
 | Images | Each image has alt text that carries its meaning, and no fact appears only in an image | Search, screen readers and agents cannot read pixels |
-| Name consistency | The same name is used for the project, package, command and skill everywhere | A searcher and an agent match on the exact string |
+| Identifier accuracy | Each project, repository, package, command and skill name matches its own authoritative source, such as project documentation, host metadata, a manifest, help output or a skill declaration | Accurate identifiers let readers find the project and invoke its tools even when their names differ |
 
 Set the repository description and topics on the host, not in the README.
 This skill reports them as recommendations because they are not files in the repo.

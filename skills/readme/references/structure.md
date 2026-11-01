@@ -27,7 +27,7 @@ Keep the order below unless a section does not apply, and drop the section rathe
 
 | Order | Section | Job | Rule |
 |---|---|---|---|
-| 1 | `# Name` | The exact project, package and command name | The only H1; it matches the repository and package name |
+| 1 | `# Name` | The project or package name from its authoritative source | The only H1; repository, package, command and skill identifiers each match their own authoritative source and may differ |
 | 2 | Value statement | What it is, who it is for and the outcome, in one or two sentences | Names the category and the technology in plain words; reusable as the repository description |
 | 3 | Badges, optional | Facts a visitor checks: release, license, build | Only true, live badges; five at most; never the only place a fact appears |
 | 4 | Why this exists | The problem in the reader's terms and what this does about it | Three to five lines; failure mode mapped to fix |

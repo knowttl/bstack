@@ -12,7 +12,7 @@ A plain request such as "write a README" does not invoke it.
 If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
 Resolve the target before proceeding: an existing repo is passed as `--repo`, and an existing directory that is not a Git repo is passed as `--workspace`.
 
-This skill writes the project's root `README.md`, or the README of one package the user names, and audits it when one exists.
+This skill writes the project's selected README, or the README of one package the user names, and audits it when one exists.
 The README is the first impression: it opens with the problem and the promise, makes the first actions obvious and short, stays scannable and links to deeper documents.
 It writes no other document, and it does not edit product code, `AGENTS.md`, `CONTRIBUTING.md` or any file the README links to.
 When the audit finds content that belongs in another document, it reports the content and the file that should hold it and leaves both unchanged.
@@ -35,13 +35,17 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 ### Step 1: Gather the project facts
 
 Read every `README` file in the target, the manifest, the real install and run path, the documents the README links to or should link to, and the existing `AGENTS.md`.
+For a GitHub repository, identify the displayed README using precedence `.github/`, then the root, then `docs/`, including `.github/README.md` and `docs/README.md`.
+Use the displayed file unless the user named another README; when that selection differs, report the displayed path and any shadowed README explicitly and ask which one to maintain before drafting.
+For a new README or a target without a host, use root `README.md` unless the user names a package README.
+Record the selected path and use it throughout the audit, draft, approval, apply and checks.
 Read the host metadata, the repository description and topics, only when it is available read-only, and otherwise report it as not read.
 Run a command's `--help` or `--version` only when it has no side effects, and never run an install, a write or a login to learn what the README should say.
 Choose the profile of the project from the [structure guide](references/structure.md): command line tool, skill pack or plugin, library, or service.
 Record every fact the README will state as scratch notes following `schemas/research-report.json`, each with a repo location, and run `node scripts/readme.mjs cite-check --repo <target> --report <file> --json`, with `--workspace` for a directory that is not a Git repo.
 The checker establishes locations and byte freshness, so open each cited source to confirm it supports the claim.
 
-Done when: Every fact the README will state has a cited source or is marked as the user's own statement, the profile is chosen, and each unreadable input is named.
+Done when: Every fact the README will state has a cited source or is marked as the user's own statement, the profile and README path are chosen, the displayed and any shadowed README are recorded, and each unreadable input is named.
 
 ### Step 2: Audit the existing README
 
@@ -66,7 +70,8 @@ Done when: The draft is in scratch, every command, flag, path, version and link 
 ### Step 4: Review and apply
 
 Record one finding in scratch following `schemas/findings.schema.json` with stage `audit`, the target and the README path as its reviewed scope, and a change set following `schemas/change-set.schema.json`.
-The change set creates or replaces `README.md` with the exact approved UTF-8 bytes and their hashes.
+The change set creates or replaces only the README path selected in Step 1 with the exact approved UTF-8 bytes and their hashes.
+Include the displayed path and any shadowed README in the review so approval covers which file is maintained.
 Include `starting-checks` in the findings' `requiredOutcomes`, as required by stage `audit`.
 A repo uses mode `repo` with its current revision, and a directory that is not a Git repo uses mode `workspace` with a null revision.
 Run `node scripts/readme.mjs apply --repo <target> --plan <file> --dry-run --json`, with `--workspace` for a directory that is not a Git repo, present the exact diff, then run the unchanged plan without `--dry-run` only after the user approves those bytes.
@@ -76,9 +81,10 @@ Done when: Only the approved README has been written, with unchanged hash precon
 
 ### Step 5: Check and report
 
-Open the written `README.md` and check every relative link resolves and every command matches the source it cites.
+Open the written README at the selected path and check every relative link resolves from its directory and every command matches the source it cites.
 Run the cold-start test again on the written bytes.
 State the target, the profile, the findings and which the user selected, and the written path.
+Report the displayed path and any shadowed README explicitly; if the displayed file was outside the approved scope, say it remains unchanged.
 Report the repository description and topics to set, with the exact values, and name them as not applied.
 Report content that belongs in another file with the file that should hold it, and name `/agents-md` when `AGENTS.md` is missing or repeats the README.
 Name every checklist item left failing, every input that could not be read and any step left blocked with its missing prerequisite.
