@@ -5190,7 +5190,10 @@ func main() {
 var typescript = `import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
-import ts from 'typescript'
+
+const { default: metadata } = await import('typescript/package.json', { with: { type: 'json' } })
+const major = Number(metadata.version.split('.')[0])
+const { default: ts } = await import(major >= 7 ? '@typescript/typescript6' : 'typescript')
 
 const rule = 'no-prose-comments'
 const exempt = __EXEMPT__.map(pattern => new RegExp(pattern))
