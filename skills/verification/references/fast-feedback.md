@@ -68,9 +68,10 @@ Affected commands by stack:
 |---|---|---|
 | Node/TypeScript with Vitest | `vitest run --since-last-run` | Compares each loaded file with the time of that test's last run, so it still selects tests right after a commit; `vitest run --changed` compares with a Git reference and is empty right after a commit. The first run is a full run, and `vitest run --clearCache` resets the record. |
 | Python with pytest | `pytest --testmon` | Selects by recorded dependencies; the first run is a full run. |
-| Go | `go test ./path/to/package/...` for the changed packages | Go caches successful package results, so unchanged packages replay instantly. |
-| Rust | `cargo nextest run -p <crate>` for the changed crates | Use a `-E` filter expression to narrow further. |
+| Go | `go test <affected-packages>` for the changed packages and their transitive reverse dependents | Pass every selected package explicitly; Go caches successful package results. |
+| Rust | `cargo nextest run -p <crate> && cargo test --doc -p <crate>`, repeating `-p` for every changed crate and transitive reverse dependent in both commands | Nextest does not run documentation tests; retain them with `cargo test --doc`. |
 
+Derive the affected set using the [selection and fallback contract](no-mistakes.md#change-scoped-test-command), including transitive reverse dependents and a full run when paths or dependencies are unknown, even when the project does not use no-mistakes.
 The affected command is for iteration only.
 A selected run never replaces the full run before the gate, and a project whose gate selects tests by change follows the change-scoped Test command section of the no-mistakes wiring reference for the proof the selector needs.
 
@@ -133,7 +134,9 @@ Swap an existing tool only with an equivalence proof and a measured saving:
 
 1. Seed the same violations in a disposable copy: a type error, a lint violation and a formatting error for each rule the project enforces.
 2. Run the old and the new tool through their public commands and show that both flag the same seeded violations and both pass the clean control.
-3. Record the measured time of each, warm and cold, and propose the swap only when the saving is worth the diff.
+3. For a test-runner swap, compare the selected tests under the same scope and configuration, including documentation tests and other test kinds the old command runs.
+   Seed an independent failure in each test kind and show that both commands run it and exit nonzero; both must also pass the clean control.
+4. Record the measured time of each complete command, warm and cold, and propose the swap only when the saving is worth the diff.
 
 A tool still in beta stays a candidate; do not swap it into the check command until it is stable.
 Check that no script imports an API the faster tool does not ship; for example TypeScript 7 provides no compiler API, so a script that imports the `typescript` package needs a compatible TypeScript version installed beside it.
@@ -144,7 +147,7 @@ Check that no script imports an API the faster tool does not ship; for example T
 | Lint, Node/TypeScript | Oxlint |
 | Lint and format, Python | Astral's Rust-based linter and formatter; its type checker `ty` is a candidate while it is in beta |
 | Lint, Go | golangci-lint with its cache |
-| Test runner, Rust | cargo nextest |
+| Test runner, Rust | `cargo nextest run && cargo test --doc`, preserving the old command's package, feature and target scope in both commands |
 
 ## Splitting the suite into sections
 
@@ -157,9 +160,10 @@ Keep one command that runs every section; the full suite is the sections togethe
 | Vitest | `test.projects` in the config, run with `vitest run --project <name>` |
 | pytest | Directories (`pytest tests/<section>`) or markers (`pytest -m <marker>`, with markers registered in the config) |
 | Go | Packages (`go test ./<section>/...`) |
-| Rust | Crates (`cargo nextest run -p <crate>`) or nextest filter expressions (`-E 'package(<crate>)'`) |
+| Rust | Crates (`cargo nextest run -p <crate> && cargo test --doc -p <crate>`); nextest filter expressions narrow only its tests, so retain the section's documentation tests separately |
 
 Name each section after the module it covers, and map each module's source paths to its section so the change-scoped selector in the no-mistakes wiring reference and the iterate layer use one map.
+Both select the sections for touched modules and all transitive reverse dependents, with the same full fallback when paths, sections or dependencies are unknown.
 Put slow, live or end-to-end tests in their own section so the daily loop skips them and the [slow tier](#the-four-layers) runs them.
 After a split, run the sections together against the old full suite and confirm they report the same tests; a test that belongs to no section is silently lost.
 
@@ -168,7 +172,7 @@ After a split, run the sections together against the old full suite and confirm 
 - Vitest, [improving performance](https://vitest.dev/guide/improving-performance) and [affected tests](https://main.vitest.dev/guide/recipes/affected-tests).
 - [pytest-testmon](https://www.testmon.org/), [pytest-xdist distribution](https://pytest-xdist.readthedocs.io/en/stable/distribution.html) and [pytest-timeout](https://github.com/pytest-dev/pytest-timeout).
 - Go, [the `go` command](https://pkg.go.dev/cmd/go) for test caching, `-p`, `-parallel` and `-timeout`.
-- cargo-nextest: [benchmarks](https://nexte.st/docs/benchmarks/), [why process-per-test](https://nexte.st/docs/design/why-process-per-test/) and [slow tests](https://nexte.st/docs/features/slow-tests/).
+- cargo-nextest: [running tests and the documentation-test limitation](https://nexte.st/docs/running/), [benchmarks](https://nexte.st/docs/benchmarks/), [why process-per-test](https://nexte.st/docs/design/why-process-per-test/) and [slow tests](https://nexte.st/docs/features/slow-tests/).
 - [Announcing TypeScript 7.0](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/), [Oxlint](https://oxc.rs/docs/guide/usage/linter), [Astral Python tools](https://docs.astral.sh/) and [ty](https://docs.astral.sh/ty/).
 - Martin Fowler, [Continuous Integration](https://martinfowler.com/articles/continuousIntegration.html).
 - Meta, [Predictive Test Selection](https://arxiv.org/abs/1810.05286).
