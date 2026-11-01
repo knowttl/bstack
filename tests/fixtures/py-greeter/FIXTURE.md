@@ -1,7 +1,7 @@
 # Python greeter
 
 Requires Node 24 or later for the builder, Git, Python 3 and Ruff on PATH.
-Run `node tests/fixtures/py-greeter/sanity.mjs <built-folder>`.
+Run `node tests/fixtures/py-greeter/sanity.ts <built-folder>`.
 
 greeter/server.py is a small HTTP service with a health endpoint and a greeting endpoint.
 pyproject.toml enables the Python mappings of slop-baseline constraints SL-1, SL-2, SL-4, SL-5 and SL-6.

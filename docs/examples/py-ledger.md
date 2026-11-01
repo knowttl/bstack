@@ -1,6 +1,6 @@
 # Existing repo: Python ledger
 
-Prepare with `node tests/fixtures/build.mjs py-ledger`, then follow the [install and invocation steps](README.md).
+Prepare with `node tests/fixtures/build.ts py-ledger`, then follow the [install and invocation steps](README.md).
 
 Request: Audit the ledger and recommend project-specific principles and checks while preserving balanced postings, the public package and native CSV/JSON journey.
 

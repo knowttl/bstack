@@ -2,7 +2,7 @@
 
 ## Standalone checker generation
 
-`node scripts/generate-checker.mjs --repo <target> [--check] [--json]` generates the C24a artifact from this checkout's shared validator sources.
+`node scripts/generate-checker.ts --repo <target> [--check] [--json]` generates the C24a artifact from this checkout's shared validator sources.
 Run `npm ci` in the source checkout first.
 The pinned esbuild development dependency bundles Node ESM and embeds the imported JSON schemas.
 The emitted file uses only Node built-ins and needs no skill folder or installed dependencies.
@@ -1098,7 +1098,7 @@ Command implementations return data and inputs, while the entry point owns resul
 
 ## C4a public test command
 
-`node tests/inputs/contract.mjs --mode draft --workspace <directory> --input tests/inputs/draft.json --json` exercises the shared library without changing production dispatch.
+`node tests/inputs/contract.ts --mode draft --workspace <directory> --input tests/inputs/draft.json --json` exercises the shared library without changing production dispatch.
 `--mode repo --repo <directory>` exercises the Git mode.
 Its input is `{ "schemaVersion": 1, "paths": [<relative path>], "scratch": <boolean> }` with no additional fields.
 It validates all paths before optionally writing `draft.txt` in a new scratch run.
@@ -1107,7 +1107,7 @@ See [development](development.md#validate) for suite selection and the [implemen
 
 ## C4b public test command
 
-`node tests/inputs/child-contract.mjs --mode run --workspace <directory> --input <fixture.json> --json` exercises child execution without production dispatch.
+`node tests/inputs/child-contract.ts --mode run --workspace <directory> --input <fixture.json> --json` exercises child execution without production dispatch.
 The fixture input supplies `command` and an optional `cancelDirectory`, whose `ready` file event aborts the running tree.
 `--mode select` accepts `executable`, `args` and launcher-selection `options` for Windows logic tests.
 `--mode fingerprint` accepts the fingerprint input object documented above.

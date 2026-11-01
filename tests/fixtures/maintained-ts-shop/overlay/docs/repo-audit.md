@@ -10,7 +10,7 @@ Stage: audit
 Target: [fixture]
 Revision: b6c59b7810f5155fd514c9db60e98b7dffce0cc0
 Stated next change: Maintain approved checkout and public core boundary, then re-audit a user edit and implement a representative extension using only repo guidance and checks.
-Reviewed scope: DESIGN.md, journey.mjs, packages/core/a.ts, packages/core/b.ts, packages/core/index.ts, packages/core/internal/database.ts, packages/core/package.json, packages/web/alias.ts, packages/web/package.json, packages/web/public.ts, packages/web/routes.ts, packages/web/ui.ts, unit.test.mjs, AGENTS.md, package.json, .bstack/project.json, .bstack/bin/bstack-check.mjs, .bstack/assessment.json, docs/repo-audit.md, glossary.md
+Reviewed scope: DESIGN.md, journey.ts, packages/core/a.ts, packages/core/b.ts, packages/core/index.ts, packages/core/internal/database.ts, packages/core/package.json, packages/web/alias.ts, packages/web/package.json, packages/web/public.ts, packages/web/routes.ts, packages/web/ui.ts, unit.test.ts, AGENTS.md, package.json, .bstack/project.json, .bstack/bin/bstack-check.mjs, .bstack/assessment.json, docs/repo-audit.md, glossary.md
 Current fingerprint: b3ae60ebe00a276e3ae533153f0eaebde06b82a5ef6cb0aad861673e323ad350
 
 ## Readiness evidence
@@ -41,8 +41,8 @@ Current fingerprint: b3ae60ebe00a276e3ae533153f0eaebde06b82a5ef6cb0aad861673e323
 
 ## Observed behaviour
 
-- native: Maintained check is type-only; separate native boundary command detects private imports, aliases and cycles. (package.json:12-16; boundaries.mjs:19-30)
-- journey: Local HTTP journey returns 12 instead of 10; mocked checkout passes when fetch returns 10. (journey.mjs:6-12; unit.test.mjs:5-8; packages/web/ui.ts:1-4)
+- native: Maintained check is type-only; separate native boundary command detects private imports, aliases and cycles. (package.json:12-16; boundaries.ts:19-30)
+- journey: Local HTTP journey returns 12 instead of 10; mocked checkout passes when fetch returns 10. (journey.ts:6-12; unit.test.ts:5-8; packages/web/ui.ts:1-4)
 - cycle: Unused mutually recursive exported functions form a native cycle violation. (packages/core/a.ts:1-2; packages/core/b.ts:1-2)
 
 ## Inferred intent
@@ -53,11 +53,11 @@ Current fingerprint: b3ae60ebe00a276e3ae533153f0eaebde06b82a5ef6cb0aad861673e323
 ### F-001: Controlled HTTP endpoint fixture supplies 12 instead of the agreed 10.
 
 Status: selected. Resolved: false. Blocks next change: true.
-Files: packages/web/ui.ts, packages/web/routes.ts, packages/core/internal/database.ts, journey.mjs, unit.test.mjs. Command: npm run journey.
+Files: packages/web/ui.ts, packages/web/routes.ts, packages/core/internal/database.ts, journey.ts, unit.test.ts. Command: npm run journey.
 Principle: Preserve DESIGN.md agreed checkout total 10.
 Consequence: Passing mocked units can conceal a broken agreed journey.
 Fix: Correct journey endpoint fixture to supply 10; retain assertion 10 and current quote behavior 12. No business discount introduced.
-Scope: journey.mjs
+Scope: journey.ts
 Verification: Fresh failing original-state capture, then passing corrected local HTTP journey against unchanged assertion 10.
 Sources: design, journey, verdict
 
@@ -79,7 +79,7 @@ Files: packages/core/a.ts, packages/core/b.ts. Command: npm run boundaries.
 Principle (proposed new principle): Existing native checker rejects cycles (not yet documented as approved design).
 Consequence: Native boundaries cannot pass; calling either exported function does not terminate.
 Fix: Retain a.ts/b.ts and their exports; a() delegates to b(), and b() returns price() instead of recursing to a().
-Scope: DESIGN.md, packages/core/a.ts, packages/core/b.ts, unit.test.mjs
+Scope: DESIGN.md, packages/core/a.ts, packages/core/b.ts, unit.test.ts
 Verification: Native valid dependency direction and seeded cycle proof, TypeScript check; selected public behavior check.
 Sources: cycle, native, verdict
 

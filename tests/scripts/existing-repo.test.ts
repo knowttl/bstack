@@ -1,0 +1,99 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { join, dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
+import { emptyRepo, build, run, runVerification, git, snapshot } from './discovery-fixture.ts'
+
+// The installed commands are exercised together without importing their internals.
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+
+function hash(bytes: string | Buffer | null) { return bytes === null ? null : createHash('sha256').update(bytes).digest('hex') }
+function canonical(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
+  if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(',')}}`
+  return JSON.stringify(value)!
+}
+
+async function plan(context: Awaited<ReturnType<typeof emptyRepo>>, findings: ReturnType<typeof JSON.parse>, edits: { id: string; findingId: string; path: string; originalHash: string | null; proposedHash: string | null; proposedContent: string | null; operation: string; payload: { content?: undefined; } | { content: string; }; }[]) {
+  const findingsFile = join(context.directory, 'findings.json')
+  await writeFile(findingsFile, JSON.stringify(findings))
+  const change: Record<string, unknown> = { schemaVersion: 1, target: findings.target, findings: 'findings.json', findingsDigest: hash(canonical(findings)),
+    selectedFindingIds: findings.selectedFindingIds,
+    reviewedScope: findings.reviewedScope.map((path: string) => ({ path, resolvedPath: join(context.repo, path) })), edits }
+  change.planDigest = hash(canonical(change))
+  const path = join(context.directory, 'apply.json')
+  await writeFile(path, JSON.stringify(change))
+  return path
+}
+
+async function edit(repo: string, path: string, content: string | null, id: string, findingId: string) {
+  let original = null
+  try { original = await readFile(join(repo, path)) } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
+  return { id, findingId, path, originalHash: hash(original), proposedHash: hash(content), proposedContent: content,
+    operation: content === null ? 'delete' : original === null ? 'create' : 'replace-file', payload: content === null ? {} : { content } }
+}
+
+test('selected root instruction merge preserves scoped instructions, dirty work and the native journey', async t => {
+  const context = await emptyRepo(t)
+  const repo = context.repo = build(t, 'dirty-work')
+  const env: NodeJS.ProcessEnv = { ...process.env, XDG_CACHE_HOME: join(context.directory, 'cache'), LOCALAPPDATA: join(context.directory, 'cache') }
+  delete env.NODE_TEST_CONTEXT
+  const instructions = '# Instructions\nUse DESIGN.md for the pricing contract.\nRun node --test price.test.ts.\n'
+  await writeFile(join(repo, 'AGENTS.md'), instructions)
+  await writeFile(join(repo, 'CLAUDE.md'), instructions)
+  await mkdir(join(repo, 'scoped'))
+  await writeFile(join(repo, 'scoped', 'CLAUDE.md'), '# Scoped\nKeep this distinct guidance.\n')
+  await writeFile(join(repo, 'CLAUDE.local.md'), '# Local\nKeep this local guidance.\n')
+  const before = await snapshot(repo)
+  assert.equal(run('inspect', repo, env).exit, 0)
+  const inventory = run('inventory', repo, env)
+  assert.equal(inventory.exit, 0)
+  assert.ok(inventory.data.candidates.some((candidate: NonNullable<typeof inventory.data.candidates>[number]) => candidate.path === 'CLAUDE.md'))
+  const source = await readFile(join(repo, 'DESIGN.md'))
+  const checks = { schemaVersion: 1, changeKind: 'document-config',
+    acceptanceSources: [{ id: 'pricing', path: 'DESIGN.md', contentHash: hash(source) }],
+    acceptanceCases: [{ id: 'quote', sourceId: 'pricing', pointer: 'A quote is quantity multiplied by 12.', outcome: 'Quote preserves quantity multiplied by 12.', userJourney: true }],
+    checks: [{ id: 'quote', role: 'outcome', required: true, acceptanceCases: ['quote'], inputScopes: ['price.ts', 'price.test.ts'],
+      command: { executable: 'node', args: ['--test', 'price.test.ts'], cwd: '.', versionArgs: ['--version'] } }] }
+  const checksFile = join(context.directory, 'checks.json')
+  await writeFile(checksFile, JSON.stringify(checks))
+  assert.equal(runVerification('run-checks', repo, env, ['--plan', checksFile]).exit, 0)
+  const originalPrice = await readFile(join(repo, 'price.ts'))
+  await writeFile(join(repo, 'price.ts'), 'export function quote(quantity) { return quantity * 13 }\n')
+  assert.equal(runVerification('run-checks', repo, env, ['--plan', checksFile]).exit, 1)
+  await writeFile(join(repo, 'price.ts'), originalPrice)
+  const findings = JSON.parse((await readFile(join(root, 'tests/inputs/findings-audit.json'))).toString('utf8'))
+  findings.target = { mode: 'repo', root: repo, revision: git(repo, 'rev-parse', 'HEAD') }
+  findings.nextChange = 'Consolidate equivalent root instructions.'
+  findings.reviewedScope = ['AGENTS.md', 'CLAUDE.md']
+  findings.sources = [{ id: 'contract', pointer: 'DESIGN.md:3', intent: 'documented', summary: 'Quotes multiply quantity by 12.' }]
+  Object.assign(findings.findings[0], { problem: 'Root instructions are duplicated.', files: ['AGENTS.md', 'CLAUDE.md'],
+    scope: findings.reviewedScope, sourceIds: ['contract'], blocksNextChange: false,
+    principle: 'One source for root instructions', consequence: 'Copies can diverge.', fix: 'Retain AGENTS.md and remove the equivalent CLAUDE.md.',
+    verification: 'Run the native quote journey and compare preserved instruction and dirty bytes.' })
+  findings.requiredOutcomes = ['starting-checks', 'journey']
+  findings.limitations = ['Maintained enforcement and portable maintenance are pending.']
+  const changes = await plan(context, findings, [await edit(repo, 'AGENTS.md', instructions, 'E-001', 'F-001'),
+    await edit(repo, 'CLAUDE.md', null, 'E-002', 'F-001')])
+  const preview = runVerification('apply', repo, env, ['--plan', changes, '--dry-run'])
+  assert.equal(preview.exit, 0, JSON.stringify(preview))
+  assert.deepEqual(await snapshot(repo), before)
+  assert.equal(runVerification('apply', repo, env, ['--plan', changes]).exit, 0)
+  const captured = runVerification('run-checks', repo, env, ['--plan', checksFile])
+  assert.equal(captured.exit, 0)
+  const findingsFile = join(context.directory, 'findings.json')
+  findings.findings[0].resolved = true
+  await writeFile(findingsFile, JSON.stringify(findings))
+  const assessed = runVerification('findings validate', repo, env, ['--findings', findingsFile])
+  const artifact = captured.data.path
+  const artifactHash = hash(await readFile(artifact))
+  findings.execution = findings.requiredOutcomes.map((outcome: NonNullable<typeof findings.requiredOutcomes>[number], index: number) => ({ id: `evidence-${index}`, outcome, status: 'passed',
+    fingerprint: assessed.data.fingerprint, artifact, artifactHash, method: 'Native quote check captured after instruction apply.' }))
+  await writeFile(findingsFile, JSON.stringify(findings))
+  assert.equal(runVerification('findings validate', repo, env, ['--findings', findingsFile]).data.result, 'ready for the stated next change')
+  const after = await snapshot(repo)
+  delete before['CLAUDE.md']
+  assert.deepEqual(after, before)
+})

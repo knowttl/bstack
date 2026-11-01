@@ -10,9 +10,9 @@
   ],
   "scripts": {
     "check": "npm run typecheck && npm test && npm run boundaries && npm run journey",
-    "test": "node --test unit.test.mjs",
-    "journey": "node journey.mjs",
-    "boundaries": "node boundaries.mjs",
+    "test": "node --test unit.test.ts",
+    "journey": "node journey.ts",
+    "boundaries": "node boundaries.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

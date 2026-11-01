@@ -1,6 +1,6 @@
 # New idea: browser-local pantry
 
-Prepare with `node tests/fixtures/build.mjs new-idea`, then follow the [install and invocation steps](README.md).
+Prepare with `node tests/fixtures/build.ts new-idea`, then follow the [install and invocation steps](README.md).
 
 Request: Read `brief.md`, establish intent and complete the new-project path, including vision review, selected foundation, protected creation and verification.
 The first journey is add Rice, mark it needed, view it on the shopping list, reload and retain it.

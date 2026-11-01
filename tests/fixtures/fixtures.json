@@ -85,14 +85,14 @@
       "packages/web/public.ts",
       "packages/web/alias.ts",
       "packages/web/routes.ts",
-      "unit.test.mjs",
-      "journey.mjs",
+      "unit.test.ts",
+      "journey.ts",
       "AGENTS.md",
       "CLAUDE.md",
       "DESIGN.md",
       "glossary.md",
       ".gitignore",
-      "boundaries.mjs",
+      "boundaries.ts",
       "package-lock.json"
     ],
     "history": [
@@ -163,11 +163,11 @@
       "packages/core/index.ts",
       "packages/web/public.ts",
       ".gitignore",
-      "boundaries.mjs",
+      "boundaries.ts",
       "package-lock.json"
     ],
     "seed": {
-      "unit.test.mjs": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n"
+      "unit.test.ts": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n"
     },
     "history": [
       {
@@ -191,11 +191,11 @@
       "packages/core/index.ts",
       "packages/web/public.ts",
       ".gitignore",
-      "boundaries.mjs",
+      "boundaries.ts",
       "package-lock.json"
     ],
     "seed": {
-      "unit.test.mjs": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
+      "unit.test.ts": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
       "packages/web/private.ts": "import { price } from '../core/internal/database.ts'\nexport function privateQuote() { return price() }\n"
     },
     "history": [
@@ -220,11 +220,11 @@
       "packages/core/index.ts",
       "packages/web/public.ts",
       ".gitignore",
-      "boundaries.mjs",
+      "boundaries.ts",
       "package-lock.json"
     ],
     "seed": {
-      "unit.test.mjs": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
+      "unit.test.ts": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
       "packages/web/alias.ts": "import { price } from '@storage/database'\nexport function aliasQuote() { return price() }\n"
     },
     "history": [
@@ -249,11 +249,11 @@
       "packages/core/index.ts",
       "packages/web/public.ts",
       ".gitignore",
-      "boundaries.mjs",
+      "boundaries.ts",
       "package-lock.json"
     ],
     "seed": {
-      "unit.test.mjs": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
+      "unit.test.ts": "import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { quote } from './packages/web/public.ts'\ntest('public quote', () => assert.equal(quote(), 12))\n",
       "packages/core/a.ts": "import { b } from './b.ts'\nexport function a(): number { return b() }\n",
       "packages/core/b.ts": "import { a } from './a.ts'\nexport function b(): number { return a() }\n"
     },
@@ -384,8 +384,8 @@
     "files": [
       "DESIGN.md",
       "project.json",
-      "price.mjs",
-      "price.test.mjs",
+      "price.ts",
+      "price.test.ts",
       "notes.md",
       "remove.md",
       "rename.md"
@@ -401,11 +401,11 @@
     ],
     "dirty": {
       "notes.md": "User edits must survive.\n",
-      "price.mjs": "export function quote(quantity) { return quantity * 12 }\n\n",
+      "price.ts": "export function quote(quantity) { return quantity * 12 }\n\n",
       "new.md": "New user file.\n",
       "renamed.md": "Rename these notes.\n"
     },
-    "stage": ["price.mjs", "rename.md", "renamed.md"],
+    "stage": ["price.ts", "rename.md", "renamed.md"],
     "remove": [
       "remove.md",
       "rename.md"
@@ -417,8 +417,8 @@
     "files": [
       "DESIGN.md",
       "project.json",
-      "price.mjs",
-      "price.test.mjs",
+      "price.ts",
+      "price.test.ts",
       "notes.md",
       "remove.md",
       "rename.md"
@@ -433,10 +433,10 @@
       },
       {
         "paths": [
-          "price.mjs"
+          "price.ts"
         ],
         "write": {
-          "price.mjs": "export function quote(quantity) {\n  const unitPrice = 12\n  return quantity * unitPrice\n}\n"
+          "price.ts": "export function quote(quantity) {\n  const unitPrice = 12\n  return quantity * unitPrice\n}\n"
         },
         "message": "refactor: preserve public pricing",
         "date": "2026-01-05T12:00:00Z"
@@ -449,8 +449,8 @@
     "files": [
       "DESIGN.md",
       "project.json",
-      "price.mjs",
-      "price.test.mjs",
+      "price.ts",
+      "price.test.ts",
       "notes.md",
       "remove.md",
       "rename.md"
@@ -483,8 +483,8 @@
     "files": [
       "DESIGN.md",
       "project.json",
-      "price.mjs",
-      "price.test.mjs",
+      "price.ts",
+      "price.test.ts",
       "notes.md",
       "remove.md",
       "rename.md"

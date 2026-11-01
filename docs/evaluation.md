@@ -321,8 +321,8 @@ Fake-model tests establish command behaviour only and do not establish judge acc
 Until calibration passes, release scoring remains human-reviewed.
 
 ```sh
-node scripts/eval-calibrate.mjs --plan --json
-node scripts/eval-calibrate.mjs --output .cache/judge-calibration --json
+node scripts/eval-calibrate.ts --plan --json
+node scripts/eval-calibrate.ts --output .cache/judge-calibration --json
 ```
 
 `--plan` validates the retained corpus without invoking any provider.
@@ -419,7 +419,7 @@ A key covered by no scenario selects every scenario, such as a runtime file that
 A new or changed file inside a skill folder selects only the scenarios that stage that skill.
 The deterministic tests change skill files and runtime schemas, commands, assets and shared references in disposable checkouts, then verify scenario selection and unmapped inputs through `eval affected`.
 Commands, schemas, assets and shared references are authored in `runtime/`, so a changed `runtime/` file takes the key it has under `runtime/`, and each skill's generated entry file, schemas, assets and references add no keys of their own.
-With-skill release evidence remains fresh only when its scenario is unaffected by changes under a skill it stages, the `runtime/` sources it bundles or `install/`, or to `scripts/generate-skills.mjs` or `scripts/lib/bundle.mjs`, since its source revision.
+With-skill release evidence remains fresh only when its scenario is unaffected by changes under a skill it stages, the `runtime/` sources it bundles or `install/`, or to `scripts/generate-skills.ts` or `scripts/lib/bundle.ts`, since its source revision.
 Other execution and scoring bindings still apply.
 
 Legacy single-run `eval compare` requires the same scenario, fixture revision, agent, model, checkpoint and criteria hash.
@@ -444,7 +444,7 @@ Manual scoring leaves the supplied source answers and transcript files unchanged
 ## Registry and final selections
 
 ```sh
-node scripts/acceptance.mjs --check-registry
+node scripts/acceptance.ts --check-registry
 ```
 
 `tests/acceptance/cases.json` registers every numbered design acceptance case with the skill it tests, an owner task, criterion source, evidence type and procedure.
@@ -484,7 +484,7 @@ Run the full deterministic suite, package check and registry validation on the f
 The maintainer supplies those results in a report; the gate validates their candidate binding and completeness, but does not rerun or independently authenticate these procedures.
 
 ```sh
-node scripts/acceptance.mjs --release 0.1.1 --candidate <full-HEAD-commit> --checks hard-break-report.json --results tests/eval/results --json
+node scripts/acceptance.ts --release 0.1.1 --candidate <full-HEAD-commit> --checks hard-break-report.json --results tests/eval/results --json
 ```
 
 `--release` requires a three-part numeric version, `--candidate` must equal the full current HEAD, and `--checks` names this input format:

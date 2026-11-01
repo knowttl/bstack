@@ -1,6 +1,6 @@
 # Unresolved idea: field notes
 
-Prepare with `node tests/fixtures/build.mjs ambiguous-idea`, then follow the [install and invocation steps](README.md).
+Prepare with `node tests/fixtures/build.ts ambiguous-idea`, then follow the [install and invocation steps](README.md).
 
 Request: Read `brief.md` and establish project intent before recommending the foundation.
 

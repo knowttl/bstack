@@ -302,10 +302,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/docs-generate.test.mjs",
+        "path": "tests/scripts/docs-generate.test.ts",
         "name": "stale sections pass after scratch proposals are reviewed and protected apply writes them",
         "artifacts": [
-          "tests/scripts/docs-generate.test.mjs"
+          "tests/scripts/docs-generate.test.ts"
         ]
       }
     },
@@ -320,10 +320,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/evidence-validate.test.mjs",
+        "path": "tests/scripts/evidence-validate.test.ts",
         "name": "missing substantive document assessment is blocked",
         "artifacts": [
-          "tests/scripts/evidence-validate.test.mjs"
+          "tests/scripts/evidence-validate.test.ts"
         ]
       }
     },
@@ -337,10 +337,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/evidence-collect.test.mjs",
+        "path": "tests/scripts/evidence-collect.test.ts",
         "name": "collects committed, staged, unstaged, new, renamed and deleted paths together",
         "artifacts": [
-          "tests/scripts/evidence-collect.test.mjs"
+          "tests/scripts/evidence-collect.test.ts"
         ]
       }
     },
@@ -354,10 +354,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/evidence-validate.test.mjs",
+        "path": "tests/scripts/evidence-validate.test.ts",
         "name": "editing code invalidates completed review",
         "artifacts": [
-          "tests/scripts/evidence-validate.test.mjs"
+          "tests/scripts/evidence-validate.test.ts"
         ]
       }
     },
@@ -371,10 +371,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/evidence-validate.test.mjs",
+        "path": "tests/scripts/evidence-validate.test.ts",
         "name": "a contract cannot remove its own document coverage or required check",
         "artifacts": [
-          "tests/scripts/evidence-validate.test.mjs"
+          "tests/scripts/evidence-validate.test.ts"
         ]
       }
     },
@@ -407,10 +407,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/checker-execution.test.mjs",
+        "path": "tests/scripts/checker-execution.test.ts",
         "name": "different-root clean clone runs one fresh leaf with isolated home and cache and unchanged committed review",
         "artifacts": [
-          "tests/scripts/checker-execution.test.mjs"
+          "tests/scripts/checker-execution.test.ts"
         ]
       }
     },
@@ -687,10 +687,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/package-check.test.mjs",
+        "path": "tests/scripts/package-check.test.ts",
         "name": "unlisted-reference fails with reference-unlisted",
         "artifacts": [
-          "tests/scripts/package-check.test.mjs"
+          "tests/scripts/package-check.test.ts"
         ]
       }
     },
@@ -740,10 +740,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/package-check.test.mjs",
+        "path": "tests/scripts/package-check.test.ts",
         "name": "host-metadata fails with host-metadata",
         "artifacts": [
-          "tests/scripts/package-check.test.mjs"
+          "tests/scripts/package-check.test.ts"
         ]
       }
     },
@@ -757,10 +757,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/package-check.test.mjs",
+        "path": "tests/scripts/package-check.test.ts",
         "name": "unexplained-constant fails with constant-comment",
         "artifacts": [
-          "tests/scripts/package-check.test.mjs"
+          "tests/scripts/package-check.test.ts"
         ]
       }
     },
@@ -788,10 +788,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/package-check.test.mjs",
+        "path": "tests/scripts/package-check.test.ts",
         "name": "language-policy fails with language-policy",
         "artifacts": [
-          "tests/scripts/package-check.test.mjs"
+          "tests/scripts/package-check.test.ts"
         ]
       }
     },
@@ -867,10 +867,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/rule-proof.test.mjs",
+        "path": "tests/scripts/rule-proof.test.ts",
         "name": "ts native public imports and permitted direction pass while private, alias and cycles fail",
         "artifacts": [
-          "tests/scripts/rule-proof.test.mjs"
+          "tests/scripts/rule-proof.test.ts"
         ]
       }
     },
@@ -966,10 +966,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/checker-execution.test.mjs",
+        "path": "tests/scripts/checker-execution.test.ts",
         "name": "portable initial foundation survives cloning while revision and selection remain required",
         "artifacts": [
-          "tests/scripts/checker-execution.test.mjs"
+          "tests/scripts/checker-execution.test.ts"
         ]
       }
     },
@@ -983,10 +983,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/package-check.test.mjs",
+        "path": "tests/scripts/package-check.test.ts",
         "name": "package resources reject implementation playbook routing",
         "artifacts": [
-          "tests/scripts/package-check.test.mjs"
+          "tests/scripts/package-check.test.ts"
         ]
       }
     },
@@ -1103,10 +1103,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/rule-proof.test.mjs",
+        "path": "tests/scripts/rule-proof.test.ts",
         "name": "py native public imports and permitted direction pass while private, alias and cycles fail",
         "artifacts": [
-          "tests/scripts/rule-proof.test.mjs"
+          "tests/scripts/rule-proof.test.ts"
         ]
       }
     },
@@ -1120,10 +1120,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/baseline.test.mjs",
+        "path": "tests/scripts/baseline.test.ts",
         "name": "new debt fails refresh without a finding without altering the baseline",
         "artifacts": [
-          "tests/scripts/baseline.test.mjs"
+          "tests/scripts/baseline.test.ts"
         ]
       }
     },
@@ -1169,10 +1169,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/apply.test.mjs",
+        "path": "tests/scripts/apply.test.ts",
         "name": "apply refuses a missing plan and malformed plans",
         "artifacts": [
-          "tests/scripts/apply.test.mjs"
+          "tests/scripts/apply.test.ts"
         ]
       }
     },
@@ -1186,10 +1186,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/run-checks.test.mjs",
+        "path": "tests/scripts/run-checks.test.ts",
         "name": "failed required check cannot pass and does not verify the user flow",
         "artifacts": [
-          "tests/scripts/run-checks.test.mjs"
+          "tests/scripts/run-checks.test.ts"
         ]
       }
     },
@@ -1203,10 +1203,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/apply.test.mjs",
+        "path": "tests/scripts/apply.test.ts",
         "name": "replace interruption after-replacement resumes from actual hashes and keeps backups",
         "artifacts": [
-          "tests/scripts/apply.test.mjs"
+          "tests/scripts/apply.test.ts"
         ]
       }
     },
@@ -1220,10 +1220,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/install-copy.test.mjs",
+        "path": "tests/scripts/install-copy.test.ts",
         "name": "copy install validates the complete package and exact ownership in isolated user scope",
         "artifacts": [
-          "tests/scripts/install-copy.test.mjs"
+          "tests/scripts/install-copy.test.ts"
         ]
       }
     },
@@ -1237,10 +1237,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/install-update.test.mjs",
+        "path": "tests/scripts/install-update.test.ts",
         "name": "clean user update removes obsolete ownership and clean uninstall removes only installer content",
         "artifacts": [
-          "tests/scripts/install-update.test.mjs"
+          "tests/scripts/install-update.test.ts"
         ]
       }
     },
@@ -1346,10 +1346,10 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/plan.test.mjs",
+        "path": "tests/scripts/plan.test.ts",
         "name": "plan check rejects a unit with no evidence",
         "artifacts": [
-          "tests/scripts/plan.test.mjs"
+          "tests/scripts/plan.test.ts"
         ]
       }
     },
@@ -1428,9 +1428,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/repo-audit-overview.test.mjs",
+        "path": "tests/scripts/repo-audit-overview.test.ts",
         "name": "installed repo-audit prompt emits both checklist orders with plan last",
-        "artifacts": ["tests/scripts/repo-audit-overview.test.mjs"]
+        "artifacts": ["tests/scripts/repo-audit-overview.test.ts"]
       }
     },
     {
@@ -1463,9 +1463,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/formal.test.mjs",
+        "path": "tests/scripts/formal.test.ts",
         "name": "scaffold renders the suite, property files, transition table and model files from the plan and rejects a model step that cites no atomic code step",
-        "artifacts": ["tests/scripts/formal.test.mjs"]
+        "artifacts": ["tests/scripts/formal.test.ts"]
       }
     },
     {
@@ -1476,9 +1476,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/formal.test.mjs",
+        "path": "tests/scripts/formal.test.ts",
         "name": "check fails on a property file with no Source paths line, a drifted transition table and a tool file that differs from its pin, and reports a missing tool as unproven",
-        "artifacts": ["tests/scripts/formal.test.mjs"]
+        "artifacts": ["tests/scripts/formal.test.ts"]
       }
     },
     {
@@ -1489,7 +1489,7 @@
       "evidenceType": "manual",
       "procedure": {
         "status": "planned",
-        "description": "Run tests/scripts/formal.test.mjs with BSTACK_TLA2TOOLS_JAR set to the pinned tla2tools.jar and Java on PATH, and score that rule-proof passes unchanged on the formal-charge-once pair with exits 0 and 12 and the expected diagnostic, and that a model that leaves a variable unassigned exits 75 and fails the proof as a modeling error; the test skips when the tool is absent, so a missing tool is never recorded as a pass."
+        "description": "Run tests/scripts/formal.test.ts with BSTACK_TLA2TOOLS_JAR set to the pinned tla2tools.jar and Java on PATH, and score that rule-proof passes unchanged on the formal-charge-once pair with exits 0 and 12 and the expected diagnostic, and that a model that leaves a variable unassigned exits 75 and fails the proof as a modeling error; the test skips when the tool is absent, so a missing tool is never recorded as a pass."
       }
     },
     {
@@ -1500,7 +1500,7 @@
       "evidenceType": "manual",
       "procedure": {
         "status": "planned",
-        "description": "Run tests/scripts/formal.test.mjs with BSTACK_TLA2TOOLS_JAR set to the pinned tla2tools.jar and Java on PATH, and score the walkthrough: the gate flags a scratch break in the real code while the unchanged model still passes, the updated model fails with the diagnostic, and the restored code and model return the original result."
+        "description": "Run tests/scripts/formal.test.ts with BSTACK_TLA2TOOLS_JAR set to the pinned tla2tools.jar and Java on PATH, and score the walkthrough: the gate flags a scratch break in the real code while the unchanged model still passes, the updated model fails with the diagnostic, and the restored code and model return the original result."
       }
     },
     {
@@ -1511,9 +1511,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/formal.test.mjs",
+        "path": "tests/scripts/formal.test.ts",
         "name": "the generalised coverage gate fails a source change when no model changed and accepts it with a No-proof-impact line",
-        "artifacts": ["tests/scripts/formal.test.mjs"]
+        "artifacts": ["tests/scripts/formal.test.ts"]
       }
     },
     {
@@ -1535,9 +1535,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/formal.test.mjs",
+        "path": "tests/scripts/formal.test.ts",
         "name": "sweep routes a drifted formal suite to its maintain mode, reports a missing tool as a limit and leaves a verify kit alone",
-        "artifacts": ["tests/scripts/formal.test.mjs"]
+        "artifacts": ["tests/scripts/formal.test.ts"]
       }
     },
     {
@@ -1581,9 +1581,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/research-skills.test.mjs",
+        "path": "tests/scripts/research-skills.test.ts",
         "name": "how, why and teach declare explicit-only invocation metadata",
-        "artifacts": ["tests/scripts/research-skills.test.mjs"]
+        "artifacts": ["tests/scripts/research-skills.test.ts"]
       }
     },
     {
@@ -1627,9 +1627,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/research-skills.test.mjs",
+        "path": "tests/scripts/research-skills.test.ts",
         "name": "architecture, why and teach ship byte-identical copies of the shared why-evidence reference",
-        "artifacts": ["tests/scripts/research-skills.test.mjs"]
+        "artifacts": ["tests/scripts/research-skills.test.ts"]
       }
     },
     {
@@ -1640,9 +1640,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/recall.test.mjs",
+        "path": "tests/scripts/recall.test.ts",
         "name": "recall declares explicit-only invocation metadata and ships only the transcripts command",
-        "artifacts": ["tests/scripts/recall.test.mjs"]
+        "artifacts": ["tests/scripts/recall.test.ts"]
       }
     },
     {
@@ -1653,9 +1653,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/recall.test.mjs",
+        "path": "tests/scripts/recall.test.ts",
         "name": "transcripts digests only this project's sessions into scratch and leaves transcripts and repo unchanged",
-        "artifacts": ["tests/scripts/recall.test.mjs"]
+        "artifacts": ["tests/scripts/recall.test.ts"]
       }
     },
     {
@@ -1677,9 +1677,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/prototype.test.mjs",
+        "path": "tests/scripts/prototype.test.ts",
         "name": "prototype declares explicit-only invocation metadata and ships only the kit check and kit prove commands",
-        "artifacts": ["tests/scripts/prototype.test.mjs"]
+        "artifacts": ["tests/scripts/prototype.test.ts"]
       }
     },
     {
@@ -1690,9 +1690,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/prototype.test.mjs",
+        "path": "tests/scripts/prototype.test.ts",
         "name": "two variants are driven and measured with the kit while the target stays byte-identical",
-        "artifacts": ["tests/scripts/prototype.test.mjs"]
+        "artifacts": ["tests/scripts/prototype.test.ts"]
       }
     },
     {
@@ -1714,7 +1714,7 @@
       "evidenceType": "manual",
       "procedure": {
         "status": "planned",
-        "description": "Run the test 'formal chart draws the charge-once violation and reports its shortest transition-table path' in tests/scripts/formal.test.mjs with BSTACK_TLA2TOOLS_JAR and Java available. Confirm the broken fixture writes chart.mmd with a breaks mark and a six-step report mapping to Read, Claim and Charge actions. Missing tools skip this proof and never count as a pass."
+        "description": "Run the test 'formal chart draws the charge-once violation and reports its shortest transition-table path' in tests/scripts/formal.test.ts with BSTACK_TLA2TOOLS_JAR and Java available. Confirm the broken fixture writes chart.mmd with a breaks mark and a six-step report mapping to Read, Claim and Charge actions. Missing tools skip this proof and never count as a pass."
       }
     },
     {
@@ -1725,9 +1725,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/formal.test.mjs",
+        "path": "tests/scripts/formal.test.ts",
         "name": "formal chart reports a missing jar as unproven without invoking mise or writing evidence",
-        "artifacts": ["tests/scripts/formal.test.mjs"]
+        "artifacts": ["tests/scripts/formal.test.ts"]
       }
     },
     {
@@ -1738,7 +1738,7 @@
       "evidenceType": "manual",
       "procedure": {
         "status": "planned",
-        "description": "Run the test 'formal chart refuses a wrong jar hash before running the compiler' in tests/scripts/formal.test.mjs with BSTACK_TLA2TOOLS_JAR and Java available. Confirm the public command fails with tool-hash-mismatch and leaves the fixture unchanged. Missing tools skip this proof and never count as a pass."
+        "description": "Run the test 'formal chart refuses a wrong jar hash before running the compiler' in tests/scripts/formal.test.ts with BSTACK_TLA2TOOLS_JAR and Java available. Confirm the public command fails with tool-hash-mismatch and leaves the fixture unchanged. Missing tools skip this proof and never count as a pass."
       }
     }
   ]

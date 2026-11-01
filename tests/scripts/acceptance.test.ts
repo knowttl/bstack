@@ -1,0 +1,148 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { mkdir, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { spawnSync } from 'node:child_process'
+import { repositoryFixture } from './discovery-fixture.ts'
+
+// Commands run from the checkout while inputs remain in disposable directories.
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+
+function run(...args: readonly string[]) {
+  const result = spawnSync(process.execPath, [join(root, 'scripts', 'acceptance.ts'), ...args], { encoding: 'utf8' })
+  return { ...result, data: JSON.parse(result.stdout) }
+}
+
+async function temporary(t: import('node:test').TestContext) {
+  const path = await mkdtemp(join(tmpdir(), 'bstack acceptance '))
+  t.after(() => rm(path, { recursive: true, force: true }))
+  return path
+}
+
+async function plannedRegistry() {
+  const data = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+  for (const entry of data.cases) entry.procedure = { status: 'planned', description: 'Pending isolated acceptance procedure.' }
+  return data
+}
+
+test('registry validates all 114 owned cases without scoring procedures', async () => {
+  const result = run('--check-registry')
+  assert.equal(result.status, 0)
+  assert.equal(result.data.data.registered, 114)
+  assert.equal(result.data.data.passed, 0)
+  const registry = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
+  assert.equal(registry.cases.filter((item: NonNullable<typeof registry.cases>[number]) => item.evidenceType === 'automated' && item.procedure.status === 'planned').length, 0)
+})
+
+for (const [name, mutate] of [
+  ['missing acceptance ID', (data: ReturnType<typeof JSON.parse>) => data.cases.pop()],
+  ['duplicate acceptance ID', (data: ReturnType<typeof JSON.parse>) => { data.cases[1].id = data.cases[0].id }],
+  ['unknown owner task', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].ownerTask = ['T99.1'] }],
+  ['wrong existing owner task', (data: ReturnType<typeof JSON.parse>) => { data.cases[54].ownerTask = ['T1.7'] }],
+  ['missing shared owner', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].ownerTask = ['T2.9'] }],
+  ['extra shared owner', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].ownerTask.push('T1.7') }],
+  ['duplicate owner', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].ownerTask.push(data.cases[0].ownerTask[0]) }],
+  ['invalid procedure status', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].procedure.status = 'passed' }],
+  ['empty planned procedure', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].procedure.description = '' }],
+  ['invalid criterion source', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].criterionSource = 'README.md' }],
+  ['unknown registry field', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].extra = true }],
+  ['missing skill', (data: ReturnType<typeof JSON.parse>) => { delete data.cases[0].skill }],
+  ['unknown skill', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].skill = 'unknown-skill' }],
+  ['missing completed evidence', (data: ReturnType<typeof JSON.parse>) => { data.cases[0].procedure = { status: 'completed', path: 'tests/eval/scenarios/scenarios.json', name: 'new-idea', artifacts: ['missing.txt'] } }],
+  ['unregistered completed test', (data: ReturnType<typeof JSON.parse>) => { data.cases[40].procedure = { status: 'completed', path: 'missing.test.mjs', name: 'missing', artifacts: ['README.md'] } }]
+] satisfies [unknown, unknown][]) {
+  test(`registry blocks ${name}`, async t => {
+    const directory = await temporary(t)
+    const data = await plannedRegistry()
+    mutate(data)
+    const path = join(directory, 'cases.json')
+    await writeFile(path, JSON.stringify(data))
+    assert.equal(run('--check-registry', '--registry', path).status, 2)
+  })
+}
+
+for (const evidenceType of ['agent', 'manual']) {
+  for (const [caseId, name, expected] of [
+    ['AC-1', 'ambiguous-idea', 2],
+    ['AC-2', 'ambiguous-idea', 0],
+    ['AC-9', 'new-idea', 0],
+    ['AC-46', 'all-scenario-comparisons', 0]
+  ] satisfies [unknown, unknown, unknown][]) {
+    test(`completed ${evidenceType} procedure ${expected ? 'blocks' : 'accepts'} ${name} for ${caseId}`, async t => {
+      const directory = await temporary(t)
+      const data = await plannedRegistry()
+      const entry = data.cases.find((item: NonNullable<typeof data.cases>[number]) => item.id === caseId)
+      entry.evidenceType = evidenceType
+      entry.procedure = { status: 'completed', path: 'tests/eval/scenarios/scenarios.json', name,
+        artifacts: ['tests/eval/scenarios/scenarios.json'] }
+      const path = join(directory, 'cases.json')
+      await writeFile(path, JSON.stringify(data))
+      const result = run('--check-registry', '--registry', path)
+      assert.equal(result.status, expected, result.stdout)
+      if (expected) assert.equal(result.data.problems[0].message, `Scenario ${name} does not check ${caseId}`)
+      else assert.deepEqual(result.data.data, { registered: 114, planned: 113, passed: 0 })
+    })
+  }
+}
+
+test('removed all-case release flag points to the release gate', () => {
+  const result = run('--require-complete')
+  assert.equal(result.status, 3)
+  assert.equal(result.data.status, 'usage-error')
+  assert.match(result.data.problems[0].message, /Use --release/)
+})
+
+test('duplicate final selections are blocked independently of run history', async t => {
+  const directory = await temporary(t)
+  const path = join(directory, 'selections.json')
+  const selection = { caseId: 'AC-1', stage: 'final', revision: 'a'.repeat(40), runId: 'missing' }
+  await writeFile(path, JSON.stringify({ schemaVersion: 1, selections: [selection, selection] }))
+  const result = run('--selections', path, '--results', directory)
+  assert.equal(result.status, 2)
+  assert.match(result.data.problems[0].message, /Duplicate final selection/)
+})
+
+for (const name of ['valid skeleton passes from another working directory', 'unlisted-reference fails with reference-unlisted']) {
+  test(`completed procedure definitions execute ${name} without scoring it`, async t => {
+    const directory = await temporary(t)
+    const data = await plannedRegistry()
+    data.cases[40].procedure = { status: 'completed', path: 'tests/scripts/package-check.test.ts',
+      name, artifacts: ['tests/eval/results/tasks/T0.5.C5b.node24-check.txt'] }
+    const path = join(directory, 'cases.json')
+    await writeFile(path, JSON.stringify(data))
+    const result = run('--check-registry', '--registry', path)
+    assert.equal(result.status, 0, result.stdout)
+    assert.deepEqual(result.data.data, { registered: 114, planned: 113, passed: 0 })
+    data.cases[40].procedure.name = 'nonexistent test'
+    await writeFile(path, JSON.stringify(data))
+    assert.equal(run('--check-registry', '--registry', path).status, 2)
+  })
+}
+
+for (const [state, declaration, expected] of [
+  ['passed', "test('required (two)+', () => {})", 0],
+  ['skipped', "test('required (two)+', { skip: true }, () => {})", 2],
+  ['todo', "test('required (two)+', { todo: true }, () => {})", 2],
+  ['failed', "test('required (two)+', () => { throw new Error('fixture failure') })", 2],
+  ['missing', "test('unrelated', () => {})", 2]
+] satisfies [unknown, unknown, unknown][]) {
+  test(`registry requires every procedure in the same suite to pass: ${state}`, async t => {
+    const repo = await repositoryFixture(t, ['scripts', 'runtime', 'docs/design.md', 'docs/implementation-plan.md', 'tests/tasks.json'])
+    const suite = 'tests/scripts/package-check.test.ts'
+    await mkdir(join(repo, 'tests/scripts'), { recursive: true })
+    await writeFile(join(repo, suite), `import test from 'node:test'\ntest('passes [one].*', () => {})\n${declaration}\ntest('unselected failure', () => { throw new Error('not selected') })\n`)
+    const data = await plannedRegistry()
+    for (const [index, name] of [[40, 'passes [one].*'], [43, 'required (two)+']] satisfies [unknown, unknown][]) {
+      data.cases[index].evidenceType = 'automated'
+      data.cases[index].procedure = { status: 'completed', path: suite, name, artifacts: [suite] }
+    }
+    const path = join(repo, 'cases.json')
+    await writeFile(path, JSON.stringify(data))
+    const result = spawnSync(process.execPath, [join(repo, 'scripts/acceptance.ts'), '--check-registry', '--registry', path, '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, expected, result.stdout + result.stderr)
+    if (expected) assert.equal(JSON.parse(result.stdout).problems[0].message, 'Completed procedure must name a successfully executed test: required (two)+')
+    else assert.deepEqual(JSON.parse(result.stdout).data, { registered: 114, planned: 112, passed: 0 })
+  })
+}

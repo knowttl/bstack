@@ -1,6 +1,6 @@
 # Existing vision: personal backup boundary
 
-Prepare with `node tests/fixtures/build.mjs existing-vision-delta`, then follow the [install and invocation steps](README.md).
+Prepare with `node tests/fixtures/build.ts existing-vision-delta`, then follow the [install and invocation steps](README.md).
 
 Request: Audit the approved reading-queue vision against the newer portability decision in `DESIGN.md` and accessible history.
 Present an evidenced candidate delta without applying or replacing the approved vision, and review backup versus sharing.

@@ -160,18 +160,18 @@ npm test -- --task T2.5
 npm test -- --task T2.8
 npm test -- --task T2.9
 npm test -- --task T3.1
-node scripts/acceptance.mjs --check-registry
+node scripts/acceptance.ts --check-registry
 node scripts/check-package.mjs
 ```
 
-`check` first verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.mjs` rewrites that table), then runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
+`check` first verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.ts` rewrites that table), then runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](command-contract.md#package-check) for exact syntax and limits.
 Local validation uses the [affected gate](#affected-validation) after dependency setup.
 
 ### Affected validation
 
-Run `node scripts/gate-test.mjs` for the delivery gate, or `npm run check` followed by `npm test` for the full offline baseline.
+Run `node scripts/gate-test.ts` for the delivery gate, or `npm run check` followed by `npm test` for the full offline baseline.
 For a manual union, repeat task IDs in one invocation, for example `npm test -- --task T2.4 --task architecture`.
 The runner sorts and deduplicates suite files before execution and rejects unknown tasks, missing suites and malformed arguments.
 It passes suite paths relative to its checkout so Node's test-path globbing cannot interpret brackets in the checkout's parent path.
@@ -400,7 +400,7 @@ npm run eval -- turn --run <id> --answer 1
 npm run eval -- close --run <id>
 npm run eval -- score --run <id> --answers answers.json --transcript transcript.txt
 npm run eval -- batch --tier smoke --mode without --adapter tests/eval/adapters/codex-final.json --repeat 5 --concurrency 6 --json
-node scripts/acceptance.mjs --release <version> --candidate <full-HEAD-commit> --checks <hard-break-report.json> --json
+node scripts/acceptance.ts --release <version> --candidate <full-HEAD-commit> --checks <hard-break-report.json> --json
 ```
 
 An unscored manual run exits 2 as blocked.
@@ -416,7 +416,7 @@ The Codex adapter copies only the invoking user's existing login into throwaway 
 See the [scoring contract](evaluation.md#judge-and-human-scoring) for judge and human answers, transcript citations and captured machine verdicts.
 Tests are discovered only under `tests/scripts/` and `tests/package-check/`.
 Task suites are registered in `tests/tasks.json`.
-For portable full-suite evidence, use `npm test -- --capture .cache/full-suite.json`, then `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>`.
+For portable full-suite evidence, use `npm test -- --capture .cache/full-suite.json`, then `node scripts/task-evidence.ts .cache/full-suite.json <task-id>`.
 The [task evidence contract](implementation-plan.md#task-evidence-contract) owns capture prerequisites, automatic capture during ordinary tests, input binding and refresh rules.
 `npm test -- --task T0.4` selects the currently implemented shared-library tests.
 `npm test -- --task T0.5` selects the currently implemented package-check tests.
@@ -428,10 +428,10 @@ Build isolated fixture workspaces with Node 24 or later and Git.
 Native fixtures also require npm, Python 3.12 and uv, with fixture-local TypeScript and Ruff locks:
 
 ```sh
-node tests/fixtures/build.mjs --all
-node tests/fixtures/build.mjs clear-goals
-node tests/fixtures/build.mjs ts-rule-proof-alias
-node tests/fixtures/build.mjs py-rule-proof-cycle
+node tests/fixtures/build.ts --all
+node tests/fixtures/build.ts clear-goals
+node tests/fixtures/build.ts ts-rule-proof-alias
+node tests/fixtures/build.ts py-rule-proof-cycle
 ```
 
 The builder prints one JSON line per fixture with its `name`, absolute temporary `path` and `kind` (`idea` or `repo`) after its sanity check passes.
@@ -447,8 +447,8 @@ Raw upstream development sources are committed outside the installed skill.
 To refresh the copies or verify them against their pinned remote bytes:
 
 ```sh
-node upstream/fetch.mjs
-node upstream/fetch.mjs --check
+node upstream/fetch.ts
+node upstream/fetch.ts --check
 ```
 
 Both commands require network access and exit 1 if a listed remote file is missing or unavailable.
@@ -458,7 +458,7 @@ Fetching replaces local copies and regenerates each source's `sha256` map in the
 To verify committed copies offline against the manifest:
 
 ```sh
-node --test --test-name-pattern='committed upstream copies' tests/scripts/upstream.test.mjs
+node --test --test-name-pattern='committed upstream copies' tests/scripts/upstream.test.ts
 ```
 
 This check requires Git, verifies hash coverage and local bytes, and rejects tracked upstream copies absent from the manifest.
@@ -478,8 +478,8 @@ The architecture and verification runtimes also expose direct baseline replaceme
 Edit authored runtime sources only in `runtime/`; refresh vendored sources through the [upstream workflow](#upstream-sources), then regenerate the skill files or verify them without writes:
 
 ```sh
-node scripts/generate-skills.mjs
-node scripts/generate-skills.mjs --check
+node scripts/generate-skills.ts
+node scripts/generate-skills.ts --check
 ```
 
 `--check` exits 1 for a missing or modified listed output or an unlisted file under a registered skill's `schemas/`, `assets/` or declared vendored destinations; generation removes those unlisted files.
@@ -520,7 +520,7 @@ node skills/formal-verification/scripts/formal-verification.mjs formal scaffold 
 ```
 
 The skill installs no tool: the project pins the tool file and its sha256, and a missing tool is reported as unproven.
-`tests/scripts/formal.test.mjs` runs its tool-independent checks, including the missing-jar chart boundary, without a tool.
+`tests/scripts/formal.test.ts` runs its tool-independent checks, including the missing-jar chart boundary, without a tool.
 Its `rule-proof`, walkthrough, chart-violation and chart wrong-hash tests run only when `BSTACK_TLA2TOOLS_JAR` names the pinned `tla2tools.jar` and Java 11 or later is on `PATH`, and they skip, never pass, otherwise.
 The [fixture notes](../tests/fixtures/formal-charge-once/FIXTURE.md) record the pinned jar, its sha256 and the expected results.
 
@@ -532,8 +532,8 @@ The generated file requires Node 24 or later and Git for repository validation.
 Check freshness without writes, or generate current bytes and an installation proposal in scratch:
 
 ```sh
-node scripts/generate-checker.mjs --repo . --check
-node scripts/generate-checker.mjs --repo <target> --json
+node scripts/generate-checker.ts --repo . --check
+node scripts/generate-checker.ts --repo <target> --json
 ```
 
 See the [generation contract](command-contract.md#standalone-checker-generation) for scratch outputs, selected-plan installation and protection of existing copies.
