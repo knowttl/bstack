@@ -45,6 +45,7 @@ Run the full suite, `<full command>`, and the maintained check, `<check command>
 
 The second line is the contract: the full suite and the check run once before the gate, not after every edit, and again only when dependencies change.
 Name each command exactly as the project defines it.
+Command pointers name the commands and link to their definitions; they do not copy command implementations into the root file.
 When the project defines no affected command, propose only the second line, and do not invent a command to point at.
 A project with no gate keeps the same contract, and the line then says before pushing in place of before the gate.
 Another skill normally adds its own line when it writes its document, so do not rewrite a line it owns.
@@ -55,7 +56,7 @@ For each line of the root file, open its target and record one result:
 
 - Resolving: the relative link names a file inside the repo that exists, and the sentence says when to use it.
 - Broken: the target is missing, or the link leaves the repo.
-- Copying: the line states a rule, definition or command instead of pointing to the source that owns it. Propose replacing it with a pointer only when that source already holds equivalent text, and keep it otherwise.
+- Copying: the line states a rule, definition or command implementation instead of pointing to the source that owns it. Propose replacing it with a pointer only when that source already holds equivalent text, and keep it otherwise.
 
 A line with no link is either merged text the author chose to keep or a copy, so ask which.
 A pointer to a command is resolving only when the project defines that command.

@@ -671,7 +671,8 @@ Hosted CI is not added: the layers below are local, and the delivery gate stays 
 - **Suite audit.** `/verification maintain` audits the suite for waste and quality, speed, splitting into sections and selector misses, and `/repo-audit` points to `/verification maintain`, or to `/verification create` when there is no kit, when the suite or gate is documented as slow.
 - **Out of scope.** Scheduling of shared hosts, load waits, hosted-proof queues and review-to-merge latency belong to whoever runs the fleet, not to bstack.
 
-This amendment changes the design only; the fast-feedback reference, skill procedures, checkers and tests are built in later slices, and agent evaluations remain deferred.
+The [agents-md command pointers](../skills/agents-md/references/agents-md.md#affected-and-full-commands), [maintenance hook boundary](../skills/maintenance/references/create.md#effect-and-limits) and [repo-audit routing](../skills/repo-audit/SKILL.md#step-4-print-the-checklist) are implemented as skill guidance.
+The remaining fast-feedback procedures, reference, checkers and tests are built in later slices, and agent evaluations remain deferred.
 
 ## The skill split
 
