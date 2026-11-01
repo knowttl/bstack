@@ -88,7 +88,8 @@ Generate the checker with `comment-check generate --repo <target> --language pyt
 It uses the language's own tokenizer, so comment-like text inside strings, regular expressions and templates is never flagged.
 It is self-contained, contains no comments itself, runs without bstack and exits 1 with `path:line:column: no-prose-comments: prose comment: <text>` for each violation.
 Propose it as a selected `create` edit at the returned suggested path and wire it into the maintained check command.
-The TypeScript checker imports the project's `typescript` package; add that development dependency as a selected edit when the project lacks it.
+The TypeScript checker uses the project's `typescript` compiler API for versions before 7; add that development dependency as a selected edit when the project lacks it.
+For TypeScript 7 and later, which ship no compiler API, the checker resolves the side-by-side TypeScript 6 package `@typescript/typescript6`; add it as a development dependency in the selected edits.
 For another language, write the same check with that language's tokenizer and prove it the same way.
 
 Before baselining, inspect `--list` identities alongside the source comments and classify each as a selected finding:
