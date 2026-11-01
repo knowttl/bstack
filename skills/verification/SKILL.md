@@ -52,9 +52,12 @@ Write the kit plan in scratch, following `schemas/kit-plan.json` and writing its
 Start with the top three to five user-facing features, each with its declared source paths, entry points, driving steps with observable matches and gotchas.
 Every step command must assert something a user would see; a step that only checks an exit code is not proof.
 Set `coverageGate` to `true` when the repo uses or will adopt no-mistakes, so the kit ships the feature-map coverage gate that Step 8 wires.
+Record in the scratch plan each feedback layer's command and measured time: pre-push check, affected-test iteration, full offline suite and slow tier.
+Mark an absent layer as not applicable and an unavailable measurement as unmeasured with its prerequisite; do not invent a time.
+Aim for feedback as fast as practical for the project's size, without fixed time targets or timing checks that fail.
 Obtain the user's selection of the plan.
 
-Done when: The plan validates against the schema, every feature step has an observable match, and the user has selected it.
+Done when: The plan validates against the schema, every feature step has an observable match, each applicable feedback layer has a command and measured time or a named measurement prerequisite, and the user has selected it.
 
 ### Step 3: Review and apply the kit
 
@@ -99,29 +102,32 @@ Done when: Every enabled rule has a passing proof or is reported unproven, exist
 
 ### Step 7: Audit the existing suite
 
-On an existing repo, review the current tests for the wasteful-test patterns, the test-quality rules with their exemptions, and journeys protected only by unit or mocked tests.
-Record evidenced instances as findings with the tests, callers and smallest change; remove nothing until the user selects it.
-Use the [testing reference](references/testing.md).
+On first contact with an existing suite, run the full suite audit in [Step M7](#step-m7-audit-and-speed-up-the-suite), including waste and quality, speed, suite sections and selector misses.
+Include journeys protected only by unit or mocked tests, and cite the tests, callers and smallest change for each finding.
 Skip this step for a repo with no tests.
 
-Done when: Every pattern instance has cited evidence, or the audit states that none was found and which tests were read.
+Done when: All four audit parts have evidence or named limitations, proposals are ranked by saving with estimates labelled, and the report names the tests read, or the repo has no tests.
 
 ### Step 8: Propose no-mistakes wiring
 
 Propose the pipeline configuration that makes the kit count: the coverage gate after Document, the kit named in the Test instructions, the testing criteria in Review and the feature map as the owner of how a user reaches each feature.
 Extend an existing `.no-mistakes.yaml` instead of replacing it.
 For slow validation, propose and prove a changed-area selector from the architecture's module and protocol declarations, including dependent validation, a safe full offline fallback and ongoing selection-miss tuning as the wiring reference describes.
+Offer two named commands, affected and full, and an `AGENTS.md` pointer to their authoritative documentation: iterate with the affected command; run the full suite and the maintained check once before the gate and after any dependency change.
+Offer an optional pre-push hook for the maintained checks only when the repo has no no-mistakes gate; the hook must not be the only enforcement.
+Follow the [fast-feedback reference](references/fast-feedback.md) for the feedback layers and command contract.
 When the repo has none, offer no-mistakes setup as a selected step the user may decline, tell the user the one command that sets it up and never run it, and add no hosted CI workflow unless the user asks.
 Load the [wiring reference](references/no-mistakes.md).
 
-Done when: Each wiring change is a selected edit with its exact diff and the effect timing stated, or the user has declined it, and the reference's inferences are listed as limitations.
+Done when: Each wiring change and affected/full command proposal is a selected edit with its exact diff and the effect timing stated, or the user has declined it, a pre-push hook is offered only without a gate, and the reference's inferences are listed as limitations.
 
 ### Step 9: Report
 
 State the kit location, the proof result with its evidence path, each selected change and its verification, unproven rules, audit findings and every limitation, including setup steps the proof did not cover.
-Name `maintain` as the later pass that keeps the kit true; do not suggest a cadence unless asked.
+Include a timing table with each feedback layer, its command and measured time, explicitly marking unmeasured or inapplicable layers.
+Name `maintain` as the later pass that keeps the kit true; the scheduled full run proposed with a selector is its safety net, not a cadence for invoking `maintain`.
 
-Done when: The report separates applied changes, proof evidence, unresolved findings and limitations.
+Done when: The report includes the per-layer timing table and separates applied changes, proof evidence, unresolved findings and limitations.
 
 ## Maintain checklist
 
@@ -133,8 +139,9 @@ Maintain needs an applied kit; without one, run `create`.
 - [ ] Step M3: Drive every feature
 - [ ] Step M4: Triage
 - [ ] Step M5: Correct the kit
-- [ ] Step M6: Mine repeated mistakes and audit the suite
-- [ ] Step M7: Report
+- [ ] Step M6: Mine repeated mistakes
+- [ ] Step M7: Audit and speed up the suite
+- [ ] Step M8: Report
 
 ### Step M1: Check the kit for drift
 
@@ -173,20 +180,38 @@ Report product bugs without changing the map to hide them.
 
 Done when: Only the approved change set has been applied, `kit check` passes and each changed feature proved again, or no correction was needed.
 
-### Step M6: Mine repeated mistakes and audit the suite
+### Step M6: Mine repeated mistakes
 
 Run Steps C1 and C2 of the [Correct checklist](#correct-checklist) over the project's recent no-mistakes findings and review comments where they are available, and propose each repeated mistake's rung without applying it.
-Audit the suite for the wasteful-test patterns and test-quality rules with the [testing reference](references/testing.md), recording evidenced instances as findings and removing nothing until the user selects it.
-Where the project uses changed-area selection, compare it with a full offline run and propose mapping fixes and selector regression cases for misses, following the [no-mistakes wiring reference](references/no-mistakes.md#change-scoped-test-command).
 
-Done when: Each repeated mistake has a proposed rung and evidence, and each pattern instance has cited evidence or the audit states that none was found.
+Done when: Each repeated mistake has a proposed rung and evidence, or the available evidence contains no repeated mistake and its limits are stated.
 
-### Step M7: Report
+### Step M7: Audit and speed up the suite
+
+Use the [testing reference](references/testing.md), [fast-feedback reference](references/fast-feedback.md) and [no-mistakes wiring reference](references/no-mistakes.md#change-scoped-test-command) for one audit with four parts:
+
+1. Review wasteful-test patterns and the test-quality rules with their exemptions; record cited instances and remove nothing until the user selects it.
+2. Measure each feedback layer, separating wait, setup and run, warm and cold runs, the slowest tests and full-suite runs per change.
+   Compare with the project's own history; a relative slowdown or a large cheap saving triggers proposals.
+   Skip speed optimisation when the suite is already fast for the project's size, but still assess the layers and timeouts.
+   Consider tool-native, host-cappable workers, setup reuse only with proof of cleanup, maintained tool swaps only with an equivalence proof and measured saving, per-test timeouts and a suite ceiling about twice its recent measured time.
+3. Propose appropriate suite sections and affected/full commands so iteration need not run the whole suite, preserving dependent validation and a safe full offline fallback.
+4. Compare changed-area selection with a full offline run, record misses and propose mapping fixes and selector regression cases.
+   Propose a scheduled full run, nightly or per release batch, as the default companion to a selector; keep the no-mistakes Test step unchanged.
+
+Rank proposals by measured or estimated time saved, label estimates as estimates and state the evidence and verification for each.
+Record unavailable measurements or comparisons as limitations with their prerequisites.
+Present selected changes through exact-diff review and `apply`; report product changes instead of implementing them.
+
+Done when: All four parts have evidence or named limitations, each applicable layer has its command and measured time or measurement prerequisite, and proposals are ranked by saving with estimates labelled and nothing removed without selection.
+
+### Step M8: Report
 
 Report one outcome: clean, changed through a reviewed change set, or blocked.
 Name the features driven, the features not reached and why, the product bugs found and every limitation.
+Include the audit findings, proposals ranked by saving and a per-layer timing table with commands, measured times and explicit measurement gaps.
 
-Done when: The report states one outcome and separates applied changes, product bugs and limitations.
+Done when: The report states one outcome, includes the suite audit and timing table, and separates applied changes, product bugs and limitations.
 
 ## Correct checklist
 
@@ -275,6 +300,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | Interviewing the repo, writing the kit plan or proving the kit | `references/create.md` |
 | Writing the kit plan's prose or the testing guidance | `references/writing.md` |
 | Proposing testing guidance or auditing the suite | `references/testing.md` |
+| Planning feedback layers, proposing affected/full commands or auditing suite speed | `references/fast-feedback.md` |
 | Proposing hard constraints, rule proofs or a baseline, or running a correct pass | `references/constraints.md` |
 | Selecting slop rules for a language or banning prose comments | `references/slop-baseline.md` |
 | The product calls an outside service or API | `references/third-party.md` |
