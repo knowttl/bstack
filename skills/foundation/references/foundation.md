@@ -64,6 +64,24 @@ Testing rules and the verification kit belong to `/verification create`: list it
 Prefer native checks and one source of truth over duplicated prose or a second verification engine.
 Distinguish automated rules from judgement rules, and leave design judgement rules to `/architecture`.
 
+### Tool examples chosen by measured equivalence
+
+Prefer the fastest maintained tool that enforces the required constraints equivalently.
+These examples are not bundled policy: use candidates only where they fit the selected stack, and keep beta tools as candidates rather than defaults.
+
+| Stack | Candidates |
+|---|---|
+| Node / TypeScript | TypeScript 7 (`tsgo`) for type checking and Oxlint for linting; retain TypeScript 6 where the compiler API is required |
+| Python | Ruff for formatting and linting; evaluate ty as a type-checking candidate while it is in beta |
+| Go | Native checks and golangci-lint with its cache |
+| Rust | Native checks and cargo nextest for test execution |
+
+Prove the representative valid cases still pass and the same seeded violations fail with the expected diagnostics, using `rule-proof`.
+Record tool versions and measured time saved before proposing a replacement; speed alone does not establish equivalence.
+Keep the maintained check command a sequential fail-fast `&&` chain, and use each tool's own worker controls for parallelism rather than backgrounding checks.
+For a project without a no-mistakes gate, offer an optional pre-push hook as part of the reviewed setup.
+Do not add a redundant hook to a project that already uses the gate.
+
 ## Record each proposal
 
 | Field | Required evidence |

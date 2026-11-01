@@ -8,6 +8,7 @@ A new project has no existing debt, so a rule that fails on the first run is fix
 
 - [Prove a rule before adopting it](#prove-a-rule-before-adopting-it)
 - [Integrate the maintained command](#integrate-the-maintained-command)
+- [Optional pre-push hook](#optional-pre-push-hook)
 - [Capture the outcome](#capture-the-outcome)
 
 ## Prove a rule before adopting it
@@ -33,10 +34,27 @@ For a selected `.yml` or `.yaml` CI edit, write JSON syntax, which is valid YAML
 The runtime supports only that JSON subset for marked CI edits and does not parse general YAML.
 Every selected path must resolve to a string command in the complete proposed bytes, and `continue-on-error` and `allow_failure` on its ancestors must be literal `false` when present.
 Selected commands use literal arguments in a fail-fast top-level `&&` chain, with unquoted words or whole double-quoted literals separated by spaces or tabs.
+Keep this chain sequential; parallelism belongs inside each tool, using its worker setting so the execution environment can cap it.
 Failure-masking operators (`||`, pipelines, separators, background execution and negation), shell dispatch, substitutions, redirection, backslashes, single quotes, `$`, backticks, `%` and `!` fail with `ignored-check-failure` before any write.
 Run `node scripts/foundation.mjs apply --help` for the supported edit operations.
 The same maintained command must pass the valid control and reject the seeded violation through `rule-proof`.
 CI examples are unverified adapters until actual hosted execution is observed, and local disposable proof does not establish a merge gate.
+
+## Optional pre-push hook
+
+Offer this hook only when the project has no no-mistakes gate.
+When selected, include the hook files and installation command in the reviewed scaffold and setup commands.
+Use a versioned project-local hook directory with `git config --local core.hooksPath .githooks`, or extend pre-commit or Lefthook when the project already uses it.
+Preserve an existing hook configuration rather than replacing it.
+The setup installs the hook for the current clone; document the same setup command for every contributor.
+Use project-owned scripts and pinned development dependencies, without global wrappers, private paths, bstack or an agent session.
+
+The hook calls the maintained formatting, linting and type-checking commands on files changed by the outgoing push, using the tools' supported file or dependency selection.
+When a tool requires project-wide context, or changed-file selection cannot be established safely, run its full maintained check instead.
+Run checks without modifying files and propagate every failure to reject the push.
+Prove a clean push succeeds and a push containing a seeded violation fails in a disposable local repository.
+Also prove the maintained command rejects that violation when invoked directly.
+Hooks can be bypassed or absent in another clone, so they are never the only enforcement: keep the maintained check required by the project's delivery workflow, independently of the hook.
 
 ## Capture the outcome
 
