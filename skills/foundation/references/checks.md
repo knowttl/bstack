@@ -42,7 +42,7 @@ CI examples are unverified adapters until actual hosted execution is observed, a
 
 ## Optional pre-push hook
 
-Offer this hook only when the project has no no-mistakes gate.
+Offer this hook only when the project has no delivery gate.
 When selected, include the hook files and installation command in the reviewed scaffold and setup commands.
 Use a versioned project-local hook directory with `git config --local core.hooksPath .githooks`, or extend pre-commit or Lefthook when the project already uses it.
 Preserve an existing hook configuration rather than replacing it.
