@@ -30,8 +30,23 @@ Find each in the source that already owns it instead of restating it.
 | Review standards | `CODING_STANDARDS.md` or `CONTRIBUTING.md` |
 | Evidence requirements | The verification kit under `.agents/skills/verify-<app>/`, or the document that says what proves a change |
 | Check commands | The project's maintained check command, such as a package script or a make target, named exactly as defined |
+| Affected and full test commands | The package script, make target or task the project defines for tests of the changed code and for the whole offline suite, named exactly as defined |
 
 A source that exists but has no pointer is a suggestion for the author to select, not an error.
+
+### Affected and full commands
+
+When the project defines both an affected-test command and a full-suite command, propose these two pointer lines, each with its one link to the file that defines the commands (written below without its links):
+
+```md
+Iterate with the affected-test command, `<affected command>`, defined in <defining file>.
+Run the full suite, `<full command>`, and the maintained check, `<check command>`, once before the gate and again after any dependency change, as defined in <defining file>.
+```
+
+The second line is the contract: the full suite and the check run once before the gate, not after every edit, and again only when dependencies change.
+Name each command exactly as the project defines it.
+When the project defines no affected command, propose only the second line, and do not invent a command to point at.
+A project with no gate keeps the same contract, and the line then says before pushing in place of before the gate.
 Another skill normally adds its own line when it writes its document, so do not rewrite a line it owns.
 
 ## Pointer audit
