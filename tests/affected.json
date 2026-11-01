@@ -64,6 +64,7 @@
     "how": ["T2.14"],
     "why": ["T2.14"],
     "prototype": ["T2.16"],
+    "readme": ["T2.18"],
     "recall": ["T2.15"],
     "teach": ["T2.14"]
   }

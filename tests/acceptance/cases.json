@@ -1740,6 +1740,43 @@
         "status": "planned",
         "description": "Run the test 'formal chart refuses a wrong jar hash before running the compiler' in tests/scripts/formal.test.ts with BSTACK_TLA2TOOLS_JAR and Java available. Confirm the public command fails with tool-hash-mismatch and leaves the fixture unchanged. Missing tools skip this proof and never count as a pass."
       }
+    },
+    {
+      "id": "AC-115",
+      "skill": "readme",
+      "ownerTask": ["T2.18"],
+      "criterionSource": "docs/design.md#AC-115",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/readme.test.ts",
+        "name": "readme declares explicit-only invocation metadata and ships only apply, state show and cite-check",
+        "artifacts": ["tests/scripts/readme.test.ts"]
+      }
+    },
+    {
+      "id": "AC-116",
+      "skill": "readme",
+      "ownerTask": ["T2.18"],
+      "criterionSource": "docs/design.md#AC-116",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/readme.test.ts",
+        "name": "apply creates the approved README and then replaces it, writing nothing else and nothing on a dry run",
+        "artifacts": ["tests/scripts/readme.test.ts"]
+      }
+    },
+    {
+      "id": "AC-117",
+      "skill": "readme",
+      "ownerTask": ["T2.18"],
+      "criterionSource": "docs/design.md#AC-117",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the readme skill on a fixture project whose README opens with a project history, buries the install command, names no entry point and lists a command that does not exist, and on a fixture project with no README, and score that the first run reports each failing checklist item with its README line, flags the invented command and the content that belongs in other files, and leaves the README unchanged until the author approves the exact bytes, and that the second run drafts a README in the structure guide's order whose every command traces to the project's source."
+      }
     }
   ]
 }

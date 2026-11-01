@@ -15,7 +15,8 @@ Its model-checker proof runs only where the pinned tool and Java are present: se
 The `how`, `why` and `teach` skills explain a codebase from cited evidence and write nothing ([T2.14](implementation-plan.md#t214-add-the-how-why-and-teach-skills)).
 The `recall` skill summarises prior context from the project's local Claude Code and Codex transcripts, read-only, and keeps its output in scratch ([T2.15](implementation-plan.md#t215-add-the-recall-skill)).
 The `prototype` skill builds throwaway variants in scratch clones, measures each with the project's verification kit and recommends one, writing nothing to the repo ([T2.16](implementation-plan.md#t216-add-the-prototype-skill)).
-The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why, teach, recall and prototype; audit usage applies to repo-audit.
+The `readme` skill creates or audits a project's `README.md` against a structure, a checklist and a leave-out list, and writes only the README the author approves ([T2.18](implementation-plan.md#t218-add-the-readme-skill)).
+The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why, teach, recall, prototype and readme; audit usage applies to repo-audit.
 
 This checkout contains the slim [repo-audit procedure](../skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](command-contract.md).
 The [vision skill](../skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
@@ -631,6 +632,13 @@ It never adopts a non-empty directory, and it writes the scaffold's `README.md` 
 The [agents-md skill](../skills/agents-md/SKILL.md) is started by the user and creates or maintains one root `AGENTS.md` of one-line pointers to the project's rules, evidence requirements and check commands.
 It audits each pointer against the repo, merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked, keeps distinct nested instruction files, reports `CLAUDE.local.md` as possible shadowing without editing it, and reads nothing outside the repo.
 The glossary, vision, architecture, foundation, maintenance and plan skills each propose their own pointer line, following the shared [pointer contract](../runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
+
+### readme
+
+The [readme skill](../skills/readme/SKILL.md) is started by the user and creates or audits one `README.md`.
+It ships `cite-check` for the facts the README states, and `apply` and `state show` for the one reviewed write.
+Its [structure guide](../skills/readme/references/structure.md), [checklist](../skills/readme/references/checklist.md), [leave-out list](../skills/readme/references/leave-out.md), [audit procedure](../skills/readme/references/audit.md) and [sources](../skills/readme/references/sources.md) hold the guidance.
+It reports the repository description and topics to set on the host and never sets them.
 
 ### plan
 
