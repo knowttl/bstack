@@ -478,6 +478,8 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.17 Add optional TLC charts to formal verification - unchanged pinned compiler, local Mermaid output and reader-word guidance, gated by the suite and tool checks.
     Package and task checks pass; the missing-jar proof runs offline, while AC-112 and AC-114 remain unavailable without the supplied pinned jar and Java.
     Evidence is recorded in `tests/eval/results/tasks/T2.17.json`.
+  - [x] T2.18 Add the `readme` skill (after T2.17) - a user-started skill that creates or audits a project's `README.md` against a structure guide, a checklist for findability, scannability and agent readability, a leave-out list and a cold-start test, and writes only the README the author approves.
+    The skill's scenario evaluation is deferred, so AC-117 keeps a planned procedure; AC-115 and AC-116 are covered by `tests/scripts/readme.test.ts`.
 - Phase 3: Enforcement
   - [x] T3.1 Write the enforcement and architecture references (before T2.8)
     - C16 supplies the early enforcement and architecture references, reviewed against both ts-shop and py-ledger using the [relevance rubric](../tests/eval/results/tasks/T3.1.verification.md).
@@ -1617,6 +1619,32 @@ Done when: The package and task checks pass, every installed compiler byte match
 Reader-word authoring and replay evaluations remain deferred.
 Re-sync with `node upstream/fetch.ts`, regenerate the installed tree and rerun this task's acceptance cases.
 
+### T2.18 Add the `readme` skill
+
+**Depends on:** T2.17, and through it the per-skill installer, the shared writing reference and the `apply`, `state show` and `cite-check` commands.
+It follows the decision of R54.
+
+**Inputs and outputs:** A project, with or without a `README.md` -> an audit of the README against the checklist, and a README the author approved as exact bytes, with every other file unchanged.
+
+**Verification:** `npm run check`, then `npm test -- --task T2.18`.
+
+**Read:** design "The skill split", R54 and AC-115 to AC-117.
+
+**Steps**
+
+1. Write `skills/readme/SKILL.md`, user-started only with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, starting no other skill, and its structure, checklist, leave-out, audit and sources references.
+2. Add the `readme` entry in `runtime/skills.json`, shipping `apply`, `state show`, `cite-check`, the findings, change-set, evidence, research-report and resume-state schemas and the writing reference, and generate the bundle.
+3. Register AC-115 to AC-117 and add the `tests/tasks.json` and `tests/affected.json` entries; update the README skills table, installation list and safety notes.
+
+**Done when**
+
+- `npm run check` and `npm test -- --task T2.18` pass.
+- `apply` creates and then replaces only `README.md` with the approved bytes, and writes nothing on a dry run.
+- The skill folder installs alone, its bundle passes `--check`, it starts no skill and it never sets host metadata.
+- The scenario evaluation of the skill stays deferred and is listed as a follow-up.
+
+**Covers:** AC-115 to AC-117.
+
 ## Phase 3: Enforcement
 
 Phase evidence from the design: valid cases pass, and seeded violations fail through the maintained command in disposable local copies.
@@ -2206,6 +2234,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.15 | AC-106, AC-107, AC-108 | Explicit-only start, the `transcripts` digest limited to this project's sessions with transcripts and repo unchanged, and the cited, secret-free summary in scratch | AC-106 and AC-107 pass in `tests/scripts/recall.test.ts`; AC-108 is planned and the scenario evaluation is deferred. |
 | T2.16 | AC-109, AC-110, AC-111 | Explicit-only start, the kit measurement of a passing and a failing variant in scratch clones with the target unchanged, and the report that recommends from the measured evidence | AC-109 and AC-110 pass in `tests/scripts/prototype.test.ts`; AC-111 is planned and the scenario evaluation is deferred. |
 | T2.17 | AC-112, AC-113, AC-114 | Local TLC charts with a checked project pin, missing-tool blocking and wrong-hash refusal | AC-113 runs offline in `tests/scripts/formal.test.ts`; AC-112 and AC-114 require `BSTACK_TLA2TOOLS_JAR` and Java and skip otherwise. Reader-word and triage evaluations remain deferred. |
+| T2.18 | AC-115, AC-116, AC-117 | Explicit-only start, the one reviewed README write with a dry run that changes nothing, and the audit and draft of a README against the checklist | AC-115 and AC-116 pass in `tests/scripts/readme.test.ts`; AC-117 is planned and the scenario evaluation is deferred. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
