@@ -143,7 +143,7 @@ Check that no script imports an API the faster tool does not ship; for example T
 
 | Check | Faster maintained candidates |
 |---|---|
-| Type check, Node/TypeScript | TypeScript 7 (`tsgo`) |
+| Type check, Node/TypeScript | TypeScript 7 (`tsc`) |
 | Lint, Node/TypeScript | Oxlint |
 | Lint and format, Python | Astral's Rust-based linter and formatter; its type checker `ty` is a candidate while it is in beta |
 | Lint, Go | golangci-lint with its cache |
